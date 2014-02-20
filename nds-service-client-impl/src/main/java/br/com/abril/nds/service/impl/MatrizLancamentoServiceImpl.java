@@ -43,7 +43,6 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.EstrategiaRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.CalendarioService;
@@ -75,10 +74,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     
     @Autowired
     protected DistribuidorRepository distribuidorRepository;
-    
-    
-    @Autowired
-    private EstrategiaRepository estrategiaRepository;
     
     @Autowired
     private FornecedorRepository fornecedorRepository;
@@ -121,11 +116,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     
     @Override
     @Transactional
-    public TreeMap<Date, List<ProdutoLancamentoDTO>> confirmarMatrizLancamento(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+    public Map<Date, List<ProdutoLancamentoDTO>> confirmarMatrizLancamento(
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final List<Date> datasConfirmadas, final Usuario usuario) {
         
-        final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = new TreeMap<Date, List<ProdutoLancamentoDTO>>();
+        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = new TreeMap<Date, List<ProdutoLancamentoDTO>>();
         
         this.validarDadosConfirmacao(matrizLancamento);
         
@@ -177,7 +172,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return matrizLancamentoRetorno;
     }
     
-	                                                    /**
+	                                                                        /**
      * Efetua a ordenação dos produtos por nome do produto e tipo de lançamento,
      * se produto for parcial respeita a ordem de PARCIAL, FINAL
      * 
@@ -219,12 +214,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     
     @Override
     @Transactional
-    public TreeMap<Date, List<ProdutoLancamentoDTO>> salvarMatrizLancamento(
+    public Map<Date, List<ProdutoLancamentoDTO>> salvarMatrizLancamento(
             final Date dataSalvar, final List<Long> idsFornecedores,
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final Usuario usuario) {
         
-        final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = new TreeMap<Date, List<ProdutoLancamentoDTO>>();
+        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = new TreeMap<Date, List<ProdutoLancamentoDTO>>();
         
         this.validarDadosConfirmacao(matrizLancamento);
         
@@ -288,16 +283,16 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     }
     
     private void validarDadosConfirmacao(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento) {
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento) {
         
         if (matrizLancamento == null || matrizLancamento.isEmpty()) {
             
             throw new ValidacaoException(TipoMensagem.WARNING,
- "Matriz de lançamento não informada!");
+                    "Matriz de lançamento não informada!");
         }
     }
     
-	                                                    /**
+	                                                                        /**
      * Método que atualiza as informações dos lançamentos.
      * 
      * @param matrizLancamentoRetorno
@@ -305,10 +300,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
      * @param usuario - usuário
      * @param mapaLancamento - mapa de lancamentos e produtos de recolhimento
      * 
-     * @return {@link TreeMap<Date, List<ProdutoLancamentoDTO>>}
+     * @return {@link Map<Date, List<ProdutoLancamentoDTO>>}
      */
     private void atualizarLancamentos(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno,
             final Usuario usuario, final Map<Long, ProdutoLancamentoDTO> mapaLancamento,
             final OperacaoMatrizLancamento operacaoMatrizLancamento) {
         
@@ -337,8 +332,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
             this.tratarLancamentosAgrupadosParaConfirmacao(lancamento,
                     listaLancamentos, mapaLancamento);
             
-            final boolean gerarHistoricoLancamento = !(lancamento.getStatus()
-                    .equals(proximoStatusLancamento));
+            final boolean gerarHistoricoLancamento = !lancamento.getStatus()
+                    .equals(proximoStatusLancamento);
             
             if (gerarHistoricoLancamento) {
                 
@@ -386,13 +381,13 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         if (listaLancamentos == null || listaLancamentos.isEmpty()) {
             
             throw new ValidacaoException(TipoMensagem.WARNING,
- "Lançamento não encontrado!");
+                    "Lançamento não encontrado!");
         }
         
         if (idsLancamento.size() != listaLancamentos.size()) {
             
             throw new ValidacaoException(TipoMensagem.WARNING,
- "Lançamento não encontrado!");
+                    "Lançamento não encontrado!");
         }
     }
     
@@ -568,7 +563,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
             } catch (final Exception e) {
                 final String msg = "Erro ao excluir o lançamento do Produto: "
                         + produtoLancamento.getNomeProduto()
-                        + " - Edição: " + produtoLancamento.getNumeroEdicao();
+                    + " - Edição: " + produtoLancamento.getNumeroEdicao();
                 LOGGER.error(msg, e);
                 throw new ValidacaoException(TipoMensagem.WARNING, msg);
             }
@@ -612,13 +607,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         historicoLancamento.setDataEdicao(new Date());
         historicoLancamento.setResponsavel(usuario);
         
-        // TODO: geração de historico desativada devido a criação de trigger
-        // para realizar essa geração.
-        // this.historicoLancamentoRepository.merge(historicoLancamento);
     }
     
     private void montarMatrizLancamentosConfirmadosRetorno(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final ProdutoLancamentoDTO produtoLancamento, final Date dataLancamento) {
         
         List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento
@@ -636,7 +628,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     
     
     private void montarMatrizLancamentosRetorno(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final ProdutoLancamentoDTO produtoLancamento, final Date novaData,
             final StatusLancamento statusLancamento) {
         
@@ -698,7 +690,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         }
     }
     
-	                                                    /**
+	                                                                        /**
      * Efetua todas as etapas para a realização do balanceamento da matriz de
      * lançamento.
      */
@@ -707,7 +699,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         
         final BalanceamentoLancamentoDTO balanceamentoLancamento = new BalanceamentoLancamentoDTO();
         
-        TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento = null;
+        Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = null;
         
         DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento;
         
@@ -777,7 +769,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return balanceamentoLancamento;
     }
     
-	                                                    /**
+	                                                                        /**
      * Valida os dados de entrada para realização do balanceamento.
      */
     private void validarDadosEntradaBalanceamento(
@@ -796,13 +788,13 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         }
     }
     
-	                                                    /**
+	                                                                        /**
      * Gera o mapa contendo a matriz de balanceamento de lançamento.
      */
-    private TreeMap<Date, List<ProdutoLancamentoDTO>> gerarMatrizBalanceamentoLancamento(
+    private Map<Date, List<ProdutoLancamentoDTO>> gerarMatrizBalanceamentoLancamento(
             final DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento) {
         
-        final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento = new TreeMap<Date, List<ProdutoLancamentoDTO>>();
+        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = new TreeMap<Date, List<ProdutoLancamentoDTO>>();
         
         List<ProdutoLancamentoDTO> produtosLancamentoNaoBalanceadosTotal = new ArrayList<ProdutoLancamentoDTO>();
         
@@ -900,7 +892,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     }
     
     private Set<Date> obterDatasConfirmadas(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final Set<Date> datasExpedicaoConfirmada) {
         
         final Set<Date> datasConfirmadas = new TreeSet<>();
@@ -926,7 +918,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return datasConfirmadas;
     }
     
-	                                                    /**
+	                                                                        /**
      * Obtém as datas de distribuição, desconsiderando as datas em que o
      * balanceamento já foi confirmado.
      */
@@ -969,12 +961,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return datasExpectativaReparteOrdenado;
     }
     
-	                                                    /**
+	                                                                        /**
      * Processa os produtos para lançamento que não devem ser balanceados e
      * adiciona os mesmos no mapa da matriz de balanceamento.
      */
     private List<ProdutoLancamentoDTO> processarProdutosLancamentoNaoBalanceaveis(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento) {
         
         final List<ProdutoLancamentoDTO> produtosLancamentoNaoProcessados = this
@@ -1033,7 +1025,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     }
     
     private List<ProdutoLancamentoDTO> processarProdutosLancamentoConfirmadosEExpedidos(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento) {
         
         final List<ProdutoLancamentoDTO> produtosLancamentoNaoProcessados = new ArrayList<>();
@@ -1072,7 +1064,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         
         long tb = 0;
         
-        if(datasValidasBalanceaveis.size()>0){
+        if (!datasValidasBalanceaveis.isEmpty()) {
             dadosLancamentoBalanceamento.setDatasBalanceaveis(datasValidasBalanceaveis);
             tb = totalBalanceavel.longValue() / datasValidasBalanceaveis.size();
             dadosLancamentoBalanceamento.setMediaDistribuicao(new BigInteger(""+tb));
@@ -1083,12 +1075,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     }
     
     
-	                                                    /**
+	                                                                        /**
      * Processa os produtos para lançamento que devem ser balanceados e adiciona
      * os mesmos no mapa da matriz de balanceamento.
      */
     private List<ProdutoLancamentoDTO> processarProdutosLancamentoBalanceaveis(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final TreeSet<Date> datasDistribuicao, final Date dataLancamentoPrevista,
             final DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
             final List<ProdutoLancamentoDTO> produtosLancamentoBalanceaveis,
@@ -1123,14 +1115,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return produtosLancamentoNaoBalanceados;
     }
     
-	                                                    /**
+	                                                                        /**
      * Obtém uma data de distribuição de acordo as datas de distribuição
      * permitidas. Ordem de tentativa de escolha da data: 1º Data igual a data
      * prevista 2º Menor data que ainda não possui nenhum produto balanceado 3º
      * Data que possui menor quantidade de expectativa de reparte balanceado
      */
     private Date obterDataDistribuicaoEscolhida(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final TreeSet<Date> datasDistribuicao, final Date dataLancamentoPrevista) {
         
         Date dataLancamentoEscolhida = null;
@@ -1183,21 +1175,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return dataLancamentoEscolhida;
     }
     
-	                                                    /**
-     * Obtém os produtos balanceáveis de uma determinada data.
-     */
-    private List<ProdutoLancamentoDTO> obterProdutosLancamentoBalanceaveisPorData(
-            final List<ProdutoLancamentoDTO> produtosLancamento, final Date dataLancamento,final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento, final long capacidadeMediaDistribuicao) {
-        return obterProdutosLancamentoBalanceaveisPorData(produtosLancamento, dataLancamento);
-    }
     
-    /**
-     * Obtém os produtos balanceáveis de uma determinada data.
-     */
-    private List<ProdutoLancamentoDTO> obterProdutosLancamentoBalanceaveisPorData(
-            final List<ProdutoLancamentoDTO> produtosLancamento, final Date dataLancamento,final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento) {
-        return obterProdutosLancamentoBalanceaveisPorData(produtosLancamento, dataLancamento);
-    }
     
     /**
      * Obtém os produtos balanceáveis de uma determinada data.
@@ -1231,7 +1209,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return produtosLancamentoFiltrados;
     }
     
-	                                                    /**
+	                                                                        /**
      * Obtém a expectativa de reparte total dos produtos para lançamento.
      */
     private BigInteger obterExpectativaReparteTotal(
@@ -1259,11 +1237,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return expectativaReparteTotal;
     }
     
-	                                                    /**
+	                                                                        /**
      * Método que efetua o balanceamento de acordo com os parâmetros informados.
      */
     private List<ProdutoLancamentoDTO> balancearProdutosLancamento(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final List<ProdutoLancamentoDTO> produtosLancamentoBalanceaveis,
             final DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
             BigInteger expectativaReparteDataAtual, final Date dataLancamento,
@@ -1314,7 +1292,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
             }
             
             if (fornecedorCompativelParaDistribuicao
-                    && (permiteExcederCapacidadeDistribuicao || (!excedeLimiteDataReprogramacao && !excedeCapacidadeDistribuidor))
+                    && (permiteExcederCapacidadeDistribuicao || !excedeLimiteDataReprogramacao && !excedeCapacidadeDistribuidor)
                     && (permiteExcederCapacidadeMedia || repartePrevisto < capacidadeMedia.longValue())) {
                 
                 expectativaReparteDataAtual = expectativaReparteDataAtual
@@ -1340,7 +1318,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     }
     
     private boolean existeLancamentoNaData(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final ProdutoLancamentoDTO produtoLancamentoAdicionar, final Date dataLancamento) {
         
         final List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento
@@ -1365,7 +1343,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return false;
     }
     
-	                                                    /**
+	                                                                        /**
      * Valida se a data de lançamento excede a data limite para reprogramação do
      * produto.
      */
@@ -1381,7 +1359,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return dataLancamento.compareTo(dataLimiteReprogramacao) == 1;
     }
     
-	                                                    /**
+	                                                                        /**
      * Valida se o produto informado excede a capacidade de distribuição no dia.
      */
     private boolean excedeCapacidadeDistribuidor(
@@ -1395,11 +1373,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return expectativaReparteDataAtual.compareTo(capacidadeDistribuicao) == 1;
     }
     
-	                                                    /**
+	                                                                        /**
      * Processa os produtos que não puderam ser balanceados.
      */
     private List<ProdutoLancamentoDTO> realocarSobrasProdutosLancamento(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             List<ProdutoLancamentoDTO> produtosLancamentoBalancear,
             final TreeSet<Date> datasDistribuicao,
             final DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
@@ -1436,12 +1414,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return produtosLancamentoBalancear;
     }
     
-	                                                    /**
+	                                                                        /**
      * Processa os produtos que não puderam ser balanceados , pois estes
      * excederam a capacidade de distribuição.
      */
     private void processarProdutosLancamentoNaoBalanceados(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             List<ProdutoLancamentoDTO> produtosLancamentoBalancear,
             final TreeSet<Date> datasDistribuicao,
             final DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
@@ -1513,11 +1491,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         Collections.sort(produtosLancamento, comparatorChain);
     }
     
-	                                                    /**
+	                                                                        /**
      * Gera o mapa de expectativa de reparte diário ordenado pela maior data.
      */
     private Map<Date, BigInteger> gerarMapaExpectativaReparteDiarioOrdenadoPelaMaiorData(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final TreeSet<Date> datasDistribuicao) {
         
         final Map<Date, BigInteger> mapaExpectativaReparteTotalDiaria = new TreeMap<Date, BigInteger>();
@@ -1537,12 +1515,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return mapaExpectativaReparteTotalDiaria;
     }
     
-	                                                    /**
+	                                                                        /**
      * Aloca na matriz de balanceamento os produtos que não foram balanceados
      * anteriormente.
      */
     private List<ProdutoLancamentoDTO> alocarSobrasMatrizLancamento(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             List<ProdutoLancamentoDTO> produtosLancamentoBalanceaveis,
             final Map<Date, BigInteger> mapaExpectativaReparteTotalDiariaAtual,
             final DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
@@ -1585,7 +1563,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
      * informada.
      */
     private void adicionarProdutoLancamentoNaMatriz(
-            final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final ProdutoLancamentoDTO produtoLancamento, final Date dataLancamento) {
         
         List<ProdutoLancamentoDTO> produtosLancamentoMatriz = matrizLancamento
@@ -1642,7 +1620,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         }
     }
     
-	                                                    /**
+	                                                                        /**
      * Verifica se o primeiro produto passado como parâmetro deve ser agrupado.
      * Primeiramente verifica pelo maior status de lançamento. Em seguida
      * verifica pelo id de lançamento maior.
@@ -1663,7 +1641,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
             
         } else {
             
-            return (produtoLancamento.getIdLancamento().compareTo(produtoLancamentoAdicionar.getIdLancamento()) == 1);
+            return produtoLancamento.getIdLancamento().compareTo(produtoLancamentoAdicionar.getIdLancamento()) == 1;
             
         }
     }
@@ -1677,10 +1655,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         BigInteger reparteFisico = BigInteger.ZERO;
         BigInteger reparteFisicoAgrupar = BigInteger.ZERO;
         
-        reparteFisico = (produtoLancamento.getReparteFisico() != null) ? produtoLancamento
+        reparteFisico = produtoLancamento.getReparteFisico() != null ? produtoLancamento
                 .getReparteFisico() : BigInteger.ZERO;
                 
-                reparteFisicoAgrupar = (produtoLancamentoAgrupar.getReparteFisico() != null) ? produtoLancamentoAgrupar
+                reparteFisicoAgrupar = produtoLancamentoAgrupar.getReparteFisico() != null ? produtoLancamentoAgrupar
                         .getReparteFisico() : BigInteger.ZERO;
                         
                         final BigDecimal valorTotal = produtoLancamento.getValorTotal().add(
@@ -1704,7 +1682,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                         produtoLancamentoAgrupar.setLancamentoAgrupado(true);
     }
     
-	                                                    /**
+	                                                                        /**
      * Verifica se o produto é balanceável.
      */
     public boolean isProdutoBalanceavel(final ProdutoLancamentoDTO produtoLancamento,
@@ -1717,17 +1695,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         
         final boolean isDataNoPeriodo = DateUtil.validarDataEntrePeriodo(
                 dataLancamentoDistribuidor, dataInicial, dataFinal);
-        if (produtoLancamento.getStatusLancamento().equals(StatusLancamento.EXPEDIDO.name())) {
-            return false;
-            
-        } else if (this.isProdutoConfirmado(produtoLancamento)
-                || (produtoLancamento.isStatusLancamentoEmBalanceamento() || produtoLancamento
-                        .isStatusLancamentoFuro() && isDataNoPeriodo)) {
-            return false;
-            
-        } else {
-            return true;
-        }
+        return !produtoLancamento.getStatusLancamento().equals(StatusLancamento.EXPEDIDO.name())
+            && !this.isProdutoConfirmado(produtoLancamento) && !produtoLancamento.isStatusLancamentoEmBalanceamento()
+            && (!produtoLancamento.isStatusLancamentoFuro() || !isDataNoPeriodo);
         
     }
     
@@ -1771,7 +1741,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         }
     }
     
-	                                                    /**
+	                                                                        /**
      * Monta o DTO com as informações para realização do balanceamento.
      */
     private DadosBalanceamentoLancamentoDTO obterDadosLancamento(
@@ -1843,7 +1813,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     }
     
     
-	                                                    /**
+	                                                                        /**
      * Monta o perídodo da semana de distribuição referente à data informada.
      */
     private Intervalo<Date> getPeriodoDistribuicao(final Date dataLancamento) {
@@ -1862,7 +1832,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return periodo;
     }
     
-	                                                    /**
+	                                                                        /**
      * Obtém as datas de distribuição dos fornecedores informados.
      */
     private Map<Long, TreeSet<Date>> obterDatasDistribuicaoFornecedor(
@@ -1918,7 +1888,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         return datasDistribuicaoPorFornecedor;
     }
     
-	                                                    /**
+	                                                                        /**
      * Obtém as datas para distribuição no período informado, de acordo com os
      * códigos dos dias da semana informados.
      */
@@ -2019,8 +1989,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         }
         
         throw new ValidacaoException(TipoMensagem.WARNING,
- "A data de lançamento deve estar em um dia da semana "
-            + "que haja distribuição de algum fornecedor!");
+                "A data de lançamento deve estar em um dia da semana "
+                        + "que haja distribuição de algum fornecedor!");
     }
     
     @Override
@@ -2028,7 +1998,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     public List<ConfirmacaoVO> obterDatasConfirmacao(
             final BalanceamentoLancamentoDTO balanceamentoLancamento) {
         
-        final TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento = balanceamentoLancamento
+        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = balanceamentoLancamento
                 .getMatrizLancamento();
         
         final Set<Date> datasConfirmacao = balanceamentoLancamento
@@ -2074,7 +2044,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         if (dataLancamento == null) {
             
             throw new ValidacaoException(TipoMensagem.WARNING,
- "Data de lançamento não informada!");
+                    "Data de lançamento não informada!");
         }
         
         final Intervalo<Date> periodoDistribuicao = this
@@ -2120,7 +2090,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         }
     }
     
-	                                                    /**
+	                                                                        /**
      * Enum para identificação da operação da Matriz de Lançamento.
      */
     private enum OperacaoMatrizLancamento {
@@ -2188,7 +2158,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                         .formatarDataPTBR(dataConfirmada);
                 
                 mensagens.add("Para reabrir a matriz, a data (" + dataFormatada
-                    + ") deve ser maior que a data de operação!");
+                        + ") deve ser maior que a data de operação!");
             }
         }
         
