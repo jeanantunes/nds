@@ -16,14 +16,18 @@ public class RetornoNFEDTO implements Serializable {
 	private static final long serialVersionUID = 9039066467977718266L;
 	
 	private Long numeroNotaFiscal;
-	private String cpfCnpj;
-	private String chaveAcesso;
-	private Status status;
-	private Long protocolo;
-	private String motivo;
-	private Date dataRecebimento;
-
 	
+	private String cpfCnpj;
+	
+	private String chaveAcesso;
+	
+	private Status status;
+	
+	private Long protocolo;
+	
+	private String motivo;
+	
+	private Date dataRecebimento;
 
 	public Long getNumeroNotaFiscal() {
 		return numeroNotaFiscal;

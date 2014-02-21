@@ -76,8 +76,7 @@ public class NFEImportUtil {
             context = JAXBContext.newInstance(TNFe.class);
             unmarshaller = context.createUnmarshaller();
             
-            schema = schemaFactory.newSchema(Thread.currentThread().getContextClassLoader().getResource(
-                    NFEImportUtil.XSD_NFE));
+            schema = schemaFactory.newSchema(Thread.currentThread().getContextClassLoader().getResource(NFEImportUtil.XSD_NFE));
             unmarshaller.setSchema(schema);
             
             final TNFe nfe = (TNFe) unmarshaller.unmarshal(arquivo);
@@ -237,11 +236,9 @@ public class NFEImportUtil {
             final String cpfCnpj = null;
             final String chaveAcesso = procCancNFe.getRetCancNFe().getInfCanc().getChNFe();
             final Long protocolo = Long.parseLong(procCancNFe.getRetCancNFe().getInfCanc().getNProt());
-            final Date dataRecebimento = procCancNFe.getRetCancNFe().getInfCanc().getDhRecbto().toGregorianCalendar()
-                    .getTime();
+            final Date dataRecebimento = procCancNFe.getRetCancNFe().getInfCanc().getDhRecbto().toGregorianCalendar().getTime();
             final String motivo = procCancNFe.getCancNFe().getInfCanc().getXJust();
-            final Status status = Status.obterPeloCodigo(Integer.parseInt(procCancNFe.getRetCancNFe().getInfCanc()
-                    .getCStat()));
+            final Status status = Status.obterPeloCodigo(Integer.parseInt(procCancNFe.getRetCancNFe().getInfCanc().getCStat()));
             
             retornoNFEDTO.setNumeroNotaFiscal(idNotaFiscal);
             retornoNFEDTO.setCpfCnpj(cpfCnpj);
