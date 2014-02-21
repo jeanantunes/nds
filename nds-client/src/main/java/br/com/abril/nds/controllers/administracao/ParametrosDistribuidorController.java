@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -27,7 +29,6 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
-import br.com.abril.nds.dto.TributoAliquotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
@@ -58,13 +59,14 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 /**
- * @author infoA2
- * Controller de parâmetros do distribuidor
+ * @author infoA2 Controller de parâmetros do distribuidor
  */
 @Resource
 @Path("/administracao/parametrosDistribuidor")
 @Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR)
 public class ParametrosDistribuidorController extends BaseController {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ParametrosDistribuidorController.class);
 	
 	@Autowired
 	private Result result;
@@ -264,7 +266,7 @@ public class ParametrosDistribuidorController extends BaseController {
 			IOUtils.copyLarge(imgLogotipo, fos);
 		
 		} catch (Exception e) {
-			
+			LOGGER.error(e.getMessage(), e);
 			throw new ValidacaoException(TipoMensagem.ERROR,
 				"Falha ao gravar o arquivo em disco!");
 		
@@ -275,6 +277,7 @@ public class ParametrosDistribuidorController extends BaseController {
 					fos.close();
 				}
 			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
 				throw new ValidacaoException(TipoMensagem.ERROR,
 					"Falha ao gravar o arquivo em disco!");
 			}
@@ -305,7 +308,7 @@ public class ParametrosDistribuidorController extends BaseController {
 			return new FileInputStream(fileLogotipo);
 			
 		} catch (FileNotFoundException e) {
-			
+			LOGGER.error(e.getMessage(), e);
 			return null;
 		}
 	}
@@ -485,290 +488,302 @@ public class ParametrosDistribuidorController extends BaseController {
 	    if (vo.getCapacidadeManuseioHomemHoraRecolhimento() == null) {
             erros.add("É necessário informar a Capacidade de Manuseio no Recolhimento!");
         }
-	    
-	    if (vo.isUtilizaContratoComCotas() && vo.getPrazoContrato() == null) {
-	        erros.add("É necessário informar o Prazo do Contrato!");
-	    }
-	    
-	    if (vo.isUtilizaGarantiaPdv() && !vo.isGarantiasUtilizadas()) {
-	        erros.add("É necessário selecionar pelo menos uma Garantia!");
-	    }
-	    
-	    if (vo.isUtilizaChequeCaucao() && vo.getValidadeChequeCaucao() == null) {
-	        erros.add("É necessário informar a Validade da Garantia Cheque Caução!");
-	    }
-	    
-	    if (vo.isUtilizaCaucaoLiquida() && vo.getValidadeCaucaoLiquida() == null) {
+        
+        if (vo.isUtilizaContratoComCotas() && vo.getPrazoContrato() == null) {
+            erros.add("É necessário informar o Prazo do Contrato!");
+        }
+        
+        if (vo.isUtilizaGarantiaPdv() && !vo.isGarantiasUtilizadas()) {
+            erros.add("É necessário selecionar pelo menos uma Garantia!");
+        }
+        
+        if (vo.isUtilizaChequeCaucao() && vo.getValidadeChequeCaucao() == null) {
+            erros.add("É necessário informar a Validade da Garantia Cheque Caução!");
+        }
+        
+        if (vo.isUtilizaCaucaoLiquida() && vo.getValidadeCaucaoLiquida() == null) {
             erros.add("É necessário informar a Validade da Garantia Caução Líquida!");
         }
-	    
-	    if (vo.isUtilizaFiador() && vo.getValidadeFiador() == null) {
+        
+        if (vo.isUtilizaFiador() && vo.getValidadeFiador() == null) {
             erros.add("É necessário informar a Validade da Garantia Fiador!");
         }
-	    
-	    if (vo.isUtilizaNotaPromissoria() && vo.getValidadeNotaPromissoria() == null) {
+        
+        if (vo.isUtilizaNotaPromissoria() && vo.getValidadeNotaPromissoria() == null) {
             erros.add("É necessário informar a Validade da Garantia Nota Promissória!");
         }
-	    
-	    if (vo.isUtilizaImovel() && vo.getValidadeImovel() == null) {
+        
+        if (vo.isUtilizaImovel() && vo.getValidadeImovel() == null) {
             erros.add("É necessário informar a Validade da Garantia Imóvel!");
         }
-	    
-	    if (vo.getValidadeAntecedenciaValidade() == null) {
+        
+        if (vo.getValidadeAntecedenciaValidade() == null) {
             erros.add("É necessário informar a Validade da Garantia Antecedência da Validade!");
         }
-	    
-	    if (vo.isUtilizaOutros() && vo.getValidadeOutros() == null) {
+        
+        if (vo.isUtilizaOutros() && vo.getValidadeOutros() == null) {
             erros.add("É necessário informar a Validade da Garantia Outros!");
         }
-	    verificarExistenciaErros(erros);
-	}
-
+        verificarExistenciaErros(erros);
+    }
+    
     /**
      * Verifica a existência de erros e executa a tratamento apropriado
+     * 
      * @param erros lista com possíveis erros ocorridos
      */
-	private void verificarExistenciaErros(List<String> erros) {
+    private void verificarExistenciaErros(final List<String> erros) {
         if (!erros.isEmpty()) {
-            ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, erros);
+            final ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, erros);
             throw new ValidacaoException(validacaoVO);
         }
     }
-	
-	/**
-	 * Busca todos os Grupos de Cota
-	 */
-	@Post
-	public void obterGrupos(String sortname, String sortorder) {
-
-		List<GrupoCotaDTO> grupos = this.grupoService.obterTodosGrupos(sortname, sortorder);
-		
-		result.use(FlexiGridJson.class).from(grupos).page(1).total(grupos.size()).serialize();
-				
-	}
-	
-	/**
-	 * Excluir Grupo
-	 * @param idGrupo
-	 */
-	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
-	public void excluirGrupo(Long idGrupo)  {
-		
-		grupoService.excluirGrupo(idGrupo);
-		
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
-	}
-		
-		
-	public void obterMunicipios(Long idGrupo, Integer page, Integer rp, String sortname, String sortorder) {
-		
-		int total =  grupoService.obterCountQtdeCotaMunicipio();
-				
-		List<MunicipioDTO> municipios =	grupoService.obterQtdeCotaMunicipio(page, rp, sortname, sortorder);
-		
-		Set<String> selecionados = getMunicipiosSelecionados();
-				
-		for(MunicipioDTO municipio : municipios) {
-			municipio.setSelecionado(selecionados.contains(municipio.getMunicipio()));
-		}
-		
-		result.use(FlexiGridJson.class).from(municipios).page(page).total(total).serialize();
-	}
-
-	public void obterCotas(Long idGrupo, TipoDistribuicaoCota tipoCota, Integer page, Integer rp, String sortname, String sortorder) {
-		
-		int total =  grupoService.obterCountCotaPorTipo(tipoCota);
-		
-		session.setAttribute(TIPO_COTA, tipoCota);
-		
-		Set<Long> selecionados = getCotasSelecionados();
-		
-		List<CotaTipoDTO> cotas =	grupoService.obterCotaPorTipo(tipoCota, page, rp, sortname, sortorder);
-		
-		for(CotaTipoDTO cota : cotas) {
-			if(selecionados.contains(cota.getIdCota()))
-				cota.setSelecionado(true);
-		}
-		
-		result.use(FlexiGridJson.class).from(cotas).page(page).total(total).serialize();		
-	}
-	
-	@SuppressWarnings("unchecked")
-	private Set<Long> getCotasSelecionados() {
-		
-		return session.getAttribute(COTAS_SELECIONADAS) == null ?  new HashSet<Long>()
-				: (Set<Long>)session.getAttribute(COTAS_SELECIONADAS);
-	}
-	
-	@SuppressWarnings("unchecked")
-	private Set<String> getMunicipiosSelecionados() {
-		
-		return session.getAttribute(MUNICIPIOS_SELECIONADOS) == null ?  
-					new HashSet<String>() : (Set<String>) session.getAttribute(MUNICIPIOS_SELECIONADOS);
-	}
-	
-	/**
-	 * Adiciona ou remove um item da lista de item adicionado
-	 * 
-	 */
-	@Post
-	public void selecionarCota(Long idCota, Boolean selecionado, Boolean addResult) {
-		
-		Set<Long> selecionados = getCotasSelecionados();
-		
-		if (selecionado){
-			selecionados.add(idCota);
-		} else {
-			selecionados.remove(idCota);
-		}
-		
-		session.setAttribute(COTAS_SELECIONADAS, selecionados);
-		
-		if(addResult!=null && addResult==false)
-			return;
-		
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
-	}
-	
-	/**
-	 * Adiciona ou remove um item da lista de item adicionado
-	 * 
-	 */
-	@Post
-	public void selecionarMunicipio(String municipio, Boolean selecionado, Boolean addResult) {
-				
-		Set<String> selecionados = getMunicipiosSelecionados();		
-		
-		if(selecionado) {
-			selecionados.add(municipio);
-		} else {
-			selecionados.remove(municipio);
-		}
-		
-		session.setAttribute(MUNICIPIOS_SELECIONADOS, selecionados);
-			
-		if(addResult!=null && addResult==false)
-			return;
-			
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
-	}
-	
-	/**
-	 * Adiciona ou remove todos os itens da pesquisa a lista de itens selecionados da sessão.
-	 * 
-	 * @param selecionado - true(adiciona todos) false (remove todos)
-	 */
-	@Post
-	public void selecionarTodasCotas(List<Long>selecionados, Boolean selecionado){
-		
-		for(Long id : selecionados)
-			selecionarCota(id, selecionado, false);
-						
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
-	}
-	
-	/**
-	 * Adiciona ou remove todos os itens da pesquisa a lista de itens selecionados da sessão.
-	 * 
-	 * @param selecionado - true(adiciona todos) false (remove todos)
-	 */
-	@Post
-	public void selecionarTodosMunicipios(List<String>selecionados, Boolean selecionado){
-		
-		for(String municipio : selecionados)
-			selecionarMunicipio(municipio, selecionado, false);
-				
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
-	}
-	
-	@Post
-	public void limparSelecoes() {
-		
-		session.removeAttribute(COTAS_SELECIONADAS);
-		session.removeAttribute(MUNICIPIOS_SELECIONADOS);
-		
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
-	}
-	
-	@Post
-	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
-	public void cadastrarOperacaoDiferenciada(String nome,List<DiaSemana> diasSemana, Long idGrupo, TipoOperacaoDiferenciada tipoOperacaoDiferenciada){
-		
-		if (tipoOperacaoDiferenciada.equals(TipoOperacaoDiferenciada.TIPO_COTA)) {
-			
-			Set<Long> cotas = this.getCotasSelecionados();
-			
-			if (cotas == null || cotas.isEmpty()) {
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi selecionada!");
-			}
-			
-			if(session.getAttribute(TIPO_COTA)!=null && session.getAttribute(TIPO_COTA) instanceof TipoCaracteristicaSegmentacaoPDV){
-				TipoCaracteristicaSegmentacaoPDV tipoCota = (TipoCaracteristicaSegmentacaoPDV) session.getAttribute(TIPO_COTA);
-				grupoService.salvarGrupoCotas(idGrupo,cotas, nome, diasSemana, tipoCota);
-			} else if(session.getAttribute(TIPO_COTA)!=null && session.getAttribute(TIPO_COTA) instanceof TipoDistribuicaoCota) {
-				TipoDistribuicaoCota tipoCota = (TipoDistribuicaoCota) session.getAttribute(TIPO_COTA);
-				
-				if(tipoCota.getDescTipoDistribuicaoCota().equalsIgnoreCase(TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO.getDescricao())){
-				 grupoService.salvarGrupoCotas(idGrupo,cotas, nome, diasSemana, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO);
-				}else{
-				 grupoService.salvarGrupoCotas(idGrupo,cotas, nome, diasSemana, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL);
-				}
-			}
-			
-		} else {
-			
-			Set<String> municipios = this.getMunicipiosSelecionados();
-			
-			if (municipios == null || municipios.isEmpty()) {
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum município foi selecionado!");
-			}
-			
-			grupoService.salvarGrupoMunicipios(idGrupo,municipios, nome, diasSemana);
-		}
-		
-		result.use(Results.json()).from("").serialize();
-	}
-	
-	@Post
-	public void carregarSelecoes(Long idGrupo, TipoGrupo tipoGrupo) {
-
-		if(tipoGrupo.equals(TipoGrupo.MUNICIPIO)) {
-		
-			Set<String> municipios = grupoService.obterMunicipiosDoGrupo(idGrupo);
-			
-			session.removeAttribute(COTAS_SELECIONADAS);
-			session.setAttribute(MUNICIPIOS_SELECIONADOS, municipios);
-		} else {
-			
-			Set<Long> ids = grupoService.obterCotasDoGrupo(idGrupo);
-			
-			session.removeAttribute(MUNICIPIOS_SELECIONADOS);
-			session.setAttribute(COTAS_SELECIONADAS, ids);
-		}
-		
-		result.use(Results.json()).from("").serialize();
-	}
-	
-	@Post
-	public void mensagemControleAprovacao(){
-		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Ao desmarcar a opção [Utiliza Controle de Aprovação] não serão mais exibidos os avisos de pendências das funcionalidades abaixo !"),"result").recursive().serialize();
-	}
-	
-	@Post
-	public void obterTributosPeloRegimeTributario(Long regimeTributarioId) {
-		
-		List<TributoAliquotaDTO> tributos = regimeTributarioService.obterTributosPeloRegimeTributario(regimeTributarioId);
-		
-		result.use(Results.json()).withoutRoot().from(tributos).serialize();	
-	}
-	
-	private enum TipoOperacaoDiferenciada {
-		
-		TIPO_COTA,
-		MUNICIPIO;
-	}
-	
+    
+    /**
+     * Busca todos os Grupos de Cota
+     */
+    @Post
+    public void obterGrupos(final String sortname, final String sortorder) {
+        
+        final List<GrupoCotaDTO> grupos = grupoService.obterTodosGrupos(sortname, sortorder);
+        
+        result.use(FlexiGridJson.class).from(grupos).page(1).total(grupos.size()).serialize();
+        
+    }
+    
+    /**
+     * Excluir Grupo
+     * 
+     * @param idGrupo
+     */
+    @Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
+    public void excluirGrupo(final Long idGrupo) {
+        
+        grupoService.excluirGrupo(idGrupo);
+        
+        result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+    }
+    
+    public void obterMunicipios(final Long idGrupo, final Integer page, final Integer rp, final String sortname,
+            final String sortorder) {
+        
+        final int total = grupoService.obterCountQtdeCotaMunicipio();
+        
+        final List<MunicipioDTO> municipios = grupoService.obterQtdeCotaMunicipio(page, rp, sortname, sortorder);
+        
+        final Set<String> selecionados = getMunicipiosSelecionados();
+        
+        for (final MunicipioDTO municipio : municipios) {
+            municipio.setSelecionado(selecionados.contains(municipio.getMunicipio()));
+        }
+        
+        result.use(FlexiGridJson.class).from(municipios).page(page).total(total).serialize();
+    }
+    
+    public void obterCotas(final Long idGrupo, final TipoDistribuicaoCota tipoCota, final Integer page,
+            final Integer rp, final String sortname, final String sortorder) {
+        
+        final int total = grupoService.obterCountCotaPorTipo(tipoCota);
+        
+        session.setAttribute(TIPO_COTA, tipoCota);
+        
+        final Set<Long> selecionados = getCotasSelecionados();
+        
+        final List<CotaTipoDTO> cotas = grupoService.obterCotaPorTipo(tipoCota, page, rp, sortname, sortorder);
+        
+        for (final CotaTipoDTO cota : cotas) {
+            if (selecionados.contains(cota.getIdCota())) {
+                cota.setSelecionado(true);
+            }
+        }
+        
+        result.use(FlexiGridJson.class).from(cotas).page(page).total(total).serialize();
+    }
+    
+    @SuppressWarnings("unchecked")
+    private Set<Long> getCotasSelecionados() {
+        
+        return session.getAttribute(COTAS_SELECIONADAS) == null ? new HashSet<Long>() : (Set<Long>) session
+                .getAttribute(COTAS_SELECIONADAS);
+    }
+    
+    @SuppressWarnings("unchecked")
+    private Set<String> getMunicipiosSelecionados() {
+        
+        return session.getAttribute(MUNICIPIOS_SELECIONADOS) == null ? new HashSet<String>() : (Set<String>) session
+                .getAttribute(MUNICIPIOS_SELECIONADOS);
+    }
+    
+    /**
+     * Adiciona ou remove um item da lista de item adicionado
+     * 
+     */
+    @Post
+    public void selecionarCota(final Long idCota, final Boolean selecionado, final Boolean addResult) {
+        
+        final Set<Long> selecionados = getCotasSelecionados();
+        
+        if (selecionado) {
+            selecionados.add(idCota);
+        } else {
+            selecionados.remove(idCota);
+        }
+        
+        session.setAttribute(COTAS_SELECIONADAS, selecionados);
+        
+        if (addResult != null && addResult == false) {
+            return;
+        }
+        
+        result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+    }
+    
+    /**
+     * Adiciona ou remove um item da lista de item adicionado
+     * 
+     */
+    @Post
+    public void selecionarMunicipio(final String municipio, final Boolean selecionado, final Boolean addResult) {
+        
+        final Set<String> selecionados = getMunicipiosSelecionados();
+        
+        if (selecionado) {
+            selecionados.add(municipio);
+        } else {
+            selecionados.remove(municipio);
+        }
+        
+        session.setAttribute(MUNICIPIOS_SELECIONADOS, selecionados);
+        
+        if (addResult != null && addResult == false) {
+            return;
+        }
+        
+        result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+    }
+    
+    /**
+     * Adiciona ou remove todos os itens da pesquisa a lista de itens
+     * selecionados da sessão.
+     * 
+     * @param selecionado - true(adiciona todos) false (remove todos)
+     */
+    @Post
+    public void selecionarTodasCotas(final List<Long> selecionados, final Boolean selecionado) {
+        
+        for (final Long id : selecionados) {
+            selecionarCota(id, selecionado, false);
+        }
+        
+        result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+    }
+    
+    /**
+     * Adiciona ou remove todos os itens da pesquisa a lista de itens
+     * selecionados da sessão.
+     * 
+     * @param selecionado - true(adiciona todos) false (remove todos)
+     */
+    @Post
+    public void selecionarTodosMunicipios(final List<String> selecionados, final Boolean selecionado) {
+        
+        for (final String municipio : selecionados) {
+            selecionarMunicipio(municipio, selecionado, false);
+        }
+        
+        result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+    }
+    
+    @Post
+    public void limparSelecoes() {
+        
+        session.removeAttribute(COTAS_SELECIONADAS);
+        session.removeAttribute(MUNICIPIOS_SELECIONADOS);
+        
+        result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+    }
+    
+    @Post
+    @Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
+    public void cadastrarOperacaoDiferenciada(final String nome, final List<DiaSemana> diasSemana, final Long idGrupo,
+            final TipoOperacaoDiferenciada tipoOperacaoDiferenciada) {
+        
+        if (tipoOperacaoDiferenciada.equals(TipoOperacaoDiferenciada.TIPO_COTA)) {
+            
+            final Set<Long> cotas = this.getCotasSelecionados();
+            
+            if (cotas == null || cotas.isEmpty()) {
+                
+                throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi selecionada!");
+            }
+            
+            if (session.getAttribute(TIPO_COTA) != null
+                    && session.getAttribute(TIPO_COTA) instanceof TipoCaracteristicaSegmentacaoPDV) {
+                final TipoCaracteristicaSegmentacaoPDV tipoCota = (TipoCaracteristicaSegmentacaoPDV) session
+                        .getAttribute(TIPO_COTA);
+                grupoService.salvarGrupoCotas(idGrupo, cotas, nome, diasSemana, tipoCota);
+            } else if (session.getAttribute(TIPO_COTA) != null
+                    && session.getAttribute(TIPO_COTA) instanceof TipoDistribuicaoCota) {
+                final TipoDistribuicaoCota tipoCota = (TipoDistribuicaoCota) session.getAttribute(TIPO_COTA);
+                
+                if (tipoCota.getDescTipoDistribuicaoCota().equalsIgnoreCase(
+                        TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO.getDescricao())) {
+                    grupoService.salvarGrupoCotas(idGrupo, cotas, nome, diasSemana,
+                            TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO);
+                } else {
+                    grupoService.salvarGrupoCotas(idGrupo, cotas, nome, diasSemana,
+                            TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL);
+                }
+            }
+            
+        } else {
+            
+            final Set<String> municipios = this.getMunicipiosSelecionados();
+            
+            if (municipios == null || municipios.isEmpty()) {
+                
+                throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum município foi selecionado!");
+            }
+            
+            grupoService.salvarGrupoMunicipios(idGrupo, municipios, nome, diasSemana);
+        }
+        
+        result.use(Results.json()).from("").serialize();
+    }
+    
+    @Post
+    public void carregarSelecoes(final Long idGrupo, final TipoGrupo tipoGrupo) {
+        
+        if (tipoGrupo.equals(TipoGrupo.MUNICIPIO)) {
+            
+            final Set<String> municipios = grupoService.obterMunicipiosDoGrupo(idGrupo);
+            
+            session.removeAttribute(COTAS_SELECIONADAS);
+            session.setAttribute(MUNICIPIOS_SELECIONADOS, municipios);
+        } else {
+            
+            final Set<Long> ids = grupoService.obterCotasDoGrupo(idGrupo);
+            
+            session.removeAttribute(MUNICIPIOS_SELECIONADOS);
+            session.setAttribute(COTAS_SELECIONADAS, ids);
+        }
+        
+        result.use(Results.json()).from("").serialize();
+    }
+    
+    @Post
+    public void mensagemControleAprovacao() {
+        
+        result.use(Results.json())
+        .from(new ValidacaoVO(
+                TipoMensagem.WARNING,
+                "Ao desmarcar a opção [Utiliza Controle de Aprovação] não serão mais exibidos os avisos de pendências das funcionalidades abaixo !"),
+                "result").recursive().serialize();
+    }
+    
+    private enum TipoOperacaoDiferenciada {
+        
+        TIPO_COTA, MUNICIPIO;
+    }
+    
 }
