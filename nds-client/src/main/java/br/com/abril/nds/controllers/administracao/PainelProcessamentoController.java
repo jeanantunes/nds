@@ -363,7 +363,7 @@ public class PainelProcessamentoController extends BaseController {
         try {
             resultado = painelProcessamentoService.listarProcessos();
         } catch (final Exception e) {
-            
+            LOGGER.error(e.getMessage(), e);
             if (e instanceof ValidacaoException) {
                 throw e;
             } else {
