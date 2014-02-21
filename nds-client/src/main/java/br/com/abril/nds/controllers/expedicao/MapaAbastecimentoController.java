@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,7 +47,6 @@ import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -397,8 +395,7 @@ public class MapaAbastecimentoController extends BaseController {
 				
 			break;
 			case COTA:
-				filtro.getPaginacao().setQtdResultadosPorPagina(null);
-				filtro.getPaginacao().setPaginaAtual(null);
+				filtro.setPaginacao(null);
 				setaNomeParaImpressao();
 				result.forwardTo(MapaAbastecimentoController.class).impressaoPorCota(filtro);
 			break;
@@ -438,8 +435,7 @@ public class MapaAbastecimentoController extends BaseController {
 			break;	
 			case ENTREGADOR:
 				
-				filtro.getPaginacao().setQtdResultadosPorPagina(null);
-				filtro.getPaginacao().setPaginaAtual(null);
+				filtro.setPaginacao(null);
 				
 				result.forwardTo(MapaAbastecimentoController.class).impressaoPorEntregador(filtro);
 				break;
@@ -482,7 +478,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 	public void impressaoPorEntregador(FiltroMapaAbastecimentoDTO filtro) {
 
-		HashMap<Long, MapaProdutoCotasDTO> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorEntregador(filtro);
+		Map<Long, MapaProdutoCotasDTO> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorEntregador(filtro);
 
 		Entregador entregador = entregadorService.buscarPorId(filtro.getIdEntregador());
 
@@ -499,12 +495,6 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 
 	public void impressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
-
-		filtro.getPaginacao().setQtdResultadosPorPagina(null);
-		filtro.getPaginacao().setPaginaAtual(null);
-
-		filtro.getPaginacao().setSortColumn("nomeEdicao");
-		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
 
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
 		setaNomeParaImpressao();
