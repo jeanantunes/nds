@@ -20,8 +20,8 @@ var anaLiseHistogramaController = $.extend(true, {
 	formatarFaixasVenda : function formatarFaixasVenda(rowCell){
 		var cotasEsmagadasFormatado = '';
 		
-			rowCell.repTotal = formatarMilhar(Math.round(rowCell.repTotal));
-			rowCell.vdaTotal = formatarMilhar(Math.round(rowCell.vdaTotal));
+			rowCell.repTotal = formatarMilhar(rowCell.repTotal);
+			rowCell.vdaTotal = formatarMilhar(rowCell.vdaTotal);
 			
 			if (cotasEsmagadasFormatado == "0") {
 				rowCell.cotasEsmagadas = 0;
@@ -32,11 +32,11 @@ var anaLiseHistogramaController = $.extend(true, {
 			rowCell.qtdeCotas = formatarMilhar(rowCell.qtdeCotas);
 			rowCell.qtdeCotasSemVendas = formatarMilhar(rowCell.qtdeCotasSemVendas);
 			rowCell.encalheMedio = floatToPrice(rowCell.encalheMedio);
-			rowCell.partReparte = floatToPrice(rowCell.partReparte * 100);
-			rowCell.partVenda = floatToPrice(rowCell.partVenda * 100);
+			rowCell.partReparte = floatToPrice(rowCell.partReparte);
+			rowCell.partVenda = floatToPrice(rowCell.partVenda);
 			rowCell.repMedio = floatToPrice(rowCell.repMedio);
 			rowCell.vdaMedio = floatToPrice(rowCell.vdaMedio);
-			rowCell.percVenda = floatToPrice(rowCell.percVenda * 100);
+			rowCell.percVenda = floatToPrice(rowCell.percVenda);
 	},
 	
 	buildResumoEstudo : function buildResumoEstudo(lastRow){
@@ -213,9 +213,6 @@ var anaLiseHistogramaController = $.extend(true, {
 				
 				$.each(data.rows, function(index, row) {
 					rowCell = row.cell;
-					rowCell.partVenda =  (rowCell.vdaTotal  /lastRow.cell.vdaTotal) || 0;
-					rowCell.partReparte =  (rowCell.repTotal /lastRow.cell.repTotal) || 0;
-					rowCell.percVenda =  (rowCell.vdaTotal /rowCell.repTotal) || 0;
 					
 					if (index == ultimo){
 						
@@ -237,7 +234,7 @@ var anaLiseHistogramaController = $.extend(true, {
 				return data;
 			},
 			colModel : [ {
-				display : 'Faixa de Venda',
+				display : 'Faixa de Venda Média',
 				name : 'faixaVenda',
 				width : 135,
 				sortable : true,
