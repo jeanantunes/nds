@@ -8,11 +8,12 @@ import java.io.OutputStream;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.xml.crypto.dsig.CanonicalizationMethod;
@@ -54,14 +55,16 @@ public class SecurityUtils {
     public static final String algoritmo= "RSA"; 
 	public static final String algoritmoAssinatura= "MD5withRSA"; 
 	private static final String C14N_TRANSFORM_METHOD = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-	public static File file= new File("C://certificado.cer"); // ‪C:\certificado.cer
-	private static String alias="sefaz";
-	private static char[] senha="changeit".toCharArray(); 
+	public static File file= new File("C://nfe/keystore/certificado.jks"); // ‪C:\certificado.cer
+	private static String alias="alias";
+	private static char[] senha="clientpass".toCharArray(); 
 	static XMLSignatureFactory sig;
 	static X509Certificate cert;
 	static KeyInfo ki; 
 	static SignedInfo si;
 	static KeyStore rep;
+
+	private static PrivateKey privateKey;
     
     public static KeyStore openStore(String keyStoreType, Resource keyStoreResource, char[] passphrase) throws Exception {
     	logger.debug("Abrindo armazém {} ...", keyStoreResource.getFilename());
@@ -117,7 +120,7 @@ public class SecurityUtils {
     	InputStream in = new FileInputStream(file);
     	cert = (X509Certificate) cf.generateCertificate(in);
     	
-    	assinarDocumento("C:/Users/wrpaiva/Desktop/receita/xml/sergioValidar3.xml");
+    	assinarDocumento("C:\\Users\\wrpaiva\\Desktop\\receita\\xml\\sergioValidar3.xml");
     	in.close();
     	
     	if (trustStore.containsAlias(certificateName)) {
@@ -156,8 +159,6 @@ public class SecurityUtils {
     public static void assinarDocumento(String localDocumento) throws Exception{		
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		dbf.setNamespaceAware(true);
-		
-		
 		Document doc = dbf.newDocumentBuilder().parse(new FileInputStream(localDocumento));
 		System.out.println("Documento ok!");
 		
@@ -169,7 +170,7 @@ public class SecurityUtils {
 		transformList.add(enveloped);
 		transformList.add(c14n);
 		
-		NodeList elements = doc.getElementsByTagName("NFe");
+		NodeList elements = doc.getElementsByTagName("infNFe");
 		org.w3c.dom.Element el = (org.w3c.dom.Element) elements.item(0);
 		String id = el.getAttribute("Id");
 		Reference r= sig.newReference("#".concat(id), sig.newDigestMethod(DigestMethod.SHA1, null), transformList, null, null);
@@ -195,13 +196,20 @@ public class SecurityUtils {
 		
 	}
     
-    public static PublicKey getChavePrivada() throws Exception{
-		
-		Key chavePrivada= (Key) cert.getPublicKey();
-		if(chavePrivada instanceof PublicKey){
-			System.out.println("Chave Privada encontrada!");
-			return (PublicKey) chavePrivada;
-		}
-		return null;		
+    public static PrivateKey getChavePrivada() throws Exception{
+    	Certificate certificate = null;
+    	
+    	KeyStore ksKeys = KeyStore.getInstance("JKS");
+		ksKeys.load(new FileInputStream("C://nfe/keystore/certificado.jks"), "clientpass".toCharArray());
+		ksKeys.getKey(alias, "clientpass".toCharArray());
+		Enumeration<String> aliases = ksKeys.aliases();
+		if (aliases.hasMoreElements()) {
+			String transportAlias = aliases.nextElement();
+			certificate = ksKeys.getCertificate(transportAlias);
+			logger.debug("Certificado: {}.", ((X509Certificate) certificate).getSubjectDN());
+			return privateKey = (PrivateKey) ksKeys.getKey(transportAlias, senha);
+		} else {
+			throw new IllegalArgumentException("Armazém principal não cont�m um certificado válido.");
+		}	
 	}
 }

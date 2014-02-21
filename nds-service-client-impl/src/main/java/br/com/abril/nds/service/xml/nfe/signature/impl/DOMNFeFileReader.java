@@ -50,6 +50,7 @@ public class DOMNFeFileReader {
 		Document document = builder.parse(inputStream);
 		
 		Element root = document.getDocumentElement();
+		root.setIdAttribute("Id", true);
 		Element parent = (Element) document.getElementsByTagName("NFe").item(0);
 		
 		signatureHandler.sign(new DOMStructure(parent), tagToSign);
