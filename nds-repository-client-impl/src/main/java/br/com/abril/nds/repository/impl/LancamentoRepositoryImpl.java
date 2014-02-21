@@ -2494,5 +2494,21 @@ public class LancamentoRepositoryImpl extends
 		
 		return (Boolean) query.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> buscarDiasMatrizLancamentoAbertos(){
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento.dataLancamentoDistribuidor,lancamento.status  from Lancamento lancamento ");
+		hql.append(" where lancamento.dataLancamentoDistribuidor >= (select distribuidor.dataOperacao from Distribuidor distribuidor) ");
+		hql.append(" group by lancamento.dataLancamentoDistribuidor , lancamento.status ");
+		hql.append(" order by lancamento.dataLancamentoDistribuidor ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		return  query.list();
+		
+	}
 
 }
