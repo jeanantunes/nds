@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -378,6 +380,32 @@ public class LancamentoServiceImpl implements LancamentoService {
     	}
     	
     	this.lancamentoRepository.merge(lancamento);
+    }
+    
+    public Set <Date> obterDiasMatrizLancamentoAbertos(){
+    	List<Object[]> lista = lancamentoRepository.buscarDiasMatrizLancamentoAbertos();
+    	
+    	Set <Date> diasConfirmados = new TreeSet<Date>();
+    	Set <Date> diasNaoBalanceaveis = new TreeSet<Date>();
+    	
+    	for(Object[] lancamento : lista){
+    		
+    		if(lancamento[1].equals(StatusLancamento.CONFIRMADO)){
+    			
+    			if(!diasConfirmados.contains((Date)lancamento[0])){
+    			  diasConfirmados.add((Date)lancamento[0]);
+    			}
+    		}else{
+    			if(!diasNaoBalanceaveis.contains((Date)lancamento[0])){
+    			  diasNaoBalanceaveis.add((Date)lancamento[0]);
+      			}
+    		}
+
+    	}
+    	
+    	diasConfirmados.removeAll(diasNaoBalanceaveis);
+    	
+    	return diasConfirmados;
     }
 
 }
