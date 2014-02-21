@@ -908,24 +908,14 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		// check opcao de componente e elemento
 		if (StringUtils.isNotEmpty(filtro.getInserirComponentes())
-				&& filtro.getInserirComponentes().equalsIgnoreCase("checked")
-				&& !filtro.getComponente().equalsIgnoreCase("-1")) {
+				&& "checked".equalsIgnoreCase(filtro.getInserirComponentes())
+				&& !"-1".equalsIgnoreCase(filtro.getComponente())) {
 
 			queryStringProdutoEdicao += " 	 left outer join PDV pdvs on cota2_.ID = pdvs.COTA_ID "; //" join cota.pdvs pdvs ";
-
-			// JOIN'S Relacionados ao componente/elemento
-			/*
-			 * " join pdvs.segmetacao segmentacao " +
-			 * " join segmetacao.TipoPontoPDV " +
-			 * " join segmetacao.areaInfluenciaPDV " +
-			 */
 
 			switch (ComponentesPDV.values()[Integer.parseInt(filtro
 					.getComponente())]) {
 			case TIPO_PONTO_DE_VENDA:
-				/*queryStringProdutoEdicao += 
-							" join pdvs.segmentacao segmentacao "
-						  + " join segmentacao.tipoPontoPDV ";*/
 
 				whereList.add(" pdvs.TIPO_PONTO_PDV_ID = :codigoTipoPontoPDV");
 				parameterMap.put("codigoTipoPontoPDV",

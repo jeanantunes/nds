@@ -2219,10 +2219,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         	
         	if (FiltroMapaAbastecimentoDTO.TipoConsulta.PROMOCIONAL.equals(filtro.getTipoConsulta())){
             	
-            	hql.append(" and sum(lancamento.REPARTE_PROMOCIONAL) > 0 ");
+            	hql.append(" having sum(lancamento.REPARTE_PROMOCIONAL) > 0 ");
             } else {
         	
-            	hql.append(" and sum(estudoCota.QTDE_EFETIVA) > 0 ");
+            	hql.append(" having sum(estudoCota.QTDE_EFETIVA) > 0 ");
             }
         }
         
@@ -2517,10 +2517,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         	
         	if (FiltroMapaAbastecimentoDTO.TipoConsulta.PROMOCIONAL.equals(filtro.getTipoConsulta())){
             	
-            	hql.append(" and sum(lancamento.REPARTE_PROMOCIONAL) > 0 ");
+            	hql.append(" having sum(lancamento.REPARTE_PROMOCIONAL) > 0 ");
             } else {
         	
-            	hql.append(" and sum(estudoCota.QTDE_EFETIVA) > 0 ");
+            	hql.append(" having sum(estudoCota.QTDE_EFETIVA) > 0 ");
             }
         }
         
@@ -2636,10 +2636,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         	
         	if (FiltroMapaAbastecimentoDTO.TipoConsulta.PROMOCIONAL.equals(filtro.getTipoConsulta())){
             	
-            	hql.append(" and sum(lancamento.REPARTE_PROMOCIONAL) > 0 ");
+            	hql.append(" having sum(lancamento.REPARTE_PROMOCIONAL) > 0 ");
             } else {
         	
-            	hql.append(" and sum(estudoCota.QTDE_EFETIVA) > 0 ");
+            	hql.append(" having sum(estudoCota.QTDE_EFETIVA) > 0 ");
             }
         }
         
@@ -2748,10 +2748,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         	
         	if (FiltroMapaAbastecimentoDTO.TipoConsulta.PROMOCIONAL.equals(filtro.getTipoConsulta())){
             	
-            	hql.append(" and sum(lancamento.REPARTE_PROMOCIONAL) > 0 ");
+            	hql.append(" having sum(lancamento.REPARTE_PROMOCIONAL) > 0 ");
             } else {
         	
-            	hql.append(" and sum(estudoCota.QTDE_EFETIVA) > 0 ");
+            	hql.append(" having sum(estudoCota.QTDE_EFETIVA) > 0 ");
             }
         }
         
@@ -2856,10 +2856,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         	
         	if (FiltroMapaAbastecimentoDTO.TipoConsulta.PROMOCIONAL.equals(filtro.getTipoConsulta())){
             	
-            	hql.append(" and sum(lancamento.REPARTE_PROMOCIONAL) > 0 ");
+            	hql.append(" having sum(lancamento.REPARTE_PROMOCIONAL) > 0 ");
             } else {
         	
-            	hql.append(" and sum(estudoCota.QTDE_EFETIVA) > 0 ");
+            	hql.append(" having sum(estudoCota.QTDE_EFETIVA) > 0 ");
             }
         }
         
@@ -3159,10 +3159,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         	
         	if (FiltroMapaAbastecimentoDTO.TipoConsulta.PROMOCIONAL.equals(filtro.getTipoConsulta())){
             	
-            	hql.append(" and sum(lancamento.REPARTE_PROMOCIONAL) > 0 ");
+            	hql.append(" having sum(lancamento.REPARTE_PROMOCIONAL) > 0 ");
             } else {
         	
-            	hql.append(" and sum(estudoCota.QTDE_EFETIVA) > 0 ");
+            	hql.append(" having sum(estudoCota.QTDE_EFETIVA) > 0 ");
             }
         }
         
