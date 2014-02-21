@@ -12,7 +12,7 @@ public class QCAcumuloDividaRepository extends AbstractRepositoryTest {
     private AcumuloDividasRepository acumuloDividaRepository;
     
     @Test
-    public void testQCObterAcumuloDividaPorMovimentoFinanceiroPendente() {
+    public void test_qc_obter_acumulo_divida_por_movimento_financeiro_pendente() {
         
         this.acumuloDividaRepository.obterAcumuloDividaPorMovimentoFinanceiroPendente(1L);
     }

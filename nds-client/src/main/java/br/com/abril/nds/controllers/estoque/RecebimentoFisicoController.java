@@ -1601,10 +1601,10 @@ public class RecebimentoFisicoController extends BaseController {
                         + " é obrigatório!");
                 }
                 
-                final Fornecedor fornecedor = produtoService.obterFornecedorPorCodigoProduto(item.getCodigoProduto());
+                final Long idFornecedor = this.produtoService.obterIdFornecedorUnificadorPorCodigoProduto(item.getCodigoProduto());
+				
+				if (!idFornecedor.equals(nota.getFornecedor())) {
                 
-                if (!fornecedor.getId().equals(nota.getFornecedor())) {
-                    
                     throw new ValidacaoException(
                             TipoMensagem.WARNING,
  "O fornecedor do ítem " + linha

@@ -7,9 +7,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -38,54 +40,54 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 /**
- * Controller responsável pela tela de consulta, cadastro e alteração de Bancos. 
+ * Controller responsável pela tela de consulta, cadastro e alteração de Bancos.
  * 
  * @author Discover Technology
- *
+ * 
  */
 
 @Resource
 @Path("/banco")
 @Rules(Permissao.ROLE_CADASTRO_BANCO)
 public class BancoController extends BaseController {
-	
-	@Autowired
-	private BancoService bancoService;
-	
-    private Result result;
     
-    private HttpSession httpSession;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BancoController.class);
+    
+    @Autowired
+    private BancoService bancoService;
+    
+    private final Result result;
+    
+    private final HttpSession httpSession;
     
     private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaBancos";
     
     private static final String APELIDO_ANTIGO_SESSION_ATTRIBUTE = "apelidoAntigo";
     
     /**
-	 * Construtor da classe
-	 * @param result
-	 * @param httpSession
-	 * @param httpResponse
-	 */
-	public BancoController(Result result, HttpSession httpSession, HttpServletResponse httpResponse) {
-		this.result = result;
-		this.httpSession = httpSession;
-	}
-   
-	
-	
+     * Construtor da classe
+     * 
+     * @param result
+     * @param httpSession
+     * @param httpResponse
+     */
+    public BancoController(final Result result, final HttpSession httpSession) {
+        this.result = result;
+        this.httpSession = httpSession;
+    }
+    
     /**
      * Método de chamada da página
      */
     @Get
     @Path("/")
-    public void bancos(){ 
-   		
-	}
+    public void bancos() {
+        
+    }
     
-    
-
     /**
      * Método de consulta de bancos
+     * 
      * @param nome
      * @param numero
      * @param cedente
@@ -96,140 +98,104 @@ public class BancoController extends BaseController {
      * @param rp
      * @throws Mensagem de nenhum registro encontrado
      */
-	@Post
-	@Path("/consultaBancos")
-	public void consultaBancos(String nome,
-			                   String numero,
-			                   String cedente,
-			                   boolean ativo,
-			                   String sortorder, 
-							   String sortname, 
-							   int page, 
-							   int rp){
-		
-		//CONFIGURAR PAGINA DE PESQUISA
-		FiltroConsultaBancosDTO filtroAtual = new FiltroConsultaBancosDTO(nome != null ? nome.trim() : null,
-														                  numero != null ? numero.trim() : null,
-														                  cedente != null ? cedente.trim() : null,
-														                  ativo);
-		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
-		filtroAtual.setPaginacao(paginacao);
-		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaBancos.values(), sortname));
-	
-		FiltroConsultaBancosDTO filtroSessao = (FiltroConsultaBancosDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
-		
-		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
-			filtroAtual.getPaginacao().setPaginaAtual(1);
-		}
-		
-		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
-
-		//BUSCA BANCOS
-		List<Banco> bancos = this.bancoService.obterBancos(filtroAtual);
-		
-		//CARREGA DIRETO DA ENTIDADE PARA A TABELA
-		List<CellModel> listaModelo = new LinkedList<CellModel>();
-		
-		if (bancos.size()==0) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		} 
-
-		for (Banco banco : bancos){	
-			listaModelo.add(new CellModel(1,
-										  (banco.getId()!=null?banco.getId().toString():""),
-										  (banco.getNumeroBanco()!=null?banco.getNumeroBanco():""),
-										  (banco.getNome()!=null?banco.getNome():""),
-										  (banco.getAgencia()!=null?banco.getAgencia().toString()+"-"+banco.getDvAgencia():""),
-										  (banco.getConta()!=null?banco.getConta().toString()+"-"+banco.getDvConta():""),
-										  (banco.getCodigoCedente()!=null?banco.getCodigoCedente().toString():""),
-										  (banco.getApelido()!=null?banco.getApelido().toString():""),
-										  (banco.getCarteira()!=null?banco.getCarteira():""),
-										  (banco.isAtivo()?"Ativo":"Desativado"),
-										  ""
-                      					)
-              );
-		}	
-		
-		TableModel<CellModel> tm = new TableModel<CellModel>();
-
-		//DEFINE TOTAL DE REGISTROS NO TABLEMODEL
-		tm.setTotal( (int) this.bancoService.obterQuantidadeBancos(filtroAtual));
-		
-		//DEFINE CONTEUDO NO TABLEMODEL
-		tm.setRows(listaModelo);
-		
-		//DEFINE PAGINA ATUAL NO TABLEMODEL
-		tm.setPage(filtroAtual.getPaginacao().getPaginaAtual());
-		
-		
-		//PREPARA RESULTADO PARA A VIEW (HASHMAP)
-		Map<String, TableModel<CellModel>> resultado = new HashMap<String, TableModel<CellModel>>();
-		resultado.put("TblModelBancos", tm);
-		
-		//RETORNA HASHMAP EM FORMATO JSON PARA A VIEW
-		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
-
-	}
-	
-	
-	
-	/**
-	 * Método responsável pela inclusão de novo Banco
-	 * @param numero
-	 * @param nome
-	 * @param codigoCedente
-	 * @param agencia
-	 * @param conta
-	 * @param digito
-	 * @param apelido
-	 * @param carteira
-	 * @param juros
-	 * @param ativo
-	 * @param multa
-	 * @param vrMulta
-	 * @param instrucoes
-	 */
-	@Post
-	@Path("/novoBanco")
-	@Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
-	public void novoBanco(String numero,
-						  String nome,
-						  String codigoCedente,
-						  String agencia,
-						  String digitoAgencia,
-						  String conta,
-						  String digito,
-						  String apelido,
-						  Integer carteira,
-						  BigDecimal juros,
-						  boolean ativo,
-						  BigDecimal multa,
-						  BigDecimal vrMulta,
-						  String instrucoes){
-		
-		if (bancoService.obterBancoPorApelido(apelido) != null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um banco com este apelido.");
-		}
-		
-		validarCadastroBanco(
-				true, 
-				numero,
-				nome,
-				codigoCedente,
-				agencia,
-				digitoAgencia,
-				conta,
-				digito,
-				apelido,
-				carteira,
-				juros,
-				multa,
-				vrMulta);
-		
-		long lAgencia = Long.parseLong(agencia);
-		long lConta = Long.parseLong(conta);
-		
-	    Banco banco = new Banco();	
+    @Post
+    @Path("/consultaBancos")
+    public void consultaBancos(final String nome, final String numero, final String cedente, final boolean ativo,
+            final String sortorder, final String sortname, final int page, final int rp) {
+        
+        // CONFIGURAR PAGINA DE PESQUISA
+        final FiltroConsultaBancosDTO filtroAtual = new FiltroConsultaBancosDTO(nome != null ? nome.trim() : null,
+                numero != null ? numero.trim() : null, cedente != null ? cedente.trim() : null, ativo);
+        final PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+        filtroAtual.setPaginacao(paginacao);
+        filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaBancos.values(), sortname));
+        
+        final FiltroConsultaBancosDTO filtroSessao = (FiltroConsultaBancosDTO) httpSession
+                .getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+        
+        if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
+            filtroAtual.getPaginacao().setPaginaAtual(1);
+        }
+        
+        httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
+        
+        // BUSCA BANCOS
+        final List<Banco> bancos = bancoService.obterBancos(filtroAtual);
+        
+        // CARREGA DIRETO DA ENTIDADE PARA A TABELA
+        final List<CellModel> listaModelo = new LinkedList<CellModel>();
+        
+        if (bancos.size() == 0) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+        }
+        
+        for (final Banco banco : bancos) {
+            listaModelo.add(new CellModel(1, banco.getId() != null ? banco.getId().toString() : "", banco
+                    .getNumeroBanco() != null ? banco.getNumeroBanco() : "", banco.getNome() != null ? banco.getNome()
+                            : "", banco.getAgencia() != null ? banco.getAgencia().toString() + "-" + banco.getDvAgencia() : "",
+                                    banco.getConta() != null ? banco.getConta().toString() + "-" + banco.getDvConta() : "", banco
+                                            .getCodigoCedente() != null ? banco.getCodigoCedente().toString() : "",
+                                                    banco.getApelido() != null ? banco.getApelido().toString() : "",
+                                                            banco.getCarteira() != null ? banco.getCarteira() : "", banco.isAtivo() ? "Ativo" : "Desativado",
+                    ""));
+        }
+        
+        final TableModel<CellModel> tm = new TableModel<CellModel>();
+        
+        // DEFINE TOTAL DE REGISTROS NO TABLEMODEL
+        tm.setTotal((int) bancoService.obterQuantidadeBancos(filtroAtual));
+        
+        // DEFINE CONTEUDO NO TABLEMODEL
+        tm.setRows(listaModelo);
+        
+        // DEFINE PAGINA ATUAL NO TABLEMODEL
+        tm.setPage(filtroAtual.getPaginacao().getPaginaAtual());
+        
+        // PREPARA RESULTADO PARA A VIEW (HASHMAP)
+        final Map<String, TableModel<CellModel>> resultado = new HashMap<String, TableModel<CellModel>>();
+        resultado.put("TblModelBancos", tm);
+        
+        // RETORNA HASHMAP EM FORMATO JSON PARA A VIEW
+        result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+        
+    }
+    
+    /**
+     * Método responsável pela inclusão de novo Banco
+     * 
+     * @param numero
+     * @param nome
+     * @param codigoCedente
+     * @param agencia
+     * @param conta
+     * @param digito
+     * @param apelido
+     * @param carteira
+     * @param juros
+     * @param ativo
+     * @param multa
+     * @param vrMulta
+     * @param instrucoes
+     */
+    @Post
+    @Path("/novoBanco")
+    @Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
+    public void novoBanco(final String numero, final String nome, final String codigoCedente, final String agencia,
+            final String digitoAgencia, final String conta, final String digito, final String apelido,
+            final Integer carteira, final BigDecimal juros, final boolean ativo, final BigDecimal multa,
+            final BigDecimal vrMulta, final String instrucoes) {
+        
+        if (bancoService.obterBancoPorApelido(apelido) != null) {
+            throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um banco com este apelido.");
+        }
+        
+        validarCadastroBanco(numero, nome, codigoCedente, agencia, digitoAgencia, conta, digito, apelido, juros, multa,
+                vrMulta);
+        
+        final long lAgencia = Long.parseLong(agencia);
+        final long lConta = Long.parseLong(conta);
+        
+        final Banco banco = new Banco();
         banco.setNumeroBanco(numero);
         banco.setNome(nome);
         banco.setCodigoCedente(codigoCedente);
@@ -244,276 +210,232 @@ public class BancoController extends BaseController {
         banco.setMulta(multa);
         banco.setVrMulta(vrMulta);
         banco.setInstrucoes(instrucoes);
-	
-		try {
-	        this.bancoService.incluirBanco(banco);
-		} catch(DataIntegrityViolationException e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe outro registro com este Número de Banco, Agência, Dígito da Agência, Conta e Dígito da Conta.");
-		}
         
-        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Banco "+nome+" cadastrado com sucesso."),"result").recursive().serialize();
-	}
-	
-	
-	
-	/**
-	 * Método responsável por buscar os dados do banco para alteração.
-	 * @param idBanco
-	 * @throws Mensagem de banco não encontrado. 
-	 */
-	@Post
-	@Path("/buscaBanco")
-	@Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
-	public void buscaBanco(long idBanco){
-		BancoVO bancoVO = this.bancoService.obterDadosBanco(idBanco);
-		if (bancoVO==null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Banco "+idBanco+" não encontrado.");
-		}
-		this.httpSession.setAttribute(APELIDO_ANTIGO_SESSION_ATTRIBUTE, bancoVO.getApelido());
-		result.use(Results.json()).from(bancoVO,"result").recursive().serialize();
-	}
-	
-	
-	
-	/**
-	 * Método responsável pela alteração de um Banco
-	 * 
-	 * @param idBanco
-	 * @param numero
-	 * @param nome
-	 * @param codigoCedente
-	 * @param agencia
-	 * @param conta
-	 * @param digito
-	 * @param apelido
-	 * @param carteira
-	 * @param juros
-	 * @param ativo
-	 * @param multa
-	 * @param vrMulta
-	 * @param instrucoes
-	 * @throws Mensagem de pendencias financeiras do banco
-	 */
-	@Post
-	@Path("/alteraBanco")
-	public void alteraBanco(long idBanco,
-						  	String numero,
-						  	String nome,
-						  	String codigoCedente,
-						  	String agencia,
-						  	String digitoAgencia,
-						  	String conta,
-						  	String digito,
-						  	String apelido,
-						  	Integer carteira,
-						  	BigDecimal juros,
-						  	boolean ativo,
-						  	BigDecimal multa,
-						  	BigDecimal vrMulta,
-						  	String instrucoes){
-		
-		if (!this.httpSession.getAttribute(APELIDO_ANTIGO_SESSION_ATTRIBUTE).equals(apelido) && bancoService.obterBancoPorApelido(apelido) != null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um banco com este apelido.");
-		}
-		
-		validarCadastroBanco(
-				false, 
-				numero, 
-				nome, 
-				codigoCedente, 
-				agencia,
-				digitoAgencia, 
-				conta, 
-				digito, 
-				apelido,
-				carteira,
-				juros, 
-				multa, 
-				vrMulta);
-		
-		if (!ativo){
-			if (this.bancoService.verificarPendencias(idBanco)){
-				throw new ValidacaoException(TipoMensagem.WARNING, "O banco "+nome+" possui pendências e não pode ser desativado.");
-			}
-		}
-        		
-		long lAgencia = Long.parseLong(agencia);
-		long lConta = Long.parseLong(conta);
-		
-		Banco banco = this.bancoService.obterBancoPorId(idBanco);
-		banco.setNumeroBanco(numero);
-		banco.setNome(nome);
-		banco.setCodigoCedente(codigoCedente);
-		banco.setAgencia(lAgencia);
-		banco.setDvAgencia(digitoAgencia);
-		banco.setConta(lConta);
-		banco.setDvConta(digito);
-		banco.setApelido(apelido);
-		banco.setCarteira(carteira);
-		banco.setJuros(juros);
-		banco.setAtivo(ativo);
-		banco.setMulta(multa);
-		banco.setVrMulta(vrMulta);
-		banco.setInstrucoes(instrucoes);
-
-		try {
-			this.bancoService.alterarBanco(banco);
-		} catch(DataIntegrityViolationException e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe outro registro com este Número de Banco, Agência, Dígito da Agência, Conta e Dígito da Conta.");
-		}
-		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Banco "+nome+" alterado com sucesso."),"result").recursive().serialize();
-    }
-	
-	
-	
-	/**
-	 * Método responsável por validar os dados de um novo banco ou de uma alteração de banco.
-	 * 
-	 * @param indNovoRegistro
-	 * @param numero
-	 * @param nome
-	 * @param codigoCedente
-	 * @param agencia
-	 * @param digitoAgencia
-	 * @param conta
-	 * @param digito
-	 * @param apelido
-	 * @param carteira
-	 * @param juros
-	 * @param multa
-	 * @param vrMulta
-	 */
-	private void validarCadastroBanco(boolean indNovoRegistro,
-								  	  String numero,
-								  	  String nome,
-								  	  String codigoCedente,
-								  	  String agencia,
-								  	  String digitoAgencia,
-								  	  String conta,
-								  	  String digito,
-								  	  String apelido,
-								  	  Integer carteira,
-								  	  BigDecimal juros,
-								  	  BigDecimal multa,
-								  	  BigDecimal vrMulta){
-		
-		
-		List<String> errorMsgs = new LinkedList<String>();
-		
-		/*if (indNovoRegistro){
-			
-			Banco banco = this.bancoService.obterbancoPorNumero(numero);
-			
-			if(banco!=null){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Banco "+numero+" já cadastrado.");
-			}
-
-			banco = this.bancoService.obterbancoPorNome(nome);
-			
-			if(banco!=null){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Banco "+nome+" já cadastrado.");
-			}
-			
-		}*/
-		
-		if ((numero==null)||("".equals(numero))){
-			errorMsgs.add("Preencha o número do banco.");
-		}
-		
-		if ((nome==null)||("".equals(nome))){
-			errorMsgs.add("Preencha o nome do banco.");
-		}
-		
-		if ((codigoCedente==null)||("".equals(codigoCedente))){
-			errorMsgs.add("Preencha o código do cedente.");
-		}
-		
-		if ((agencia==null)||("".equals(agencia))){
-			errorMsgs.add("Preencha o campo agência.");
-		}
-		
-		if ((digitoAgencia==null)||("".equals(digitoAgencia))){
-			errorMsgs.add("Preencha o campo dígito da agência.");
-		}
-		
-		if ((conta==null)||("".equals(conta))){
-			errorMsgs.add("Preencha o campo conta.");
-		}
-		
-		if ((digito==null)||("".equals(digito))){
-			errorMsgs.add("Preencha o campo dígito da conta do banco.");
-		}
-		
-		if ((apelido==null)||("".equals(apelido))){
-			errorMsgs.add("Preencha o campo apelido.");
-		}
-		
-		if(juros==null){
-			errorMsgs.add("Especifique a taxa de juros.");
-		}
-		
-        if((multa==null)&&(vrMulta==null)){
-        	errorMsgs.add("Especifique a taxa ou o valor da multa.");
-		}
-		
-        if(errorMsgs != null && !errorMsgs.isEmpty()) {
-        	throw new ValidacaoException(TipoMensagem.WARNING, errorMsgs);
+        try {
+            bancoService.incluirBanco(banco);
+        } catch (final DataIntegrityViolationException e) {
+            final String msg = "Já existe outro registro com este Número de Banco, Agência, Dígito da Agência, Conta e Dígito da Conta.";
+            LOGGER.error(msg, e);
+            throw new ValidacaoException(TipoMensagem.ERROR, msg);
         }
         
-	}
-	
-	
-	
-	/**
-	 * Método responsável por desativar um banco.
-	 * @param idBanco
-	 * @throws Mansagens de validação segundo as regras de desativação de banco
-	 */
-	@Post
-	@Path("/excluirBanco")
-	@Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
-	public void excluirBanco(long idBanco){
-		
-		Banco banco = this.bancoService.obterBancoPorId(idBanco);
-		String nomebanco = banco.getNome();
-		
-		String msg = null;
-		TipoMensagem tipoMsg = TipoMensagem.SUCCESS;
-		
-		try {
-			this.bancoService.excluirBanco(idBanco);
-			msg = "Banco " + nomebanco + " excluido com sucesso.";
-		} catch(DataIntegrityViolationException e) {
-			
-			if(!banco.isAtivo()) {
-				tipoMsg = TipoMensagem.WARNING;
-				msg = "Banco " + nomebanco + " está em uso, não pode ser excluido.";
-			} else {				
-				this.bancoService.dasativarBanco(idBanco);
-				msg = "Banco " + nomebanco + " desativado com sucesso.";
-			}
-		}
-		
-		result.use(Results.json()).from(new ValidacaoVO(tipoMsg, msg),"result").recursive().serialize();
+        result.use(Results.json()).from(
+                new ValidacaoVO(TipoMensagem.SUCCESS, "Banco " + nome + " cadastrado com sucesso."), "result")
+                .recursive().serialize();
     }
-	
-	@Post
-	public void autoCompletarPorNomeBanco(String nomeBanco){
-		
-		List<Banco> listabancos = bancoService.obterBancosPorNome(nomeBanco, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
-		
-		List<ItemAutoComplete> listaCotasAutoComplete = new ArrayList<ItemAutoComplete>();
-		
-		if (listabancos != null && !listabancos.isEmpty()) {
-			
-			for (Banco banco : listabancos) {
-					
-				listaCotasAutoComplete.add(new ItemAutoComplete(banco.getNome(), null, banco.getId()));
-			}
-		}
-		
-		this.result.use(Results.json()).from(listaCotasAutoComplete, "result").include("value", "chave").serialize();
-	}
-	
+    
+    /**
+     * Método responsável por buscar os dados do banco para alteração.
+     * 
+     * @param idBanco
+     * @throws Mensagem de banco não encontrado.
+     */
+    @Post
+    @Path("/buscaBanco")
+    @Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
+    public void buscaBanco(final long idBanco) {
+        final BancoVO bancoVO = bancoService.obterDadosBanco(idBanco);
+        if (bancoVO == null) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Banco " + idBanco + " não encontrado.");
+        }
+        httpSession.setAttribute(APELIDO_ANTIGO_SESSION_ATTRIBUTE, bancoVO.getApelido());
+        result.use(Results.json()).from(bancoVO, "result").recursive().serialize();
+    }
+    
+    /**
+     * Método responsável pela alteração de um Banco
+     * 
+     * @param idBanco
+     * @param numero
+     * @param nome
+     * @param codigoCedente
+     * @param agencia
+     * @param conta
+     * @param digito
+     * @param apelido
+     * @param carteira
+     * @param juros
+     * @param ativo
+     * @param multa
+     * @param vrMulta
+     * @param instrucoes
+     * @throws Mensagem de pendencias financeiras do banco
+     */
+    @Post
+    @Path("/alteraBanco")
+    public void alteraBanco(final long idBanco, final String numero, final String nome, final String codigoCedente,
+            final String agencia, final String digitoAgencia, final String conta, final String digito,
+            final String apelido, final Integer carteira, final BigDecimal juros, final boolean ativo,
+            final BigDecimal multa, final BigDecimal vrMulta, final String instrucoes) {
+        
+        if (!httpSession.getAttribute(APELIDO_ANTIGO_SESSION_ATTRIBUTE).equals(apelido)
+                && bancoService.obterBancoPorApelido(apelido) != null) {
+            throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um banco com este apelido.");
+        }
+        
+        validarCadastroBanco(numero, nome, codigoCedente, agencia, digitoAgencia, conta, digito, apelido, juros, multa,
+                vrMulta);
+        
+        if (!ativo) {
+            if (bancoService.verificarPendencias(idBanco)) {
+                throw new ValidacaoException(TipoMensagem.WARNING, "O banco " + nome
+                        + " possui pendências e não pode ser desativado.");
+            }
+        }
+        
+        final long lAgencia = Long.parseLong(agencia);
+        final long lConta = Long.parseLong(conta);
+        
+        final Banco banco = bancoService.obterBancoPorId(idBanco);
+        banco.setNumeroBanco(numero);
+        banco.setNome(nome);
+        banco.setCodigoCedente(codigoCedente);
+        banco.setAgencia(lAgencia);
+        banco.setDvAgencia(digitoAgencia);
+        banco.setConta(lConta);
+        banco.setDvConta(digito);
+        banco.setApelido(apelido);
+        banco.setCarteira(carteira);
+        banco.setJuros(juros);
+        banco.setAtivo(ativo);
+        banco.setMulta(multa);
+        banco.setVrMulta(vrMulta);
+        banco.setInstrucoes(instrucoes);
+        
+        try {
+            bancoService.alterarBanco(banco);
+        } catch (final DataIntegrityViolationException e) {
+            final String msg = "Já existe outro registro com este Número de Banco, Agência, Dígito da Agência, Conta e Dígito da Conta.";
+            LOGGER.error(msg, e);
+            throw new ValidacaoException(TipoMensagem.ERROR, msg);
+        }
+        
+        result.use(Results.json()).from(
+                new ValidacaoVO(TipoMensagem.SUCCESS, "Banco " + nome + " alterado com sucesso."), "result")
+                .recursive().serialize();
+    }
+    
+    /**
+     * Método responsável por validar os dados de um novo banco ou de uma
+     * alteração de banco.
+     * 
+     * @param numero
+     * @param nome
+     * @param codigoCedente
+     * @param agencia
+     * @param digitoAgencia
+     * @param conta
+     * @param digito
+     * @param apelido
+     * @param juros
+     * @param multa
+     * @param vrMulta
+     */
+    private void validarCadastroBanco(final String numero, final String nome, final String codigoCedente,
+            final String agencia, final String digitoAgencia, final String conta, final String digito,
+            final String apelido, final BigDecimal juros, final BigDecimal multa, final BigDecimal vrMulta) {
+        
+        final List<String> errorMsgs = new LinkedList<String>();
+        
+        if (StringUtils.isBlank(numero)) {
+            errorMsgs.add("Preencha o número do banco.");
+        }
+        
+        if (StringUtils.isBlank(nome)) {
+            errorMsgs.add("Preencha o nome do banco.");
+        }
+        
+        if (StringUtils.isBlank(codigoCedente)) {
+            errorMsgs.add("Preencha o código do cedente.");
+        }
+        
+        if (StringUtils.isBlank(agencia)) {
+            errorMsgs.add("Preencha o campo agência.");
+        }
+        
+        if (StringUtils.isBlank(digitoAgencia)) {
+            errorMsgs.add("Preencha o campo dígito da agência.");
+        }
+        
+        if (StringUtils.isBlank(conta)) {
+            errorMsgs.add("Preencha o campo conta.");
+        }
+        
+        if (StringUtils.isBlank(digito)) {
+            errorMsgs.add("Preencha o campo dígito da conta do banco.");
+        }
+        
+        if (StringUtils.isBlank(apelido)) {
+            errorMsgs.add("Preencha o campo apelido.");
+        }
+        
+        if (juros == null) {
+            errorMsgs.add("Especifique a taxa de juros.");
+        }
+        
+        if (multa == null && vrMulta == null) {
+            errorMsgs.add("Especifique a taxa ou o valor da multa.");
+        }
+        
+        if (errorMsgs != null && !errorMsgs.isEmpty()) {
+            throw new ValidacaoException(TipoMensagem.WARNING, errorMsgs);
+        }
+        
+    }
+    
+    /**
+     * Método responsável por desativar um banco.
+     * 
+     * @param idBanco
+     * @throws Mansagens de validação segundo as regras de desativação de banco
+     */
+    @Post
+    @Path("/excluirBanco")
+    @Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
+    public void excluirBanco(final long idBanco) {
+        
+        final Banco banco = bancoService.obterBancoPorId(idBanco);
+        final String nomebanco = banco.getNome();
+        
+        String msg = null;
+        TipoMensagem tipoMsg = TipoMensagem.SUCCESS;
+        
+        try {
+            bancoService.excluirBanco(idBanco);
+            msg = "Banco " + nomebanco + " excluido com sucesso.";
+        } catch (final DataIntegrityViolationException e) {
+            
+            if (!banco.isAtivo()) {
+                tipoMsg = TipoMensagem.WARNING;
+                msg = "Banco " + nomebanco + " está em uso, não pode ser excluido.";
+            } else {
+                bancoService.dasativarBanco(idBanco);
+                msg = "Banco " + nomebanco + " desativado com sucesso.";
+            }
+            
+            LOGGER.error(msg, e);
+        }
+        
+        result.use(Results.json()).from(new ValidacaoVO(tipoMsg, msg), "result").recursive().serialize();
+    }
+    
+    @Post
+    public void autoCompletarPorNomeBanco(final String nomeBanco) {
+        
+        final List<Banco> listabancos = bancoService.obterBancosPorNome(nomeBanco,
+                Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
+        
+        final List<ItemAutoComplete> listaCotasAutoComplete = new ArrayList<ItemAutoComplete>();
+        
+        if (listabancos != null && !listabancos.isEmpty()) {
+            
+            for (final Banco banco : listabancos) {
+                
+                listaCotasAutoComplete.add(new ItemAutoComplete(banco.getNome(), null, banco.getId()));
+            }
+        }
+        
+        result.use(Results.json()).from(listaCotasAutoComplete, "result").include("value", "chave").serialize();
+    }
+    
 }

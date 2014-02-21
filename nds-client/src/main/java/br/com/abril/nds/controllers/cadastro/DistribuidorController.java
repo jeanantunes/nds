@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
@@ -25,85 +27,87 @@ import br.com.caelum.vraptor.view.Results;
  * Controller responsável pelo Distribuidor.
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Resource
 @Path("/cadastro/distribuidor")
 public class DistribuidorController extends BaseController {
-
-	@Autowired
-	private Result result;
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
-	
-	@Autowired
-	private ParametrosDistribuidorService parametrosDistribuidorService; 
-	
-	@Get
-	@Path("/obterNumeroSemana")
-	public void obterNumeroSemana(Date data) {
-		
-		DiaSemana diaSemana = this.distribuidorService.inicioSemana();
-		
-		if (diaSemana == null) {
-			
-			throw new RuntimeException("Dados do distribuidor inexistentes: início semana");
-		}
-		
-		Integer anoSemana = 
-			SemanaUtil.obterAnoNumeroSemana(data, diaSemana.getCodigoDiaSemana());
-		
-		result.use(Results.json()).from(anoSemana).serialize();
-	}
-	
-	@Get
-	@Path("/obterDataDaSemana")
-	public void obterDataDaSemanaNoAno(Integer numeroSemana, Integer anoBase) {
-		
-		DiaSemana diaSemana = this.distribuidorService.inicioSemana();
-		
-		if (diaSemana == null) {
-			
-			throw new RuntimeException("Dados do distribuidor inexistentes: inicio semana");
-		}
-		
-		Date data = 
-			SemanaUtil.obterDataDaSemanaNoAno(numeroSemana, diaSemana.getCodigoDiaSemana(), anoBase);
-		
-		String dataFormatada = "";
-		
-		if (data != null) {
-			
-			dataFormatada = DateUtil.formatarDataPTBR(data);
-		}
-		
-		result.use(Results.json()).from(dataFormatada, "result").serialize();
-	}
-	
-	@Get
-	public Download logo(){		
-		try {
-			
-			InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
-			
-			if(inputStream == null){
-			  
-				return new InputStreamDownload(new ByteArrayInputStream(new byte[0]), null, null);
-			}
-			
-			return new InputStreamDownload(inputStream, null,null);
-			
-		} catch (Exception e) {			
-			
-			return new InputStreamDownload(new ByteArrayInputStream(new byte[0]), null, null);
-		}
-	}	
-	
-	@Post
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DistribuidorController.class);
+    
+    @Autowired
+    private Result result;
+    
+    @Autowired
+    private DistribuidorService distribuidorService;
+    
+    @Autowired
+    private ParametrosDistribuidorService parametrosDistribuidorService;
+    
+    @Get
+    @Path("/obterNumeroSemana")
+    public void obterNumeroSemana(final Date data) {
+        
+        final DiaSemana diaSemana = distribuidorService.inicioSemana();
+        
+        if (diaSemana == null) {
+            
+            throw new RuntimeException("Dados do distribuidor inexistentes: início semana");
+        }
+        
+        final Integer anoSemana =
+                SemanaUtil.obterAnoNumeroSemana(data, diaSemana.getCodigoDiaSemana());
+        
+        result.use(Results.json()).from(anoSemana).serialize();
+    }
+    
+    @Get
+    @Path("/obterDataDaSemana")
+    public void obterDataDaSemanaNoAno(final Integer numeroSemana, final Integer anoBase) {
+        
+        final DiaSemana diaSemana = distribuidorService.inicioSemana();
+        
+        if (diaSemana == null) {
+            
+            throw new RuntimeException("Dados do distribuidor inexistentes: inicio semana");
+        }
+        
+        final Date data =
+                SemanaUtil.obterDataDaSemanaNoAno(numeroSemana, diaSemana.getCodigoDiaSemana(), anoBase);
+        
+        String dataFormatada = "";
+        
+        if (data != null) {
+            
+            dataFormatada = DateUtil.formatarDataPTBR(data);
+        }
+        
+        result.use(Results.json()).from(dataFormatada, "result").serialize();
+    }
+    
+    @Get
+    public Download logo(){
+        try {
+            
+            final InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
+            
+            if(inputStream == null){
+                
+                return new InputStreamDownload(new ByteArrayInputStream(new byte[0]), null, null);
+            }
+            
+            return new InputStreamDownload(inputStream, null,null);
+            
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+            return new InputStreamDownload(new ByteArrayInputStream(new byte[0]), null, null);
+        }
+    }
+    
+    @Post
     public void obterDataDistribuidor() {
 
 		this.result.use(Results.json()).from(DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()), "result").recursive().serialize();
     }
-	
+    
 }
