@@ -1199,13 +1199,8 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
             final boolean validarTransfEstoqueDiferenca,
             final Date dataLancamento, final Origem origem) {
         
-        final List<TipoDiferenca> tiposDiferencaSobraCota =
-                Arrays.asList(
-                        TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA,
-                        TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA
-                        );
-        
-        if (tiposDiferencaSobraCota.contains(tipoDiferenca)) {
+        if (tipoDiferenca.isSobra() && 
+        		!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
             
             try {
                 
