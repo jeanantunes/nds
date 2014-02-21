@@ -42,10 +42,7 @@ public class DOMNFeFileReader {
 	
 	/**
 	 * Ler arquivo e assina.
-	 * 
-	 * @param inputStream
-	 * @param tagToSign
-	 * 
+	 * @param inputStream / @param tagToSign
 	 * @throws Exception
 	 */
 	public Result loadAndSign(InputStream inputStream, String tagToSign) throws Exception {
@@ -68,5 +65,4 @@ public class DOMNFeFileReader {
 		}
 		return streamResult;
 	}
-
 }

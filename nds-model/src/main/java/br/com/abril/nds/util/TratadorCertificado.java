@@ -50,7 +50,7 @@ public class TratadorCertificado {
 	public static final String algoritmo= "RSA"; 
 	public static final String algoritmoAssinatura= "MD5withRSA"; 
 	private static final String C14N_TRANSFORM_METHOD = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-	public static File file= new File("C:\\nfe\\keystore\\certificado.cer");
+	public static File file= new File("C://certificado.cer"); // ‪C:\certificado.cer
 	private static String alias="sefaz";
 	private static char[] senha="changeit".toCharArray(); 
 	static XMLSignatureFactory sig;
@@ -115,7 +115,7 @@ public class TratadorCertificado {
 	
 	public static void getCertificado() throws Exception{					
 		InputStream dado= new FileInputStream(file);		
-		rep= KeyStore.getInstance("cer");		
+		rep= KeyStore.getInstance("cert");		
 		rep.load(dado, senha);
 		cert= (X509Certificate) rep.getCertificate(alias);
 		String retorno= TratadorCertificado.getValidade(cert);

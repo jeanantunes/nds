@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -103,6 +104,7 @@ import br.com.abril.nds.service.TributacaoService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
@@ -179,10 +181,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Autowired
 	private NotaFiscalNdsRepository notaFiscalNdsRepository;
-
 	
 	@Autowired
 	private GeracaoNotaEnvioService geracaoNotaEnvioService;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -582,8 +584,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		StringBuilder sBuilder = new StringBuilder();
 
-		// NFEExporter nfeExporter = new NFEExporter();
-
+		NFEExporter nfeExporter = new NFEExporter();
+		
+		FileOutputStream stream = null;
+		
 		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
 
 			JAXBContext jc;
@@ -599,17 +603,19 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		        //marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", "");
 		        marshaller.marshal(notaFiscal, System.out);
+		        
+		        
 			
 			} catch (JAXBException e) {
 				LOGGER.error("Erro ao gerar XML", e);
 			}
-			/*
+			
 			nfeExporter.clear();
 
 			nfeExporter.execute(notaFiscal);
 
 			String s = nfeExporter.gerarArquivo();
-			sBuilder.append(s);*/
+			sBuilder.append(s);
 		}
 
 		return "NOTA FISCAL|" + notasFiscaisParaExportacao.size() + "|\n"

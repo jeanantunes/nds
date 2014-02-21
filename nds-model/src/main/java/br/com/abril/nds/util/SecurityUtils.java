@@ -2,15 +2,45 @@ package br.com.abril.nds.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.Key;
 import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.xml.crypto.dsig.CanonicalizationMethod;
+import javax.xml.crypto.dsig.DigestMethod;
+import javax.xml.crypto.dsig.Reference;
+import javax.xml.crypto.dsig.SignatureMethod;
+import javax.xml.crypto.dsig.SignedInfo;
+import javax.xml.crypto.dsig.Transform;
+import javax.xml.crypto.dsig.XMLSignature;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMSignContext;
+import javax.xml.crypto.dsig.keyinfo.KeyInfo;
+import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
+import javax.xml.crypto.dsig.keyinfo.X509Data;
+import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
+import javax.xml.crypto.dsig.spec.TransformParameterSpec;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 public class SecurityUtils {
 	
@@ -20,6 +50,18 @@ public class SecurityUtils {
     static String trustStoreName = "cacerts";
     static String trustStorePath = null;
     static String trustStorePassword = "changeit";
+    
+    public static final String algoritmo= "RSA"; 
+	public static final String algoritmoAssinatura= "MD5withRSA"; 
+	private static final String C14N_TRANSFORM_METHOD = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
+	public static File file= new File("C://certificado.cer"); // ‪C:\certificado.cer
+	private static String alias="sefaz";
+	private static char[] senha="changeit".toCharArray(); 
+	static XMLSignatureFactory sig;
+	static X509Certificate cert;
+	static KeyInfo ki; 
+	static SignedInfo si;
+	static KeyStore rep;
     
     public static KeyStore openStore(String keyStoreType, Resource keyStoreResource, char[] passphrase) throws Exception {
     	logger.debug("Abrindo armazém {} ...", keyStoreResource.getFilename());
@@ -73,7 +115,9 @@ public class SecurityUtils {
     	
 	    CertificateFactory cf = CertificateFactory.getInstance("X.509");
     	InputStream in = new FileInputStream(file);
-    	X509Certificate cert = (X509Certificate) cf.generateCertificate(in);
+    	cert = (X509Certificate) cf.generateCertificate(in);
+    	
+    	assinarDocumento("C:/Users/wrpaiva/Desktop/receita/xml/sergioValidar3.xml");
     	in.close();
     	
     	if (trustStore.containsAlias(certificateName)) {
@@ -104,5 +148,60 @@ public class SecurityUtils {
 		    return;
 		}
 		installCertificate(trustStorePath, certificateLocation, certificateName);
+		
+		
     }
+    
+    
+    public static void assinarDocumento(String localDocumento) throws Exception{		
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
+		
+		
+		Document doc = dbf.newDocumentBuilder().parse(new FileInputStream(localDocumento));
+		System.out.println("Documento ok!");
+		
+		sig= XMLSignatureFactory.getInstance("DOM");
+		
+		ArrayList<Transform> transformList= new ArrayList<Transform>();
+		Transform enveloped= sig.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null);
+		Transform c14n= sig.newTransform(C14N_TRANSFORM_METHOD, (TransformParameterSpec) null);
+		transformList.add(enveloped);
+		transformList.add(c14n);
+		
+		NodeList elements = doc.getElementsByTagName("NFe");
+		org.w3c.dom.Element el = (org.w3c.dom.Element) elements.item(0);
+		String id = el.getAttribute("Id");
+		Reference r= sig.newReference("#".concat(id), sig.newDigestMethod(DigestMethod.SHA1, null), transformList, null, null);
+		si = sig.newSignedInfo(sig.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE,
+					(C14NMethodParameterSpec) null),
+						sig.newSignatureMethod(SignatureMethod.RSA_SHA1, null),
+						Collections.singletonList(r)						
+		);
+		
+		KeyInfoFactory kif = sig.getKeyInfoFactory();
+		List x509Content = new ArrayList();		
+		x509Content.add(cert);
+		X509Data xd = kif.newX509Data(x509Content);
+		ki = kif.newKeyInfo(Collections.singletonList(xd));		
+		
+		DOMSignContext dsc = new DOMSignContext(getChavePrivada(), doc.getDocumentElement());
+		XMLSignature signature = sig.newXMLSignature(si, ki);
+		signature.sign(dsc);
+		OutputStream os = new FileOutputStream("nfeassinada.xml");
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer trans = tf.newTransformer();
+		trans.transform(new DOMSource(doc), new StreamResult(os));
+		
+	}
+    
+    public static PublicKey getChavePrivada() throws Exception{
+		
+		Key chavePrivada= (Key) cert.getPublicKey();
+		if(chavePrivada instanceof PublicKey){
+			System.out.println("Chave Privada encontrada!");
+			return (PublicKey) chavePrivada;
+		}
+		return null;		
+	}
 }

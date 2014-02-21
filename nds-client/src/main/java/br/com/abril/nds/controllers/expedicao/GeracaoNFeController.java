@@ -256,7 +256,7 @@ public class GeracaoNFeController extends BaseController {
 			this.geracaoNFeService.gerarNotaFiscal(filtro, idCotasSuspensas, null);
 			
 		} catch (IOException ioe){
-			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar nota fiscal");
 		} 
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "NF-e(s) gerada(s) com sucesso."), Constantes.PARAM_MSGS).serialize();

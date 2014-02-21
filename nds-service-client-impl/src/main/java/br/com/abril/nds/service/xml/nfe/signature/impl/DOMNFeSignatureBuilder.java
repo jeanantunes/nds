@@ -135,15 +135,4 @@ public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, Initia
 		logger.debug("Elemento <SignedInfo .../> preparado para assinatura.");
 		return signedInfo;
 	}
-
-	@Resource
-	protected void setXMLSignatureFactory(XMLSignatureFactory signatureFactory) {
-		this.signatureFactory = signatureFactory;
-	}
-	
-	@Resource
-	public void setKeyInfoBuilder(KeyInfoBuilder keyInfoBuilder) {
-		this.keyInfoBuilder = keyInfoBuilder;
-	}
-	
 }
