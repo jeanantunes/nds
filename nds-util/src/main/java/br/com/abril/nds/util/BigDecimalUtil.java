@@ -29,6 +29,15 @@ public class BigDecimalUtil {
 		return false;
 	}
 	
+	public static boolean isMenorQueZero(BigDecimal valor) {
+		
+		if(valor!=null && valor.compareTo(BigDecimal.ZERO)<0) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Caso o valor passado for null,
 	 * retorna o BigDecimal ZERO.

@@ -53,6 +53,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
+import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
@@ -60,6 +61,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -901,6 +903,32 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
         return rateiosProcessados;
     }
     
+    /**
+     * Método que obtém a data de recebimento de uma nota fiscal de entrada
+     * cujo recebimento físico tenha sído confirmado.
+     * 
+     * @param recebimentoFisico
+     * 
+     * @return Date
+     */
+    private Date obterDataRecebimentoNota(RecebimentoFisico recebimentoFisico) {
+    	
+    	if(recebimentoFisico != null && recebimentoFisico.getDataConfirmacao()!=null) {
+    		
+    		NotaFiscalEntrada notaFiscalEntrada = recebimentoFisico.getNotaFiscal();
+    		
+    		if(notaFiscalEntrada!=null && notaFiscalEntrada.getDataRecebimento()!=null) {
+    			
+    			return DateUtil.removerTimestamp(notaFiscalEntrada.getDataRecebimento());
+    			
+    		}
+    		
+    	}
+    	
+    	return DateUtil.removerTimestamp(Calendar.getInstance().getTime());
+    	
+    }
+    
     @Override
     @Transactional(readOnly = true)
     public boolean validarDataLancamentoDiferenca(final Date dataLancamentoDiferenca,
@@ -928,12 +956,11 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
                 itemRecebimentoFisico.getRecebimentoFisico().setDataConfirmacao(Calendar.getInstance().getTime());
             }
             
-            final Date dataConfirmacaoRecebimentoFisico =
-                    DateUtil.removerTimestamp(
-                            itemRecebimentoFisico.getRecebimentoFisico().getDataConfirmacao());
-            
-            final long diferencaDias = DateUtil.obterDiferencaDias(
-                    dataConfirmacaoRecebimentoFisico, dataLancamentoDiferenca);
+
+          final Date dataRecebimentoNota = obterDataRecebimentoNota(itemRecebimentoFisico.getRecebimentoFisico());
+          
+          final long diferencaDias = DateUtil.obterDiferencaDias(
+        		  dataRecebimentoNota, dataLancamentoDiferenca);
             
             if (diferencaDias == numeroDiasPermitidoLancamento
                     || diferencaDias < numeroDiasPermitidoLancamento) {
@@ -1041,14 +1068,6 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
             break;
             
         case SOBRA_EM_DIRECIONADA_COTA:
-            
-            parametroNumeroDiasLancamento =
-            parametroSistemaRepository.buscarParametroPorTipoParametro(
-                    TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM);
-            
-            break;
-            
-        case SOBRA_ENVIO_PARA_COTA:
             
             parametroNumeroDiasLancamento =
             parametroSistemaRepository.buscarParametroPorTipoParametro(
@@ -1180,13 +1199,8 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
             final boolean validarTransfEstoqueDiferenca,
             final Date dataLancamento, final Origem origem) {
         
-        final List<TipoDiferenca> tiposDiferencaSobraCota =
-                Arrays.asList(
-                        TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA,
-                        TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA
-                        );
-        
-        if (tiposDiferencaSobraCota.contains(tipoDiferenca)) {
+        if (tipoDiferenca.isSobra() && 
+        		!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
             
             try {
                 
@@ -1210,7 +1224,11 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
         
         GrupoMovimentoEstoque grupoMovimentoEstoque;
         
-        if (tipoDiferenca.isDiferencaDe()) {
+        if (TipoDiferenca.SOBRA_ENVIO_PARA_COTA.equals(tipoDiferenca)) {
+        	
+        	return tipoDiferenca.getTipoMovimentoEstoque();
+        	
+        } else if (tipoDiferenca.isDiferencaDe()) {
             
             if (tipoDiferenca.isFalta()) {
                 

@@ -151,18 +151,27 @@ public class BoxServiceImpl implements BoxService {
 	@Transactional(readOnly=true)
 	public List<Box> obterBoxPorIntervaloCodigo(Integer codigoBoxDe, Integer codigoBoxAte){
 		
-		Integer boxDe = codigoBoxDe==null?0:codigoBoxDe;
-		
-		Integer boxAte = codigoBoxAte==null?0:codigoBoxAte;
-		
-		if (boxDe.compareTo(boxAte) > 0 ){
+		if (codigoBoxDe != null && codigoBoxAte != null && codigoBoxDe.compareTo(codigoBoxAte) > 0 ){
 			
-			boxDe = codigoBoxAte;
+			codigoBoxDe = codigoBoxAte;
 			
-			boxAte = codigoBoxDe;
+			codigoBoxAte = codigoBoxDe;
 		}
 
-		List<Box> boxes = this.boxRepository.obterBoxPorIntervaloCodigo(boxDe, boxAte);
+		List<Box> boxes = null;
+		
+		if (codigoBoxDe != null && codigoBoxAte != null) {
+		
+			boxes = this.boxRepository.obterBoxPorIntervaloCodigo(codigoBoxDe, codigoBoxAte);
+		
+		} else if (codigoBoxDe != null) {
+			
+			boxes = this.boxRepository.obterBoxPorCodigo(codigoBoxDe);
+			
+		} else if (codigoBoxAte != null) {
+			
+			boxes = this.boxRepository.obterBoxPorCodigo(codigoBoxAte);
+		}
 		
 		return boxes;
 	}

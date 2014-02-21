@@ -1019,33 +1019,21 @@ var analiseParcialController = $.extend(true, {
         analiseParcialController.carregarEdicoesBaseEstudo(_id);
 
         $('#liberar').click(function(event){
-            if ($('#status_estudo').text() == 'Liberado') {
-                analiseParcialController.exibirMsg('WARNING', ['Estudo já está libearado.']);
-            } else if ($('#saldo_reparte').text() != 0) {
-                analiseParcialController.exibirMsg('WARNING', ['Não é possível liberar estudo com saldo de reparte.']);
-            } else {
-                $('<div>Liberar estudo?</div>').dialog({
-                    escondeHeader: false,
-                    title: 'Confirmação',
-                    buttons: {
-                        "Confirmar": function() {
-                            $(this).dialog("close");
-                            $.post(analiseParcialController.path +'/distribuicao/analise/parcial/liberar', {'id': $('#estudoId').val()},function(){
-                                $('#status_estudo').text('Liberado');
-                                analiseParcialController.exibirMsg('SUCCESS', ['Estudo liberado com sucesso!']);
-                                if(typeof(matrizDistribuicao)=="object"){
-                                	matrizDistribuicao.carregarGrid();
-                                }
-                                
-                                var disabled = $('#status_estudo').text()==='Liberado';    
-                                $('.reparteSugerido').attr('disabled','disabled');
-                            });
-                        },
-                        "Cancelar": function() {
-                            $(this).dialog("close");
-                        }
-                    }
-                });
+            if(analiseParcialController.verificacoesParaLiberarEstudo()) {
+                
+            	var id = $('#estudoId').val();
+		    	
+    	    	$.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/verificacoesParaLiberarEstudo',
+    	    			[{name : 'estudoId', value : id}],
+    				
+	    			function(result) {
+    	    			analiseParcialController.liberarEstudo();
+    	    		},
+    				function(result) {
+    					analiseParcialController.exibirMsg(result.tipoMensagem, result.listaMensagens);
+    				},
+    				null
+    			);
             }
             event.preventDefault();
         });
@@ -1072,6 +1060,49 @@ var analiseParcialController = $.extend(true, {
         });
 
 //        analiseParcialController.cotasQueNaoEntraramNoEstudo();
+    },
+    
+    verificacoesParaLiberarEstudo : function(){
+    	
+    	if ($('#status_estudo').text() == 'Liberado') {
+            analiseParcialController.exibirMsg('WARNING', ['Estudo já está libearado.']);
+            return false;
+        }else if ($('#saldo_reparte').text() != 0) {
+            analiseParcialController.exibirMsg('WARNING', ['Não é possível liberar estudo com saldo de reparte.']);
+            return false;
+    	}else{
+    		return true;
+    	}
+    	
+    },
+    
+    liberarEstudo : function(){
+    	
+    	$('<div>Liberar estudo?</div>').dialog({
+			escondeHeader: false,
+			title: 'Confirmação',
+			buttons: {
+				"Confirmar": function() {
+					$(this).dialog("close");
+					$.post(analiseParcialController.path +'/distribuicao/analise/parcial/liberar', {'id': $('#estudoId').val()},function(){
+						
+						$('#status_estudo').text('Liberado');
+						analiseParcialController.exibirMsg('SUCCESS', ['Estudo liberado com sucesso!']);
+						
+						if(typeof(matrizDistribuicao)=="object"){
+							matrizDistribuicao.carregarGrid();
+						}
+						
+						var disabled = $('#status_estudo').text()==='Liberado';    
+						$('.reparteSugerido').attr('disabled','disabled');
+					});
+				},
+				"Cancelar": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+    	
     },
     
     preProcessGridNaoSelec : function(resultado) {
