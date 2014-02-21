@@ -23,7 +23,8 @@ public class NotaFiscalTest {
 		try {
 			String schemaFile = "src/main/resources/xsd/v"+ versaoNFE2 +"/nfe_v"+ versaoNFE2 +".xsd";
 			//String xmlFile = "src/main/resources/xmlGerado.xml";
-			String xmlFile = "src/main/resources/nfe-v"+ versaoNFE2 +"-2.xml";
+			//String xmlFile = "src/main/resources/nfe-v"+ versaoNFE2 +"-2.xml";
+			String xmlFile = "/home/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/nfeassinada.xml";
 			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			System.out.println("Schema: "+ schemaFile);
 			Schema schema = factory.newSchema(new File(schemaFile));
