@@ -38,6 +38,8 @@ import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.EstudoPDV;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
+import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoPDVRepository;
 import br.com.abril.nds.repository.FixacaoReparteRepository;
@@ -80,6 +82,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     
     @Autowired
 	private EstudoService estudoService;
+    
+    @Autowired
+    private EstudoCotaGeradoRepository estudoCotaGerado;
+    
+    @Autowired
+    private EstudoGeradoRepository estudoGerado;
+    
     
     private Map<String, String> mapClassificacaoCota;
 
@@ -390,4 +399,16 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         analiseParcialRepository.atualizaReparteTotalESaldo(idEstudo, reparteTotal);
         return estudoGeradoRepository.buscarPorId(idEstudo).getSobra();
     }
+
+	@Override
+	@Transactional
+	public List<EstudoCotaGerado> obterEstudosCotaGerado(Long id) {
+		return estudoCotaGerado.obterEstudosCota(id);
+	}
+
+	@Override
+	@Transactional
+	public BigDecimal obterReparteLancamentoEstudo(Long idEstudo) {
+		return estudoGerado.reparteEstudoOriundoDoLancamento(idEstudo);
+	}
 }

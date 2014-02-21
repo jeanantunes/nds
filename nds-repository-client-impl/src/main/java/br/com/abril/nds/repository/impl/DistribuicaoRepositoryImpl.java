@@ -65,15 +65,14 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" join produto_fornecedor prodForn on prodForn.PRODUTO_ID = prod.ID")
 		.append(" join fornecedor forn on forn.ID = prodForn.fornecedores_ID")
 		.append(" join pessoa ON pessoa.ID = forn.JURIDICA_ID")
-		.append(" left join LANCAMENTO_PARCIAL lancamento_parcial ON prodEdic.ID = lancamento_parcial.PRODUTO_EDICAO_ID")
-		.append(" left join PERIODO_LANCAMENTO_PARCIAL plp ON lancamento_parcial.ID = plp.LANCAMENTO_PARCIAL_ID ")
+		.append(" left join PERIODO_LANCAMENTO_PARCIAL plp ON plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID ")
+		.append(" left join LANCAMENTO_PARCIAL lancamento_parcial ON plp.LANCAMENTO_PARCIAL_ID = lancamento_parcial.ID")
 		.append(" where prod.ATIVO = true")
 		.append(" and prodEdic.ATIVO = true")
 		.append(" and lanc.status in ('BALANCEADO', 'PLANEJADO', 'CONFIRMADO', 'EM_BALANCEAMENTO', 'FURO')")
 		.append(" and forn.SITUACAO_CADASTRO = 'ATIVO'")
 		.append(" and lanc.EXPEDICAO_ID is null")
-		.append(" and (lanc.PERIODO_LANCAMENTO_PARCIAL_ID is null or lanc.PERIODO_LANCAMENTO_PARCIAL_ID = plp.id) ")
-	    .append(" and (plp.NUMERO_PERIODO is null or plp.NUMERO_PERIODO = 1) ");
+		.append(" and (lanc.PERIODO_LANCAMENTO_PARCIAL_ID is null or lanc.PERIODO_LANCAMENTO_PARCIAL_ID = plp.id) ");
 	 
 	 	if(filtro.getEstudoId()!=null){
 	 		sql.append(" and estudo.id = :estudoId");

@@ -141,13 +141,13 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			hql.append(" and movEstCotaLancDif.id = movimentoEstoque.id ");
 		}*/
 
-		if(filtro.getIdBox() == null ) {
+		if(filtro.getCodigoBox() == null ) {
 			
 			hql.append(" and roteiro.descricaoRoteiro <> 'Especial' ");
 			
-		} else if(filtro.getIdBox() != null && filtro.getIdBox() != -1) {
+		} else if(filtro.getCodigoBox() != null && filtro.getCodigoBox() != -1) {
 			
-			hql.append(" and box.id = :idBox ");
+			hql.append(" and box.codigo = :codigoBox ");
 			hql.append(" and roteiro.descricaoRoteiro <> 'Especial' ");
 			
 		} else {
@@ -265,9 +265,9 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			"statusLancamento", 
 				new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
 		
-		if(filtro.getIdBox() != null && filtro.getIdBox() != -1) {
+		if(filtro.getCodigoBox() != null && filtro.getCodigoBox() != -1) {
 			
-			query.setParameter("idBox", filtro.getIdBox());
+			query.setParameter("codigoBox", filtro.getCodigoBox());
 		}
 		
 		if(filtro.getIdRoteiro() != null){

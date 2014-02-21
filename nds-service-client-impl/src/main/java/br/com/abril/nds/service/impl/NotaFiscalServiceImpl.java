@@ -601,7 +601,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				jc = JAXBContext.newInstance(NotaFiscal.class);
 		        Marshaller marshaller = jc.createMarshaller();
 		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		        //marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", "");
 		        marshaller.marshal(notaFiscal, System.out);
 		        
 		        

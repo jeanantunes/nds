@@ -110,7 +110,7 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Saída de sobra de pacote direcionada para cota
 	 */
-	SOBRA_ENVIO_PARA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
+	SOBRA_ENVIO_PARA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.GANHO),
 	
 	/**
 	 * Sobra em pacote direcionada para cota

@@ -159,7 +159,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 	
 		cota = obterCota(filtro.getIdCota().intValue());
 		if(cota == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inesxistente.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente.");
 		}
 		filtro.setIdCota(cota.getId());
 				
@@ -291,7 +291,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
-			FileExporter.to("consignado_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+			FileExporter.to("consignado_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 					listaConsignadoCota, ConsultaConsignadoCotaDTO.class, this.httpResponse);	
 			
 		}else{
@@ -303,7 +303,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
-			FileExporter.to("consignado_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+			FileExporter.to("consignado_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 					listaConsignadoCota, ConsultaConsignadoCotaPeloFornecedorDTO.class, this.httpResponse);
 			
 		}

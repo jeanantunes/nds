@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 
 public class LancamentoDTO implements Serializable {
 
@@ -24,6 +25,16 @@ public class LancamentoDTO implements Serializable {
 	
 	private StatusLancamento statusLancamento;
 	
+	private TipoLancamento tipoLancamento;
+	
+	public TipoLancamento getTipoLancamento() {
+		return tipoLancamento;
+	}
+
+	public void setTipoLancamento(TipoLancamento tipoLancamento) {
+		this.tipoLancamento = tipoLancamento;
+	}
+
 	public Long getId() {
 		return id;
 	}
