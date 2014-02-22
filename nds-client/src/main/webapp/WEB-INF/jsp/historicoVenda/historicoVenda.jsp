@@ -24,12 +24,6 @@ $(function() {
       </a>
     </span>
 
-    <span class="bt_novos">
-      <a href="javascript:;" id="botaoCancelar" rel="tipsy" title="Cancelar">
-        <img src="images/ico_excluir.gif" hspace="5" border="0" />
-      </a>
-    </span>
-
   </div>
 </div>
 <br clear="all" />

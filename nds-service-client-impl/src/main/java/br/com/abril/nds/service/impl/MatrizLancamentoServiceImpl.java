@@ -46,6 +46,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.BigIntegerUtil;
@@ -77,6 +78,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     
     @Autowired
     private FornecedorRepository fornecedorRepository;
+    
+    @Autowired
+    private LancamentoService lancamentoService;
     
     
     @Override
@@ -1695,9 +1699,17 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         
         final boolean isDataNoPeriodo = DateUtil.validarDataEntrePeriodo(
                 dataLancamentoDistribuidor, dataInicial, dataFinal);
+        
+        if(dataLancamentoDistribuidor.after(produtoLancamento.getDataLancamentoDistribuidor()) 
+       && !produtoLancamento.getStatusLancamento().equals(StatusLancamento.EXPEDIDO.name())){
+        	
+        	return true;
+        }else {
+        
         return !produtoLancamento.getStatusLancamento().equals(StatusLancamento.EXPEDIDO.name())
             && !this.isProdutoConfirmado(produtoLancamento) && !produtoLancamento.isStatusLancamentoEmBalanceamento()
             && (!produtoLancamento.isStatusLancamentoFuro() || !isDataNoPeriodo);
+        }
         
     }
     
