@@ -93,8 +93,7 @@ public class NFEImportUtil {
                 context = JAXBContext.newInstance(TNfeProc.class);
                 unmarshaller = context.createUnmarshaller();
                 
-                schema = schemaFactory.newSchema(Thread.currentThread().getContextClassLoader().getResource(
-                        NFEImportUtil.XSD_PPROC_NFE));
+                schema = schemaFactory.newSchema(Thread.currentThread().getContextClassLoader().getResource(NFEImportUtil.XSD_PPROC_NFE));
                 unmarshaller.setSchema(schema);
                 
                 final TNfeProc nfeProc = (TNfeProc) unmarshaller.unmarshal(arquivo);

@@ -72,10 +72,10 @@ public class Assinatura {
             SignatureMethod sm = fac.newSignatureMethod(SignatureMethod.RSA_SHA1, null);
             SignedInfo si = fac.newSignedInfo(cm, sm, Collections.singletonList(ref));
             //KeyStore ks = KeyStore.getInstance("PKCS12");
-            //KeyStore ks = KeyStore.getInstance("JKS");
-            KeyStore ks = KeyStore.getInstance("PKCS11");
+            KeyStore ks = KeyStore.getInstance("JKS");
+            // KeyStore ks = KeyStore.getInstance("PKCS11");
 
-            FileInputStream fis = new FileInputStream("/home/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/certificado.jks");
+            FileInputStream fis = new FileInputStream("C://Users/wrpaiva/Desktop/receita/certificado/certificado.jks");
             char[] senha = "changeit".toCharArray();
             ks.load(fis, senha);
             fis.close();
@@ -118,7 +118,7 @@ public class Assinatura {
             XMLSignature signature = fac.newXMLSignature(si, ki);
             signature.sign(dsc);
 
-            OutputStream os = new FileOutputStream("/home/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/nfeassinada.xml");
+            OutputStream os = new FileOutputStream("C://Users/wrpaiva/Desktop/receita/xml/nfe-assinada.xml");
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer trans = null;
             trans = tf.newTransformer();
