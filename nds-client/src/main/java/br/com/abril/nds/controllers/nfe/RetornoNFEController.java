@@ -71,8 +71,6 @@ public class RetornoNFEController extends BaseController {
 		
 		ParametroSistema pathNFEImportacao = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO);
 		
-		this.limparSessao();
-		
 		List<File> listaNotas = null;
 		
 		try {
@@ -195,7 +193,9 @@ public class RetornoNFEController extends BaseController {
 			
 					arquivoRetornoAuxiliar = arquivoRetorno;
 							
-				} else if (arquivoRetornoAuxiliar.getChaveAcesso().equals(arquivoRetorno.getChaveAcesso())) {
+				} 
+				
+				if (arquivoRetornoAuxiliar.getChaveAcesso().equals(arquivoRetorno.getChaveAcesso())) {
 				
 					arquivoRetorno = this.processarNotaCancelamento(arquivoRetornoAuxiliar, arquivoRetorno);
 				}

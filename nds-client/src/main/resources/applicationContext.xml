@@ -35,14 +35,6 @@
 		
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
 	
-	<!--
-	<bean id="documentBuilderFactory" class="com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl" />
-	
-	<bean id="securityHandler" class="br.com.abril.nds.service.xml.nfe.signature.impl.SimpleSecurityHandlerBean" />
-	
-	<bean id="signatureFactory" class="org.jcp.xml.dsig.internal.dom.DOMXMLSignatureFactory" />
-	
-	<bean id="signatureBuilder" class="br.com.abril.nds.service.xml.nfe.signature.impl.DOMNFeSignatureBuilder" /> -->
 	
 	<!-- 
 	    Beans de assinatura 

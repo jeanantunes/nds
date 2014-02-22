@@ -55,9 +55,9 @@ public class SecurityUtils {
     public static final String algoritmo= "RSA"; 
 	public static final String algoritmoAssinatura= "MD5withRSA"; 
 	private static final String C14N_TRANSFORM_METHOD = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-	public static File file= new File("C://nfe/keystore/certificado.jks"); // ‪C:\certificado.cer
+	public static File file= new File("C://Users/wrpaiva/Desktop/receita/certificado.jks"); // ‪C:\certificado.cer
 	private static String alias="alias";
-	private static char[] senha="clientpass".toCharArray(); 
+	private static char[] senha="changeit".toCharArray(); 
 	static XMLSignatureFactory sig;
 	static X509Certificate cert;
 	static KeyInfo ki; 
@@ -200,8 +200,8 @@ public class SecurityUtils {
     	Certificate certificate = null;
     	
     	KeyStore ksKeys = KeyStore.getInstance("JKS");
-		ksKeys.load(new FileInputStream("C://nfe/keystore/certificado.jks"), "clientpass".toCharArray());
-		ksKeys.getKey(alias, "clientpass".toCharArray());
+		ksKeys.load(new FileInputStream("C://Users/wrpaiva/Desktop/receita/certificado.jks"), "clientpass".toCharArray());
+		ksKeys.getKey(alias, "changeit".toCharArray());
 		Enumeration<String> aliases = ksKeys.aliases();
 		if (aliases.hasMoreElements()) {
 			String transportAlias = aliases.nextElement();
