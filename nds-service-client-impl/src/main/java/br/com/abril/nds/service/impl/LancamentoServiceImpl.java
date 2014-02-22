@@ -36,6 +36,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -67,6 +68,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
     
     private static final List<StatusLancamento> STATUS_LANCAMENTOS_REMOVIVEL = Arrays.asList(
             StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO,
@@ -387,10 +391,11 @@ public class LancamentoServiceImpl implements LancamentoService {
     	
     	Set <Date> diasConfirmados = new TreeSet<Date>();
     	Set <Date> diasNaoBalanceaveis = new TreeSet<Date>();
+    	Date diaOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
     	
     	for(Object[] lancamento : lista){
     		
-    		if(lancamento[1].equals(StatusLancamento.CONFIRMADO)){
+    		if(lancamento[1].equals(StatusLancamento.CONFIRMADO) && !((Date)lancamento[0]).before(diaOperacaoDistribuidor)){
     			
     			if(!diasConfirmados.contains((Date)lancamento[0])){
     			  diasConfirmados.add((Date)lancamento[0]);
