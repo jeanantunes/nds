@@ -493,6 +493,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 											  consolidadosCotaUnficacao);
 		}
 		
+		Set<String> setNossoNumeroEmail = new HashSet<String>();
+		
 		for (Entry<Cota, List<GerarCobrancaHelper>> entry : consolidadosCotaUnficacao.entrySet()){
 			
 			List<GerarCobrancaHelper> lista = entry.getValue();
@@ -531,15 +533,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					helperPrincipal.getDataConsolidado());
 			
 			if (helperPrincipal.getFormaCobrancaPrincipal() == null ? false :
-				helperPrincipal.getFormaCobrancaPrincipal().isRecebeCobrancaEmail() &&
 				setNossoNumero != null){
 				
 				setNossoNumero.add(nossoNumero);
 			}
+			
+			if (helperPrincipal.getFormaCobrancaPrincipal() == null ? false :
+                helperPrincipal.getFormaCobrancaPrincipal().isRecebeCobrancaEmail()){
+			    
+			    setNossoNumeroEmail.add(nossoNumero);
+			}
 		}
 		
-		
-        this.salvarBoletoEmailPendenteEnvio(setNossoNumero);
+        this.salvarBoletoEmailPendenteEnvio(setNossoNumeroEmail);
 		
 		if (!msgs.isEmpty()){
 			
