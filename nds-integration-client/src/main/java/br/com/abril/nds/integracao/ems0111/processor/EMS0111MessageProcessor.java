@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
@@ -25,6 +27,7 @@ import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -38,6 +41,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		MessageProcessor {
 
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private Set<Date> datasAbertas = new TreeSet<Date>();
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -48,6 +52,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private ParciaisService parciaisService;
 	
+	@Autowired
+	private LancamentoService lancamentoService;
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		distribuidorService.bloqueiaProcessosLancamentosEstudos();
@@ -55,6 +62,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 
 	@Override
 	public void processMessage(Message message) {
+		
+		//Recupera datas Abertas para matriz
+		datasAbertas = lancamentoService.obterDiasMatrizLancamentoAbertos();
 
 		EMS0111Input input = (EMS0111Input) message.getBody();
 				
@@ -155,7 +165,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			lancamento.setDataCriacao(new Date());// confirmado
 			
-			lancamento.setDataLancamentoDistribuidor(input.getDataLancamento());// confirmado
+			lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento()));// confirmado
 			
 			lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
 			
@@ -350,7 +360,6 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		
 		return (Lancamento) criteria.uniqueResult();
 	}
-	
 	/**
 	 * Trata o valor de um Number para evitar nullpointer.<br>
 	 * Caso o valor do Number seja null, será retornado 0 (zero).
@@ -384,6 +393,25 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	@Override
 	public void posProcess(Object tempVar) {
 		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
+	}
+	
+	private Date getDiaMatrizAberta(Date dataLctoDistibuidor){
+		
+		if(datasAbertas==null || datasAbertas.isEmpty()){
+		 return dataLctoDistibuidor;
+	    }else if(datasAbertas.contains(dataLctoDistibuidor)){
+		 return dataLctoDistibuidor;
+		}else{
+			for(Date data : datasAbertas){
+				
+				if(!data.before(dataLctoDistibuidor)){
+					return data;
+				}
+				
+			}
+		    return	(Date)datasAbertas.toArray()[0];
+		}
+		
 	}
 	
 }

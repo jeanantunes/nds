@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -243,10 +242,9 @@ public class HistogramaVendasController extends BaseController {
 		result.include("labelElemento", labelElemento);
 		result.include("classificacaoLabel", classificacaoLabel);
 		
-		NumberFormat f = NumberFormat.getNumberInstance();
-        // informações do resumo do histograma (parte inferior da tela)
-		this.session.setAttribute(REPARTE_TOTAL, f.format(reparteTotalDistribuidor / nrEdicoes.length));
-		result.include("reparteTotalDistribuidor", f.format(reparteTotalDistribuidor / nrEdicoes.length));
+		// informações do resumo do histograma (parte inferior da tela)
+		this.session.setAttribute(REPARTE_TOTAL, reparteTotalDistribuidor);
+		result.include("reparteTotalDistribuidor", reparteTotalDistribuidor);
 		
 		
 		

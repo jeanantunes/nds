@@ -52,5 +52,5 @@ public class NotaFiscalTest {
 			System.out.println("Exception: "+e.getMessage());
 		}
 
-	}
+	}	
 }

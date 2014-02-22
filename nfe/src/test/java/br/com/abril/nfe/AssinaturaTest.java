@@ -57,7 +57,7 @@ public class AssinaturaTest {
         
 		String content = null;
 		try {
-			content = new Scanner(new File("/home/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/sergioValidar3.xml")).useDelimiter("\\Z").next();
+			content = new Scanner(new File("C://Users/wrpaiva/Desktop/receita/xml/sergioValidar3.xml")).useDelimiter("\\Z").next();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
