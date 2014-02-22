@@ -1426,6 +1426,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         BigInteger cotasEsmagadas = BigInteger.ZERO;
         BigDecimal vendaEsmagadas = BigDecimal.ZERO;
         BigDecimal qtdeCotasSemVenda = BigDecimal.ZERO;
+        StringBuilder strCotas = new StringBuilder();
         for (int i = 0; i < newFaixasVenda.length; i++) {
             final String[] faixa = newFaixasVenda[i].split("-");
             final AnaliseHistogramaDTO obj =
@@ -1438,6 +1439,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 for (final String strCota : obj.getIdCotaStr().split(",")){
                     cotas.add(Integer.valueOf(strCota));
                 }
+                
+                strCotas.append(strCotas.length() == 0 ? obj.getIdCotaStr() : "," + obj.getIdCotaStr());
             }
             
             if (!cotas.isEmpty()){
@@ -1506,6 +1509,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         totalizar.setEncalheMedio(reparteTotal.subtract(vendaTotal).divide(new BigDecimal(qtdeCotas), 2, RoundingMode.HALF_EVEN));
         totalizar.setQtdeTotalCotasAtivas(cotaRepository.obterQuantidadeCotas(SituacaoCadastro.ATIVO));
         totalizar.setReparteDistribuido(movimentoEstoqueService.obterReparteDistribuidoProduto(codigoProduto));
+        totalizar.setIdCotaStr(strCotas.toString());
         
         for (AnaliseHistogramaDTO aDto : list){
         	aDto.setPartReparte(aDto.getRepTotal().multiply(CEM).divide(totalizar.getRepTotal(), 2, RoundingMode.HALF_EVEN));
