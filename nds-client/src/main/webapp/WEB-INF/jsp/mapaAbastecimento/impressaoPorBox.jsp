@@ -57,24 +57,28 @@ function imprimir(){
          <c:forEach items="${produtosMapa}" var="produto" varStatus="status">
             
             <tr class="class_linha_${status.index%2==0 ? 1:2}">
-              <td style="border-left:1px solid #000;padding-left:5px; ">${produto.nomeProduto}</td>
+              <td style="border-left:1px solid #000;padding-left:5px;">
+              	<div style="width: 130px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${produto.nomeProduto}</div>
+              </td>
               <td style="border-right:1px solid #000;padding-left:5px; ">${produto.numeroEdicao}</td>
               <td rowspan="2">
               <table width="100%" border="0" cellspacing="0" cellpadding="0" style="height:63px;">
                 <tr class="box_rel">
                 
                    <c:forEach items="${produto.boxQtde}" var="box" varStatus="statusBox">                
-                 		<td width="60" align="center" style="border-right:1px solid #000; border-bottom:1px solid #000;">${box.key}</td>
+                 		<td width="60" align="center" style="border-right:1px solid #000; border-bottom:1px solid #000;">
+                 			${box.value eq 0 ? '' : box.key}
+                 		</td>
                   </c:forEach>
                   
                   <td width="80" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
                 </tr>
                 <tr class="box_dados">
                   <c:forEach items="${produto.boxQtde}" var="box" varStatus="statusBox">                
-                 		<td align="center" style=" border-bottom:1px solid #000; border-right:1px solid #000;">${box.value eq 0 ? '': box.value}</td>
+                 		<td align="center" style=" border-bottom:1px solid #000; border-right:1px solid #000; font-size: 18px;">${box.value eq 0 ? '': box.value}</td>
                   </c:forEach>
                   
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">${produto.totalReparte}</td>
+                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000; font-size: 18px;">${produto.totalReparte}</td>
                 </tr>
                 
               </table>

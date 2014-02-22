@@ -199,7 +199,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
                             " cota.numeroCota as numeroCota, ").append(
                                     " coalesce(pessoa.nome, pessoa.razaoSocial) as nomeCota,").append(
                                             " cobranca.dataVencimento as dataVencimento,").append(" cobranca.dataEmissao as dataEmissao,")
-                                            .append(" cobranca.valor as valor,").append(" cobranca.tipoCobranca as tipoCobranca,").append(
+                                            .append(" ROUND(cobranca.valor,2) as valor,").append(" cobranca.tipoCobranca as tipoCobranca,").append(
                                                     " cobranca.vias as vias, ").append(" cobranca.nossoNumero as nossoNumero ");
         }
         
