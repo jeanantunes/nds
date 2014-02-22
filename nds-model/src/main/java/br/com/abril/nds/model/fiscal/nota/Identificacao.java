@@ -436,6 +436,7 @@ public class Identificacao implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "NATUREZA_OPERACAO_ID", updatable=true, insertable=true)
+	@XmlTransient
 	private NaturezaOperacao naturezaOperacao;
 	
 	/**

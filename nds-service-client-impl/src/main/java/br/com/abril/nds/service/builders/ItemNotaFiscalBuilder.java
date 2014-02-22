@@ -15,8 +15,10 @@ import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalItem;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
-import br.com.abril.nds.model.fiscal.nota.COFINS;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ICMS;
+import br.com.abril.nds.model.fiscal.nota.IPI;
+import br.com.abril.nds.model.fiscal.nota.Impostos;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
@@ -197,13 +199,63 @@ public class ItemNotaFiscalBuilder  {
 		detalheNotaFiscal.getProdutoServico().setValorTotalBruto(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde())));
 		detalheNotaFiscal.getProdutoServico().setValorUnitario(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
 		detalheNotaFiscal.getProdutoServico().setProdutoEdicao(new ProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao().getId()));
+		if(detalheNotaFiscal.getImpostos() == null) {
+			detalheNotaFiscal.setImpostos(new Impostos());
+		}
+		
 		for(Tributacao t : movimentoEstoqueCota.getProdutoEdicao().getProduto().getProdutoTributacao()) {
 			detalheNotaFiscal.getProdutoServico().setCst(t.getCstA().toString() + t.getCst().toString());
 			if("ICMS".equals(t.getTributo())) {
 				detalheNotaFiscal.getProdutoServico().setValorAliquotaICMS(t.getValorAliquota());
+				Class<?> clazz;
+				ICMS icms = null;
+				try {
+					clazz = Class.forName("br.com.abril.nds.model.fiscal.nota.ICMS"+ t.getCst().toString());
+					icms = (ICMS) clazz.newInstance();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				icms.setCst(t.getCstA().toString() + t.getCst().toString());
+				icms.setAliquota(t.getValorAliquota());
+				icms.setValorBaseCalculo(t.getBaseCalculo());
+				
+				detalheNotaFiscal.getImpostos().setIcms(icms);
 			}
 			if("IPI".equals(t.getTributo())) {
 				detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(t.getValorAliquota());
+				
+				//Class<?> clazz;
+				IPI ipi = new IPI();
+				
+				/*
+				try {
+					clazz = Class.forName("br.com.abril.nds.model.fiscal.nota.IPI"+ t.getCst().toString());
+					clazz.newInstance();
+					
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				*/
+				ipi.setCst(t.getCstA().toString() + t.getCst().toString());
+				ipi.setAliquota(t.getValorAliquota());
+				ipi.setValorBaseCalculo(t.getBaseCalculo());
+				
+				detalheNotaFiscal.getImpostos().setIpi(ipi);
 			}
 		}
 		

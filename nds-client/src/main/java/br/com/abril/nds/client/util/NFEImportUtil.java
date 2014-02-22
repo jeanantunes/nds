@@ -235,11 +235,9 @@ public class NFEImportUtil {
             final String cpfCnpj = null;
             final String chaveAcesso = procCancNFe.getRetCancNFe().getInfCanc().getChNFe();
             final Long protocolo = Long.parseLong(procCancNFe.getRetCancNFe().getInfCanc().getNProt());
-            final Date dataRecebimento = procCancNFe.getRetCancNFe().getInfCanc().getDhRecbto().toGregorianCalendar()
-                    .getTime();
+            final Date dataRecebimento = procCancNFe.getRetCancNFe().getInfCanc().getDhRecbto().toGregorianCalendar().getTime();
             final String motivo = procCancNFe.getCancNFe().getInfCanc().getXJust();
-            final Status status = Status.obterPeloCodigo(Integer.parseInt(procCancNFe.getRetCancNFe().getInfCanc()
-                    .getCStat()));
+            final Status status = Status.obterPeloCodigo(Integer.parseInt(procCancNFe.getRetCancNFe().getInfCanc().getCStat()));
             
             retornoNFEDTO.setNumeroNotaFiscal(idNotaFiscal);
             retornoNFEDTO.setCpfCnpj(cpfCnpj);

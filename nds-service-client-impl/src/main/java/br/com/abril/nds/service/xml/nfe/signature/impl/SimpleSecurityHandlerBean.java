@@ -58,7 +58,7 @@ public class SimpleSecurityHandlerBean extends AbstractSecurityHandlerBean {
 					logger.debug("Certificado: {}.", ((X509Certificate) certificate).getSubjectDN());
 					privateKey = (PrivateKey) ksKeys.getKey(transportAlias, password);
 				} else {
-					throw new IllegalArgumentException("Armazém principal não cont�m um certificado válido.");
+					throw new IllegalArgumentException("Armazém principal não contém um certificado válido.");
 				}
 			}
 		} catch (Exception e) {
