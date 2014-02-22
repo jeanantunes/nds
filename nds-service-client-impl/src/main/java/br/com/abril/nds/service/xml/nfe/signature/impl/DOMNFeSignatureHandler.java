@@ -3,7 +3,6 @@ package br.com.abril.nds.service.xml.nfe.signature.impl;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
-import javax.annotation.Resource;
 import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dom.DOMStructure;
 
@@ -54,15 +53,5 @@ public class DOMNFeSignatureHandler implements SignatureHandler {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrada a tag {} para assinar.");
 			
 		}
-	}
-	
-	@Resource
-	public void setSecurityHandler(SecurityHandler securityHandler) {
-		this.securityHandler = securityHandler;
-	}
-	
-	@Resource
-	public void setSignatureBuilder(SignatureBuilder<Element> signatureBuilder) {
-		this.signatureBuilder = signatureBuilder;
 	}
 }

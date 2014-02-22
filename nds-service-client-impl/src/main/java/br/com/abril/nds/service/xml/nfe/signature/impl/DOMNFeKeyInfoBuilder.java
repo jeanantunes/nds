@@ -11,13 +11,14 @@ import javax.xml.crypto.dsig.keyinfo.X509Data;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.service.xml.nfe.signature.KeyInfoBuilder;
 
 public class DOMNFeKeyInfoBuilder implements KeyInfoBuilder {
     
 	private static final Logger logger = LoggerFactory.getLogger(DOMNFeKeyInfoBuilder.class);
+	
+	@Resource
 	private XMLSignatureFactory signatureFactory;
 	
 	/**
@@ -32,8 +33,5 @@ public class DOMNFeKeyInfoBuilder implements KeyInfoBuilder {
 		return keyInfo;
 	}
 
-	@Resource
-	protected void setXMLSignatureFactory(XMLSignatureFactory signatureFactory) {
-		this.signatureFactory = signatureFactory;
-	}	
+
 }

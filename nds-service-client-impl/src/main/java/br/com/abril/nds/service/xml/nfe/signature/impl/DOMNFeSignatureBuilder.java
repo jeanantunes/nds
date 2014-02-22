@@ -8,7 +8,6 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.Reference;
@@ -135,15 +134,4 @@ public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, Initia
 		logger.debug("Elemento <SignedInfo .../> preparado para assinatura.");
 		return signedInfo;
 	}
-
-	@Resource
-	protected void setXMLSignatureFactory(XMLSignatureFactory signatureFactory) {
-		this.signatureFactory = signatureFactory;
-	}
-	
-	@Resource
-	public void setKeyInfoBuilder(KeyInfoBuilder keyInfoBuilder) {
-		this.keyInfoBuilder = keyInfoBuilder;
-	}
-	
 }
