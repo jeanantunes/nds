@@ -42,10 +42,7 @@ public class DOMNFeFileReader {
 	
 	/**
 	 * Ler arquivo e assina.
-	 * 
-	 * @param inputStream
-	 * @param tagToSign
-	 * 
+	 * @param inputStream / @param tagToSign
 	 * @throws Exception
 	 */
 	public Result loadAndSign(InputStream inputStream, String tagToSign) throws Exception {
@@ -53,6 +50,7 @@ public class DOMNFeFileReader {
 		Document document = builder.parse(inputStream);
 		
 		Element root = document.getDocumentElement();
+		root.setIdAttribute("Id", true);
 		Element parent = (Element) document.getElementsByTagName("NFe").item(0);
 		
 		signatureHandler.sign(new DOMStructure(parent), tagToSign);
@@ -68,5 +66,4 @@ public class DOMNFeFileReader {
 		}
 		return streamResult;
 	}
-
 }

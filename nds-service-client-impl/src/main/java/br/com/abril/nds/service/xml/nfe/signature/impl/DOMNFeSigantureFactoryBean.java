@@ -9,11 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
-/**
- * Cria inst�ncias de <code>XMLSignatureFactory</code>.
- * 
- * @author mauriciofernandesdecastro
- */
 public class DOMNFeSigantureFactoryBean implements InitializingBean, FactoryBean<XMLSignatureFactory> {
 
 	public static final String DEFAULT_PROVIDER_CLASS_NAME = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
@@ -41,11 +36,9 @@ public class DOMNFeSigantureFactoryBean implements InitializingBean, FactoryBean
 	public void setProviderClassName(String providerClassName) {
 		this.providerClassName = providerClassName;
 	}
-	
-	
-	
-    /**
-     * Prepara a cria��o de inst�ncias de <code>XMLSignatureFactory</code>.
+    
+	/**
+     * Prepara a criação de instancias de <code>XMLSignatureFactory</code>.
      */
 	public void afterPropertiesSet() throws Exception {
 		if (getProviderName().isEmpty()) {
@@ -54,7 +47,7 @@ public class DOMNFeSigantureFactoryBean implements InitializingBean, FactoryBean
 		}
 		if (getProviderClassName().isEmpty()) {
 			setProviderClassName(DEFAULT_PROVIDER_CLASS_NAME);
-			logger.warn("PRovider name n�o definido, usando {}", getProviderClassName());
+			logger.warn("PRovider name não definido, usando {}", getProviderClassName());
 		}
 		providerName = System.getProperty(getProviderName(), getProviderClassName());
 	}
@@ -63,7 +56,7 @@ public class DOMNFeSigantureFactoryBean implements InitializingBean, FactoryBean
 		logger.debug("Usando o provider com nome {}.", providerName);
 		Provider provider = (Provider) Class.forName(providerName).newInstance();
 		XMLSignatureFactory xmlSignatureFactory = XMLSignatureFactory.getInstance("DOM", provider);
-		logger.debug("A inst�ncia de XMLSignatureFactory � {}.", xmlSignatureFactory);
+		logger.debug("A instância de XMLSignatureFactory é {}.", xmlSignatureFactory);
 		return xmlSignatureFactory;
 	}
 	

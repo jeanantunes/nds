@@ -118,6 +118,7 @@ import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
@@ -664,7 +665,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-		        
 		        
 			} catch (JAXBException e) {
 				LOGGER.error("Erro ao gerar XML", e);
