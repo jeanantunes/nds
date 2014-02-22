@@ -43,6 +43,7 @@ var anaLiseHistogramaController = $.extend(true, {
 		
 		$("#cotasAtivasCell", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.qtdeTotalCotasAtivas || 0));
 		$("#reparteDistribuidoCell", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.repTotal || 0 ));
+		$("#reparteTotalDistribuidor_", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.repTotal || 0 ));
 		$("#repMedioCell", anaLiseHistogramaController.workspace).text(floatToPrice(lastRow.cell.repMedio || 0));
 		$("#vdaMedioCell", anaLiseHistogramaController.workspace).text(floatToPrice(lastRow.cell.vdaMedio || 0));
 		$("#cotasEsmagadasCell", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.cotasEsmagadas || 0));
@@ -53,12 +54,9 @@ var anaLiseHistogramaController = $.extend(true, {
 		
 		
 		var vdaTotal = parseInt(lastRow.cell.vdaTotal);
-		//var repTotal = parseInt(lastRow.cell.repTotal);
 		
 		var qtdeCotas = parseInt(lastRow.cell.qtdeCotas);
-		//cotas ativas da faixa de venda
-		//var qtdeCotasAtivas = parseInt(lastRow.cell.qtdeCotasAtivas);
-		//total de cotas ativas 
+		
 		var qtdeTotalCotasAtivas = parseInt(lastRow.cell.qtdeTotalCotasAtivas);
 		
 		var qtdeCotasSemVenda = parseInt(lastRow.cell.qtdeCotasSemVenda);
@@ -216,14 +214,16 @@ var anaLiseHistogramaController = $.extend(true, {
 					
 					if (index == ultimo){
 						
-						rowCell.faixaVenda = rowCell.faixaVenda;
+						rowCell.faixaVenda = "<a class='histogramafaixaVenda' href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotaStr');\">"+
+						rowCell.faixaVenda + "</a>";
+						//rowCell.faixaVenda = rowCell.faixaVenda;
 					} else {
 						
 						rowCell.faixaVenda = "<a class='histogramafaixaVenda' href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotaStr');\">"+
 						"De " + row.cell.faixaDe + " a " + row.cell.faixaAte + "</a>";
 					}					
 					
-					if(parseInt(rowCell.qtdeCotas)>0 && index != ultimo){
+					if(parseInt(rowCell.qtdeCotas) > 0 && parseInt(rowCell.cotasEsmagadas) > 0 && index != ultimo){
 						rowCell.cotasEsmagadas="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+
 						index+",'idCotasEsmagadas');\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
 					}
