@@ -1035,6 +1035,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 					rota = this.rotaRepository.buscarPorId(rotaDTO.getId());
                     
 					rota.setRoteiro(roteiro);
+					rota.setOrdem(rotaDTO.getOrdem());
 					
 					if (rota != null) {
 						
