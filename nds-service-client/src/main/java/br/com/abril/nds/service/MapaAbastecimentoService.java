@@ -1,6 +1,5 @@
 package br.com.abril.nds.service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -176,6 +175,6 @@ public interface MapaAbastecimentoService {
 	 * @param filtro
 	 * @return
 	 */
-	HashMap<Long, MapaProdutoCotasDTO> obterMapaDeImpressaoPorEntregador(
+	Map<Long, MapaProdutoCotasDTO> obterMapaDeImpressaoPorEntregador(
 			FiltroMapaAbastecimentoDTO filtro);
 }
