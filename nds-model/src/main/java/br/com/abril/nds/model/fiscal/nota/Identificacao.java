@@ -70,6 +70,21 @@ public class Identificacao implements Serializable {
 		public int getValor() {
 			return valor;
 		}
+		
+		public static FormaPagamento getByValue(Integer valor) {
+			
+			switch(valor) {
+				case 0:
+					return A_VISTA;
+				case 1:
+					return A_PRAZO;
+				case 2:
+					return OUTROS;
+				default:
+					return null;
+			}
+			
+		}
 
 	}	
 	

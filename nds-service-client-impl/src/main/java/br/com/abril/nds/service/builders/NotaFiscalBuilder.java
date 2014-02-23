@@ -3,9 +3,11 @@ package br.com.abril.nds.service.builders;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Random;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -35,6 +37,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscalInformacoes;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
 
+@Component
 public class NotaFiscalBuilder implements Serializable {
 	
 	private static final long serialVersionUID = 176874569807919538L;
@@ -148,64 +151,73 @@ public class NotaFiscalBuilder implements Serializable {
 	}
 
 
-	public static void montarHeaderNotaFiscal(NotaFiscal notaFiscal2, Cota cota) {
+	public static void montarHeaderNotaFiscal(NotaFiscal notaFiscal, Cota cota) {
 		
-		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacao() == null) {
-			notaFiscal2.getNotaFiscalInformacoes().setIdentificacao(new Identificacao());
+		ResourceBundle rb = ResourceBundle.getBundle("nds-client-nfe");
+		String versaoEmissor = rb.getString("nfe.informacoes.versaoEmissor");
+		FormaPagamento formaPagamento;
+		try {
+			formaPagamento = FormaPagamento.getByValue(Integer.valueOf(rb.getString("nfe.informacoes.tipoPagamento")));
+		} catch (NumberFormatException nfe) {
+			formaPagamento = FormaPagamento.OUTROS;
 		}
 		
-		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario() == null) {
-			notaFiscal2.getNotaFiscalInformacoes().setIdentificacaoDestinatario(new IdentificacaoDestinatario());
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacao() == null) {
+			notaFiscal.getNotaFiscalInformacoes().setIdentificacao(new Identificacao());
+		}
+		
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario() == null) {
+			notaFiscal.getNotaFiscalInformacoes().setIdentificacaoDestinatario(new IdentificacaoDestinatario());
 		}
 
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setFormaPagamento(FormaPagamento.A_VISTA);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormaPagamento(formaPagamento);
 		
 		//FIXME: Ajustar para variavel global
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setTipoAmbiente(TipoAmbiente.HOMOLOGACAO);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoAmbiente(TipoAmbiente.HOMOLOGACAO);
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setTipoEmissao(TipoEmissao.NORMAL);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoEmissao(TipoEmissao.NORMAL);
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.NORMAL);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.NORMAL);
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setOperacaoConsumidorFinal(OperacaoConsumidorFinal.NAO);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setOperacaoConsumidorFinal(OperacaoConsumidorFinal.NAO);
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setPresencaConsumidor(PresencaConsumidor.NAO_SE_APLICA);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setPresencaConsumidor(PresencaConsumidor.NAO_SE_APLICA);
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setVersaoSistemaEmissao("2.2.21");
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setVersaoSistemaEmissao(versaoEmissor);
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setFormatoImpressao(FormatoImpressao.PAISAGEM);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormatoImpressao(FormatoImpressao.PAISAGEM);
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setModeloDocumentoFiscal("55");
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setModeloDocumentoFiscal("55");
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.EMISSAO_NFE_APLICATIVO_FORNECIDO_PELO_FISCO);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.EMISSAO_NFE_APLICATIVO_FORNECIDO_PELO_FISCO);
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setNumeroDocumentoFiscal(Long.parseLong(new Random().nextInt(10000000)+""));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNumeroDocumentoFiscal(Long.parseLong(new Random().nextInt(10000000)+""));
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setDataEmissao(new Date());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDataEmissao(new Date());
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setCodigoUf(35L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoUf());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoUf(35L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoUf());
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setCodigoMunicipio(3550308L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoCidadeIBGE());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoMunicipio(3550308L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoCidadeIBGE());
 		
 		//FIXME: Ajustar o valor do codigoNF
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setCodigoNF(Integer.toString(new Random().nextInt(90000000 - 10000000) + 10000000));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoNF(Integer.toString(new Random().nextInt(90000000 - 10000000) + 10000000));
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(0L);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(0L);
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setTipoOperacao(TipoOperacao.SAIDA);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoOperacao(TipoOperacao.SAIDA);
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao();
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao();
 		
 	}
 

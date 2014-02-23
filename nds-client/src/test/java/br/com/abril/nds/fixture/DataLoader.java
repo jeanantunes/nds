@@ -12344,7 +12344,7 @@ public class DataLoader {
 		String justificativaEntradaContigencia = "Justificativa";
 		List<NotaFiscalReferenciada> listReferenciadas = null;
 		Long numeroDocumentoFiscal = 1234L;
-		String serie = "123A";
+		Long serie = 123L;
 		TipoOperacao tipoOperacao = TipoOperacao.ENTRADA;
 		
 		Identificacao identificacao = Fixture.identificacao(

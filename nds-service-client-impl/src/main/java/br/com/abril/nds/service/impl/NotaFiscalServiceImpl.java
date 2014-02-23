@@ -663,7 +663,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					trans.transform(new DOMSource(document), new StreamResult(os2));
 		            os2.flush();
 		            os2.close();
-		            
 			        
 				} catch (ParserConfigurationException e) {
 					// TODO Auto-generated catch block
