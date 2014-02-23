@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -39,7 +39,7 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroViewNotaFiscalDTO filtro) {
+	public List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroNFeDTO filtro) {
 		
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
@@ -68,7 +68,7 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 	}
 	
 	@Override
-	public Long consultaCotaExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
+	public Long consultaCotaExemplaresSumarizadosQtd(FiltroNFeDTO filtro) {
 		
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
@@ -80,12 +80,12 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 	
 	/**
 	 * Obter conjunto de cotas
-	 * @param FiltroViewNotaFiscalDTO
+	 * @param FiltroNFeDTO
 	 * @return List ids
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Cota> obterConjuntoCotasNotafiscal(FiltroViewNotaFiscalDTO filtro) {
+	public List<Cota> obterConjuntoCotasNotafiscal(FiltroNFeDTO filtro) {
 		
 		// OBTER ID DE TODAS AS COTAS DA TELA
 		StringBuilder hql = new StringBuilder("SELECT ");
@@ -103,7 +103,7 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<MovimentoEstoqueCota> obterMovimentosEstoqueCota(FiltroViewNotaFiscalDTO filtro) {
+	public List<MovimentoEstoqueCota> obterMovimentosEstoqueCota(FiltroNFeDTO filtro) {
 	
 		// ITENS DA NOTA FISCAL
 		StringBuilder hql = new StringBuilder("SELECT mec");
@@ -112,7 +112,7 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 		return query.list();
 	}
 	
-	private StringBuilder queryConsultaNfe(FiltroViewNotaFiscalDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
+	private StringBuilder queryConsultaNfe(FiltroNFeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
 		
 		hql.append(" FROM MovimentoEstoqueCota mec ")
 		.append(" JOIN mec.tipoMovimento tipoMovimento ")
@@ -186,7 +186,7 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 		return hql;
 	}
 	
-	public Query queryConsultaNfeParameters(StringBuilder hql, FiltroViewNotaFiscalDTO filtro) {
+	public Query queryConsultaNfeParameters(StringBuilder hql, FiltroNFeDTO filtro) {
 		
 
 		// Realizar a consulta e converter ao objeto cota exemplares.
@@ -271,7 +271,7 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 
 	@Override
 	@SuppressWarnings("unchecked")	
-	public List<EstoqueProduto> obterConjuntoFornecedorNotafiscal(FiltroViewNotaFiscalDTO filtro) {
+	public List<EstoqueProduto> obterConjuntoFornecedorNotafiscal(FiltroNFeDTO filtro) {
 
 		StringBuilder hql = new StringBuilder("select ")
 		.append(" estoqueProduto")
@@ -293,7 +293,7 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro) {
+	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder("select ")
 		.append(" fornecedor.id AS idFornecedor, ")
@@ -322,7 +322,7 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<EstoqueProduto> obterEstoques(FiltroViewNotaFiscalDTO filtro) {
+	public List<EstoqueProduto> obterEstoques(FiltroNFeDTO filtro) {
 		StringBuilder hql = new StringBuilder("select estoqueProduto ");
 		
 		Query query =  queryConsultaNfeEstoqueParameters(queryConsultaNfeEstoque(filtro, hql, true, true, true), filtro);
@@ -334,7 +334,7 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 	
 	
 	@Override
-	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
+	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro) {
 		
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
@@ -344,7 +344,7 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 		return (long) query.list().size();
 	}
 	
-	public Query queryConsultaNfeEstoqueParameters(StringBuilder hql, FiltroViewNotaFiscalDTO filtro) {
+	public Query queryConsultaNfeEstoqueParameters(StringBuilder hql, FiltroNFeDTO filtro) {
 
 		Query query = this.getSession().createQuery(hql.toString());		
 		
@@ -353,7 +353,7 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 		return query;
 	}
 	
-	public StringBuilder queryConsultaNfeEstoque(FiltroViewNotaFiscalDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup){
+	public StringBuilder queryConsultaNfeEstoque(FiltroNFeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup){
 		
 		hql.append(" from EstoqueProduto as estoqueProduto ")
 		.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao")

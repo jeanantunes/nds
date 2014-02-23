@@ -9,6 +9,7 @@ import java.util.Enumeration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
@@ -19,7 +20,10 @@ public class SimpleSecurityHandlerBean extends AbstractSecurityHandlerBean {
 	
 	protected static final Logger logger = LoggerFactory.getLogger(SimpleSecurityHandlerBean.class);
 	
+	@Value(value="${secutiry.certificate.alias:}")
 	private String alias;
+	
+	@Value(value="${secutiry.certificate.password:}")
 	private char[] password;
 	   
 	public SimpleSecurityHandlerBean() {
@@ -78,6 +82,7 @@ public class SimpleSecurityHandlerBean extends AbstractSecurityHandlerBean {
 		}
 	}
 	
+	
 	public void setAlias(String alias) {
 		this.alias = alias;
 	}
@@ -85,4 +90,5 @@ public class SimpleSecurityHandlerBean extends AbstractSecurityHandlerBean {
 	public void setPassword(char[] password) {
 		this.password = password;
 	}
+	
 }

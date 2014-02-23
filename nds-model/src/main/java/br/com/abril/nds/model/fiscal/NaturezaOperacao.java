@@ -89,7 +89,7 @@ public class NaturezaOperacao implements Serializable {
 	
 	
 	@Column(name = "NOTA_FISCAL_SERIE", length=60)
-	private String notaFiscalSerie;
+	private Long notaFiscalSerie;
 	
 	public Long getId() {
 		return id;
@@ -186,11 +186,11 @@ public class NaturezaOperacao implements Serializable {
 		this.tipoMovimento = tipoMovimento;
 	}
 	
-	public String getNotaFiscalSerie() {
+	public Long getNotaFiscalSerie() {
 		return notaFiscalSerie;
 	}
 
-	public void setNotaFiscalSerie(String notaFiscalSerie) {
+	public void setNotaFiscalSerie(Long notaFiscalSerie) {
 		this.notaFiscalSerie = notaFiscalSerie;
 	}
 

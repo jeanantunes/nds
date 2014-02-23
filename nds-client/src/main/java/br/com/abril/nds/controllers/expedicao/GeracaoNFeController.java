@@ -15,7 +15,7 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -157,7 +157,7 @@ public class GeracaoNFeController extends BaseController {
 	}
 	
 	@Post
-	public void pesquisar(FiltroViewNotaFiscalDTO filtro, String sortname, String sortorder, int rp, int page) {
+	public void pesquisar(FiltroNFeDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
 		List<CotaExemplaresDTO> cotaExemplaresDTOs = null;
 		List<FornecedorExemplaresDTO> fornecedorExemplaresDTOs = null;
@@ -213,7 +213,7 @@ public class GeracaoNFeController extends BaseController {
 	}
 	
 	@Post("/buscaCotasSuspensas.json")
-	public void buscaCotasSuspensas(FiltroViewNotaFiscalDTO filtro, List<Long> listIdFornecedor, Long tipoNotaFiscal, String sortname,
+	public void buscaCotasSuspensas(FiltroNFeDTO filtro, List<Long> listIdFornecedor, Long tipoNotaFiscal, String sortname,
 			String sortorder, int rp, int page) {
 		
 		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(filtro.getIntervaloBoxInicial(), filtro.getIntervaloBoxFinal());
@@ -230,8 +230,7 @@ public class GeracaoNFeController extends BaseController {
 	}
 	
 	@Post("/hasCotasSuspensas.json")
-	public void hasCotasSuspensas(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
-			Integer intervaloCotaDe, Integer intervaloCotaAte,
+	public void hasCotasSuspensas(Integer intervaloBoxDe, Integer intervaloBoxAte, Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor,Long tipoNotaFiscal){
 
 		boolean hasCotasSuspensas = false;
@@ -250,13 +249,14 @@ public class GeracaoNFeController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_NFE_GERACAO_NFE_ALTERACAO)
-	public void gerarNotasFiscais(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
+	public void gerarNotasFiscais(FiltroNFeDTO filtro, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
+		
 		try {
 
-			this.geracaoNFeService.gerarNotaFiscal(filtro, idCotasSuspensas, null);
+			this.geracaoNFeService.gerarNotaFiscal(filtro);
 			
-		} catch (IOException ioe){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar nota fiscal");
+		} catch (Exception e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		} 
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "NF-e(s) gerada(s) com sucesso."), Constantes.PARAM_MSGS).serialize();
@@ -279,7 +279,6 @@ public class GeracaoNFeController extends BaseController {
 		return listaTipoNotaFiscal;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void exportar(Integer intervaloBoxDe, Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, Long tipoNotaFiscal,String sortname,

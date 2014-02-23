@@ -6,15 +6,15 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 
 public class NaturezaOperacaoBuilder {
 	
-	public static void montarNaturezaOperacao(NotaFiscal notaFiscal2, NaturezaOperacao naturezaOperacao) {
+	public static void montarNaturezaOperacao(NotaFiscal notaFiscal, NaturezaOperacao naturezaOperacao) {
 		
-		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacao() == null) {
-			notaFiscal2.getNotaFiscalInformacoes().setIdentificacao(new Identificacao());
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacao() == null) {
+			notaFiscal.getNotaFiscalInformacoes().setIdentificacao(new Identificacao());
 		}
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setDescricaoNaturezaOperacao(naturezaOperacao.getDescricao());
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setSerie(naturezaOperacao.getNotaFiscalSerie());
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setNaturezaOperacao(naturezaOperacao);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDescricaoNaturezaOperacao(naturezaOperacao.getDescricao());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setSerie(naturezaOperacao.getNotaFiscalSerie());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNaturezaOperacao(naturezaOperacao);
 		
 	}
 	

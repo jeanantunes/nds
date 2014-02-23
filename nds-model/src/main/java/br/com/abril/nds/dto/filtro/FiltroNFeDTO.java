@@ -9,7 +9,7 @@ import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
-public class FiltroViewNotaFiscalDTO implements Serializable {
+public class FiltroNFeDTO implements Serializable {
 	
 	private static final long serialVersionUID = 4377811331164817630L;
 
