@@ -3,7 +3,7 @@ package br.com.abril.nds.service.builders;
 import java.io.Serializable;
 import java.util.Date;
 
-import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
@@ -36,7 +36,7 @@ public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 
 
 	// metodo responsavel pelo dados do distribuidor da nota
-	public static NotaFiscalNds popularDadosDistribuidor(NotaFiscalNds notaFiscal, Distribuidor distribuidor, FiltroViewNotaFiscalDTO filtro){
+	public static NotaFiscalNds popularDadosDistribuidor(NotaFiscalNds notaFiscal, Distribuidor distribuidor, FiltroNFeDTO filtro){
 		
 		// Dados do Distribuidor
 		/**
@@ -56,7 +56,7 @@ public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 		return notaFiscal;
 	}
 
-	public static void popularDadosDistribuidor(br.com.abril.nds.model.fiscal.nota.NotaFiscal notaFiscal2, Distribuidor distribuidor, FiltroViewNotaFiscalDTO filtro) {
+	public static void popularDadosDistribuidor(br.com.abril.nds.model.fiscal.nota.NotaFiscal notaFiscal2, Distribuidor distribuidor, FiltroNFeDTO filtro) {
 		
 		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente() == null) {
 			notaFiscal2.getNotaFiscalInformacoes().setIdentificacaoEmitente(new br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente());

@@ -287,7 +287,7 @@ public class Identificacao implements Serializable {
 	@Column(name = "SERIE", length = 3, nullable = false)
 	@NFEExport(secao=TipoSecao.B, posicao=5)
 	@XmlElement(name="serie")
-	private String serie;
+	private Long serie;
 
 	/**
 	 * nNF
@@ -518,14 +518,14 @@ public class Identificacao implements Serializable {
 	/**
 	 * @return the serie
 	 */
-	public String getSerie() {
+	public Long getSerie() {
 		return serie;
 	}
 
 	/**
 	 * @param serie the serie to set
 	 */
-	public void setSerie(String serie) {
+	public void setSerie(Long serie) {
 		this.serie = serie;
 	}
 

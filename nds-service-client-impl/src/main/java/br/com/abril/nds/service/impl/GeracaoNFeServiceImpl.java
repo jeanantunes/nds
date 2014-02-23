@@ -18,7 +18,7 @@ import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -27,7 +27,6 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
-import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalBase;
 import br.com.abril.nds.repository.CotaRepository;
@@ -144,8 +143,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	 */
 	@Override
 	@Transactional(rollbackFor=Throwable.class)
-	public List<NotaFiscal> gerarNotaFiscal(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException {
+	public List<NotaFiscal> gerarNotaFiscal(FiltroNFeDTO filtro) throws FileNotFoundException, IOException {
 		
+		this.validarFiltroNFe(filtro);
 		/**
 		 * metodo para gerar nota.
 		 */
@@ -196,7 +196,18 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		return notas;
 	}
 
-	private void gerarNotasFiscaisCotas(FiltroViewNotaFiscalDTO filtro,
+	private void validarFiltroNFe(FiltroNFeDTO filtro) {
+		
+		if(filtro.getDataInicial() == null || filtro.getDataFinal() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "As datas inicial e final não podem ser nulas.");
+		} 
+		
+		if(filtro.getDataFinal().getTime() < filtro.getDataInicial().getTime()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "A data inicial não pode ser maior que a da final.");
+		}
+	}
+
+	private void gerarNotasFiscaisCotas(FiltroNFeDTO filtro,
 			List<NotaFiscal> notasFiscais, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
 		
 		// obter as cotas que estão na tela pelo id das cotas
@@ -233,7 +244,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		}
 	}
 	
-	private void gerarNotasFiscaisFornecedor(FiltroViewNotaFiscalDTO filtro, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
+	private void gerarNotasFiscaisFornecedor(FiltroNFeDTO filtro, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
 
 		// obter as cotas que estão na tela pelo id das cotas
 		List<EstoqueProduto> estoques = this.notaFiscalNdsRepository.obterConjuntoFornecedorNotafiscal(filtro);
@@ -270,13 +281,13 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
 	@Override
 	@Transactional
-	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro) {
+	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroNFeDTO filtro) {
 		return notaFiscalService.consultaCotaExemplareSumarizado(filtro);
 	}
 
 	@Override
 	@Transactional
-	public Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro) {
+	public Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro) {
 		return notaFiscalService.consultaCotaExemplareSumarizadoQtd(filtro);
 	}
 	
@@ -290,12 +301,12 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	}
 
 	@Override
-	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro) {
+	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro) {
 		return notaFiscalService.consultaFornecedorExemplarSumarizado(filtro);
 	}
 
 	@Override
-	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
+	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro) {
 		return notaFiscalService.consultaFornecedorExemplaresSumarizadosQtd(filtro);
 	}
 	

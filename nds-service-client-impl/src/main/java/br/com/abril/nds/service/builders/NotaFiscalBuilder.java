@@ -7,7 +7,7 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -73,7 +73,7 @@ public class NotaFiscalBuilder implements Serializable {
 	}
 
 
-	public static void popularDadosDistribuidor(NotaFiscal notaFiscal, Distribuidor distribuidor, FiltroViewNotaFiscalDTO filtro) {
+	public static void popularDadosDistribuidor(NotaFiscal notaFiscal, Distribuidor distribuidor, FiltroNFeDTO filtro) {
 		
 		if(notaFiscal.getNotaFiscalInformacoes() == null) {
 			notaFiscal.setNotaFiscalInformacoes(new NotaFiscalInformacoes());
@@ -209,7 +209,7 @@ public class NotaFiscalBuilder implements Serializable {
 		
 	}
 
-	public static void popularDadosTransportadora(NotaFiscal notaFiscal2, Distribuidor distribuidor, FiltroViewNotaFiscalDTO filtro) {
+	public static void popularDadosTransportadora(NotaFiscal notaFiscal2, Distribuidor distribuidor, FiltroNFeDTO filtro) {
 		
 		if(notaFiscal2.getNotaFiscalInformacoes().getInformacaoTransporte() == null) {
 			notaFiscal2.getNotaFiscalInformacoes().setInformacaoTransporte(new InformacaoTransporte());

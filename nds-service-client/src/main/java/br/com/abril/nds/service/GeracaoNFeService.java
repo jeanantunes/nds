@@ -7,9 +7,8 @@ import java.util.List;
 
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
-import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.util.Intervalo;
 
@@ -17,7 +16,6 @@ public interface GeracaoNFeService {
 	
 	/**
 	 * Gera nota fiscal
-	 * 
 	 * @param intervaloBox
 	 * @param intervalorCota
 	 * @param intervaloDateMovimento
@@ -25,11 +23,11 @@ public interface GeracaoNFeService {
 	 * @param listIdProduto
 	 * @param idTipoNotaFiscal
 	 * @param dataEmissao
-	 * @param idCotasSuspensas cotas suspensas que vao emitir nota
+	 * 
 	 * @return 
 	 *  
 	 */
-	List<NotaFiscal> gerarNotaFiscal(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException;
+	List<NotaFiscal> gerarNotaFiscal(FiltroNFeDTO filtro) throws FileNotFoundException, IOException;
 
 
 	List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
@@ -40,15 +38,15 @@ public interface GeracaoNFeService {
 			Integer resultsPage, Integer page, SituacaoCadastro situacaoCadastro);
 
 	
-	public abstract List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro);
+	public abstract List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroNFeDTO filtro);
 
 
-	public abstract Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro);
+	public abstract Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro);
 
 
-	public abstract List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro);
+	public abstract List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro);
 
-	public abstract Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro);
+	public abstract Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro);
 
 	
 }
