@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -21,12 +22,25 @@ import java.util.Set;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.crypto.dom.DOMStructure;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
@@ -34,7 +48,7 @@ import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
-import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -102,9 +116,9 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.TributacaoService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
+import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
@@ -184,6 +198,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 	@Autowired
 	private GeracaoNotaEnvioService geracaoNotaEnvioService;
+	
+	@Autowired
+	private SignatureHandler signatureHandler;
 	
 	/*
 	 * (non-Javadoc)
@@ -500,7 +517,13 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		exportarNotasFiscais(notasFiscaisParaExportacao);
 
-		gerarArquivoNota(notasFiscaisParaExportacao);
+		try {
+			gerarArquivoNota(notasFiscaisParaExportacao);
+		} catch (JAXBException e) {
+			LOGGER.error("Erro ao gerar arquivo da nota fiscal.", e);
+		} catch (Exception e) {
+			LOGGER.error("Erro ao gerar arquivo da nota fiscal.", e);
+		}
 
 	}
 
@@ -542,6 +565,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 						"Erro ao gerar arquivo de nota: " + msgs.toString());
 			}
 			
+			LOGGER.error("Falha ao gerar arquivo de exportação: ", e);
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					"Falha ao gerar arquivo de exportação: " + e.getMessage()));
 		}
@@ -580,14 +604,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 	}
 
-	private String gerarArquivoNota(List<NotaFiscal> notasFiscaisParaExportacao) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	private String gerarArquivoNota(List<NotaFiscal> notasFiscaisParaExportacao) throws Exception {
 
 		StringBuilder sBuilder = new StringBuilder();
 
-		NFEExporter nfeExporter = new NFEExporter();
-		
-		FileOutputStream stream = null;
-		
 		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
 
 			JAXBContext jc;
@@ -601,20 +621,62 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				jc = JAXBContext.newInstance(NotaFiscal.class);
 		        Marshaller marshaller = jc.createMarshaller();
 		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		        marshaller.marshal(notaFiscal, System.out);
 		        
+		        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		        documentBuilderFactory.setNamespaceAware(true);
+		        DocumentBuilder documentBuilder;
+				try {
+					documentBuilder = documentBuilderFactory.newDocumentBuilder();
+					Document document = documentBuilder.newDocument();
+			         
+			        marshaller.marshal(notaFiscal, document);
+			        
+			        /*
+			         * Trecho para corrigir o prefix ns2  
+			         */
+			        document.getFirstChild().setPrefix("");
+			        NamedNodeMap nnm = document.getFirstChild().getAttributes();
+			        Node nodeXmlsNS = nnm.getNamedItem("xmlns:ns2");			        
+			        Element xmlns = document.createElement("xmlns");
+			        xmlns.setNodeValue(nodeXmlsNS.getNodeValue());
+			        
+			        nnm.removeNamedItem("xmlns:ns2");
+			        document.getFirstChild().appendChild(xmlns);
+			        
+					Element parent = (Element) document.getElementsByTagName("NFe").item(0);
+					
+					NodeList elements = document.getElementsByTagName("infNFe");
+			        Element el = (Element) elements.item(0);
+			        el.setIdAttribute("Id", true);
+					
+					signatureHandler.sign(new DOMStructure(parent), "infNFe");
+			        			        
+					ParametroSistema diretorioSaida = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
+					String numeroNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNumeroDocumentoFiscal().toString();
+					String serieNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getSerie().toString();
+					
+			        OutputStream os2 = new FileOutputStream(diretorioSaida.getValor() +"/"+ "NF-e-"+ serieNF +"-"+ numeroNF +".xml");
+			        TransformerFactory tf = TransformerFactory.newInstance();
+		            Transformer trans = null;
+		            
+					trans = tf.newTransformer();
+					trans.transform(new DOMSource(document), new StreamResult(os2));
+		            os2.flush();
+		            os2.close();
+			        
+				} catch (ParserConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		        
-			
 			} catch (JAXBException e) {
 				LOGGER.error("Erro ao gerar XML", e);
+				throw new JAXBException("Erro ao gerar XML.");
+			} catch (FileNotFoundException e) {
+				LOGGER.error("Erro ao gerar XML", e);
+				throw new JAXBException("Erro ao gerar XML");
 			}
 			
-			nfeExporter.clear();
-
-			nfeExporter.execute(notaFiscal);
-
-			String s = nfeExporter.gerarArquivo();
-			sBuilder.append(s);
 		}
 
 		return "NOTA FISCAL|" + notasFiscaisParaExportacao.size() + "|\n"
@@ -1799,7 +1861,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 	@Override
 	@Transactional
-	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro) {
+	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroNFeDTO filtro) {
 		
 		LOGGER.info("obter informações da cota sumarizadas...");
 		
@@ -1812,7 +1874,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Override
 	@Transactional
-	public Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro) {
+	public Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro) {
 		return this.notaFiscalNdsRepository.consultaCotaExemplaresSumarizadosQtd(filtro);
 	}
 
@@ -1824,14 +1886,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Override
 	@Transactional
-	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro) {
+	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro) {
 		LOGGER.info("obter informações dos forncedores sumarizados...");
 		return this.notaFiscalNdsRepository.consultaFornecedorExemplarSumarizado(filtro);
 	}
 
 	@Override
 	@Transactional
-	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
+	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro) {
 		return this.notaFiscalNdsRepository.consultaFornecedorExemplaresSumarizadosQtd(filtro);
 	}
 	

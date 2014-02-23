@@ -70,6 +70,21 @@ public class Identificacao implements Serializable {
 		public int getValor() {
 			return valor;
 		}
+		
+		public static FormaPagamento getByValue(Integer valor) {
+			
+			switch(valor) {
+				case 0:
+					return A_VISTA;
+				case 1:
+					return A_PRAZO;
+				case 2:
+					return OUTROS;
+				default:
+					return null;
+			}
+			
+		}
 
 	}	
 	
@@ -287,7 +302,7 @@ public class Identificacao implements Serializable {
 	@Column(name = "SERIE", length = 3, nullable = false)
 	@NFEExport(secao=TipoSecao.B, posicao=5)
 	@XmlElement(name="serie")
-	private String serie;
+	private Long serie;
 
 	/**
 	 * nNF
@@ -436,6 +451,7 @@ public class Identificacao implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "NATUREZA_OPERACAO_ID", updatable=true, insertable=true)
+	@XmlTransient
 	private NaturezaOperacao naturezaOperacao;
 	
 	/**
@@ -517,14 +533,14 @@ public class Identificacao implements Serializable {
 	/**
 	 * @return the serie
 	 */
-	public String getSerie() {
+	public Long getSerie() {
 		return serie;
 	}
 
 	/**
 	 * @param serie the serie to set
 	 */
-	public void setSerie(String serie) {
+	public void setSerie(Long serie) {
 		this.serie = serie;
 	}
 

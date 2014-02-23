@@ -3605,7 +3605,7 @@ public class Fixture {
 			String justificativaEntradaContigencia,
 			List<NotaFiscalReferenciada> listReferenciadas,
 			Long numeroDocumentoFiscal,
-			String serie,
+			Long serie,
 			TipoOperacao tipoOperacao) {
 		
 		Identificacao identificacao = new Identificacao();

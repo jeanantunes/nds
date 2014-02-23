@@ -13,7 +13,7 @@ import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
-import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
@@ -152,14 +152,14 @@ public interface NotaFiscalService {
 	public abstract void exportarNotasFiscais(Long... idNotaFiscals)
 			throws FileNotFoundException, IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException;
 
-	List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro);
+	List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroNFeDTO filtro);
 
-	Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro);
+	Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro);
 
 	List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario);
 
-	List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro);
+	List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro);
 	
-	Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro);
+	Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro);
 		
 }

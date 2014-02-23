@@ -41,7 +41,10 @@ public class DetalheNotaFiscal implements Serializable {
 	@XmlElement(name="prod")
 	private ProdutoServico produtoServico;
 	
-	
+	@Transient
+	//@XmlElements({@XmlElement(type=ICMS41.class, name="ICMS41")})
+	//@XmlTransient
+	private Impostos impostos;
 	
 	public DetalheNotaFiscal() {
 		super();
@@ -83,6 +86,14 @@ public class DetalheNotaFiscal implements Serializable {
 	}
 	public void setProdutoServico(ProdutoServico produtoServico) {
 		this.produtoServico = produtoServico;
+	}
+
+	public Impostos getImpostos() {
+		return impostos;
+	}
+
+	public void setImpostos(Impostos impostos) {
+		this.impostos = impostos;
 	}
 
 	@Override
