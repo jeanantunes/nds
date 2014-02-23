@@ -991,10 +991,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     @Transactional(rollbackFor = Exception.class)
     public void gerarNotaFiscal(final Date dataEncalhe) {
         
-        final List<NaturezaOperacao> listaTipoNotaFiscal = naturezaOperacaoRepository
-                .obterTiposNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
-        final ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = distribuidorRepository
-                .parametrosRecolhimentoDistribuidor();
+        final List<NaturezaOperacao> listaTipoNotaFiscal = naturezaOperacaoRepository.obterTiposNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
+        final ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = distribuidorRepository.parametrosRecolhimentoDistribuidor();
         final List<Cota> cotas = fechamentoEncalheRepository.buscarCotaFechamentoChamadaEncalhe(dataEncalhe);
         for (final Cota cota : cotas) {
             

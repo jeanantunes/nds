@@ -20,7 +20,7 @@ public class NotaFiscalV2Test {
 	public void validateXMLRetornoVersaoLayout2() throws Exception {
 
 		try {
-			String schemaFile = "src/main/resources/xsd/v"+ versaoNFE2 +"/cancNFe_v"+ versaoNFE2 +".xsd";
+			String schemaFile = "src/main/resources/xsd/v"+ versaoNFE2 +"/retCancNFe_v"+ versaoNFE2 +".xsd";
 			//String xmlFile = "src/main/resources/xmlGerado.xml";
 			//String xmlFile = "src/main/resources/nfe-v"+ versaoNFE2 +"-2.xml";
 			String xmlFile = "C://opt/parametros_nds/notas/importacao/retCancNFe.xml";
