@@ -31,6 +31,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.exolab.castor.xml.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,6 +120,7 @@ import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
@@ -319,27 +321,19 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void cancelarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
-		/*
-		NotaFiscal notaFiscalCancelada = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
-
-		NaturezaOperacao tipoNotaFiscal = notaFiscalCancelada.getIdentificacao()
-				.getTipoNotaFiscal();
-
-		if (isRemessaMercadoriaConsignacao(tipoNotaFiscal)) {
-			movimentoEstoqueService.devolucaoConsignadoNotaCancelada(notaFiscalCancelada);
-			movimentoEstoqueCotaService.envioConsignadoNotaCancelada(notaFiscalCancelada);
-
-		}else if(isDevolucaoMerdadoriaRecebiaConsignacao(tipoNotaFiscal)){			
-			if(isSobraMercadoria(notaFiscalCancelada) || isDevolucaoEncalhe(notaFiscalCancelada) ){
-				movimentoEstoqueService.devolucaoRecolhimentoNotaCancelada(notaFiscalCancelada);
-
-			}else if(isFaltaMercadoria(notaFiscalCancelada)){
-				movimentoEstoqueService.devolucaoConsignadoNotaCancelada(notaFiscalCancelada);
-
-			}
+		
+		System.out.println("Realizar a solicitação de um pedido de cancelamento da nota");
+		
+		// validar se a nota fiscal emitida esta no prazo de 24 horas
+		if (Util.diferencaEntreDatasEmDias(dadosRetornoNFE.getDataRecebimento(), new Date()) > 1){
+			throw new ValidacaoException(TipoMensagem.ERROR, "O cancelamento da nota não pode ser realizado, a data ultrapassa o prazo limite de 24 horas.");
 		}
-		atualizaRetornoNFe(dadosRetornoNFE);
-		*/
+		
+		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarNotaFiscalNumeroSerie(dadosRetornoNFE);
+
+		
+		
+		
 	}
 
 	/**
