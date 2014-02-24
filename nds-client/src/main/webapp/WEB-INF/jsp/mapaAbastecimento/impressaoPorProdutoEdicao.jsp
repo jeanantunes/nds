@@ -77,7 +77,8 @@ function imprimir(){
                 <tr class="box_rel">
                 	
                   <c:forEach items="${box.value.rotasQtde}" var="rota" varStatus="statusRota" >
-	                	<td width="60" align="center" style="border-right:1px solid #000; border-bottom:1px solid #000;">
+	                	<td align="center" 
+	                		style="border-right:1px solid #000; border-bottom:1px solid #000; word-break: break-all; width: 60px; overflow: hidden; text-overflow: ellipsis;">
 	                		<c:if test="${!rota.key.startsWith('|')}">
 	                  	 		${rota.key}
 	                  	 	</c:if>
