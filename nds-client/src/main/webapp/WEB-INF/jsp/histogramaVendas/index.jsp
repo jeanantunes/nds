@@ -43,12 +43,6 @@
         <img src="images/ico_copia_distrib.gif" hspace="5" border="0" />
       </a>
     </span>
-
-    <span class="bt_novos">
-      <a href="javascript:;" onclick="$('.ui-tabs-selected', histogramaVendasController.workspace).children('.ui-icon-close').click();" rel="tipsy" title="Cancelar">
-        <img src="images/ico_excluir.gif" hspace="5" border="0" />
-      </a>
-    </span>
   </div>
 </div>
 <br clear="all"/>

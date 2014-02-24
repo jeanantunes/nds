@@ -31,6 +31,7 @@ import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE.ColunaOrdenacao;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -447,11 +448,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
 		   .append(" join produtoEdicao.produto produto ")
 		   .append(" join produto.fornecedores fornecedores ")
-		   .append(" join cota.box box ")
 		   .append(" join cota.pdvs pdv ")
 		   .append(" join pdv.rotas rotaPdv ")
 		   .append(" join rotaPdv.rota rota ")
 		   .append(" join rota.roteiro roteiro ")
+		   .append(" join roteiro.roteirizacao roteirizacao ")
+		   .append(" join roteirizacao.box box ")
 		   .append(" where cota.box.id = box.id ");
 		
 		if(filtro.getDtRecolhimentoDe() != null) {

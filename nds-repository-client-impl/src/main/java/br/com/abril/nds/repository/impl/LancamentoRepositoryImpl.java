@@ -863,14 +863,14 @@ public class LancamentoRepositoryImpl extends
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select lancamento ")
-				.append(" from Lancamento lancamento ")
-				.append(" join lancamento.movimentoEstoqueCotas mec ")
+				.append(" from MovimentoEstoqueCota mec ")
+				.append(" join mec.produtoEdicao.lancamentos lancamento ")
 				.append(" join mec.cota cota ")
 				.append(" where lancamento.dataLancamentoPrevista = ")
 				.append(" (")
 				.append("   select max(lancamentoMaxDate.dataLancamentoPrevista) ")
-				.append("   from Lancamento lancamentoMaxDate ")
-				.append("   join lancamentoMaxDate.movimentoEstoqueCotas mecMaxDate ")
+				.append("   from MovimentoEstoqueCota mecMaxDate ")
+				.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
 				.append("   join mecMaxDate.cota cotaMaxDate ")
 				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ")
 				.append("   and cotaMaxDate.id = :idCota ").append(" ) ")
@@ -882,6 +882,8 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 
 		query.setParameter("idCota", idCota);
+		
+		query.setMaxResults(1);
 
 		Object lancamento = query.uniqueResult();
 
@@ -2493,6 +2495,22 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("status", StatusLancamento.EXPEDIDO);
 		
 		return (Boolean) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> buscarDiasMatrizLancamentoAbertos(){
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento.dataLancamentoDistribuidor,lancamento.status  from Lancamento lancamento ");
+		hql.append(" where lancamento.dataLancamentoDistribuidor >= (select distribuidor.dataOperacao from Distribuidor distribuidor) ");
+		hql.append(" group by lancamento.dataLancamentoDistribuidor , lancamento.status ");
+		hql.append(" order by lancamento.dataLancamentoDistribuidor ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		return  query.list();
+		
 	}
 
 }
