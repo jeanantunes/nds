@@ -121,6 +121,6 @@ public class BoletoEmailController extends BaseController {
 		
 		String status = CACHE_ENVIO_BOLETO.get(KEY_ENVIO_BOLETO_EMAIL);
 		
-		result.use(Results.json()).withoutRoot().from(status==null?"Enviando boletos por email..." : status).recursive().serialize();
+		result.use(Results.json()).withoutRoot().from(status == null ? "": status).recursive().serialize();
 	}
 }

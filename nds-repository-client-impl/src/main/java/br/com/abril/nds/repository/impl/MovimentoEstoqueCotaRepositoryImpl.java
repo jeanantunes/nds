@@ -2082,7 +2082,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	
         if (filtro.getPaginacao() == null){
             
-            hql.append(" order by box.CODIGO, roteiro.ORDEM, rota.ORDEM, lancamento.SEQUENCIA_MATRIZ ");
+            hql.append(" order by lancamento.SEQUENCIA_MATRIZ, box.CODIGO, roteiro.ORDEM, rota.ORDEM ");
             return;
         }
         
@@ -2333,7 +2333,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		produtoEdicao.ID as idProdutoEdicao, ");
         hql.append(" 		produto.CODIGO as codigoProduto, ");
         hql.append(" 		produto.NOME as nomeProduto, ");
-        hql.append(" 		concat(produtoEdicao.CODIGO_DE_BARRAS, ' - ' , lancamento.SEQUENCIA_MATRIZ) as codigoBarra, ");
+        hql.append(" 		produtoEdicao.CODIGO_DE_BARRAS as codigoBarra, ");
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
         hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
         hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
@@ -2383,11 +2383,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final StringBuilder hql = new StringBuilder();
         
         hql.append(" select box.CODIGO as codigoBox, ");
-        hql.append(" 		concat(rota.DESCRICAO_ROTA, ' - ', rota.ORDEM) as codigoRota, ");
+        hql.append(" 		rota.DESCRICAO_ROTA as codigoRota, ");
         hql.append(" 		produtoEdicao.ID as idProdutoEdicao, ");
         hql.append(" 		produto.CODIGO as codigoProduto, ");
         hql.append(" 		produto.NOME as nomeProduto, ");
-        hql.append(" 		concat(produtoEdicao.CODIGO_DE_BARRAS, ' - ', lancamento.SEQUENCIA_MATRIZ) as codigoBarra, ");
+        hql.append(" 		produtoEdicao.CODIGO_DE_BARRAS as codigoBarra, ");
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
         hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
         hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
@@ -3192,7 +3192,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		produto.CODIGO as codigoProduto, ");
         hql.append(" 		produto.NOME as nomeProduto, ");
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
-        hql.append(" 		concat(produtoEdicao.CODIGO_DE_BARRAS, ' - ', lancamento.SEQUENCIA_MATRIZ) as codigoBarra, ");
+        hql.append(" 		produtoEdicao.CODIGO_DE_BARRAS as codigoBarra, ");
         hql.append(" 		produtoEdicao.ID as idProdutoEdicao, ");
         hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
         hql.append(" 		sum(estudoCota.REPARTE * produtoEdicao.PRECO_VENDA) as totalBox, ");

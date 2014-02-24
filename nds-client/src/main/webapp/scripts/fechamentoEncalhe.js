@@ -535,9 +535,9 @@ var fechamentoEncalheController = $.extend(true, {
 						params,
 						function (result) {
 
-							var tipoMensagem = result.tipoMensagem;
+							var tipoMensagem = result.mensagem.tipoMensagem;
 							
-							var listaMensagens = result.listaMensagens;
+							var listaMensagens = result.mensagem.listaMensagens;
 							
 							if (tipoMensagem && listaMensagens) {
 								
@@ -545,8 +545,12 @@ var fechamentoEncalheController = $.extend(true, {
 								
 								_this.dialog("close");
 								
-								window.open(contextPath + "/devolucao/fechamentoEncalhe/imprimirBoletosCotasAusentes", 
-										"_blank");
+								if(result.isImprimirBoletos){
+									
+									window.open(contextPath + "/devolucao/fechamentoEncalhe/imprimirBoletosCotasAusentes", 
+											"_blank");
+									
+								}
 								
 								fechamentoEncalheController.emitirBoletosFechamentoEncalhe();
 
@@ -1281,15 +1285,8 @@ var fechamentoEncalheController = $.extend(true, {
 					
 				} else {
 					
-					if (result == 'FINALIZADO'){
-						
-						$('#mensagemLoading').text('Aguarde, envio de boletos ...');
-					}
-					else{
-					
-					    $('#mensagemLoading').text(result);
-					}
-					
+					$('#mensagemLoading').text(result);
+										
 					setTimeout(fechamentoEncalheController.obterStatusEmissaoBoletosFechamentoEncalhe,5000);
 				}
 			}
@@ -1305,6 +1302,7 @@ var fechamentoEncalheController = $.extend(true, {
 				if (result && result.tipoMensagem){
 						
 					exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					
 				}
 			}
 		);	

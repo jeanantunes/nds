@@ -929,6 +929,8 @@ public class BaixaFinanceiraController extends BaseController {
 		this.validarBaixaManualDividas(tipoPagamento, idCobrancas, idBanco,valorMultaConvertido, 
 		  		valorJurosConvertido,valorDescontoConvertido, valorSaldoConvertido,dataPagamento);
 		
+		this.cobrancaService.validarDataPagamentoCobranca(idCobrancas, dataPagamento);
+		
 		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}
 		
