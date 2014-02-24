@@ -102,4 +102,13 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	void atualizarVias(Boleto boleto);
 
 	List<TipoCobranca> obterTiposCobrancaCadastradas();
+
+    /**
+     * Obtem Cobrancas com a data de emissao maior que a data parametrizada
+     * 
+     * @param idCobrancas
+     * @param dataPagamento
+     * @return
+     */
+    List<Cobranca> obterCobrancasDataEmissaoMaiorQue(Date dataPagamento, List<Long> idCobrancas);
 }
