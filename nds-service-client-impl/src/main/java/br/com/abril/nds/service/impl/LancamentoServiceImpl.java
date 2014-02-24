@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -386,16 +387,17 @@ public class LancamentoServiceImpl implements LancamentoService {
     	this.lancamentoRepository.merge(lancamento);
     }
     
-    public Set <Date> obterDiasMatrizLancamentoAbertos(){
+    public HashMap<String, Set> obterDiasMatrizLancamentoAbertos(){
     	List<Object[]> lista = lancamentoRepository.buscarDiasMatrizLancamentoAbertos();
     	
     	Set <Date> diasConfirmados = new TreeSet<Date>();
     	Set <Date> diasNaoBalanceaveis = new TreeSet<Date>();
     	Date diaOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
+    	HashMap<String, Set> listaBalanceavelNaoBalanceavel = new HashMap<>();
     	
     	for(Object[] lancamento : lista){
     		
-    		if(lancamento[1].equals(StatusLancamento.CONFIRMADO) && !((Date)lancamento[0]).before(diaOperacaoDistribuidor)){
+    		if((lancamento[1].equals(StatusLancamento.CONFIRMADO)|| lancamento[1].equals(StatusLancamento.PLANEJADO)) && !((Date)lancamento[0]).before(diaOperacaoDistribuidor)){
     			
     			if(!diasConfirmados.contains((Date)lancamento[0])){
     			  diasConfirmados.add((Date)lancamento[0]);
@@ -410,7 +412,10 @@ public class LancamentoServiceImpl implements LancamentoService {
     	
     	diasConfirmados.removeAll(diasNaoBalanceaveis);
     	
-    	return diasConfirmados;
+    	listaBalanceavelNaoBalanceavel.put("diasBalanceaveis", diasConfirmados);
+    	listaBalanceavelNaoBalanceavel.put("diasNaoBalanceaveis", diasNaoBalanceaveis);
+    	
+    	return listaBalanceavelNaoBalanceavel;
     }
 
 }
