@@ -464,7 +464,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     }
     
     private MovimentoEstoque criarMovimentoEstoque(final Long idItemRecebimentoFisico, final Long idProdutoEdicao, final Long idUsuario,
-            final BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque,
+            final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque,
             final Origem origem, Date dataOperacao, final boolean isImportacao,
             final boolean isMovimentoDiferencaAutomatica, final boolean validarTransfEstoqueDiferenca,
             final StatusIntegracao statusIntegracao) {
@@ -512,22 +512,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
                 movimentoEstoque.setAprovador(new Usuario(idUsuario));
                 movimentoEstoque.setDataAprovacao(distribuidorService.obterDataOperacaoDistribuidor());
-                
-                /*
-                 * 04/10/2013 - Regra adicionada a pedido do Ronaldo Pataro
-                 * Se o Regime de Recolhimento e o Tipo forem "Parcial" deve ser direcionado para o Estoque de Lancamentos
-                 * exceto se for Tipo "Final", que deve ir para o estoque de recolhimento
-                 * 
-                 */
-                final ProdutoEdicao pe = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-                if(pe.isParcial()) {
-                    for(final Lancamento l : pe.getLancamentos()) {
-                        if(l.getPeriodoLancamentoParcial() != null
-                                && l.getPeriodoLancamentoParcial().getTipo().equals(TipoLancamentoParcial.PARCIAL)) {
-                            tipoMovimentoEstoque = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
-                        }
-                    }
-                }
                 
                 final Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, isImportacao, validarTransfEstoqueDiferenca);
                 
