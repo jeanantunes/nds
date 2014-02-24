@@ -11,7 +11,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
-import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
@@ -43,24 +42,32 @@ public class AjusteReparte extends ProcessoAbstrato {
     	if ((estudo == null) || (estudo.getCotas() == null)) {
 		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Houve um erro durante a execução do processo Ajuste de Reparte. Erro: objeto Estudo nulo."));
 		}
+    	
+    	BigDecimal repDistribuir = new BigDecimal(estudo.getReparteDistribuir());
 		
+    	BigDecimal indice = new BigDecimal("0.85");
+    	
+    	BigDecimal somatorio = estudo.getSomatoriaVendaMedia().divide(repDistribuir, 2,	BigDecimal.ROUND_HALF_UP); 
+    	
     	for (CotaEstudo cota : estudo.getCotas()) {
 		    
     		if ((cota.getVendaMediaMaisN() != null) && (estudo.getPacotePadrao() != null) && (cota.getVendaMediaMaisN().compareTo(BigInteger.ZERO) > 0)) {
-		    	
-    			BigInteger ajusteReparte = BigInteger.ZERO;
-			
-		    	if (cota.getVendaMediaMaisN().compareTo(estudo.getPacotePadrao()) > 0) {
-		    		ajusteReparte = cota.getVendaMediaMaisN();
-				} else {
-				    ajusteReparte = estudo.getPacotePadrao();
-				}
-			
-		    	cota.setReparteCalculado(new BigDecimal(ajusteReparte).add(cota.getVendaMedia()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
-		    	cota.setClassificacao(ClassificacaoCota.Ajuste);
-		    	cotasComReparteJaCalculado.add(cota);
-		    }
-	    
+    			
+    			if(somatorio.compareTo(indice) < 0){
+    				
+	    			BigInteger ajusteReparte = BigInteger.ZERO;
+				
+			    	if (cota.getVendaMediaMaisN().compareTo(estudo.getPacotePadrao()) > 0) {
+			    		ajusteReparte = cota.getVendaMediaMaisN();
+					} else {
+					    ajusteReparte = estudo.getPacotePadrao();
+					}
+				
+			    	cota.setReparteCalculado(new BigDecimal(ajusteReparte).add(cota.getVendaMedia()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
+			    	cota.setClassificacao(ClassificacaoCota.Ajuste);
+			    	cotasComReparteJaCalculado.add(cota);
+			    }
+    		}
 	}
 	
 	estudo.setCotasComReparteJaCalculado(new LinkedList<>(cotasComReparteJaCalculado));
