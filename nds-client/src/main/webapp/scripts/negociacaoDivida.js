@@ -808,7 +808,8 @@ var negociacaoDividaController = $.extend(true, {
 			'BOLETO_EM_BRANCO',
 			'DEPOSITO',
 			'TRANSFERENCIA_BANCARIA',
-			'DINHEIRO'
+			'DINHEIRO',
+			'OUTROS'
 		];
 		
 		var dadosBanco = [
@@ -825,7 +826,6 @@ var negociacaoDividaController = $.extend(true, {
 				$('#divBanco', negociacaoDividaController.workspace).show();
 			} else {
 				$('#divBanco', negociacaoDividaController.workspace).hide();
-				$('#selectParcelas', negociacaoDividaController.workspace).val(1);
 			}
 		}else if (value == 'CHEQUE'){
 			$('#gridVenctos', negociacaoDividaController.workspace).hide();
