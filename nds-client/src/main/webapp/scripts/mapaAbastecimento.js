@@ -572,6 +572,8 @@
 			data.push({name:'filtro.idEntregador',	value: T.get("idEntregador")});
 		}
 		
+		data.push({name:'filtro.excluirProdutoSemReparte', value: T.get("excluirProdutoSemReparte")});
+		
 		return data;
 	},
 		
