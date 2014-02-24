@@ -1,5 +1,3 @@
-<%--
- --%>
  <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
  <!-- distribuicaoVendaMedia -->
 <script language="javascript">
@@ -13,17 +11,20 @@ $(function() {
 		});
 		distribuicaoVendaMedia.carregarEventos();
 	});
+
 function popup_novo() {
-	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	$("#edicaoProdCadastradosGrid").flexAddData({
 			rows : [],
 			page : 1,
 			total : 1
 		});
+	
 	$("#codigoPesquisaBases").val("");
 	$("#produtoPesquisaBases").val("");
 	$("#edicaoPesquisaBases").val("");
+	
 	distribuicaoVendaMedia.produtoEdicaoPesquisaBases = [];
+	
 	$( "#dialog-edicoes-base" ).dialog({
 	    escondeHeader: false,
 		resizable: false,
@@ -34,7 +35,6 @@ function popup_novo() {
 			"Confirmar": function() {
 				distribuicaoVendaMedia.confirmarProdutosEdicaoBasePopup();
 				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);				
 			},
 			"Cancelar": function() {
 				$( this ).dialog( "close" );
@@ -43,7 +43,6 @@ function popup_novo() {
 	});
 };
 function popup_cancelar() {
-	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 	$( "#dialog-cancelar" ).dialog({
 	    escondeHeader: false,
