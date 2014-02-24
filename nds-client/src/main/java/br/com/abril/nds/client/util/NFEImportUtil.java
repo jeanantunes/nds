@@ -3,10 +3,13 @@ package br.com.abril.nds.client.util;
 import java.io.File;
 import java.util.Date;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +76,15 @@ public class NFEImportUtil {
         Exception exception = null;
         
         try {
+        	
+        	SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			
+			schema = factory.newSchema(arquivo);
+			Validator validator = schema.newValidator();
+			validator.validate(new StreamSource(arquivo));
+        	
+        	
+        	
             context = JAXBContext.newInstance(TNFe.class);
             unmarshaller = context.createUnmarshaller();
             
