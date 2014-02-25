@@ -497,7 +497,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<DescontoDTO> obterDescontosProdutoEdicao(Long lancamentoId, Long produtoEdicaoId) {
+	public List<DescontoDTO> obterDescontosProdutoEdicao() {
 
 		StringBuilder hql = new StringBuilder("")
 			.append(" SELECT cota_id AS cotaId, fornecedor_id AS fornecedorId, produto_edicao_id AS produtoEdicaoId, produto_id AS produtoId, valor ")
