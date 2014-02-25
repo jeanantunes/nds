@@ -426,10 +426,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				} else {
 					
 					formaCobranca = 
-							formaCobrancaService.obterFormaCobranca(
-									ultimaCota != null ? ultimaCota.getId() : null, 
-									ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
-									dataOperacao, valorMovimentos);
+					        this.obterFormaCobrancaCota(
+					                dataOperacao, 
+					                ultimaCota == null ? null : ultimaCota.getId(), 
+			                        ultimoFornecedor == null ? null : ultimoFornecedor.getId(), 
+					                valorMovimentos);
 
 					formaCobrancaClone = this.cloneFormaCobranca(formaCobranca);
 					
@@ -472,10 +473,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			if (formaCobranca == null){
 				
 				formaCobranca = 
-						formaCobrancaService.obterFormaCobranca(
-								ultimaCota != null ? ultimaCota.getId() : null, 
-								ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
-								dataOperacao, valorMovimentos);
+						this.obterFormaCobrancaCota(
+						        dataOperacao, 
+						        ultimaCota == null ? null : ultimaCota.getId(), 
+						        ultimoFornecedor == null ? null : ultimoFornecedor.getId(), 
+						        valorMovimentos);
 					
 				formaCobrancaClone = this.cloneFormaCobranca(formaCobranca);  
 			}
@@ -514,6 +516,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				}
 				
 				consolidados.add(helper.getConsolidadoFinanceiroCota());
+			}
+			
+			if (helperPrincipal == null){
+			    
+			    helperPrincipal = lista.get(0);
 			}
 			
 			String nossoNumero = 
@@ -838,8 +845,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			return;
 		}
 		
-		List<Integer> diasSemanaConcentracaoPagamento = null;
-		
 		//obtem a data de vencimento de acordo com o dia em que se concentram os pagamentos da cota
 		Integer fatorVencimento = 0;
 		
@@ -928,7 +933,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		Cota cotaUnificadora = this.cotaUnificacaoRepository.obterCotaUnificadoraPorCota(cota.getNumeroCota());
 		cotaUnificadora = cotaUnificadora == null ? cota : cotaUnificadora;
 		
-		
 		if (!consolidadosCotaUnficacao.containsKey(cotaUnificadora)){
 			consolidadosCotaUnficacao.put(
 				cotaUnificadora, 
@@ -943,7 +947,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				consolidadoFinanceiroCota, 
 				qtdDiasNovaCobranca, 
 				fornecedor, 
-				diasSemanaConcentracaoPagamento, 
 				dataVencimento,
 				consolidadoFinanceiroCota.getDataConsolidado()));
 	}
@@ -1526,4 +1529,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					"Erro ao tentar obter [FormaCobranca]!");
 		}
 	}
+    
+    private FormaCobranca obterFormaCobrancaCota(Date dataOperacao, Long cotaId,
+            Long fornecedorId, BigDecimal valorMovimentos) {
+        
+        if (cotaId != null){
+            
+            cotaId = this.cotaUnificacaoRepository.obterIdCotaUnificadoraPorCota(cotaId);
+        }
+        
+        return formaCobrancaService.obterFormaCobranca(
+                cotaId, 
+                fornecedorId, 
+                dataOperacao, valorMovimentos);
+    }
 }

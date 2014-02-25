@@ -312,9 +312,11 @@ public class ConferenciaEncalheController extends BaseController {
 				return;
 			}
 			
-			for(Entry<Integer, String> entry : mapaCotaConferidaUsuario.entrySet()) {
-				if( entry.getValue().equals(userSessionID) ) {
-					mapaCotaConferidaUsuario.remove(entry.getKey());
+			Set<Integer> cotasEmConferencia = new HashSet<>(mapaCotaConferidaUsuario.keySet()) ;
+
+			for(Integer numeroCota : cotasEmConferencia) {
+				if( mapaCotaConferidaUsuario.get(numeroCota).equals(userSessionID) ) {
+					mapaCotaConferidaUsuario.remove(numeroCota);
 				}
 			}
 		
