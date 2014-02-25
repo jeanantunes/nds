@@ -669,7 +669,6 @@ var VENDA_PRODUTO = {
 	
 	totalizarQntDisponivelGeral:function(){
 	
-		//var total =  $("input[id^='qntDisponivel']", VENDA_PRODUTO.workspace).sum();
 		var valorTotal = 0;
 		$.each($("input[id^='qntDisponivel']", VENDA_PRODUTO.workspace), function(index,inp){
 			if (inp.value){
@@ -934,7 +933,6 @@ var VENDA_PRODUTO = {
 		}
 	
 		$("input[name='codProduto']", VENDA_PRODUTO.workspace).numeric();
-		//$("input[name='nmProduto']", VENDA_PRODUTO.workspace).autocomplete({source: ""});
 		
 		
 		$("input[name='nmProduto']",VENDA_PRODUTO.workspace).autocomplete({
