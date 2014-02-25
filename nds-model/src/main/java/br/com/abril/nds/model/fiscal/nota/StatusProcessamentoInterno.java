@@ -5,6 +5,7 @@ public enum StatusProcessamentoInterno {
 	GERADA,
 	NAO_GERADA,
 	ENVIADA,
-	RETORNADA;
+	RETORNADA,
+	SOLICITACAO_CANCELAMENTO;
 
 }

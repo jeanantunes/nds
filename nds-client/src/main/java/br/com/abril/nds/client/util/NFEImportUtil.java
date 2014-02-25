@@ -89,8 +89,8 @@ public class NFEImportUtil {
 	            retornoNFEDTO = NFEImportUtil.retornoNFeAssinada(nfe);
 	            
 	        }else if(validarSchemaXML(XSD_PPROC_NFE, arquivo, schemaPath)){
-	        	 context = JAXBContext.newInstance(TNfeProc.class);
-	             unmarshaller = context.createUnmarshaller();
+	        	context = JAXBContext.newInstance(TNfeProc.class);
+	            unmarshaller = context.createUnmarshaller();
 	        	final TNfeProc nfeProc = (TNfeProc) unmarshaller.unmarshal(arquivo);
 	            retornoNFEDTO = NFEImportUtil.retornoNFeProcNFe(nfeProc);
 	            
