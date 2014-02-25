@@ -79,9 +79,9 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(", ', ', endereco.bairro ");
 		hql.append(", ', ', endereco.cidade ");
 		hql.append(", ', ', endereco.uf ");
-		hql.append(" ) as logradouro, ");
-		hql.append(" endereco.cep as cep ");
-		
+		hql.append(", ' - ', endereco.cep ");
+		hql.append(" ) as endereco ");
+				
 		//if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 			//hql.append(", round(itemNota.reparte / lancamento.produtoEdicao.pacotePadrao) as pacote ");
 			//hql.append(", lancDif.diferenca.qtde as quebra ");
@@ -384,13 +384,13 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(", roteiro.descricaoRoteiro as nomeRoteiro ");
 		hql.append(", rota.id as idRota ");
 		hql.append(", rota.descricaoRota as nomeRota ");
-		hql.append(", endereco.tipoLogradouro as tipoLogradouro ");
-		hql.append(", endereco.logradouro as logradouro ");
-		hql.append(", endereco.numero as numeroLogradouro ");
-		hql.append(", endereco.bairro as bairro ");		
-		hql.append(", endereco.cidade as cidade ");
-		hql.append(", endereco.uf as uf ");
-		hql.append(", endereco.cep as cep ");
+		
+		hql.append(", concat(endereco.tipoLogradouro, ' ' , endereco.logradouro, ', ' , endereco.numero ");
+		hql.append(", ', ', endereco.bairro ");
+		hql.append(", ', ', endereco.cidade ");
+		hql.append(", ', ', endereco.uf ");
+		hql.append(", ' - ', endereco.cep ");
+		hql.append(" ) as endereco ");
 		
 		int qtdProdutos = 0;
 		if (filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()) {
