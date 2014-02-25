@@ -29,9 +29,9 @@ public class GerarCobrancaHelper {
 	private Date dataVencimento, dataConsolidado;
 	
 	public GerarCobrancaHelper(Cota cota, FormaCobranca formaCobrancaPrincipal, boolean cobrarHoje, 
-			ConsolidadoFinanceiroCota consolidadoFinanceiroCota, int qtdDiasNovaCobranca,
-			Fornecedor fornecedor,
-			Date dataVencimento, Date dateConsolidado){
+							   ConsolidadoFinanceiroCota consolidadoFinanceiroCota, int qtdDiasNovaCobranca,
+							   Fornecedor fornecedor,
+							   Date dataVencimento, Date dateConsolidado){
 		
 		this.cota = cota;
 		this.formaCobrancaPrincipal = formaCobrancaPrincipal;
