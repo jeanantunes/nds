@@ -41,7 +41,7 @@ implements MovimentoEstoqueRepository {
 	@SuppressWarnings("unchecked")
 	public List<ExtratoEdicaoDTO> obterListaExtratoEdicao(FiltroExtratoEdicaoDTO filtro, StatusAprovacao statusAprovacao) {
 
-		String codigoProduto = filtro.getCodigoProduto();
+		String codigoProduto = (filtro != null && filtro.getCodigoProduto() != null) ? filtro.getCodigoProduto() : null;
 		Long numeroEdicao = filtro.getNumeroEdicao();
 		
 		StringBuilder hql = new StringBuilder("");

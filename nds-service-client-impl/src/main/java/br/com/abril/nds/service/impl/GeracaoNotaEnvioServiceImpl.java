@@ -534,7 +534,7 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
         
         final Map<Long, List<EstudoCota>> mapEstudosCota = this.getMapEstudosCota(listaEstudosCotas);
         
-        final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
+        final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao();
         
         final EnderecoDistribuidor enderecoDistribuidor = distribuidorRepository.obterEnderecoPrincipal();
         final TelefoneDistribuidor telefoneDistribuidor = distribuidorRepository.obterTelefonePrincipal();
@@ -931,7 +931,7 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
         
         final Map<Long, List<EstudoCota>> mapEstudosCota = this.getMapEstudosCota(listaEstudosCotas);
         
-        final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
+        final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao();
         
         for (final Long idCota : idCotas) {
             

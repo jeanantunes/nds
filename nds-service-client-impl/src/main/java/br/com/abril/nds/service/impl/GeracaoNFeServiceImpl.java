@@ -4,12 +4,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +56,8 @@ import br.com.abril.nds.util.Intervalo;
 @Service
 public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
+	private static Logger LOGGER = LoggerFactory.getLogger(GeracaoNFeServiceImpl.class);
+	
 	@Autowired
 	private NotaFiscalService notaFiscalService;
 
@@ -80,6 +85,10 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	@Autowired
 	private UsuarioService usuarioService;
 	
+	// Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
+    // O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
+    private static final Map<String, Object> TRAVA_GERACAO_NFe = new HashMap<>();
+	
 	@Override
 	@Transactional
 	public List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
@@ -88,54 +97,75 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			List<Long> listIdFornecedor, Long idTipoNotaFiscal, Long idRoteiro, Long idRota,
 			String sortname, String sortorder, Integer resultsPage, Integer page, SituacaoCadastro situacaoCadastro) {
 		
-		Set<NaturezaOperacao> tiposNota = new HashSet<NaturezaOperacao>();
-		
-		if (idTipoNotaFiscal == null){
+		if (TRAVA_GERACAO_NFe.get("NFesSendoGeradas") != null) {
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Notas de envio sendo geradas por outro usuário, tente novamente mais tarde.");
+        }
+        
+        TRAVA_GERACAO_NFe.put("NFesSendoGeradas", true);
+        
+        List<CotaExemplaresDTO> listaCotaExemplares = null; 
+        		
+        try {
+        	
+        
+			Set<NaturezaOperacao> tiposNota = new HashSet<NaturezaOperacao>();
 			
-			tiposNota.addAll(this.naturezaOperacaoRepository.obterTiposNotasFiscaisCotasNaoContribuintesPor(
-					this.distribuidorRepository.tipoAtividade()));
-		} else {
+			if (idTipoNotaFiscal == null){
+				
+				tiposNota.addAll(this.naturezaOperacaoRepository.obterTiposNotasFiscaisCotasNaoContribuintesPor(
+						this.distribuidorRepository.tipoAtividade()));
+			} else {
+				
+				tiposNota.add(this.naturezaOperacaoRepository.buscarPorId(idTipoNotaFiscal));
+			}
 			
-			tiposNota.add(this.naturezaOperacaoRepository.buscarPorId(idTipoNotaFiscal));
-		}
-		
-		List<SituacaoCadastro> situacoesCadastro = null;
-		
-		if (situacaoCadastro != null){
-			situacoesCadastro = new ArrayList<SituacaoCadastro>();
-			situacoesCadastro.add(situacaoCadastro);
-		}
-		
-		Set<Long> idsCotasDestinatarias = new HashSet<>();
-		idsCotasDestinatarias.addAll(this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, situacoesCadastro, idRoteiro, idRota, null, null, null, null));
-		
-		ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal = new ConsultaLoteNotaFiscalDTO();
-		
-		dadosConsultaLoteNotaFiscal.setTipoNotaFiscal(tiposNota);
-		dadosConsultaLoteNotaFiscal.setPeriodoMovimento(intervaloDateMovimento);
-		dadosConsultaLoteNotaFiscal.setIdsCotasDestinatarias(idsCotasDestinatarias);
-		dadosConsultaLoteNotaFiscal.setListaIdFornecedores(listIdFornecedor);
-		
-		Map<Cota, QuantidadePrecoItemNotaDTO> cotasTotalItens = this.notaFiscalService.obterTotalItensNotaFiscalPorCotaEmLote(dadosConsultaLoteNotaFiscal);
-		
-		List<CotaExemplaresDTO> listaCotaExemplares = new ArrayList<CotaExemplaresDTO>();
-		
-		for (Entry<Cota, QuantidadePrecoItemNotaDTO> entry : cotasTotalItens.entrySet()) {
+			List<SituacaoCadastro> situacoesCadastro = null;
 			
-			CotaExemplaresDTO cotaExemplares = new CotaExemplaresDTO();
+			if (situacaoCadastro != null){
+				situacoesCadastro = new ArrayList<SituacaoCadastro>();
+				situacoesCadastro.add(situacaoCadastro);
+			}
 			
-			cotaExemplares.setIdCota(entry.getKey().getId());
-			cotaExemplares.setExemplares(entry.getValue().getQuantidade());
-			cotaExemplares.setNomeCota(entry.getKey().getPessoa().getNome());
-			cotaExemplares.setNumeroCota(entry.getKey().getNumeroCota());
-			cotaExemplares.setTotal(entry.getValue().getPreco());
-			cotaExemplares.setTotalDesconto(entry.getValue().getPrecoComDesconto());
+			Set<Long> idsCotasDestinatarias = new HashSet<>();
+			idsCotasDestinatarias.addAll(this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, situacoesCadastro, idRoteiro, idRota, null, null, null, null));
 			
-			listaCotaExemplares.add(cotaExemplares);
+			ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal = new ConsultaLoteNotaFiscalDTO();
 			
-		}
+			dadosConsultaLoteNotaFiscal.setTipoNotaFiscal(tiposNota);
+			dadosConsultaLoteNotaFiscal.setPeriodoMovimento(intervaloDateMovimento);
+			dadosConsultaLoteNotaFiscal.setIdsCotasDestinatarias(idsCotasDestinatarias);
+			dadosConsultaLoteNotaFiscal.setListaIdFornecedores(listIdFornecedor);
+			
+			Map<Cota, QuantidadePrecoItemNotaDTO> cotasTotalItens = this.notaFiscalService.obterTotalItensNotaFiscalPorCotaEmLote(dadosConsultaLoteNotaFiscal);
+			
+			listaCotaExemplares = new ArrayList<CotaExemplaresDTO>();
+			
+			for (Entry<Cota, QuantidadePrecoItemNotaDTO> entry : cotasTotalItens.entrySet()) {
+				
+				CotaExemplaresDTO cotaExemplares = new CotaExemplaresDTO();
+				
+				cotaExemplares.setIdCota(entry.getKey().getId());
+				cotaExemplares.setExemplares(entry.getValue().getQuantidade());
+				cotaExemplares.setNomeCota(entry.getKey().getPessoa().getNome());
+				cotaExemplares.setNumeroCota(entry.getKey().getNumeroCota());
+				cotaExemplares.setTotal(entry.getValue().getPreco());
+				cotaExemplares.setTotalDesconto(entry.getValue().getPrecoComDesconto());
+				
+				listaCotaExemplares.add(cotaExemplares);
+				
+			}
+			
+        } catch (Exception e) {
+        	LOGGER.error("", e);
+        	throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar NF-e.");
+        	
+        } finally {
+            TRAVA_GERACAO_NFe.remove("NFesSendoGeradas");
+        }
 		
-		return listaCotaExemplares;
+        return listaCotaExemplares;
+        
 	}
 
 	/* (non-Javadoc)

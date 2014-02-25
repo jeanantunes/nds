@@ -175,7 +175,7 @@ public class CotaUnificacaoRepositoryImpl extends AbstractRepositoryModel<CotaUn
 	@Override
 	public Cota obterCotaUnificadoraPorCota(Integer numeroCota){
 		
-		StringBuilder hql = new StringBuilder("select cu.cota ");
+		StringBuilder hql = new StringBuilder("select distinct cu.cota ");
 		hql.append(" from CotaUnificacao cu ")
 		   .append(" join cu.cotas cotaUnificada ")
 		   .append(" where cu.cota.numeroCota = :numeroCota ")
@@ -190,7 +190,7 @@ public class CotaUnificacaoRepositoryImpl extends AbstractRepositoryModel<CotaUn
 	@Override
     public Long obterIdCotaUnificadoraPorCota(Long idCota){
         
-        StringBuilder hql = new StringBuilder("select cu.cota.id ");
+        StringBuilder hql = new StringBuilder("select distinct cu.cota.id ");
         hql.append(" from CotaUnificacao cu ")
            .append(" join cu.cotas cotaUnificada ")
            .append(" where cu.cota.id = :idCota ")

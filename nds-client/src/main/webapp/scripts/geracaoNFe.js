@@ -440,8 +440,10 @@ var geracaoNFeController = $.extend({
 		grid.flexReload();
 		
 		if($('input[name=tipoDestinatario]:checked').val() == 'FORNECEDOR') {
+			$(".grids").hide();
 			$(".grids-forn").show();
 		} else {
+			$(".grids-forn").hide();
 			$(".grids").show();
 		}
 	

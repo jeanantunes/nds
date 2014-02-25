@@ -492,7 +492,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			BigDecimal desconto = new BigDecimal(BigInteger.ZERO, new MathContext(18));
             desconto = desconto.setScale(4, RoundingMode.HALF_EVEN);
 			
-			if(produtoEdicao.getOrigem().equals(Origem.MANUAL)) {
+			if(produtoEdicao != null && produtoEdicao.getOrigem() != null && produtoEdicao.getOrigem().equals(Origem.MANUAL)) {
 				if(produtoEdicao != null && produtoEdicao.getDesconto() != null) {
 					desconto = produtoEdicao.getDesconto();
 				} else {				
