@@ -533,7 +533,7 @@ var VENDA_PRODUTO = {
 		
 		var parametroAutoCompleteProduto = '\'#nmProduto' + index + '\', true';
 		
-		return '<input value="'+valor+'" type="text" id="nmProduto' + index + '" name="nmProduto" style="width:110px;" maxlenght="255" onkeyup="pesquisaProdutoVendaEncalhe.autoCompletarPorNomeProduto(' + parametroAutoCompleteProduto + ');" onblur="pesquisaProdutoVendaEncalhe.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
+		return '<input value="'+valor+'" type="text" id="nmProduto' + index + '" name="nmProduto" style="width:110px;" maxlenght="255" onblur="pesquisaProdutoVendaEncalhe.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
 	},
 	
 	getInputNumeroEdicao:function(index,result,funcaoError){
@@ -669,7 +669,6 @@ var VENDA_PRODUTO = {
 	
 	totalizarQntDisponivelGeral:function(){
 	
-		//var total =  $("input[id^='qntDisponivel']", VENDA_PRODUTO.workspace).sum();
 		var valorTotal = 0;
 		$.each($("input[id^='qntDisponivel']", VENDA_PRODUTO.workspace), function(index,inp){
 			if (inp.value){
@@ -934,7 +933,20 @@ var VENDA_PRODUTO = {
 		}
 	
 		$("input[name='codProduto']", VENDA_PRODUTO.workspace).numeric();
-		$("input[name='nmProduto']", VENDA_PRODUTO.workspace).autocomplete({source: ""});
+		
+		
+		$("input[name='nmProduto']",VENDA_PRODUTO.workspace).autocomplete({
+			source:function(param ,callback) {
+				$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", { 'nomeProduto': param.term }, callback);
+			},
+			select : function(event, ui) {
+				
+			},
+			minLength: 2,
+			delay : 0,
+		}).keyup(function(){
+			this.value = this.value.toUpperCase();
+		});
 		$("input[name='qntSolicitada']", VENDA_PRODUTO.workspace).justInput(/[0-9]/);
 		$("input[name='numEdicao']", VENDA_PRODUTO.workspace).numeric();
 		
