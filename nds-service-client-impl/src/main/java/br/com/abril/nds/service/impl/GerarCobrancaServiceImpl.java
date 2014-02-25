@@ -316,10 +316,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     private void salvarBoletoEmailPendenteEnvio(Set<String> nossoNumeroEnvioEmail){
     	
 		if (nossoNumeroEnvioEmail!=null && !nossoNumeroEnvioEmail.isEmpty()){
-
-	        List<String> listaNossoNumero = new ArrayList<String>(nossoNumeroEnvioEmail);
-			
-		    this.boletoEmailService.salvarBoletoEmail(listaNossoNumero);
+		    
+		    this.boletoEmailService.salvarBoletoEmail(nossoNumeroEnvioEmail);
 		}
     }
 	
@@ -495,8 +493,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 											  consolidadosCotaUnficacao);
 		}
 		
-		Set<String> setNossoNumeroEmail = new HashSet<String>();
-		
 		for (Entry<Cota, List<GerarCobrancaHelper>> entry : consolidadosCotaUnficacao.entrySet()){
 			
 			List<GerarCobrancaHelper> lista = entry.getValue();
@@ -539,20 +535,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					helperPrincipal.getDataVencimento(),
 					helperPrincipal.getDataConsolidado());
 			
-			if (helperPrincipal.getFormaCobrancaPrincipal() == null ? false :
-				setNossoNumero != null){
+			if (setNossoNumero != null && nossoNumero != null){
 				
 				setNossoNumero.add(nossoNumero);
 			}
-			
-			if (helperPrincipal.getFormaCobrancaPrincipal() == null ? false :
-                helperPrincipal.getFormaCobrancaPrincipal().isRecebeCobrancaEmail()){
-			    
-			    setNossoNumeroEmail.add(nossoNumero);
-			}
 		}
 		
-        this.salvarBoletoEmailPendenteEnvio(setNossoNumeroEmail);
+        this.salvarBoletoEmailPendenteEnvio(setNossoNumero);
 		
 		if (!msgs.isEmpty()){
 			
