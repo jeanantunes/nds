@@ -186,4 +186,19 @@ public class CotaUnificacaoRepositoryImpl extends AbstractRepositoryModel<CotaUn
 		
 		return (Cota) query.uniqueResult();
 	}
+	
+	@Override
+    public Long obterIdCotaUnificadoraPorCota(Long idCota){
+        
+        StringBuilder hql = new StringBuilder("select cu.cota.id ");
+        hql.append(" from CotaUnificacao cu ")
+           .append(" join cu.cotas cotaUnificada ")
+           .append(" where cu.cota.id = :idCota ")
+           .append(" or cotaUnificada.id = :idCota ");
+        
+        Query query = this.getSession().createQuery(hql.toString());
+        query.setParameter("idCota", idCota);
+        
+        return (Long) query.uniqueResult();
+    }
 }

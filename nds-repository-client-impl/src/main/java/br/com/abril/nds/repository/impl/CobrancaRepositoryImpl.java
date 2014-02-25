@@ -35,7 +35,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		super(Cobranca.class);		
 	}
 
-	public Date obterDataAberturaDividas(Long idCota) {
+	@Override
+    public Date obterDataAberturaDividas(Long idCota) {
 		
 		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
 		criteria.createAlias("cobranca.cota", "cota");
@@ -48,7 +49,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	}
 	
 	
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota, boolean obtemCobrancaOrigemNegociacao, Date data) {		
 		
 		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
@@ -144,7 +146,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	}
 	
 	
-	public Cobranca obterCobrancaPorNossoNumero(String nossoNumero){
+	@Override
+    public Cobranca obterCobrancaPorNossoNumero(String nossoNumero){
 		
 		StringBuffer hql = new StringBuffer();
 		
@@ -159,7 +162,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 	}
 	
-	public void incrementarVia(String... nossoNumero){
+	@Override
+    public void incrementarVia(String... nossoNumero){
 		Query query = this.getSession().createQuery("update Cobranca set vias = vias + 1 where nossoNumero IN (:nossoNumero)");
 		query.setParameterList("nossoNumero", nossoNumero);
 		query.executeUpdate();
@@ -191,104 +195,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		return quantidade;
 	}
 	
-	/**
-	 * Método responsável por obter uma lista de cobrancas
-	 * @param filtro
-	 * @return query.list(): lista de cobrancas
-	 */
-	/*@SuppressWarnings("unchecked")
-	@Override
-	public List<CobrancaVO> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {	
-
-		StringBuilder hql = new StringBuilder();
-		hql.append(" select ");
-		hql.append(" c.cota.numeroCota as numeroCota, cast(c.id as string) as codigo, ");
-		hql.append(" c.cota.pessoa.nome as nome, cast(c.dataEmissao as string) as dataEmissao, ");
-		hql.append(" cast(c.dataVencimento as string) as dataVencimento, cast(c.valor as string) as valor ");
-		hql.append(" from Cobranca c ");		
-		hql.append(" left join c.baixasCobranca baixa ");
-		hql.append(" left join c.divida divida ");
-		hql.append(" where c.cota.numeroCota = :ncota ");
-		hql.append(" and baixa.statusAprovacao is null ");
-		hql.append(" and divida.status != :statusPendenteInadimplencia ");
-
-		if (filtro.getDataVencimento()!=null){
-		    hql.append(" and c.dataVencimento <= :vcto ");
-		}
-		
-		if (filtro.getStatusCobranca()!=null){
-			hql.append(" and c.statusCobranca = :status ");
-		}
-		
-		if (filtro.isAcumulaDivida()){
-		    hql.append(" and ( (c.divida.acumulada = :acumulada) or (c.divida.data = :data) )");
-		}
 	
-
-		if (filtro.getOrdenacaoColuna() != null) {
-			switch (filtro.getOrdenacaoColuna()) {
-				case NUMERO_COTA:
-					hql.append(" order by c.cota.numeroCota ");
-					break;
-				case NOME_COTA:
-					hql.append(" order by c.cota.pessoa.nome ");
-					break;
-				case DATA_EMISSAO:
-					hql.append(" order by c.dataEmissao ");
-					break;
-				case DATA_VENCIMENTO:
-					hql.append(" order by c.dataVencimento ");
-					break;
-				case VALOR:
-					hql.append(" order by c.valor ");
-					break;
-				default:
-					break;
-			}
-			if (filtro.getPaginacao().getOrdenacao() != null) {
-				hql.append(filtro.getPaginacao().getOrdenacao().toString());
-			}	
-		}
-		
-//		hql.append(this.continuarQuery(filtro));
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		query.setParameter("ncota", filtro.getNumeroCota());
-		
-		if (filtro.getDataVencimento()!=null){
-		    query.setDate("vcto", filtro.getDataVencimento());
-		}
-		
-		if (filtro.getStatusCobranca()!=null){
-		    query.setParameter("status", filtro.getStatusCobranca());
-		}
-		
-		if (filtro.isAcumulaDivida()){
-			query.setParameter("acumulada", filtro.isAcumulaDivida());
-			query.setParameter("data", filtro.getDataVencimento());
-		}
-		
-		query.setParameter("statusPendenteInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA);
-
-        if (filtro.getPaginacao() != null) {
-			if (filtro.getPaginacao().getPosicaoInicial() != null) {
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-			}
-			
-			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-			}
-		}
-        //TODO
-        query.setResultTransformer(Transformers.aliasToBean(CobrancaVO.class));
-
-        List<CobrancaVO> cobrancaVO = query.list();
-        
-        cobrancaVO.addAll(continuarQuery(filtro));
-        
-		return cobrancaVO;
-	}*/
-
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<CobrancaVO> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {
@@ -321,8 +228,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		((SQLQuery) query).addScalar("codigo", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery) query).addScalar("numeroCota");
 		((SQLQuery) query).addScalar("nome");
-		((SQLQuery) query).addScalar("dataVencimento", StandardBasicTypes.DATE);
 		((SQLQuery) query).addScalar("dataEmissao", StandardBasicTypes.DATE);
+        ((SQLQuery) query).addScalar("dataVencimento", StandardBasicTypes.DATE);
 		((SQLQuery) query).addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery) query).addScalar("boletoAntecipado", StandardBasicTypes.BOOLEAN);
 
@@ -552,4 +459,13 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		return query.list();
 	}
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Cobranca> obterCobrancasDataEmissaoMaiorQue(Date dataPagamento, List<Long> idCobrancas) {
+        Criteria criteria = this.getSession().createCriteria(Cobranca.class, "cobranca");
+        criteria.add(Restrictions.in("cobranca.id", idCobrancas.toArray()));
+        criteria.add(Restrictions.gt("cobranca.dataEmissao", dataPagamento));
+        return criteria.list();
+    }
 }
