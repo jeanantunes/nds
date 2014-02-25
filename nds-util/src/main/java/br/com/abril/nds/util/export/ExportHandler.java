@@ -565,6 +565,8 @@ public class ExportHandler {
 			
 			exportHeader.setColumnWidth(exportAnnotation.widthPercent() == 0f ? null : exportAnnotation.widthPercent());
 			
+			exportHeader.setXlsAutoSize(exportAnnotation.xlsAutoSize());
+			
 			exportHeaders.add(exportHeader);
 		}
 	}
