@@ -2081,6 +2081,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                     .getDataLancamentoPrevista());
             
             lancamento.setStatus(StatusLancamento.CONFIRMADO);
+            lancamento.setSequenciaMatriz(null);
             lancamento.setUsuario(usuario);
             
             lancamentoRepository.merge(lancamento);
@@ -2096,6 +2097,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         for (final Lancamento lancamento : lancamentos) {
             
             lancamento.setStatus(StatusLancamento.CONFIRMADO);
+            lancamento.setSequenciaMatriz(null);
             lancamento.setUsuario(usuario);
             
             lancamentoRepository.merge(lancamento);
@@ -2133,6 +2135,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
             this.validarLancamentoParaReabertura(lancamento);
             
             lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO);
+            
+            lancamento.setSequenciaMatriz(null);
             
             lancamento.setUsuario(usuario);
             
