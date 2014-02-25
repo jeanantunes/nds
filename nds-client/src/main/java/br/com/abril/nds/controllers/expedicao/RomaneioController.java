@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -29,10 +30,12 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RomaneioService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -58,6 +61,9 @@ public class RomaneioController extends BaseController {
 	
 	@Autowired
 	private RomaneioService romaneioService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 	
 	@Autowired
 	private Result result;
@@ -149,16 +155,29 @@ public class RomaneioController extends BaseController {
 	public void exportar(FileType fileType) throws IOException, URISyntaxException, JRException {
 		
 		FiltroRomaneioDTO filtro = (FiltroRomaneioDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS);
+
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		
+		String nomesProduto = this.obterNomesProduto(filtro);
+		
+		filtro.setNomesProduto(nomesProduto);
+		
+		List<RomaneioDTO> listaRomaneios = this.romaneioService.buscarRomaneio(filtro, true);
+		
+		FileExporter.to("romaneio", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,
+				listaRomaneios, RomaneioDTO.class, this.httpResponse);
+		
+		result.nothing();
+	}
+	
+	@Get
+	public void gerarRomaneio(FileType fileType) throws IOException, URISyntaxException, JRException {
+		
+		FiltroRomaneioDTO filtro = (FiltroRomaneioDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS);
 		
 		byte[] arquivo = this.romaneioService.gerarRelatorio(filtro, "", fileType);
 		
-		if (FileType.PDF == fileType){
-		
-			this.httpResponse.setContentType("application/pdf");
-		} else if (FileType.XLS == fileType) {
-			
-			this.httpResponse.setContentType("application/xls");
-		}
+		this.httpResponse.setContentType("application/pdf");
 		
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=romaneio" + fileType.getExtension());
 
@@ -169,6 +188,33 @@ public class RomaneioController extends BaseController {
 		httpResponse.getOutputStream().close();
 		
 		result.nothing();
+	}
+
+	private String obterNomesProduto(FiltroRomaneioDTO filtro) {
+		
+		StringBuilder nomesProduto = new StringBuilder();
+		
+		List<Long> produtos = filtro.getProdutos();
+		
+		if (produtos == null || produtos.isEmpty()) {
+			
+			return nomesProduto.toString();
+		}
+		
+		List<ProdutoEdicao> produtosEdicao =
+			this.produtoEdicaoService.obterProdutosEdicaoPorId(new HashSet<>(filtro.getProdutos()));
+		
+		for (ProdutoEdicao produtoEdicao : produtosEdicao) {
+			
+			if (!nomesProduto.toString().isEmpty()) {
+				
+				nomesProduto.append(", ");
+			}
+			
+			nomesProduto.append(produtoEdicao.getProduto().getNome() + " - " + produtoEdicao.getNumeroEdicao());
+		}
+		
+		return nomesProduto.toString();
 	}
 	
 	private void validarEntrada(FiltroRomaneioDTO filtro) {

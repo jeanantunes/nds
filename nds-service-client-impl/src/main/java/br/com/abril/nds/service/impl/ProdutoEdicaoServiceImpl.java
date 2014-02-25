@@ -1673,5 +1673,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         dto.setNumeroLancamento(1);
         
     }
+    
+    public List<ProdutoEdicao> obterProdutosEdicaoPorId(Set<Long> idsProdutoEdicao) {
+    	
+    	return this.produtoEdicaoRepository.obterProdutosEdicaoPorId(idsProdutoEdicao);
+    }
+    
 }
 

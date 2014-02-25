@@ -25,7 +25,7 @@ var romaneiosController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Endereço',
-				name : 'logradouro',
+				name : 'endereco',
 				width : 450,
 				sortable : false,
 				align : 'left'
@@ -70,11 +70,13 @@ var romaneiosController = $.extend(true, {
 		
 		var params = [];
 		
-		params.push({name: 'filtro.data',      value: $("#dataLancamento", romaneiosController.workspace).val()});
-		params.push({name: 'filtro.codigoBox', value:$('#codigoBox', romaneiosController.workspace).val()});
-		params.push({name: 'filtro.idRoteiro', value:$('#idRoteiro', romaneiosController.workspace).val()});
-		params.push({name: 'filtro.idRota',    value:$('#idRota', romaneiosController.workspace).val()});
-		params.push({name: 'filtro.nomeRota',  value: $('#idRota option:selected', romaneiosController.workspace).text()});
+		params.push({name: 'filtro.data',      	value: $("#dataLancamento", romaneiosController.workspace).val()});
+		params.push({name: 'filtro.codigoBox', 	value:$('#codigoBox', romaneiosController.workspace).val()});
+		params.push({name: 'filtro.idRoteiro', 	value:$('#idRoteiro', romaneiosController.workspace).val()});
+		params.push({name: 'filtro.idRota',    	value:$('#idRota', romaneiosController.workspace).val()});
+		params.push({name: 'filtro.nomeRota',	value: $('#idRota option:selected', romaneiosController.workspace).text()});
+		params.push({name: 'filtro.nomeRoteiro',value: $('#idRoteiro option:selected', romaneiosController.workspace).text()});
+		params.push({name: 'filtro.nomeBox',  	value: $('#codigoBox option:selected', romaneiosController.workspace).text()});
 		
 		var produtos = $("#selectProdutos", romaneiosController.workspace).val();
 		
@@ -103,6 +105,8 @@ var romaneiosController = $.extend(true, {
 			);
 			
 			$(".grids", romaneiosController.workspace).hide();
+			
+			romaneiosController.esconderBotoes();
 
 			return resultado;
 		}
@@ -113,11 +117,11 @@ var romaneiosController = $.extend(true, {
 				
 				value.cell.numeroNotaEnvio = '';
 			}
-			
-			value.cell.logradouro += ' - ' + value.cell.cep;
 		});
 		
 		$(".grids", romaneiosController.workspace).show();
+		
+		romaneiosController.mostrarBotoes();
 		
 		return resultado;
 	},
@@ -306,6 +310,16 @@ var romaneiosController = $.extend(true, {
 	        $(comboNameComponent).val('');
 	    }
 	},
+	
+	mostrarBotoes : function() {
+		
+		$(".areaBts", romaneiosController.workspace).find("span").show();
+	},
+	
+	esconderBotoes : function() {
+		
+		$(".areaBts", romaneiosController.workspace).find("span").hide();
+	}
 		
 }, BaseController);
 
