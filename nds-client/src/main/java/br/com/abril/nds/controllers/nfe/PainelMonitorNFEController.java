@@ -96,7 +96,7 @@ public class PainelMonitorNFEController extends BaseController {
 		this.carregarComboTipoNfe();
 		this.obterTiposDestinatarios();
 		this.obterFornecedoresDestinatarios();
-		
+		this.validarTipoServico();
 	}
 	
 	private void obterTiposDestinatarios() {
@@ -105,6 +105,10 @@ public class PainelMonitorNFEController extends BaseController {
 	
 	private void obterFornecedoresDestinatarios() {
 		result.include("fornecedoresDestinatarios", fornecedorService.obterFornecedoresDestinatarios(SituacaoCadastro.ATIVO));
+	}
+	
+	private void validarTipoServico(){
+		result.include("emissor", true);
 	}
 	
 	@Post

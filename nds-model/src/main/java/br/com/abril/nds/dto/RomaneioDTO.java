@@ -4,29 +4,28 @@ import java.io.Serializable;
 import java.math.BigInteger;
 
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Footer;
+import br.com.abril.nds.util.export.FooterType;
 
+@Exportable
 public class RomaneioDTO implements Serializable {
 
 
 	/** */
 	private static final long serialVersionUID = 6721772921124214158L;
 	
-	
+	@Export(label = "Cota", alignment = Alignment.LEFT, exhibitionOrder = 2, widthPercent = 15)
+	@Footer(label = "Total de Entregas", type = FooterType.COUNT, alignWithHeader="Endereço")
 	private Integer numeroCota;
 	
+	@Export(label = "Nome", alignment = Alignment.LEFT, exhibitionOrder = 3, widthPercent = 25, xlsAutoSize = true)
 	private String nome;
-	
-	private String tipoLogradouro;
-	
-	private String logradouro;
-	
-	private String numeroLogradouro;
-	
-	private String bairro;
-	
-	private String cidade;
-	
-	private String uf;
+
+	@Export(label = "Endereço", alignment = Alignment.LEFT, exhibitionOrder = 4, widthPercent = 45, xlsAutoSize = true)
+	private String endereco;
 	
 	private String numeroTelefone;
 	
@@ -63,33 +62,12 @@ public class RomaneioDTO implements Serializable {
 	
 	private BigInteger qtdProduto5;
 	
+	@Export(label = "Nº. NE", alignment = Alignment.LEFT, exhibitionOrder = 1, widthPercent = 15)
 	private Long numeroNotaEnvio;
 	
 	private String cep;
 	
 	public RomaneioDTO() {}
-	
-	public RomaneioDTO(Integer numeroCota, String nome, String logradouro,
-			String bairro, String cidade, String uf, String numeroTelefone, Long idCota) {
-		super();
-		this.numeroCota = numeroCota;
-		this.nome = nome;
-		this.logradouro = logradouro;
-		this.bairro = bairro;
-		this.cidade = cidade;
-		this.uf = uf;
-		this.numeroTelefone = numeroTelefone;
-		this.idCota = idCota;
-	}
-	
-	public RomaneioDTO(String logradouro, String bairro, String cidade, String uf) {
-		super();
-		this.logradouro = logradouro;
-		this.bairro = bairro;
-		this.cidade = cidade;
-		this.uf = uf;
-	}
-	
 	
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -103,41 +81,13 @@ public class RomaneioDTO implements Serializable {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	public String getTipoLogradouro() {
-		return tipoLogradouro;
+	
+	public String getEndereco() {
+		return endereco;
 	}
-	public void setTipoLogradouro(String tipoLogradouro) {
-		this.tipoLogradouro = tipoLogradouro;
-	}
-	public String getLogradouro() {
-		return logradouro;
-	}
-	public void setLogradouro(String logradouro) {
-		this.logradouro = logradouro;
-	}
-	public String getNumeroLogradouro() {
-		return numeroLogradouro;
-	}
-	public void setNumeroLogradouro(String numeroLogradouro) {
-		this.numeroLogradouro = numeroLogradouro;
-	}
-	public String getBairro() {
-		return bairro;
-	}
-	public void setBairro(String bairro) {
-		this.bairro = bairro;
-	}
-	public String getCidade() {
-		return cidade;
-	}
-	public void setCidade(String cidade) {
-		this.cidade = cidade;
-	}
-	public String getUf() {
-		return uf;
-	}
-	public void setUf(String uf) {
-		this.uf = uf;
+
+	public void setEndereco(String endereco) {
+		this.endereco = endereco;
 	}
 
 	public String getNumeroTelefone() {
@@ -313,4 +263,5 @@ public class RomaneioDTO implements Serializable {
 	public void setCep(String cep) {
 		this.cep = Util.adicionarMascaraCEP(cep);
 	}
+	
 }

@@ -257,6 +257,29 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}
 	
 	@Override
+	public NotaFiscal obterChaveAcesso(RetornoNFEDTO dadosRetornoNFE) {
+		
+		StringBuffer sql = new StringBuffer("");
+
+		sql.append(" SELECT notaFiscal");
+		sql.append(" FROM NotaFiscal as notaFiscal");
+		sql.append(" WHERE");
+		
+		
+		if(dadosRetornoNFE.getChaveAcesso()!=null) {
+
+			sql.append(" notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso = :chaveAcesso ");
+
+		}
+		
+		Query query = this.getSession().createQuery(sql.toString());
+		query.setParameter("chaveAcesso", dadosRetornoNFE.getChaveAcesso());
+		
+		return (NotaFiscal) query.uniqueResult();
+		
+	}
+	
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<NotaFiscal> obterListaNotasFiscaisNumeroSerie(FiltroMonitorNfeDTO filtro) {
 

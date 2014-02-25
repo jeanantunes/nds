@@ -283,35 +283,37 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		for (RetornoNFEDTO dadosRetornoNFE : listaDadosRetornoNFE) {
 
 			if (dadosRetornoNFE.getNumeroNotaFiscal() != null || dadosRetornoNFE.getProtocolo() != null) {
-
-				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarNotaFiscalNumeroSerie(dadosRetornoNFE);
+				NotaFiscal notaFiscal = null;
+				
+				if(dadosRetornoNFE.getStatus().equals(Status.CANCELAMENTO_HOMOLOGADO)){
+					notaFiscal = this.notaFiscalRepository.obterChaveAcesso(dadosRetornoNFE);
+				}else{
+					notaFiscal = this.notaFiscalRepository.buscarNotaFiscalNumeroSerie(dadosRetornoNFE);
+				}
+				
 
 				if (notaFiscal != null) {
-
-					IdentificacaoEmitente emitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente();
-
-					String cpfCnpjEmitente = emitente.getDocumento().getDocumento();
-
 					InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
 
-					if (cpfCnpjEmitente.equals(dadosRetornoNFE.getCpfCnpj())) {
+					if (informacaoEletronica.getChaveAcesso().equals(dadosRetornoNFE.getChaveAcesso())) {
 
 						if (StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno())) {
-							dadosRetornoNFE.setStatus(Status.AUTORIZADO);
-							if (Status.AUTORIZADO.equals(dadosRetornoNFE.getStatus())
-									|| Status.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())) {
-
+							if (Status.AUTORIZADO.equals(dadosRetornoNFE.getStatus()) || Status.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())) {
 								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
 							}
 
 						} else if (StatusProcessamentoInterno.RETORNADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno())) {
 
-							if (Status.AUTORIZADO.equals(informacaoEletronica.getRetornoComunicacaoEletronica().getStatus())
-									|| Status.CANCELAMENTO_HOMOLOGADO.equals(dadosRetornoNFE.getStatus())) {
+							if (Status.AUTORIZADO.equals(informacaoEletronica.getRetornoComunicacaoEletronica().getStatus()) || Status.CANCELAMENTO_HOMOLOGADO.equals(dadosRetornoNFE.getStatus())) {
 
 								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
 							}
+						} else if (StatusProcessamentoInterno.SOLICITACAO_CANCELAMENTO.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno())) {
+								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
+						} else {
+							throw new ValidacaoException(TipoMensagem.ERROR, "A chave de acesso do arquivo não confere com a base de dados.");
 						}
+							
 					}
 				}
 			}

@@ -18,13 +18,20 @@
 	    		
     <div class="areaBts">
 		<div class="area">
-			<span class="bt_arq">
+		
+			<span class="bt_novos" style="display: none;">
+				<a href="${pageContext.request.contextPath}/romaneio/gerarRomaneio?fileType=PDF" rel="tipsy" title="Gerar Romaneio">
+					<img src="${pageContext.request.contextPath}/images/bt_expedicao.png" border="0" />
+				</a>
+			</span>
+		
+			<span class="bt_arq" style="display: none;">
 				<a href="${pageContext.request.contextPath}/romaneio/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" border="0" />
 				</a>
 			</span>
 			
-			<span class="bt_arq">
+			<span class="bt_arq" style="display: none;">
 				<a href="${pageContext.request.contextPath}/romaneio/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
 				</a>

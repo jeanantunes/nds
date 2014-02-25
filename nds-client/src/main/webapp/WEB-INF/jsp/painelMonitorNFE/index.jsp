@@ -25,22 +25,25 @@ $(function() {
 <body>
 <div class="areaBts">
 	<div class="area">
-		<span class="bt_novos">
-			<a isEdicao="true" onclick="PainelMonitorNFE.cancelarNfe()" href="javascript:;" rel="tipsy" title="Cancelar NF-e">
-				<img 	src="${pageContext.request.contextPath}/images/ico_bloquear.gif" 
-					alt="Cancelar NF-e" width="16" 
-					height="16" 
-					hspace="5" border="0">
-			</a>
-		</span>
 		
-		<span  class="bt_novos">
-			<a isEdicao="true" onclick="PainelMonitorNFE.imprimirDanfes(true)" href="javascript:;" rel="tipsy" title="Emitir em DEPEC">
-				<img 	src="${pageContext.request.contextPath}/images/bt_expedicao.png" 	
-				     	alt="Emitir em DEPEC" 
-					hspace="5" border="0">
-			</a>
-		</span>
+		<c:if test="${!emissor}">
+			<span class="bt_novos">
+				<a isEdicao="true" onclick="PainelMonitorNFE.cancelarNfe()" href="javascript:;" rel="tipsy" title="Cancelar NF-e">
+					<img 	src="${pageContext.request.contextPath}/images/ico_bloquear.gif" 
+						alt="Cancelar NF-e" width="16" 
+						height="16" 
+						hspace="5" border="0">
+				</a>
+			</span>
+			<span  class="bt_novos">
+				<a isEdicao="true" onclick="PainelMonitorNFE.imprimirDanfes(true)" href="javascript:;" rel="tipsy" title="Emitir em DEPEC">
+					<img 	src="${pageContext.request.contextPath}/images/bt_expedicao.png" 	
+					     	alt="Emitir em DEPEC" 
+						hspace="5" border="0">
+				</a>
+			</span>
+		</c:if>
+		
 		
 		<span class="bt_novos">
 			<a  isEdicao="true" onclick="PainelMonitorNFE.imprimirDanfes(false)" href="javascript:;" rel="tipsy" title="Imprimir Seleção">
