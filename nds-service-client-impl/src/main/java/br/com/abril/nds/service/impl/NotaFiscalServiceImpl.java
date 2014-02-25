@@ -28,15 +28,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.exolab.castor.xml.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -120,8 +121,8 @@ import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.inf.portalfiscal.nfe.util.Util;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -134,6 +135,9 @@ import br.com.abril.nds.vo.ValidacaoVO;
 public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(NotaFiscalServiceImpl.class);
+	public static final String VERSAO = "2.2.21";
+	public static final String NAMESPACE = "http://www.portalfiscal.inf.br/nfe";
+	
 	
 	@Autowired
 	private NotaFiscalRepository notaFiscalRepository;
@@ -280,7 +284,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		for (RetornoNFEDTO dadosRetornoNFE : listaDadosRetornoNFE) {
 
-			if (dadosRetornoNFE.getNumeroNotaFiscal() != null) {
+			if (dadosRetornoNFE.getNumeroNotaFiscal() != null || dadosRetornoNFE.getProtocolo() != null) {
 
 				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarNotaFiscalNumeroSerie(dadosRetornoNFE);
 
@@ -331,9 +335,32 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarNotaFiscalNumeroSerie(dadosRetornoNFE);
 
-		
-		
-		
+		this.gerarArquivoSolicitacaoCancelamento(notaFiscal); 
+
+	}
+
+	private void gerarArquivoSolicitacaoCancelamento(NotaFiscal notaFiscal)
+			throws TransformerFactoryConfigurationError {
+		try {
+			Document document = this.criarDocumentoCancelamento(notaFiscal);
+			ParametroSistema diretorioSaida = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
+			String numeroNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNumeroDocumentoFiscal().toString();
+			String serieNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getSerie().toString();
+			
+	        OutputStream os2 = new FileOutputStream(diretorioSaida.getValor() +"/"+ "NF-e-Solicitacao-Cancelamento"+ serieNF +"-"+ numeroNF +".xml");
+	        TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer trans = null;
+            
+			trans = tf.newTransformer();
+			trans.transform(new DOMSource(document), new StreamResult(os2));
+            os2.flush();
+            os2.close();
+		} catch (ParserConfigurationException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao realizar o parser do documento de cancelamento.");
+		} catch (Exception e) {
+			LOGGER.error("Erro ao gerar XML", e);
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no transporter do arquivo gerado.");
+		}
 	}
 
 	/**
@@ -1828,25 +1855,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		return notaReferenciada;
 	}
-
-	private Endereco cloneEndereco(Endereco endereco)
-			throws CloneNotSupportedException {
-		Endereco novoEndereco = endereco.clone();
-		enderecoRepository.detach(novoEndereco);
-		novoEndereco.setId(null);
-		novoEndereco.setPessoa(null);
-		if (novoEndereco.getCep() != null) {
-			novoEndereco.setCep(novoEndereco.getCep().replace("-", ""));
-		}
-		/*if (novoEndereco.getCodigoUf() == null
-				&& novoEndereco.getCodigoCidadeIBGE() != null) {
-			novoEndereco.setCodigoUf(novoEndereco
-					.getCodigoCidadeIBGE().toString().substring(0, 2));
-		}*/
-		enderecoRepository.adicionar(novoEndereco);
-		return novoEndereco;
-	}
-
+	
 	public byte[] imprimirNotasEnvio(List<NotaEnvio> notasEnvio) {
 		
 		return null;
@@ -1891,4 +1900,50 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return this.notaFiscalNdsRepository.consultaFornecedorExemplaresSumarizadosQtd(filtro);
 	}
 	
+	public Document criarDocumentoCancelamento(NotaFiscal notaFiscal) throws ParserConfigurationException {
+		
+		if (notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getJustificativaEntradaContigencia()==null) {
+			throw new IllegalArgumentException("Justificativa não pode ser nula");
+		}
+		
+		if (notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getJustificativaEntradaContigencia().length()<15 || notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getJustificativaEntradaContigencia().length()>255) {
+			throw new IllegalArgumentException("Justificativa deve possuir entre 15 e 255 caracteres, tamanho atual: "+notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getJustificativaEntradaContigencia().length());
+		}
+		
+		
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder;
+		documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		Document doc = documentBuilder.newDocument();
+		
+		Element cancNFeElement = doc.getDocumentElement();
+		cancNFeElement.setAttribute("versao", VERSAO);
+		
+		Element infCancElement = doc.createElement("infCanc");
+		infCancElement.setAttribute("Id", new StringBuilder("ID").append(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso()).toString());
+		cancNFeElement.appendChild(infCancElement);
+
+		Element tpAmbElement = doc.createElement("tpAmb");
+		tpAmbElement.setTextContent(String.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoAmbiente()));
+		infCancElement.appendChild(tpAmbElement);
+
+		Element xServElement = doc.createElement("xServ");
+		xServElement.setTextContent("CANCELAR");
+		infCancElement.appendChild(xServElement);
+
+		Element chNFeElement = doc.createElement("chNFe");
+		chNFeElement.setTextContent(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso().toString());
+		infCancElement.appendChild(chNFeElement);
+
+		Element nProtElement = doc.createElement("nProt");
+		nProtElement.setTextContent(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica().getProtocolo().toString());
+		infCancElement.appendChild(nProtElement);
+
+		Element xJustElement = doc.createElement("xJust");
+		xJustElement.setTextContent(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getJustificativaEntradaContigencia());
+		infCancElement.appendChild(xJustElement);
+
+		return doc;
+	}
+
 }

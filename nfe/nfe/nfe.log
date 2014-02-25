@@ -344,3 +344,17 @@
 21:06:10,987 ERROR NotaFiscalV310Test:37 - Exception: cvc-complex-type.2.4.b: The content of element 'NFe' is not complete. One of '{"http://www.w3.org/2000/09/xmldsig#":Signature}' is expected.
 21:07:23,492 DEBUG NotaFiscalV310Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
 21:07:23,873 DEBUG NotaFiscalV310Test:34 - Validando: src/main/resources/xmlTestes/nfeassinada.xml
+22:12:07,115 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+22:12:07,329 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+22:12:56,037 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+22:12:56,212 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+22:13:09,163 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+22:13:12,158 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+22:26:52,101 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+22:26:52,259 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+22:27:00,606 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v/2.00.xsd
+22:27:00,661 ERROR NotaFiscalV200Test:37 - Exception: schema_reference.4: Falha ao ler o documento do esquema 'file:/C:/Users/wrpaiva/NDS/nfe/src/main/resources/xsd/v2.00/nfe_v/2.00.xsd' porque 1) não foi possível encontrar o documento; 2) não foi possível ler o documento; 3) o elemento-raiz do documento não é <xsd:schema>.
+22:27:21,834 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+22:27:29,989 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+22:28:07,403 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+22:28:07,468 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml

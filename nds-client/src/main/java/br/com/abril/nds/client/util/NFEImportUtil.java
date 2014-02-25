@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 import javax.xml.XMLConstants;
@@ -16,11 +17,14 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import br.com.abril.nds.dto.RetornoNFEDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ProcessamentoNFEException;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.inf.portalfiscal.nfe.TNFe;
 import br.inf.portalfiscal.nfe.TNfeProc;
 import br.inf.portalfiscal.nfe.TProcCancNFe;
+import br.inf.portalfiscal.nfe.TRetCancNFe;
 
 /**
  * Classe utilitária que importa os arquivos de nota fiscal.
@@ -32,20 +36,22 @@ public class NFEImportUtil {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(NFEImportUtil.class);
     
+    private static String versaoNFE = "2.00";
+    
     /**
      * Constante com caminho do arquivo do xsd do POJO TNFe
      */
-    private static final String XSD_NFE = "xsdnfe/nfe_v2.00.xsd";
+    private static final String XSD_NFE = "/nfe_v";
     
     /**
      * Constante com caminho do arquivo do xsd do POJO TNfeProc
      */
-    private static final String XSD_PPROC_NFE = "xsdnfe/procNFe_v2.00.xsd";
+    private static final String XSD_PPROC_NFE = "/procNFe_v";
     
     /**
      * Constante com caminho do arquivo do xsd do POJO TProcCancNFe
      */
-    private static final String XSD_PROC_CANC_NFE = "xsdnfe/procCancNFe_v2.00.xsd";
+    private static final String XSD_PROC_CANC_NFE = "/retCancNFe_v";
     
     /**
      * Constante da quantidade de dígitos da chave acesso.
@@ -55,6 +61,7 @@ public class NFEImportUtil {
     private NFEImportUtil() {
         
     }
+
     
     /**
      * Obtém os dados atualizados de Status do arquivo da NFe de Retorno.
@@ -64,78 +71,43 @@ public class NFEImportUtil {
      * @throws ProcessamentoNFEException
      * @throws SAXException
      */
-    public static RetornoNFEDTO processarArquivoRetorno(final File arquivo) throws ProcessamentoNFEException {
+    public static RetornoNFEDTO processarArquivoRetorno(final File arquivo, String schemaPath) throws ProcessamentoNFEException {
         
         RetornoNFEDTO retornoNFEDTO = null;
         
+        // validar o tipo de schema pertecente
         JAXBContext context;
         Unmarshaller unmarshaller;
-        final SchemaFactory schemaFactory = SchemaFactory.newInstance(javax.xml.XMLConstants.DEFAULT_NS_PREFIX);
-        Schema schema;
-        
-        Exception exception = null;
         
         try {
-        	
-        	SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			
-			schema = factory.newSchema(arquivo);
-			Validator validator = schema.newValidator();
-			validator.validate(new StreamSource(arquivo));
-        	
-        	
-        	
-            context = JAXBContext.newInstance(TNFe.class);
-            unmarshaller = context.createUnmarshaller();
-            
-            schema = schemaFactory.newSchema(Thread.currentThread().getContextClassLoader().getResource(NFEImportUtil.XSD_NFE));
-            unmarshaller.setSchema(schema);
-            
-            final TNFe nfe = (TNFe) unmarshaller.unmarshal(arquivo);
-            
-            retornoNFEDTO = NFEImportUtil.retornoNFeAssinada(nfe);
+        
+	        if (validarSchemaXML(XSD_NFE, arquivo, schemaPath)){
+	        	context = JAXBContext.newInstance(TNFe.class);
+	            unmarshaller = context.createUnmarshaller();
+	            
+	            final TNFe nfe = (TNFe) unmarshaller.unmarshal(arquivo);
+	            retornoNFEDTO = NFEImportUtil.retornoNFeAssinada(nfe);
+	            
+	        }else if(validarSchemaXML(XSD_PPROC_NFE, arquivo, schemaPath)){
+	        	 context = JAXBContext.newInstance(TNfeProc.class);
+	             unmarshaller = context.createUnmarshaller();
+	        	final TNfeProc nfeProc = (TNfeProc) unmarshaller.unmarshal(arquivo);
+	            retornoNFEDTO = NFEImportUtil.retornoNFeProcNFe(nfeProc);
+	            
+	        }else if(validarSchemaXML(XSD_PROC_CANC_NFE, arquivo, schemaPath)){
+	        	
+	        	context = JAXBContext.newInstance(TProcCancNFe.class);
+                unmarshaller = context.createUnmarshaller();
+                final TRetCancNFe retornoCancelamentoNFe = (TRetCancNFe) unmarshaller.unmarshal(arquivo);
+                retornoNFEDTO = NFEImportUtil.retornoNFeCancNFe(retornoCancelamentoNFe);
+	        	
+	        }else{
+	        	 throw new ValidacaoException(TipoMensagem.ERROR, "Erro com a geração do arquivo ");
+	        }
+        
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            exception = e;
-        }
-        
-        if (exception != null) {
-            exception = null;
-            try {
-                context = JAXBContext.newInstance(TNfeProc.class);
-                unmarshaller = context.createUnmarshaller();
-                
-                schema = schemaFactory.newSchema(Thread.currentThread().getContextClassLoader().getResource(NFEImportUtil.XSD_PPROC_NFE));
-                unmarshaller.setSchema(schema);
-                
-                final TNfeProc nfeProc = (TNfeProc) unmarshaller.unmarshal(arquivo);
-                retornoNFEDTO = NFEImportUtil.retornoNFeProcNFe(nfeProc);
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                exception = e;
-            }
-        }
-        
-        if (exception != null) {
-            exception = null;
-            try {
-                context = JAXBContext.newInstance(TProcCancNFe.class);
-                unmarshaller = context.createUnmarshaller();
-                
-                schema = schemaFactory.newSchema(Thread.currentThread().getContextClassLoader().getResource(
-                        NFEImportUtil.XSD_PROC_CANC_NFE));
-                unmarshaller.setSchema(schema);
-                
-                final TProcCancNFe procCancNFe = (TProcCancNFe) unmarshaller.unmarshal(arquivo);
-                retornoNFEDTO = NFEImportUtil.retornoNFeCancNFe(procCancNFe);
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                exception = e;
-            }
-        }
-        
-        if (exception != null) {
-            throw new ProcessamentoNFEException();
+            throw new ValidacaoException(TipoMensagem.ERROR, "Erro com a geração do arquivo ");
         }
         
         return retornoNFEDTO;
@@ -233,23 +205,23 @@ public class NFEImportUtil {
      * @return
      * @throws ProcessamentoNFEException
      */
-    private static RetornoNFEDTO retornoNFeCancNFe(final TProcCancNFe procCancNFe) throws ProcessamentoNFEException {
+    private static RetornoNFEDTO retornoNFeCancNFe(final TRetCancNFe procCancNFe) throws ProcessamentoNFEException {
         final RetornoNFEDTO retornoNFEDTO = new RetornoNFEDTO();
         
-        if (procCancNFe != null && procCancNFe.getRetCancNFe() != null
-                && procCancNFe.getRetCancNFe().getInfCanc() != null
-                && procCancNFe.getRetCancNFe().getInfCanc().getChNFe() != null
-                && procCancNFe.getRetCancNFe().getInfCanc().getChNFe().length() == 44
-                && procCancNFe.getRetCancNFe().getInfCanc().getDhRecbto() != null && procCancNFe.getCancNFe() != null
-                && procCancNFe.getCancNFe().getInfCanc() != null) {
+        if (procCancNFe != null && procCancNFe.getInfCanc() != null
+                && procCancNFe.getInfCanc() != null
+                && procCancNFe.getInfCanc().getChNFe() != null
+                && procCancNFe.getInfCanc().getChNFe().length() == 44
+                && procCancNFe.getInfCanc().getDhRecbto() != null && procCancNFe.getInfCanc() != null
+                && procCancNFe.getInfCanc() != null) {
             
             final Long idNotaFiscal = null;
             final String cpfCnpj = null;
-            final String chaveAcesso = procCancNFe.getRetCancNFe().getInfCanc().getChNFe();
-            final Long protocolo = Long.parseLong(procCancNFe.getRetCancNFe().getInfCanc().getNProt());
-            final Date dataRecebimento = procCancNFe.getRetCancNFe().getInfCanc().getDhRecbto().toGregorianCalendar().getTime();
-            final String motivo = procCancNFe.getCancNFe().getInfCanc().getXJust();
-            final Status status = Status.obterPeloCodigo(Integer.parseInt(procCancNFe.getRetCancNFe().getInfCanc().getCStat()));
+            final String chaveAcesso = procCancNFe.getInfCanc().getChNFe();
+            final Long protocolo = Long.parseLong(procCancNFe.getInfCanc().getNProt());
+            final Date dataRecebimento = procCancNFe.getInfCanc().getDhRecbto().toGregorianCalendar().getTime();
+            final String motivo = procCancNFe.getInfCanc().getXMotivo();
+            final Status status = Status.obterPeloCodigo(Integer.parseInt(procCancNFe.getInfCanc().getCStat()));
             
             retornoNFEDTO.setNumeroNotaFiscal(idNotaFiscal);
             retornoNFEDTO.setCpfCnpj(cpfCnpj);
@@ -264,4 +236,33 @@ public class NFEImportUtil {
         return retornoNFEDTO;
     }
     
+    /**
+     * Metodo por validar o schema de xml
+     * 
+     * @param versao
+     * @param tipoSchema
+     */
+	public static boolean validarSchemaXML(String tipoSchema, File arquivo, String schemaPàth) {
+		
+		boolean retorno = false; 
+		
+		
+		try {
+			
+			String schemaFile = schemaPàth+"xsdnfe/v"+ versaoNFE + tipoSchema + versaoNFE + ".xsd";
+			//String xmlFile = "src/main/resources/xmlGerado.xml";
+			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			LOGGER.debug("Schema: "+ schemaFile);
+			Schema schema = factory.newSchema(new File(schemaFile));
+			Validator validator = schema.newValidator();
+			validator.validate(new StreamSource(arquivo));
+			
+			return true;
+			
+		} catch (IOException | SAXException e) {
+			LOGGER.error("Exception: ", e);
+		}
+		
+		return retorno;
+	}
 }

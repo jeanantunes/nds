@@ -70,7 +70,13 @@
 			<artifactId>nds-repository-client-impl</artifactId>
 			<version>1.0</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nfe</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
