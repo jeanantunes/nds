@@ -277,21 +277,21 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				try {
 					lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(dtLancamentoNovo, lancamento.getDataRecolhimentoDistribuidor(),message,codigoProduto,edicao));
 				} catch (Exception e) {
-					return;
+					//return;
 				}
 				// Alterado por solicitacao da trac 185
-				/*
+				
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteracao da DATA LANCAMENTO DISTRIBUIDOR do Produto: "
+						"Alteracao para PARCIAL da DATA LANCAMENTO DISTRIBUIDOR do Produto: "
 								+ codigoProduto + " e Edicao: " + edicao
 								+ " , de: " + simpleDateFormat.format(
 										dtLancamentoDistribuidor)
 								+ "para: " + simpleDateFormat.format(
 										dtLancamentoNovo));
 				
-				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
-				*/
+				//lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
+				
 				boolean erroRetornoParciais =
 					this.tratarParciais(lancamento, message, codigoProduto, edicao);
 				
