@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
+import br.com.abril.nds.dto.TributoAliquotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
@@ -785,5 +787,13 @@ public class ParametrosDistribuidorController extends BaseController {
         
         TIPO_COTA, MUNICIPIO;
     }
+    
+    @Post
+	public void obterTributosPeloRegimeTributario(Long regimeTributarioId) {
+		
+		List<TributoAliquotaDTO> tributos = regimeTributarioService.obterTributosPeloRegimeTributario(regimeTributarioId);
+		
+		result.use(Results.json()).withoutRoot().from(tributos).serialize();	
+	}
     
 }

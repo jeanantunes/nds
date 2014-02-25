@@ -260,10 +260,14 @@ public class NecaBuilder  implements Serializable {
 			public int compare(ItemNotaEnvio o1, ItemNotaEnvio o2) {
 			    
 			    	if(o1 != null && o1.getSequenciaMatrizLancamento() != null && o2 != null && o2.getSequenciaMatrizLancamento() != null) {
+			    		
 			    	    return o1.getSequenciaMatrizLancamento().compareTo(o2.getSequenciaMatrizLancamento());
-			    	} else if ((o1.getProdutoEdicao() != null && o1.getProdutoEdicao().getProduto() != null)
-			    		&& (o2.getProdutoEdicao() != null && o2.getProdutoEdicao().getProduto() != null)) {
-    						o1.getProdutoEdicao().getProduto().getNome().compareTo(o2.getProdutoEdicao().getProduto().getNome());
+			    	    
+			    	} else if ((o1 != null && o1.getProdutoEdicao() != null && o1.getProdutoEdicao().getProduto() != null)
+			    		&& (o2 != null && o2.getProdutoEdicao() != null && o2.getProdutoEdicao().getProduto() != null)) {
+    					
+			    		return o1.getProdutoEdicao().getProduto().getNome().compareTo(o2.getProdutoEdicao().getProduto().getNome());
+    					 
     				}
     							    	
 			    	return 0;
