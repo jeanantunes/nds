@@ -3,6 +3,7 @@ package br.com.abril.nds.util.export;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,10 +104,19 @@ public class XLSExporter implements Exporter {
 
             int lastRowNum = this.createSheetFilter(sheet, creationHelper, exportModel.getFilters());
 
-            lastRowNum = this.createSheetMainDataHeaders(sheet, creationHelper, exportModel.getHeaders(), lastRowNum);
+            List<Integer> autoSizeColumns = new ArrayList<>();
+            
+            lastRowNum =
+            	this.createSheetMainDataHeaders(
+            		sheet, creationHelper, exportModel.getHeaders(), lastRowNum, autoSizeColumns);
 
             lastRowNum = this.createSheetMainDataRows(sheet, exportModel.getRows(), lastRowNum);
 
+            for (Integer autoSizeColumn : autoSizeColumns) {
+				
+				sheet.autoSizeColumn(autoSizeColumn);
+			}
+            
             this.createSheetFooter(sheet, exportModel.getFooters(), exportModel.getHeaders(), lastRowNum);
 
             this.createSheetHeader(sheet, creationHelper, ndsFileHeader);
@@ -195,7 +205,7 @@ public class XLSExporter implements Exporter {
     }
 
     private int createSheetMainDataHeaders(final Sheet sheet, final CreationHelper creationHelper,
-            final List<ExportHeader> headers, final int lastRowNum) {
+            final List<ExportHeader> headers, final int lastRowNum, List<Integer> autoSizeColumns) {
 
         final int startRowNum = lastRowNum + 2;
 
@@ -249,6 +259,11 @@ public class XLSExporter implements Exporter {
 
             sheet.setColumnWidth(cellNum, width);
 
+            if (exportHeader.getXlsAutoSize()) {
+    			
+				autoSizeColumns.add(cell.getColumnIndex());
+			}
+            
             cellNum++;
         }
 
