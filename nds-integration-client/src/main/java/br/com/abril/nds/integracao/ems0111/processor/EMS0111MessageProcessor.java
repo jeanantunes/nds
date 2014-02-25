@@ -411,10 +411,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	
 	private Date getDiaMatrizAberta(Date dataLctoDistibuidor,Date dataRecDistibuidor,Message message, String codigoProduto, Long edicao) throws Exception{
 		
+		
 	    	
 		if(datasNaoBalanceaveis==null || datasNaoBalanceaveis.isEmpty()){
 		 return dataLctoDistibuidor;
-	    }else if(!datasNaoBalanceaveis.contains(dataLctoDistibuidor)){
+		}else if(!datasNaoBalanceaveis.contains(dataLctoDistibuidor) && !dataLctoDistibuidor.before(distribuidorService.obterDataOperacaoDistribuidor())){
 		 return dataLctoDistibuidor;
 		}else{
 			if(datasBalanceaveis!=null && !datasBalanceaveis.isEmpty()){
