@@ -686,8 +686,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		            os2.close();
 			        
 				} catch (ParserConfigurationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.error("Erro ao gerar XML", e);
+					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar XML.");
 				}
 		        
 			} catch (JAXBException e) {
