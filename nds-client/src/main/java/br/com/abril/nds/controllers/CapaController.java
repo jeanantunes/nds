@@ -38,7 +38,7 @@ import br.com.caelum.vraptor.view.Results;
 public class CapaController {
     
     private static final String NO_IMAGE_PATH = "/images/no_image.jpeg";
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(CapaController.class);
     
     private static final int TAMANHO_MAXIMO = 500 * 1024;
@@ -94,7 +94,7 @@ public class CapaController {
         try {
             fileService.validarArquivo(500, imagemCapa, FileType.JPEG, FileType.PNG, FileType.GIF);
         } catch (final Exception e) {
-            
+            LOGGER.error(e.getMessage(), e);
             if (e instanceof ValidacaoException) {
                 throw e;
             } else {
@@ -158,6 +158,7 @@ public class CapaController {
             capaService.deleteCapa(idProdutoEdicao);
             vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Remoção feita com sucesso!");
         } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
             if (e instanceof ValidacaoException) {
                 
                 vo = ((ValidacaoException) e).getValidacao();
