@@ -69,7 +69,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" notaFiscal.notaFiscalInformacoes.identificacao.serie as serie,")
 		.append(" notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao as emissao,")
 		.append(" notaFiscal.notaFiscalInformacoes.identificacao.tipoEmissao as tipoEmissao,")
-		.append(" notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento.documento as cnpjDestinatario,")
+		.append(" notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento.documento as cnpjRemetente,")
+		.append(" notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.documento.documento as cnpjDestinatario, ")
 		.append(" notaFiscal.notaFiscalInformacoes.statusProcessamentoInterno as statusNfe,")
 		.append(" notaFiscal.notaFiscalInformacoes.identificacao.naturezaOperacao.descricao as tipoNfe,")
 		.append(" notaFiscal.notaFiscalInformacoes.identificacao.naturezaOperacao.descricao as movimentoIntegracao");
@@ -95,9 +96,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	private StringBuilder queryConsultaPainelMonitor(FiltroMonitorNfeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup){
 		
 		hql.append(" FROM NotaFiscal as notaFiscal")
-		.append(" JOIN notaFiscal.usuario as usuario")
-		.append(" LEFT JOIN notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento as documento")
-		.append(" LEFT JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.documento as dest");
+		.append(" JOIN notaFiscal.usuario as usuario");
+		//.append(" LEFT JOIN notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento as docEmit")
+		//.append(" LEFT JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.documento as docDest");
 		if(	(filtro.getBox()!=null) || filtro.getDataInicial() != null || filtro.getDataFinal() != null ||
 				(filtro.getDocumentoPessoa() != null && !filtro.getDocumentoPessoa().isEmpty() ) || 
 				(filtro.getTipoNfe() != null && !filtro.getTipoNfe().isEmpty() ) || 

@@ -84,7 +84,6 @@ import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
-import br.com.abril.nds.repository.TributacaoRepository;
 import br.com.abril.nds.repository.TributoAliquotaRepository;
 import br.com.abril.nds.service.GrupoPermissaoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;

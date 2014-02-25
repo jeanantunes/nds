@@ -1030,10 +1030,12 @@ public class DataLoader {
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
-				if (commit) {
-					tx.commit();
-				} else {
-					tx.rollback();
+				if(tx != null) {
+					if (commit) {
+						tx.commit();
+					} else {
+						tx.rollback();
+					}
 				}
 				if (session != null) {
 					session.close();
@@ -6753,7 +6755,7 @@ public class DataLoader {
 		//Boletos não vencidos
 		Boleto boleto6 = Fixture.boleto("1311009032012", "840", "1311009032012840",
 				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"),
-		                				null, BigDecimal.ZERO, new BigDecimal(2258.62),
+		                				null, BigDecimal.ZERO, BigDecimal.valueOf(2258.62),
 		                				TipoBaixaCobranca.MANUAL, "ACAO", StatusCobranca.NAO_PAGO,
 		                				cotaManoel, bancoHSBC, divida6,0);
 
@@ -6777,7 +6779,7 @@ public class DataLoader {
 
 		Boleto boleto9 = Fixture.boleto("1311009032025", "840", "1311009032012825",
 						                DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"),
-										null, BigDecimal.ZERO, new BigDecimal(2258.62),
+										null, BigDecimal.ZERO, BigDecimal.valueOf(2258.62),
 										TipoBaixaCobranca.MANUAL, "ACAO", StatusCobranca.NAO_PAGO,
 										cotaManoelCunha, bancoHSBC, divida15,0);
 
@@ -9370,253 +9372,253 @@ public class DataLoader {
 		//PRODUTOS EDIÇÃO
 		javaMagazineEdicao101 =
 				Fixture.produtoEdicao("COD_001", 101L, 10, 14,
-						new Long(100), BigDecimal.TEN, new BigDecimal(20),
+						new Long(100), BigDecimal.TEN, BigDecimal.valueOf(20),
 									  "001", javaMagazine, BigDecimal.TEN, true, "javaMagazineEdicao101");
 
 		javaMagazineEdicao102 =
 				Fixture.produtoEdicao(102L, 13, 14, new Long(100),
-						BigDecimal.TEN, new BigDecimal(17), "002",
+						BigDecimal.TEN, BigDecimal.valueOf(17), "002",
 									  javaMagazine, BigDecimal.TEN, true);
 
 		mundoJavaEdicao101 =
 				Fixture.produtoEdicao(101L, 5, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(10.5), "003",
+						BigDecimal.TEN, BigDecimal.valueOf(10.5), "003",
 									  mundoJava, BigDecimal.TEN, false);
 
 		mundoJavaEdicao102 =
 				Fixture.produtoEdicao(102L, 15, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(2.9), "004",
+						BigDecimal.TEN, BigDecimal.valueOf(2.9), "004",
 									  mundoJava, BigDecimal.TEN, false);
 
 		sqlMagazineEdicao101 =
 				Fixture.produtoEdicao(101L, 10, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(23), "005",
+						BigDecimal.TEN, BigDecimal.valueOf(23), "005",
 									  sqlMagazine, BigDecimal.TEN, false);
 
 		sqlMagazineEdicao102 =
 				Fixture.produtoEdicao(102L, 8, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(10), "006",
+						BigDecimal.TEN, BigDecimal.valueOf(10), "006",
 									  sqlMagazine, BigDecimal.TEN, false);
 
 		galileuEdicao101 =
 				Fixture.produtoEdicao(101L, 3, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(12), "007",
+						BigDecimal.TEN, BigDecimal.valueOf(12), "007",
 									  galileu, BigDecimal.TEN, true);
 
 		galileuEdicao102 =
 				Fixture.produtoEdicao(102L, 9, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(32.1), "008",
+						BigDecimal.TEN, BigDecimal.valueOf(32.1), "008",
 									  galileu, BigDecimal.TEN, true);
 
 		duasRodasEdicao101 =
 				Fixture.produtoEdicao(101L, 8, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(11), "009",
+						BigDecimal.TEN, BigDecimal.valueOf(11), "009",
 									  duasRodas, BigDecimal.TEN, false);
 
 		duasRodasEdicao102 =
 				Fixture.produtoEdicao(102L, 6, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(16), "010",
+						BigDecimal.TEN, BigDecimal.valueOf(16), "010",
 									  duasRodas, BigDecimal.TEN, false);
 
 		guitarPlayerEdicao101 =
 				Fixture.produtoEdicao(101L, 2, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(16), "011",
+						BigDecimal.TEN, BigDecimal.valueOf(16), "011",
 									  guitarPlayer, BigDecimal.TEN, false);
 
 		guitarPlayerEdicao102 =
 				Fixture.produtoEdicao(102L, 6, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(15), "012",
+						BigDecimal.TEN, BigDecimal.valueOf(15), "012",
 									  guitarPlayer, BigDecimal.TEN, true);
 
 		roadieCrewEdicao101 =
 				Fixture.produtoEdicao(101L, 3, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(20), "013",
+						BigDecimal.TEN, BigDecimal.valueOf(20), "013",
 									  roadieCrew, BigDecimal.TEN, true);
 
 		roadieCrewEdicao102 =
 				Fixture.produtoEdicao(102L, 9, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(28), "014",
+						BigDecimal.TEN, BigDecimal.valueOf(28), "014",
 									  roadieCrew, BigDecimal.TEN, false);
 
 		rockBrigadeEdicao101 =
 				Fixture.produtoEdicao(101L, 5, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(19), "015",
+						BigDecimal.TEN, BigDecimal.valueOf(19), "015",
 									  rockBrigade, BigDecimal.TEN, false);
 
 		rockBrigadeEdicao102 =
 				Fixture.produtoEdicao(102L, 15, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(21.9), "016",
+						BigDecimal.TEN, BigDecimal.valueOf(21.9), "016",
 									  rockBrigade, BigDecimal.TEN, true);
 
 		valhallaEdicao101 =
 				Fixture.produtoEdicao(101L, 10, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(29.9), "017",
+						BigDecimal.TEN, BigDecimal.valueOf(29.9), "017",
 									  valhalla, BigDecimal.TEN, true);
 
 		valhallaEdicao102 =
 				Fixture.produtoEdicao(102L, 7, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(19.9), "018",
+						BigDecimal.TEN, BigDecimal.valueOf(19.9), "018",
 									  valhalla, BigDecimal.TEN, true);
 
 		rollingStoneEdicao101 =
 				Fixture.produtoEdicao(101L, 12, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(14), "019",
+						BigDecimal.TEN, BigDecimal.valueOf(14), "019",
 									  rollingStone, BigDecimal.TEN, false);
 
 		rollingStoneEdicao102 =
 				Fixture.produtoEdicao(102L, 11, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(13.5), "020",
+						BigDecimal.TEN, BigDecimal.valueOf(13.5), "020",
 									  rollingStone, BigDecimal.TEN, false);
 
 		bonsFluidosEdicao101 =
 				Fixture.produtoEdicao(101L, 8, 14, new Long(100),
-						BigDecimal.TEN, new BigDecimal(10), "021",
+						BigDecimal.TEN, BigDecimal.valueOf(10), "021",
 									  bonsFluidos, BigDecimal.TEN, false);
 
 		bonsFluidosEdicao102 =
 				Fixture.produtoEdicao(102L, 7, 14, new Long(100),
-						BigDecimal.TEN, new BigDecimal(20), "022",
+						BigDecimal.TEN, BigDecimal.valueOf(20), "022",
 									  bonsFluidos, BigDecimal.TEN, false);
 
 		bravoEdicao101 =
 				Fixture.produtoEdicao(101L, 6, 14, new Long(100),
-						BigDecimal.TEN, new BigDecimal(20), "023",
+						BigDecimal.TEN, BigDecimal.valueOf(20), "023",
 									  bravo, BigDecimal.TEN, false);
 
 		bravoEdicao102 =
 				Fixture.produtoEdicao(102L, 7, 14, new Long(100),
-						BigDecimal.TEN, new BigDecimal(20), "024",
+						BigDecimal.TEN, BigDecimal.valueOf(20), "024",
 									  bravo, BigDecimal.TEN, false);
 
 		casaClaudiaEdicao101 =
 				Fixture.produtoEdicao(101L, 4, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(15), "025",
+						BigDecimal.TEN, BigDecimal.valueOf(15), "025",
 									  casaClaudia, BigDecimal.TEN, false);
 
 		casaClaudiaEdicao102 =
 				Fixture.produtoEdicao(102L, 10, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(18.9), "026",
+						BigDecimal.TEN, BigDecimal.valueOf(18.9), "026",
 									  casaClaudia, BigDecimal.TEN, false);
 
 		jequitiEdicao101 =
 				Fixture.produtoEdicao(101L, 11, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(19.9), "027",
+						BigDecimal.TEN, BigDecimal.valueOf(19.9), "027",
 									  jequiti, BigDecimal.TEN, false);
 
 		jequitiEdicao102 =
 				Fixture.produtoEdicao(102L, 2, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(12.5), "028",
+						BigDecimal.TEN, BigDecimal.valueOf(12.5), "028",
 									  jequiti, BigDecimal.TEN, false);
 
 		mundoEstranhoEdicao101 =
 				Fixture.produtoEdicao(101L, 1, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(17.5), "029",
+						BigDecimal.TEN, BigDecimal.valueOf(17.5), "029",
 									  mundoEstranho, BigDecimal.TEN, false);
 
 		mundoEstranhoEdicao102 =
 				Fixture.produtoEdicao(102L, 1, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(13), "030",
+						BigDecimal.TEN, BigDecimal.valueOf(13), "030",
 									  mundoEstranho, BigDecimal.TEN, false);
 
 		novaEscolaEdicao101 =
 				Fixture.produtoEdicao(101L, 1, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(16), "031",
+						BigDecimal.TEN, BigDecimal.valueOf(16), "031",
 									  novaEscola, BigDecimal.TEN, false);
 
 		novaEscolaEdicao102 =
 				Fixture.produtoEdicao(102L, 1, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(30), "032",
+						BigDecimal.TEN, BigDecimal.valueOf(30), "032",
 									  novaEscola, BigDecimal.TEN, false);
 
 		minhaCasaEdicao101 =
 				Fixture.produtoEdicao(101L, 5, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(31.5), "033",
+						BigDecimal.TEN, BigDecimal.valueOf(31.5), "033",
 									  minhaCasa, BigDecimal.TEN, false);
 
 		minhaCasaEdicao102 =
 				Fixture.produtoEdicao(102L, 15, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(16), "034",
+						BigDecimal.TEN, BigDecimal.valueOf(16), "034",
 									  minhaCasa, BigDecimal.TEN, false);
 
 		recreioEdicao101 =
 				Fixture.produtoEdicao(101L, 10, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(18.9), "035",
+						BigDecimal.TEN, BigDecimal.valueOf(18.9), "035",
 									  recreio, BigDecimal.TEN, false);
 
 		recreioEdicao102 =
 				Fixture.produtoEdicao(102L, 10, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(22), "036",
+						BigDecimal.TEN, BigDecimal.valueOf(22), "036",
 									  recreio, BigDecimal.TEN, false);
 
 		womenHealthEdicao101 =
 				Fixture.produtoEdicao(101L, 7, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(29), "037",
+						BigDecimal.TEN, BigDecimal.valueOf(29), "037",
 									  womenHealth, BigDecimal.TEN, false);
 
 		womenHealthEdicao102 =
 				Fixture.produtoEdicao(102L, 9, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(10.5), "038",
+						BigDecimal.TEN, BigDecimal.valueOf(10.5), "038",
 									  womenHealth, BigDecimal.TEN, false);
 
 		viagemTurismoEdicao101 =
 				Fixture.produtoEdicao(101L, 7, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(20.05), "039",
+						BigDecimal.TEN, BigDecimal.valueOf(20.05), "039",
 									  viagemTurismo, BigDecimal.TEN, false);
 
 		viagemTurismoEdicao102 =
 				Fixture.produtoEdicao(102L, 6, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(14.5), "040",
+						BigDecimal.TEN, BigDecimal.valueOf(14.5), "040",
 									  viagemTurismo, BigDecimal.TEN, false);
 
 
 		vipEdicao101 =
 				Fixture.produtoEdicao(101L, 8, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(12), "041",
+						BigDecimal.TEN, BigDecimal.valueOf(12), "041",
 									  vip, BigDecimal.TEN, false);
 
 		vipEdicao102 =
 				Fixture.produtoEdicao(102L, 15, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(17), "042",
+						BigDecimal.TEN, BigDecimal.valueOf(17), "042",
 									  vip, BigDecimal.TEN, false);
 
 		gestaoEscolarEdicao101 =
 				Fixture.produtoEdicao(101L, 14, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(9.9), "043",
+						BigDecimal.TEN, BigDecimal.valueOf(9.9), "043",
 									  gestaoEscolar, BigDecimal.TEN, false);
 
 		gestaoEscolarEdicao102 =
 				Fixture.produtoEdicao(102L, 4, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(9.9), "044",
+						BigDecimal.TEN, BigDecimal.valueOf(9.9), "044",
 									  gestaoEscolar, BigDecimal.TEN, true);
 
 		lolaEdicao101 =
 				Fixture.produtoEdicao(101L, 5, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(8.5), "045",
+						BigDecimal.TEN, BigDecimal.valueOf(8.5), "045",
 									  lola,  BigDecimal.TEN, false);
 
 		lolaEdicao102 =
 				Fixture.produtoEdicao(102L, 9, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(6.9), "046",
+						BigDecimal.TEN, BigDecimal.valueOf(6.9), "046",
 									  lola, BigDecimal.TEN, false);
 
 		heavyMetalEdicao101 =
 				Fixture.produtoEdicao(101L, 1, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(50), "047",
+						BigDecimal.TEN, BigDecimal.valueOf(50), "047",
 									  heavyMetal, BigDecimal.TEN, false);
 
 		heavyMetalEdicao102 =
 				Fixture.produtoEdicao(102L, 1, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(50), "048",
+						BigDecimal.TEN, BigDecimal.valueOf(50), "048",
 									  heavyMetal, BigDecimal.TEN, false);
 
 		metalUndergroundEdicao101 =
 				Fixture.produtoEdicao(101L, 1, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(16), "049",
+						BigDecimal.TEN, BigDecimal.valueOf(16), "049",
 									  metalUnderground, BigDecimal.TEN, false);
 
 		metalUndergroundEdicao102 =
 				Fixture.produtoEdicao(102L, 1, 14, new Long(200),
-						BigDecimal.TEN, new BigDecimal(16), "050",
+						BigDecimal.TEN, BigDecimal.valueOf(16), "050",
 									  metalUnderground, BigDecimal.TEN, false);
 
 		save(session, javaMagazineEdicao101, javaMagazineEdicao102, mundoJavaEdicao101, mundoJavaEdicao102, sqlMagazineEdicao101, sqlMagazineEdicao102,
@@ -12642,7 +12644,7 @@ public class DataLoader {
 		DescontoProduto descontoProdutoQuatroRodas = new DescontoProduto();
 		descontoProdutoQuatroRodas.setDataAlteracao(DateUtil.adicionarDias(new Date(), -2));
 		descontoProdutoQuatroRodas.setCotas(cotas);
-		descontoProdutoQuatroRodas.setDesconto(new BigDecimal(44.30));
+		descontoProdutoQuatroRodas.setDesconto(BigDecimal.valueOf(44.30));
 		descontoProdutoQuatroRodas.setDistribuidor(distribuidor);
 		descontoProdutoQuatroRodas.setProdutoEdicao(produtoEdicaoQuatroRodas1);
 		descontoProdutoQuatroRodas.setUsuario(usuarioJoao);
@@ -12669,7 +12671,7 @@ public class DataLoader {
 		DescontoProduto descontoProdutoCapricho = new DescontoProduto();
 		descontoProdutoCapricho.setDataAlteracao(DateUtil.adicionarDias(new Date(), -4));
 		descontoProdutoCapricho.setCotas(cotas);
-		descontoProdutoCapricho.setDesconto(new BigDecimal(5.11));
+		descontoProdutoCapricho.setDesconto(BigDecimal.valueOf(5.11));
 		descontoProdutoCapricho.setDistribuidor(distribuidor);
 		descontoProdutoCapricho.setProdutoEdicao(produtoEdicaoCapricho1);
 		descontoProdutoCapricho.setUsuario(usuarioJoao);
@@ -12683,7 +12685,7 @@ public class DataLoader {
 		DescontoProduto descontoProdutoSuperInteressante = new DescontoProduto();
 		descontoProdutoSuperInteressante.setDataAlteracao(DateUtil.adicionarDias(new Date(), -6));
 		descontoProdutoSuperInteressante.setCotas(cotas);
-		descontoProdutoSuperInteressante.setDesconto(new BigDecimal(13.22));
+		descontoProdutoSuperInteressante.setDesconto(BigDecimal.valueOf(13.22));
 		descontoProdutoSuperInteressante.setDistribuidor(distribuidor);
 		descontoProdutoSuperInteressante.setProdutoEdicao(produtoEdicaoSuper1);
 		descontoProdutoSuperInteressante.setUsuario(usuarioJoao);

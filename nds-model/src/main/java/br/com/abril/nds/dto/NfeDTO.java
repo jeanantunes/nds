@@ -14,20 +14,29 @@ public class NfeDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Long idNotaFiscal;
+	
 	private Long numero;
-	private Integer serie;
+	
+	private Long serie;
+	
 	private Date emissao;
+	
 	private TipoEmissao tipoEmissao;
 	
 	private String cnpjDestinatario;
+	
 	private String cpfDestinatario;
 	
 	private String cnpjRemetente;
+	
 	private String cpfRemetente;
 	
 	private StatusProcessamentoInterno statusNfe;
+	
 	private String tipoNfe;
+	
 	private String movimentoIntegracao;
+	
 	private boolean notaImpressa;
 	
 	/**
@@ -50,14 +59,14 @@ public class NfeDTO implements Serializable {
 	 *
 	 * @return String
 	 */
-	public Integer getSerie() {
+	public Long getSerie() {
 		return serie;
 	}
 	/**
 	 * Atribuí serie
 	 * @param serie 
 	 */
-	public void setSerie(Integer serie) {
+	public void setSerie(Long serie) {
 		this.serie = serie;
 	}
 	/**
