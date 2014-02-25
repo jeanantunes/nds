@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo01_subreport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" whenResourceMissingType="Empty" isIgnorePagination="true" uuid="2c487403-7084-47c6-ae90-c78f0c73e450">
 	<property name="ireport.zoom" value="1.9487171000000065"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="148"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="tipoLogradouro" class="java.lang.String">
-		<fieldDescription><![CDATA[tipoLogradouro]]></fieldDescription>
-	</field>
 	<field name="pacote" class="java.math.BigInteger">
 		<fieldDescription><![CDATA[pacote]]></fieldDescription>
 	</field>
@@ -37,12 +34,6 @@
 	<field name="idRoteiro" class="java.lang.Long">
 		<fieldDescription><![CDATA[idRoteiro]]></fieldDescription>
 	</field>
-	<field name="logradouro" class="java.lang.String">
-		<fieldDescription><![CDATA[logradouro]]></fieldDescription>
-	</field>
-	<field name="uf" class="java.lang.String">
-		<fieldDescription><![CDATA[uf]]></fieldDescription>
-	</field>
 	<field name="numeroTelefone" class="java.lang.String">
 		<fieldDescription><![CDATA[numeroTelefone]]></fieldDescription>
 	</field>
@@ -67,20 +58,8 @@
 	<field name="qtdProduto2" class="java.math.BigInteger">
 		<fieldDescription><![CDATA[qtdProduto2]]></fieldDescription>
 	</field>
-	<field name="numeroLogradouro" class="java.lang.String">
-		<fieldDescription><![CDATA[numeroLogradouro]]></fieldDescription>
-	</field>
-	<field name="cep" class="java.lang.String">
-		<fieldDescription><![CDATA[cep]]></fieldDescription>
-	</field>
-	<field name="cidade" class="java.lang.String">
-		<fieldDescription><![CDATA[cidade]]></fieldDescription>
-	</field>
 	<field name="idBox" class="java.lang.Long">
 		<fieldDescription><![CDATA[idBox]]></fieldDescription>
-	</field>
-	<field name="bairro" class="java.lang.String">
-		<fieldDescription><![CDATA[bairro]]></fieldDescription>
 	</field>
 	<field name="reparteTotal" class="java.math.BigInteger">
 		<fieldDescription><![CDATA[reparteTotal]]></fieldDescription>
@@ -94,10 +73,11 @@
 	<field name="numeroNotaEnvio" class="java.lang.Long">
 		<fieldDescription><![CDATA[numeroNotaEnvio]]></fieldDescription>
 	</field>
+	<field name="endereco" class="java.lang.String"/>
 	<columnHeader>
 		<band height="25" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="7a08c427-0ac5-452e-886c-23f0c07c3862" mode="Opaque" x="0" y="0" width="50" height="25" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="0" y="0" width="50" height="25" backcolor="#999999" uuid="7a08c427-0ac5-452e-886c-23f0c07c3862"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -110,7 +90,7 @@
 				<text><![CDATA[ Nº NE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="9fcaa2fe-00d2-4b0a-8159-9f18ec4310d9" mode="Opaque" x="50" y="0" width="40" height="25" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="50" y="0" width="40" height="25" backcolor="#999999" uuid="9fcaa2fe-00d2-4b0a-8159-9f18ec4310d9"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -124,7 +104,7 @@
 				<text><![CDATA[ Cota]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="904c0aed-4a1b-4b65-b897-4827e586689b" mode="Opaque" x="90" y="0" width="190" height="25" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="90" y="0" width="190" height="25" backcolor="#999999" uuid="904c0aed-4a1b-4b65-b897-4827e586689b"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -138,7 +118,7 @@
 				<text><![CDATA[ Nome]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="562acd86-76e0-4741-ab2a-a146b78ea1dd" mode="Opaque" x="280" y="0" width="350" height="25" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="280" y="0" width="350" height="25" backcolor="#999999" uuid="562acd86-76e0-4741-ab2a-a146b78ea1dd"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -152,7 +132,7 @@
 				<text><![CDATA[ Endereço]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="e00ed3f3-bf9c-48ab-bce0-4213a569f336" mode="Opaque" x="630" y="0" width="60" height="25" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="630" y="0" width="60" height="25" backcolor="#999999" uuid="e00ed3f3-bf9c-48ab-bce0-4213a569f336"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -166,7 +146,7 @@
 				<text><![CDATA[Hora]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="2f08827f-62e0-468b-9f32-52a6e5565744" mode="Opaque" x="690" y="0" width="112" height="25" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="690" y="0" width="112" height="25" backcolor="#999999" uuid="2f08827f-62e0-468b-9f32-52a6e5565744"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -184,7 +164,7 @@
 	<detail>
 		<band height="25" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="c221fb00-25e9-4898-bee1-b8336395c68e" stretchType="RelativeToTallestObject" x="0" y="0" width="50" height="25"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="50" height="25" uuid="c221fb00-25e9-4898-bee1-b8336395c68e"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -197,7 +177,7 @@
 				<textFieldExpression><![CDATA[$F{numeroNotaEnvio}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="c8a451a9-b1a7-46f9-9397-abfc7d57ed98" stretchType="RelativeToTallestObject" x="50" y="0" width="40" height="25"/>
+				<reportElement stretchType="RelativeToTallestObject" x="50" y="0" width="40" height="25" uuid="c8a451a9-b1a7-46f9-9397-abfc7d57ed98"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -208,7 +188,7 @@
 				<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="8ba95a57-9df0-4d53-8f10-aac059046378" stretchType="RelativeToTallestObject" x="90" y="0" width="190" height="25"/>
+				<reportElement stretchType="RelativeToTallestObject" x="90" y="0" width="190" height="25" uuid="8ba95a57-9df0-4d53-8f10-aac059046378"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -219,7 +199,7 @@
 				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="e4ed3fd2-311a-49cd-b4f1-1ffb097267bf" stretchType="RelativeToTallestObject" x="280" y="0" width="350" height="25"/>
+				<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="350" height="25" uuid="e4ed3fd2-311a-49cd-b4f1-1ffb097267bf"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -227,16 +207,10 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[($F{tipoLogradouro} == null ? "" : $F{tipoLogradouro} + " ")
-+ ($F{logradouro} == null ? "" : $F{logradouro} + ", ")
-+ ($F{numeroLogradouro} == null ? "" : $F{numeroLogradouro} + ", ")
-+ ($F{bairro} == null ? "" : $F{bairro} + ", ")
-+ ($F{cidade} == null ? "" : $F{cidade} + ", ")
-+ ($F{uf} == null ? "" : $F{uf})
-+ ($F{cep} == null ? "" : " - " + $F{cep})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{endereco}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="95e1d452-2374-41ca-99c0-158965f219cf" stretchType="RelativeToTallestObject" x="630" y="0" width="60" height="25"/>
+				<reportElement stretchType="RelativeToTallestObject" x="630" y="0" width="60" height="25" uuid="95e1d452-2374-41ca-99c0-158965f219cf"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -247,7 +221,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="a67b94db-dde1-4771-9281-ff03b57e4d62" stretchType="RelativeToTallestObject" x="690" y="0" width="112" height="25"/>
+				<reportElement stretchType="RelativeToTallestObject" x="690" y="0" width="112" height="25" uuid="a67b94db-dde1-4771-9281-ff03b57e4d62"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -262,7 +236,7 @@
 	<lastPageFooter>
 		<band height="15">
 			<textField>
-				<reportElement uuid="131d6720-d6c3-4b3c-b716-bb775b6319c9" x="50" y="0" width="752" height="15"/>
+				<reportElement x="50" y="0" width="752" height="15" uuid="131d6720-d6c3-4b3c-b716-bb775b6319c9"/>
 				<box leftPadding="3">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -273,7 +247,7 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="8a6b933f-e4a5-496f-b237-e6fa39da2095" x="0" y="0" width="50" height="15"/>
+				<reportElement x="0" y="0" width="50" height="15" uuid="8a6b933f-e4a5-496f-b237-e6fa39da2095"/>
 				<box leftPadding="3">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>

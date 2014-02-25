@@ -3,6 +3,7 @@ package br.com.abril.nds.util.export;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,10 +104,19 @@ public class XLSExporter implements Exporter {
 
             int lastRowNum = this.createSheetFilter(sheet, creationHelper, exportModel.getFilters());
 
-            lastRowNum = this.createSheetMainDataHeaders(sheet, creationHelper, exportModel.getHeaders(), lastRowNum);
+            List<Integer> autoSizeColumns = new ArrayList<>();
+            
+            lastRowNum =
+            	this.createSheetMainDataHeaders(
+            		sheet, creationHelper, exportModel.getHeaders(), lastRowNum, autoSizeColumns);
 
             lastRowNum = this.createSheetMainDataRows(sheet, exportModel.getRows(), lastRowNum);
 
+            for (Integer autoSizeColumn : autoSizeColumns) {
+				
+				sheet.autoSizeColumn(autoSizeColumn);
+			}
+            
             this.createSheetFooter(sheet, exportModel.getFooters(), exportModel.getHeaders(), lastRowNum);
 
             this.createSheetHeader(sheet, creationHelper, ndsFileHeader);
@@ -195,7 +205,7 @@ public class XLSExporter implements Exporter {
     }
 
     private int createSheetMainDataHeaders(final Sheet sheet, final CreationHelper creationHelper,
-            final List<ExportHeader> headers, final int lastRowNum) {
+            final List<ExportHeader> headers, final int lastRowNum, List<Integer> autoSizeColumns) {
 
         final int startRowNum = lastRowNum + 2;
 
@@ -249,6 +259,11 @@ public class XLSExporter implements Exporter {
 
             sheet.setColumnWidth(cellNum, width);
 
+            if (exportHeader.getXlsAutoSize()) {
+    			
+				autoSizeColumns.add(cell.getColumnIndex());
+			}
+            
             cellNum++;
         }
 
@@ -299,6 +314,17 @@ public class XLSExporter implements Exporter {
         return startRowNum;
     }
 
+	private void carregarValorDaCelulaEFormatacaoComLabel(final Sheet sheet,
+														  final Cell cell, final ColumType columType, String columnLabel,
+														  String columnString, final CellStyle cellStyle) {
+
+		this.carregarValorDaCelulaEFormatacao(sheet, cell, columType, columnString, cellStyle);
+
+		String newValue = columnLabel + ": " + cell.getStringCellValue();
+
+		cell.setCellValue(newValue);
+	}
+    
     private void carregarValorDaCelulaEFormatacao(final Sheet sheet, final Cell cell, final ColumType columType,
             String columnString, final CellStyle cellStyle) {
 
@@ -375,12 +401,6 @@ public class XLSExporter implements Exporter {
 
                 if (headerIndex != null) {
 
-                    if (!exportFooter.getLabel().trim().isEmpty()) {
-
-                        headerIndex--;
-
-                    }
-
                     cellNum = headerIndex;
                 }
             }
@@ -389,24 +409,29 @@ public class XLSExporter implements Exporter {
 
             if (hasLabel) {
 
-                final Cell labelCell = row.createCell(++cellNum);
+				final Cell labelCell = row.createCell(cellNum);
 
-                labelCell.setCellValue(exportFooter.getLabel());
+				final CellStyle cellStyle =
+					this.getFooterCellStyle(sheet, true, exportFooter.getAlignment());
 
-                final CellStyle cellStyle = this.getFooterCellStyle(sheet, true, exportFooter.getAlignment());
+				labelCell.setCellStyle(cellStyle);
 
-                labelCell.setCellStyle(cellStyle);
-            }
+				carregarValorDaCelulaEFormatacaoComLabel(sheet, labelCell,
+														 exportFooter.getColumnType(), exportFooter.getLabel(),
+														 exportFooter.getValue(), cellStyle);
 
-            final Cell cell = row.createCell(cellNum);
+			} else {
 
-            final CellStyle cellStyle = this.getFooterCellStyle(sheet, false, exportFooter.getAlignment());
+				final Cell cell = row.createCell(cellNum);
 
-            carregarValorDaCelulaEFormatacao(sheet, cell, exportFooter.getColumnType(), exportFooter.getValue(),
-                    cellStyle);
+				final CellStyle cellStyle =
+					this.getFooterCellStyle(sheet, false, exportFooter.getAlignment());
 
-            cellNum++;
-
+				carregarValorDaCelulaEFormatacao(sheet, cell,
+												 exportFooter.getColumnType(), exportFooter.getValue(),
+												 cellStyle);
+			}
+            
             if (exportFooter.isVerticalPrinting()) {
 
                 row = sheet.createRow(++newRowNum);
