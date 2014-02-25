@@ -241,6 +241,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			final Date dataLancamento = input.getDataLancamento();
 			
+			
 			// Remover a hora, minuto, segundo e milissegundo para comparação:
 			final Date dtLancamentoAtual = this.normalizarDataSemHora(
 					lancamento.getDataLancamentoPrevista());
@@ -273,6 +274,13 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			if (null != dtLancamentoDistribuidor && !dtLancamentoDistribuidor.equals(dtLancamentoNovo) && isStatusAlteracaoDataLancamento) {
 				
+				try {
+					lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(dtLancamentoNovo, lancamento.getDataRecolhimentoDistribuidor(),message,codigoProduto,edicao));
+				} catch (Exception e) {
+					return;
+				}
+				// Alterado por solicitacao da trac 185
+				/*
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao da DATA LANCAMENTO DISTRIBUIDOR do Produto: "
@@ -283,7 +291,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 										dtLancamentoNovo));
 				
 				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
-				
+				*/
 				boolean erroRetornoParciais =
 					this.tratarParciais(lancamento, message, codigoProduto, edicao);
 				
