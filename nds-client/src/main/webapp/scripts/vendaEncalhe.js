@@ -533,7 +533,7 @@ var VENDA_PRODUTO = {
 		
 		var parametroAutoCompleteProduto = '\'#nmProduto' + index + '\', true';
 		
-		return '<input value="'+valor+'" type="text" id="nmProduto' + index + '" name="nmProduto" style="width:110px;" maxlenght="255" onblur="pesquisaProdutoVendaEncalhe.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
+		return '<input value="'+valor+'" type="text" id="nmProduto' + index + '" name="nmProduto" style="width:110px;" maxlenght="255" />';
 	},
 	
 	getInputNumeroEdicao:function(index,result,funcaoError){
@@ -940,6 +940,9 @@ var VENDA_PRODUTO = {
 				$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", { 'nomeProduto': param.term }, callback);
 			},
 			select : function(event, ui) {
+				var row  =  $(this).parent().parent().parent();
+				$("input[name='codProduto']",row).val(ui.item.chave.codigo);
+				$( "input[name='numEdicao']",row).attr("disabled",false).focus();
 				
 			},
 			minLength: 2,
