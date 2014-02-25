@@ -182,12 +182,12 @@ public class RetornoNFEController extends BaseController {
 		HashMap<String, RetornoNFEDTO> hashNotasRetorno = new HashMap<String, RetornoNFEDTO>();
 		
 		RetornoNFEDTO arquivoRetornoAuxiliar = null;
-		
 		for (File nota : arquivosNotas) {
 			
 			try {
+				String schemaPath = this.getClass().getClassLoader().getResource("").getPath();
 				
-				RetornoNFEDTO arquivoRetorno = NFEImportUtil.processarArquivoRetorno(nota);
+				RetornoNFEDTO arquivoRetorno = NFEImportUtil.processarArquivoRetorno(nota, schemaPath);
 			
 				if (arquivoRetornoAuxiliar == null) {
 			
