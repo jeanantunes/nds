@@ -69,7 +69,7 @@ public class NaturezaOperacao implements Serializable {
 	@Column(name = "TIPO_DESTINATARIO", nullable = false)
 	private TipoDestinatario tipoDestinatario;
 	
-	@ElementCollection(targetClass = Processo.class,fetch=FetchType.EAGER) 
+	@ElementCollection(targetClass = Processo.class, fetch=FetchType.EAGER) 
 	@CollectionTable(name = "PROCESSO_NFE",
 	    joinColumns = @JoinColumn(name = "PROCESSO_NFE_ID"))
 	@Column(name = "PROCESSO")

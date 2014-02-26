@@ -57,11 +57,11 @@ var PainelMonitorNFE = $.extend(true, {
 	    
 	    
 	    $(document).ready(function() {
-	    	if($("input:radio[name='impresaoNfe-radioTipoDoc']:checked").val()=="cnpj"){
-				$("input[id=impresaoNfe-documento]").mask("99.999.999/9999-99");
-		                $("#impresaoNfe-documento").text('Digite o CNPJ:');
+	    	if($("input:radio[name='painelNfe-radioTipoDoc']:checked").val()=="cnpj"){
+				$("input[id=painelNfe-documento]").mask("99.999.999/9999-99");
+		                $("#painelNfe-documento").text('Digite o CNPJ:');
 			} else {
-				$("input[id=impresaoNfe-documento]").mask("999.999.999-99");
+				$("input[id=painelNfe-documento]").mask("999.999.999-99");
                 $(this).attr('checked', false);
 			}
 
@@ -129,7 +129,7 @@ var PainelMonitorNFE = $.extend(true, {
 		var box = $("#box", PainelMonitorNFE.workspace).val();
 		var dataInicial = $("#dataInicial", PainelMonitorNFE.workspace).val();
 		var dataFinal = $("#dataFinal", PainelMonitorNFE.workspace).val();
-		var documentoPessoa = $('input:radio[name=impresaoNfe-radioTipoDoc]:checked', PainelMonitorNFE.workspace).val();
+		var documentoPessoa = $('input:radio[name=painelNfe-radioTipoDoc]:checked', PainelMonitorNFE.workspace).val();
 		var documento = $("#documento", PainelMonitorNFE.workspace).val();
 		var tipoNfe = $("#tipoNfe", PainelMonitorNFE.workspace).val();
 		var numeroInicial = $("#numeroInicial", PainelMonitorNFE.workspace).val();
@@ -137,6 +137,7 @@ var PainelMonitorNFE = $.extend(true, {
 		var chaveAcesso = $("#chaveAcesso", PainelMonitorNFE.workspace).val();
 		var situacaoNfe = $("#situacaoNfe", PainelMonitorNFE.workspace).val();
 		var serieNfe	= $("#serieNfe", PainelMonitorNFE.workspace).val();	
+		var nrDocumento	= $("#painelNfe-documento", PainelMonitorNFE.workspace).val();
 		
 		var params = [
 		        {name:'filtro.box', value: box },
@@ -149,7 +150,8 @@ var PainelMonitorNFE = $.extend(true, {
 		        {name:'filtro.numeroNotaFinal', value: numeroFinal },
 		        {name:'filtro.chaveAcesso', value: chaveAcesso },
 		        {name:'filtro.situacaoNfe', value: situacaoNfe },
-		        {name:'filtro.serie',    value: serieNfe}
+		        {name:'filtro.serie',    value: serieNfe},
+		        {name:'filtro.numeroDocumento', value: nrDocumento}
 		];
 		
 		$("#nfeGrid", PainelMonitorNFE.workspace).flexOptions({
@@ -307,13 +309,13 @@ var PainelMonitorNFE = $.extend(true, {
 	
 	verificarRadioCnpjCpf : function() {
 		
-         $('input[id=impresaoNfe-documento]').unmask();//Remove a mascara
-         if($("input:radio[name='impresaoNfe-radioTipoDoc']:checked").val()=="cpf"){//Acaso seja CPF
-                $("input[id=impresaoNfe-documento]").mask("999.999.999-99");
-                $("#impresaoNfe-documento").text('Digite o CPF:');
+         $('input[id=painelNfe-documento]').unmask();//Remove a mascara
+         if($("input:radio[name='painelNfe-radioTipoDoc']:checked").val()=="cpf"){//Acaso seja CPF
+                $("input[id=painelNfe-documento]").mask("999.999.999-99");
+                $("#painelNfe-documento").text('Digite o CPF:');
          } else {//Acaso seja Cnpj
-                $("input[id=impresaoNfe-documento]").mask("99.999.999/9999-99");
-                $("#impresaoNfe-documento").text('Digite o CNPJ:');
+                $("input[id=painelNfe-documento]").mask("99.999.999/9999-99");
+                $("#painelNfe-documento").text('Digite o CNPJ:');
          }
 		
 	},

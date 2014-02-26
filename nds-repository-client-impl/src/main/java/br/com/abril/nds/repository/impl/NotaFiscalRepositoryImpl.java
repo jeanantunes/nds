@@ -121,9 +121,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getNumeroDocumento() != null){
 			if(filtro.getDocumentoPessoa() !=null && !filtro.getDocumentoPessoa().isEmpty()) {
 				if(filtro.getDocumentoPessoa().equalsIgnoreCase("cpf")){
-					hql.append(" AND dest.documento = :documento");
+					hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento.documento = :documento");
 				}else{
-					hql.append(" AND documento.documento = :documento");
+					hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento.documento = :documento");
 				}
 			}
 		}
@@ -179,9 +179,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getDocumentoPessoa()!=null && !filtro.getDocumentoPessoa().isEmpty()) {
 			if(filtro.getNumeroDocumento() != null){
 				if(filtro.getDocumentoPessoa().equalsIgnoreCase("cpf")){
-					query.setParameter("documento", filtro.getDocumentoPessoa());				
+					query.setParameter("documento", filtro.getNumeroDocumento().replaceAll("\\D", ""));				
 				}else{
-					query.setParameter("documento", filtro.getDocumentoPessoa());
+					query.setParameter("documento", filtro.getNumeroDocumento().replaceAll("\\D", ""));
 				}
 			}
 		}
