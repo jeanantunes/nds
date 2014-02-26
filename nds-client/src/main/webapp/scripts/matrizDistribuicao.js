@@ -182,6 +182,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		if (typeof resultadoPesquisa[0] == 'undefined' || resultadoPesquisa[0].rows.length == 0) {
 			T.escondeGrid();
+			exibirMensagem("WARNING", ["Pesquisa não obteve resultados."]);
 		} else {
 			$("#totalGerado", _workspace).html(resultadoPesquisa[1]);
 			$("#totalLiberado", _workspace).html(resultadoPesquisa[2]);
