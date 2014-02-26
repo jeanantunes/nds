@@ -245,7 +245,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			// Remover a hora, minuto, segundo e milissegundo para comparação:
 			final Date dtLancamentoAtual = this.normalizarDataSemHora(
 					lancamento.getDataLancamentoPrevista());
-			final Date dtLancamentoNovo = this.normalizarDataSemHora(dataLancamento);
+			Date dtLancamentoNovo = this.normalizarDataSemHora(dataLancamento);
 			if (null != dtLancamentoAtual && !dtLancamentoAtual.equals(dtLancamentoNovo)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -274,10 +274,13 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			if (null != dtLancamentoDistribuidor && !dtLancamentoDistribuidor.equals(dtLancamentoNovo) && isStatusAlteracaoDataLancamento) {
 				
-				try {
-					lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(dtLancamentoNovo, lancamento.getDataRecolhimentoDistribuidor(),message,codigoProduto,edicao));
-				} catch (Exception e) {
-					//return;
+				if(dtLancamentoNovo.before(distribuidorService.obterDataOperacaoDistribuidor())){
+				
+					try {
+					 dtLancamentoNovo = getDiaMatrizAberta(dtLancamentoNovo, lancamento.getDataRecolhimentoDistribuidor(),message,codigoProduto,edicao);
+				    } catch (Exception e) {
+					  return;
+				    }
 				}
 				// Alterado por solicitacao da trac 185
 				
@@ -290,7 +293,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 								+ "para: " + simpleDateFormat.format(
 										dtLancamentoNovo));
 				
-				//lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
+				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
 				
 				boolean erroRetornoParciais =
 					this.tratarParciais(lancamento, message, codigoProduto, edicao);

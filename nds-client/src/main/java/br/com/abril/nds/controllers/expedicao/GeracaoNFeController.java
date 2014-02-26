@@ -173,13 +173,13 @@ public class GeracaoNFeController extends BaseController {
 		
 		switch (naturezaOperacao.getTipoDestinatario()) {
 		case COTA:
-			cotaExemplaresDTOs = geracaoNFeService.consultaCotaExemplareSumarizado(filtro);			
+			cotaExemplaresDTOs = geracaoNFeService.consultaCotaExemplaresSumarizados(filtro);			
 			totalRegistros = geracaoNFeService.consultaCotaExemplareSumarizadoQtd(filtro);
 			
 			break;
 			
 		case DISTRIBUIDOR:
-			cotaExemplaresDTOs = geracaoNFeService.consultaCotaExemplareSumarizado(filtro);			
+			cotaExemplaresDTOs = geracaoNFeService.consultaCotaExemplaresSumarizados(filtro);			
 			totalRegistros = geracaoNFeService.consultaCotaExemplareSumarizadoQtd(filtro);
 			break;
 			
