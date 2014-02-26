@@ -53,7 +53,7 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
 	@Transactional(readOnly = true)
 	public List<HistoricoSituacaoCotaVO> obterHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
-		if(filtro.getNumeroCota() == null) {
+		if(filtro.getNumeroCota() != null) {
 			
 			return this.historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
 		}
@@ -68,7 +68,7 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
 	@Transactional(readOnly = true)
 	public Long obterTotalHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
-		if(filtro.getNumeroCota() == null) {
+		if(filtro.getNumeroCota() != null) {
 			
 			return this.historicoSituacaoCotaRepository.obterTotalHistoricoStatusCota(filtro);
 		}
