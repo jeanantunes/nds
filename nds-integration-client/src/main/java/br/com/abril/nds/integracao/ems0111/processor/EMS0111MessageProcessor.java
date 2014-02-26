@@ -241,10 +241,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			final Date dataLancamento = input.getDataLancamento();
 			
+			
 			// Remover a hora, minuto, segundo e milissegundo para comparação:
 			final Date dtLancamentoAtual = this.normalizarDataSemHora(
 					lancamento.getDataLancamentoPrevista());
-			final Date dtLancamentoNovo = this.normalizarDataSemHora(dataLancamento);
+			Date dtLancamentoNovo = this.normalizarDataSemHora(dataLancamento);
 			if (null != dtLancamentoAtual && !dtLancamentoAtual.equals(dtLancamentoNovo)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -273,9 +274,19 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			if (null != dtLancamentoDistribuidor && !dtLancamentoDistribuidor.equals(dtLancamentoNovo) && isStatusAlteracaoDataLancamento) {
 				
+				if(dtLancamentoNovo.before(distribuidorService.obterDataOperacaoDistribuidor())){
+				
+					try {
+					 dtLancamentoNovo = getDiaMatrizAberta(dtLancamentoNovo, lancamento.getDataRecolhimentoDistribuidor(),message,codigoProduto,edicao);
+				    } catch (Exception e) {
+					  return;
+				    }
+				}
+				// Alterado por solicitacao da trac 185
+				
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteracao da DATA LANCAMENTO DISTRIBUIDOR do Produto: "
+						"Alteracao para PARCIAL da DATA LANCAMENTO DISTRIBUIDOR do Produto: "
 								+ codigoProduto + " e Edicao: " + edicao
 								+ " , de: " + simpleDateFormat.format(
 										dtLancamentoDistribuidor)
@@ -411,10 +422,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	
 	private Date getDiaMatrizAberta(Date dataLctoDistibuidor,Date dataRecDistibuidor,Message message, String codigoProduto, Long edicao) throws Exception{
 		
+		
 	    	
 		if(datasNaoBalanceaveis==null || datasNaoBalanceaveis.isEmpty()){
 		 return dataLctoDistibuidor;
-	    }else if(!datasNaoBalanceaveis.contains(dataLctoDistibuidor)){
+		}else if(!datasNaoBalanceaveis.contains(dataLctoDistibuidor) && !dataLctoDistibuidor.before(distribuidorService.obterDataOperacaoDistribuidor())){
 		 return dataLctoDistibuidor;
 		}else{
 			if(datasBalanceaveis!=null && !datasBalanceaveis.isEmpty()){
