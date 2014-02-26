@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -39,6 +41,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoletoService;
@@ -793,6 +796,12 @@ public class FechamentoEncalheController extends BaseController {
 					listaEncalhe, true);
 			
 			this.session.setAttribute(SET_NOSSO_NUMERO, nossoNumero);
+			
+			final Map<String,Object> retornoFechamento = new HashMap<>();
+			retornoFechamento.put("isImprimirBoletos", !nossoNumero.isEmpty());
+			retornoFechamento.put("mensagem",  new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"));
+			
+			result.use(CustomJson.class).put("result", retornoFechamento).serialize();
 		
 		} catch(ValidacaoException ve){
 			
@@ -803,10 +812,6 @@ public class FechamentoEncalheController extends BaseController {
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
                     "Erro ao tentar encerrar a operação de encalhe! " + e.getMessage()));
 		}
-		
-        this.result.use(Results.json()).from(
-                new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result")
-                .recursive().serialize();
 	}
 
 	private String resolveSort(String sortname) {

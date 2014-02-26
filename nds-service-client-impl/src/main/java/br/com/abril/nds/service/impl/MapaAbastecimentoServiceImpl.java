@@ -4,10 +4,12 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,11 +79,15 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	public Map<String, ProdutoMapaDTO> obterMapaDeImpressaoPorBox(
 		FiltroMapaAbastecimentoDTO filtro) {
 		
+		Set<Integer> boxes = new HashSet<Integer>();
+		
 		Map<String,ProdutoMapaDTO> produtoMapa = new LinkedHashMap<String, ProdutoMapaDTO>();
 		
 		List<ProdutoAbastecimentoDTO> produtosPorBox = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
 		
 		for(ProdutoAbastecimentoDTO produtoPorBox : produtosPorBox) {
+			
+			boxes.add(produtoPorBox.getCodigoBox());
 			
 			String keyProduto = produtoPorBox.getCodigoProduto();
 
@@ -110,6 +116,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			produtoMapa.get(keyProduto).setTotalReparte(novaQtdeTotal);
 		}
 		
+		this.preencheBoxNaoUtilizado(boxes, produtoMapa);
+		
 		return produtoMapa;
 	}
 	
@@ -119,22 +127,21 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	* @param boxes
 	* @param produtos
 	*/
-//	private void preencheBoxNaoUtilizado(List<Integer> boxes, Map<String, ProdutoMapaDTO> produtos) {
-//		for(Integer keyBox : boxes) {
-//	
-//			for(Entry<String, ProdutoMapaDTO> entry : produtos.entrySet()) {
-//	
-//				if(!entry.getValue().getBoxQtde().containsKey(keyBox))
-//					entry.getValue().getBoxQtde().put(keyBox, 0);
-//				}
-//			}
-//		}
+	private void preencheBoxNaoUtilizado(Set<Integer> boxes, Map<String, ProdutoMapaDTO> produtos) {
+		for(Integer keyBox : boxes) {
+	
+			for(Entry<String, ProdutoMapaDTO> entry : produtos.entrySet()) {
+	
+				if(!entry.getValue().getBoxQtde().containsKey(keyBox)){
+					entry.getValue().getBoxQtde().put(keyBox, 0);
+				}
+			}
+		}
+	}
 	
 	@Transactional
 	public Map<Integer, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(
 			FiltroMapaAbastecimentoDTO filtro) {
-	
-		List<String> rotas = new ArrayList<String>();
 	
 		Map<Integer, Map<String, ProdutoMapaRotaDTO>> boxes = new LinkedHashMap<Integer, Map<String, ProdutoMapaRotaDTO>> ();
 	
@@ -179,36 +186,40 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			produto.getRotasQtde().put(item.getCodigoRota(), qtdeAtual + item.getReparte());
 	
 			produto.setTotalReparte(produto.getTotalReparte() + item.getReparte());
-	
-			if(!rotas.contains(item.getCodigoRota())){
+		}
+		
+		
+		int maiorQtdRotas = 0;
+		for(Entry<Integer, Map<String, ProdutoMapaRotaDTO>> entry : boxes.entrySet()) {
+			
+			for (Entry<String, ProdutoMapaRotaDTO> ent : entry.getValue().entrySet()){
 				
-				rotas.add(item.getCodigoRota());
+				int size = ent.getValue().getRotasQtde().size();
+				
+				if (size > maiorQtdRotas){
+					maiorQtdRotas = size;
+				}
 			}
-	
-	
 		}
 	
-//		for(Entry<Integer, Map<String, ProdutoMapaRotaDTO>> entry : boxes.entrySet()) {
-//	
-//			preencheRotasNaoUtilizadas(rotas, entry.getValue());	
-//		}
+		for(Entry<Integer, Map<String, ProdutoMapaRotaDTO>> entry : boxes.entrySet()) {
+	
+			preencheRotasNaoUtilizadas(maiorQtdRotas, entry.getValue());	
+		}
 	
 		return boxes;
 	}
 	
-//	private void preencheRotasNaoUtilizadas(List<String> rotas,
-//			Map<String, ProdutoMapaRotaDTO> produtos) {
-//	
-//		for(String keyRota : rotas) {
-//	
-//			for(Entry<String, ProdutoMapaRotaDTO> entry : produtos.entrySet()) {	
-//	
-//				if(!entry.getValue().getRotasQtde().containsKey(keyRota))
-//					entry.getValue().getRotasQtde().put(keyRota, 0);
-//			}
-//		}
-//	
-//	}
+	private void preencheRotasNaoUtilizadas(int qtd,
+			Map<String, ProdutoMapaRotaDTO> produtos) {
+	
+		
+		for(Entry<String, ProdutoMapaRotaDTO> entry : produtos.entrySet()) {	
+			for (int index = entry.getValue().getRotasQtde().size() ; index < qtd ; index++){
+				entry.getValue().getRotasQtde().put("|" + index, 0);
+			}
+		}
+	}
 	
 	@Override
 	@Transactional
@@ -230,6 +241,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			return null;
 		}
 		
+		Set<String> rotas = new HashSet<String>();
+		
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
 	
 			if(!peMapaDTO.getBoxes().containsKey(item.getCodigoBox())){
@@ -249,26 +262,34 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 			Integer qtdeTotalAtual = box.getQtdeTotal();
 			box.setQtdeTotal(qtdeTotalAtual + item.getReparte());
+			
+			rotas.add(item.getCodigoRota());
 		}
-	
-		//preencheRotasNaoUtilizadasPE(rotas, peMapaDTO.getBoxes());	
+		
+		int maiorQtd = 0;
+		for (Entry<Integer, BoxRotasDTO> entry : peMapaDTO.getBoxes().entrySet()){
+			
+			int qtd = entry.getValue().getRotasQtde().size();
+			
+			if (qtd > maiorQtd){
+				maiorQtd = qtd;
+			}
+		}
+		
+		preencheRotasNaoUtilizadasPE(maiorQtd, peMapaDTO.getBoxes());	
 	
 		return peMapaDTO;
 	}
 	
-//	private void preencheRotasNaoUtilizadasPE(List<String> rotas,
-//			HashMap<Integer, BoxRotasDTO> boxes) {
-//	
-//		for(String keyRota : rotas) {
-//	
-//			for(Entry<Integer, BoxRotasDTO> entry : boxes.entrySet()) {	
-//	
-//				if(!entry.getValue().getRotasQtde().containsKey(keyRota))
-//					entry.getValue().getRotasQtde().put(keyRota, 0);
-//			}
-//		}
-//	
-//	}
+	private void preencheRotasNaoUtilizadasPE(int qtd,
+			HashMap<Integer, BoxRotasDTO> boxes) {
+		
+		for(Entry<Integer, BoxRotasDTO> entry : boxes.entrySet()) {	
+			for (int index = entry.getValue().getRotasQtde().size() ; index < qtd ; index++){
+				entry.getValue().getRotasQtde().put("|" + index, 0);
+			}
+		}
+	}
 	
 	@Override
 	@Transactional
@@ -392,15 +413,16 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 	@Override
 	@Transactional
-	public HashMap<Long, MapaProdutoCotasDTO> obterMapaDeImpressaoPorEntregador(
+	public Map<Long, MapaProdutoCotasDTO> obterMapaDeImpressaoPorEntregador(
 			FiltroMapaAbastecimentoDTO filtro) {
 	
 		List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregador(filtro);
 	
-		if(produtosBoxRota.size() == 0)
+		if(produtosBoxRota.size() == 0){
 			return null;
+		}
 	
-		HashMap<Long, MapaProdutoCotasDTO> mapas = new HashMap<Long, MapaProdutoCotasDTO>();
+		Map<Long, MapaProdutoCotasDTO> mapas = new LinkedHashMap<Long, MapaProdutoCotasDTO>();
 	
 		MapaProdutoCotasDTO pcMapaDTO = null;
 	
@@ -414,8 +436,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 						item.getNumeroEdicao().longValue(),
 						item.getCodigoBarra(),
 						item.getPrecoCapa(),
-						new HashMap<Integer, Integer>(),
-						new TreeMap<String, Integer>());
+						new LinkedHashMap<Integer, Integer>(),
+						new LinkedHashMap<String, Integer>());
 	
 				mapas.put(item.getIdProdutoEdicao(), pcMapaDTO);
 			}	
@@ -576,54 +598,4 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			FiltroMapaAbastecimentoDTO filtro) {
 		return movimentoEstoqueCotaRepository.countObterMapaDeAbastecimentoPorEntregador(filtro);
 	}
-
-
-
-//    private static class CompararProdutoMapaDTO implements Comparator<String> {
-//        
-//     TreeMap<String,ProdutoMapaDTO> produtoMapa;
-//
-//	     @Override
-//	     public int compare(String o1, String o2) {
-//	    	 ProdutoMapaDTO p1 = produtoMapa.get(o1);
-//	    	 ProdutoMapaDTO p2 = produtoMapa.get(o2);
-//		
-//		
-//	    	 int result = p1.getNomeProduto().compareTo(p2.getNomeProduto());
-//	    	 if (result == 0)
-//	    		 result = p1.getNumeroEdicao().compareTo(p2.getNumeroEdicao());
-//	    	 return result;
-//	     }
-//	
-//		/**
-//		* @param produtoMapa the produtoMapa to set
-//		*/
-//		public void setProdutoMapa(TreeMap<String, ProdutoMapaDTO> produtoMapa) {
-//			this.produtoMapa = produtoMapa;
-//			}
-//    }
-
-//    private static class CompararProdutoMapaCotaDTO implements Comparator<Long> {
-//    
-//     TreeMap<Long, ProdutoMapaCotaDTO> produtoMapa;
-//    
-//     @Override
-//     public int compare(Long o1, Long o2) {
-//     ProdutoMapaCotaDTO p1 = produtoMapa.get(o1);
-//     ProdutoMapaCotaDTO p2 = produtoMapa.get(o2);
-//    
-//    
-//     int result = p1.getNomeProduto().compareTo(p2.getNomeProduto());
-//     if (result == 0)
-//    	 result = p1.getNumeroEdicao().compareTo(p2.getNumeroEdicao());
-//     	return result;
-//     }
-//    
-//     /**
-//      * @param produtoMapa the produtoMapa to set
-//	*/
-//     public void setProdutoMapa(TreeMap<Long, ProdutoMapaCotaDTO> produtoMapa) {
-//    	 this.produtoMapa = produtoMapa;
-//     }
-//    }
 }

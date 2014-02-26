@@ -463,7 +463,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 				
 				setTimeout(function() {
-					ConferenciaEncalhe.atualizarValoresGridInteira(ConferenciaEncalhe.veificarCobrancaGerada);
+					ConferenciaEncalhe.atualizarValoresGridInteira(ConferenciaEncalhe.verificarCobrancaGerada);
 				}, 1000);
 				
 			}
@@ -642,13 +642,8 @@ var ConferenciaEncalhe = $.extend(true, {
 			return null;
 		}
 		
-		if(vr.substr(vr.length-3,1)==","){
-			vr = this.replaceAll(vr,".","");
-			vr = this.replaceAll(vr,",",".");
-		}
-		if(vr.substr(vr.length-3,1)=="."){
-			vr = this.replaceAll(vr,",","");
-		}
+		vr = replaceAll(vr, ".", "");
+		
 		return vr;
 	},
 	
@@ -2136,8 +2131,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		ConferenciaEncalhe.popup_logado();
 	},
 	
-	veificarCobrancaGerada: function(){
-		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/veificarCobrancaGerada', null,
+	verificarCobrancaGerada: function(){
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarCobrancaGerada', null,
 		
 			function(conteudo){
 			

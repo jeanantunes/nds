@@ -63,7 +63,9 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("                where epc.cota_id = c.id ");
         sql.append("                  and ped.produto_id = p.id ");
         sql.append("                order by ped.numero_edicao desc ");
-        sql.append("                limit 0, 1), 0) ultimoReparte ");
+        sql.append("                limit 0, 1), 0) ultimoReparte, ");
+        sql.append("       (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
+        sql.append("       (coalesce(ec.reparte_inicial,0) - coalesce(ec.reparte,0)) quantidadeAjuste ");
         sql.append("  from estudo_cota_gerado ec ");
         sql.append("  left join cota c on (c.id = ec.cota_id) ");
         sql.append("  left join pessoa pes on (c.pessoa_id = pes.id) ");
@@ -211,6 +213,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         ((SQLQuery) query).addScalar("cotaNova", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("juramento", StandardBasicTypes.BIG_DECIMAL);
         ((SQLQuery) query).addScalar("ultimoReparte", StandardBasicTypes.BIG_DECIMAL);
+        ((SQLQuery) query).addScalar("ajustado", StandardBasicTypes.BOOLEAN);
+        ((SQLQuery) query).addScalar("quantidadeAjuste", StandardBasicTypes.BIG_INTEGER);
 
         query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseParcialDTO.class));
         return query.list();
@@ -424,12 +428,12 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     public void atualizaReparteCota(Long estudoId, Long numeroCota, Long reparteSubtraido) {
 
         StringBuilder sql = new StringBuilder();
-        sql.append("update estudo_cota_gerado ec ");
+        sql.append("  update estudo_cota_gerado ec ");
         sql.append("  left join cota cota on cota.id = ec.cota_id ");
-        sql.append("   set ec.reparte = coalesce(ec.reparte,0) + ?, ");
-        sql.append("   ec.qtde_efetiva = coalesce(ec.qtde_efetiva,0) + ? ");
-        sql.append(" where ec.estudo_id = ? ");
-        sql.append("   and cota.numero_cota = ? ");
+        sql.append("  set ec.reparte = coalesce(ec.reparte,0) + ?, ");
+        sql.append("      ec.qtde_efetiva = coalesce(ec.qtde_efetiva,0) + ? ");
+        sql.append("  where ec.estudo_id = ? ");
+        sql.append("  and cota.numero_cota = ? ");
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setLong(0, reparteSubtraido);

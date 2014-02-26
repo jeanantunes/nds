@@ -1,5 +1,3 @@
-<%--
- --%>
  <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
  <!-- distribuicaoVendaMedia -->
 <script language="javascript">
@@ -13,17 +11,20 @@ $(function() {
 		});
 		distribuicaoVendaMedia.carregarEventos();
 	});
+
 function popup_novo() {
-	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	$("#edicaoProdCadastradosGrid").flexAddData({
 			rows : [],
 			page : 1,
 			total : 1
 		});
+	
 	$("#codigoPesquisaBases").val("");
 	$("#produtoPesquisaBases").val("");
 	$("#edicaoPesquisaBases").val("");
+	
 	distribuicaoVendaMedia.produtoEdicaoPesquisaBases = [];
+	
 	$( "#dialog-edicoes-base" ).dialog({
 	    escondeHeader: false,
 		resizable: false,
@@ -34,7 +35,6 @@ function popup_novo() {
 			"Confirmar": function() {
 				distribuicaoVendaMedia.confirmarProdutosEdicaoBasePopup();
 				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);				
 			},
 			"Cancelar": function() {
 				$( this ).dialog( "close" );
@@ -43,7 +43,6 @@ function popup_novo() {
 	});
 };
 function popup_cancelar() {
-	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 	$( "#dialog-cancelar" ).dialog({
 	    escondeHeader: false,
@@ -54,7 +53,6 @@ function popup_cancelar() {
 		buttons: {
 			"Confirmar": function() {
 				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);				
 				distribuicaoVendaMedia.cancelar();
 			},
 			"Cancelar": function() {
@@ -75,7 +73,6 @@ function popup_excluir_bonificacao(index) {
 			"Confirmar": function() {
 				distribuicaoVendaMedia.removerBonificacao(index);
 				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);				
 			},
 			"Cancelar": function() {
 				$( this ).dialog( "close" );
@@ -96,7 +93,6 @@ function popup_excluir() {
 			"Confirmar": function() {
 				distribuicaoVendaMedia.removerProdutoEdicaoDaBase();
 				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);
 			},
 			"Cancelar": function() {
 				$( this ).dialog( "close" );
@@ -115,7 +111,6 @@ function popup_excluir_todos() {
 		"Confirmar": function() {
 			distribuicaoVendaMedia.removerTodasEdicoesDeBase();
 			$( this ).dialog( "close" );
-			$("#effect").show("highlight", {}, 1000, callback);
 		},
 		"Cancelar": function() {
 			$( this ).dialog( "close" );
@@ -324,20 +319,22 @@ function limparLstExcecao1(){
           <tr>
             <td width="43">Código:</td>
             <td width="78">
-            	<input type="text" id="codigoPesquisaBases" style="width:60px;"
-            	 	onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);"
-            	 	/>
+            	<input type="text" name="textfield1" id="codigoPesquisaBases" style="width:60px;"
+            	 	onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);"/>
             </td>
+            
             <td width="48">Produto:</td>
             <td width="184">
-            	<input type="text" id="produtoPesquisaBases" style="width:160px;" 
+            	<input type="text" name="textfield2" id="produtoPesquisaBases" style="width:160px;" 
             		onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#produtoPesquisaBases', true);" 
-                	 onblur="pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);"
-            		/>
+                	 onblur="pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);"/>
             </td>
+            
             <td width="42">Edição:</td>
-            <td width="62"><input type="text" name="textfield3" id="edicaoPesquisaBases" style="width:60px;" /></td>
-            </tr>
+            <td width="62">
+            	<input type="text" name="textfield3" id="edicaoPesquisaBases" style="width:60px;" /></td>
+          </tr>
+            
           	<tr>
 	          	<td width="76">Classifica&ccedil;&atilde;o:</td>
 	            <td colspan="3">
@@ -377,13 +374,6 @@ function limparLstExcecao1(){
    
     <div class="container">
     
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-                <span class="ui-state-default ui-corner-all" style="float:right;">
-                <a href="javascript:;" class="ui-icon ui-icon-close">&nbsp;</a></span>
-				<b>Ação realizada com sucesso</b></p>
-	</div>
-    	
       <fieldset style="width:650px!important; float:left;">
        	  <legend>Distribuição</legend>
         <div class="grids" style="display:block;">

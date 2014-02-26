@@ -130,7 +130,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		queryNative.append(" JOIN produto_edicao pe on (pe.ID = mec.PRODUTO_EDICAO_ID) ");
 		queryNative.append(" JOIN estudo_cota ec on (ec.cota_id = cota.id) ");
 		queryNative.append(" JOIN estudo estudo on (ec.estudo_id = estudo.id) ");
-		queryNative.append(" JOIN LANCAMENTO lancamento on (lancamento.id = mec.lancamento_id and estudo.PRODUTO_EDICAO_ID = lancamento.PRODUTO_EDICAO_ID and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
+		queryNative.append(" JOIN LANCAMENTO lancamento on (lancamento.id = mec.lancamento_id and estudo.PRODUTO_EDICAO_ID = lancamento.PRODUTO_EDICAO_ID and estudo.id = lancamento.estudo_id) ");
 		
 		queryNative.append(" JOIN PDV pdv ON (pdv.COTA_ID = cota.ID) ");
 		queryNative.append(" JOIN ROTA_PDV rota_pdv ON (pdv.ID = rota_pdv.PDV_ID) ");
@@ -221,7 +221,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		hql.append(" produtoEdicao.id as idProdutoEdicao, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
 		hql.append(" sum(movimentosEstoqueCota.qtde) as reparte, ");
-		hql.append(" estoqueProduto.qtdeSuplementar as quantidadeDisponivel ");
+		hql.append(" coalesce(estoqueProduto.qtdeSuplementar,0) as quantidadeDisponivel ");
 		hql.append(" from CotaAusente cotaAusente ");
 		hql.append(" inner join cotaAusente.movimentosEstoqueCota movimentosEstoqueCota ");
 		hql.append(" inner join movimentosEstoqueCota.produtoEdicao produtoEdicao ");

@@ -37,7 +37,6 @@ import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
@@ -500,19 +499,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 				Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
 
-				List<EstoqueProdutoCota> listaEstoqueProdutoCota =
-					this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(idLancamento);
-				
-				List<EstoqueProdutoCota> estoqueProdutoCotaCompraSuplementar = 
-						this.estoqueProdutoCotaRepository.buscarEstoqueProdutoCotaCompraSuplementar(idLancamento);
-				
-				listaEstoqueProdutoCota.addAll(estoqueProdutoCotaCompraSuplementar);
-				
-				if (listaEstoqueProdutoCota == null	|| listaEstoqueProdutoCota.isEmpty()) {
-
-                    throw new ValidacaoException(TipoMensagem.WARNING, "Estoque produto cota não encontrado!");
-				}
-
 				ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
 				
 				List<CotaReparteDTO> cotasReparte =	this.movimentoEstoqueCotaRepository.obterReparte(idLancamento, produtoEdicao.getId());
@@ -703,14 +689,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 																	  listaIdsFornecedores, 
 																	  GrupoProduto.CROMO);
 		
-		//TODO Certo
         BigDecimal media = BigDecimal.ZERO;
 		
 		for (BigDecimal bigDecimal : mapaExpectativaEncalheTotalDiaria.values()) {
 			media = media.add(bigDecimal);
 		}
 		
-		//dadosRecolhimento.addMediaRecolhimentoDistribuidor(media.divide(new BigDecimal(""+dadosRecolhimento.getDatasRecolhimentoFornecedor().size())).longValue());
 		dadosRecolhimento.addMediaRecolhimentoDistribuidor(media.longValue()/dadosRecolhimento.getDatasRecolhimentoFornecedor().size());
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados = new ArrayList<>();

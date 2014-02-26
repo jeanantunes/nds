@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
+import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.EstrategiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -35,12 +35,14 @@ import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
-import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
+import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
+import br.com.abril.nds.service.DistribuicaoVendaMediaService;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.EstrategiaService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.ProdutoEdicaoAlgoritimoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RoteiroService;
@@ -96,7 +98,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     private EstrategiaService estrategiaService;
 
     @Autowired
-    private DistribuicaoVendaMediaRepository distribuicaoVendaMediaRepository;
+    private DistribuicaoVendaMediaService distribuicaoVendaMediaService;
 
     @Autowired
     private EstudoAlgoritmoService estudoAlgoritmoService;
@@ -108,10 +110,13 @@ public class DistribuicaoVendaMediaController extends BaseController {
     private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
     
     @Autowired
-    private ProdutoEdicaoDAO produtoEdicaoDAO;
+    private ProdutoEdicaoAlgoritimoService produtoEdicaoAlgoritimoService;
     
     @Autowired
     private ProdutoService prodService;
+
+    @Autowired
+    private EstudoProdutoEdicaoBaseRepository estudoProdutoEdicaoBaseRepository;
     
     private static final int QTD_MAX_PRODUTO_EDICAO = 6;
 
@@ -128,6 +133,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    result.include("estudo", estudo);
 	    produtoEdicao = estudo.getProdutoEdicao();
         produto = estudo.getProdutoEdicao().getProduto();
+        lancamentoId = estudo.getLancamentoID();
     } else {
         produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao.toString());
         produto = produtoEdicao.getProduto();
@@ -152,20 +158,35 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    selecionados.clear();
 
 	    for (EdicaoBaseEstrategia base : estrategia.getBasesEstrategia()) {
-		selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(base.getProdutoEdicao().getProduto().getCodigo(), null, base.getProdutoEdicao().getNumeroEdicao(), base.getProdutoEdicao().getTipoClassificacaoProduto() != null ? base.getProdutoEdicao().getTipoClassificacaoProduto().getId() : null, false));
+                selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProdutoEdicao().getProduto()
+                        .getCodigo(), null, base.getProdutoEdicao().getNumeroEdicao(), base.getProdutoEdicao()
+                        .getTipoClassificacaoProduto() != null ? base.getProdutoEdicao().getTipoClassificacaoProduto()
+                        .getId() : null, false));
 	    }
-	} else {
-	    EstudoTransient estudoTemp = new EstudoTransient();
-	    estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(produto.getCodigo(), produtoEdicao.getNumeroEdicao(), lancamento != null ? lancamento.getId() : null));
-	    try {
-		definicaoBases.executar(estudoTemp);
-		selecionados.clear();
+    } else if (estudo != null) {
+        List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseRepository.obterEdicoesBase(estudo.getId());
+        for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
+                selecionados.addAll(distribuicaoVendaMediaService.pesquisar(edicaoBaseEstudoDTO.getCodigoProduto(),
+                        edicaoBaseEstudoDTO.getNomeProduto(), edicaoBaseEstudoDTO.getNumeroEdicao().longValue(), null,
+                        false));
+        }
+    } else {
+        EstudoTransient estudoTemp = new EstudoTransient();
+            estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoAlgoritimoService.getProdutoEdicaoEstudo(
+                    produto.getCodigo(), produtoEdicao.getNumeroEdicao(), lancamento != null ? lancamento.getId()
+                            : null));
+        try {
+            definicaoBases.executar(estudoTemp);
+            selecionados.clear();
 
 		for (ProdutoEdicaoEstudo base : estudoTemp.getEdicoesBase()) {
 		    if (base.isParcial()) {
-			selecionados.addAll(distribuicaoVendaMediaRepository.pesquisarEdicoesParciais(base.getProduto().getCodigo(), base.getPeriodo(), base.getNumeroEdicao()));
+                        selecionados.addAll(distribuicaoVendaMediaService.pesquisarEdicoesParciais(base.getProduto()
+                                .getCodigo(), base.getPeriodo(), base.getNumeroEdicao()));
 		    } else {
-			selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao(), base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, false));
+                        selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(),
+                                null, base.getNumeroEdicao(), base.getTipoClassificacaoProduto() != null ? base
+                                        .getTipoClassificacaoProduto().getId() : null, false));
 		    }
 		}
 	    } catch (Exception e) {
@@ -233,7 +254,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	Produto produto = prodService.obterProdutoPorCodigo(filtro.getCodigo());
     	filtro.setCodigo(produto.getCodigoICD());
     	
-    	List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaRepository.pesquisar(filtro);
+        List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaService.pesquisar(filtro);
 	
 		session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, resultado);
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
@@ -320,7 +341,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     public void adicionarProdutoEdicaoABase(List<Integer> indexes) {
 	List<ProdutoEdicaoVendaMediaDTO> resultadoPesquisa = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
 	
-		if (resultadoPesquisa != null) {
+		if ((resultadoPesquisa != null) && (resultadoPesquisa.size() > 0)) {
 		
 			List<ProdutoEdicaoVendaMediaDTO> selecionados = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
 			if (selecionados == null) {
@@ -353,7 +374,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
 	if (distribuicaoVendaMedia.getBases().size() > QTD_MAX_PRODUTO_EDICAO) {
 
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não pode ter mais do que "+QTD_MAX_PRODUTO_EDICAO+" bases."));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não pode ter mais do que "
+                + QTD_MAX_PRODUTO_EDICAO + " bases."));
 	}
 
 	for (int i = 0; i < distribuicaoVendaMedia.getBases().size(); i++) {
@@ -365,7 +387,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	}
 
 	if (qtdEdicoesAbertas > 1) {
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é possível utilizar mais que uma edição base aberta."));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+                    "Não é possível utilizar mais que uma edição base aberta."));
 	}
     
 	ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
@@ -375,7 +398,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	try {
 		produto.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento));
 		} catch (ParseException e) {
-		    throw new Exception("Data de lançamento em formato incorreto.");
+            throw new Exception("Data de lançamento em formato incorreto.");
 		}
 	
 	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
@@ -420,11 +443,26 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
 	for (TipoClassificacaoProduto tipoClassificacaoProduto : listaTipoClassificacaoProduto) {
 
-	    // Preenchendo a lista que irá representar o combobox de área de
-	    // influência na view
+            // Preenchendo a lista que irá representar o combobox de área de
+            // influência na view
 	    listaTipoClassificacaoProdutoCombo.add(new ItemDTO<Long, String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
 	}
 
 	result.include("listaTipoClassificacao", listaTipoClassificacaoProdutoCombo);
+    }
+    
+    /**
+     * @return the distribuicaoVendaMediaService
+     */
+    public DistribuicaoVendaMediaService getDistribuicaoVendaMediaService() {
+        return distribuicaoVendaMediaService;
+    }
+    
+    /**
+     * @param distribuicaoVendaMediaService the distribuicaoVendaMediaService to
+     *            set
+     */
+    public void setDistribuicaoVendaMediaService(DistribuicaoVendaMediaService distribuicaoVendaMediaService) {
+        this.distribuicaoVendaMediaService = distribuicaoVendaMediaService;
     }
 }

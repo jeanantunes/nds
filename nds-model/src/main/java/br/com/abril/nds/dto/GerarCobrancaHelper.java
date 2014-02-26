@@ -1,8 +1,10 @@
 package br.com.abril.nds.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -27,9 +29,9 @@ public class GerarCobrancaHelper {
 	private Date dataVencimento, dataConsolidado;
 	
 	public GerarCobrancaHelper(Cota cota, FormaCobranca formaCobrancaPrincipal, boolean cobrarHoje, 
-			ConsolidadoFinanceiroCota consolidadoFinanceiroCota, int qtdDiasNovaCobranca,
-			Fornecedor fornecedor, List<Integer> diasSemanaConcentracaoPagamento,
-			Date dataVencimento, Date dateConsolidado){
+							   ConsolidadoFinanceiroCota consolidadoFinanceiroCota, int qtdDiasNovaCobranca,
+							   Fornecedor fornecedor,
+							   Date dataVencimento, Date dateConsolidado){
 		
 		this.cota = cota;
 		this.formaCobrancaPrincipal = formaCobrancaPrincipal;
@@ -37,9 +39,18 @@ public class GerarCobrancaHelper {
 		this.consolidadoFinanceiroCota = consolidadoFinanceiroCota;
 		this.qtdDiasNovaCobranca = qtdDiasNovaCobranca;
 		this.fornecedor = fornecedor;
-		this.diasSemanaConcentracaoPagamento = diasSemanaConcentracaoPagamento;
 		this.dataVencimento = dataVencimento;
 		this.dataConsolidado = dateConsolidado;
+		
+		if (formaCobrancaPrincipal.getConcentracaoCobrancaCota() != null && 
+		        !formaCobrancaPrincipal.getConcentracaoCobrancaCota().isEmpty()){
+		    
+		    this.diasSemanaConcentracaoPagamento = new ArrayList<Integer>();
+		    
+		    for (ConcentracaoCobrancaCota c : formaCobrancaPrincipal.getConcentracaoCobrancaCota()){
+		        this.diasSemanaConcentracaoPagamento.add(c.getDiaSemana().getCodigoDiaSemana());
+		    }
+		}
 	}
 
 	public FormaCobranca getFormaCobrancaPrincipal() {

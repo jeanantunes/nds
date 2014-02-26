@@ -49,7 +49,7 @@
                             <td width="133">Tipo de Pagamento:</td>
                             <td><select name="dTipoCobranca" id="dTipoCobranca"
                                 style="width: 200px;"
-                                onchange="parametroCobrancaController.opcaoPagto(this.value);parametroCobrancaController.carregarFormasEmissao(this.value,'');">
+                                onchange="parametroCobrancaController.limparCamposValores();parametroCobrancaController.opcaoPagto(this.value);parametroCobrancaController.carregarFormasEmissao(this.value,'');">
                                     <option value="">Selecione</option>
                                     <c:forEach varStatus="counter" var="tipoCobranca"
                                         items="${listaTiposCobranca}">

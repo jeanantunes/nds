@@ -238,8 +238,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			return;
 		}
 		
-		
-		produto.setCodigoICD(input.getCodigoICD());
+		if(!Strings.isNullOrEmpty(input.getCodigoICD())) {
+		    produto.setCodigoICD(input.getCodigoICD());
+		}
 		
 		produto.setSlogan(input.getSlogan());
 		produto.setPeb(input.getPeb());
@@ -454,7 +455,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Peso para: " + input.getPeso());
 		}
 		
-		if (!Objects.equal(produto.getCodigoICD(), input.getCodigoICD())) {
+		if (!Strings.isNullOrEmpty(input.getCodigoICD()) 
+		        && !Objects.equal(produto.getCodigoICD(), input.getCodigoICD())) {
 		    produto.setCodigoICD(input.getCodigoICD());
 		    this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,

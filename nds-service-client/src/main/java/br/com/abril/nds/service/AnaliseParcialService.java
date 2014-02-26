@@ -38,4 +38,8 @@ public interface AnaliseParcialService {
     Integer[] buscarCotasPorTipoDistribuicao(TipoDistribuicaoCota tipo);
 
     BigInteger atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal);
+    
+    List<EstudoCotaGerado> obterEstudosCotaGerado(Long id);
+    
+    BigDecimal obterReparteLancamentoEstudo (Long idEstudo);
 }

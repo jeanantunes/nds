@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
@@ -95,17 +96,9 @@ public class BoletoEmailController extends BaseController {
         	
         	    mensagensBoletosNaoEmitidos.add("Cota "+cota.getNumeroCota()+" - "+cota.getPessoa().getNome());
         	    
-                LOGGER.info("Boleto [" + bm.getCobranca().getNossoNumero() + "] não enviado, para a cota: "
-                        + bm.getCobranca().getCota().getNumeroCota());
-        	    LOGGER.info(e.getMessage());
-
-        	    String stackTrace = "";
+                LOGGER.error("Boleto [" + bm.getCobranca().getNossoNumero() + "] não enviado, para a cota: "
+                    + bm.getCobranca().getCota().getNumeroCota(), e);
         	    
-        	    for (StackTraceElement element : e.getStackTrace()) {
-        	    	stackTrace += element.toString() + "\n";
-        	    }
-        	    
-        	    LOGGER.info(stackTrace);
 
         	    boletosNaoEmitidos = true;
             }
@@ -128,6 +121,6 @@ public class BoletoEmailController extends BaseController {
 		
 		String status = CACHE_ENVIO_BOLETO.get(KEY_ENVIO_BOLETO_EMAIL);
 		
-		result.use(Results.json()).withoutRoot().from(status==null?"Enviando boletos por email..." : status).recursive().serialize();
+		result.use(Results.json()).withoutRoot().from(status == null ? "": status).recursive().serialize();
 	}
 }

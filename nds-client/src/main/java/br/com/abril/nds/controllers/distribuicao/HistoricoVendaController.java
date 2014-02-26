@@ -26,7 +26,6 @@ import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -43,7 +42,6 @@ import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
-import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.UfEnum;
 import br.com.abril.nds.util.Util;
@@ -259,7 +257,7 @@ public class HistoricoVendaController extends BaseController {
 	 * 
 	 */
 	@Post
-	public void analiseHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas){
+	public void analiseHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Integer> cotas){
 		
 		ordenarEdicoesMaiorParaMenor(listProdutoEdicaoDto);
 		
@@ -281,19 +279,60 @@ public class HistoricoVendaController extends BaseController {
 	
 	@SuppressWarnings("unchecked")
 	@Post
-	public void carregarGridAnaliseHistorico(String sortorder, String sortname, Integer de, Integer ate){
+	public void carregarGridAnaliseHistorico(String sortorder, String sortname){
 		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
 		
-		List<Cota> listCota = (List<Cota>) session.getAttribute("listCotas");
-		
-		Intervalo<Integer> faixa = null;
-		if (de != null && ate != null){
-			faixa = new Intervalo<Integer>(de, ate);
-		}
+		List<Integer> listCota = (List<Integer>) session.getAttribute("listCotas");
 		
 		List<AnaliseHistoricoDTO> listAnaliseHistorico = 
 			cotaService.buscarHistoricoCotas(
-				listProdutoEdicaoDTO, listCota, sortorder, sortname, faixa);
+				listProdutoEdicaoDTO, listCota, sortorder, sortname);
+		
+		AnaliseHistoricoDTO suma = new AnaliseHistoricoDTO();
+		suma.setReparteMedio(0d);
+		suma.setVendaMedia(0d);
+		for (AnaliseHistoricoDTO dto : listAnaliseHistorico){
+			
+			suma.setNumeroCota(suma.getNumeroCota() + (dto.getNumeroCota() == null ? 0 : 1));
+			suma.setQtdPdv(dto.getQtdPdv() + suma.getQtdPdv());
+			suma.setReparteMedio(dto.getReparteMedio() + suma.getReparteMedio());
+			
+			if (dto.getVendaMedia() != null){
+				suma.setVendaMedia(dto.getVendaMedia() + suma.getVendaMedia());
+			}
+
+			if (dto.getEd1Reparte() != null){
+				suma.setEd1Reparte(dto.getEd1Reparte() + (suma.getEd1Reparte() == null ? 0 : suma.getEd1Reparte()));
+				suma.setEd1Venda(dto.getEd1Venda() + (suma.getEd1Venda() == null ? 0 : suma.getEd1Venda()));
+			}
+			
+			if (dto.getEd2Reparte() != null){
+				suma.setEd2Reparte(dto.getEd2Reparte() + (suma.getEd2Reparte() == null ? 0 : suma.getEd2Reparte()));
+				suma.setEd2Venda(dto.getEd2Venda() + (suma.getEd2Venda() == null ? 0 : suma.getEd2Venda()));
+			}
+			
+			if (dto.getEd3Reparte() != null){
+				suma.setEd3Reparte(dto.getEd3Reparte() + (suma.getEd3Reparte() == null ? 0 : suma.getEd3Reparte()));
+				suma.setEd3Venda(dto.getEd3Venda() + (suma.getEd3Venda() == null ? 0 : suma.getEd3Venda()));
+			}
+			
+			if (dto.getEd4Reparte() != null){
+				suma.setEd4Reparte(dto.getEd4Reparte() + (suma.getEd4Reparte() == null ? 0 : suma.getEd4Reparte()));
+				suma.setEd4Venda(dto.getEd4Venda() + (suma.getEd4Venda() == null ? 0 : suma.getEd4Venda()));
+			}
+			
+			if (dto.getEd5Reparte() != null){
+				suma.setEd5Reparte(dto.getEd5Reparte() + (suma.getEd5Reparte() == null ? 0 : suma.getEd5Reparte()));
+				suma.setEd5Venda(dto.getEd5Venda() + (suma.getEd5Venda() == null ? 0 : suma.getEd5Venda()));
+			}
+			
+			if (dto.getEd6Reparte() != null){
+				suma.setEd6Reparte(dto.getEd6Reparte() + (suma.getEd6Reparte() == null ? 0 : suma.getEd6Reparte()));
+				suma.setEd6Venda(dto.getEd6Venda() + (suma.getEd6Venda() == null ? 0 : suma.getEd6Venda()));
+			}
+		}
+		
+		listAnaliseHistorico.add(suma);
 		
 		TableModel<CellModelKeyValue<AnaliseHistoricoDTO>> tableModel = new TableModel<CellModelKeyValue<AnaliseHistoricoDTO>>();
 		
@@ -379,9 +418,9 @@ public class HistoricoVendaController extends BaseController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
-		List<Cota> listCota = (List<Cota>) session.getAttribute("listCotas");
+		List<Integer> listCota = (List<Integer>) session.getAttribute("listCotas");
 		
-		List<AnaliseHistoricoDTO> dto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, null, null, null);
+		List<AnaliseHistoricoDTO> dto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, null, null);
 		
 		try {
 			FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, dto,

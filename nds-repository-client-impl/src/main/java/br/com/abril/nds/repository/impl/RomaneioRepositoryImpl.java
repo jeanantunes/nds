@@ -79,9 +79,9 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(", ', ', endereco.bairro ");
 		hql.append(", ', ', endereco.cidade ");
 		hql.append(", ', ', endereco.uf ");
-		hql.append(" ) as logradouro, ");
-		hql.append(" endereco.cep as cep ");
-		
+		hql.append(", ' - ', endereco.cep ");
+		hql.append(" ) as endereco ");
+				
 		//if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 			//hql.append(", round(itemNota.reparte / lancamento.produtoEdicao.pacotePadrao) as pacote ");
 			//hql.append(", lancDif.diferenca.qtde as quebra ");
@@ -141,13 +141,13 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			hql.append(" and movEstCotaLancDif.id = movimentoEstoque.id ");
 		}*/
 
-		if(filtro.getIdBox() == null ) {
+		if(filtro.getCodigoBox() == null ) {
 			
 			hql.append(" and roteiro.descricaoRoteiro <> 'Especial' ");
 			
-		} else if(filtro.getIdBox() != null && filtro.getIdBox() != -1) {
+		} else if(filtro.getCodigoBox() != null && filtro.getCodigoBox() != -1) {
 			
-			hql.append(" and box.id = :idBox ");
+			hql.append(" and box.codigo = :codigoBox ");
 			hql.append(" and roteiro.descricaoRoteiro <> 'Especial' ");
 			
 		} else {
@@ -265,9 +265,9 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			"statusLancamento", 
 				new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
 		
-		if(filtro.getIdBox() != null && filtro.getIdBox() != -1) {
+		if(filtro.getCodigoBox() != null && filtro.getCodigoBox() != -1) {
 			
-			query.setParameter("idBox", filtro.getIdBox());
+			query.setParameter("codigoBox", filtro.getCodigoBox());
 		}
 		
 		if(filtro.getIdRoteiro() != null){
@@ -384,13 +384,13 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(", roteiro.descricaoRoteiro as nomeRoteiro ");
 		hql.append(", rota.id as idRota ");
 		hql.append(", rota.descricaoRota as nomeRota ");
-		hql.append(", endereco.tipoLogradouro as tipoLogradouro ");
-		hql.append(", endereco.logradouro as logradouro ");
-		hql.append(", endereco.numero as numeroLogradouro ");
-		hql.append(", endereco.bairro as bairro ");		
-		hql.append(", endereco.cidade as cidade ");
-		hql.append(", endereco.uf as uf ");
-		hql.append(", endereco.cep as cep ");
+		
+		hql.append(", concat(endereco.tipoLogradouro, ' ' , endereco.logradouro, ', ' , endereco.numero ");
+		hql.append(", ', ', endereco.bairro ");
+		hql.append(", ', ', endereco.cidade ");
+		hql.append(", ', ', endereco.uf ");
+		hql.append(", ' - ', endereco.cep ");
+		hql.append(" ) as endereco ");
 		
 		int qtdProdutos = 0;
 		if (filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()) {

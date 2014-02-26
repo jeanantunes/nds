@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -438,4 +439,26 @@ public class ProdutoServiceImpl implements ProdutoService {
 		
 		return ultimoCodigoRegional;
 	}
+    
+    @Override
+	@Transactional
+	public Long obterIdFornecedorUnificadorPorCodigoProduto(String codigoProduto) {
+
+		Produto produto = this.obterProdutoPorCodigo(codigoProduto);
+        
+		if (produto == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado!");
+		}
+		
+		Fornecedor fornecedor = produto.getFornecedor();
+		
+		if (fornecedor.getFornecedorUnificador() != null) {
+			
+			fornecedor = fornecedor.getFornecedorUnificador();
+		}
+		
+        return fornecedor.getId();
+	}
+    
 }

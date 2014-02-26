@@ -20,10 +20,8 @@ var anaLiseHistogramaController = $.extend(true, {
 	formatarFaixasVenda : function formatarFaixasVenda(rowCell){
 		var cotasEsmagadasFormatado = '';
 		
-			rowCell.repTotal = formatarMilhar(Math.round(rowCell.repTotal));
-			rowCell.vdaTotal = formatarMilhar(Math.round(rowCell.vdaTotal));
-			
-			cotasEsmagadasFormatado = formatarMilhar($(rowCell.cotasEsmagadas).text());
+			rowCell.repTotal = formatarMilhar(rowCell.repTotal);
+			rowCell.vdaTotal = formatarMilhar(rowCell.vdaTotal);
 			
 			if (cotasEsmagadasFormatado == "0") {
 				rowCell.cotasEsmagadas = 0;
@@ -34,17 +32,18 @@ var anaLiseHistogramaController = $.extend(true, {
 			rowCell.qtdeCotas = formatarMilhar(rowCell.qtdeCotas);
 			rowCell.qtdeCotasSemVendas = formatarMilhar(rowCell.qtdeCotasSemVendas);
 			rowCell.encalheMedio = floatToPrice(rowCell.encalheMedio);
-			rowCell.partReparte = floatToPrice(rowCell.partReparte * 100);
-			rowCell.partVenda = floatToPrice(rowCell.partVenda * 100);
+			rowCell.partReparte = floatToPrice(rowCell.partReparte);
+			rowCell.partVenda = floatToPrice(rowCell.partVenda);
 			rowCell.repMedio = floatToPrice(rowCell.repMedio);
 			rowCell.vdaMedio = floatToPrice(rowCell.vdaMedio);
-			rowCell.percVenda = floatToPrice(rowCell.percVenda * 100);
+			rowCell.percVenda = floatToPrice(rowCell.percVenda);
 	},
 	
 	buildResumoEstudo : function buildResumoEstudo(lastRow){
 		
 		$("#cotasAtivasCell", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.qtdeTotalCotasAtivas || 0));
 		$("#reparteDistribuidoCell", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.repTotal || 0 ));
+		$("#reparteTotalDistribuidor_", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.repTotal || 0 ));
 		$("#repMedioCell", anaLiseHistogramaController.workspace).text(floatToPrice(lastRow.cell.repMedio || 0));
 		$("#vdaMedioCell", anaLiseHistogramaController.workspace).text(floatToPrice(lastRow.cell.vdaMedio || 0));
 		$("#cotasEsmagadasCell", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.cotasEsmagadas || 0));
@@ -55,12 +54,9 @@ var anaLiseHistogramaController = $.extend(true, {
 		
 		
 		var vdaTotal = parseInt(lastRow.cell.vdaTotal);
-		//var repTotal = parseInt(lastRow.cell.repTotal);
 		
 		var qtdeCotas = parseInt(lastRow.cell.qtdeCotas);
-		//cotas ativas da faixa de venda
-		//var qtdeCotasAtivas = parseInt(lastRow.cell.qtdeCotasAtivas);
-		//total de cotas ativas 
+		
 		var qtdeTotalCotasAtivas = parseInt(lastRow.cell.qtdeTotalCotasAtivas);
 		
 		var qtdeCotasSemVenda = parseInt(lastRow.cell.qtdeCotasSemVenda);
@@ -211,35 +207,34 @@ var anaLiseHistogramaController = $.extend(true, {
 				
 				anaLiseHistogramaController.buildResumoEstudo(lastRow);
 				
+				var ultimo = data.rows.length - 1;
+				
 				$.each(data.rows, function(index, row) {
 					rowCell = row.cell;
-					rowCell.partVenda =  (rowCell.vdaTotal  /lastRow.cell.vdaTotal) || 0;
-					rowCell.partReparte =  (rowCell.repTotal /lastRow.cell.repTotal) || 0;
-					rowCell.percVenda =  (rowCell.vdaTotal /rowCell.repTotal) || 0;
-					rowCell.faixaVenda="<a class='histogramafaixaVenda' href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotaStr');\">"+
-					"De " + row.cell.faixaDe + " a " + row.cell.faixaAte +"</a>";						
 					
-					if(parseInt(rowCell.qtdeCotas)>0){
+					if (index == ultimo){
+						
+						rowCell.faixaVenda = "<a class='histogramafaixaVenda' href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotaStr');\">"+
+						rowCell.faixaVenda + "</a>";
+						//rowCell.faixaVenda = rowCell.faixaVenda;
+					} else {
+						
+						rowCell.faixaVenda = "<a class='histogramafaixaVenda' href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotaStr');\">"+
+						"De " + row.cell.faixaDe + " a " + row.cell.faixaAte + "</a>";
+					}					
+					
+					if(parseInt(rowCell.qtdeCotas) > 0 && parseInt(rowCell.cotasEsmagadas) > 0 && index != ultimo){
 						rowCell.cotasEsmagadas="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+
-						index+",'idCotasEsmagadas',"+ row.cell.faixaDe +","+ row.cell.faixaAte +");\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
+						index+",'idCotasEsmagadas');\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
 					}
 					
 					anaLiseHistogramaController.formatarFaixasVenda(rowCell);
-				});
-				
-				lastRow.cell.repTotal = 0;
-				lastRow.cell.vdaTotal = 0;
-				$.each(data.rows, function(index, row) {
-					if (lastRow.id !== row.id) {
-						lastRow.cell.repTotal += parseInt(row.cell.repTotal);
-						lastRow.cell.vdaTotal += parseInt(row.cell.vdaTotal);
-					}
 				});
 
 				return data;
 			},
 			colModel : [ {
-				display : 'Faixa de Venda',
+				display : 'Faixa de Venda Média',
 				name : 'faixaVenda',
 				width : 135,
 				sortable : true,
@@ -319,7 +314,7 @@ var anaLiseHistogramaController = $.extend(true, {
 		});
 	},
 	
-	executarAnaliseHistoricoVenda:function(idx, propriedade, de, ate){
+	executarAnaliseHistoricoVenda:function(idx, propriedade){
 		var idCotaArray = resultadoAnalise[idx].cell[propriedade].split(','),
 			url = contextPath + "/distribuicao/historicoVenda/analiseHistorico",
 			params = new Array(),
@@ -343,14 +338,7 @@ var anaLiseHistogramaController = $.extend(true, {
 		    	  
 		    	  anaLiseHistogramaController.montarDados();
 		    	  
-		    	  var options = new Object();
-		    	  
-		    	  if (de && ate){
-			    	  options.params = [{name:'de', value: de},
-			    						{name:'ate', value: ate}];
-		    	  }
-		    	  
-		    	  analiseHistoricoVendaController.Grids.BaseHistoricoGrid.reload(options);
+		    	  analiseHistoricoVendaController.Grids.BaseHistoricoGrid.reload();
 		    	  
 		    	  if ($(resultadoAnalise[idx].cell.faixaVenda).text() === 'De 0 a 0') {
 		    		  analiseHistoricoVendaController.isFaixaZero = true;

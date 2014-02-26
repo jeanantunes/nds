@@ -241,7 +241,7 @@ var negociacaoDividaController = $.extend(true, {
 
 		params.push({
 			name: 'filtro.valorSelecionado',
-			value: priceToFloat($('#dividaSelecionada', negociacaoDividaController.wokspace).html())
+			value: $('#dividaSelecionada', negociacaoDividaController.wokspace).html()
 		});
 
 		params.push({
@@ -358,6 +358,8 @@ var negociacaoDividaController = $.extend(true, {
 						"Confirmar": function() {
 							
 							negociacaoDividaController.confirmarNegociacao();
+							
+							$("#dialog-NegociacaoformaPgto", negociacaoDividaController.workspace).dialog("close");
 						},
 						"Cancelar": function() {
 							 $("#dialog-NegociacaoformaPgto", negociacaoDividaController.workspace).dialog("close");
@@ -800,15 +802,30 @@ var negociacaoDividaController = $.extend(true, {
 	},
 	
 	opcaoFormasPagto : function(value){
+	
+		var dadosParcela = [
+			'BOLETO',
+			'BOLETO_EM_BRANCO',
+			'DEPOSITO',
+			'TRANSFERENCIA_BANCARIA',
+			'DINHEIRO',
+			'OUTROS'
+		];
 		
-		
-		if (value == 'BOLETO' || value == 'BOLETO_EM_BRANCO' || value == 'DEPOSITO' || value == 'TRANSFERENCIA_BANCARIA'){
+		var dadosBanco = [
+			'DEPOSITO',
+			'DINHEIRO'
+		];
+
+		if ($.inArray(value, dadosParcela) >= 0) {
 			$('#gridVenctos', negociacaoDividaController.workspace).show();
 			$('#gridCheque', negociacaoDividaController.workspace).hide();
 			
-			if(value != 'DEPOSITO'){
+			if($.inArray(value, dadosBanco) < 0){
 				$('#divChequeDeposito', negociacaoDividaController.workspace).hide();
 				$('#divBanco', negociacaoDividaController.workspace).show();
+			} else {
+				$('#divBanco', negociacaoDividaController.workspace).hide();
 			}
 		}else if (value == 'CHEQUE'){
 			$('#gridVenctos', negociacaoDividaController.workspace).hide();
@@ -853,12 +870,6 @@ var negociacaoDividaController = $.extend(true, {
 			}
 			
 		});
-		
-		negociacaoDividaController.valorSelecionadoSemEncargo = 
-			floatValue(negociacaoDividaController.valorSelecionadoSemEncargo);
-		
-		negociacaoDividaController.valorEncargoSelecionado = 
-			floatValue(negociacaoDividaController.valorEncargoSelecionado);
 		
 		$("#negociacaoCheckAll", negociacaoDividaController.workspace).get(0).checked = todosChecados;
 	},

@@ -5,7 +5,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.filtro.FiltroEdicaoBaseDistribuicaoVendaMedia;
@@ -21,7 +20,6 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao, Long idClassificacao) {
     	
     	return pesquisar(new FiltroEdicaoBaseDistribuicaoVendaMedia(codigoProduto, nomeProduto, edicao, idClassificacao));
@@ -34,7 +32,6 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 
     @SuppressWarnings("unchecked")
 	@Override
-    @Transactional(readOnly = true)
     public List<ProdutoEdicaoVendaMediaDTO> pesquisarEdicoesParciais(String codigoProduto, Integer periodo, Long edicao) {
     	
 		StringBuilder sql = new StringBuilder();
@@ -102,7 +99,6 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     
     @SuppressWarnings("unchecked")
 	@Override
-    @Transactional(readOnly = true)
     public List<ProdutoEdicaoVendaMediaDTO> pesquisar(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, boolean usarICD) {
 
 		StringBuilder sql = new StringBuilder();

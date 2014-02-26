@@ -68,6 +68,8 @@ public class AnaliseHistogramaDTO implements Serializable {
 	
 	private Integer faixaAte;
 	
+	private BigDecimal mediaEdPresente;
+	
 	public String getFaixaVenda() {
 		return faixaVenda;
 	}
@@ -164,15 +166,15 @@ public class AnaliseHistogramaDTO implements Serializable {
 	
 	public void executeScaleValues(int qtdEdicoes){
 		
-		repTotal = (repTotal==null)?BigDecimal.ZERO: repTotal.setScale(2,BigDecimal.ROUND_FLOOR);//.divide(new BigDecimal(qtdEdicoes));
-		repMedio = (repMedio==null)?BigDecimal.ZERO: repMedio.setScale(2,BigDecimal.ROUND_FLOOR);//.divide(new BigDecimal(qtdEdicoes));
-		vdaMedio = (vdaMedio==null)?BigDecimal.ZERO: vdaMedio.setScale(2,BigDecimal.ROUND_FLOOR);//.divide(new BigDecimal(qtdEdicoes));
-		vdaTotal = (vdaTotal==null)?BigDecimal.ZERO: vdaTotal.setScale(2,BigDecimal.ROUND_FLOOR);//.divide(new BigDecimal(qtdEdicoes));
-		percVenda =	(percVenda==null)?BigDecimal.ZERO: percVenda.setScale(2,BigDecimal.ROUND_FLOOR);
+		repTotal = (repTotal==null)?BigDecimal.ZERO: repTotal.setScale(2,RoundingMode.HALF_EVEN);
+		repMedio = (repMedio==null)?BigDecimal.ZERO: repMedio.setScale(2,RoundingMode.HALF_EVEN);
+		vdaMedio = (vdaMedio==null)?BigDecimal.ZERO: vdaMedio.setScale(2,RoundingMode.HALF_EVEN);
+		vdaTotal = (vdaTotal==null)?BigDecimal.ZERO: vdaTotal.setScale(2,RoundingMode.HALF_EVEN);
+		percVenda =	(percVenda==null)?BigDecimal.ZERO: percVenda.setScale(2,RoundingMode.HALF_EVEN);
 		
 		BigDecimal encalhe = repTotal.subtract(vdaTotal);
 		int qtdCotas = Integer.parseInt(this.qtdeCotas.toString());
-		BigDecimal qtdCotasDecimal = new BigDecimal(qtdCotas).setScale(2,BigDecimal.ROUND_FLOOR);
+		BigDecimal qtdCotasDecimal = new BigDecimal(qtdCotas).setScale(2,RoundingMode.HALF_EVEN);
 		BigDecimal encalheMedioCalc = null;
 		
 		if (qtdCotas != 0) {
@@ -180,11 +182,9 @@ public class AnaliseHistogramaDTO implements Serializable {
 		}
 		
 		encalheMedio = (encalheMedioCalc==null)?BigDecimal.ZERO: encalheMedioCalc;
-		partReparte = (partReparte==null)?BigDecimal.ZERO: partReparte.setScale(2,BigDecimal.ROUND_FLOOR);
-		partVenda =	(partVenda==null)?BigDecimal.ZERO: partVenda.setScale(2,BigDecimal.ROUND_FLOOR);
 		cotasEsmagadas = (cotasEsmagadas==null)?BigInteger.ZERO: cotasEsmagadas;
-		vendaEsmagadas = (vendaEsmagadas==null)?BigDecimal.ZERO: vendaEsmagadas.setScale(2,BigDecimal.ROUND_FLOOR);//.divide(new BigDecimal(qtdEdicoes));
-		qtdeCotasAtivas = (qtdeCotasAtivas==null)?BigDecimal.ZERO: qtdeCotasAtivas.setScale(2,BigDecimal.ROUND_FLOOR);
+		vendaEsmagadas = (vendaEsmagadas==null)?BigDecimal.ZERO: vendaEsmagadas.setScale(2,RoundingMode.HALF_EVEN);
+		qtdeCotasAtivas = (qtdeCotasAtivas==null)?BigDecimal.ZERO: qtdeCotasAtivas.setScale(2,RoundingMode.HALF_EVEN);
 	}
 	public BigInteger getReparteDistribuido() {
 		return reparteDistribuido;
@@ -222,5 +222,10 @@ public class AnaliseHistogramaDTO implements Serializable {
 	public void setFaixaAte(BigInteger faixaAte) {
 		this.faixaAte = faixaAte.intValue();
 	}
-	
+	public BigDecimal getMediaEdPresente() {
+		return mediaEdPresente;
+	}
+	public void setMediaEdPresente(BigDecimal mediaEdPresente) {
+		this.mediaEdPresente = mediaEdPresente;
+	}
 }
