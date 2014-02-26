@@ -690,7 +690,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			politicaChamadao.setValorConsignado(chamadaoConsignado);
 		}
 		
-		
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = null;
 		if (distribuidor.getParametrosRecolhimentoDistribuidor() != null) {
 			parametrosRecolhimentoDistribuidor = distribuidor.getParametrosRecolhimentoDistribuidor();
