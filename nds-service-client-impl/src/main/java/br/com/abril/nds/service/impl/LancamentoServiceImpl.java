@@ -397,7 +397,7 @@ public class LancamentoServiceImpl implements LancamentoService {
     	
     	for(Object[] lancamento : lista){
     		
-    		if((lancamento[1].equals(StatusLancamento.CONFIRMADO)|| lancamento[1].equals(StatusLancamento.PLANEJADO)) && !((Date)lancamento[0]).before(diaOperacaoDistribuidor)){
+    		if((lancamento[1].equals(StatusLancamento.CONFIRMADO)|| lancamento[1].equals(StatusLancamento.PLANEJADO)|| lancamento[1].equals(StatusLancamento.FURO)) && !((Date)lancamento[0]).before(diaOperacaoDistribuidor)){
     			
     			if(!diasConfirmados.contains((Date)lancamento[0])){
     			  diasConfirmados.add((Date)lancamento[0]);
