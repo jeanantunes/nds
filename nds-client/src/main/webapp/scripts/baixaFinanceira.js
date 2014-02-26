@@ -1120,13 +1120,7 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		var dataPagamento;
 		
-		if(dividasMarcadas.length > 1){
-			$("#dtPagamentoManual", baixaFinanceiraController.workspace).datepicker(
-			"setDate", baixaFinanceiraController.dataOperacaoDistribuidor);
-		}else{
-			dataPagamento = baixaFinanceiraController.obterDataVencimentoDividaManual();
-			$("#dtPagamentoManual", baixaFinanceiraController.workspace).val(dataPagamento);
-		}
+		$("#dtPagamentoManual", baixaFinanceiraController.workspace).datepicker("setDate", baixaFinanceiraController.dataOperacaoDistribuidor);
 	
 	   dataPagamento = $("#dtPagamentoManual", baixaFinanceiraController.workspace).val();
 	
