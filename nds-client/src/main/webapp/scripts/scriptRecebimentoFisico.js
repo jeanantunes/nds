@@ -770,28 +770,65 @@ var recebimentoFisicoController = $.extend(true, {
 		});
 		
 	},
+	
+	validarDescontosRecebimentoFisico: function() {
+		
+		$.postJSON(
+			this.path + 'validarDescontosRecebimentoFisico', 
+			recebimentoFisicoController.getParametrosConfirmacao(), 
+			function(result) {
+
+				if (result.mensagens) {
+					recebimentoFisicoController.popupDescontosDivergentes(result);
+				} else {
+					recebimentoFisicoController.confirmarRecebimentoFisico();
+				}
+			}
+		);		
+	},
+	
+	popupDescontosDivergentes: function(result) {
+		
+		var message = "";
+		
+		$.each(result.mensagens, function(index, value) {
+			message += value + "<br />";
+		});
+		
+		$("#dialog-descontos-divergente", this.workspace).find("p").html(
+			message
+		);
+		
+		$("#dialog-descontos-divergente", this.workspace).dialog({			
+			resizable : false,
+			height : 'auto',
+			width : 450,
+			modal : true,
+			buttons : {				
+				"Confirmar" : function() {
+					$(this).dialog("close");
+					recebimentoFisicoController.confirmarRecebimentoFisico();
+					return true;
+				},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+					return false;
+				}
+			},
+			
+			form: $("#dialog-descontos-divergente", this.workspace).parents("form")
+		});
+	},
+	
 
     /**
      * COFIRMA OS DADOS DOS ITENS DA NOTA EDITADOS.
      */
-	confirmarRecebimentoFisico : function() {
-		
-		var listaDeValores  = null;
-		
-		if (recebimentoFisicoController.indNotaFiscalInterface) {
-			
-			if (!recebimentoFisicoController.validarPreenchimentoQuantidades()) {
-
-				return;
-			}
-			
-			listaDeValores = 
-				serializeArrayToPost(
-					'itensRecebimento', recebimentoFisicoController.obterListaValores());
-		}
+	confirmarRecebimentoFisico: function() {
 		
 		$.postJSON(
-			this.path + 'confirmarRecebimentoFisico', listaDeValores, 
+			this.path + 'confirmarRecebimentoFisico', 
+			recebimentoFisicoController.getParametrosConfirmacao(), 
 			function(result) {
 
 				$(".grids", recebimentoFisicoController.workspace).hide();
@@ -801,6 +838,21 @@ var recebimentoFisicoController = $.extend(true, {
 				recebimentoFisicoController.ocultarBtns();
 			}
 		);
+	},
+	
+	getParametrosConfirmacao: function() {
+
+		if (recebimentoFisicoController.indNotaFiscalInterface) {
+			
+			if (!recebimentoFisicoController.validarPreenchimentoQuantidades()) {
+
+				return;
+			}
+			
+			return 
+				serializeArrayToPost(
+					'itensRecebimento', recebimentoFisicoController.obterListaValores());
+		}
 	},
 	
 	/**

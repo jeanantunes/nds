@@ -35,6 +35,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -357,11 +358,37 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
             this.montarMatrizLancamentosRetorno(matrizLancamentoRetorno,
                     produtoLancamento, novaData, proximoStatusLancamento);
             
+            this.ajustarDataDeRecolhimentoDoProduto(lancamento,novaData);
+            
             lancamentoRepository.merge(lancamento);
         }
     }
     
-    private StatusLancamento getProximoStatusLancamentoPorOperacao(
+    /**
+     * Ajusta a data de recolhimento do produto caso a data de lançamento informada seja maior que a mesma
+     * e o produto não seja PARCIAL.
+     * 
+     * @param lancamento lancamento do produto
+     * @param novaData nova data de lancamento informada
+     */
+    private void ajustarDataDeRecolhimentoDoProduto(
+    		final Lancamento lancamento,final Date novaData) {
+
+    	ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
+    	
+    	if(produtoEdicao!= null){
+    		
+    		if(!produtoEdicao.isParcial() 
+    				&& novaData.compareTo(lancamento.getDataRecolhimentoDistribuidor())>=0){
+        		
+        		Date novaDataRecolhimento = DateUtil.adicionarDias(novaData, produtoEdicao.getPeb());
+        		
+        		lancamento.setDataRecolhimentoDistribuidor(novaDataRecolhimento);
+        	}
+    	}
+	}
+
+	private StatusLancamento getProximoStatusLancamentoPorOperacao(
             final OperacaoMatrizLancamento operacaoMatrizLancamento) {
         
         StatusLancamento statusLancamento = null;
@@ -2081,6 +2108,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                     .getDataLancamentoPrevista());
             
             lancamento.setStatus(StatusLancamento.CONFIRMADO);
+            lancamento.setSequenciaMatriz(null);
             lancamento.setUsuario(usuario);
             
             lancamentoRepository.merge(lancamento);
@@ -2096,6 +2124,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         for (final Lancamento lancamento : lancamentos) {
             
             lancamento.setStatus(StatusLancamento.CONFIRMADO);
+            lancamento.setSequenciaMatriz(null);
             lancamento.setUsuario(usuario);
             
             lancamentoRepository.merge(lancamento);
@@ -2133,6 +2162,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
             this.validarLancamentoParaReabertura(lancamento);
             
             lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO);
+            
+            lancamento.setSequenciaMatriz(null);
             
             lancamento.setUsuario(usuario);
             

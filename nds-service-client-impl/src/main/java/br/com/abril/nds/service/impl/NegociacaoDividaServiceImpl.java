@@ -169,24 +169,24 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     @Transactional(readOnly = true)
     public List<NegociacaoDividaDTO> obterDividasPorCota(final FiltroConsultaNegociacaoDivida filtro) {
         
-        final List<NegociacaoDividaDTO> dividas = negociacaoDividaRepository.obterNegociacaoPorCota(filtro);
-        final Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
-        final Date data = DateUtil.removerTimestamp(new Date());
+        final List<NegociacaoDividaDTO> dividas = this.negociacaoDividaRepository.obterNegociacaoPorCota(filtro);
+        final Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
+        final Date data = this.distribuidorService.obterDataOperacaoDistribuidor();
         
-        final FormaCobranca formaCobrancaPrincipal = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+        final FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
         
         for (final NegociacaoDividaDTO divida : dividas) {
             
             if (divida.getPrazo() != 0) {
                 
-                final Banco banco = bancoRepository.buscarBancoPorIdCobranca(divida.getIdCobranca());
+                final Banco banco = this.bancoRepository.buscarBancoPorIdCobranca(divida.getIdCobranca());
                 BigDecimal encargo = (divida.getEncargos() != null) ? divida.getEncargos() : BigDecimal.ZERO;
                 
-                encargo = encargo.add(cobrancaService.calcularJuros(banco, cota.getId(), divida.getVlDivida(), divida
+                encargo = encargo.add(this.cobrancaService.calcularJuros(banco, cota.getId(), divida.getVlDivida(), divida
                         .getDtVencimento(), data, formaCobrancaPrincipal));
                 
                 if (divida.getDtVencimento().compareTo(data) < 0) {
-                    encargo = encargo.add(cobrancaService.calcularMulta(banco, cota, divida.getVlDivida(),
+                    encargo = encargo.add(this.cobrancaService.calcularMulta(banco, cota, divida.getVlDivida(),
                             formaCobrancaPrincipal));
                 }
                 divida.setEncargos(encargo);
@@ -1022,8 +1022,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         BigDecimal somaEncargo = BigDecimal.ZERO;
         
         Date dataBase = new Date();
-        final Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
-        final Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
         
         final FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
         

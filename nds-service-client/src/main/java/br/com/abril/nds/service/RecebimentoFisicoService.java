@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
@@ -11,6 +12,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 public interface RecebimentoFisicoService {
 	 
@@ -35,5 +37,7 @@ public interface RecebimentoFisicoService {
 	RecebimentoFisicoDTO obterRecebimentoFisicoDTO(String codigo, String edicao);
 
 	void excluirNota(Long id);
+	
+	ValidacaoVO validarDescontoProduto(Origem origemNota, List<RecebimentoFisicoDTO> listaItensNota);
 	 
 }
