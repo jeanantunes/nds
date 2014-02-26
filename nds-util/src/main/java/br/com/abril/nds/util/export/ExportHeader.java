@@ -12,6 +12,8 @@ public class ExportHeader implements Comparable<ExportHeader> {
 	
 	private ColumType columType;
 	
+	private Boolean xlsAutoSize;
+	
 	public ExportHeader() {
 		
 	}
@@ -126,6 +128,14 @@ public class ExportHeader implements Comparable<ExportHeader> {
 
 	public void setColumType(ColumType columType) {
 		this.columType = columType;
+	}
+
+	public Boolean getXlsAutoSize() {
+		return xlsAutoSize;
+	}
+
+	public void setXlsAutoSize(Boolean xlsAutoSize) {
+		this.xlsAutoSize = xlsAutoSize;
 	}
 
 }

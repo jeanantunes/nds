@@ -8,8 +8,10 @@ import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Exportable
 public class FiltroRomaneioDTO implements Serializable {
 
 	private static final long serialVersionUID = -3783996689743491442L;
@@ -18,8 +20,15 @@ public class FiltroRomaneioDTO implements Serializable {
 	private Long idRoteiro;
 	private Long idRota;
 	private String nomeRota;
+	private String nomeRoteiro;
+	private String nomeBox;
+	
+	@Export(label = "Data", exhibitionOrder = 1)
 	private Date data;
 	private List<Long> produtos;
+	
+	@Export(label = "Produtos", exhibitionOrder = 5)
+	private String nomesProduto;
 	
 	private PaginacaoVO paginacao;
 	
@@ -89,12 +98,12 @@ public class FiltroRomaneioDTO implements Serializable {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
 	
-	@Export(label = "Roteiro" , exhibitionOrder = 1, alignment = Alignment.LEFT)
+	@Export(label = "Roteiro" , exhibitionOrder = 3, alignment = Alignment.LEFT)
 	public String getRoteiro() {
 		
-		if(getIdRoteiro() != null){
+		if(nomeRoteiro != null){
 			
-			return   "("+ getIdRoteiro() + ")";
+			return nomeRoteiro;
 		}else{
 			
 			return "Todos";
@@ -102,22 +111,24 @@ public class FiltroRomaneioDTO implements Serializable {
 		
 	}
 	
+	@Export(label = "Box", exhibitionOrder = 2)
 	public String getBox() {
 		
-		if(getCodigoBox() != null){
+		if(nomeBox != null){
 			
-			return getCodigoBox().toString();
+			return nomeBox;
 		}else{
 			
 			return "Todos";
 		}
 	}
 	
+	@Export(label = "Rota", exhibitionOrder = 4)
 	public String getRota() {
 		
-		if(getIdRota() != null){
+		if(nomeRota != null){
 						
-			return "(" + getIdRota() + ") " + getNomeRota();		
+			return nomeRota;		
 		}else{
 			return "Todos";
 		}
@@ -137,6 +148,22 @@ public class FiltroRomaneioDTO implements Serializable {
 		this.nomeRota = nomeRota;
 	}
 
+	public String getNomeRoteiro() {
+		return nomeRoteiro;
+	}
+
+	public void setNomeRoteiro(String nomeRoteiro) {
+		this.nomeRoteiro = nomeRoteiro;
+	}
+
+	public String getNomeBox() {
+		return nomeBox;
+	}
+
+	public void setNomeBox(String nomeBox) {
+		this.nomeBox = nomeBox;
+	}
+
 	public Date getData() {
 		return data;
 	}
@@ -152,4 +179,13 @@ public class FiltroRomaneioDTO implements Serializable {
 	public void setProdutos(List<Long> produtos) {
 		this.produtos = produtos;
 	}
+
+	public String getNomesProduto() {
+		return nomesProduto;
+	}
+
+	public void setNomesProduto(String nomesProduto) {
+		this.nomesProduto = nomesProduto;
+	}
+	
 }

@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -171,6 +172,6 @@ public interface LancamentoService {
     
     void atualizarReparteLancamento(Long idLancamento, BigInteger reparte, BigInteger repartePromocional);
     
-    Set <Date> obterDiasMatrizLancamentoAbertos();
+    HashMap<String, Set> obterDiasMatrizLancamentoAbertos();
 }
  

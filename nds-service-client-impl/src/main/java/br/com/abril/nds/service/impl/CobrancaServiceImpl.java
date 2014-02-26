@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -1238,4 +1237,13 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		return this.cobrancaRepository.obterTiposCobrancaCadastradas();
 	}
+
+    @Override
+    public void validarDataPagamentoCobranca(List<Long> idCobrancas, Date dataPagamento) {
+        List<Cobranca> cobrancas = this.cobrancaRepository.obterCobrancasDataEmissaoMaiorQue(dataPagamento, idCobrancas);
+        
+        if(cobrancas != null && !cobrancas.isEmpty()) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "A Data de Pagamento não pode ser menor que a Data de Emissão dos itens selecionados");
+        }
+    }
 }

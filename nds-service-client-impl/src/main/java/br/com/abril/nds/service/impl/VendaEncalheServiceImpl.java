@@ -262,8 +262,8 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 
-		item.setPreco(CurrencyUtil.formatarValor(precoVenda.subtract(valorDesconto)));
-		item.setTotal(CurrencyUtil.formatarValor(itemVE.getValorTotalVenda()));
+		item.setPreco(CurrencyUtil.formatarValorQuatroCasas(precoVenda.subtract(valorDesconto)));
+		item.setTotal(CurrencyUtil.formatarValorQuatroCasas(itemVE.getValorTotalVenda()));
 
 		return item;
 	}
@@ -593,7 +593,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		ValoresAplicados valoresAplicados = new ValoresAplicados();
 		
 		valoresAplicados.setValorDesconto(percentualDesconto);
-		valoresAplicados.setPrecoComDesconto(precoVenda.subtract(valorDoDesconto));
+		valoresAplicados.setPrecoComDesconto(precoVenda.subtract(valorDoDesconto).setScale(4,BigDecimal.ROUND_HALF_EVEN));
 		valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());
 		
 		return valoresAplicados;
@@ -955,6 +955,8 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		venda.setHorarioVenda(vendaDTO.getHorarioVenda());
 		venda.setQntProduto(vendaDTO.getQntProduto());
 		venda.setTipoVenda(vendaDTO.getTipoVendaEncalhe());
+		
+		
 		venda.setValorTotalVenda(valoresAplicados.getPrecoComDesconto().multiply(new BigDecimal(vendaDTO.getQntProduto())));
 		venda.setValoresAplicados(valoresAplicados);
 		venda.setDataOperacao(dataOperacao);
@@ -1160,9 +1162,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		BigDecimal valorDesconto = 
 				MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+		BigDecimal preco = precoVenda.subtract(valorDesconto).setScale(4,BigDecimal.ROUND_HALF_EVEN);
 
-		BigDecimal valorVendaNovo = 
-				precoVenda.subtract(valorDesconto).multiply(new BigDecimal(qntNovaProduto));
+		BigDecimal valorVendaNovo = preco.multiply(new BigDecimal(qntNovaProduto));
 
 		if (qntAtualProduto.compareTo(qntNovaProduto) != 0) {
 

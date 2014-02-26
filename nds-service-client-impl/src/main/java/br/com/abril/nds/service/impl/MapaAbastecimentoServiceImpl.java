@@ -418,8 +418,9 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 		List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregador(filtro);
 	
-		if(produtosBoxRota.size() == 0)
+		if(produtosBoxRota.size() == 0){
 			return null;
+		}
 	
 		Map<Long, MapaProdutoCotasDTO> mapas = new LinkedHashMap<Long, MapaProdutoCotasDTO>();
 	
@@ -597,54 +598,4 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			FiltroMapaAbastecimentoDTO filtro) {
 		return movimentoEstoqueCotaRepository.countObterMapaDeAbastecimentoPorEntregador(filtro);
 	}
-
-
-
-//    private static class CompararProdutoMapaDTO implements Comparator<String> {
-//        
-//     TreeMap<String,ProdutoMapaDTO> produtoMapa;
-//
-//	     @Override
-//	     public int compare(String o1, String o2) {
-//	    	 ProdutoMapaDTO p1 = produtoMapa.get(o1);
-//	    	 ProdutoMapaDTO p2 = produtoMapa.get(o2);
-//		
-//		
-//	    	 int result = p1.getNomeProduto().compareTo(p2.getNomeProduto());
-//	    	 if (result == 0)
-//	    		 result = p1.getNumeroEdicao().compareTo(p2.getNumeroEdicao());
-//	    	 return result;
-//	     }
-//	
-//		/**
-//		* @param produtoMapa the produtoMapa to set
-//		*/
-//		public void setProdutoMapa(TreeMap<String, ProdutoMapaDTO> produtoMapa) {
-//			this.produtoMapa = produtoMapa;
-//			}
-//    }
-
-//    private static class CompararProdutoMapaCotaDTO implements Comparator<Long> {
-//    
-//     TreeMap<Long, ProdutoMapaCotaDTO> produtoMapa;
-//    
-//     @Override
-//     public int compare(Long o1, Long o2) {
-//     ProdutoMapaCotaDTO p1 = produtoMapa.get(o1);
-//     ProdutoMapaCotaDTO p2 = produtoMapa.get(o2);
-//    
-//    
-//     int result = p1.getNomeProduto().compareTo(p2.getNomeProduto());
-//     if (result == 0)
-//    	 result = p1.getNumeroEdicao().compareTo(p2.getNumeroEdicao());
-//     	return result;
-//     }
-//    
-//     /**
-//      * @param produtoMapa the produtoMapa to set
-//	*/
-//     public void setProdutoMapa(TreeMap<Long, ProdutoMapaCotaDTO> produtoMapa) {
-//    	 this.produtoMapa = produtoMapa;
-//     }
-//    }
 }
