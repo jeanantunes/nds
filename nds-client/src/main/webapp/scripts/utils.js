@@ -612,6 +612,20 @@ function verificarPermissaoAcesso(workspace) {
 	return false;
 }
 
+function removeTabByTitle(title) {
+	
+	var tabToRemove=-1;
+	$("#workspace li.ui-state-default a").each(function(idx,comp){
+		if($(comp).text()==title){
+			tabToRemove=idx;
+		}
+	});
+	if(tabToRemove>-1){
+		$("#workspace").tabs("remove",tabToRemove);
+	}
+}
+
+
 function direcionar(novaTab, path){
 	    
 	$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
