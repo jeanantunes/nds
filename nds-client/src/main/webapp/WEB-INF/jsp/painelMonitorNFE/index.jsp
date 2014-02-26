@@ -114,14 +114,14 @@ $(function() {
 							Tipo Doc:
 						</td>
 						<td width="10%">
-							<input type="radio" name="impresaoNfe-radioTipoDoc" value="cpf" onchange="PainelMonitorNFE.verificarRadioCnpjCpf()"/>
+							<input type="radio" name="painelNfe-radioTipoDoc" value="cpf" onchange="PainelMonitorNFE.verificarRadioCnpjCpf()"/>
 						</td>
 						<td width="15%">
 							<label for="cpf">CPF</label>
 						</td>
 						
 						<td width="10%">
-							<input type="radio" name="impresaoNfe-radioTipoDoc" checked="checked" value="cnpj" onchange="PainelMonitorNFE.verificarRadioCnpjCpf()"/>
+							<input type="radio" name="painelNfe-radioTipoDoc" checked="checked" value="cnpj" onchange="PainelMonitorNFE.verificarRadioCnpjCpf()"/>
 						</td>
 						
 						<td width="15%">
@@ -131,7 +131,7 @@ $(function() {
 				</table>
 			</td>
 			<td>
-				<input type="text" id="impresaoNfe-documento" style="width: 100px;" />
+				<input type="text" id="painelNfe-documento" style="width: 100px;" />
 			</td>
 		</tr>
 		<tr>
@@ -157,7 +157,7 @@ $(function() {
 				Chave de Acesso NF-e:
 			</td>
 			<td colspan="2">	
-				<input type="text" id="chaveAcesso" style="width: 160px;" />
+				<input type="text" id="chaveAcesso" style="width: 270px;" />
 			</td>
 		</tr>
 		<tr>
