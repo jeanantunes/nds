@@ -181,7 +181,6 @@ public class NaturezaOperacao implements Serializable {
 		return tipoMovimento;
 	}
 
-
 	public void setTipoMovimento(List<TipoMovimento> tipoMovimento) {
 		this.tipoMovimento = tipoMovimento;
 	}
