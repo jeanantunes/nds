@@ -31,8 +31,6 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 	
 	private String codigoBarras;
 	
-	private Long codigoSiscorp;
-	
 	private Integer peb;
 	
 	private String periodicidade;
@@ -123,16 +121,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.codigoBarras = codigoBarras;
 	}
 
-	@Field(offset = 111, length = 10)
-	public Long getCodigoSiscorp() {
-		return codigoSiscorp;
-	}
-
-	public void setCodigoSiscorp(Long codigoSiscorp) {
-		this.codigoSiscorp = codigoSiscorp;
-	}
-
-	@Field(offset = 185, length = 3)
+	@Field(offset = 177, length = 3)
 	public Integer getPeb() {
 		return peb;
 	}
@@ -140,7 +129,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 	public void setPeb(Integer peb) {
 		this.peb = peb;
 	}
-	@Field(offset = 188, length = 15)
+	@Field(offset = 180, length = 15)
 	public String getPeriodicidade() {
 		return periodicidade;
 	}
@@ -149,7 +138,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.periodicidade = periodicidade;
 	}
 	
-	@Field(offset = 203, length = 6)
+	@Field(offset = 195, length = 6)
 	@FixedFormatDecimal(decimals=3)
 	public Double getPeso() {
 		return peso;
@@ -159,7 +148,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.peso = peso;
 	}
 	
-	@Field(offset = 209, length = 20)
+	@Field(offset = 201, length = 20)
 	public String getTipoProduto() {
 		return tipoProduto;
 	}
