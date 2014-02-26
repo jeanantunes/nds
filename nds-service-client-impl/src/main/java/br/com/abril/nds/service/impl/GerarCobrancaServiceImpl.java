@@ -317,9 +317,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     	
 		if (nossoNumeroEnvioEmail!=null && !nossoNumeroEnvioEmail.isEmpty()){
 
-	        List<String> listaNossoNumero = new ArrayList<String>(nossoNumeroEnvioEmail);
-			
-		    this.boletoEmailService.salvarBoletoEmail(listaNossoNumero);
+		    this.boletoEmailService.salvarBoletoEmail(nossoNumeroEnvioEmail);
 		}
     }
     
@@ -519,9 +517,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			                         Map<Cota, List<GerarCobrancaHelper>> consolidadosCotaUnficacao,
 			                         List<String> msgs) throws GerarCobrancaValidacaoException{
 		
-        Set<String> setNossoNumeroEmail = new HashSet<String>();
-		
-		for (Entry<Cota, List<GerarCobrancaHelper>> entry : consolidadosCotaUnficacao.entrySet()){
+        for (Entry<Cota, List<GerarCobrancaHelper>> entry : consolidadosCotaUnficacao.entrySet()){
 			
 			List<GerarCobrancaHelper> lista = entry.getValue();
 			Cota cotaUnificadora =  entry.getKey();
@@ -547,32 +543,23 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			    helperPrincipal = lista.get(0);
 			}
 			
-			List<String> listaNossoNumero = this.gerarDividaCobranca(cotaUnificadora, 
-																	 helperPrincipal.getFormaCobrancaPrincipal(),
-																	 valor, 
-																	 helperPrincipal.isCobrarHoje(),
-																	 consolidados,
-																	 usuario, 
-																	 helperPrincipal.getQtdDiasNovaCobranca(), 
-																	 msgs, 
-																	 helperPrincipal.getFornecedor(), 
-																	 helperPrincipal.getDiasSemanaConcentracaoPagamento(), 
-																	 dataOperacao, 
-																	 helperPrincipal.getDataVencimento(),
-																	 helperPrincipal.getDataConsolidado());
-			
-			if (helperPrincipal.getFormaCobrancaPrincipal() == null ? false : setNossoNumero != null){
-				
-				setNossoNumero.addAll(listaNossoNumero);
-			}
-			
-			if (helperPrincipal.getFormaCobrancaPrincipal() == null ? false : helperPrincipal.getFormaCobrancaPrincipal().isRecebeCobrancaEmail()){
-			    
-			    setNossoNumeroEmail.addAll(listaNossoNumero);
-			}
+			this.gerarDividaCobranca(cotaUnificadora, 
+									 helperPrincipal.getFormaCobrancaPrincipal(),
+									 valor, 
+									 helperPrincipal.isCobrarHoje(),
+									 consolidados,
+									 usuario, 
+									 helperPrincipal.getQtdDiasNovaCobranca(), 
+									 msgs, 
+									 helperPrincipal.getFornecedor(), 
+									 helperPrincipal.getDiasSemanaConcentracaoPagamento(), 
+									 dataOperacao, 
+									 helperPrincipal.getDataVencimento(),
+									 helperPrincipal.getDataConsolidado(),
+									 setNossoNumero);
 		}
 		
-        this.salvarBoletoEmailPendenteEnvio(setNossoNumeroEmail);
+        this.salvarBoletoEmailPendenteEnvio(setNossoNumero);
 		
 		if (!msgs.isEmpty()){
 			
@@ -990,21 +977,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * @param dataConsolidado
 	 * @return List<String>
 	 */
-	private List<String> gerarDividaCobranca(Cota cota, 
-			                                 FormaCobranca formaCobrancaPrincipal,
-											 BigDecimal vlMovFinanTotal, 
-											 boolean cobrarHoje, 
-											 List<ConsolidadoFinanceiroCota> consolidadoFinanceiroCota,
-											 Usuario usuario, 
-											 int qtdDiasNovaCobranca, 
-											 List<String> msgs, 
-											 Fornecedor fornecedor,
-											 List<Integer> diasSemanaConcentracaoPagamento, 
-											 Date dataOperacao, 
-											 Date dataVencimento,
-											 Date dataConsolidado) {
-		
-		    List<String> listaNossoNumero = new ArrayList<String>();	
+	private void gerarDividaCobranca(Cota cota, 
+	                                 FormaCobranca formaCobrancaPrincipal,
+									 BigDecimal vlMovFinanTotal, 
+									 boolean cobrarHoje, 
+									 List<ConsolidadoFinanceiroCota> consolidadoFinanceiroCota,
+									 Usuario usuario, 
+									 int qtdDiasNovaCobranca, 
+									 List<String> msgs, 
+									 Fornecedor fornecedor,
+									 List<Integer> diasSemanaConcentracaoPagamento, 
+									 Date dataOperacao, 
+									 Date dataVencimento,
+									 Date dataConsolidado,
+									 Set<String> setNossoNumero) {
 		
 		    Divida novaDivida = null;
 			
@@ -1108,9 +1094,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						this.cobrancaRepository.adicionar(cobranca);
 					}			
 					
-					if (cobranca != null){
+					if (cobranca != null && setNossoNumero != null){
 						
-						listaNossoNumero.add(cobranca.getNossoNumero());
+						setNossoNumero.add(cobranca.getNossoNumero());
 					}
 				} 
 				else if (consolidado.getTotal().compareTo(valorMinino) != 0) {
@@ -1130,8 +1116,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
 				}
 			}
-
-			return listaNossoNumero;
 		}
 	
    /**
@@ -1580,10 +1564,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     
     private FormaCobranca obterFormaCobrancaCota(Date dataOperacao, Long cotaId,
             Long fornecedorId, BigDecimal valorMovimentos) {
-    	
-    	Long cotaUnificacaoId = cotaId!=null?this.cotaUnificacaoRepository.obterIdCotaUnificadoraPorCota(cotaId):null;
         
-        cotaId = cotaUnificacaoId!=null?cotaUnificacaoId:cotaId;
+        if (cotaId != null){
+            
+            cotaId = this.cotaUnificacaoRepository.obterIdCotaUnificadoraPorCota(cotaId);
+        }
         
         return formaCobrancaService.obterFormaCobranca(
                 cotaId, 
