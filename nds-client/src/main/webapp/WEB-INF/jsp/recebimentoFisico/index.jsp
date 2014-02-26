@@ -55,7 +55,13 @@
 </head>
 
 <body>
-
+	
+	<form>
+		<div id="dialog-descontos-divergente" title="Descontos Divergentes" style="display: none;">
+			<p></p>
+		</div>
+	</form>
+			
 	<form action="/recebimentoFisico" id="form_novo_item">
 
 		<div id="dialog-valor-nota-divergente" title="Valor Total Nota Fiscal Divergente" style="display: none;">
@@ -234,7 +240,7 @@
 
 						<c:if test="${permissaoBotaoConfirmacao eq true}">
 							<span class="bt_novos">
-								<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento Físico">
+								<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.validarDescontosRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento Físico">
 									<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
 								</a>
 							</span>
