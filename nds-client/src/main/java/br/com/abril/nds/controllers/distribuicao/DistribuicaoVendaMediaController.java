@@ -341,7 +341,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     public void adicionarProdutoEdicaoABase(List<Integer> indexes) {
 	List<ProdutoEdicaoVendaMediaDTO> resultadoPesquisa = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
 	
-		if (resultadoPesquisa != null) {
+		if ((resultadoPesquisa != null) && (resultadoPesquisa.size() > 0)) {
 		
 			List<ProdutoEdicaoVendaMediaDTO> selecionados = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
 			if (selecionados == null) {
