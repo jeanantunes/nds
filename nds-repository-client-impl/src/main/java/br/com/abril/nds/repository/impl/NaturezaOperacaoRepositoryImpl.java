@@ -185,10 +185,10 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		
 		if(count){
 			
-			hql.append(" select tipoNota.id from TipoNotaFiscal tipoNota ");
+			hql.append(" select no.id from NaturezaOperacao no ");
 		}
 		else{
-			hql.append(" select tipoNota from TipoNotaFiscal tipoNota ");
+			hql.append(" select no from NaturezaOperacao no ");
 		}
 		
 		if((filtro.getTipoNota()!= null && !filtro.getTipoNota().trim().isEmpty()) 
@@ -198,7 +198,7 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		}
 		
 		if(filtro.getTipoNota()!= null && !filtro.getTipoNota().trim().isEmpty() ){
-			hql.append(" upper(tipoNota.descricao) like(:tipoDescNota) ");
+			hql.append(" upper(no.descricao) like(:tipoDescNota) ");
 		}
 		
 		if(filtro.getTipoAtividade()!= null 
@@ -207,10 +207,10 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		}
 		
 		if(filtro.getTipoAtividade()!= null){
-			hql.append("  tipoNota.tipoAtividade=:tipoAtividade ");
+			hql.append("  no.tipoAtividade = :tipoAtividade ");
 		}
 		
-		hql.append(" group by tipoNota.descricao, tipoNota.tipoAtividade, tipoNota.cfopEstado, tipoNota.cfopOutrosEstados  ");
+		hql.append(" group by no.descricao, no.tipoAtividade, no.cfopEstado, no.cfopOutrosEstados  ");
 		
 		return hql.toString();
 	}

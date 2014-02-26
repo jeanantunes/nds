@@ -38,7 +38,7 @@ public interface GeracaoNFeService {
 			Integer resultsPage, Integer page, SituacaoCadastro situacaoCadastro);
 
 	
-	public abstract List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroNFeDTO filtro);
+	public abstract List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroNFeDTO filtro);
 
 
 	public abstract Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro);
