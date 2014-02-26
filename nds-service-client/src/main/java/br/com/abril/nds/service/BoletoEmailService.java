@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.model.financeiro.BoletoEmail;
 
@@ -19,7 +20,7 @@ public interface BoletoEmailService {
 	 * 
 	 * @param listaNossoNumeroEnvioEmail
 	 */
-	void salvarBoletoEmail(List<String> listaNossoNumeroEnvioEmail);
+	void salvarBoletoEmail(Set<String> listaNossoNumeroEnvioEmail);
 
 	/**
 	 * Obtem todos os boletos/cobrancas pendentes de envio por email
