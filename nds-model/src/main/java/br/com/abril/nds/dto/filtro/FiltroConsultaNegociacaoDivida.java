@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -11,6 +12,8 @@ public class FiltroConsultaNegociacaoDivida implements Serializable {
 	private PaginacaoVO paginacaoVO;
 	
 	private Integer numeroCota;
+	
+	private Date dataOperacao;
 	
 	private boolean lancamento;
 
@@ -36,5 +39,19 @@ public class FiltroConsultaNegociacaoDivida implements Serializable {
 
 	public void setLancamento(boolean lancamento) {
 		this.lancamento = lancamento;
+	}
+
+	/**
+	 * @return the dataOperacao
+	 */
+	public Date getDataOperacao() {
+		return dataOperacao;
+	}
+
+	/**
+	 * @param dataOperacao the dataOperacao to set
+	 */
+	public void setDataOperacao(Date dataOperacao) {
+		this.dataOperacao = dataOperacao;
 	}
 }
