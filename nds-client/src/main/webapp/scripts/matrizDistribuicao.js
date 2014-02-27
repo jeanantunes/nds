@@ -141,24 +141,24 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.onSuccessPesquisa = function() {
 		
-		$(T.lancamentos, _workspace).each(function(i,lancamento){
+		$(T.lancamentos).each(function(i,lancamento){
 			 var index = i + 1;
 			 var id = '#row' + index;
 			 
-			 $(id, _workspace).removeClass("erow");
+			 $(id).removeClass("erow");
 			 
 			 if (T.lancamentos[i].idCopia != null) {
 				 
 				 for (var j=0; j < 12; j++) {
-					 $($(id, _workspace).children()[j]).html("");
+					 $($(id).children()[j]).html("");
 				 }
 			 }
 			 
 			 if (T.lancamentos[i].idRow % 2 == 0) {
-				 $(id, _workspace).addClass("gridLinha");
+				 $(id).addClass("gridLinha");
 			 }
 			 
-			 $("#inputRepDistrib" + i, _workspace).removeAttr('disabled');
+			 $("#inputRepDistrib" + i).removeAttr('disabled');
 				if (T.lancamentos[i].dataFinMatDistrib != undefined) {
 					T.finalizaItem(i);
 			 }				 
