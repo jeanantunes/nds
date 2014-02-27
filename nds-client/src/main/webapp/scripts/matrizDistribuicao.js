@@ -143,7 +143,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		$(T.lancamentos).each(function(i,lancamento){
 			 var index = i + 1;
-			 var id = '#row' + index;
+			 var id = '#lancamentoMatrizDistribuicaoGrid tr[id=row' + index + ']';
 			 
 			 $(id).removeClass("erow");
 			 
