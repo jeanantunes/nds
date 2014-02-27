@@ -168,7 +168,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     @Override
     @Transactional(readOnly = true)
     public List<NegociacaoDividaDTO> obterDividasPorCota(final FiltroConsultaNegociacaoDivida filtro) {
-        
+
+    	filtro.setDataOperacao(this.distribuidorService.obterDataOperacaoDistribuidor());
+    	
         final List<NegociacaoDividaDTO> dividas = this.negociacaoDividaRepository.obterNegociacaoPorCota(filtro);
         final Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
         final Date data = this.distribuidorService.obterDataOperacaoDistribuidor();
