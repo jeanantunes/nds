@@ -3,7 +3,9 @@ package br.com.abril.nds.controllers.financeiro;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,6 +27,7 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ConsultaConsignadoCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
@@ -85,22 +88,30 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		if(filtro.getIdCota() != null){
 			cota = obterCota(filtro.getIdCota().intValue());
 			if(cota == null){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cota inesxistente.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente.");
 			}
 			filtro.setIdCota(cota.getId());			
 		}
 		
-		if(filtro.getIdFornecedor() == -1 || filtro.getIdFornecedor() == 0){
+		Map<String, Object> mapaResultado = new HashMap<String, Object>();
+		
+		List<TotalConsultaConsignadoCotaDetalhado> totaisFornecedores = null;
+		
+		if (filtro.getIdFornecedor() == -1) {
+			
 			filtro.setIdFornecedor(null);
+			
+			totaisFornecedores = 
+				this.consultaConsignadoCota.buscarTotalDetalhado(filtro);
+			
+			mapaResultado.put("totaisFornecedores", totaisFornecedores);
 		}
 		
 		BigDecimal totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
-		String totalFormatado = "";
-		
-		totalFormatado = CurrencyUtil.formatarValor(totalGeral);
-		
-		this.result.use(Results.json()).from(totalFormatado, "result").recursive().serialize();
-		
+
+		mapaResultado.put("totalGeral", CurrencyUtil.formatarValor(totalGeral));
+
+		this.result.use(CustomJson.class).put("result", mapaResultado).serialize();
 	}
 	
 	@Post
