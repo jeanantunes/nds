@@ -66,15 +66,17 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		distribuidorService.bloqueiaProcessosLancamentosEstudos();
-	}
-
-	@Override
-	public void processMessage(Message message) {
 		
 		//Recupera datas Abertas para matriz
 		datas = lancamentoService.obterDiasMatrizLancamentoAbertos();
 		datasBalanceaveis = datas.get("diasBalanceaveis");
 		datasNaoBalanceaveis = datas.get("diasNaoBalanceaveis");
+	}
+
+	@Override
+	public void processMessage(Message message) {
+		
+
 		
 		EMS0111Input input = (EMS0111Input) message.getBody();
 				
