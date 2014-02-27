@@ -47,6 +47,7 @@ import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ProdutoEdicaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -384,14 +385,22 @@ public class MapaAbastecimentoController extends BaseController {
 			switch(filtro.getTipoConsulta()) {
 			case BOX:
 				filtro.setPaginacao(null);
-				Map<String, ProdutoMapaDTO> produtosMapaBox = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
-
+				
 				setaNomeParaImpressao();
-				result.forwardTo(MapaAbastecimentoController.class).impressaoPorBox(produtosMapaBox);
+				
+				if (filtro.getQuebraPorCota()){
+				    result.forwardTo(MapaAbastecimentoController.class).impressaoPorBoxQuebraCota(filtro);
+				} else {
+				    result.forwardTo(MapaAbastecimentoController.class).impressaoPorBox(filtro);
+				}
 			break;
 			case ROTA:
 				
-				result.forwardTo(MapaAbastecimentoController.class).impressaoPorRota(filtro);
+			    if (filtro.getQuebraPorCota()){
+			        result.forwardTo(MapaAbastecimentoController.class).impressaoPorRotaQuebraCota(filtro);
+			    } else {
+			        result.forwardTo(MapaAbastecimentoController.class).impressaoPorRota(filtro);
+			    }
 				
 			break;
 			case COTA:
@@ -449,10 +458,21 @@ public class MapaAbastecimentoController extends BaseController {
 
 	}
 
-	public void impressaoPorBox(Map<String, ProdutoMapaDTO> produtosMapa) {
+	public void impressaoPorBox(FiltroMapaAbastecimentoDTO filtro) {
+	    
+	    Map<String, ProdutoMapaDTO> produtosMapaBox = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
+	    
+		result.include("produtosMapa",produtosMapaBox.values());
 
-		result.include("produtosMapa",produtosMapa.values());
-
+	}
+	
+	public void impressaoPorBoxQuebraCota(FiltroMapaAbastecimentoDTO filtro) {
+	    
+	    Map<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>> produtosMapaBox = 
+	            mapaAbastecimentoService.obterMapaDeImpressaoPorBoxQuebraPorCota(filtro);
+	    
+	    result.include("produtosMapa",produtosMapaBox);
+	    result.include("dataLancamento", filtro.getDataLancamento());
 	}
 
 	public void impressaoPorRota(FiltroMapaAbastecimentoDTO filtro) {
@@ -464,6 +484,18 @@ public class MapaAbastecimentoController extends BaseController {
 		result.include("mapa", produtosMapa);
 
 	}
+	
+	public void impressaoPorRotaQuebraCota(FiltroMapaAbastecimentoDTO filtro) {
+
+	    filtro.setPaginacao(null);
+
+	    Map<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>> produtosMapa = 
+                mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRotaQuebraCota(filtro);
+        
+        setaNomeParaImpressao();
+        result.include("mapa", produtosMapa);
+        result.include("dataLancamento", filtro.getDataLancamento());
+    }
 
 	public void impressaoPorProduto(FiltroMapaAbastecimentoDTO filtro) {
 
