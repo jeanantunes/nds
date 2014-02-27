@@ -197,10 +197,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 				
 				if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
 					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao);
-				}else{
-					
-					
-
+				} else{
+					//
+					throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
 				}
 				
 				break;
