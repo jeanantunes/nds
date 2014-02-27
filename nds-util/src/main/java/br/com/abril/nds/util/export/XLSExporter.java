@@ -314,18 +314,7 @@ public class XLSExporter implements Exporter {
         return startRowNum;
     }
 
-	private void carregarValorDaCelulaEFormatacaoComLabel(final Sheet sheet,
-														  final Cell cell, final ColumType columType, String columnLabel,
-														  String columnString, final CellStyle cellStyle) {
-
-		this.carregarValorDaCelulaEFormatacao(sheet, cell, columType, columnString, cellStyle);
-
-		String newValue = columnLabel + ": " + cell.getStringCellValue();
-
-		cell.setCellValue(newValue);
-	}
-    
-    private void carregarValorDaCelulaEFormatacao(final Sheet sheet, final Cell cell, final ColumType columType,
+	private void carregarValorDaCelulaEFormatacao(final Sheet sheet, final Cell cell, final ColumType columType,
             String columnString, final CellStyle cellStyle) {
 
         if (ColumType.NUMBER.equals(columType) || ColumType.INTEGER.equals(columType)
@@ -416,9 +405,7 @@ public class XLSExporter implements Exporter {
 
 				labelCell.setCellStyle(cellStyle);
 
-				carregarValorDaCelulaEFormatacaoComLabel(sheet, labelCell,
-														 exportFooter.getColumnType(), exportFooter.getLabel(),
-														 exportFooter.getValue(), cellStyle);
+				labelCell.setCellValue(exportFooter.getLabel() + ": " + exportFooter.getValue());
 
 			} else {
 
