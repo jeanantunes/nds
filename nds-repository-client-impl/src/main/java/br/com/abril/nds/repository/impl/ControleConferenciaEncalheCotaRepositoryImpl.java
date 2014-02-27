@@ -141,6 +141,8 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		sql.append("	inner join COTA on ");
 		sql.append("	( COTA.ID = CHAMADA_ENCALHE_COTA.COTA_ID) ");
 		
+		sql.append("	inner join pdv on (cota.ID = pdv.cota_id and pdv.ponto_PRINCIPAL = true) ");
+		
 		sql.append("	inner join BOX on ");
 		sql.append("	( BOX.ID = COTA.BOX_ID) ");
 		
@@ -153,8 +155,7 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		sql.append("	inner join ROTA on ");
 		sql.append("	( ROTA.ROTEIRO_ID = ROTEIRO.ID) ");
 		
-		sql.append("	inner join ROTA_PDV on ");
-		sql.append("	( ROTA.ID = ROTA_PDV.ROTA_ID) ");
+		sql.append("	INNER JOIN ROTA_PDV ON (ROTA.ID = ROTA_PDV.ROTA_ID and rota_pdv.pdv_id = pdv.id) ");
 		
 		sql.append("	where	");
 		

@@ -34,6 +34,7 @@ import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -72,6 +73,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private CalendarioService calendarioService;
     
     private static final List<StatusLancamento> STATUS_LANCAMENTOS_REMOVIVEL = Arrays.asList(
             StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO,
@@ -390,14 +394,22 @@ public class LancamentoServiceImpl implements LancamentoService {
     public HashMap<String, Set> obterDiasMatrizLancamentoAbertos(){
     	List<Object[]> lista = lancamentoRepository.buscarDiasMatrizLancamentoAbertos();
     	
+
+    	
     	Set <Date> diasConfirmados = new TreeSet<Date>();
     	Set <Date> diasNaoBalanceaveis = new TreeSet<Date>();
     	Date diaOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
+
     	HashMap<String, Set> listaBalanceavelNaoBalanceavel = new HashMap<>();
     	
     	for(Object[] lancamento : lista){
     		
-    		if((lancamento[1].equals(StatusLancamento.CONFIRMADO)|| lancamento[1].equals(StatusLancamento.PLANEJADO)|| lancamento[1].equals(StatusLancamento.FURO)) && !((Date)lancamento[0]).before(diaOperacaoDistribuidor)){
+    		if((lancamento[1].equals(StatusLancamento.CONFIRMADO)
+    		 || lancamento[1].equals(StatusLancamento.PLANEJADO)
+    		 || lancamento[1].equals(StatusLancamento.FURO)) 
+    	  && !((Date)lancamento[0]).before(diaOperacaoDistribuidor)
+    	  && ! calendarioService.isFeriadoSemOperacao((Date)lancamento[0])
+    	  && ! calendarioService.isFeriadoMunicipalSemOperacao((Date)lancamento[0])){
     			
     			if(!diasConfirmados.contains((Date)lancamento[0])){
     			  diasConfirmados.add((Date)lancamento[0]);

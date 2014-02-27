@@ -143,7 +143,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		$(T.lancamentos).each(function(i,lancamento){
 			 var index = i + 1;
-			 var id = '#row' + index;
+			 var id = '#lancamentoMatrizDistribuicaoGrid tr[id=row' + index + ']';
 			 
 			 $(id).removeClass("erow");
 			 
@@ -182,6 +182,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		if (typeof resultadoPesquisa[0] == 'undefined' || resultadoPesquisa[0].rows.length == 0) {
 			T.escondeGrid();
+			exibirMensagem("WARNING", ["Pesquisa não obteve resultados."]);
 		} else {
 			$("#totalGerado", _workspace).html(resultadoPesquisa[1]);
 			$("#totalLiberado", _workspace).html(resultadoPesquisa[2]);
@@ -368,8 +369,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.alterarReparte = function(input, index) {
 		
-		if (!$.isNumeric(input.value)) {
-			exibirMensagem("WARNING", ["Digite um número valido!"]);
+		if ((!$.isNumeric(input.value)) || (input.value < 1)) {
+			exibirMensagem("WARNING", ["Digite um valor válido!"]);
 			return;
 		}
 
