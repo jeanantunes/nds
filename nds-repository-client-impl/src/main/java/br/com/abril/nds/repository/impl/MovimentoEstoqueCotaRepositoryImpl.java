@@ -584,7 +584,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             parameters.put("idFornecedor", filtro.getIdFornecedor());
         }
         
-        parameters.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+        parameters.put("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
         parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
         parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
         parameters.put("isPostergado", false);
@@ -645,7 +645,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             parameters.put("idFornecedor", filtro.getIdFornecedor());
         }
         
-        parameters.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+        parameters.put("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
         parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
         parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
         parameters.put("isPostergado", false);
@@ -796,9 +796,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" OR (CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
         sql.append(" AND CHAMADA_ENCALHE.DATA_RECOLHIMENTO <= (SELECT DATA_OPERACAO FROM DISTRIBUIDOR) ");
         sql.append(" AND CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO IS NULL) ) ");
-        sql.append(" AND tm.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
+        sql.append(" AND tm.GRUPO_MOVIMENTO_ESTOQUE <> :grupoMovimentoEstoqueEncalhe ");
         sql.append(" AND CHAMADA_ENCALHE_COTA.POSTERGADO = :isPostergado ");
         sql.append(" AND MEC_REPARTE.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
+        sql.append(" AND MEC_REPARTE.LANCAMENTO_ID is not null ");
         
         if(filtro.getIdCota()!=null) {
             sql.append(" and CHAMADA_ENCALHE_COTA.COTA_ID = :idCota  ");
@@ -895,7 +896,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             parameters.put("idFornecedor", filtro.getIdFornecedor());
         }
         
-        parameters.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+        parameters.put("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
         parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
         parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
         parameters.put("isPostergado", false);

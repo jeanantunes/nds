@@ -42,7 +42,6 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -546,44 +545,7 @@ public class LancamentoRepositoryImpl extends
 
 		return statusParaBalanceamentoRecolhimento;
 	}
-
-	private List<String> getGruposMovimentoEstoqueSaidaDistribuidor() {
-
-		String[] arrayGruposMovimentoEstoqueSaidaDistribuidor = {
-				GrupoMovimentoEstoque.ENVIO_JORNALEIRO.toString(),
-				GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO.toString(),
-				GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.toString(),
-				GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.toString() };
-
-		List<String> gruposMovimentoEstoqueSaidaDistribuidor = Arrays
-				.asList(arrayGruposMovimentoEstoqueSaidaDistribuidor);
-
-		return gruposMovimentoEstoqueSaidaDistribuidor;
-	}
 	
-	private List<String> getGruposMovimentoEstoqueDistribuidor() {
-
-		String[] arrayGruposMovimentoEstoqueSaidaDistribuidor = {
-				GrupoMovimentoEstoque.ENVIO_JORNALEIRO.toString(),
-				GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO.toString(),
-				GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE.toString(),
-				GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO.toString(),
-				GrupoMovimentoEstoque.SOBRA_DE_DIRECIONADA_PARA_COTA.toString(),
-				GrupoMovimentoEstoque.SOBRA_EM_DIRECIONADA_PARA_COTA.toString(),
-				GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO.toString(),
-				GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.toString(),
-				GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.toString(),
-				GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.toString(),
-				GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.toString(),
-				GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR.toString(),
-				GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE.toString()};
-		
-		List<String> gruposMovimentoEstoqueSaidaDistribuidor = Arrays
-				.asList(arrayGruposMovimentoEstoqueSaidaDistribuidor); 
-
-		return gruposMovimentoEstoqueSaidaDistribuidor;
-	}
-
 	private String getConsultaBalanceamentoRecolhimentoAnalitico() {
 
 		StringBuilder sql = new StringBuilder();
@@ -603,42 +565,18 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" pessoaEditor.RAZAO_SOCIAL as nomeEditor, ");
 	
 		sql.append(" sum( ");
-		sql.append("	case when (tipoProduto.GRUPO_PRODUTO =:grupoCromo and periodoLancamentoParcial.TIPO =:tipoParcial) ");
+		sql.append("	case when (tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO = :tipoParcial) ");
 		sql.append("	then (	");		
-		sql.append("		case ");
-		sql.append("			when (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE =:grupoSuplementarCotaAusente) "); 
-		sql.append("				then (((movimentoEstoque.QTDE *-1) - ((movimentoEstoque.QTDE *-1) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100)))/produtoEdicao.PACOTE_PADRAO)");			
-		sql.append("			when (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE =:grupoReparteCotaAusente) ");
-		sql.append("				then (((movimentoEstoque.QTDE) - ((movimentoEstoque.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100)))/ produtoEdicao.PACOTE_PADRAO)");			
-		sql.append("			else( ");
-		sql.append("				(((if(tipoMovimento.OPERACAO_ESTOQUE =:grupoSaida , movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) - ((if(tipoMovimento.OPERACAO_ESTOQUE =:grupoSaida, movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO)");
-		sql.append("				)");
-		sql.append("		end");
-		sql.append("		)");
+		sql.append("		((if(tipoMovimento.OPERACAO_ESTOQUE = :grupoSaida, movimentoEstoqueCota.QTDE * -1, movimentoEstoqueCota.QTDE)) - ((if(tipoMovimento.OPERACAO_ESTOQUE = :grupoSaida, movimentoEstoqueCota.QTDE * -1, movimentoEstoqueCota.QTDE)) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO ");
+		sql.append("		)" );
 		sql.append("	else (	");		
-		sql.append("		case ");
-		sql.append("			when (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE =:grupoSuplementarCotaAusente)"); 
-		sql.append("				then (((movimentoEstoque.QTDE *-1) - ((movimentoEstoque.QTDE *-1) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))))");			
-		sql.append("			when (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE =:grupoReparteCotaAusente) ");
-		sql.append("				then (((movimentoEstoque.QTDE) - ((movimentoEstoque.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))))");			
-		sql.append("			else(");
-		sql.append("				((if(tipoMovimento.OPERACAO_ESTOQUE =:grupoSaida, movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) - ((if(tipoMovimento.OPERACAO_ESTOQUE =:grupoSaida, movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100)))");
-		sql.append("				)");
-		sql.append("		end");
-		sql.append("		)");
-		sql.append("	end ) as expectativaEncalhe,");
+		sql.append("		(if(tipoMovimento.OPERACAO_ESTOQUE = :grupoSaida, movimentoEstoqueCota.QTDE * -1, movimentoEstoqueCota.QTDE)) - ((if(tipoMovimento.OPERACAO_ESTOQUE = :grupoSaida, movimentoEstoqueCota.QTDE * -1, movimentoEstoqueCota.QTDE)) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100)) ");
+		sql.append("		) ");
+		sql.append(" end ) as expectativaEncalhe, ");
 		
 		sql.append(" sum( ");
-		sql.append("	case ");
-		sql.append("		when (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE =:grupoSuplementarCotaAusente) ");    
-		sql.append("			then (((movimentoEstoque.QTDE *-1) - ((movimentoEstoque.QTDE *-1) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA,0) / 100)))* (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * (coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO / 100,descontoLogisticaProduto.PERCENTUAL_DESCONTO / 100,produtoEdicao.DESCONTO / 100 ,0)) ) ) )");
-		sql.append("		when (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE =:grupoReparteCotaAusente) ");     
-		sql.append("			then (((movimentoEstoque.QTDE) - ((movimentoEstoque.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA,0) / 100)))* (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * (coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO / 100,descontoLogisticaProduto.PERCENTUAL_DESCONTO / 100,produtoEdicao.DESCONTO / 100 ,0)) ) ) ) ");
-		sql.append("    else(			");
-		sql.append("		((if(tipoMovimento.OPERACAO_ESTOQUE =:grupoSaida, movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) - ((if(tipoMovimento.OPERACAO_ESTOQUE =:grupoSaida, movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA,0) / 100))) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * (coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO / 100, descontoLogisticaProduto.PERCENTUAL_DESCONTO / 100, produtoEdicao.DESCONTO / 100 ,0))))");	
-		sql.append("		)");
-		sql.append("	end "); 
-		sql.append(")as valorTotal,");
+		sql.append("	((if(tipoMovimento.OPERACAO_ESTOQUE = :grupoSaida, movimentoEstoqueCota.QTDE * -1, movimentoEstoqueCota.QTDE)) - ((if(tipoMovimento.OPERACAO_ESTOQUE = :grupoSaida, movimentoEstoqueCota.QTDE * -1, movimentoEstoqueCota.QTDE)) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA,0) / 100))) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * (coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO / 100, descontoLogisticaProduto.PERCENTUAL_DESCONTO / 100, produtoEdicao.DESCONTO / 100 ,0)))) ");
+		sql.append(" ) as valorTotal, ");
 
 		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");
 		sql.append(" ((coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO, ");
@@ -655,10 +593,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	  LANCAMENTO lancamento ");
 		sql.append(" inner join ");
 		sql.append("     ESTUDO estudo ");
-		sql.append("         on ( ");
-		sql.append("             estudo.PRODUTO_EDICAO_ID = lancamento.PRODUTO_EDICAO_ID ");
-		sql.append("             and estudo.ID = lancamento.ESTUDO_ID ");
-		sql.append("         ) ");
+		sql.append("         on estudo.ID = lancamento.ESTUDO_ID ");
 		sql.append(" inner join ");
 		sql.append("     PRODUTO_EDICAO produtoEdicao ");
 		sql.append("         on lancamento.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
@@ -696,19 +631,15 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	  TIPO_PRODUTO tipoProduto ");
 		sql.append(" 	  		on produto.TIPO_PRODUTO_ID=tipoProduto.ID ");
 		sql.append(" inner join ");
-		sql.append(" 	  MOVIMENTO_ESTOQUE movimentoEstoque ");
-		sql.append(" 	  		on ( ");
-		sql.append("					movimentoEstoque.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-		sql.append("	 	  			and movimentoEstoque.DATA between lancamento.DATA_LCTO_DISTRIBUIDOR and lancamento.DATA_REC_PREVISTA ");
-		sql.append("			) ");
+		sql.append(" 	  MOVIMENTO_ESTOQUE_COTA movimentoEstoqueCota ");
+		sql.append(" 	  		ON movimentoEstoqueCota.LANCAMENTO_ID = lancamento.ID ");
 		sql.append(" inner join ");
 		sql.append(" 	  TIPO_MOVIMENTO tipoMovimento ");
-		sql.append(" 	  		on tipoMovimento.ID = movimentoEstoque.TIPO_MOVIMENTO_ID ");
+		sql.append(" 	  		on tipoMovimento.ID = movimentoEstoqueCota.TIPO_MOVIMENTO_ID ");
 
 		sql.append(" where lancamento.STATUS in ( ");
 		sql.append("         :statusParaBalanceamentoRecolhimento ");
 		sql.append("     ) ");
-		sql.append(" 	 and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:gruposMovimentoEstoqueSaidaDistribuidor) ");
 		sql.append("     and ( ");
 		sql.append("         lancamento.DATA_REC_DISTRIB between :periodoInicial and :periodoFinal ");
 		sql.append("     ) ");
@@ -717,6 +648,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append("             :idsFornecedores ");
 		sql.append("         ) ");
 		sql.append("     ) ");
+		sql.append("     and movimentoEstoqueCota.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 
 		return sql.toString();
 	}
@@ -742,28 +674,12 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" sum( ");
 		sql.append("	case when (tipoProduto.GRUPO_PRODUTO =:grupoCromo and periodoLancamentoParcial.TIPO =:tipoParcial) ");
 		sql.append("	then (	");		
-		sql.append("		case ");
-		sql.append("			when (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE =:grupoSuplementarCotaAusente) "); 
-		sql.append("				then (((movimentoEstoque.QTDE *-1) - ((movimentoEstoque.QTDE *-1) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100)))/produtoEdicao.PACOTE_PADRAO)");			
-		sql.append("			when (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE =:grupoReparteCotaAusente) ");
-		sql.append("				then (((movimentoEstoque.QTDE) - ((movimentoEstoque.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100)))/ produtoEdicao.PACOTE_PADRAO)");			
-		sql.append("			else( ");
-		sql.append("				(((if(tipoMovimento.OPERACAO_ESTOQUE =:grupoSaida , movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) - ((if(tipoMovimento.OPERACAO_ESTOQUE =:grupoSaida, movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO)");
-		sql.append("				)");
-		sql.append("		end");
-		sql.append("		)");
+		sql.append("		((if(tipoMovimento.OPERACAO_ESTOQUE = :grupoSaida, movimentoEstoqueCota.QTDE * -1, movimentoEstoqueCota.QTDE)) - ((if(tipoMovimento.OPERACAO_ESTOQUE = :grupoSaida, movimentoEstoqueCota.QTDE * -1, movimentoEstoqueCota.QTDE)) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO ");
+		sql.append("		)" );
 		sql.append("	else (	");		
-		sql.append("		case ");
-		sql.append("			when (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE =:grupoSuplementarCotaAusente)"); 
-		sql.append("				then (((movimentoEstoque.QTDE *-1) - ((movimentoEstoque.QTDE *-1) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))))");			
-		sql.append("			when (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE =:grupoReparteCotaAusente) ");
-		sql.append("				then (((movimentoEstoque.QTDE) - ((movimentoEstoque.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))))");			
-		sql.append("			else(");
-		sql.append("				((if(tipoMovimento.OPERACAO_ESTOQUE =:grupoSaida, movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) - ((if(tipoMovimento.OPERACAO_ESTOQUE =:grupoSaida, movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100)))");
-		sql.append("				)");
-		sql.append("		end");
-		sql.append("		)");
-		sql.append("	end ) as expectativaEncalhe");
+		sql.append("		(if(tipoMovimento.OPERACAO_ESTOQUE = :grupoSaida, movimentoEstoqueCota.QTDE * -1, movimentoEstoqueCota.QTDE)) - ((if(tipoMovimento.OPERACAO_ESTOQUE = :grupoSaida, movimentoEstoqueCota.QTDE * -1, movimentoEstoqueCota.QTDE)) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100)) ");
+		sql.append("		) ");
+		sql.append(" end ) as expectativaEncalhe");
 		
 		String clausulaFrom = getConsultaBalanceamentoRecolhimentoAnalitico();
 
@@ -817,23 +733,16 @@ public class LancamentoRepositoryImpl extends
 		
 		List<String> statusParaBalanceamentoRecolhimento = this
 				.getStatusParaBalanceamentoRecolhimento();
-
-		List<String> gruposMovimentoEstoqueDistribuidor = this
-				.getGruposMovimentoEstoqueDistribuidor();
 		
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoRecolhimento.getDe());
 		query.setParameter("periodoFinal", periodoRecolhimento.getAte());
 		query.setParameter("grupoCromo", grupoCromo.toString());
 		query.setParameter("tipoParcial",TipoLancamentoParcial.PARCIAL.toString());
-		query.setParameter("grupoSaida", OperacaoEstoque.SAIDA);
+		query.setParameter("grupoSaida", OperacaoEstoque.SAIDA.name());
 
 		query.setParameterList("statusParaBalanceamentoRecolhimento",
 				statusParaBalanceamentoRecolhimento);
-		query.setParameterList("gruposMovimentoEstoqueSaidaDistribuidor",
-				gruposMovimentoEstoqueDistribuidor);
-		query.setParameter("grupoSuplementarCotaAusente", GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.toString());
-		query.setParameter("grupoReparteCotaAusente", GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.toString());
 	}
 
 	@Override
@@ -2057,18 +1966,16 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" left join produtoEdicao.descontoLogistica descontoLogisticaProdutoEdicao ");
 		hql.append(" left join produto.descontoLogistica descontoLogisticaProduto ");
 		hql.append(" left join lancamento.periodoLancamentoParcial periodoLancamentoParcial ");
-		hql.append(" join lancamento.estudo estudo ");
-		hql.append(" join estudo.estudoCotas estudoCota ");
-		hql.append(" join estudoCota.cota cota ");
-		hql.append(" join cota.box box, ");
-		hql.append(" MovimentoEstoqueCota movimentoEstoqueCota join movimentoEstoqueCota.tipoMovimento tipoMovimento  ");
+		hql.append(" join lancamento.estudo estudo, ");
+		hql.append(" MovimentoEstoqueCota movimentoEstoqueCota join movimentoEstoqueCota.tipoMovimento tipoMovimento ");
+		hql.append(" join movimentoEstoqueCota.cota cota ");
+		hql.append(" join cota.box box ");
 		
-		hql.append(" where movimentoEstoqueCota.cota = cota ");
-		hql.append(" and movimentoEstoqueCota.produtoEdicao = produtoEdicao ");
-		hql.append(" and movimentoEstoqueCota.lancamento = lancamento ");
+		hql.append(" where movimentoEstoqueCota.lancamento = lancamento ");
 		hql.append(" and cota.id in (:idsCota) ");
 		hql.append(" and lancamento.id in (:idsLancamento) ");
-		hql.append(" group by lancamento.id ");
+		hql.append(" and movimentoEstoqueCota.movimentoEstoqueCotaFuro is null ");
+		hql.append(" group by lancamento.id, cota.id ");
 
 		Query query = getSession().createQuery(hql.toString());
 
