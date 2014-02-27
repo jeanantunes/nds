@@ -369,8 +369,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.alterarReparte = function(input, index) {
 		
-		if (!$.isNumeric(input.value)) {
-			exibirMensagem("WARNING", ["Digite um número valido!"]);
+		if ((!$.isNumeric(input.value)) || (input.value < 1)) {
+			exibirMensagem("WARNING", ["Digite um valor válido!"]);
 			return;
 		}
 

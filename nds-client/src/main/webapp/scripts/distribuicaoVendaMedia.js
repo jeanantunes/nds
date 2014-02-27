@@ -525,7 +525,11 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		if(T.produtoEdicaoBases != undefined && T.produtoEdicaoBases.length === 1){
 			distribuicaoVendaMedia.alertaUmaEdicaoBase();
 		}else{
-			distribuicaoVendaMedia.gerar();
+			if($('#reparteDistribuir').val() > 0){
+				distribuicaoVendaMedia.gerar();
+			}else{
+				exibirMensagemDialog("WARNING", ["Não é possível gerar estudo com reparte menor que 01."], "");
+			}
 		}
 	};
 	
