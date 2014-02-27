@@ -189,8 +189,77 @@ $(function(){
 			</table>
 		</fieldset>
 		
+		<fieldset class="fieldFiltro">
+			<legend>Parâmetros NF-e</legend>
+			<table width="950" border="0" cellpadding="2" cellspacing="2">
+				<thead />
+				<tbody>
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td width="164">Ambiente: </td>
+									<td width="294">
+										<input type="text" name="tipoAmbiente" id="tipoAmbiente" style="width:220px;" value="HOMOLOGAÇÃO"/>
+									</td>	
+								</tr>
+								<tr>
+									<td>Tipo do Emissor de NF-e:</td>
+									<td>
+										<input type="text" name="tipoEmissorNFe" id="tipoEmissorNFe" style="width:220px;" value=""/>
+									</td>
+								</tr>
+								<tr>
+									<td>Versão do Emissor:</td>
+									<td>
+										<input type="text" name="versaoEmissor" id="versaoEmissor" style="width:220px;" value="2.2.21"/>
+									</td>
+								</tr>
+								<tr>
+									<td>Formato Impressão:</td>
+									<td>
+										<input type="text" name="formatoImpressao" id="formatoImpressao" style="width:220px;" value="PAISAGEM" />
+									</td>
+								</tr>
+							</table>
+						</td>
+							
+						<td valign="top">
+							<table>
+								<tr>
+									<td>Modelo Documento Fiscal: </td>
+									<td>
+										<input type="text" name="modeloDocumentoFiscal" id="modeloDocumentoFiscal" style="width:220px;" value="55" />
+									</td>
+								</tr>
+								<tr>
+									<td>Interface Picking Exporta&ccedil;&atilde;o: </td>
+									<td>
+										<input disabled="disabled" type="text" name="dto.pathPickingExportacao" id="pathPickingExportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathPickingExportacao}" />
+									</td>
+								</tr>
+								
+								<tr>
+									<td>Interface Contrato Importa&ccedil;&atilde;o: </td>
+									<td>
+										<input type="text" name="dto.pathContrato" id="pathContrato" style="width:220px;" value="${parametroSistemaGeralDTO.pathContrato}" />
+									</td>
+								</tr>
+								<tr>
+									<td>Interface GFS Importa&ccedil;&atilde;o: </td>
+									<td>
+										<input disabled="disabled" type="text" name="dto.pathGfsImportacao" id="pathGfsImportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathGfsImportacao}" />
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					
+				</tbody>
+			</table>
+		</fieldset>
+		
 		<div class="linha_separa_fields">&nbsp;</div>
-
 
 </form>
 </body>

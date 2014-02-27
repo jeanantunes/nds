@@ -1,8 +1,7 @@
 <div id="tabFiscal">
 	<br />
-
-	<fieldset
-		style="width: 98% !important; margin-bottom: 5px; float: left;">
+	
+	<fieldset style="width: 98% !important; margin-bottom: 5px; float: left;">
 		<legend>Fiscal</legend>
 		<table width="100%" border="0" cellspacing="2" cellpadding="0">
 			<tr>

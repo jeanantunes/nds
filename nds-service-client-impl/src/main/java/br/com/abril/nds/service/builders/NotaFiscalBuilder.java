@@ -170,6 +170,7 @@ public class NotaFiscalBuilder implements Serializable {
 			notaFiscal.getNotaFiscalInformacoes().setIdentificacaoDestinatario(new IdentificacaoDestinatario());
 		}
 
+		//FIXME: Ajustar para obter dos parametros enviado pela tela
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormaPagamento(formaPagamento);
 		
 		//FIXME: Ajustar para variavel global
@@ -206,8 +207,10 @@ public class NotaFiscalBuilder implements Serializable {
 		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDataEmissao(new Date());
 		
+		//FIXME: Ajustar codigo de UF do cadastro
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoUf(35L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoUf());
 		
+		//FIXME: Ajustar codigo de municipio do cadastro
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoMunicipio(3550308L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoCidadeIBGE());
 		
 		//FIXME: Ajustar o valor do codigoNF
@@ -215,7 +218,7 @@ public class NotaFiscalBuilder implements Serializable {
 		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(0L);
 		
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoOperacao(TipoOperacao.SAIDA);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoOperacao(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getTipoOperacao());
 		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao();
 		

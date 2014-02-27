@@ -27,6 +27,7 @@ import br.com.abril.nds.client.vo.DistribuidorClassificacaoCotaVO;
 import br.com.abril.nds.client.vo.DistribuidorPercentualExcedenteVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.TiposNotasFiscaisParametrosVO;
+import br.com.abril.nds.dto.RegimeTributarioDTO;
 import br.com.abril.nds.dto.TributoAliquotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
@@ -49,6 +50,7 @@ import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaChamadao;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.RegimeTributario;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -222,7 +224,16 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		this.atribuirDadosTelefoneDistribuidor(parametrosDistribuidor,distribuidor);
 		
-		parametrosDistribuidor.setRegimeTributario(distribuidor.getRegimeTributario());
+		List<TributoAliquota> ta = distribuidor.getRegimeTributario().getTributosAliquotas();
+		if(ta != null) distribuidor.getRegimeTributario().getTributosAliquotas().isEmpty();
+		
+		RegimeTributarioDTO regimeTributario = new RegimeTributarioDTO();
+		regimeTributario.setId(distribuidor.getRegimeTributario().getId());
+		regimeTributario.setCodigo(distribuidor.getRegimeTributario().getCodigo());
+		regimeTributario.setDescricao(distribuidor.getRegimeTributario().getDescricao());
+		regimeTributario.setAtivo(distribuidor.getRegimeTributario().isAtivo());
+		
+		parametrosDistribuidor.setRegimeTributario(regimeTributario);
 		parametrosDistribuidor.setTipoAtividade(distribuidor.getTipoAtividade());
 		parametrosDistribuidor.setPossuiRegimeEspecialDispensaInterna(distribuidor.isPossuiRegimeEspecialDispensaInterna());
 		
@@ -987,14 +998,23 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			distribuidor.setParametrosDistribuidorFaltasSobras(null);
 		}
 		
-		distribuidor.setRegimeTributario(parametrosDistribuidor.getRegimeTributario());
-		
-		for(TributoAliquotaDTO taDTO : parametrosDistribuidor.getTributosAliquotas()) {
+		if(parametrosDistribuidor.getRegimeTributario() != null) {
 			
-			TributoAliquota ta = tributoAliquotaRepository.buscarPorId(taDTO.getId());
-			ta.setValor(taDTO.getValor());
-			tributoAliquotaRepository.alterar(ta);
+			RegimeTributario regimeTributario = regimeTributarioRepository.buscarPorId(parametrosDistribuidor.getRegimeTributario().getId());
+			regimeTributario.setId(parametrosDistribuidor.getRegimeTributario().getId());
+			regimeTributario.setCodigo(parametrosDistribuidor.getRegimeTributario().getCodigo());
+			regimeTributario.setDescricao(parametrosDistribuidor.getRegimeTributario().getDescricao());
+			regimeTributario.setAtivo(parametrosDistribuidor.getRegimeTributario().isAtivo());
 			
+			for(TributoAliquotaDTO taDTO : parametrosDistribuidor.getTributosAliquotas()) {
+				
+				TributoAliquota ta = tributoAliquotaRepository.buscarPorId(taDTO.getId());
+				ta.setValor(taDTO.getValor());
+				tributoAliquotaRepository.alterar(ta);
+				
+			}
+			
+			distribuidor.setRegimeTributario(regimeTributario);
 		}
 		
 		if(parametrosDistribuidor.isPossuiRegimeEspecialDispensaInterna()) {

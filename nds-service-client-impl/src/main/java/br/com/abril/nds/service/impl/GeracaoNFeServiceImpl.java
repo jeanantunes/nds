@@ -253,11 +253,11 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor, filtro);
 			
+			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
+			
 			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota);
 			
 			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
-			
-			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
 			// obter os movimentos de cada cota
 			filtro.setIdCota(cota.getId());
