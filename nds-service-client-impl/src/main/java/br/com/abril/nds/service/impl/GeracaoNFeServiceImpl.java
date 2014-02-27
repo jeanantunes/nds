@@ -26,6 +26,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -41,6 +42,7 @@ import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.service.GeracaoNFeService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.builders.EmitenteDestinatarioBuilder;
 import br.com.abril.nds.service.builders.FaturaBuilder;
@@ -84,6 +86,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	@Autowired
+    private ParametrosDistribuidorService parametrosDistribuidorService;
 	
 	// Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
     // O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -175,10 +180,10 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	@Transactional(rollbackFor=Throwable.class)
 	public List<NotaFiscal> gerarNotaFiscal(FiltroNFeDTO filtro) throws FileNotFoundException, IOException {
 		
-		this.validarFiltroNFe(filtro);
 		/**
 		 * metodo para gerar nota.
 		 */
+		this.validarFiltroNFe(filtro);
 		List<NotaFiscal> notas = new ArrayList<NotaFiscal>();
 		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
 		
@@ -197,10 +202,23 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 				
 				if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
 					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao);
-				}else{
-					
-					
-
+				} else{
+					//
+					boolean notaGerada = false;
+					for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()){
+						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
+							if(dtnf.getTipoEmissao().getId().equals(1)){									
+								throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
+							}
+							
+							this.gerarNotaFiscalUnifica(filtro, notas, distribuidor, naturezaOperacao);
+							notaGerada = true;
+							break;
+						}
+					}
+					if(!notaGerada){
+						throw new ValidacaoException(TipoMensagem.ERROR, "Natureza de Operação não encontrada pelo distribuidor");
+					}
 				}
 				
 				break;
@@ -247,6 +265,40 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			NotaFiscal notaFiscal = new NotaFiscal();
 			
+			notaFiscal.setUsuario(usuarioService.getUsuarioLogado());
+			
+			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
+			
+			NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor, filtro);
+			
+			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota);
+			
+			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
+			
+			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
+			
+			// obter os movimentos de cada cota
+			filtro.setIdCota(cota.getId());
+			List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalNdsRepository.obterMovimentosEstoqueCota(filtro);
+			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota);
+			}
+			
+			//FIXME: Ajustar o valor do campo para valores parametrizados
+			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais("XXXXX");
+			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
+			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal, cota);
+			notasFiscais.add(notaFiscal);
+		}
+	}
+	
+	private void gerarNotaFiscalUnifica(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
+		
+		// obter as cotas que estão na tela pelo id das cotas
+		NotaFiscal notaFiscal = new NotaFiscal();
+		List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoCotasNotafiscal(filtro);
+		
+		for (Cota cota : cotas) {
 			notaFiscal.setUsuario(usuarioService.getUsuarioLogado());
 			
 			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);

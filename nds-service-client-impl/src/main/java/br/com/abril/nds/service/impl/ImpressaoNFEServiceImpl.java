@@ -19,16 +19,20 @@ import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal.DistribuidorGrupoNotaFiscal;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.ImpressaoNFeRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ImpressaoNFEService;
@@ -72,6 +76,9 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	@Autowired
 	private NFeService nFeService;
 
+	@Autowired 
+	private NaturezaOperacaoRepository naturezaOperacaoRepository;
+	
 	@Transactional
 	public List<ProdutoDTO> obterProdutosExpedicaoConfirmada(FiltroImpressaoNFEDTO filtro) {
 		
@@ -139,7 +146,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	@Transactional
 	public byte[] imprimirNFe(FiltroImpressaoNFEDTO filtro) {
 		LOGGER.info("Metodo responsavel pela impressão de NFE...");
-		
+		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
 		List<DanfeWrapper> listaDanfeWrapper = new ArrayList<DanfeWrapper>();
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		InputStream logoDistribuidor = this.parametrosDistribuidorService.getLogotipoDistribuidor();
@@ -147,17 +154,32 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 		if(TipoAtividade.MERCANTIL.equals(distribuidor.getTipoAtividade())) {
 			
 			if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
-				LOGGER.info("obter informações para imprimir DANFE ou NECA... ");				
 				
-				List<NotaFiscal> notas = this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro);
-				
-				for (NotaFiscal notaFiscal : notas) {
-					DanfeDTO danfe = montarDanfe(notaFiscal);
+				for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()){
 					
-					if(danfe!=null) {
-						listaDanfeWrapper.add(new DanfeWrapper(danfe));
+					if(dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_ENVIO_PARA_COTA)){
+						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
+							if(dtnf.getTipoEmissao().getId().equals(1)){
+								
+								LOGGER.info("obter informações para imprimir DANFE ou NECA... ");				
+								
+								List<NotaFiscal> notas = this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro);
+								
+								for (NotaFiscal notaFiscal : notas) {
+									DanfeDTO danfe = montarDanfe(notaFiscal);
+									
+									if(danfe!=null) {
+										listaDanfeWrapper.add(new DanfeWrapper(danfe));
+									}
+								}
+								
+							}
+						}else{
+							throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
+						}
 					}
 				}
+				
 				
 			}else{
 				LOGGER.info("obter Nota de envio sem chave de acesso ");
