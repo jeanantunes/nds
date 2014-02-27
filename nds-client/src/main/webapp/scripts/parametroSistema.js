@@ -9,7 +9,6 @@ var parametroSistemaController = $.extend(true, {
 	
 	salvar: function() {
 		
-		$("#nfeDpecHidden", this.workspace).val($('#nfeDpec', this.workspace).is(":checked"));
 		$("#autenticaEmailHidden", this.workspace).val($('#autenticaEmail', this.workspace).is(":checked"));
 		
 		var formData = $("#formParametroSistema", this.workspace).serializeArray();
