@@ -19,6 +19,7 @@ import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 
+//TODO: Renomear a classe para NAturezaOperacao
 @Service
 public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 

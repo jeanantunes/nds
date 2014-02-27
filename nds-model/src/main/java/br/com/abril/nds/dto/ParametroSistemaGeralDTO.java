@@ -385,21 +385,6 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	public void setPathNfeExportacao(String pathNfeExportacao) {
 		this.params.put(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO, pathNfeExportacao);
 	}
-
-	/**
-	 * @return the nfeDpec
-	 */
-	public String getNfeDpec() {
-		return this.getParametroSistemaString(TipoParametroSistema.NFE_DPEC);
-	}
-
-	/**
-	 * @param nfeDpec
-	 *            the nfeDpec to set
-	 */
-	public void setNfeDpec(String nfeDpec) {
-		this.params.put(TipoParametroSistema.NFE_DPEC, Boolean.valueOf(nfeDpec) ? "TRUE" : "FALSE");
-	}
 	
 	/**
 	 * @return pathImageCapa
