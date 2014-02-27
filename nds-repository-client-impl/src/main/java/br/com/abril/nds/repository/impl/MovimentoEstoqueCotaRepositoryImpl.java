@@ -2082,7 +2082,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	
         if (filtro.getPaginacao() == null){
             
-            hql.append(" order by lancamento.SEQUENCIA_MATRIZ, box.CODIGO, roteiro.ORDEM, rota.ORDEM ");
+            hql.append(" order by lancamento.SEQUENCIA_MATRIZ, box.CODIGO, roteiro.ORDEM, rota.ORDEM, cota.NUMERO_COTA ");
             return;
         }
         
@@ -2392,7 +2392,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
         hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
         hql.append(" 		pessoa.NOME as nomeCota, ");
-        hql.append(" 		cota.NUMERO_COTA as codigoCota ");
+        hql.append(" 		cota.NUMERO_COTA as codigoCota, ");
+        hql.append("        roteiro.DESCRICAO_ROTEIRO as descRoteiro ");
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
         
@@ -2421,6 +2422,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
         query.addScalar("nomeCota", StandardBasicTypes.STRING);
         query.addScalar("codigoCota", StandardBasicTypes.INTEGER);
+        query.addScalar("descRoteiro", StandardBasicTypes.STRING);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
         
