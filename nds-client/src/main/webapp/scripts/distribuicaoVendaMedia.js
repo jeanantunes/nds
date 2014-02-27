@@ -43,6 +43,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	                qtdSelecionados++;
 	            }
 	        });
+	        T.produtoEdicaoPesquisaBases = [];
 	    }
 	    
 	    if (qtdSelecionados > 6) {
