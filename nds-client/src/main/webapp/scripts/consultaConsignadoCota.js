@@ -277,6 +277,39 @@ var consultaConsignadoCotaController = $.extend(true, {
 		}
 	},
 	
+//	popularTotal : function(){
+//		
+// 		$.postJSON(
+//			contextPath + '/financeiro/consultaConsignadoCota/buscarTotalGeralCota',
+//			[{name:'filtro.idCota', value:$('#codigoCota', consultaConsignadoCotaController.workspace).val()},
+//			{name:'filtro.idFornecedor', value:$('#idFornecedor', consultaConsignadoCotaController.workspace).val()}],
+//			function(result) {
+//				var idFornecedor = $('#idFornecedor', consultaConsignadoCotaController.workspace).val();				
+//				if( idFornecedor != "0"){
+//					$("#totalGeralCota", consultaConsignadoCotaController.workspace).hide();
+//					$('.tabelaGeralDetalhado', consultaConsignadoCotaController.workspace).hide();
+//					$('.tabelaGeralPorFornecedor', consultaConsignadoCotaController.workspace).show();
+//					$("#totalGeralPorFornecedor", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>" +
+//							"<tr> <td><strong>Total Geral:</strong></td>" +
+//        						" <td>&nbsp;</td> "+
+//        						" <td align='right'><strong>"+result+"</strong></td></tr>");
+//				}else{
+//					$("#totalGeralCota", consultaConsignadoCotaController.workspace).show();
+//					$(".tabelaGeralDetalhado", consultaConsignadoCotaController.workspace).hide();
+//					$(".tabelaGeralPorFornecedor", consultaConsignadoCotaController.workspace).hide();
+//					$("#totalGeralCota", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right' >" +
+//												"<tr> <td><strong>Total Geral:</strong></td>" +
+//			                						" <td>&nbsp;</td> "+
+//			                						" <td align='right'><strong>"+result+"</strong></td></tr>");					
+//				} 
+//				
+//			},
+//			null,
+//			true
+//		);
+//		
+//	},
+	
 	popularTotal : function(){
 		
  		$.postJSON(
@@ -284,25 +317,36 @@ var consultaConsignadoCotaController = $.extend(true, {
 			[{name:'filtro.idCota', value:$('#codigoCota', consultaConsignadoCotaController.workspace).val()},
 			{name:'filtro.idFornecedor', value:$('#idFornecedor', consultaConsignadoCotaController.workspace).val()}],
 			function(result) {
-				var idFornecedor = $('#idFornecedor', consultaConsignadoCotaController.workspace).val();				
-				if( idFornecedor != "0"){
-					$("#totalGeralCota", consultaConsignadoCotaController.workspace).hide();
-					$('.tabelaGeralDetalhado', consultaConsignadoCotaController.workspace).hide();
-					$('.tabelaGeralPorFornecedor', consultaConsignadoCotaController.workspace).show();
-					$("#totalGeralPorFornecedor", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>" +
-							"<tr> <td><strong>Total Geral:</strong></td>" +
-        						" <td>&nbsp;</td> "+
-        						" <td align='right'><strong>"+result+"</strong></td></tr>");
-				}else{
-					$("#totalGeralCota", consultaConsignadoCotaController.workspace).show();
-					$(".tabelaGeralDetalhado", consultaConsignadoCotaController.workspace).hide();
-					$(".tabelaGeralPorFornecedor", consultaConsignadoCotaController.workspace).hide();
-					$("#totalGeralCota", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right' >" +
-												"<tr> <td><strong>Total Geral:</strong></td>" +
-			                						" <td>&nbsp;</td> "+
-			                						" <td align='right'><strong>"+result+"</strong></td></tr>");					
-				} 
+
+				$("#totalGeralCota", consultaConsignadoCotaController.workspace).hide();
+				$('.tabelaGeralDetalhado', consultaConsignadoCotaController.workspace).hide();
+				$('.tabelaGeralPorFornecedor', consultaConsignadoCotaController.workspace).show();
 				
+				var htmlTotais =
+					" <table width='450' border='0' cellspacing='1' cellpadding='1' align='right'>"
+					+ "<tr> <td><strong>Total Geral:</strong></td>"
+					+ " <td>&nbsp;</td> "
+					+ " <td align='right'><strong>" + result.totalGeral + "</strong></td></tr>";
+				
+				if (result.totaisFornecedores) {
+					
+					$.each(result.totaisFornecedores, function(index, value) {
+								
+						htmlTotais += "<tr>";
+						
+						if (index == 0) {
+							htmlTotais += "<td width='71'><strong>Total por Fornecedor:</strong></td>";		
+						} else {
+							htmlTotais += "<td>&nbsp;</td>";
+						}
+						
+						htmlTotais += "<td width='90'><strong>" + value.nomeFornecedor + "</strong></td>";
+						htmlTotais += "<td width='60' align='right'><strong>" + value.totalFormatado + "</strong></td>";
+						htmlTotais += "</tr>";
+					});
+				}
+				
+				$("#totalGeralPorFornecedor", consultaConsignadoCotaController.workspace).html(htmlTotais);
 			},
 			null,
 			true
