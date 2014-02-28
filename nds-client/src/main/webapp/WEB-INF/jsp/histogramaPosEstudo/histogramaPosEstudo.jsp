@@ -70,7 +70,7 @@ $(function(){
       </a>
     </span>
     <span class="bt_novos">
-      <a href="javascript:;" rel='tipsy' title='Voltar' onclick="$(this).tipsy('hide'); $('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected')); selectTabTitle('Matriz Distribuição');" id="botaoVoltarMatrizDistribuicao">
+      <a href="javascript:;" rel='tipsy' title='Voltar' onclick="$(this).tipsy('hide'); $('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected')); removeTabByTitle('Distribuição Venda Média'); selectTabTitle('Matriz Distribuição');" id="botaoVoltarMatrizDistribuicao">
         <img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />
 
       </a>

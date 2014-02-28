@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
@@ -34,7 +35,10 @@ public class TotalConsultaConsignadoCotaDetalhado {
 	public void setNomeFornecedor(String nomeFornecedor) {
 		this.nomeFornecedor = nomeFornecedor;
 	}
-	
-	
+
+	public String getTotalFormatado() {
+		return CurrencyUtil.formatarValor(total);
+	}
+
 
 }

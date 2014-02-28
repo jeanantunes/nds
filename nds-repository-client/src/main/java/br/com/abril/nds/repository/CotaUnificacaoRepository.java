@@ -44,4 +44,6 @@ public interface CotaUnificacaoRepository extends Repository<CotaUnificacao,Long
 	Cota obterCotaUnificadoraPorCota(Integer numeroCota);
 
 	CotaUnificacao obterCotaUnificacaoPorCotaCentralizadora(Long idCota);
+
+    Long obterIdCotaUnificadoraPorCota(Long idCota);
 }
