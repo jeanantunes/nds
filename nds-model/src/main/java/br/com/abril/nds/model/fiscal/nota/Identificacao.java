@@ -127,13 +127,15 @@ public class Identificacao implements Serializable {
 	
 	public enum FormatoImpressao implements NotaFiscalEnum {
 		
-		RETRATO(1), 
-		PAISAGEM(2);
+		RETRATO(1, "Restrato"), 
+		PAISAGEM(2, "Paisagem");
 
 		private Integer tipoImpressao;
+		private String descricao;
 		
-		FormatoImpressao(Integer tipoImpressao) {
+		FormatoImpressao(Integer tipoImpressao, String descricao) {
 			this.tipoImpressao = tipoImpressao;
+			this.descricao = descricao;
 		}
 		
 		@Override
@@ -141,17 +143,23 @@ public class Identificacao implements Serializable {
 			return tipoImpressao.intValue();
 		}
 
+		public String getDescricao() {
+			return descricao;
+		}
+		
 	}	
 	
 	public enum TipoAmbiente implements NotaFiscalEnum, PersistentEnum {
 		
-		PRODUCAO(1), 
-		HOMOLOGACAO(2);
+		PRODUCAO(1, "Produção"), 
+		HOMOLOGACAO(2, "Homologação");
 
 		private Integer id;
+		private String descricao;
 		
-		TipoAmbiente(Integer id) {
+		TipoAmbiente(Integer id, String descricao) {
 			this.id = id;
+			this.descricao = descricao;
 		}
 		
 		@Override
@@ -164,24 +172,35 @@ public class Identificacao implements Serializable {
 			return id.intValue();
 		}
 
+		public String getDescricao() {
+			return descricao;
+		}
+
 	}
 	
 	public enum ProcessoEmissao implements NotaFiscalEnum {
 		
-		EMISSAO_NFE_APLICATIVO_CONTRIBUINTE(0), 
-		EMISSAO_NFE_AVULSA_PELO_FISCO(1),
-		EMISSAO_NFE_AVULSA_PELO_FISCO_COM_CERTIFICADO(2),
-		EMISSAO_NFE_APLICATIVO_FORNECIDO_PELO_FISCO(3);
+		EMISSAO_NFE_APLICATIVO_CONTRIBUINTE(0, "Aplicativo do Contribuinte"), 
+		EMISSAO_NFE_AVULSA_PELO_FISCO(1, "Avulsa pelo Fisco"),
+		EMISSAO_NFE_AVULSA_PELO_FISCO_COM_CERTIFICADO(2, "Avulsa pelo Fisco com Certificado"),
+		EMISSAO_NFE_APLICATIVO_FORNECIDO_PELO_FISCO(3, "Aplicativo fornecido pelo fisco");
 
 		private Integer processoEmissao;
+		private String descricao; 
 		
-		ProcessoEmissao(Integer processoEmissao) {
+		ProcessoEmissao(Integer processoEmissao, String descricao) {
 			this.processoEmissao = processoEmissao;
+			this.descricao = descricao;
+			
 		}
 		
 		@Override
 		public Integer getIntValue() {
 			return processoEmissao.intValue();
+		}
+
+		public String getDescricao() {
+			return descricao;
 		}
 
 	}

@@ -189,8 +189,76 @@ $(function(){
 			</table>
 		</fieldset>
 		
+		<fieldset class="fieldFiltro">
+			<legend>Parâmetros NF-e</legend>
+			<table width="950" border="0" cellpadding="2" cellspacing="2">
+				<thead />
+				<tbody>
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td width="164">Ambiente: </td>
+									<td width="294">
+										<select name="dto.nfeInformacoesAmbiente" id="nfeInformacoesAmbiente" style="width:220px;">
+											<c:forEach  var="tipoAmbiente" items="${tiposAmbientes}">
+												<option value="${tipoAmbiente.key}" <c:if test="${parametroSistemaGeralDTO.nfeInformacoesAmbiente == tipoAmbiente.key}">selected="selected"</c:if>>${tipoAmbiente.value}</option>
+											</c:forEach>											
+										</select>
+									</td>	
+								</tr>
+								<tr>
+									<td>Formato Impressão:</td>
+									<td>
+										<select name="dto.nfeInformacoesFormatoImpressao" id="nfeInformacoesFormatoImpressao" style="width:220px;">
+											<c:forEach  var="formatoImpressao" items="${formatosImpressao}">
+												<option value="${formatoImpressao.key}" <c:if test="${parametroSistemaGeralDTO.nfeInformacoesFormatoImpressao == formatoImpressao.key}">selected="selected"</c:if>>${formatoImpressao.value}</option>
+											</c:forEach>											
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Modelo Documento Fiscal: </td>
+									<td>
+										<input type="text" name="dto.nfeInformacoesModeloDocumento" id="nfeInformacoesModeloDocumento" style="width:220px;" maxlength="5" value="${parametroSistemaGeralDTO.nfeInformacoesModeloDocumento}" />
+									</td>
+								</tr>
+							</table>
+						</td>
+							
+						<td valign="top">
+							<table>
+								<tr>
+									<td>Tipo do Emissor de NF-e:</td>
+									<td>
+										<select name="dto.nfeInformacoesTipoEmissor" id="nfeInformacoesTipoEmissor" style="width:220px;">
+											<c:forEach var="processoEmissaoNFe" items="${processosEmissaoNFe}">
+												<option value="${processoEmissaoNFe.key}" <c:if test="${parametroSistemaGeralDTO.nfeInformacoesTipoEmissor == processoEmissaoNFe.key}">selected="selected"</c:if>>${processoEmissaoNFe.value}</option>
+											</c:forEach>											
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Versão do Emissor:</td>
+									<td>
+										<input type="text" name="dto.nfeInformacoesVersaoEmissor" id="nfeInformacoesVersaoEmissor" style="width:220px;" maxlength="10" value="${parametroSistemaGeralDTO.nfeInformacoesVersaoEmissor}"/>
+									</td>
+								</tr>
+								<tr>
+									<td>Local do certificado digital: </td>
+									<td>
+										<input disabled="disabled" type="text" name="dto.nfeInformacoesCertificadoDigitalPath" id="nfeInformacoesCertificadoDigitalPath" style="width:220px;" value="${parametroSistemaGeralDTO.nfeInformacoesCertificadoDigitalPath}" />
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					
+				</tbody>
+			</table>
+		</fieldset>
+		
 		<div class="linha_separa_fields">&nbsp;</div>
-
 
 </form>
 </body>
