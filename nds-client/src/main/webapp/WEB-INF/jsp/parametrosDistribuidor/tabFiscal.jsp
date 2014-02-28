@@ -29,9 +29,7 @@
 						</tr>
 						<tr>
 							<td width="35%">Informações Adicionais:</td>
-							<td><textarea rows="2" cols="100" name="informacoesAdicionais" id="informacoesAdicionais" style="width: 150px;" >${parametrosDistribuidor.nfInformacoesAdicionais}</textarea></td>
-							<td width="35%"><table id="regimeTributarioTributos"></table></td>
-							<td></td>
+							<td colspan="3"><textarea rows="2" cols="100" name="informacoesAdicionais" id="informacoesAdicionais" style="width: 90%;" >${parametrosDistribuidor.nfInformacoesAdicionais}</textarea></td>
 						</tr>
 						<tr>
 							<td>Obrigação Fiscal possui Regime Especial ou Dispensa Interna?</td>
