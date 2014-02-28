@@ -286,7 +286,7 @@ function somarDistribuicao(){
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
       
-      <span class="bt_novos"><a href="javascript:$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));"><img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
+      <span class="bt_novos"><a href="javascript:$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));matrizDistribuicao.tabSomarCopiarEstudos='';"><img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
       <span class="bt_novos"><a href="javascript:;" onclick="$('#codigoEstudo').val('').blur();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
       <span class="bt_novos"><a href="#" onclick="estudoComplementarController.gerarEstudoComplementar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Gerar Estudo" hspace="5" border="0" />Gerar Estudo</a></span>
       <span class="bt_novos"><a href="javascript:;" onclick="estudoComplementarController.analisar()"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" alt="Confirmar" hspace="5" border="0" />Análise</a></span>
