@@ -37,7 +37,7 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 	public List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
 		
 		StringBuilder hql = new StringBuilder("");
-		hql.append("from TipoNotaFiscal tipoNotaFiscal ");
+		hql.append("from NaturezaOperacao tipoNotaFiscal ");
 		hql.append("where 1=1 ");
 		
 		if(tipoOperacao != null)
@@ -171,7 +171,7 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 	@Override
 	public List<NaturezaOperacao> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(TipoAtividade tipoAtividade) {
 		
-		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.tipoAtividade = :tipoAtividade group by tipoNotaFiscal.id ";
+		String hql = " from NaturezaOperacao tipoNotaFiscal where tipoNotaFiscal.tipoAtividade = :tipoAtividade group by tipoNotaFiscal.id ";
 		
 		Query query = getSession().createQuery(hql);
 		query.setParameter("tipoAtividade", tipoAtividade);

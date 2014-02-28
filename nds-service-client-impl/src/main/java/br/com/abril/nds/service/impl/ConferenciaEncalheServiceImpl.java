@@ -49,7 +49,6 @@ import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocument
 import br.com.abril.nds.model.estoque.CobrancaControleConferenciaEncalheCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -57,7 +56,6 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
-import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -90,6 +88,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
+import br.com.abril.nds.repository.EstoqueProdutoFilaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.GrupoRepository;
@@ -200,6 +199,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private EstoqueProdutoRespository estoqueProdutoRepository;
+	
+	@Autowired
+	private EstoqueProdutoFilaRepository estoqueProdutoFilaRepository;
 	
 	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
@@ -374,8 +376,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return estoqueProdutoCotaRepository.obterTotalEmEstoqueProdutoCota(idCota, idProdutoEdicao);
 		
 	}
-	
-	
 
 	
 	private class DiaSemanaRecolhimento {
@@ -1565,6 +1565,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Usuario usuario, 
 			boolean indConferenciaContingencia) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException {
 
+		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
+		
 		desfazerCobrancaConferenciaEncalheReaberta(controleConfEncalheCota.getId());
 		
 		//validarPermissaoSalvarConferenciaEncalhe(listaConferenciaEncalhe);
@@ -1585,6 +1588,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			boolean indConferenciaContingencia, 
 			BigDecimal reparte) throws GerarCobrancaValidacaoException {
 		
+		
+		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
+		
 		this.resetarDadosFinalizacaoConferencia(controleConfEncalheCota);
 		
 		this.incluirDadosConferenciaEncalheCota(controleConfEncalheCota, 
@@ -1592,8 +1599,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				                                listaIdConferenciaEncalheParaExclusao, 
 				                                usuario, 
 				                                indConferenciaContingencia);
-
-		Cota cota = controleConfEncalheCota.getCota();       
 
 		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
 				//conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(controleConfEncalheCota.getId());
@@ -1672,7 +1677,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return documentoConferenciaEncalhe;
 	}
-	
+
 	private boolean getDocumentoImpressao(Boolean documentoImpressaoCota,
 										  Boolean documentoImpressaoDistribuidor) {
 		
@@ -1798,12 +1803,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 	}
 	
-	private void removerItensConferenciaEncallhe(Set<Long> listaIdConferenciaEncalheParaExclusao) {
+	private void removerItensConferenciaEncallhe(Cota cota, Set<Long> listaIdConferenciaEncalheParaExclusao) {
 		
 		if(listaIdConferenciaEncalheParaExclusao!=null && !listaIdConferenciaEncalheParaExclusao.isEmpty()) {
 			
 			for(Long idConferenciaEncalheExclusao : listaIdConferenciaEncalheParaExclusao) {
-				excluirRegistroConferenciaEncalhe(idConferenciaEncalheExclusao);
+				excluirRegistroConferenciaEncalhe(cota, idConferenciaEncalheExclusao);
 			}
 			
 		}
@@ -1836,7 +1841,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Date dataCriacao = new Date();
 		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
-		removerItensConferenciaEncallhe(listaIdConferenciaEncalheParaExclusao);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
+		
+		removerItensConferenciaEncallhe(cota, listaIdConferenciaEncalheParaExclusao);
 		
 		NotaFiscalEntradaCota notaFiscalEntradaCota = atualizarCabecalhoNotaFiscalEntradaCota(
 				controleConfEncalheCota.getId(),
@@ -1874,6 +1881,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
 
 				atualizarRegistroConferenciaEncalhe(
+						cota,
 						conferenciaEncalheDTO, 
 						statusOperacao, 
 						mapaTipoMovimentoEstoque,
@@ -1886,6 +1894,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			} else {
 				
 				criarNovoRegistroConferenciaEncalhe(
+						cota,
 						conferenciaEncalheDTO, 
 						statusOperacao, 
 						mapaTipoMovimentoEstoque,
@@ -1905,6 +1914,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	/**
 	 * Atualiza registro de ConferenciaEncalhe e entidades relacionadas.
 	 * 
+	 * @param cota
 	 * @param conferenciaEncalheDTO
 	 * @param statusOperacao
 	 * @param mapaTipoMovimentoEstoque
@@ -1915,6 +1925,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param usuario
 	 */
 	private void atualizarRegistroConferenciaEncalhe(
+			Cota cota,
 			ConferenciaEncalheDTO conferenciaEncalheDTO, 
 			StatusOperacao statusOperacao, 
 			Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque,
@@ -1951,8 +1962,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 			
 		if (movimentoEstoque != null) {
-		
-			atualizarMovimentoEstoque(movimentoEstoque, conferenciaEncalheDTO);
+			
+			movimentoEstoqueService.atualizarMovimentoEstoqueDeEncalhe(cota, movimentoEstoque, conferenciaEncalheDTO.getQtdExemplar());
 			
 		} else {	
 		
@@ -1966,6 +1977,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 			
 			movimentoEstoque = criarNovoRegistroMovimentoEstoque(
+					cota,
 					controleConferenciaEncalheCota, 
 					conferenciaEncalheDTO, 
 					numeroCota, 
@@ -1984,9 +1996,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	
 	/**
 	 * Cria novo registro de ConferenciaEncalhe e entidades relacionadas.
 	 * 
+	 * @param cota
 	 * @param conferenciaEncalheDTO
 	 * @param statusOperacao
 	 * @param mapaTipoMovimentoEstoque
@@ -1997,6 +2011,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param usuario
 	 */
 	private void criarNovoRegistroConferenciaEncalhe(
+			Cota cota,
 			ConferenciaEncalheDTO conferenciaEncalheDTO, 
 			StatusOperacao statusOperacao, 
 			Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque,
@@ -2029,6 +2044,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					usuario);
 		 
 		 movimentoEstoque = criarNovoRegistroMovimentoEstoque(
+				 	cota,
 					controleConferenciaEncalheCota, 
 					conferenciaEncalheDTO, 
 					numeroCota, 
@@ -2451,12 +2467,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @param idConferenciaEncalhe
 	 */
-	private void excluirRegistroConferenciaEncalhe(Long idConferenciaEncalhe) {
+	private void excluirRegistroConferenciaEncalhe(Cota cota, Long idConferenciaEncalhe) {
 		
 		ConferenciaEncalhe conferenciaEncalhe = conferenciaEncalheRepository.buscarPorId(idConferenciaEncalhe);
 		
 		MovimentoEstoqueCota movimentoEstoqueCota = conferenciaEncalhe.getMovimentoEstoqueCota();
-
+		
 		MovimentoEstoque movimentoEstoque = conferenciaEncalhe.getMovimentoEstoque();
 
 		conferenciaEncalheRepository.remover(conferenciaEncalhe);
@@ -2466,10 +2482,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		if(movimentoEstoque!=null){
-			excluirRegistroMovimentoEstoque(movimentoEstoque);
+			movimentoEstoqueService.excluirRegistroMovimentoEstoqueDeEncalhe(cota, movimentoEstoque);
 		}
 		
 	}
+	
 	
 	/**
 	 * Exclui registro de MovimentoEstoqueCota alterando consequentemente
@@ -2497,47 +2514,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		this.movimentoEstoqueCotaRepository.remover(movimentoEstoqueCota);
 	}
 
-	/**
-	 * Exclui um registro de MovimentoEstoque alterando consequentemente
-	 * o EstoqueProduto relativo.
-	 * 
-	 * @param movimentoEstoque
-	 */
-	private void excluirRegistroMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
-		
-		if(movimentoEstoque.getQtde() != null && (movimentoEstoque.getQtde().compareTo(BigInteger.ZERO) != 0)) {
-
-			GrupoMovimentoEstoque grupoMovimentoEstoqueExcluido = ((TipoMovimentoEstoque)movimentoEstoque.getTipoMovimento()).getGrupoMovimentoEstoque();
-			
-			EstoqueProduto estoqueProduto = movimentoEstoque.getEstoqueProduto();
-			
-			if(estoqueProduto != null) {
-				
-				if(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.equals(grupoMovimentoEstoqueExcluido)) {
-
-					BigInteger qtdeOriginal = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
-					
-					estoqueProduto.setQtdeSuplementar(qtdeOriginal.subtract(movimentoEstoque.getQtde()));
-
-					estoqueProdutoRepository.alterar(estoqueProduto);
-
-					
-				} else {
-					
-					BigInteger qtdeOriginal = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
-					
-					estoqueProduto.setQtdeDevolucaoEncalhe(qtdeOriginal.subtract(movimentoEstoque.getQtde()));
-
-					estoqueProdutoRepository.alterar(estoqueProduto);
-					
-				}
-				
-			}
-			
-		}
-		
-		movimentoEstoqueRepository.remover(movimentoEstoque);
-	}
+	
 	
 	/**
 	 * Atualiza um registro existente de ConferenciaEncalhe.
@@ -2662,6 +2639,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	/**
 	 * Cria um novo registro de MovimentoEstoque.
 	 * 
+	 * @param cota
 	 * @param controleConferenciaEncalheCota
 	 * @param conferenciaEncalheDTO
 	 * @param numeroCota
@@ -2673,6 +2651,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @return MovimentoEstoque
 	 */
 	private MovimentoEstoque criarNovoRegistroMovimentoEstoque(
+									Cota cota,
 									ControleConferenciaEncalheCota controleConferenciaEncalheCota,
 									ConferenciaEncalheDTO conferenciaEncalheDTO,
 									Integer numeroCota, 
@@ -2704,7 +2683,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		MovimentoEstoque movimentoEstoque = 
 			this.movimentoEstoqueService.gerarMovimentoEstoque(
 					conferenciaEncalheDTO.getIdProdutoEdicao(), usuario.getId(), 
-					conferenciaEncalheDTO.getQtdExemplar(), tipoMovimentoEstoque);
+					conferenciaEncalheDTO.getQtdExemplar(), tipoMovimentoEstoque, true, cota);
 		
 		return movimentoEstoque;
 	}
@@ -2947,85 +2926,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 	}
 	
-	/**
-	 * Atualiza registro de MovimentoEstoque bem como o registro 
-	 * de EstoqueProduto relacionado.
-	 * 
-	 * @param movimentoEstoque
-	 * @param conferenciaEncalheDTO
-	 */
-	private void atualizarMovimentoEstoque(MovimentoEstoque movimentoEstoque, 
-										   ConferenciaEncalheDTO conferenciaEncalheDTO) {
-		
-		BigInteger oldQtdeMovEstoque = movimentoEstoque.getQtde();
-		
-		BigInteger newQtdeMovEstoque = conferenciaEncalheDTO.getQtdExemplar();
-		
-		movimentoEstoque.setQtde(newQtdeMovEstoque);
-		
-		GrupoMovimentoEstoque grupoMovimentoEstoque = ((TipoMovimentoEstoque) movimentoEstoque.getTipoMovimento()).getGrupoMovimentoEstoque();
-		
-		this.movimentoEstoqueRepository.alterar(movimentoEstoque);
-		
-		EstoqueProduto estoqueProduto =  movimentoEstoque.getEstoqueProduto();
-		
-		if (estoqueProduto != null) {
-			
-			if (GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.equals(grupoMovimentoEstoque)) {
-
-				BigInteger qtdeOriginal = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
-				
-				estoqueProduto.setQtdeSuplementar(qtdeOriginal.subtract(oldQtdeMovEstoque));
-
-				estoqueProduto.setQtdeSuplementar(estoqueProduto.getQtdeSuplementar().add(newQtdeMovEstoque));
-				
-				validarAlteracaoEstoqueProdutoDistribuidor(
-						estoqueProduto.getQtdeSuplementar(), TipoEstoque.SUPLEMENTAR, estoqueProduto.getProdutoEdicao());
-				
-				this.estoqueProdutoRepository.alterar(estoqueProduto);
-
-			} else {
-				
-				BigInteger qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
-				
-				estoqueProduto.setQtdeDevolucaoEncalhe(qtdeEncalhe.subtract(oldQtdeMovEstoque));
-
-				estoqueProduto.setQtdeDevolucaoEncalhe(estoqueProduto.getQtdeDevolucaoEncalhe().add(newQtdeMovEstoque));
-				
-				validarAlteracaoEstoqueProdutoDistribuidor(
-						estoqueProduto.getQtdeDevolucaoEncalhe(), TipoEstoque.DEVOLUCAO_ENCALHE, estoqueProduto.getProdutoEdicao());
-				
-				this.estoqueProdutoRepository.alterar(estoqueProduto);			
-			}
-			
-		} else {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Produto ["
-							+ movimentoEstoque.getProdutoEdicao().getProduto().getCodigo() + " - "
-							+ movimentoEstoque.getProdutoEdicao().getProduto().getNomeComercial()
-							+ " - " + movimentoEstoque.getProdutoEdicao().getNumeroEdicao()
-                + "] não possui registro de estoque do distribuidor.");
-			
-		}
-		
-	}
-
-	private void validarAlteracaoEstoqueProdutoDistribuidor(
-			BigInteger saldoEstoque, TipoEstoque tipoEstoque,
-			ProdutoEdicao produtoEdicao) {
-
-		if (!this.validarSaldoEstoque(saldoEstoque)) {
-
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Saldo do produto ["
-							+ produtoEdicao.getProduto().getCodigo() + " - "
-							+ produtoEdicao.getProduto().getNomeComercial()
-							+ " - " + produtoEdicao.getNumeroEdicao()
-							+ "] no estoque \"" + tipoEstoque.getDescricao()
-                + "\", insuficiente para movimentação.");
-		}
-	}
+	
 
 	private void validarAlteracaoEstoqueProdutoCota(BigInteger saldoEstoque,
 			ProdutoEdicao produtoEdicao) {

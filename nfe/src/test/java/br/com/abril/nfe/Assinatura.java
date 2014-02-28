@@ -1,7 +1,6 @@
 package br.com.abril.nfe;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -62,7 +61,7 @@ public class Assinatura {
             Transform envelopedTransform = fac.newTransform(Transform.ENVELOPED, tps);
             Transform c14NTransform = fac.newTransform(C14N_TRANSFORM_METHOD, tps);
 
-            ArrayList transformList = new ArrayList();
+            ArrayList<Transform> transformList = new ArrayList<Transform>();
             transformList.add(envelopedTransform);
             transformList.add(c14NTransform);
 
@@ -79,7 +78,7 @@ public class Assinatura {
             char[] senha = "changeit".toCharArray();
             ks.load(fis, senha);
             fis.close();
-            Enumeration aliasesEnum = null;
+            Enumeration<String> aliasesEnum = null;
             aliasesEnum = ks.aliases();
             String alias = "";
             while(aliasesEnum.hasMoreElements()){
@@ -95,7 +94,7 @@ public class Assinatura {
             KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry) entry;
             X509Certificate cert = (X509Certificate) keyEntry.getCertificate();
             KeyInfoFactory kif = fac.getKeyInfoFactory();
-            List x509Content = new ArrayList();
+            List<X509Certificate> x509Content = new ArrayList<X509Certificate>();
 
             x509Content.add(cert);
             X509Data xd = kif.newX509Data(x509Content);

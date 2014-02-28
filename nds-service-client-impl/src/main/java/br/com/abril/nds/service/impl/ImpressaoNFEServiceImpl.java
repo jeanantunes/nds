@@ -187,6 +187,8 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 				 * Nota de Envio Buscar quando houver chave de acesso
 				 */
 				
+				// saber qual e modelo para gera MODELO 1 MODELO 2...
+				
 				this.impressaoNFeRepository.buscarCotasParaImpressaoNotaEnvioQtd(filtro);
 					
 			}
