@@ -94,7 +94,7 @@ public class BoletoEmailController extends BaseController {
             	
             	Cota cota = bm.getCobranca().getCota();
         	
-        	    mensagensBoletosNaoEmitidos.add("Cota "+cota.getNumeroCota()+" - "+cota.getPessoa().getNome());
+        	    mensagensBoletosNaoEmitidos.add("Cota "+cota.getNumeroCota()+" - "+cota.getPessoa().getNome() + " - " + e.getMessage());
         	    
                 LOGGER.error("Boleto [" + bm.getCobranca().getNossoNumero() + "] não enviado, para a cota: "
                     + bm.getCobranca().getCota().getNumeroCota(), e);
