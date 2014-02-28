@@ -122,7 +122,8 @@ public class ProdutoEdicaoDAO {
                     if (rs.getString("GRUPO_PRODUTO") != null && rs.getString("GRUPO_PRODUTO").equalsIgnoreCase(PRODUTO_COLECIONAVEL)) {
                         produtoEdicaoBase.setColecao(true);
                     }
-                    produtoEdicaoBase.setTipoSegmentoProduto(getTipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID")));
+//                    produtoEdicaoBase.setTipoSegmentoProduto(getTipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID")));
+                    produtoEdicaoBase.getProduto().setTipoSegmentoProduto(getTipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID")));
                     produtoEdicaoBase.setTipoClassificacaoProduto(getTipoClassificacaoProduto(rs.getLong("TIPO_CLASSIFICACAO_PRODUTO_ID")));
                     return produtoEdicaoBase;
                 }
