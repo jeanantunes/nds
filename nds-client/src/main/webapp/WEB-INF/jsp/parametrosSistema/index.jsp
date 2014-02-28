@@ -200,25 +200,27 @@ $(function(){
 								<tr>
 									<td width="164">Ambiente: </td>
 									<td width="294">
-										<input type="text" name="tipoAmbiente" id="tipoAmbiente" style="width:220px;" value="HOMOLOGAÇÃO"/>
+										<select name="dto.nfeInformacoesAmbiente" id="nfeInformacoesAmbiente" style="width:220px;">
+											<c:forEach  var="tipoAmbiente" items="${tiposAmbientes}">
+												<option value="${tipoAmbiente.key}" <c:if test="${parametroSistemaGeralDTO.nfeInformacoesAmbiente == tipoAmbiente.key}">selected="selected"</c:if>>${tipoAmbiente.value}</option>
+											</c:forEach>											
+										</select>
 									</td>	
-								</tr>
-								<tr>
-									<td>Tipo do Emissor de NF-e:</td>
-									<td>
-										<input type="text" name="tipoEmissorNFe" id="tipoEmissorNFe" style="width:220px;" value=""/>
-									</td>
-								</tr>
-								<tr>
-									<td>Versão do Emissor:</td>
-									<td>
-										<input type="text" name="versaoEmissor" id="versaoEmissor" style="width:220px;" value="2.2.21"/>
-									</td>
 								</tr>
 								<tr>
 									<td>Formato Impressão:</td>
 									<td>
-										<input type="text" name="formatoImpressao" id="formatoImpressao" style="width:220px;" value="PAISAGEM" />
+										<select name="dto.nfeInformacoesFormatoImpressao" id="nfeInformacoesFormatoImpressao" style="width:220px;">
+											<c:forEach  var="formatoImpressao" items="${formatosImpressao}">
+												<option value="${formatoImpressao.key}" <c:if test="${parametroSistemaGeralDTO.nfeInformacoesFormatoImpressao == formatoImpressao.key}">selected="selected"</c:if>>${formatoImpressao.value}</option>
+											</c:forEach>											
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Modelo Documento Fiscal: </td>
+									<td>
+										<input type="text" name="dto.nfeInformacoesModeloDocumento" id="nfeInformacoesModeloDocumento" style="width:220px;" maxlength="5" value="${parametroSistemaGeralDTO.nfeInformacoesModeloDocumento}" />
 									</td>
 								</tr>
 							</table>
@@ -227,28 +229,25 @@ $(function(){
 						<td valign="top">
 							<table>
 								<tr>
-									<td>Modelo Documento Fiscal: </td>
+									<td>Tipo do Emissor de NF-e:</td>
 									<td>
-										<input type="text" name="modeloDocumentoFiscal" id="modeloDocumentoFiscal" style="width:220px;" value="55" />
+										<select name="dto.nfeInformacoesTipoEmissor" id="nfeInformacoesTipoEmissor" style="width:220px;">
+											<c:forEach var="processoEmissaoNFe" items="${processosEmissaoNFe}">
+												<option value="${processoEmissaoNFe.key}" <c:if test="${parametroSistemaGeralDTO.nfeInformacoesTipoEmissor == processoEmissaoNFe.key}">selected="selected"</c:if>>${processoEmissaoNFe.value}</option>
+											</c:forEach>											
+										</select>
 									</td>
 								</tr>
 								<tr>
-									<td>Interface Picking Exporta&ccedil;&atilde;o: </td>
+									<td>Versão do Emissor:</td>
 									<td>
-										<input disabled="disabled" type="text" name="dto.pathPickingExportacao" id="pathPickingExportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathPickingExportacao}" />
-									</td>
-								</tr>
-								
-								<tr>
-									<td>Interface Contrato Importa&ccedil;&atilde;o: </td>
-									<td>
-										<input type="text" name="dto.pathContrato" id="pathContrato" style="width:220px;" value="${parametroSistemaGeralDTO.pathContrato}" />
+										<input type="text" name="dto.nfeInformacoesVersaoEmissor" id="nfeInformacoesVersaoEmissor" style="width:220px;" maxlength="10" value="${parametroSistemaGeralDTO.nfeInformacoesVersaoEmissor}"/>
 									</td>
 								</tr>
 								<tr>
-									<td>Interface GFS Importa&ccedil;&atilde;o: </td>
+									<td>Local do certificado digital: </td>
 									<td>
-										<input disabled="disabled" type="text" name="dto.pathGfsImportacao" id="pathGfsImportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathGfsImportacao}" />
+										<input disabled="disabled" type="text" name="dto.nfeInformacoesCertificadoDigitalPath" id="nfeInformacoesCertificadoDigitalPath" style="width:220px;" value="${parametroSistemaGeralDTO.nfeInformacoesCertificadoDigitalPath}" />
 									</td>
 								</tr>
 							</table>

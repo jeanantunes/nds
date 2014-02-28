@@ -442,6 +442,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			}
 		}
 		
+		parametrosDistribuidor.setNfInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 		parametrosDistribuidor.setNumeroDispositivoLegal(distribuidor.getNumeroDispositivoLegal());
 		parametrosDistribuidor.setDataLimiteVigenciaRegimeEspecial(distribuidor.getDataLimiteVigenciaRegimeEspecial());
 		
@@ -998,14 +999,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			distribuidor.setParametrosDistribuidorFaltasSobras(null);
 		}
 		
+		distribuidor.setNfInformacoesAdicionais(parametrosDistribuidor.getNfInformacoesAdicionais());
+		
 		if(parametrosDistribuidor.getRegimeTributario() != null) {
 			
 			RegimeTributario regimeTributario = regimeTributarioRepository.buscarPorId(parametrosDistribuidor.getRegimeTributario().getId());
-			regimeTributario.setId(parametrosDistribuidor.getRegimeTributario().getId());
-			regimeTributario.setCodigo(parametrosDistribuidor.getRegimeTributario().getCodigo());
-			regimeTributario.setDescricao(parametrosDistribuidor.getRegimeTributario().getDescricao());
-			regimeTributario.setAtivo(parametrosDistribuidor.getRegimeTributario().isAtivo());
-			
+						
 			for(TributoAliquotaDTO taDTO : parametrosDistribuidor.getTributosAliquotas()) {
 				
 				TributoAliquota ta = tributoAliquotaRepository.buscarPorId(taDTO.getId());

@@ -215,6 +215,9 @@ public class Distribuidor {
 	@Column(name = "POSSUI_REGIME_ESPECIAL_DISPENSA_INTERNA", nullable = false)
 	private boolean possuiRegimeEspecialDispensaInterna;
 	
+	@Column(name = "NF_INFORMACOES_ADICIONAIS", nullable = true)
+	private String nfInformacoesAdicionais;
+	
 	@Column(name = "NUMERO_DISPOSITIVO_LEGAL")
 	private String numeroDispositivoLegal;
 	
@@ -328,7 +331,6 @@ public class Distribuidor {
 	private boolean pararAcumuloDividas;
 	
 	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
-
 	@OrderBy("id")
 	private Set<DistribuidorTipoNotaFiscal> tiposNotaFiscalDistribuidor = new HashSet<DistribuidorTipoNotaFiscal>();
 	
@@ -800,6 +802,14 @@ public class Distribuidor {
 	public void setPossuiRegimeEspecialDispensaInterna(
 			boolean possuiRegimeEspecialDispensaInterna) {
 		this.possuiRegimeEspecialDispensaInterna = possuiRegimeEspecialDispensaInterna;
+	}
+
+	public String getNfInformacoesAdicionais() {
+		return nfInformacoesAdicionais;
+	}
+
+	public void setNfInformacoesAdicionais(String nfInformacoesAdicionais) {
+		this.nfInformacoesAdicionais = nfInformacoesAdicionais;
 	}
 
 	public String getNumeroDispositivoLegal() {

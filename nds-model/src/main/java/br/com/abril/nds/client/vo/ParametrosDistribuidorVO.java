@@ -35,6 +35,8 @@ public class ParametrosDistribuidorVO {
     
     private boolean possuiRegimeEspecialDispensaInterna;
     
+    private String nfInformacoesAdicionais;
+    
 	private String numeroDispositivoLegal;
 	
 	private Date dataLimiteVigenciaRegimeEspecial;
@@ -339,7 +341,15 @@ public class ParametrosDistribuidorVO {
         this.possuiRegimeEspecialDispensaInterna = possuiRegimeEspecialDispensaInterna;
     }
 
-    public String getNumeroDispositivoLegal() {
+    public String getNfInformacoesAdicionais() {
+		return nfInformacoesAdicionais;
+	}
+
+	public void setNfInformacoesAdicionais(String nfInformacoesAdicionais) {
+		this.nfInformacoesAdicionais = nfInformacoesAdicionais;
+	}
+
+	public String getNumeroDispositivoLegal() {
 		return numeroDispositivoLegal;
 	}
 

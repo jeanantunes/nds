@@ -2,11 +2,12 @@ package br.com.abril.nds.service.builders;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Random;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
@@ -36,6 +37,8 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalInformacoes;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
+import br.com.abril.nds.model.integracao.ParametroSistema;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 
 @Component
 public class NotaFiscalBuilder implements Serializable {
@@ -43,6 +46,9 @@ public class NotaFiscalBuilder implements Serializable {
 	private static final long serialVersionUID = 176874569807919538L;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(NotaFiscalBuilder.class);
+	
+	@Autowired
+	private static ParametroSistemaRepository parametroSistemaRepository;
 	
 	// builder header Nota fiscal
 	public static NotaFiscalNds montarHeaderNotaFiscal(NotaFiscalNds notaFiscal, Cota cota){
@@ -155,6 +161,9 @@ public class NotaFiscalBuilder implements Serializable {
 		
 		ResourceBundle rb = ResourceBundle.getBundle("nds-client-nfe");
 		String versaoEmissor = rb.getString("nfe.informacoes.versaoEmissor");
+		
+		Map<String, ParametroSistema> params = parametroSistemaRepository.buscarParametroSistemaGeralMap();
+		
 		FormaPagamento formaPagamento;
 		
 		try {
@@ -175,7 +184,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormaPagamento(formaPagamento);
 		
 		//FIXME: Ajustar para variavel global
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoAmbiente(TipoAmbiente.HOMOLOGACAO);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoAmbiente(TipoAmbiente.valueOf(params.get("NFE_INFORMACOES_AMBIENTE").getValor()));
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoEmissao(TipoEmissao.NORMAL);
@@ -196,15 +205,13 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormatoImpressao(FormatoImpressao.PAISAGEM);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormatoImpressao(FormatoImpressao.valueOf(params.get("NFE_INFORMACOES_FORMATO_IMPRESSAO").getValor()));
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setModeloDocumentoFiscal("55");
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.EMISSAO_NFE_APLICATIVO_FORNECIDO_PELO_FISCO);
-		
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNumeroDocumentoFiscal(Long.parseLong(new Random().nextInt(10000000)+""));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.valueOf(params.get("EMISSAO_NFE_APLICATIVO_FORNECIDO_PELO_FISCO").getValor()));
 		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDataEmissao(new Date());
 		
@@ -213,9 +220,6 @@ public class NotaFiscalBuilder implements Serializable {
 		
 		//FIXME: Ajustar codigo de municipio do cadastro
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoMunicipio(3550308L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoCidadeIBGE());
-		
-		//FIXME: Ajustar o valor do codigoNF
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoNF(Integer.toString(new Random().nextInt(90000000 - 10000000) + 10000000));
 		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(0L);
 		

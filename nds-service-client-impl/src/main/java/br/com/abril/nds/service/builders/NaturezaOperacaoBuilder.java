@@ -13,6 +13,8 @@ public class NaturezaOperacaoBuilder {
 		}
 		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDescricaoNaturezaOperacao(naturezaOperacao.getDescricao());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNumeroDocumentoFiscal(naturezaOperacao.getNotaFiscalNumeroNF());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoNF(naturezaOperacao.getNotaFiscalNumeroNF().toString());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setSerie(naturezaOperacao.getNotaFiscalSerie());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNaturezaOperacao(naturezaOperacao);
 		

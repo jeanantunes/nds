@@ -264,6 +264,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		for (Cota cota : cotas) {
 			
 			NotaFiscal notaFiscal = new NotaFiscal();
+			naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
+			naturezaOperacaoRepository.merge(naturezaOperacao);
 			
 			notaFiscal.setUsuario(usuarioService.getUsuarioLogado());
 			
@@ -296,6 +298,10 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		// obter as cotas que estão na tela pelo id das cotas
 		NotaFiscal notaFiscal = new NotaFiscal();
+		
+		naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
+		naturezaOperacaoRepository.merge(naturezaOperacao);
+		
 		List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoCotasNotafiscal(filtro);
 		
 		for (Cota cota : cotas) {
