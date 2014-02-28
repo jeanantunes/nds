@@ -3,8 +3,8 @@ package br.com.abril.nds.client.vo;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.RegimeTributarioDTO;
 import br.com.abril.nds.dto.TributoAliquotaDTO;
-import br.com.abril.nds.model.cadastro.RegimeTributario;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.vo.EnderecoVO;
@@ -29,11 +29,13 @@ public class ParametrosDistribuidorVO {
     // Frame Endereço
     private EnderecoVO endereco = new EnderecoVO();
     // Frame Fiscal
-    private RegimeTributario regimeTributario;
+    private RegimeTributarioDTO regimeTributario;
     
     private TipoAtividade tipoAtividade;
     
     private boolean possuiRegimeEspecialDispensaInterna;
+    
+    private String nfInformacoesAdicionais;
     
 	private String numeroDispositivoLegal;
 	
@@ -312,14 +314,14 @@ public class ParametrosDistribuidorVO {
     /**
      * @return the regimeTributario
      */
-    public RegimeTributario getRegimeTributario() {
+    public RegimeTributarioDTO getRegimeTributario() {
         return regimeTributario;
     }
 
     /**
      * @param regimeTributario the regimeTributario to set
      */
-    public void setRegimeTributario(RegimeTributario regimeTributario) {
+    public void setRegimeTributario(RegimeTributarioDTO regimeTributario) {
         this.regimeTributario = regimeTributario;
     }
     
@@ -339,7 +341,15 @@ public class ParametrosDistribuidorVO {
         this.possuiRegimeEspecialDispensaInterna = possuiRegimeEspecialDispensaInterna;
     }
 
-    public String getNumeroDispositivoLegal() {
+    public String getNfInformacoesAdicionais() {
+		return nfInformacoesAdicionais;
+	}
+
+	public void setNfInformacoesAdicionais(String nfInformacoesAdicionais) {
+		this.nfInformacoesAdicionais = nfInformacoesAdicionais;
+	}
+
+	public String getNumeroDispositivoLegal() {
 		return numeroDispositivoLegal;
 	}
 

@@ -104,7 +104,11 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("   FROM ");
 		sql.append("   ( ");
 		sql.append("     SELECT ");
-		sql.append("       (SELECT lancamento.reparte FROM estudo_gerado estudo INNER JOIN lancamento ON estudo.lancamento_id = lancamento.id WHERE estudo.id = :estudoId ) AS qtdReparteDistribuidor, ");
+		
+		sql.append("       (SELECT case lc.REPARTE when 0 then case plp.NUMERO_PERIODO when 1 then ((lc.REPARTE)-lc.REPARTE_PROMOCIONAL) else estp.QTDE end else lc.REPARTE end as rprte ");
+		sql.append("       			From estudo_gerado eg JOIN lancamento lc ON lc.ID = eg.LANCAMENTO_ID LEFT JOIN periodo_lancamento_parcial plp ON plp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		sql.append("       			LEFT JOIN estoque_produto estp ON estp.PRODUTO_EDICAO_ID = eg.PRODUTO_EDICAO_ID where eg.ID = :estudoId ) AS qtdReparteDistribuidor, ");
+		
 		sql.append("       (SELECT qtde_reparte FROM estudo_gerado where id = :estudoId) AS qtdReparteADistribuir, ");
 		sql.append("       (SELECT sum(reparte) FROM estudo_cota_gerado WHERE estudo_id = :estudoId ) AS qtdReparteDistribuidoEstudo, ");
 		sql.append("       (SELECT count(id) FROM cota WHERE SITUACAO_CADASTRO = 'ATIVO') AS qtdCotasAtivas, ");
@@ -251,10 +255,26 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT lancamento.reparte ");
-		sql.append(" FROM estudo_gerado estudo ");
-		sql.append(" INNER JOIN lancamento ON estudo.lancamento_id = lancamento.id ");
-		sql.append(" WHERE estudo.id = :estudoId ");
+		sql.append(" SELECT ");
+		
+		sql.append(" case lc.REPARTE ");
+		sql.append(" 	when 0 then ");
+		sql.append("  		case plp.NUMERO_PERIODO ");
+		sql.append(" 			when 1 then ");
+		sql.append(" 				((IF(lc.REPARTE is null, 0, lc.REPARTE))-IF(lc.REPARTE_PROMOCIONAL is null, 0, lc.REPARTE_PROMOCIONAL))  ");
+		sql.append("			else estp.QTDE ");
+		sql.append(" 		end ");
+		sql.append(" 	else lc.REPARTE ");
+		sql.append(" end ");
+		
+		sql.append(" From estudo_gerado eg ");
+		
+		sql.append(" JOIN lancamento lc ON lc.ID = eg.LANCAMENTO_ID ");
+		sql.append(" LEFT JOIN periodo_lancamento_parcial plp ON plp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		sql.append(" LEFT JOIN estoque_produto estp ON estp.PRODUTO_EDICAO_ID = eg.PRODUTO_EDICAO_ID  ");
+		
+		sql.append(" where eg.ID = :estudoId ");
+		
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		

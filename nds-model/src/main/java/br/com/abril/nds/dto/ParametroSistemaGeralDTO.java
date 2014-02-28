@@ -429,6 +429,70 @@ public class ParametroSistemaGeralDTO implements Serializable {
 		this.params.put(TipoParametroSistema.PATH_IMPORTACAO_CONTRATO, pathContrato);
 	}
 	
+	public String getNfeInformacoesAmbiente() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_AMBIENTE);
+	}
+	
+	public void setNfeInformacoesAmbiente(String nfeInformacoesAmbiente) {
+		this.params.put(TipoParametroSistema.NFE_INFORMACOES_AMBIENTE, nfeInformacoesAmbiente);
+	}
+	
+	public String getNfeInformacoesFormatoImpressao() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_FORMATO_IMPRESSAO);
+	}
+	
+	public void setNfeInformacoesFormatoImpressao(String nfeInformacoesFormatoImpressao) {
+		this.params.put(TipoParametroSistema.NFE_INFORMACOES_FORMATO_IMPRESSAO, nfeInformacoesFormatoImpressao);
+	}
+	
+	public String getNfeInformacoesModeloDocumento() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_MODELO_DOCUMENTO);
+	}
+	
+	public void setNfeInformacoesModeloDocumento(String nfeInformacoesModeloDocumento) {
+		this.params.put(TipoParametroSistema.NFE_INFORMACOES_MODELO_DOCUMENTO, nfeInformacoesModeloDocumento);
+	}
+	
+	public String getNfeInformacoesTipoEmissor() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
+	}
+	
+	public void setNfeInformacoesTipoEmissor(String nfeInformacoesTipoEmissor) {
+		this.params.put(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR, nfeInformacoesTipoEmissor);
+	}
+	
+	public String getNfeInformacoesVersaoEmissor() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_VERSAO_EMISSOR);
+	}
+	
+	public void setNfeInformacoesVersaoEmissor(String nfeInformacoesVersaoEmissor) {
+		this.params.put(TipoParametroSistema.NFE_INFORMACOES_VERSAO_EMISSOR, nfeInformacoesVersaoEmissor);
+	}
+	
+	public String getNfeInformacoesCertificadoDigitalPath() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PATH);
+	}
+	
+	public void setNfeInformacoesCertificadoDigitalPath(String nfeInformacoesCertificadoDigitalPath) {
+		this.params.put(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PATH, nfeInformacoesCertificadoDigitalPath);
+	}
+	
+	public String getNFeInformacoesCertificadoDigitalAlias() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_ALIAS);
+	}
+	
+	public void setNFeInformacoesCertificadoDigitalAlias(String nfeInformacoesCertificadoDigitalAlias) {
+		this.params.put(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_ALIAS, nfeInformacoesCertificadoDigitalAlias);
+	}
+	
+	public String getNFeInformacoesCertificadoDigitalPrivateKeyPassword() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PRIV_KEY_PASSWORD);
+	}
+	
+	public void setNFeInformacoesCertificadoDigitalPrivateKeyPassword(String nfeInformacoesCertificadoDigitalPrivateKeyPassword) {
+		this.params.put(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PRIV_KEY_PASSWORD, nfeInformacoesCertificadoDigitalPrivateKeyPassword);
+	}
+	
 	/**
 	 * @return the dtOperacaoCorrente
 	 */

@@ -87,6 +87,8 @@ public class NaturezaOperacao implements Serializable {
 	            inverseJoinColumns=@JoinColumn(table="TIPO_MOVIMENTO",name="TIPO_MOVIMENTO_ID", referencedColumnName="id"))
 	private List<TipoMovimento> tipoMovimento;
 	
+	@Column(name = "NOTA_FISCAL_NUMERO_NF", length=60)
+	private Long notaFiscalNumeroNF;
 	
 	@Column(name = "NOTA_FISCAL_SERIE", length=60)
 	private Long notaFiscalSerie;
@@ -185,6 +187,14 @@ public class NaturezaOperacao implements Serializable {
 		this.tipoMovimento = tipoMovimento;
 	}
 	
+	public Long getNotaFiscalNumeroNF() {
+		return notaFiscalNumeroNF;
+	}
+
+	public void setNotaFiscalNumeroNF(Long notaFiscalNumeroNF) {
+		this.notaFiscalNumeroNF = notaFiscalNumeroNF;
+	}
+
 	public Long getNotaFiscalSerie() {
 		return notaFiscalSerie;
 	}

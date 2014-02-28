@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.model.integracao.ParametroSistema;
@@ -54,5 +55,7 @@ public interface ParametroSistemaRepository extends Repository<ParametroSistema,
 	 * @return
 	 */
 	String getParametro(String string);
+	
+	public Map<String, ParametroSistema> buscarParametroSistemaGeralMap();
 	
 }

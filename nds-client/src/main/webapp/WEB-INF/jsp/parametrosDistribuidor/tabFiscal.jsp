@@ -1,8 +1,7 @@
 <div id="tabFiscal">
 	<br />
-
-	<fieldset
-		style="width: 98% !important; margin-bottom: 5px; float: left;">
+	
+	<fieldset style="width: 98% !important; margin-bottom: 5px; float: left;">
 		<legend>Fiscal</legend>
 		<table width="100%" border="0" cellspacing="2" cellpadding="0">
 			<tr>
@@ -25,6 +24,12 @@
 										<option value="${regimeTributario.key}" <c:if test="${parametrosDistribuidor.regimeTributario.id == regimeTributario.key}">selected="selected"</c:if>>${regimeTributario.value}</option>
 									</c:forEach>
 							</select></td>
+							<td width="35%"><table id="regimeTributarioTributos"></table></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td width="35%">Informações Adicionais:</td>
+							<td><textarea rows="2" cols="100" name="informacoesAdicionais" id="informacoesAdicionais" style="width: 150px;" >${parametrosDistribuidor.nfInformacoesAdicionais}</textarea></td>
 							<td width="35%"><table id="regimeTributarioTributos"></table></td>
 							<td></td>
 						</tr>
