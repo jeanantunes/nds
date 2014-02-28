@@ -66,15 +66,17 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		distribuidorService.bloqueiaProcessosLancamentosEstudos();
-	}
-
-	@Override
-	public void processMessage(Message message) {
 		
 		//Recupera datas Abertas para matriz
 		datas = lancamentoService.obterDiasMatrizLancamentoAbertos();
 		datasBalanceaveis = datas.get("diasBalanceaveis");
 		datasNaoBalanceaveis = datas.get("diasNaoBalanceaveis");
+	}
+
+	@Override
+	public void processMessage(Message message) {
+		
+
 		
 		EMS0111Input input = (EMS0111Input) message.getBody();
 				
@@ -268,7 +270,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			// Atualizar lançamento Distribuidor:
 			final StatusLancamento status = (lancamento.getReparte().compareTo(BigInteger.ZERO) == 0) ? StatusLancamento.CANCELADO : lancamento.getStatus();
 			
-			boolean isStatusAlteracaoDataLancamento = ( (StatusLancamento.PLANEJADO.equals(status)) || (StatusLancamento.CONFIRMADO.equals(status)) ); 
+			boolean isStatusAlteracaoDataLancamento = ( (StatusLancamento.PLANEJADO.equals(status)) || (StatusLancamento.CONFIRMADO.equals(status)) || (StatusLancamento.FURO.equals(status)) ); 
 			
 			final Date dtLancamentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataLancamentoDistribuidor());
 			
@@ -289,9 +291,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 						"Alteracao para PARCIAL da DATA LANCAMENTO DISTRIBUIDOR do Produto: "
 								+ codigoProduto + " e Edicao: " + edicao
 								+ " , de: " + simpleDateFormat.format(
-										dtLancamentoDistribuidor)
+										dtLancamentoNovo)
 								+ "para: " + simpleDateFormat.format(
-										dtLancamentoNovo));
+										dtLancamentoDistribuidor));
 				
 				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
 				
