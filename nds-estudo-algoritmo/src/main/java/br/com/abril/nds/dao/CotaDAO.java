@@ -176,7 +176,6 @@ public class CotaDAO {
 
     public List<CotaEstudo> getCotas(final EstudoTransient estudo) {
 	Map<String, Object> params = new HashMap<>();
-//	params.put("tipo_segmento_produto_id", estudo.getProdutoEdicaoEstudo().getTipoSegmentoProduto().getId());
 	params.put("tipo_segmento_produto_id", estudo.getProdutoEdicao().getProduto().getTipoSegmentoProduto().getId());
 	params.put("produto_id", estudo.getProdutoEdicaoEstudo().getProduto().getId());
 	params.put("data_lcto", estudo.getProdutoEdicaoEstudo().getDataLancamento());

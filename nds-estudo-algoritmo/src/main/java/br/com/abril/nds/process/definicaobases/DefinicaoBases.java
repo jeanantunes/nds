@@ -47,7 +47,6 @@ public class DefinicaoBases extends ProcessoAbstrato {
             if (!edicoesBase.isEmpty()) {
                 edicoesBase = filtrarClassificacao(edicoesBase, estudo);
                 edicoesBase = limitarEdicoesApenasSeis(edicoesBase, estudo);
-//                validaApenasUmaEdicaoFechada(edicoesBase);
                 excluiEdicoesComMaisDeDoisAnos(edicoesBase);
                 excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
                 
