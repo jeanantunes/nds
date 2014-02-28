@@ -28,4 +28,6 @@ public interface EstoqueProdutoRespository extends Repository<EstoqueProduto, Lo
 	
 	BigInteger buscarQtdEstoqueProdutoEdicao(Long idProdutoEdicao);
 	
+	public Long selectForUpdate(Long idProdutoEdicao);
+	
 }
