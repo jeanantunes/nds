@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository;
 
+import java.util.List;
+
 import br.com.abril.nds.model.financeiro.BoletoEmail;
 
 /**
@@ -17,4 +19,6 @@ public interface BoletoEmailRepository extends Repository<BoletoEmail,Long>{
 	 * @return BoletoEmail
 	 */
 	BoletoEmail obterBoletoEmailPorCobranca(Long cobrancaId);
+
+    List<BoletoEmail> buscarTodosOrdenados();
 }

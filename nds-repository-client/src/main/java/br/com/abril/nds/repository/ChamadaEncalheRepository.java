@@ -46,9 +46,11 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 			Intervalo<Date> intervaloRecolhimento, Long fornecedor, PaginacaoVO paginacaoVO);
 
 	List<FornecedorDTO> obterDadosFornecedoresParaImpressaoBandeira(
-			Intervalo<Date> intervalo);
+			Intervalo<Date> intervalo, Long fornecedor);
 
 	Long countObterBandeirasNoIntervalo(Intervalo<Date> intervalo);
+
+    Long countObterBandeirasNoIntervalo(Intervalo<Date> intervalo, Long fornecedor);
 	
 	List<ChamadaEncalhe> obterChamadasEncalhe(ProdutoEdicao produtoEdicao, TipoChamadaEncalhe tipoChamadaEncalhe, Date dataRecolhimento);
 
