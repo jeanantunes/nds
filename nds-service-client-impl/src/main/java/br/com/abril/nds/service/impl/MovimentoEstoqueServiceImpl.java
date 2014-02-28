@@ -698,16 +698,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     		GrupoMovimentoEstoque grupoMovimentoEstoque,
     		OperacaoEstoque operacaoEstoque,
     		BigInteger qtde) {
-//FIXME VOLTAR APOS OS TESTES
-//    	EstoqueProdutoFila epf = new EstoqueProdutoFila();
-//    	
-//    	epf.setProdutoEdicao(produtoEdicao);
-//    	epf.setCota(cota);
-//    	epf.setQtde(qtde);
-//    	epf.setOperacaoEstoque(operacaoEstoque);
-//    	epf.setTipoEstoque(grupoMovimentoEstoque.getTipoEstoque());
-//		
-//    	estoqueProdutoFilaRepository.adicionar(epf);
+    	
+    	EstoqueProdutoFila epf = new EstoqueProdutoFila();
+    	
+    	epf.setProdutoEdicao(produtoEdicao);
+    	epf.setCota(cota);
+    	epf.setQtde(qtde);
+    	epf.setOperacaoEstoque(operacaoEstoque);
+    	epf.setTipoEstoque(grupoMovimentoEstoque.getTipoEstoque());
+		
+    	estoqueProdutoFilaRepository.adicionar(epf);
     	
     }
     
