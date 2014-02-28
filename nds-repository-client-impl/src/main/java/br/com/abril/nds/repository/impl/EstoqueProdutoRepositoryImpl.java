@@ -5,11 +5,15 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
+import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
@@ -42,6 +46,33 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		
 		return (EstoqueProduto) criteria.uniqueResult();
 	}
+
+	public Long selectForUpdate(Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" SELECT E.ID AS id ");
+		
+		hql.append(" FROM ESTOQUE_PRODUTO E ");
+		
+		hql.append(" WHERE E.PRODUTO_EDICAO_ID = :idProdutoEdicao FOR UPDATE ");
+		
+		Query query = this.getSession().createSQLQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		((org.hibernate.SQLQuery)query).addScalar("id", StandardBasicTypes.LONG);
+		
+		List ids = query.list();
+	
+		if(ids==null || ids.isEmpty()){
+			return null;
+		}
+		
+		return (Long) ids.get(0);
+		
+	}
+
 	
 	public EstoqueProduto buscarEstoqueProdutoPorProdutoEdicao(Long idProdutoEdicao) {
 		StringBuilder hql = new StringBuilder("select estoqueProduto ");
