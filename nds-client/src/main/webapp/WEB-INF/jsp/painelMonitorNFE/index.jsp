@@ -9,8 +9,8 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.br.js"></script>
 <script language="javascript" type="text/javascript" src='${pageContext.request.contextPath}/scripts//utils.js'></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script language="javascript" type="text/javascript" src='${pageContext.request.contextPath}/scripts/painelMonitorNFE.js'></script>
-
 <script type="text/javascript">
 
 $(function() {
@@ -55,7 +55,7 @@ $(function() {
 		</span>
 				
 		<span class="bt_arq">
-			<a href="${pageContext.request.contextPath}/nfe/painelMonitorNFe/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+			<a isEdicao="true" onclick="PainelMonitorNFE.exportar()" rel="tipsy" title="Gerar Arquivo">
 				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 			</a> 
 		</span> 
@@ -68,6 +68,15 @@ $(function() {
 	</div>
 </div>
 <div class="linha_separa_fields">&nbsp;</div>
+
+<div id="preparing-file-modal" title="Preparing report..." style="display: none;">
+    Preparando para gerar o arquivo, Favor aguarde...
+    <div class="ui-progressbar-value ui-corner-left ui-corner-right" style="width: 100%; height:22px; margin-top: 20px;"></div>
+</div>
+
+<div id="error-modal" title="Error" style="display: none;">
+    Problema ao gerar arquivo solicitado...
+</div>
 <fieldset class="fieldFiltro">
 	
 	<legend> Painel Monitor NF-e</legend>

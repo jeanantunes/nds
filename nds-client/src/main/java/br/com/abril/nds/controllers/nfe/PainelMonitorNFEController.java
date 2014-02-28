@@ -244,7 +244,7 @@ public class PainelMonitorNFEController extends BaseController {
 		List<NfeVO> listaNfeVO = getListaNfeVO(infoNfe.getListaNfeDTO());
 		
 		FileExporter.to("nfe", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, listaNfeVO, NfeVO.class, this.httpResponse);
-		
+		httpResponse.setHeader("Set-Cookie", "fileDownload=true; path=/");
 	}
 
 	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO)

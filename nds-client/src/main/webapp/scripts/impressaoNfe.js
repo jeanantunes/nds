@@ -166,7 +166,7 @@ var impressaoNfeController = $.extend(true, {
 		}
 		
 		
-		for(i = 0; i < impressaoNfeController.filtroProdutos.length; i++) {
+		for(var i = 0; i < impressaoNfeController.filtroProdutos.length; i++) {
 
 			params.push({
 				'name' : 'filtro.codigosProdutos[]',
@@ -284,7 +284,7 @@ var impressaoNfeController = $.extend(true, {
 
 		$.each(resultado.rows, function() {
 
-			for(i=0; i < impressaoNfeController.filtroProdutos.length; i++) {
+			for(var i=0; i < impressaoNfeController.filtroProdutos.length; i++) {
 				if(impressaoNfeController.filtroProdutos[i]['cell']['codigoProduto'] == this.cell.codigoProduto) {
 					checked = true;
 				}
@@ -327,30 +327,64 @@ var impressaoNfeController = $.extend(true, {
 		
 		params = [];
 		
+		params = [ 	{name:'filtro.idNaturezaOperacao', value:$('#impressaoNfe-filtro-naturezaOperacao', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataEmissao', value:$('#impressaoNfe-filtro-dataEmissao', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idRoteiro', value:$('#idRoteiro', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idRota', value:$('#idRota option:selected', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idCotaInicial', value:$('#idCotaInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idCotaFinal', value:$('#idCotaFinal', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idBoxInicial', value:$('#idBoxInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idBoxFinal', value:$('#idBoxFinal', impressaoNfeController.workspace).val()}
+		           	];
+		
+		
 		params.push({
 				'name' : 'fileType',
 				'value' : fileType
 			});
 		
-		for(i=0; i < impressaoNfeController.filtroNotasImprimirNFe.length; i++) {
+		for(var i=0; i < impressaoNfeController.filtroNotasImprimirNFe.length; i++) {
 			params.push({
 				'name' : 'filtro.numerosNotas[]',
 				'value' : impressaoNfeController.filtroNotasImprimirNFe[i]
 			});
 		}
 		
+		var preparingFileModal = $("#preparing-file-modal").dialog({ modal: true });
+		
 		if(fileType == 'XLS') {
 			
 			$.fileDownload(contextPath +'/nfe/impressaoNFE/exportar', {
 				httpMethod : "POST",
-				data : params
+				data : params,
+				
+				successCallback: function (url) {
+			    	console.log('success');
+			    	$("#preparing-file-modal").dialog('close');
+			    },
+			    failCallback: function (responseHtml, url) {
+			        preparingFileModal.dialog('close');
+			        $("#error-modal").dialog({ modal: true });
+			    }
 			});
 			
 		} else {
 			
 			$.fileDownload(contextPath +'/nfe/impressaoNFE/imprimirNFe', {
 				httpMethod : "POST",
-				data : params
+				data : params,
+				
+				successCallback: function (url) {
+			    	console.log('success');
+			    	$("#preparing-file-modal").dialog('close');
+			    },
+			    failCallback: function (responseHtml, url) {
+			        preparingFileModal.dialog('close');
+			        $("#error-modal").dialog({ modal: true });
+			    }
+				
 			});
 			
 		}
@@ -365,7 +399,6 @@ var impressaoNfeController = $.extend(true, {
 
 		var inputs = $('.impressaoGrid :checkbox', impressaoNfeController.workspace);
 
-		var values = {};
 		inputs.each(function(index) {
 			if(this.id != "selTodasAsNotas") {
 
@@ -386,7 +419,6 @@ var impressaoNfeController = $.extend(true, {
 
 		var inputs = $('#menuFornecedores :checkbox', impressaoNfeController.workspace);
 
-		var values = {};
 		inputs.each(function(index) {
 			if(this.id != "selecionarTodosFornecedores") {
 
@@ -443,7 +475,7 @@ var impressaoNfeController = $.extend(true, {
 			}
 			});
 		} else {
-			for(i=0; i< impressaoNfeController.filtroProdutos.length; i++) {
+			for(var i=0; i< impressaoNfeController.filtroProdutos.length; i++) {
 				if(impressaoNfeController.filtroProdutos[i]['cell']['codigoProduto'] == codigoProduto) {
 					impressaoNfeController.filtroProdutos.splice(i, 1);
 				}
@@ -461,7 +493,7 @@ var impressaoNfeController = $.extend(true, {
 
 	removerDosProdutosFiltrado : function(codigoProduto) {
 
-		for(i=0; i< impressaoNfeController.filtroProdutos.length; i++) {
+		for(var i=0; i< impressaoNfeController.filtroProdutos.length; i++) {
 			if(impressaoNfeController.filtroProdutos[i]['cell']['codigoProduto'] == codigoProduto) {
 				impressaoNfeController.filtroProdutos.splice(i, 1);
 			}
@@ -474,7 +506,6 @@ var impressaoNfeController = $.extend(true, {
 		};
 
 		var inputs = $(".produtosPesqGrid :checkbox");
-		var values = [];
 		inputs.each(function(index) {
 			if(this.value == codigoProduto) {	 
 				this.checked = false;

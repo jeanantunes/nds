@@ -37,15 +37,17 @@ public interface ChamadaEncalheService {
 	 * Obtém Dados dos Fornecedores para impressão de Bandeira
 	 * 
 	 * @param semana - Número da semana
+	 * @param fornecedor TODO
 	 * @return
 	 */
-	List<FornecedorDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana);
+	List<FornecedorDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana, Long fornecedor);
 
 	/**
 	 * Obter Count de "obterBandeirasDaSemana"
 	 * 
 	 * @param semana
+	 * @param fornecedor TODO
 	 * @return
 	 */
-	Long countObterBandeirasDaSemana(Integer semana);
+	Long countObterBandeirasDaSemana(Integer semana, Long fornecedor);
 }

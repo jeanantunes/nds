@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
@@ -60,7 +61,7 @@ public class EstoqueProduto implements Serializable {
 	@OneToMany(mappedBy = "estoqueProduto")
 	private List<MovimentoEstoque> movimentos = new ArrayList<MovimentoEstoque>();
 	
-	//@Version
+	@Version
 	@Column(name = "VERSAO")
 	private Long versao = 0L;
 	

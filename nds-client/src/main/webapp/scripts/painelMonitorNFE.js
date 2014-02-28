@@ -293,6 +293,55 @@ var PainelMonitorNFE = $.extend(true, {
 		
 	},
 
+	exportar : function() {
+		document.cookie="username=John Doe; expires=Thu, 18 Dec 2013 12:00:00 GMT; path=/";
+		var box = $("#box", PainelMonitorNFE.workspace).val();
+		var dataInicial = $("#dataInicial", PainelMonitorNFE.workspace).val();
+		var dataFinal = $("#dataFinal", PainelMonitorNFE.workspace).val();
+		var documentoPessoa = $('input:radio[name=painelNfe-radioTipoDoc]:checked', PainelMonitorNFE.workspace).val();
+		var documento = $("#documento", PainelMonitorNFE.workspace).val();
+		var tipoNfe = $("#tipoNfe", PainelMonitorNFE.workspace).val();
+		var numeroInicial = $("#numeroInicial", PainelMonitorNFE.workspace).val();
+		var numeroFinal = $("#numeroFinal", PainelMonitorNFE.workspace).val();
+		var chaveAcesso = $("#chaveAcesso", PainelMonitorNFE.workspace).val();
+		var situacaoNfe = $("#situacaoNfe", PainelMonitorNFE.workspace).val();
+		var serieNfe	= $("#serieNfe", PainelMonitorNFE.workspace).val();	
+		var nrDocumento	= $("#painelNfe-documento", PainelMonitorNFE.workspace).val();
+		
+		var params = [
+		        {name:'filtro.box', value: box },
+		        {name:'filtro.dataInicial', value: dataInicial },
+		        {name:'filtro.dataFinal', value: dataFinal },
+		        {name:'filtro.documentoPessoa', value: documentoPessoa },
+		        {name:'filtro.documento', value: documento },
+		        {name:'filtro.tipoNfe', value: tipoNfe },
+		        {name:'filtro.numeroNotaInicial', value: numeroInicial },
+		        {name:'filtro.numeroNotaFinal', value: numeroFinal },
+		        {name:'filtro.chaveAcesso', value: chaveAcesso },
+		        {name:'filtro.situacaoNfe', value: situacaoNfe },
+		        {name:'filtro.serie',    value: serieNfe},
+		        {name:'filtro.numeroDocumento', value: nrDocumento}
+		];
+		
+		var preparingFileModal = $("#preparing-file-modal").dialog({ modal: true });
+		
+		$.fileDownload(this.path+"exportar?fileType=XLS", {
+			data: params, 
+		    httpMethod: "GET",
+		    successCallback: function (url) {
+		    	console.log('success');
+		    	$("#preparing-file-modal").dialog('close');
+		    },
+		    failCallback: function (responseHtml, url) {
+		        preparingFileModal.dialog('close');
+		        $("#error-modal").dialog({ modal: true });
+		    }
+		    
+		});
+		
+		$("#preparing-file-modal").dialog('close');
+	},
+	
 	
 	imprimirDanfeUnica : function(lineId) {
 		

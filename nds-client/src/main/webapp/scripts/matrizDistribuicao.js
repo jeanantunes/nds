@@ -1543,7 +1543,9 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	    $('#workspace').tabs( "option", "ajaxOptions", temp );
 
 	    T.esconderOpcoes();
-	};
+
+        this.tabSomarCopiarEstudos = 'complementar';
+    };
 
 	this.analise = function(){
 		//testa se registro foi selecionado
