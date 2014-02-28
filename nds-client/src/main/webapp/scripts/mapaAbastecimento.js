@@ -484,15 +484,15 @@
 			T.limparProdutosSelecionados();
 			break;
 		case 'COTA':
-			T.bloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao');
-			T.desbloquearCampos('codigoCota','nomeCota','quebraPorCota');
+			T.bloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao','quebraPorCota');
+			T.desbloquearCampos('codigoCota','nomeCota');
 			T.displayEntregador(false);
 			T.bloquearLinkProdutos();
 			T.limparProdutosSelecionados();
 			break;
 		case 'PRODUTO_X_COTA' :
-			T.bloquearCampos('box','rota','roteiro');
-			T.desbloquearCampos('codigoCota','nomeCota','quebraPorCota', 'codigoProduto','nomeProduto','edicao');
+			T.bloquearCampos('box','rota','roteiro','quebraPorCota');
+			T.desbloquearCampos('codigoCota','nomeCota', 'codigoProduto','nomeProduto','edicao');
 			T.desbloquearLinkProdutos();
 			T.displayEntregador(false);
 			break;

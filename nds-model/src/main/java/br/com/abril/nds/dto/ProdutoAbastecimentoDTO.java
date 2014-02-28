@@ -33,6 +33,7 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private Integer qtdeExms;
 	private Cota cota;
 	private List<String> cotasSemRoteirizacao;
+	private String descRoteiro;
 	
 	public ProdutoAbastecimentoDTO() {
 	
@@ -290,4 +291,14 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	public void setCotasSemRoteirizacao(List<String> cotasSemRoteirizacao) {
 		this.cotasSemRoteirizacao = cotasSemRoteirizacao;
 	}
+
+    
+    public String getDescRoteiro() {
+        return descRoteiro;
+    }
+
+    
+    public void setDescRoteiro(String descRoteiro) {
+        this.descRoteiro = descRoteiro;
+    }
 }
