@@ -167,16 +167,8 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		   .append(" join produtoEdicao.chamadaEncalhes chamadaEncalhe ")
 		   .append(" join chamadaEncalhe.chamadaEncalheCotas cec ")
 		   .append(" where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ")
-		   .append(" and cec.postergado = :naoPostergado ")
+		   .append(" and cec.postergado = :naoPostergado ");
 		   
-		   //ignorar registros zerados - comentado a pedidos do negócio
-//		   .append(" and (")
-//		   .append(" coalesce(estoqueProduto.qtde, 0) != 0 ")
-//		   .append(" or coalesce(estoqueProduto.qtdeSuplementar, 0) != 0 ")
-//		   .append(" or coalesce(estoqueProduto.qtdeDanificado, 0) != 0 ")
-//		   .append(" or coalesce(estoqueProduto.qtdeDevolucaoEncalhe, 0) != 0 ")
-//		   .append(")")
-		   ;
 	}
 	
 	private void setParametrosBuscarEstoqueProdutoRecolhimento(Query query, 
@@ -195,6 +187,7 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		   .append(" from EstoqueProduto ep ")
 		   .append(" join ep.produtoEdicao pre ")
 		   .append(" join pre.lancamentos lan ")
+		   .append(" join pre.chamadaEncalhes ce")
 		   .append(" where lan.status = :statusFechado ")
 		   .append(" group by ep.id ")
 		   .append(" having (sum(coalesce(ep.qtde,0)) + sum(coalesce(ep.qtdeSuplementar,0)) ")

@@ -652,7 +652,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	
 	@Override
 	@Transactional
-	public Long countObterBandeirasDaSemana(Integer semana) {
+	public Long countObterBandeirasDaSemana(Integer semana, Long fornecedor) {
 		
 		Intervalo<Date> periodoRecolhimento = null;
 		
@@ -662,12 +662,12 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
-		return chamadaEncalheRepository.countObterBandeirasNoIntervalo(periodoRecolhimento);
+		return chamadaEncalheRepository.countObterBandeirasNoIntervalo(periodoRecolhimento, fornecedor);
 	}
 	
 	@Override
 	@Transactional
-	public List<FornecedorDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana) {
+	public List<FornecedorDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana, Long fornecedor) {
 		
 		Intervalo<Date> periodoRecolhimento = null;
 		
@@ -677,6 +677,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
-		return chamadaEncalheRepository.obterDadosFornecedoresParaImpressaoBandeira(periodoRecolhimento);
+		return chamadaEncalheRepository.obterDadosFornecedoresParaImpressaoBandeira(periodoRecolhimento, fornecedor);
 	}
 }
