@@ -655,6 +655,17 @@ public class MatrizLancamentoController extends BaseController {
             }
         }
         
+
+        if(calendarioService.isFeriadoSemOperacao(novaData)
+  	    || calendarioService.isFeriadoMunicipalSemOperacao(novaData)){
+        	
+            throw new ValidacaoException(
+                    TipoMensagem.WARNING,
+                    "A data de lançamento não pode ser alterada para uma data feriado não operante!");
+            
+        	
+        }
+  	  
         this.removerEAdicionarMapa(matrizLancamento, listaProdutoLancamentoAlterar, novaData);
         
         balanceamentoLancamentoSessao.setMatrizLancamento(matrizLancamento);
@@ -734,10 +745,6 @@ public class MatrizLancamentoController extends BaseController {
             
             produtosLancamentoDTO.remove(produtoLancamentoDTO);
             
-            System.out.println(produtoLancamentoDTO.getNomeProduto());
-            System.out.println(produtoLancamentoDTO.getStatusLancamento());
-            System.out.println(produtoLancamentoDTO.isAlterado());
-            System.out.println(produtoLancamentoDTO.getNovaDataLancamento());
             
             if (produtosLancamentoDTO.isEmpty()) {
                 
