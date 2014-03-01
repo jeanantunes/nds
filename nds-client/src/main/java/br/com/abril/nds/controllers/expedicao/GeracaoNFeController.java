@@ -262,19 +262,9 @@ public class GeracaoNFeController extends BaseController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "NF-e(s) gerada(s) com sucesso."), Constantes.PARAM_MSGS).serialize();
 	}
 	
-	@Post("/transferirSuplementar.json")
-	public void transferirSuplementar(List<Long> idsCota){
-		
-		//TODO
-		
-		result.use(CustomJson.class).from(true).serialize();
-	}
-	
 	public List<ItemDTO<Long, String>> carregarTipoNotaFiscal() {
 		
-		List<ItemDTO<Long, String>> listaTipoNotaFiscal = 
-				this.tipoNotaFiscalService.carregarComboTiposNotasFiscais(
-						this.distribuidorService.tipoAtividade());
+		List<ItemDTO<Long, String>> listaTipoNotaFiscal = this.tipoNotaFiscalService.carregarComboTiposNotasFiscais(this.distribuidorService.tipoAtividade());
 		
 		return listaTipoNotaFiscal;
 	}

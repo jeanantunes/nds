@@ -658,11 +658,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			        document.getFirstChild().setPrefix("");
 			        NamedNodeMap nnm = document.getFirstChild().getAttributes();
 			        Node nodeXmlsNS = nnm.getNamedItem("xmlns:ns2");			        
-			        Element xmlns = document.createElement("xmlns");
-			        xmlns.setNodeValue(nodeXmlsNS.getNodeValue());
+			        //Element xmlns = document.createElement("xmlns");
+			        //xmlns.setNodeValue(nodeXmlsNS.getNodeValue());
 			        
 			        nnm.removeNamedItem("xmlns:ns2");
-			        document.getFirstChild().appendChild(xmlns);
+			        //document.getFirstChild().appendChild(xmlns);
 			        
 					Element parent = (Element) document.getElementsByTagName("NFe").item(0);
 					
@@ -673,7 +673,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					signatureHandler.sign(new DOMStructure(parent), "infNFe");
 			        			        
 					ParametroSistema diretorioSaida = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
-					String numeroNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNumeroDocumentoFiscal().toString();
+					String numeroNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getCodigoNF();
 					String serieNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getSerie().toString();
 					
 			        OutputStream os2 = new FileOutputStream(diretorioSaida.getValor() +"/"+ "NF-e-"+ serieNF +"-"+ numeroNF +".xml");

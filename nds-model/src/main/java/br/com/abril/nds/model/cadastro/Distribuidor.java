@@ -336,14 +336,14 @@ public class Distribuidor {
 	
 	@OneToMany
 	@JoinTable(
-	            name="DISTRIBUIDOR_TIPOS_EMISSOES_NOTA_FISCAL",
+	            name="distribuidor_nota_fiscal_tipos",
 	            joinColumns={
 	            		@JoinColumn(table="DISTRIBUIDOR", name="DISTRIBUIDOR_ID", referencedColumnName="id", nullable=false)
 	                    },
 	            inverseJoinColumns=@JoinColumn(table="DISTRIBUIDOR_NOTA_FISCAL_TIPO_EMISSAO", name="NOTA_FISCAL_TIPO_EMISSAO_ID", referencedColumnName="id"))
 	@OrderBy("sequencia")
 	private Set<NotaFiscalTipoEmissao> tiposEmissoesNotaFiscalDistribuidor = new HashSet<NotaFiscalTipoEmissao>();
-
+	
 	@OneToMany
 	private List<DistribuidorClassificacaoCota> listClassificacaoCota;
 	

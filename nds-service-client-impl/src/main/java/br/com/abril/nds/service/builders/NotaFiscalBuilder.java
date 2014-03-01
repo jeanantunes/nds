@@ -3,7 +3,6 @@ package br.com.abril.nds.service.builders;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,7 +126,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setInscricaoMunicipal(distribuidor.getJuridica().getInscricaoMunicipal());
 		
 		//FIXME: Obter o valor cnae
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setCnae(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getCnae());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setCnae("4789099");
 		
 		//FIXME: Obter o valor crt
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setRegimeTributario(RegimeTributario.REGIME_NORMAL);
@@ -157,20 +156,10 @@ public class NotaFiscalBuilder implements Serializable {
 	}
 
 
-	public static void montarHeaderNotaFiscal(NotaFiscal notaFiscal, Cota cota) {
+	public static void montarHeaderNotaFiscal(NotaFiscal notaFiscal, Cota cota, Map<String, ParametroSistema> parametrosSistema) {
 		
-		ResourceBundle rb = ResourceBundle.getBundle("nds-client-nfe");
-		String versaoEmissor = rb.getString("nfe.informacoes.versaoEmissor");
-		
-		Map<String, ParametroSistema> params = parametroSistemaRepository.buscarParametroSistemaGeralMap();
-		
-		FormaPagamento formaPagamento;
-		
-		try {
-			formaPagamento = FormaPagamento.getByValue(Integer.valueOf(rb.getString("nfe.informacoes.tipoPagamento")));
-		} catch (NumberFormatException nfe) {
-			formaPagamento = FormaPagamento.OUTROS;
-		}
+		//FIXME: Obter forma de pagamento da cota
+		FormaPagamento formaPagamento = FormaPagamento.OUTROS;
 		
 		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacao() == null) {
 			notaFiscal.getNotaFiscalInformacoes().setIdentificacao(new Identificacao());
@@ -184,7 +173,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormaPagamento(formaPagamento);
 		
 		//FIXME: Ajustar para variavel global
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoAmbiente(TipoAmbiente.valueOf(params.get("NFE_INFORMACOES_AMBIENTE").getValor()));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoAmbiente(TipoAmbiente.valueOf(parametrosSistema.get("NFE_INFORMACOES_AMBIENTE").getValor()));
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoEmissao(TipoEmissao.NORMAL);
@@ -199,19 +188,19 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setPresencaConsumidor(PresencaConsumidor.NAO_SE_APLICA);
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setVersaoSistemaEmissao(versaoEmissor);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setVersaoSistemaEmissao(parametrosSistema.get("NFE_INFORMACOES_VERSAO_EMISSOR").getValor());
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormatoImpressao(FormatoImpressao.valueOf(params.get("NFE_INFORMACOES_FORMATO_IMPRESSAO").getValor()));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormatoImpressao(FormatoImpressao.valueOf(parametrosSistema.get("NFE_INFORMACOES_FORMATO_IMPRESSAO").getValor()));
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setModeloDocumentoFiscal("55");
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.valueOf(params.get("EMISSAO_NFE_APLICATIVO_FORNECIDO_PELO_FISCO").getValor()));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.valueOf(parametrosSistema.get("NFE_INFORMACOES_TIPO_EMISSOR").getValor()));
 		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDataEmissao(new Date());
 		

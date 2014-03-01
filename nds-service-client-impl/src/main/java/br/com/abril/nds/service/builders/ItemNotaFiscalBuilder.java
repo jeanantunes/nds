@@ -20,8 +20,10 @@ import br.com.abril.nds.model.fiscal.nota.ICMS;
 import br.com.abril.nds.model.fiscal.nota.IPI;
 import br.com.abril.nds.model.fiscal.nota.Impostos;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.OrigemProduto;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
+import br.com.abril.nds.util.CurrencyUtil;
 
 public class ItemNotaFiscalBuilder  {
 	
@@ -105,8 +107,24 @@ public class ItemNotaFiscalBuilder  {
 		detalheNotaFiscal.getProdutoServico().setNcm(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
 		detalheNotaFiscal.getProdutoServico().setQuantidade(movimentoEstoqueCota.getQtde());
 		detalheNotaFiscal.getProdutoServico().setUnidade(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
-		detalheNotaFiscal.getProdutoServico().setValorTotalBruto(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde())));
-		detalheNotaFiscal.getProdutoServico().setValorUnitario(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
+		
+		BigDecimal valorTotalBruto = CurrencyUtil.arredondarValorParaDuasCasas(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde())));
+		detalheNotaFiscal.getProdutoServico().setValorTotalBruto(valorTotalBruto);
+		
+		BigDecimal valorUnitario = CurrencyUtil.arredondarValorParaQuatroCasas(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
+		detalheNotaFiscal.getProdutoServico().setValorUnitario(valorUnitario);
+		
+		detalheNotaFiscal.getProdutoServico().setValorDesconto(BigDecimal.ZERO);
+		
+		//FIXME: Ajustar os produtos para sinalizarem a inclusao do frete na nf
+		detalheNotaFiscal.getProdutoServico().setValorFreteCompoeValorNF(false);
+		if(detalheNotaFiscal.getProdutoServico().isValorFreteCompoeValorNF()) {
+			//FIXME: Ajustar os produtos para trazer os valores, se necessario
+			detalheNotaFiscal.getProdutoServico().setValorFrete(BigDecimal.ZERO);
+			detalheNotaFiscal.getProdutoServico().setValorSeguro(BigDecimal.ZERO);
+			detalheNotaFiscal.getProdutoServico().setValorOutros(BigDecimal.ZERO);
+		}
+		
 		detalheNotaFiscal.getProdutoServico().setProdutoEdicao(new ProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao().getId()));
 		if(detalheNotaFiscal.getImpostos() == null) {
 			detalheNotaFiscal.setImpostos(new Impostos());
@@ -132,7 +150,9 @@ public class ItemNotaFiscalBuilder  {
 					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao acessar classe: ICMS"+ t.getCst().toString());
 				}
 				
-				icms.setCst(t.getCstA().toString() + t.getCst().toString());
+				//FIXME: Ajustar o produto para trazer a origem (nacional / estrangeira)
+				icms.setOrigem(OrigemProduto.NACIONAL);
+				icms.setCst(t.getCst().toString());
 				icms.setAliquota(t.getValorAliquota());
 				icms.setValorBaseCalculo(t.getBaseCalculo());
 				
@@ -144,7 +164,7 @@ public class ItemNotaFiscalBuilder  {
 				
 				IPI ipi = new IPI();
 				
-				ipi.setCst(t.getCstA().toString() + t.getCst().toString());
+				ipi.setCst(t.getCst().toString());
 				ipi.setAliquota(t.getValorAliquota());
 				ipi.setValorBaseCalculo(t.getBaseCalculo());
 				
@@ -153,7 +173,7 @@ public class ItemNotaFiscalBuilder  {
 		}
 		
 		//FIXME: Ajustar o codigo Excessao do ipi
-		detalheNotaFiscal.getProdutoServico().setExtipi(0L);
+		//detalheNotaFiscal.getProdutoServico().setExtipi(0L);
 
 		String cfop = "";
 		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getPais()

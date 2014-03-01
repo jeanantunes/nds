@@ -158,6 +158,7 @@ public class IdentificacaoEmitente implements Serializable {
 	@OneToOne(optional=true, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="TELEFONE_ID_EMITENTE", updatable=true, insertable=true)
 	@NFEExportType
+	@XmlTransient
 	private NotaFiscalTelefone telefone;
 	
 	

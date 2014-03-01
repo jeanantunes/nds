@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.builders;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -14,7 +16,7 @@ public class NaturezaOperacaoBuilder {
 		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDescricaoNaturezaOperacao(naturezaOperacao.getDescricao());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNumeroDocumentoFiscal(naturezaOperacao.getNotaFiscalNumeroNF());
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoNF(naturezaOperacao.getNotaFiscalNumeroNF().toString());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoNF(StringUtils.leftPad(naturezaOperacao.getNotaFiscalNumeroNF().toString(), 8, '0'));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setSerie(naturezaOperacao.getNotaFiscalSerie());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNaturezaOperacao(naturezaOperacao);
 		

@@ -60,13 +60,7 @@
 	
 	<input type="hidden" id="tipoEnderecoHidden"
 		   value="${parametrosDistribuidor.endereco.tipoEndereco}" />
-		   
-    <input type="hidden" id="regimeTributarioHidden"
-		   value="${parametrosDistribuidor.regimeTributario.id}" />
-		   
-	<input type="hidden" id="nfInformacoesAdicionaisHidden"
-		   value="${parametrosDistribuidor.nfInformacoesAdicionais}" />
-		   		  
+					   		  
 	<input type="hidden" id="relancamentoParciaisEmDiasHidden"
 		   value="${parametrosDistribuidor.relancamentoParciaisEmDias}" />
 		   

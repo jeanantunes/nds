@@ -34,7 +34,7 @@ import br.com.abril.nds.model.movimentacao.TipoMovimento;
  */
 @Entity
 @Table(name = "NATUREZA_OPERACAO")
-@Cache(usage=CacheConcurrencyStrategy.READ_ONLY, region="naturezaOperacao")
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE, region="naturezaOperacao")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class NaturezaOperacao implements Serializable {
 

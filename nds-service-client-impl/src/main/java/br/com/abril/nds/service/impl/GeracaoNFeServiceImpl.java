@@ -33,11 +33,13 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalBase;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalNdsRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.service.GeracaoNFeService;
@@ -85,18 +87,21 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	private NotaFiscalNdsRepository notaFiscalNdsRepository; 
 	
 	@Autowired
+	private ParametroSistemaRepository parametroSistemaRepository;
+	
+	@Autowired
 	private UsuarioService usuarioService;
 	
 	@Autowired
     private ParametrosDistribuidorService parametrosDistribuidorService;
 	
-	// Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
-    // O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
+	// Trava para evitar duplicidade ao gerar notas por mais de um usuario simultaneamente
+    // O HashMap suporta mais detalhes e pode ser usado futuramente para restricoes mais finas
     private static final Map<String, Object> TRAVA_GERACAO_NFe = new HashMap<>();
 	
 	@Override
 	@Transactional
-	public List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
+	public synchronized List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
 			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, Long idTipoNotaFiscal, Long idRoteiro, Long idRota,
@@ -194,6 +199,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		}
 		
 		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
+		Map<String, ParametroSistema> parametrosSistema = parametroSistemaRepository.buscarParametroSistemaGeralMap();
 		
 		switch (naturezaOperacao.getTipoDestinatario()) {
 		
@@ -201,7 +207,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			case DISTRIBUIDOR:
 				
 				if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
-					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao);
+					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
 				} else{
 					//
 					boolean notaGerada = false;
@@ -211,7 +217,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 								throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
 							}
 							
-							this.gerarNotaFiscalUnifica(filtro, notas, distribuidor, naturezaOperacao);
+							this.gerarNotaFiscalUnifica(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
 							notaGerada = true;
 							break;
 						}
@@ -256,7 +262,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	}
 
 	private void gerarNotasFiscaisCotas(FiltroNFeDTO filtro,
-			List<NotaFiscal> notasFiscais, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
+			List<NotaFiscal> notasFiscais, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao, Map<String, ParametroSistema> parametrosSistema) {
 		
 		// obter as cotas que estão na tela pelo id das cotas
 		List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoCotasNotafiscal(filtro);
@@ -275,7 +281,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
-			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota);
+			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota, parametrosSistema);
 			
 			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
 			
@@ -287,14 +293,15 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			}
 			
 			//FIXME: Ajustar o valor do campo para valores parametrizados
-			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais("XXXXX");
+			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal, cota);
 			notasFiscais.add(notaFiscal);
 		}
 	}
 	
-	private void gerarNotaFiscalUnifica(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
+	private void gerarNotaFiscalUnifica(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais
+			, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao, Map<String, ParametroSistema> parametrosSistema) {
 		
 		// obter as cotas que estão na tela pelo id das cotas
 		NotaFiscal notaFiscal = new NotaFiscal();
@@ -311,7 +318,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor, filtro);
 			
-			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota);
+			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota, parametrosSistema);
 			
 			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
 			

@@ -358,3 +358,261 @@
 22:27:29,989 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
 22:28:07,403 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
 22:28:07,468 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+16:06:59,008 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v/2.00.xsd
+16:06:59,068 ERROR NotaFiscalV200Test:37 - Exception: schema_reference.4: Failed to read schema document 'file:/home/sergio/Projects/DGB/NDS/nfe/src/main/resources/xsd/v2.00/nfe_v/2.00.xsd', because 1) could not find the document; 2) the document could not be read; 3) the root element of the document is not <xsd:schema>.
+16:06:59,071 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+16:06:59,255 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+16:06:59,267 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+16:06:59,303 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+16:07:49,022 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+16:07:49,377 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+16:07:49,401 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'infNFe'. One of '{"http://www.portalfiscal.inf.br/nfe":infNFe}' is expected.
+16:07:49,404 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+16:07:49,445 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+16:07:49,455 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+16:07:49,492 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+16:08:22,740 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+16:08:22,851 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+16:08:22,865 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+16:08:22,908 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+16:08:22,914 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+16:08:23,099 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+16:08:23,115 ERROR NotaFiscalV200Test:37 - Exception: cvc-pattern-valid: Value '6' is not facet-valid with respect to pattern '[0-9]{8}' for type '#AnonType_cNFideinfNFeTNFe'.
+16:44:31,076 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+16:44:31,500 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+16:44:31,526 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'infNFe'. One of '{"http://www.portalfiscal.inf.br/nfe":infNFe}' is expected.
+16:44:31,529 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+16:44:31,587 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+16:44:31,597 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+16:44:31,641 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+16:44:50,510 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+16:44:50,934 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+16:44:50,963 ERROR NotaFiscalV200Test:37 - Exception: cvc-pattern-valid: Value '00000007' is not facet-valid with respect to pattern '[1-9]{1}[0-9]{0,8}' for type 'TNF'.
+16:44:50,967 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+16:44:51,012 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+16:44:51,020 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+16:44:51,066 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+16:46:02,668 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+16:46:03,076 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+16:46:03,106 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'CRT'. One of '{"http://www.portalfiscal.inf.br/nfe":CNAE}' is expected.
+16:46:03,109 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+16:46:03,154 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+16:46:03,162 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+16:46:03,206 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+16:59:43,563 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+16:59:44,198 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+16:59:44,243 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'infNFe'. One of '{"http://www.portalfiscal.inf.br/nfe":infNFe}' is expected.
+16:59:44,271 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+16:59:44,366 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+16:59:44,381 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+16:59:44,457 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+16:59:53,598 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+16:59:54,212 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+16:59:54,245 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'CRT'. One of '{"http://www.portalfiscal.inf.br/nfe":CNAE}' is expected.
+16:59:54,249 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+16:59:54,342 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+16:59:54,362 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+16:59:54,416 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:00:14,311 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:00:14,718 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:00:14,746 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'CNAE'. One of '{"http://www.portalfiscal.inf.br/nfe":dhCont}' is expected.
+17:00:14,749 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:00:14,794 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:00:14,802 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:00:14,847 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:02:14,364 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:02:14,475 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:02:14,486 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:02:14,536 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:02:14,543 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:02:14,760 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:02:14,780 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'CNAE'. One of '{"http://www.portalfiscal.inf.br/nfe":dhCont}' is expected.
+17:03:15,054 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:03:15,475 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:03:15,506 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'CRT'. One of '{"http://www.portalfiscal.inf.br/nfe":CNAE}' is expected.
+17:03:15,509 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:03:15,554 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:03:15,563 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:03:15,609 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:20:41,974 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:20:42,073 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:20:42,084 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:20:42,126 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:20:42,134 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:20:42,304 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:20:42,321 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'CRT'. One of '{"http://www.portalfiscal.inf.br/nfe":CNAE}' is expected.
+17:20:54,863 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:20:55,261 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:20:55,291 ERROR NotaFiscalV200Test:37 - Exception: cvc-pattern-valid: Value '4789-0/99' is not facet-valid with respect to pattern '[0-9]{7}' for type '#AnonType_CNAEemitinfNFeTNFe'.
+17:20:55,294 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:20:55,340 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:20:55,348 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:20:55,402 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:21:05,847 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:21:06,246 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:21:06,282 ERROR NotaFiscalV200Test:37 - Exception: cvc-pattern-valid: Value '0' is not facet-valid with respect to pattern '[0-9]{2,3}' for type '#AnonType_EXTIPIproddetinfNFeTNFe'.
+17:21:06,285 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:21:06,336 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:21:06,345 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:21:06,393 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:24:39,493 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:24:40,108 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:24:40,168 ERROR NotaFiscalV200Test:37 - Exception: cvc-pattern-valid: Value '38.4230' is not facet-valid with respect to pattern '0|0\.[0-9]{2}|[1-9]{1}[0-9]{0,12}(\.[0-9]{2})?' for type 'TDec_1302'.
+17:24:40,174 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:24:40,248 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:24:40,260 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:24:40,343 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:37:19,499 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:37:19,843 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:37:19,867 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'infNFe'. One of '{"http://www.portalfiscal.inf.br/nfe":infNFe}' is expected.
+17:37:19,870 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:37:19,909 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:37:19,919 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:37:19,956 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:37:29,137 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:37:29,577 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:37:29,611 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.b: The content of element 'prod' is not complete. One of '{"http://www.portalfiscal.inf.br/nfe":cEANTrib}' is expected.
+17:37:29,614 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:37:29,659 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:37:29,667 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:37:29,710 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:38:21,685 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:38:22,143 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:38:22,176 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.b: The content of element 'prod' is not complete. One of '{"http://www.portalfiscal.inf.br/nfe":uTrib}' is expected.
+17:38:22,179 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:38:22,224 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:38:22,231 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:38:22,280 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:38:42,936 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:38:43,365 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:38:43,399 ERROR NotaFiscalV200Test:37 - Exception: cvc-pattern-valid: Value '' is not facet-valid with respect to pattern '[!-ÿ]{1}[ -ÿ]{0,}[!-ÿ]{1}|[!-ÿ]{1}' for type '#AnonType_uTribproddetinfNFeTNFe'.
+17:38:43,402 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:38:43,447 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:38:43,455 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:38:43,492 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:38:51,835 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:38:52,254 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:38:52,299 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.b: The content of element 'prod' is not complete. One of '{"http://www.portalfiscal.inf.br/nfe":qTrib}' is expected.
+17:38:52,303 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:38:52,370 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:38:52,390 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:38:52,436 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:39:05,707 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:39:06,126 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:39:06,161 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.b: The content of element 'prod' is not complete. One of '{"http://www.portalfiscal.inf.br/nfe":vUnTrib}' is expected.
+17:39:06,164 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:39:06,210 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:39:06,218 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:39:06,263 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:39:21,504 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:39:21,962 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:39:22,002 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.b: The content of element 'prod' is not complete. One of '{"http://www.portalfiscal.inf.br/nfe":vFrete, "http://www.portalfiscal.inf.br/nfe":vSeg, "http://www.portalfiscal.inf.br/nfe":vDesc, "http://www.portalfiscal.inf.br/nfe":vOutro, "http://www.portalfiscal.inf.br/nfe":indTot}' is expected.
+17:39:22,006 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:39:22,049 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:39:22,057 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:39:22,092 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:40:22,698 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:40:22,826 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:40:22,843 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:40:22,894 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:40:22,900 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:40:23,125 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:40:23,150 ERROR NotaFiscalV200Test:37 - Exception: cvc-pattern-valid: Value '' is not facet-valid with respect to pattern '0\.[0-9]{1}[1-9]{1}|0\.[1-9]{1}[0-9]{1}|[1-9]{1}[0-9]{0,12}(\.[0-9]{2})?' for type 'TDec_1302Opc'.
+17:40:31,190 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:40:31,321 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:40:31,339 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:40:31,394 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:40:31,407 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:40:31,703 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:40:31,734 ERROR NotaFiscalV200Test:37 - Exception: cvc-pattern-valid: Value '0.00' is not facet-valid with respect to pattern '0\.[0-9]{1}[1-9]{1}|0\.[1-9]{1}[0-9]{1}|[1-9]{1}[0-9]{0,12}(\.[0-9]{2})?' for type 'TDec_1302Opc'.
+17:41:11,988 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:41:12,109 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:41:12,127 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:41:12,179 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:41:12,187 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:41:12,446 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:41:12,474 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.b: The content of element 'prod' is not complete. One of '{"http://www.portalfiscal.inf.br/nfe":vSeg, "http://www.portalfiscal.inf.br/nfe":vDesc, "http://www.portalfiscal.inf.br/nfe":vOutro, "http://www.portalfiscal.inf.br/nfe":indTot}' is expected.
+17:41:26,218 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:41:26,651 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:41:26,685 ERROR NotaFiscalV200Test:37 - Exception: cvc-pattern-valid: Value '0.00' is not facet-valid with respect to pattern '0\.[0-9]{1}[1-9]{1}|0\.[1-9]{1}[0-9]{1}|[1-9]{1}[0-9]{0,12}(\.[0-9]{2})?' for type 'TDec_1302Opc'.
+17:41:26,689 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:41:26,734 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:41:26,742 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:41:26,775 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:41:34,446 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:41:34,571 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:41:34,590 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:41:34,638 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:41:34,646 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:41:34,879 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:41:34,905 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.b: The content of element 'prod' is not complete. One of '{"http://www.portalfiscal.inf.br/nfe":vDesc, "http://www.portalfiscal.inf.br/nfe":vOutro, "http://www.portalfiscal.inf.br/nfe":indTot}' is expected.
+17:41:46,594 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:41:46,719 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:41:46,735 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:41:46,790 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:41:46,798 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:41:47,056 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:41:47,084 ERROR NotaFiscalV200Test:37 - Exception: cvc-pattern-valid: Value '0.00' is not facet-valid with respect to pattern '0\.[0-9]{1}[1-9]{1}|0\.[1-9]{1}[0-9]{1}|[1-9]{1}[0-9]{0,12}(\.[0-9]{2})?' for type 'TDec_1302Opc'.
+17:42:04,451 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:42:04,803 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:42:04,837 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.b: The content of element 'prod' is not complete. One of '{"http://www.portalfiscal.inf.br/nfe":vOutro, "http://www.portalfiscal.inf.br/nfe":indTot}' is expected.
+17:42:04,840 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:42:04,877 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:42:04,885 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:42:04,921 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:42:15,385 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:42:15,848 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:42:15,891 ERROR NotaFiscalV200Test:37 - Exception: cvc-pattern-valid: Value '0.00' is not facet-valid with respect to pattern '0\.[0-9]{1}[1-9]{1}|0\.[1-9]{1}[0-9]{1}|[1-9]{1}[0-9]{0,12}(\.[0-9]{2})?' for type 'TDec_1302Opc'.
+17:42:15,895 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:42:15,947 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:42:15,967 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:42:16,007 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:42:23,024 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:42:23,145 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:42:23,163 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:42:23,212 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:42:23,220 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:42:23,477 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:42:23,504 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.b: The content of element 'prod' is not complete. One of '{"http://www.portalfiscal.inf.br/nfe":indTot}' is expected.
+17:42:32,966 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:42:33,087 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:42:33,104 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:42:33,156 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:42:33,164 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:42:33,397 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:42:33,423 ERROR NotaFiscalV200Test:37 - Exception: cvc-enumeration-valid: Value '' is not facet-valid with respect to enumeration '[0, 1]'. It must be a value from the enumeration.
+17:42:42,336 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:42:42,747 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:42:42,780 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'impostos'. One of '{"http://www.portalfiscal.inf.br/nfe":imposto}' is expected.
+17:42:42,783 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:42:42,828 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:42:42,836 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:42:42,894 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:44:19,599 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:44:19,724 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:44:19,740 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:44:19,792 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:44:19,800 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:44:20,034 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:44:20,062 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'ICMS40'. One of '{"http://www.portalfiscal.inf.br/nfe":ICMS, "http://www.portalfiscal.inf.br/nfe":ISSQN}' is expected.
+17:45:12,345 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+17:45:12,439 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+17:45:12,450 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+17:45:12,487 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+17:45:12,493 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+17:45:12,690 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+17:45:12,709 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'aliquota'. One of '{"http://www.portalfiscal.inf.br/nfe":orig}' is expected.
+20:08:06,965 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+20:08:07,332 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+20:08:07,365 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.b: The content of element 'prod' is not complete. One of '{"http://www.portalfiscal.inf.br/nfe":vFrete, "http://www.portalfiscal.inf.br/nfe":vSeg, "http://www.portalfiscal.inf.br/nfe":vDesc, "http://www.portalfiscal.inf.br/nfe":vOutro, "http://www.portalfiscal.inf.br/nfe":indTot}' is expected.
+20:08:07,368 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+20:08:07,404 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+20:08:07,412 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+20:08:07,449 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+20:08:29,424 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+20:08:29,782 DEBUG NotaFiscalV200Test:34 - Validando: src/main/resources/xmlTestes/nfeAssinadaOficial.xml
+20:08:29,816 ERROR NotaFiscalV200Test:37 - Exception: cvc-complex-type.2.4.a: Invalid content was found starting with element 'aliquota'. One of '{"http://www.portalfiscal.inf.br/nfe":orig}' is expected.
+20:08:29,819 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+20:08:29,863 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+20:08:29,871 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+20:08:29,909 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml

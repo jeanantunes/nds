@@ -773,11 +773,9 @@ public class Identificacao implements Serializable {
 		this.codigoNF = codigoNF;
 	}
 	
-	public Long getCodigoNF() {
-		return Long.parseLong(codigoNF);
+	public String getCodigoNF() {
+		return codigoNF;
 	}
-
-	
 
 	public String getModeloDocumentoFiscal() {
 		return modeloDocumentoFiscal;
