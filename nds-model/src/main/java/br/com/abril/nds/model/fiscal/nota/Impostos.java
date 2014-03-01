@@ -16,7 +16,7 @@ public class Impostos implements Serializable {
 	 */
 	private static final long serialVersionUID = 4845108096352563349L;
 
-	@XmlElementWrapper(name="ICMS")
+	@XmlElement(name="ICMS")
 	private ICMSWrapper icms;
 
 	@XmlElement(name="IPI")

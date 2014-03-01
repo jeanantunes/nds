@@ -66,10 +66,6 @@ public class ProdutoServico implements Serializable {
 	@XmlElement(name="cEAN")
 	private Long codigoBarras;
 	
-	@Transient
-	@XmlElement(name="cEANTrib")
-	private Long codigoBarrasXML;
-	
 	/**
 	 * xProd
 	 */
@@ -117,10 +113,6 @@ public class ProdutoServico implements Serializable {
 	@XmlElement(name="uCom")
 	private String unidade;
 	
-	@Transient
-	@XmlElement(name="uTrib")
-	private String unidadeTributada;	
-	
 	/**
 	 * qCom
 	 */
@@ -128,10 +120,6 @@ public class ProdutoServico implements Serializable {
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=7, tamanho=12),@NFEExport(secao=TipoSecao.I, posicao=12, tamanho=12)})
 	@XmlElement(name="qCom")
 	private BigInteger quantidade;
-	
-	@Transient
-	@XmlElement(name="qTrib")
-	private BigInteger quantidadeTributada;
 	
 	/**
 	 * vUnCom
@@ -141,16 +129,30 @@ public class ProdutoServico implements Serializable {
 	@XmlElement(name="vUnCom")
 	private BigDecimal valorUnitario;
 	
-	@Transient
-	@XmlElement(name="vUnTrib")
-	private String valorUnitarioTributado;
-	
 	/**
 	 * vProd
 	 */
 	@Column(name="VALOR_TOTAL_BRUTO", precision=18, scale=4, nullable=false)
 	@XmlElement(name="vProd")
 	private BigDecimal valorTotalBruto;
+
+	@Transient
+	@XmlElement(name="cEANTrib")
+	private Long codigoBarrasXML;
+	
+
+	@Transient
+	@XmlElement(name="uTrib")
+	private String unidadeTributada;	
+	
+
+	@Transient
+	@XmlElement(name="qTrib")
+	private BigInteger quantidadeTributada;
+
+	@Transient
+	@XmlElement(name="vUnTrib")
+	private String valorUnitarioTributado;
 	
 	/**
 	 * vFrete

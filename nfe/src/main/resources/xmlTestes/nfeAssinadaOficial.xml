@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <NFe xmlns="http://www.portalfiscal.inf.br/nfe">
 	<infNFe Id="NFe00000000000000000000000000000000000000000000"
-		versao="2.00" >
+		versao="2.00">
 		<ide>
 			<cUF>35</cUF>
-			<cNF>00000009</cNF>
-			<natOp>Remessa de mercadoria em consignação mercantil ou industrial</natOp>
+			<cNF>00000015</cNF>
+			<natOp>5917 - Remessa de mercadoria em consignação mercantil ou in</natOp>
 			<indPag>2</indPag>
 			<mod>55</mod>
 			<serie>5</serie>
-			<nNF>9</nNF>
+			<nNF>15</nNF>
 			<dEmi>2014-02-28</dEmi>
 			<tpNF>1</tpNF>
 			<cMunFG>3550308</cMunFG>
@@ -42,16 +42,16 @@
 			<CRT>3</CRT>
 		</emit>
 		<dest>
-			<CPF>11129862860</CPF>
-			<xNome>FULVIO HIGA JUNIOR</xNome>
+			<CPF>31083264818</CPF>
+			<xNome>WILLIAM DA SILVA ROCHA</xNome>
 			<enderDest>
-				<xLgr>JOSE PANCETTI</xLgr>
-				<nro>861</nro>
-				<xBairro>VILA PROOST DE SOUZA</xBairro>
+				<xLgr>COACIARA</xLgr>
+				<nro>1226</nro>
+				<xBairro>PARQUE DOM PEDRO II</xBairro>
 				<cMun>3550308</cMun>
 				<xMun>CAMPINAS</xMun>
 				<UF>SP</UF>
-				<CEP>13033740</CEP>
+				<CEP>13056430</CEP>
 				<cPais>1058</cPais>
 				<xPais>Brasil</xPais>
 			</enderDest>
@@ -68,31 +68,45 @@
 				<qCom>2</qCom>
 				<vUnCom>3.8423</vUnCom>
 				<vProd>7.68</vProd>
-				
-				<cEANTrib></cEANTrib>
+				<cEANTrib>9770008594009</cEANTrib>
 				<uTrib>KG</uTrib>
 				<qTrib>2</qTrib>
 				<vUnTrib>3.8423</vUnTrib>
-				<!-- <vFrete>0.01</vFrete>
-				<vSeg>0.01</vSeg>
-				<vDesc>0.01</vDesc>
-				<vOutro>0.01</vOutro> -->
-				<indTot>0</indTot> 
+				<indTot>0</indTot>
 			</prod>
 			<imposto>
 				<ICMS>
 					<ICMS40>
-						<aliquota>0.0000</aliquota>
-						<cst>041</cst>
-						<valorBaseCalculo>0.0000</valorBaseCalculo>
+						<orig>0</orig>
+						<CST>41</CST>
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<aliquota>0.0000</aliquota>
-					<cst>041</cst>
-					<valorBaseCalculo>0.0000</valorBaseCalculo>
+					<cEnq>1</cEnq>
+					<IPITrib>
+						<CST>99</CST>
+						<vBC>3.84</vBC>
+						<pIPI>5</pIPI>
+						<vIPI>0.00</vIPI>
+					</IPITrib>
 				</IPI>
-			</impostos>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>3.84</vBC>
+						<pPIS>1.65</pPIS>
+						<vPIS>0.15</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>3.84</vBC>
+						<pCOFINS>7.60</pCOFINS>
+						<vCOFINS>1.25</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
+			</imposto>
 		</det>
 		<det nItem="2">
 			<prod>
@@ -105,19 +119,45 @@
 				<qCom>2</qCom>
 				<vUnCom>3.8423</vUnCom>
 				<vProd>7.68</vProd>
+				<cEANTrib>9770008594009</cEANTrib>
+				<uTrib>KG</uTrib>
+				<qTrib>2</qTrib>
+				<vUnTrib>3.8423</vUnTrib>
+				<indTot>0</indTot>
 			</prod>
-			<impostos>
-				<ICMS40>
-					<aliquota>0.0000</aliquota>
-					<cst>041</cst>
-					<valorBaseCalculo>0.0000</valorBaseCalculo>
-				</ICMS40>
+			<imposto>
+				<ICMS>
+					<ICMS40>
+						<orig>0</orig>
+						<CST>41</CST>
+					</ICMS40>
+				</ICMS>
 				<IPI>
-					<aliquota>0.0000</aliquota>
-					<cst>041</cst>
-					<valorBaseCalculo>0.0000</valorBaseCalculo>
+					<cEnq>1</cEnq>
+					<IPITrib>
+						<CST>99</CST>
+						<vBC>3.84</vBC>
+						<pIPI>5</pIPI>
+						<vIPI>0.00</vIPI>
+					</IPITrib>
 				</IPI>
-			</impostos>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>3.84</vBC>
+						<pPIS>1.65</pPIS>
+						<vPIS>0.15</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>3.84</vBC>
+						<pCOFINS>7.60</pCOFINS>
+						<vCOFINS>1.25</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
+			</imposto>
 		</det>
 		<det nItem="3">
 			<prod>
@@ -130,19 +170,45 @@
 				<qCom>2</qCom>
 				<vUnCom>3.8423</vUnCom>
 				<vProd>7.68</vProd>
+				<cEANTrib>9770008594009</cEANTrib>
+				<uTrib>KG</uTrib>
+				<qTrib>2</qTrib>
+				<vUnTrib>3.8423</vUnTrib>
+				<indTot>0</indTot>
 			</prod>
-			<impostos>
-				<ICMS40>
-					<aliquota>0.0000</aliquota>
-					<cst>041</cst>
-					<valorBaseCalculo>0.0000</valorBaseCalculo>
-				</ICMS40>
+			<imposto>
+				<ICMS>
+					<ICMS40>
+						<orig>0</orig>
+						<CST>41</CST>
+					</ICMS40>
+				</ICMS>
 				<IPI>
-					<aliquota>0.0000</aliquota>
-					<cst>041</cst>
-					<valorBaseCalculo>0.0000</valorBaseCalculo>
+					<cEnq>1</cEnq>
+					<IPITrib>
+						<CST>99</CST>
+						<vBC>3.84</vBC>
+						<pIPI>5</pIPI>
+						<vIPI>0.00</vIPI>
+					</IPITrib>
 				</IPI>
-			</impostos>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>3.84</vBC>
+						<pPIS>1.65</pPIS>
+						<vPIS>0.15</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>3.84</vBC>
+						<pCOFINS>7.60</pCOFINS>
+						<vCOFINS>1.25</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
+			</imposto>
 		</det>
 		<det nItem="4">
 			<prod>
@@ -155,19 +221,45 @@
 				<qCom>2</qCom>
 				<vUnCom>3.8423</vUnCom>
 				<vProd>7.68</vProd>
+				<cEANTrib>9770008594009</cEANTrib>
+				<uTrib>KG</uTrib>
+				<qTrib>2</qTrib>
+				<vUnTrib>3.8423</vUnTrib>
+				<indTot>0</indTot>
 			</prod>
-			<impostos>
-				<ICMS40>
-					<aliquota>0.0000</aliquota>
-					<cst>041</cst>
-					<valorBaseCalculo>0.0000</valorBaseCalculo>
-				</ICMS40>
+			<imposto>
+				<ICMS>
+					<ICMS40>
+						<orig>0</orig>
+						<CST>41</CST>
+					</ICMS40>
+				</ICMS>
 				<IPI>
-					<aliquota>0.0000</aliquota>
-					<cst>041</cst>
-					<valorBaseCalculo>0.0000</valorBaseCalculo>
+					<cEnq>1</cEnq>
+					<IPITrib>
+						<CST>99</CST>
+						<vBC>3.84</vBC>
+						<pIPI>5</pIPI>
+						<vIPI>0.00</vIPI>
+					</IPITrib>
 				</IPI>
-			</impostos>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>3.84</vBC>
+						<pPIS>1.65</pPIS>
+						<vPIS>0.15</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>3.84</vBC>
+						<pCOFINS>7.60</pCOFINS>
+						<vCOFINS>1.25</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
+			</imposto>
 		</det>
 		<trans>
 			<mdFrente>1</mdFrente>
@@ -186,7 +278,7 @@
 			</endereco>
 		</trans>
 		<notaFiscalValoresCalculados>
-			<id>21</id>
+			<id>35</id>
 			<valorBaseICMS>30.72</valorBaseICMS>
 			<valorICMS>10</valorICMS>
 			<valorBaseICMSSubstituto>30.72</valorBaseICMSSubstituto>
@@ -216,14 +308,14 @@
 					<Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
 				</Transforms>
 				<DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-				<DigestValue>r3EytvQc4SHHFAK8hyIDFDRTwf4=</DigestValue>
+				<DigestValue>QY6fMh4CqZCoVY1tEoHmISYXB0U=</DigestValue>
 			</Reference>
 		</SignedInfo>
-		<SignatureValue>mwb115FkRFtJXzuyrfY7518fF9ga2ruyUFPReL2qExYXCklRBxePDJn8Wv6xZ6iS8o7jEY5JzEys
-			s03s8RdUTcxapDsmBDhkHxnzQ3kj1uKul7451LS5zO8+26Wj08TpgsV3fREkTlXioOZqfj7S2tkC
-			zD23VxLii8Z0r3+rBIsBSdc0RJSekCqdQ9kulLzL0pMImhkDgBwytLUJsAFjkyEAw92f/pEOM8Xz
-			2cFerMES3q2JKTiCbWOr7/Wi9kT2JyxJbKN1tPlj+jBZUAQZfofcv55PgeyW1YXswMc2V6CET1dC
-			d7Ves8Y1N/CfxoZoYr9NGutEdmGJ2HzWjiKimg==
+		<SignatureValue>IuHDQB4Bwzgmtb1glU/P1nrxJEVdR6Ffy3UlCB/XetwxmsVZkc80Crh4Eb/U3BBIVHpuRVlZoPY/
+			xDMrJJKIpfWSNZ1wvQt9EXjikKpQpfq2dddTn0mYT9KcRUgCyG34e7azXCjEGc9I/aD0ofbClkMj
+			GihrhJfWXjq39X2e57wR69wuI5QVJooV9BhLd8MMzqoNc+KeE0G6hES8oCsbrbtD0P7NZ5vD+Fk8
+			pISTUaiCbzCvUZik6dLL9eNN52Rxo7aKTxK2kHJpoHAOyBhZgzWQ3C/AJiuZGPySq3GQt7RLrW+b
+			9Aye1k97l7FxSjybDf935iY19F0YWsoCXTIB+Q==
 		</SignatureValue>
 		<KeyInfo>
 			<X509Data>

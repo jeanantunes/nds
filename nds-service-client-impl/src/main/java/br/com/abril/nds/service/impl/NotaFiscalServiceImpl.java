@@ -40,7 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
@@ -81,7 +80,6 @@ import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoEmissao;
-import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
@@ -657,7 +655,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			         */
 			        document.getFirstChild().setPrefix("");
 			        NamedNodeMap nnm = document.getFirstChild().getAttributes();
-			        Node nodeXmlsNS = nnm.getNamedItem("xmlns:ns2");			        
+			        //Node nodeXmlsNS = nnm.getNamedItem("xmlns:ns2");			        
 			        //Element xmlns = document.createElement("xmlns");
 			        //xmlns.setNodeValue(nodeXmlsNS.getNodeValue());
 			        
@@ -669,6 +667,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					NodeList elements = document.getElementsByTagName("infNFe");
 			        Element el = (Element) elements.item(0);
 			        el.setIdAttribute("Id", true);
+			        el.removeAttribute("xmlns");
 					
 					signatureHandler.sign(new DOMStructure(parent), "infNFe");
 			        			        

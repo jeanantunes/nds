@@ -114,7 +114,7 @@ public class ItemNotaFiscalBuilder  {
 		BigDecimal valorUnitario = CurrencyUtil.arredondarValorParaQuatroCasas(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
 		detalheNotaFiscal.getProdutoServico().setValorUnitario(valorUnitario);
 		
-		detalheNotaFiscal.getProdutoServico().setValorDesconto(BigDecimal.ZERO);
+		//detalheNotaFiscal.getProdutoServico().setValorDesconto(BigDecimal.ZERO);
 		
 		//FIXME: Ajustar os produtos para sinalizarem a inclusao do frete na nf
 		detalheNotaFiscal.getProdutoServico().setValorFreteCompoeValorNF(false);
