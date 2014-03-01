@@ -10,7 +10,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosPendentesDTO;
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
@@ -92,12 +91,17 @@ public class EntradaNFETerceirosController extends BaseController {
 	
 	@Path("/")
 	public void index(){
-		carregarComboStatusNota();
+		this.carregarComboStatusNota();
+		this.carregarFornecedores();
+	}
+
+	private void carregarFornecedores() {
 		
 		List<Fornecedor> listFornecedores = fornecedorService.obterFornecedores();
 		result.include("listFornecedores", listFornecedores);
+		
 	}
-
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void carregarComboStatusNota() {
 		

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -72,7 +73,7 @@ public class Produto implements Serializable {
 	@Column(name = "NOME_COMERCIAL")
 	private String nomeComercial;
 	
-	@ManyToMany(fetch=FetchType.LAZY)
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
 	@Enumerated(EnumType.STRING)

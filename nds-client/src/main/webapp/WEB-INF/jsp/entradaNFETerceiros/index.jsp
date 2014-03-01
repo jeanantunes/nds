@@ -1,8 +1,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/jquery.multiselect.css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/entradaNFETerceiros.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.br.js"></script>
 	
 <script language="javascript" type="text/javascript">
 	$(function() {
@@ -180,11 +183,11 @@ fieldset label {
 				class="filtro">
 				<tr>
 					<td width="75">Fornecedor:</td>
-					<td width="250"><select name="filtro.fornecedor.id" id="fornecedor" type="text" style="width: 150px;">
-							<option selected="selected" value="-1"></option>
-								<c:forEach items="${listFornecedores}" var="fornecedor">
-									<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
-								</c:forEach>
+					<td width="250">
+						<select id="entrada-terceiros-selectFornecedoresDestinatarios"  name="filtro.listIdFornecedor.id" multiple="multiple" style="width:250px">
+							<c:forEach items="${listFornecedores}" var="fornecedor">
+								<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
+							</c:forEach>
 						</select>
 					</td>
 					<td width="50">Cota:</td>
