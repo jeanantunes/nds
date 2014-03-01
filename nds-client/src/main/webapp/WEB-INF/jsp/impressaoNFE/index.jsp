@@ -26,8 +26,8 @@
 </div>
 <div class="linha_separa_fields">&nbsp;</div>
 
-<div id="preparing-file-modal" title="Preparing report..." style="display: none;">
-    Preparando para gerar o arquivo, Favor aguarde...
+<div id="preparing-file-modal" title="Preparando para geração do report..." style="display: none;">
+    Por Favor Aguarde...
     <div class="ui-progressbar-value ui-corner-left ui-corner-right" style="width: 100%; height:22px; margin-top: 20px;"></div>
 </div>
 

@@ -108,11 +108,8 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 			hql.append( " and cota.id = :idCota ");
 		}
 		
-		if (filtro.getFornecedor() != null
-				&& filtro.getFornecedor().getId() != null
-				&& filtro.getFornecedor().getId() > 0
-				&& StatusNotaFiscalEntrada.RECEBIDA.equals(filtro.getStatusNotaFiscalEntrada())) {
-			hql.append( " and fornecedor.id = :idFornecedor ");
+		if (filtro.getListIdFornecedor() != null && !filtro.getListIdFornecedor().isEmpty()) {
+			hql.append( " and fornecedor in (:fornecedor) ");
 		}
 		
 		if(filtro.getDataInicial() != null && filtro.getDataFinal() != null){
@@ -158,11 +155,8 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 			query.setParameter("idCota", filtro.getCota().getId());
 		}
 
-		if (filtro.getFornecedor() != null
-				&& filtro.getFornecedor().getId() != null
-				&& filtro.getFornecedor().getId() > 0
-				&& StatusNotaFiscalEntrada.RECEBIDA.equals(filtro.getStatusNotaFiscalEntrada())) {
-			query.setParameter("idFornecedor", filtro.getFornecedor().getJuridica().getId());
+		if (filtro.getListIdFornecedor() != null && !filtro.getListIdFornecedor().isEmpty()) {
+			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
 
 		if(filtro.getDataInicial() != null && filtro.getDataFinal() != null){
@@ -259,6 +253,9 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append(" LEFT JOIN controleConferenciaEncalheCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN controleConferenciaEncalheCota.conferenciasEncalhe as conferenciasEncalhe");
+		hql.append("  LEFT JOIN conferenciasEncalhe.produtoEdicao as produtoEdicao");
+		hql.append("  LEFT JOIN produtoEdicao.produto as produto");
+		hql.append("  LEFT JOIN produto.fornecedores as fornecedor");
 		
 		hql.append(" where ( ");
 		hql.append("            SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");
@@ -295,7 +292,12 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		if(filtro.getDataInicial() != null && filtro.getDataFinal() != null){
 			hql.append( " and date(controleConferenciaEncalheCota.dataOperacao) between :dataInicial and :dataFinal ");
 		}
-
+		
+		if(filtro.getListIdFornecedor() != null && !filtro.getListIdFornecedor().isEmpty()){
+			
+			hql.append(" and fornecedor in (:fornecedor) ");
+		}
+		
 		return hql.toString();
 	}
 	
