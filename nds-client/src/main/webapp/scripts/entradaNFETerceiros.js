@@ -3,18 +3,7 @@ var entradaNFETerceirosController = $.extend(true, {
 	path : contextPath + "/nfe/entradaNFETerceiros/",
 	
 	init : function() {
-		$( "#dataInicial", this.workspace ).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
-		$( "#dataFinal", this.workspace ).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
+		this.initInputs();
 		this.initEncalheNfeGrid();
 		this.initNotaRecebidaGrid();
 		this.initPesqProdutosNotaGrid();
@@ -177,7 +166,7 @@ var entradaNFETerceirosController = $.extend(true, {
 		$.each(resultado.rows, function(index, row) {
 
 			var inputQtdeInfo  = "<input type='text' name='inputQtdeInfo' style='text-align:center' size='5' value='" + row.cell.qtdInformada + "' />";
-			var inputPrecoCapa = "<input type='text' name='inputPrecoCapa' style='text-align:right' size='10' value='" + row.cell.precoCapaFormatado + "' />";
+			var inputPrecoCapa = "<input type='text' name='inputPrecoCapa' style='text-align:right' size='10' value='" + floatToPrice(row.cell.precoCapaFormatado) + "' />";
 
 			row.cell.qtdInformada = inputQtdeInfo;
 			row.cell.precoCapaFormatado = inputPrecoCapa;
@@ -517,6 +506,37 @@ var entradaNFETerceirosController = $.extend(true, {
 		});
 	},
 	
+	initInputs : function() {
+		
+		$( "#dataInicial", this.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$( "#dataFinal", this.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$("#entrada-terceiros-selectFornecedoresDestinatarios").multiselect({
+			selectedList : 6,
+		});
+		$("#entrada-terceiros-selectFornecedoresDestinatarios").multiselect({
+			selectedList : 6
+		}).multiselect("checkAll");
+		
+		$("#selFornecedor", entradaNFETerceirosController.workspace).click(function() {
+			$(".menu_fornecedor", entradaNFETerceirosController.workspace).show().fadeIn("fast");
+		});
+
+		$(".menu_fornecedor", entradaNFETerceirosController.workspace).mouseleave(function() {
+			$(".menu_fornecedor", entradaNFETerceirosController.workspace).hide();
+		});
+		
+	},
+	
 	initPesqProdutosNotaGrid : function() {
 		$(".pesquisarProdutosNotaGrid", this.workspace).flexigrid({
 			preProcess: this.executarPreProcessamentoProdutosNotaFiscal,
@@ -584,3 +604,4 @@ var entradaNFETerceirosController = $.extend(true, {
 	}
 	
 }, BaseController);
+//@ sourceURL=entradaNFETerceiros.js
