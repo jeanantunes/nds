@@ -6,7 +6,7 @@ package br.com.abril.nds.model.fiscal.nota;
  * @author Diego Fernandes
  * 
  */
-public enum Origem {
+public enum OrigemProduto {
 	/**
 	 * 0 – Nacional
 	 */

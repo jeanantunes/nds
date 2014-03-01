@@ -719,7 +719,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             
             sql.append("	and cota.ID not in ( 											");
             sql.append("		select uni.cota_id 											");
-            sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada join COTA_UNIFICACAO UNI ON (aoada.COTA_UNIFICACAO_ID = uni.ID	)) ");
+            sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada join COTA_UNIFICACAO uni ON (aoada.COTA_UNIFICACAO_ID = uni.ID	)) ");
             
         }
         
@@ -840,7 +840,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             
             sql.append("	and cota.ID not in ( 								");
             sql.append("		select uni.cota_id 								");
-            sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada join COTA_UNIFICACAO UNI ON (aoada.COTA_UNIFICACAO_ID = uni.ID	)) ");
+            sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada join COTA_UNIFICACAO uni ON (aoada.COTA_UNIFICACAO_ID = uni.ID	)) ");
             
         }
         

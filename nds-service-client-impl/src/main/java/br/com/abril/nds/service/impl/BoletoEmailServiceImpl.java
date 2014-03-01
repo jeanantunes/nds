@@ -295,7 +295,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	@Override
 	public List<BoletoEmail> buscarTodos() {
 		
-		return this.boletoEmailRepository.buscarTodos();
+		return this.boletoEmailRepository.buscarTodosOrdenados();
 	}
 	
 	/**

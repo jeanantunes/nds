@@ -197,6 +197,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaEm', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm', this.workspace).is(':checked')},
 			
+			{name:'parametrosDistribuidor.tipoAtividade', value: $('#tipoAtividade', this.workspace).val()},
 			{name:'parametrosDistribuidor.regimeTributario.id', value: $('#regimeTributario', this.workspace).val()},
 			{name:'parametrosDistribuidor.nfInformacoesAdicionais', value: $('#informacoesAdicionais', this.workspace).val()},
 			{name:'parametrosDistribuidor.possuiRegimeEspecialDispensaInterna', value: $('#possuiRegimeEspecialDispensaInterna', this.workspace).is(':checked')},
@@ -615,10 +616,6 @@ var parametrosDistribuidorController = $.extend(true, {
 		});
 		
 		$("#tipoEndereco", this.workspace).val($("#tipoEnderecoHidden").val());
-		$('#informacoesAdicionais', this.workspace).val($("#nfInformacoesAdicionaisHidden").val());
-		$("#regimeTributario", this.workspace).val($("#regimeTributarioHidden").val());
-		$("#obrigacaoFiscal", this.workspace).val($("#obrigacaoFiscalHidden").val());
-		$("#obrigacaoFiscal", this.workspace).val($("#obrigacaoFiscalHidden").val());
 		$("#pararAcumuloDividas", this.workspace).val($("#pararAcumuloDividasHidden").val());
 		
 		var hasLogotipo = $("#hasLogotipoHidden").val();

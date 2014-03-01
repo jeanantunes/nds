@@ -102,7 +102,7 @@ public class ProdutoServico implements Serializable {
 	 * CFOP
 	 */
 	@Column(name="CST", length=4, nullable=false)
-	@XmlElement(name="CST")
+	@XmlTransient	
 	private String cst;
 	
 	/**
@@ -126,12 +126,8 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="VALOR_UNITARIO_COMERCIAL", precision=18, scale=4, nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=8, tamanho=16),@NFEExport(secao=TipoSecao.I, posicao=13, tamanho=16)})
-	@XmlTransient
-	private BigDecimal valorUnitario;
-	
-	@Transient
 	@XmlElement(name="vUnCom")
-	private String valorUnitarioXML;
+	private BigDecimal valorUnitario;
 	
 	/**
 	 * vProd
@@ -139,12 +135,31 @@ public class ProdutoServico implements Serializable {
 	@Column(name="VALOR_TOTAL_BRUTO", precision=18, scale=4, nullable=false)
 	@XmlElement(name="vProd")
 	private BigDecimal valorTotalBruto;
+
+	@Transient
+	@XmlElement(name="cEANTrib")
+	private Long codigoBarrasXML;
+	
+
+	@Transient
+	@XmlElement(name="uTrib")
+	private String unidadeTributada;	
+	
+
+	@Transient
+	@XmlElement(name="qTrib")
+	private BigInteger quantidadeTributada;
+
+	@Transient
+	@XmlElement(name="vUnTrib")
+	private String valorUnitarioTributado;
 	
 	/**
 	 * vFrete
 	 */
 	@Column(name="VALOR_FRETE", precision=18, scale=4, nullable=true)
 	@NFEExport(secao=TipoSecao.I, posicao=14, tamanho=15)
+	@XmlElement(name="vFrete")
 	private BigDecimal valorFrete;
 	
 	/**
@@ -152,6 +167,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="VALOR_SERGURO", precision=18, scale=4, nullable=true)
 	@NFEExport(secao=TipoSecao.I, posicao=15, tamanho=15)
+	@XmlElement(name="vSeg")
 	private BigDecimal valorSeguro;
 	
 	/**
@@ -159,19 +175,31 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="VALOR_DESCONTO", precision=18, scale=4, nullable=true)
 	@NFEExport(secao=TipoSecao.I, posicao=16, tamanho=15)
+	@XmlElement(name="vDesc")
 	private BigDecimal valorDesconto;
 	
 	/**
 	 * vOutro
 	 */
 	@Column(name="VALOR_OUTROS", precision=18, scale=4, nullable=true)
+	@XmlElement(name="vOutro")
 	private BigDecimal valorOutros;
 	
 	@Column(name="VALOR_ALIQUOTA_ICMS", precision=13, scale=4, nullable=false)
+	@XmlTransient
 	private BigDecimal valorAliquotaICMS;
 	
 	@Column(name="VALOR_ALIQUOTA_IPI", precision=13, scale=4, nullable=false)
+	@XmlTransient
 	private BigDecimal valorAliquotaIPI;
+	
+	@Column(name="VALOR_FRETE_COMPOE_VALOR_NF", precision=13, nullable=false)
+	@XmlTransient
+	private boolean valorFreteCompoeValorNF;
+	
+	@Transient
+	@XmlElement(name="indTot")
+	private Long valorFreteCompoeValorNFXML;
 	
 	@ManyToMany
 	@JoinTable( joinColumns = {			
@@ -236,6 +264,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	public void setCodigoBarras(Long codigoBarras) {
 		this.codigoBarras = codigoBarras;
+		this.codigoBarrasXML = codigoBarras;
 	}
 
 	/**
@@ -314,6 +343,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	public void setUnidade(String unidade) {
 		this.unidade = unidade;
+		this.unidadeTributada = unidade;
 	}
 
 	/**
@@ -328,6 +358,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	public void setQuantidade(BigInteger quantidade) {
 		this.quantidade = quantidade;
+		this.quantidadeTributada = quantidade;
 	}
 
 	/**
@@ -342,9 +373,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	public void setValorUnitario(BigDecimal valorUnitario) {
 		this.valorUnitario = valorUnitario;
-		/*df.setMinimumFractionDigits(2);   
-		df.setParseBigDecimal (true);*/ 
-		this.valorUnitarioXML = valorUnitario.toString();
+		this.valorUnitarioTributado = valorUnitario.toString();
 	}
 
 	/**
@@ -431,6 +460,15 @@ public class ProdutoServico implements Serializable {
 
 	public void setValorAliquotaIPI(BigDecimal valorAliquotaIPI) {
 		this.valorAliquotaIPI = valorAliquotaIPI;
+	}
+
+	public boolean isValorFreteCompoeValorNF() {
+		return valorFreteCompoeValorNF;
+	}
+
+	public void setValorFreteCompoeValorNF(boolean valorFreteCompoeValorNF) {
+		this.valorFreteCompoeValorNF = valorFreteCompoeValorNF;
+		this.valorFreteCompoeValorNFXML = valorFreteCompoeValorNF ? 1L : 0L; 
 	}
 
 	/**

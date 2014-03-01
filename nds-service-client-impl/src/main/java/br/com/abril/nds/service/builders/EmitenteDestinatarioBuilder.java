@@ -89,7 +89,7 @@ public class EmitenteDestinatarioBuilder {
 		
 		if(cota.getEnderecoPrincipal().getEndereco().getCodigoUf() != null) {
 			Long codigoUF = Long.parseLong(cota.getEnderecoPrincipal().getEndereco().getCodigoUf());
-			//FIXME: ajusgar o codigo do estado
+			//FIXME: ajustar o codigo do estado
 			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(35L);
 		}
 		

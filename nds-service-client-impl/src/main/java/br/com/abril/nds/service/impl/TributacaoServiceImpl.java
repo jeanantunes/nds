@@ -16,7 +16,7 @@ import br.com.abril.nds.model.fiscal.nota.COFINS;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
 import br.com.abril.nds.model.fiscal.nota.ICMS;
 import br.com.abril.nds.model.fiscal.nota.IPI;
-import br.com.abril.nds.model.fiscal.nota.Origem;
+import br.com.abril.nds.model.fiscal.nota.OrigemProduto;
 import br.com.abril.nds.model.fiscal.nota.PIS;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalTributacao;
 import br.com.abril.nds.repository.TributacaoRepository;
@@ -95,7 +95,7 @@ public class TributacaoServiceImpl implements TributacaoService {
 		String cstICMS = tributacao.getCstICMS();
 
 		int origem = Integer.valueOf(cstICMS.substring(0, 1));
-		icms.setOrigem(Origem.values()[origem]);
+		icms.setOrigem(OrigemProduto.values()[origem]);
 		icms.setCst(cstICMS.substring(1, 3));
 
 		if (IND_SIM.equals(tributacao.getIndicadorBaseCalculoICMS())) {
