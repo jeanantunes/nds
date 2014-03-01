@@ -928,6 +928,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		consolidadoFinanceiroCota.setConsignado(vlMovConsignado.abs());
 		consolidadoFinanceiroCota.setPendente(vlMovPendente);
 		
+		this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
+		
         // insere postergado pois não encontrou forma de cobrança ou parametros
         // do método exigem postergação
 		if (formaCobrancaPrincipal == null || postergarDividas==true){
@@ -943,8 +945,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							                                       null, 
 							                                       dataOperacao,
 							                                       postergarDividas?"Processamento Financeiro - Divida postergada":null);
-			
-			this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
 			
 			if (movPost != null){
 				
@@ -1145,11 +1145,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					                                       null);
 		}
 		
-		for (ConsolidadoFinanceiroCota consolidado : consolidadoFinanceiroCota){
-		
-			this.consolidadoFinanceiroRepository.adicionar(consolidado);
-		}
-		
 		Cobranca cobranca = this.salvarDividaCobranca(formaCobrancaPrincipal, 
 										      		  novaDivida, 
 										      		  cota, 
@@ -1226,8 +1221,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				novaDivida.setStatus(StatusDivida.EM_ABERTO);
 				novaDivida.setResponsavel(usuario);
 				novaDivida.setOrigemNegociacao(false);
-				
-				this.consolidadoFinanceiroRepository.adicionar(consolidado);
 									
                 Cobranca cobranca = this.salvarDividaCobranca(formaCobrancaPrincipal, 
 									                		  novaDivida, 

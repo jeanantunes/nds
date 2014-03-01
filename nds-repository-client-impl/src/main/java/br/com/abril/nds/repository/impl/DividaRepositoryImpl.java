@@ -192,31 +192,37 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         if (count) {
             hql.append(" SELECT count(divida.id)");
         } else {
-            hql// .append(" SELECT new ").append(GeraDividaDTO.class.getCanonicalName())
-            // .append("(")
-            .append(" select cobranca.id as cobrancaId,").append(" box.codigo || '-'|| box.nome as box,").append(
-                    " rota.descricaoRota as rota,").append(" roteiro.descricaoRoteiro as roteiro,").append(
-                            " cota.numeroCota as numeroCota, ").append(
-                                    " coalesce(pessoa.nome, pessoa.razaoSocial) as nomeCota,").append(
-                                            " cobranca.dataVencimento as dataVencimento,").append(" cobranca.dataEmissao as dataEmissao,")
-                                            .append(" ROUND(cobranca.valor,2) as valor,").append(" cobranca.tipoCobranca as tipoCobranca,").append(
-                                                    " cobranca.vias as vias, ").append(" cobranca.nossoNumero as nossoNumero ");
+            hql.append(" select cobranca.id as cobrancaId,")
+               .append(" box.codigo || '-'|| box.nome as box,")
+               .append(" rota.descricaoRota as rota,")
+               .append(" roteiro.descricaoRoteiro as roteiro,")
+               .append(" cota.numeroCota as numeroCota, ")
+               .append(" coalesce(pessoa.nome, pessoa.razaoSocial) as nomeCota,")
+               .append(" cobranca.dataVencimento as dataVencimento,")
+               .append(" cobranca.dataEmissao as dataEmissao,")
+               .append(" cobranca.valor as valor,")
+               .append(" cobranca.tipoCobranca as tipoCobranca,")
+               .append(" cobranca.vias as vias, ")
+               .append(" cobranca.nossoNumero as nossoNumero ");
         }
         
-        hql.append(" FROM ").append(" Divida divida ").append(" JOIN divida.cobranca cobranca ").append(
-                " JOIN divida.consolidados consolidado ").append(" JOIN cobranca.cota cota ").append(
-                        " left JOIN cota.box box ").append(" left JOIN cota.pdvs pdv ")
-                        .append(" left JOIN cota.pessoa pessoa ")
-                        .append(" left JOIN cota.parametroCobranca parametroCobranca ")
-                        .append(" left JOIN pdv.rotas rotaPdv  ").append(" left JOIN rotaPdv.rota rota  ").append(
-                                " left JOIN rota.roteiro roteiro ")
-                                
-                                .append(" WHERE ")
-                                
-                                .append(" divida.data =:data ").append(" AND divida.acumulada =:acumulaDivida ").append(
-                                        " AND cobranca.statusCobranca=:statusCobranca ").append(
-                                                " AND pdv.caracteristicas.pontoPrincipal = true ").append(
-                                                        " AND divida.status != :pendenteAcumulada ");
+        hql.append(" FROM ")
+           .append(" Divida divida ")
+           .append(" JOIN divida.cobranca cobranca ")
+           .append(" JOIN divida.consolidados consolidado ")
+           .append(" JOIN cobranca.cota cota ")
+           .append(" left JOIN cota.box box ")
+           .append(" left JOIN cota.pdvs pdv ")
+           .append(" left JOIN cota.pessoa pessoa ")
+           .append(" left JOIN cota.parametroCobranca parametroCobranca ")
+           .append(" left JOIN pdv.rotas rotaPdv  ").append(" left JOIN rotaPdv.rota rota  ")
+           .append(" left JOIN rota.roteiro roteiro ")
+           .append(" WHERE ")
+           .append(" divida.data =:data ")
+           .append(" AND divida.acumulada =:acumulaDivida ")
+           .append(" AND cobranca.statusCobranca=:statusCobranca ")
+           .append(" AND pdv.caracteristicas.pontoPrincipal = true ")
+           .append(" AND divida.status != :pendenteAcumulada ");
         
         if (filtro.getNumeroCota() != null) {
             hql.append(" AND cota.numeroCota =:numeroCota ");
