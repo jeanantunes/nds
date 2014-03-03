@@ -411,7 +411,7 @@ function limparLstExcecao1(){
                           </tr>
                           <tr>
                             <td>Pacote Padrão:</td>
-                            <td>${ produtoEdicao.pacotePadrao }</td>
+                            <td id='pctPadrao'>${ produtoEdicao.pacotePadrao }</td>
                           </tr>
                           <tr>
                             <td>Data Lançamento:</td>
@@ -441,23 +441,10 @@ function limparLstExcecao1(){
                         </tr>
                       </table>
                    	  <table width="275" border="0" cellspacing="2" cellpadding="2">
-                   	    <!--  <tr>
-                   	      <td width="91">Juramentado:</td>
-                   	      <td colspan="2">${ juramentado }</td>
-               	        </tr>
-                   	    <tr>
-                   	      <td>Suplementar:</td>
-                   	      <td colspan="2">${ suplementar }</td>
-               	        </tr>-->
                    	    <tr>
                    	      <td>Lançamento:</td>
                    	      <td colspan="2" id="reparteTotal">${ lancado }</td>
                	        </tr>
-                   	    <!--  <tr>
-                   	      <td>Promocional:</td>
-                   	      <td colspan="2">${ promocional }</td>
-               	        </tr>
-                   	    <tr>-->
                    	      <td>Sobra:</td>
                    	      <td colspan="2" id="sobra">${sobra}</td>
                	        </tr>
@@ -474,9 +461,9 @@ function limparLstExcecao1(){
                    	      <td colspan="2">Usar Fixação</td>
                	        </tr>
                    	    <tr>
-                   	      <td align="right"><input type="checkbox" name="checkbox3" id="distribuicaoPorMultiplo" onclick="$('.distrMult').toggle();" /></td>
+                   	      <td align="right"><input type="checkbox" name="checkbox3" id="distribuicaoPorMultiplo" onclick="$('.distrMult').toggle(); $('#multiplo').val($('#pctPadrao').text());" /></td>
                    	      <td width="120">Distribuição por multiplo</td>
-                   	      <td width="44"><input type="text" class="distrMult" style="width:40px; text-align:center; display:none;" id="multiplo" value="10" /></td>
+                   	      <td width="44"><input type="text" class="distrMult" style="width:40px; text-align:center; display:none;" id="multiplo" value="00" /></td>
                	        </tr>
                	    </table>
                   </fieldset>
