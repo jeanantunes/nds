@@ -31,6 +31,7 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.Validate;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.ftf.FTFParameters;
 
 /**
  * Cadastro do Distribuidor
@@ -204,7 +205,7 @@ public class Distribuidor {
 	 */
 	@Column(name = "QTD_DIAS_ENCALHE_ATRASADO_ACEITAVEL", nullable = false)
 	private int qtdDiasEncalheAtrasadoAceitavel = 4;
-
+	
 	@Column(name="QNT_DIAS_VENCIMENTO_VENDA_ENCALHE")
 	private Integer qntDiasVencinemtoVendaEncalhe;
 	
@@ -227,7 +228,7 @@ public class Distribuidor {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_CE", nullable = true)
-	private TipoImpressaoCE tipoImpressaoCE;
+	private TipoImpressaoCE tipoImpressaoCE;	
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_INTERFACE_LED", nullable = true)
@@ -336,14 +337,14 @@ public class Distribuidor {
 	
 	@OneToMany
 	@JoinTable(
-	            name="distribuidor_nota_fiscal_tipos",
+	            name="DISTRIBUIDOR_TIPOS_EMISSOES_NOTA_FISCAL",
 	            joinColumns={
 	            		@JoinColumn(table="DISTRIBUIDOR", name="DISTRIBUIDOR_ID", referencedColumnName="id", nullable=false)
 	                    },
 	            inverseJoinColumns=@JoinColumn(table="DISTRIBUIDOR_NOTA_FISCAL_TIPO_EMISSAO", name="NOTA_FISCAL_TIPO_EMISSAO_ID", referencedColumnName="id"))
 	@OrderBy("sequencia")
 	private Set<NotaFiscalTipoEmissao> tiposEmissoesNotaFiscalDistribuidor = new HashSet<NotaFiscalTipoEmissao>();
-	
+
 	@OneToMany
 	private List<DistribuidorClassificacaoCota> listClassificacaoCota;
 	
@@ -356,6 +357,9 @@ public class Distribuidor {
 	@OneToOne
 	@JoinColumn(name="REGIME_TRIBUTARIO_ID")
 	private RegimeTributario regimeTributario;
+	
+	@Embedded
+	private FTFParameters ftfParameters;
 	
 	public Long getId() {
 		return id;
@@ -1185,6 +1189,14 @@ public class Distribuidor {
 	public void setDataInicioInterfacesMatrizExecucao(
 			Date dataInicioInterfacesMatrizExecucao) {
 		this.dataInicioInterfacesMatrizExecucao = dataInicioInterfacesMatrizExecucao;
+	}
+
+	public FTFParameters getFtfParameters() {
+		return ftfParameters;
+	}
+
+	public void setFtfParameters(FTFParameters ftfParameters) {
+		this.ftfParameters = ftfParameters;
 	}
 
 	/**
