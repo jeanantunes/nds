@@ -67,7 +67,7 @@ public class RetornoNFEController extends BaseController {
 	}
 
 	@Post("/pesquisarArquivos.json")
-	public void pesquisarArquivosDeRetorno(Date dataReferencia) {
+	public void pesquisarArquivosDeRetorno(final Date dataReferencia) {
 		
 		ParametroSistema pathNFEImportacao = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO);
 		
@@ -82,7 +82,7 @@ public class RetornoNFEController extends BaseController {
 		}
 		
 		if (listaNotas == null || listaNotas.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrado nenhuma nota para a data informada");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrado nenhum retorno de nota");
 		}
 			
 		List<RetornoNFEDTO> listaNotasRetorno = this.notaFiscalService.processarRetornoNotaFiscal(this.gerarParseListaNotasRetorno(listaNotas));
@@ -102,13 +102,13 @@ public class RetornoNFEController extends BaseController {
 	@Rules(Permissao.ROLE_NFE_RETORNO_NFE_ALTERACAO)
 	public void confirmar() {
 		
-		List<RetornoNFEDTO> listaNotasRetorno = (List<RetornoNFEDTO>) this.session.getAttribute(LISTA_NOTAS_DE_RETORNO);
+		final List<RetornoNFEDTO> listaNotasRetorno = (List<RetornoNFEDTO>) this.session.getAttribute(LISTA_NOTAS_DE_RETORNO);
 		
 		if (listaNotasRetorno == null || listaNotasRetorno.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não existem notas de retorno para serem atualizadas"));
 		}
 		
-		for (RetornoNFEDTO notaRetorno : listaNotasRetorno) {
+		for (final RetornoNFEDTO notaRetorno : listaNotasRetorno) {
 			
 			switch (notaRetorno.getStatus()) {
 			
@@ -147,7 +147,7 @@ public class RetornoNFEController extends BaseController {
 	 * @param listaNotasRetorno
 	 * @return objeto de sumarizacao
 	 */
-	private SumarizacaoNotaRetornoVO sumarizarNotasRetorno(List<RetornoNFEDTO> listaNotasRetorno) {
+	private SumarizacaoNotaRetornoVO sumarizarNotasRetorno(final List<RetornoNFEDTO> listaNotasRetorno) {
 		
 		Long totalArquivos = (long) listaNotasRetorno.size();
 		Long notasRejeitadas = 0L;
@@ -177,27 +177,27 @@ public class RetornoNFEController extends BaseController {
 	 * @param listaNotas path das notas dentro do diretório
 	 * @return lista de notas
 	 */
-	private List<RetornoNFEDTO> gerarParseListaNotasRetorno (List<File> arquivosNotas) {
+	private List<RetornoNFEDTO> gerarParseListaNotasRetorno (final List<File> arquivosNotas) {
 		
-		HashMap<String, RetornoNFEDTO> hashNotasRetorno = new HashMap<String, RetornoNFEDTO>();
-		
-		RetornoNFEDTO arquivoRetornoAuxiliar = null;
-		for (File nota : arquivosNotas) {
+		final HashMap<String, RetornoNFEDTO> hashNotasRetorno = new HashMap<String, RetornoNFEDTO>();
+		final List<RetornoNFEDTO> listaNotas = new ArrayList<RetornoNFEDTO>();
+		RetornoNFEDTO arquivoAux = null;
+		for (final File nota : arquivosNotas) {
 			
 			try {
 				String schemaPath = this.getClass().getClassLoader().getResource("").getPath();
 				
 				RetornoNFEDTO arquivoRetorno = NFEImportUtil.processarArquivoRetorno(nota, schemaPath);
 			
-				if (arquivoRetornoAuxiliar == null) {
+				if (arquivoAux == null) {
 			
-					arquivoRetornoAuxiliar = arquivoRetorno;
+					arquivoAux = arquivoRetorno;
 							
 				} 
 				
-				if (arquivoRetornoAuxiliar.getChaveAcesso().equals(arquivoRetorno.getChaveAcesso())) {
+				if (arquivoAux.getChaveAcesso().equals(arquivoRetorno.getChaveAcesso())) {
 				
-					arquivoRetorno = this.processarNotaCancelamento(arquivoRetornoAuxiliar, arquivoRetorno);
+					arquivoRetorno = this.processarNotaCancelamento(arquivoAux, arquivoRetorno);
 				}
 							
 				hashNotasRetorno.put(arquivoRetorno.getChaveAcesso(), arquivoRetorno);
@@ -206,8 +206,6 @@ public class RetornoNFEController extends BaseController {
 				continue;
 			}
 		}
-		
-		List<RetornoNFEDTO> listaNotas = new ArrayList<RetornoNFEDTO>();
 		
 		listaNotas.addAll(hashNotasRetorno.values());
 		
@@ -225,35 +223,23 @@ public class RetornoNFEController extends BaseController {
 	 * @param arquivo02
 	 * @return Objeto com os dados dos arquivos
 	 */
-	private RetornoNFEDTO processarNotaCancelamento(RetornoNFEDTO arquivo01, RetornoNFEDTO arquivo02) {
+	private RetornoNFEDTO processarNotaCancelamento(final RetornoNFEDTO arquivo01, final RetornoNFEDTO arquivo02) {
 		
-		RetornoNFEDTO notaCancelamentoMerged = new RetornoNFEDTO();
+		final RetornoNFEDTO notaCancelamentoMerged = new RetornoNFEDTO();
 		
 		notaCancelamentoMerged.setChaveAcesso(arquivo01.getChaveAcesso());
 		
-		notaCancelamentoMerged.setNumeroNotaFiscal(
-				arquivo01.getNumeroNotaFiscal() != null ? 
-						arquivo01.getNumeroNotaFiscal() : arquivo02.getNumeroNotaFiscal());
+		notaCancelamentoMerged.setNumeroNotaFiscal(arquivo01.getNumeroNotaFiscal() != null ? arquivo01.getNumeroNotaFiscal() : arquivo02.getNumeroNotaFiscal());
 		
-		notaCancelamentoMerged.setDataRecebimento(
-				arquivo01.getDataRecebimento() != null ?
-						arquivo01.getDataRecebimento() : arquivo02.getDataRecebimento());
+		notaCancelamentoMerged.setDataRecebimento(arquivo01.getDataRecebimento() != null ? arquivo01.getDataRecebimento() : arquivo02.getDataRecebimento());
 		
-		notaCancelamentoMerged.setMotivo(
-				StringUtil.isEmpty(arquivo01.getMotivo()) ?
-						arquivo02.getMotivo() : arquivo01.getMotivo());
+		notaCancelamentoMerged.setMotivo(StringUtil.isEmpty(arquivo01.getMotivo()) ? arquivo02.getMotivo() : arquivo01.getMotivo());
 		
-		notaCancelamentoMerged.setCpfCnpj(
-				StringUtil.isEmpty(arquivo01.getCpfCnpj()) ?
-						arquivo02.getCpfCnpj() : arquivo01.getCpfCnpj());
+		notaCancelamentoMerged.setCpfCnpj(StringUtil.isEmpty(arquivo01.getCpfCnpj()) ? arquivo02.getCpfCnpj() : arquivo01.getCpfCnpj());
 		
-		notaCancelamentoMerged.setProtocolo(
-				arquivo01.getProtocolo() != null ?
-						arquivo01.getProtocolo() : arquivo02.getProtocolo());
+		notaCancelamentoMerged.setProtocolo(arquivo01.getProtocolo() != null ? arquivo01.getProtocolo() : arquivo02.getProtocolo());
 		
-		notaCancelamentoMerged.setStatus(
-				arquivo01.getStatus() != null?
-						arquivo01.getStatus() : arquivo02.getStatus());
+		notaCancelamentoMerged.setStatus(arquivo01.getStatus() != null? arquivo01.getStatus() : arquivo02.getStatus());
 		
 		return notaCancelamentoMerged;
 	}
