@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -228,7 +229,7 @@ public class GeraDividaDTO implements Serializable{
 	 * @param valor the valor to set
 	 */
 	public void setValor(BigDecimal valor) {
-		this.valor = valor;
+		this.valor = valor == null ? null : valor.setScale(2, RoundingMode.HALF_EVEN);
 	}
 	/**
 	 * @return the tipoCobranca

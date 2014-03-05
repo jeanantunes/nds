@@ -1121,7 +1121,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             dto.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
             dto.setPacotePadrao(produtoEdicao.getPacotePadrao());
             dto.setPrecoPrevisto(produtoEdicao.getPrecoPrevisto());
-            dto.setTipoSegmentoProdutoId(produtoEdicao.getTipoSegmentoProduto() == null ? null : produtoEdicao.getTipoSegmentoProduto().getId());
+            dto.setTipoSegmentoProdutoId(produtoEdicao.getProduto().getTipoSegmentoProduto() == null ? null : produtoEdicao.getProduto().getTipoSegmentoProduto().getId());
             
             dto.setClassificacao(produtoEdicao.getTipoClassificacaoProduto() == null ? null : produtoEdicao.getTipoClassificacaoProduto().getId().toString());
             

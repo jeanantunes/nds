@@ -32,10 +32,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
-import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
@@ -44,8 +46,6 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 /**
  * @author T30541
@@ -207,11 +207,6 @@ public class ProdutoEdicao implements Serializable {
     
     @OneToMany(mappedBy = "produtoEdicao", fetch=FetchType.LAZY)
     private Set<HistoricoEstoqueProduto> historicoEstoqueProduto;
-
-    @Deprecated
-    @OneToOne(fetch=FetchType.EAGER, optional=true)
-	@JoinColumn(name="TIPO_SEGMENTO_PRODUTO_ID")
-	private TipoSegmentoProduto tipoSegmentoProduto;
 
     /**
      * Classificação do Produto
@@ -651,14 +646,6 @@ public class ProdutoEdicao implements Serializable {
 	public void setHistoricoEstoqueProduto(
 			Set<HistoricoEstoqueProduto> historicoEstoqueProduto) {
 		this.historicoEstoqueProduto = historicoEstoqueProduto;
-	}
-
-	public TipoSegmentoProduto getTipoSegmentoProduto() {
-		return tipoSegmentoProduto;
-	}
-
-	public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
-		this.tipoSegmentoProduto = tipoSegmentoProduto;
 	}
 
     public TipoClassificacaoProduto getTipoClassificacaoProduto() {
