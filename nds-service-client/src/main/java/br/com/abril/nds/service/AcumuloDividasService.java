@@ -5,6 +5,7 @@ import java.util.Date;
 
 import br.com.abril.nds.model.financeiro.AcumuloDivida;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 
 /**
  * Interface para reger a lógica de negócio de Acumulo de Dívidas.  
@@ -53,9 +54,11 @@ public interface AcumuloDividasService {
 	 * 
 	 * @param idConsolidadoFinanceiroCota - id do consolidado financeiro da cota.
 	 * 
+	 * @param tipoBaixa - tipo da baixa que está sendo realizadas
+	 * 
 	 * @return Número de acúmulos da dívida 
 	 */
 	BigInteger obterNumeroDeAcumulosDivida(Long idConsolidadoFinanceiroCota);
 
-	void quitarDividasAcumuladas(Date dataPagamento, Divida dividaAtual);
+	void quitarDividasAcumuladas(Date dataPagamento, Divida dividaAtual,TipoBaixaCobranca tipoBaixa);
 }
