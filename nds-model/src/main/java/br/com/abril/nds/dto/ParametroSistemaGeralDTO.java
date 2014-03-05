@@ -469,30 +469,6 @@ public class ParametroSistemaGeralDTO implements Serializable {
 		this.params.put(TipoParametroSistema.NFE_INFORMACOES_VERSAO_EMISSOR, nfeInformacoesVersaoEmissor);
 	}
 	
-	public String getNfeInformacoesCertificadoDigitalPath() {
-		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PATH);
-	}
-	
-	public void setNfeInformacoesCertificadoDigitalPath(String nfeInformacoesCertificadoDigitalPath) {
-		this.params.put(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PATH, nfeInformacoesCertificadoDigitalPath);
-	}
-	
-	public String getNFeInformacoesCertificadoDigitalAlias() {
-		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_ALIAS);
-	}
-	
-	public void setNFeInformacoesCertificadoDigitalAlias(String nfeInformacoesCertificadoDigitalAlias) {
-		this.params.put(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_ALIAS, nfeInformacoesCertificadoDigitalAlias);
-	}
-	
-	public String getNFeInformacoesCertificadoDigitalPrivateKeyPassword() {
-		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PRIV_KEY_PASSWORD);
-	}
-	
-	public void setNFeInformacoesCertificadoDigitalPrivateKeyPassword(String nfeInformacoesCertificadoDigitalPrivateKeyPassword) {
-		this.params.put(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PRIV_KEY_PASSWORD, nfeInformacoesCertificadoDigitalPrivateKeyPassword);
-	}
-	
 	/**
 	 * @return the dtOperacaoCorrente
 	 */

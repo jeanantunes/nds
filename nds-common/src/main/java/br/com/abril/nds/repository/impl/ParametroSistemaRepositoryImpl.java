@@ -72,9 +72,6 @@ implements ParametroSistemaRepository {
 		lst.add(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
 		lst.add(TipoParametroSistema.NFE_INFORMACOES_FORMATO_IMPRESSAO);
 		lst.add(TipoParametroSistema.NFE_INFORMACOES_MODELO_DOCUMENTO);
-		lst.add(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PATH);
-		lst.add(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_ALIAS);
-		lst.add(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PRIV_KEY_PASSWORD);
 		//lst.add(TipoParametroSistema.VERSAO_SISTEMA);
 
 		Query query = this.getSession().createQuery(hql);
@@ -172,9 +169,6 @@ implements ParametroSistemaRepository {
 		lst.add(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
 		lst.add(TipoParametroSistema.NFE_INFORMACOES_FORMATO_IMPRESSAO);
 		lst.add(TipoParametroSistema.NFE_INFORMACOES_MODELO_DOCUMENTO);
-		lst.add(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PATH);
-		lst.add(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_ALIAS);
-		lst.add(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PRIV_KEY_PASSWORD);
 		//lst.add(TipoParametroSistema.VERSAO_SISTEMA);
 
 		Query query = this.getSession().createQuery(hql);
