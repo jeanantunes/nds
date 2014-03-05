@@ -30,10 +30,10 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-                        <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>httpclient</artifactId>
-                        <version>4.2.5</version>
-                </dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>4.2.5</version>
+			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -399,6 +399,19 @@
 			<url>http://repo.maven.apache.org/maven2/</url>		
 		</repository> -->
 		<repository>
+			<id>mvnrepository</id>
+			<url>http://mvnrepository.com/artifact/</url>		
+		</repository>
+		<repository>
+			<id>repomaven</id>
+			<url>http://repo.maven.apache.org/maven2/</url>		
+		</repository>
+		<repository>
+			<id>thirdparty-releases</id>
+			<name>JBoss Thirdparty Releases</name>
+			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
+		</repository>
+		<repository>
 			<id>jrimum.org</id>
 			<url>http://jrimum.org/maven/content/groups/public/</url>
 			<snapshots>
@@ -485,6 +498,7 @@
 				<module>nds-model</module>
 				<module>nds-util</module>
 				<module>nds-common</module>
+				<module>nfe</module>
 				<module>nds-repository-client</module>
 				<module>nds-repository-client-impl</module>
 				<module>nds-service-client</module>
@@ -498,6 +512,7 @@
 				<module>nds-estudo-algoritmo</module>
 				<module>nds-homologador</module>
 <!-- 			<module>nds-test</module> -->
+				<module>nds-ws-pessoacrp</module>
 			</modules>
 		</profile>
 
@@ -517,6 +532,18 @@
 				<module>nds-integration-server</module>
 				<module>nds-integration-client</module>
 				<module>nds-estudo-algoritmo</module>
+<<<<<<< Updated upstream
+			</modules>
+		</profile>
+		
+		<profile>
+			<id>testProfile</id>
+			<modules>
+				<module>nds-estudo-algoritmo</module>
+				<module>nds-test</module>
+=======
+				<module>nds-ws-pessoacrp</module>
+>>>>>>> Stashed changes
 			</modules>
 		</profile>
 		
