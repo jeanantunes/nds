@@ -21,7 +21,6 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
-import org.jcp.xml.dsig.internal.dom.DOMReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -89,7 +88,6 @@ public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, Initia
 		return transformList;
 	}
 	
-	@SuppressWarnings("restriction")
 	public void build(Element elementToSign, Element parentElement, Certificate certificate, PrivateKey privateKey) {
 		try {
 			List<Reference> refList = newReferenceList(elementToSign);
@@ -98,8 +96,8 @@ public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, Initia
 			DOMSignContext dsc = new DOMSignContext(privateKey, parentElement);
 			XMLSignature signature = signatureFactory.newXMLSignature(signedInfo, keyInfo);
 			signature.sign(dsc);
-			logger.debug(" Primeiro digest value encontrado  {}", ((DOMReference) signature.getSignedInfo().getReferences().get(0)).getDigestValue());
-			logger.debug(" Primeiro digest value encontrado  {}", ((DOMReference) signature.getSignedInfo().getReferences().get(0)).getHere());
+			logger.debug(" Primeiro digest value encontrado  {}", ((Reference) signature.getSignedInfo().getReferences().get(0)).getDigestValue());
+			//logger.debug(" Primeiro digest value encontrado  {}", ((DOMReference) signature.getSignedInfo().getReferences().get(0)).getHere());
 			InputStreamReader isr = new InputStreamReader(signature.getSignedInfo().getCanonicalizedData());
 			char[] cbuf = new char[1024];
 			

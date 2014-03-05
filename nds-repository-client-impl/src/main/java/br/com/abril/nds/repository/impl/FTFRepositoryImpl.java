@@ -7,12 +7,15 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.StatelessSession;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.enums.TipoParametroSistema;
@@ -42,9 +45,11 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 	private static long NF_VENDA_COTA = 8;
 	private static long NF_DEVOLUCAO_FORNECEDOR = 7;
-	
+
 	private Distribuidor distribuidor;
 	
+	@Autowired
+	HibernateTransactionManager transactionManager;
 	
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -335,8 +340,18 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	}
 	
 	@PostConstruct
-	public void getDistribuidor(){
-		distribuidor = distribuidorRepository.obter();
+	@SuppressWarnings("unchecked")
+	public void getDistribuidor() {
+		
+		StatelessSession ss = transactionManager.getSessionFactory().openStatelessSession();
+
+		String hql = "from Distribuidor";
+		Query query = ss.createQuery(hql);
+		
+		List<Distribuidor> distribuidores = query.list();
+		
+		distribuidor = distribuidores.isEmpty() ? null : distribuidores.get(0);
+		
 	}
 
 	@Override

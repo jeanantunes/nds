@@ -26,8 +26,10 @@ public class PessoaCRPWSServiceImpl implements PessoaCRPWSService {
 
 	@Autowired
 	private PessoaCRPService_2Stub pessoaCRPService2Stub;
+	
 	@Value("${userNameWS:}")
 	private String userNameWS;
+	
 	@Value("${passwordWS:}")
 	private String passwordWS;
 	

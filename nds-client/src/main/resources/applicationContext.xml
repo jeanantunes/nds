@@ -66,12 +66,18 @@
 	<!-- 
 	    DOM builder factory 
 	-->
-	<bean id="documentBuilderFactory" 
-	    class="javax.xml.parsers.DocumentBuilderFactory"
-	    factory-method="newInstance">
+	<bean id="documentBuilderFactory" class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
 		<property name="validating" value="true" />
 		<property name="namespaceAware" value="true" />
 	</bean>
+	
+	<!-- Web Services -->
+	
+	<!-- FTF -->
+	<bean id="pessoaCRPService2Stub" class="br.com.abril.axis2.PessoaCRPService_2Stub" />
+	<!-- /FTF -->
+	
+	<!-- /Web Services -->	
 	
 	<!-- MASTER -->
 	<!-- <bean id="interceptor" class="br.com.abril.nds.interceptor.auditoria.EntityInterceptor" /> -->
@@ -80,8 +86,7 @@
 	<!-- Descomentar abaixo para ligar o bloqueador -->
 	<!-- <bean id="interceptor" class="br.com.abril.nds.interceptor.EntityInterceptor" />-->
 	
-	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="packagesToScan"> 
 			<list>
@@ -136,8 +141,7 @@
 	</bean>
 
 
-	<bean id="transactionManager"
-		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	

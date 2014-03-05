@@ -1,45 +1,46 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>webservice</groupId>
-  
-  <parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>webservice</groupId>
+
+	<parent>
 		<artifactId>nds</artifactId>
 		<groupId>br.com.abril</groupId>
 		<version>1.0</version>
 	</parent>
 
-  <artifactId>nds-ws-pessoacrp</artifactId>
-  <name>NDS - ws-pessoacrp</name>
-  <description>ws-pessoacrp</description>
-  
-  
-  <dependencies>
-  
-   <dependency>
-          <groupId>org.apache.axis2</groupId>
-          <artifactId>axis2</artifactId>
-          <version>1.6.2</version>
-    </dependency>
-  		<dependency>
+	<artifactId>nds-ws-pessoacrp</artifactId>
+	<name>NDS - WS Pessoa CRP</name>
+	<description>ws-pessoacrp</description>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-wsdl2code-maven-plugin</artifactId>
 			<version>1.6.2</version>
 		</dependency>
-		
 		<dependency>
-	<groupId>javax.xml.ws</groupId>
-	<artifactId>jaxws-api</artifactId>
-	<version>2.2.11</version>
-</dependency>
-            
-            
+			<groupId>javax.xml.ws</groupId>
+			<artifactId>jaxws-api</artifactId>
+			<version>2.2.11</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.stream</groupId>
+			<artifactId>sjsxp</artifactId>
+			<version>1.0.2</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>3.2.3.RELEASE</version>
 		</dependency>
-            
-  </dependencies>
+
+	</dependencies>
  <!-- 
  <build>
  	<plugins>
