@@ -152,7 +152,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         param.put("pendenteAcumulada", StatusDivida.PENDENTE_INADIMPLENCIA);
         
         if (!isBoleto) {
-            param.put("tipoCobrancaBoleto", TipoCobranca.BOLETO);
+            param.put("tipoCobrancaBoleto", Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
         }
         
         if (filtro.getNumeroCota() != null) {
