@@ -31,7 +31,6 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.Validate;
 
 import br.com.abril.nds.model.DiaSemana;
-import br.com.abril.nds.model.ftf.FTFParameters;
 
 /**
  * Cadastro do Distribuidor
@@ -357,9 +356,6 @@ public class Distribuidor {
 	@OneToOne
 	@JoinColumn(name="REGIME_TRIBUTARIO_ID")
 	private RegimeTributario regimeTributario;
-	
-	@Embedded
-	private FTFParameters ftfParameters;
 	
 	public Long getId() {
 		return id;
@@ -1189,14 +1185,6 @@ public class Distribuidor {
 	public void setDataInicioInterfacesMatrizExecucao(
 			Date dataInicioInterfacesMatrizExecucao) {
 		this.dataInicioInterfacesMatrizExecucao = dataInicioInterfacesMatrizExecucao;
-	}
-
-	public FTFParameters getFtfParameters() {
-		return ftfParameters;
-	}
-
-	public void setFtfParameters(FTFParameters ftfParameters) {
-		this.ftfParameters = ftfParameters;
 	}
 
 	/**

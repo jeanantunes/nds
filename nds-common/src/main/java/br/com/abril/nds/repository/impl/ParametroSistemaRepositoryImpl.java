@@ -72,6 +72,10 @@ implements ParametroSistemaRepository {
 		lst.add(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
 		lst.add(TipoParametroSistema.NFE_INFORMACOES_FORMATO_IMPRESSAO);
 		lst.add(TipoParametroSistema.NFE_INFORMACOES_MODELO_DOCUMENTO);
+		lst.add(TipoParametroSistema.FTF_CODIGO_ESTABELECIMENTO_EMISSOR);
+		lst.add(TipoParametroSistema.FTF_CNPJ_ESTABELECIMENTO_EMISSOR);
+		lst.add(TipoParametroSistema.FTF_CODIGO_CENTRO_EMISSOR);
+		lst.add(TipoParametroSistema.FTF_CODIGO_LOCAL);
 		//lst.add(TipoParametroSistema.VERSAO_SISTEMA);
 
 		Query query = this.getSession().createQuery(hql);

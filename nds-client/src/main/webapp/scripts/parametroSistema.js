@@ -5,6 +5,8 @@ var parametroSistemaController = $.extend(true, {
 		$("#dtOperacaoCorrente").mask("99/99/9999");
 		
 		$("#frequenciaExpurgo").numeric();
+		
+		$("#ftfCnpjEstabelecimentoEmissor", this.workspace).mask("99.999.999/9999-99");
 	},
 	
 	salvar: function() {

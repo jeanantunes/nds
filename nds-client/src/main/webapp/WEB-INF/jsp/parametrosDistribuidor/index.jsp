@@ -31,6 +31,7 @@
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/jquery.numeric.js'></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/operacaoDiferenciada.js"></script>
 
+
 <script type="text/javascript">
 	
 	parametrosDistribuidorController.init();
@@ -92,10 +93,12 @@
 			    <li><a href="#tabNegociacao">Negociação</a></li>
 			    <li><a href="#tabFiscal">Fiscal</a></li>
 			    <li><a href="#tabAprovacao">Aprovação</a></li>
+			    <li><a href="#tabFtf">FTF</a></li>
 			</ul>
 			
             <jsp:include page="tabCadastro.jsp"/>
 			
+            <!--  Aba Operação --> 
             <jsp:include page="tabOperacao.jsp"/>
 			
 			<jsp:include page="tabOperacaoDiferenciada.jsp"/>
@@ -107,14 +110,15 @@
 			
 			<jsp:include page="tabNegociacao.jsp" />
 
-			<jsp:include page="tabFiscal.jsp"/>
+			<jsp:include page="tabFiscal.jsp" />
 			
+		    <!-- Aba Contratos e Garantias  	-->
             <jsp:include page="tabContratosGarantias.jsp"/>
-            
+             
             <%--
             <jsp:include page="tabAprovacao.jsp" />
             --%>
-            
+						
 	   		<br clear="all" />
 		</div>
 	</fieldset>
