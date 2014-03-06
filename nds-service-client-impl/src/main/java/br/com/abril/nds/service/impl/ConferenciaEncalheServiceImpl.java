@@ -1562,20 +1562,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#salvarDadosConferenciaEncalhe(br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota, java.util.List, java.util.Set, br.com.abril.nds.model.seguranca.Usuario)
 	 */
-	@Transactional
+	@Transactional(timeout = 500)
 	public Long salvarDadosConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario, 
 			boolean indConferenciaContingencia) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException {
-
-		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
-		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		desfazerCobrancaConferenciaEncalheReaberta(controleConfEncalheCota.getId());
-		
-		//validarPermissaoSalvarConferenciaEncalhe(listaConferenciaEncalhe);
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.EM_ANDAMENTO, indConferenciaContingencia);

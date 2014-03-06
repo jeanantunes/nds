@@ -63,7 +63,7 @@ public class Divida implements Serializable {
 	@OneToOne(mappedBy = "divida", cascade={CascadeType.MERGE})
 	private Cobranca cobranca;
 	
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "DIVIDA_CONSOLIDADO", joinColumns = {
 			@JoinColumn(name = "DIVIDA_ID")},
 			inverseJoinColumns = {@JoinColumn(name="CONSOLIDADO_ID")})
