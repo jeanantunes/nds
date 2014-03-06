@@ -65,6 +65,12 @@ public class NotaFiscalValorCalculado implements Serializable {
 	@Column(name = "ISSQN_VALOR")
 	private	BigDecimal ISSQNValor;
 	
+	@Column(name="VALOR_PIS")
+	private BigDecimal valorPIS;
+	
+	@Column(name="VALOR_COFINS", nullable=false, precision=18, scale=4)
+	private BigDecimal valorCOFINS;
+	
 	public BigDecimal getISSQNTotal() {
 		return ISSQNTotal;
 	}
@@ -185,6 +191,22 @@ public class NotaFiscalValorCalculado implements Serializable {
 		ISSQNValor = iSSQNValor;
 	}
 	
+	public BigDecimal getValorPIS() {
+		return valorPIS;
+	}
+
+	public void setValorPIS(BigDecimal valorPIS) {
+		this.valorPIS = valorPIS;
+	}
+
+	public BigDecimal getValorCOFINS() {
+		return valorCOFINS;
+	}
+
+	public void setValorCOFINS(BigDecimal valorCOFINS) {
+		this.valorCOFINS = valorCOFINS;
+	}
+
 	@Override
 	public String toString() {
 		return "ValoresCalculados [id=" + id + ", valorBaseICMS="

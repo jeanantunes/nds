@@ -26,7 +26,7 @@ public class NotaFiscalV200Test {
 		try {
 			String schemaFile = "src/main/resources/xsd/v"+ versaoNFE +"/nfe_v"+ versaoNFE +".xsd";
 			//String xmlFile = "src/main/resources/xmlGerado.xml";
-			String xmlFile = "src/main/resources/xmlTestes/nfeAssinadaOficial.xml";
+			String xmlFile = "C:/opt/nfeassinada.xml";
 			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			LOGGER.debug("Schema: "+ schemaFile);
 			Schema schema = factory.newSchema(new File(schemaFile));

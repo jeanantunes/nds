@@ -5,8 +5,6 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlElements;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Impostos implements Serializable {
@@ -21,7 +19,13 @@ public class Impostos implements Serializable {
 
 	@XmlElement(name="IPI")
 	private IPI ipi;
+	
+	@XmlElement(name="PIS")
+	private PIS pis;
 
+	@XmlElement(name="COFINS")
+	private COFINS cofins;
+	
 	public ICMS getIcms() {
 		if(this.icms == null) return null;
 		return icms.getIcms();
@@ -39,5 +43,20 @@ public class Impostos implements Serializable {
 	public void setIpi(IPI ipi) {
 		this.ipi = ipi;
 	}
-	
+
+	public PIS getPis() {
+		return pis;
+	}
+
+	public void setPis(PIS pis) {
+		this.pis = pis;
+	}
+
+	public COFINS getCofins() {
+		return cofins;
+	}
+
+	public void setCofins(COFINS cofins) {
+		this.cofins = cofins;
+	}
 }

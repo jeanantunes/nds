@@ -87,7 +87,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	 */
 	@Embedded
 	@NFEExportType
-	@XmlElement(name="trans")
+	@XmlElement(name="transp")
 	private InformacaoTransporte informacaoTransporte;
 	
 		

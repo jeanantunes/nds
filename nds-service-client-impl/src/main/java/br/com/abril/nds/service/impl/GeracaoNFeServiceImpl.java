@@ -28,6 +28,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
@@ -45,6 +46,7 @@ import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.service.GeracaoNFeService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.service.TransportadorService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.builders.EmitenteDestinatarioBuilder;
 import br.com.abril.nds.service.builders.FaturaBuilder;
@@ -54,6 +56,7 @@ import br.com.abril.nds.service.builders.ItemNotaFiscalEstoqueProdutoBuilder;
 import br.com.abril.nds.service.builders.NaturezaOperacaoBuilder;
 import br.com.abril.nds.service.builders.NotaFiscalBuilder;
 import br.com.abril.nds.service.builders.NotaFiscalEstoqueProdutoBuilder;
+import br.com.abril.nds.service.builders.NotaFiscalTransportadorBuilder;
 import br.com.abril.nds.service.builders.NotaFiscalValoresCalculadosBuilder;
 import br.com.abril.nds.util.Intervalo;
 
@@ -94,6 +97,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
 	@Autowired
     private ParametrosDistribuidorService parametrosDistribuidorService;
+	
+	@Autowired
+    private TransportadorService transportadorService;
 	
 	// Trava para evitar duplicidade ao gerar notas por mais de um usuario simultaneamente
     // O HashMap suporta mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -217,7 +223,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 								throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
 							}
 							
-							this.gerarNotaFiscalUnifica(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
+							this.gerarNotaFiscalUnificada(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
 							notaGerada = true;
 							break;
 						}
@@ -300,43 +306,46 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		}
 	}
 	
-	private void gerarNotaFiscalUnifica(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais
+	private void gerarNotaFiscalUnificada(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais
 			, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao, Map<String, ParametroSistema> parametrosSistema) {
 		
 		// obter as cotas que estão na tela pelo id das cotas
 		NotaFiscal notaFiscal = new NotaFiscal();
-		
+		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
 		naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
 		naturezaOperacaoRepository.merge(naturezaOperacao);
 		
 		List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoCotasNotafiscal(filtro);
+		notaFiscal.setUsuario(usuarioService.getUsuarioLogado());
 		
+		NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
+		NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor, filtro);
+		EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, distribuidor);
+		NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, distribuidor, parametrosSistema);
+		NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 		for (Cota cota : cotas) {
-			notaFiscal.setUsuario(usuarioService.getUsuarioLogado());
 			
-			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
-			
-			NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor, filtro);
-			
-			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota, parametrosSistema);
-			
-			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
-			
-			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
-			
+			// FIX arrumar endereco
 			// obter os movimentos de cada cota
 			filtro.setIdCota(cota.getId());
 			List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalNdsRepository.obterMovimentosEstoqueCota(filtro);
 			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota);
 			}
-			
-			//FIXME: Ajustar o valor do campo para valores parametrizados
-			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais("XXXXX");
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal, cota);
-			notasFiscais.add(notaFiscal);
 		}
+		
+		notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+		
+		//FIXME: Ajustar o transportador Principal
+		if(transportadores.isEmpty() || transportadores == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Não foi .");
+		}else {			
+			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores.get(0));
+		}
+		
+		notasFiscais.add(notaFiscal);
 	}
 	
 	private void gerarNotasFiscaisFornecedor(FiltroNFeDTO filtro, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
@@ -351,7 +360,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			NotaFiscalEstoqueProdutoBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
 			
 			// popular header
-			NotaFiscalEstoqueProdutoBuilder.montarHeaderNotaFiscal(notaFiscal, estoque);
+			NotaFiscalEstoqueProdutoBuilder.montarHeaderNotaFiscal(notaFiscal, estoque, distribuidor);
 			
 			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, estoque);
 			
@@ -369,8 +378,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculadosEstoqueProduto(notaFiscal, estoque);
 			
-			//FIXME: Ajustar o valor do campo para valores parametrizados 
-			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais("ssss");
+			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 		}	
 	}
 	
