@@ -196,6 +196,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
                .append(" box.codigo || '-'|| box.nome as box,")
                .append(" rota.descricaoRota as rota,")
                .append(" roteiro.descricaoRoteiro as roteiro,")
+               .append(" cota.id as idCota, ")
                .append(" cota.numeroCota as numeroCota, ")
                .append(" coalesce(pessoa.nome, pessoa.razaoSocial) as nomeCota,")
                .append(" cobranca.dataVencimento as dataVencimento,")
