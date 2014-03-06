@@ -9,8 +9,12 @@ import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
+
+import com.sun.xml.internal.txw2.annotation.XmlElement;
 
 @Embeddable
 @AttributeOverrides({
@@ -20,6 +24,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 		@AttributeOverride(name = "valor", column = @Column(name = "VLR_ICMS", precision = 5, scale = 2, nullable = true))
 
 })
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class ICMS extends ICMSBase implements Serializable {
 
 	/**
@@ -48,9 +53,18 @@ public class ICMS extends ICMSBase implements Serializable {
 	public ICMS() {
 
 	}
+	
+	@XmlElement(value="orig")
+	public String getOrig() {
+		return super.orig;
+	}
+	
+	@XmlElement(value="CST")
+	public String getCst() {
+		return super.getCst();
+	}
 
-
-
+	
 	/**
 	 * @return the motivoDesoneracao
 	 */

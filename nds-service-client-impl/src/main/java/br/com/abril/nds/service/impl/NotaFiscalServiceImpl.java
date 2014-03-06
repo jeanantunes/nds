@@ -1732,7 +1732,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				.buscarRoteirizacaoDeCota(cota.getNumeroCota());
 
 		if (pdv != null && roteirizacao != null) {
-			transporte.setModalidadeFrente(0); // Por conta emitente
+			transporte.setModalidadeFrete(0); // Por conta emitente
 
 			// *****Comentado porque não é obrigatório*****//
 
@@ -1759,7 +1759,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			 * transporte.setVeiculo(veiculo);
 			 */
 		} else {
-			transporte.setModalidadeFrente(1); // Por conta destinatário
+			transporte.setModalidadeFrete(1); // Por conta destinatário
 		}
 
 		return transporte;

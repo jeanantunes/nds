@@ -7,6 +7,9 @@ import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlTransient;
+
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
@@ -56,7 +59,11 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 			@NFEWhen(condition = NFEConditions.ICMS_70, export = @NFEExport(secao = TipoSecao.N09, posicao = 0, tamanho = 1)),
 			@NFEWhen(condition = NFEConditions.ICMS_90, export = @NFEExport(secao = TipoSecao.N10, posicao = 0, tamanho = 1))
 	})
+	@XmlTransient
 	protected OrigemProduto origem;
+	
+	@Transient
+	protected String orig;
 	
 	/**
 	 * modBC
@@ -103,6 +110,7 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	 */
 	public void setOrigem(OrigemProduto origem) {
 		this.origem = origem;
+		this.orig = String.valueOf(origem.getId());
 	}
 
 	/**

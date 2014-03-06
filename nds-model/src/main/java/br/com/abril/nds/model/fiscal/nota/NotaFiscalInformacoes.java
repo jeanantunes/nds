@@ -82,6 +82,11 @@ public class NotaFiscalInformacoes implements Serializable {
 	@NFEExportType(secaoPadrao = TipoSecao.W)
 	private InformacaoValoresTotais informacaoValoresTotais;
 	
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name="NOTA_FISCAL_VALOR_CALCULADO_ID", unique = true)
+	@XmlElement(name="total")
+	private NotaFiscalValorCalculado notaFiscalValoresCalculados = new NotaFiscalValorCalculado();
+	
 	/**
 	 * TRANSP
 	 */
@@ -126,10 +131,6 @@ public class NotaFiscalInformacoes implements Serializable {
 	@XmlTransient
 	@Column(name = "NOTA_IMPRESSA", nullable = false)
 	private boolean notaImpressa;
-	
-	@OneToOne(cascade=CascadeType.ALL)
-	@JoinColumn(name="NOTA_FISCAL_VALOR_CALCULADO_ID", unique = true)
-	private NotaFiscalValorCalculado notaFiscalValoresCalculados = new NotaFiscalValorCalculado();
 	
 	@Column(name = "INFORMACOES_ADICIONAIS")
 	private	String informacoesAdicionais;

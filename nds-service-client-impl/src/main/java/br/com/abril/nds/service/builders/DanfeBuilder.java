@@ -323,16 +323,16 @@ public class DanfeBuilder  implements Serializable {
 		
 		InformacaoTransporte informacaoTransporte = notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte();
 		
-		NotaFiscalEndereco endereco = informacaoTransporte.getEndereco();
+		NotaFiscalEndereco endereco = informacaoTransporte.getTransportadorWrapper().getEndereco();
 		
-		Veiculo veiculo = informacaoTransporte.getVeiculo();
+		Veiculo veiculo = informacaoTransporte.getTransportadorWrapper().getVeiculo();
 		
-		Integer frete = informacaoTransporte.getModalidadeFrente();
+		Integer frete = informacaoTransporte.getModalidadeFrete();
 		
-		String transportadoraDocumento = informacaoTransporte.getDocumento();
-		String transportadoraNome = informacaoTransporte.getNome();
+		String transportadoraDocumento = informacaoTransporte.getTransportadorWrapper().getDocumento();
+		String transportadoraNome = informacaoTransporte.getTransportadorWrapper().getNome();
 		
-		String transportadoraInscricaoEstadual = informacaoTransporte.getInscricaoEstadual();
+		String transportadoraInscricaoEstadual = informacaoTransporte.getTransportadorWrapper().getInscricaoEstadual();
 
 		String transportadoraEndereco 	= "";
 		String transportadoraMunicipio 	= "";

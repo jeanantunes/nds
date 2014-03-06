@@ -273,6 +273,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		// obter as cotas que estão na tela pelo id das cotas
 		List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoCotasNotafiscal(filtro);
 		
+		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
+		
 		for (Cota cota : cotas) {
 			
 			NotaFiscal notaFiscal = new NotaFiscal();
@@ -283,7 +285,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
 			
-			NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor, filtro);
+			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
 			
 			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota, parametrosSistema);
 			
@@ -342,7 +344,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		if(transportadores.isEmpty() || transportadores == null){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Não foi .");
 		}else {			
-			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores.get(0));
+			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
 		}
 		
 		notasFiscais.add(notaFiscal);
