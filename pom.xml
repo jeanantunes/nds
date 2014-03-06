@@ -532,7 +532,6 @@
 				<module>nds-integration-server</module>
 				<module>nds-integration-client</module>
 				<module>nds-estudo-algoritmo</module>
-<<<<<<< Updated upstream
 			</modules>
 		</profile>
 		
@@ -541,9 +540,7 @@
 			<modules>
 				<module>nds-estudo-algoritmo</module>
 				<module>nds-test</module>
-=======
 				<module>nds-ws-pessoacrp</module>
->>>>>>> Stashed changes
 			</modules>
 		</profile>
 		
