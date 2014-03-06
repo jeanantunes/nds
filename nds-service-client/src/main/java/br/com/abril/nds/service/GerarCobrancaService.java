@@ -88,6 +88,8 @@ public interface GerarCobrancaService {
 	boolean aceitaEnvioEmail(Cota cota, String nossoNumero);
 
 	boolean aceitaEmissaoDocumento(Cota cota, TipoEmissaoDocumento tipoEmissaoDocumento);
+
+    boolean aceitaEmissaoDocumento(Long idCota, TipoEmissaoDocumento tipoEmissaoDocumento);
 	
 	/**
     * Obtem Data de Vencimento onforme Parametros 
