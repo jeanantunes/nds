@@ -538,8 +538,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
                 break;
             }
             
-        }
-        catch (final Exception e) {
+        }catch (final Exception e) {
             final String msg = "Erro ao gerar arquivo de cobrança para nosso número: " + nossoNumero + " - "
                     + e.getMessage();
             LOGGER.error(msg, e);
