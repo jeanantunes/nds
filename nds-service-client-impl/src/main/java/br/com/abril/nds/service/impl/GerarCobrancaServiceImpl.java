@@ -255,7 +255,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
      * @throws GerarCobrancaValidacaoException
      */
 	@Override
-	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class, timeout = 500)
 	public void gerarCobranca(Long idCota, 
 			                  Long idUsuario, 
 			                  Set<String> setNossoNumero)
@@ -297,7 +297,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * @throws GerarCobrancaValidacaoException
 	 */
 	@Override
-	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class, timeout = 500)
 	public void gerarDividaPostergada(Long idCota, 
 			                          Long idUsuario)
 		throws GerarCobrancaValidacaoException {
@@ -1502,7 +1502,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 	}
 	
-	@Transactional
+	@Transactional(timeout = 500)
 	@Override
 	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao, boolean excluiFinanceiro) {
 		
@@ -1557,6 +1557,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				}
                 
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
+			    
+			    this.consolidadoFinanceiroRepository.clear();
 			}
 		}
 		
