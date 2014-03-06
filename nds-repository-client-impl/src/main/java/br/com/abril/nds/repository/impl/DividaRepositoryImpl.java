@@ -152,7 +152,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         param.put("pendenteAcumulada", StatusDivida.PENDENTE_INADIMPLENCIA);
         
         if (!isBoleto) {
-            param.put("tipoCobrancaBoleto", TipoCobranca.BOLETO);
+            param.put("tipoCobrancaBoleto", Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
         }
         
         if (filtro.getNumeroCota() != null) {
@@ -196,6 +196,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
                .append(" box.codigo || '-'|| box.nome as box,")
                .append(" rota.descricaoRota as rota,")
                .append(" roteiro.descricaoRoteiro as roteiro,")
+               .append(" cota.id as idCota, ")
                .append(" cota.numeroCota as numeroCota, ")
                .append(" coalesce(pessoa.nome, pessoa.razaoSocial) as nomeCota,")
                .append(" cobranca.dataVencimento as dataVencimento,")

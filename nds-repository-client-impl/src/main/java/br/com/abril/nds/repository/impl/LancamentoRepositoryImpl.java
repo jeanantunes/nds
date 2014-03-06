@@ -1201,7 +1201,7 @@ public class LancamentoRepositoryImpl extends
 
 		sql.append(" left join ");
 		sql.append(" ESTUDO estudo ");
-		sql.append(" on estudo.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		sql.append(" on estudo.LANCAMENTO_ID = lancamento.ID ");
 		
 		sql.append(" left join ");
 		sql.append(" ESTUDO_GERADO ");

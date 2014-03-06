@@ -269,6 +269,14 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 							+ " O lançamento já se encontra em recolhimento. ");
 			return false;
 		}
+
+		if (StatusLancamento.FECHADO.equals(lancamento.getStatus())) {
+
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"As data do Lançamento:" + lancamento.getId()  + " não serão alteradas, por estar com o status Fechado" +
+					" para o Produto:" + input.getCodigoProduto() + " e Edicao: " + input.getEdicaoCapa());
+		}
 		
 		return true; 
 	}
@@ -473,13 +481,12 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			 lancamento.getStatus().equals(StatusLancamento.BALANCEADO) ||
 			 lancamento.getStatus().equals(StatusLancamento.EXPEDIDO) ||
 			 lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)||
-			 lancamento.getStatus().equals(StatusLancamento.FECHADO) ||
 			 lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO)) {
 			
 			lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
 			lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 		}
-		
+
 		return (Lancamento) this.getSession().merge(lancamento);
 	}
 

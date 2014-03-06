@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
@@ -72,8 +73,49 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		return (Long) ids.get(0);
 		
 	}
-
 	
+	public EstoqueProduto obterEstoqueProdutoParaAtualizar(Long idProdutoEdicao) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				" select ep from EstoqueProduto ep where ep.produtoEdicao.id = :idProdutoEdicao ");
+		
+		query.setLockOptions(LockOptions.UPGRADE);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (EstoqueProduto) query.uniqueResult();
+	}
+	
+	public void atualizarEstoqueProduto(Long idProdutoEdicao, TipoEstoque tipoEstoque, BigInteger qtde) {
+		
+		String sql = "update estoque_produto set ";
+		
+		switch (tipoEstoque) {
+		
+			case SUPLEMENTAR:
+				
+				sql += " QTDE_SUPLEMENTAR = QTDE_SUPLEMENTAR + ";
+				break;
+				
+			case DEVOLUCAO_ENCALHE:
+				
+				sql += " QTDE_DEVOLUCAO_ENCALHE = QTDE_DEVOLUCAO_ENCALHE + ";
+				break;
+				
+			default:
+				break;
+		}
+		
+		sql += " :qtde where PRODUTO_EDICAO_ID = :idProdutoEdicao ";
+		
+		this.getSession()
+			.createSQLQuery(sql)
+				.setParameter("qtde", qtde)
+				.setParameter("idProdutoEdicao", idProdutoEdicao)
+				.executeUpdate();
+	}
+
 	public EstoqueProduto buscarEstoqueProdutoPorProdutoEdicao(Long idProdutoEdicao) {
 		StringBuilder hql = new StringBuilder("select estoqueProduto ");
 		hql.append(" from EstoqueProduto estoqueProduto join estoqueProduto.produtoEdicao produtoEdicao ")

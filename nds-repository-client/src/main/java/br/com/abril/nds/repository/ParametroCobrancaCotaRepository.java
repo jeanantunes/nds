@@ -19,4 +19,5 @@ public interface ParametroCobrancaCotaRepository extends Repository<ParametroCob
 	ParametroCobrancaCota obterParametroCobrancaCotaPorCota(Integer numeroCota);
 
 	boolean verificarCotaSemParametroCobrancaPorFormaCobranca(Long id);
+
 }
