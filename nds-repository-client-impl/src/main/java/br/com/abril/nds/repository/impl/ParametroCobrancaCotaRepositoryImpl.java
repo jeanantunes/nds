@@ -36,6 +36,9 @@ public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepositoryModel
 		return query.list();
 		
 	}
+	
+	
+	
 
 	@Override
 	public ParametroCobrancaCota obterParametroCobrancaCotaPorCota(Integer numeroCota) {

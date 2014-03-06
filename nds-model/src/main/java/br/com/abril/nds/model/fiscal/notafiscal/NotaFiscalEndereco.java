@@ -50,6 +50,13 @@ public class NotaFiscalEndereco implements Serializable {
 	@XmlElement(name="nro")
 	private String numero;
 	
+	@Column(name = "COMPLEMENTO", length=60)
+	@NFEWhens(value = {
+			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=2, tamanho=60)),
+			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao=TipoSecao.E05, posicao=2 , tamanho=60))
+	})
+	private String complemento;
+	
 	@Column(name = "BAIRRO", length=60)
 	@NFEWhens(value = {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=3, tamanho=60)),
@@ -95,13 +102,6 @@ public class NotaFiscalEndereco implements Serializable {
 	@XmlTransient
 	@Column(name="CODIGO_UF")
 	private Long codigoUf;
-	
-	@Column(name = "COMPLEMENTO", length=60)
-	@NFEWhens(value = {
-			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=2, tamanho=60)),
-			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao=TipoSecao.E05, posicao=2 , tamanho=60))
-	})
-	private String complemento;
 	
 	@Column(name = "CODIGO_PAIS", length=20)
 	@XmlElement(name="cPais")

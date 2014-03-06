@@ -695,7 +695,7 @@ TipoMensagem.ERROR,
 		
 		InformacaoTransporte transporte = new InformacaoTransporte();
 		
-		transporte.setModalidadeFrente(0);
+		transporte.setModalidadeFrete(0);
 		
 		InformacaoAdicional informacaoAdicional = new InformacaoAdicional();
 		

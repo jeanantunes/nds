@@ -11,7 +11,15 @@ var retornoNFEController  = $.extend(true, {
 	initFlexiGrids : function() {
 		
 		$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexigrid({
-			//preProcess : _this.preProcessGridPesquisa,
+			preProcess : (function(result) {	
+				if(result && result.mensagens) {
+					var tipoMensagem = result.mensagens.tipoMensagem;
+					var listaMensagens = result.mensagens.listaMensagens;
+					if (tipoMensagem && listaMensagens) {
+						exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+					}
+				}
+			}),
 			colModel : [{
 				display : 'Num. Total de Arquivos',
 				name : 'numeroTotalArquivos',
@@ -75,7 +83,7 @@ var retornoNFEController  = $.extend(true, {
 				"url" : this.path + 'pesquisarArquivos.json',
 				params : params,
 				dataType : 'json',
-				newp : 1
+				newp : 1, 
 			});
 			
 			grid.flexReload();

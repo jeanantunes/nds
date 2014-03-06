@@ -175,7 +175,18 @@ public class Identificacao implements Serializable {
 		public String getDescricao() {
 			return descricao;
 		}
-
+		
+		public static TipoAmbiente getTipoAmbiente(int value){  
+            
+            for (TipoAmbiente tipoAmb : TipoAmbiente.values()){  
+                if(tipoAmb.getIntValue() == value){  
+                    return tipoAmb;  
+                }  
+            }  
+              
+            return null;  
+        } 
+		
 	}
 	
 	public enum ProcessoEmissao implements NotaFiscalEnum {

@@ -73,7 +73,7 @@ public class PainelMonitorNFEController extends BaseController {
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
-	private HttpSession session;
+	private static HttpSession session;
 	
 	@Autowired
 	private HttpServletRequest request;
@@ -237,7 +237,7 @@ public class PainelMonitorNFEController extends BaseController {
 	 */
 	@SuppressWarnings("deprecation")
 	@Get
-	public void exportar(FiltroMonitorNfeDTO filtro, FileType fileType) throws IOException {
+	public void exportar(final FiltroMonitorNfeDTO filtro, FileType fileType) throws IOException {
 
 		InfoNfeDTO infoNfe = monitorNFEService.pesquisarNFe(filtro);
 		
@@ -248,7 +248,7 @@ public class PainelMonitorNFEController extends BaseController {
 	}
 
 	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO)
-	public void cancelarNfe(FiltroMonitorNfeDTO filtro) throws FileNotFoundException, IOException {
+	public void cancelarNfe(final FiltroMonitorNfeDTO filtro) throws FileNotFoundException, IOException {
 		
 		// cancelamento de nota fiscal
 		this.monitorNFEService.cancelarNfe(filtro);
@@ -259,7 +259,7 @@ public class PainelMonitorNFEController extends BaseController {
 	
 	@SuppressWarnings("unchecked")
 	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO)
-	public void imprimirDanfes(boolean indEmissaoDepec) {
+	public void imprimirDanfes(final boolean indEmissaoDepec) {
 		
 		List<NfeVO> listaNfesParaImpressaoDanfe = (List<NfeVO>) session.getAttribute(NFES_PARA_IMPRESSAO_DANFES);
 		

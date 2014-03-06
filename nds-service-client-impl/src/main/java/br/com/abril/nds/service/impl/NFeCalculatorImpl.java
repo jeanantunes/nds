@@ -10,16 +10,15 @@ import br.com.abril.nds.model.fiscal.nota.ICMS;
 import br.com.abril.nds.model.fiscal.nota.ICMSST;
 import br.com.abril.nds.model.fiscal.nota.IPI;
 import br.com.abril.nds.model.fiscal.nota.PIS;
-import br.com.abril.nds.service.NFeCalculator;
 
 /**
  * Implementacao padrao para calculo de impostos.
  */
-public class NFeCalculatorImpl implements NFeCalculator {
+public class NFeCalculatorImpl {
 
 	private static final Logger logger = LoggerFactory.getLogger(NFeCalculatorImpl.class);
 	
-	public BigDecimal calculate(ICMS icms) {
+	public static BigDecimal calculate(ICMS icms) {
 		BigDecimal taxValue = icms.getValor();
 		validate(icms.getAliquota(), icms.getValorBaseCalculo());
 
@@ -33,7 +32,7 @@ public class NFeCalculatorImpl implements NFeCalculator {
 		return taxValue;
 	}
 
-	public BigDecimal calculate(ICMSST icms) {
+	public static BigDecimal calculate(ICMSST icms) {
 		
 		BigDecimal taxValue = icms.getValor();
 		validate(icms.getAliquota(), icms.getValorBaseCalculo());
@@ -48,12 +47,12 @@ public class NFeCalculatorImpl implements NFeCalculator {
 		return taxValue;
 	}
 
-	public BigDecimal calculate(IPI ipi) {
+	public static BigDecimal calculate(IPI ipi) {
 		BigDecimal taxValue = ipi.getValor();
 		validate(ipi.getAliquota(), ipi.getValorBaseCalculo());
 
 		if (taxValue==null) {
-			taxValue = internalCalculate(ipi.getValorBaseCalculo(), ipi.getValor());
+			taxValue = internalCalculate(ipi.getValorBaseCalculo(), ipi.getAliquota());
 			logger.debug("Valor calculado do IPI: {}.", taxValue);
 			return taxValue;
 		}
@@ -62,12 +61,12 @@ public class NFeCalculatorImpl implements NFeCalculator {
 		return taxValue;
 	}
 
-	public BigDecimal calculate(PIS pis) {
+	public static BigDecimal calculate(PIS pis) {
 		BigDecimal taxValue = pis.getValor();
 		validate(pis.getValorAliquota(), pis.getValorBaseCalculo());
 
 		if (taxValue==null) {
-			taxValue = internalCalculate(pis.getValorBaseCalculo(), pis.getValor());
+			taxValue = internalCalculate(pis.getValorBaseCalculo(), pis.getValorAliquota());
 			logger.debug("Valor calculado do PIS: {}.", taxValue);
 			return taxValue;
 		}
@@ -76,12 +75,12 @@ public class NFeCalculatorImpl implements NFeCalculator {
 		return taxValue;
 	}
 
-	public BigDecimal calculate(COFINS cofins) {
+	public static BigDecimal calculate(COFINS cofins) {
 		BigDecimal taxValue = cofins.getValor();
 		validate(cofins.getValorAliquota(), cofins.getValorBaseCalculo());
 
 		if (taxValue==null) {
-			taxValue = internalCalculate(cofins.getValorBaseCalculo(), cofins.getValor());
+			taxValue = internalCalculate(cofins.getValorBaseCalculo(), cofins.getValorAliquota());
 			logger.debug("Valor calculado do CONFINS: {}.", taxValue);
 			return taxValue;
 		}
@@ -96,7 +95,7 @@ public class NFeCalculatorImpl implements NFeCalculator {
 	 * @param aliquota
 	 * @param valorBaseCalculo
 	 */
-	protected void validate(BigDecimal aliquota, BigDecimal valorBaseCalculo) {
+	protected static void validate(BigDecimal aliquota, BigDecimal valorBaseCalculo) {
 		if (aliquota==null) {
 			throw new IllegalArgumentException("Valor da aliquota não pode ser nulo");
 		}
@@ -111,7 +110,7 @@ public class NFeCalculatorImpl implements NFeCalculator {
 	 * @param valorBaseCalculo valor da base de calculo
 	 * @param aliquota aliquota
 	 */
-	protected BigDecimal internalCalculate(BigDecimal valorBaseCalculo, BigDecimal aliquota) {
+	protected static BigDecimal internalCalculate(BigDecimal valorBaseCalculo, BigDecimal aliquota) {
 		return valorBaseCalculo.multiply(aliquota).divide(new BigDecimal(100));
 	}
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -17,9 +18,9 @@ public class CotaExemplaresDTO implements Serializable {
 		
 	}
 	
-	public CotaExemplaresDTO(Long idCota, Integer numeroCota, String nomeCota,
-			BigInteger exemplares, BigDecimal total, BigDecimal totalDesconto,
-			boolean inativo) {
+	public CotaExemplaresDTO(Long idCota, Integer numeroCota, String nomeCota, 
+			BigInteger exemplares, BigDecimal total, BigDecimal totalDesconto, 
+			boolean inativo, SituacaoCadastro situacaoCadastro) {
 		super();
 		this.idCota = idCota;
 		this.numeroCota = numeroCota;
@@ -28,6 +29,7 @@ public class CotaExemplaresDTO implements Serializable {
 		this.total = total;
 		this.totalDesconto = totalDesconto;
 		this.inativo = inativo;
+		this.situacaoCadastro = situacaoCadastro;
 	}
 
 	private Long idCota;
@@ -46,6 +48,8 @@ public class CotaExemplaresDTO implements Serializable {
 	
 	@Export(label="Total Desconto R$", alignment=Alignment.RIGHT)
 	private BigDecimal totalDesconto;
+	
+	private SituacaoCadastro situacaoCadastro;
 	
 	private boolean inativo;
 
@@ -133,5 +137,13 @@ public class CotaExemplaresDTO implements Serializable {
 	 */
 	public BigInteger getExemplares() {
 		return exemplares;
+	}
+
+	public SituacaoCadastro getSituacaoCadastro() {
+		return situacaoCadastro;
+	}
+
+	public void setSituacaoCadastro(SituacaoCadastro situacaoCadastro) {
+		this.situacaoCadastro = situacaoCadastro;
 	}
 }

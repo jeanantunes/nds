@@ -32,7 +32,7 @@ import br.inf.portalfiscal.nfe.TRetCancNFe;
  * @author Discover Technology
  * 
  */
-public class NFEImportUtil {
+public abstract class NFEImportUtil {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(NFEImportUtil.class);
     
@@ -58,11 +58,6 @@ public class NFEImportUtil {
      */
     public static final int QTD_DIGITOS_CHAVE_ACESSO_NFE = 44;
     
-    private NFEImportUtil() {
-        
-    }
-
-    
     /**
      * Obtém os dados atualizados de Status do arquivo da NFe de Retorno.
      * 
@@ -71,7 +66,7 @@ public class NFEImportUtil {
      * @throws ProcessamentoNFEException
      * @throws SAXException
      */
-    public static RetornoNFEDTO processarArquivoRetorno(final File arquivo, String schemaPath) throws ProcessamentoNFEException {
+    public static RetornoNFEDTO processarArquivoRetorno(final File arquivo, final String schemaPath) throws ProcessamentoNFEException {
         
         RetornoNFEDTO retornoNFEDTO = null;
         
@@ -182,8 +177,7 @@ public class NFEImportUtil {
             final Date dataRecebimento = nfeProc.getProtNFe().getInfProt().getDhRecbto().toGregorianCalendar()
                     .getTime();
             final String motivo = null;
-            final Status status = Status
-                    .obterPeloCodigo(Integer.parseInt(nfeProc.getProtNFe().getInfProt().getCStat()));
+            final Status status = Status.obterPeloCodigo(Integer.parseInt(nfeProc.getProtNFe().getInfProt().getCStat()));
             
             retornoNFEDTO.setNumeroNotaFiscal(idNotaFiscal);
             retornoNFEDTO.setCpfCnpj(cpfCnpj);
@@ -242,19 +236,22 @@ public class NFEImportUtil {
      * @param versao
      * @param tipoSchema
      */
-	public static boolean validarSchemaXML(String tipoSchema, File arquivo, String schemaPàth) {
+	public static boolean validarSchemaXML(final String tipoSchema, final File arquivo, final String schemaPàth) {
 		
 		boolean retorno = false; 
 		
 		
 		try {
 			
-			String schemaFile = schemaPàth+"xsdnfe/v"+ versaoNFE + tipoSchema + versaoNFE + ".xsd";
+			final String schemaFile = schemaPàth+"xsdnfe/v"+ versaoNFE + tipoSchema + versaoNFE + ".xsd";
 			//String xmlFile = "src/main/resources/xmlGerado.xml";
-			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			LOGGER.debug("Schema: "+ schemaFile);
-			Schema schema = factory.newSchema(new File(schemaFile));
-			Validator validator = schema.newValidator();
+			final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			
+			if(LOGGER.isDebugEnabled()){				
+				LOGGER.debug("Schema: "+ schemaFile);
+			}
+			final Schema schema = factory.newSchema(new File(schemaFile));
+			final Validator validator = schema.newValidator();
 			validator.validate(new StreamSource(arquivo));
 			
 			return true;

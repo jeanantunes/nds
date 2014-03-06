@@ -48,7 +48,8 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') as nomeCota,");
 		hql.append(" SUM(mec.qtde) as exemplares, ");
 		hql.append(" SUM(mec.valoresAplicados.precoVenda * mec.qtde) as total, "); 
-		hql.append(" SUM(mec.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto"); 	
+		hql.append(" SUM(mec.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto, "); 	
+		hql.append(" mec.cota.situacaoCadastro as situacaoCadastro ");
 		
 		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, false, false, false), filtro);
 				

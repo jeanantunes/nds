@@ -3480,15 +3480,15 @@ public class Fixture {
 		
 		InformacaoTransporte informacaoTransporte = new InformacaoTransporte();
 		
-		informacaoTransporte.setDocumento(documento);
-		informacaoTransporte.setInscricaoEstadual(inscricaoEstadual);
-		informacaoTransporte.setModalidadeFrente(modalidadeFrente);
-		informacaoTransporte.setMunicipio(municipio);
-		informacaoTransporte.setNome(nome);
-		informacaoTransporte.setRetencaoICMS(retencaoICMS);
-		informacaoTransporte.setUf(uf);
-		informacaoTransporte.setVeiculo(veiculo);
-		informacaoTransporte.setEndereco(endereco);
+		informacaoTransporte.getTransportadorWrapper().setDocumento(documento);
+		informacaoTransporte.getTransportadorWrapper().setInscricaoEstadual(inscricaoEstadual);
+		informacaoTransporte.setModalidadeFrete(modalidadeFrente);
+		informacaoTransporte.getTransportadorWrapper().setMunicipio(municipio);
+		informacaoTransporte.getTransportadorWrapper().setNome(nome);
+		informacaoTransporte.getTransportadorWrapper().setRetencaoICMS(retencaoICMS);
+		informacaoTransporte.getTransportadorWrapper().setUf(uf);
+		informacaoTransporte.getTransportadorWrapper().setVeiculo(veiculo);
+		informacaoTransporte.getTransportadorWrapper().setEndereco(endereco);
 		
 		return informacaoTransporte;
 		
