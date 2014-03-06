@@ -1105,6 +1105,7 @@ ConsolidadoFinanceiroRepository {
         hql.append(" where mov.id = :idMovimentoFinanceiro ");
         
         final Query query = this.getSession().createQuery(hql.toString());
+        
         query.setParameter("idMovimentoFinanceiro", idMovimentoFinanceiro);
         
         return query.list();
