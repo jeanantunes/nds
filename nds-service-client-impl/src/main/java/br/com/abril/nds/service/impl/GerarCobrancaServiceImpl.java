@@ -1687,12 +1687,22 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	}
 	
 	@Override
-	@Transactional(readOnly=true)
-	public boolean aceitaEmissaoDocumento(Cota cota, TipoEmissaoDocumento tipoEmissaoDocumento) {
-		
-		Boolean aceitaEmissao = this.getMapaEmissaoDocumentos(cota).get(tipoEmissaoDocumento); 
+    @Transactional(readOnly=true)
+    public boolean aceitaEmissaoDocumento(Cota cota, TipoEmissaoDocumento tipoEmissaoDocumento) {
 
-		return aceitaEmissao == null ? false : aceitaEmissao;
+        Boolean aceitaEmissao = this.getMapaEmissaoDocumentos(cota).get(tipoEmissaoDocumento); 
+
+        return aceitaEmissao == null ? false : aceitaEmissao;
+    }
+
+    @Override
+	@Transactional(readOnly=true)
+	public boolean aceitaEmissaoDocumento(Long idCota, TipoEmissaoDocumento tipoEmissaoDocumento) {
+        
+        Cota cota = cotaRepository.buscarPorId(idCota);
+        
+        return aceitaEmissaoDocumento(cota, tipoEmissaoDocumento);
+		
 	}
 	
 	private HashMap<TipoEmissaoDocumento, Boolean> getMapaEmissaoDocumentos(Cota cota) {		
