@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import javax.persistence.MappedSuperclass;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -25,7 +26,9 @@ public abstract class Imposto implements Serializable {
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 536918061402194564L;
-
+	
+	
+	
 	@NFEWhens(value = {
 			@NFEWhen(condition = NFEConditions.ICMS_00, export = @NFEExport(secao = TipoSecao.N02, posicao = 1, tamanho = 2)),
 			@NFEWhen(condition = NFEConditions.ICMS_10, export = @NFEExport(secao = TipoSecao.N03, posicao = 1, tamanho = 2)),
@@ -39,7 +42,7 @@ public abstract class Imposto implements Serializable {
 			@NFEWhen(condition = NFEConditions.IPI_TRIB, export = @NFEExport(secao = TipoSecao.O07, posicao = 0, tamanho = 2)),
 			@NFEWhen(condition = NFEConditions.IPI_NAO_TRIB, export = @NFEExport(secao = TipoSecao.O08, posicao = 0, tamanho = 2))
 	})
-	//@XmlElement(name="CST")
+	@XmlElement(name="CST")
 	protected String cst;
 	
 	@NFEWhens(value = {
@@ -150,5 +153,5 @@ public abstract class Imposto implements Serializable {
 	public void setAliquota(BigDecimal aliquota) {
 		this.aliquota = aliquota;
 	}
-	
+
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.fiscal.nota;
 
+
 /**
  * Modalidade de determinação da BC do ICMS
  * 
@@ -7,23 +8,24 @@ package br.com.abril.nds.model.fiscal.nota;
  * 
  */
 public enum OrigemProduto {
-	/**
-	 * 0 – Nacional
-	 */
-	NACIONAL,
-	/**
-	 * 1 – Estrangeira – Importação direta
-	 */
-	ESTRANGEIRA_IMPORTACAO,
-	/**
-	 * 2 – Estrangeira – Adquirida no mercado interno
-	 */
-	ESTRANGEIRA_MERCADO;
-	/**
-	 * @see java.lang.Enum#toString()
-	 */
-	@Override
-	public String toString() {
-		return String.valueOf(this.ordinal());
+	
+	NACIONAL(0, "Nacional"), 
+	ESTRANGEIRA_IMPORTACAO(1, "Estrangeira"),
+	ESTRANGEIRA_MERCADO(2, "Estrangeira – Adquirida no mercado interno");
+	
+	private Integer id;
+	private String descricao;
+	
+	OrigemProduto(Integer id, String descricao) {
+		this.id = id;
+		this.descricao = descricao;
+	}
+	
+	public int getId() {
+		return id.intValue();
+	}
+
+	public String getDescricao() {
+		return descricao;
 	}
 }

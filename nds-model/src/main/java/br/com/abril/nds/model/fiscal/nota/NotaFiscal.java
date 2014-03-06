@@ -15,7 +15,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.TipoSecao;
@@ -24,7 +23,6 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 @Entity
 @Table(name = "NOTA_FISCAL_NOVO")
 @XmlRootElement(name="NFe", namespace="http://www.portalfiscal.inf.br/nfe") 
-@XmlType(name="NotaFiscalNds")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class NotaFiscal implements Serializable {
 	

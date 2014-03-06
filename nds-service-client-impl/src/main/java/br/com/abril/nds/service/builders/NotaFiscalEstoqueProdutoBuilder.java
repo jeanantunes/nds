@@ -7,7 +7,7 @@ import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
+import br.com.abril.nds.model.fiscal.nota.CNPJDestinatario;
 import br.com.abril.nds.model.fiscal.nota.CNPJEmitente;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
@@ -17,44 +17,6 @@ import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 	
 	private static final long serialVersionUID = 176874569807919538L;
-	
-	// builder header Nota fiscal
-	public static NotaFiscalNds montarHeaderNotaFiscal(NotaFiscalNds notaFiscal, EstoqueProduto estoqueProduto){
-		
-		/**
-		 *notaFiscal.getEmissor().setRazaoSocial("pessoa Juridica");
-		notaFiscal.getEmissor().setNomeFantasia("Teste teste teste teste");
-		notaFiscal.getEmissor().setInscricaoEstadual("pessoaJuridica.getInscricaoEstadual()");
-		notaFiscal.getEmissor().setCnpj("301852668001160");
-		notaFiscal.getEmissor().setEmail("teste@teste.com"); 
-		 * 
-		 */
-		
-		
-		return notaFiscal;
-	}
-
-
-	// metodo responsavel pelo dados do distribuidor da nota
-	public static NotaFiscalNds popularDadosDistribuidor(NotaFiscalNds notaFiscal, Distribuidor distribuidor, FiltroNFeDTO filtro){
-		
-		// Dados do Distribuidor
-		/**
-		 * 
-		 * notaFiscal.getEmissor().setNomeFantasia(distribuidor.getJuridica().getRazaoSocial());
-		notaFiscal.getEmissor().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());
-		notaFiscal.getEmissor().setCnpj(distribuidor.getJuridica().getCnpj());
-		
-		// Endereço
-		notaFiscal.getEmissor().getNotaFicalEndereco().setUf(distribuidor.getEnderecoDistribuidor().getEndereco().getUf());
-		notaFiscal.getEmissor().getNotaFicalEndereco().setCidade(distribuidor.getEnderecoDistribuidor().getEndereco().getCidade());
-		notaFiscal.getEmissor().getNotaFicalEndereco().setBairro(distribuidor.getEnderecoDistribuidor().getEndereco().getBairro());
-		notaFiscal.getEmissor().getNotaFicalEndereco().setLogradouro(distribuidor.getEnderecoDistribuidor().getEndereco().getLogradouro());
-		 */
-		
-		
-		return notaFiscal;
-	}
 
 	public static void popularDadosDistribuidor(br.com.abril.nds.model.fiscal.nota.NotaFiscal notaFiscal2, Distribuidor distribuidor, FiltroNFeDTO filtro) {
 		
@@ -81,7 +43,7 @@ public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setLogradouro(distribuidor.getEnderecoDistribuidor().getEndereco().getLogradouro());
 	}
 	
-	public static void montarHeaderNotaFiscal(br.com.abril.nds.model.fiscal.nota.NotaFiscal notaFiscal2, EstoqueProduto estoqueProduto) {
+	public static void montarHeaderNotaFiscal(br.com.abril.nds.model.fiscal.nota.NotaFiscal notaFiscal2, EstoqueProduto estoqueProduto, Distribuidor distribuidor) {
 		
 		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacao() == null) {
 			notaFiscal2.getNotaFiscalInformacoes().setIdentificacao(new Identificacao());
@@ -101,7 +63,10 @@ public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao();
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(null);
+		CNPJDestinatario cnpj = new CNPJDestinatario();
+		cnpj.setDocumento(distribuidor.getJuridica().getCnpj().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
+		
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(cnpj);
 	}
 	
 }

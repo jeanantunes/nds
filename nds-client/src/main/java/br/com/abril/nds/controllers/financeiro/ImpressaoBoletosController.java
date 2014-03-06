@@ -34,9 +34,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
-import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -72,9 +70,6 @@ public class ImpressaoBoletosController extends BaseController {
 	private Result result;
 
 	@Autowired
-	private GerarCobrancaService gerarCobrancaService;
-
-	@Autowired
 	private RoteirizacaoService roteirizacaoService;
 
 	@Autowired
@@ -85,9 +80,6 @@ public class ImpressaoBoletosController extends BaseController {
 
 	@Autowired
 	private DistribuidorService distribuidorService;
-
-	@Autowired
-	private ParametroCobrancaCotaService financeiroService;
 
 	@Autowired
 	private BoxService boxService;

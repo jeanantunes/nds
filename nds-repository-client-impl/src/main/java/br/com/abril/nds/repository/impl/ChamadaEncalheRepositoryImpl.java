@@ -826,7 +826,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<BandeirasDTO> obterBandeirasNoIntervalo(
-			Intervalo<Date> intervalo, Long fornecedor, PaginacaoVO paginacaoVO) {
+			Intervalo<Date> intervalo, TipoChamadaEncalhe tipoChamadaEncalhe, Long fornecedor, PaginacaoVO paginacaoVO) {
 	
 		StringBuilder hql = new StringBuilder();
 		
@@ -851,6 +851,10 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			hql.append(" and fornecedores.id = :fornecedor ");
 		}
 		
+		if(tipoChamadaEncalhe != null){
+		    hql.append(" and chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe");
+		}
+		
 		hql.append(" group by chamadaEncalhe.id ");
 		
 		if (paginacaoVO != null)		
@@ -864,6 +868,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if (fornecedor != null){
 			
 			query.setParameter("fornecedor", fornecedor);
+		}
+		if(tipoChamadaEncalhe != null){
+		    query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
 		}
 		
 		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
@@ -880,11 +887,11 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	
 	@Override
     public Long countObterBandeirasNoIntervalo(Intervalo<Date> intervalo) {
-        return countObterBandeirasNoIntervalo(intervalo, null);
+        return countObterBandeirasNoIntervalo(intervalo, null, null);
     }
 
     @Override
-	public Long countObterBandeirasNoIntervalo(Intervalo<Date> intervalo, Long fornecedor) {
+	public Long countObterBandeirasNoIntervalo(Intervalo<Date> intervalo, TipoChamadaEncalhe tipoChamadaEncalhe, Long fornecedor) {
 	
 		StringBuilder hql = new StringBuilder();
 		
@@ -901,7 +908,11 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
             
             hql.append(" and fornecedores.id = :fornecedor ");
         }
-				
+			
+		if(tipoChamadaEncalhe != null){
+            hql.append(" and chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe");
+        }
+        
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		
@@ -912,6 +923,10 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
             
             query.setParameter("fornecedor", fornecedor);
         }
+		if(tipoChamadaEncalhe != null){
+            query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
+        }
+        
 				
 		return (Long) query.uniqueResult();
 	}

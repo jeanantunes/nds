@@ -15,12 +15,14 @@ import br.com.abril.nds.model.cadastro.Tributacao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.nota.COFINS;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ICMS;
 import br.com.abril.nds.model.fiscal.nota.IPI;
 import br.com.abril.nds.model.fiscal.nota.Impostos;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.OrigemProduto;
+import br.com.abril.nds.model.fiscal.nota.PIS;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -170,6 +172,31 @@ public class ItemNotaFiscalBuilder  {
 				
 				detalheNotaFiscal.getImpostos().setIpi(ipi);
 			}
+			
+			if("PIS".equals(t.getTributo())) {
+				detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(t.getValorAliquota());
+				
+				PIS pis = new PIS();
+				
+				pis.setCst(Integer.valueOf(t.getCst().toString()));
+				pis.setValorAliquota(t.getValorAliquota());
+				pis.setValorBaseCalculo(t.getBaseCalculo());
+				
+				detalheNotaFiscal.getImpostos().setPis(pis);
+			}
+			
+			if("COFINS".equals(t.getTributo())) {
+				detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(t.getValorAliquota());
+				
+				COFINS cofins = new COFINS();
+				
+				cofins.setCst(Integer.valueOf(t.getCst().toString()));
+				cofins.setValorAliquota(t.getValorAliquota());
+				cofins.setValorBaseCalculo(t.getBaseCalculo());
+				
+				detalheNotaFiscal.getImpostos().setCofins(cofins);
+			}
+			
 		}
 		
 		//FIXME: Ajustar o codigo Excessao do ipi

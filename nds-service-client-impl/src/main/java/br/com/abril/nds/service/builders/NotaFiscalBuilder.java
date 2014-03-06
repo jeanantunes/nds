@@ -34,6 +34,7 @@ import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalInformacoes;
+import br.com.abril.nds.model.fiscal.nota.TransportadorWrapper;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
 import br.com.abril.nds.model.integracao.ParametroSistema;
@@ -173,7 +174,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormaPagamento(formaPagamento);
 		
 		//FIXME: Ajustar para variavel global
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoAmbiente(TipoAmbiente.valueOf(parametrosSistema.get("NFE_INFORMACOES_AMBIENTE").getValor()));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoAmbiente(TipoAmbiente.getTipoAmbiente(Integer.valueOf(parametrosSistema.get("NFE_INFORMACOES_AMBIENTE").getValor())));
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoEmissao(TipoEmissao.NORMAL);
@@ -214,29 +215,94 @@ public class NotaFiscalBuilder implements Serializable {
 		
 	}
 
+	public static void montarHeaderNotaFiscal(NotaFiscal notaFiscal, Distribuidor distribuidor, Map<String, ParametroSistema> parametrosSistema) {
+		
+		//FIXME: Obter forma de pagamento da cota
+		FormaPagamento formaPagamento = FormaPagamento.OUTROS;
+		
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacao() == null) {
+			notaFiscal.getNotaFiscalInformacoes().setIdentificacao(new Identificacao());
+		}
+		
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario() == null) {
+			notaFiscal.getNotaFiscalInformacoes().setIdentificacaoDestinatario(new IdentificacaoDestinatario());
+		}
+
+		//FIXME: Ajustar para obter dos parametros enviado pela tela
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormaPagamento(formaPagamento);
+		
+		//FIXME: Ajustar para variavel global
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoAmbiente(TipoAmbiente.valueOf(parametrosSistema.get("NFE_INFORMACOES_AMBIENTE").getValor()));
+		
+		//FIXME: Ajustar para variavel parametrizada
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoEmissao(TipoEmissao.NORMAL);
+		
+		//FIXME: Ajustar para variavel parametrizada
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.NORMAL);
+		
+		//FIXME: Ajustar para variavel parametrizada
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setOperacaoConsumidorFinal(OperacaoConsumidorFinal.NAO);
+		
+		//FIXME: Ajustar para variavel parametrizada
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setPresencaConsumidor(PresencaConsumidor.NAO_SE_APLICA);
+		
+		//FIXME: Ajustar para variavel parametrizada
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setVersaoSistemaEmissao(parametrosSistema.get("NFE_INFORMACOES_VERSAO_EMISSOR").getValor());
+		
+		//FIXME: Ajustar para variavel parametrizada
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
+		
+		//FIXME: Ajustar para variavel parametrizada
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormatoImpressao(FormatoImpressao.valueOf(parametrosSistema.get("NFE_INFORMACOES_FORMATO_IMPRESSAO").getValor()));
+		
+		//FIXME: Ajustar para variavel parametrizada
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setModeloDocumentoFiscal(parametrosSistema.get("MODELO_DOCUMENTO_FISCAL").getValor());
+		
+		//FIXME: Ajustar para variavel parametrizada
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.valueOf(parametrosSistema.get("NFE_INFORMACOES_TIPO_EMISSOR").getValor()));
+		
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDataEmissao(new Date());
+		
+		//FIXME: Ajustar codigo de UF do cadastro
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoUf(Long.valueOf(distribuidor.getEnderecoDistribuidor().getEndereco().getCodigoUf())); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoUf());
+		
+		//FIXME: Ajustar codigo de municipio do cadastro
+		if(distribuidor.getEnderecoDistribuidor().isPrincipal()){
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoMunicipio(0L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoCidadeIBGE());
+			
+		}
+		
+		
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(0L);
+		
+	}
+	
 	public static void popularDadosTransportadora(NotaFiscal notaFiscal, Distribuidor distribuidor, FiltroNFeDTO filtro) {
 		
 		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte() == null) {
 			notaFiscal.getNotaFiscalInformacoes().setInformacaoTransporte(new InformacaoTransporte());
 		}
 		
+		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper() == null) {
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setTransportadorWrapper(new TransportadorWrapper());
+		}
 
-		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco() == null) {
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setEndereco(new NotaFiscalEndereco());
+		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco() == null) {
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setEndereco(new NotaFiscalEndereco());
 		}
 		
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setBairro("Osasco");
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setLogradouro("Kenkiti Shinomoto");
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCep("08250000");
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setNumero("158");
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCodigoCidadeIBGE(3550308L);
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCidade("Sãp Paulo");
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCodigoPais(30L);
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCodigoUf(20L);
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setComplemento("XXXX");
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setPais("Brasil");
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setTipoLogradouro("Rua");
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setUf("SP");
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrente(1);
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setBairro("Osasco");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setLogradouro("Kenkiti Shinomoto");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCep("08250000");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setNumero("158");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoCidadeIBGE(3550308L);
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCidade("Sãp Paulo");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoPais(30L);
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoUf(20L);
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setComplemento("XXXX");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setPais("Brasil");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setTipoLogradouro("Rua");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setUf("SP");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(1);
 	}
 }
