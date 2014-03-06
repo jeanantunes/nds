@@ -589,30 +589,33 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     @Transactional
     public void atualizarEstoqueProdutoDaFilaCota(Integer numeroCota) {
     
-		List<EstoqueProdutoFila> listaEstoqueProdutoFila = estoqueProdutoFilaRepository.buscarEstoqueProdutoFilaNumeroCota(numeroCota);
+		List<EstoqueProdutoFila> listaEstoqueProdutoFila = 
+			estoqueProdutoFilaRepository.buscarEstoqueProdutoFilaNumeroCota(numeroCota);
 		
-		if(listaEstoqueProdutoFila == null || listaEstoqueProdutoFila.isEmpty()) {
+		if (listaEstoqueProdutoFila == null 
+				|| listaEstoqueProdutoFila.isEmpty()) {
+			
 			return;
 		}
 		
-		for(EstoqueProdutoFila eFila : listaEstoqueProdutoFila) {
-			int quantidadeTentativas = 10;
-			atualizarEstoqueProdutoDaFila(eFila, quantidadeTentativas);
+		for (EstoqueProdutoFila eFila : listaEstoqueProdutoFila) {
+
+			atualizarEstoqueProdutoDaFila(eFila);
 		}
     	
 		cleanUpEstoqueProdutoFila(listaEstoqueProdutoFila);
-		
     }
     
-    
-    private void atualizarEstoqueProdutoDaFila(EstoqueProdutoFila eFila, int tentativas) {
+    private void atualizarEstoqueProdutoDaFila(EstoqueProdutoFila eFila) {
     	
 		Long idProdutoEdicao = eFila.getProdutoEdicao().getId();
 		
 		TipoEstoque tipoEstoque = eFila.getTipoEstoque();
 		
-		Long idEstoqueProduto = estoqueProdutoRespository.selectForUpdate(idProdutoEdicao);
-		EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarPorId(idEstoqueProduto);
+//		Long idEstoqueProduto = estoqueProdutoRespository.selectForUpdate(idProdutoEdicao);
+//		EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarPorId(idEstoqueProduto);
+		
+		EstoqueProduto estoqueProduto = estoqueProdutoRespository.obterEstoqueProdutoParaAtualizar(idProdutoEdicao);
 		
 		BigInteger novaQuantidade = BigInteger.ZERO;
 		
@@ -620,50 +623,45 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		switch (tipoEstoque) {
         
-        case DEVOLUCAO_ENCALHE:
-            
-        	 final BigInteger qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
-             
-             novaQuantidade = isOperacaoEntrada ? qtdeEncalhe.add(eFila.getQtde()) :
-                 qtdeEncalhe.subtract(eFila.getQtde());
-             
-             estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
-
-            
-            break;
-            
-        case SUPLEMENTAR:
-            
-        	final BigInteger qtdeSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
-            
-            novaQuantidade = isOperacaoEntrada ? qtdeSuplementar.add(eFila.getQtde()) :
-                qtdeSuplementar.subtract(eFila.getQtde());
-            
-            estoqueProduto.setQtdeSuplementar(novaQuantidade);
-            
-        default :
-        	
-        	throw new ValidacaoException(TipoMensagem.WARNING, "Estoque inválido para a operação.");
+	        case DEVOLUCAO_ENCALHE:
+	            
+	        	 final BigInteger qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+	             
+	             novaQuantidade = isOperacaoEntrada ? qtdeEncalhe.add(eFila.getQtde()) :
+	                 qtdeEncalhe.subtract(eFila.getQtde());
+	             
+	             estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
+	
+	            
+	            break;
+	            
+	        case SUPLEMENTAR:
+	            
+	        	final BigInteger qtdeSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
+	            
+	            novaQuantidade = isOperacaoEntrada ? qtdeSuplementar.add(eFila.getQtde()) :
+	                qtdeSuplementar.subtract(eFila.getQtde());
+	            
+	            estoqueProduto.setQtdeSuplementar(novaQuantidade);
+	            
+	        default :
+	        	
+	        	throw new ValidacaoException(TipoMensagem.WARNING, "Estoque inválido para a operação.");
         	
 		};
 		
         this.validarAlteracaoEstoqueProdutoDistribuidor(
-                novaQuantidade, tipoEstoque, estoqueProduto.getProdutoEdicao(),
-                true);
+        	novaQuantidade, tipoEstoque, estoqueProduto.getProdutoEdicao(), true);
 
     	estoqueProdutoRespository.merge(estoqueProduto);
-
-    	
     }
     
     private void cleanUpEstoqueProdutoFila(List<EstoqueProdutoFila> listaEstoqueProdutoFila) {
     	
-    	for(EstoqueProdutoFila e : listaEstoqueProdutoFila) {
+    	for (EstoqueProdutoFila e : listaEstoqueProdutoFila) {
     	
     		estoqueProdutoFilaRepository.remover(e);
-    	
     	}
-    	
     }
     
     /**
