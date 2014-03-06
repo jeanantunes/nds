@@ -105,12 +105,6 @@ $(function(){
 										<input disabled="disabled" type="text" name="dto.pathMdcImportacao" id="pathMdcImportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathMdcImportacao}" />
 									</td>
 								</tr>
-								<tr>
-									<td>Interface MDC Exporta&ccedil;&atilde;o:</td>
-									<td>
-										<input disabled="disabled" type="text" name="dto.pathMdcExportacao" id="pathMdcExportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathMdcExportacao}" />
-									</td>
-								</tr>
 							</table>
 						</td>
 							
@@ -170,6 +164,12 @@ $(function(){
 								<tr>
 									<td>Data Opera&ccedil;&atilde;o Corrente:</td>
 									<td><input type="text" name="dto.dtOperacaoCorrente" id="dtOperacaoCorrente" style="width:100px; text-align:center;" disabled="disabled" value="${parametroSistemaGeralDTO.dtOperacaoCorrente}" /></td>
+								</tr>
+								<tr>
+									<td>Interface MDC Exporta&ccedil;&atilde;o:</td>
+									<td>
+										<input disabled="disabled" type="text" name="dto.pathMdcExportacao" id="pathMdcExportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathMdcExportacao}" />
+									</td>
 								</tr>
 								<%--
 								Funcionalidade desabilitada ate a criação das rotinas de expurgo
@@ -245,10 +245,8 @@ $(function(){
 									</td>
 								</tr>
 								<tr>
-									<td>Local do certificado digital: </td>
-									<td>
-										<input disabled="disabled" type="text" name="dto.nfeInformacoesCertificadoDigitalPath" id="nfeInformacoesCertificadoDigitalPath" style="width:220px;" value="${parametroSistemaGeralDTO.nfeInformacoesCertificadoDigitalPath}" />
-									</td>
+									<td></td>
+									<td></td>
 								</tr>
 							</table>
 						</td>
@@ -256,6 +254,43 @@ $(function(){
 					
 				</tbody>
 			</table>
+			
+		</fieldset>
+		
+		<fieldset class="fieldFiltro">
+			<legend>FTF</legend>
+		
+			<table width="950" border="0" cellpadding="2" cellspacing="2">
+				<thead />
+				<tbody>
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td> C&oacute;digo do Estabelecimento Emissor:</td>
+									<td> <input id="ftfCodigoEstabelecimentoEmissor" name="dto.ftfCodigoEstabelecimentoEmissor" value="${parametroSistemaGeralDTO.ftfCodigoEstabelecimentoEmissor}" type="text" /> </td>
+								</tr>
+								<tr>
+									<td>CNPJ Estabelecimento Emissor:</td>
+									<td> <input id="ftfCnpjEstabelecimentoEmissor" name="dto.ftfCnpjEstabelecimentoEmissor" value="${parametroSistemaGeralDTO.ftfCnpjEstabelecimentoEmissor}" type="text" /></td>
+								</tr>
+							</table>
+						</td>
+						<td>
+							<table>
+								<tr>
+									<td> C&oacute;digo local:</td>
+									<td> <input id="ftfCodigoLocal" name="dto.ftfCodigoLocal" value="${parametroSistemaGeralDTO.ftfCodigoLocal}" type="text" /> </td>
+								</tr>
+								<tr>
+									<td> C&oacute;digo do Centro Emissor: </td>
+									<td><input id="ftfCodigoCentroEmissor" name="dto.ftfCodigoCentroEmissor" value="${parametroSistemaGeralDTO.ftfCodigoCentroEmissor}" type="text" /></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</tbody>
+				</table>
 		</fieldset>
 		
 		<div class="linha_separa_fields">&nbsp;</div>

@@ -32,7 +32,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.jcp.xml.dsig.internal.dom.XMLDSigRI;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+//import org.jcp.xml.dsig.internal.dom.XMLDSigRI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -56,7 +57,7 @@ public class Assinatura {
             String id = el.getAttribute("Id");
             
 
-            XMLSignatureFactory fac = XMLSignatureFactory.getInstance(XML_SIGNATURE_TYPE, new XMLDSigRI());
+            XMLSignatureFactory fac = XMLSignatureFactory.getInstance(XML_SIGNATURE_TYPE,  new BouncyCastleProvider());
             TransformParameterSpec tps = null;
             Transform envelopedTransform = fac.newTransform(Transform.ENVELOPED, tps);
             Transform c14NTransform = fac.newTransform(C14N_TRANSFORM_METHOD, tps);

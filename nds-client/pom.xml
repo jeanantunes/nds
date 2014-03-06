@@ -17,6 +17,16 @@
 	<name>NDS - Client</name>
 
 	<dependencies>
+	<dependency>
+			<groupId>webservice</groupId>
+			<artifactId>nds-ws-pessoacrp</artifactId>
+			<version>1.0</version>
+		</dependency>
+	<dependency>
+          <groupId>org.apache.axis2</groupId>
+          <artifactId>axis2</artifactId>
+          <version>1.6.2</version>
+    </dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
@@ -492,6 +502,7 @@
 				</plugins>
 			</build>
 		</profile>
+				
 		<profile>
 			<id>nds-client-homolog-f2</id>
 			<properties>
@@ -541,6 +552,7 @@
 				</plugins>
 			</build>
 		</profile>
+		
 		<profile>
 			<id>qa</id>
 			<properties>

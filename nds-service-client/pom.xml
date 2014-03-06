@@ -18,6 +18,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>webservice</groupId>
+			<artifactId>nds-ws-pessoacrp</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
 			<groupId>br.com.abril</groupId>
 			<artifactId>nds-common</artifactId>
 			<version>1.0</version>

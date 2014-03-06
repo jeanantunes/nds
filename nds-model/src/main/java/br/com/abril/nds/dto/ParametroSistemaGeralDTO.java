@@ -25,8 +25,7 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	private static final long serialVersionUID = -7477289076396360578L;
 	
 
-	private Map<TipoParametroSistema, String> params = 
-			new HashMap<TipoParametroSistema, String>();
+	private Map<TipoParametroSistema, String> params = new HashMap<TipoParametroSistema, String>();
 	
 	/** Data da Operação Corrente (usado apenas para exibição). */
 	private String dtOperacaoCorrente;
@@ -469,28 +468,36 @@ public class ParametroSistemaGeralDTO implements Serializable {
 		this.params.put(TipoParametroSistema.NFE_INFORMACOES_VERSAO_EMISSOR, nfeInformacoesVersaoEmissor);
 	}
 	
-	public String getNfeInformacoesCertificadoDigitalPath() {
-		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PATH);
+	public void setFtfCodigoEstabelecimentoEmissor(String ftfCodigoEstabelecimentoEmissor) {
+		this.params.put(TipoParametroSistema.FTF_CODIGO_ESTABELECIMENTO_EMISSOR, ftfCodigoEstabelecimentoEmissor);
 	}
 	
-	public void setNfeInformacoesCertificadoDigitalPath(String nfeInformacoesCertificadoDigitalPath) {
-		this.params.put(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PATH, nfeInformacoesCertificadoDigitalPath);
+	public String getFtfCodigoEstabelecimentoEmissor() {
+		return this.getParametroSistemaString(TipoParametroSistema.FTF_CODIGO_ESTABELECIMENTO_EMISSOR);
 	}
 	
-	public String getNFeInformacoesCertificadoDigitalAlias() {
-		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_ALIAS);
+	public void setFtfCnpjEstabelecimentoEmissor(String ftfCnpjEstabelecimentoEmissor) {
+		this.params.put(TipoParametroSistema.FTF_CNPJ_ESTABELECIMENTO_EMISSOR, ftfCnpjEstabelecimentoEmissor);
 	}
 	
-	public void setNFeInformacoesCertificadoDigitalAlias(String nfeInformacoesCertificadoDigitalAlias) {
-		this.params.put(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_ALIAS, nfeInformacoesCertificadoDigitalAlias);
+	public String getFtfCnpjEstabelecimentoEmissor() {
+		return this.getParametroSistemaString(TipoParametroSistema.FTF_CNPJ_ESTABELECIMENTO_EMISSOR);
+	}
+    
+	public void setFtfCodigoLocal(String ftfCodigoLocal) {
+		this.params.put(TipoParametroSistema.FTF_CODIGO_LOCAL, ftfCodigoLocal);
 	}
 	
-	public String getNFeInformacoesCertificadoDigitalPrivateKeyPassword() {
-		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PRIV_KEY_PASSWORD);
+	public String getFtfCodigoLocal() {
+		return this.getParametroSistemaString(TipoParametroSistema.FTF_CODIGO_LOCAL);
 	}
 	
-	public void setNFeInformacoesCertificadoDigitalPrivateKeyPassword(String nfeInformacoesCertificadoDigitalPrivateKeyPassword) {
-		this.params.put(TipoParametroSistema.NFE_INFORMACOES_CERTIFICADO_DIGITAL_PRIV_KEY_PASSWORD, nfeInformacoesCertificadoDigitalPrivateKeyPassword);
+	public void setFtfCodigoCentroEmissor(String ftfCodigoCentroEmissor) {
+		this.params.put(TipoParametroSistema.FTF_CODIGO_CENTRO_EMISSOR, ftfCodigoCentroEmissor);
+	}
+	
+	public String getFtfCodigoCentroEmissor() {
+		return this.getParametroSistemaString(TipoParametroSistema.FTF_CODIGO_CENTRO_EMISSOR);
 	}
 	
 	/**

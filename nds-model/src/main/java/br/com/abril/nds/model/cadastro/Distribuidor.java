@@ -204,7 +204,7 @@ public class Distribuidor {
 	 */
 	@Column(name = "QTD_DIAS_ENCALHE_ATRASADO_ACEITAVEL", nullable = false)
 	private int qtdDiasEncalheAtrasadoAceitavel = 4;
-
+	
 	@Column(name="QNT_DIAS_VENCIMENTO_VENDA_ENCALHE")
 	private Integer qntDiasVencinemtoVendaEncalhe;
 	
@@ -227,7 +227,7 @@ public class Distribuidor {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_CE", nullable = true)
-	private TipoImpressaoCE tipoImpressaoCE;
+	private TipoImpressaoCE tipoImpressaoCE;	
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_INTERFACE_LED", nullable = true)
@@ -336,14 +336,14 @@ public class Distribuidor {
 	
 	@OneToMany
 	@JoinTable(
-	            name="distribuidor_nota_fiscal_tipos",
+	            name="DISTRIBUIDOR_TIPOS_EMISSOES_NOTA_FISCAL",
 	            joinColumns={
 	            		@JoinColumn(table="DISTRIBUIDOR", name="DISTRIBUIDOR_ID", referencedColumnName="id", nullable=false)
 	                    },
 	            inverseJoinColumns=@JoinColumn(table="DISTRIBUIDOR_NOTA_FISCAL_TIPO_EMISSAO", name="NOTA_FISCAL_TIPO_EMISSAO_ID", referencedColumnName="id"))
 	@OrderBy("sequencia")
 	private Set<NotaFiscalTipoEmissao> tiposEmissoesNotaFiscalDistribuidor = new HashSet<NotaFiscalTipoEmissao>();
-	
+
 	@OneToMany
 	private List<DistribuidorClassificacaoCota> listClassificacaoCota;
 	
