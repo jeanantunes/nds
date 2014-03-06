@@ -245,10 +245,8 @@ $(function(){
 									</td>
 								</tr>
 								<tr>
-									<td>Local do certificado digital: </td>
-									<td>
-										<input disabled="disabled" type="text" name="dto.nfeInformacoesCertificadoDigitalPath" id="nfeInformacoesCertificadoDigitalPath" style="width:220px;" value="${parametroSistemaGeralDTO.nfeInformacoesCertificadoDigitalPath}" />
-									</td>
+									<td></td>
+									<td></td>
 								</tr>
 							</table>
 						</td>

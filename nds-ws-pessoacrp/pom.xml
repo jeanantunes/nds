@@ -31,9 +31,9 @@
 			<version>2.2.11</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.xml.stream</groupId>
+			<groupId>sun-jaxws</groupId>
 			<artifactId>sjsxp</artifactId>
-			<version>1.0.2</version>
+			<version>2.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

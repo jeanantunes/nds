@@ -23,6 +23,7 @@ import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalBase;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.CotaRepository;
@@ -42,6 +44,7 @@ import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.SerieRepository;
+import br.com.abril.nds.service.FTFService;
 import br.com.abril.nds.service.GeracaoNFeService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
@@ -94,6 +97,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
 	@Autowired
     private ParametrosDistribuidorService parametrosDistribuidorService;
+	
+	@Autowired
+	private FTFService ftfService;
 	
 	// Trava para evitar duplicidade ao gerar notas por mais de um usuario simultaneamente
     // O HashMap suporta mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -183,7 +189,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	 */
 	@Override
 	@Transactional(rollbackFor=Throwable.class)
-	public List<NotaFiscal> gerarNotaFiscal(FiltroNFeDTO filtro) throws FileNotFoundException, IOException {
+	public synchronized List<NotaFiscal> gerarNotaFiscal(FiltroNFeDTO filtro) throws FileNotFoundException, IOException {
 		
 		/**
 		 * metodo para gerar nota.
@@ -245,7 +251,11 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			notaFiscalRepository.adicionar(notaFiscal);
 		}
 		
-		this.notaFiscalService.exportarNotasFiscais(notas);
+		if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR))) {
+			this.ftfService.gerarFtf(notas, 0);
+		} else {
+			this.notaFiscalService.exportarNotasFiscais(notas);
+		}
 		
 		return notas;
 	}

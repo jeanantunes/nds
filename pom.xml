@@ -386,6 +386,11 @@
 
 	<repositories>
 		<repository>
+			<id>thirdparty-releases</id>
+			<name>JBoss Thirdparty Releases</name>
+			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
+		</repository>
+		<repository>
 			<id>nexus</id>
 			<url>http://177.71.197.202:8080/nexus-2.3.1-01/content/groups/public/</url>
 			<!-- url>http://177.71.255.76:8080/nexus-2.0.6/content/groups/public/</url -->
@@ -405,11 +410,6 @@
 		<repository>
 			<id>repomaven</id>
 			<url>http://repo.maven.apache.org/maven2/</url>		
-		</repository>
-		<repository>
-			<id>thirdparty-releases</id>
-			<name>JBoss Thirdparty Releases</name>
-			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
 		</repository>
 		<repository>
 			<id>jrimum.org</id>
@@ -532,15 +532,6 @@
 				<module>nds-integration-server</module>
 				<module>nds-integration-client</module>
 				<module>nds-estudo-algoritmo</module>
-			</modules>
-		</profile>
-		
-		<profile>
-			<id>testProfile</id>
-			<modules>
-				<module>nds-estudo-algoritmo</module>
-				<module>nds-test</module>
-				<module>nds-ws-pessoacrp</module>
 			</modules>
 		</profile>
 		
