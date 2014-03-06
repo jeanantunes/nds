@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 
 public interface EstoqueProdutoRespository extends Repository<EstoqueProduto, Long> {
 
@@ -29,5 +30,9 @@ public interface EstoqueProdutoRespository extends Repository<EstoqueProduto, Lo
 	BigInteger buscarQtdEstoqueProdutoEdicao(Long idProdutoEdicao);
 	
 	public Long selectForUpdate(Long idProdutoEdicao);
+	
+	EstoqueProduto obterEstoqueProdutoParaAtualizar(Long idProdutoEdicao);
+	
+	void atualizarEstoqueProduto(Long idProdutoEdicao, TipoEstoque tipoEstoque, BigInteger qtde);
 	
 }
