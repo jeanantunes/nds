@@ -2817,7 +2817,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         hql.append(" cota.numeroCota as numeroCota, ");
         hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
         hql.append(" cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ");
-        hql.append(" rankingFaturamento.faturamento as faturamento ");
+        hql.append(" rankingFaturamento.faturamento as faturamento, ");
+        hql.append(" max(rankingFaturamento.dataGeracaoRank) as  dataGeracao ");
         
         hql.append(" FROM RankingFaturamento rankingFaturamento ");
         hql.append(" RIGHT JOIN rankingFaturamento.cota as cota ");
