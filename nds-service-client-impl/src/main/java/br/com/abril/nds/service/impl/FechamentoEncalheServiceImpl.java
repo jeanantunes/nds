@@ -726,7 +726,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                         gerarCobrancaService.gerarDividaPostergada(cota.getId(), usuario.getId());
                     } else {
                         
-                        gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
+                        gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail, new HashSet<String>());
                     }
                 } catch (final GerarCobrancaValidacaoException e) {
                     LOGGER.error(e.getMessage(), e);
@@ -918,19 +918,19 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         // cobra cotas as demais cotas, no caso, as não ausentes e com
         // unificação
-        final Set<String> nossoNumero = new HashSet<String>();
+        final Set<String> nossoNumeroCentralizacao = new HashSet<String>();
         
         if (cobrarCotas) {
             try {
                 
-                gerarCobrancaService.gerarCobranca(null, usuario.getId(), nossoNumero);
+                gerarCobrancaService.gerarCobranca(null, usuario.getId(), new HashSet<String>(), nossoNumeroCentralizacao);
             } catch (final GerarCobrancaValidacaoException e) {
                 LOGGER.error(e.getMessage(), e);
                 throw new ValidacaoException(e.getValidacaoVO());
             }
         }
         
-        return nossoNumero;
+        return nossoNumeroCentralizacao;
     }
     
     private void tratarAtualizacaoProximoLancamentoParcial(final FechamentoFisicoLogicoDTO item, final Usuario usuario,

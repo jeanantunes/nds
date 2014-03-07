@@ -50,12 +50,14 @@ public interface GerarCobrancaService {
 	 * 
 	 * @param idCota
 	 * @param idUsuario
-	 * @param setNossoNumero
+	 * @param setNossoNumeroEnvioEmail
+	 * @param setNossoNumeroCentralizacao
 	 * @throws GerarCobrancaValidacaoException
 	 */
 	void gerarCobranca(Long idCota, 
 			           Long idUsuario, 
-			           Set<String> setNossoNumeroEnvioEmail) throws GerarCobrancaValidacaoException;
+			           Set<String> setNossoNumeroEnvioEmail,
+			           Set<String> setNossoNumeroCentralizacao) throws GerarCobrancaValidacaoException;
 	
 	/**
 	 * Consolida Financeiro, Gera Divida e Posterga Divida Gerada para Cotas especificas
