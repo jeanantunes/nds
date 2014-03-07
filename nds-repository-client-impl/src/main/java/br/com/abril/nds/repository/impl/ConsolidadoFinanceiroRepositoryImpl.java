@@ -1207,7 +1207,7 @@ ConsolidadoFinanceiroRepository {
     @Override
     public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(final Long idCota) {
         
-        final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c, Distribuidor d ");
+        final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c, Distribuidor d  ");
         
         if (idCota != null){
             

@@ -20,7 +20,14 @@ public class RankingFaturamentoServiceImpl implements RankingFaturamentoService 
 	@Transactional
 	@Override
 	public void executeJobGerarRankingFaturamento() {
-		this.rankingFaturamentoRepository.executeJobGerarRankingFaturamento();
+		
+		this.rankingFaturamentoRepository.deletarRankingFaturamento();
+		
+		this.rankingFaturamentoRepository.gerarRankingFaturamento();
+		
+		this.rankingFaturamentoRepository.gerarRankingFaturamentoParaCotasSemRanking();
+		
+		this.rankingFaturamentoRepository.atualizarClassificacaoCota();
 	}
 
 	@Transactional

@@ -11,10 +11,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
-
-import com.sun.xml.internal.txw2.annotation.XmlElement;
 
 @Embeddable
 @AttributeOverrides({
@@ -54,12 +53,12 @@ public class ICMS extends ICMSBase implements Serializable {
 
 	}
 	
-	@XmlElement(value="orig")
+	@XmlElement(name="orig")
 	public String getOrig() {
 		return super.orig;
 	}
 	
-	@XmlElement(value="CST")
+	@XmlElement(name="CST")
 	public String getCst() {
 		return super.getCst();
 	}

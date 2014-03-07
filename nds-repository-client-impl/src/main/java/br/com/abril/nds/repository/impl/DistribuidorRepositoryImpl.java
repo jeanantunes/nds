@@ -401,9 +401,7 @@ public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribu
 	@Override
 	public String codigoDistribuidorDinap() {
 		
-		return (String)
-				this.getSession().
-				createQuery("select codigoDistribuidorDinap from Distribuidor").uniqueResult();
+		return (String) this.getSession().createQuery("select codigoDistribuidorDinap from Distribuidor").uniqueResult();
 	}
 
 	@Override
