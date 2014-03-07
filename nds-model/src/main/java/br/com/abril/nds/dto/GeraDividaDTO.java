@@ -33,6 +33,8 @@ public class GeraDividaDTO implements Serializable{
 	@Export(label = "Cota")
 	private Integer numeroCota;
 	
+	private Long idCota;
+	
 	@Export(label = "Nome")
 	private String nomeCota;
 	
@@ -255,6 +257,22 @@ public class GeraDividaDTO implements Serializable{
 	public void setSuportaEmail(Boolean suportaEmail) {
 		this.suportaEmail = suportaEmail;
 	}
+
+    
+    /**
+     * @return the idCota
+     */
+    public Long getIdCota() {
+        return idCota;
+    }
+
+    
+    /**
+     * @param idCota the idCota to set
+     */
+    public void setIdCota(Long idCota) {
+        this.idCota = idCota;
+    }
 	
 	
 	 
