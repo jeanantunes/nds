@@ -1798,6 +1798,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if (idMovimentoFinanceiroCota != null){
 
 			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadoPorIdMovimentoFinanceiro(idMovimentoFinanceiroCota);
+		
 		} else {
 			
 			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota);
@@ -1845,7 +1846,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
                 
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
 			    
-			    this.consolidadoFinanceiroRepository.clear();
 			}
 		}
 		
@@ -1861,18 +1861,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		    
 			this.excluirBoletoEmailAssociacao(cobranca.getId());
 			
-			this.cobrancaRepository.remover(cobranca);
 		}
 		
-		excluirDadosDivida(divida.getId());
+		this.dividaRepository.remover(divida);
 		
-	}
-	
-	private void excluirDadosDivida(Long idDivida) {
-		
-		 this.dividaRepository.excluirDividaConsolidado(idDivida);
-		 
-		 this.dividaRepository.removerPorId(idDivida);
 		
 	}
 	

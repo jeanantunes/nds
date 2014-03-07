@@ -60,7 +60,7 @@ public class Divida implements Serializable {
 	@Column(name = "STATUS", nullable = false)
 	private StatusDivida status;
 	
-	@OneToOne(mappedBy = "divida", cascade={CascadeType.MERGE})
+	@OneToOne(mappedBy = "divida", cascade={CascadeType.MERGE, CascadeType.REMOVE})
 	private Cobranca cobranca;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
