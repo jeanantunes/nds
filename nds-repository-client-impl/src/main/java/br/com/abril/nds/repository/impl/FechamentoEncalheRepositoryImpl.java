@@ -1449,32 +1449,34 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public Boolean validarEncerramentoOperacaoEncalhe(final Date data) {
-        
-        final StringBuilder sql = new StringBuilder()
-        .append("select ")
-        .append("	((select count(data_recolhimento) ")
-        .append("		from chamada_encalhe ")
-        .append("		where data_recolhimento = :dataOperacao) > 0) countCeGtZero ")
-        .append(", 	((select count(data_encalhe) ")
-        .append("		from fechamento_encalhe ")
-        .append("		where data_encalhe = :dataOperacao) > 0) countFeGtZero ");
+                
+        String sql = "select " 
+                + "(select count(*)FROM CHAMADA_ENCALHE "
+                + " WHERE DATA_RECOLHIMENTO = :dataOperacao) > 0 "
+                + " as chamadaEncalhe, "
+                   
+                + " (SELECT count(*) FROM CONTROLE_CONFERENCIA_ENCALHE_COTA "
+                + " WHERE DATA_OPERACAO = :dataOperacao AND status='CONCLUIDO')  > 0 "
+                + " as conferenciaEncalhe, "
+
+                + " (SELECT count(* )FROM CONTROLE_FECHAMENTO_ENCALHE "
+                + " WHERE data_encalhe = :dataOperacao)  > 0 "
+                + " as fechamentoEncalhe ";
         
         final SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setParameter("dataOperacao", data);
-        query.addScalar("countCeGtZero", StandardBasicTypes.BOOLEAN);
-        query.addScalar("countFeGtZero", StandardBasicTypes.BOOLEAN);
+        query.addScalar("chamadaEncalhe", StandardBasicTypes.BOOLEAN);
+        query.addScalar("conferenciaEncalhe", StandardBasicTypes.BOOLEAN);
+        query.addScalar("fechamentoEncalhe", StandardBasicTypes.BOOLEAN);
         
-        final List<Object> result = query.list();
+        Object[] result = (Object[]) query.uniqueResult();
         
-        if(result == null || result.isEmpty()) {
-            return false;
-        }
+        Boolean chamadaEncalhe = (Boolean) result[0];
+        Boolean conferenciaEncalhe = (Boolean) result[1];
+        Boolean fechamentoEncalhe = (Boolean) result[2];
         
-        final Object[] obj = (Object[]) result.get(0);
-        
-        return !((Boolean) obj[0] ^ (Boolean) obj[1]);
+        return !(chamadaEncalhe && conferenciaEncalhe && !fechamentoEncalhe);
     }
 }
