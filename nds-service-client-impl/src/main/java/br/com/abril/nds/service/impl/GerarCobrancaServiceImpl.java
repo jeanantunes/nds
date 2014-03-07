@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1797,6 +1798,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if (idMovimentoFinanceiroCota != null){
 
 			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadoPorIdMovimentoFinanceiro(idMovimentoFinanceiroCota);
+		
 		} else {
 			
 			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota);
@@ -1827,7 +1829,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					
 					} else {
 					
-						this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
+						this.removerDividaCobrancaConsolidado(divida, consolidado, dataOperacao);
 					}
 				}
 
@@ -1844,7 +1846,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
                 
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
 			    
-			    this.consolidadoFinanceiroRepository.clear();
 			}
 		}
 		
@@ -1860,10 +1861,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		    
 			this.excluirBoletoEmailAssociacao(cobranca.getId());
 			
-			this.cobrancaRepository.remover(cobranca);
 		}
 		
-	    this.dividaRepository.remover(divida);
+		this.dividaRepository.remover(divida);
+		
+		
 	}
 	
 	private void removerPostergados(Long idCota, Date dataOperacao){
