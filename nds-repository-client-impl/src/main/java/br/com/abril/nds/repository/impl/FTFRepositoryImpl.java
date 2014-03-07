@@ -48,68 +48,68 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	private static long NF_DEVOLUCAO_FORNECEDOR = 7;
 
 	private Distribuidor distribuidor;
-	
+
 	@Autowired
 	HibernateTransactionManager transactionManager;
-	
+
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
-	
+
 	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
-	
+
 	@Autowired
 	private CotaRepository cotaRepository;
-	
+
 	@Override
 	public FTFEnvTipoRegistro00 obterRegistroTipo00(long idTipoNotaFiscal) {
-		
+
 		FTFEnvTipoRegistro00 reg00 = new FTFEnvTipoRegistro00();
 		reg00.setTipoRegistro("0");
 		setCommonsParameters(reg00);
 		reg00.setNumeroDocOrigem("00000000");
 		reg00.setDataGeracao(DateUtil.formatarData(GregorianCalendar.getInstance().getTime(), Constantes.DATE_PATTERN_PT_BR));
-		
+
 		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.FTF_INDEX_FILENAME);
-		
+
 		Long sequence  = Long.parseLong(ps.getValor());
 		sequence += 1l;
 		ps.setValor(Long.toString(sequence));
 		parametroSistemaRepository.alterar(ps);
-		
+
 		String pattern = "000000";
 		DecimalFormat myFormatter = new DecimalFormat(pattern);
 		long value = sequence;
 		String output = myFormatter.format(value);
-		
+
 		String codigoDistribuidor = distribuidor.getCodigoDistribuidorDinap();
 		if(StringUtil.isEmpty(codigoDistribuidor)){
 			codigoDistribuidor = distribuidor.getCodigoDistribuidorFC();
 		}
-		
+
 		reg00.setNomeArquivo(String.format("NDS%s%s.PED",output, codigoDistribuidor));
 		reg00.setNumSequencia(output);
-		
+
 		return reg00;
-		
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FTFEnvTipoRegistro01> obterResgistroTipo01(List<NotaFiscal> notas, long idTipoNotaFiscal) {
-		
+
 		StringBuilder sqlBuilder = new StringBuilder();
-		
+
 		sqlBuilder.append(" select DISTINCT ");
 		sqlBuilder.append(" '1' as tipoRegistro, ");
-		
+
 		setParametersFromDistribuidor(sqlBuilder);
-		
+
 		concatenarTipoPedidoBy(idTipoNotaFiscal, sqlBuilder);
-		
+
 		sqlBuilder.append(" cast(nfn.id as char) as numeroDocOrigem, ");
 		sqlBuilder.append(" 'SIST_NDS' as codSolicitante,  "); 
 		sqlBuilder.append(" endereco.LOGRADOURO as  nomeLocalEntregaNf, ");
@@ -117,9 +117,9 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" 'SIST_NDS' as codCentroEmissor, ");
 		sqlBuilder.append(" nfn.DOCUMENTO_DESTINATARIO as cpfCnpjDestinatario, ");
 		sqlBuilder.append(" nfn.DOCUMENTO_DESTINATARIO as cpfCnpjEstabelecimentoEntrega, ");
-		
+
 		adicionarCodDestinatarioSistemaOrigem(idTipoNotaFiscal, sqlBuilder);
-		
+
 		sqlBuilder.append(" COALESCE(cast(nfn.CONDICAO as char),'') as codCondicaoPagamento, ");
 		sqlBuilder.append(" nfn.IE_EMITENTE as numInscricaoEstadual, ");
 		sqlBuilder.append(" nfn.IE_EMITENTE as numDeclaracaoImportacao, ");
@@ -149,7 +149,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" '' as numContaBanco, ");
 		sqlBuilder.append(" COALESCE(DATE_FORMAT(nfn.data_saida_entrada,'%d/%m/%Y'),'')  as dataSaida, ");
 		sqlBuilder.append(" cast(nfn.indicador_forma_pagamento as char) as formaPagamento, ");
-		
+
 		sqlBuilder.append(" '' as envioBoleto, ");
 		sqlBuilder.append(" '' as formaFaturamento, ");
 		sqlBuilder.append(" '' as percentualComissaoIntermediaio, ");
@@ -158,7 +158,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" '' as codIntermediarioSistemaOrigem, ");
 		sqlBuilder.append(" '' as valorBruto, ");
 		sqlBuilder.append(" '' as numeroFaturaAssociada, ");
-		
+
 		sqlBuilder.append(" '' as debitoCartaoCredito, ");
 		sqlBuilder.append(" '' as numCartaoCredito, ");
 		sqlBuilder.append(" '' as numContratoPermuta, ");
@@ -168,13 +168,13 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" 'NDS' as codUnidadeOperacionalEmpresaEmissora, ");
 		sqlBuilder.append(" '0' as indicadorResponsavelPeloFrete, ");
 		sqlBuilder.append(" '1' as statusPedido, ");
-		
+
 		sqlBuilder.append(" '' as numPedidoCliente, ");
 		sqlBuilder.append(" '' as codLinhaDistribuicao, "); 
-		
+
 		sqlBuilder.append(" '' as codResponsavelPeloFrete, ");
 		sqlBuilder.append(" '' as numSimulacao, "); 
-		
+
 		sqlBuilder.append(" '' as tipoOperacao, "); //-- falta definição por parte da equipe de FTF 
 		sqlBuilder.append(" '' as numAprovacao, ");
 		sqlBuilder.append(" '' as situacaoTitulo,  ");//-- verificar equipe FTF
@@ -205,22 +205,22 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" from nota_fiscal_novo nfn ");
 		sqlBuilder.append(" left join tipo_nota_fiscal tnf ON tnf.ID = nfn.TIPO_NOTA_FISCAL_ID ");
 		sqlBuilder.append(" left join endereco endereco on endereco.ID = nfn.ENDERECO_ID_DESTINATARIO ");
-		
+
 		adicionarJoinCota(idTipoNotaFiscal, sqlBuilder);
-		
+
 		sqlBuilder.append(" where nfn.id in (:idsNotaFiscal) ");
 		sqlBuilder.append(" and tnf.id  = :idTipoNotaFiscal ");
 		SQLQuery query = getSession().createSQLQuery(sqlBuilder.toString());
-		
+
 		query.setParameterList("idsNotaFiscal", obterIdsFrom(notas));
 		query.setParameter("idTipoNotaFiscal", idTipoNotaFiscal);
-		
+
 		adicionarDistribuidorParametro(idTipoNotaFiscal, query);
-		
+
 		query.setResultTransformer(new AliasToBeanResultTransformer(FTFEnvTipoRegistro01.class));
-		
+
 		query.setMaxResults(2);
-		
+
 		return query.list();
 	}
 
@@ -256,35 +256,35 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	}
 
 	private void setParametersFromDistribuidor(StringBuilder sqlBuilder) {
-		
+
 		Map<String, ParametroSistema> ps = parametroSistemaRepository.buscarParametroSistemaGeralMap();
 		if (ps != null) {
-			sqlBuilder.append(String.format(" '%s' as codEstabelecimentoEmissor,  ", ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR")));
+			sqlBuilder.append(String.format(" '%s' as codEstabelecimentoEmissor,  ", ps.get("FTF_CODIGO_ESTABELECIMENTO_EMISSOR")));
 			sqlBuilder.append(String.format(" '%s' as cnpjEstabelecimentoEmissor,  ", ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR")));
 			sqlBuilder.append(String.format(" '%s' as codLocal,  ", ps.get("FTF_CODIGO_LOCAL")));
 		}
 	}
-	
+
 	private List<Long> obterIdsFrom(List<NotaFiscal> notas){
 		int length = notas.size();
 		List<Long> ids = new ArrayList<>();
-		
+
 		for (int i = 0; i < length; i++) {
 			ids.add(notas.get(i).getId());
 		}
 		return ids;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FTFEnvTipoRegistro02> obterResgistroTipo02(Long idNF, long idTipoNotaFiscal) {
-	
+
 		StringBuilder sqlBuilder = new StringBuilder();
-		
+
 		sqlBuilder.append(" select ")
 		.append("  '2' as tipoRegistro, ");
 		setParametersFromDistribuidor(sqlBuilder);
-		
+
 		concatenarTipoPedidoBy(idTipoNotaFiscal, sqlBuilder);
 		sqlBuilder.append("  nfn.DOCUMENTO_EMITENTE as numeroDocOrigem, ")
 		.append("  cast(nfps.SEQUENCIA as char) as numItemPedido, ")
@@ -311,54 +311,54 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" inner join nota_fiscal_novo nfn ON nfn.id = nfps.NOTA_FISCAL_ID ")
 		.append(" left join tipo_nota_fiscal tnf ON tnf.ID = nfn.TIPO_NOTA_FISCAL_ID ")
 		.append(" where nfps.NOTA_FISCAL_ID = :idNF ");
-		
+
 		SQLQuery query = getSession().createSQLQuery(sqlBuilder.toString());
 		query.setParameter("idNF", idNF);
-		
+
 		query.setResultTransformer(new AliasToBeanResultTransformer(FTFEnvTipoRegistro02.class));
-		
+
 		List<FTFEnvTipoRegistro02> list = query.list();
 		return list;
 	}
 
 	@Override
 	public FTFEnvTipoRegistro09 obterRegistroTipo09(long idTipoNotaFiscal) {
-		
+
 		FTFEnvTipoRegistro09 reg09 = new FTFEnvTipoRegistro09();
 		reg09.setTipoRegistro("9");
 		reg09.setTipoPedido("99");
-		
+
 		setCommonsParameters(reg09);
-		
+
 		reg09.setNumeroDocOrigem("99999999");
-		
+
 		return reg09;
 	}
-	
+
 	private void setCommonsParameters(FTFCommons object) {
-		
+
 		Map<String, ParametroSistema> ps = parametroSistemaRepository.buscarParametroSistemaGeralMap();
 		if (ps != null) {
-			object.setCnpjEstabelecimentoEmissor(ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR").getValor());
+			object.setCnpjEstabelecimentoEmissor(ps.get("FTF_CODIGO_ESTABELECIMENTO_EMISSOR").getValor());
 			object.setCnpjEstabelecimentoEmissor(ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR").getValor());
 			object.setCnpjEstabelecimentoEmissor(ps.get("FTF_CODIGO_LOCAL").getValor());
 		}
-		
+
 	}
-	
+
 	@PostConstruct
 	@SuppressWarnings("unchecked")
 	public void getDistribuidor() {
-		
+
 		StatelessSession ss = transactionManager.getSessionFactory().openStatelessSession();
 
 		String hql = "from Distribuidor";
 		Query query = ss.createQuery(hql);
-		
+
 		List<Distribuidor> distribuidores = query.list();
-		
+
 		distribuidor = distribuidores.isEmpty() ? null : distribuidores.get(0);
-		
+
 	}
 
 	@Override
@@ -376,18 +376,18 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(list.toArray());
 		namedParameterJdbcTemplate.batchUpdate(builder.toString(), batch);
-		 
+
 
 	}
-	
+
 	public FTFEnvTipoRegistro06 obterRegistroTipo06(NotaFiscalReferenciada nota) {
-		
+
 		FTFEnvTipoRegistro06 tipoRegistro06 = null;
 		NotaFiscal notaFiscal = nota.getPk().getNotaFiscal();
-		
+
 		if (notaFiscal != null) {
 			tipoRegistro06 = new FTFEnvTipoRegistro06();
-			
+
 			tipoRegistro06.setTipoRegistro("6");
 			setCommonsParameters(tipoRegistro06);
 			tipoRegistro06.setTipoPedido("2");
@@ -395,8 +395,8 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 			tipoRegistro06.setNumDocumentoOrigemAssociado("");//TODO
 
 		}
-		
-		
+
+
 		return tipoRegistro06;
 	}
 
@@ -404,46 +404,46 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	public FTFEnvTipoRegistro06 obterRegistroTipo06(Long idNF) {
 
 		StringBuilder sb = new StringBuilder();
-		
+
 		sb.append("select nfr from NotaFiscalReferenciada nfr ")
 		.append(" left join nfr.pk ")
 		.append(" left join nfr.pk.notaFiscal nf ")
 		.append(" where nf.id = :idNF ");
-		
-		
+
+
 		SQLQuery query = getSession().createSQLQuery(sb.toString());
 		query.setParameter("idNF", idNF);
-		
+
 		NotaFiscalReferenciada nota = (NotaFiscalReferenciada)query.uniqueResult();
-		
+
 		FTFEnvTipoRegistro06 tipoRegistro06 = null;
 		if(nota!=null){
-			
+
 			NotaFiscal notaFiscal = nota.getPk().getNotaFiscal();
-			
+
 			if (notaFiscal != null) {
 				tipoRegistro06 = new FTFEnvTipoRegistro06();
-				
+
 				tipoRegistro06.setTipoRegistro("6");
 				setCommonsParameters(tipoRegistro06);
 				tipoRegistro06.setTipoPedido("2");
 				tipoRegistro06.setNumeroDocOrigem(notaFiscal.getId().toString());
 				tipoRegistro06.setNumDocumentoOrigemAssociado("");//TODO
-				
+
 			}
-			
+
 		}
-		
-		
+
+
 		return tipoRegistro06;
-		
+
 	}
 
-	
+
 	@Override
 	public FTFEnvTipoRegistro08 obterRegistroTipo08(long idTipoNotaFiscal) {
 		StringBuilder sb = new StringBuilder();
-		
+
 		sb.append(" select  ")
 		.append(" nfn.DOCUMENTO_EMITENTE as cnpjEstabelecimentoEmissor, ")
 		.append(" '' as codLocal, ")
@@ -475,13 +475,13 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		SQLQuery query = getSession().createSQLQuery(sb.toString());
 		query.setParameter("idNF", idTipoNotaFiscal);
-		
+
 		query.setResultTransformer(new AliasToBeanResultTransformer(FTFEnvTipoRegistro08.class));
-		
+
 		Object uniqueResult = query.uniqueResult();
-		
+
 		return (FTFEnvTipoRegistro08)uniqueResult;
-		
+
 	}
 }
 

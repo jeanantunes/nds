@@ -386,30 +386,22 @@
 
 	<repositories>
 		<repository>
-			<id>thirdparty-releases</id>
-			<name>JBoss Thirdparty Releases</name>
-			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
-		</repository>
-		<repository>
 			<id>nexus</id>
 			<url>http://177.71.197.202:8080/nexus-2.3.1-01/content/groups/public/</url>
 			<!-- url>http://177.71.255.76:8080/nexus-2.0.6/content/groups/public/</url -->
 		</repository>
-		<!-- <repository>
+		<repository>
+			<id>repomaven</id>
+			<url>http://repo.maven.apache.org/maven2/</url>		
+		</repository>
+		<repository>
 			<id>mvnrepository</id>
 			<url>http://mvnrepository.com/artifact/</url>		
 		</repository>
 		<repository>
-			<id>repomaven</id>
-			<url>http://repo.maven.apache.org/maven2/</url>		
-		</repository> -->
-		<repository>
-			<id>mvnrepository</id>
-			<url>http://mvnrepository.com/artifact/</url>		
-		</repository>
-		<repository>
-			<id>repomaven</id>
-			<url>http://repo.maven.apache.org/maven2/</url>		
+			<id>thirdparty-releases</id>
+			<name>JBoss Thirdparty Releases</name>
+			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
 		</repository>
 		<repository>
 			<id>jrimum.org</id>
