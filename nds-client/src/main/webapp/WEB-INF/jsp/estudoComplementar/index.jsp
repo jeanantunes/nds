@@ -143,11 +143,27 @@ $("#reparteDistribuicao").keydown(function(e){
 
 
 function somarSobra(){
-	$('#reparteSobra').val($("#reparteLancamento").val() - $('#reparteDistribuicao').val());
+	
+	var reparteDistribuicao = $('#reparteDistribuicao').val();
+	
+	if (!reparteDistribuicao) {
+		
+		reparteDistribuicao = 0;
+	}
+	
+	$('#reparteSobra').val($("#reparteLancamento").val() - reparteDistribuicao);
 };
 
 function somarDistribuicao(){
-	$('#reparteDistribuicao').val($("#reparteDistribuicao").val() - $('#reparteSobra').val());
+	
+	var reparteSobra = $('#reparteSobra').val();
+	
+	if (!reparteSobra) {
+		
+		reparteSobra = 0;
+	}
+	
+	$('#reparteDistribuicao').val($("#reparteLancamento").val() - reparteSobra);
 };
 </script>
 
@@ -264,9 +280,9 @@ function somarDistribuicao(){
                 <td width="84">Reparte Lncto:</td>
                 <td width="70"><input name="reparteLancamento" type="text" id="reparteLancamento" style="width:60px; text-align:center;" value="${reparteDisponivel}"  readonly="readonly" /></td>
                 <td width="46">Sobra:</td>
-                <td width="75"><input name="reparteSobra" type="text" id="reparteSobra" style="width:60px; text-align:center;" value="" onkeyup="somarDistribuicao();"/></td>
+                <td width="75"><input name="reparteSobra" type="text" id="reparteSobra" style="width:60px; text-align:center;" value="" onchange="somarDistribuicao();"/></td>
                 <td width="127">Reparte Distribuido:</td>
-                <td width="60"><input name="reparteDistribuicao" type="text" id="reparteDistribuicao" style="width:60px; text-align:center;" value="${reparteDisponivel}" onkeyup="somarSobra();" o/></td>
+                <td width="60"><input name="reparteDistribuicao" type="text" id="reparteDistribuicao" style="width:60px; text-align:center;" value="${reparteDisponivel}" onchange="somarSobra();" o/></td>
               </tr>
               <tr>
                 <td align="right"><input name="checkbox" type="checkbox" id="checkboxDistMult" onclick="$('.distrMult').toggle();" /></td>
