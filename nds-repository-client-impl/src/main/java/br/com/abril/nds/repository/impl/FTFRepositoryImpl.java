@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -255,10 +256,12 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	}
 
 	private void setParametersFromDistribuidor(StringBuilder sqlBuilder) {
-		if (distribuidor.getFtfParameters() != null) {
-			sqlBuilder.append(String.format(" '%s' as codEstabelecimentoEmissor,  ", distribuidor.getFtfParameters().getCnpjEstabelecimentoEmissor()));
-			sqlBuilder.append(String.format(" '%s' as cnpjEstabelecimentoEmissor,  ",distribuidor.getFtfParameters().getCnpjEstabelecimentoEmissor()));
-			sqlBuilder.append(String.format(" '%s' as codLocal,  ", distribuidor.getFtfParameters().getCodigoLocal()));
+		
+		Map<String, ParametroSistema> ps = parametroSistemaRepository.buscarParametroSistemaGeralMap();
+		if (ps != null) {
+			sqlBuilder.append(String.format(" '%s' as codEstabelecimentoEmissor,  ", ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR")));
+			sqlBuilder.append(String.format(" '%s' as cnpjEstabelecimentoEmissor,  ", ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR")));
+			sqlBuilder.append(String.format(" '%s' as codLocal,  ", ps.get("FTF_CODIGO_LOCAL")));
 		}
 	}
 	
@@ -272,6 +275,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		return ids;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<FTFEnvTipoRegistro02> obterResgistroTipo02(Long idNF, long idTipoNotaFiscal) {
 	
@@ -313,7 +317,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(FTFEnvTipoRegistro02.class));
 		
-		List list = query.list();
+		List<FTFEnvTipoRegistro02> list = query.list();
 		return list;
 	}
 
@@ -331,12 +335,15 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		return reg09;
 	}
 	
-	private void setCommonsParameters(FTFCommons object){
-		if (distribuidor.getFtfParameters() != null) {
-			object.setCnpjEstabelecimentoEmissor(distribuidor.getFtfParameters().getCnpjEstabelecimentoEmissor());
-			object.setCodEstabelecimentoEmissor(distribuidor.getFtfParameters().getCodigoEstabelecimentoEmissor());
-			object.setCodLocal(distribuidor.getFtfParameters().getCodigoLocal());
+	private void setCommonsParameters(FTFCommons object) {
+		
+		Map<String, ParametroSistema> ps = parametroSistemaRepository.buscarParametroSistemaGeralMap();
+		if (ps != null) {
+			object.setCnpjEstabelecimentoEmissor(ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR").getValor());
+			object.setCnpjEstabelecimentoEmissor(ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR").getValor());
+			object.setCnpjEstabelecimentoEmissor(ps.get("FTF_CODIGO_LOCAL").getValor());
 		}
+		
 	}
 	
 	@PostConstruct
