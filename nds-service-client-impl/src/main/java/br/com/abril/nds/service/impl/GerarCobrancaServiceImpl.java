@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1541,7 +1542,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					
 					} else {
 					
-						this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
+						this.removerDividaCobrancaConsolidado(divida, consolidado, dataOperacao);
 					}
 				}
 
@@ -1577,7 +1578,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			this.cobrancaRepository.remover(cobranca);
 		}
 		
-	    this.dividaRepository.remover(divida);
+		excluirDadosDivida(divida.getId());
+		
+	}
+	
+	private void excluirDadosDivida(Long idDivida) {
+		
+		 this.dividaRepository.excluirDividaConsolidado(idDivida);
+		 
+		 this.dividaRepository.removerPorId(idDivida);
+		
 	}
 	
 	private void removerPostergados(Long idCota, Date dataOperacao){
