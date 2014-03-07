@@ -1749,7 +1749,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 					gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
 													   controleConferenciaEncalheCota.getUsuario().getId(), 
-													   nossoNumeroCollection);
+													   nossoNumeroCollection,
+													   new HashSet<String>());
 				}
 			}
 	    }
