@@ -23,10 +23,11 @@ public class RankingFaturamentoRepositoryImpl extends AbstractRepositoryModel<Ra
 	public void gerarRankingFaturamento() {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" INSERT INTO ranking_faturamento (COTA_ID, FATURAMENTO) ");
+		sql.append(" INSERT INTO ranking_faturamento (COTA_ID, FATURAMENTO, DATA_GERACAO_RANK) ");
 		sql.append(" select ");
 		sql.append("     innerQuery.cota_id, ");
-		sql.append("     sum(innerQuery.faturamento) ");
+		sql.append("     sum(innerQuery.faturamento), ");
+		sql.append("     SYSDATE() ");
 		sql.append(" from ");
 		sql.append("     (select "); 
 		sql.append("         epc.cota_id as cota_id, ");
@@ -53,10 +54,11 @@ public class RankingFaturamentoRepositoryImpl extends AbstractRepositoryModel<Ra
 	public void gerarRankingFaturamentoParaCotasSemRanking() {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" INSERT INTO ranking_faturamento (COTA_ID, FATURAMENTO) ");
+		sql.append(" INSERT INTO ranking_faturamento (COTA_ID, FATURAMENTO, DATA_GERACAO_RANK) ");
 		sql.append(" select ");
 		sql.append("     c.ID, ");
-		sql.append("     0 ");
+		sql.append("     0, ");
+		sql.append("     SYSDATE() ");
 		sql.append(" from ");
 		sql.append("     cota c, ");
 		sql.append("     ranking_faturamento ranking ");

@@ -18,11 +18,12 @@ public class RankingSegmentoRepositoryImpl extends AbstractRepositoryModel<Ranki
 	public void gerarRankingSegmento() {
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" INSERT INTO ranking_segmento (COTA_ID, TIPO_SEGMENTO_PRODUTO_ID, QTDE) ");
+		hql.append(" INSERT INTO ranking_segmento (COTA_ID, TIPO_SEGMENTO_PRODUTO_ID, QTDE, DATA_GERACAO_RANK) ");
 		hql.append(" select ");
 		hql.append("     innerQuery.cota_id as cota_id, ");
 		hql.append("     innerQuery.tipo_segmento_produto_id as tipo_segmento_produto_id, ");
-		hql.append("     sum(innerQuery.qtde) as qtde ");
+		hql.append("     sum(innerQuery.qtde) as qtde, ");
+		hql.append("     SYSDATE() ");
 		hql.append(" from ");
 		hql.append("     (SELECT ");
 		hql.append("         epc.cota_id as cota_id, ");
@@ -52,11 +53,12 @@ public class RankingSegmentoRepositoryImpl extends AbstractRepositoryModel<Ranki
 		
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" INSERT INTO ranking_segmento (COTA_ID, TIPO_SEGMENTO_PRODUTO_ID, QTDE) ");
+		hql.append(" INSERT INTO ranking_segmento (COTA_ID, TIPO_SEGMENTO_PRODUTO_ID, QTDE, DATA_GERACAO_RANK) ");
 		hql.append(" select ");
 		hql.append("     c.ID as cota_id, ");
 		hql.append("     ranking.TIPO_SEGMENTO_PRODUTO_ID as tipo_segmento_produto_id, ");
-		hql.append("     0 as qtde ");
+		hql.append("     0 as qtde, ");
+		hql.append("     SYSDATE() ");
 		hql.append(" from ");
 		hql.append("     cota c, ");
 		hql.append("     ranking_segmento ranking ");
