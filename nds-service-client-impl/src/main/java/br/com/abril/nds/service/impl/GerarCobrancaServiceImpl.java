@@ -1233,7 +1233,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	/**
 	 * Cotas com Centralização
 	 * Gera Consolidado
-	 * Monta Helper com Informações do consolidado gerado e adiciona la lista
+	 * Monta Helper com Informações do consolidado gerado e adiciona na lista
 	 * 
 	 * @param cota
 	 * @param cotaCentralizadora
@@ -2036,7 +2036,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 								 new AnexoEmail("Cobranca",anexo,TipoAnexo.PDF));		
 	}
 	
-	            /**
+	/**
      * Envia Cobranças para email da Cota
      * 
      * @param cota
@@ -2073,22 +2073,4 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}	
 	}
 	
-    private FormaCobranca cloneFormaCobranca(FormaCobranca formaCobranca) {
-		
-		if (formaCobranca==null){
-			
-			return null;
-		}
-		
-		try {
-			
-			return (FormaCobranca) BeanUtils.cloneBean(formaCobranca);
-			
-		} catch (Exception e) {
-
-			throw new ValidacaoException(
-					TipoMensagem.ERROR,
-					"Erro ao tentar obter [FormaCobranca]!");
-		}
-	}
 }
