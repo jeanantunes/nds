@@ -66,7 +66,9 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         .append(" f.dataHora as dataHora,")
         .append(" f.edicaoInicial as edicaoInicial,")
         .append(" f.edicaoFinal as edicaoFinal,")
-        .append(" f.edicaoFinal - f.edicaoInicial as edicoesAtendidas,")
+//        .append(" f.edicaoFinal - f.edicaoInicial as edicoesAtendidas,")
+//        (CASE WHEN fixacaorep0_.ED_FINAL > 0 THEN fixacaorep0_.ED_FINAL - fixacaorep0_.ED_INICIAL ELSE 0 END) col_6_0_,
+        .append(" (CASE WHEN f.edicaoFinal > 0 THEN f.edicaoFinal - f.edicaoInicial ELSE 0 END) as edicoesAtendidas,")
         .append(" f.cotaFixada.numeroCota as cotaFixada,")
         .append(" f.cotaFixada.id as cotaFixadaId,")
         .append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '')  as nomeCota,")
