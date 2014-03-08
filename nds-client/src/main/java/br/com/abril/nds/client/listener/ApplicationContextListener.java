@@ -83,7 +83,7 @@ public class ApplicationContextListener implements ServletContextListener {
 //			this.agendarIntegracaoOperacionalDistribuidor(scheduler);
 //			this.agendaExeclusaoAjusteReparte(scheduler);
 //			this.agendarExclusaoDeEstudos(scheduler);
-//			this.agendarGeracaoRankings(scheduler);
+			this.agendarGeracaoRankings(scheduler);
 //			this.agendaExclusaoFixacaoReparte();
 //			this.agendaExclusaoRegiao();
 			
