@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,8 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -914,7 +913,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			for (GerarCobrancaHelper helper : lista){
 				
-				valorTotalMovimentos = valorTotalMovimentos.add(helper.getConsolidadoFinanceiroCota().getTotal());
+				valorTotalMovimentos = valorTotalMovimentos.add(helper.getConsolidadoFinanceiroCota().getTotal().setScale(2, RoundingMode.HALF_UP));
 				
 				if (helper.getCota().equals(cotaUnificadora)){
 					
@@ -1519,14 +1518,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 		for (ConsolidadoFinanceiroCota consolidado : consolidadoFinanceiroCota){
 			
+			BigDecimal valorConsolidado = consolidado.getTotal().setScale(2, RoundingMode.HALF_UP);
+			
 			// caso tenha alcançado o valor minino de cobrança e seja um dia de
             // concentração de cobrança, ou a cota esteja suspensa
-			if ( (consolidado.getTotal().compareTo(BigDecimal.ZERO) < 0) &&
-			     (consolidado.getTotal().abs().compareTo(valorMinino) > 0 && cobrarHoje) || 
-				 (consolidado.getTotal().abs().compareTo(valorMinino) > 0 && cotaSuspensa)){
+			if ( (valorConsolidado.compareTo(BigDecimal.ZERO) < 0) &&
+			     (valorConsolidado.abs().compareTo(valorMinino) > 0 && cobrarHoje) || 
+				 (valorConsolidado.abs().compareTo(valorMinino) > 0 && cotaSuspensa)){
 				
 				novaDivida = new Divida();
-				novaDivida.setValor(consolidado.getTotal().abs());
+				novaDivida.setValor(valorConsolidado.abs());
 				novaDivida.setData(dataConsolidado);
 				novaDivida.setConsolidados(Arrays.asList(consolidado));
 				novaDivida.setCota(cota);
@@ -1547,15 +1548,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					setNossoNumero.add(cobranca.getNossoNumero());
 				}
 			} 
-			else if (consolidado.getTotal().compareTo(valorMinino) != 0) {
+			else if (valorConsolidado.compareTo(valorMinino) != 0) {
 
 				movimentoFinanceiroCota = this.gerarPostergado(cota,
 						                                       qtdDiasNovaCobranca, 
 						                                       msgs, 
 						                                       fornecedor,
 						                                       consolidadoFinanceiroCota, 
-						                                       consolidado.getTotal(), 
-						                                       consolidado.getTotal(), 
+						                                       valorConsolidado, 
+						                                       valorConsolidado, 
 						                                       usuario,
 						                                       diasSemanaConcentracaoPagamento, 
 						                                       dataOperacao,
