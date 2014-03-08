@@ -50,7 +50,7 @@ public class EMS0140Input extends IntegracaoDocumentMaster<EMS0140InputItem> imp
 	}
 
 	@Master
-	@Field(offset = 16, length = 6)
+	@Field(offset = 16, length = 8)
 	public Long getNotaFiscal() {
 		return notaFiscal;
 	}
@@ -59,7 +59,7 @@ public class EMS0140Input extends IntegracaoDocumentMaster<EMS0140InputItem> imp
 		this.notaFiscal = notaFiscal;
 	}
 	
-	@Field(offset = 22, length = 3)
+	@Field(offset = 24, length = 3)
 	public String getSerieNotaFiscal() {
 		return serieNotaFiscal;
 	}
@@ -68,7 +68,7 @@ public class EMS0140Input extends IntegracaoDocumentMaster<EMS0140InputItem> imp
 		this.serieNotaFiscal = serieNotaFiscal;
 	}
 
-	@Field(offset = 111, length = 44)
+	@Field(offset = 123, length = 44)
 	public String getChaveAcessoNF() {
 		return chaveAcessoNF;
 	}
@@ -77,7 +77,7 @@ public class EMS0140Input extends IntegracaoDocumentMaster<EMS0140InputItem> imp
 		this.chaveAcessoNF = chaveAcessoNF;
 	}
 
-	@Field(offset = 155, length = 14)
+	@Field(offset = 167, length = 14)
 	public String getCnpjEmissor() {
 		return cnpjEmissor;
 	}
@@ -86,7 +86,7 @@ public class EMS0140Input extends IntegracaoDocumentMaster<EMS0140InputItem> imp
 		this.cnpjEmissor = cnpjEmissor;
 	}
 
-	@Field(offset = 169, length = 8)
+	@Field(offset = 181, length = 8)
 	public String getNumeroNotaEnvio() {
 		return numeroNotaEnvio;
 	}

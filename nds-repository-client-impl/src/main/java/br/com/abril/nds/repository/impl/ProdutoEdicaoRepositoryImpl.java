@@ -192,7 +192,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         sql.append("         sum(coalesce(e.qtde_reparte, 0)) reparte_est,                   ");
         sql.append("         sum(coalesce(l.reparte_promocional, 0)) reparte_prom            ");
         sql.append("         from lancamento l                                               ");
-        sql.append("         left join estudo e on e.lancamento_id = l.id ");
+        sql.append("         left join estudo_gerado e on e.lancamento_id = l.id 			 ");
         sql.append("         where l.produto_edicao_id = :idProdutoEdicao ) t                ");
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
