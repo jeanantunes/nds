@@ -8,7 +8,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -17,9 +18,11 @@ import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -31,6 +34,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -56,6 +60,9 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 	private FornecedorService fornecedorService;
 	@Autowired
 	private LancamentoService lancamentoService;
+	
+	@Autowired
+	private DescontoService descontoService;
 	
 	@Autowired
 	private TipoMovimentoService tipoMovimentoService;
@@ -444,6 +451,30 @@ public class ConfirmacaoExpedicaoController extends BaseController{
             throw new ValidacaoException(TipoMensagem.ERROR,
                     "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
 			}
+		}
+		
+		@Get
+		@Path("obterValorDesconto/{numeroCota}/{codigoProduto}/{numeroEdicao}")
+		public void obterValorDesconto(Integer numeroCota, String codigoProduto, Long numeroEdicao) throws Exception {
+		    
+		    
+		    if(numeroCota.equals(0))
+		        numeroCota = null;
+		    
+		    if(codigoProduto.equals("0"))
+                codigoProduto = null;
+            
+		    
+		    if(numeroEdicao.equals(0L))
+                numeroEdicao = null;
+		    
+		    DescontoDTO dto = descontoService.obterDescontoPor(numeroCota, codigoProduto, numeroEdicao);
+		    
+		    if(dto == null)
+		        dto = new DescontoDTO();
+		    
+		    result.use(Results.json()).from(dto, "result").serialize();
+		    
 		}
 		
 	}
