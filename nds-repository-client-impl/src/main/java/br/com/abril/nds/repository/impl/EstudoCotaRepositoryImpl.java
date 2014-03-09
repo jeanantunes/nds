@@ -161,15 +161,15 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		
         if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
 			
-			sql.append(" AND lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
+			sql.append(" AND ((lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim) or (itemNotaEnvios.furoProduto is not null) ) ");
 		}	
 		
 		Query query = getSession().createQuery(sql.toString());
 		
 		query.setParameterList("idCotas", idCotas);
 
-		query.setParameterList("listaExclusaoStatusLancamento", new StatusLancamento[] {StatusLancamento.FURO, StatusLancamento.PLANEJADO, StatusLancamento.FECHADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO, StatusLancamento.CANCELADO});
-	
+		query.setParameterList("listaExclusaoStatusLancamento", new StatusLancamento[] {StatusLancamento.FURO,StatusLancamento.PLANEJADO, StatusLancamento.FECHADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO, StatusLancamento.CANCELADO});
+		
 		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
 			query.setParameterList("listaFornecedores", listaIdsFornecedores);
 		}
