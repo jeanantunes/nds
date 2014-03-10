@@ -1507,6 +1507,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         montarQueryCotasComNotasEnvioEmitidas(filtro, sql, true);
         sql.append(" union all ");
+        montarConsultaFuroProdutoNotaEmitida(filtro, sql, true);
+        sql.append(" union all ");
         montarQueryReparteCotaAusente(filtro, sql, true, StatusNotaEnvio.EMITIDA);
         
         sql.append(" ) rs1 ");
@@ -1553,6 +1555,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         montarQueryCotasComNotasEnvioEmitidas(filtro, sql, true);
         sql.append(" union all ");
+        montarConsultaFuroProdutoNotaEmitida(filtro, sql, true);
+        sql.append(" union all ");
         montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, true);
         sql.append(" union all ");
         montarQueryReparteCotaAusente(filtro, sql, true, null);
@@ -1576,6 +1580,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         final StringBuilder sql = new StringBuilder();
         
         montarQueryCotasComNotasEnvioEmitidas(filtro, sql, false);
+        sql.append(" union all ");
+        montarConsultaFuroProdutoNotaEmitida(filtro, sql, false);
         sql.append(" union all ");
         montarQueryReparteCotaAusente(filtro, sql, false, StatusNotaEnvio.EMITIDA);
         
@@ -1627,6 +1633,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         montarQueryCotasComNotasEnvioEmitidas(filtro, sql, false);
         sql.append(" union all ");
+        montarConsultaFuroProdutoNotaEmitida(filtro, sql, false);
+        sql.append(" union all ");
         montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, false);
         sql.append(" union all ");
         montarQueryReparteCotaAusente(filtro, sql, false, null);
@@ -1650,28 +1658,35 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     
     private List<String> getGruposSobraFalta() {
         
-        return Arrays.asList(GrupoMovimentoEstoque.FALTA_DE.name(), GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
-                GrupoMovimentoEstoque.FALTA_EM.name(), GrupoMovimentoEstoque.FALTA_EM_COTA.name(),
-                GrupoMovimentoEstoque.SOBRA_DE.name(), GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
-                GrupoMovimentoEstoque.SOBRA_EM.name(), GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
-                GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
-                GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name(), GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE
-                .name());
+        List<String> grupoMovimentosSobrasFaltas = new ArrayList<String>();
+        grupoMovimentosSobrasFaltas.addAll(this.getGruposFalta());
+        grupoMovimentosSobrasFaltas.addAll(this.getGruposSobra());
+        
+        return grupoMovimentosSobrasFaltas;
     }
     
     private List<String> getGruposFalta() {
         
-        return Arrays.asList(GrupoMovimentoEstoque.FALTA_DE.name(), GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
-                GrupoMovimentoEstoque.FALTA_EM.name(), GrupoMovimentoEstoque.FALTA_EM_COTA.name(),
-                GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name(), GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE
-                .name());
+        return Arrays.asList(
+        		GrupoMovimentoEstoque.FALTA_DE.name(), 
+        		GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
+        		GrupoMovimentoEstoque.FALTA_EM.name(), 
+        		GrupoMovimentoEstoque.FALTA_EM_COTA.name(),
+                GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name(), 
+                GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name(),
+                GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA.name());
     }
     
     private List<String> getGruposSobra() {
         
-        return Arrays.asList(GrupoMovimentoEstoque.SOBRA_DE.name(), GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
-                GrupoMovimentoEstoque.SOBRA_EM.name(), GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
-                GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name());
+        return Arrays.asList(
+        		GrupoMovimentoEstoque.SOBRA_DE.name(), 
+        		GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
+                GrupoMovimentoEstoque.SOBRA_EM.name(), 
+                GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+                GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
+                GrupoMovimentoEstoque.SOBRA_ENVIO_PARA_COTA.name(),
+                GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO.name());
     }
     
     private void montarQueryReparteCotaAusente(final FiltroConsultaNotaEnvioDTO filtro, final StringBuilder sql,
@@ -1770,34 +1785,39 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         if (isCount) {
             sql.append(" select cota_.ID ");
         } else {
-            sql.append(" select lancamento_.STATUS as status,  " + "	        cota_.ID as idCota, "
-                    + "	        cota_.NUMERO_COTA as numeroCota, " + "	        cota_.BOX_ID as box, "
-                    + "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
-                    + "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
-                    + "	        SUM(coalesce(nei.reparte, 0)) as exemplares, "
-                    + "	        SUM(coalesce(nei.reparte, 0) * pe_.PRECO_VENDA) as total, "
-                    + "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa,	"
-                    + "			roteiro_.ordem ordemRoteiro, " + "			rota_.ordem ordemRota, "
-                    + "			rota_pdv_.ordem ordemRotaPdv ");
+          
+            sql.append(" select lancamento_.STATUS AS status, ");	 
+            sql.append(" cota_.ID AS idCota,"); 	 
+            sql.append(" cota_.NUMERO_COTA AS numeroCota,"); 	 
+            sql.append(" cota_.BOX_ID AS box, ");
+            sql.append(" COALESCE(pessoa_cota_.nome,pessoa_cota_.razao_social) AS nomeCota,"); 	 
+            sql.append(" cota_.SITUACAO_CADASTRO AS situacaoCadastro, ");
+            sql.append(" SUM(COALESCE(nei.reparte, 0)) AS exemplares, ");
+            sql.append(" SUM(COALESCE(nei.reparte, 0) * pe_.PRECO_VENDA) AS total,"); 
+            sql.append(" CASE WHEN COUNT(nei.NOTA_ENVIO_ID)>0 THEN TRUE ELSE FALSE END notaImpressa,");
+            sql.append(" roteiro_.ordem ordemRoteiro, ");			
+            sql.append(" rota_.ordem ordemRota, ");			
+            sql.append(" rota_pdv_.ordem ordemRotaPdv ");
         }
-   
+      
         sql.append(" FROM COTA cota_ ");
-        sql.append(" LEFT OUTER JOIN BOX box1_ ON cota_.BOX_ID=box1_.ID ");
+        sql.append(" LEFT  JOIN BOX box1_  ON cota_.BOX_ID=box1_.ID ");
         sql.append(" INNER JOIN ESTUDO_COTA ec_ ON cota_.ID=ec_.COTA_ID ");
-        sql.append(" INNER JOIN ESTUDO e_ ON ec_.ESTUDO_ID=e_.ID ");
-        sql.append(" INNER JOIN LANCAMENTO lancamento_ ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");
-        sql.append(" INNER JOIN PRODUTO_EDICAO pe_ ON e_.PRODUTO_EDICAO_ID=pe_.ID ");
-        sql.append(" INNER JOIN PRODUTO p_ ON pe_.PRODUTO_ID=p_.ID ");
-        sql.append(" INNER JOIN PRODUTO_FORNECEDOR pf_ ON p_.ID=pf_.PRODUTO_ID ");
+        sql.append(" INNER JOIN ESTUDO e_  ON ec_.ESTUDO_ID=e_.ID ");
+        sql.append(" INNER JOIN LANCAMENTO lancamento_  ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");        									
+        sql.append(" INNER JOIN PRODUTO_EDICAO pe_  ON e_.PRODUTO_EDICAO_ID=pe_.ID ");
+        sql.append(" INNER JOIN PRODUTO p_  ON pe_.PRODUTO_ID=p_.ID ");
+        sql.append(" INNER JOIN PRODUTO_FORNECEDOR pf_  ON p_.ID=pf_.PRODUTO_ID ");
         sql.append(" INNER JOIN FORNECEDOR f_ ON pf_.fornecedores_ID=f_.ID ");
         sql.append(" INNER JOIN PDV pdv_ ON cota_.ID=pdv_.COTA_ID ");
-        sql.append(" LEFT OUTER JOIN ROTA_PDV rota_pdv_ ON pdv_.ID=rota_pdv_.PDV_ID ");
-        sql.append(" LEFT OUTER JOIN ROTA rota_ ON rota_pdv_.rota_ID=rota_.ID ");
-        sql.append(" LEFT OUTER JOIN ROTEIRO roteiro_ ON rota_.ROTEIRO_ID=roteiro_.ID ");
+        sql.append(" LEFT  JOIN ROTA_PDV rota_pdv_ ON pdv_.ID=rota_pdv_.PDV_ID ");
+        sql.append(" LEFT  JOIN ROTA rota_ ON rota_pdv_.rota_ID=rota_.ID ");
+        sql.append(" LEFT  JOIN ROTEIRO roteiro_ ON rota_.ROTEIRO_ID=roteiro_.ID ");
         sql.append(" INNER JOIN PESSOA pessoa_cota_ ON cota_.PESSOA_ID=pessoa_cota_.ID ");
-        sql.append(" INNER JOIN NOTA_ENVIO_ITEM nei ON nei.ESTUDO_COTA_ID = ec_.ID and nei.PRODUTO_EDICAO_ID = pe_.ID ");  
-        sql.append(" WHERE pdv_.ponto_principal = :principal  ");
-        sql.append(" AND lancamento_.STATUS NOT IN (:statusNaoEmitiveis) ");  
+        sql.append(" INNER JOIN NOTA_ENVIO_ITEM nei ON nei.ESTUDO_COTA_ID = ec_.ID and nei.PRODUTO_EDICAO_ID = pe_.ID "); 
+        sql.append(" WHERE pdv_.ponto_principal = true ");
+        sql.append(" AND nei.ESTUDO_COTA_ID is not null");
+        sql.append(" AND lancamento_.STATUS NOT IN (:statusNaoEmitiveis) ");
         
         if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
             sql.append(" and ( f_.ID is null  or f_.ID in (:idFornecedores) )  ");
@@ -1835,8 +1855,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         if (filtro.getIntervaloMovimento() != null && filtro.getIntervaloMovimento().getDe() != null
                 && filtro.getIntervaloMovimento().getAte() != null) {
         		
-        	sql.append("AND ((lancamento_.DATA_LCTO_DISTRIBUIDOR BETWEEN :dataDe AND :dataAte and nei.FURO_PRODUTO_ID is null ) ");
-        	sql.append("	or ((select furo_produto.DATA_LCTO_DISTRIBUIDOR from FURO_PRODUTO furo_produto where furo_produto.ID = nei.FURO_PRODUTO_ID ) BETWEEN :dataDe AND :dataAte))");
+        	sql.append(" AND lancamento_.DATA_LCTO_DISTRIBUIDOR BETWEEN :dataDe AND :dataAte ");
+        	
         }
         
         sql.append(" group by cota_.ID ");
@@ -1862,30 +1882,31 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
             sql.append(" 	IF(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:gruposFaltaSobra), ec_.QTDE_EFETIVA, 0)) "); 
             sql.append("	- IF(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposFalta), mec.QTDE,0) ");
             sql.append("	+ IF(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposSobra), mec.QTDE,0))) AS total, "); 
-            sql.append(" false notaImpressa,	");
+            sql.append(" CASE WHEN COUNT(nei.NOTA_ENVIO_ID)>0 THEN TRUE ELSE FALSE END notaImpressa,");
             sql.append(" roteiro_.ordem ordemRoteiro, rota_.ordem ordemRota, ");
             sql.append(" rota_pdv_.ordem ordemRotaPdv ");
         }
         
         sql.append(" FROM COTA cota_ ");
-        sql.append(" LEFT  JOIN BOX box1_ ON cota_.BOX_ID=box1_.ID ");
-        sql.append(" INNER JOIN ESTUDO_COTA ec_ ON cota_.ID=ec_.COTA_ID ");
-        sql.append(" INNER JOIN ESTUDO e_ ON ec_.ESTUDO_ID=e_.ID ");
-        sql.append(" INNER JOIN LANCAMENTO lancamento_ ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");
-        sql.append(" LEFT  JOIN MOVIMENTO_ESTOQUE_COTA mec ON mec.LANCAMENTO_ID=lancamento_.id AND mec.COTA_ID=cota_.ID ");
-        sql.append(" LEFT  JOIN TIPO_MOVIMENTO tipo_mov ON tipo_mov.ID=mec.TIPO_MOVIMENTO_ID ");
-        sql.append(" INNER JOIN PRODUTO_EDICAO pe_ ON e_.PRODUTO_EDICAO_ID=pe_.ID ");
-        sql.append(" INNER JOIN PRODUTO p_ ON pe_.PRODUTO_ID=p_.ID ");
-        sql.append(" INNER JOIN PRODUTO_FORNECEDOR pf_ ON p_.ID=pf_.PRODUTO_ID ");
-        sql.append(" INNER JOIN FORNECEDOR f_ ON pf_.fornecedores_ID=f_.ID ");
-        sql.append(" INNER JOIN PDV pdv_ ON cota_.ID=pdv_.COTA_ID ");
-        sql.append(" LEFT  JOIN ROTA_PDV rota_pdv_ ON pdv_.ID=rota_pdv_.PDV_ID ");
-        sql.append(" LEFT  JOIN ROTA rota_ ON rota_pdv_.rota_ID=rota_.ID ");
-        sql.append(" LEFT  JOIN ROTEIRO roteiro_ ON rota_.ROTEIRO_ID=roteiro_.ID ");
-        sql.append(" INNER JOIN PESSOA pessoa_cota_ ON cota_.PESSOA_ID=pessoa_cota_.ID ");
-        sql.append(" LEFT OUTER JOIN NOTA_ENVIO_ITEM nei on nei.ESTUDO_COTA_ID = ec_ .ID ");
-        sql.append(" WHERE lancamento_.STATUS not in (:statusNaoEmitiveis)  and pdv_.ponto_principal = :principal");
-        sql.append(" AND (nei.FURO_PRODUTO_ID is not null or nei.ESTUDO_COTA_ID is null) ");
+        sql.append(" LEFT  JOIN  BOX box1_ ON cota_.BOX_ID=box1_.ID ");
+        sql.append(" INNER JOIN  ESTUDO_COTA ec_ ON cota_.ID=ec_.COTA_ID ");
+        sql.append(" INNER JOIN  ESTUDO e_ ON ec_.ESTUDO_ID=e_.ID ");
+        sql.append(" INNER JOIN  LANCAMENTO lancamento_ ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");
+        sql.append(" LEFT  JOIN  MOVIMENTO_ESTOQUE_COTA mec ON mec.LANCAMENTO_ID=lancamento_.id AND mec.COTA_ID=cota_.ID ");
+        sql.append(" LEFT  JOIN  TIPO_MOVIMENTO tipo_mov ON tipo_mov.ID=mec.TIPO_MOVIMENTO_ID ");
+        sql.append(" INNER JOIN  PRODUTO_EDICAO pe_ ON e_.PRODUTO_EDICAO_ID=pe_.ID ");
+        sql.append(" INNER JOIN  PRODUTO p_ ON pe_.PRODUTO_ID=p_.ID ");
+        sql.append(" INNER JOIN  PRODUTO_FORNECEDOR pf_ ON p_.ID=pf_.PRODUTO_ID ");
+        sql.append(" INNER JOIN  FORNECEDOR f_ ON pf_.fornecedores_ID=f_.ID ");
+        sql.append(" INNER JOIN  PDV pdv_ ON cota_.ID=pdv_.COTA_ID ");
+        sql.append(" LEFT  JOIN  ROTA_PDV rota_pdv_ ON pdv_.ID=rota_pdv_.PDV_ID ");
+        sql.append(" LEFT  JOIN  ROTA rota_ ON rota_pdv_.rota_ID=rota_.ID ");
+        sql.append(" LEFT  JOIN  ROTEIRO roteiro_ ON rota_.ROTEIRO_ID=roteiro_.ID ");
+        sql.append(" INNER JOIN  PESSOA pessoa_cota_ ON cota_.PESSOA_ID=pessoa_cota_.ID ");
+        sql.append(" LEFT  JOIN  NOTA_ENVIO_ITEM nei on nei.ESTUDO_COTA_ID = ec_ .ID  ");
+        sql.append(" WHERE lancamento_.STATUS NOT IN (:statusNaoEmitiveis)"); 
+        sql.append(" AND pdv_.ponto_principal = true "); 
+        sql.append(" AND nei.ESTUDO_COTA_ID is null ");
         
         if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
             sql.append("and ( f_.ID is null or f_.ID in (:idFornecedores) ) ");
@@ -1926,6 +1947,89 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
             sql.append(" and cota_.ID not in (select COTA_ID from COTA_AUSENTE where COTA_ID = cota_.ID and DATA between :dataDe and :dataAte)  ");
         }
         
+        sql.append(" group by cota_.ID ");
+    }
+    
+    private void montarConsultaFuroProdutoNotaEmitida(final FiltroConsultaNotaEnvioDTO filtro,
+            final StringBuilder sql, final boolean isCount){
+    	
+    	if (isCount) {
+            sql.append(" select cota_.ID ");
+    	}
+    	else{
+    		
+    		sql.append(" select lancamento_.STATUS AS status, ");	 
+    		sql.append(" cota_.ID AS idCota, ");	 
+    		sql.append(" cota_.NUMERO_COTA AS numeroCota, "); 	 
+    		sql.append(" cota_.BOX_ID AS box, ");
+    		sql.append(" COALESCE(pessoa_cota_.nome,pessoa_cota_.razao_social) AS nomeCota, "); 	 
+    		sql.append(" cota_.SITUACAO_CADASTRO AS situacaoCadastro, ");
+    		sql.append(" SUM(COALESCE(nei.reparte, 0)) AS exemplares, "); 
+    		sql.append(" SUM(COALESCE(nei.reparte, 0) * pe_.PRECO_VENDA) AS total, "); 
+    		sql.append(" CASE WHEN COUNT(nei.NOTA_ENVIO_ID)>0 THEN TRUE ELSE FALSE END notaImpressa, ");
+    		sql.append(" roteiro_.ordem ordemRoteiro, ");			
+    		sql.append(" rota_.ordem ordemRota, ");			
+    		sql.append(" rota_pdv_.ordem ordemRotaPdv ");
+    	}
+    
+    	sql.append(" FROM COTA cota_ ");
+    	sql.append(" LEFT  JOIN BOX box1_  ON cota_.BOX_ID=box1_.ID ");
+    	sql.append(" INNER JOIN ESTUDO_COTA ec_ ON cota_.ID=ec_.COTA_ID ");
+    	sql.append(" INNER JOIN ESTUDO e_  ON ec_.ESTUDO_ID=e_.ID ");
+    	sql.append(" INNER JOIN LANCAMENTO lancamento_  ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");
+    	sql.append(" INNER JOIN PRODUTO_EDICAO pe_  ON e_.PRODUTO_EDICAO_ID=pe_.ID ");
+    	sql.append(" INNER JOIN PRODUTO p_  ON pe_.PRODUTO_ID=p_.ID ");
+    	sql.append(" INNER JOIN PRODUTO_FORNECEDOR pf_  ON p_.ID=pf_.PRODUTO_ID ");
+    	sql.append(" INNER JOIN FORNECEDOR f_ ON pf_.fornecedores_ID=f_.ID ");
+    	sql.append(" INNER JOIN PDV pdv_ ON cota_.ID=pdv_.COTA_ID ");
+    	sql.append(" LEFT  JOIN ROTA_PDV rota_pdv_ ON pdv_.ID=rota_pdv_.PDV_ID ");
+    	sql.append(" LEFT  JOIN ROTA rota_ ON rota_pdv_.rota_ID=rota_.ID ");
+    	sql.append(" LEFT  JOIN ROTEIRO roteiro_ ON rota_.ROTEIRO_ID=roteiro_.ID ");
+    	sql.append(" INNER JOIN PESSOA pessoa_cota_ ON cota_.PESSOA_ID=pessoa_cota_.ID ");
+    	sql.append(" INNER JOIN FURO_PRODUTO furoProduto ON furoProduto.LANCAMENTO_ID = lancamento_.ID ");
+    	sql.append(" INNER JOIN NOTA_ENVIO_ITEM nei ON nei.FURO_PRODUTO_ID  = furoProduto.ID ");
+    	sql.append(" WHERE pdv_.ponto_principal = true ");
+        sql.append(" AND nei.ESTUDO_COTA_ID is null");
+        sql.append(" AND lancamento_.STATUS NOT IN (:statusNaoEmitiveis) ");
+        
+    	if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
+            sql.append(" and ( f_.ID is null  or f_.ID in (:idFornecedores) )  ");
+        }
+        
+        if (filtro.getIntervaloCota() != null && filtro.getIntervaloCota().getDe() != null) {
+            if (filtro.getIntervaloCota().getAte() != null) {
+                
+                sql.append(" and cota_.NUMERO_COTA between :numeroCotaDe and :numeroCotaAte  ");
+                
+            } else {
+                
+                sql.append(" and cota_.NUMERO_COTA=:numeroCota ");
+            }
+        }
+        
+        if (filtro.getIntervaloBox() != null && filtro.getIntervaloBox().getDe() != null
+                && filtro.getIntervaloBox().getAte() != null) {
+            sql.append(" and box1_.CODIGO between :boxDe and :boxAte  ");
+        }
+        
+        if (filtro.getIdRoteiro() != null) {
+            sql.append(" and roteiro_.ID=:idRoteiro  ");
+        }
+        
+        if (filtro.getIdRota() != null) {
+            sql.append(" and rota_.ID=:idRota  ");
+        }
+        
+        if (!filtro.isFiltroEspecial()) {
+            sql.append(" and roteiro_.TIPO_ROTEIRO!=:roteiroEspecial  ");
+        }
+        
+        if (filtro.getIntervaloMovimento() != null && filtro.getIntervaloMovimento().getDe() != null
+                && filtro.getIntervaloMovimento().getAte() != null) {
+        		
+        	sql.append(" AND furoProduto.DATA_LCTO_DISTRIBUIDOR BETWEEN :dataDe AND :dataAte ");
+        }
+       
         sql.append(" group by cota_.ID ");
     }
     
