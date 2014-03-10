@@ -229,7 +229,8 @@ public class EstudoServiceImpl implements EstudoService {
 	}
 
 	@Transactional
-	public EstudoGerado criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,Date dataLancamento){
+	public EstudoGerado criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,
+	        Date dataLancamento, Long lancamentoId){
 		
 		Date dataOperacao = distribuidorRepository.obterDataOperacaoDistribuidor();
 		
@@ -242,6 +243,7 @@ public class EstudoServiceImpl implements EstudoService {
 		estudo.setQtdeReparte(quantidadeReparte);
 		estudo.setReparteDistribuir(quantidadeReparte);
 		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+		estudo.setLancamentoID(lancamentoId);
 		
 		return estudoGeradoRepository.merge(estudo);
 	}
