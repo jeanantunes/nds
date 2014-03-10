@@ -751,6 +751,18 @@ public class MatrizLancamentoController extends BaseController {
                 matrizLancamento.remove(produtoLancamentoDTO.getNovaDataLancamento());
                 
             } else {
+            	//Verificar se ja possui o produto - edicao no dia.
+            	//caso exista, nao permitir que a data seje alterada trac 184
+            	
+            	boolean existeProdutoEdicaoDia = lancamentoRepositoryService.existeProdutoEdicaoParaDia(produtoLancamentoDTO,novaData);
+            	
+            	if(existeProdutoEdicaoDia){
+            		 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
+            				 "Já existe o produto: "+produtoLancamentoDTO.getNomeProduto()+
+            				 " com a edição: "+produtoLancamentoDTO.getNumeroEdicao()+
+            				 " para o dia :"+novaData));
+            	}
+            	
                 produtoLancamentoDTO.setAlterado(true);
                 produtoLancamentoDTO.setStatus(StatusLancamento.CONFIRMADO);
                 produtoLancamentoDTO.setStatusLancamento(StatusLancamento.CONFIRMADO.name());
