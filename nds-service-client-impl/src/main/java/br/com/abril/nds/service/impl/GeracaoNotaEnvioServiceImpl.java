@@ -45,6 +45,7 @@ import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.CotaAusenteRepository;
@@ -52,6 +53,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaEnvioRepository;
@@ -63,6 +65,7 @@ import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 
 import com.google.common.base.Predicate;
@@ -118,6 +121,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     
     @Autowired
     private RoteiroRepository roteiroRepository;
+    
+    @Autowired
+    private FuroProdutoRepository furoProdutoRepository;
     
     // Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
     // O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -213,7 +219,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
      * @param listaMovimentoEstoqueCota
      * @param cota
      * @param listItemNotaEnvio
-     * @param descontos TODO
+     * @param descontos 
      */
     private void gerarItensNEMovimento(
             final List<MovimentoEstoqueCota> listaMovimentoEstoqueCota, final Cota cota,
@@ -331,7 +337,7 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
      * @param listaEstudoCota
      * @param cota
      * @param listItemNotaEnvio
-     * @param descontos TODO
+     * @param descontos 
      */
     private void gerarItensNEEstudo(final List<EstudoCota> listaEstudoCota,
             final Cota cota, final List<ItemNotaEnvio> listItemNotaEnvio, final Intervalo<Date> periodo, final Map<String, DescontoDTO> descontos) {
@@ -350,9 +356,15 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
             //Verifica se Estudo ja possui itens de Nota de Envio.
             if (estudoCota.getItemNotaEnvios()!=null && !estudoCota.getItemNotaEnvios().isEmpty()) {
                 
-                listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
-                
-                continue;
+            	List<ItemNotaEnvio> itens  = this.filtraItensNotaEnvioComfuroDeProduto(estudoCota.getItemNotaEnvios(),periodo);
+            	
+            	if(!itens.isEmpty()){
+            		
+            		 listItemNotaEnvio.addAll(itens);
+            		 
+            		 continue;
+            	}
+           
             }
             
             final ProdutoEdicao produtoEdicao = estudoCota.getEstudo().getProdutoEdicao();
@@ -765,25 +777,33 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
         }
     }
     
-	                                                                /*
-     * Retorna uma lista com os movimentos estoque cota filtrados, onde os
-     * movimentos estoque cota não tiveram itens de nota de envio gerados
-     */
-    private List<MovimentoEstoqueCota> filtraItensSemItemNotaEnvioGerado(final List<MovimentoEstoqueCota> itens){
+
+    private List<ItemNotaEnvio> filtraItensNotaEnvioComfuroDeProduto(final List<ItemNotaEnvio> itens, final Intervalo<Date> periodo){
         
         if(itens == null || itens.isEmpty()){
             return null;
         }
         
-        final Predicate<MovimentoEstoqueCota> movimentoEstoqueCotaPredicate = new Predicate<MovimentoEstoqueCota>() {
+        final Predicate<ItemNotaEnvio> itensNotaEnvioCotaPredicate = new Predicate<ItemNotaEnvio>() {
             @Override
-            public boolean apply(final MovimentoEstoqueCota mvCota) {
-                return mvCota.getItemNotaEnvio() == null ;
+            public boolean apply(final ItemNotaEnvio item) {
+                
+            	if(item.getFuroProduto() == null){
+            		return true;
+            	}
+            	
+        		FuroProduto furoProduto = furoProdutoRepository.buscarPorId(item.getFuroProduto());
+        		
+        		if(furoProduto == null){
+        			return true;
+        		}
+        		
+        		return (DateUtil.validarDataEntrePeriodo(furoProduto.getDataLancamentoDistribuidor(), periodo.getDe(),periodo.getAte()));
             }
         };
         
-        final Collection<MovimentoEstoqueCota> filteredCollection =
-                Collections2.filter(itens, movimentoEstoqueCotaPredicate);
+        final Collection<ItemNotaEnvio> filteredCollection =
+                Collections2.filter(itens, itensNotaEnvioCotaPredicate);
         
         if (filteredCollection != null) {
             return  Lists.newArrayList(filteredCollection);
@@ -791,6 +811,32 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
             return new ArrayList<>();
         }
     }
+    
+    /* Retorna uma lista com os movimentos estoque cota filtrados, onde os
+    * movimentos estoque cota não tiveram itens de nota de envio gerados
+    */
+   private List<MovimentoEstoqueCota> filtraItensSemItemNotaEnvioGerado(final List<MovimentoEstoqueCota> itens){
+       
+       if(itens == null || itens.isEmpty()){
+           return null;
+       }
+       
+       final Predicate<MovimentoEstoqueCota> movimentoEstoqueCotaPredicate = new Predicate<MovimentoEstoqueCota>() {
+           @Override
+           public boolean apply(final MovimentoEstoqueCota mvCota) {
+               return mvCota.getItemNotaEnvio() == null ;
+           }
+       };
+       
+       final Collection<MovimentoEstoqueCota> filteredCollection =
+               Collections2.filter(itens, movimentoEstoqueCotaPredicate);
+       
+       if (filteredCollection != null) {
+           return  Lists.newArrayList(filteredCollection);
+       } else {
+           return new ArrayList<>();
+       }
+   }
     
 	                                                                /*
      * Efetua o processamento das notas de envio já geradas
