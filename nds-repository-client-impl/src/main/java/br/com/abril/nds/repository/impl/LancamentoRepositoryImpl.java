@@ -2512,5 +2512,35 @@ public class LancamentoRepositoryImpl extends
 		return  query.list();
 		
 	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean existeProdutoEdicaoParaDia(ProdutoLancamentoDTO produtoLancamentoDTO,Date novaData){
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento.id ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
+		hql.append(" join produtoEdicao.produto produto ");
+		hql.append(" where lancamento.dataLancamentoDistribuidor =:dataLancamento ");
+		hql.append(" and produto.codigo = :codProduto ");
+		hql.append(" and produtoEdicao.id = :idProdutoEdicao ");
+		hql.append(" and produtoEdicao.produto = produto.id ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("dataLancamento", novaData);
+		query.setParameter("codProduto", produtoLancamentoDTO.getCodigoProduto());
+		query.setParameter("idProdutoEdicao", produtoLancamentoDTO.getIdProdutoEdicao());
+		
+		List lista =  query.list();
+		
+		if(lista==null || lista.isEmpty()){
+			return false;
+		}else {
+			return true;
+		}
+		//return (Boolean) query.uniqueResult();
+	}
 
 }
