@@ -32,6 +32,7 @@ import br.com.abril.nds.repository.InformacoesProdutoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.EstudoComplementarService;
+import br.com.abril.nds.service.EstudoService;
 
 
 @Service
@@ -55,6 +56,9 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 
     @Autowired
     private InformacoesProdutoRepository informacoesProdutoRepository;
+    
+    @Autowired
+    private EstudoService estudoService;
 
     @Override
     @Transactional(readOnly = true)
@@ -135,6 +139,10 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	estudo1.setQtdeReparte(qtdDistribuido);
 	estudo1.setReparteDistribuir(qtdDistribuido);
 	estudo1.setSobra(estudo1.getQtdeReparte().subtract(estudo1.getReparteDistribuir()));
+	
+	Long id = this.estudoService.obterUltimoAutoIncrement();
+    
+	estudo1.setId(id);
 
 	// Gera Novo Estudo
 	estudoGeradoRepository.adicionar(estudo1);

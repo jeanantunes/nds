@@ -33,13 +33,11 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
 	    sql.append("  join cota c on c.id = ec.cota_id and c.situacao_cadastro = 'ATIVO' ");
 	    if (estudoComplementarVO.getTipoSelecao().equals("RANKING_FATURAMENTO")) {
 		sql.append("  join ranking_faturamento rs on rs.cota_id = c.id ");
-		sql.append("   and rs.data_geracao_rank = (select max(r.data_geracao_rank) from ranking_faturamento r) ");
 	    } else {
 		sql.append("  join estudo_gerado e on e.id = ec.estudo_id ");
 		sql.append("  join produto_edicao pe on pe.id = e.produto_edicao_id ");
 		sql.append("  join produto p on p.id = pe.produto_id ");
 		sql.append("  join ranking_segmento rs on rs.cota_id = c.id ");
-		sql.append("   and rs.data_geracao_rank = (select max(r.data_geracao_rank) from ranking_segmento r) ");
 		sql.append("   and rs.tipo_segmento_produto_id = p.tipo_segmento_produto_id ");
 	    }
 	    sql.append(" where (ec.reparte = 0 or ec.reparte is null) ");
@@ -87,13 +85,11 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
 	sql.append("  join cota c on c.id = ec.cota_id and c.situacao_cadastro = 'ATIVO' ");
 	if (estudoComplementarVO.getTipoSelecao().equals("RANKING_FATURAMENTO")) {
 	    sql.append("  join ranking_faturamento rs on rs.cota_id = c.id ");
-	    sql.append("   and rs.data_geracao_rank = (select max(r.data_geracao_rank) from ranking_faturamento r) ");
 	} else {
 	    sql.append("  join estudo_gerado e on e.id = ec.estudo_id ");
 	    sql.append("  join produto_edicao pe on pe.id = e.produto_edicao_id ");
 	    sql.append("  join produto p on p.id = pe.produto_id ");
 	    sql.append("  join ranking_segmento rs on rs.cota_id = c.id ");
-	    sql.append("   and rs.data_geracao_rank = (select max(r.data_geracao_rank) from ranking_segmento r) ");
 	    sql.append("   and rs.tipo_segmento_produto_id = p.tipo_segmento_produto_id ");
 	}
 	sql.append(" where (ec.reparte = 0 or ec.reparte is null) ");

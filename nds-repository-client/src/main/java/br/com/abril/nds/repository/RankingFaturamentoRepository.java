@@ -7,7 +7,13 @@ import br.com.abril.nds.model.distribuicao.RankingFaturamento;
 
 public interface RankingFaturamentoRepository extends Repository<RankingFaturamento, Long> {
 
-	void executeJobGerarRankingFaturamento();
+	void gerarRankingFaturamento();
+	
+	void gerarRankingFaturamentoParaCotasSemRanking();
+	
+	void deletarRankingFaturamento();
+	
 	List<RankingFaturamento>  buscarPorCota(Cota cota);
+	
 	void atualizarClassificacaoCota();
 }
