@@ -1801,7 +1801,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		} else {
 			
-			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota);
+			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota, dataOperacao);
 		}
 		
 		if (consolidados != null) {
