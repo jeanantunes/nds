@@ -325,6 +325,10 @@ $(".itensRegioesEspecificasGrid").flexigrid({
                 $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
                 $('#copiarEstudo-estudoPesquisa').val(numeroEstudo).change();
                 return;
+            case 'complementar':
+                $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+                $('#codigoEstudo').val(numeroEstudo).blur();
+                return;
         }
 
         var matriz = [],

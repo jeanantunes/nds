@@ -5,17 +5,22 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
+import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
@@ -42,7 +47,75 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		
 		return (EstoqueProduto) criteria.uniqueResult();
 	}
+
+	public Long selectForUpdate(Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" SELECT E.ID AS id ");
+		
+		hql.append(" FROM ESTOQUE_PRODUTO E ");
+		
+		hql.append(" WHERE E.PRODUTO_EDICAO_ID = :idProdutoEdicao FOR UPDATE ");
+		
+		Query query = this.getSession().createSQLQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		((org.hibernate.SQLQuery)query).addScalar("id", StandardBasicTypes.LONG);
+		
+		List ids = query.list();
 	
+		if(ids==null || ids.isEmpty()){
+			return null;
+		}
+		
+		return (Long) ids.get(0);
+		
+	}
+	
+	public EstoqueProduto obterEstoqueProdutoParaAtualizar(Long idProdutoEdicao) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				" select ep from EstoqueProduto ep where ep.produtoEdicao.id = :idProdutoEdicao ");
+		
+		query.setLockOptions(LockOptions.UPGRADE);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (EstoqueProduto) query.uniqueResult();
+	}
+	
+	public void atualizarEstoqueProduto(Long idProdutoEdicao, TipoEstoque tipoEstoque, BigInteger qtde) {
+		
+		String sql = "update estoque_produto set ";
+		
+		switch (tipoEstoque) {
+		
+			case SUPLEMENTAR:
+				
+				sql += " QTDE_SUPLEMENTAR = QTDE_SUPLEMENTAR + ";
+				break;
+				
+			case DEVOLUCAO_ENCALHE:
+				
+				sql += " QTDE_DEVOLUCAO_ENCALHE = QTDE_DEVOLUCAO_ENCALHE + ";
+				break;
+				
+			default:
+				break;
+		}
+		
+		sql += " :qtde where PRODUTO_EDICAO_ID = :idProdutoEdicao ";
+		
+		this.getSession()
+			.createSQLQuery(sql)
+				.setParameter("qtde", qtde)
+				.setParameter("idProdutoEdicao", idProdutoEdicao)
+				.executeUpdate();
+	}
+
 	public EstoqueProduto buscarEstoqueProdutoPorProdutoEdicao(Long idProdutoEdicao) {
 		StringBuilder hql = new StringBuilder("select estoqueProduto ");
 		hql.append(" from EstoqueProduto estoqueProduto join estoqueProduto.produtoEdicao produtoEdicao ")
@@ -167,16 +240,8 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		   .append(" join produtoEdicao.chamadaEncalhes chamadaEncalhe ")
 		   .append(" join chamadaEncalhe.chamadaEncalheCotas cec ")
 		   .append(" where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ")
-		   .append(" and cec.postergado = :naoPostergado ")
+		   .append(" and cec.postergado = :naoPostergado ");
 		   
-		   //ignorar registros zerados - comentado a pedidos do negócio
-//		   .append(" and (")
-//		   .append(" coalesce(estoqueProduto.qtde, 0) != 0 ")
-//		   .append(" or coalesce(estoqueProduto.qtdeSuplementar, 0) != 0 ")
-//		   .append(" or coalesce(estoqueProduto.qtdeDanificado, 0) != 0 ")
-//		   .append(" or coalesce(estoqueProduto.qtdeDevolucaoEncalhe, 0) != 0 ")
-//		   .append(")")
-		   ;
 	}
 	
 	private void setParametrosBuscarEstoqueProdutoRecolhimento(Query query, 
@@ -195,6 +260,7 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		   .append(" from EstoqueProduto ep ")
 		   .append(" join ep.produtoEdicao pre ")
 		   .append(" join pre.lancamentos lan ")
+		   .append(" join pre.chamadaEncalhes ce")
 		   .append(" where lan.status = :statusFechado ")
 		   .append(" group by ep.id ")
 		   .append(" having (sum(coalesce(ep.qtde,0)) + sum(coalesce(ep.qtdeSuplementar,0)) ")

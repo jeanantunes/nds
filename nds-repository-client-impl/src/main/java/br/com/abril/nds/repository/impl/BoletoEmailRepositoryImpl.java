@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
+
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -35,4 +37,12 @@ public class BoletoEmailRepositoryImpl extends AbstractRepositoryModel<BoletoEma
 		
 		return (BoletoEmail) query.uniqueResult();
 	}
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BoletoEmail> buscarTodosOrdenados() {
+        
+        return this.getSession().createQuery(
+                "select b from BoletoEmail b order by b.cobranca.cota.numeroCota").list();
+    }
 }

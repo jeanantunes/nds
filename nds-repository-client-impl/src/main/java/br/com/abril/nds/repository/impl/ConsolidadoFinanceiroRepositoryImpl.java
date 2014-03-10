@@ -1105,6 +1105,7 @@ ConsolidadoFinanceiroRepository {
         hql.append(" where mov.id = :idMovimentoFinanceiro ");
         
         final Query query = this.getSession().createQuery(hql.toString());
+        
         query.setParameter("idMovimentoFinanceiro", idMovimentoFinanceiro);
         
         return query.list();
@@ -1206,7 +1207,7 @@ ConsolidadoFinanceiroRepository {
     @Override
     public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(final Long idCota) {
         
-        final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c, Distribuidor d ");
+        final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c, Distribuidor d  ");
         
         if (idCota != null){
             

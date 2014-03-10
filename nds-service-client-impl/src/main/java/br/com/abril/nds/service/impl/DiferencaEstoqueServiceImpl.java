@@ -647,12 +647,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         GrupoMovimentoFinaceiro grupoMovimentoFinaceiro = null;
         OperacaoFinaceira operacaoFinaceira = null;
         
-        if (tipoDiferenca.isFalta()) {
+        if (tipoDiferenca.isFalta() || tipoDiferenca.isAlteracaoReparte()) {
             
             grupoMovimentoFinaceiro = GrupoMovimentoFinaceiro.CREDITO;
             operacaoFinaceira = OperacaoFinaceira.CREDITO;
             
-        } else if (tipoDiferenca.isSobra()) {
+        } else {
             
             grupoMovimentoFinaceiro = GrupoMovimentoFinaceiro.DEBITO;
             operacaoFinaceira = OperacaoFinaceira.DEBITO;

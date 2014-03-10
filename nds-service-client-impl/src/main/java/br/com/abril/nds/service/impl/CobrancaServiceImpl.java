@@ -147,6 +147,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 			return BigDecimal.ZERO;
 		}
 		
+		dataVencimento = this.calendarioService.obterProximaDataDiaUtil(dataVencimento);
+		
 		long quantidadeDias = DateUtil.obterDiferencaDias(dataVencimento, dataCalculoJuros);
 
 		BigDecimal taxaJurosDiaria = MathUtil.divide(taxaJurosMensal, new BigDecimal(30));
@@ -256,21 +258,12 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<CobrancaVO> obterDadosCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {
-		
-	    Cota cota = this.cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
-	    
-	    List<CobrancaVO> cobrancas = null;
-	    
-	    if (cota!=null){
-	    	
-	    	filtro.setAcumulaDivida(false);
-		    cobrancas = this.cobrancaRepository.obterCobrancasPorCota(filtro);
-	    }
-	    
-		return cobrancas;
+
+    	filtro.setAcumulaDivida(false);
+
+    	return this.cobrancaRepository.obterCobrancasPorCota(filtro);
 	}
-	
-	
+
 	/**
 	 * Método responsável por obter dados de cobrança por código
 	 * @param idCobranca
@@ -676,6 +669,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 			BigDecimal valorCobranca = itemCobranca.getValor().subtract(this.obterSaldoDivida(itemCobranca.getId()));
 			valorCobranca = valorCobranca.setScale(2, RoundingMode.HALF_EVEN);
 			BigDecimal valorCobrancaCorrigida = valorCobranca.add(valorJuros).add(valorMulta).subtract(valorDesconto);
+			valorCobrancaCorrigida = valorCobrancaCorrigida.setScale(2, RoundingMode.HALF_EVEN);
 			
 			if ( valorPagamentoCobranca.compareTo(valorCobrancaCorrigida) >= 0 ) {
 				
@@ -699,7 +693,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		    	
 				valorPagamentoCobranca = valorPagamentoCobranca.subtract(valorCobrancaCorrigida);
 				
-				this.acumuloDividasService.quitarDividasAcumuladas(itemCobranca.getDataPagamento(), itemCobranca.getDivida());
+				this.acumuloDividasService.quitarDividasAcumuladas(itemCobranca.getDataPagamento(), itemCobranca.getDivida(),TipoBaixaCobranca.MANUAL);
 		    
 			} else {
 		    	cobrancaParcial = itemCobranca;

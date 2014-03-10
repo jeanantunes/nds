@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.EnderecoAssociacaoDTO.ColunaOrdenacao;
+import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -15,6 +15,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.service.DocumentoCobrancaService;
+import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
 
 @Service
@@ -25,6 +26,10 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	
 	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
+	
+	
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
 	
 	@Transactional
 	@Override
@@ -69,18 +74,11 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	
 		List<GeraDividaDTO> dividasGeradas = dividaRepository.obterDividasGeradas(filtro);
 		
-		for(GeraDividaDTO umaDividaGerada : dividasGeradas)
-		{
-			Long retornoDeEnvioDeEmail = dividaRepository.verificarEnvioDeEmail(umaDividaGerada);
-			
-			if(retornoDeEnvioDeEmail.intValue() == 0)
-			{
-				umaDividaGerada.setSuportaEmail(false);
-			}
-			else
-			{
-				umaDividaGerada.setSuportaEmail(true);
-			}
+		for(GeraDividaDTO umaDividaGerada : dividasGeradas){
+		    
+		    
+		    umaDividaGerada.setSuportaEmail( gerarCobrancaService.aceitaEmissaoDocumento(umaDividaGerada.getIdCota(), TipoEmissaoDocumento.EMAIL_BOLETO_RECIBO));
+		   
 		}
 			
 		return dividasGeradas;
