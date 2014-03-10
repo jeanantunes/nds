@@ -200,6 +200,14 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			// EFETIVAR INSERCAO NA BASE
 			getSession().persist(lancamento);	
 			
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Inserido Lancamento para Produto: "
+							+ codigoProduto
+							+ " e Edicao: " + edicao
+							+ " na lancamento");
+			return;
+			
 		} else {
 			lancamento.setAlteradoInteface(true);
 			/*
@@ -251,7 +259,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			if (null != dtLancamentoAtual && !dtLancamentoAtual.equals(dtLancamentoNovo)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteracao da DATA LANCAMENTO PREVISTO do Produto: "
+						"Enviar Alteracao da DATA LANCAMENTO PREVISTO do Produto: "
 								+ codigoProduto + " e Edicao: " + edicao
 								+ " , de: " + simpleDateFormat.format(
 										dtLancamentoAtual)
@@ -265,6 +273,13 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				if (erroRetornoParciais) {
 					return;
 				}
+				
+				this.ndsiLoggerFactory.getLogger().logError(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alterado Lancamento para Produto: "
+								+ codigoProduto
+								+ " e Edicao: " + edicao
+								+ " na lancamento");
 			}
 			
 			// Atualizar lançamento Distribuidor:
@@ -274,7 +289,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			final Date dtLancamentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataLancamentoDistribuidor());
 			
-			if (null != dtLancamentoDistribuidor && !dtLancamentoDistribuidor.equals(dtLancamentoNovo) && isStatusAlteracaoDataLancamento) {
+			if (null != dtLancamentoDistribuidor && !	dtLancamentoDistribuidor.equals(dtLancamentoNovo) && isStatusAlteracaoDataLancamento) {
 				
 				if(dtLancamentoNovo.before(distribuidorService.obterDataOperacaoDistribuidor())){
 				
@@ -292,7 +307,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 								+ codigoProduto + " e Edicao: " + edicao
 								+ " , de: " + simpleDateFormat.format(
 										dtLancamentoNovo)
-								+ "para: " + simpleDateFormat.format(
+								+ " para: " + simpleDateFormat.format(
 										dtLancamentoDistribuidor));
 				
 				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
