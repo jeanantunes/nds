@@ -45,7 +45,6 @@ import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.CotaAusenteRepository;
@@ -65,7 +64,6 @@ import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 
 import com.google.common.base.Predicate;
@@ -201,7 +199,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
                 GrupoMovimentoEstoque.SOBRA_DE_COTA,
                 GrupoMovimentoEstoque.SOBRA_EM_COTA,
                 GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE,
-                GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE
+                GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE,
+                GrupoMovimentoEstoque.FALTA_DE,
+                GrupoMovimentoEstoque.FALTA_EM,
+                GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE,
+                GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA,
+                GrupoMovimentoEstoque.SOBRA_DE,
+                GrupoMovimentoEstoque.SOBRA_EM,
+                GrupoMovimentoEstoque.SOBRA_ENVIO_PARA_COTA,
+                GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO   
         };
         
         final Map<Long, BigInteger> mapProdutos =
@@ -356,15 +362,9 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
             //Verifica se Estudo ja possui itens de Nota de Envio.
             if (estudoCota.getItemNotaEnvios()!=null && !estudoCota.getItemNotaEnvios().isEmpty()) {
                 
-            	List<ItemNotaEnvio> itens  = this.filtraItensNotaEnvioComfuroDeProduto(estudoCota.getItemNotaEnvios(),periodo);
-            	
-            	if(!itens.isEmpty()){
-            		
-            		 listItemNotaEnvio.addAll(itens);
+            	listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
             		 
-            		 continue;
-            	}
-           
+            	continue;
             }
             
             final ProdutoEdicao produtoEdicao = estudoCota.getEstudo().getProdutoEdicao();
@@ -776,42 +776,7 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
             
         }
     }
-    
-
-    private List<ItemNotaEnvio> filtraItensNotaEnvioComfuroDeProduto(final List<ItemNotaEnvio> itens, final Intervalo<Date> periodo){
         
-        if(itens == null || itens.isEmpty()){
-            return null;
-        }
-        
-        final Predicate<ItemNotaEnvio> itensNotaEnvioCotaPredicate = new Predicate<ItemNotaEnvio>() {
-            @Override
-            public boolean apply(final ItemNotaEnvio item) {
-                
-            	if(item.getFuroProduto() == null){
-            		return true;
-            	}
-            	
-        		FuroProduto furoProduto = furoProdutoRepository.buscarPorId(item.getFuroProduto());
-        		
-        		if(furoProduto == null){
-        			return true;
-        		}
-        		
-        		return (DateUtil.validarDataEntrePeriodo(furoProduto.getDataLancamentoDistribuidor(), periodo.getDe(),periodo.getAte()));
-            }
-        };
-        
-        final Collection<ItemNotaEnvio> filteredCollection =
-                Collections2.filter(itens, itensNotaEnvioCotaPredicate);
-        
-        if (filteredCollection != null) {
-            return  Lists.newArrayList(filteredCollection);
-        } else {
-            return new ArrayList<>();
-        }
-    }
-    
     /* Retorna uma lista com os movimentos estoque cota filtrados, onde os
     * movimentos estoque cota não tiveram itens de nota de envio gerados
     */

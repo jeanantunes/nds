@@ -1491,6 +1491,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		cobrancaControleConferenciaEncalheCota.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
 		
 		cobrancaControleConferenciaEncalheCotaRepository.adicionar(cobrancaControleConferenciaEncalheCota);
+
 		
 	}
 	
@@ -1523,6 +1524,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					controleConfEncalheCota.getId());
 			
 			if(StatusOperacao.CONCLUIDO.equals(statusAtualOperacaoConfEnc)) {
+				
 				
 				removerAssociacoesCobrancaConferenciaEncalheCota(controleConfEncalheCota.getId());
 				
@@ -1579,7 +1581,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 500)
+	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 900)
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
@@ -1592,8 +1594,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
 		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-
-		this.resetarDadosFinalizacaoConferencia(controleConfEncalheCota);
 		
 		this.incluirDadosConferenciaEncalheCota(controleConfEncalheCota, 
 				                                listaConferenciaEncalhe, 
@@ -1621,6 +1621,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		try {
 			
+			
             // se a cota for unificadora ou unificada não pode gerar cobrança
             // nesse ponto
 			boolean cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificada(
@@ -1628,6 +1629,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					
 					cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificadora(
 							cota.getNumeroCota());
+			
+			
 			
 			if (!cotaUnificadora && !cotaUnificada){
 				
@@ -1715,6 +1718,20 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
      */
 	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 		
+		
+		if(	controleConferenciaEncalheCota.getId() != null) {
+			
+			StatusOperacao statusAtualOperacaoConfEnc = 
+					controleConferenciaEncalheCotaRepository.obterStatusControleConferenciaEncalheCota(
+							controleConferenciaEncalheCota.getId());
+			
+			if(StatusOperacao.CONCLUIDO.equals(statusAtualOperacaoConfEnc)) {
+				
+				
+				removerAssociacoesCobrancaConferenciaEncalheCota(controleConferenciaEncalheCota.getId());
+			}
+		}	
+		
 		Set<String> nossoNumeroCollection = new HashSet<String>();
 		
         // COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO
@@ -1723,6 +1740,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
         		                                                                       controleConferenciaEncalheCota.getDataOperacao());
 		
 		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
+			
 			
 			//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
 			this.gerarCobrancaService.cancelarDividaCobranca(null, 
@@ -1802,7 +1820,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
         boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(cota,dataOperacao);
 		
 		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
-		
+			
 			List<MovimentoFinanceiroCota> movimentosFinanceiroCota = 
 					movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
 			

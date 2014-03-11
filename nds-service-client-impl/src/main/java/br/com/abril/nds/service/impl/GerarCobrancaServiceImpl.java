@@ -270,7 +270,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				               setNossoNumeroCentralizacao,
         		               false);
 		
-		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
 	}
 	
 	/**
@@ -652,6 +651,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			BigDecimal valorMovimentos = BigDecimal.ZERO;
 			
 			List<MovimentoFinanceiroCota> movimentos = new ArrayList<MovimentoFinanceiroCota>();
+			
+			boolean ultimaCotaConsolidadoProcessado = false;
 
 			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
 				
@@ -673,7 +674,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			    }
 				
 				boolean unificaCobrancaPorFornecedor = this.isCotaUnificaCobrancaPorFornecedor(cotaAnterior);
-
+				
 				TipoMovimentoFinanceiro tipo = (TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento();
 				
 				if (cotaAtual.equals(cotaAnterior) &&
@@ -690,7 +691,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					    
 						valorMovimentos = valorMovimentos.add(movimentoFinanceiroCota.getValor());
 					}
-
+					
+					ultimaCotaConsolidadoProcessado = false;
+					
 				} else {
 
 					this.processarConsolidadoDividaCobranca(cotaAnterior, 
@@ -722,22 +725,27 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				    
 				    	valorMovimentos = movimentoFinanceiroCota.getValor();
 				    }
+					
+					ultimaCotaConsolidadoProcessado = true;
 				}
 			}
 			
-			//Ultima cota
-			this.processarConsolidadoDividaCobranca(cotaAnterior, 
-												    movimentos, 
-												    usuario, 
-												    numeroDiasNovaCobranca, 
-												    dataOperacao, 
-												    msgs, 
-												    ultimoFornecedor, 
-												    postergarDividas,
-												    consolidadosCotaCentralizacao,
-												    valorMovimentos, 
-												    valorMovimentos,
-												    setNossoNumero);
+			if (!ultimaCotaConsolidadoProcessado){
+			
+				//Ultima cota
+				this.processarConsolidadoDividaCobranca(cotaAnterior, 
+													    movimentos, 
+													    usuario, 
+													    numeroDiasNovaCobranca, 
+													    dataOperacao, 
+													    msgs, 
+													    ultimoFornecedor, 
+													    postergarDividas,
+													    consolidadosCotaCentralizacao,
+													    valorMovimentos, 
+													    valorMovimentos,
+													    setNossoNumero);
+			}
 		}
 		
 		//Processamento de Divida e Cobrança de Cotas com Centralização
@@ -1802,7 +1810,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		} else {
 			
-			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota);
+			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota, dataOperacao);
 		}
 		
 		if (consolidados != null) {
