@@ -174,4 +174,7 @@ public interface DescontoService {
 
     DescontoDTO obterDescontoPor(Integer numeroCota, String codigoProduto, Long numeroEdicao) throws Exception;
 
+    DescontoDTO obterDescontoProximosLancamentosPorDeTodasCotas(Map<String, DescontoDTO> descontos, Long fornecedorId,
+            Long produtoEdicaoId, Long produtoId);
+
 }

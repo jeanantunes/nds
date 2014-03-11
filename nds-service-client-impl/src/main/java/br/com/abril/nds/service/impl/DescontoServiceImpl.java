@@ -1432,10 +1432,19 @@ public class DescontoServiceImpl implements DescontoService {
             return descontoDTO;
         }
         
+        return descontoDTO;
+	}
+	
+	@Override
+    public DescontoDTO obterDescontoProximosLancamentosPorDeTodasCotas(
+            Map<String, DescontoDTO> descontos, Long fornecedorId, Long produtoEdicaoId, Long produtoId) {
+    
+        DescontoDTO descontoDTO = null;
+        
         /**
          * Desconto de ProdutoEdicao no proximo lancamento para todas as cotas
          */     
-        key = new StringBuilder()
+        StringBuilder key = new StringBuilder()
                     .append(produtoId != null ? "p" : "")
                     .append(produtoId != null ? produtoId : "")
                     .append("pl");
@@ -1447,6 +1456,6 @@ public class DescontoServiceImpl implements DescontoService {
         }
         
         return descontoDTO;
-	}
+    }
 
 }

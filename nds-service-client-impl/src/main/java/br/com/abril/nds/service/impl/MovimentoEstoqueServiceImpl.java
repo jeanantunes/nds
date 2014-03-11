@@ -205,6 +205,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
         
+        tratarIncrementoProximoLancamento(descontos,descontoProximosLancamentos, null, 
+                produtoEdicao.getProduto().getFornecedor().getId(), idProdutoEdicao, idProduto);
+        
         for (final EstudoCotaDTO estudoCota : listaEstudoCota) {
             
             if (estudoCota.getQtdeEfetiva() == null || BigInteger.ZERO.equals(estudoCota.getQtdeEfetiva())) {
@@ -212,21 +215,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 continue;
             }
             
-            if (descontoProximosLancamentos != null) {
-            
-	            final DescontoDTO descontoDTO = 
-	                descontoService.obterDescontoProximosLancamentosPor(
-	                	descontos, estudoCota.getIdCota(), produtoEdicao.getProduto().getFornecedor().getId(), idProdutoEdicao, idProduto);
-	                
-	            if (descontoDTO != null) {
-	            	
-	                Integer quantidadeProximosLancamaentos = 
-	                	descontoProximosLancamentos.getQuantidadeProximosLancamaentos();
-	                
-	                descontoProximosLancamentos.setQuantidadeProximosLancamaentos(
-	                	--quantidadeProximosLancamaentos);
-	            }
-            }
+            tratarIncrementoProximoLancamento(descontos,descontoProximosLancamentos, estudoCota.getIdCota(), 
+                    produtoEdicao.getProduto().getFornecedor().getId(), idProdutoEdicao, idProduto);
             
             final MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
                     dataPrevista, idProdutoEdicao, estudoCota.getIdCota(),
@@ -245,11 +235,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             movimentosEstoqueCota.add(mec);
         }
         
-        if (descontoProximosLancamentos != null) {
-        	
-        	descontoProximosLancamentosRepository.merge(descontoProximosLancamentos);
-        }
-        
         if(total.compareTo(BigInteger.ZERO) > 0){
             gerarMovimentoEstoque(idProdutoEdicao, idUsuario, total, tipoMovimento, dataDistribuidor, false);
         }
@@ -262,7 +247,34 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
     }
     
-	            /**
+	private void tratarIncrementoProximoLancamento(Map<String, DescontoDTO>  descontos, 
+	        DescontoProximosLancamentos descontoProximosLancamentos, Long idCota, Long idFornecedor, Long idProduto, Long idEdicao) {
+	    
+        if (descontoProximosLancamentos != null) {
+            
+            DescontoDTO descontoDTO =  null;
+            
+            if(idCota!=null)
+                descontoDTO = descontoService.obterDescontoProximosLancamentosPor(
+                    descontos, idCota, idFornecedor, idProduto, idEdicao);
+            else
+                descontoDTO = descontoService.obterDescontoProximosLancamentosPorDeTodasCotas(
+                        descontos, idFornecedor, idProduto, idEdicao);
+                
+            if (descontoDTO != null) {
+                
+                Integer quantidadeProximosLancamaentos = 
+                    descontoProximosLancamentos.getQuantidadeProximosLancamaentos();
+                
+                descontoProximosLancamentos.setQuantidadeProximosLancamaentos(
+                    --quantidadeProximosLancamaentos);
+                
+                descontoProximosLancamentosRepository.merge(descontoProximosLancamentos);
+            }
+        }
+    }
+
+                /**
      * Obtem Objeto com Lista de movimentos de estoque referentes à reparte e
      * Map de edicoes com saidas e entradas diversas
      * 
