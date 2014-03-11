@@ -142,10 +142,10 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 			return sessionFactory.getCurrentSession();
 			
 		} catch (Exception e) {
-			LOGGER.error("\n\nFaltando @Transaction: "+ InformacoesTransaction.getInfo() +"\n\n");
+			LOGGER.error("\n\nFaltando @Transaction: "+ InformacoesTransaction.getInfo() +"\n\n", e);
 		}
 		
-		return null; // sessionFactory.openSession();
+		return sessionFactory.openSession();
 	}
 	
 	protected void setParameters(Query query, Map<String, Object> parameters) {

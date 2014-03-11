@@ -12,7 +12,7 @@
 	<aop:aspectj-autoproxy/>
 	
 	<context:annotation-config />
-	<context:property-placeholder location="classpath:nds-client.properties, classpath:prophecies.properties, classpath:nds-client-nfe.properties" ignore-unresolvable="true" />
+	<context:property-placeholder location="classpath:nds-client.properties, classpath:prophecies.properties" ignore-unresolvable="true" />
 	<context:component-scan base-package="br.com.abril.nds" />
 	
 	<!-- TOMCAT -->
@@ -52,7 +52,7 @@
 	<bean id="nFeFileReader" class="br.com.abril.nds.service.xml.nfe.signature.impl.DOMNFeFileReader" />
 	
 	<bean id="keyStore" class="org.springframework.ws.soap.security.support.KeyStoreFactoryBean">
-		<property name="location" value="file:${secutiry.certificate.location}" />  
+		<property name="location" value="file:${security.certificate.location}" />  
 	</bean>
 	
 	<bean id="securityHandler" class="br.com.abril.nds.service.xml.nfe.signature.impl.SimpleSecurityHandlerBean">
