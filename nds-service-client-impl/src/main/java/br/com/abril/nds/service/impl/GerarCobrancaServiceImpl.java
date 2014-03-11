@@ -270,7 +270,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				               setNossoNumeroCentralizacao,
         		               false);
 		
-		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
 	}
 	
 	/**
