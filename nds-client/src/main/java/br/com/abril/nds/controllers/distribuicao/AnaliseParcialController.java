@@ -29,6 +29,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -229,8 +230,8 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Path("/mudarReparte")
-    public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte) {
-        analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte);
+    public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado) {
+        analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte, reparteDigitado);
         result.nothing();
     }
 
@@ -238,7 +239,7 @@ public class AnaliseParcialController extends BaseController {
     public void mudarReparteLote(Long estudoId, List<CotaQueNaoEntrouNoEstudoDTO> cotas) {
 
         for (CotaQueNaoEntrouNoEstudoDTO cota : cotas) {
-            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().longValue());
+            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().longValue(), cota.getQuantidade().longValue());
             analiseParcialService.atualizaClassificacaoCota(estudoId, cota.getNumeroCota());
         }
 
@@ -246,9 +247,10 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Path("/liberar")
-    public void liberar(Long id) {
+    public void liberar(Long estudoId, List<CotaLiberacaoEstudo> cotas) {
     	
-        analiseParcialService.liberar(id);
+        analiseParcialService.liberar(estudoId, cotas);
+        
         result.nothing();
     }
 
