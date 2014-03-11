@@ -662,7 +662,7 @@ public class ProdutoEdicaoController extends BaseController {
             if (maiorDataLancamento != null && dto.getDataLancamentoPrevisto() != null
 					&& dto.getDataLancamentoPrevisto().compareTo(maiorDataLancamento) <= 0) {
 				
-            	 listaMensagens.add("Já existe redistribuição cadastrada nessa data!");
+                listaMensagens.add("Já existe redistribuição cadastrada nessa data!");
 			}
 		}
 		

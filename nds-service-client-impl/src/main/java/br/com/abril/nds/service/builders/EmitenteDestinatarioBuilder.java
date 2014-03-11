@@ -22,15 +22,6 @@ import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoaJuridica;
 
 public class EmitenteDestinatarioBuilder {
 
-	public static NotaFiscalNds montarEnderecoEmitenteDestinatarioEstoqueProduto(NotaFiscalNds notaFiscal, EstoqueProduto estoque) {
-		
-		notaFiscal.getEmitenteDestinario().setNome("XXXXXXXXX");
-		notaFiscal.getEmitenteDestinario().setEmail("XXXXXXXX");
-		
-		return notaFiscal;
-		
-	}
-
 	public static void montarEnderecoEmitenteDestinatario(NotaFiscal notaFiscal2, Cota cota) {
 		
 		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario() == null) {

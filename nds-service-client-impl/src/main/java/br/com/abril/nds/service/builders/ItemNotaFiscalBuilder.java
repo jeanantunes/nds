@@ -169,7 +169,8 @@ public class ItemNotaFiscalBuilder  {
 				ipi.setCst(t.getCst().toString());
 				ipi.setAliquota(t.getValorAliquota());
 				ipi.setValorBaseCalculo(t.getBaseCalculo());
-				
+				ipi.setCodigoEnquadramento("01");
+			
 				detalheNotaFiscal.getImpostos().setIpi(ipi);
 			}
 			

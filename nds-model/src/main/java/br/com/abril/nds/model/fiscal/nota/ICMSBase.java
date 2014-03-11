@@ -16,7 +16,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
 import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
 
-
+@XmlTransient
 @MappedSuperclass
 public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	
@@ -59,11 +59,10 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 			@NFEWhen(condition = NFEConditions.ICMS_70, export = @NFEExport(secao = TipoSecao.N09, posicao = 0, tamanho = 1)),
 			@NFEWhen(condition = NFEConditions.ICMS_90, export = @NFEExport(secao = TipoSecao.N10, posicao = 0, tamanho = 1))
 	})
-	@XmlTransient
 	protected OrigemProduto origem;
 	
 	@Transient
-	protected String orig;
+	protected String aOrig;
 	
 	/**
 	 * modBC
@@ -87,6 +86,7 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	/**
 	 * @return the percentualReducao
 	 */
+	@XmlTransient
 	public BigDecimal getPercentualReducao() {
 		return percentualReducao;
 	}
@@ -101,6 +101,7 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	/**
 	 * @return the origem
 	 */
+	@XmlTransient
 	public OrigemProduto getOrigem() {
 		return origem;
 	}
@@ -110,7 +111,7 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	 */
 	public void setOrigem(OrigemProduto origem) {
 		this.origem = origem;
-		this.orig = String.valueOf(origem.getId());
+		this.aOrig = String.valueOf(origem.getId());
 	}
 
 	/**
