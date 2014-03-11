@@ -1628,9 +1628,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 																										  indConferenciaContingencia,
 																										  info.getReparte());
 			
-			
-			this.movimentoEstoqueService.atualizarEstoqueProdutoDaFilaCota(controleConfEncalheCota.getCota().getNumeroCota());
-			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			
 			Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();

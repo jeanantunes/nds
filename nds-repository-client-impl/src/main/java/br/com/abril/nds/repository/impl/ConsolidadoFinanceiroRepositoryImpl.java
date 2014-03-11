@@ -1205,28 +1205,21 @@ ConsolidadoFinanceiroRepository {
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(final Long idCota) {
+    public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(final Long idCota, Date dataOperacao) {
         
-        final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c, Distribuidor d ");
+        final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c ");
         
-        if (idCota != null){
+        hql.append(" join c.cota cota ");
+        
+        hql.append(" where c.dataConsolidado = :dataOperacao ");
             
-            hql.append(" join c.cota cota ");
-        }
-        
-        hql.append(" where c.dataConsolidado = d.dataOperacao ");
-        
-        if (idCota != null){
-            
-            hql.append(" and cota.id = :idCota ");
-        }
+        hql.append(" and cota.id = :idCota ");
         
         final Query query = this.getSession().createQuery(hql.toString());
         
-        if (idCota != null){
-            
-            query.setParameter("idCota", idCota);
-        }
+        query.setParameter("idCota", idCota);
+        
+        query.setParameter("dataOperacao", dataOperacao);
         
         return query.list();
     }

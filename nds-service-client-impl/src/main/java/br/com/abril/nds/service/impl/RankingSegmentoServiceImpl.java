@@ -16,8 +16,12 @@ public class RankingSegmentoServiceImpl implements RankingSegmentoService {
 	@Override
 	@Transactional
 	public void executeJobGerarRankingSegmento() {
-		rankingSegmentoRepository.executeJobGerarRankingSegmento();
+		
+		this.rankingSegmentoRepository.deletarRankingSegmento();
+		
+		this.rankingSegmentoRepository.gerarRankingSegmento();
 
+		this.rankingSegmentoRepository.gerarRankingSegmentoParaCotasSemRanking();
 	}
 
 }

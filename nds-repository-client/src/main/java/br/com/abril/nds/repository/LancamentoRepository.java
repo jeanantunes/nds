@@ -406,4 +406,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	List<Object[]> buscarDiasMatrizLancamentoAbertos();
 	
+	boolean existeProdutoEdicaoParaDia(ProdutoLancamentoDTO produtoLancamentoDTO,Date novaData);
+	
 }

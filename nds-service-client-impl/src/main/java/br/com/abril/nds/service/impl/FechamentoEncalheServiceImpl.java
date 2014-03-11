@@ -64,6 +64,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
@@ -726,7 +727,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                         gerarCobrancaService.gerarDividaPostergada(cota.getId(), usuario.getId());
                     } else {
                         
-                        gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
+                        gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail, new HashSet<String>());
                     }
                 } catch (final GerarCobrancaValidacaoException e) {
                     LOGGER.error(e.getMessage(), e);
@@ -809,7 +810,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             movimentoEstoqueService.gerarMovimentoEstoque(null, item.getIdProdutoEdicao(), usuario.getId(), item
                     .getQtde(), tipoMovEstoqueEnvioJornaleiroJuramentado);
             
-            this.processarEstudoCotaLancamentoParcial(item);
+            this.processarEstudoCotaLancamentoParcial(item, usuario.getId(), dataOperacao);
         }
         
     }
@@ -818,7 +819,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
      * Cria estudo e estudo cota para os proximos lançamentos parciais
      * juramentado
      */
-    private void processarEstudoCotaLancamentoParcial(final MovimentoEstoqueCotaGenericoDTO item) {
+    private void processarEstudoCotaLancamentoParcial(final MovimentoEstoqueCotaGenericoDTO item, final Long usuarioId,
+            final Date dataOperacao) {
         
         final Lancamento lancamentoParcial = lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item
                 .getIdChamadaEncalhe());
@@ -838,7 +840,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         if (estudo == null) {
             
             final EstudoGerado estudoGerado = estudoService.criarEstudo(proximoLancamentoPeriodo.getProdutoEdicao(),
-                    item.getQtde(), proximoLancamentoPeriodo.getDataLancamentoDistribuidor());
+                    item.getQtde(), proximoLancamentoPeriodo.getDataLancamentoDistribuidor(), proximoLancamentoPeriodo.getId());
             
             estudo = estudoService.liberar(estudoGerado.getId());
             
@@ -850,8 +852,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             estudo = estudoRepository.merge(estudo);
         }
         
-        estudoCotaService.criarEstudoCotaJuramentado(proximoLancamentoPeriodo.getProdutoEdicao(), estudo, item
+        EstudoCota ec = estudoCotaService.criarEstudoCotaJuramentado(proximoLancamentoPeriodo.getProdutoEdicao(), estudo, item
                 .getQtde(), new Cota(item.getIdCota()));
+        
+        TipoMovimentoEstoque tipoMovimentoEstoque = 
+                this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+                        GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO);
+        
+        this.movimentoEstoqueService.gerarMovimentoCota(proximoLancamentoPeriodo.getDataCriacao(), 
+                item.getIdProdutoEdicao(), item.getIdCota(), usuarioId, item.getQtde(), tipoMovimentoEstoque, 
+                dataOperacao, dataOperacao, proximoLancamentoPeriodo.getId(), ec.getId());
     }
     
     @Override
@@ -918,19 +928,19 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         // cobra cotas as demais cotas, no caso, as não ausentes e com
         // unificação
-        final Set<String> nossoNumero = new HashSet<String>();
+        final Set<String> nossoNumeroCentralizacao = new HashSet<String>();
         
         if (cobrarCotas) {
             try {
                 
-                gerarCobrancaService.gerarCobranca(null, usuario.getId(), nossoNumero);
+                gerarCobrancaService.gerarCobranca(null, usuario.getId(), new HashSet<String>(), nossoNumeroCentralizacao);
             } catch (final GerarCobrancaValidacaoException e) {
                 LOGGER.error(e.getMessage(), e);
                 throw new ValidacaoException(e.getValidacaoVO());
             }
         }
         
-        return nossoNumero;
+        return nossoNumeroCentralizacao;
     }
     
     private void tratarAtualizacaoProximoLancamentoParcial(final FechamentoFisicoLogicoDTO item, final Usuario usuario,

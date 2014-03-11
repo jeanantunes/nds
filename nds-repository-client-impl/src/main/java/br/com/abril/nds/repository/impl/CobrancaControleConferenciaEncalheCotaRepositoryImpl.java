@@ -45,6 +45,9 @@ public class CobrancaControleConferenciaEncalheCotaRepositoryImpl extends Abstra
 		query.setParameter("idCobranca", idCobranca);
 		
 		query.executeUpdate();
+		
+		getSession().flush();
+		
 	}
 	
 }

@@ -2888,12 +2888,13 @@ public class CotaServiceImpl implements CotaService {
         }
         
         try{
-            if ("A".equalsIgnoreCase(TipoCota)) {
-                mixCotaProdutoService.excluirMixPorCota(idCota);
-            }
-            
-            if ("C".equalsIgnoreCase(TipoCota)) {
-                fixacaoReparteService.excluirFixacaoPorCota(idCota);
+            if ("ALTERNATIVO".equalsIgnoreCase(TipoCota)) {
+            	
+            	fixacaoReparteService.excluirFixacaoPorCota(idCota);
+            	
+            } else if ("CONVENCIONAL".equalsIgnoreCase(TipoCota)) {
+            	
+            	mixCotaProdutoService.excluirMixPorCota(idCota);
             }
             
         } catch (final DataIntegrityViolationException e) {

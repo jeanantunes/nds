@@ -41,6 +41,18 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         super(Divida.class);
     }
     
+    public void excluirDividaConsolidado(final Long idDivida) {
+    	
+    	Query query = this.getSession().createSQLQuery("DELETE FROM DIVIDA_CONSOLIDADO WHERE DIVIDA_ID = :idDivida");
+		
+		query.setParameter("idDivida", idDivida);
+		
+		query.executeUpdate();
+		
+		getSession().flush();
+    	
+    }
+    
     @Override
     public Divida obterDividaParaAcumuloPorCota(final Long idCota) {
         
