@@ -23,7 +23,7 @@ public interface EstudoService {
 	
 	void gravarEstudo(EstudoGerado estudo);
 	
-	EstudoGerado criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,Date dataLancamento);
+	EstudoGerado criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,Date dataLancamento,Long lancamentoId);
 
 	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId);
 	

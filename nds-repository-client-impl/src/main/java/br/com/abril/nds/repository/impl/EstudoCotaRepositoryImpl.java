@@ -161,7 +161,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		
         if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
 			
-			sql.append(" AND ((lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim) or (itemNotaEnvios.furoProduto is not null) ) ");
+			sql.append(" AND lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
 		}	
 		
 		Query query = getSession().createQuery(sql.toString());
