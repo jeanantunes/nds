@@ -419,6 +419,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
 		
+		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
+		
 		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 		
 		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO.name());
@@ -502,6 +504,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
 		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
+		
+		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
 		
 		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 		
