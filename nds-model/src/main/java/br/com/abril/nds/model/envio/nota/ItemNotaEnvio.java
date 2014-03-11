@@ -68,6 +68,17 @@ public class ItemNotaEnvio implements Serializable {
 	@OneToMany(mappedBy="itemNotaEnvio", cascade={CascadeType.MERGE, CascadeType.PERSIST})
 	private List<MovimentoEstoqueCota> movimentosProdutoSemEstudo;
 	
+	@Column(name="FURO_PRODUTO_ID")
+	private Long furoProduto;
+	
+	public Long getFuroProduto() {
+		return furoProduto;
+	}
+
+	public void setFuroProduto(Long furoProduto) {
+		this.furoProduto = furoProduto;
+	}
+
 	/**
 	 * @return the produtoEdicao
 	 */

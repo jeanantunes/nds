@@ -1226,8 +1226,6 @@ public class ConferenciaEncalheController extends BaseController {
 																         this.getUsuarioLogado(),
 																         indConferenciaContingencia);
 	        
-	        this.movimentoEstoqueService.atualizarEstoqueProdutoDaFilaCota(controleConfEncalheCota.getCota().getNumeroCota());
-	        
 
 		} catch (EncalheSemPermissaoSalvarException e) {
             LOGGER.error(
@@ -1629,9 +1627,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 																										  this.getUsuarioLogado(),
 																										  indConferenciaContingencia,
 																										  info.getReparte());
-			
-			
-			this.movimentoEstoqueService.atualizarEstoqueProdutoDaFilaCota(controleConfEncalheCota.getCota().getNumeroCota());
 			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			
