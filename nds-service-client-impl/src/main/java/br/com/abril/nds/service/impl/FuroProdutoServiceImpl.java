@@ -186,7 +186,6 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		lancamento.setStatus(StatusLancamento.FURO);
 		lancamento.setSequenciaMatriz(null);
 		
-		// Ao furar um produto com nota de envio emitida, o item da nota eh removido
 		if (lancamento.getEstudo() != null) {
 			
 			for(EstudoCota ec : lancamento.getEstudo().getEstudoCotas()) {
@@ -195,6 +194,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 					
 					for(ItemNotaEnvio item : ec.getItemNotaEnvios()) {
 						
+						item.setFuroProduto(furoProduto.getId());
 						item.setEstudoCota(null);
 						
 						itemNovaEnvioRepository.merge(item);

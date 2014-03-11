@@ -41,16 +41,16 @@ public class NotaFiscalValoresCalculadosBuilder {
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorProdutos(valorTotalItens);
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorSeguro(BigDecimal.valueOf(0));
 		
-		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorIPI(CurrencyUtil.arredondarValorParaQuatroCasas(valorIPI));
+		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorIPI(CurrencyUtil.arredondarValorParaDuasCasas(valorIPI));
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorBaseICMS(valorTotalItens);
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorBaseICMSSubstituto(valorTotalItens);
 		
-		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorICMS(CurrencyUtil.arredondarValorParaQuatroCasas(valorICMS));
+		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorICMS(CurrencyUtil.arredondarValorParaDuasCasas(valorICMS));
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorICMSSubstituto(BigDecimal.valueOf(0));
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorOutro(BigDecimal.valueOf(0));
 		
-		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorPIS(CurrencyUtil.arredondarValorParaQuatroCasas(valorPIS));
-		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorCOFINS(CurrencyUtil.arredondarValorParaQuatroCasas(valorCofins));
+		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorPIS(CurrencyUtil.arredondarValorParaDuasCasas(valorPIS));
+		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorCOFINS(CurrencyUtil.arredondarValorParaDuasCasas(valorCofins));
 		return notaFiscal;
 	}
 

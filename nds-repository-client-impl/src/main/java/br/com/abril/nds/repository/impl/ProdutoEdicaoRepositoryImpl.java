@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import static org.apache.commons.lang.StringUtils.leftPad;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -163,7 +165,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		Query query = super.getSession().createQuery(hql);
 
-		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("codigoProduto",  leftPad(codigoProduto, 8, "0"));
 		query.setParameter("numeroEdicao", numeroEdicao);
 
 		query.setMaxResults(1);

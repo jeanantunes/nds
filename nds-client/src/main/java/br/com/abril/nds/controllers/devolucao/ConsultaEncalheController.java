@@ -347,7 +347,7 @@ public class ConsultaEncalheController extends BaseController {
 		String valorDebitoCredito = ( infoConsultaEncalhe.getValorDebitoCredito() != null ) ? infoConsultaEncalhe.getValorDebitoCredito().toString() : "0" ;
 		String valorPagar = ( infoConsultaEncalhe.getValorPagar() != null ) ? infoConsultaEncalhe.getValorPagar().toString() : "0" ;
 		String valorReparte = (infoConsultaEncalhe.getValorReparte() != null) ? MathUtil.round(infoConsultaEncalhe.getValorReparte(), 2).toString() : "0";
-		String valorEncalhe = (infoConsultaEncalhe.getValorEncalhe() != null) ? infoConsultaEncalhe.getValorEncalhe().toString() : "0";
+		String valorEncalhe = (infoConsultaEncalhe.getValorEncalhe() != null) ? MathUtil.round(infoConsultaEncalhe.getValorEncalhe(), 2).toString() : "0";
 
 		resultadoPesquisa.setValorReparte(valorReparte);
 		resultadoPesquisa.setValorEncalhe(valorEncalhe);

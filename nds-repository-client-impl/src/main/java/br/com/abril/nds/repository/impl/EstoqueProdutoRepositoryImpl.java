@@ -192,8 +192,9 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		   .append(" coalesce(estoqueProduto.qtde, 0) as lancamento, ")
 		   .append(" coalesce(estoqueProduto.qtdeSuplementar, 0) as suplementar, ")
 		   .append(" coalesce(estoqueProduto.qtdeDanificado, 0) as danificado, ")
-		   .append(" (coalesce(estoqueProduto.qtdeDevolucaoEncalhe, 0) - ")
-		   .append(hqlRecolhimentoPDV)
+		   .append(" (coalesce(estoqueProduto.qtdeDevolucaoEncalhe, 0)  ")
+		   //mater comentado até que se prove o contrário, assim disse César, MNDS-208
+		   //.append(" - ").append(hqlRecolhimentoPDV)
 		   .append(" ) as recolhimento, ")
 		   .append(hqlRecolhimentoPDV)
 		   .append(" as recolhimentoPDV,")
