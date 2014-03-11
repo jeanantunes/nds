@@ -1576,7 +1576,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 500)
+	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 900)
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
