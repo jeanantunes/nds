@@ -6,6 +6,7 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.xml.bind.annotation.XmlElement;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
@@ -53,12 +54,14 @@ public class IPI extends ImpostoProduto implements Serializable {
 	 */
 	@Column(name="CODIGO_SELO_IPI", length=60, nullable=true)
 	@NFEExport(secao = TipoSecao.O, posicao = 2)
+	@XmlElement(name="cSelo")
 	private String codigoSelo;
 	/**
 	 * qSelo
 	 */	
 	@Column(name="QUANTIDADE_SELO_IPI", length=12, nullable=true)
 	@NFEExport(secao = TipoSecao.O, posicao = 3)
+	@XmlElement(name="qSelo")
 	private Long quantidadeSelo;
 	
 	/**
@@ -66,6 +69,7 @@ public class IPI extends ImpostoProduto implements Serializable {
 	 */
 	@Column(name="CODIGO_ENQUADRAMENTO_IPI", length=3, nullable=true)
 	@NFEExport(secao = TipoSecao.O, posicao = 4, tamanho = 3)
+	@XmlElement(name="cEnq")
 	private String codigoEnquadramento;
 	
 	/**
