@@ -1,7 +1,8 @@
 <div id="tabDiferenciada">
    <br />
-   <fieldset style="width:800px; margin-left:10px;">
+   <fieldset style="width:940px; margin-left:10px;">
    	<legend>Grupos</legend>
+   		<input type="checkbox" id="includeHistory"/><label for="includeHistory">Exibir Hist&oacute;ricos</label>
 
        <table class="gruposGrid"></table>
        

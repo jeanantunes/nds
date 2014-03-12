@@ -57,10 +57,10 @@ public class FTFServiceImpl implements FTFService {
 	
 	@Autowired
 	private NotaFiscalService notaFiscalService;
-	
-	@Transactional(readOnly = true)
+
 	@Override
-	public FTFReportDTO gerarFtf(List<NotaFiscal> notas, long idTipoNotaFiscal) {
+	@Transactional(readOnly = true)
+	public FTFReportDTO gerarFtf(List<NotaFiscal> notas, long idNaturezaOperacao) {
 		List<FTFBaseDTO> list = new ArrayList<FTFBaseDTO>();
 		FTFReportDTO report = new FTFReportDTO();
 		
@@ -68,19 +68,19 @@ public class FTFServiceImpl implements FTFService {
 			notas = fiscalRepository.buscarTodos();
 		}
 		
-		FTFEnvTipoRegistro00 regTipo00 = ftfRepository.obterRegistroTipo00(idTipoNotaFiscal);
-		FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(idTipoNotaFiscal);
-		FTFEnvTipoRegistro09 regTipo09 = ftfRepository.obterRegistroTipo09(idTipoNotaFiscal);
+		FTFEnvTipoRegistro00 regTipo00 = ftfRepository.obterRegistroTipo00(idNaturezaOperacao);
+		FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(idNaturezaOperacao);
+		FTFEnvTipoRegistro09 regTipo09 = ftfRepository.obterRegistroTipo09(idNaturezaOperacao);
 		
 		list.add(regTipo00);
 
-		List<FTFEnvTipoRegistro01> listTipoRegistro01 = ftfRepository.obterResgistroTipo01(notas, idTipoNotaFiscal);
+		List<FTFEnvTipoRegistro01> listTipoRegistro01 = ftfRepository.obterResgistroTipo01(notas, idNaturezaOperacao);
 		List<FTFEnvTipoRegistro01> listTipoRegistro01Cadastrados = listTipoRegistro01;// = obterPessoasCadastradasCRP(report, listTipoRegistro01);
 		
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
 			long idNF = Long.parseLong(ftfEnvTipoRegistro01.getNumeroDocOrigem());
 			
-			List<FTFEnvTipoRegistro02> obterResgistroTipo02 = ftfRepository.obterResgistroTipo02(idNF, idTipoNotaFiscal);
+			List<FTFEnvTipoRegistro02> obterResgistroTipo02 = ftfRepository.obterResgistroTipo02(idNF, idNaturezaOperacao);
 			ftfEnvTipoRegistro01.setItemNFList(obterResgistroTipo02);
 			
 			
@@ -118,7 +118,7 @@ public class FTFServiceImpl implements FTFService {
 			
 			if (!diretorioExportacaoNFE.isDirectory()) {
 				throw new FileNotFoundException(
-						"O diretório["+pathNFEExportacao.getValor()+"] de exportação parametrizado não é válido!");
+						"O diretório["+ pathNFEExportacao.getValor() +"] de exportação parametrizado não é válido!");
 			}
 			
 			bw=new BufferedWriter(new FileWriter(f));

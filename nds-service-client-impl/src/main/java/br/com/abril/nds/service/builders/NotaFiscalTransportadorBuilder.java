@@ -101,11 +101,12 @@ public class NotaFiscalTransportadorBuilder {
 					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoCidadeIBGE(Long.valueOf(enderecoTransportador.getEndereco().getCodigoCidadeIBGE()));
 					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCidade(enderecoTransportador.getEndereco().getCidade());
 					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoPais(0L);
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoUf(Long.valueOf(enderecoTransportador.getEndereco().getCodigoUf()));
+					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoUf(35L); //Long.valueOf(enderecoTransportador.getEndereco().getCodigoUf()));
 					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setComplemento(enderecoTransportador.getEndereco().getComplemento());
 					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setPais("Brasil");
 					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setTipoLogradouro(enderecoTransportador.getEndereco().getTipoLogradouro());
 					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setUf(enderecoTransportador.getEndereco().getUf());
+					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(1);
 					break;
 				}
 			}
