@@ -39,6 +39,7 @@ public class FixacaoRepartePdvRepositoryImpl extends  AbstractRepositoryModel<Fi
 		hql.append("delete from FixacaoRepartePdv frp where frp.fixacaoReparte = :fixacaoReparte");
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("fixacaoReparte",  fixacaoReparte );
+		query.executeUpdate();
 	}
 
     @Override
