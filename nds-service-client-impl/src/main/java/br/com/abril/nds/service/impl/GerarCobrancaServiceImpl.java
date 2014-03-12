@@ -270,7 +270,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				               setNossoNumeroCentralizacao,
         		               false);
 		
-		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
 	}
 	
 	/**
@@ -353,19 +352,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     }
     
     /**
-     * Verifica se cota Unifica Cobranca por Distribuidor
+     * Verifica se cota unifica todas as cobrancas
      * 
      * @param cota
      * @return boolean
      */
-    private boolean isCotaUnificaCobrancaPorFornecedor(Cota cota){
+    private boolean isCotaUnificaCobranca(Cota cota){
     	
-    	//TODO: Verificar alteração na obtenção de parametro de unificação por fornecedor, hoje depende da forma de cobrança
+    	//TODO: Verificar alteração na obtenção de parametro de unificação de cobrança, hoje depende da forma de cobrança
     	//no caso atual, a forma de cobrança escolhida conforme os parametros passados pode nao coincidir com o parametro unificaCobranca utilizado
     	//Aguardando resposta de negócio
     	if (cota.getParametroCobranca() != null){
     		
-    		return cota.getParametroCobranca().isUnificaCobranca();
+    		return cota.getParametroCobranca().isUnificaCobranca()!=null?cota.getParametroCobranca().isUnificaCobranca():false;
     	}
     	
         PoliticaCobranca pl = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor().getPoliticaCobranca();
@@ -375,6 +374,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     
     /**
      * Obtem Data de Vencimento onforme Parametros 
+     * 
      * @param dataConsolidado
      * @param fatorVencimento
      * @return Date
@@ -674,13 +674,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			    			                                                  cotaAtual.getNumeroCota() + "]."));
 			    }
 				
-				boolean unificaCobrancaPorFornecedor = this.isCotaUnificaCobrancaPorFornecedor(cotaAnterior);
+				boolean unificaCobranca = this.isCotaUnificaCobranca(cotaAnterior);
 				
 				TipoMovimentoFinanceiro tipo = (TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento();
 				
 				if (cotaAtual.equals(cotaAnterior) &&
-				   ((ultimoFornecedor == null || fornecedorProdutoMovimento.equals(ultimoFornecedor)) || 
-				    (unificaCobrancaPorFornecedor))){
+				   ((fornecedorProdutoMovimento.equals(ultimoFornecedor)) || 
+				    (unificaCobranca))){
 					
 					movimentos.add(movimentoFinanceiroCota);			
 					  
@@ -950,7 +950,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 															                           helperPrincipal.getFornecedor(),
 															                           consolidados, 
 															                           valorTotalMovimentos, 
-															                           valorTotalMovimentos, 
 															                           usuario,
 															                           helperPrincipal.getDiasSemanaConcentracaoPagamento(), 
 															                           dataOperacao,
@@ -1116,8 +1115,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					                                  formaCobranca, 
 					                                  postergarDividas, 
 					                                  consolidadosCota, 
-					                                  vlMovFinanTotal, 
-					                                  vlMovPostergado);
+					                                  vlMovFinanTotal);
 		}
 		else{
 
@@ -1148,7 +1146,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * @param postergarDividas
 	 * @param consolidadosCota
 	 * @param vlMovFinanTotal
-	 * @param vlMovPostergado
 	 */
 	private void getConsolidadoHelperSemCentralizacao(Cota cota,
 													  List<MovimentoFinanceiroCota> movimentos,
@@ -1160,8 +1157,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 											          FormaCobranca formaCobrancaPrincipal,
 											          boolean postergarDividas,
 											          Map<Cota, List<GerarCobrancaHelper>> consolidadosCota,
-											          BigDecimal vlMovFinanTotal,
-											          BigDecimal vlMovPostergado){
+											          BigDecimal vlMovFinanTotal){
 		
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = this.montarConsolidadoFinanceiro(cota, movimentos, dataOperacao);
 		
@@ -1174,8 +1170,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					                                               msgs, 
 					                                               fornecedor, 
 							                                       Arrays.asList(consolidadoFinanceiroCota), 
-							                                       vlMovFinanTotal, 
-							                                       vlMovPostergado, 
+							                                       vlMovFinanTotal,
 							                                       usuario, 
 							                                       null, 
 							                                       dataOperacao,
@@ -1457,8 +1452,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					                                       msgs, 
 					                                       fornecedor,
 					                                       consolidadosFinanceiroCota, 
-					                                       vlMovFinanTotal, 
-					                                       vlMovFinanTotal, 
+					                                       vlMovFinanTotal,
 					                                       usuario,
 					                                       diasSemanaConcentracaoPagamento, 
 					                                       dataOperacao,
@@ -1564,8 +1558,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						                                       msgs, 
 						                                       fornecedor,
 						                                       consolidadoFinanceiroCota, 
-						                                       valorConsolidado, 
-						                                       valorConsolidado, 
+						                                       valorConsolidado,
 						                                       usuario,
 						                                       diasSemanaConcentracaoPagamento, 
 						                                       dataOperacao,
@@ -1681,7 +1674,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
      * @param fornecedor
      * @param consolidadoFinanceiroCota
      * @param vlMovFinanTotal
-     * @param vlMovFinanPostergado
      * @param usuario
      * @param diasSemanaConcentracaoPagamento
      * @param dataOperacao
@@ -1693,25 +1685,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			                                        List<String> msgs, 
 			                                        Fornecedor fornecedor,
 			                                        List<ConsolidadoFinanceiroCota> consolidadoFinanceiroCota,
-			                                        BigDecimal vlMovFinanTotal, 
-			                                        BigDecimal vlMovFinanPostergado, 
+			                                        BigDecimal vlMovFinanTotal,
 			                                        Usuario usuario,
 			                                        List<Integer> diasSemanaConcentracaoPagamento, 
 			                                        Date dataOperacao,
 			                                        String descPostergado) {
-		
-		for (ConsolidadoFinanceiroCota consolidado : consolidadoFinanceiroCota){
-		
-			//gerar postergado
-			consolidado.setValorPostergado(vlMovFinanPostergado);
-		}
 		
 		Calendar diaPostergado = Calendar.getInstance();
 		diaPostergado.setTime(dataOperacao);
 		diaPostergado.add(Calendar.DAY_OF_MONTH, qtdDiasNovaCobranca);
 	
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
-		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) > 0){
+		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) < 0){
 			
 			tipoMovimentoFinanceiro = 
 					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
@@ -1811,7 +1796,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		} else {
 			
-			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota);
+			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota, dataOperacao);
 		}
 		
 		if (consolidados != null) {

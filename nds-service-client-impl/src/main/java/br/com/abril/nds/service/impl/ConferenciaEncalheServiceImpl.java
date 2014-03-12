@@ -540,7 +540,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Date dataRecolhimentoCE, 
 			Integer primeiroDiaDaSemanaDistribuidor) {
 		
-		List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota);
+		List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota, dataRecolhimentoCE);
 		
 		List<DiaSemanaRecolhimento> listaDiaSemanaRecolhimento = new ArrayList<>();
 
@@ -927,9 +927,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly = true)
 	public void verificarCotaOperacaoDiferenciada(Integer numeroCota) {
 		
-		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
-		List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota);
+		List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota, dataOperacao);
 		
 		DiaSemana diaSemanaDataOperacao = DiaSemana.getByCodigoDiaSemana(DateUtil.obterDiaDaSemana(dataOperacao));
 		
@@ -1137,7 +1137,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if (produtoEdicao != null){
 		    
-			Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+			final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 			
 			produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
@@ -1145,7 +1145,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 	    	ChamadaEncalheCota chamadaEncalheCota = null;
 	    	
-	    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota())){
+	    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota(), dataOperacao)){
 	    		chamadaEncalheCota = this.validarChamadaEncalheOperacaoDiferenciada(cota, produtoEdicao);
 	    	} else {
 				chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
@@ -1237,7 +1237,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
             throw new ValidacaoException(TipoMensagem.WARNING, "SM é obrigatório.");
 		}
 		
-		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
 		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorSequenciaMatriz(sm, dataOperacao);
 		
@@ -1251,7 +1251,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 	    	ChamadaEncalheCota chamadaEncalheCota = null;
 	    	
-	    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota())){
+	    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota(), dataOperacao)){
 	    		chamadaEncalheCota = this.validarChamadaEncalheOperacaoDiferenciada(cota, produtoEdicao);
 	    	} else {
 				chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
@@ -1343,7 +1343,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Transactional(readOnly = true)
 	public List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws EncalheRecolhimentoParcialException {
-		
+	    final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		if (numeroCota == null){
 			
             throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
@@ -1370,7 +1370,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 		    	ChamadaEncalheCota chamadaEncalheCota = null;
 		    	
-		    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota())){
+		    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota(), dataOperacao)){
 		    		chamadaEncalheCota = this.validarChamadaEncalheOperacaoDiferenciada(cota, produtoEdicao);
 		    	} else {
 					chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
@@ -1397,7 +1397,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 	            produtoEdicaoDTO.setPrecoVenda(precoVenda);
 	
-	            Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 	
 				carregarValoresAplicadosProdutoEdicao(produtoEdicaoDTO, numeroCota, produtoEdicao.getId(), dataOperacao);
 				
@@ -1491,6 +1490,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		cobrancaControleConferenciaEncalheCota.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
 		
 		cobrancaControleConferenciaEncalheCotaRepository.adicionar(cobrancaControleConferenciaEncalheCota);
+
 		
 	}
 	
@@ -1523,6 +1523,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					controleConfEncalheCota.getId());
 			
 			if(StatusOperacao.CONCLUIDO.equals(statusAtualOperacaoConfEnc)) {
+				
 				
 				removerAssociacoesCobrancaConferenciaEncalheCota(controleConfEncalheCota.getId());
 				
@@ -1579,7 +1580,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 500)
+	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 900)
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
@@ -1592,8 +1593,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
 		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-
-		this.resetarDadosFinalizacaoConferencia(controleConfEncalheCota);
 		
 		this.incluirDadosConferenciaEncalheCota(controleConfEncalheCota, 
 				                                listaConferenciaEncalhe, 
@@ -1621,6 +1620,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		try {
 			
+			
             // se a cota for unificadora ou unificada não pode gerar cobrança
             // nesse ponto
 			boolean cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificada(
@@ -1628,6 +1628,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					
 					cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificadora(
 							cota.getNumeroCota());
+			
+			
 			
 			if (!cotaUnificadora && !cotaUnificada){
 				
@@ -1715,6 +1717,20 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
      */
 	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 		
+		
+		if(	controleConferenciaEncalheCota.getId() != null) {
+			
+			StatusOperacao statusAtualOperacaoConfEnc = 
+					controleConferenciaEncalheCotaRepository.obterStatusControleConferenciaEncalheCota(
+							controleConferenciaEncalheCota.getId());
+			
+			if(StatusOperacao.CONCLUIDO.equals(statusAtualOperacaoConfEnc)) {
+				
+				
+				removerAssociacoesCobrancaConferenciaEncalheCota(controleConferenciaEncalheCota.getId());
+			}
+		}	
+		
 		Set<String> nossoNumeroCollection = new HashSet<String>();
 		
         // COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO
@@ -1723,6 +1739,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
         		                                                                       controleConferenciaEncalheCota.getDataOperacao());
 		
 		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
+			
 			
 			//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
 			this.gerarCobrancaService.cancelarDividaCobranca(null, 
@@ -1802,7 +1819,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
         boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(cota,dataOperacao);
 		
 		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
-		
+			
 			List<MovimentoFinanceiroCota> movimentosFinanceiroCota = 
 					movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
 			

@@ -933,7 +933,7 @@ ConsolidadoFinanceiroRepository {
         .append("        coalesce(estudocota7_.QTDE_PREVISTA,0) as reparteSugerido, ")
         .append("        coalesce(chamadaEncalheCota.QTDE_PREVISTA,0) as reparteFinal, ")
         .append("        coalesce(estudocota7_.QTDE_PREVISTA-estudocota7_.QTDE_EFETIVA,0) as diferenca, ")
-        .append("        diferenca10_.TIPO_DIFERENCA as motivoTexto, ")
+        .append("        case when diferenca10_.TIPO_DIFERENCA is null then '' else diferenca10_.TIPO_DIFERENCA end as motivoTexto, ")
         .append("        sum(movimentos4_.QTDE) * coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as total, ")
         .append("        coalesce(chamadaEncalhe.sequencia, 'Postergado') as sequencia ")
         .append("from ")
@@ -1205,28 +1205,21 @@ ConsolidadoFinanceiroRepository {
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(final Long idCota) {
+    public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(final Long idCota, Date dataOperacao) {
         
-        final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c, Distribuidor d  ");
+        final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c ");
         
-        if (idCota != null){
+        hql.append(" join c.cota cota ");
+        
+        hql.append(" where c.dataConsolidado = :dataOperacao ");
             
-            hql.append(" join c.cota cota ");
-        }
-        
-        hql.append(" where c.dataConsolidado = d.dataOperacao ");
-        
-        if (idCota != null){
-            
-            hql.append(" and cota.id = :idCota ");
-        }
+        hql.append(" and cota.id = :idCota ");
         
         final Query query = this.getSession().createQuery(hql.toString());
         
-        if (idCota != null){
-            
-            query.setParameter("idCota", idCota);
-        }
+        query.setParameter("idCota", idCota);
+        
+        query.setParameter("dataOperacao", dataOperacao);
         
         return query.list();
     }

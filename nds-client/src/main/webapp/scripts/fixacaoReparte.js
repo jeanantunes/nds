@@ -978,7 +978,7 @@ var fixacaoReparteController = $.extend(true, {
 					}
 			}
 
-            if (porCota || $('#selectModal').val() == '-1') {
+            if (porCota && $('#selectModal').val() == '-1') {
                 exibirMensagem("WARNING", ["Selecione uma classificação"]);
                 return false;
             }
