@@ -39,7 +39,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
     private EstudoAlgoritmoService estudoAlgoritmoService;
     
     @Override
-    public void executar(final EstudoTransient estudo) throws Exception {
+    public void executar(final EstudoTransient estudo)  {
         if ((estudo.getEdicoesBase() == null) || (estudo.getEdicoesBase().size() == 0)) {
             LinkedList<ProdutoEdicaoEstudo> edicoesBase = estudoAlgoritmoService.getEdicoesBases(estudo
                     .getProdutoEdicaoEstudo());
