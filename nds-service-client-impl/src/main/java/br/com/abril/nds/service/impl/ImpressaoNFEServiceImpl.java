@@ -160,7 +160,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 					
 					if(dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_ENVIO_PARA_COTA)){
 						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
-							if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)){
+							if(!dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)){
 								
 								LOGGER.info("obter informações para imprimir DANFE ou NECA... ");				
 								
