@@ -364,7 +364,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     	//Aguardando resposta de negócio
     	if (cota.getParametroCobranca() != null){
     		
-    		return cota.getParametroCobranca().isUnificaCobranca();
+    		return cota.getParametroCobranca().isUnificaCobranca()!=null?cota.getParametroCobranca().isUnificaCobranca():false;
     	}
     	
         PoliticaCobranca pl = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor().getPoliticaCobranca();
@@ -374,6 +374,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     
     /**
      * Obtem Data de Vencimento onforme Parametros 
+     * 
      * @param dataConsolidado
      * @param fatorVencimento
      * @return Date
