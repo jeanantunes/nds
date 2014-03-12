@@ -641,6 +641,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	            
 	            estoqueProduto.setQtdeSuplementar(novaQuantidade);
 	            
+	            break;
+	            
 	        default :
 	        	
 	        	throw new ValidacaoException(TipoMensagem.WARNING, "Estoque inválido para a operação.");

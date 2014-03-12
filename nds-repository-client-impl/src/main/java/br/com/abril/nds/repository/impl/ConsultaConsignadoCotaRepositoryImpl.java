@@ -189,6 +189,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
 		
+		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
+		
 		parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 		
 		parameters.put("statusRecolhido", StatusLancamento.RECOLHIDO.name());
@@ -227,6 +229,60 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		};
 		
 		return (List<ConsultaConsignadoCotaDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
+	}
+	
+	/**
+	 * Obtem tuplas de cotas do tipo à vista ou consignado para a consulta de consignado
+	 * 
+	 * @return StringBuilder
+	 */
+	private StringBuilder getSqlTuplasCotaAVista(){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("AND (");
+
+		sql.append("        ((c.TIPO_COTA = :tipoCotaConsignado) AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro)) OR ");
+		
+		sql.append("        ( ");
+		
+		sql.append("          (c.TIPO_COTA = :tipoCotaAVista) AND ");
+		
+		sql.append("          (   ");
+		
+		sql.append("              ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA <= c.ALTERACAO_TIPO_COTA) AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro)) OR ");
+		
+		sql.append("              (");
+		
+		sql.append("                  ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA > c.ALTERACAO_TIPO_COTA)) AND ");
+		
+		sql.append("                  (");
+		
+		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) IS NULL) OR ");
+		
+		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) = TRUE) ");
+		
+		sql.append("                  )");
+		
+		sql.append("              ) ");
+		
+		sql.append("          ) AND ");
+		
+		sql.append("          MEC.ID NOT IN (SELECT CONFE.MOVIMENTO_ESTOQUE_COTA_ID ");
+		
+		sql.append("          		         FROM CONFERENCIA_ENCALHE CONFE ");
+		
+		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ON CCEC.ID = CONFE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID ");
+		
+		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE CCE ON CCE.ID = CCEC.CTRL_CONF_ENCALHE_ID ");
+		
+		sql.append("          		         WHERE CCE.STATUS = :statusConferenciaEncalhe ) ");
+		
+		sql.append("        ) ");
+
+		sql.append("    )");
+		
+		return sql;
 	}
 	
 	private void setarFromWhereConsultaConsignado(StringBuilder sql, FiltroConsultaConsignadoCotaDTO filtro){
@@ -269,47 +325,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			sql.append(" AND fornecedor8_.ID = :idFornecedor ");
 		}
 		
-		sql.append("AND (");
-
-		sql.append("        (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) OR ");
-		
-		sql.append("        ( ");
-		
-		sql.append("          (c.TIPO_COTA = :tipoCotaAVista) AND ");
-		
-		sql.append("          (   ");
-		
-		sql.append("              ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA <= c.ALTERACAO_TIPO_COTA)) OR ");
-		
-		sql.append("              (");
-		
-		sql.append("                  ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA > c.ALTERACAO_TIPO_COTA)) AND ");
-		
-		sql.append("                  (");
-		
-		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) IS NULL) OR ");
-		
-		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) = TRUE) ");
-		
-		sql.append("                  )");
-		
-		sql.append("              ) ");
-		
-		sql.append("          ) AND ");
-		
-		sql.append("          MEC.ID NOT IN (SELECT CONFE.MOVIMENTO_ESTOQUE_COTA_ID ");
-		
-		sql.append("          		         FROM CONFERENCIA_ENCALHE CONFE ");
-		
-		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ON CCEC.ID = CONFE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID ");
-		
-		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE CCE ON CCE.ID = CCEC.CTRL_CONF_ENCALHE_ID ");
-		
-		sql.append("          		         WHERE CCE.STATUS = :statusConferenciaEncalhe ) ");
-		
-		sql.append("        ) ");
-
-		sql.append("    )");
+		sql.append(this.getSqlTuplasCotaAVista());
 	}
 
 	
@@ -366,47 +382,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			sql.append(" AND c.ID = :idCota ");
 		}
 		
-        sql.append(" AND (");
-        
-        sql.append("        (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) OR ");
-		
-		sql.append("        ( ");
-		
-		sql.append("          (c.TIPO_COTA = :tipoCotaAVista) AND ");
-		
-		sql.append("          (   ");
-		
-		sql.append("              ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA <= c.ALTERACAO_TIPO_COTA)) OR ");
-		
-		sql.append("              (");
-		
-		sql.append("                  ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA > c.ALTERACAO_TIPO_COTA)) AND ");
-		
-		sql.append("                  (");
-		
-		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) IS NULL) OR ");
-		
-		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) = TRUE) ");
-		
-		sql.append("                  )");
-		
-		sql.append("              ) ");
-		
-		sql.append("          ) AND ");
-
-		sql.append("          MEC.ID NOT IN (SELECT CONFE.MOVIMENTO_ESTOQUE_COTA_ID ");
-
-		sql.append("          		         FROM CONFERENCIA_ENCALHE CONFE ");
-				  
-		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ON CCEC.ID = CONFE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID ");
-				  
-		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE CCE ON CCE.ID = CCEC.CTRL_CONF_ENCALHE_ID ");
-				 
-		sql.append("          		         WHERE CCE.STATUS = :statusConferenciaEncalhe ) ");
-
-		sql.append("        ) ");
-
-		sql.append("     )");
+		sql.append(this.getSqlTuplasCotaAVista());
 
 		sql.append(" GROUP BY pe.ID, c.id ");
 
@@ -442,6 +418,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
 		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
+		
+		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
 		
 		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 		
@@ -502,48 +480,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 			sql.append(" AND c.ID = :idCota ");
 		}
-		
-        sql.append(" AND (");
-        
-        sql.append("        (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) OR ");
-		
-		sql.append("        ( ");
-		
-		sql.append("          (c.TIPO_COTA = :tipoCotaAVista) AND ");
-		
-		sql.append("          (   ");
-		
-		sql.append("              ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA <= c.ALTERACAO_TIPO_COTA)) OR ");
-		
-		sql.append("              (");
-		
-		sql.append("                  ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA > c.ALTERACAO_TIPO_COTA)) AND ");
-		
-		sql.append("                  (");
-		
-		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) IS NULL) OR ");
-		
-		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) = TRUE) ");
-		
-		sql.append("                  )");
-		
-		sql.append("              ) ");
-		
-		sql.append("          ) AND ");
 
-		sql.append("          MEC.ID NOT IN (SELECT CONFE.MOVIMENTO_ESTOQUE_COTA_ID ");
-
-		sql.append("          		         FROM CONFERENCIA_ENCALHE CONFE ");
-				  
-		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ON CCEC.ID = CONFE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID ");
-				  
-		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE CCE ON CCE.ID = CCEC.CTRL_CONF_ENCALHE_ID ");
-				 
-		sql.append("          		         WHERE CCE.STATUS = :statusConferenciaEncalhe ) ");
-
-		sql.append("        ) ");
-
-		sql.append("     )");
+		sql.append(this.getSqlTuplasCotaAVista());
 
 		sql.append(" GROUP BY pe.ID, c.id ");
 
@@ -566,6 +504,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
 		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
+		
+		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
 		
 		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 		
@@ -618,6 +558,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
         parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
+        
+        parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
         
         parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
         
@@ -683,6 +625,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
 		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
+		
+		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
 		
 		parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 		

@@ -54,8 +54,6 @@ public class EstoqueProdutoFilaRepositoryImpl extends AbstractRepositoryModel<Es
 		
 		query.setParameter("numeroCota", numeroCota);
 		
-		query.setLockOptions(LockOptions.UPGRADE);
-		
 		return query.list();
 		
 	}
