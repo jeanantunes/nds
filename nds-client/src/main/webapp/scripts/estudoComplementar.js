@@ -93,7 +93,6 @@ var estudoComplementarController =$.extend(true,  {
 		        	 if (data) {
 	        			 exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 		        	 }else{
-		        		 $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
 		        		 exibirMensagem("SUCCESS", ["Estudo Complementar Gerado"]);
 	 	             }
 		         }

@@ -1613,12 +1613,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     }
     
     @Override
-    @Transactional
-    public BigInteger obterReparteDisponivel(final Long idProdutoEdicao) {
-        return produtoEdicaoRepository.obterReparteDisponivel(idProdutoEdicao);
-    }
-    
-    @Override
     public void tratarInformacoesAdicionaisProdutoEdicaoArquivo(final ProdutoEdicaoDTO dto) {
         
         if(dto.getCodigoProduto()==null) {

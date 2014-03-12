@@ -88,7 +88,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	estudoComplDto.setIdEdicao(pe.getId());
 	estudoComplDto.setNumeroEdicao(pe.getNumeroEdicao());
 	estudoComplDto.setCodigoProduto(pe.getProduto().getCodigo());
-	estudoComplDto.setNomeClassificacao(pe.getTipoClassificacaoProduto().getDescricao()==null?"":pe.getTipoClassificacaoProduto().getDescricao());
+	estudoComplDto.setNomeClassificacao((pe.getTipoClassificacaoProduto() == null || pe.getTipoClassificacaoProduto().getDescricao()==null)?"":pe.getTipoClassificacaoProduto().getDescricao());
 	estudoComplDto.setIdPublicacao(pe.getNumeroEdicao());
 	estudoComplDto.setIdPEB(pe.getProduto().getPeb());
 	estudoComplDto.setNomeFornecedor( pe.getProduto().getFornecedor().getJuridica().getNomeFantasia()==null?"":pe.getProduto().getFornecedor().getJuridica().getNomeFantasia());

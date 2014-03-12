@@ -47,13 +47,14 @@ public class EstudoComplementarController extends BaseController {
     private EstudoService estudoService;
 
     @Path("/estudoComplementar")
-    public void index(Long estudoId, Long idProdutoEdicao, Long idLancamento) {
+    public void index(Long estudoId, Long idProdutoEdicao, Long idLancamento, BigInteger reparte, BigInteger reparteDistribuido, BigInteger sobra) {
 
         String data = DateUtil.formatarDataPTBR(new Date());
         ProdutoEdicao produto = produtoEdicaoService.buscarPorID(idProdutoEdicao);
-        BigInteger reparteDisponivel = produtoEdicaoService.obterReparteDisponivel(idProdutoEdicao);
 
-        result.include("reparteDisponivel", reparteDisponivel);
+        result.include("reparteDisponivel", reparte);
+        result.include("sobra", sobra);
+        result.include("reparteDistribuido", reparteDistribuido);
         result.include("pacotePadrao", produto.getPacotePadrao());
         result.include("data", data);
         result.include("estudoId", estudoId);

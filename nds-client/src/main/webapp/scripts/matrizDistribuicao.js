@@ -1533,9 +1533,12 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	        return;
 	    }
 	    var postData = [];
-	    postData.push({name: "estudoId",        value: selecionado.estudo});
-	    postData.push({name: "idProdutoEdicao", value: selecionado.idProdutoEdicao});
-	    postData.push({name: "idLancamento",    value: selecionado.idLancamento});
+	    postData.push({name: "estudoId",        	value: selecionado.estudo});
+	    postData.push({name: "idProdutoEdicao", 	value: selecionado.idProdutoEdicao});
+	    postData.push({name: "idLancamento",    	value: selecionado.idLancamento});
+	    postData.push({name: "reparte",    			value: selecionado.reparte});
+	    postData.push({name: "reparteDistribuido",	value: selecionado.repDistrib});
+	    postData.push({name: "sobra",    			value: selecionado.sobra});
 
 	    var temp = $('#workspace').tabs( "option", "ajaxOptions");
 	    $('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );

@@ -280,9 +280,9 @@ function somarDistribuicao(){
                 <td width="84">Reparte Lncto:</td>
                 <td width="70"><input name="reparteLancamento" type="text" id="reparteLancamento" style="width:60px; text-align:center;" value="${reparteDisponivel}"  readonly="readonly" /></td>
                 <td width="46">Sobra:</td>
-                <td width="75"><input name="reparteSobra" type="text" id="reparteSobra" style="width:60px; text-align:center;" value="" onchange="somarDistribuicao();"/></td>
+                <td width="75"><input name="reparteSobra" type="text" id="reparteSobra" style="width:60px; text-align:center;" value="${sobra}" onchange="somarDistribuicao();"/></td>
                 <td width="127">Reparte Distribuido:</td>
-                <td width="60"><input name="reparteDistribuicao" type="text" id="reparteDistribuicao" style="width:60px; text-align:center;" value="${reparteDisponivel}" onchange="somarSobra();" o/></td>
+                <td width="60"><input name="reparteDistribuicao" type="text" id="reparteDistribuicao" style="width:60px; text-align:center;" value="${reparteDistribuido}" onchange="somarSobra();" o/></td>
               </tr>
               <tr>
                 <td align="right"><input name="checkbox" type="checkbox" id="checkboxDistMult" onclick="$('.distrMult').toggle();" /></td>
