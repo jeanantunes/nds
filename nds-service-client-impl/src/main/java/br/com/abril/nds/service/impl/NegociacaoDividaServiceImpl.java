@@ -83,6 +83,7 @@ import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Util;
@@ -185,13 +186,16 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 BigDecimal encargo = (divida.getEncargos() != null) ? divida.getEncargos() : BigDecimal.ZERO;
                 
                 encargo = encargo.add(this.cobrancaService.calcularJuros(banco, cota.getId(), divida.getVlDivida(), divida
-                        .getDtVencimento(), data, formaCobrancaPrincipal));
+                        .getDtVencimento(), data, formaCobrancaPrincipal)).setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN);
                 
                 if (divida.getDtVencimento().compareTo(data) < 0) {
                     encargo = encargo.add(this.cobrancaService.calcularMulta(banco, cota, divida.getVlDivida(),
-                            formaCobrancaPrincipal));
+                            formaCobrancaPrincipal)).setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN);
                 }
                 divida.setEncargos(encargo);
+                
+                divida.setVlDivida(divida.getVlDivida().setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN));
+
                 divida.setTotal(divida.getVlDivida().add(encargo));
             } else {
                 
@@ -297,8 +301,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 parcelaNegociacao.getMovimentoFinanceiroCota().setStatus(StatusAprovacao.APROVADO);
                 parcelaNegociacao.getMovimentoFinanceiroCota().setAprovador(usuarioResponsavel);
                 parcelaNegociacao.getMovimentoFinanceiroCota().setTipoMovimento(tipoMovimentoFinanceiro);
+                parcelaNegociacao.getMovimentoFinanceiroCota().setValor(
+            		parcelaNegociacao.getMovimentoFinanceiroCota().getValor().add(parcelaNegociacao.getEncargos())
+                );
                 parcelaNegociacao.getMovimentoFinanceiroCota().setObservacao("Negociação de dívida.");
-                
+
                 final Fornecedor fornecedor = cota.getParametroCobranca() != null ? cota.getParametroCobranca()
                         .getFornecedorPadrao() : formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor()
                         .getPoliticaCobranca().getFornecedorPadrao();
@@ -310,9 +317,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                         }
                         
                         parcelaNegociacao.getMovimentoFinanceiroCota().setFornecedor(fornecedor);
-                        
-                        totalNegociacao = totalNegociacao.add(parcelaNegociacao.getMovimentoFinanceiroCota().getValor());
-                        
+
+                        totalNegociacao = totalNegociacao
+                        					.add(parcelaNegociacao.getMovimentoFinanceiroCota().getValor())
+                        					.add(parcelaNegociacao.getEncargos());
+
                         movimentoFinanceiroCotaRepository.adicionar(parcelaNegociacao.getMovimentoFinanceiroCota());
             }
             
@@ -1023,13 +1032,18 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 DEFAULT_SCALE, RoundingMode.HALF_EVEN);
         BigDecimal somaEncargo = BigDecimal.ZERO;
         
-        Date dataBase = new Date();
+        Date dataBase = this.distribuidorService.obterDataOperacaoDistribuidor();
         
         final FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
         
         for (int i = 0; i < qntParcelas; i++) {
             final CalculaParcelasVO parcela = new CalculaParcelasVO();
             
+            if (BigDecimalUtil.eq(somaEncargo, filtro.getValorEncargoSelecionado())) {
+
+            	valorEncargo = BigDecimal.ZERO;
+            }
+
             if (i == qntParcelas - 1) {
                 valorParcela = filtro.getValorSelecionadoSemEncargo().subtract(somaParelas);
                 valorParcela = valorParcela.setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN);
@@ -1046,15 +1060,16 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 }
                 
                 somaEncargo = somaEncargo.add(valorEncargo);
+
             } else {
                 
                 valorEncargo = BigDecimal.ZERO;
             }
+
             
             dataBase = calculaParcela(filtro, valorParcela, dataBase, i, parcela, formaCobranca);
-            
             parcela.setEncargos(CurrencyUtil.formatarValor(valorEncargo));
-            
+
             parcela.setParcTotal(CurrencyUtil.formatarValor(valorParcela.add(valorEncargo)));
             
             listParcelas.add(parcela);

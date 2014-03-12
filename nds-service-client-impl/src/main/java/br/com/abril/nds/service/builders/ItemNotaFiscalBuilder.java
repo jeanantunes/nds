@@ -24,6 +24,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.OrigemProduto;
 import br.com.abril.nds.model.fiscal.nota.PIS;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
+import br.com.abril.nds.model.fiscal.nota.TribIPI;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.util.CurrencyUtil;
 
@@ -170,7 +171,12 @@ public class ItemNotaFiscalBuilder  {
 				ipi.setAliquota(t.getValorAliquota());
 				ipi.setValorBaseCalculo(t.getBaseCalculo());
 				ipi.setCodigoEnquadramento("01");
-			
+				ipi.setIPITrib(new TribIPI());
+				ipi.getIPITrib().setValorAliquota(t.getValorAliquota());
+				ipi.getIPITrib().setValorBaseCalculo(t.getBaseCalculo());
+				
+				// FIX ME ajustar a classe de valor do ipi
+				ipi.getIPITrib().setValorIPI(t.getBaseCalculo());
 				detalheNotaFiscal.getImpostos().setIpi(ipi);
 			}
 			
@@ -202,7 +208,6 @@ public class ItemNotaFiscalBuilder  {
 		
 		//FIXME: Ajustar o codigo Excessao do ipi
 		//detalheNotaFiscal.getProdutoServico().setExtipi(0L);
-
 		String cfop = "";
 		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getPais()
 				.equals(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getPais())) {
