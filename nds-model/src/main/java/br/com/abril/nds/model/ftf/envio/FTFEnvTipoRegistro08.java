@@ -20,7 +20,6 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 
 	@FTFfield(tamanho = 2, tipo = "char", ordem = 5)
 	private String tipoPedido;
-
 	
 	@FTFfield(tamanho = 8, tipo = "char", ordem = 6)
 	private String numeroDocOrigem;

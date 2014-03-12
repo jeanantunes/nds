@@ -5,6 +5,23 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	grupos : [],
 	
 	init : function() {
+		$( "#includeHistory", this.workspace ).button().click(function(event){
+			var includeHistory = $(this).attr('checked') == 'checked';
+			
+			$(".gruposGrid", OperacaoDiferenciadaController.workspace).flexOptions({
+				params : [{
+					name : "includeHistory",
+					value : includeHistory
+				}]
+			});
+			$(".gruposGrid", OperacaoDiferenciadaController.workspace).flexReload();
+			
+			$(".gruposGrid", OperacaoDiferenciadaController.workspace).flexToggleCol(3,includeHistory);
+			
+			var label = (includeHistory)?'Ocultar Hist&oacute;ricos':'Exibir Hist&oacute;ricos';
+			
+			$(this ).button( "option", "label", label );
+		});
 		OperacaoDiferenciadaController.inicializarGrids();
 	},
 	
@@ -14,7 +31,14 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		
 		$.each(result.rows, function(index,row){
 			OperacaoDiferenciadaController.grupos.push(row.cell);
-			OperacaoDiferenciadaController.gerarAcao(index,row);
+			
+			if(!row.cell.dataFimVigencia){
+				row.cell.dataFimVigencia = ' - ';
+				OperacaoDiferenciadaController.gerarAcao(index,row);
+			}else{
+				row.cell.acao = '';
+			}
+			
 		} );
 				
 		return result;
@@ -24,12 +48,12 @@ var OperacaoDiferenciadaController = $.extend(true, {
 				
 		row.cell.acao = 
 			'<a isEdicao="true" href="javascript:;" onclick="OperacaoDiferenciadaController.editarGrupo(' + index + ');" style="margin-right:10px;">' +
-			'<img src="' + contextPath + '/images/ico_editar.gif" border="0" alt="Editar" hspace="5" />' +
+				'<img src="' + contextPath + '/images/ico_editar.gif" border="0" alt="Editar" hspace="5" />' +
 			'</a>' +
-			
 			'<a isEdicao="true" href="javascript:;" onclick="OperacaoDiferenciadaController.dialogExcluirGrupo(' + index + ');">' +
-			'<img src="' + contextPath + '/images/ico_excluir.gif" border="0" alt="Excluir" />' +
+				'<img src="' + contextPath + '/images/ico_excluir.gif" border="0" alt="Excluir" />' +
 			'</a>';
+			
 	},
 	
 	editarGrupo : function(index) {
@@ -481,7 +505,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 			colModel : [ {
 				display : 'Nome',
 				name : 'nome',
-				width : 500,
+				width : 460,
 				sortable : true,
 				align : 'left'
 			},{
@@ -491,13 +515,26 @@ var OperacaoDiferenciadaController = $.extend(true, {
 				sortable : false,
 				align : 'LEFT'
 			},{
+				display : 'Ativo Apartir de',
+				name : 'dataInicioVigencia',
+				width : 80,
+				sortable : false,
+				align : 'center'
+			},{
+				display : 'Inativo Apartir de',
+				name : 'dataFimVigencia',
+				width : 90,
+				sortable : false,
+				align : 'center',
+				hide: true
+			},{
 				display : 'Ação',
 				name : 'acao',
 				width : 60,
 				sortable : false,
 				align : 'center'
 			}],
-			width : 800,
+			width : 940,
 			height : 150,
 			sortname : "nome",
 			sortorder : "asc"

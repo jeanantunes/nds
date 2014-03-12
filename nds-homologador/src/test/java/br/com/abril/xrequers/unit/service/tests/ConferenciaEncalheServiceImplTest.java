@@ -44,7 +44,7 @@ public class ConferenciaEncalheServiceImplTest {
     	
     	when(distribuidorService.inicioSemana()).thenReturn(DiaSemana.QUARTA_FEIRA);
     	
-    	when(grupoRepository.obterDiasOperacaoDiferenciadaCota(Matchers.anyInt())).thenReturn(listaDiasSemana);
+    	when(grupoRepository.obterDiasOperacaoDiferenciadaCota(Matchers.anyInt(), new Date())).thenReturn(listaDiasSemana);
     	
     	
     }

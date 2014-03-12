@@ -175,9 +175,9 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" '' as codResponsavelPeloFrete, ");
 		sqlBuilder.append(" '' as numSimulacao, "); 
 
-		sqlBuilder.append(" '' as tipoOperacao, "); //-- falta definição por parte da equipe de FTF 
+		sqlBuilder.append(" '' as tipoOperacao, "); //TODO: -- falta definição por parte da equipe de FTF 
 		sqlBuilder.append(" '' as numAprovacao, ");
-		sqlBuilder.append(" '' as situacaoTitulo,  ");//-- verificar equipe FTF
+		sqlBuilder.append(" '' as situacaoTitulo,  ");//TODO: -- verificar equipe FTF
 		sqlBuilder.append(" '' as codUnidadeOperacionalEmpresaDestinataria, ");
 		sqlBuilder.append(" '' as percentualDescontoFidelidade, ");
 		sqlBuilder.append(" '' as pracaEntrega, ");
@@ -185,7 +185,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" '' as codProjetoSize3, ");
 		sqlBuilder.append(" '' as numAssinatura, ");
 		sqlBuilder.append(" '' as cpfCnpjEstabelecimentoColeta, ");
-		sqlBuilder.append(" '' as cnpjTransportadoraSuframa, "); //-- verificar equipe de negocio 
+		sqlBuilder.append(" '' as cnpjTransportadoraSuframa, "); //TODO: -- verificar equipe de negocio 
 		sqlBuilder.append(" COALESCE(nfn.UF_TRANS,'') as ufPlacaVeiculoTransportadora, ");
 		sqlBuilder.append(" COALESCE(nfn.EMAIL_DESTINATARIO,'') as emailDestinatarioNota, ");
 		sqlBuilder.append(" '' as codProjetoSize7, ");
@@ -203,13 +203,13 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" '' as codPessoaDetalheEmissorNota, ");
 		sqlBuilder.append(" '' as codPessoaDetalheDestinatarioNota ");
 		sqlBuilder.append(" from nota_fiscal_novo nfn ");
-		sqlBuilder.append(" left join tipo_nota_fiscal tnf ON tnf.ID = nfn.TIPO_NOTA_FISCAL_ID ");
-		sqlBuilder.append(" left join endereco endereco on endereco.ID = nfn.ENDERECO_ID_DESTINATARIO ");
+		sqlBuilder.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ");
+		sqlBuilder.append(" left join nota_fiscal_endereco endereco on endereco.ID = nfn.ENDERECO_ID_DESTINATARIO ");
 
 		adicionarJoinCota(idTipoNotaFiscal, sqlBuilder);
 
 		sqlBuilder.append(" where nfn.id in (:idsNotaFiscal) ");
-		sqlBuilder.append(" and tnf.id  = :idTipoNotaFiscal ");
+		sqlBuilder.append(" and no.id  = :idTipoNotaFiscal ");
 		SQLQuery query = getSession().createSQLQuery(sqlBuilder.toString());
 
 		query.setParameterList("idsNotaFiscal", obterIdsFrom(notas));
@@ -235,7 +235,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 			StringBuilder sqlBuilder) {
 		if (idTipoNotaFiscal == NF_DEVOLUCAO_FORNECEDOR) {
 			sqlBuilder.append(" COALESCE(cast(:codDestinatario as char),'') as codDestinatarioSistemaOrigem, ");
-		}else{
+		}else if (idTipoNotaFiscal == NF_VENDA_COTA) {
 			sqlBuilder.append(" COALESCE(cast(co.numero_cota as char),'') as codDestinatarioSistemaOrigem, ");
 		}
 	}
@@ -259,9 +259,9 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		Map<String, ParametroSistema> ps = parametroSistemaRepository.buscarParametroSistemaGeralMap();
 		if (ps != null) {
-			sqlBuilder.append(String.format(" '%s' as codEstabelecimentoEmissor,  ", ps.get("FTF_CODIGO_ESTABELECIMENTO_EMISSOR")));
-			sqlBuilder.append(String.format(" '%s' as cnpjEstabelecimentoEmissor,  ", ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR")));
-			sqlBuilder.append(String.format(" '%s' as codLocal,  ", ps.get("FTF_CODIGO_LOCAL")));
+			sqlBuilder.append(String.format(" '%s' as codEstabelecimentoEmissor,  ", ps.get("FTF_CODIGO_ESTABELECIMENTO_EMISSOR").getValor()));
+			sqlBuilder.append(String.format(" '%s' as cnpjEstabelecimentoEmissor,  ", ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR").getValor()));
+			sqlBuilder.append(String.format(" '%s' as codLocal,  ", ps.get("FTF_CODIGO_LOCAL").getValor()));
 		}
 	}
 
@@ -288,7 +288,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		concatenarTipoPedidoBy(idTipoNotaFiscal, sqlBuilder);
 		sqlBuilder.append("  nfn.DOCUMENTO_EMITENTE as numeroDocOrigem, ")
 		.append("  cast(nfps.SEQUENCIA as char) as numItemPedido, ")
-		.append("  '' as codSistemaOrigemPedido,  ") //-- Deve ser cadastrado no FTF, ver com a Edna.
+		.append("  '' as codSistemaOrigemPedido,  ") //TODO: -- Deve ser cadastrado no FTF, ver com a Edna.
 		.append("  nfps.CODIGO_PRODUTO as codProdutoOuServicoSistemaOrigem, ")
 		.append("  cast(nfps.quantidade_comercial as char) as qtdeProdutoOuServico, ")
 		.append("  replace(cast(nfps.VALOR_UNITARIO_COMERCIAL as char),'.','') as valorUnitario, ")
@@ -302,7 +302,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append("  '' as numEdicaoRevista, ")
 		.append("  '' as dataCompetencia, ")
 		.append("  cast(nfps.CODIGO_BARRAS as char) as codBarrasProduto, ")
-		.append("  '' as indicadorProdutoServicoMaterial, ") //-- aguardando resposta equipe de negócio
+		.append("  '' as indicadorProdutoServicoMaterial, ") //TODO: -- aguardando resposta equipe de negócio
 		.append("  '' as codMaterialOuServicoCorporativo, ")
 		.append("  '' as novoCodigoTipoNaturezaOperacao, ")
 		.append("  nfps.DESCRICAO_PRODUTO as descricaoProduto, ")
@@ -468,10 +468,10 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" '' as complementoTelefone ")
 		.append("  ")
 		.append(" from nota_fiscal_novo nfn ")
-		.append(" left join pessoa ON pessoa.ID = nfn.PESSOA_DESTINATARIO_ID_REFERENCIA ")
-		.append(" left join endereco ON endereco.ID = nfn.ENDERECO_ID_DESTINATARIO ")
-		.append(" left join telefone ON telefone.ID = nfn.TELEFONE_ID_DESTINATARIO ")
-		.append(" where nfn.id= :idNF ");
+		.append(" left join nota_fiscal_pessoa pessoa ON pessoa.ID = nfn.PESSOA_DESTINATARIO_ID_REFERENCIA ")
+		.append(" left join nota_fiscal_endereco endereco ON endereco.ID = nfn.ENDERECO_ID_DESTINATARIO ")
+		.append(" left join nota_fiscal_telefone telefone ON telefone.ID = nfn.TELEFONE_ID_DESTINATARIO ")
+		.append(" where nfn.id = :idNF ");
 
 		SQLQuery query = getSession().createSQLQuery(sb.toString());
 		query.setParameter("idNF", idTipoNotaFiscal);

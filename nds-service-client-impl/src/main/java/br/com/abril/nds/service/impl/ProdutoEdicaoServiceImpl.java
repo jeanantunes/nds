@@ -327,6 +327,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             final Integer numeroCota,
             final Integer quantidadeRegistros) {
         
+        final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+        
         if (codigoNomeProduto == null || codigoNomeProduto.trim().isEmpty()){
             
             throw new ValidacaoException(TipoMensagem.WARNING, "Codigo/nome produto é obrigatório.");
@@ -345,7 +347,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 
                 conferenciaEncalheService.isDataRecolhimentoValida(
                         dataOperacaoDistribuidor, dataOperacaoDistribuidor, produtoEdicao.getId(),
-                        cotaService.isCotaOperacaoDiferenciada(numeroCota));
+                        cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao));
                 
                 produtosEdicaoValidos.add(produtoEdicao);
                 
