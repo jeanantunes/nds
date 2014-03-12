@@ -197,7 +197,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				
 				if (value.cell.detalharDebitoCredito){
 					
-					var valor = (value.cell.debitoCredito != null && value.cell.debitoCredito != 0) * -1 ? value.cell.debitoCredito : '0.0000';
+					var valor = (value.cell.debitoCredito != null && value.cell.debitoCredito != 0) ? value.cell.debitoCredito * -1 : '0.0000';
 					
 					value.cell.debitoCredito = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+
 							   [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + valor +'\');"/>' +

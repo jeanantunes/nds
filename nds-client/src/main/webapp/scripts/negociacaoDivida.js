@@ -389,11 +389,11 @@ var negociacaoDividaController = $.extend(true, {
               },
               {
             	  name: "comissaoAtualCota",
-            	  value: priceToFloat($("#comissaoAtualCota", negociacaoDividaController.workspace).val())
+            	  value: $("#comissaoAtualCota", negociacaoDividaController.workspace).val()
               },
               {
             	  name: "comissaoUtilizar",
-            	  value: priceToFloat($("#comissaoUtilizar", negociacaoDividaController.workspace).val())
+            	  value: $("#comissaoUtilizar", negociacaoDividaController.workspace).val()
               },
               {
             	  name: "tipoCobranca",
@@ -457,11 +457,11 @@ var negociacaoDividaController = $.extend(true, {
 					},
 					{
 						name: "parcelas["+ index +"].encargos",
-						value: priceToFloat($("[name=encargoParcela]", negociacaoDividaController.workspace)[index].value)
+						value: $("[name=encargoParcela]", negociacaoDividaController.workspace)[index].value
 					},
 					{
 						name: "parcelas["+ index +"].movimentoFinanceiroCota.valor",
-						value: priceToFloat($("[name=valorParcela]", negociacaoDividaController.workspace)[index].value)
+						value: $("[name=valorParcela]", negociacaoDividaController.workspace)[index].value
 					}
 				);
 			});
@@ -481,7 +481,7 @@ var negociacaoDividaController = $.extend(true, {
 					},
 					{
 						name: "parcelas["+ index +"].movimentoFinanceiroCota.valor",
-						value: priceToFloat($("[name=valorCheque]", negociacaoDividaController.workspace)[index].value)
+						value: $("[name=valorCheque]", negociacaoDividaController.workspace)[index].value
 					}
 				);
 			});
@@ -494,7 +494,7 @@ var negociacaoDividaController = $.extend(true, {
 		
 		params.push({
 			name: 'valorDividaComissao',
-			value: priceToFloat($('#totalSelecionado', negociacaoDividaController.wokspace).html())
+			value: $('#totalSelecionado', negociacaoDividaController.wokspace).html()
 		});
 		
 		params.push({
@@ -504,7 +504,7 @@ var negociacaoDividaController = $.extend(true, {
 		
 		$.postJSON(contextPath + '/financeiro/negociacaoDivida/confirmarNegociacao',
 			params, 
-			function(result) {
+			function(result) {//TODO
 			
 	            if (result.tipoMensagem && result.listaMensagens) {
 	                
@@ -520,6 +520,8 @@ var negociacaoDividaController = $.extend(true, {
 	            		
 	            		$("#botaoImprimirBoleto", negociacaoDividaController.workspace).show();
 	            	}
+	            	
+	            	$(".negociacaoGrid", negociacaoDividaController.workspace).flexReload();
 	            	
 	            } else {
 	            	
