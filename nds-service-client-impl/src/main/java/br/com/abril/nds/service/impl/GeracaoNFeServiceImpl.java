@@ -130,17 +130,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
         		
         try {
         	
-        
-			Set<NaturezaOperacao> tiposNota = new HashSet<NaturezaOperacao>();
-			
-			if (idTipoNotaFiscal == null){
-				
-				tiposNota.addAll(this.naturezaOperacaoRepository.obterTiposNotasFiscaisCotasNaoContribuintesPor(
-						this.distribuidorRepository.tipoAtividade()));
-			} else {
-				
-				tiposNota.add(this.naturezaOperacaoRepository.buscarPorId(idTipoNotaFiscal));
-			}
+			Set<NaturezaOperacao> naturezasOperacoes = new HashSet<NaturezaOperacao>();
+			naturezasOperacoes.add(this.naturezaOperacaoRepository.buscarPorId(idTipoNotaFiscal));
 			
 			List<SituacaoCadastro> situacoesCadastro = null;
 			
@@ -154,7 +145,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal = new ConsultaLoteNotaFiscalDTO();
 			
-			dadosConsultaLoteNotaFiscal.setTipoNotaFiscal(tiposNota);
+			dadosConsultaLoteNotaFiscal.setTipoNotaFiscal(naturezasOperacoes);
 			dadosConsultaLoteNotaFiscal.setPeriodoMovimento(intervaloDateMovimento);
 			dadosConsultaLoteNotaFiscal.setIdsCotasDestinatarias(idsCotasDestinatarias);
 			dadosConsultaLoteNotaFiscal.setListaIdFornecedores(listIdFornecedor);
@@ -257,8 +248,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			notaFiscalRepository.adicionar(notaFiscal);
 		}
 		
-		if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR))) {
-			this.ftfService.gerarFtf(notas, 0);
+		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
+		if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+			this.ftfService.gerarFtf(notas, notas.get(0).getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId());
 		} else {
 			this.notaFiscalService.exportarNotasFiscais(notas);
 		}
