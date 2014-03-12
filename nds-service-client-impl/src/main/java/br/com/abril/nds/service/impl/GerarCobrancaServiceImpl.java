@@ -1695,7 +1695,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		diaPostergado.add(Calendar.DAY_OF_MONTH, qtdDiasNovaCobranca);
 	
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
-		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) > 0){
+		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) < 0){
 			
 			tipoMovimentoFinanceiro = 
 					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
@@ -1742,7 +1742,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			movimentoFinanceiroCota.setData(data);
 			movimentoFinanceiroCota.setDataCriacao(dataOperacao);
 			movimentoFinanceiroCota.setUsuario(usuario);
-			movimentoFinanceiroCota.setValor(vlMovFinanTotal);
+			movimentoFinanceiroCota.setValor(vlMovFinanTotal.abs());
 			movimentoFinanceiroCota.setLancamentoManual(false);
 			movimentoFinanceiroCota.setCota(cota);
 			movimentoFinanceiroCota.setStatus(StatusAprovacao.APROVADO);
