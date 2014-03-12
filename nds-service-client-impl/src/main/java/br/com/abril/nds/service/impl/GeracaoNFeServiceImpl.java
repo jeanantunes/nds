@@ -310,8 +310,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		}
 	}
 	
-	private void gerarNotaFiscalUnificada(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais
-			, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao, Map<String, ParametroSistema> parametrosSistema) {
+	private void gerarNotaFiscalUnificada(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao, Map<String, ParametroSistema> parametrosSistema) {
 		
 		// obter as cotas que estão na tela pelo id das cotas
 		NotaFiscal notaFiscal = new NotaFiscal();

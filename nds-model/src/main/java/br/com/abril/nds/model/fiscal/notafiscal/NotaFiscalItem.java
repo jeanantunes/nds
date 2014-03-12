@@ -36,7 +36,6 @@ public class NotaFiscalItem implements Serializable {
 	@Column(name="VALOR_UNITARIO")
 	private BigDecimal valorUnitario;
 
-
 	public Long getCodigoItem() {
 		return codigoItem;
 	}

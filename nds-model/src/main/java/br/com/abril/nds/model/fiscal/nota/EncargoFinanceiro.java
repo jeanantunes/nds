@@ -2,7 +2,6 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -11,13 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
@@ -37,14 +32,6 @@ public abstract class EncargoFinanceiro implements Serializable {
 	@GeneratedValue(generator = "NOTA_FISCAL_ENCARGO_FINANCEIRO_SEQ", strategy = GenerationType.TABLE)
 	@Column(name = "ID")
 	private Long id;
-	
-	@XmlTransient
-	@OneToOne(cascade=CascadeType.ALL)
-	@JoinColumns({
-        @JoinColumn(name="NOTA_FISCAL_ID", referencedColumnName="NOTA_FISCAL_ID"),
-        @JoinColumn(name="PRODUTO_SERVICO_SEQUENCIA", referencedColumnName="SEQUENCIA")
-    })
-	private DetalheNotaFiscal detalheNotaFiscal;
 	
 	@Embedded
 	@NFEExportType(secaoPadrao = TipoSecao.Q)
@@ -102,20 +89,6 @@ public abstract class EncargoFinanceiro implements Serializable {
 	 */
 	public void setCofins(COFINS cofins) {
 		this.cofins = cofins;
-	}
-	
-	/**
-	 * @return the produtoServico
-	 */
-	public DetalheNotaFiscal getDetalheNotaFiscal() {
-		return detalheNotaFiscal;
-	}
-
-	/**
-	 * @param produtoServico the produtoServico to set
-	 */
-	public void setDetalheNotaFiscal(DetalheNotaFiscal detalheNotaFiscal) {
-		this.detalheNotaFiscal = detalheNotaFiscal;
 	}
 
 	/**
