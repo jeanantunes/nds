@@ -328,6 +328,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("idCota", idCota);
 		
+		query.executeUpdate();
 	}
 	
 	@Override

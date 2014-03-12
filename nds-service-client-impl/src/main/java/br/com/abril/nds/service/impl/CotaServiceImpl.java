@@ -2664,9 +2664,9 @@ public class CotaServiceImpl implements CotaService {
     
     @Override
     @Transactional(readOnly = true)
-    public boolean isCotaOperacaoDiferenciada(final Integer numeroCota){
+    public boolean isCotaOperacaoDiferenciada(final Integer numeroCota, Date dataOperacao){
         
-        final List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota);
+        final List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota, dataOperacao);
         
         return diasSemanaOperacaoDiferenciada != null && !diasSemanaOperacaoDiferenciada.isEmpty();
         
