@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -39,6 +40,7 @@ public abstract class Imposto implements Serializable {
 			@NFEWhen(condition = NFEConditions.IPI_TRIB, export = @NFEExport(secao = TipoSecao.O07, posicao = 0, tamanho = 2)),
 			@NFEWhen(condition = NFEConditions.IPI_NAO_TRIB, export = @NFEExport(secao = TipoSecao.O08, posicao = 0, tamanho = 2))
 	})
+	@Transient
 	protected String cst;
 	
 	@NFEWhens(value = {
@@ -57,6 +59,7 @@ public abstract class Imposto implements Serializable {
 			@NFEWhen(condition = NFEConditions.ISSQN, export = @NFEExport(secao = TipoSecao.U, posicao = 2))
 	})
 	//@XmlElement(name="vICMS")
+	@Transient
 	protected BigDecimal valor;
 	
 	@NFEWhens(value = {
@@ -75,6 +78,7 @@ public abstract class Imposto implements Serializable {
 			@NFEWhen(condition = NFEConditions.ISSQN, export = @NFEExport(secao = TipoSecao.U, posicao = 0))
 	})
 	@XmlTransient
+	@Transient
 	protected BigDecimal valorBaseCalculo;
 	
 	@NFEWhens(value = {
@@ -91,6 +95,7 @@ public abstract class Imposto implements Serializable {
 			@NFEWhen(condition = NFEConditions.IPI_TRIB_ALIQ, export = @NFEExport(secao = TipoSecao.O10, posicao = 1)),
 			@NFEWhen(condition = NFEConditions.ISSQN, export = @NFEExport(secao = TipoSecao.U, posicao = 1))
 	})
+	@Transient
 	protected BigDecimal aliquota;
 
 	/**

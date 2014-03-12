@@ -1,9 +1,14 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -37,6 +42,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
@@ -115,6 +121,7 @@ import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.inf.portalfiscal.nfe.NfePreifixMapper;
 import br.inf.portalfiscal.nfe.util.Util;
 
 /**
@@ -637,18 +644,20 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				}
 				
 				jc = JAXBContext.newInstance(NotaFiscal.class);
+				
+				
 		        Marshaller marshaller = jc.createMarshaller();
 		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		        
 		        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		       
+		        documentBuilderFactory.setNamespaceAware(false);
 		        DocumentBuilder documentBuilder;
 				try {
 					documentBuilder = documentBuilderFactory.newDocumentBuilder();
 					Document document = documentBuilder.newDocument();
 			         
 			        marshaller.marshal(notaFiscal, document);
-			        
+			        marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper", new NfePreifixMapper());
+			        marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 			        /*
 			         * Trecho para corrigir o prefix ns2  
 			         */
@@ -667,35 +676,26 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					NodeList elements = document.getElementsByTagName("infNFe");
 			        Element el = (Element) elements.item(0);
 			        el.setIdAttribute("Id", true);
-					
+			        
+			        document.normalizeDocument();
+			        
 			        ParametroSistema diretorioSaida = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
 					String numeroNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getCodigoNF();
 					String serieNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getSerie().toString();
-					
-					OutputStream os2 = new FileOutputStream(diretorioSaida.getValor() +"/"+ "NF-e-"+ serieNF +"-"+ numeroNF +"-antes-assinar.xml");
-					TransformerFactory tf = TransformerFactory.newInstance();
-		            Transformer trans = null;
 		            
-					trans = tf.newTransformer();
-					trans.setOutputProperty(OutputKeys.INDENT, "yes");
-					//trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-					//trans.setOutputProperty(OutputKeys.STANDALONE, "yes");
-					trans.transform(new DOMSource(document), new StreamResult(os2));
-					os2.flush();
-		            os2.close();
-		            
-					signatureHandler.sign(new DOMStructure(parent), "infNFe");
+					signatureHandler.sign(new DOMStructure(root), "infNFe");
 					
-			        OutputStream os3 = new FileOutputStream(diretorioSaida.getValor() +"/"+ "NF-e-"+ serieNF +"-"+ numeroNF +".xml");
+			        OutputStream os = new FileOutputStream(diretorioSaida.getValor() +"/"+ "NF-e-"+ serieNF +"-"+ numeroNF +".xml");
 			        TransformerFactory tf2 = TransformerFactory.newInstance();
 		            Transformer trans2 = null;
 		            
 					trans2 = tf2.newTransformer();
 					trans2.setOutputProperty(OutputKeys.INDENT, "yes");
 					//trans2.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-					trans2.transform(new DOMSource(root), new StreamResult(os3));
-		            os3.flush();
-		            os3.close();
+					
+					trans2.transform(new DOMSource(root), new StreamResult(os));
+		            os.flush();
+		            os.close();
 			        
 				} catch (ParserConfigurationException e) {
 					LOGGER.error("Erro ao gerar XML", e);
@@ -715,7 +715,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return "NOTA FISCAL|" + notasFiscaisParaExportacao.size() + "|\n"
 		+ sBuilder.toString();
 	}
-
+	
 	/**
 	 * Carrega Grupo das informações de identificação da NF-e
 	 * 
