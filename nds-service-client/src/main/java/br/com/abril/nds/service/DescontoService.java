@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -157,7 +158,7 @@ public interface DescontoService {
 	 * Recupera o Map de Descontos a serem aplicado para o produto edição
 	 * @return
 	 */
-	Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao();
+	Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao(Date data);
 	
 	/**
 	 * @param descontos
@@ -176,5 +177,7 @@ public interface DescontoService {
 
     DescontoDTO obterDescontoProximosLancamentosPorDeTodasCotas(Map<String, DescontoDTO> descontos, Long fornecedorId,
             Long produtoEdicaoId, Long produtoId);
+
+    Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao();
 
 }

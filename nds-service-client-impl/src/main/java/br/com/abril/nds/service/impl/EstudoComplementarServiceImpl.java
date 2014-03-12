@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.repository.EstudoComplementarRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
@@ -156,6 +157,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	    nova.setReparte(reparte);
 	    nova.setReparteInicial(reparte);
 	    nova.setClassificacao("CP");
+	    nova.setTipoEstudo(TipoEstudoCota.NORMAL);
 	    cotas.add(nova);
 	    
 	    qtdDistribuido = qtdDistribuido.subtract(reparte);

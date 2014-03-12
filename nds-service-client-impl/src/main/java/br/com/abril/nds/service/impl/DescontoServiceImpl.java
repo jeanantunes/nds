@@ -586,6 +586,7 @@ public class DescontoServiceImpl implements DescontoService {
 				descontoProximosLancamentos.setDataInicioDesconto(dataAtual);
 				descontoProximosLancamentos.setProduto(produto);
 				descontoProximosLancamentos.setQuantidadeProximosLancamaentos(descontoDTO.getQuantidadeEdicoes());
+				descontoProximosLancamentos.setQuantidadeProximosLancamaentosOriginal(descontoDTO.getQuantidadeEdicoes());
 				descontoProximosLancamentos.setValorDesconto(desconto.getValor());
 				descontoProximosLancamentos.setDesconto(desconto);
 				descontoProximosLancamentos.setAplicadoATodasAsCotas(descontoDTO.isTodasCotas());
@@ -1205,13 +1206,19 @@ public class DescontoServiceImpl implements DescontoService {
 	}
 
 	@Override
+    @Transactional
+    public Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao() {
+	    return obterDescontosMapPorLancamentoProdutoEdicao(distribuidorRepository.obterDataOperacaoDistribuidor());
+	}
+	
+	@Override
 	@Transactional
-	public Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao() {
+	public Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao(Date data) {
 		
 		Map<String, DescontoDTO> descontosMap = new HashMap<String, DescontoDTO>();
 		List<DescontoDTO> descontos = descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao();
 		
-		List<DescontoDTO> descontosProximosLancamentos = descontoProximosLancamentosRepository.obterDescontosProximosLancamentos(distribuidorRepository.obterDataOperacaoDistribuidor());
+		List<DescontoDTO> descontosProximosLancamentos = descontoProximosLancamentosRepository.obterDescontosProximosLancamentos(data);
 		
 		for(DescontoDTO desc : descontos) {
 			String key = new StringBuilder()

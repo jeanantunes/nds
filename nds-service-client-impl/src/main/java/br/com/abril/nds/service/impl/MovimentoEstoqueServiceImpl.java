@@ -197,9 +197,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         BigInteger totalParcialJuramentado = BigInteger.ZERO;
         
-        final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao();
+        final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(dataDistribuidor);
         
-        final DescontoProximosLancamentos descontoProximosLancamentos = descontoProximosLancamentosRepository.obterDescontoProximosLancamentosPor(idProduto, dataPrevista);
+        final DescontoProximosLancamentos descontoProximosLancamentos = descontoProximosLancamentosRepository.obterDescontoProximosLancamentosPor(idProduto, dataDistribuidor);
         
         final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota = new ArrayList<MovimentoEstoqueCotaDTO>();
         
