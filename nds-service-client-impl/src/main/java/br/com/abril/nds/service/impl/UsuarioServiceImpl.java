@@ -112,6 +112,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
+	@Transactional
 	public void alterarSenha(Usuario usuario) {
 		usuarioRepository.alterarSenha(usuario);
 	}

@@ -172,7 +172,7 @@ public class EstudoAlgoritmoService {
         return definicaoBasesDAO.getEdicoesBases(edicao);
     }
     
-    public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresVeraneio(final ProdutoEdicaoEstudo edicao) throws Exception {
+    public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresVeraneio(final ProdutoEdicaoEstudo edicao) {
         List<ProdutoEdicaoEstudo> listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresMesmoMes(edicao);
         
         if (!listaEdicoesBase.isEmpty()) {
