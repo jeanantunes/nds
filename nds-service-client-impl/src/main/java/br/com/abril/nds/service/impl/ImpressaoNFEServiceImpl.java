@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal.DistribuidorGrupoNotaFiscal;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -159,7 +160,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 					
 					if(dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_ENVIO_PARA_COTA)){
 						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
-							if(dtnf.getTipoEmissao().getId().equals(1)){
+							if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)){
 								
 								LOGGER.info("obter informações para imprimir DANFE ou NECA... ");				
 								

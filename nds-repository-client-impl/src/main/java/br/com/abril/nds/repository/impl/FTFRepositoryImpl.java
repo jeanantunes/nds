@@ -198,7 +198,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" '' as aliquotaIssImpostoDevido, ");
 		sqlBuilder.append(" '' as nomeMunicipioServicoPrestado, ");
 		sqlBuilder.append(" '' as numNotaEmpenho, ");
-		sqlBuilder.append(" '' as codViagem,  ");
+		sqlBuilder.append(" '' as codViagem, ");
 		sqlBuilder.append(" '' as codFaturaAssociada, ");
 		sqlBuilder.append(" '' as codPessoaDetalheEmissorNota, ");
 		sqlBuilder.append(" '' as codPessoaDetalheDestinatarioNota ");

@@ -65,7 +65,7 @@ public final class FTFParser {
 					}
 					else if (value.length() < campo.tamanho()) {
 						
-						value = (campo.tipo().equals("numeric"))?completaComZero(value, campo.tamanho()):
+						value = (campo.tipo().equals("numeric")) ? StringUtils.leftPad(value, campo.tamanho(), '0'):
 							completaComEspaco(value, campo.tamanho());
 					}
 					
@@ -104,24 +104,6 @@ public final class FTFParser {
 		}
 		
 		return espaco.toString();
-	}
-	
-	private String completaComZero(String value, int tamanho) {
-		
-		StringBuilder zeros = new StringBuilder();
-		
-		if (value.length() < tamanho) {
-			
-			tamanho -= value.length();
-			
-			for (int i=1; i <= tamanho; i++) {
-				zeros.append("0");
-			}
-			
-			zeros.append(value);
-		}
-		
-		return zeros.toString();
 	}
 	
 	@SuppressWarnings("all")
@@ -163,7 +145,7 @@ public final class FTFParser {
 			break;
 		}
 		
-		Class forName = Class.forName(className);
+		Class<?> forName = Class.forName(className);
 		Method[] methods = forName.getDeclaredMethods();
 		List<Method> methodList = new ArrayList<Method>();
 		
