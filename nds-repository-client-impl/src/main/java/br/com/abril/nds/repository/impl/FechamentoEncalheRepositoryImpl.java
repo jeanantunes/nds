@@ -593,7 +593,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("	on grupoCota.id = diaRecolhimentoGrupoCota.grupo_id						");
         
         sql.append("    where    ");
-        
+        sql.append("   grupoCota.DATA_VIGENCIA_INICIO <= :dataEncalhe");
+        sql.append("         and (grupoCota.DATA_VIGENCIA_FIM is null");
+        sql.append("         or grupoCota.DATA_VIGENCIA_FIM >= :dataEncalhe) and ");
         
         sql.append("    (	grupoCota.id is null		");
         sql.append("    or diaRecolhimentoGrupoCota.dia_id = :diaRecolhimento ) and	");
