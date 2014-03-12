@@ -433,12 +433,6 @@ var analiseParcialController = $.extend(true, {
                     return;
                 }
             }
-            
-            var saldoReparteAtualizado = parseInt($saldoreparte.val(), 10) - reparteSubtraido;
-            
-            $saldoreparte.text(saldoReparteAtualizado);
-            
-            $saldoreparte.val(saldoReparteAtualizado);
 
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
                 data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').val(), 'variacaoDoReparte': reparteSubtraido, 'reparteDigitado' : reparteDigitado},
@@ -453,6 +447,12 @@ var analiseParcialController = $.extend(true, {
                 		
                 		return;
                 	}
+                	
+                	var saldoReparteAtualizado = parseInt($saldoreparte.val(), 10) - reparteSubtraido;
+                    
+                    $saldoreparte.text(saldoReparteAtualizado);
+                    
+                    $saldoreparte.val(saldoReparteAtualizado);
                 	
                 	analiseParcialController.atualizaAbrangencia();
                     $input_reparte.attr('reparteAtual', reparteDigitado);

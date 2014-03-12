@@ -933,7 +933,7 @@ ConsolidadoFinanceiroRepository {
         .append("        coalesce(estudocota7_.QTDE_PREVISTA,0) as reparteSugerido, ")
         .append("        coalesce(chamadaEncalheCota.QTDE_PREVISTA,0) as reparteFinal, ")
         .append("        coalesce(estudocota7_.QTDE_PREVISTA-estudocota7_.QTDE_EFETIVA,0) as diferenca, ")
-        .append("        diferenca10_.TIPO_DIFERENCA as motivoTexto, ")
+        .append("        case when diferenca10_.TIPO_DIFERENCA is null then '' else diferenca10_.TIPO_DIFERENCA end as motivoTexto, ")
         .append("        sum(movimentos4_.QTDE) * coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as total, ")
         .append("        coalesce(chamadaEncalhe.sequencia, 'Postergado') as sequencia ")
         .append("from ")

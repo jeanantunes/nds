@@ -108,7 +108,17 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		Query query = getSession().createQuery("select o from Negociacao o join o.cobrancasOriginarias c where c.id = " + id);
 		return (Negociacao) query.uniqueResult();
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Negociacao obterNegociacaoPorDivida(Long id) {
+
+		Query query = getSession().createQuery("select n from Negociacao n join n.cobrancasOriginarias c join c.divida d where d.id = " + id);
+		return (Negociacao) query.uniqueResult();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Negociacao> obterNegociacaoPorComissaoCota(Long idCota){
