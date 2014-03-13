@@ -649,7 +649,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		        Marshaller marshaller = jc.createMarshaller();
 		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		        documentBuilderFactory.setNamespaceAware(false);
+		        documentBuilderFactory.setNamespaceAware(true);
 		        DocumentBuilder documentBuilder;
 				try {
 					documentBuilder = documentBuilderFactory.newDocumentBuilder();

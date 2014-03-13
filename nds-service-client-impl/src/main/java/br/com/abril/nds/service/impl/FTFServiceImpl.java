@@ -83,11 +83,9 @@ public class FTFServiceImpl implements FTFService {
 			List<FTFEnvTipoRegistro02> obterResgistroTipo02 = ftfRepository.obterResgistroTipo02(idNF, idNaturezaOperacao);
 			ftfEnvTipoRegistro01.setItemNFList(obterResgistroTipo02);
 			
-			
 			FTFEnvTipoRegistro06 regTipo06 = ftfRepository.obterRegistroTipo06(idNF);
 			ftfEnvTipoRegistro01.setRegTipo06(regTipo06);
 		}
-		
 		
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
 			list.add(ftfEnvTipoRegistro01);
@@ -121,8 +119,8 @@ public class FTFServiceImpl implements FTFService {
 						"O diretório["+ pathNFEExportacao.getValor() +"] de exportação parametrizado não é válido!");
 			}
 			
-			bw=new BufferedWriter(new FileWriter(f));
-			FTFParser ftfParser =  new FTFParser();
+			bw = new BufferedWriter(new FileWriter(f));
+			FTFParser ftfParser = new FTFParser();
 			
 			for (FTFBaseDTO dto : list) {
 				ftfParser.parseFTF(dto, bw);

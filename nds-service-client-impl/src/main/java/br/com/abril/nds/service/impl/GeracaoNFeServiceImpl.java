@@ -28,6 +28,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -216,7 +217,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 					boolean notaGerada = false;
 					for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()){
 						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
-							if(dtnf.getTipoEmissao().getId().equals(1)){									
+							if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)){									
 								throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
 							}
 							
@@ -251,6 +252,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
 		if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
 			this.ftfService.gerarFtf(notas, notas.get(0).getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId());
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "FTF gerado");
 		} else {
 			this.notaFiscalService.exportarNotasFiscais(notas);
 		}
