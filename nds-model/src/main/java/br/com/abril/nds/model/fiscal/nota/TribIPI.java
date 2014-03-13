@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -17,6 +18,11 @@ public class TribIPI {
 	public TribIPI() {
 		
 	}
+	
+	@XmlElement(name="CST")
+	@Transient
+	private String cst;
+	
 
 	/**
 	 * vBC
@@ -62,5 +68,14 @@ public class TribIPI {
 	public void setValorIPI(BigDecimal valorIPI) {
 		this.valorIPI = valorIPI;
 	}
+
+	public String getCst() {
+		return cst;
+	}
+
+	public void setCst(String cst) {
+		this.cst = cst;
+	}
+	
 	
 }

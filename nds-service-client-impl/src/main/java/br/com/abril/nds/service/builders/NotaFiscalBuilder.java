@@ -174,7 +174,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormaPagamento(formaPagamento);
 		
 		//FIXME: Ajustar para variavel global
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoAmbiente(TipoAmbiente.valueOf(parametrosSistema.get("NFE_INFORMACOES_AMBIENTE").getValor()));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoAmbiente(TipoAmbiente.getTipoAmbiente(Integer.valueOf(parametrosSistema.get("NFE_INFORMACOES_AMBIENTE").getValor())));
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoEmissao(TipoEmissao.NORMAL);
