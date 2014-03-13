@@ -703,7 +703,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         reparte = reparte != null ? reparte : BigDecimal.ZERO;
         
-        negociacaoDividaService.abaterNegociacaoPorComissao(idCota, reparte, usuario);
+        negociacaoDividaService.abaterNegociacaoPorComissao(idCota, reparte, BigDecimal.ZERO, usuario);
         
         // COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO
         // CONSIGNADA ATÉ FECHAMENTO DO DIA
