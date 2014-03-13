@@ -252,6 +252,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
 		if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
 			this.ftfService.gerarFtf(notas, notas.get(0).getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId());
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "FTF gerado");
 		} else {
 			this.notaFiscalService.exportarNotasFiscais(notas);
 		}

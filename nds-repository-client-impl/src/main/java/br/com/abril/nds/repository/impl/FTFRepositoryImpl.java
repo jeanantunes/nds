@@ -339,9 +339,9 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		Map<String, ParametroSistema> ps = parametroSistemaRepository.buscarParametroSistemaGeralMap();
 		if (ps != null) {
-			object.setCnpjEstabelecimentoEmissor(ps.get("FTF_CODIGO_ESTABELECIMENTO_EMISSOR").getValor());
+			object.setCodEstabelecimentoEmissor(ps.get("FTF_CODIGO_ESTABELECIMENTO_EMISSOR").getValor());
 			object.setCnpjEstabelecimentoEmissor(ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR").getValor());
-			object.setCnpjEstabelecimentoEmissor(ps.get("FTF_CODIGO_LOCAL").getValor());
+			object.setCodLocal(ps.get("FTF_CODIGO_LOCAL").getValor());
 		}
 
 	}
