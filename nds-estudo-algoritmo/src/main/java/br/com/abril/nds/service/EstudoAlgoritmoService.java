@@ -354,58 +354,58 @@ public class EstudoAlgoritmoService {
     }
     
     public boolean isCotaDentroDoComponenteElemento(final ComponentesPDV componente, final String[] elementos, final CotaEstudo cota) {
-        boolean retorno = false;
+        
         if (componente != null && elementos != null) {
             if (componente.equals(ComponentesPDV.AREA_DE_INFLUENCIA)) {
                 for (final String elemento : elementos) {
                     if (cota.getAreasInfluenciaPdv().contains(Integer.parseInt(elemento))) {
-                        retorno = true;
+                        return true;
                     }
                 }
             } else if (componente.equals(ComponentesPDV.BAIRRO)) {
                 for (final String elemento : elementos) {
                     if (cota.getBairros().contains(elemento)) {
-                        retorno = true;
+                    	return true;
                     }
                 }
             } else if (componente.equals(ComponentesPDV.COTAS_A_VISTA)) {
                 for (final String elemento : elementos) {
                     if (cota.getTiposCota().contains(elemento)) {
-                        retorno = true;
+                    	return true;
                     }
                 }
             } else if (componente.equals(ComponentesPDV.COTAS_NOVAS_RETIVADAS)) {
                 for (final String elemento : elementos) {
                     if ((cota.isNova() && "1".equals(elemento)) || (!cota.isNova() && "0".equals(elemento))) {
-                        retorno = true;
+                    	return true;
                     }
                 }
             } else if (componente.equals(ComponentesPDV.DISTRITO)) {
                 for (final String elemento : elementos) {
                     if (cota.getEstados().contains(elemento)) {
-                        retorno = true;
+                    	return true;
                     }
                 }
             } else if (componente.equals(ComponentesPDV.GERADOR_DE_FLUXO)) {
                 for (final String elemento : elementos) {
                     if (cota.getTiposGeradorFluxo().contains(Integer.parseInt(elemento))) {
-                        retorno = true;
+                    	return true;
                     }
                 }
             } else if (componente.equals(ComponentesPDV.REGIAO)) {
                 for (final String elemento : elementos) {
                     if (cota.getRegioes().contains(Integer.parseInt(elemento))) {
-                        retorno = true;
+                    	return true;
                     }
                 }
             } else if (componente.equals(ComponentesPDV.TIPO_PONTO_DE_VENDA)) {
                 for (final String elemento : elementos) {
                     if (cota.getTiposPontoPdv().contains(Integer.parseInt(elemento))) {
-                        retorno = true;
+                    	return true;
                     }
                 }
             }
         }
-        return retorno;
+        return false;
     }
 }

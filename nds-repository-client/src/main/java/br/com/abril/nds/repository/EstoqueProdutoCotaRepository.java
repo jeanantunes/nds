@@ -40,7 +40,7 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 
 	BigInteger obterTotalEmEstoqueProdutoCota(Long idCota, Long idProdutoEdicao);
 	
-	List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto, String classificacaoProduto);
+	List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto, String classificacaoProduto, Integer numeroCota);
 	
 	List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota, String codigoProduto, String classificacaoProduto);
 }

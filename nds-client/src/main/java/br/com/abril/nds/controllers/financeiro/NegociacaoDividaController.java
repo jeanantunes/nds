@@ -286,6 +286,7 @@ public class NegociacaoDividaController extends BaseController {
 				negociacaoAvulsa, 
 				ativarAposPagar, 
 				comissaoUtilizar, 
+				comissaoAtualCota,
 				isentaEncargos,
 				formaCobranca,
 				idBanco);

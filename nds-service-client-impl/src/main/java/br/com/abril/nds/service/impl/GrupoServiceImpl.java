@@ -30,6 +30,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.GrupoService;
+import br.com.abril.nds.util.SemanaUtil;
 
 @Service
 public class GrupoServiceImpl implements GrupoService {
@@ -114,12 +115,15 @@ public class GrupoServiceImpl implements GrupoService {
 	@Override
 	public void excluirGrupo(Long idGrupo) {
 		final Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+		final int diaInicioSemana = this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+        
+        final Date dataInicioProximaSemana = SemanaUtil.obterDataInicioProximaSemana(diaInicioSemana, dataOperacao);
 		GrupoCota grupo = grupoRepository.buscarPorId(idGrupo);
 		
 		if (grupo.getDataInicioVigencia().after(dataOperacao)){
 		    grupoRepository.remover(grupo);
 		}else{
-		    grupo.setDataFimVigencia(dataOperacao);
+		    grupo.setDataFimVigencia(DateUtils.addDays(dataInicioProximaSemana, -1));
 	        grupoRepository.saveOrUpdate(grupo);
 		}
 		
@@ -155,28 +159,16 @@ public class GrupoServiceImpl implements GrupoService {
 	@Transactional
 	public void salvarGrupoCotas(Long idGrupo, Set<Long> idCotas, String nome,
 			List<DiaSemana> diasSemana, TipoCaracteristicaSegmentacaoPDV tipoCota) {
-	    final Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
-	    final Date dataOperacaoFutura = DateUtils.addDays(dataOperacao, 1);
 	    
-		this.validarNomeGrupo(nome, idGrupo, dataOperacaoFutura);
-		
-		Set<Cota> cotas = this.validarCotaJaPertenceGrupo(idGrupo, idCotas, null, dataOperacaoFutura);
-		
-		salvarGrupoCota(idGrupo, nome, diasSemana, TipoGrupo.TIPO_COTA, null, tipoCota, cotas,dataOperacao,dataOperacaoFutura);
+		salvarGrupoCota(idGrupo, nome, diasSemana, TipoGrupo.TIPO_COTA, null, tipoCota, idCotas);
 	}
 
 	@Override
 	@Transactional
 	public void salvarGrupoMunicipios(Long idGrupo, Set<String> municipios,
 			String nome, List<DiaSemana> diasSemana) {
-	    final Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
-	    final Date dataOperacaoFutura = DateUtils.addDays(dataOperacao, 1);
 		
-		this.validarNomeGrupo(nome, idGrupo, dataOperacaoFutura);
-		
-		this.validarCotaJaPertenceGrupo(idGrupo, null, municipios,dataOperacaoFutura);
-		
-		salvarGrupoCota(idGrupo, nome, diasSemana, TipoGrupo.MUNICIPIO, municipios, null, null,dataOperacao,dataOperacaoFutura);
+		salvarGrupoCota(idGrupo, nome, diasSemana, TipoGrupo.MUNICIPIO, municipios, null, null);
 	}
 
     /**
@@ -185,16 +177,26 @@ public class GrupoServiceImpl implements GrupoService {
      * @param nome
      * @param diasSemana
      */
-    private void salvarGrupoCota(Long idGrupo, String nome, List<DiaSemana> diasSemana, TipoGrupo tipoGrupo, Set<String> municipios, TipoCaracteristicaSegmentacaoPDV tipoCota, Set<Cota> cotas, Date dataOperacao,Date dataOperacaoFutura) {
+    private void salvarGrupoCota(Long idGrupo, String nome, List<DiaSemana> diasSemana, TipoGrupo tipoGrupo, Set<String> municipios, TipoCaracteristicaSegmentacaoPDV tipoCota, Set<Long> idCotas) {
        
-		
+        final Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+        
+        final int diaInicioSemana = this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+        
+        final Date dataInicioProximaSemana = SemanaUtil.obterDataInicioProximaSemana(diaInicioSemana, dataOperacao);
+        
+        this.validarNomeGrupo(nome, idGrupo, dataInicioProximaSemana);
+        
+        Set<Cota> cotas = this.validarCotaJaPertenceGrupo(idGrupo, idCotas, null, dataInicioProximaSemana);
+        
+        
 		GrupoCota grupoNovo = null;
 		if(idGrupo != null) {
 		   final GrupoCota grupoAntigo = grupoRepository.buscarPorId(idGrupo);
 			if (grupoAntigo.getDataInicioVigencia().after(dataOperacao)){
                 grupoNovo = grupoAntigo;
 			} else {
-			    grupoAntigo.setDataFimVigencia(dataOperacao);
+			    grupoAntigo.setDataFimVigencia(DateUtils.addDays(dataInicioProximaSemana, -1));
 			    grupoRepository.saveOrUpdate(grupoAntigo);
             }
 			
@@ -202,15 +204,20 @@ public class GrupoServiceImpl implements GrupoService {
 		
 		if(grupoNovo == null ){
 		    grupoNovo = new GrupoCota();
-	        grupoNovo.setDataInicioVigencia( dataOperacaoFutura);
+	        grupoNovo.setDataInicioVigencia( dataInicioProximaSemana);
 		}
 		grupoNovo.setNome(nome);
 		grupoNovo.setDiasRecolhimento(new HashSet<DiaSemana>(diasSemana));
 		grupoNovo.setTipoGrupo(tipoGrupo);
-		grupoNovo.setMunicipios(municipios);
-		grupoNovo.setTipoCota(tipoCota);
-		grupoNovo.setCotas(cotas);
-		
+		if(TipoGrupo.MUNICIPIO.equals(tipoGrupo)){
+		    grupoNovo.setMunicipios(municipios);
+		    grupoNovo.setTipoCota(null);
+	        grupoNovo.setCotas(null);
+		}else{
+		    grupoNovo.setMunicipios(null);
+		    grupoNovo.setTipoCota(tipoCota);
+	        grupoNovo.setCotas(cotas);
+		}
 		grupoRepository.merge(grupoNovo);
     }
 
