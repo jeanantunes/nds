@@ -71,7 +71,6 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         .append(" f.dataHora as dataHora,")
         .append(" f.edicaoInicial as edicaoInicial,")
         .append(" f.edicaoFinal as edicaoFinal, ")
-        .append(" f.lancamentoId as idLancamento, ")
         .append(" f.cotaFixada.numeroCota as cotaFixada,")
         .append(" f.cotaFixada.id as cotaFixadaId,")
         .append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '')  as nomeCota,")

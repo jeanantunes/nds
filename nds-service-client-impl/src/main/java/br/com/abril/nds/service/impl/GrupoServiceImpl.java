@@ -25,6 +25,8 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.GrupoRepository;
@@ -47,6 +49,9 @@ public class GrupoServiceImpl implements GrupoService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private ChamadaEncalheRepository chamadaEncalheRepository;
 	
 	private static final DateFormat DATE_FORMAT =  new SimpleDateFormat("dd/MM/yyyy");
 	
@@ -115,9 +120,8 @@ public class GrupoServiceImpl implements GrupoService {
 	@Override
 	public void excluirGrupo(Long idGrupo) {
 		final Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
-		final int diaInicioSemana = this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
         
-        final Date dataInicioProximaSemana = SemanaUtil.obterDataInicioProximaSemana(diaInicioSemana, dataOperacao);
+        final Date dataInicioProximaSemana = getDataInicioProximaSemanaSemCE();
 		GrupoCota grupo = grupoRepository.buscarPorId(idGrupo);
 		
 		if (grupo.getDataInicioVigencia().after(dataOperacao)){
@@ -181,9 +185,9 @@ public class GrupoServiceImpl implements GrupoService {
        
         final Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
         
-        final int diaInicioSemana = this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+       
         
-        final Date dataInicioProximaSemana = SemanaUtil.obterDataInicioProximaSemana(diaInicioSemana, dataOperacao);
+        final Date dataInicioProximaSemana = getDataInicioProximaSemanaSemCE();
         
         this.validarNomeGrupo(nome, idGrupo, dataInicioProximaSemana);
         
@@ -219,6 +223,19 @@ public class GrupoServiceImpl implements GrupoService {
 	        grupoNovo.setCotas(cotas);
 		}
 		grupoRepository.merge(grupoNovo);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Date getDataInicioProximaSemanaSemCE() {
+        final int diaInicioSemana = this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+        
+        final Date maxDataRecolhimento = this.chamadaEncalheRepository.obterMaxDataRecolhimento(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+        
+        final Date dataInicioProximaSemana = SemanaUtil.obterDataInicioProximaSemana(diaInicioSemana, maxDataRecolhimento);
+        return dataInicioProximaSemana;
     }
 
 	private void validarNomeGrupo(String nome, Long idGrupo, Date dataOperacao) {
