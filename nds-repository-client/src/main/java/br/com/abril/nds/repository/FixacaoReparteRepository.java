@@ -1,8 +1,11 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.FixacaoReparteDTO;
+import br.com.abril.nds.dto.verificadorFixacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -32,6 +35,18 @@ public interface FixacaoReparteRepository  extends Repository<FixacaoReparte, Lo
 
 	public void gerarCopiaPorProdutoFixacaoReparte(List<FixacaoReparteDTO> mixProdutoOrigem, Usuario usuarioLogado);
 	
-	List<Long> historicoDeEdicoesParaCalcularEdicoesAtendidas(Long lancamentoID, String codigoICD, Integer qtdEdicoes);
+	List<Long> historicoDeEdicoesParaCalcularEdicoesAtendidas(Long lancamentoID, String codigoICD, Integer qtdEdicoes, Long idClassificacao);
+	
+	//VerificacoesDeFixacao
+	
+	List<verificadorFixacaoDTO> obterLcmtsDosProdutosQuePossueFixacao (List<BigInteger> lancamentosDoDia);
+	
+	List<FixacaoReparte> obterFixacoesParaOsProdutosDosLancamentos (List<String> listaCodICDsLacamentos);
+	
+	BigInteger obterNumeroEdicaoPeloLancamentoID (Long idLancamento); 
+	
+	BigInteger qntdEdicoesPosterioresAolancamento (String codigoICD, Date dataFixaCadastroFixacao);
+	
+	List<BigInteger> obterListaLancamentos (Date dataOperacao);
 
 }

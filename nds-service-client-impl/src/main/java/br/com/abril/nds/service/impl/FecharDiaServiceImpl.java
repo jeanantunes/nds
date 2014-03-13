@@ -1646,6 +1646,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			LOGGER.info("FECHAMENTO DIARIO - PROCESSADA DIVIDAS NAO PAGAS");
 			
+			// addServico
+			
 			return fechamentoDiarioDTO;
 		
 		} catch (FechamentoDiarioException e) {

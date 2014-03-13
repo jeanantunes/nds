@@ -11,6 +11,8 @@ public class FiltroConsultaFixacaoProdutoDTO extends FiltroDTO{
 	private String nomeProduto;
 	private String classificacaoProduto;
 	private String codigoCota;
+	private Integer cota;
+	private String nomeCota;
 	private Long idFixacao;
 	private PaginacaoVO paginacaoVO;
 	private Long idProduto;
@@ -56,5 +58,17 @@ public class FiltroConsultaFixacaoProdutoDTO extends FiltroDTO{
 	}
 	public void setIdProduto(Long idProduto) {
 		this.idProduto = idProduto;
+	}
+	public Integer getCota() {
+		return cota;
+	}
+	public void setCota(Integer cota) {
+		this.cota = cota;
+	}
+	public String getNomeCota() {
+		return nomeCota;
+	}
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
 	}
 }

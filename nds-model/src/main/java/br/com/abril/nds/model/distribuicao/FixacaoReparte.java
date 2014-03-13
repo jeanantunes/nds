@@ -69,8 +69,8 @@ public class FixacaoReparte {
 	@Column(name="MANTER_FIXA")
 	private Boolean manterFixa = false;
 	
-	@Column(name="ID_LANCAMENTO")
-	private Long lancamentoId;
+	@Column(name="DATA_FIXA_CADASTRO_FIXACAO")
+	private Date dataFixa;
 	
 	public Long getId() {
 		return id;
@@ -193,12 +193,12 @@ public class FixacaoReparte {
         this.classificacaoProdutoEdicao = classificacaoProdutoEdicao;
     }
 
-	public Long getLancamentoId() {
-		return lancamentoId;
+	public Date getDataFixa() {
+		return dataFixa;
 	}
 
-	public void setLancamentoId(Long lancamentoId) {
-		this.lancamentoId = lancamentoId;
+	public void setDataFixa(Date dataFixa) {
+		this.dataFixa = dataFixa;
 	}
     
 }

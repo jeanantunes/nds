@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
 import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.dto.PdvDTO;
+import br.com.abril.nds.dto.verificadorFixacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
@@ -97,8 +99,10 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
         
         for (FixacaoReparteDTO fixacao : fixacoesPorProduto) {
         	
+        	Integer qtdEdicoes = (fixacao.getQtdeEdicoes() != null ? fixacao.getQtdeEdicoes() : 6);
+        	
         	fixacao.setEdicoesAtendidas(fixacaoReparteRepository.historicoDeEdicoesParaCalcularEdicoesAtendidas(fixacao.getIdLancamento(), fixacao.getCodigoProduto(), 
-        								fixacao.getQtdeEdicoes() != null ? fixacao.getQtdeEdicoes() : 6).size());
+    																											qtdEdicoes, fixacao.getClassificacaoProdutoId()).size());
         	
 		}
         
@@ -122,11 +126,13 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Transactional
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorProduto(FiltroConsultaFixacaoProdutoDTO filtroProduto) {
 		List<FixacaoReparteDTO> resultado = null;
+		
 		if(filtroProduto != null && filtroProduto.getCodigoProduto()!=null){
 			Produto produto = produtoService.obterProdutoPorCodigo(filtroProduto.getCodigoProduto());
-			 resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorProduto(produto, filtroProduto.getClassificacaoProduto()) ;
-		}
-		return resultado; 
+			resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorProduto(produto, filtroProduto.getClassificacaoProduto(), filtroProduto.getCota());	
+		 }
+		
+	return resultado; 
 	}
 	
 	@Override
@@ -204,6 +210,10 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Transactional
 	public void removerFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO) {
 		FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorId(fixacaoReparteDTO.getId());
+		removerFixacaoReparte(fixacaoReparte);
+	}
+
+	private void removerFixacaoReparte(FixacaoReparte fixacaoReparte) {
 		List<FixacaoRepartePdv> repartes = fixacaoRepartePdvRepository.obterFixacaoRepartePdvPorFixacaoReparte(fixacaoReparte);
 		
 		for (FixacaoRepartePdv fixacaoRepartePdv : repartes) {
@@ -243,9 +253,8 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		fixacaoReparte.setQtdeEdicoes(fixacaoReparteDTO.getQtdeEdicoes());
 		fixacaoReparte.setQtdeExemplares(fixacaoReparteDTO.getQtdeExemplares());
 		fixacaoReparte.setQtdeEdicoes(fixacaoReparteDTO.getQtdeEdicoes());
-		fixacaoReparte.setEdicaoInicial((Integer) (fixacaoReparteDTO.getEdicaoInicial() != null ? fixacaoReparteDTO.getEdicaoInicial() : fixacaoReparteDTO.getEdicao()));
+		fixacaoReparte.setEdicaoInicial(fixacaoReparteDTO.getEdicaoInicial());
 		fixacaoReparte.setEdicaoFinal(fixacaoReparteDTO.getEdicaoFinal());
-		fixacaoReparte.setLancamentoId(fixacaoReparteDTO.getIdLancamento());
         
         if (classificacaoProduto != null) 
             fixacaoReparte.setClassificacaoProdutoEdicao(classificacaoProduto);        
@@ -444,5 +453,80 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		return true;
 	
 	}
-
+	
+	@Transactional
+	@Override
+	public void verificarFixacao (Date dataOperacaoAserFechada){
+		
+		List<BigInteger> listaLancamentosDoDia = fixacaoReparteRepository.obterListaLancamentos(dataOperacaoAserFechada);
+		
+		if(listaLancamentosDoDia != null && !listaLancamentosDoDia.isEmpty()){
+			this.atualizaFixacao(listaLancamentosDoDia);
+		}
+		
+	}
+	
+	
+	
+	@Transactional
+	@Override
+	public void atualizaFixacao (List<BigInteger> lancamentosDoDia){ 
+		
+		List<verificadorFixacaoDTO> lcmtsDosProdutosQuePossueFixacao = fixacaoReparteRepository.obterLcmtsDosProdutosQuePossueFixacao(lancamentosDoDia);
+		
+		if(lcmtsDosProdutosQuePossueFixacao != null && !lcmtsDosProdutosQuePossueFixacao.isEmpty()){
+			
+			List<String> codigosICD = new ArrayList<>();
+			
+			for (verificadorFixacaoDTO lancamentosEICD : lcmtsDosProdutosQuePossueFixacao) {
+				codigosICD.add(lancamentosEICD.getCodICDFixacao());
+			}
+			
+			if(!codigosICD.isEmpty()){
+				
+				List<FixacaoReparte> fixacoesParaOsProdutosDosLancamentos = fixacaoReparteRepository.obterFixacoesParaOsProdutosDosLancamentos(codigosICD);
+				
+				if(!fixacoesParaOsProdutosDosLancamentos.isEmpty()){
+					
+					for(verificadorFixacaoDTO verificadorLcmtXFixacao : lcmtsDosProdutosQuePossueFixacao){
+						
+						for (FixacaoReparte fixacao : fixacoesParaOsProdutosDosLancamentos) {
+							
+							if (verificadorLcmtXFixacao.getCodICDFixacao().equalsIgnoreCase(fixacao.getCodigoICD())){
+								
+								if((fixacao.getEdicaoInicial()!=null && fixacao.getEdicaoInicial().intValue() > 0)&&(fixacao.getEdicaoFinal()!=null && fixacao.getEdicaoFinal().intValue() > 0)){
+									
+									BigInteger numeroEdicaoPeloLancamentoID = fixacaoReparteRepository.obterNumeroEdicaoPeloLancamentoID(verificadorLcmtXFixacao.getIdLancamento().longValue());
+									
+									if((numeroEdicaoPeloLancamentoID.intValue() > fixacao.getEdicaoInicial()) && (numeroEdicaoPeloLancamentoID.intValue() < fixacao.getEdicaoFinal())){
+										fixacao.setEdicoesAtendidas(fixacao.getEdicoesAtendidas()+1);
+										fixacaoReparteRepository.alterar(fixacao);
+										
+									}else{
+										if(numeroEdicaoPeloLancamentoID.intValue() == fixacao.getEdicaoFinal().longValue()){
+											this.removerFixacaoReparte(fixacao);
+										}
+									}
+									
+								}else{
+									
+									//buscar qntd de edições
+									BigInteger qtdEdicoesPosteriores = fixacaoReparteRepository.qntdEdicoesPosterioresAolancamento(verificadorLcmtXFixacao.getCodICDFixacao(), fixacao.getDataFixa());
+									
+									if(qtdEdicoesPosteriores.intValue() <= fixacao.getQtdeEdicoes()){
+										fixacao.setEdicoesAtendidas(qtdEdicoesPosteriores.intValue());
+										fixacaoReparteRepository.alterar(fixacao);
+									}else{
+										fixacao.setEdicoesAtendidas(fixacao.getQtdeEdicoes());
+										this.removerFixacaoReparte(fixacao);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
 }

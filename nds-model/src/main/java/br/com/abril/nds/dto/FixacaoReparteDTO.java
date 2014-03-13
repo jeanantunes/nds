@@ -89,6 +89,7 @@ public class FixacaoReparteDTO implements Serializable {
 	private Long cotaFixadaId;
 	private Long produtoFixadoId;
 	private Long idLancamento;
+	private Date dataFixaCadastroDaFixacao;
 	
 	public String getDataLancamentoString() {
 		return dataLancamentoString;
@@ -390,4 +391,13 @@ public class FixacaoReparteDTO implements Serializable {
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
 	}
+
+	public Date getDataFixaCadastroDaFixacao() {
+		return dataFixaCadastroDaFixacao;
+	}
+
+	public void setDataFixaCadastroDaFixacao(Date dataFixaCadastroDaFixacao) {
+		this.dataFixaCadastroDaFixacao = dataFixaCadastroDaFixacao;
+	}
+	
 }

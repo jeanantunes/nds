@@ -176,7 +176,7 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto, String classificacaoProduto){
+	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto, String classificacaoProduto, Integer numeroCota){
 		
 		StringBuilder sql = new StringBuilder("");
 
@@ -195,6 +195,9 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		sql.append("	join produto on produto.ID = produto_edicao.PRODUTO_ID");
 		sql.append("	left join tipo_classificacao_produto tcp on tcp.ID = produto_edicao.TIPO_CLASSIFICACAO_PRODUTO_ID");
 		sql.append(" where produto.codigo_icd = :produtoBusca ");
+		sql.append(" and estoque_produto_cota.COTA_ID = (select c.ID from cota c where c.NUMERO_COTA = :numeroCota ) ");
+		
+				
         if (!classificacaoProduto.equalsIgnoreCase("-1")) {
             sql.append(" and tcp.id = :classificacaoProduto ");
         }
@@ -205,9 +208,12 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("produtoBusca", produto.getCodigoICD());
+		query.setParameter("numeroCota", numeroCota);
+		
         if (!classificacaoProduto.equalsIgnoreCase("-1")) {
             query.setParameter("classificacaoProduto", classificacaoProduto);
         }
+        
         query.setResultTransformer(new AliasToBeanResultTransformer(FixacaoReparteDTO.class));
 		
 		return query.list();
