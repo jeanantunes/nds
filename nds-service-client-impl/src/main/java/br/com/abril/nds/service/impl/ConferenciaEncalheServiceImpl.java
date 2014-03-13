@@ -1600,19 +1600,23 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				                                usuario, 
 				                                indConferenciaContingencia);
 
+		BigDecimal valorTotalReparteOperacaoConferenciaEncalhe = BigDecimal.ZERO;
 		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
 				//conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(controleConfEncalheCota.getId());
 		
 		for (ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
 			
-			valorTotalEncalheOperacaoConferenciaEncalhe = valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getValorTotal());
+			valorTotalReparteOperacaoConferenciaEncalhe = 
+					valorTotalReparteOperacaoConferenciaEncalhe.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getQtdReparte())));
+			valorTotalEncalheOperacaoConferenciaEncalhe = 
+					valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getQtdExemplar())));
 		}
 		
 		reparte = reparte == null ? BigDecimal.ZERO : reparte;
 		
-		valorTotalEncalheOperacaoConferenciaEncalhe = reparte.subtract(valorTotalEncalheOperacaoConferenciaEncalhe);
-		
-		this.negociacaoDividaService.abaterNegociacaoPorComissao(cota.getId(), valorTotalEncalheOperacaoConferenciaEncalhe, usuario);
+		this.negociacaoDividaService.abaterNegociacaoPorComissao(
+			cota.getId(), valorTotalReparteOperacaoConferenciaEncalhe, valorTotalEncalheOperacaoConferenciaEncalhe, usuario
+		);
 		
 		Set<String> nossoNumeroCollection = new LinkedHashSet<String>();
 		
