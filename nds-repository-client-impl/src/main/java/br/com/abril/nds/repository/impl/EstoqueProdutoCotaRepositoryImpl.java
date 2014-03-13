@@ -231,7 +231,6 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 			sql.append("  	ifnull(estoque_produto_cota.QTDE_RECEBIDA - estoque_produto_cota.QTDE_DEVOLVIDA, 0 ) as venda, ");
 			sql.append("  	lancamento.STATUS as status, ");
 			sql.append("  	lancamento.DATA_LCTO_PREVISTA as dataLancamento, ");
-			sql.append(" 	lancamento.ID as idLancamento, ");
 			sql.append(" 	lancamento.DATA_REC_PREVISTA as dataRecolhimento");
 			sql.append("  		 from estoque_produto_cota  ");
 			sql.append(" 			join produto_edicao on estoque_produto_cota.PRODUTO_EDICAO_ID = produto_edicao.id ");
