@@ -226,19 +226,19 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		switch (filtro.getOrdenacaoColuna()) {
 			
 			case OPERACAO:
-				hql.append(" order by tipoNota.tipoAtividade  ");
+				hql.append(" order by no.tipoAtividade  ");
 				break;
 			case DESCRICAO:
-				hql.append(" order by tipoNota.descricao  ");
+				hql.append(" order by no.descricao  ");
 				break;
 			case CFOP_ESTADO :
-				hql.append(" order by tipoNota.cfopEstado  ");
+				hql.append(" order by no.cfopEstado  ");
 				break;
 			case CFOP_OUTROS_ESTADOS:
-				hql.append(" order by tipoNota.cfopOutrosEstados ");
+				hql.append(" order by no.cfopOutrosEstados ");
 				break;
 			default:
-				hql.append(" order by  tipoNota.tipoAtividade ");
+				hql.append(" order by no.tipoAtividade ");
 		}
 
 		if (filtro.getPaginacao().getOrdenacao() != null) {
