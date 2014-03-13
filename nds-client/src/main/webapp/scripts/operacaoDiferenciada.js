@@ -5,23 +5,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	grupos : [],
 	
 	init : function() {
-		$( "#includeHistory", this.workspace ).button().click(function(event){
-			var includeHistory = $(this).attr('checked') == 'checked';
-			
-			$(".gruposGrid", OperacaoDiferenciadaController.workspace).flexOptions({
-				params : [{
-					name : "includeHistory",
-					value : includeHistory
-				}]
-			});
-			$(".gruposGrid", OperacaoDiferenciadaController.workspace).flexReload();
-			
-			$(".gruposGrid", OperacaoDiferenciadaController.workspace).flexToggleCol(3,includeHistory);
-			
-			var label = (includeHistory)?'Ocultar Hist&oacute;ricos':'Exibir Hist&oacute;ricos';
-			
-			$(this ).button( "option", "label", label );
-		});
+		
 		OperacaoDiferenciadaController.inicializarGrids();
 	},
 	

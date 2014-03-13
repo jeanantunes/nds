@@ -24,13 +24,13 @@ public class RepartePDVRepositoryImpl extends  AbstractRepositoryModel<RepartePD
 		super(RepartePDV.class);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public RepartePDV buscarPorId(Long id){
 		return super.buscarPorId(id);
 	}
 	
-	 public List<RepartePDVDTO> obterRepartePdvMixPorCota(Long idCota){
+	 @SuppressWarnings("unchecked")
+	public List<RepartePDVDTO> obterRepartePdvMixPorCota(Long idCota){
 		 StringBuilder hql = new StringBuilder();
 		hql.append(" SELECT  pdv.nome as nomePDV, rep.reparte as reparte, " )
 			.append(" coalesce(mix.cota.pessoa.nomeFantasia, mix.cota.pessoa.razaoSocial, mix.cota.pessoa.nome, '')  as nomeCota, ")
@@ -96,6 +96,19 @@ public class RepartePDVRepositoryImpl extends  AbstractRepositoryModel<RepartePD
 		return this.buscarPorIdTipoReferencia("mixCotaProduto",id);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<RepartePDV> buscarPorCota(Long idCota) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				" from RepartePDV rep WHERE rep.mixCotaProduto.cota.id = :idCota ");
+		
+		query.setParameter("idCota", idCota);
+        
+        return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
 	private List<RepartePDV> buscarPorIdTipoReferencia(String type,Long id) {
 		Query q = getSession().createQuery(" from RepartePDV rep WHERE rep."+type+".id = :idTipo ");
         q.setParameter("idTipo", id);

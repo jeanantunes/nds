@@ -500,6 +500,11 @@ var analiseParcialController = $.extend(true, {
     },
 
     restauraBaseInicial : function() {
+    	
+    	$.postJSON(
+    		analiseParcialController.path + '/distribuicao/analise/parcial/restaurarBaseInicial'
+    	);
+    	
         $('#baseEstudoGridParcial').flexAddData(analiseParcialController.baseInicialAnalise);
     },
 
