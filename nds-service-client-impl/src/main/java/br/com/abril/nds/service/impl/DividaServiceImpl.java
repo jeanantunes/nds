@@ -402,7 +402,7 @@ public class DividaServiceImpl implements DividaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há negociação associada a essa dívida");
 		}
 		
-		BigDecimal valorOriginal = negociacao.getValorDividaPagaComissao();
+		BigDecimal valorOriginal = negociacao.getValorOriginal();
 		
 		if(valorOriginal == null) {
 			

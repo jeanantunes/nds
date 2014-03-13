@@ -4,11 +4,14 @@ var codigos =  [],
 
 var pesquisaCota = new PesquisaCota();
 var autoComplete;
+var idLancamentoEdicaoDestaque;
+
 
 var fixacaoReparteController = $.extend(true, {
 //Grid de historico de edicoes 	
     wsp : function() { return fixacaoReparteController.workspace; },
 	init : function() {
+		
 		
 		autoComplete = new AutoCompleteCampos(fixacaoReparteController.workspace);
 		
@@ -736,6 +739,8 @@ var fixacaoReparteController = $.extend(true, {
                 result.rows[i].cell["reparte"] = result.rows[i].cell["reparte"] | 0;
                 result.rows[i].cell["venda"] = result.rows[i].cell["venda"] | 0;
             }
+            
+            idLancamentoEdicaoDestaque = result.rows[0].cell.idLancamento;
 		}else{
 			$("#historicoXLS").hide();
 			$("#historicoPDF").hide();
@@ -867,6 +872,7 @@ var fixacaoReparteController = $.extend(true, {
 			data.push({name:'fixacaoReparteDTO.qtdeExemplares',	value: $("#qtdeFixadaModal").val()});
 			data.push({name:'fixacaoReparteDTO.edicaoInicial',	value: $("#edInicialModal").val()});
 			data.push({name:'fixacaoReparteDTO.edicaoFinal',	value: $("#edFinalModal").val()});
+			data.push({name:'fixacaoReparteDTO.idLancamento', 	value: idLancamentoEdicaoDestaque});
 			data.push({name:'fixacaoReparteDTO.qtdeEdicoesMarcado',	value: $("#radioQtdeEdicoes").is(":checked")});
 
 			return data;
