@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Footer;
@@ -121,7 +122,7 @@ public class CotaSuspensaoDTO implements Serializable{
 	}
 
 	public void setDividaAcumulada(BigDecimal dividaAcumulada) {
-		this.dividaAcumulada = dividaAcumulada;
+		this.dividaAcumulada = dividaAcumulada == null ? dividaAcumulada : MathUtil.round(dividaAcumulada, 2);
 	}
 
 	public Integer getDiasAberto() {
