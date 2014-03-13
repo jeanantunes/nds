@@ -2,7 +2,9 @@ package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.exolab.castor.types.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -48,6 +51,7 @@ import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.SegmentoNaoRecebidoService;
 import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -114,9 +118,10 @@ public class FixacaoReparteController extends BaseController {
 	@Path("/")
 	public void fixacaoReparte(){
 		result.include("classificacao",fixacaoReparteService.obterClassificacoesProduto());
+		
 	}
-	
-	
+
+
 	@Post
 	@Path("/pesquisarPorProduto")
 	public void pesquisarPorProduto(FiltroConsultaFixacaoProdutoDTO filtro , String sortorder, String sortname, int page, int rp){
@@ -738,5 +743,5 @@ new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),
 		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
 		filtro.setIdProduto(produto.getId());
 	}
-
+	
 }
