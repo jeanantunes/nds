@@ -136,7 +136,7 @@ public class ItemNotaFiscalBuilder  {
 		for(Tributacao t : movimentoEstoqueCota.getProdutoEdicao().getProduto().getProdutoTributacao()) {
 			detalheNotaFiscal.getProdutoServico().setCst(t.getCstA().toString() + t.getCst().toString());
 			if("ICMS".equals(t.getTributo())) {
-				detalheNotaFiscal.getProdutoServico().setValorAliquotaICMS(t.getValorAliquota());
+				detalheNotaFiscal.getProdutoServico().setValorAliquotaICMS(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
 				Class<?> clazz;
 				ICMS icms = null;
 				try {
@@ -156,50 +156,51 @@ public class ItemNotaFiscalBuilder  {
 				//FIXME: Ajustar o produto para trazer a origem (nacional / estrangeira)
 				icms.setOrigem(OrigemProduto.NACIONAL);
 				icms.setCst(t.getCst().toString());
-				icms.setAliquota(t.getValorAliquota());
-				icms.setValorBaseCalculo(t.getBaseCalculo());
+				icms.setAliquota(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
+				icms.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(t.getBaseCalculo()));
 				
 				detalheNotaFiscal.getImpostos().setIcms(icms);
 			}
 			
 			if("IPI".equals(t.getTributo())) {
-				detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(t.getValorAliquota());
+				detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
 				
 				IPI ipi = new IPI();
 				
 				ipi.setCst(t.getCst().toString());
 				ipi.setAliquota(t.getValorAliquota());
 				ipi.setValorBaseCalculo(t.getBaseCalculo());
-				ipi.setCodigoEnquadramento("01");
+				ipi.setCodigoEnquadramento("00");
 				ipi.setIPITrib(new TribIPI());
-				ipi.getIPITrib().setValorAliquota(t.getValorAliquota());
-				ipi.getIPITrib().setValorBaseCalculo(t.getBaseCalculo());
+				ipi.getIPITrib().setCst("00");
+				ipi.getIPITrib().setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
+				ipi.getIPITrib().setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(t.getBaseCalculo()));
 				
 				// FIX ME ajustar a classe de valor do ipi
-				ipi.getIPITrib().setValorIPI(t.getBaseCalculo());
+				ipi.getIPITrib().setValorIPI(CurrencyUtil.arredondarValorParaDuasCasas(t.getBaseCalculo()));
 				detalheNotaFiscal.getImpostos().setIpi(ipi);
 			}
 			
 			if("PIS".equals(t.getTributo())) {
-				detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(t.getValorAliquota());
+				detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
 				
 				PIS pis = new PIS();
 				
 				pis.setCst(Integer.valueOf(t.getCst().toString()));
-				pis.setValorAliquota(t.getValorAliquota());
-				pis.setValorBaseCalculo(t.getBaseCalculo());
+				pis.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
+				pis.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(t.getBaseCalculo()));
 				
 				detalheNotaFiscal.getImpostos().setPis(pis);
 			}
 			
 			if("COFINS".equals(t.getTributo())) {
-				detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(t.getValorAliquota());
+				detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
 				
 				COFINS cofins = new COFINS();
 				
 				cofins.setCst(Integer.valueOf(t.getCst().toString()));
-				cofins.setValorAliquota(t.getValorAliquota());
-				cofins.setValorBaseCalculo(t.getBaseCalculo());
+				cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
+				cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(t.getBaseCalculo()));
 				
 				detalheNotaFiscal.getImpostos().setCofins(cofins);
 			}

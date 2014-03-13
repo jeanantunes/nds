@@ -122,6 +122,7 @@ public class TransportadorWrapper implements Serializable {
 	 *
 	 * @return Endereco
 	 */
+	@XmlTransient
 	public NotaFiscalEndereco getEndereco() {
 		return endereco;
 	}

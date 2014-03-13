@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -46,6 +44,10 @@ public class ValoresCalculadosWrapper {
 	@Column(name = "VALOR_DESCONTO", nullable = false, precision=18, scale=4)
 	@XmlElement(name="vDesc")
 	protected BigDecimal valorDesconto;	
+	
+	@Column(name = "VALOR_IMPOSTO_IMPORTACAO", nullable = false, precision=18, scale=4)
+	@XmlElement(name="vII")
+	protected BigDecimal valorImpostoImportacao;	
 	
 	@Column(name = "VALOR_IPI")
 	@XmlElement(name="vIPI")
@@ -207,4 +209,14 @@ public class ValoresCalculadosWrapper {
 		this.valorCOFINS = valorCOFINS;
 	}
 
+	public BigDecimal getValorImpostoImportacao() {
+		return valorImpostoImportacao;
+	}
+
+	public void setValorImpostoImportacao(BigDecimal valorImpostoImportacao) {
+		this.valorImpostoImportacao = valorImpostoImportacao;
+	}
+
+	
+	
 }
