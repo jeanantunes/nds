@@ -1532,6 +1532,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	        exibirMensagem("ERROR", ["Selecione "+ (maisDeUm ? "apenas" : "") +" um item para esta opção."]);
 	        return;
 	    }
+	    
 	    var postData = [];
 	    postData.push({name: "estudoId",        	value: selecionado.estudo});
 	    postData.push({name: "idProdutoEdicao", 	value: selecionado.idProdutoEdicao});
@@ -1539,6 +1540,12 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	    postData.push({name: "reparte",    			value: selecionado.reparte});
 	    postData.push({name: "reparteDistribuido",	value: selecionado.repDistrib});
 	    postData.push({name: "sobra",    			value: selecionado.sobra});
+	    
+	    if (selecionado.idCopia != undefined) {
+	    	
+	    	postData.push({name: "idCopia", value: selecionado.idCopia});
+	    }
+		
 
 	    var temp = $('#workspace').tabs( "option", "ajaxOptions");
 	    $('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );

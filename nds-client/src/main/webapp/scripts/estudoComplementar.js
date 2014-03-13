@@ -82,6 +82,7 @@ var estudoComplementarController =$.extend(true,  {
 	                  dados.push({name:"parametros.tipoSelecao",          value: tipoSelecao});
 	                  dados.push({name:"parametros.idLancamento",         value: $('#idLancamento').val()});
 	                  dados.push({name:"parametros.idProdutoEdicao",      value: $('#idProdutoEdicao').val()});
+	                  dados.push({name:"parametros.idCopia",      		  value: $('#idCopia').val()});
 	                  dados.push({name:"parametros.multiplo",             value: isMultiplo});
 	      					           
 		 $.ajax({
@@ -89,14 +90,20 @@ var estudoComplementarController =$.extend(true,  {
 			 data:  dados ,
 	         type: "POST",
 	         
-	         success: function(data){
-		        	 if (data) {
-	        			 exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
-		        	 }else{
-		        		 exibirMensagem("SUCCESS", ["Estudo Complementar Gerado"]);
-	 	             }
-		         }
-	         });
+	         success: function(data) {
+	         
+	         	 if (data.mensagens) {
+        
+	         		 exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+	         		 
+	         	 } else {
+	         		 
+	         		 exibirMensagem("SUCCESS", ["Estudo Complementar Gerado"]);
+	         		 
+	         		 $('#idEstudoComplementar').html(data);
+	 	         }
+		     }
+		 });
 	},
 
 	
@@ -165,6 +172,12 @@ consultarEstudo:function (obj) {
 			// Deve ir direto para EMS 2031
 			matrizDistribuicao.redirectToTelaAnalise('#estudoComplementarContent', '#estudoComplementarTelaAnalise', $('#idEstudoComplementar').html());
 		}
+	},
+
+	voltar : function() {
+		
+		$(".ui-tabs-selected").find("span").click();
+		$("a[href='"+ pathTela +"/matrizDistribuicao']").click();
 	}
 	
 

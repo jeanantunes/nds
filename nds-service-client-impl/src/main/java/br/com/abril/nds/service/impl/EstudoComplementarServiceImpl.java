@@ -120,75 +120,76 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 
     @Transactional
     @Override
-    public boolean gerarEstudoComplementar(EstudoComplementarVO estudoComplementarVO) {
-	List<EstudoCotaGerado> estudoCotas = selecionarBancas(estudoComplementarVO);
-
-	if (estudoCotas.isEmpty()) {
-	    throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi encontrada nos parâmetros para gerar o estudo complementar.");
-	}
-
-	BigInteger reparte = BigInteger.valueOf(estudoComplementarVO.getReparteCota());
-	BigInteger qtdDistribuido = BigInteger.valueOf(estudoComplementarVO.getReparteDistribuicao());
-
-	EstudoGerado estudo = estudoGeradoRepository.buscarPorId(estudoComplementarVO.getCodigoEstudo());
-
-	EstudoGerado estudo1 = new EstudoGerado();
-	BeanUtils.copyProperties(estudo, estudo1, new String[] {"id", "lancamentos", "estudoCotas"});
-	estudo1.setLiberado(false);
-	estudo1.setProdutoEdicao(new ProdutoEdicao(estudoComplementarVO.getIdProdutoEdicao()));
-	estudo1.setQtdeReparte(qtdDistribuido);
-	estudo1.setReparteDistribuir(qtdDistribuido);
-	estudo1.setSobra(estudo1.getQtdeReparte().subtract(estudo1.getReparteDistribuir()));
+    public Long gerarEstudoComplementar(EstudoComplementarVO estudoComplementarVO) {
+		List<EstudoCotaGerado> estudoCotas = selecionarBancas(estudoComplementarVO);
 	
-	Long id = this.estudoService.obterUltimoAutoIncrement();
-    
-	estudo1.setId(id);
-
-	// Gera Novo Estudo
-	estudoGeradoRepository.adicionar(estudo1);
-	
-	List<EstudoCotaGerado> cotas = new ArrayList<>();
-
-	for (EstudoCotaGerado cota : estudoCotas) {
-		EstudoCotaGerado nova = new EstudoCotaGerado();
-	    BeanUtils.copyProperties(cota, nova, new String[] {"id", "reparte", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
-	    nova.setEstudo(estudo1);
-	    nova.setReparte(reparte);
-	    nova.setReparteInicial(reparte);
-	    nova.setClassificacao("CP");
-	    cotas.add(nova);
-	    
-	    qtdDistribuido = qtdDistribuido.subtract(reparte);
-
-	    if (qtdDistribuido.compareTo(reparte) < 0) {
-		break;
-	    }
-	}
-	
-	// reordenando de acordo com o ranking
-	cotas = ordenarCotas(cotas, estudoComplementarVO);
-	if (!estudoComplementarVO.isMultiplo()) {
-	    reparte = BigInteger.ONE;
-	} 
-	while (qtdDistribuido.compareTo(reparte) > 0) {
-	    for (EstudoCotaGerado cota : cotas) {
-		cota.setReparte(cota.getReparte().add(reparte));
-		qtdDistribuido = qtdDistribuido.subtract(reparte);
-
-		if (qtdDistribuido.compareTo(reparte) < 0) {
-		    break;
+		if (estudoCotas.isEmpty()) {
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi encontrada nos parâmetros para gerar o estudo complementar.");
 		}
-	    }
-	}
-
-	for (EstudoCotaGerado cota : cotas) {
-	    if (cota.getReparte() != null) {
-		cota.setQtdeEfetiva(cota.getReparte());
-		cota.setQtdePrevista(cota.getReparte());
-	    }
-	    estudoCotaGeradoRepository.adicionar(cota);	
-	}
-	return true;
+	
+		BigInteger reparte = BigInteger.valueOf(estudoComplementarVO.getReparteCota());
+		BigInteger qtdDistribuido = BigInteger.valueOf(estudoComplementarVO.getReparteDistribuicao());
+	
+		EstudoGerado estudo = estudoGeradoRepository.buscarPorId(estudoComplementarVO.getCodigoEstudo());
+	
+		EstudoGerado estudo1 = new EstudoGerado();
+		BeanUtils.copyProperties(estudo, estudo1, new String[] {"id", "lancamentos", "estudoCotas"});
+		estudo1.setLiberado(false);
+		estudo1.setProdutoEdicao(new ProdutoEdicao(estudoComplementarVO.getIdProdutoEdicao()));
+		estudo1.setQtdeReparte(qtdDistribuido);
+		estudo1.setReparteDistribuir(qtdDistribuido);
+		estudo1.setSobra(estudo1.getQtdeReparte().subtract(estudo1.getReparteDistribuir()));
+		
+		Long id = this.estudoService.obterUltimoAutoIncrement();
+	    
+		estudo1.setId(id);
+	
+		// Gera Novo Estudo
+		Long idEstudo = estudoGeradoRepository.adicionar(estudo1);
+		
+		List<EstudoCotaGerado> cotas = new ArrayList<>();
+	
+		for (EstudoCotaGerado cota : estudoCotas) {
+			EstudoCotaGerado nova = new EstudoCotaGerado();
+		    BeanUtils.copyProperties(cota, nova, new String[] {"id", "reparte", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
+		    nova.setEstudo(estudo1);
+		    nova.setReparte(reparte);
+		    nova.setReparteInicial(reparte);
+		    nova.setClassificacao("CP");
+		    cotas.add(nova);
+		    
+		    qtdDistribuido = qtdDistribuido.subtract(reparte);
+	
+		    if (qtdDistribuido.compareTo(reparte) < 0) {
+			break;
+		    }
+		}
+		
+		// reordenando de acordo com o ranking
+		cotas = ordenarCotas(cotas, estudoComplementarVO);
+		if (!estudoComplementarVO.isMultiplo()) {
+		    reparte = BigInteger.ONE;
+		} 
+		while (qtdDistribuido.compareTo(reparte) > 0) {
+		    for (EstudoCotaGerado cota : cotas) {
+			cota.setReparte(cota.getReparte().add(reparte));
+			qtdDistribuido = qtdDistribuido.subtract(reparte);
+	
+			if (qtdDistribuido.compareTo(reparte) < 0) {
+			    break;
+			}
+		    }
+		}
+	
+		for (EstudoCotaGerado cota : cotas) {
+		    if (cota.getReparte() != null) {
+			cota.setQtdeEfetiva(cota.getReparte());
+			cota.setQtdePrevista(cota.getReparte());
+		    }
+		    estudoCotaGeradoRepository.adicionar(cota);	
+		}
+		
+		return idEstudo;
     }
 
     private List<EstudoCotaGerado> ordenarCotas(List<EstudoCotaGerado> estudoCotas, EstudoComplementarVO estudoComplementarVO) {

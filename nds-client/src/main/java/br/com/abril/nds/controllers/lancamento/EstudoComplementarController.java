@@ -1,12 +1,26 @@
 package br.com.abril.nds.controllers.lancamento;
 
 
+import static br.com.caelum.vraptor.view.Results.json;
+
+import java.math.BigInteger;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.vo.EstudoComplementarVO;
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.client.vo.estudocomplementar.BaseEstudoVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.controllers.distribuicao.MatrizDistribuicaoController;
 import br.com.abril.nds.dto.EstudoComplementarDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoComplementarService;
 import br.com.abril.nds.service.EstudoService;
@@ -16,13 +30,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.servlet.http.HttpServletResponse;
-import java.math.BigInteger;
-import java.util.Date;
-
-import static br.com.caelum.vraptor.view.Results.json;
 
 @Resource
 @Path("/lancamento")
@@ -30,6 +37,9 @@ public class EstudoComplementarController extends BaseController {
 
     @Autowired
     private Result result;
+    
+    @Autowired
+    private HttpSession session;
 
     @Autowired
     private HttpServletResponse httpResponse;
@@ -47,7 +57,7 @@ public class EstudoComplementarController extends BaseController {
     private EstudoService estudoService;
 
     @Path("/estudoComplementar")
-    public void index(Long estudoId, Long idProdutoEdicao, Long idLancamento, BigInteger reparte, BigInteger reparteDistribuido, BigInteger sobra) {
+    public void index(Long estudoId, Long idProdutoEdicao, Long idLancamento, BigInteger reparte, BigInteger reparteDistribuido, BigInteger sobra, Long idCopia) {
 
         String data = DateUtil.formatarDataPTBR(new Date());
         ProdutoEdicao produto = produtoEdicaoService.buscarPorID(idProdutoEdicao);
@@ -60,6 +70,7 @@ public class EstudoComplementarController extends BaseController {
         result.include("estudoId", estudoId);
         result.include("idProdutoEdicao", idProdutoEdicao);
         result.include("idLancamento", idLancamento);
+        result.include("idCopia", idCopia);
     }
 
     @Path("/pesquisaEstudoBase/{estudoBase.id}")
@@ -89,10 +100,46 @@ public class EstudoComplementarController extends BaseController {
     @Path("/gerarEstudo")
     @Post
     public void gerarEstudo(EstudoComplementarVO parametros) {
-        if (estudoComplementarService.gerarEstudoComplementar(parametros)) {
-            estudoService.setIdLancamentoNoEstudo(parametros.getIdLancamento(), parametros.getIdEstudoComplementar());
-        }
+    	
+    	Long idEstudo = this.estudoComplementarService.gerarEstudoComplementar(parametros);
+    	
+        estudoService.setIdLancamentoNoEstudo(parametros.getIdLancamento(), parametros.getIdEstudoComplementar());
 
-        result.nothing();
+        this.removerItemSessao(parametros.getIdLancamento(), parametros.getIdCopia());
+        
+        result.use(CustomJson.class).put("result", idEstudo).serialize();
     }
+    
+    private void removerItemSessao(Long idLancamento, Long idCopia) {
+    	
+    	if (idCopia == null) {
+    		
+    		return;
+    	}
+    	
+    	List<ProdutoDistribuicaoVO> lista = this.obterListaDeItensDuplicadosNaSessao();
+    	
+    	ProdutoDistribuicaoVO produtoDistribuicaoRemover = null;
+    	
+    	for (ProdutoDistribuicaoVO produtoDistribuicao : lista) {
+    		
+    		if (idLancamento.equals(produtoDistribuicao.getIdLancamento().longValue())
+    				&& idCopia.equals(produtoDistribuicao.getIdCopia().longValue())) {
+    			
+    			produtoDistribuicaoRemover = produtoDistribuicao;
+    		}
+    	}
+
+    	if (produtoDistribuicaoRemover != null) {
+    	
+    		lista.remove(produtoDistribuicaoRemover);
+    	}
+    }
+    
+    @SuppressWarnings("unchecked")
+    private List<ProdutoDistribuicaoVO> obterListaDeItensDuplicadosNaSessao() {
+    	
+        return (List<ProdutoDistribuicaoVO>) session.getAttribute(MatrizDistribuicaoController.LISTA_DE_DUPLICACOES);
+    }
+    
 }
