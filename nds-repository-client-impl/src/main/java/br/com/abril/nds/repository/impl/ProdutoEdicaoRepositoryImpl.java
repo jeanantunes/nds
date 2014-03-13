@@ -183,24 +183,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 
     @Override
-    @Transactional
-    public BigInteger obterReparteDisponivel(Long idProdutoEdicao) {
-
-        StringBuilder sql = new StringBuilder();
-        sql.append(" select t.reparte_lcto - t.reparte_est - t.reparte_prom                  ");
-        sql.append(" from (select sum(coalesce(l.reparte, 0)) reparte_lcto,                  ");
-        sql.append("         sum(coalesce(e.qtde_reparte, 0)) reparte_est,                   ");
-        sql.append("         sum(coalesce(l.reparte_promocional, 0)) reparte_prom            ");
-        sql.append("         from lancamento l                                               ");
-        sql.append("         left join estudo_gerado e on e.lancamento_id = l.id 			 ");
-        sql.append("         where l.produto_edicao_id = :idProdutoEdicao ) t                ");
-
-        SQLQuery query = getSession().createSQLQuery(sql.toString());
-        query.setParameter("idProdutoEdicao", idProdutoEdicao);
-        return ((BigDecimal) query.uniqueResult()).toBigInteger();
-    }
-
-    @Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoBarra(String codigoBarra) {
 
