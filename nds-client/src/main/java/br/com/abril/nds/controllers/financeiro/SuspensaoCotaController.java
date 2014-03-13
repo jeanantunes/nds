@@ -25,6 +25,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -130,7 +131,7 @@ public class SuspensaoCotaController extends BaseController {
 		for(Cobranca cobranca : cobrancas) {
 			dividas.add(new DividaDTO(
 					DateUtil.formatarData(cobranca.getDataVencimento(), FORMATO_DATA), 
-					CurrencyUtil.formatarValor(cobranca.getValor())));
+					CurrencyUtil.formatarValorQuatroCasas(MathUtil.round(cobranca.getValor(), 4))));
 		}
 		result.use(Results.json()).from(dividas, "result").serialize();
 	}

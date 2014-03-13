@@ -11,7 +11,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 
 
@@ -35,10 +34,6 @@ public class RepartePDV {
 	@OneToOne
 	@JoinColumn(name = "PRODUTO_ID",nullable=false)
 	private Produto produto;
-	
-	@ManyToOne
-    @JoinColumn(name="FIXACAO_REPARTE_ID")
-    private FixacaoReparte fixacaoReparte;
 	
 	@ManyToOne
     @JoinColumn(name="MIX_COTA_PRODUTO_ID")
@@ -76,14 +71,6 @@ public class RepartePDV {
 		this.produto = produto;
 	}
 
-	public FixacaoReparte getFixacaoReparte() {
-		return fixacaoReparte;
-	}
-
-	public void setFixacaoReparte(FixacaoReparte fixacaoReparte) {
-		this.fixacaoReparte = fixacaoReparte;
-	}
-
 	public MixCotaProduto getMixCotaProduto() {
 		return mixCotaProduto;
 	}
@@ -91,7 +78,5 @@ public class RepartePDV {
 	public void setMixCotaProduto(MixCotaProduto mixCotaProduto) {
 		this.mixCotaProduto = mixCotaProduto;
 	}
-	
-	
 	
 }
