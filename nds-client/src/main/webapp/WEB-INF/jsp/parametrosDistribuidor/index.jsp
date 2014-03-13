@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
 <head>
 <style type="text/css">
@@ -84,97 +83,6 @@
     <fieldset class="fieldFiltro">
    	    <legend>Parâmetros do Distribuidor</legend>
         <div id="tabDistribuidor">
-=======
-<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
-<head>
-<style type="text/css">
-	#dialog-confirm{display:none;}
-	label{width:auto!important;}
-	#dialog-pesq-fornecedor fieldset {width:450px!important;}
-	.forncedoresSel{display:none;}
-	#dialog-pesq-fornecedor{display:none;}
-	.forncedores ul{margin:0px; padding:0px;}
-	.forncedores li{display:inline;}
-	.forncedoresSel, .editorSel {
-	    padding: 0px!important;
-	}
-	
-	body{
-	font-family: arial;
-	font-size: 11px;
-	color: #000;
-	background-color: #FFF;
-	margin: 0px;
-}
-</style>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.css"></link>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.image.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.link.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.table.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parametrosDistribuidor.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/endereco.js"></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/scripts/jquery.numeric.js'></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/operacaoDiferenciada.js"></script>
-
-
-<script type="text/javascript">
-	
-	parametrosDistribuidorController.init();
-	
-	var endereco = new Endereco("", "");
-	
-	endereco.preencherComboUF("${parametrosDistribuidor.endereco.uf}");
-	bloquearItensEdicao(parametrosDistribuidorController.workspace);
-</script>
-
-</head>
-
-<body>
-
-<form id="salvarParametrosDistribuidor">
-</form>
-
-<form action="<c:url value='/administracao/parametrosDistribuidor/salvarLogo' />" id="formParamentrosDistribuidor"
-	  method="post" enctype="multipart/form-data" >
-
-	<input type="hidden" name="formUploadAjax" value="true" />
-	
-	<input type="hidden" id="tipoEnderecoHidden"
-		   value="${parametrosDistribuidor.endereco.tipoEndereco}" />
-		   
-    <input type="hidden" id="regimeTributarioHidden"
-		   value="${parametrosDistribuidor.regimeTributario}" />
-		   
-    <input type="hidden" id="obrigacaoFiscalHidden"
-		   value="${parametrosDistribuidor.obrigacaoFiscal}" />
-		  
-	<input type="hidden" id="relancamentoParciaisEmDiasHidden"
-		   value="${parametrosDistribuidor.relancamentoParciaisEmDias}" />
-		   
-    <input type="hidden" id="impressaoInterfaceLEDHidden"
-		   value="${parametrosDistribuidor.impressaoInterfaceLED}" />
-		   
-    <input type="hidden" id="impressaoNECADANFEHidden"
-		   value="${parametrosDistribuidor.impressaoNECADANFE}" />
-	
-	<input type="hidden" id="impressaoCEHidden"
-		   value="${parametrosDistribuidor.impressaoCE}" />
-		   
-	<input type="hidden" id="hasLogotipoHidden"
-		   value="${hasLogotipo}" />
-		   
-	<div class="areaBts">
-		<div class="area">
-		    <span class="bt_novos" id="btnSalvar"><a href="javascript:;" onclick="parametrosDistribuidorController.popup_confirm();" rel="tipsy" title="Salvar Parâmetros do Distribuidor"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a></span>
-		</div>
-	</div>
-	<div class="linha_separa_fields">&nbsp;</div>
-    <fieldset class="fieldFiltro">
-   	    <legend>Parâmetros do Distribuidor</legend>
-        <div id="tabDistribuidor">
->>>>>>> DGBti/master
 			<ul>
 				<li><a href="#tabCadastro">Cadastro</a></li>
 				<li><a href="#tabOperacao">Operação</a></li>
