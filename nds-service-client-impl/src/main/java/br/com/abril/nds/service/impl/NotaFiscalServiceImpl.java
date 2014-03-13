@@ -120,7 +120,6 @@ import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.inf.portalfiscal.nfe.NfePreifixMapper;
 import br.inf.portalfiscal.nfe.util.Util;
 import br.inf.portalfiscal.nfe.util.XmlDomUtils;
 
@@ -657,8 +656,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			        
 					XmlDomUtils.removeUnusedNamespaces(document);
 					
-					marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper", new NfePreifixMapper());
-			        
 			        marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 			        
 			        marshaller.marshal(notaFiscal, document);
