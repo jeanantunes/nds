@@ -23,7 +23,7 @@ public interface NegociacaoDividaService {
 	
 	Long criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, BigDecimal valorDividaPagaComissao, 
 			List<Long> idsCobrancasOriginarias, Usuario usuarioResponsavel, boolean negociacaoAvulsa, Integer ativarCotaAposParcela,
-			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca, Long idBanco);
+			BigDecimal comissaoParaSaldoDivida, BigDecimal comissaoOriginalCota, boolean isentaEncargos, FormaCobranca formaCobranca, Long idBanco);
 	
 	Negociacao obterNegociacaoPorId(Long idNegociacao);
 	
@@ -44,5 +44,5 @@ public interface NegociacaoDividaService {
 	 */
 	Integer obterQuantidadeParcelasConformeValorMinimo(FiltroCalculaParcelas filtro);
 	
-	void abaterNegociacaoPorComissao(Long idCota, BigDecimal valorTotalEncalhe, Usuario usuario);
+	void abaterNegociacaoPorComissao(Long idCota, BigDecimal valorTotalReparte, BigDecimal valorTotalEncalhe, Usuario usuario);
 }

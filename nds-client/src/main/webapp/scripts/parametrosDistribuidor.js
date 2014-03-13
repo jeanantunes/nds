@@ -634,7 +634,16 @@ var parametrosDistribuidorController = $.extend(true, {
 		parametrosDistribuidorController.utilizaContratoCotasListener();
 		
 		
-		$("#tabDistribuidor", this.workspace).tabs();
+		$("#tabDistribuidor", this.workspace).tabs({
+			show: function(event,ui){
+				var btnSalvar = $('#btnSalvar', this.workspace);
+				if(ui.index == 2){
+					btnSalvar.hide();
+				}else{
+					btnSalvar.show();
+				}
+			}
+		});
 		
 		parametrosDistribuidorController.alternarControleAprovacao();
 		
