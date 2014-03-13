@@ -3,6 +3,7 @@ package br.com.abril.nds.service.builders;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Tributacao;
+import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
@@ -32,26 +34,26 @@ public class ItemNotaFiscalBuilder  {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(ItemNotaFiscalBuilder.class);
 
-	public static void montaItemNotaFiscal(NotaFiscal notaFiscal2, MovimentoEstoqueCota movimentoEstoqueCota) {
+	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, MovimentoEstoqueCota movimentoEstoqueCota, Map<String, TributoAliquota> tributoAliquota) {
 
 		ProdutoServico produtoServico = new ProdutoServico();
 		DetalheNotaFiscal detalheNotaFiscal = new DetalheNotaFiscal(produtoServico);
 		
-		if(notaFiscal2 == null) {
+		if(notaFiscal == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Objeto nulo.");
 		} else {
-			if(notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal() == null) {
-				notaFiscal2.getNotaFiscalInformacoes().setDetalhesNotaFiscal(new ArrayList<DetalheNotaFiscal>());
+			if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal() == null) {
+				notaFiscal.getNotaFiscalInformacoes().setDetalhesNotaFiscal(new ArrayList<DetalheNotaFiscal>());
 			}
 		}
 		
-		if(notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() == 0) {
+		if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() == 0) {
 			
-			montarItem(movimentoEstoqueCota, detalheNotaFiscal, notaFiscal2);
+			montarItem(movimentoEstoqueCota, detalheNotaFiscal, notaFiscal, tributoAliquota);
 			
 		} else {
 			
-			for(DetalheNotaFiscal dnf : notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
+			for(DetalheNotaFiscal dnf : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
 				
 				boolean notFound = true;
 
@@ -66,7 +68,7 @@ public class ItemNotaFiscalBuilder  {
 						
 						notFound = false;
 						
-						montarItem(movimentoEstoqueCota, detalheNotaFiscal, notaFiscal2);
+						montarItem(movimentoEstoqueCota, detalheNotaFiscal, notaFiscal, tributoAliquota);
 						
 					}
 					
@@ -74,7 +76,7 @@ public class ItemNotaFiscalBuilder  {
 				
 				if(notFound) {
 					
-					montarItem(movimentoEstoqueCota, detalheNotaFiscal, notaFiscal2);
+					montarItem(movimentoEstoqueCota, detalheNotaFiscal, notaFiscal, tributoAliquota);
 					
 				}
 			}
@@ -82,12 +84,12 @@ public class ItemNotaFiscalBuilder  {
 		
 		// popular os itens das notas fiscais
 		// notaFiscalItem.setNotaFiscal(notaFiscal2);
-		notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal().add(detalheNotaFiscal);
+		notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().add(detalheNotaFiscal);
 		
 	}
 
 	private static void montarItem(MovimentoEstoqueCota movimentoEstoqueCota,
-			DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal) {
+			DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal, Map<String, TributoAliquota> tributoAliquota) {
 		
 		detalheNotaFiscal.getProdutoServico().setCodigoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo());
 		detalheNotaFiscal.getProdutoServico().setDescricaoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getDescricao());
@@ -180,32 +182,27 @@ public class ItemNotaFiscalBuilder  {
 				ipi.getIPITrib().setValorIPI(CurrencyUtil.arredondarValorParaDuasCasas(t.getBaseCalculo()));
 				detalheNotaFiscal.getImpostos().setIpi(ipi);
 			}
-			
-			if("PIS".equals(t.getTributo())) {
-				detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
-				
-				PIS pis = new PIS();
-				
-				pis.setCst(Integer.valueOf(t.getCst().toString()));
-				pis.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
-				pis.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(t.getBaseCalculo()));
-				
-				detalheNotaFiscal.getImpostos().setPis(pis);
-			}
-			
-			if("COFINS".equals(t.getTributo())) {
-				detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
-				
-				COFINS cofins = new COFINS();
-				
-				cofins.setCst(Integer.valueOf(t.getCst().toString()));
-				cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
-				cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(t.getBaseCalculo()));
-				
-				detalheNotaFiscal.getImpostos().setCofins(cofins);
-			}
-			
 		}
+		
+		PIS pis = new PIS();
+		TributoAliquota tributoPis = tributoAliquota.get("PIS");
+		
+		// FIXME Ajustar CST
+		//pis.setCst(tributoPis.getTributo());
+		pis.setValor(detalheNotaFiscal.getProdutoServico().getValorTotalBruto().multiply(tributoPis.getValor().divide(BigDecimal.valueOf(100))));
+		pis.setValorBaseCalculo(tributoPis.getValor());
+		pis.setPercentualAliquota(tributoPis.getValor());
+		
+		COFINS cofins = new COFINS();		
+		TributoAliquota tributoCofins = tributoAliquota.get("COFINS");
+		// FIXME Ajustar CST
+		cofins.setValorAliquota(detalheNotaFiscal.getProdutoServico().getValorTotalBruto().multiply(tributoCofins.getValor().divide(BigDecimal.valueOf(100))));
+		cofins.setValorBaseCalculo(tributoCofins.getValor());
+		cofins.setPercentualAliquota(tributoCofins.getValor());
+		
+		detalheNotaFiscal.getImpostos().setPis(pis);
+		detalheNotaFiscal.getImpostos().setCofins(cofins);
+
 		
 		//FIXME: Ajustar o codigo Excessao do ipi
 		//detalheNotaFiscal.getProdutoServico().setExtipi(0L);

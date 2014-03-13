@@ -30,11 +30,12 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Transportador;
+import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalBase;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.CotaRepository;
@@ -277,6 +278,12 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
 		
+		Map<String, TributoAliquota> tributoAliquota = new HashMap<String, TributoAliquota>();
+		
+		for(TributoAliquota tributo : distribuidor.getRegimeTributario().getTributosAliquotas()){
+			tributoAliquota.put(tributo.getTributo().getNome(), tributo);
+		}
+		
 		for (Cota cota : cotas) {
 			
 			NotaFiscal notaFiscal = new NotaFiscal();
@@ -299,7 +306,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			filtro.setIdCota(cota.getId());
 			List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalNdsRepository.obterMovimentosEstoqueCota(filtro);
 			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
-				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota);
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
 			}
 			
 			//FIXME: Ajustar o valor do campo para valores parametrizados
@@ -321,6 +328,13 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoCotasNotafiscal(filtro);
 		notaFiscal.setUsuario(usuarioService.getUsuarioLogado());
 		
+		Map<String, TributoAliquota> tributoAliquota = new HashMap<String, TributoAliquota>();
+		
+		for(TributoAliquota tributo : distribuidor.getRegimeTributario().getTributosAliquotas()){
+			tributoAliquota.put(tributo.getTributo().getNome(), tributo);
+		}
+		
+		
 		NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
 		NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor, filtro);
 		EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, distribuidor);
@@ -333,7 +347,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			filtro.setIdCota(cota.getId());
 			List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalNdsRepository.obterMovimentosEstoqueCota(filtro);
 			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
-				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota);
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
 			}
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal, cota);
