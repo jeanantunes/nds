@@ -68,7 +68,7 @@ public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, Initia
 			transformList = newTransformList();
 		}
 		if (logger.isDebugEnabled()) {
-			StringBuilder debugMsg = new StringBuilder("Lista de transformacoes inclui algorotimos: ");
+			StringBuilder debugMsg = new StringBuilder("Lista de transformacoes inclui algoritmos: ");
 			for (Transform transform: transformList) {
 				debugMsg.append(transform.getAlgorithm()).append(" ");
 			}
@@ -77,7 +77,7 @@ public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, Initia
 		if (digestMethod==null) {
 			digestMethod = signatureFactory.newDigestMethod(DigestMethod.SHA1, null);
 		}
-		logger.debug("Algorotimo do metodo digest {}", digestMethod.getAlgorithm());
+		logger.debug("Algoritmo do metodo digest {}", digestMethod.getAlgorithm());
 	}
 	
 	protected List<Transform> newTransformList() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
