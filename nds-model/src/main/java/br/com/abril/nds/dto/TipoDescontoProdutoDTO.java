@@ -39,6 +39,8 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	
 	private Integer qtdeProxLcmt;
 	
+	private Integer qtdeProxLcmtAtual;
+	
 	private Integer qtdeCotas;
 	
 	private boolean excluivel;
@@ -193,5 +195,13 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	public void setQtdeCotas(BigInteger qtdeCotas) {
 		this.qtdeCotas = (qtdeCotas == null) ? null : qtdeCotas.intValue();
 	}
+
+    public Integer getQtdeProxLcmtAtual() {
+        return qtdeProxLcmtAtual;
+    }
+
+    public void setQtdeProxLcmtAtual(Integer qtdeProxLcmtAtual) {
+        this.qtdeProxLcmtAtual = qtdeProxLcmtAtual;
+    }
 
 }

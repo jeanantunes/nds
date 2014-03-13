@@ -175,7 +175,7 @@ public class DescontoServiceImpl implements DescontoService {
 			c1.set(Calendar.SECOND, 1);
 			c1.set(Calendar.MILLISECOND, 0);
 			
-			if(c1.before(dataOperacao) || (desconto != null && desconto.isUsado()) ) {
+			if(isExclusaoBloqueada(c1.before(dataOperacao), desconto, tdp) ) {
 				tdp.setExcluivel(false);
 			} else {
 				tdp.setExcluivel(true);
@@ -185,7 +185,24 @@ public class DescontoServiceImpl implements DescontoService {
 		return historicoDesconto;
 	}
 
-	@Override
+	private boolean isExclusaoBloqueada(boolean alteradoNaDiaAtualOP, Desconto desconto, TipoDescontoProdutoDTO tdp) {
+       	
+	    if(tdp.getQtdeProxLcmt() == null) {
+    	    
+    	    if(alteradoNaDiaAtualOP|| desconto != null && desconto.isUsado())
+    	        return true;	    
+    	    else
+    	        return false;
+	    }
+	    
+	    if(tdp.getQtdeProxLcmtAtual().equals(0))
+	        return true;
+	            	    
+	    return false;
+
+    }
+
+    @Override
 	@Transactional(readOnly=true)
 	public Integer buscarQuantidadeTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
 
@@ -586,7 +603,7 @@ public class DescontoServiceImpl implements DescontoService {
 				descontoProximosLancamentos.setDataInicioDesconto(dataAtual);
 				descontoProximosLancamentos.setProduto(produto);
 				descontoProximosLancamentos.setQuantidadeProximosLancamaentos(descontoDTO.getQuantidadeEdicoes());
-				descontoProximosLancamentos.setQuantidadeProximosLancamaentosOriginal(descontoDTO.getQuantidadeEdicoes());
+				descontoProximosLancamentos.setQuantidadeProximosLancamentosOriginal(descontoDTO.getQuantidadeEdicoes());
 				descontoProximosLancamentos.setValorDesconto(desconto.getValor());
 				descontoProximosLancamentos.setDesconto(desconto);
 				descontoProximosLancamentos.setAplicadoATodasAsCotas(descontoDTO.isTodasCotas());
@@ -1005,15 +1022,37 @@ public class DescontoServiceImpl implements DescontoService {
 
 		Desconto desconto = descontoRepository.buscarPorId(idDesconto);
 
-		validarExclusaoDesconto(desconto);
+		List<Long> idsDescontoProximosLancamento = descontoRepository.buscarProximosLancamentosQueUsamDescontoProduto(desconto);
+		
+		if(idsDescontoProximosLancamento.isEmpty())
+		    validarExclusaoDesconto(desconto);
 		
 		List<Long> idsProdutosEdicao = descontoRepository.buscarProdutosEdicoesQueUsamDescontoProduto(desconto);
 		
 		List<Long> idsProduto = descontoRepository.buscarProdutosQueUsamDescontoProduto(desconto);
 		
-		List<Long> idsDescontoProximosLancamento = descontoRepository.buscarProximosLancamentosQueUsamDescontoProduto(desconto);
-		
 		FiltroConsultaHistoricoDescontoDTO filtroConsultaHistorico = new FiltroConsultaHistoricoDescontoDTO();
+		
+		if(idsDescontoProximosLancamento!=null && !idsDescontoProximosLancamento.isEmpty()) {
+            
+            for(Long dpl : idsDescontoProximosLancamento) {
+                
+                DescontoProximosLancamentos descProximo = descontoProximosLancamentosRepository.buscarPorId(dpl);
+                
+                boolean utilizado = descProximo.getDesconto().isUsado();
+                Integer qtdProximosOriginal =  descProximo.getQuantidadeProximosLancamentosOriginal();
+                Integer qtdProximosAtual =  descProximo.getQuantidadeProximosLancamaentos();
+                
+                if(!utilizado)
+                    descontoProximosLancamentosRepository.remover(descProximo);
+                else {
+                    descProximo.setQuantidadeProximosLancamentosOriginal(qtdProximosOriginal - qtdProximosAtual);
+                    descProximo.setQuantidadeProximosLancamaentos(0);
+                    descontoProximosLancamentosRepository.merge(descProximo);
+                }
+            }
+            
+        }
 		
 		if(!desconto.isUsado()) {
 			
@@ -1067,14 +1106,6 @@ public class DescontoServiceImpl implements DescontoService {
 
 			}
 			
-			if(idsDescontoProximosLancamento!=null && !idsDescontoProximosLancamento.isEmpty()) {
-
-				for(Long dpl : idsDescontoProximosLancamento) {
-					descontoProximosLancamentosRepository.remover(descontoProximosLancamentosRepository.buscarPorId(dpl));
-				}
-				
-			}
-			
 			Set<DescontoCotaProdutoExcessao> dcpe = 
 				this.descontoProdutoEdicaoExcessaoRepository.obterDescontoProdutoEdicaoExcessao(
 					null, desconto, null, null, null);
@@ -1108,45 +1139,36 @@ public class DescontoServiceImpl implements DescontoService {
         Validate.notNull(produtoEdicao, "Edição do produto não deve ser nula!");
         
         Desconto desconto = null;
+    
+        desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, idCota, produtoEdicao);
+
+        if (desconto == null) {
         
-        //if (produtoEdicao.getProduto().isPublicacao()) {
-
-            desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, idCota, produtoEdicao);
-
-            if (desconto == null) {
+        	String produtoEdicaoSemDesconto = "";
             
-            	String produtoEdicaoSemDesconto = "";
-                
-                if (produtoEdicao != null && produtoEdicao.getProduto() != null) {
-                
-                	produtoEdicaoSemDesconto = produtoEdicao.getProduto().getNome();
-                }
-                
-                if (produtoEdicao != null) {
-                	
-                produtoEdicaoSemDesconto += " / Edição: " + produtoEdicao.getNumeroEdicao();
-                }
-            	
-            	ValidacaoVO validacaoVO = 
-                    new ValidacaoVO(
-                    	TipoMensagem.ERROR, 
-                    "Não existe desconto cadastrado para o Produto: "
-                    			+ produtoEdicaoSemDesconto);
-            	
-            	throw new ValidacaoException(validacaoVO);
+            if (produtoEdicao != null && produtoEdicao.getProduto() != null) {
+            
+            	produtoEdicaoSemDesconto = produtoEdicao.getProduto().getNome();
             }
             
-            desconto.setUsado(true);
-            
-            descontoRepository.alterar(desconto);
-            
-        /*} else {
-
-        	desconto = new Desconto();
+            if (produtoEdicao != null) {
+            	
+            produtoEdicaoSemDesconto += " / Edição: " + produtoEdicao.getNumeroEdicao();
+            }
         	
-            desconto.setValor(produtoEdicao.getProduto().getDesconto());
-        }*/
+        	ValidacaoVO validacaoVO = 
+                new ValidacaoVO(
+                	TipoMensagem.ERROR, 
+                "Não existe desconto cadastrado para o Produto: "
+                			+ produtoEdicaoSemDesconto);
+        	
+        	throw new ValidacaoException(validacaoVO);
+        }
         
+        desconto.setUsado(true);
+        
+        descontoRepository.alterar(desconto);
+          
         return desconto;
     }
 	

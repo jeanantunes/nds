@@ -52,6 +52,7 @@ import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
+import br.com.abril.nds.repository.DescontoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoFilaRepository;
@@ -106,9 +107,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     
     @Autowired
     private DescontoService descontoService;
+   
+    @Autowired
+    private DescontoRepository descontoRepository;
     
     @Autowired
-    DescontoProximosLancamentosRepository descontoProximosLancamentosRepository;
+    private DescontoProximosLancamentosRepository descontoProximosLancamentosRepository;
     
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -266,8 +270,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 Integer quantidadeProximosLancamaentos = 
                     descontoProximosLancamentos.getQuantidadeProximosLancamaentos();
                 
-                descontoProximosLancamentos.setQuantidadeProximosLancamaentos(
-                    --quantidadeProximosLancamaentos);
+                descontoProximosLancamentos.setQuantidadeProximosLancamaentos(quantidadeProximosLancamaentos - 1);
+                
+                Desconto desconto = descontoProximosLancamentos.getDesconto();
+                
+                desconto.setUsado(true);
+                
+                descontoRepository.merge(desconto);
                 
                 descontoProximosLancamentosRepository.merge(descontoProximosLancamentos);
             }
