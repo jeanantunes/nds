@@ -14,6 +14,8 @@ public class GrupoCotaDTO implements Serializable {
 	private Long idGrupo;
 	private String nome;
 	private String recolhimento;
+	private String dataInicioVigencia;
+	private String dataFimVigencia;
 	private TipoGrupo tipoGrupo;
 	private TipoCaracteristicaSegmentacaoPDV tipoCota;
 	private List<DiaSemana> diasSemana;
@@ -127,6 +129,38 @@ public class GrupoCotaDTO implements Serializable {
 	public void setSelecionados(List<Long> selecionados) {
 		this.selecionados = selecionados;
 	}
+
+    
+    /**
+     * @return the dataInicioVigencia
+     */
+    public String getDataInicioVigencia() {
+        return dataInicioVigencia;
+    }
+
+    
+    /**
+     * @param dataInicioVigencia the dataInicioVigencia to set
+     */
+    public void setDataInicioVigencia(String dataInicioVigencia) {
+        this.dataInicioVigencia = dataInicioVigencia;
+    }
+
+    
+    /**
+     * @return the dataFimVigencia
+     */
+    public String getDataFimVigencia() {
+        return dataFimVigencia;
+    }
+
+    
+    /**
+     * @param dataFimVigencia the dataFimVigencia to set
+     */
+    public void setDataFimVigencia(String dataFimVigencia) {
+        this.dataFimVigencia = dataFimVigencia;
+    }
 	
 	
 }

@@ -452,7 +452,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 			Integer numeroCota, 
 			Long produtoEdicaoId ){
 		
-		boolean indCotaOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota);
+		boolean indCotaOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacaoConferencia);
 		
 		Date dataPrimeiroDiaRecolhimento = null;
 		

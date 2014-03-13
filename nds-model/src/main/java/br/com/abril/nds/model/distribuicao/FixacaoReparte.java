@@ -2,17 +2,21 @@ package br.com.abril.nds.model.distribuicao;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
@@ -64,6 +68,9 @@ public class FixacaoReparte {
 	
 	@Column(name="MANTER_FIXA")
 	private Boolean manterFixa = false;
+	
+	@Column(name="DATA_FIXA_CADASTRO_FIXACAO")
+	private Date dataFixa;
 	
 	public Long getId() {
 		return id;
@@ -185,4 +192,13 @@ public class FixacaoReparte {
     public void setClassificacaoProdutoEdicao(TipoClassificacaoProduto classificacaoProdutoEdicao) {
         this.classificacaoProdutoEdicao = classificacaoProdutoEdicao;
     }
+
+	public Date getDataFixa() {
+		return dataFixa;
+	}
+
+	public void setDataFixa(Date dataFixa) {
+		this.dataFixa = dataFixa;
+	}
+    
 }
