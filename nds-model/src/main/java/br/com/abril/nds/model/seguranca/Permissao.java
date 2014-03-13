@@ -315,6 +315,9 @@ public enum Permissao {
 	ROLE_MOVIMENTO_FINANCEIRO_COTA_ALTERACAO("Processamento Financeiro",                                	Permissao.ROLE_FINANCEIRO, true), 
 	ROLE_MOVIMENTO_FINANCEIRO_COTA("Processamento Financeiro",                                	 	   	    Permissao.ROLE_FINANCEIRO, ROLE_MOVIMENTO_FINANCEIRO_COTA_ALTERACAO, true, null),
 	
+	ROLE_FINANCEIRO_P3_ALTERACAO("Extração relatório P3", 													Permissao.ROLE_FINANCEIRO, true),
+	ROLE_FINANCEIRO_P3("Extração relatório P3",																Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_P3_ALTERACAO, true, null),
+
 	ROLE_FINANCEIRO_HELP_ALTERACAO("Help",           														Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_HELP("Help",           															 	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_HELP_ALTERACAO, true, null),
 	
