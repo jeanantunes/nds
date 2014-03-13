@@ -35,7 +35,7 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 	private EstudoAlgoritmoService estudoAlgoritmoService;
 
 	@Override
-	public void executar(EstudoTransient estudo) throws Exception {
+	public void executar(EstudoTransient estudo)  {
 		// copia lista para não afetar o loop após modificações.
 		List<ProdutoEdicaoEstudo> edicoes = new ArrayList<ProdutoEdicaoEstudo>(estudo.getEdicoesBase());
 
@@ -58,7 +58,7 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 		}
 	}
 
-	private void adicionarEdicoesAnterioresAoEstudo(ProdutoEdicaoEstudo produtoEdicaoBase, EstudoTransient estudo) throws Exception {
+	private void adicionarEdicoesAnterioresAoEstudo(ProdutoEdicaoEstudo produtoEdicaoBase, EstudoTransient estudo)  {
 		List<ProdutoEdicaoEstudo> edicoesAnosAnteriores = estudoAlgoritmoService.buscaEdicoesAnosAnterioresVeraneio(produtoEdicaoBase);
 		if (edicoesAnosAnteriores.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontradas outras bases para veraneio, favor inserir bases manualmente."));

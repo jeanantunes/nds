@@ -497,9 +497,9 @@ public class ParametrosDistribuidorController extends BaseController {
      * Busca todos os Grupos de Cota
      */
     @Post
-    public void obterGrupos(final String sortname, final String sortorder) {
+    public void obterGrupos(final String sortname, final String sortorder, boolean includeHistory) {
         
-        final List<GrupoCotaDTO> grupos = grupoService.obterTodosGrupos(sortname, sortorder);
+        final List<GrupoCotaDTO> grupos = grupoService.obterTodosGrupos(sortname, sortorder, includeHistory);
         
         result.use(FlexiGridJson.class).from(grupos).page(1).total(grupos.size()).serialize();
         

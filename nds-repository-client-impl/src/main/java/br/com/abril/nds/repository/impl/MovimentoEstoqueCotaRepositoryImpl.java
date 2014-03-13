@@ -225,17 +225,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         hql.append(" produtoEdicao.id as idProdutoEdicao,	");
         hql.append(" cota.id as idCota,						");
-        hql.append(" sum(mec.qtde) as qtde,					");
+        hql.append(" sum(conferenciaEncalhe.qtde) as qtde,	");
         hql.append(" chamadaEncalhe.id as idChamadaEncalhe ");
         
         hql.append(" from ConferenciaEncalhe conferenciaEncalhe	");
         
-        hql.append(" inner join conferenciaEncalhe.movimentoEstoqueCota mec		");
-        hql.append(" inner join mec.cota as cota 								");
-        hql.append(" inner join mec.produtoEdicao as produtoEdicao 				");
-        hql.append(" inner join conferenciaEncalhe.controleConferenciaEncalheCota controlConfEncalheCota");
+        hql.append(" inner join conferenciaEncalhe.produtoEdicao produtoEdicao 				");
+        hql.append(" inner join conferenciaEncalhe.controleConferenciaEncalheCota controlConfEncalheCota ");
         hql.append(" inner join conferenciaEncalhe.chamadaEncalheCota chamadaEncalheCota ");
         hql.append(" inner join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+        hql.append(" inner join controlConfEncalheCota.cota cota ");
         
         hql.append(" where ");
         

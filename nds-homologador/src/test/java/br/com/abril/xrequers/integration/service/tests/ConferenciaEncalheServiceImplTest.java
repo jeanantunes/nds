@@ -47,7 +47,7 @@ public class ConferenciaEncalheServiceImplTest extends AbstractJUnit4SpringConte
         
         when(this.distribuidorService.inicioSemana()).thenReturn(DiaSemana.QUARTA_FEIRA);
         
-        when(this.grupoRepository.obterDiasOperacaoDiferenciadaCota(Matchers.anyInt())).thenReturn(listaDiasSemana);
+        when(this.grupoRepository.obterDiasOperacaoDiferenciadaCota(Matchers.anyInt(), new Date())).thenReturn(listaDiasSemana);
         
         
     }

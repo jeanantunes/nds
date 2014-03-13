@@ -251,6 +251,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         final Query query  = getSession().createQuery(sql.toString());
         query.setParameter("cotaSelecionada",  cota);
         
+        query.executeUpdate();
     }
     
     @Override

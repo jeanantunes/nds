@@ -223,6 +223,21 @@ public class SemanaUtil {
 		return dataInicioSemana;
 	}
 	
+	public static Date obterDataInicioProximaSemana(Integer diaInicioSemana, Date data) {
+        
+        int numeroAnoSemana =
+            obterAnoNumeroSemana(data, diaInicioSemana);
+
+        Integer anoBase = getAno(numeroAnoSemana);
+        
+        Integer numeroSemana = getSemana(numeroAnoSemana);
+        
+        Date dataInicioSemana =
+            obterDataDaSemanaNoAno(++numeroSemana, diaInicioSemana, anoBase);
+        
+        return dataInicioSemana;
+    }
+	
 	/**
 	 * Retorna o código do dia da semana de uma determinada data.
 	 * 

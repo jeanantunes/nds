@@ -1819,6 +1819,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 					
 					break;
 
+				case ALTERACAO_REPARTE_PARA_SUPLEMENTAR:
+
+				    novoTipoDiferenca = TipoDiferenca.PERDA_EM;
+                    
+                    break;
+                    
 				default:
 					
                 throw new RuntimeException("Tipo de Diferença não identificado");

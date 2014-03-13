@@ -662,8 +662,7 @@ public class ProdutoEdicaoController extends BaseController {
             if (maiorDataLancamento != null && dto.getDataLancamentoPrevisto() != null
 					&& dto.getDataLancamentoPrevisto().compareTo(maiorDataLancamento) <= 0) {
 				
-				listaMensagens.add(
-"Não é possível cadastrar uma redistribuição com data igual ou inferior ao lançamento!");
+            	 listaMensagens.add("Já existe redistribuição cadastrada nessa data!");
 			}
 		}
 		

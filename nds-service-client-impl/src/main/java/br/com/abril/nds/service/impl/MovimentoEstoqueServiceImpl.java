@@ -612,9 +612,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		TipoEstoque tipoEstoque = eFila.getTipoEstoque();
 		
-//		Long idEstoqueProduto = estoqueProdutoRespository.selectForUpdate(idProdutoEdicao);
-//		EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarPorId(idEstoqueProduto);
-		
 		EstoqueProduto estoqueProduto = estoqueProdutoRespository.obterEstoqueProdutoParaAtualizar(idProdutoEdicao);
 		
 		BigInteger novaQuantidade = BigInteger.ZERO;
@@ -643,6 +640,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	                qtdeSuplementar.subtract(eFila.getQtde());
 	            
 	            estoqueProduto.setQtdeSuplementar(novaQuantidade);
+	            
+	            break;
 	            
 	        default :
 	        	

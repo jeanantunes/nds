@@ -394,33 +394,28 @@ public class DividaServiceImpl implements DividaService {
 	@Override
 	@Transactional(readOnly=true)
 	public DividaComissaoDTO obterDadosDividaComissao(Long idDivida) {
-		Divida divida = dividaRepository.buscarPorId(idDivida);
-		Cobranca cobranca = divida.getCobranca();
 
-		Negociacao negociacao = negociacaoRepository.obterNegociacaoPorCobranca(cobranca.getId());
-		
+		Negociacao negociacao = negociacaoRepository.obterNegociacaoPorDivida(idDivida);
+
 		if(negociacao == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há negociação associada a essa dívida");
 		}
 		
-		BigDecimal valorResidual = negociacao.getValorDividaPagaComissao();
+		BigDecimal valorOriginal = negociacao.getValorOriginal();
 		
-		if(valorResidual == null) {
+		if(valorOriginal == null) {
 			
-			valorResidual = BigDecimal.ZERO;
-		}
-		
-		BigDecimal valorOriginal = BigDecimal.ZERO;
-		
-		for(Cobranca c : negociacao.getCobrancasOriginarias()) {
-			
-			valorOriginal = valorOriginal.add(c.getValor());
+			valorOriginal = BigDecimal.ZERO;
 		}
 		
 		BigDecimal valorPago = 
 			this.negociacaoRepository.obterValorPagoDividaNegociadaComissao(
 				negociacao.getId());
+		
+		valorPago = valorPago == null ? BigDecimal.ZERO : valorPago;
+		
+		BigDecimal valorResidual = valorOriginal.subtract(valorPago);
 		
 		DividaComissaoDTO resultado = new DividaComissaoDTO();
 		resultado.setPorcentagem(CurrencyUtil.formatarValor(negociacao.getComissaoParaSaldoDivida()));
