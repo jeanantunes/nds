@@ -278,20 +278,25 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	private void statusPermitido(StatusLancamento status) {
 		switch (status) {
 		
-		case CONFIRMADO:
-		case FECHADO:
-            throw new ValidacaoException(TipoMensagem.WARNING, "Não permitido a fixação devido ao status das edições.");
-			
-		case BALANCEADO:
-		case BALANCEADO_RECOLHIMENTO:
-		case CANCELADO:
-		case EM_BALANCEAMENTO:
-		case EM_BALANCEAMENTO_RECOLHIMENTO:
-		case ESTUDO_FECHADO:
-		case EXPEDIDO:
-		case FURO:
 		case PLANEJADO:
+			break;
+		case CONFIRMADO:
+			break;
+		case EM_BALANCEAMENTO:
+			break;
+		case BALANCEADO:
+			break;
+
+		case EXPEDIDO:
+		case CANCELADO:
+		case ESTUDO_FECHADO:
+		case EM_BALANCEAMENTO_RECOLHIMENTO:
+		case BALANCEADO_RECOLHIMENTO:
+		case FURO:
+		case EM_RECOLHIMENTO:
 		case RECOLHIDO:
+		case FECHADO:
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não permitido a fixação devido ao status das edições.");
 			
 		default:
 			break;
