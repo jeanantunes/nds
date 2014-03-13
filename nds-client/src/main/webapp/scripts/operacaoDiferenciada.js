@@ -382,21 +382,27 @@ var OperacaoDiferenciadaController = $.extend(true, {
 
 	dialogExcluirGrupo : function(index) {
 		
-		$( "#dialog-confirm-grupo", OperacaoDiferenciadaController.workspace ).dialog({
-			resizable: false,
-			height:'auto',
-			width:400,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					OperacaoDiferenciadaController.excluirGrupo(index);				
+		$.get(contextPath + '/administracao/parametrosDistribuidor/obterDataEfetivacao', function(result){
+			$('#dataEfetivacao',  OperacaoDiferenciadaController.workspace ).html(result.dataEfetivacao);
+			console.log(result);
+			$( "#dialog-confirm-grupo", OperacaoDiferenciadaController.workspace ).dialog({
+				resizable: false,
+				height:'auto',
+				width:400,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						OperacaoDiferenciadaController.excluirGrupo(index);				
+					},
+					"Cancelar": function() {
+						$( this, OperacaoDiferenciadaController.workspace ).dialog( "close" );
+					}
 				},
-				"Cancelar": function() {
-					$( this, OperacaoDiferenciadaController.workspace ).dialog( "close" );
-				}
-			},
-			form: $("#dialog-confirm-grupo", OperacaoDiferenciadaController.workspace).parents("form")
+				form: $("#dialog-confirm-grupo", OperacaoDiferenciadaController.workspace).parents("form")
+			});
 		});
+		
+		
 	},
 	
 	inicializarGrids : function() {

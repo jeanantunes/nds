@@ -16,7 +16,7 @@ public interface GrupoService {
  
 	/**
 	 * Obtém todos os Grupos
-	 * @param includeHistory TODO
+	 * @param includeHistory 
 	 * @return List<GrupoCota> grupos
 	 */
 	List<GrupoCotaDTO> obterTodosGrupos(String sortname, String sortorder, boolean includeHistory) ;
@@ -92,6 +92,8 @@ public interface GrupoService {
 
 	
 	Integer countTodosGrupos(Date dataOperacao);
+
+    public abstract Date getDataInicioProximaSemanaSemCE();
 
 
 
