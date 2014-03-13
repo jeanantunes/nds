@@ -510,7 +510,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 									
 								}else{
 									
-									//buscar qntd de edições
 									BigInteger qtdEdicoesPosteriores = fixacaoReparteRepository.qntdEdicoesPosterioresAolancamento(verificadorLcmtXFixacao.getCodICDFixacao(), fixacao.getDataFixa());
 									
 									if(qtdEdicoesPosteriores.intValue() <= fixacao.getQtdeEdicoes()){

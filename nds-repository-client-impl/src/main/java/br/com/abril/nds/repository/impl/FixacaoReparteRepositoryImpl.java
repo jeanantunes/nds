@@ -491,7 +491,6 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		
 		StringBuilder sql = new StringBuilder("");
 		
-//		sql.append(" select hl.LANCAMENTO_ID from historico_lancamento hl where Date(hl.DATA_EDICAO) = :data ");
 		sql.append(" select lc.ID from lancamento lc join expedicao ex on lc.EXPEDICAO_ID = ex.ID where Date(ex.DATA_EXPEDICAO)= :data ");
 		
 		Query query = getSession().createSQLQuery(sql.toString());

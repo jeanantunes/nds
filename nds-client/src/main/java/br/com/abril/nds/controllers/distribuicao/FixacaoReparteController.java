@@ -119,26 +119,6 @@ public class FixacaoReparteController extends BaseController {
 	public void fixacaoReparte(){
 		result.include("classificacao",fixacaoReparteService.obterClassificacoesProduto());
 		
-
-		String str = "25/02/2014";  
-		  
-		SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy");  
-		
-		Date data;
-		
-		try {
-			data = formatador.parse(str);  
-			fixacaoReparteService.verificarFixacao(data);
-		} catch (Exception e) {
-			e.getStackTrace();
-		}
-		
-		
-//		Date dataIn = new SimpleDateFormat().
-		
-//		Date dataInicial = new DateTime(25/02/2014).toDate();
-		
-		
 	}
 
 
