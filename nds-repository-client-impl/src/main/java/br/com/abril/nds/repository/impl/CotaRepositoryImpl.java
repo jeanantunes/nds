@@ -53,6 +53,7 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -244,10 +245,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
                                                 " AND MOVIMENTOCOTA.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
         
         final StringBuilder hqlDividaAcumulada = new StringBuilder();
-        hqlDividaAcumulada.append(" SELECT SUM(round(COALESCE(D.VALOR,0), 2)) ").append("	FROM DIVIDA D ").append(
-                " JOIN COBRANCA c on (c.DIVIDA_ID=d.ID) ").append("	WHERE D.COTA_ID = COTA_.ID ").append(
-                        " AND c.DT_PAGAMENTO is null ").append("	AND D.STATUS in (:statusDividaEmAbertoPendente) ").append(
-                                "	AND C.DT_VENCIMENTO < :dataOperacao ");
+        hqlDividaAcumulada.append(" SELECT SUM(COALESCE(D.VALOR,0)) ")
+                          .append("	FROM DIVIDA D ")
+                          .append(" JOIN COBRANCA c on (c.DIVIDA_ID=d.ID) ")
+                          .append("	WHERE D.COTA_ID = COTA_.ID ")
+                          .append(" AND c.DT_PAGAMENTO is null ")
+                          .append("	AND D.STATUS in (:statusDividaEmAbertoPendente) ")
+                          .append("	AND C.DT_VENCIMENTO < :dataOperacao ");
         
         final StringBuilder sql = new StringBuilder();
         
@@ -297,7 +301,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         .append("		(SELECT ")
         .append("			MIN(COBRANCA_.DT_VENCIMENTO) FROM COBRANCA COBRANCA_")
         .append("		WHERE COBRANCA_.COTA_ID=COTA_.ID  ")
-        .append("		AND COBRANCA_.STATUS_COBRANCA='NAO_PAGO' ) AS DATAABERTURA ");
+        .append("		AND COBRANCA_.STATUS_COBRANCA= :statusCobrancaNaoPago ) AS DATAABERTURA ");
         
         this.setFromWhereCotasSujeitasSuspensao(sql);
         
@@ -310,7 +314,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         sql.append(" join ESTUDO_COTA ec_ on (ec_.cota_ID=geral.IDCOTA) ")
         .append(" join ESTUDO e_ on ec_.ESTUDO_ID = e_.ID ")
-        .append(" left join LANCAMENTO lancamento_ on (e_.PRODUTO_EDICAO_ID = lancamento_.PRODUTO_EDICAO_ID and e_.ID = lancamento_.ESTUDO_ID AND lancamento_.DATA_LCTO_DISTRIBUIDOR=:dataOperacao) ")
+        .append(" join LANCAMENTO lancamento_ on (e_.PRODUTO_EDICAO_ID = lancamento_.PRODUTO_EDICAO_ID and e_.ID = lancamento_.ESTUDO_ID AND lancamento_.DATA_LCTO_DISTRIBUIDOR=:dataOperacao) ")
         .append(" join PRODUTO_EDICAO pe_ on e_.PRODUTO_EDICAO_ID = pe_.ID ");
         
         sql.append(" WHERE (lancamento_.STATUS is null OR lancamento_.STATUS not in (:status))  ").append(
@@ -336,6 +340,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setParameterList("tipoMovimentoEstorno", new String[]{GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name()});
         query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
         query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO.name());
+        query.setParameter("statusCobrancaNaoPago", StatusCobranca.NAO_PAGO.name());
         
         final int intervalo = 35;
         query.setParameter("intervalo", intervalo);
