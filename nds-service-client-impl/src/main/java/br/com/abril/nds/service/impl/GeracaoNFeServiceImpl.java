@@ -211,24 +211,33 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			case COTA:
 			case DISTRIBUIDOR:
 				
-				if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+				if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+					
 					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
-				} else{
+					
+				} else {
 					//
 					boolean notaGerada = false;
-					for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()){
-						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
-							if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)){									
+					
+					for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+							if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {									
 								throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
 							}
 							
-							this.gerarNotaFiscalUnificada(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
+							if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS)) {			
+								this.gerarNotaFiscalUnificada(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
+							} else {
+								this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
+							}
+							
 							notaGerada = true;
 							break;
 						}
 					}
-					if(!notaGerada){
-						throw new ValidacaoException(TipoMensagem.ERROR, "Natureza de Operação não encontrada pelo distribuidor");
+					
+					if(!notaGerada) {
+						throw new ValidacaoException(TipoMensagem.ERROR, "Natureza de Operação não está configurada adequadamente para o Regime Especial.");
 					}
 				}
 				
@@ -256,6 +265,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "FTF gerado");
 		} else {
+			
 			this.notaFiscalService.exportarNotasFiscais(notas);
 		}
 		

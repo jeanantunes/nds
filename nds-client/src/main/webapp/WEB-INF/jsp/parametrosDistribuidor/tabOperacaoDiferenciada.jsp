@@ -16,8 +16,8 @@
 	<div id="dialog-confirm-grupo" title="Excluir Grupo" style="display:none;">
 		<fieldset style="width:350px!important;">
 	  		<legend>Confirmação</legend>
+	  		 <p>Aten&ccedil;&atilde;o: A exclus&atilde;o deste grupo somente ser&aacute; efetiva em <span id="dataEfetivacao"/>.</p>
 	        <p>Confirma a exclusão deste Grupo?</p>
-	        
 	    </fieldset>
 	</div>
 
@@ -49,6 +49,7 @@
 						</td>
 					</tr>
 				</table>
+				<p>Aten&ccedil;&atilde;o: a inclus&atilde;o/edi&ccedil;&atilde;o de grupo somente ser&aacute; efetiva apenas para a pr&oacute;xima senama sem Chamada de Encalhe.</p>
 			</fieldset>
 		</div>
 

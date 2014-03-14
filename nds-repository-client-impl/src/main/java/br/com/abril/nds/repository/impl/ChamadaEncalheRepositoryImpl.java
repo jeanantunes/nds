@@ -12,8 +12,11 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.DateType;
@@ -1157,6 +1160,17 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 		return new ArrayList<CotaProdutoEmissaoCEDTO>(query.list());
+	}
+	
+
+	@Override
+    public Date obterMaxDataRecolhimento(final TipoChamadaEncalhe tipoChamadaEncalhe){
+	    final Criteria criteria = getSession().createCriteria(ChamadaEncalhe.class);
+	    
+	    criteria.add(Restrictions.eq("tipoChamadaEncalhe", tipoChamadaEncalhe));
+	    criteria.setProjection(Projections.max("dataRecolhimento"));
+	    
+	    return (Date) criteria.uniqueResult();
 	}
 	
 }

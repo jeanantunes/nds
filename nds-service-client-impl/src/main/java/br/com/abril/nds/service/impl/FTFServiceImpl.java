@@ -69,7 +69,8 @@ public class FTFServiceImpl implements FTFService {
 		}
 		
 		FTFEnvTipoRegistro00 regTipo00 = ftfRepository.obterRegistroTipo00(idNaturezaOperacao);
-		FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(idNaturezaOperacao);
+		//FIXME: ajustar se estiver certo
+		FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(notas.get(0).getId());
 		FTFEnvTipoRegistro09 regTipo09 = ftfRepository.obterRegistroTipo09(idNaturezaOperacao);
 		
 		list.add(regTipo00);
@@ -84,13 +85,15 @@ public class FTFServiceImpl implements FTFService {
 			ftfEnvTipoRegistro01.setItemNFList(obterResgistroTipo02);
 			
 			FTFEnvTipoRegistro06 regTipo06 = ftfRepository.obterRegistroTipo06(idNF);
-			ftfEnvTipoRegistro01.setRegTipo06(regTipo06);
+			if(regTipo06 != null)
+				ftfEnvTipoRegistro01.setRegTipo06(regTipo06);
 		}
 		
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
 			list.add(ftfEnvTipoRegistro01);
 			list.addAll(ftfEnvTipoRegistro01.getItemNFList());
-			list.add(ftfEnvTipoRegistro01.getRegTipo06());
+			if(ftfEnvTipoRegistro01.getRegTipo06() != null)
+				list.add(ftfEnvTipoRegistro01.getRegTipo06());
 		}
 		
 		String totalPedidos = Integer.toString(listTipoRegistro01Cadastrados.size());
