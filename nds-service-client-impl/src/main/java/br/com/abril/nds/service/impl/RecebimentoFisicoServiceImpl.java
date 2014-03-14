@@ -387,7 +387,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	@Transactional
 	public List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
 		
-		return tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
+		return tipoNotaFiscalRepository.obterNaturezasOperacoes(tipoOperacao);
 		
 	}
 	
@@ -403,7 +403,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	@Transactional
 	public List<NaturezaOperacao> obterListaTipoNotaFiscal(TipoOperacao tipoOperacao) {
-		return tipoNotaFiscalRepository.obterTiposNotasFiscais();
+		return tipoNotaFiscalRepository.obterNaturezasOperacoes();
 	}
 	
 	        /**

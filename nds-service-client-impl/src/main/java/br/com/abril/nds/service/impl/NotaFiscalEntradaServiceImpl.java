@@ -131,7 +131,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 			notaFiscal.setControleConferenciaEncalheCota(conferenciaEncalheCota);
 		}
 		
-		NaturezaOperacao tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(grupoNotaFiscal, tipoAtividade, isContribuinte);
+		NaturezaOperacao tipoNotaFiscal = this.tipoNotaFiscalRepository.obterNaturezaOperacao(grupoNotaFiscal, tipoAtividade, isContribuinte);
 
 		if (tipoNotaFiscal == null) {
 			

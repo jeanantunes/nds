@@ -2252,7 +2252,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
                 throw new IllegalStateException("Nota Fiscal Saida não parametrizada no sistema");
 			}
 			
-			NaturezaOperacao tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
+			NaturezaOperacao tipoNF = tipoNotaFiscalRepository.obterNaturezaOperacao(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
 
 			if(tipoNF == null) {
                 throw new IllegalStateException("TipoNotaFiscal não parametrizada");

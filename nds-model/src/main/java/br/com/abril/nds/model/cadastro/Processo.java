@@ -7,7 +7,7 @@ public enum Processo {
 	ENTRADA_ENCALHE("Entrada do encalhe"),
 	FALTA_REPARTE("Faltas do reparte"),
 	SOBRA_REPARTE("Sobras do reparte"),
-	FALTA_ENCALHE("Faltas do encalhe"),
+	FALTA_ENCALHE("Faltas de Reparte recebido por NFe"),
 	SOBRA_ENCALHE("Sobras do encalhe"),
 	CALCELADA("Cancelada"),
 

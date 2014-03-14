@@ -11,16 +11,16 @@ import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 
 public interface NaturezaOperacaoRepository extends Repository<NaturezaOperacao, Long> {
 
-	List<NaturezaOperacao> obterTiposNotasFiscais();
+	List<NaturezaOperacao> obterNaturezasOperacoes();
 	
 	/**
 	 * Retorna os tipos de notas fiscais baseado no tipo de operação e no tipo de destinatario
 	 * @param tipoOperacao
 	 * @return
 	 */
-	List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao);
+	List<NaturezaOperacao> obterNaturezasOperacoes(TipoOperacao tipoOperacao);
 
-	NaturezaOperacao obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal);
+	NaturezaOperacao obterNaturezaOperacao(GrupoNotaFiscal grupoNotaFiscal);
 	
 	List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao, TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente, GrupoNotaFiscal[] grupoNotaFiscal);
 
@@ -48,7 +48,7 @@ public interface NaturezaOperacaoRepository extends Repository<NaturezaOperacao,
 	 * @param isContribuinte
 	 * @return TipoNotaFiscal
 	 */
-	NaturezaOperacao obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoAtividade tipoAtividade, boolean isContribuinte);
+	NaturezaOperacao obterNaturezaOperacao(GrupoNotaFiscal grupoNotaFiscal, TipoAtividade tipoAtividade, boolean isContribuinte);
 	
 	NaturezaOperacao obterNaturezaOperacao(Long idNaturezaOperacao);
 }
