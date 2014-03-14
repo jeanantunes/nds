@@ -109,8 +109,8 @@ var descontoDistribuidorController = $.extend(true,{
 						sortable : false,
 						align : 'center'
 					}],
-					sortname : "sequencial",
-					sortorder : "asc",
+					sortname : "dataAlteracao",
+					sortorder : "desc",
 					usepager : true,
 					useRp : true,
 					rp : 15,

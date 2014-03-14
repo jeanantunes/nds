@@ -48,7 +48,7 @@ implements DescontoProximosLancamentosRepository{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<DescontoDTO> obterDescontosProximosLancamentos(Date dataOperacaoInicioDesconto) {
+	public List<DescontoDTO> obterDescontosProximosLancamentos(Date dataLancamento) {
 		
 		StringBuilder hql = new StringBuilder("")
 			.append(" SELECT cota_id AS cotaId ")
@@ -62,12 +62,12 @@ implements DescontoProximosLancamentosRepository{
 			.append(" LEFT OUTER JOIN desconto_lancamento_cota dlc ON dlc.DESCONTO_LANCAMENTO_ID = dpl.ID ")
 			.append(" LEFT OUTER JOIN cota c ON c.ID = dlc.COTA_ID ")
 			.append(" WHERE dpl.QUANTIDADE_PROXIMOS_LANCAMENTOS > 0 ")
-			.append(" AND dpl.DATA_INICIO_DESCONTO <= :dataOperacaoInicioDesconto ");
+			.append(" AND dpl.DATA_INICIO_DESCONTO <= :dataLancamento ");
 
 		SQLQuery query = getSession().createSQLQuery(hql.toString());
 		query.setResultTransformer(new AliasToBeanResultTransformer(DescontoDTO.class));
 		
-		query.setParameter("dataOperacaoInicioDesconto", dataOperacaoInicioDesconto);
+		query.setParameter("dataLancamento", dataLancamento);
 		
 		query.addScalar("cotaId", StandardBasicTypes.LONG);
 		query.addScalar("produtoEdicaoId", StandardBasicTypes.LONG);
