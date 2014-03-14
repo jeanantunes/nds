@@ -257,6 +257,7 @@ $(function(){
 			
 		</fieldset>
 		
+		<c:if test="${utilizaFTF}">
 		<fieldset class="fieldFiltro">
 			<legend>FTF</legend>
 		
@@ -292,6 +293,7 @@ $(function(){
 				</tbody>
 				</table>
 		</fieldset>
+		</c:if>
 		
 		<div class="linha_separa_fields">&nbsp;</div>
 
