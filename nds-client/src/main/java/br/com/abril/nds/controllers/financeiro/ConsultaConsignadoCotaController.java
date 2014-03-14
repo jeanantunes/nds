@@ -292,8 +292,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 			filtro.setNomeFornecedor("Todos");
 		}
 		
-		if(filtro.getIdCota() != null
-				&& filtro.getIdFornecedor() == null) {
+		if(filtro.getIdCota() != null) {
 				
 			List<ConsultaConsignadoCotaDTO> listaConsignadoCota = 
 					this.consultaConsignadoCota.buscarConsignadoCota(filtro, false);
