@@ -309,7 +309,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append("  '' as codEanProduto ")
 		.append(" from nota_fiscal_produto_servico nfps ")
 		.append(" inner join nota_fiscal_novo nfn ON nfn.id = nfps.NOTA_FISCAL_ID ")
-		.append(" left join tipo_nota_fiscal tnf ON tnf.ID = nfn.TIPO_NOTA_FISCAL_ID ")
+		.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ")
 		.append(" where nfps.NOTA_FISCAL_ID = :idNF ");
 
 		SQLQuery query = getSession().createSQLQuery(sqlBuilder.toString());
@@ -411,10 +411,10 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" where nf.id = :idNF ");
 
 
-		SQLQuery query = getSession().createSQLQuery(sb.toString());
+		Query query = getSession().createQuery(sb.toString());
 		query.setParameter("idNF", idNF);
 
-		NotaFiscalReferenciada nota = (NotaFiscalReferenciada)query.uniqueResult();
+		NotaFiscalReferenciada nota = (NotaFiscalReferenciada) query.uniqueResult();
 
 		FTFEnvTipoRegistro06 tipoRegistro06 = null;
 		if(nota!=null){
