@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -20,6 +21,7 @@ public class ConsultaFollowupCadastroParcialDTO implements Serializable {
 	@Export(label = "Numero da edição do produto", alignment=Alignment.CENTER, exhibitionOrder = 3)
 	private Long numeroEdicao;
 	
+	private BigInteger numeroEdicaoPesquisa;
 	
 	public ConsultaFollowupCadastroParcialDTO() {}
 
@@ -61,6 +63,19 @@ public class ConsultaFollowupCadastroParcialDTO implements Serializable {
 	public void setNumeroEdicaoo(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
+
+
+	public BigInteger getNumeroEdicaoPesquisa() {
+		return numeroEdicaoPesquisa;
+	}
+
+
+	public void setNumeroEdicaoPesquisa(BigInteger numeroEdicaoPesquisa) {
+		this.numeroEdicaoPesquisa = numeroEdicaoPesquisa;
+		this.numeroEdicao = numeroEdicaoPesquisa.longValue();
+	}
+	
+	
 	
 	
 }
