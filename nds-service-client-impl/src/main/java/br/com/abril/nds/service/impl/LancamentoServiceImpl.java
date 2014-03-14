@@ -171,13 +171,13 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		lancamentoRepository.alterarLancamento(idLancamento, dataOperacao, StatusLancamento.EXPEDIDO, expedicao);
 				
-		HistoricoLancamento historico = new HistoricoLancamento();
-		historico.setDataEdicao(dataOperacao);
-		historico.setLancamento(new Lancamento(idLancamento));
-		
-		historico.setResponsavel(new Usuario(idUsuario));
-		historico.setStatusNovo(StatusLancamento.EXPEDIDO);
-		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
+//		HistoricoLancamento historico = new HistoricoLancamento();
+//		historico.setDataEdicao(dataOperacao);
+//		historico.setLancamento(new Lancamento(idLancamento));
+//		
+//		historico.setResponsavel(new Usuario(idUsuario));
+//		historico.setStatusNovo(StatusLancamento.EXPEDIDO);
+//		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		
         // TODO: geração de historico desativada devido a criação de trigger
         // para realizar essa geração.
