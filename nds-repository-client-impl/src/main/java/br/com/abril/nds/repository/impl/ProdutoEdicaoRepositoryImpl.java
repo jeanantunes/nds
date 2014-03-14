@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
+import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -44,7 +46,6 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -76,12 +77,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEdicao> obterProdutoEdicaoPorNomeProduto(String nomeProduto) {
-		String hql = "from ProdutoEdicao produtoEdicao " 
+	public List<ProdutoEdicao> obterProdutoEdicaoPorNomeProduto(final String nomeProduto) {
+		final String hql = "from ProdutoEdicao produtoEdicao " 
 				   + " join fetch produtoEdicao.produto " 
 				   + " where upper(produtoEdicao.produto.nome) like upper(:nomeProduto)";
 
-		Query query = super.getSession().createQuery(hql);
+		final Query query = super.getSession().createQuery(hql);
 
 		query.setParameter("nomeProduto", nomeProduto + "%");
 
@@ -90,12 +91,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEdicao> obterListaProdutoEdicao(Produto produto, ProdutoEdicao produtoEdicao ) {
+	public List<ProdutoEdicao> obterListaProdutoEdicao(final Produto produto, final ProdutoEdicao produtoEdicao ) {
 
-		String codigoProduto = produto.getCodigo();
-		Long numeroEdicao = produtoEdicao.getNumeroEdicao();
+		final String codigoProduto = produto.getCodigo();
+		final Long numeroEdicao = produtoEdicao.getNumeroEdicao();
 
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 
 		hql.append(" select p from ProdutoEdicao p ");
 
@@ -105,7 +106,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		hql.append(" p.produto.codigo = :codigoProduto ");
 
-		Query query = getSession().createQuery(hql.toString());
+		final Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("codigoProduto",  codigoProduto );
 
@@ -116,8 +117,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 
 	@Override
-	public FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(String codigo, String nomeProduto, Long edicao, Date dataLancamento, boolean furado) {
-		StringBuilder hql = new StringBuilder();
+	public FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(final String codigo, final String nomeProduto, final Long edicao, final Date dataLancamento, final boolean furado) {
+		final StringBuilder hql = new StringBuilder();
 		
 		// Corrigido para obter o saldo real do produto. Implementado em conjunto com Eduardo Punk Rock.
 		hql.append("select new ")
@@ -138,7 +139,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			   hql.append(" and   lancamento.status                     != :statusFuro");
 		   }
 
-		Query query = super.getSession().createQuery(hql.toString());
+		final Query query = super.getSession().createQuery(hql.toString());
 		query.setParameter("codigo", codigo);
 		query.setParameter("edicao", edicao);
 		query.setParameter("dataLancamento", dataLancamento);
@@ -155,15 +156,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 
 	@Override
-	public ProdutoEdicao obterProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto,
-																  Long numeroEdicao) {
+	public ProdutoEdicao obterProdutoEdicaoPorCodProdutoNumEdicao(final String codigoProduto,
+																  final Long numeroEdicao) {
 
-		String hql = "from ProdutoEdicao produtoEdicao " 
+		final String hql = "from ProdutoEdicao produtoEdicao " 
 				   + " join fetch produtoEdicao.produto " 
 				   + " where produtoEdicao.produto.codigo = :codigoProduto "
 				   + " and 	 produtoEdicao.numeroEdicao   = :numeroEdicao";
 
-		Query query = super.getSession().createQuery(hql);
+		final Query query = super.getSession().createQuery(hql);
 
 		query.setParameter("codigoProduto",  leftPad(codigoProduto, 8, "0"));
 		query.setParameter("numeroEdicao", numeroEdicao);
@@ -173,8 +174,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return (ProdutoEdicao) query.uniqueResult();
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicao> listProdutoEdicaoPorCodProdutoNumEdicoes(String codigoProduto, Long numeroEdicaoInicial, Long numeroEdicaoFinal) {
+	public List<ProdutoEdicao> listProdutoEdicaoPorCodProdutoNumEdicoes(final String codigoProduto, final Long numeroEdicaoInicial, final Long numeroEdicaoFinal) {
 		return super.getSession().createCriteria(ProdutoEdicao.class)
 				.add(Restrictions.between("numeroEdicao", numeroEdicaoInicial, numeroEdicaoFinal))
 				.addOrder(Order.asc("numeroEdicao"))
@@ -184,9 +186,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
     @Override
     @Transactional
-    public BigInteger obterReparteDisponivel(Long idProdutoEdicao) {
+    public BigInteger obterReparteDisponivel(final Long idProdutoEdicao) {
 
-        StringBuilder sql = new StringBuilder();
+        final StringBuilder sql = new StringBuilder();
         sql.append(" select t.reparte_lcto - t.reparte_est - t.reparte_prom                  ");
         sql.append(" from (select sum(coalesce(l.reparte, 0)) reparte_lcto,                  ");
         sql.append("         sum(coalesce(e.qtde_reparte, 0)) reparte_est,                   ");
@@ -195,26 +197,27 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         sql.append("         left join estudo_gerado e on e.lancamento_id = l.id 			 ");
         sql.append("         where l.produto_edicao_id = :idProdutoEdicao ) t                ");
 
-        SQLQuery query = getSession().createSQLQuery(sql.toString());
+        final SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setParameter("idProdutoEdicao", idProdutoEdicao);
         return ((BigDecimal) query.uniqueResult()).toBigInteger();
     }
 
     @Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoBarra(String codigoBarra) {
+	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoBarra(final String codigoBarra) {
 
-		Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class);
+		final Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class);
 		criteria.add(Restrictions.eq("codigoDeBarras", codigoBarra));
 
 		return criteria.list();
 	}
 
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(String codigoProduto) {
+	public List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(final String codigoProduto) {
 
-		Criteria criteria = super.getSession().createCriteria(ProdutoEdicao.class);
+		final Criteria criteria = super.getSession().createCriteria(ProdutoEdicao.class);
 
 		criteria.createAlias("produto", "produto");
 
@@ -226,21 +229,22 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEdicao> obterProdutosEdicaoPorId(Set<Long> idsProdutoEdicao) {
+	public List<ProdutoEdicao> obterProdutosEdicaoPorId(final Set<Long> idsProdutoEdicao) {
 
-		String hql = "from ProdutoEdicao produtoEdicao " 
+		final String hql = "from ProdutoEdicao produtoEdicao " 
 				   + " where produtoEdicao.id in (:idsProdutoEdicao)";
 
-		Query query = super.getSession().createQuery(hql);
+		final Query query = super.getSession().createQuery(hql);
 
 		query.setParameterList("idsProdutoEdicao", idsProdutoEdicao);
 
 		return query.list();
 	}
 
-	public ProdutoEdicao obterProdutoEdicaoPorSequenciaMatriz(Integer sequenciaMatriz, Date dataRecolhimentoDistribuidor) {
+	@Override
+	public ProdutoEdicao obterProdutoEdicaoPorSequenciaMatriz(final Integer sequenciaMatriz, final Date dataRecolhimentoDistribuidor) {
 
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 
 		hql.append(" select chamadaEncalhe.produtoEdicao from ChamadaEncalhe chamadaEncalhe ");
 
@@ -248,7 +252,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		hql.append(" and chamadaEncalhe.dataRecolhimento = :dataRecolhimentoDistribuidor ");
 
-		Query query = getSession().createQuery(hql.toString());
+		final Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("sequenciaMatriz", sequenciaMatriz);
 
@@ -261,9 +265,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#obterCodigoMatrizPorProdutoEdicao(java.lang.Long, java.util.Date)
 	 */
-	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao, Date dataRecolhimento, Integer numeroCota) {
+	@Override
+	public Integer obterCodigoMatrizPorProdutoEdicao(final Long idProdutoEdicao, final Date dataRecolhimento, final Integer numeroCota) {
 		
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select chamadaEncalhe.sequencia from ChamadaEncalhe chamadaEncalhe ");
 		hql.append(" join chamadaEncalhe.chamadaEncalheCotas cec ");
@@ -288,7 +293,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			hql.append(" ) ");			
 		}
 		
-		Query query = getSession().createQuery(hql.toString());
+		final Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		query.setParameter("numeroCota", numeroCota);
@@ -301,19 +306,19 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 
 	@Override
-	public ProdutoEdicao obterProdutoEdicaoPorSM(Long sm) {
+	public ProdutoEdicao obterProdutoEdicaoPorSM(final Long sm) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nome,
-			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
-			String codigoDeBarras, boolean brinde,
-			String sortorder, String sortname, int initialResult, int maxResults) {
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(final String codigoProduto, final String nome,
+			final Intervalo<Date> dataLancamento, final Intervalo<Double> preco , final StatusLancamento statusLancamento,
+			final String codigoDeBarras, final boolean brinde,
+			final String sortorder, final String sortname, final int initialResult, final int maxResults) {
 			
-		StringBuilder hql = new StringBuilder()
+		final StringBuilder hql = new StringBuilder()
 		
 		.append(" SELECT pe.id as id, p.codigo as codigoProduto, p.NOME_COMERCIAL as nomeComercial, ")
 		.append("        pe.NUMERO_EDICAO as numeroEdicao, coalesce(pessoa.nome, pessoa.RAZAO_SOCIAL) as nomeFornecedor, ")
@@ -323,7 +328,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		.append("        pe.parcial as parcial ");
 		
 		// Corpo da consulta com os filtros:
-		SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
+		final SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
 		
@@ -345,19 +350,19 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Integer countPesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
-			String codigoDeBarras, boolean brinde) {
+	public Integer countPesquisarEdicoes(final String codigoProduto, final String nomeProduto,
+			final Intervalo<Date> dataLancamento, final Intervalo<Double> preco , final StatusLancamento statusLancamento,
+			final String codigoDeBarras, final boolean brinde) {
 		
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 		hql.append(" SELECT pe.id as total ");
 		
 		// Corpo da consulta com os filtros:
-		SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, null, null);
+		final SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, null, null);
 		
 		query.addScalar("total", StandardBasicTypes.LONG);
 		
-		List idsProdutoEdicao = query.list();
+		final List idsProdutoEdicao = query.list();
 		
 		if(idsProdutoEdicao == null) {
 			return 0;
@@ -386,9 +391,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
      * 
      * @return
      */
-	private SQLQuery queryBodyPesquisarEdicoes(StringBuilder hql, String codigoProduto, String nome,
-			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
-			String codigoDeBarras, boolean brinde, String sortname, String sortorder) {
+	private SQLQuery queryBodyPesquisarEdicoes(final StringBuilder hql, final String codigoProduto, final String nome,
+			final Intervalo<Date> dataLancamento, final Intervalo<Double> preco , final StatusLancamento statusLancamento,
+			final String codigoDeBarras, final boolean brinde, final String sortname, final String sortorder) {
 		
 		hql.append("   from PRODUTO_EDICAO pe ");
 		hql.append("   inner join PRODUTO p on pe.PRODUTO_ID=p.ID "); 
@@ -444,7 +449,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			hql.append(" ORDER BY " + sortname + " " + sortorder);
 		}
 		
-		SQLQuery query = getSession().createSQLQuery(hql.toString());
+		final SQLQuery query = getSession().createSQLQuery(hql.toString());
 		
 		query.setParameter("indAtivo", true);
 		
@@ -484,13 +489,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(String codigoProduto,	int qtdEdicoes) {
+	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(final String codigoProduto,	final int qtdEdicoes) {
 		
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 		hql.append(" SELECT pe ");
 		
 		// Corpo da consulta com os filtros:
-		Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, null, null, null, null, null, false, "pe.numeroEdicao", "DESC");
+		final Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, null, null, null, null, null, false, "pe.numeroEdicao", "DESC");
 		
 		query.setMaxResults(qtdEdicoes);
 		
@@ -498,26 +503,26 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 
 	@Override
-	public boolean hasProdutoEdicao(Produto produto) {
+	public boolean hasProdutoEdicao(final Produto produto) {
 
-		String hql = 
+		final String hql = 
 				"SELECT count(pe.id) FROM ProdutoEdicao pe WHERE pe.produto = :produto ";
 
-		Query query = this.getSession().createQuery(hql);
+		final Query query = this.getSession().createQuery(hql);
 		query.setParameter("produto", produto);
 
 		try {
-			Long qtd = (Long) query.uniqueResult(); 
+			final Long qtd = (Long) query.uniqueResult(); 
 			return qtd == null || Long.valueOf(0).equals(qtd) ? false : true;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public boolean isProdutoEdicaoJaPublicada(Long idProdutoEdicao) {
+	public boolean isProdutoEdicaoJaPublicada(final Long idProdutoEdicao) {
 
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 
 		hql.append(" SELECT CASE WHEN (ln.dataLancamentoDistribuidor > sysdate()) THEN false ELSE true END ");
 		hql.append("   FROM Lancamento ln ");
@@ -527,19 +532,19 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("          WHERE lnMinDate.produtoEdicao.id = :idProdutoEdicao ) ");
 		hql.append("    AND ln.produtoEdicao.id = :idProdutoEdicao ");
 
-		Query query = this.getSession().createQuery(hql.toString());
+		final Query query = this.getSession().createQuery(hql.toString());
 		query.setLong("idProdutoEdicao", 
 				idProdutoEdicao == null ? Long.valueOf(0) : idProdutoEdicao);
 
-		Boolean isPublicado = (Boolean) query.uniqueResult(); 
+		final Boolean isPublicado = (Boolean) query.uniqueResult(); 
 		return (isPublicado == null ? false : isPublicado.booleanValue());
 	}
 
 	@Override
-    public boolean isNumeroEdicaoCadastrada(Long idProduto,
-			Long numeroEdicao, Long idProdutoEdicao) {
+    public boolean isNumeroEdicaoCadastrada(final Long idProduto,
+			final Long numeroEdicao, final Long idProdutoEdicao) {
         
-        Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
+        final Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
         criteria.setProjection(Projections.rowCount());
         
         criteria.add(Restrictions.eq("numeroEdicao", numeroEdicao));
@@ -547,16 +552,16 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         if (idProdutoEdicao != null) {
             criteria.add(Restrictions.not(Restrictions.idEq(idProdutoEdicao)));
         }
-        Long qtd = (Long) criteria.uniqueResult();
+        final Long qtd = (Long) criteria.uniqueResult();
 		return qtd.intValue() > 0 ? true : false;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoDeBarra(String codigoDeBarras,
-			Long idProdutoEdicao) {
+	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoDeBarra(final String codigoDeBarras,
+			final Long idProdutoEdicao) {
 
-		Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
+		final Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
 		criteria.add(Restrictions.eq("codigoDeBarras", codigoDeBarras));
 		criteria.add(Restrictions.ne("id", 
 				idProdutoEdicao == null ? Long.valueOf(0) : idProdutoEdicao));
@@ -573,17 +578,17 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
      * @return ProdutoEdicao
      */
 	@Override
-	public ProdutoEdicao obterProdutoEdicaoPorProdutoEEdicaoOuNome(Long idProduto,
-																   Long numeroEdicao,
-																   String nome) {
+	public ProdutoEdicao obterProdutoEdicaoPorProdutoEEdicaoOuNome(final Long idProduto,
+																   final Long numeroEdicao,
+																   final String nome) {
 
-		String hql = "from ProdutoEdicao produtoEdicao " 
+		final String hql = "from ProdutoEdicao produtoEdicao " 
 				   + " join fetch produtoEdicao.produto " 
 				   + " where ((produtoEdicao.produto.id = :idProduto "
 				   + " and 	 produtoEdicao.numeroEdicao   = :numeroEdicao)"
 				   + " or 	 (produtoEdicao.nomeComercial  = :nome))";
 
-		Query query = super.getSession().createQuery(hql);
+		final Query query = super.getSession().createQuery(hql);
 
 		query.setParameter("idProduto", idProduto);
 		query.setParameter("numeroEdicao", numeroEdicao);
@@ -598,10 +603,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Integer obterQuantidadeEdicoesPorCodigoProduto(String codigoProduto) {
+	public Integer obterQuantidadeEdicoesPorCodigoProduto(final String codigoProduto) {
 		// TODO Auto-generated method stub
 
-		Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
+		final Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
 
 		criteria.createAlias("produto", "produto");
 
@@ -617,9 +622,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicao> obterProdutosEdicoesPorCodigoProdutoLimitado(String codigoProduto, Integer limite) {
+	public List<ProdutoEdicao> obterProdutosEdicoesPorCodigoProdutoLimitado(final String codigoProduto, final Integer limite) {
 
-		Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
+		final Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
 
 		criteria.createAlias("produto", "produto");
 
@@ -633,9 +638,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TipoDescontoProdutoDTO> obterProdutosEdicoesPorCodigoProdutoComDesconto(
-			String codigoProduto) {
+			final String codigoProduto) {
 
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 
 //		case when pe.desconto is null or pe.desconto = 0 then (case when p.desconto is null then 0 else p.desconto end) else pe.desconto end		
 		hql .append("select new ")
@@ -647,11 +652,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			.append("where p.codigo = :codigoProduto ")
 			.append("\n");
 
-		Query q = getSession().createQuery(hql.toString());
+		final Query q = getSession().createQuery(hql.toString());
 
 		q.setParameter("codigoProduto", codigoProduto);
 
-		return (List<TipoDescontoProdutoDTO>) q.list();
+		return q.list();
 
 		/*Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
 		
@@ -671,13 +676,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public Set<ProdutoEdicao> obterProdutosEdicaoPorFornecedor(Long idFornecedor) {
+	public Set<ProdutoEdicao> obterProdutosEdicaoPorFornecedor(final Long idFornecedor) {
 
-		String queryString = " select produtoEdicao from ProdutoEdicao produtoEdicao "
+		final String queryString = " select produtoEdicao from ProdutoEdicao produtoEdicao "
 						   + " join produtoEdicao.produto.fornecedores fornecedores"
 				   		   + " where fornecedores.id = :idFornecedor ";
 
-		Query query = this.getSession().createQuery(queryString);
+		final Query query = this.getSession().createQuery(queryString);
 
 		query.setParameter("idFornecedor", idFornecedor);
 
@@ -687,14 +692,14 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEdicao> buscarProdutosLancadosData(Date data) {
+	public List<ProdutoEdicao> buscarProdutosLancadosData(final Date data) {
 
-		StringBuilder hql = new StringBuilder("select distinct l.produtoEdicao ");
+		final StringBuilder hql = new StringBuilder("select distinct l.produtoEdicao ");
 		hql.append(" from Lancamento l ")
 		   .append(" where l.dataLancamentoDistribuidor = :data ")
 		   .append(" and l.status= '" + StatusLancamento.EXPEDIDO.toString() + "'");
 
-		Query query = this.getSession().createQuery(hql.toString());
+		final Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", data);
 		query.setMaxResults(6);
 
@@ -703,9 +708,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 
 	@Override
-	public String buscarNome(Long idProdutoEdicao) {
+	public String buscarNome(final Long idProdutoEdicao) {
 
-		Query query = this.getSession().createQuery(
+		final Query query = this.getSession().createQuery(
 				"select produtoEdicao.nomeComercial from ProdutoEdicao produtoEdicao where produtoEdicao.id = :idProdutoEdicao");
 
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
@@ -715,9 +720,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 
 	@Override
-	public Long obterUltimoNumeroEdicao(Long idProduto) {
+	public Long obterUltimoNumeroEdicao(final Long idProduto) {
 
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select max(pe.numeroEdicao)	");
 		
@@ -727,7 +732,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		hql.append(" where p.id = :idProduto		");
 		
-		Query query = getSession().createQuery(hql.toString());
+		final Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idProduto", idProduto);
 		
@@ -737,17 +742,17 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorDistribuidor(Set<Fornecedor> fornecedores) {
+	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorDistribuidor(final Set<Fornecedor> fornecedores) {
 
-		StringBuilder idsFornecedores = new StringBuilder();
-		for (Fornecedor fornecedor : fornecedores) {
+		final StringBuilder idsFornecedores = new StringBuilder();
+		for (final Fornecedor fornecedor : fornecedores) {
 			if (!idsFornecedores.toString().isEmpty()) {
 				idsFornecedores.append(", ");
 			}
 			idsFornecedores.append(fornecedor.getId());
 		}
 
-		String queryString = "SELECT "
+		final String queryString = "SELECT "
 			+ 	"produtoEdicao "
 			+ "FROM "
 			+ 	"ProdutoEdicao produtoEdicao "
@@ -777,24 +782,24 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		//queryString += whereString;
 
-		Query query = this.getSession().createQuery(queryString);
+		final Query query = this.getSession().createQuery(queryString);
 
 		return new HashSet<ProdutoEdicao>(query.list());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorCota(Cota cota, Set<Fornecedor> fornecedores) {
+	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorCota(final Cota cota, final Set<Fornecedor> fornecedores) {
 
-		StringBuilder idsFornecedores = new StringBuilder();
-		for (Fornecedor fornecedor : fornecedores) {
+		final StringBuilder idsFornecedores = new StringBuilder();
+		for (final Fornecedor fornecedor : fornecedores) {
 			if (!idsFornecedores.toString().isEmpty()) {
 				idsFornecedores.append(", ");
 			}
 			idsFornecedores.append(fornecedor.getId());
 		}		
 
-		String queryString = "SELECT "
+		final String queryString = "SELECT "
 			+ 	"produtoEdicao "
 			+ "FROM "
 			+ 	"ProdutoEdicao produtoEdicao "
@@ -827,7 +832,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		//queryString += whereString;
 
-		Query query = this.getSession().createQuery(queryString);
+		final Query query = this.getSession().createQuery(queryString);
 
 		return new HashSet<ProdutoEdicao>(query.list());
 	}
@@ -835,7 +840,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<EdicoesProdutosDTO> obterHistoricoEdicoes(FiltroHistogramaVendas filtro) {
+	public List<EdicoesProdutosDTO> obterHistoricoEdicoes(final FiltroHistogramaVendas filtro) {
 
 		String queryStringProdutoEdicao = 
 				" SELECT " +
@@ -878,8 +883,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				 " ";
 
 
-		List<String> whereList = new ArrayList<String>();
-		HashMap<String,Object> parameterMap = new HashMap<String,Object>();
+		final List<String> whereList = new ArrayList<String>();
+		final HashMap<String,Object> parameterMap = new HashMap<String,Object>();
 
 		//Filtro por
 		if (StringUtils.isNotEmpty(filtro.getFiltroPor())) {
@@ -990,19 +995,19 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 									" GROUP BY base.numeroEdicao  " + 
 									this.ordenarConsultaHistogramaVenda(filtro);
 
-		Query query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
+		final Query query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
 
 		setParameters(query, parameterMap);
 		query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 		configurarPaginacao(filtro,query);
-		List<EdicoesProdutosDTO> resultado = query.list();
+		final List<EdicoesProdutosDTO> resultado = query.list();
 
 		return resultado;
 	}
 
-	private String ordenarConsultaHistogramaVenda(FiltroHistogramaVendas filtro) {
+	private String ordenarConsultaHistogramaVenda(final FiltroHistogramaVendas filtro) {
 
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 
 		if (filtro.getOrdemColuna() != null) {
 
@@ -1061,9 +1066,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 
 	@Override
-	public AnaliseHistogramaDTO obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,Integer de, Integer ate,String[] edicoes) {
+	public AnaliseHistogramaDTO obterBaseEstudoHistogramaPorFaixaVenda(final FiltroHistogramaVendas filtro,final String codigoProduto,final Integer de, final Integer ate,final String[] edicoes) {
 
-		String queryQtdEdicoesPresentes = " (select count(distinct _pe.ID) " +
+		final String queryQtdEdicoesPresentes = " (select count(distinct _pe.ID) " +
 				" from ESTOQUE_PRODUTO_COTA _epc " +
 				" join PRODUTO_EDICAO _pe on (_pe.ID = _epc.PRODUTO_EDICAO_ID) " +
 				" join PRODUTO _p on (_p.ID = _pe.PRODUTO_ID) " +
@@ -1071,7 +1076,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				" where _p.CODIGO = :produtoCodigo " +
 				" and _pe.NUMERO_EDICAO in (:nrEdicoes)) ";
 		
-		String queryQtdEdicoesPresentesPorCota = " (select count(distinct _pe.ID) " +
+		final String queryQtdEdicoesPresentesPorCota = " (select count(distinct _pe.ID) " +
 				" from ESTOQUE_PRODUTO_COTA _epc " +
 				" join PRODUTO_EDICAO _pe on (_pe.ID = _epc.PRODUTO_EDICAO_ID) " +
 				" join PRODUTO _p on (_p.ID = _pe.PRODUTO_ID) " +
@@ -1123,8 +1128,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		// Adicionando filtro
 
-		List<String> whereList = new ArrayList<String>();
-		HashMap<String,Object> parameterMap = new HashMap<String,Object>();
+		final List<String> whereList = new ArrayList<String>();
+		final HashMap<String,Object> parameterMap = new HashMap<String,Object>();
 
 		// Filtro por
 		if (StringUtils.isNotEmpty(filtro.getFiltroPor())) {
@@ -1229,7 +1234,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		queryStringProdutoEdicao+=") as HIST";
 
-		SQLQuery query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
+		final SQLQuery query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
 		query.setParameter("de", de);
 		query.setParameter("ate", ate);
 		query.setParameter("produtoCodigo", codigoProduto);
@@ -1239,15 +1244,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseHistogramaDTO.class));
 
-		AnaliseHistogramaDTO resultado = (AnaliseHistogramaDTO) query.uniqueResult();
+		final AnaliseHistogramaDTO resultado = (AnaliseHistogramaDTO) query.uniqueResult();
 
 
 		return resultado;
 	}
 
-	private void configurarPaginacao(FiltroDTO dto, Query query) {
+	private void configurarPaginacao(final FiltroDTO dto, final Query query) {
 
-        PaginacaoVO paginacao = dto.getPaginacao();
+        final PaginacaoVO paginacao = dto.getPaginacao();
 
         if (paginacao.getQtdResultadosTotal().equals(0)) {
          paginacao.setQtdResultadosTotal(query.list().size());
@@ -1265,11 +1270,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEdicaoDTO> obterEdicoesProduto(FiltroHistoricoVendaDTO filtro) {
+	public List<ProdutoEdicaoDTO> obterEdicoesProduto(final FiltroHistoricoVendaDTO filtro) {
 
-		Map<String, Object> parameters = new HashMap<String, Object>();
+		final Map<String, Object> parameters = new HashMap<String, Object>();
 
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 
 		hql.append(" SELECT ");
 		hql.append(" produto.codigo as codigoProduto, ");
@@ -1327,7 +1332,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			hql.append(" ORDER BY lancamento.dataLancamentoPrevista DESC ");			
 		}
 
-		Query query = super.getSession().createQuery(hql.toString());
+		final Query query = super.getSession().createQuery(hql.toString());
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
 
@@ -1339,9 +1344,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 
 
-	private String ordenarConsultaHistoricoVendaProdutoEdicao(FiltroHistoricoVendaDTO filtro) {
+	private String ordenarConsultaHistoricoVendaProdutoEdicao(final FiltroHistoricoVendaDTO filtro) {
 
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 
 		if (filtro.getOrdemColuna() != null) {
 
@@ -1396,15 +1401,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 
 	@Override
-	public ProdutoEdicaoDTO obterHistoricoProdutoEdicao(String codigoProduto, Long numeroEdicao, Integer numeroCota) {
+	public ProdutoEdicaoDTO obterHistoricoProdutoEdicao(final String codigoProduto, final Long numeroEdicao, final Integer numeroCota) {
 
 		if (codigoProduto.isEmpty() || numeroEdicao == 0 || numeroCota == 0) {
 			return null;
 		}
 
-		Map<String, Object> parameters = new HashMap<String, Object>();
+		final Map<String, Object> parameters = new HashMap<String, Object>();
 
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 
 		hql.append(" SELECT ");
 
@@ -1429,7 +1434,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		hql.append(" GROUP BY estoqueProdutoCota.cota ");
 
-		Query query = super.getSession().createQuery(hql.toString());
+		final Query query = super.getSession().createQuery(hql.toString());
 
 		this.setParameters(query, parameters);
 
@@ -1476,33 +1481,33 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}*/
 
 	@Override
-	public ProdutoEdicao obterProdutoEdicaoPorIdLancamento(Long idLancamento) {
+	public ProdutoEdicao obterProdutoEdicaoPorIdLancamento(final Long idLancamento) {
 
 
-		StringBuilder sql = new StringBuilder();
+		final StringBuilder sql = new StringBuilder();
 
 		sql.append(" select lancamento.produtoEdicao from Lancamento lancamento");
 		sql.append(" where lancamento.id = :idLancamento");
 
-		Query query = getSession().createQuery(sql.toString());
+		final Query query = getSession().createQuery(sql.toString());
 		query.setParameter("idLancamento", idLancamento);
 
-		ProdutoEdicao produtoEdicao = (ProdutoEdicao)query.uniqueResult();
+		final ProdutoEdicao produtoEdicao = (ProdutoEdicao)query.uniqueResult();
 
 		return produtoEdicao;
 	}
 
 
 	@Override
-	public Boolean estudoPodeSerSomado(Long idEstudoBase, String codigoProduto) {
+	public Boolean estudoPodeSerSomado(final Long idEstudoBase, final String codigoProduto) {
 
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 
 		hql.append(" SELECT count(*) from EstudoGerado estudoGerado ");
 		hql.append(" WHERE estudoGerado.produtoEdicao.produto.codigo = :codigoProduto");
 		hql.append(" AND estudoGerado.id = :idEstudo");
 
-		Query query = super.getSession().createQuery(hql.toString());
+		final Query query = super.getSession().createQuery(hql.toString());
 
 		query.setParameter("codigoProduto", 	 codigoProduto);		
 		query.setParameter("idEstudo", 	 	 idEstudoBase);
@@ -1511,8 +1516,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 
 	@Override
-	public ProdutoEdicaoDTO findReparteEVenda(ProdutoEdicaoDTO dto){
-		List<ProdutoEdicaoDTO> produtosEdicao = new ArrayList<>();
+	public ProdutoEdicaoDTO findReparteEVenda(final ProdutoEdicaoDTO dto){
+		final List<ProdutoEdicaoDTO> produtosEdicao = new ArrayList<>();
 		produtosEdicao.add(dto);
 		findReparteEVenda(produtosEdicao);
 		return dto;
@@ -1520,9 +1525,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEdicaoDTO> findReparteEVenda(List<ProdutoEdicaoDTO> produtosEdicao){
-		StringBuffer selectReparte = new StringBuffer();
-		StringBuffer selectVenda = new StringBuffer();
+	public List<ProdutoEdicaoDTO> findReparteEVenda(final List<ProdutoEdicaoDTO> produtosEdicao){
+		final StringBuffer selectReparte = new StringBuffer();
+		final StringBuffer selectVenda = new StringBuffer();
 
 		selectReparte.append("SELECT REPARTE,PRODUTO_EDICAO_ID FROM estudo_produto_edicao where PRODUTO_EDICAO_ID in (");
 
@@ -1532,7 +1537,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				.append("where m.tipo_movimento_id = 13 and m.qtde and p.qtde_devolucao_fornecedor is not null and pe.id in (");
 
 		for(int i = 0; i < produtosEdicao.size(); i++){
-			ProdutoEdicaoDTO dto = produtosEdicao.get(i);
+			final ProdutoEdicaoDTO dto = produtosEdicao.get(i);
 			selectReparte.append(dto.getId());
 			selectVenda.append(dto.getId());
 			if(i != produtosEdicao.size() - 1){
@@ -1544,31 +1549,31 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		selectReparte.append(");");
 		selectVenda.append(") ");
 
-		Query queryReparte = super.getSession().createSQLQuery(selectReparte.toString());
-		Query queryVenda = super.getSession().createSQLQuery(selectVenda.toString());
+		final Query queryReparte = super.getSession().createSQLQuery(selectReparte.toString());
+		final Query queryVenda = super.getSession().createSQLQuery(selectVenda.toString());
 
-		List<Object[]> resultVenda = queryVenda.list();
-		List<Object[]> resultReparte = queryReparte.list();
+		final List<Object[]> resultVenda = queryVenda.list();
+		final List<Object[]> resultReparte = queryReparte.list();
 
-		for(ProdutoEdicaoDTO dto : produtosEdicao){
+		for(final ProdutoEdicaoDTO dto : produtosEdicao){
 			preencherCampos(dto, resultReparte, resultVenda);
 		}
 
 		return produtosEdicao;
 	}
 
-	private void preencherCampos(ProdutoEdicaoDTO dto, List<Object[]> resultadoReparte, List<Object[]> resultadoVenda){
-		for(Object[] item : resultadoReparte){
-			BigInteger id = (BigInteger)item[1];
+	private void preencherCampos(final ProdutoEdicaoDTO dto, final List<Object[]> resultadoReparte, final List<Object[]> resultadoVenda){
+		for(final Object[] item : resultadoReparte){
+			final BigInteger id = (BigInteger)item[1];
 			if(id.longValue() == dto.getId()){
 				dto.setReparte((BigInteger)item[0]);
 				break;
 			}
 		}
-		for(Object[] item : resultadoVenda){
-			BigInteger id = (BigInteger)item[0];
+		for(final Object[] item : resultadoVenda){
+			final BigInteger id = (BigInteger)item[0];
 			if( id.longValue() == dto.getId() ){
-				BigDecimal produto = (BigDecimal) item[1];
+				final BigDecimal produto = (BigDecimal) item[1];
 				BigDecimal movimento = (BigDecimal) item[2];
 				if(produto == null){
 					break;
@@ -1576,7 +1581,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				if(movimento == null){
 					movimento = new BigDecimal(0);
 				}
-				Double venda = produto.doubleValue() - movimento.doubleValue();
+				final Double venda = produto.doubleValue() - movimento.doubleValue();
 				dto.setVenda(venda);
 				dto.setPercentualVenda( (venda / produto.doubleValue()) * 100);
 				break;
@@ -1587,15 +1592,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
-	public void insereVendaRandomica(ProdutoEdicao produtoEdicao) {
+	public void insereVendaRandomica(final ProdutoEdicao produtoEdicao) {
 
-	    Session s = getSession();
+	    final Session s = getSession();
 
-	    Map<Long, BigInteger> prod = new HashMap<>(); 
-	    Criteria esto = s.createCriteria(EstoqueProdutoCota.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
-	    List<EstoqueProdutoCota> temp = esto.list();
-	    for (EstoqueProdutoCota x : temp) {
-	    	BigInteger venda = BigInteger.valueOf(Math.round((Math.random() * x.getQtdeRecebida().longValue())));
+	    final Map<Long, BigInteger> prod = new HashMap<>(); 
+	    final Criteria esto = s.createCriteria(EstoqueProdutoCota.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
+	    final List<EstoqueProdutoCota> temp = esto.list();
+	    for (final EstoqueProdutoCota x : temp) {
+	    	final BigInteger venda = BigInteger.valueOf(Math.round((Math.random() * x.getQtdeRecebida().longValue())));
 	    	if (prod.get(x.getProdutoEdicao().getId()) == null) {
 	    		prod.put(x.getProdutoEdicao().getId(), venda);
 	    	} else {
@@ -1604,31 +1609,31 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	    	x.setQtdeDevolvida(venda);
 	    	s.persist(x);
 
-	    	MovimentoEstoqueCota mec = (MovimentoEstoqueCota) s.createCriteria(MovimentoEstoqueCota.class)
+	    	final MovimentoEstoqueCota mec = (MovimentoEstoqueCota) s.createCriteria(MovimentoEstoqueCota.class)
 		    		.add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()))
 		    		.add(Restrictions.eq("tipoMovimento.id", 21L))
 		    		.add(Restrictions.eq("cota.id", x.getCota().getId())).uniqueResult();
 
-	    	MovimentoEstoqueCota mec_venda = new MovimentoEstoqueCota();
+	    	final MovimentoEstoqueCota mec_venda = new MovimentoEstoqueCota();
 			BeanUtils.copyProperties(mec, mec_venda, new String[] {"id", "qtde", "tipoMovimento", "listaProdutoServicos"});
 	    	mec_venda.setQtde(venda);
-	    	TipoMovimento tipoMovimento = (TipoMovimento) s.createCriteria(TipoMovimento.class).add(Restrictions.eq("id", 26L)).uniqueResult();
+	    	final TipoMovimento tipoMovimento = (TipoMovimento) s.createCriteria(TipoMovimento.class).add(Restrictions.eq("id", 26L)).uniqueResult();
 	    	mec_venda.setTipoMovimento(tipoMovimento);
 	    	s.persist(mec_venda);
 	    }
 
-	    Criteria espr = s.createCriteria(EstoqueProduto.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
-	    List<EstoqueProduto> temp3 = espr.list();
-	    for (EstoqueProduto x : temp3) {
+	    final Criteria espr = s.createCriteria(EstoqueProduto.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
+	    final List<EstoqueProduto> temp3 = espr.list();
+	    for (final EstoqueProduto x : temp3) {
 	    	if (prod.get(x.getProdutoEdicao().getId()) != null) {
 	    		x.setQtdeDevolucaoFornecedor(prod.get(x.getProdutoEdicao().getId()));
 	    		s.persist(x);
 	    	}
 	    }
 
-	    Criteria lanc = s.createCriteria(Lancamento.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
-	    List<Lancamento> temp2 = lanc.list();
-	    for (Lancamento x : temp2) {
+	    final Criteria lanc = s.createCriteria(Lancamento.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
+	    final List<Lancamento> temp2 = lanc.list();
+	    for (final Lancamento x : temp2) {
 	    	x.setStatus(StatusLancamento.FECHADO);
 	    	s.persist(x);
 	    }
@@ -1637,15 +1642,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean isEdicaoAberta(Long produtoEdicaoId) {
-	    StringBuilder sql = new StringBuilder();
+	public boolean isEdicaoAberta(final Long produtoEdicaoId) {
+	    final StringBuilder sql = new StringBuilder();
 	    sql.append("select status ");
 	    sql.append("  from lancamento ");
 	    sql.append(" where produto_edicao_id = :produtoEdicaoId ");
 
-	    Query query = getSession().createSQLQuery(sql.toString());
+	    final Query query = getSession().createSQLQuery(sql.toString());
 	    query.setParameter("produtoEdicaoId", produtoEdicaoId);
-	    List<String> lista = query.list();
+	    final List<String> lista = query.list();
 	    if (lista.size() > 0 && (lista.get(0).equals("FECHADO") || lista.get(0).equals("RECOLHIDO"))) {
 		return false;
 	    }
@@ -1654,9 +1659,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Long> obterNumeroDas6UltimasEdicoesFechadas(Long idProduto){
+	public List<Long> obterNumeroDas6UltimasEdicoesFechadas(final Long idProduto){
 	
-		StringBuilder sql = new StringBuilder();
+		final StringBuilder sql = new StringBuilder();
 
 
 			sql.append(" select pe.NUMERO_EDICAO from produto_edicao pe left join produto p ON p.ID = pe.PRODUTO_ID ")
@@ -1666,17 +1671,18 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				.append(" order by l.DATA_LCTO_PREVISTA desc ")
 				.append(" limit 6  ");
 		
-	    Query query = getSession().createSQLQuery(sql.toString());
+	    final Query query = getSession().createSQLQuery(sql.toString());
 	    query.setParameter("idProduto", idProduto);
 	    
-	    List<Long> lista = query.list();
+	    final List<Long> lista = query.list();
 	    return lista;
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
-	public List<Long> obterNumeroDas6UltimasEdicoesFechadasPorICD(String codigoICD){
+	public List<Long> obterNumeroDas6UltimasEdicoesFechadasPorICD(final String codigoICD){
 		
-		StringBuilder sql = new StringBuilder();
+		final StringBuilder sql = new StringBuilder();
 
 
 			sql.append(" select pe.NUMERO_EDICAO from produto_edicao pe left join produto p ON p.ID = pe.PRODUTO_ID ")
@@ -1686,21 +1692,22 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				.append(" order by l.DATA_LCTO_PREVISTA desc ")
 				.append(" limit 6  ");
 		
-	    Query query = getSession().createSQLQuery(sql.toString());
+	    final Query query = getSession().createSQLQuery(sql.toString());
 	    query.setParameter("idProduto", codigoICD);
 	    
-	    List<Long> lista = query.list();
+	    final List<Long> lista = query.list();
 	    return lista;
 	}
 	
-	public BigDecimal obterDescontoLogistica(Long idPropdutoEdicao){
+	@Override
+	public BigDecimal obterDescontoLogistica(final Long idPropdutoEdicao){
 		
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select pEdicao.descontoLogistica.percentualDesconto from ProdutoEdicao pEdicao ");
 		hql.append(" where pEdicao.id = :idPropdutoEdicao ");
 		
-		Query query = super.getSession().createQuery(hql.toString());
+		final Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("idPropdutoEdicao",idPropdutoEdicao);
 		
@@ -1709,11 +1716,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ItemAutoComplete> obterPorCodigoBarraILike(String codigoBarra) {
+	public List<ItemAutoComplete> obterPorCodigoBarraILike(final String codigoBarra) {
 		
-		Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class);
+		final Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class);
 		
-		Query query = this.getSession().createQuery("select o.id as chave, o.codigoDeBarras as value, o.codigoDeBarras || ' -  ' || o.produto.nome || ' - Ed.:' || o.numeroEdicao as label from ProdutoEdicao o where o.codigoDeBarras like :codigoDeBarras");
+		final Query query = this.getSession().createQuery("select o.id as chave, o.codigoDeBarras as value, o.codigoDeBarras || ' -  ' || o.produto.nome || ' - Ed.:' || o.numeroEdicao as label from ProdutoEdicao o where o.codigoDeBarras like :codigoDeBarras");
 		
 		criteria.add(Restrictions.ilike("codigoDeBarras", codigoBarra,MatchMode.START));
 		query.setString("codigoDeBarras", codigoBarra + "%");
@@ -1724,14 +1731,14 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 	
 	@Override
-	public Boolean isEdicaoParcial(Long idProdutoEdicao) {
+	public Boolean isEdicaoParcial(final Long idProdutoEdicao) {
 		
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select pEdicao.parcial from ProdutoEdicao pEdicao ");
 		hql.append(" where pEdicao.id = :idPropdutoEdicao ");
 		
-		Query query = super.getSession().createQuery(hql.toString());
+		final Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("idPropdutoEdicao",idProdutoEdicao);
 		
@@ -1739,9 +1746,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 	}
 	
-	public ProdutoEdicao obterMaxProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto, Long numeroEdicao) {
+	@Override
+	public ProdutoEdicao obterMaxProdutoEdicaoPorCodProdutoNumEdicao(final String codigoProduto, final Long numeroEdicao) {
 
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 		   
 		hql.append(" from ProdutoEdicao pe where pe.id =(select max(produtoEdicao.id) from ProdutoEdicao produtoEdicao "); 
 		hql.append(" 												join produtoEdicao.produto produto ");
@@ -1749,7 +1757,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" 												produto.codigo =:codigoProduto ");
 		hql.append(" 												and produtoEdicao.numeroEdicao=:numeroEdicao ) ");	
 					
-		Query query = super.getSession().createQuery(hql.toString());
+		final Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("codigoProduto", codigoProduto);
 		query.setParameter("numeroEdicao", numeroEdicao);
@@ -1759,63 +1767,134 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer numeroCota, Integer quantidadeRegisttros) {
+	public List<ProdutoEdicao> obterProdutoPorCodigoNome(
+			final String codigoNomeProduto, 
+			final Integer numeroCota, 
+			final Integer quantidadeRegisttros,
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel ) {
 		
-		StringBuilder hql = new StringBuilder(" select produtoEdicao ");
+		final StringBuilder hql = new StringBuilder(" select produtoEdicao ");
 		   
-		hql.append(" from MovimentoEstoqueCota mec 			 	 	")
-		
-			.append(" inner join mec.tipoMovimento tipoMovimento	")
-
-			.append(" inner join mec.cota cota					 	")
+		hql.append(" from ChamadaEncalheCota cec		")
+			.append(" inner join cec.chamadaEncalhe ce	")
+			.append(" inner join cec.cota cota					 		")
+			.append(" inner join ce.produtoEdicao produtoEdicao 		")
+			.append(" inner join produtoEdicao.produto produto			")
+			.append(" inner join produto.fornecedores fornecedor  		")
+			.append(" inner join produtoEdicao.lancamentos lancamentos 	")
 			
-			.append(" inner join mec.produtoEdicao produtoEdicao 	")
-			
-			.append(" inner join produtoEdicao.produto produto		")
-			
-			.append(" inner join produtoEdicao.lancamentos lancamentos ")
-			
-			.append(" where 										")
+			.append(" where ")
 			
 			.append(" (produto.nome like :nomeProduto 				")
-			
-			.append(" or produto.codigo like :codigoProduto) 	and		")
-			
-			.append(" tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque and	")
-
+			.append(" or produto.codigo like :codigoProduto) 	and	")
 			.append(" cota.numeroCota = :numeroCota ")
+			.append(" and lancamentos.status in (:statusLancamento) ");
 			
-			.append(" and lancamentos.status in (:statusLancamento) ")
-			
-			.append(" group by produtoEdicao.id 					")
-			
-			.append(" order by produto.nome asc, 					")
-			
-			.append(" produtoEdicao.numeroEdicao desc 				");
+			 carregarHQLParametrosFornecedorDatasEncalhe(hql, null, mapaDataCEConferivel);
 		
-		Query query = this.getSession().createQuery(hql.toString());
+			hql.append(" group by produtoEdicao.id			")
+			   .append(" order by produto.nome asc,			")
+			   .append(" produtoEdicao.numeroEdicao desc	");
 		
-		query.setParameter("nomeProduto", "%" + codigoNomeProduto + "%");
+		final Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setParameter("codigoProduto", "%" + codigoNomeProduto + "%");
-		
-		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-		
+		query.setParameter("nomeProduto", codigoNomeProduto );
+		query.setParameter("codigoProduto", codigoNomeProduto );
 		query.setParameter("numeroCota", numeroCota);
-		
 		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO));
+		
+		carregarHQLParametrosFornecedorDatasEncalhe(null, query, mapaDataCEConferivel);
 		
 		query.setMaxResults(quantidadeRegisttros);
 		
 		return query.list();
 	}
 
+	
+	private void carregarHQLParametrosFornecedorDatasEncalhe(
+			final StringBuilder hql,
+			final Query query,
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel) {
+		
+		if(query == null) {
+
+			int quantidadeEntradas = mapaDataCEConferivel.size();
+			
+			hql.append(" and ");
+			
+			final Set<Long> listaIdFornecedor = mapaDataCEConferivel.keySet();
+			
+			hql.append(" ( ");
+			
+			for(final Long idFornecedor : listaIdFornecedor) {
+				
+				final List<Date> datasCEProdutoParcial = mapaDataCEConferivel.get(idFornecedor).getListaDataConferivelProdutoParcial();
+				final List<Date> datasCEProdutoNaoParcial = mapaDataCEConferivel.get(idFornecedor).getListaDataConferivelProdutoNaoParcial();
+				final boolean criaHqlParcial = !datasCEProdutoParcial.isEmpty();
+				final boolean criaHqlNaoParcial = !datasCEProdutoNaoParcial.isEmpty();
+				
+				hql.append(" ( fornecedor.id = :idFornecedor_"+idFornecedor );
+				hql.append(" and "); 
+				
+				hql.append(" 	( ");
+				
+				boolean indOr = false;
+				
+				if(criaHqlParcial) {
+					hql.append(" (produtoEdicao.parcial = true and ce.dataRecolhimento in (:datasRecolhimentoParcial_"+idFornecedor+"))" );
+					indOr = true;
+				}
+				
+				if(criaHqlNaoParcial) {
+					hql.append(indOr ? " or " : "");
+					hql.append(" (produtoEdicao.parcial = false and ce.dataRecolhimento in (:datasRecolhimentoNaoParcial_"+idFornecedor+"))" );
+				}
+				
+				hql.append(" 	) ");
+				
+				hql.append(" ) ");
+				
+				hql.append( (--quantidadeEntradas > 0) ? " or " : "");
+				
+			}
+			
+			hql.append(" ) ");
+			
+		} else {
+			
+			final Set<Entry<Long, DataCEConferivelDTO>> entradasMapa = mapaDataCEConferivel.entrySet();
+			
+			for(final Entry<Long, DataCEConferivelDTO> entrada : entradasMapa) {
+				
+				query.setParameter("idFornecedor_"+entrada.getKey(), entrada.getKey());
+				
+				final List<Date> listaDataConferivelProdutoParcial = entrada.getValue().getListaDataConferivelProdutoParcial();
+				final List<Date> listaDataConferivelProdutoNaoParcial = entrada.getValue().getListaDataConferivelProdutoNaoParcial();
+				
+				if(!listaDataConferivelProdutoParcial.isEmpty()) {
+					query.setParameterList("datasRecolhimentoParcial_"+entrada.getKey(), listaDataConferivelProdutoParcial);
+				}
+
+				if(!listaDataConferivelProdutoNaoParcial.isEmpty()) {
+					query.setParameterList("datasRecolhimentoNaoParcial_"+entrada.getKey(), listaDataConferivelProdutoNaoParcial);
+				}
+				
+				
+			}
+			
+			
+		}
+		
+		
+	}
+	
+	
 
 	@Override
-	public BigDecimal obterVendaEsmagadaMedia(String codigoProduto, Integer numeroEdicao, 
-			Integer numeroCotaEsmagada) {
+	public BigDecimal obterVendaEsmagadaMedia(final String codigoProduto, final Integer numeroEdicao, 
+			final Integer numeroCotaEsmagada) {
 		
-		SQLQuery query = this.getSession().createSQLQuery("select sum(epc.QTDE_RECEBIDA) " +
+		final SQLQuery query = this.getSession().createSQLQuery("select sum(epc.QTDE_RECEBIDA) " +
 				" from ESTOQUE_PRODUTO_COTA epc " +
 				" join PRODUTO_EDICAO pe on (pe.ID = epc.PRODUTO_EDICAO_ID) " +
 				" join PRODUTO p on (p.ID = pe.PRODUTO_ID) " +
@@ -1833,10 +1912,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 	
 	@Override
-	public int obterQtdEdicoesPresentes(String codigoProduto, String[] edicoes, 
-			Integer numeroCotaEsmagada) {
+	public int obterQtdEdicoesPresentes(final String codigoProduto, final String[] edicoes, 
+			final Integer numeroCotaEsmagada) {
 		
-		SQLQuery query = this.getSession().createSQLQuery("select count(distinct pe.ID) " +
+		final SQLQuery query = this.getSession().createSQLQuery("select count(distinct pe.ID) " +
 				" from ESTOQUE_PRODUTO_COTA epc " +
 				" join PRODUTO_EDICAO pe on (pe.ID = epc.PRODUTO_EDICAO_ID) " +
 				" join PRODUTO p on (p.ID = pe.PRODUTO_ID) " +
@@ -1854,10 +1933,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 
 	@Override
-	public boolean cotaTemProduto(String codigoProduto, Integer numeroEdicao,
-			Integer numeroCota) {
+	public boolean cotaTemProduto(final String codigoProduto, final Integer numeroEdicao,
+			final Integer numeroCota) {
 		
-		SQLQuery query = this.getSession().createSQLQuery(
+		final SQLQuery query = this.getSession().createSQLQuery(
 				"select count(pe.ID) " +
 				" from ESTOQUE_PRODUTO_COTA epc " +
 				" join PRODUTO_EDICAO pe on (pe.ID = epc.PRODUTO_EDICAO_ID) " +

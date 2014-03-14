@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
+import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -121,7 +123,8 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	
 	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, 
 												  Integer numeroCota,
-												  Integer quantidadeRegistros);
+												  Integer quantidadeRegistros,
+												  Map<Long, DataCEConferivelDTO> mapaDataCEConferivel);
 	
 	/**
 	 * Obtém uma lista de produtos edição de acordo com o parâmetro iformado.

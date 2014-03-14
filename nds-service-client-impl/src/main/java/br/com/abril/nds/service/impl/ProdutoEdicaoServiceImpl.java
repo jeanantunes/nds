@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
+import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -323,9 +324,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     @Override
     @Transactional(readOnly = true)
-    public List<ProdutoEdicao> obterProdutoPorCodigoNomeParaRecolhimento(final String codigoNomeProduto,
+    public List<ProdutoEdicao> obterProdutoPorCodigoNomeParaRecolhimento(
+    		final String codigoNomeProduto,
             final Integer numeroCota,
-            final Integer quantidadeRegistros) {
+            final Integer quantidadeRegistros,
+            final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel) {
         
         if (codigoNomeProduto == null || codigoNomeProduto.trim().isEmpty()){
             
@@ -333,29 +336,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         }
         
         final List<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.obterProdutoPorCodigoNome(
-                codigoNomeProduto, numeroCota, quantidadeRegistros);
+                codigoNomeProduto, numeroCota, quantidadeRegistros, mapaDataCEConferivel);
         
-        final List<ProdutoEdicao> produtosEdicaoValidos = new ArrayList<>();
-        
-        final Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
-        
-        for (final ProdutoEdicao produtoEdicao : produtosEdicao) {
-            
-            try {
-                
-                conferenciaEncalheService.isDataRecolhimentoValida(
-                        dataOperacaoDistribuidor, dataOperacaoDistribuidor, produtoEdicao.getId(),
-                        cotaService.isCotaOperacaoDiferenciada(numeroCota));
-                
-                produtosEdicaoValidos.add(produtoEdicao);
-                
-            } catch (final ValidacaoException e) {
-                LOGGER.debug(e.getMessage(), e);
-                continue;
-            }
-        }
-        
-        return produtosEdicaoValidos;
+        return produtosEdicao;
     }
     
     @Override
@@ -1426,7 +1409,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         BigInteger cotasEsmagadas = BigInteger.ZERO;
         BigDecimal vendaEsmagadas = BigDecimal.ZERO;
         BigDecimal qtdeCotasSemVenda = BigDecimal.ZERO;
-        StringBuilder strCotas = new StringBuilder();
+        final StringBuilder strCotas = new StringBuilder();
         for (int i = 0; i < newFaixasVenda.length; i++) {
             final String[] faixa = newFaixasVenda[i].split("-");
             final AnaliseHistogramaDTO obj =
@@ -1511,7 +1494,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         totalizar.setReparteDistribuido(movimentoEstoqueService.obterReparteDistribuidoProduto(codigoProduto));
         totalizar.setIdCotaStr(strCotas.toString());
         
-        for (AnaliseHistogramaDTO aDto : list){
+        for (final AnaliseHistogramaDTO aDto : list){
         	aDto.setPartReparte(aDto.getRepTotal().multiply(CEM).divide(totalizar.getRepTotal(), 2, RoundingMode.HALF_EVEN));
             aDto.setPartVenda(aDto.getVdaTotal().multiply(CEM).divide(totalizar.getVdaTotal(), 2, RoundingMode.HALF_EVEN));
             
@@ -1674,7 +1657,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
     }
     
-    public List<ProdutoEdicao> obterProdutosEdicaoPorId(Set<Long> idsProdutoEdicao) {
+    @Override
+	public List<ProdutoEdicao> obterProdutosEdicaoPorId(final Set<Long> idsProdutoEdicao) {
     	
     	return this.produtoEdicaoRepository.obterProdutosEdicaoPorId(idsProdutoEdicao);
     }

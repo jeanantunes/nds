@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
+import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -79,7 +80,11 @@ public interface ProdutoEdicaoService {
 	 */
 	List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(String codigoProduto);
 
-	List<ProdutoEdicao> obterProdutoPorCodigoNomeParaRecolhimento(String codigoNomeProduto, Integer numeroCota, Integer quantidadeRegisttros);
+	List<ProdutoEdicao> obterProdutoPorCodigoNomeParaRecolhimento(
+			String codigoNomeProduto, 
+			Integer numeroCota, 
+			Integer quantidadeRegistros,
+			Map<Long, DataCEConferivelDTO> mapaDataCEConferivel);
 	
 	
 	/**
