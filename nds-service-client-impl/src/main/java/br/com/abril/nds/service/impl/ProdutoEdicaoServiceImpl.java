@@ -339,6 +339,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 codigoNomeProduto, numeroCota, quantidadeRegistros, mapaDataCEConferivel);
         
         return produtosEdicao;
+
     }
     
     @Override
@@ -1593,12 +1594,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     @Transactional
     public void insereVendaRandomica(final String codigoProduto, final Integer numeroEdicao) {
         produtoEdicaoRepository.insereVendaRandomica(produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, Long.valueOf(numeroEdicao)));
-    }
-    
-    @Override
-    @Transactional
-    public BigInteger obterReparteDisponivel(final Long idProdutoEdicao) {
-        return produtoEdicaoRepository.obterReparteDisponivel(idProdutoEdicao);
     }
     
     @Override

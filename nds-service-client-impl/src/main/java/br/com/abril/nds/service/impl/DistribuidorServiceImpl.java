@@ -488,7 +488,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 			final Long produtoEdicaoId,
 			final List<Long> idFornecedores){
 		
-		final boolean indCotaOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota);
+		boolean indCotaOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacaoConferencia);
 		
 		Date dataPrimeiroDiaRecolhimento = null;
 		

@@ -289,7 +289,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final Map<Long, DataCEConferivelDTO> mapaForncedorDatasEncalhe = new HashMap<>();
 		
-		final boolean indCotaOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota);
+		final boolean indCotaOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao);
 		
 		for(final Long idFornecedor : listaIdFornecedor) {
 			
@@ -697,7 +697,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final Date dataRecolhimentoCE, 
 			final Integer primeiroDiaDaSemanaDistribuidor) {
 		
-		final List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota);
+		List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota, dataRecolhimentoCE);
 		
 		final List<DiaSemanaRecolhimento> listaDiaSemanaRecolhimento = new ArrayList<>();
 
@@ -1091,7 +1091,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
-		final List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota);
+		List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota, dataOperacao);
 		
 		final DiaSemana diaSemanaDataOperacao = DiaSemana.getByCodigoDiaSemana(DateUtil.obterDiaDaSemana(dataOperacao));
 		
@@ -1312,7 +1312,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 	    	ChamadaEncalheCota chamadaEncalheCota = null;
 	    	
-	    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota())){
+	    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota(), dataOperacao)){
 	    		chamadaEncalheCota = this.validarChamadaEncalheOperacaoDiferenciada(cota, produtoEdicao);
 	    	} else {
 				chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
@@ -1419,7 +1419,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 	    	ChamadaEncalheCota chamadaEncalheCota = null;
 	    	
-	    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota())){
+	    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota(), dataOperacao)){
 	    		chamadaEncalheCota = this.validarChamadaEncalheOperacaoDiferenciada(cota, produtoEdicao);
 	    	} else {
 				chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
@@ -1511,7 +1511,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(final Integer numeroCota, final String codigoDeBarras) throws EncalheRecolhimentoParcialException {
+	public List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws EncalheRecolhimentoParcialException {
+	    
+		final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
 		if (numeroCota == null){
 			
@@ -1539,7 +1541,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 		    	ChamadaEncalheCota chamadaEncalheCota = null;
 		    	
-		    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota())){
+		    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota(), dataOperacao)){
 		    		chamadaEncalheCota = this.validarChamadaEncalheOperacaoDiferenciada(cota, produtoEdicao);
 		    	} else {
 					chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
@@ -1565,8 +1567,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 				final BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 	            produtoEdicaoDTO.setPrecoVenda(precoVenda);
-	
-	            final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 	
 				carregarValoresAplicadosProdutoEdicao(produtoEdicaoDTO, numeroCota, produtoEdicao.getId(), dataOperacao);
 				
@@ -1772,19 +1772,23 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				                                usuario, 
 				                                indConferenciaContingencia);
 
+		BigDecimal valorTotalReparteOperacaoConferenciaEncalhe = BigDecimal.ZERO;
 		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
 				//conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(controleConfEncalheCota.getId());
 		
 		for (final ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
 			
-			valorTotalEncalheOperacaoConferenciaEncalhe = valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getValorTotal());
+			valorTotalReparteOperacaoConferenciaEncalhe = 
+					valorTotalReparteOperacaoConferenciaEncalhe.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getQtdReparte())));
+			valorTotalEncalheOperacaoConferenciaEncalhe = 
+					valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getQtdExemplar())));
 		}
 		
 		reparte = reparte == null ? BigDecimal.ZERO : reparte;
 		
-		valorTotalEncalheOperacaoConferenciaEncalhe = reparte.subtract(valorTotalEncalheOperacaoConferenciaEncalhe);
-		
-		this.negociacaoDividaService.abaterNegociacaoPorComissao(cota.getId(), valorTotalEncalheOperacaoConferenciaEncalhe, usuario);
+		this.negociacaoDividaService.abaterNegociacaoPorComissao(
+			cota.getId(), valorTotalReparteOperacaoConferenciaEncalhe, valorTotalEncalheOperacaoConferenciaEncalhe, usuario
+		);
 		
 		Set<String> nossoNumeroCollection = new LinkedHashSet<String>();
 		

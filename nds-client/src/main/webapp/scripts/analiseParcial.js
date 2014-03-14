@@ -433,16 +433,27 @@ var analiseParcialController = $.extend(true, {
                     return;
                 }
             }
-            
-            var saldoReparteAtualizado = parseInt($saldoreparte.val(), 10) - reparteSubtraido;
-            
-            $saldoreparte.text(saldoReparteAtualizado);
-            
-            $saldoreparte.val(saldoReparteAtualizado);
 
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
-                data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').val(), 'variacaoDoReparte': reparteSubtraido},
-                success: function() {
+                data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').val(), 'variacaoDoReparte': reparteSubtraido, 'reparteDigitado' : reparteDigitado},
+                success: function(result) {
+                	
+                	if (result.mensagens) {
+                		
+                		analiseParcialController.exibirMsg(
+                			result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+                		
+                		$input_reparte.val(reparteAtual);
+                		
+                		return;
+                	}
+                	
+                	var saldoReparteAtualizado = parseInt($saldoreparte.val(), 10) - reparteSubtraido;
+                    
+                    $saldoreparte.text(saldoReparteAtualizado);
+                    
+                    $saldoreparte.val(saldoReparteAtualizado);
+                	
                 	analiseParcialController.atualizaAbrangencia();
                     $input_reparte.attr('reparteAtual', reparteDigitado);
                     var reparteInicial = $input_reparte.attr('reparteInicial');
@@ -489,6 +500,11 @@ var analiseParcialController = $.extend(true, {
     },
 
     restauraBaseInicial : function() {
+    	
+    	$.postJSON(
+    		analiseParcialController.path + '/distribuicao/analise/parcial/restaurarBaseInicial'
+    	);
+    	
         $('#baseEstudoGridParcial').flexAddData(analiseParcialController.baseInicialAnalise);
     },
 
@@ -1084,7 +1100,15 @@ var analiseParcialController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					$(this).dialog("close");
-					$.post(analiseParcialController.path +'/distribuicao/analise/parcial/liberar', {'id': $('#estudoId').val()},function(){
+					$.post(analiseParcialController.path +'/distribuicao/analise/parcial/liberar', analiseParcialController.getDadosLiberacao(), function(result) {
+						
+						if (result.mensagens) {
+			        		
+			        		analiseParcialController.exibirMsg(
+			        			result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+			        		
+			        		return;
+			        	}
 						
 						$('#status_estudo').text('Liberado');
 						analiseParcialController.exibirMsg('SUCCESS', ['Estudo liberado com sucesso!']);
@@ -1102,7 +1126,22 @@ var analiseParcialController = $.extend(true, {
 				}
 			}
 		});
-    	
+    },
+    
+    getDadosLiberacao: function () {
+       
+    	var data = [];
+
+        data.push({name: 'estudoId', value: $("#estudoId").val()});
+
+        $("#baseEstudoGridParcial tr td input").each(function (key, element) {
+            if (element.value > 0) {
+                data.push({name: 'cotas[' + key + '].numeroCota', value: $(element).attr('numerocota')});
+                data.push({name: 'cotas[' + key + '].reparte', value: element.value});
+            }
+        });
+
+        return data;
     },
     
     preProcessGridNaoSelec : function(resultado) {
@@ -1244,7 +1283,16 @@ var analiseParcialController = $.extend(true, {
     postMudarReparteLote: function () {
         $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/mudarReparteLote',
             analiseParcialController.getCotasComReparte(),
-            function () {
+            function (result) {
+        		
+	        	if (result.mensagens) {
+	        		
+	        		analiseParcialController.exibirMsg(
+	        			result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+	        		
+	        		return;
+	        	}
+        	
                 $('#baseEstudoGridParcial').flexReload();
                 $('#saldo_reparte').text($('#saldoReparteNaoSelec').text());
                 analiseParcialController.atualizaAbrangencia();

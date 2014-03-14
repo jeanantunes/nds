@@ -592,8 +592,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("	left outer join DIA_RECOLHIMENTO_GRUPO_COTA diaRecolhimentoGrupoCota	");
         sql.append("	on grupoCota.id = diaRecolhimentoGrupoCota.grupo_id						");
         
-        sql.append("    where    ");
-        
+        sql.append("    where (grupoCota.DATA_VIGENCIA_INICIO is null or grupoCota.DATA_VIGENCIA_INICIO <= :dataEncalhe) ");
+        sql.append("           and (grupoCota.DATA_VIGENCIA_FIM is null or grupoCota.DATA_VIGENCIA_FIM >= :dataEncalhe) and ");
         
         sql.append("    (	grupoCota.id is null		");
         sql.append("    or diaRecolhimentoGrupoCota.dia_id = :diaRecolhimento ) and	");

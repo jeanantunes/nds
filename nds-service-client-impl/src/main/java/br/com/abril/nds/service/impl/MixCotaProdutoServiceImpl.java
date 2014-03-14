@@ -206,7 +206,15 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	@Override
 	@Transactional
 	public void excluirMixPorCota(Long idCota){
-		mixCotaProdutoRepository.removerPorIdCota(idCota);
+		
+		List<RepartePDV> repartesPDV = this.repartePDVRepository.buscarPorCota(idCota);
+		
+		for (RepartePDV repartePDV : repartesPDV) {
+			
+			this.repartePDVRepository.remover(repartePDV);
+		}
+		
+		this.mixCotaProdutoRepository.removerPorIdCota(idCota);
 	}
 	
 	

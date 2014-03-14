@@ -43,6 +43,9 @@ public class Negociacao {
 	@Column(name = "COMISSAO_PARA_SALDO_DIVIDA", precision=18, scale=4)
 	private BigDecimal comissaoParaSaldoDivida;
 	
+	@Column(name = "COMISSAO_ORIGINAL_COTA", precision=18, scale=4)
+	private BigDecimal comissaoOriginalCota;
+	
 	@Column(name = "NEGOCIACAO_AVULSA")
 	private boolean negociacaoAvulsa;
 	
@@ -58,6 +61,9 @@ public class Negociacao {
 	
 	@Column(name = "VALOR_DIVIDA_PAGA_COMISSAO", precision=18, scale=4)
 	private BigDecimal valorDividaPagaComissao;
+	
+	@Column(name = "VALOR_ORIGINAL", precision=18, scale=4)
+	private BigDecimal valorOriginal;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_CRIACAO")
@@ -101,6 +107,20 @@ public class Negociacao {
 		this.comissaoParaSaldoDivida = comissaoParaSaldoDivida;
 	}
 
+	/**
+	 * @return the comissaoOriginalCota
+	 */
+	public BigDecimal getComissaoOriginalCota() {
+		return comissaoOriginalCota;
+	}
+
+	/**
+	 * @param comissaoOriginalCota the comissaoOriginalCota to set
+	 */
+	public void setComissaoOriginalCota(BigDecimal comissaoOriginalCota) {
+		this.comissaoOriginalCota = comissaoOriginalCota;
+	}
+
 	public boolean isNegociacaoAvulsa() {
 		return negociacaoAvulsa;
 	}
@@ -139,6 +159,20 @@ public class Negociacao {
 
 	public void setValorDividaPagaComissao(BigDecimal valorDividaPagaComissao) {
 		this.valorDividaPagaComissao = valorDividaPagaComissao;
+	}
+
+	/**
+	 * @return the valorOriginal
+	 */
+	public BigDecimal getValorOriginal() {
+		return valorOriginal;
+	}
+
+	/**
+	 * @param valorOriginal the valorOriginal to set
+	 */
+	public void setValorOriginal(BigDecimal valorOriginal) {
+		this.valorOriginal = valorOriginal;
 	}
 
 	public Date getDataCriacao() {
