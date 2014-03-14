@@ -872,7 +872,6 @@ var fixacaoReparteController = $.extend(true, {
 			data.push({name:'fixacaoReparteDTO.qtdeExemplares',	value: $("#qtdeFixadaModal").val()});
 			data.push({name:'fixacaoReparteDTO.edicaoInicial',	value: $("#edInicialModal").val()});
 			data.push({name:'fixacaoReparteDTO.edicaoFinal',	value: $("#edFinalModal").val()});
-			data.push({name:'fixacaoReparteDTO.idLancamento', 	value: idLancamentoEdicaoDestaque});
 			data.push({name:'fixacaoReparteDTO.qtdeEdicoesMarcado',	value: $("#radioQtdeEdicoes").is(":checked")});
 
 			return data;
