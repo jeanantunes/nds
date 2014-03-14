@@ -43,6 +43,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	                qtdSelecionados++;
 	            }
 	        });
+	        T.produtoEdicaoPesquisaBases = [];
 	    }
 	    
 	    if (qtdSelecionados > 6) {
@@ -521,13 +522,21 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 	
 	this.verificacoesGerar = function(){
-		if(T.produtoEdicaoBases != undefined && T.produtoEdicaoBases.length === 1){
-			distribuicaoVendaMedia.alertaUmaEdicaoBase();
+		if($('#reparteDistribuir').val() <= 0){
+			exibirMensagemDialog("WARNING", ["Não é possível gerar estudo com reparte menor que 01."], "");
 		}else{
-			distribuicaoVendaMedia.gerar();
+			if(($("#distribuicaoPorMultiplo").is(":checked")) && ((($('#reparteDistribuir').val()) % ($('#multiplo').val())) > 0 )){
+				exibirMensagemDialog("WARNING", ["O reparte tem que ser multiplo de " + $('#multiplo').val() + "."], "");
+			}else{
+				if(T.produtoEdicaoBases != undefined && T.produtoEdicaoBases.length === 1){
+					distribuicaoVendaMedia.alertaUmaEdicaoBase();
+				}else{
+					distribuicaoVendaMedia.gerar();
+				}
+			}
 		}
 	};
-	
+		
 	this.alertaUmaEdicaoBase = function(){
 		$( "#dialog-edicoesbase" ).dialog({
 		    escondeHeader: false,

@@ -1206,11 +1206,10 @@ public class DescontoServiceImpl implements DescontoService {
 
 	@Override
 	@Transactional
-	public Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao(
-			Long lancamentoId, Long produtoEdicaoId) {
+	public Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao() {
 		
 		Map<String, DescontoDTO> descontosMap = new HashMap<String, DescontoDTO>();
-		List<DescontoDTO> descontos = descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(lancamentoId, produtoEdicaoId);
+		List<DescontoDTO> descontos = descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao();
 		
 		List<DescontoDTO> descontosProximosLancamentos = descontoProximosLancamentosRepository.obterDescontosProximosLancamentos(distribuidorRepository.obterDataOperacaoDistribuidor());
 		
@@ -1232,10 +1231,6 @@ public class DescontoServiceImpl implements DescontoService {
 			String key = new StringBuilder()
 				.append(desc.getCotaId() != null ? "c" : "")
 				.append(desc.getCotaId() != null ? desc.getCotaId() : "")
-				.append(desc.getFornecedorId() != null ? "f" : "")
-				.append(desc.getFornecedorId() != null ? desc.getFornecedorId() : "")
-				.append(desc.getProdutoEdicaoId() != null ? "pe" : "")
-				.append(desc.getProdutoEdicaoId() != null ? desc.getProdutoEdicaoId() : "")
 				.append(desc.getProdutoId() != null ? "p" : "")
 				.append(desc.getProdutoId() != null ? desc.getProdutoId() : "")
 				.append(desc.isProximoLancamento() ? "pl" : "")
@@ -1246,7 +1241,7 @@ public class DescontoServiceImpl implements DescontoService {
 		return descontosMap;
 	}
 	
-	public DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, long cotaId, long fornecedorId, long produtoId, long produtoEdicaoId) throws Exception {
+	public DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, Long cotaId, Long fornecedorId, Long produtoId, Long produtoEdicaoId) throws Exception {
 		
 		                                                                                /**
          * A busca dos descontos é feita diretamente no Map, por chave, agilizando o retorno do resultado
@@ -1263,198 +1258,195 @@ public class DescontoServiceImpl implements DescontoService {
 		DescontoDTO descontoDTO = null;
 		
 		/**
-		 * Desconto de ProdutoEdicao no proximo lancamento
-		 */
-		String key = new StringBuilder()
-					.append("p")
-					.append(produtoId)
-					.append("pl")
-					.toString();
+		 * Desconto de ProdutoEdicao no proximo lancamento com cota especifica
+		 */		
+		StringBuilder key = new StringBuilder()
+					.append(cotaId != null ? "c" : "")
+					.append(cotaId != null ? cotaId : "")
+					.append(produtoId != null ? "p" : "")
+					.append(produtoId != null ? produtoId : "")
+					.append("pl");
 		
-		descontoDTO = descontos.get(key);
+		descontoDTO = descontos.get(key.toString());
 		
 		if(descontoDTO != null) {
 			return descontoDTO;
 		}
 		
-		                                                                                /**
+		/**
+         * Desconto de ProdutoEdicao no proximo lancamento para todas as cotas
+         */     
+        key = new StringBuilder()
+                    .append(produtoId != null ? "p" : "")
+                    .append(produtoId != null ? produtoId : "")
+                    .append("pl");
+        
+        descontoDTO = descontos.get(key.toString());
+        
+        if(descontoDTO != null) {
+            return descontoDTO;
+        }
+		
+		
+		
+		/**
          * Desconto de ProdutoEdicao para cota específica
          */
-		if(descontoDTO == null) {
-			
-			key = new StringBuilder()
-				.append("c")
-				.append(cotaId)
-				.append("f")
-				.append(fornecedorId)
-				.append("pe")
-				.append(produtoEdicaoId)
-				.append("p")
-				.append(produtoId)
-				.toString();
-			
-			descontoDTO = descontos.get(key);
-			
-			if(descontoDTO != null) {
-				return descontoDTO;
-			}
-			
+		key = new StringBuilder()
+			.append("c")
+			.append(cotaId)		
+			.append("f")
+            .append(fornecedorId)
+		    .append("pe")
+			.append(produtoEdicaoId)
+			.append("p")
+			.append(produtoId);
+		
+		descontoDTO = descontos.get(key.toString());
+		
+		if(descontoDTO != null) {
+			return descontoDTO;
 		}
-		
-		                                                                                /**
-         * Desconto de ProdutoEdicao para cota específica
-         */
-		if(descontoDTO == null) {
-			
-			key = new StringBuilder()
-				.append("c")
-				.append(cotaId)
-				.append("f")
-				.append(fornecedorId)
-				.append("pe")
-				.append(produtoEdicaoId)
-				.toString();
-		
-			descontoDTO = descontos.get(key);
-			
-			if(descontoDTO != null) {
-				return descontoDTO;
-			}
-
-		}
-		
-		                                                                                /**
+				
+		/**
          * Desconto de Produto para cota específica
          */
-		if(descontoDTO == null) {
-			
-			key = new StringBuilder()
-				.append("c")
-				.append(cotaId)
-				.append("f")
-				.append(fornecedorId)
-				.append("p")
-				.append(produtoId)
-				.toString();
+		key = new StringBuilder()
+			.append("c")
+			.append(cotaId)
+			.append("p")
+			.append(produtoId);
+	
+		descontoDTO = descontos.get(key.toString());
 		
-			descontoDTO = descontos.get(key);
-			
-			if(descontoDTO != null) {
-				return descontoDTO;
-			}
-			
+		if(descontoDTO != null) {
+			return descontoDTO;
 		}
 		
 		/**
 		 * Desconto de ProdutoEdicao
 		 */
-		if(descontoDTO == null) {
-			
-			key = new StringBuilder()
-				.append("pe")
-				.append(produtoEdicaoId)
-				.toString();
+		key = new StringBuilder()
+			.append("pe")
+            .append(produtoEdicaoId)
+            .append("p")
+            .append(produtoId);
 		
-			descontoDTO = descontos.get(key);
-			
-			if(descontoDTO != null) {
-				return descontoDTO;
-			}
-			
+		descontoDTO = descontos.get(key.toString());
+		
+		if(descontoDTO != null) {
+			return descontoDTO;
 		}
 		
 		/**
 		 * Desconto de Produto
 		 */
-		if(descontoDTO == null) {
-			
-			key = new StringBuilder()
-				.append("p")
-				.append(produtoId)
-				.toString();
+		key = new StringBuilder()
+			.append("p")
+			.append(produtoId);
+	
+		descontoDTO = descontos.get(key.toString());
 		
-			descontoDTO = descontos.get(key);
-			
-			if(descontoDTO != null) {
-				return descontoDTO;
-			}
-			
+		if(descontoDTO != null) {
+			return descontoDTO;
 		}
 		
 		/**
 		 * Desconto Especifico da Cota
 		 */
-		if(descontoDTO == null) {
-			key = new StringBuilder()
-				.append("c")
-				.append(cotaId)
-				.append("f")
-				.append(fornecedorId)
-				.toString();
+		key = new StringBuilder()
+			.append("c")
+			.append(cotaId)
+			.append("f")
+			.append(fornecedorId);
+	
 		
-			
-			descontoDTO = descontos.get(key);
-			
-			if(descontoDTO != null) {
-				return descontoDTO;
-			}
-			
+		descontoDTO = descontos.get(key.toString());
+		
+		if(descontoDTO != null) {
+			return descontoDTO;
 		}
 		
 		/**
 		 * Desconto Geral (Fornecedor)
 		 */
-		if(descontoDTO == null) {
-			key = new StringBuilder()
-				.append("f")
-				.append(fornecedorId)
-				.toString();
+		key = new StringBuilder()
+			.append("f")
+			.append(fornecedorId);
+	
+		descontoDTO = descontos.get(key.toString());
 		
-			descontoDTO = descontos.get(key);
-			
-			if(descontoDTO != null) {
-				return descontoDTO;
-			}
-			
+		if(descontoDTO != null) {
+			return descontoDTO;
 		}
 				
 		return descontoDTO;
 	}
+	
+	@Override
+	@Transactional
+	public DescontoDTO obterDescontoPor(Integer numeroCota, String codigoProduto, Long numeroEdicao) throws Exception {
+	    
+	    ProdutoEdicao pe = null;
+	    Cota c = null;
+	    Produto p = null; 
+        
+	    if(codigoProduto != null)
+            p = produtoRepository.obterProdutoPorCodigoProdin(codigoProduto);
+        	    
+	    if(codigoProduto != null && numeroEdicao != null)
+	        pe = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
+	    	    
+	    if(numeroCota != null) 
+	        c = cotaRepository.obterPorNumerDaCota(numeroCota);
+	    
+	    Map<String, DescontoDTO> descontos = this.obterDescontosMapPorLancamentoProdutoEdicao();
+	    
+	    return  obterDescontoPor(descontos, 
+	            c  == null ? null : c.getId(), 
+	            pe == null ? null : p.getFornecedor().getId(), 
+	            p  == null ? null : p.getId(), 
+	            pe == null ? null : pe.getId());
+	}
 
 	@Override
-	public DescontoDTO obterDescontoProximosLancamentosPor(Map<String, DescontoDTO> descontos, Long idProduto) {
-		
-		DescontoDTO descontoDTO = null;
-		
-		String key = new StringBuilder()
-			.append("p")
-			.append(idProduto)
-			.append("pd")
-			.append("pl")
-			.toString();
+	public DescontoDTO obterDescontoProximosLancamentosPor(
+			Map<String, DescontoDTO> descontos, 
+				Long cotaId, Long fornecedorId, Long produtoEdicaoId, Long produtoId) {
 	
-		descontoDTO = descontos.get(key);
-		
-		if(descontoDTO != null) {
-			return descontoDTO;
-		}
-		
-		/**
-		 * Desconto de ProdutoEdicao no proximo lancamento
-		 */
-		key = new StringBuilder()
-			.append("p")
-			.append(idProduto)
-			.append("pl")
-			.toString();
-		
-		descontoDTO = descontos.get(key);
-		
-		if(descontoDTO != null) {
-			return descontoDTO;
-		}
-		
-		return descontoDTO;
+		DescontoDTO descontoDTO = null;
+        
+        /**
+         * Desconto de ProdutoEdicao no proximo lancamento com cota especifica
+         */     
+        StringBuilder key = new StringBuilder()
+                    .append(cotaId != null ? "c" : "")
+                    .append(cotaId != null ? cotaId : "")
+                    .append(produtoId != null ? "p" : "")
+                    .append(produtoId != null ? produtoId : "")
+                    .append("pl");
+        
+        descontoDTO = descontos.get(key.toString());
+        
+        if(descontoDTO != null) {
+            return descontoDTO;
+        }
+        
+        /**
+         * Desconto de ProdutoEdicao no proximo lancamento para todas as cotas
+         */     
+        key = new StringBuilder()
+                    .append(produtoId != null ? "p" : "")
+                    .append(produtoId != null ? produtoId : "")
+                    .append("pl");
+        
+        descontoDTO = descontos.get(key.toString());
+        
+        if(descontoDTO != null) {
+            return descontoDTO;
+        }
+        
+        return descontoDTO;
 	}
 
 }

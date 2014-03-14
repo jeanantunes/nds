@@ -2,10 +2,10 @@ package br.com.abril.nds.service;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
@@ -210,10 +210,10 @@ public interface ProdutoEdicaoService {
 
 	void insereVendaRandomica(String codigoProduto, Integer numeroEdicao);
 
-    BigInteger obterReparteDisponivel(Long idProdutoEdicao);
-	
     Integer obterNumeroLancamento(Long idProdutoEdicao, Long idPeriodo);
  
     public void tratarInformacoesAdicionaisProdutoEdicaoArquivo(ProdutoEdicaoDTO prodEdicao);
+    
+    List<ProdutoEdicao> obterProdutosEdicaoPorId(Set<Long> idsProdutoEdicao);
 	
 }

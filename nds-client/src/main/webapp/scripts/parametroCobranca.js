@@ -394,11 +394,7 @@ var parametroCobrancaController = $.extend(true,
 			}else{
 				$('.formPgto', this.workspace).hide();
 			}
-			
-			$("#taxaMulta", this.workspace).val("");
-			$("#taxaJuros", this.workspace).val("");
-			$("#valorMulta", this.workspace).val("");
-			
+				
 			parametroCobrancaController.obterDadosBancarios($("#dBanco", this.workspace).val());
 		},
 		
@@ -439,6 +435,8 @@ var parametroCobrancaController = $.extend(true,
 		},
 
 		sucessCallbackObterParametro : function(resultado) {
+			
+			
 			
 			var formaEmissao = resultado.formaEmissao;
 			
@@ -561,10 +559,10 @@ var parametroCobrancaController = $.extend(true,
 					idBanco : $("#dBanco", this.workspace).val(),
 					idFornecedorPadrao : $("#comboFornecedorPadrao option:selected", this.workspace).val(),
 					fatorVencimento : $("#comboFatorVencimento option:selected", this.workspace).val(),
-					valorMinimo : floatValue($("#valorMinimo", this.workspace).val()),
-					taxaMulta : floatValue($("#taxaMulta", this.worspace).val()),
-					valorMulta : floatValue($("#valorMulta", this.worspace).val()),
-					taxaJuros : floatValue($("#taxaJuros", this.worspace).val()),
+					valorMinimo : $("#valorMinimo", this.workspace).val(),
+					taxaMulta : $("#taxaMulta", this.worspace).val(),
+					valorMulta : $("#valorMulta", this.worspace).val(),
+					taxaJuros : $("#taxaJuros", this.worspace).val(),
 					instrucoes : $("#instrucoes", this.worspace).val(),
 					acumulaDivida : $("#acumulaDivida", this.workspace).val() == 'S',
 					vencimentoDiaUtil : $("#vencimentoDiaUtil", this.workspace).val() == 'S',
@@ -748,6 +746,13 @@ var parametroCobrancaController = $.extend(true,
 					   ,
 					   null,
 					   true);
+		},
+		
+		limparCamposValores:function(){
+			
+			$("#taxaMulta", this.workspace).val("");
+			$("#taxaJuros", this.workspace).val("");
+			$("#valorMulta", this.workspace).val("");
 		},
 		
 		

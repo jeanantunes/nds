@@ -83,6 +83,7 @@ import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Util;
@@ -168,28 +169,33 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     @Override
     @Transactional(readOnly = true)
     public List<NegociacaoDividaDTO> obterDividasPorCota(final FiltroConsultaNegociacaoDivida filtro) {
+
+    	filtro.setDataOperacao(this.distribuidorService.obterDataOperacaoDistribuidor());
+    	
+        final List<NegociacaoDividaDTO> dividas = this.negociacaoDividaRepository.obterNegociacaoPorCota(filtro);
+        final Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
+        final Date data = this.distribuidorService.obterDataOperacaoDistribuidor();
         
-        final List<NegociacaoDividaDTO> dividas = negociacaoDividaRepository.obterNegociacaoPorCota(filtro);
-        final Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
-        final Date data = DateUtil.removerTimestamp(new Date());
-        
-        final FormaCobranca formaCobrancaPrincipal = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+        final FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
         
         for (final NegociacaoDividaDTO divida : dividas) {
             
             if (divida.getPrazo() != 0) {
                 
-                final Banco banco = bancoRepository.buscarBancoPorIdCobranca(divida.getIdCobranca());
+                final Banco banco = this.bancoRepository.buscarBancoPorIdCobranca(divida.getIdCobranca());
                 BigDecimal encargo = (divida.getEncargos() != null) ? divida.getEncargos() : BigDecimal.ZERO;
                 
-                encargo = encargo.add(cobrancaService.calcularJuros(banco, cota.getId(), divida.getVlDivida(), divida
-                        .getDtVencimento(), data, formaCobrancaPrincipal));
+                encargo = encargo.add(this.cobrancaService.calcularJuros(banco, cota.getId(), divida.getVlDivida(), divida
+                        .getDtVencimento(), data, formaCobrancaPrincipal)).setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN);
                 
                 if (divida.getDtVencimento().compareTo(data) < 0) {
-                    encargo = encargo.add(cobrancaService.calcularMulta(banco, cota, divida.getVlDivida(),
-                            formaCobrancaPrincipal));
+                    encargo = encargo.add(this.cobrancaService.calcularMulta(banco, cota, divida.getVlDivida(),
+                            formaCobrancaPrincipal)).setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN);
                 }
                 divida.setEncargos(encargo);
+                
+                divida.setVlDivida(divida.getVlDivida().setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN));
+
                 divida.setTotal(divida.getVlDivida().add(encargo));
             } else {
                 
@@ -206,7 +212,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     public Long criarNegociacao(final Integer numeroCota, final List<ParcelaNegociacao> parcelas,
             final BigDecimal valorDividaParaComissao, final List<Long> idsCobrancasOriginarias,
             final Usuario usuarioResponsavel, final boolean negociacaoAvulsa, final Integer ativarCotaAposParcela,
-            final BigDecimal comissaoParaSaldoDivida, final boolean isentaEncargos, final FormaCobranca formaCobranca,
+            final BigDecimal comissaoParaSaldoDivida, final BigDecimal comissaoOriginalCota,
+            final boolean isentaEncargos, final FormaCobranca formaCobranca,
             final Long idBanco) {
         
         // lista para mensagens de validação
@@ -295,8 +302,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 parcelaNegociacao.getMovimentoFinanceiroCota().setStatus(StatusAprovacao.APROVADO);
                 parcelaNegociacao.getMovimentoFinanceiroCota().setAprovador(usuarioResponsavel);
                 parcelaNegociacao.getMovimentoFinanceiroCota().setTipoMovimento(tipoMovimentoFinanceiro);
+                parcelaNegociacao.getMovimentoFinanceiroCota().setValor(
+            		parcelaNegociacao.getMovimentoFinanceiroCota().getValor().add(parcelaNegociacao.getEncargos())
+                );
                 parcelaNegociacao.getMovimentoFinanceiroCota().setObservacao("Negociação de dívida.");
-                
+
                 final Fornecedor fornecedor = cota.getParametroCobranca() != null ? cota.getParametroCobranca()
                         .getFornecedorPadrao() : formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor()
                         .getPoliticaCobranca().getFornecedorPadrao();
@@ -308,13 +318,15 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                         }
                         
                         parcelaNegociacao.getMovimentoFinanceiroCota().setFornecedor(fornecedor);
-                        
-                        totalNegociacao = totalNegociacao.add(parcelaNegociacao.getMovimentoFinanceiroCota().getValor());
-                        
+
+                        totalNegociacao = totalNegociacao
+                        					.add(parcelaNegociacao.getMovimentoFinanceiroCota().getValor())
+                        					.add(parcelaNegociacao.getEncargos());
+
                         movimentoFinanceiroCotaRepository.adicionar(parcelaNegociacao.getMovimentoFinanceiroCota());
             }
             
-            // Caso essa seja uma negociação avulsa as parcelas não devem entrar
+            // Caso essa seja uma negociação avulsa as parcelas não devem entrar TODO
             // nas próximas
             // gerações de cobrança, para isso é necessário criar um consolidado
             // financeiro para
@@ -449,7 +461,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         negociacao.setNegociacaoAvulsa(negociacaoAvulsa);
         negociacao.setFormaCobranca(formaCobranca);
         negociacao.setParcelas(parcelas);
+        negociacao.setComissaoOriginalCota(comissaoOriginalCota);
         negociacao.setValorDividaPagaComissao(valorDividaParaComissao);
+        negociacao.setValorOriginal(valorDividaParaComissao);
         negociacao.setDataCriacao(new Date());
         
         if (negociacao.getParcelas() != null) {
@@ -1021,15 +1035,18 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 DEFAULT_SCALE, RoundingMode.HALF_EVEN);
         BigDecimal somaEncargo = BigDecimal.ZERO;
         
-        Date dataBase = new Date();
-        final Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
-        final Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
+        Date dataBase = this.distribuidorService.obterDataOperacaoDistribuidor();
         
         final FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
         
         for (int i = 0; i < qntParcelas; i++) {
             final CalculaParcelasVO parcela = new CalculaParcelasVO();
             
+            if (BigDecimalUtil.eq(somaEncargo, filtro.getValorEncargoSelecionado())) {
+
+            	valorEncargo = BigDecimal.ZERO;
+            }
+
             if (i == qntParcelas - 1) {
                 valorParcela = filtro.getValorSelecionadoSemEncargo().subtract(somaParelas);
                 valorParcela = valorParcela.setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN);
@@ -1046,15 +1063,16 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 }
                 
                 somaEncargo = somaEncargo.add(valorEncargo);
+
             } else {
                 
                 valorEncargo = BigDecimal.ZERO;
             }
+
             
             dataBase = calculaParcela(filtro, valorParcela, dataBase, i, parcela, formaCobranca);
-            
             parcela.setEncargos(CurrencyUtil.formatarValor(valorEncargo));
-            
+
             parcela.setParcTotal(CurrencyUtil.formatarValor(valorParcela.add(valorEncargo)));
             
             listParcelas.add(parcela);
@@ -1185,10 +1203,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     
     @Override
     @Transactional
-    public void abaterNegociacaoPorComissao(final Long idCota, BigDecimal valorTotalEncalhe, final Usuario usuario) {
+    public void abaterNegociacaoPorComissao(final Long idCota, BigDecimal valorTotalReparte, BigDecimal valorTotalEncalhe, final Usuario usuario) {
         
         // verifica se existe valor para abater das negociações
-        if (valorTotalEncalhe != null && valorTotalEncalhe.compareTo(BigDecimal.ZERO) > 0) {
+        if (valorTotalReparte != null && valorTotalReparte.compareTo(BigDecimal.ZERO) > 0) {
             
             // busca negociações por comissão ainda não quitadas
             final List<Negociacao> negociacoes = negociacaoDividaRepository.obterNegociacaoPorComissaoCota(idCota);
@@ -1208,18 +1226,44 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     
                     // caso todo o valor da conferencia tenha sido usado para
                     // quitação das negociações
-                    if (valorTotalEncalhe.compareTo(BigDecimal.ZERO) <= 0) {
+                    if (valorTotalReparte.compareTo(BigDecimal.ZERO) <= 0) {
                         break;
                     }
                     
                     final BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
+                    final BigDecimal comissaoCota = negociacao.getComissaoOriginalCota();
+                    final BigDecimal novaComissao = comissaoCota.subtract(comissao);
                     
-                    final BigDecimal valorDescontar = valorTotalEncalhe.multiply(comissao).divide(valorCem);
+                    //Reparte
+                    final BigDecimal valorReparteCota = valorTotalReparte.subtract(valorTotalReparte.multiply(comissaoCota.divide(valorCem)));
                     
-                    valorTotalEncalhe = valorTotalEncalhe.subtract(valorDescontar);
+                    final BigDecimal valorReparteNegociacao = valorTotalReparte.subtract(valorTotalReparte.multiply(novaComissao.divide(valorCem)));
                     
-                    final BigDecimal valorRestanteNegociacao = negociacao.getValorDividaPagaComissao().subtract(
-                            valorDescontar);
+                    //Encalhe
+                    final BigDecimal valorEncalheCota = valorTotalEncalhe.subtract(valorTotalEncalhe.multiply(comissaoCota.divide(valorCem)));
+                    
+                    final BigDecimal valorEncalheNegociacao = valorTotalEncalhe.subtract(valorTotalEncalhe.multiply(novaComissao.divide(valorCem)));
+
+                    //Venda Comissão Antiga
+                    final BigDecimal vendaCota = valorReparteCota.subtract(valorEncalheCota);
+                    //Venda Comissão Nova
+                    final BigDecimal vendaNegociacao = valorReparteNegociacao.subtract(valorEncalheNegociacao);
+
+                    
+                    final BigDecimal valorComissaoCota = 
+                    		vendaCota.multiply(comissaoCota)
+                    				 .divide(valorCem.subtract(comissaoCota));
+
+                    final BigDecimal valorNovaComissao = 
+                    		vendaNegociacao.multiply(novaComissao)
+                    				  	   .divide(valorCem.subtract(novaComissao));
+
+                    final BigDecimal valorDescontar = valorComissaoCota.subtract(valorNovaComissao);
+                    
+                    valorTotalReparte = valorTotalReparte.subtract(valorDescontar);
+
+                    final BigDecimal valorRestanteNegociacao = 
+                    		negociacao.getValorDividaPagaComissao().subtract(valorDescontar);
                     
                     // se o valor resultante não quita a negociação
                     if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0) {
@@ -1231,7 +1275,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                         
                         // gera crédito para cota caso a comissão gere sobra na
                         // quitação
-                        valorTotalEncalhe = valorTotalEncalhe.add(valorRestanteNegociacao.negate());
+                        valorTotalReparte = valorTotalReparte.add(valorRestanteNegociacao.negate());
                     }
                     
                     final MovimentoFinanceiroCotaDTO movDTO = new MovimentoFinanceiroCotaDTO();

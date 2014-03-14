@@ -540,4 +540,22 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		
 		return (String) query.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Box> obterBoxPorCodigo(Integer codigoBox) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT box FROM Box box ");
+		
+		sql.append(" WHERE box.codigo = :codigosBox ");
+		
+		Query query = this.getSession().createQuery(sql.toString());
+		
+		query.setParameter("codigosBox", codigoBox);
+		
+		return query.list();
+	}
+	
 }

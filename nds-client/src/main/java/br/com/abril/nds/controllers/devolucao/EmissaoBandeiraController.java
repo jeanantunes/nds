@@ -18,7 +18,6 @@ import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.EmissaoBandeiraService;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -39,9 +38,6 @@ public class EmissaoBandeiraController extends BaseController {
 
 	@Autowired
 	private Result result;
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	private HttpServletResponse response;
@@ -70,17 +66,16 @@ public class EmissaoBandeiraController extends BaseController {
 		
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 		
-		List<BandeirasDTO> listaBandeiraDTO = 
-			chamadaEncalheService.obterBandeirasDaSemana(anoSemana, fornecedor, paginacaoVO); 
+		int total = chamadaEncalheService.countObterBandeirasDaSemana(anoSemana, fornecedor).intValue();
 		
-		if (listaBandeiraDTO.isEmpty()) {
+		if (total <= 0 ) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
-			
+		    List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(anoSemana, fornecedor, paginacaoVO); 
 			this.result.use(FlexiGridJson.class)
 				.from(listaBandeiraDTO)
-				.total(chamadaEncalheService.countObterBandeirasDaSemana(anoSemana).intValue())
+				.total(total)
 				.page(page).serialize();
 		}
 	}
@@ -95,7 +90,7 @@ public class EmissaoBandeiraController extends BaseController {
 			try {
 				
 				FileExporter.to("emissao-bandeira", fileType).inHTTPResponse(
-					this.getNDSFileHeader(), null, null, listaBandeiraDTO, BandeirasDTO.class, this.response);
+					this.getNDSFileHeader(), null, listaBandeiraDTO, BandeirasDTO.class, this.response);
 				
 			} catch (Exception e) {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
@@ -110,7 +105,7 @@ public class EmissaoBandeiraController extends BaseController {
 	public Download imprimirBandeira(Integer anoSemana, Long fornecedor, Integer numeroPallets,
 			Date dataEnvio) throws Exception{
 		
-		byte[] comprovate = emissaoBandeiraService.imprimirBandeira(anoSemana, numeroPallets, dataEnvio);
+		byte[] comprovate = emissaoBandeiraService.imprimirBandeira(anoSemana, numeroPallets, dataEnvio, fornecedor);
 		
 		return new ByteArrayDownload(comprovate,"application/pdf", "bandeira_" + anoSemana + ".pdf", true);
 	}

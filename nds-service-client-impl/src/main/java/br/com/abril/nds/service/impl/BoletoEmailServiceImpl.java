@@ -3,14 +3,13 @@ package br.com.abril.nds.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
-import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
@@ -242,7 +241,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	 */
 	@Transactional
 	@Override
-    public void salvarBoletoEmail(List<String> listaNossoNumeroEnvioEmail){
+    public void salvarBoletoEmail(Set<String> listaNossoNumeroEnvioEmail){
 		
 		if(listaNossoNumeroEnvioEmail==null || listaNossoNumeroEnvioEmail.isEmpty()){
 			
@@ -296,7 +295,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	@Override
 	public List<BoletoEmail> buscarTodos() {
 		
-		return this.boletoEmailRepository.buscarTodos();
+		return this.boletoEmailRepository.buscarTodosOrdenados();
 	}
 	
 	/**

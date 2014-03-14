@@ -1373,12 +1373,37 @@ public class RecebimentoFisicoController extends BaseController {
                 msgs.add("O campo " + label + " é invalido");
                 
             }
-            
         }
-        
     }
     
-	                    /**
+    @Post
+    @Rules(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_ALTERACAO)
+    public void validarDescontosRecebimentoFisico(final List<RecebimentoFisicoDTO> itensRecebimento) {
+
+    	final NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
+        
+        if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
+            atualizarItensRecebimentoEmSession(itensRecebimento);
+        }
+        final NotaFiscalEntrada notaFiscalFromSession = getNotaFiscalFromSession();
+        notaFiscalFromSession.setStatusRecebimento(StatusRecebimento.CONFIRMADO);
+        
+        List<RecebimentoFisicoDTO> listaItensNota = getItensRecebimentoFisicoFromSession();
+        
+    	ValidacaoVO validacaoDescontos = this.recebimentoFisicoService.validarDescontoProduto(notaFiscalFromSession.getOrigem(), listaItensNota);
+
+    	if (validacaoDescontos != null) {
+    	
+    		this.result.use(Results.json()).from(validacaoDescontos.getListaMensagens(), Constantes.PARAM_MSGS).recursive().serialize();
+    	
+    	} else {
+    		
+    		this.result.use(Results.json()).from("").serialize();
+    	}
+    }
+    
+    
+	/**
      * confirmaçao de recebimento fisico
      * 
      * @param notaFiscal
@@ -1396,12 +1421,13 @@ public class RecebimentoFisicoController extends BaseController {
         final NotaFiscalEntrada notaFiscalFromSession = getNotaFiscalFromSession();
         notaFiscalFromSession.setStatusRecebimento(StatusRecebimento.CONFIRMADO);
         
-        recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscalFromSession, getItensRecebimentoFisicoFromSession(), new Date(),false);
+        List<RecebimentoFisicoDTO> listaItensNota = getItensRecebimentoFisicoFromSession();
         
-        final List<String> msgs = new ArrayList<String>();
-        msgs.add("Itens Confirmados com Sucesso.");
-        final ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
-        result.use(Results.json()).from(validacao, Constantes.PARAM_MSGS).recursive().serialize();
+        this.recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscalFromSession, listaItensNota, new Date(),false);
+
+        ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Itens Confirmados com Sucesso.");
+        
+        this.result.use(Results.json()).from(validacao, Constantes.PARAM_MSGS).recursive().serialize();
         
         
     }
@@ -1601,10 +1627,10 @@ public class RecebimentoFisicoController extends BaseController {
                         + " é obrigatório!");
                 }
                 
-                final Fornecedor fornecedor = produtoService.obterFornecedorPorCodigoProduto(item.getCodigoProduto());
+                final Long idFornecedor = this.produtoService.obterIdFornecedorUnificadorPorCodigoProduto(item.getCodigoProduto());
+				
+				if (!idFornecedor.equals(nota.getFornecedor())) {
                 
-                if (!fornecedor.getId().equals(nota.getFornecedor())) {
-                    
                     throw new ValidacaoException(
                             TipoMensagem.WARNING,
  "O fornecedor do ítem " + linha

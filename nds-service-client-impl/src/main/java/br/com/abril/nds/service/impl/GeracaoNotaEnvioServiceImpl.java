@@ -52,6 +52,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaEnvioRepository;
@@ -118,6 +119,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     
     @Autowired
     private RoteiroRepository roteiroRepository;
+    
+    @Autowired
+    private FuroProdutoRepository furoProdutoRepository;
     
     // Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
     // O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -195,7 +199,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
                 GrupoMovimentoEstoque.SOBRA_DE_COTA,
                 GrupoMovimentoEstoque.SOBRA_EM_COTA,
                 GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE,
-                GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE
+                GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE,
+                GrupoMovimentoEstoque.FALTA_DE,
+                GrupoMovimentoEstoque.FALTA_EM,
+                GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE,
+                GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA,
+                GrupoMovimentoEstoque.SOBRA_DE,
+                GrupoMovimentoEstoque.SOBRA_EM,
+                GrupoMovimentoEstoque.SOBRA_ENVIO_PARA_COTA,
+                GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO   
         };
         
         final Map<Long, BigInteger> mapProdutos =
@@ -213,7 +225,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
      * @param listaMovimentoEstoqueCota
      * @param cota
      * @param listItemNotaEnvio
-     * @param descontos TODO
+     * @param descontos 
      */
     private void gerarItensNEMovimento(
             final List<MovimentoEstoqueCota> listaMovimentoEstoqueCota, final Cota cota,
@@ -331,7 +343,7 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
      * @param listaEstudoCota
      * @param cota
      * @param listItemNotaEnvio
-     * @param descontos TODO
+     * @param descontos 
      */
     private void gerarItensNEEstudo(final List<EstudoCota> listaEstudoCota,
             final Cota cota, final List<ItemNotaEnvio> listItemNotaEnvio, final Intervalo<Date> periodo, final Map<String, DescontoDTO> descontos) {
@@ -350,9 +362,9 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
             //Verifica se Estudo ja possui itens de Nota de Envio.
             if (estudoCota.getItemNotaEnvios()!=null && !estudoCota.getItemNotaEnvios().isEmpty()) {
                 
-                listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
-                
-                continue;
+            	listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
+            		 
+            	continue;
             }
             
             final ProdutoEdicao produtoEdicao = estudoCota.getEstudo().getProdutoEdicao();
@@ -531,7 +543,7 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
         
         final Map<Long, List<EstudoCota>> mapEstudosCota = this.getMapEstudosCota(listaEstudosCotas);
         
-        final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
+        final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao();
         
         final EnderecoDistribuidor enderecoDistribuidor = distribuidorRepository.obterEnderecoPrincipal();
         final TelefoneDistribuidor telefoneDistribuidor = distribuidorRepository.obterTelefonePrincipal();
@@ -764,33 +776,32 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
             
         }
     }
-    
-	                                                                /*
-     * Retorna uma lista com os movimentos estoque cota filtrados, onde os
-     * movimentos estoque cota não tiveram itens de nota de envio gerados
-     */
-    private List<MovimentoEstoqueCota> filtraItensSemItemNotaEnvioGerado(final List<MovimentoEstoqueCota> itens){
         
-        if(itens == null || itens.isEmpty()){
-            return null;
-        }
-        
-        final Predicate<MovimentoEstoqueCota> movimentoEstoqueCotaPredicate = new Predicate<MovimentoEstoqueCota>() {
-            @Override
-            public boolean apply(final MovimentoEstoqueCota mvCota) {
-                return mvCota.getItemNotaEnvio() == null ;
-            }
-        };
-        
-        final Collection<MovimentoEstoqueCota> filteredCollection =
-                Collections2.filter(itens, movimentoEstoqueCotaPredicate);
-        
-        if (filteredCollection != null) {
-            return  Lists.newArrayList(filteredCollection);
-        } else {
-            return new ArrayList<>();
-        }
-    }
+    /* Retorna uma lista com os movimentos estoque cota filtrados, onde os
+    * movimentos estoque cota não tiveram itens de nota de envio gerados
+    */
+   private List<MovimentoEstoqueCota> filtraItensSemItemNotaEnvioGerado(final List<MovimentoEstoqueCota> itens){
+       
+       if(itens == null || itens.isEmpty()){
+           return null;
+       }
+       
+       final Predicate<MovimentoEstoqueCota> movimentoEstoqueCotaPredicate = new Predicate<MovimentoEstoqueCota>() {
+           @Override
+           public boolean apply(final MovimentoEstoqueCota mvCota) {
+               return mvCota.getItemNotaEnvio() == null ;
+           }
+       };
+       
+       final Collection<MovimentoEstoqueCota> filteredCollection =
+               Collections2.filter(itens, movimentoEstoqueCotaPredicate);
+       
+       if (filteredCollection != null) {
+           return  Lists.newArrayList(filteredCollection);
+       } else {
+           return new ArrayList<>();
+       }
+   }
     
 	                                                                /*
      * Efetua o processamento das notas de envio já geradas
@@ -928,7 +939,7 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
         
         final Map<Long, List<EstudoCota>> mapEstudosCota = this.getMapEstudosCota(listaEstudosCotas);
         
-        final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
+        final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao();
         
         for (final Long idCota : idCotas) {
             

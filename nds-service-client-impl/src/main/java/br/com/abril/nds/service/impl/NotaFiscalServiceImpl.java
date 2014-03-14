@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1122,7 +1122,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		notaFiscalRepository.adicionar(notaFiscal);
 		
-		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao();
 
 		int sequencia = 1;
 		for (ItemNotaFiscalSaida itemNotaFiscal : listItemNotaFiscal) {
@@ -1435,7 +1435,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		
-		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao();
 		
 		for (MovimentoEstoqueCota movimentoEstoqueCota : listaMovimentoEstoqueCota) {
 

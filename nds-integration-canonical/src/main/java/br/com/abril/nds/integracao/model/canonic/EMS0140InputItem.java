@@ -31,8 +31,6 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 	
 	private String codigoBarras;
 	
-	private Long codigoSiscorp;
-	
 	private Integer peb;
 	
 	private String periodicidade;
@@ -41,7 +39,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 	
 	private String tipoProduto;
 
-	@Field(offset = 25, length = 8)
+	@Field(offset = 27, length = 8)
 	@FixedFormatPattern("yyyyMMdd")
 	public Date getDataLancamento() {
 		return dataLancamento;
@@ -51,7 +49,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.dataLancamento = dataLancamento;
 	}
 
-	@Field(offset = 33, length = 5)
+	@Field(offset = 35, length = 5)
 	public Integer getPacotePadrao() {
 		return pacotePadrao;
 	}
@@ -60,7 +58,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.pacotePadrao = pacotePadrao;
 	}
 
-	@Field(offset = 38, length = 8)
+	@Field(offset = 40, length = 8)
 	public Integer getQtdExemplar() {
 		return qtdExemplar;
 	}
@@ -69,7 +67,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.qtdExemplar = qtdExemplar;
 	}
 
-	@Field(offset = 46, length = 8)
+	@Field(offset = 56, length = 8)
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -78,7 +76,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.codigoProduto = codigoProduto;
 	}
 
-	@Field(offset = 54, length = 16)
+	@Field(offset = 64, length = 16)
 	public String getNomeProduto() {
 		return nomeProduto;
 	}
@@ -87,7 +85,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.nomeProduto = nomeProduto;
 	}
 
-	@Field(offset = 70, length = 4)
+	@Field(offset = 80, length = 4)
 	public Long getEdicao() {
 		return edicao;
 	}
@@ -96,7 +94,8 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.edicao = edicao;
 	}
 
-	@Field(offset = 74, length = 14)
+	@Field(offset = 84, length = 14)
+	@FixedFormatDecimal(decimals=2, useDecimalDelimiter=true, decimalDelimiter=',')
 	public Double getPreco() {
 		return preco;
 	}
@@ -105,7 +104,8 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.preco = preco;
 	}
 
-	@Field(offset = 88, length = 5)
+	@Field(offset = 98, length = 7)
+	@FixedFormatDecimal(decimals=2, useDecimalDelimiter=true, decimalDelimiter=',')
 	public Double getDesconto() {
 		return desconto;
 	}
@@ -114,7 +114,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.desconto = desconto;
 	}
 
-	@Field(offset = 93, length = 18)
+	@Field(offset = 105, length = 18)
 	public String getCodigoBarras() {
 		return codigoBarras;
 	}
@@ -123,16 +123,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.codigoBarras = codigoBarras;
 	}
 
-	@Field(offset = 111, length = 10)
-	public Long getCodigoSiscorp() {
-		return codigoSiscorp;
-	}
-
-	public void setCodigoSiscorp(Long codigoSiscorp) {
-		this.codigoSiscorp = codigoSiscorp;
-	}
-
-	@Field(offset = 185, length = 3)
+	@Field(offset = 187, length = 3)
 	public Integer getPeb() {
 		return peb;
 	}
@@ -140,7 +131,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 	public void setPeb(Integer peb) {
 		this.peb = peb;
 	}
-	@Field(offset = 188, length = 15)
+	@Field(offset = 190, length = 15)
 	public String getPeriodicidade() {
 		return periodicidade;
 	}
@@ -149,7 +140,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.periodicidade = periodicidade;
 	}
 	
-	@Field(offset = 203, length = 6)
+	@Field(offset = 205, length = 6)
 	@FixedFormatDecimal(decimals=3)
 	public Double getPeso() {
 		return peso;
@@ -159,7 +150,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.peso = peso;
 	}
 	
-	@Field(offset = 209, length = 20)
+	@Field(offset = 211, length = 20)
 	public String getTipoProduto() {
 		return tipoProduto;
 	}

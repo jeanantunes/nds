@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import static org.apache.commons.lang.StringUtils.leftPad;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -163,7 +165,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		Query query = super.getSession().createQuery(hql);
 
-		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("codigoProduto",  leftPad(codigoProduto, 8, "0"));
 		query.setParameter("numeroEdicao", numeroEdicao);
 
 		query.setMaxResults(1);
@@ -179,24 +181,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				.createCriteria("produto")
 				.add(Restrictions.eq("codigo", codigoProduto)).list();
 	}
-
-    @Override
-    @Transactional
-    public BigInteger obterReparteDisponivel(Long idProdutoEdicao) {
-
-        StringBuilder sql = new StringBuilder();
-        sql.append(" select t.reparte_lcto - t.reparte_est - t.reparte_prom                  ");
-        sql.append(" from (select sum(coalesce(l.reparte, 0)) reparte_lcto,                  ");
-        sql.append("         sum(coalesce(e.qtde_reparte, 0)) reparte_est,                   ");
-        sql.append("         sum(coalesce(l.reparte_promocional, 0)) reparte_prom            ");
-        sql.append("         from lancamento l                                               ");
-        sql.append("         left join estudo e on e.lancamento_id = l.id ");
-        sql.append("         where l.produto_edicao_id = :idProdutoEdicao ) t                ");
-
-        SQLQuery query = getSession().createSQLQuery(sql.toString());
-        query.setParameter("idProdutoEdicao", idProdutoEdicao);
-        return ((BigDecimal) query.uniqueResult()).toBigInteger();
-    }
 
     @Override
 	@SuppressWarnings("unchecked")
@@ -908,24 +892,14 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		// check opcao de componente e elemento
 		if (StringUtils.isNotEmpty(filtro.getInserirComponentes())
-				&& filtro.getInserirComponentes().equalsIgnoreCase("checked")
-				&& !filtro.getComponente().equalsIgnoreCase("-1")) {
+				&& "checked".equalsIgnoreCase(filtro.getInserirComponentes())
+				&& !"-1".equalsIgnoreCase(filtro.getComponente())) {
 
 			queryStringProdutoEdicao += " 	 left outer join PDV pdvs on cota2_.ID = pdvs.COTA_ID "; //" join cota.pdvs pdvs ";
-
-			// JOIN'S Relacionados ao componente/elemento
-			/*
-			 * " join pdvs.segmetacao segmentacao " +
-			 * " join segmetacao.TipoPontoPDV " +
-			 * " join segmetacao.areaInfluenciaPDV " +
-			 */
 
 			switch (ComponentesPDV.values()[Integer.parseInt(filtro
 					.getComponente())]) {
 			case TIPO_PONTO_DE_VENDA:
-				/*queryStringProdutoEdicao += 
-							" join pdvs.segmentacao segmentacao "
-						  + " join segmentacao.tipoPontoPDV ";*/
 
 				whereList.add(" pdvs.TIPO_PONTO_PDV_ID = :codigoTipoPontoPDV");
 				parameterMap.put("codigoTipoPontoPDV",
@@ -1091,31 +1065,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		//Criada para EMS 2029
 		String queryStringProdutoEdicao = 
 				"select concat('De ', :de, ' a ', :ate) as faixaVenda," +
-				" (sum(reparteTotal) / "+ queryQtdEdicoesPresentes +") / count(distinct COTA_ID) as repMedio, " +
-				" (sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) / "+ queryQtdEdicoesPresentes +" ) / count(distinct COTA_ID) as vdaMedio, " +
-				" ((sum(HIST.qtde_Recebida - hist.qtde_Devolvida) / "+ queryQtdEdicoesPresentes +") / (sum(reparteTotal) / " + queryQtdEdicoesPresentes + ")) * 100 as percVenda, " +
-
-				// encalheMedio = ((rep total-vda nominal)/qte.cotas)
 				" (avg(HIST.qtde_Devolvida) / "+ queryQtdEdicoesPresentes +") as encalheMedio , " + 
-
-                // Part Reparte – participação do reparte desta faixa de venda
-                // em relação ao reparte total da edição
-                // O valor dessa coluna é a soma de reparte das cotas que fazem
-                // parte desta faixa dividido pelo reparte total da edição.
-				" sum(hist.qtde_Recebida)/sum(reparteTotal) as partReparte, " +
-
-                // Part Venda - mesmo critério que Part de Reparte, porém,
-                // observando a venda.
-                // Resumindo, é a soma de venda das cotas que fazem parte desta
-                // faixa dividido pela venda total da edição.
-				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) / " +
-				//subselect para totalizar as vendas de um produto, sem filtro por cota
-				" (select sum(qtde_recebida)-sum(qtde_devolvida) from estoque_produto_cota " +
-				"	JOIN produto_edicao on produto_edicao.ID = estoque_produto_cota.PRODUTO_EDICAO_ID" +
-				"	JOIN PRODUTO ON produto_edicao.PRODUTO_ID=PRODUTO.ID" +
-				"	where produto.CODIGO = :produtoCodigo and " +
-				"	produto_Edicao.NUMERO_EDICAO in ( :nrEdicoes )) as partVenda," +
-
 				" count(distinct COTA_ID) as qtdeCotas, " +
 				" group_concat(distinct COTA_ID) as idCotaStr, " +
 				" sum(cotaAtiva) as qtdeCotasAtivas, " +
@@ -1141,10 +1091,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				
 				" 	(sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / " + queryQtdEdicoesPresentesPorCota +" as mediaEdPresente, " +
 				
-				" 	case when (round((sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / "+ queryQtdEdicoesPresentes +") = " +
+				" 	case when (round((sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / "+ queryQtdEdicoesPresentesPorCota +") = " +
 				" 	round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / "+ queryQtdEdicoesPresentesPorCota +")) then cota2_.NUMERO_COTA else null end as cotaEsmagada, " +
 				
-				" 	case when (round((sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / "+ queryQtdEdicoesPresentes +") = " +
+				" 	case when (round((sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / "+ queryQtdEdicoesPresentesPorCota +") = " +
 				" 	round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / "+ queryQtdEdicoesPresentesPorCota +")) then round(sum(estoqueProdutoCota.QTDE_RECEBIDA) /"+ queryQtdEdicoesPresentesPorCota +") else 0 end as vendaEsmagada " +
 				
 				" from ESTOQUE_PRODUTO_COTA estoqueProdutoCota " +

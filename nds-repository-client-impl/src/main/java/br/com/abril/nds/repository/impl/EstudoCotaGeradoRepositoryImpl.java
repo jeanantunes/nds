@@ -186,7 +186,7 @@ public class EstudoCotaGeradoRepositoryImpl extends AbstractRepositoryModel<Estu
     @SuppressWarnings("unchecked")
 	@Override
     public List<EstudoCotaGerado> obterEstudosCota(Long idEstudo) {
-	String hql = " from EstudoCotaGerado estudoCota where estudoCota.estudo = :estudo";
+	String hql = " from EstudoCotaGerado estudoCota where estudoCota.estudo.id = :estudo";
 
 	Query query = super.getSession().createQuery(hql);
 	query.setParameter("estudo", idEstudo);

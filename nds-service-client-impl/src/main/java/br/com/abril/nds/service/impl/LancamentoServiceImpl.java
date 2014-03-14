@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,9 +34,11 @@ import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -65,6 +70,12 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private CalendarioService calendarioService;
     
     private static final List<StatusLancamento> STATUS_LANCAMENTOS_REMOVIVEL = Arrays.asList(
             StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO,
@@ -378,6 +389,45 @@ public class LancamentoServiceImpl implements LancamentoService {
     	}
     	
     	this.lancamentoRepository.merge(lancamento);
+    }
+    
+    public HashMap<String, Set> obterDiasMatrizLancamentoAbertos(){
+    	List<Object[]> lista = lancamentoRepository.buscarDiasMatrizLancamentoAbertos();
+    	
+
+    	
+    	Set <Date> diasConfirmados = new TreeSet<Date>();
+    	Set <Date> diasNaoBalanceaveis = new TreeSet<Date>();
+    	Date diaOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
+
+    	HashMap<String, Set> listaBalanceavelNaoBalanceavel = new HashMap<>();
+    	
+    	for(Object[] lancamento : lista){
+    		
+    		if((lancamento[1].equals(StatusLancamento.CONFIRMADO)
+    		 || lancamento[1].equals(StatusLancamento.PLANEJADO)
+    		 || lancamento[1].equals(StatusLancamento.FURO)) 
+    	  && !((Date)lancamento[0]).before(diaOperacaoDistribuidor)
+    	  && ! calendarioService.isFeriadoSemOperacao((Date)lancamento[0])
+    	  && ! calendarioService.isFeriadoMunicipalSemOperacao((Date)lancamento[0])){
+    			
+    			if(!diasConfirmados.contains((Date)lancamento[0])){
+    			  diasConfirmados.add((Date)lancamento[0]);
+    			}
+    		}else{
+    			if(!diasNaoBalanceaveis.contains((Date)lancamento[0])){
+    			  diasNaoBalanceaveis.add((Date)lancamento[0]);
+      			}
+    		}
+
+    	}
+    	
+    	diasConfirmados.removeAll(diasNaoBalanceaveis);
+    	
+    	listaBalanceavelNaoBalanceavel.put("diasBalanceaveis", diasConfirmados);
+    	listaBalanceavelNaoBalanceavel.put("diasNaoBalanceaveis", diasNaoBalanceaveis);
+    	
+    	return listaBalanceavelNaoBalanceavel;
     }
 
 }

@@ -168,6 +168,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     @Value("${data_cabalistica}")
     private String dataCabalistica;
     
+    private static final BigDecimal CEM = BigDecimal.TEN.multiply(BigDecimal.TEN);
+    
     @Override
     @Transactional(readOnly = true)
     public ProdutoEdicao obterProdutoEdicao(final Long idProdutoEdicao, final boolean indCarregaFornecedores) {
@@ -325,6 +327,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             final Integer numeroCota,
             final Integer quantidadeRegistros) {
         
+        final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+        
         if (codigoNomeProduto == null || codigoNomeProduto.trim().isEmpty()){
             
             throw new ValidacaoException(TipoMensagem.WARNING, "Codigo/nome produto é obrigatório.");
@@ -343,7 +347,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 
                 conferenciaEncalheService.isDataRecolhimentoValida(
                         dataOperacaoDistribuidor, dataOperacaoDistribuidor, produtoEdicao.getId(),
-                        cotaService.isCotaOperacaoDiferenciada(numeroCota));
+                        cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao));
                 
                 produtosEdicaoValidos.add(produtoEdicao);
                 
@@ -1119,7 +1123,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             dto.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
             dto.setPacotePadrao(produtoEdicao.getPacotePadrao());
             dto.setPrecoPrevisto(produtoEdicao.getPrecoPrevisto());
-            dto.setTipoSegmentoProdutoId(produtoEdicao.getTipoSegmentoProduto() == null ? null : produtoEdicao.getTipoSegmentoProduto().getId());
+            dto.setTipoSegmentoProdutoId(produtoEdicao.getProduto().getTipoSegmentoProduto() == null ? null : produtoEdicao.getProduto().getTipoSegmentoProduto().getId());
             
             dto.setClassificacao(produtoEdicao.getTipoClassificacaoProduto() == null ? null : produtoEdicao.getTipoClassificacaoProduto().getId().toString());
             
@@ -1417,15 +1421,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         }
         
         BigDecimal reparteTotal = BigDecimal.ZERO;
-        BigDecimal reparteMedioTotal = BigDecimal.ZERO;
         BigDecimal vendaTotal = BigDecimal.ZERO;
-        BigDecimal vendaMediaTotal = BigDecimal.ZERO;
         BigDecimal partReparte = BigDecimal.ZERO;
         BigDecimal partVenda = BigDecimal.ZERO;
         BigInteger qtdeCotas = BigInteger.ZERO;
         BigInteger cotasEsmagadas = BigInteger.ZERO;
         BigDecimal vendaEsmagadas = BigDecimal.ZERO;
         BigDecimal qtdeCotasSemVenda = BigDecimal.ZERO;
+        StringBuilder strCotas = new StringBuilder();
         for (int i = 0; i < newFaixasVenda.length; i++) {
             final String[] faixa = newFaixasVenda[i].split("-");
             final AnaliseHistogramaDTO obj =
@@ -1438,6 +1441,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 for (final String strCota : obj.getIdCotaStr().split(",")){
                     cotas.add(Integer.valueOf(strCota));
                 }
+                
+                strCotas.append(strCotas.length() == 0 ? obj.getIdCotaStr() : "," + obj.getIdCotaStr());
             }
             
             if (!cotas.isEmpty()){
@@ -1445,23 +1450,32 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 final List<AnaliseHistoricoDTO> historico =
                         cotaService.buscarHistoricoCotas(lstPrDTO, cotas, null, null);
                 
-                Double vendaMedia = 0d, reparteMedio = 0d;
+                BigDecimal vendaMedia = BigDecimal.ZERO, reparteMedio = BigDecimal.ZERO;
                 
                 for (final AnaliseHistoricoDTO anaDTO : historico){
                     
                     if (anaDTO.getVendaMedia() != null){
                         
-                        vendaMedia += anaDTO.getVendaMedia();
+                        vendaMedia = vendaMedia.add(new BigDecimal(anaDTO.getVendaMedia()).setScale(2, RoundingMode.HALF_EVEN));
                     }
                     
                     if (anaDTO.getReparteMedio() != null){
                         
-                        reparteMedio += anaDTO.getReparteMedio();
+                        reparteMedio = reparteMedio.add(new BigDecimal(anaDTO.getReparteMedio()).setScale(2, RoundingMode.HALF_EVEN));
                     }
                 }
                 
-                obj.setVdaTotal(new BigDecimal(vendaMedia));
-                obj.setRepTotal(new BigDecimal(reparteMedio));
+                obj.setVdaTotal(vendaMedia.setScale(2, RoundingMode.HALF_EVEN));
+                obj.setRepTotal(reparteMedio.setScale(2, RoundingMode.HALF_EVEN));
+            }
+            
+            if (obj.getQtdeCotas().compareTo(BigInteger.ZERO) != 0){
+            	obj.setRepMedio(obj.getRepTotal().divide(new BigDecimal(obj.getQtdeCotas()), RoundingMode.HALF_EVEN));
+            	obj.setVdaMedio(obj.getVdaTotal().divide(new BigDecimal(obj.getQtdeCotas()), RoundingMode.HALF_EVEN));
+            }
+            
+            if (obj.getRepTotal().compareTo(BigDecimal.ZERO) != 0){
+            	obj.setPercVenda(obj.getVdaTotal().multiply(CEM).divide(obj.getRepTotal(), 2, RoundingMode.HALF_EVEN));
             }
             
             obj.executeScaleValues(edicoes.length);
@@ -1475,10 +1489,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             qtdeCotas = qtdeCotas.add(obj.getQtdeCotas());
             cotasEsmagadas = cotasEsmagadas.add(obj.getCotasEsmagadas());
             vendaEsmagadas = vendaEsmagadas.add(obj.getVendaEsmagadas());
-            reparteMedioTotal = reparteMedioTotal.add(obj.getRepMedio());
-            vendaMediaTotal = vendaMediaTotal.add(obj.getVdaMedio());
-            partReparte = partReparte.add(obj.getPartReparte());
-            partVenda = partVenda.add(obj.getPartVenda());
             
             if (obj.getQtdeCotasSemVenda() != null){
                 qtdeCotasSemVenda = qtdeCotasSemVenda.add(obj.getQtdeCotasSemVenda());
@@ -1495,14 +1505,24 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         totalizar.setCotasEsmagadas(cotasEsmagadas);
         totalizar.setVendaEsmagadas(vendaEsmagadas);
         totalizar.setQtdeCotasSemVenda(qtdeCotasSemVenda);
-        totalizar.setRepMedio(reparteMedioTotal);
-        totalizar.setVdaMedio(vendaMediaTotal);
-        totalizar.setPercVenda(vendaTotal.divide(reparteTotal, RoundingMode.HALF_EVEN));
-        totalizar.setEncalheMedio(reparteTotal.subtract(vendaTotal).divide(new BigDecimal(qtdeCotas), RoundingMode.HALF_EVEN));
-        totalizar.setPartReparte(partReparte);
-        totalizar.setPartVenda(partVenda);
+        totalizar.setRepMedio(reparteTotal.divide(new BigDecimal(qtdeCotas), 2, RoundingMode.HALF_EVEN));
+        totalizar.setVdaMedio(vendaTotal.divide(new BigDecimal(qtdeCotas), 2, RoundingMode.HALF_EVEN));
+        totalizar.setPercVenda(vendaTotal.multiply(CEM).divide(reparteTotal, 2, RoundingMode.HALF_EVEN));
+        totalizar.setEncalheMedio(reparteTotal.subtract(vendaTotal).divide(new BigDecimal(qtdeCotas), 2, RoundingMode.HALF_EVEN));
         totalizar.setQtdeTotalCotasAtivas(cotaRepository.obterQuantidadeCotas(SituacaoCadastro.ATIVO));
         totalizar.setReparteDistribuido(movimentoEstoqueService.obterReparteDistribuidoProduto(codigoProduto));
+        totalizar.setIdCotaStr(strCotas.toString());
+        
+        for (AnaliseHistogramaDTO aDto : list){
+        	aDto.setPartReparte(aDto.getRepTotal().multiply(CEM).divide(totalizar.getRepTotal(), 2, RoundingMode.HALF_EVEN));
+            aDto.setPartVenda(aDto.getVdaTotal().multiply(CEM).divide(totalizar.getVdaTotal(), 2, RoundingMode.HALF_EVEN));
+            
+            partReparte = partReparte.add(aDto.getPartReparte());
+            partVenda = partVenda.add(aDto.getPartVenda());
+        }
+        
+        totalizar.setPartReparte(partReparte.setScale(0, RoundingMode.HALF_EVEN));
+        totalizar.setPartVenda(partVenda.setScale(0, RoundingMode.HALF_EVEN));
         
         list.add(totalizar);
         
@@ -1595,12 +1615,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     }
     
     @Override
-    @Transactional
-    public BigInteger obterReparteDisponivel(final Long idProdutoEdicao) {
-        return produtoEdicaoRepository.obterReparteDisponivel(idProdutoEdicao);
-    }
-    
-    @Override
     public void tratarInformacoesAdicionaisProdutoEdicaoArquivo(final ProdutoEdicaoDTO dto) {
         
         if(dto.getCodigoProduto()==null) {
@@ -1655,5 +1669,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         dto.setNumeroLancamento(1);
         
     }
+    
+    public List<ProdutoEdicao> obterProdutosEdicaoPorId(Set<Long> idsProdutoEdicao) {
+    	
+    	return this.produtoEdicaoRepository.obterProdutosEdicaoPorId(idsProdutoEdicao);
+    }
+    
 }
 

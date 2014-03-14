@@ -94,7 +94,7 @@ public class BoletoEmailController extends BaseController {
             	
             	Cota cota = bm.getCobranca().getCota();
         	
-        	    mensagensBoletosNaoEmitidos.add("Cota "+cota.getNumeroCota()+" - "+cota.getPessoa().getNome());
+        	    mensagensBoletosNaoEmitidos.add("Cota "+cota.getNumeroCota()+" - "+cota.getPessoa().getNome() + " - " + e.getMessage());
         	    
                 LOGGER.error("Boleto [" + bm.getCobranca().getNossoNumero() + "] não enviado, para a cota: "
                     + bm.getCobranca().getCota().getNumeroCota(), e);
@@ -121,6 +121,6 @@ public class BoletoEmailController extends BaseController {
 		
 		String status = CACHE_ENVIO_BOLETO.get(KEY_ENVIO_BOLETO_EMAIL);
 		
-		result.use(Results.json()).withoutRoot().from(status==null?"Enviando boletos por email..." : status).recursive().serialize();
+		result.use(Results.json()).withoutRoot().from(status == null ? "": status).recursive().serialize();
 	}
 }

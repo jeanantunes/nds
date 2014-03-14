@@ -27,6 +27,8 @@ public @interface Export {
 	
 	float fontSize() default 0;
 	
+	boolean xlsAutoSize() default false;
+	
 	public enum Alignment {
 		
 		LEFT(0),

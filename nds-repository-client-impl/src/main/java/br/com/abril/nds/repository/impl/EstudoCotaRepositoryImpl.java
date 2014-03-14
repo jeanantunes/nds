@@ -168,8 +168,8 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		
 		query.setParameterList("idCotas", idCotas);
 
-		query.setParameterList("listaExclusaoStatusLancamento", new StatusLancamento[] {StatusLancamento.FURO, StatusLancamento.PLANEJADO, StatusLancamento.FECHADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO, StatusLancamento.CANCELADO});
-	
+		query.setParameterList("listaExclusaoStatusLancamento", new StatusLancamento[] {StatusLancamento.FURO,StatusLancamento.PLANEJADO, StatusLancamento.FECHADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO, StatusLancamento.CANCELADO});
+		
 		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
 			query.setParameterList("listaFornecedores", listaIdsFornecedores);
 		}
@@ -185,7 +185,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
     @SuppressWarnings("unchecked")
 	@Override
     public List<EstudoCota> obterEstudosCota(Long idEstudo) {
-	String hql = " from EstudoCota estudoCota where estudoCota.estudo = :estudo";
+	String hql = " from EstudoCota estudoCota where estudoCota.estudo.id = :estudo";
 
 	Query query = super.getSession().createQuery(hql);
 	query.setParameter("estudo", idEstudo);

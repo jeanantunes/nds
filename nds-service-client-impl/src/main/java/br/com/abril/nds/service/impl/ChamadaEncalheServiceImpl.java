@@ -30,6 +30,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -647,12 +648,12 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
-		return chamadaEncalheRepository.obterBandeirasNoIntervalo(periodoRecolhimento, fornecedor, paginacaoVO);
+		return chamadaEncalheRepository.obterBandeirasNoIntervalo(periodoRecolhimento, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO, fornecedor, paginacaoVO);
 	}
 	
 	@Override
 	@Transactional
-	public Long countObterBandeirasDaSemana(Integer semana) {
+	public Long countObterBandeirasDaSemana(Integer semana, Long fornecedor) {
 		
 		Intervalo<Date> periodoRecolhimento = null;
 		
@@ -662,12 +663,12 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
-		return chamadaEncalheRepository.countObterBandeirasNoIntervalo(periodoRecolhimento);
+		return chamadaEncalheRepository.countObterBandeirasNoIntervalo(periodoRecolhimento, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO, fornecedor);
 	}
 	
 	@Override
 	@Transactional
-	public List<FornecedorDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana) {
+	public List<FornecedorDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana, Long fornecedor) {
 		
 		Intervalo<Date> periodoRecolhimento = null;
 		
@@ -677,6 +678,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
-		return chamadaEncalheRepository.obterDadosFornecedoresParaImpressaoBandeira(periodoRecolhimento);
+		return chamadaEncalheRepository.obterDadosFornecedoresParaImpressaoBandeira(periodoRecolhimento, fornecedor);
 	}
 }

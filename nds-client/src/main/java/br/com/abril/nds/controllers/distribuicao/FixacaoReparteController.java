@@ -114,9 +114,10 @@ public class FixacaoReparteController extends BaseController {
 	@Path("/")
 	public void fixacaoReparte(){
 		result.include("classificacao",fixacaoReparteService.obterClassificacoesProduto());
+		
 	}
-	
-	
+
+
 	@Post
 	@Path("/pesquisarPorProduto")
 	public void pesquisarPorProduto(FiltroConsultaFixacaoProdutoDTO filtro , String sortorder, String sortname, int page, int rp){
@@ -738,5 +739,5 @@ new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),
 		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
 		filtro.setIdProduto(produto.getId());
 	}
-
+	
 }

@@ -149,6 +149,6 @@ public interface DescontoProdutoEdicaoRepository extends Repository<DescontoProd
      * 
      * @return lista de descontos
      */
-	List<DescontoDTO> obterDescontosProdutoEdicao(Long lancamentoId, Long produtoEdicaoId);
+	List<DescontoDTO> obterDescontosProdutoEdicao();
 	
 }

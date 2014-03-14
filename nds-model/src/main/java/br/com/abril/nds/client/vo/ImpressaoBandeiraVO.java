@@ -27,7 +27,7 @@ public class ImpressaoBandeiraVO implements Serializable  {
 	public ImpressaoBandeiraVO(FornecedorDTO fornecedor, String volumes, Integer semana,
 			Date dataEnvio) {
 		
-		this.titulo = "DEVOLUÇÃO TREELOG";
+		this.titulo = "DEVOLUÇÃO AO FORNECEDOR";
 		this.forncedor = fornecedor.getRazaoSocial();
 		this.semana = "SEMANA " + (semana.toString().length() > 4 ? semana.toString().substring(4) : semana.toString());
 		this.praca = fornecedor.getPraca();

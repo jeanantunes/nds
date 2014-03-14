@@ -63,6 +63,8 @@ implements MovimentoEstoqueRepository {
 		hql.append(" join produtoEdicao.produto produto ");
 		
 		hql.append(" left join m.lancamentoDiferenca ld ");
+		
+		hql.append(" left join ld.diferenca dif ");
 			
 		hql.append(" where produtoEdicao.numeroEdicao = :numeroEdicao ");		
 
@@ -76,7 +78,7 @@ implements MovimentoEstoqueRepository {
 			hql.append(" and m.status = :statusAprovacao  ");
 		}
 		
-		hql.append(" group by produtoEdicao.id, m.data, tipoMovimento.id ");		
+		hql.append(" group by produtoEdicao.id, m.data, tipoMovimento.id, dif.tipoDiferenca ");		
 		
 		hql.append(" order by ");
 		

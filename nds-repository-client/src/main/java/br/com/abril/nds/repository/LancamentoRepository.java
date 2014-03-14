@@ -404,4 +404,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	void desvincularEstudos(List<Long> idsEstudos);
 	
+	List<Object[]> buscarDiasMatrizLancamentoAbertos();
+	
+	boolean existeProdutoEdicaoParaDia(ProdutoLancamentoDTO produtoLancamentoDTO,Date novaData);
+	
 }

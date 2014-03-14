@@ -26,6 +26,8 @@ import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.RepartePDVDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
@@ -33,11 +35,13 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.EstudoPDV;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoPDVRepository;
 import br.com.abril.nds.repository.FixacaoReparteRepository;
@@ -80,6 +84,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     
     @Autowired
 	private EstudoService estudoService;
+    
+    @Autowired
+    private EstudoCotaGeradoRepository estudoCotaGerado;
+    
+    @Autowired
+    private EstudoGeradoRepository estudoGerado;
+    
     
     private Map<String, String> mapClassificacaoCota;
 
@@ -229,9 +240,32 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     
     @Override
     @Transactional
-    public void atualizaReparte(Long estudoId, Long numeroCota, Long reparte) {
+    public void atualizaReparte(Long estudoId, Long numeroCota, Long reparte, Long reparteDigitado) {
+    	
+    	this.validarDistribuicaoPorMultiplo(estudoId, reparteDigitado);
+    	
         analiseParcialRepository.atualizaReparteCota(estudoId, numeroCota, reparte);
         analiseParcialRepository.atualizaReparteEstudo(estudoId, reparte);
+    }
+    
+    private void validarDistribuicaoPorMultiplo(Long estudoId, Long reparteDigitado) {
+    	
+    	EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(estudoId);
+    	
+    	if (estudoGerado.getDistribuicaoPorMultiplos() != null
+    			&& estudoGerado.getDistribuicaoPorMultiplos() == 1) {
+    		
+    		BigInteger multiplo = 
+    			new BigInteger(estudoGerado.getPacotePadrao().toString());
+    		
+    		BigInteger novoReparte = new BigInteger(reparteDigitado.toString());
+    		
+    		if (!novoReparte.mod(multiplo).equals(BigInteger.ZERO)) {
+    			
+    			throw new ValidacaoException(
+    				TipoMensagem.WARNING, "Reparte deve ser múltiplo de " + multiplo);
+    		}
+    	}
     }
 
     @Override
@@ -242,7 +276,12 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     @Override
     @Transactional
-    public void liberar(Long id) {
+    public void liberar(Long id, List<CotaLiberacaoEstudo> cotas) {
+    	
+    	for (CotaLiberacaoEstudo cota : cotas) {
+    		
+    		this.validarDistribuicaoPorMultiplo(id, cota.getReparte().longValue());
+    	}
     	
     	estudoService.liberar(id);
     }
@@ -390,4 +429,16 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         analiseParcialRepository.atualizaReparteTotalESaldo(idEstudo, reparteTotal);
         return estudoGeradoRepository.buscarPorId(idEstudo).getSobra();
     }
+
+	@Override
+	@Transactional
+	public List<EstudoCotaGerado> obterEstudosCotaGerado(Long id) {
+		return estudoCotaGerado.obterEstudosCota(id);
+	}
+
+	@Override
+	@Transactional
+	public BigDecimal obterReparteLancamentoEstudo(Long idEstudo) {
+		return estudoGerado.reparteEstudoOriundoDoLancamento(idEstudo);
+	}
 }

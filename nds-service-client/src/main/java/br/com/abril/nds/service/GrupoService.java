@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -15,9 +16,10 @@ public interface GrupoService {
  
 	/**
 	 * Obtém todos os Grupos
+	 * @param includeHistory 
 	 * @return List<GrupoCota> grupos
 	 */
-	List<GrupoCotaDTO> obterTodosGrupos(String sortname, String sortorder) ;
+	List<GrupoCotaDTO> obterTodosGrupos(String sortname, String sortorder, boolean includeHistory) ;
 
 	void excluirGrupo(Long idGrupo);
 
@@ -89,7 +91,9 @@ public interface GrupoService {
 	Set<Long> obterCotasDoGrupo(Long idGrupo);
 
 	
-	Integer countTodosGrupos();
+	Integer countTodosGrupos(Date dataOperacao);
+
+    public abstract Date getDataInicioProximaSemanaSemCE();
 
 
 

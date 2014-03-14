@@ -83,7 +83,7 @@ public class ApplicationContextListener implements ServletContextListener {
 //			this.agendarIntegracaoOperacionalDistribuidor(scheduler);
 //			this.agendaExeclusaoAjusteReparte(scheduler);
 //			this.agendarExclusaoDeEstudos(scheduler);
-//			this.agendarGeracaoRankings(scheduler);
+			this.agendarGeracaoRankings(scheduler);
 //			this.agendaExclusaoFixacaoReparte();
 //			this.agendaExclusaoRegiao();
 			
@@ -181,8 +181,12 @@ public class ApplicationContextListener implements ServletContextListener {
 				"integracao-distribuidor.properties");
 		
 		
-		String intervaloExecucaoGeracaoRanking = propertiesUtil
-				.getPropertyValue("intervalo.execucao.geracao.ranking");
+		String intervaloExecucaoGeracaoRankingFaturamento = propertiesUtil
+				.getPropertyValue("intervalo.execucao.geracao.ranking.faturamento");
+		
+		String intervaloExecucaoGeracaoRankingSegmento = propertiesUtil
+				.getPropertyValue("intervalo.execucao.geracao.ranking.segmento");
+		
 		
 		JobDetail jobRankingFaturamento = newJob(RankingFaturamentoJob.class)
 				.withIdentity(RankingFaturamentoJob.class.getName(), groupName)
@@ -196,13 +200,13 @@ public class ApplicationContextListener implements ServletContextListener {
 		CronTrigger cronTriggerRankingFaturamento = newTrigger()
 				.withIdentity("gerarRankingFaturamentoTrigger", groupName)
 				.withSchedule(
-						cronSchedule(intervaloExecucaoGeracaoRanking))
+						cronSchedule(intervaloExecucaoGeracaoRankingFaturamento))
 				.build();
 		
 		CronTrigger cronTriggerRankingSegmento = newTrigger()
 				.withIdentity("gerarRankingSegmentoTrigger", groupName)
 				.withSchedule(
-						cronSchedule(intervaloExecucaoGeracaoRanking))
+						cronSchedule(intervaloExecucaoGeracaoRankingSegmento))
 				.build();
 
 		try {

@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -28,14 +29,18 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
+import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -83,6 +88,11 @@ public class AnaliseParcialController extends BaseController {
 
     @Autowired
     private ProdutoService produtoService;
+    
+    @Autowired
+    private EstudoService estudoService;
+    
+    private static final String EDICOES_BASE_SESSION_ATTRIBUTE = "";
 
     @Path("/")
     public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado,String dataLancamentoEdicao) {
@@ -90,6 +100,8 @@ public class AnaliseParcialController extends BaseController {
         EstudoCotaGerado estudoCota = analiseParcialService.buscarPorId(id);
         Lancamento lancamento = lancamentoService.obterPorId(estudoCota.getEstudo().getLancamentoID());
 
+        this.clearEdicoesBaseSession();
+        
         if (modoAnalise == null) {
             result.include("tipoExibicao", "NORMAL");
             session.setAttribute("modoAnalise", "NORMAL");
@@ -175,7 +187,7 @@ public class AnaliseParcialController extends BaseController {
         queryDTO.setFilterSortFrom(filterSortFrom);
         queryDTO.setFilterSortTo(filterSortTo);
         queryDTO.setElemento(elemento);
-        queryDTO.setEdicoesBase(edicoesBase);
+        queryDTO.setEdicoesBase(getEdicoesBase(edicoesBase));
         queryDTO.setEstudoId(id);
         queryDTO.setFaixaDe(faixaDe);
         queryDTO.setFaixaAte(faixaAte);
@@ -195,7 +207,33 @@ public class AnaliseParcialController extends BaseController {
         validator.onErrorUse(Results.json()).withoutRoot().from(table).recursive().serialize();
         result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
+    
+    @SuppressWarnings("unchecked")
+	private List<EdicoesProdutosDTO> getEdicoesBase(List<EdicoesProdutosDTO> edicoesBase) {
+    	
+    	if (edicoesBase != null) {
+    		
+    		this.session.setAttribute(EDICOES_BASE_SESSION_ATTRIBUTE, edicoesBase);
+    		
+    		return edicoesBase;
+    	}
+    	
+    	edicoesBase = (List<EdicoesProdutosDTO>) this.session.getAttribute(EDICOES_BASE_SESSION_ATTRIBUTE);
+    	
+    	return edicoesBase;
+    }
+    
+    @Path("/restaurarBaseInicial")
+    public void restaurarBaseInicial() {
+    	this.clearEdicoesBaseSession();
+    	this.result.nothing();
+    }
 
+    private void clearEdicoesBaseSession() {
+
+    	this.session.removeAttribute(EDICOES_BASE_SESSION_ATTRIBUTE);
+    }
+    
     @Path("/cotasQueNaoEntraramNoEstudo/filtrar")
     public void filtrar(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
 
@@ -222,8 +260,8 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Path("/mudarReparte")
-    public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte) {
-        analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte);
+    public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado) {
+        analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte, reparteDigitado);
         result.nothing();
     }
 
@@ -231,7 +269,7 @@ public class AnaliseParcialController extends BaseController {
     public void mudarReparteLote(Long estudoId, List<CotaQueNaoEntrouNoEstudoDTO> cotas) {
 
         for (CotaQueNaoEntrouNoEstudoDTO cota : cotas) {
-            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().longValue());
+            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().longValue(), cota.getQuantidade().longValue());
             analiseParcialService.atualizaClassificacaoCota(estudoId, cota.getNumeroCota());
         }
 
@@ -239,9 +277,10 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Path("/liberar")
-    public void liberar(Long id) {
+    public void liberar(Long estudoId, List<CotaLiberacaoEstudo> cotas) {
     	
-        analiseParcialService.liberar(id);
+        analiseParcialService.liberar(estudoId, cotas);
+        
         result.nothing();
     }
 
@@ -296,5 +335,31 @@ public class AnaliseParcialController extends BaseController {
         result.use(Results.json()).withoutRoot()
                 .from(analiseParcialService.atualizaReparteTotalESaldo(idEstudo, reparteTotal))
                 .recursive().serialize();
+    }
+    
+    @Post
+    @Path("/verificacoesParaLiberarEstudo")
+    public void verificacoesAntesDeLiberarEstudo (Long estudoId){
+    	
+    	List<EstudoCotaGerado> listEstudoCotas = analiseParcialService.obterEstudosCotaGerado(estudoId);
+    	
+    	BigDecimal reparteLancamento = analiseParcialService.obterReparteLancamentoEstudo(estudoId);
+    	
+    	BigInteger reparteLancamentoEstudo = reparteLancamento.toBigInteger();
+    	
+    	EstudoGerado estudoGerado = estudoService.obterEstudo(estudoId);
+    	
+    	for (EstudoCotaGerado estudoCota : listEstudoCotas) {
+			if(BigIntegerUtil.isMenorQueZero(estudoCota.getReparte())){
+		    	throw new ValidacaoException(TipoMensagem.WARNING,"Há cota(s) com reparte(s) negativo(s), por favor ajustá-la(s)!");
+			}
+		}
+    	
+    	if((BigIntegerUtil.isMenorQueZero(reparteLancamentoEstudo.subtract(estudoGerado.getQtdeReparte())))){
+    		throw new ValidacaoException(TipoMensagem.WARNING, "O reparte distribuido é maior que estoque disponível!");
+    	}
+    	
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();    		
+    	
     }
 }

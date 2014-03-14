@@ -175,27 +175,29 @@ public class CalcularReparte extends ProcessoAbstrato {
 	    }
 
 	    if (estudo.getPercentualExcedente().compareTo(BigDecimal.ZERO) < 0) {
-		// RepCalculadoCota = ((RepDistribuir / SVendaMédiaFinal) * VendaMédiaFinalCota) + ReparteMínimo
-		cota.setReparteCalculado(indiceReparte.multiply(cota.getVendaMedia()).add(reparteMinimo).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
-		
-		// ajuste no reparteDistribuir do estudo para nao remover novamente o valor do reparte minimo do reparteDistribuir
-		BigInteger reparteSemMinimo = indiceReparte.multiply(cota.getVendaMedia()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
-		estudo.setReparteDistribuir(estudo.getReparteDistribuir().add(cota.getReparteCalculado().subtract(reparteSemMinimo)));
+			// RepCalculadoCota = ((RepDistribuir / SVendaMédiaFinal) * VendaMédiaFinalCota) + ReparteMínimo
+			cota.setReparteCalculado(indiceReparte.multiply(cota.getVendaMedia()).add(reparteMinimo).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
+			
+			// ajuste no reparteDistribuir do estudo para nao remover novamente o valor do reparte minimo do reparteDistribuir
+			BigInteger reparteSemMinimo = indiceReparte.multiply(cota.getVendaMedia()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
+			estudo.setReparteDistribuir(estudo.getReparteDistribuir().add(cota.getReparteCalculado().subtract(reparteSemMinimo)));
 	    } else {
-		// ExcPDV = ExcedentePDV * PDVCota
-		BigDecimal excPDV = BigDecimal.ZERO;
-		if (cota.getQuantidadePDVs() != null) {
-		    excPDV = excedentePDV.multiply(cota.getQuantidadePDVs());
-		}
-		// ExcVDA = ExcedenteVDA * VendaMédiaFinalCota		    
-		BigDecimal excVenda = excedenteVenda.multiply(cota.getVendaMedia());
-
-		// RepCalculadoCota = VMFCota + ExcedPDV + ExcedVda + ReparteMínimo
-		cota.setReparteCalculado(cota.getVendaMedia().add(excPDV).add(excVenda).add(reparteMinimo).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
-		
-		// ajuste no reparteDistribuir do estudo para nao remover novamente o valor do reparte minimo do reparteDistribuir
-		BigInteger reparteSemMinimo = cota.getVendaMedia().add(excPDV).add(excVenda).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
-		estudo.setReparteDistribuir(estudo.getReparteDistribuir().add(cota.getReparteCalculado().subtract(reparteSemMinimo)));
+	    	// ExcPDV = ExcedentePDV * PDVCota
+			BigDecimal excPDV = BigDecimal.ZERO;
+			
+			if (cota.getQuantidadePDVs() != null) {
+			    excPDV = excedentePDV.multiply(cota.getQuantidadePDVs());
+			}
+			
+			// ExcVDA = ExcedenteVDA * VendaMédiaFinalCota		    
+			BigDecimal excVenda = excedenteVenda.multiply(cota.getVendaMedia());
+	
+			// RepCalculadoCota = VMFCota + ExcedPDV + ExcedVda + ReparteMínimo
+			cota.setReparteCalculado(cota.getVendaMedia().add(excPDV).add(excVenda).add(reparteMinimo).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
+			
+			// ajuste no reparteDistribuir do estudo para nao remover novamente o valor do reparte minimo do reparteDistribuir
+			BigInteger reparteSemMinimo = cota.getVendaMedia().add(excPDV).add(excVenda).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
+			estudo.setReparteDistribuir(estudo.getReparteDistribuir().add(cota.getReparteCalculado().subtract(reparteSemMinimo)));
 	    }
 	}
     }
@@ -267,8 +269,15 @@ public class CalcularReparte extends ProcessoAbstrato {
 	    }
 	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
 		    ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
-		BigDecimal indiceCalculado = new BigDecimal(cota.getReparteCalculado()).multiply(indicedeSobraouFalta);
-		cota.setReparteCalculado(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, indiceCalculado), estudo);
+		
+	    	BigDecimal indiceCalculado = new BigDecimal(cota.getReparteCalculado()).multiply(indicedeSobraouFalta);
+		
+	    	BigDecimal reparteMinimoCota = new BigDecimal(cota.getReparteMinimoFinal());
+		
+		if(indiceCalculado.compareTo(reparteMinimoCota) > 0){
+			cota.setReparteCalculado(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, indiceCalculado), estudo);
+		}
+		
 	    }
 	}
 
@@ -284,8 +293,10 @@ public class CalcularReparte extends ProcessoAbstrato {
 			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
 		    if (estudo.getReparteDistribuir().compareTo(reparte) >= 0) {
 			cota.setReparteCalculado(cota.getReparteCalculado().add(reparte), estudo);
-		    } else if (estudo.getReparteDistribuir().compareTo(reparte.negate()) <= 0) {
-			cota.setReparteCalculado(cota.getReparteCalculado().subtract(reparte), estudo);
+		    } else if ((estudo.getReparteDistribuir().compareTo(reparte.negate()) <= 0)) {
+		    	if(cota.getReparteCalculado().compareTo(cota.getReparteMinimoFinal()) > 0){
+		    		cota.setReparteCalculado(cota.getReparteCalculado().subtract(reparte), estudo);
+		    	}
 		    } else {
 			break;
 		    }

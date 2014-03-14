@@ -1,9 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -14,7 +11,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -53,6 +49,7 @@ import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
@@ -136,6 +133,9 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
+	
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
@@ -312,9 +312,11 @@ public class ConferenciaEncalheController extends BaseController {
 				return;
 			}
 			
-			for(Entry<Integer, String> entry : mapaCotaConferidaUsuario.entrySet()) {
-				if( entry.getValue().equals(userSessionID) ) {
-					mapaCotaConferidaUsuario.remove(entry.getKey());
+			Set<Integer> cotasEmConferencia = new HashSet<>(mapaCotaConferidaUsuario.keySet()) ;
+
+			for(Integer numeroCota : cotasEmConferencia) {
+				if( mapaCotaConferidaUsuario.get(numeroCota).equals(userSessionID) ) {
+					mapaCotaConferidaUsuario.remove(numeroCota);
 				}
 			}
 		
@@ -1472,12 +1474,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 			
 			byte[] bs = arquivos.get(tipo_documento_impressao_encalhe);
 			
-			try {
-				gerarArquivoNoServer(tipo_documento_impressao_encalhe,arquivos.get(tipo_documento_impressao_encalhe));
-			}catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-			
 			Map<String, Object> dados = new HashMap<String, Object>();
 			
 			if(bs != null && bs.length > 0) {
@@ -1501,34 +1497,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 			this.result.use(Results.nothing());
 		}
 	}	
-	
-	//TODO remover abaixo apos testes
-	private void gerarArquivoNoServer(String tipoArquivo, byte[] arquivo) throws Exception {
-		
-		
-		if(tipoArquivo.equals(TipoDocumentoConferenciaEncalhe.SLIP_TXT.name())){
-			
-			OutputStream out = new FileOutputStream(new File("docEncalhe"+System.currentTimeMillis()+".txt"));
-			
-			out.write(arquivo);
-			
-			out.flush();
-			
-			out.close();
-			
-		}else{
-			
-			OutputStream out = new FileOutputStream(new File("docConfEncalhe"+System.currentTimeMillis()+".pdf"));
-			
-			out.write(arquivo);
-			
-			out.flush();
-			
-			out.close();
-			
-		}
-		
-	}
 	
 	@Post
 	public void verificarCobrancaGerada(){

@@ -5,6 +5,9 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
@@ -16,7 +19,8 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.integracao.model.canonic.EMS0111Input;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.model.canonic.EMS0111Input;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
@@ -25,6 +29,8 @@ import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -38,6 +44,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		MessageProcessor {
 
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private Set<Date> datasBalanceaveis = new TreeSet<Date>();
+	private Set<Date> datasNaoBalanceaveis = new TreeSet<Date>();
+	private HashMap<String, Set> datas = new HashMap<String, Set>();
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -48,14 +57,27 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private ParciaisService parciaisService;
 	
+	@Autowired
+	private LancamentoService lancamentoService;
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		distribuidorService.bloqueiaProcessosLancamentosEstudos();
+		
+		//Recupera datas Abertas para matriz
+		datas = lancamentoService.obterDiasMatrizLancamentoAbertos();
+		datasBalanceaveis = datas.get("diasBalanceaveis");
+		datasNaoBalanceaveis = datas.get("diasNaoBalanceaveis");
 	}
 
 	@Override
 	public void processMessage(Message message) {
+		
 
+		
 		EMS0111Input input = (EMS0111Input) message.getBody();
 				
 		// Validar Distribuidor:
@@ -155,11 +177,15 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			lancamento.setDataCriacao(new Date());// confirmado
 			
-			lancamento.setDataLancamentoDistribuidor(input.getDataLancamento());// confirmado
+			try {
+				lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
+			} catch (Exception e) {
+				return;
+			}
 			
 			lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
 			
-			lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado
+			lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
 			
 			lancamento.setExpedicao(null);// default
 			
@@ -173,6 +199,14 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 
 			// EFETIVAR INSERCAO NA BASE
 			getSession().persist(lancamento);	
+			
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Inserido Lancamento para Produto: "
+							+ codigoProduto
+							+ " e Edicao: " + edicao
+							+ " na lancamento");
+			return;
 			
 		} else {
 			lancamento.setAlteradoInteface(true);
@@ -217,14 +251,15 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			final Date dataLancamento = input.getDataLancamento();
 			
+			
 			// Remover a hora, minuto, segundo e milissegundo para comparação:
 			final Date dtLancamentoAtual = this.normalizarDataSemHora(
 					lancamento.getDataLancamentoPrevista());
-			final Date dtLancamentoNovo = this.normalizarDataSemHora(dataLancamento);
+			Date dtLancamentoNovo = this.normalizarDataSemHora(dataLancamento);
 			if (null != dtLancamentoAtual && !dtLancamentoAtual.equals(dtLancamentoNovo)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteracao da DATA LANCAMENTO PREVISTO do Produto: "
+						"Enviar Alteracao da DATA LANCAMENTO PREVISTO do Produto: "
 								+ codigoProduto + " e Edicao: " + edicao
 								+ " , de: " + simpleDateFormat.format(
 										dtLancamentoAtual)
@@ -238,25 +273,42 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				if (erroRetornoParciais) {
 					return;
 				}
+				
+				this.ndsiLoggerFactory.getLogger().logError(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alterado Lancamento para Produto: "
+								+ codigoProduto
+								+ " e Edicao: " + edicao
+								+ " na lancamento");
 			}
 			
 			// Atualizar lançamento Distribuidor:
 			final StatusLancamento status = (lancamento.getReparte().compareTo(BigInteger.ZERO) == 0) ? StatusLancamento.CANCELADO : lancamento.getStatus();
 			
-			boolean isStatusAlteracaoDataLancamento = ( (StatusLancamento.PLANEJADO.equals(status)) || (StatusLancamento.CONFIRMADO.equals(status)) ); 
+			boolean isStatusAlteracaoDataLancamento = ( (StatusLancamento.PLANEJADO.equals(status)) || (StatusLancamento.CONFIRMADO.equals(status)) || (StatusLancamento.FURO.equals(status)) ); 
 			
 			final Date dtLancamentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataLancamentoDistribuidor());
 			
-			if (null != dtLancamentoDistribuidor && !dtLancamentoDistribuidor.equals(dtLancamentoNovo) && isStatusAlteracaoDataLancamento) {
+			if (null != dtLancamentoDistribuidor && !	dtLancamentoDistribuidor.equals(dtLancamentoNovo) && isStatusAlteracaoDataLancamento) {
+				
+				if(dtLancamentoNovo.before(distribuidorService.obterDataOperacaoDistribuidor())){
+				
+					try {
+					 dtLancamentoNovo = getDiaMatrizAberta(dtLancamentoNovo, lancamento.getDataRecolhimentoDistribuidor(),message,codigoProduto,edicao);
+				    } catch (Exception e) {
+					  return;
+				    }
+				}
+				// Alterado por solicitacao da trac 185
 				
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteracao da DATA LANCAMENTO DISTRIBUIDOR do Produto: "
+						"Alteracao para PARCIAL da DATA LANCAMENTO DISTRIBUIDOR do Produto: "
 								+ codigoProduto + " e Edicao: " + edicao
 								+ " , de: " + simpleDateFormat.format(
-										dtLancamentoDistribuidor)
-								+ "para: " + simpleDateFormat.format(
-										dtLancamentoNovo));
+										dtLancamentoNovo)
+								+ " para: " + simpleDateFormat.format(
+										dtLancamentoDistribuidor));
 				
 				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
 				
@@ -350,7 +402,6 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		
 		return (Lancamento) criteria.uniqueResult();
 	}
-	
 	/**
 	 * Trata o valor de um Number para evitar nullpointer.<br>
 	 * Caso o valor do Number seja null, será retornado 0 (zero).
@@ -384,6 +435,66 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	@Override
 	public void posProcess(Object tempVar) {
 		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
+	}
+	
+	private Date getDiaMatrizAberta(Date dataLctoDistibuidor,Date dataRecDistibuidor,Message message, String codigoProduto, Long edicao) throws Exception{
+		
+		
+	    	
+		if(datasNaoBalanceaveis==null || datasNaoBalanceaveis.isEmpty()){
+		 return dataLctoDistibuidor;
+		}else if(!datasNaoBalanceaveis.contains(dataLctoDistibuidor) && !dataLctoDistibuidor.before(distribuidorService.obterDataOperacaoDistribuidor())){
+		 return dataLctoDistibuidor;
+		}else{
+			if(datasBalanceaveis!=null && !datasBalanceaveis.isEmpty()){
+			 for(Date data : datasBalanceaveis){
+				
+				if(!data.before(dataLctoDistibuidor)){
+			   
+			        // usa calendar para subtrair data
+			        Calendar calendarData = Calendar.getInstance();
+			        calendarData.setTime(dataLctoDistibuidor);
+			   
+			        int numeroDiasParaSubtrair = 2;
+			        // achar data de início
+			        calendarData.add(Calendar.DATE,numeroDiasParaSubtrair);
+			        
+			        if(data.before(calendarData.getTime())){
+			        	
+			        	this.ndsiLoggerFactory.getLogger().logInfo(message,
+								EventoExecucaoEnum.ERRO_INFRA,
+								"Não foi inserido o lancamento do Produto: "
+										+ codigoProduto
+										+ " e Edicao: " + edicao
+										+ ", data de Recolhimento: " + dataRecDistibuidor
+										+ " para: " + data+ " é menor que 2 dias.");
+			        	throw new Exception("Não foi inserido o lancamento do Produto: "
+											+ codigoProduto
+											+ " e Edicao: " + edicao
+											+ ", data de Recolhimento: " + dataRecDistibuidor
+											+ " para: " + data+ " é menor que 2 dias.");
+			        }else{
+					
+			        	this.ndsiLoggerFactory.getLogger().logInfo(message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Alteracao da Data Lcto Distribuidor do Produto: "
+									+ codigoProduto
+									+ " e Edicao: " + edicao
+									+ ", de: " + dataLctoDistibuidor
+									+ " para: " + data);
+					
+			        	return data;
+			        }
+					
+				}
+				
+			 }
+		     return	(Date)datasBalanceaveis.toArray()[0];
+			}else {
+			  return dataLctoDistibuidor;
+			}
+		}
+		
 	}
 	
 }

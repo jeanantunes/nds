@@ -37,6 +37,8 @@ public class Box implements Serializable {
      */
     public static final Box ESPECIAL;
     
+    public static final Long ID_BOX_ESPECIAL = Long.valueOf(-1);
+    
     static {
         ESPECIAL = new Box();
         ESPECIAL.setId(Long.valueOf(-1));

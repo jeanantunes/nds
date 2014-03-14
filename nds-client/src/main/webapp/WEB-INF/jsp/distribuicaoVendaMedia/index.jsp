@@ -1,5 +1,3 @@
-<%--
- --%>
  <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
  <!-- distribuicaoVendaMedia -->
 <script language="javascript">
@@ -13,17 +11,20 @@ $(function() {
 		});
 		distribuicaoVendaMedia.carregarEventos();
 	});
+
 function popup_novo() {
-	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	$("#edicaoProdCadastradosGrid").flexAddData({
 			rows : [],
 			page : 1,
 			total : 1
 		});
+	
 	$("#codigoPesquisaBases").val("");
 	$("#produtoPesquisaBases").val("");
 	$("#edicaoPesquisaBases").val("");
+	
 	distribuicaoVendaMedia.produtoEdicaoPesquisaBases = [];
+	
 	$( "#dialog-edicoes-base" ).dialog({
 	    escondeHeader: false,
 		resizable: false,
@@ -34,7 +35,6 @@ function popup_novo() {
 			"Confirmar": function() {
 				distribuicaoVendaMedia.confirmarProdutosEdicaoBasePopup();
 				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);				
 			},
 			"Cancelar": function() {
 				$( this ).dialog( "close" );
@@ -43,7 +43,6 @@ function popup_novo() {
 	});
 };
 function popup_cancelar() {
-	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 	$( "#dialog-cancelar" ).dialog({
 	    escondeHeader: false,
@@ -54,7 +53,6 @@ function popup_cancelar() {
 		buttons: {
 			"Confirmar": function() {
 				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);				
 				distribuicaoVendaMedia.cancelar();
 			},
 			"Cancelar": function() {
@@ -75,7 +73,6 @@ function popup_excluir_bonificacao(index) {
 			"Confirmar": function() {
 				distribuicaoVendaMedia.removerBonificacao(index);
 				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);				
 			},
 			"Cancelar": function() {
 				$( this ).dialog( "close" );
@@ -96,7 +93,6 @@ function popup_excluir() {
 			"Confirmar": function() {
 				distribuicaoVendaMedia.removerProdutoEdicaoDaBase();
 				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);
 			},
 			"Cancelar": function() {
 				$( this ).dialog( "close" );
@@ -115,7 +111,6 @@ function popup_excluir_todos() {
 		"Confirmar": function() {
 			distribuicaoVendaMedia.removerTodasEdicoesDeBase();
 			$( this ).dialog( "close" );
-			$("#effect").show("highlight", {}, 1000, callback);
 		},
 		"Cancelar": function() {
 			$( this ).dialog( "close" );
@@ -324,20 +319,22 @@ function limparLstExcecao1(){
           <tr>
             <td width="43">Código:</td>
             <td width="78">
-            	<input type="text" id="codigoPesquisaBases" style="width:60px;"
-            	 	onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);"
-            	 	/>
+            	<input type="text" name="textfield1" id="codigoPesquisaBases" style="width:60px;"
+            	 	onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);"/>
             </td>
+            
             <td width="48">Produto:</td>
             <td width="184">
-            	<input type="text" id="produtoPesquisaBases" style="width:160px;" 
+            	<input type="text" name="textfield2" id="produtoPesquisaBases" style="width:160px;" 
             		onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#produtoPesquisaBases', true);" 
-                	 onblur="pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);"
-            		/>
+                	 onblur="pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);"/>
             </td>
+            
             <td width="42">Edição:</td>
-            <td width="62"><input type="text" name="textfield3" id="edicaoPesquisaBases" style="width:60px;" /></td>
-            </tr>
+            <td width="62">
+            	<input type="text" name="textfield3" id="edicaoPesquisaBases" style="width:60px;" /></td>
+          </tr>
+            
           	<tr>
 	          	<td width="76">Classifica&ccedil;&atilde;o:</td>
 	            <td colspan="3">
@@ -377,13 +374,6 @@ function limparLstExcecao1(){
    
     <div class="container">
     
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-                <span class="ui-state-default ui-corner-all" style="float:right;">
-                <a href="javascript:;" class="ui-icon ui-icon-close">&nbsp;</a></span>
-				<b>Ação realizada com sucesso</b></p>
-	</div>
-    	
       <fieldset style="width:650px!important; float:left;">
        	  <legend>Distribuição</legend>
         <div class="grids" style="display:block;">
@@ -421,7 +411,7 @@ function limparLstExcecao1(){
                           </tr>
                           <tr>
                             <td>Pacote Padrão:</td>
-                            <td>${ produtoEdicao.pacotePadrao }</td>
+                            <td id='pctPadrao'>${ produtoEdicao.pacotePadrao }</td>
                           </tr>
                           <tr>
                             <td>Data Lançamento:</td>
@@ -451,23 +441,10 @@ function limparLstExcecao1(){
                         </tr>
                       </table>
                    	  <table width="275" border="0" cellspacing="2" cellpadding="2">
-                   	    <!--  <tr>
-                   	      <td width="91">Juramentado:</td>
-                   	      <td colspan="2">${ juramentado }</td>
-               	        </tr>
-                   	    <tr>
-                   	      <td>Suplementar:</td>
-                   	      <td colspan="2">${ suplementar }</td>
-               	        </tr>-->
                    	    <tr>
                    	      <td>Lançamento:</td>
                    	      <td colspan="2" id="reparteTotal">${ lancado }</td>
                	        </tr>
-                   	    <!--  <tr>
-                   	      <td>Promocional:</td>
-                   	      <td colspan="2">${ promocional }</td>
-               	        </tr>
-                   	    <tr>-->
                    	      <td>Sobra:</td>
                    	      <td colspan="2" id="sobra">${sobra}</td>
                	        </tr>
@@ -484,9 +461,9 @@ function limparLstExcecao1(){
                    	      <td colspan="2">Usar Fixação</td>
                	        </tr>
                    	    <tr>
-                   	      <td align="right"><input type="checkbox" name="checkbox3" id="distribuicaoPorMultiplo" onclick="$('.distrMult').toggle();" /></td>
+                   	      <td align="right"><input type="checkbox" name="checkbox3" id="distribuicaoPorMultiplo" onclick="$('.distrMult').toggle(); $('#multiplo').val($('#pctPadrao').text());" /></td>
                    	      <td width="120">Distribuição por multiplo</td>
-                   	      <td width="44"><input type="text" class="distrMult" style="width:40px; text-align:center; display:none;" id="multiplo" value="10" /></td>
+                   	      <td width="44"><input type="text" class="distrMult" style="width:40px; text-align:center; display:none;" id="multiplo" value="00" /></td>
                	        </tr>
                	    </table>
                   </fieldset>

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -59,8 +61,10 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
@@ -168,6 +172,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 						}
 					}				
 					recebimentoFisicoRepository.remover(recebimentoFisico);
+					notaFiscal.setStatusRecebimento(null);
+					notaFiscalRepository.merge(notaFiscal);
 				}else{
                     throw new ValidacaoException(TipoMensagem.WARNING,
                             "O Recebimento ja foi confirmado, não é possível alterar os dados do mesmo.");
@@ -301,6 +307,53 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		alterarRecebimentoFisicoParaConfirmado(usuarioLogado, notaFiscal, dataAtual);	
 		
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public ValidacaoVO validarDescontoProduto(Origem origemNota, List<RecebimentoFisicoDTO> listaItensNota) {
+		
+		if (!Origem.INTERFACE.equals(origemNota)){
+			
+			return null;
+		}
+
+		List<String> mensagens = new ArrayList<>();
+		
+		final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
+		
+		for (RecebimentoFisicoDTO item : listaItensNota) {
+
+			ProdutoEdicao produtoEdicao = this.produtoEdicaoService.buscarPorID(item.getIdProdutoEdicao());
+
+			DescontoLogistica descontoLogistica = produtoEdicao.getDescontoLogistica() != null ? 
+					produtoEdicao.getDescontoLogistica() : produtoEdicao.getProduto().getDescontoLogistica();
+					
+			if (descontoLogistica == null) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, 
+						"Produto " + produtoEdicao.getProduto().getCodigo() + " sem desconto cadastrado!");
+			}
+
+			BigDecimal percentualProduto = descontoLogistica.getPercentualDesconto().divide(ONE_HUNDRED);
+			
+			if (BigDecimalUtil.neq(percentualProduto, item.getPercentualDesconto())) {
+				
+				mensagens.add(" [Cod.:" + produtoEdicao.getProduto().getCodigo() 
+							 + " Ed.: " + produtoEdicao.getNumeroEdicao() + "]"
+							 + " - Cadastro: " + percentualProduto.multiply(ONE_HUNDRED).setScale(2, RoundingMode.HALF_EVEN) + "%"
+							 + " / Nota: "  + item.getPercentualDesconto().multiply(ONE_HUNDRED).setScale(2, RoundingMode.HALF_EVEN) + "%");
+			}
+		}
+		
+		if (!mensagens.isEmpty()) {
+			
+			mensagens.add(0, "Os Produtos abaixo poossuem descontos diferentes entre o cadastrado e a nota.");
+			
+			return new ValidacaoVO(TipoMensagem.WARNING, mensagens);
+		}
+		
+		return null;
 	}
 	
 	        /**

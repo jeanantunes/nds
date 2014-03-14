@@ -72,9 +72,6 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		StringBuilder hql = new StringBuilder();
 		hql.append(getHqlResumoLancamento(false, false, filtro));
 		
-//		hql.append(" group by ");
-//		hql.append(" produtoEdicao.ID ");
-		
 		Query query = getSession().createSQLQuery(hql.toString());
 		
 		this.setParametersQueryResumoExpedicaoPorProduto(filtro, query);
@@ -99,10 +96,13 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		sql.append(" FROM (");
 
-		sql.append("     SELECT SUM(innerQuery.qntReparte) + COALESCE( "+ this.getQntDiferencaResumoLancamento() +", 0) as qntReparte, ");
+		sql.append("     SELECT SUM(innerQuery.qntReparte) + COALESCE( ")
+															.append(this.getQntDiferencaResumoLancamento()).append(", 0) - ")
+															.append(this.getQntCotaAusente(false)).append(" as qntReparte, ");
 		
-		sql.append("            innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + COALESCE( "+ this.getQntDiferencaResumoLancamento() +", 0) ) AS totalValorFaturado ");
-		
+		sql.append("            innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + COALESCE( ")
+															.append(this.getQntDiferencaResumoLancamento()).append(", 0) - ")
+															.append(this.getQntCotaAusente(false)).append(" ) AS totalValorFaturado ");
 		sql.append("     FROM ");
 			
 		sql.append("     ( ");
@@ -133,9 +133,6 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(getHqlResumoLancamento(true, false, filtro));
-		
-//		hql.append(" group by ");
-//		hql.append(" box.ID ");
 		
 		Query query = this.getQueryResumoLancamentoPorBox(hql);
 		
@@ -201,24 +198,31 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	@Override
     public ExpedicaoDTO obterTotaisResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro) {
 		
-		StringBuilder hql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		
-		String hqlResumoExpedicaoProdutoDoBox = getHqlResumoLancamento(false, true, filtro);
+		sql.append(" SELECT ");
+
+		sql.append(" SUM( resumoExpedicaoPorBox.valorFaturado ) as valorFaturado ");
 		
-		String from =
-			hqlResumoExpedicaoProdutoDoBox.substring(hqlResumoExpedicaoProdutoDoBox.indexOf("FROM"));
-		
-		hql.append(" select SUM(queryResumoExpedicaoProdutoDoBox.valorFaturado) as valorFaturado ");
-		
-		hql.append(" from ( ");
-		
-		hql.append(" select (SUM(innerQuery.qntReparte) * innerQuery.precoCapa) as valorFaturado ");
-		
-		hql.append(from);
-		
-		hql.append(") as queryResumoExpedicaoProdutoDoBox ");
-		
-		Query query = getSession().createSQLQuery(hql.toString()).addScalar("valorFaturado");
+		sql.append(" FROM (");
+
+		sql.append("     SELECT ");		
+		sql.append("            innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + COALESCE( ")
+															.append(this.getQntDiferencaResumoLancamento()).append(", 0) - ")
+															.append(this.getQntCotaAusente(false)).append(" ) AS valorFaturado ");
+		sql.append("     FROM ");
+			
+		sql.append("     ( ");
+	
+		sql.append(        this.getInnerQueryResumoLancamento(false));
+			
+		sql.append("     ) as innerQuery ");
+
+		sql.append(this.getAgrupamentoResumoLancamento(false, true, filtro));
+
+        sql.append(" ) as resumoExpedicaoPorBox ");
+
+		Query query = getSession().createSQLQuery(sql.toString()).addScalar("valorFaturado");
 		
 		this.setParametersQueryResumoExpedicaoProdutosDoBox(filtro, query);
 		
@@ -249,6 +253,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
 		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		
 		query.setParameterList("statusAposExpedido", 
 							   Arrays.asList(StatusLancamento.EXPEDIDO.name(),
 											 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
@@ -256,22 +262,11 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 											 StatusLancamento.EM_RECOLHIMENTO.name(),
 											 StatusLancamento.RECOLHIDO.name(),
 											 StatusLancamento.FECHADO.name()));
-		
-		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
-
 	}
 	
 	private void setParametersQueryResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
-		query.setParameter("dataLancamento", filtro.getDataLancamento());
-		
-		query.setParameterList("statusAposExpedido", 
-				   Arrays.asList(StatusLancamento.EXPEDIDO.name(),
-								 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
-								 StatusLancamento.BALANCEADO_RECOLHIMENTO.name(),
-								 StatusLancamento.EM_RECOLHIMENTO.name(),
-								 StatusLancamento.RECOLHIDO.name(),
-								 StatusLancamento.FECHADO.name()));
+		this.setParametersQueryResumoExpedicaoPorProduto(filtro, query);
 
         if (filtro.getCodigoBox() != null) {
 			query.setParameter("codigoBox", filtro.getCodigoBox());
@@ -433,7 +428,9 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				  .append(" LEFT OUTER JOIN BOX box ON cota.BOX_ID=box.ID ")
 				  .append(" WHERE lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ")
 				  .append(" AND lancamento.STATUS IN ( :statusAposExpedido ) ")
-				  .append(" AND tp.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
+				  .append(" AND tp.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ")
+				  .append(" AND mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
+				  
 		
 		return innerQuery;
 	}
@@ -477,10 +474,10 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		sql.append(" SELECT  innerQuery.precoCapa AS precoCapa, 				 	")
 				.append(" SUM(CASE WHEN innerQuery.grupoMovimento in (" + this.getGruposFalta() + ") ")
 				.append("			 THEN -innerQuery.qntReparte ")
-				.append("			 ELSE innerQuery.qntReparte END ")
-				.append(" ) AS qntReparte, 						    ")
+				.append("			 ELSE innerQuery.qntReparte END ) - ").append(this.getQntCotaAusente(false))
+				.append("  AS qntReparte, 						    ")
 				.append(" COALESCE( "+ this.getQntDiferencaResumoLancamento() +", 0) AS qntDiferenca,")
-				.append(" sum(innerQuery.valorFaturado) AS valorFaturado, 		 ")
+				.append(" sum(innerQuery.valorFaturado) - ").append(this.getQntCotaAusente(true)).append(" AS valorFaturado,")
 				.append(" innerQuery.codigoProduto AS codigoProduto, 			 ")
 				.append(" innerQuery.nomeProduto AS nomeProduto, 				 ")
 				.append(" innerQuery.numeroEdicao AS numeroEdicao, 				 ")
@@ -526,5 +523,30 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		}
 
 		return gruposFalta.replaceFirst(",", "");
-	}	
+	}
+	
+	private String getQntCotaAusente(boolean calcularValorFaturado){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("( SELECT ");
+		
+		if(calcularValorFaturado){
+			sql.append(" COALESCE(sum(case when (tp_movimento.GRUPO_MOVIMENTO_ESTOQUE = 'SUPLEMENTAR_COTA_AUSENTE') then (mec_st.QTDE ) else (mec_st.QTDE *-1) end) * precoCapa,0)");
+		}
+		else{
+			sql.append(" COALESCE(sum(case when (tp_movimento.GRUPO_MOVIMENTO_ESTOQUE = 'SUPLEMENTAR_COTA_AUSENTE') then (mec_st.QTDE ) else (mec_st.QTDE *-1) end),0)");
+		}
+		
+		sql.append("  FROM ");
+		sql.append("	movimento_estoque mec_st inner join tipo_movimento tp_movimento");
+		sql.append("	ON tp_movimento.ID = mec_st.TIPO_MOVIMENTO_ID");
+		sql.append("	WHERE");
+		sql.append("	mec_st.DATA = innerQuery.dataLancamento");
+		sql.append("	AND mec_st.PRODUTO_EDICAO_ID =  produtoEdicaoId");
+		sql.append("	AND tp_movimento.GRUPO_MOVIMENTO_ESTOQUE IN('SUPLEMENTAR_COTA_AUSENTE','REPARTE_COTA_AUSENTE')");
+		sql.append(")");
+		
+		return sql.toString();
+	}
 }

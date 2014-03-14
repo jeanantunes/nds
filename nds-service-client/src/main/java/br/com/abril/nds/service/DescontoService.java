@@ -155,13 +155,9 @@ public interface DescontoService {
 	
 	/**
 	 * Recupera o Map de Descontos a serem aplicado para o produto edição
-	 * 
-	 * @param lancamento
-	 * @param cota
-	 * @param produtoEdicao
 	 * @return
 	 */
-	Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao(Long lancamentoId, Long produtoEdicaoId);
+	Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao();
 	
 	/**
 	 * @param descontos
@@ -172,13 +168,10 @@ public interface DescontoService {
 	 * @return
 	 * @throws Exception
 	 */
-	DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, long cotaId, long fornecedorId, long produtoId, long produtoEdicaoId) throws Exception;
+	DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, Long cotaId, Long fornecedorId, Long produtoId, Long produtoEdicaoId) throws Exception;
 
-	/**
-	 * @param descontos
-	 * @param idProduto
-	 * @return TODO
-	 */
-	DescontoDTO obterDescontoProximosLancamentosPor(Map<String, DescontoDTO> descontos, Long idProduto);
+	DescontoDTO obterDescontoProximosLancamentosPor(Map<String, DescontoDTO> descontos, Long cotaId, Long fornecedorId, Long produtoEdicaoId, Long produtoId);
+
+    DescontoDTO obterDescontoPor(Integer numeroCota, String codigoProduto, Long numeroEdicao) throws Exception;
 
 }

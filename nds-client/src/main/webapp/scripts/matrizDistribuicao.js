@@ -141,24 +141,24 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.onSuccessPesquisa = function() {
 		
-		$(T.lancamentos, _workspace).each(function(i,lancamento){
+		$(T.lancamentos).each(function(i,lancamento){
 			 var index = i + 1;
-			 var id = '#row' + index;
+			 var id = '#lancamentoMatrizDistribuicaoGrid tr[id=row' + index + ']';
 			 
-			 $(id, _workspace).removeClass("erow");
+			 $(id).removeClass("erow");
 			 
 			 if (T.lancamentos[i].idCopia != null) {
 				 
 				 for (var j=0; j < 12; j++) {
-					 $($(id, _workspace).children()[j]).html("");
+					 $($(id).children()[j]).html("");
 				 }
 			 }
 			 
 			 if (T.lancamentos[i].idRow % 2 == 0) {
-				 $(id, _workspace).addClass("gridLinha");
+				 $(id).addClass("gridLinha");
 			 }
 			 
-			 $("#inputRepDistrib" + i, _workspace).removeAttr('disabled');
+			 $("#inputRepDistrib" + i).removeAttr('disabled');
 				if (T.lancamentos[i].dataFinMatDistrib != undefined) {
 					T.finalizaItem(i);
 			 }				 
@@ -182,6 +182,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		if (typeof resultadoPesquisa[0] == 'undefined' || resultadoPesquisa[0].rows.length == 0) {
 			T.escondeGrid();
+			exibirMensagem("WARNING", ["Pesquisa não obteve resultados."]);
 		} else {
 			$("#totalGerado", _workspace).html(resultadoPesquisa[1]);
 			$("#totalLiberado", _workspace).html(resultadoPesquisa[2]);
@@ -368,8 +369,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.alterarReparte = function(input, index) {
 		
-		if (!$.isNumeric(input.value)) {
-			exibirMensagem("WARNING", ["Digite um número valido!"]);
+		if ((!$.isNumeric(input.value)) || (input.value < 1)) {
+			exibirMensagem("WARNING", ["Digite um valor válido!"]);
 			return;
 		}
 
@@ -1531,10 +1532,20 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	        exibirMensagem("ERROR", ["Selecione "+ (maisDeUm ? "apenas" : "") +" um item para esta opção."]);
 	        return;
 	    }
+	    
 	    var postData = [];
-	    postData.push({name: "estudoId",        value: selecionado.estudo});
-	    postData.push({name: "idProdutoEdicao", value: selecionado.idProdutoEdicao});
-	    postData.push({name: "idLancamento",    value: selecionado.idLancamento});
+	    postData.push({name: "estudoId",        	value: selecionado.estudo});
+	    postData.push({name: "idProdutoEdicao", 	value: selecionado.idProdutoEdicao});
+	    postData.push({name: "idLancamento",    	value: selecionado.idLancamento});
+	    postData.push({name: "reparte",    			value: selecionado.reparte});
+	    postData.push({name: "reparteDistribuido",	value: selecionado.repDistrib});
+	    postData.push({name: "sobra",    			value: selecionado.sobra});
+	    
+	    if (selecionado.idCopia != undefined) {
+	    	
+	    	postData.push({name: "idCopia", value: selecionado.idCopia});
+	    }
+		
 
 	    var temp = $('#workspace').tabs( "option", "ajaxOptions");
 	    $('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );
@@ -1542,7 +1553,9 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	    $('#workspace').tabs( "option", "ajaxOptions", temp );
 
 	    T.esconderOpcoes();
-	};
+
+        this.tabSomarCopiarEstudos = 'complementar';
+    };
 
 	this.analise = function(){
 		//testa se registro foi selecionado

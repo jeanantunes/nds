@@ -46,7 +46,7 @@
 						onchange="negociacaoDividaController.pesquisarCota(this.value);"
 						style="width: 60px; float: left; margin-right: 5px;" /></td>
 					<td width="39">Nome:</td>
-					<td width="207"><span id="negociacaoDivida_nomeCota"></span></td>
+					<td width="230"><span id="negociacaoDivida_nomeCota"></span></td>
 					<td width="41">Status:</td>
 					<td width="157"><span id="negociacaoDivida_statusCota"></span></td>
 					<td width="33" align="right"><input type="checkbox"
