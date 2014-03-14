@@ -571,7 +571,6 @@ public class CotaServiceImpl implements CotaService {
      * @param idsIgnorar
      * @return List<TelefoneAssociacaoDTO>
      */
-    @SuppressWarnings("unused")
     @Transactional(readOnly = true)
     @Override
     public List<TelefoneAssociacaoDTO> buscarTelefonesCota(final Long idCota, final Set<Long> idsIgnorar) {
