@@ -19,8 +19,9 @@
 		<table width="520" border="0" class="filtro">
 			<tr>
 				<td>
-					<input type="radio" value="p3" name="opcaoDeRelatorio" class='opcaoDeRelatorio'>P3
-					<input type="radio" value="movCompleta" name="opcaoDeRelatorio" class='opcaoDeRelatorio'>Movimentação Completa
+					<input type="radio" value="p3" name="opcaoDeRelatorio" class='opcaoDeRelatorio'>Integração Fiscal P3
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="radio" value="movCompleta" name="opcaoDeRelatorio" class='opcaoDeRelatorio'>P3 Movimentação Completa
 				</td>
 			</tr>
             <tr>
