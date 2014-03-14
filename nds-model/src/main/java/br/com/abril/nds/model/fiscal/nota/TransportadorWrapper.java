@@ -87,6 +87,7 @@ public class TransportadorWrapper implements Serializable {
 	
 	@Embedded
 	@NFEExportType
+	@XmlTransient
 	private Veiculo veiculo;
 
 	/**
@@ -122,7 +123,6 @@ public class TransportadorWrapper implements Serializable {
 	 *
 	 * @return Endereco
 	 */
-	@XmlTransient
 	public NotaFiscalEndereco getEndereco() {
 		return endereco;
 	}

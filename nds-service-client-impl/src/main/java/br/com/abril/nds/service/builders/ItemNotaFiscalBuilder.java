@@ -18,6 +18,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.nota.COFINS;
+import br.com.abril.nds.model.fiscal.nota.CofinsWrapper;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ICMS;
 import br.com.abril.nds.model.fiscal.nota.IPI;
@@ -25,6 +26,7 @@ import br.com.abril.nds.model.fiscal.nota.Impostos;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.OrigemProduto;
 import br.com.abril.nds.model.fiscal.nota.PIS;
+import br.com.abril.nds.model.fiscal.nota.PISWrapper;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.TribIPI;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
@@ -172,9 +174,9 @@ public class ItemNotaFiscalBuilder  {
 				ipi.setCst(t.getCst().toString());
 				ipi.setAliquota(t.getValorAliquota());
 				ipi.setValorBaseCalculo(t.getBaseCalculo());
-				ipi.setCodigoEnquadramento("00");
+				ipi.setCodigoEnquadramento(t.getCst());
 				ipi.setIPITrib(new TribIPI());
-				ipi.getIPITrib().setCst("00");
+				ipi.getIPITrib().setCst(t.getCst());
 				ipi.getIPITrib().setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
 				ipi.getIPITrib().setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(t.getBaseCalculo()));
 				
@@ -184,25 +186,63 @@ public class ItemNotaFiscalBuilder  {
 			}
 		}
 		
-		PIS pis = new PIS();
+		TributoAliquota tributoSimples = tributoAliquota.get("SIMPLES");
+		
+		if(tributoSimples != null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Regime tributario simples não suportado.");
+		}
+		
 		TributoAliquota tributoPis = tributoAliquota.get("PIS");
-		
-		// FIXME Ajustar CST
-		//pis.setCst(tributoPis.getTributo());
-		pis.setValor(detalheNotaFiscal.getProdutoServico().getValorTotalBruto().multiply(tributoPis.getValor().divide(BigDecimal.valueOf(100))));
-		pis.setValorBaseCalculo(tributoPis.getValor());
-		pis.setPercentualAliquota(tributoPis.getValor());
-		
-		COFINS cofins = new COFINS();		
 		TributoAliquota tributoCofins = tributoAliquota.get("COFINS");
-		// FIXME Ajustar CST
-		cofins.setValorAliquota(detalheNotaFiscal.getProdutoServico().getValorTotalBruto().multiply(tributoCofins.getValor().divide(BigDecimal.valueOf(100))));
-		cofins.setValorBaseCalculo(tributoCofins.getValor());
-		cofins.setPercentualAliquota(tributoCofins.getValor());
 		
-		detalheNotaFiscal.getImpostos().setPis(pis);
-		detalheNotaFiscal.getImpostos().setCofins(cofins);
-
+		if(tributoPis != null){
+			PISWrapper pisWrapper = new PISWrapper();
+			PIS pis = new PIS();
+			// FIXME Ajustar CST
+			pisWrapper.setPis(pis);
+			pisWrapper.getPis().setCst("01");
+			pisWrapper.getPis().setValorBaseCalculo(tributoPis.getValor());
+			pisWrapper.getPis().setPercentualAliquota(tributoPis.getValor());			
+			pisWrapper.getPis().setValor(detalheNotaFiscal.getProdutoServico().getValorTotalBruto().multiply(tributoPis.getValor().divide(BigDecimal.valueOf(100))));
+			detalheNotaFiscal.getImpostos().setPis(pisWrapper);
+		} else {
+			PISWrapper pisWrapper = new PISWrapper();
+			PIS pis = new PIS();
+			pisWrapper.setPis(pis);
+			// FIXME Ajustar CST
+			pisWrapper.getPis().setCst("01");
+			pisWrapper.getPis().setValorBaseCalculo(BigDecimal.valueOf(0));
+			pisWrapper.getPis().setValor(BigDecimal.valueOf(0));
+			pisWrapper.getPis().setPercentualAliquota(BigDecimal.valueOf(0));			
+			detalheNotaFiscal.getImpostos().setPis(pisWrapper);
+		}
+		
+		if(tributoCofins != null){
+			
+			CofinsWrapper cofinsWrapper = new CofinsWrapper();	
+			COFINS cofins = new COFINS();
+			
+			cofinsWrapper.setCofins(cofins);
+			
+			// FIXME Ajustar CST
+			cofinsWrapper.getCofins().setCst("01");
+			cofinsWrapper.getCofins().setValorBaseCalculo(tributoCofins.getValor());
+			cofinsWrapper.getCofins().setValorAliquota(detalheNotaFiscal.getProdutoServico().getValorTotalBruto().multiply(tributoCofins.getValor().divide(BigDecimal.valueOf(100))));
+			
+			detalheNotaFiscal.getImpostos().setCofins(cofinsWrapper);
+		}else{
+			CofinsWrapper cofinsWrapper = new CofinsWrapper();	
+			COFINS cofins = new COFINS();
+			
+			cofinsWrapper.setCofins(cofins);		
+			// FIXME Ajustar CST
+			cofinsWrapper.getCofins().setCst("01");
+			cofinsWrapper.getCofins().setValorBaseCalculo(BigDecimal.valueOf(0));
+			cofinsWrapper.getCofins().setValor(BigDecimal.valueOf(0));
+			cofinsWrapper.getCofins().setValorAliquota(BigDecimal.valueOf(0));
+			
+			detalheNotaFiscal.getImpostos().setCofins(cofinsWrapper);
+		}
 		
 		//FIXME: Ajustar o codigo Excessao do ipi
 		//detalheNotaFiscal.getProdutoServico().setExtipi(0L);

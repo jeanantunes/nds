@@ -281,10 +281,10 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
 		
-		Map<String, TributoAliquota> tributoAliquota = new HashMap<String, TributoAliquota>();
+		Map<String, TributoAliquota> tributoRegimeTributario = new HashMap<String, TributoAliquota>();
 		
 		for(TributoAliquota tributo : distribuidor.getRegimeTributario().getTributosAliquotas()){
-			tributoAliquota.put(tributo.getTributo().getNome(), tributo);
+			tributoRegimeTributario.put(tributo.getTributo().getNome(), tributo);
 		}
 		
 		for (Cota cota : cotas) {
@@ -309,7 +309,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			filtro.setIdCota(cota.getId());
 			List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalNdsRepository.obterMovimentosEstoqueCota(filtro);
 			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
-				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoRegimeTributario);
 			}
 			
 			//FIXME: Ajustar o valor do campo para valores parametrizados
@@ -373,6 +373,13 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		// obter as cotas que estão na tela pelo id das cotas
 		List<EstoqueProduto> estoques = this.notaFiscalNdsRepository.obterConjuntoFornecedorNotafiscal(filtro);
 		
+		Map<String, TributoAliquota> tributoRegimeTributario = new HashMap<String, TributoAliquota>();
+		
+		for(TributoAliquota tributo : distribuidor.getRegimeTributario().getTributosAliquotas()){
+			tributoRegimeTributario.put(tributo.getTributo().getNome(), tributo);
+		}
+		
+		
 		for (EstoqueProduto estoque : estoques) {
 			NotaFiscal notaFiscal = new NotaFiscal();
 			
@@ -391,7 +398,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			List<EstoqueProduto> estoqueProdutos = this.notaFiscalNdsRepository.obterEstoques(filtro);
 			for (EstoqueProduto estoqueProduto : estoqueProdutos) {
 				
-				ItemNotaFiscalEstoqueProdutoBuilder.montaItemNotaFiscal(notaFiscal, estoqueProduto);
+				ItemNotaFiscalEstoqueProdutoBuilder.montaItemNotaFiscal(notaFiscal, estoqueProduto, tributoRegimeTributario);
 			}
 			
 			FaturaEstoqueProdutoNotaFiscalBuilder.montarFaturaEstoqueProdutoNotaFiscal(notaFiscal, estoqueProdutos);

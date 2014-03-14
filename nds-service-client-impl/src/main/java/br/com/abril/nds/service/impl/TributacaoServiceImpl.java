@@ -124,7 +124,7 @@ public class TributacaoServiceImpl implements TributacaoService {
 	private PIS calculaPIS(NotaFiscalTributacao tributacao, BigDecimal valorItem) {
 		PIS pis = new PIS();
 
-		pis.setCst(Integer.valueOf(tributacao.getCstPIS()));
+		pis.setCst(tributacao.getCstPIS());
 
 		pis.setValorBaseCalculo(valorItem);
 		pis.setValor(valorItem.multiply(tributacao.getAliquotaIPI()).divide(
@@ -137,7 +137,7 @@ public class TributacaoServiceImpl implements TributacaoService {
 	private COFINS calculaCOFINS(NotaFiscalTributacao tributacao, BigDecimal valorItem) {
 		COFINS cofins = new COFINS();
 
-		cofins.setCst(Integer.valueOf(tributacao.getCstCOFINS()));
+		cofins.setCst(tributacao.getCstCOFINS());
 
 		cofins.setValorBaseCalculo(valorItem);
 		cofins.setValor(valorItem.multiply(tributacao.getAliquotaCOFINS())

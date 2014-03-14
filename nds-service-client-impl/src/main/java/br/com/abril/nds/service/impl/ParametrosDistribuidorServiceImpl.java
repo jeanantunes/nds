@@ -350,41 +350,29 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		// Garantia
 		parametrosDistribuidor.setUtilizaGarantiaPdv(distribuidor.isUtilizaGarantiaPdv());
 		
-		    for (TipoGarantiaAceita tipoGarantiaAceita : distribuidor
-		            .getTiposGarantiasAceita()) {
-		        
-		        if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CHEQUE_CAUCAO) {
-		            parametrosDistribuidor.setUtilizaChequeCaucao(true);
-		            parametrosDistribuidor
-		            .setValidadeChequeCaucao(tipoGarantiaAceita.getValor());
-		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.FIADOR) {
-		            parametrosDistribuidor.setUtilizaFiador(true);
-		            parametrosDistribuidor.setValidadeFiador(tipoGarantiaAceita
-		                    .getValor());
-		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.IMOVEL) {
-		            parametrosDistribuidor.setUtilizaImovel(true);
-		            parametrosDistribuidor.setValidadeImovel(tipoGarantiaAceita
-		                    .getValor());
-		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CAUCAO_LIQUIDA) {
-		            parametrosDistribuidor.setUtilizaCaucaoLiquida(true);
-		            parametrosDistribuidor
-		            .setValidadeCaucaoLiquida(tipoGarantiaAceita.getValor());
-		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.NOTA_PROMISSORIA) {
-		            parametrosDistribuidor.setUtilizaNotaPromissoria(true);
-		            parametrosDistribuidor
-		            .setValidadeNotaPromissoria(tipoGarantiaAceita
-		                    .getValor());
-		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
-		           
-		            parametrosDistribuidor
-		            .setValidadeAntecedenciaValidade(tipoGarantiaAceita
-		                    .getValor());
-		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.OUTROS) {
-		            parametrosDistribuidor.setUtilizaOutros(true);
-		            parametrosDistribuidor.setValidadeOutros(tipoGarantiaAceita
-		                    .getValor());
-		        }
-		    }
+	    for (TipoGarantiaAceita tipoGarantiaAceita : distribuidor.getTiposGarantiasAceita()) {
+	        if (tipoGarantiaAceita.getTipoGarantia().equals(TipoGarantia.CHEQUE_CAUCAO)) {
+	            parametrosDistribuidor.setUtilizaChequeCaucao(true);
+	            parametrosDistribuidor.setValidadeChequeCaucao(tipoGarantiaAceita.getValor());
+	        } else if (tipoGarantiaAceita.getTipoGarantia().equals(TipoGarantia.FIADOR)) {
+	            parametrosDistribuidor.setUtilizaFiador(true);
+	            parametrosDistribuidor.setValidadeFiador(tipoGarantiaAceita.getValor());
+	        } else if (tipoGarantiaAceita.getTipoGarantia().equals(TipoGarantia.IMOVEL)) {
+	            parametrosDistribuidor.setUtilizaImovel(true);
+	            parametrosDistribuidor.setValidadeImovel(tipoGarantiaAceita.getValor());
+	        } else if (tipoGarantiaAceita.getTipoGarantia().equals(TipoGarantia.CAUCAO_LIQUIDA)) {
+	            parametrosDistribuidor.setUtilizaCaucaoLiquida(true);
+	            parametrosDistribuidor.setValidadeCaucaoLiquida(tipoGarantiaAceita.getValor());
+	        } else if (tipoGarantiaAceita.getTipoGarantia().equals(TipoGarantia.NOTA_PROMISSORIA)) {
+	            parametrosDistribuidor.setUtilizaNotaPromissoria(true);
+	            parametrosDistribuidor.setValidadeNotaPromissoria(tipoGarantiaAceita.getValor());
+	        } else if (tipoGarantiaAceita.getTipoGarantia().equals(TipoGarantia.ANTECEDENCIA_VALIDADE)) {
+	            parametrosDistribuidor.setValidadeAntecedenciaValidade(tipoGarantiaAceita.getValor());
+	        } else if (tipoGarantiaAceita.getTipoGarantia().equals(TipoGarantia.OUTROS)) {
+	            parametrosDistribuidor.setUtilizaOutros(true);
+	            parametrosDistribuidor.setValidadeOutros(tipoGarantiaAceita.getValor());
+	        }
+	    }
 
 		// Negociação de Dividas
 		if (distribuidor.getPoliticaSuspensao() != null) {

@@ -4,14 +4,13 @@
 		versao="2.00">
 		<ide>
 			<cUF>35</cUF>
-			<cNF>00000112</cNF>
-			<natOp>Remessa de mercadoria em consignação mercantil ou industria
-			</natOp>
+			<cNF>00000124</cNF>
+			<natOp>5917</natOp>
 			<indPag>2</indPag>
 			<mod>55</mod>
 			<serie>5</serie>
-			<nNF>112</nNF>
-			<dEmi>2014-03-12</dEmi>
+			<nNF>124</nNF>
+			<dEmi>2014-03-13</dEmi>
 			<tpNF>1</tpNF>
 			<cMunFG>3550308</cMunFG>
 			<tpImp>2</tpImp>
@@ -43,16 +42,16 @@
 			<CRT>3</CRT>
 		</emit>
 		<dest>
-			<CPF>86690272834</CPF>
-			<xNome>ANTONIO RODRIGUES DE SOUSA</xNome>
+			<CPF>72152877853</CPF>
+			<xNome>ALBERTO DE ALMEIDA PETTA</xNome>
 			<enderDest>
-				<xLgr>JORGE MICHEL KEIRALLA</xLgr>
-				<nro>355</nro>
+				<xLgr>ADAO FOCESI</xLgr>
+				<nro>367</nro>
 				<xBairro>0</xBairro>
 				<cMun>3550308</cMun>
 				<xMun>CAMPINAS</xMun>
 				<UF>SP</UF>
-				<CEP>13130650</CEP>
+				<CEP>13050000</CEP>
 				<cPais>1058</cPais>
 				<xPais>Brasil</xPais>
 			</enderDest>
@@ -60,19 +59,19 @@
 		</dest>
 		<det nItem="1">
 			<prod>
-				<cProd>24262001</cProd>
-				<cEAN>9771983724009</cEAN>
+				<cProd>37048001</cProd>
+				<cEAN>9788580734720</cEAN>
 				<xProd>Revistas</xProd>
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>4</qCom>
-				<vUnCom>1.5323</vUnCom>
-				<vProd>6.13</vProd>
-				<cEANTrib>9771983724009</cEANTrib>
+				<qCom>2</qCom>
+				<vUnCom>19.2423</vUnCom>
+				<vProd>38.48</vProd>
+				<cEANTrib>9788580734720</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>4</qTrib>
-				<vUnTrib>1.5323</vUnTrib>
+				<qTrib>2</qTrib>
+				<vUnTrib>19.2423</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
 			<imposto>
@@ -83,14 +82,30 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
 		<det nItem="2">
@@ -101,12 +116,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>5</qCom>
+				<qCom>4</qCom>
 				<vUnCom>2.6950</vUnCom>
-				<vProd>13.48</vProd>
+				<vProd>10.78</vProd>
 				<cEANTrib>9771413200004</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>5</qTrib>
+				<qTrib>4</qTrib>
 				<vUnTrib>2.6950</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -118,17 +133,84 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
 		<det nItem="3">
+			<prod>
+				<cProd>39257001</cProd>
+				<cEAN>7897710179750</cEAN>
+				<xProd>Revistas</xProd>
+				<NCM>49029000</NCM>
+				<CFOP>5917</CFOP>
+				<uCom>KG</uCom>
+				<qCom>2</qCom>
+				<vUnCom>2.3023</vUnCom>
+				<vProd>4.60</vProd>
+				<cEANTrib>7897710179750</cEANTrib>
+				<uTrib>KG</uTrib>
+				<qTrib>2</qTrib>
+				<vUnTrib>2.3023</vUnTrib>
+				<indTot>0</indTot>
+			</prod>
+			<imposto>
+				<ICMS>
+					<ICMS40>
+						<orig>0</orig>
+						<CST>41</CST>
+					</ICMS40>
+				</ICMS>
+				<IPI>
+					<cEnq>99</cEnq>
+					<IPITrib>
+						<CST>99</CST>
+						<vBC>0.00</vBC>
+						<pIPI>0.00</pIPI>
+						<vIPI>0.00</vIPI>
+					</IPITrib>
+				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
+			</imposto>
+		</det>
+		<det nItem="4">
 			<prod>
 				<cProd>14905001</cProd>
 				<cEAN>9771677746003</cEAN>
@@ -136,12 +218,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>1</qCom>
+				<qCom>3</qCom>
 				<vUnCom>2.3100</vUnCom>
-				<vProd>2.31</vProd>
+				<vProd>6.93</vProd>
 				<cEANTrib>9771677746003</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>1</qTrib>
+				<qTrib>3</qTrib>
 				<vUnTrib>2.3100</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -153,17 +235,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="4">
+		<det nItem="5">
 			<prod>
 				<cProd>42668001</cProd>
 				<cEAN>7897710181722</cEAN>
@@ -188,17 +286,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="5">
+		<det nItem="6">
 			<prod>
 				<cProd>15559001</cProd>
 				<cEAN>9771415974002</cEAN>
@@ -206,12 +320,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>6</qCom>
+				<qCom>10</qCom>
 				<vUnCom>1.5323</vUnCom>
-				<vProd>9.19</vProd>
+				<vProd>15.32</vProd>
 				<cEANTrib>9771415974002</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>6</qTrib>
+				<qTrib>10</qTrib>
 				<vUnTrib>1.5323</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -223,17 +337,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="6">
+		<det nItem="7">
 			<prod>
 				<cProd>90370001</cProd>
 				<cEAN>9771413503006</cEAN>
@@ -241,12 +371,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>3</qCom>
+				<qCom>4</qCom>
 				<vUnCom>3.0800</vUnCom>
-				<vProd>9.24</vProd>
+				<vProd>12.32</vProd>
 				<cEANTrib>9771413503006</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>3</qTrib>
+				<qTrib>4</qTrib>
 				<vUnTrib>3.0800</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -258,17 +388,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="7">
+		<det nItem="8">
 			<prod>
 				<cProd>12519001</cProd>
 				<cEAN>9771517017003</cEAN>
@@ -276,10 +422,61 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
+				<qCom>9</qCom>
+				<vUnCom>1.5323</vUnCom>
+				<vProd>13.79</vProd>
+				<cEANTrib>9771517017003</cEANTrib>
+				<uTrib>KG</uTrib>
+				<qTrib>9</qTrib>
+				<vUnTrib>1.5323</vUnTrib>
+				<indTot>0</indTot>
+			</prod>
+			<imposto>
+				<ICMS>
+					<ICMS40>
+						<orig>0</orig>
+						<CST>41</CST>
+					</ICMS40>
+				</ICMS>
+				<IPI>
+					<cEnq>99</cEnq>
+					<IPITrib>
+						<CST>99</CST>
+						<vBC>0.00</vBC>
+						<pIPI>0.00</pIPI>
+						<vIPI>0.00</vIPI>
+					</IPITrib>
+				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
+			</imposto>
+		</det>
+		<det nItem="9">
+			<prod>
+				<cProd>00001840</cProd>
+				<cEAN>9770104538006</cEAN>
+				<xProd>Revistas</xProd>
+				<NCM>49029000</NCM>
+				<CFOP>5917</CFOP>
+				<uCom>KG</uCom>
 				<qCom>4</qCom>
 				<vUnCom>1.5323</vUnCom>
 				<vProd>6.13</vProd>
-				<cEANTrib>9771517017003</cEANTrib>
+				<cEANTrib>9770104538006</cEANTrib>
 				<uTrib>KG</uTrib>
 				<qTrib>4</qTrib>
 				<vUnTrib>1.5323</vUnTrib>
@@ -293,84 +490,30 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
-			</imposto>
-		</det>
-		<det nItem="8">
-			<prod>
-				<cProd>00001840</cProd>
-				<cEAN>9770104538006</cEAN>
-				<xProd>Revistas</xProd>
-				<NCM>49029000</NCM>
-				<CFOP>5917</CFOP>
-				<uCom>KG</uCom>
-				<qCom>2</qCom>
-				<vUnCom>1.5323</vUnCom>
-				<vProd>3.06</vProd>
-				<cEANTrib>9770104538006</cEANTrib>
-				<uTrib>KG</uTrib>
-				<qTrib>2</qTrib>
-				<vUnTrib>1.5323</vUnTrib>
-				<indTot>0</indTot>
-			</prod>
-			<imposto>
-				<ICMS>
-					<ICMS40>
-						<orig>0</orig>
-						<CST>41</CST>
-					</ICMS40>
-				</ICMS>
-				<IPI>
-					<cEnq>00</cEnq>
-					<IPITrib>
-						<CST>00</CST>
-						<vBC>0.00</vBC>
-						<pIPI>0.00</pIPI>
-						<vIPI>0.00</vIPI>
-					</IPITrib>
-				</IPI>
-			</imposto>
-		</det>
-		<det nItem="9">
-			<prod>
-				<cProd>16412071</cProd>
-				<cEAN>7897710182514</cEAN>
-				<xProd>Revistas</xProd>
-				<NCM>49029000</NCM>
-				<CFOP>5917</CFOP>
-				<uCom>KG</uCom>
-				<qCom>2</qCom>
-				<vUnCom>3.0723</vUnCom>
-				<vProd>6.14</vProd>
-				<cEANTrib>7897710182514</cEANTrib>
-				<uTrib>KG</uTrib>
-				<qTrib>2</qTrib>
-				<vUnTrib>3.0723</vUnTrib>
-				<indTot>0</indTot>
-			</prod>
-			<imposto>
-				<ICMS>
-					<ICMS40>
-						<orig>0</orig>
-						<CST>41</CST>
-					</ICMS40>
-				</ICMS>
-				<IPI>
-					<cEnq>00</cEnq>
-					<IPITrib>
-						<CST>00</CST>
-						<vBC>0.00</vBC>
-						<pIPI>0.00</pIPI>
-						<vIPI>0.00</vIPI>
-					</IPITrib>
-				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
 		<det nItem="10">
@@ -381,12 +524,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>7</qCom>
+				<qCom>8</qCom>
 				<vUnCom>8.3930</vUnCom>
-				<vProd>58.75</vProd>
+				<vProd>67.14</vProd>
 				<cEANTrib>9770104396002</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>7</qTrib>
+				<qTrib>8</qTrib>
 				<vUnTrib>8.3930</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -398,14 +541,30 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
 		<det nItem="11">
@@ -416,12 +575,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>6</qCom>
+				<qCom>3</qCom>
 				<vUnCom>6.9300</vUnCom>
-				<vProd>41.58</vProd>
+				<vProd>20.79</vProd>
 				<cEANTrib>9770104144009</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>6</qTrib>
+				<qTrib>3</qTrib>
 				<vUnTrib>6.9300</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -433,52 +592,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
 		<det nItem="12">
-			<prod>
-				<cProd>00005499</cProd>
-				<cEAN>9770104153001</cEAN>
-				<xProd>Revistas</xProd>
-				<NCM>49029000</NCM>
-				<CFOP>5917</CFOP>
-				<uCom>KG</uCom>
-				<qCom>1</qCom>
-				<vUnCom>8.4700</vUnCom>
-				<vProd>8.47</vProd>
-				<cEANTrib>9770104153001</cEANTrib>
-				<uTrib>KG</uTrib>
-				<qTrib>1</qTrib>
-				<vUnTrib>8.4700</vUnTrib>
-				<indTot>0</indTot>
-			</prod>
-			<imposto>
-				<ICMS>
-					<ICMS40>
-						<orig>0</orig>
-						<CST>41</CST>
-					</ICMS40>
-				</ICMS>
-				<IPI>
-					<cEnq>00</cEnq>
-					<IPITrib>
-						<CST>00</CST>
-						<vBC>0.00</vBC>
-						<pIPI>0.00</pIPI>
-						<vIPI>0.00</vIPI>
-					</IPITrib>
-				</IPI>
-			</imposto>
-		</det>
-		<det nItem="13">
 			<prod>
 				<cProd>00925100</cProd>
 				<cEAN>9771679251000</cEAN>
@@ -503,14 +643,81 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
+			</imposto>
+		</det>
+		<det nItem="13">
+			<prod>
+				<cProd>39397001</cProd>
+				<cEAN>9788447124626</cEAN>
+				<xProd>Fasciculos</xProd>
+				<NCM>49019100</NCM>
+				<CFOP>5917</CFOP>
+				<uCom>KG</uCom>
+				<qCom>2</qCom>
+				<vUnCom>23.0230</vUnCom>
+				<vProd>46.05</vProd>
+				<cEANTrib>9788447124626</cEANTrib>
+				<uTrib>KG</uTrib>
+				<qTrib>2</qTrib>
+				<vUnTrib>23.0230</vUnTrib>
+				<indTot>0</indTot>
+			</prod>
+			<imposto>
+				<ICMS>
+					<ICMS40>
+						<orig>0</orig>
+						<CST>41</CST>
+					</ICMS40>
+				</ICMS>
+				<IPI>
+					<cEnq>99</cEnq>
+					<IPITrib>
+						<CST>99</CST>
+						<vBC>0.00</vBC>
+						<pIPI>0.00</pIPI>
+						<vIPI>0.00</vIPI>
+					</IPITrib>
+				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
 		<det nItem="14">
@@ -521,12 +728,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>1</qCom>
+				<qCom>2</qCom>
 				<vUnCom>11.4730</vUnCom>
-				<vProd>11.47</vProd>
+				<vProd>22.95</vProd>
 				<cEANTrib>9771808377069</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>1</qTrib>
+				<qTrib>2</qTrib>
 				<vUnTrib>11.4730</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -538,14 +745,30 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
 		<det nItem="15">
@@ -573,14 +796,30 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
 		<det nItem="16">
@@ -608,14 +847,30 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
 		<det nItem="17">
@@ -626,12 +881,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>2</qCom>
+				<qCom>3</qCom>
 				<vUnCom>1.1550</vUnCom>
-				<vProd>2.31</vProd>
+				<vProd>3.46</vProd>
 				<cEANTrib>7897763465497</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>2</qTrib>
+				<qTrib>3</qTrib>
 				<vUnTrib>1.1550</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -643,14 +898,30 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
 		<det nItem="18">
@@ -661,12 +932,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>2</qCom>
+				<qCom>4</qCom>
 				<vUnCom>1.1550</vUnCom>
-				<vProd>2.31</vProd>
+				<vProd>4.62</vProd>
 				<cEANTrib>9772238350044</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>2</qTrib>
+				<qTrib>4</qTrib>
 				<vUnTrib>1.1550</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -678,14 +949,30 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
 		<det nItem="19">
@@ -713,52 +1000,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
 		<det nItem="20">
-			<prod>
-				<cProd>32902001</cProd>
-				<cEAN>9771516752004</cEAN>
-				<xProd>Revistas</xProd>
-				<NCM>49029000</NCM>
-				<CFOP>5917</CFOP>
-				<uCom>KG</uCom>
-				<qCom>2</qCom>
-				<vUnCom>10.7030</vUnCom>
-				<vProd>21.41</vProd>
-				<cEANTrib>9771516752004</cEANTrib>
-				<uTrib>KG</uTrib>
-				<qTrib>2</qTrib>
-				<vUnTrib>10.7030</vUnTrib>
-				<indTot>0</indTot>
-			</prod>
-			<imposto>
-				<ICMS>
-					<ICMS40>
-						<orig>0</orig>
-						<CST>41</CST>
-					</ICMS40>
-				</ICMS>
-				<IPI>
-					<cEnq>00</cEnq>
-					<IPITrib>
-						<CST>00</CST>
-						<vBC>0.00</vBC>
-						<pIPI>0.00</pIPI>
-						<vIPI>0.00</vIPI>
-					</IPITrib>
-				</IPI>
-			</imposto>
-		</det>
-		<det nItem="21">
 			<prod>
 				<cProd>33429001</cProd>
 				<cEAN>9771517159000</cEAN>
@@ -783,31 +1051,47 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="22">
+		<det nItem="21">
 			<prod>
-				<cProd>39296001</cProd>
-				<cEAN>9771806420002</cEAN>
-				<xProd>Revistas</xProd>
+				<cProd>33573001</cProd>
+				<cEAN>9772178234204</cEAN>
+				<xProd>Revista Digital</xProd>
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
 				<qCom>3</qCom>
-				<vUnCom>6.0830</vUnCom>
-				<vProd>18.25</vProd>
-				<cEANTrib>9771806420002</cEANTrib>
+				<vUnCom>3.8423</vUnCom>
+				<vProd>11.53</vProd>
+				<cEANTrib>9772178234204</cEANTrib>
 				<uTrib>KG</uTrib>
 				<qTrib>3</qTrib>
-				<vUnTrib>6.0830</vUnTrib>
+				<vUnTrib>3.8423</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
 			<imposto>
@@ -818,87 +1102,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="23">
-			<prod>
-				<cProd>32491001</cProd>
-				<cEAN>9771806257004</cEAN>
-				<xProd>Revistas</xProd>
-				<NCM>49029000</NCM>
-				<CFOP>5917</CFOP>
-				<uCom>KG</uCom>
-				<qCom>2</qCom>
-				<vUnCom>7.5460</vUnCom>
-				<vProd>15.09</vProd>
-				<cEANTrib>9771806257004</cEANTrib>
-				<uTrib>KG</uTrib>
-				<qTrib>2</qTrib>
-				<vUnTrib>7.5460</vUnTrib>
-				<indTot>0</indTot>
-			</prod>
-			<imposto>
-				<ICMS>
-					<ICMS40>
-						<orig>0</orig>
-						<CST>41</CST>
-					</ICMS40>
-				</ICMS>
-				<IPI>
-					<cEnq>00</cEnq>
-					<IPITrib>
-						<CST>00</CST>
-						<vBC>0.00</vBC>
-						<pIPI>0.00</pIPI>
-						<vIPI>0.00</vIPI>
-					</IPITrib>
-				</IPI>
-			</imposto>
-		</det>
-		<det nItem="24">
-			<prod>
-				<cProd>32632001</cProd>
-				<cEAN>9772316184002</cEAN>
-				<xProd>Revistas</xProd>
-				<NCM>49029000</NCM>
-				<CFOP>5917</CFOP>
-				<uCom>KG</uCom>
-				<qCom>2</qCom>
-				<vUnCom>23.0230</vUnCom>
-				<vProd>46.05</vProd>
-				<cEANTrib>9772316184002</cEANTrib>
-				<uTrib>KG</uTrib>
-				<qTrib>2</qTrib>
-				<vUnTrib>23.0230</vUnTrib>
-				<indTot>0</indTot>
-			</prod>
-			<imposto>
-				<ICMS>
-					<ICMS40>
-						<orig>0</orig>
-						<CST>41</CST>
-					</ICMS40>
-				</ICMS>
-				<IPI>
-					<cEnq>00</cEnq>
-					<IPITrib>
-						<CST>00</CST>
-						<vBC>0.00</vBC>
-						<pIPI>0.00</pIPI>
-						<vIPI>0.00</vIPI>
-					</IPITrib>
-				</IPI>
-			</imposto>
-		</det>
-		<det nItem="25">
+		<det nItem="22">
 			<prod>
 				<cProd>41877001</cProd>
 				<cEAN>9771806457008</cEAN>
@@ -923,52 +1153,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="26">
-			<prod>
-				<cProd>32852001</cProd>
-				<cEAN>9771808400002</cEAN>
-				<xProd>Revistas</xProd>
-				<NCM>49029000</NCM>
-				<CFOP>5917</CFOP>
-				<uCom>KG</uCom>
-				<qCom>6</qCom>
-				<vUnCom>8.4700</vUnCom>
-				<vProd>50.82</vProd>
-				<cEANTrib>9771808400002</cEANTrib>
-				<uTrib>KG</uTrib>
-				<qTrib>6</qTrib>
-				<vUnTrib>8.4700</vUnTrib>
-				<indTot>0</indTot>
-			</prod>
-			<imposto>
-				<ICMS>
-					<ICMS40>
-						<orig>0</orig>
-						<CST>41</CST>
-					</ICMS40>
-				</ICMS>
-				<IPI>
-					<cEnq>00</cEnq>
-					<IPITrib>
-						<CST>00</CST>
-						<vBC>0.00</vBC>
-						<pIPI>0.00</pIPI>
-						<vIPI>0.00</vIPI>
-					</IPITrib>
-				</IPI>
-			</imposto>
-		</det>
-		<det nItem="27">
+		<det nItem="23">
 			<prod>
 				<cProd>00458833</cProd>
 				<cEAN>7897763465541</cEAN>
@@ -993,17 +1204,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="28">
+		<det nItem="24">
 			<prod>
 				<cProd>31785001</cProd>
 				<cEAN>9771808274009</cEAN>
@@ -1011,12 +1238,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>1</qCom>
+				<qCom>3</qCom>
 				<vUnCom>6.0830</vUnCom>
-				<vProd>6.08</vProd>
+				<vProd>18.25</vProd>
 				<cEANTrib>9771808274009</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>1</qTrib>
+				<qTrib>3</qTrib>
 				<vUnTrib>6.0830</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -1028,17 +1255,84 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="29">
+		<det nItem="25">
+			<prod>
+				<cProd>33582012</cProd>
+				<cEAN>9788574799445</cEAN>
+				<xProd>Fasciculos</xProd>
+				<NCM>49019100</NCM>
+				<CFOP>5917</CFOP>
+				<uCom>KG</uCom>
+				<qCom>2</qCom>
+				<vUnCom>29.2523</vUnCom>
+				<vProd>58.50</vProd>
+				<cEANTrib>9788574799445</cEANTrib>
+				<uTrib>KG</uTrib>
+				<qTrib>2</qTrib>
+				<vUnTrib>29.2523</vUnTrib>
+				<indTot>0</indTot>
+			</prod>
+			<imposto>
+				<ICMS>
+					<ICMS40>
+						<orig>0</orig>
+						<CST>41</CST>
+					</ICMS40>
+				</ICMS>
+				<IPI>
+					<cEnq>99</cEnq>
+					<IPITrib>
+						<CST>99</CST>
+						<vBC>0.00</vBC>
+						<pIPI>0.00</pIPI>
+						<vIPI>0.00</vIPI>
+					</IPITrib>
+				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
+			</imposto>
+		</det>
+		<det nItem="26">
 			<prod>
 				<cProd>33915001</cProd>
 				<cEAN>9770104880006</cEAN>
@@ -1046,12 +1340,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>3</qCom>
+				<qCom>4</qCom>
 				<vUnCom>9.2400</vUnCom>
-				<vProd>27.72</vProd>
+				<vProd>36.96</vProd>
 				<cEANTrib>9770104880006</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>3</qTrib>
+				<qTrib>4</qTrib>
 				<vUnTrib>9.2400</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -1063,52 +1357,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="30">
-			<prod>
-				<cProd>34647014</cProd>
-				<cEAN>9788564625136</cEAN>
-				<xProd>Fasciculos</xProd>
-				<NCM>49019100</NCM>
-				<CFOP>5917</CFOP>
-				<uCom>KG</uCom>
-				<qCom>1</qCom>
-				<vUnCom>13.7830</vUnCom>
-				<vProd>13.78</vProd>
-				<cEANTrib>9788564625136</cEANTrib>
-				<uTrib>KG</uTrib>
-				<qTrib>1</qTrib>
-				<vUnTrib>13.7830</vUnTrib>
-				<indTot>0</indTot>
-			</prod>
-			<imposto>
-				<ICMS>
-					<ICMS40>
-						<orig>0</orig>
-						<CST>41</CST>
-					</ICMS40>
-				</ICMS>
-				<IPI>
-					<cEnq>00</cEnq>
-					<IPITrib>
-						<CST>00</CST>
-						<vBC>0.00</vBC>
-						<pIPI>0.00</pIPI>
-						<vIPI>0.00</vIPI>
-					</IPITrib>
-				</IPI>
-			</imposto>
-		</det>
-		<det nItem="31">
+		<det nItem="27">
 			<prod>
 				<cProd>39405012</cProd>
 				<cEAN>9788375665857</cEAN>
@@ -1116,12 +1391,12 @@
 				<NCM>49019100</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>3</qCom>
+				<qCom>2</qCom>
 				<vUnCom>11.5115</vUnCom>
-				<vProd>34.53</vProd>
+				<vProd>23.02</vProd>
 				<cEANTrib>9788375665857</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>3</qTrib>
+				<qTrib>2</qTrib>
 				<vUnTrib>11.5115</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -1133,87 +1408,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="32">
-			<prod>
-				<cProd>41718612</cProd>
-				<cEAN>9788598767208</cEAN>
-				<xProd>Revistas</xProd>
-				<NCM>49029000</NCM>
-				<CFOP>5917</CFOP>
-				<uCom>KG</uCom>
-				<qCom>1</qCom>
-				<vUnCom>13.7830</vUnCom>
-				<vProd>13.78</vProd>
-				<cEANTrib>9788598767208</cEANTrib>
-				<uTrib>KG</uTrib>
-				<qTrib>1</qTrib>
-				<vUnTrib>13.7830</vUnTrib>
-				<indTot>0</indTot>
-			</prod>
-			<imposto>
-				<ICMS>
-					<ICMS40>
-						<orig>0</orig>
-						<CST>41</CST>
-					</ICMS40>
-				</ICMS>
-				<IPI>
-					<cEnq>00</cEnq>
-					<IPITrib>
-						<CST>00</CST>
-						<vBC>0.00</vBC>
-						<pIPI>0.00</pIPI>
-						<vIPI>0.00</vIPI>
-					</IPITrib>
-				</IPI>
-			</imposto>
-		</det>
-		<det nItem="33">
-			<prod>
-				<cProd>33286001</cProd>
-				<cEAN>0</cEAN>
-				<xProd>Revistas</xProd>
-				<NCM>49029000</NCM>
-				<CFOP>5917</CFOP>
-				<uCom>KG</uCom>
-				<qCom>4</qCom>
-				<vUnCom>7.6230</vUnCom>
-				<vProd>30.49</vProd>
-				<cEANTrib>0</cEANTrib>
-				<uTrib>KG</uTrib>
-				<qTrib>4</qTrib>
-				<vUnTrib>7.6230</vUnTrib>
-				<indTot>0</indTot>
-			</prod>
-			<imposto>
-				<ICMS>
-					<ICMS40>
-						<orig>0</orig>
-						<CST>41</CST>
-					</ICMS40>
-				</ICMS>
-				<IPI>
-					<cEnq>00</cEnq>
-					<IPITrib>
-						<CST>00</CST>
-						<vBC>0.00</vBC>
-						<pIPI>0.00</pIPI>
-						<vIPI>0.00</vIPI>
-					</IPITrib>
-				</IPI>
-			</imposto>
-		</det>
-		<det nItem="34">
+		<det nItem="28">
 			<prod>
 				<cProd>34129001</cProd>
 				<cEAN>0</cEAN>
@@ -1221,12 +1442,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>2</qCom>
+				<qCom>9</qCom>
 				<vUnCom>8.3930</vUnCom>
-				<vProd>16.79</vProd>
+				<vProd>75.54</vProd>
 				<cEANTrib>0</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>2</qTrib>
+				<qTrib>9</qTrib>
 				<vUnTrib>8.3930</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -1238,17 +1459,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="35">
+		<det nItem="29">
 			<prod>
 				<cProd>43501001</cProd>
 				<cEAN>9788566773132</cEAN>
@@ -1256,12 +1493,12 @@
 				<NCM>49019100</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>10</qCom>
+				<qCom>5</qCom>
 				<vUnCom>30.7615</vUnCom>
-				<vProd>307.62</vProd>
+				<vProd>153.81</vProd>
 				<cEANTrib>9788566773132</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>10</qTrib>
+				<qTrib>5</qTrib>
 				<vUnTrib>30.7615</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -1273,17 +1510,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="36">
+		<det nItem="30">
 			<prod>
 				<cProd>43328001</cProd>
 				<cEAN>7899599703408</cEAN>
@@ -1291,12 +1544,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>2</qCom>
+				<qCom>3</qCom>
 				<vUnCom>3.8423</vUnCom>
-				<vProd>7.68</vProd>
+				<vProd>11.53</vProd>
 				<cEANTrib>7899599703408</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>2</qTrib>
+				<qTrib>3</qTrib>
 				<vUnTrib>3.8423</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -1308,17 +1561,33 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="37">
+		<det nItem="31">
 			<prod>
 				<cProd>43367001</cProd>
 				<cEAN>9772318401008</cEAN>
@@ -1326,12 +1595,12 @@
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>2</qCom>
+				<qCom>3</qCom>
 				<vUnCom>7.5460</vUnCom>
-				<vProd>15.09</vProd>
+				<vProd>22.64</vProd>
 				<cEANTrib>9772318401008</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>2</qTrib>
+				<qTrib>3</qTrib>
 				<vUnTrib>7.5460</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
@@ -1343,31 +1612,47 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
-		<det nItem="38">
+		<det nItem="32">
 			<prod>
-				<cProd>33815001</cProd>
-				<cEAN>9771980063002</cEAN>
+				<cProd>32774001</cProd>
+				<cEAN>9771676825006</cEAN>
 				<xProd>Revistas</xProd>
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
 				<qCom>1</qCom>
-				<vUnCom>8.3930</vUnCom>
-				<vProd>8.39</vProd>
-				<cEANTrib>9771980063002</cEANTrib>
+				<vUnCom>7.6230</vUnCom>
+				<vProd>7.62</vProd>
+				<cEANTrib>9771676825006</cEANTrib>
 				<uTrib>KG</uTrib>
 				<qTrib>1</qTrib>
-				<vUnTrib>8.3930</vUnTrib>
+				<vUnTrib>7.6230</vUnTrib>
 				<indTot>0</indTot>
 			</prod>
 			<imposto>
@@ -1378,66 +1663,48 @@
 					</ICMS40>
 				</ICMS>
 				<IPI>
-					<cEnq>00</cEnq>
+					<cEnq>99</cEnq>
 					<IPITrib>
-						<CST>00</CST>
+						<CST>99</CST>
 						<vBC>0.00</vBC>
 						<pIPI>0.00</pIPI>
 						<vIPI>0.00</vIPI>
 					</IPITrib>
 				</IPI>
-			</imposto>
-		</det>
-		<det nItem="39">
-			<prod>
-				<cProd>33599001</cProd>
-				<cEAN>9771678650019</cEAN>
-				<xProd>Revistas</xProd>
-				<NCM>49029000</NCM>
-				<CFOP>5917</CFOP>
-				<uCom>KG</uCom>
-				<qCom>1</qCom>
-				<vUnCom>6.5450</vUnCom>
-				<vProd>6.54</vProd>
-				<cEANTrib>9771678650019</cEANTrib>
-				<uTrib>KG</uTrib>
-				<qTrib>1</qTrib>
-				<vUnTrib>6.5450</vUnTrib>
-				<indTot>0</indTot>
-			</prod>
-			<imposto>
-				<ICMS>
-					<ICMS40>
-						<orig>0</orig>
-						<CST>41</CST>
-					</ICMS40>
-				</ICMS>
-				<IPI>
-					<cEnq>00</cEnq>
-					<IPITrib>
-						<CST>00</CST>
-						<vBC>0.00</vBC>
-						<pIPI>0.00</pIPI>
-						<vIPI>0.00</vIPI>
-					</IPITrib>
-				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pPIS>0</pPIS>
+						<vPIS>0</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0</vBC>
+						<pCOFINS>0</pCOFINS>
+						<vCOFINS>0</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
 			</imposto>
 		</det>
 		<total>
 			<ICMSTot>
-				<vBC>890.11</vBC>
+				<vBC>762.19</vBC>
 				<vICMS>0.00</vICMS>
-				<vBCST>890.11</vBCST>
+				<vBCST>762.19</vBCST>
 				<vST>0</vST>
-				<vProd>890.11</vProd>
+				<vProd>762.19</vProd>
 				<vFrete>0</vFrete>
 				<vSeg>0</vSeg>
 				<vDesc>0</vDesc>
+				<vII>0</vII>
 				<vIPI>0.00</vIPI>
 				<vPIS>0.00</vPIS>
 				<vCOFINS>0.00</vCOFINS>
 				<vOutro>0</vOutro>
-				<vNF>890.11</vNF>
+				<vNF>762.19</vNF>
 			</ICMSTot>
 		</total>
 		<transp>
@@ -1446,7 +1713,6 @@
 				<CNPJ>07348198000148</CNPJ>
 				<xNome>Treelog</xNome>
 				<xEnder>null null null null</xEnder>
-				<veiculo />
 			</transporta>
 		</transp>
 	</infNFe>
@@ -1461,10 +1727,10 @@
 					<Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
 				</Transforms>
 				<DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-				<DigestValue>uh9iLZgvYbBkQVJCWHT0pQEQ0Hg=</DigestValue>
+				<DigestValue>2czFYuIb2jTMeg3DdTiepW51WI8=</DigestValue>
 			</Reference>
 		</SignedInfo>
-		<SignatureValue>UK8Q1aJu770ToLdAPqi+bCoZlj0OJD0QFRTSbgYVf4sQGCeQ98YuBHYCDvEr0Nn5lAjwtx9sKnTLMoo7HEybon7QVEbHxLOx9waL+1hzHyN11oOMof9y3KUHWgQBfhWW89h6EeRFOmNa8m6099ohiAY/ca5jLFguFG0sPYBHfYIM0NI/HS3c2RURlwxw8FRl4Q68Y92aYtwL2SZ4pS75+v9UGRabQeBxTbr1mCbEZg12devISYcu4MJXKgndOn+tPMHqXAHHnbX8yLG7KkLed1tcpQ598g79dCNxg5CpXE8+r2gRxDLDkb0mwzZ6FmFXvk66aejp1BTH44FlVunzwg==
+		<SignatureValue>XLzvz0BI8HFhL8eicDqTaE+YVO6++YO1I8/Y24dLjXnUDc2JcNMGqOD/9N7Tmpv1rIQOhR8VleSdKB6kfl+TgnPhDoaVorc0GHWSNEsTNMgsqDXJldYtA9XwS5fE/m8FxAuFtgyVhqBT2+NhwmtWYt7HVgI/E/rOSLycS+o+Sc01csCyslG7BroQBrkrxN5FS0Xx8FKHeM49qxGvdPfWYsQVHo3HJlHe8nvZp4m+35SpDq69r0ISWvIva1BpV+ySc22N5DAgZVXQ3zOMkMLv2qAzyRVbshYqnJ38jdKqaXmiAAhLEADw7MQRKYooHt4XLOmHRKg02WoCnagGGwlz7Q==
 		</SignatureValue>
 		<KeyInfo>
 			<X509Data>

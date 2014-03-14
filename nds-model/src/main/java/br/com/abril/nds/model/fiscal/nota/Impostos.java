@@ -9,9 +9,6 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Impostos implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4845108096352563349L;
 
 	@XmlElement(name="ICMS")
@@ -21,10 +18,10 @@ public class Impostos implements Serializable {
 	private IPI ipi;
 	
 	@XmlElement(name="PIS")
-	private PIS pis;
+	private PISWrapper pis;
 
 	@XmlElement(name="COFINS")
-	private COFINS cofins;
+	private CofinsWrapper cofins;
 	
 	public ICMS getIcms() {
 		if(this.icms == null) return null;
@@ -44,19 +41,19 @@ public class Impostos implements Serializable {
 		this.ipi = ipi;
 	}
 
-	public PIS getPis() {
+	public PISWrapper getPis() {
 		return pis;
 	}
 
-	public void setPis(PIS pis) {
+	public void setPis(PISWrapper pis) {
 		this.pis = pis;
 	}
 
-	public COFINS getCofins() {
+	public CofinsWrapper getCofins() {
 		return cofins;
 	}
 
-	public void setCofins(COFINS cofins) {
+	public void setCofins(CofinsWrapper cofins) {
 		this.cofins = cofins;
 	}
 }
