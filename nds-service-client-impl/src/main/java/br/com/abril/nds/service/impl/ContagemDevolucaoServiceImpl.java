@@ -685,7 +685,7 @@ TipoMensagem.ERROR,
 			return;
 		}
 		
-		NaturezaOperacao tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
+		NaturezaOperacao tipoNotaFiscal = this.tipoNotaFiscalRepository.obterNaturezaOperacao(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
 
 		if(tipoNotaFiscal == null) {
             throw new IllegalStateException("Nota Fiscal Saida não parametrizada no sistema");

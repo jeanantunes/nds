@@ -24,9 +24,9 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<NaturezaOperacao> obterTiposNotasFiscais() {
+	public List<NaturezaOperacao> obterNaturezasOperacoes() {
 
-		String hql = " from TipoNotaFiscal tipoNotaFiscal group by tipoNotaFiscal.id ";
+		String hql = " from NaturezaOperacao no group by no.id ";
 		
 		Query query = getSession().createQuery(hql);
 		
@@ -34,16 +34,16 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
+	public List<NaturezaOperacao> obterNaturezasOperacoes(TipoOperacao tipoOperacao) {
 		
 		StringBuilder hql = new StringBuilder("");
-		hql.append("from NaturezaOperacao tipoNotaFiscal ");
+		hql.append("from NaturezaOperacao no ");
 		hql.append("where 1=1 ");
 		
 		if(tipoOperacao != null)
-			hql.append("and tipoNotaFiscal.tipoOperacao = :tipoOperacao ");
+			hql.append("and no.tipoOperacao = :tipoOperacao ");
 		
-		hql.append("order by tipoNotaFiscal.descricao ");
+		hql.append("order by no.descricao ");
 		
 		Query query = getSession().createQuery(hql.toString()).setCacheable(true);
 		
@@ -54,13 +54,13 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 	}
 
 	@Override
-	public NaturezaOperacao obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
+	public NaturezaOperacao obterNaturezaOperacao(GrupoNotaFiscal grupoNotaFiscal) {
 		
-		String hql = " from TipoNotaFiscal tipoNotaFiscal " +
-				     " where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal " +
-				     " and tipoNotaFiscal.destinatario = :destinatario " +
-				     " and tipoNotaFiscal.emitente = :emitente " +
-				     " group by tipoNotaFiscal.id  ";
+		String hql = " from NaturezaOperacao no " +
+				     " where no.grupoNotaFiscal = :grupoNotaFiscal " +
+				     " and no.destinatario = :destinatario " +
+				     " and no.emitente = :emitente " +
+				     " group by no.id  ";
 		
 		Query query = getSession().createQuery(hql);
 		
@@ -75,7 +75,7 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NaturezaOperacao obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoAtividade tipoAtividade, boolean isContribuinte) {
+	public NaturezaOperacao obterNaturezaOperacao(GrupoNotaFiscal grupoNotaFiscal, TipoAtividade tipoAtividade, boolean isContribuinte) {
 
 		StringBuilder hql = new StringBuilder();
 
