@@ -3,10 +3,12 @@ package br.com.abril.nds.service.builders;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
@@ -112,21 +114,21 @@ public class ItemNotaFiscalEstoqueProdutoBuilder  {
 	}
 	
 	
-	public static void montaItemNotaFiscal(NotaFiscal notaFiscal2, EstoqueProduto estoqueProduto) {
+	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, EstoqueProduto estoqueProduto, Map<String, TributoAliquota> tributoRegimeTributario) {
 
 		ProdutoEdicao produtoEdicao;
 		ProdutoServico produtoServico = new ProdutoServico();
 		DetalheNotaFiscal detalheNotaFiscal = new DetalheNotaFiscal(produtoServico);
 		
-		if(notaFiscal2 == null) {
+		if(notaFiscal == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Objeto nulo.");
 		} else {
-			if(notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal() == null) {
-				notaFiscal2.getNotaFiscalInformacoes().setDetalhesNotaFiscal(new ArrayList<DetalheNotaFiscal>());
+			if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal() == null) {
+				notaFiscal.getNotaFiscalInformacoes().setDetalhesNotaFiscal(new ArrayList<DetalheNotaFiscal>());
 			}
 		}
 		
-		if(notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() == 0) {
+		if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() == 0) {
 		
 			detalheNotaFiscal.getProdutoServico().setCodigoProduto(estoqueProduto.getProdutoEdicao().getProduto().getCodigo());
 			detalheNotaFiscal.getProdutoServico().setDescricaoProduto(estoqueProduto.getProdutoEdicao().getProduto().getTipoProduto().getDescricao());
@@ -145,7 +147,7 @@ public class ItemNotaFiscalEstoqueProdutoBuilder  {
 			
 		} else {
 			
-			for(DetalheNotaFiscal nfi : notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
+			for(DetalheNotaFiscal nfi : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
 				
 				boolean notFound = true;
 
@@ -196,7 +198,7 @@ public class ItemNotaFiscalEstoqueProdutoBuilder  {
 		
 		// popular os itens das notas fiscais
 		// notaFiscalItem.setNotaFiscal(notaFiscal2);
-		notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal().add(detalheNotaFiscal);
+		notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().add(detalheNotaFiscal);
 		
 	}
 	

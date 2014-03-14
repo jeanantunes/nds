@@ -1,11 +1,13 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.xml.bind.annotation.XmlElement;
 
 @Embeddable
 @AttributeOverrides({
@@ -23,14 +25,42 @@ public class PIS extends PISBase implements Serializable {
 	 */
 	private static final long serialVersionUID = 8687019293575282492L;
 	
-	
-	
-	
 	/**
 	 * Construtor padrão.
 	 */
 	public PIS() {
 		
 	}
+	
+	/**
+	 * @return the cst
+	 */
+	@XmlElement(name="CST")
+	public String getCst() {
+		return super.getCst();
+	}
 
+	/**
+	 * @return the valorBaseCalculo
+	 */
+	@XmlElement(name="vBC")
+	public BigDecimal getDValorBaseCalculo() {
+		return super.getValorBaseCalculo();
+	}
+
+	/**
+	 * @return the percentualAliquota
+	 */
+	@XmlElement(name="pPIS")
+	public BigDecimal getPercentualAliquota() {
+		return super.getPercentualAliquota();
+	}
+	
+	/**
+	 * @return the valor
+	 */
+	@XmlElement(name="vPIS")
+	public BigDecimal getValor() {
+		return super.getValor();
+	}
 }
