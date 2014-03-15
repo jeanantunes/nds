@@ -21,6 +21,12 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
  */
 public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 
+	/**
+	 * Obtém o lista de id de todos os fornecedores
+	 * @return List - Long
+	 */
+	List<Long> obterIdFornecedores();
+	
 	List<Fornecedor> obterFornecedoresAtivos();
 	
 	List<Fornecedor> obterFornecedores(String cnpj);
