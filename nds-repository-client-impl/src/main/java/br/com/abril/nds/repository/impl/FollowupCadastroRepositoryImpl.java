@@ -37,7 +37,7 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		StringBuilder hql = new StringBuilder();
 		hql.append("SELECT cota.numeroCota as numeroCota, ");
 		hql.append("       coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeJornaleiro, ");
-		hql.append("       pdv.contato as responsavel, ");
+		hql.append("       coalesce(pdv.contato, '') as responsavel, ");
 		hql.append("       contrato.dataTermino as dataVencimento, ");
 		hql.append("       'Contrato' as tipo ");
 		hql.append(" from Cota as cota, ");
@@ -73,7 +73,7 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		StringBuilder hql = new StringBuilder();
 		hql.append("SELECT cota.numeroCota as numeroCota ");
 		hql.append(" , coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeJornaleiro ");
-		hql.append(" , pdv.contato as responsavel");
+		hql.append(" , coalesce(pdv.contato, '') as responsavel");
 		hql.append(" , 'Cota Distribuicao' as tipo ");
 		hql.append(" from Cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
@@ -104,7 +104,7 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 	private List<ConsultaFollowupCadastroDTO> getFornecedores(FiltroFollowupCadastroDTO filtro) {
 		StringBuilder	hql = new StringBuilder();
 		
-		hql.append(" SELECT cota.numeroCota as numeroCota, ");
+		hql.append(" SELECT ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '')  as nomeJornaleiro, ");
 		hql.append(" 'Fornecedores' as tipo, ");
 		hql.append(" fornecedores.validadeContrato as dataVencimento, ");
