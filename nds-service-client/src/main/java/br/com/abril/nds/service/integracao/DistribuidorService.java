@@ -104,6 +104,14 @@ public interface DistribuidorService {
 	
 	boolean utilizaControleAprovacaoFaltaSobra();
 	
+	public List<Integer> getListaDiaOrdinalAceitaRecolhimento();
+	
+	List<Date> obterListaDatasRecolhimentoAPartirDataAtual(
+			Date dataAtual, 
+			int qtndDiasUteis, 
+			final List<Integer> diasSemanaDistribuidorOpera,
+			final boolean posterior);
+	
 	/**
 	 * Método que devolve uma lista de datas nas quais o recolhimento será permitido
 	 * a partir da dataRecolhimento e fornecedores informados. 
@@ -130,6 +138,7 @@ public interface DistribuidorService {
 	 * @param dataRecolhimento
 	 * @param numeroCota
 	 * @param idProdutoEdicao
+	 * @param idFornecedores
 	 * 
 	 * @return Integer
 	 */
@@ -137,7 +146,8 @@ public interface DistribuidorService {
 			Date dataConferencia, 
 			Date dataRecolhimento, 
 			Integer numeroCota, 
-			Long idProdutoEdicao);
+			Long idProdutoEdicao,
+			List<Long> idFornecedores);
 	
 	/**
 	 * Bloqueia os processos que alteram estudos ou balanceamentos de matriz
