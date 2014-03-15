@@ -297,7 +297,7 @@ public class FollowupController extends BaseController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(15);
+		tableModel.setTotal(totalRegistros);
 		
 		return tableModel;
 	}
