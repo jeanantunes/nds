@@ -1270,7 +1270,7 @@ ConsolidadoFinanceiroRepository {
         .append(" cfc.DEBITO_CREDITO as debitoCredito, ")
         
         //detalharDebitoCredito
-        .append("(select case when count(m.id) > 0 then true else false end ")
+        .append("(select case when count(m.id) > 0 or cfc.DEBITO_CREDITO != 0 then true else false end ")
         .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
         .append(" inner join COTA on COTA.ID = m.COTA_ID")
         .append(" where COTA.NUMERO_COTA = :numeroCota ")
