@@ -330,6 +330,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             final Integer quantidadeRegistros,
             final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel) {
         
+    	if(mapaDataCEConferivel == null || mapaDataCEConferivel.isEmpty()) {
+    		return new ArrayList<ProdutoEdicao>();
+    	}
+    	
         if (codigoNomeProduto == null || codigoNomeProduto.trim().isEmpty()){
             
             throw new ValidacaoException(TipoMensagem.WARNING, "Codigo/nome produto é obrigatório.");
