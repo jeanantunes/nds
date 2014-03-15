@@ -342,11 +342,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(listaDiasRecolheAtrasado.contains(dia)) {
 			
-			dataCEConferivel.getListaDataConferivelProdutoNaoParcial().add(dataCE);
+			dataCEConferivel.getListaDataConferivelProdutoNaoParcial().add(DateUtil.removerTimestamp(dataCE));
 			
 			if(PRIMEIRO_DIA_RECOLHIMENTO==dia) {
 				
-				dataCEConferivel.getListaDataConferivelProdutoParcial().add(dataCE);
+				dataCEConferivel.getListaDataConferivelProdutoParcial().add(DateUtil.removerTimestamp(dataCE));
 				
 			}
 		}

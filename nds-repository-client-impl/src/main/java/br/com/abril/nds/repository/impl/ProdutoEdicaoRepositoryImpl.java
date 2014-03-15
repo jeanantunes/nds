@@ -1769,8 +1769,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			
 			.append(" (produto.nome like :nomeProduto 				")
 			.append(" or produto.codigo like :codigoProduto) 	and	")
-			.append(" cota.numeroCota = :numeroCota ")
-			.append(" and lancamentos.status in (:statusLancamento) ");
+			.append(" cota.numeroCota = :numeroCota and 			")
+			.append(" cec.fechado = false and 	")
+			.append(" lancamentos.status in (:statusLancamento) ");
 			
 			 carregarHQLParametrosFornecedorDatasEncalhe(hql, null, mapaDataCEConferivel);
 		
@@ -1815,7 +1816,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				final boolean criaHqlParcial = !datasCEProdutoParcial.isEmpty();
 				final boolean criaHqlNaoParcial = !datasCEProdutoNaoParcial.isEmpty();
 				
-				hql.append(" ( fornecedor.id = :idFornecedor_"+idFornecedor );
+				hql.append(" (( fornecedor.id = :idFornecedor_"+idFornecedor );
 				hql.append(" and "); 
 				
 				hql.append(" 	( ");
@@ -1823,18 +1824,18 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				boolean indOr = false;
 				
 				if(criaHqlParcial) {
-					hql.append(" (produtoEdicao.parcial = true and ce.dataRecolhimento in (:datasRecolhimentoParcial_"+idFornecedor+"))" );
+					hql.append(" ((produtoEdicao.parcial = true and ce.dataRecolhimento in (:datasRecolhimentoParcial_"+idFornecedor+")))" );
 					indOr = true;
 				}
 				
 				if(criaHqlNaoParcial) {
 					hql.append(indOr ? " or " : "");
-					hql.append(" (produtoEdicao.parcial = false and ce.dataRecolhimento in (:datasRecolhimentoNaoParcial_"+idFornecedor+"))" );
+					hql.append(" ((produtoEdicao.parcial = false and ce.dataRecolhimento in (:datasRecolhimentoNaoParcial_"+idFornecedor+")))" );
 				}
 				
 				hql.append(" 	) ");
 				
-				hql.append(" ) ");
+				hql.append(" )) ");
 				
 				hql.append( (--quantidadeEntradas > 0) ? " or " : "");
 				
