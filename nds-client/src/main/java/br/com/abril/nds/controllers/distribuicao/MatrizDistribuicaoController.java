@@ -110,7 +110,7 @@ public class MatrizDistribuicaoController extends BaseController {
     private ProdutoEdicaoAlgoritimoService produtoEdicaoAlgoritimoService;
 
     private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizDistribuicao";
-    private static final String LISTA_DE_DUPLICACOES = "LISTA_DE_DUPLICACOES";
+    public static final String LISTA_DE_DUPLICACOES = "LISTA_DE_DUPLICACOES";
     private static final int MAX_DUPLICACOES_PERMITIDAS = 2;
 
     @Path("/")

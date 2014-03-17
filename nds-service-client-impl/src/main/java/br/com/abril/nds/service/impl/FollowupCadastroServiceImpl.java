@@ -19,8 +19,7 @@ public class FollowupCadastroServiceImpl implements FollowupCadastroService {
 
 	@Override
 	@Transactional
-	public List<ConsultaFollowupCadastroDTO> obterCadastros(
-			FiltroFollowupCadastroDTO filtro) {
+	public List<ConsultaFollowupCadastroDTO> obterCadastros(FiltroFollowupCadastroDTO filtro) {
 		 
 		return this.followupCadastroRepository.obterConsignadosParaChamadao(filtro);
 	}

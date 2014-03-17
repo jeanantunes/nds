@@ -45,6 +45,9 @@ public class DescontoProximosLancamentos implements Serializable {
 	@Column(name = "QUANTIDADE_PROXIMOS_LANCAMENTOS", nullable = true)
 	private Integer quantidadeProximosLancamaentos;
 	
+	@Column(name = "QUANTIDADE_PROXIMOS_LANCAMENTOS_ORIGINAL", nullable = true)
+    private Integer quantidadeProximosLancamentosOriginal;
+	
 	@Column(name ="VALOR_DESCONTO", nullable = true, precision=18, scale=4)
 	private BigDecimal valorDesconto;
 	
@@ -217,4 +220,11 @@ public class DescontoProximosLancamentos implements Serializable {
 		this.aplicadoATodasAsCotas = aplicadoATodasAsCotas;
 	}
 	
+    public Integer getQuantidadeProximosLancamentosOriginal() {
+        return quantidadeProximosLancamentosOriginal;
+    }
+   
+    public void setQuantidadeProximosLancamentosOriginal(Integer quantidadeProximosLancamentosOriginal) {
+        this.quantidadeProximosLancamentosOriginal = quantidadeProximosLancamentosOriginal;
+    }
 }

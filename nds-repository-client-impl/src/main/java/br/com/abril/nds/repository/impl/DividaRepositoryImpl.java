@@ -480,8 +480,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
     public List<StatusDividaDTO> obterInadimplenciasCota(final FiltroCotaInadimplenteDTO filtro) {
         
         final StringBuilder sql = new StringBuilder(this.getSqlInadimplenciaClausulaSelect()
-                + this.getSqlInadimplenciaClausulaFrom());
         
+        		+ this.getSqlInadimplenciaClausulaFrom());
         final Map<String, Object> params = new HashMap<>();
         
         tratarFiltro(sql, params, filtro);
@@ -594,9 +594,11 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
                 
                 if (pesquisaVencidosNaoPagos) {
                     
-                    sql.append(" AND ( COBRANCA_.DT_PAGAMENTO IS NULL OR ");
+                    sql.append(" AND (DIVIDA_.STATUS = :statusNegociado OR COBRANCA_.DT_PAGAMENTO IS NULL OR ");
                     sql.append(" COBRANCA_.DT_PAGAMENTO > COBRANCA_.DT_VENCIMENTO ");
                     sql.append("  ) ");
+                    
+                    params.put("statusNegociado", StatusDivida.NEGOCIADA.name());
                     
                 } else {
                     sql.append(" AND COBRANCA_.DT_PAGAMENTO > COBRANCA_.DT_VENCIMENTO ");

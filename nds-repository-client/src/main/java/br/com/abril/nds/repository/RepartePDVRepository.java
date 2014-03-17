@@ -18,4 +18,7 @@ public interface RepartePDVRepository  extends Repository<RepartePDV, Long> {
 	public List<RepartePDV> buscarPorIdFixacao(Long id);
 	
 	public List<RepartePDV> buscarPorIdMix(Long id);
+	
+	List<RepartePDV> buscarPorCota(Long idCota);
+	
 }

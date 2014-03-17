@@ -59,5 +59,7 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 	Set<Lancamento> obterLancamentos(Long idChamadaEncalhe);
 
 	List<CotaProdutoEmissaoCEDTO> obterDecomposicaoReparteSuplementarRedistribuicao(FiltroEmissaoCE filtro);
+
+    public abstract Date obterMaxDataRecolhimento(final TipoChamadaEncalhe tipoChamadaEncalhe);
 	
 }

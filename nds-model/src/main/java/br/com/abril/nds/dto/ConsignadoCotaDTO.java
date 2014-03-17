@@ -15,7 +15,7 @@ public class ConsignadoCotaDTO implements Serializable{
 	
 	private static final long serialVersionUID = 2186060384671120600L;
 	
-	@Export(label="Sequência", fontSize=9, widthPercent=7)
+	@Export(label="SM", fontSize=9, widthPercent=7)
 	private String sequencia;
 	
 	@Export(label="Código", fontSize=9)
