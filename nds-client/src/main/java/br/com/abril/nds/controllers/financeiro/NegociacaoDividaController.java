@@ -44,7 +44,6 @@ import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
@@ -166,6 +165,8 @@ public class NegociacaoDividaController extends BaseController {
 		BigDecimal total = BigDecimal.ZERO;
 		for (NegociacaoDividaDetalheVO d : listDividas){
 			
+			d.setValor(d.getValor().setScale(2, RoundingMode.HALF_EVEN));
+			
 			if (d.getTipoMovimentoFinanceiro().getOperacaoFinaceira() == OperacaoFinaceira.CREDITO){
 				total = total.subtract(d.getValor());
 			} else {
@@ -181,7 +182,7 @@ public class NegociacaoDividaController extends BaseController {
 		
 		Object[] dados = new Object[2];
 		dados[0] = tableModel;
-		dados[1] = MathUtil.round(total, 2);
+		dados[1] = total;
 		
 		result.use(Results.json()).from(dados, "result").recursive().serialize();
 	}
@@ -285,6 +286,7 @@ public class NegociacaoDividaController extends BaseController {
 				negociacaoAvulsa, 
 				ativarAposPagar, 
 				comissaoUtilizar, 
+				comissaoAtualCota,
 				isentaEncargos,
 				formaCobranca,
 				idBanco);

@@ -571,7 +571,6 @@ public class CotaServiceImpl implements CotaService {
      * @param idsIgnorar
      * @return List<TelefoneAssociacaoDTO>
      */
-    @SuppressWarnings("unused")
     @Transactional(readOnly = true)
     @Override
     public List<TelefoneAssociacaoDTO> buscarTelefonesCota(final Long idCota, final Set<Long> idsIgnorar) {
@@ -2664,9 +2663,9 @@ public class CotaServiceImpl implements CotaService {
     
     @Override
     @Transactional(readOnly = true)
-    public boolean isCotaOperacaoDiferenciada(final Integer numeroCota){
+    public boolean isCotaOperacaoDiferenciada(final Integer numeroCota, Date dataOperacao){
         
-        final List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota);
+        final List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota, dataOperacao);
         
         return diasSemanaOperacaoDiferenciada != null && !diasSemanaOperacaoDiferenciada.isEmpty();
         
@@ -2889,12 +2888,13 @@ public class CotaServiceImpl implements CotaService {
         }
         
         try{
-            if ("A".equalsIgnoreCase(TipoCota)) {
-                mixCotaProdutoService.excluirMixPorCota(idCota);
-            }
-            
-            if ("C".equalsIgnoreCase(TipoCota)) {
-                fixacaoReparteService.excluirFixacaoPorCota(idCota);
+            if ("ALTERNATIVO".equalsIgnoreCase(TipoCota)) {
+            	
+            	fixacaoReparteService.excluirFixacaoPorCota(idCota);
+            	
+            } else if ("CONVENCIONAL".equalsIgnoreCase(TipoCota)) {
+            	
+            	mixCotaProdutoService.excluirMixPorCota(idCota);
             }
             
         } catch (final DataIntegrityViolationException e) {

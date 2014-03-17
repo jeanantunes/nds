@@ -15,19 +15,19 @@ import br.com.abril.nds.model.cadastro.GrupoCota;
  */
 public interface GrupoRepository extends Repository<GrupoCota,Long> {
 	
-	List<DiaSemana> obterDiasOperacaoDiferenciadaCota(Integer numeroCota);
+	List<DiaSemana> obterDiasOperacaoDiferenciadaCota(final Integer numeroCota,final Date dataOperacao);
 	
 	List<GrupoCota> obterGruposCota(Date data) ;
 
-	Boolean existeGrupoCota(String nome, Long idGrupo);
+	Boolean existeGrupoCota(String nome, Long idGrupo, Date dataOperacao);
 	
-	Integer countTodosGrupos();
+	Integer countTodosGrupos(Date dataOperacao);
 
-	List<GrupoCota> obterGrupos(String sortname, String sortorder);
+	List<GrupoCota> obterGruposAtivos(String sortname, String sortorder, boolean includeHistory);
 
-	String obterNomeGrupoPorCota(Long id, Long idGrupoIgnorar);
+	String obterNomeGrupoPorCota(Long id, Long idGrupoIgnorar, Date dataOperacao);
 
-	String obterNomeGrupoPorMunicipio(String municipio, Long idGrupoIgnorar);
+	String obterNomeGrupoPorMunicipio(String municipio, Long idGrupoIgnorar, Date dataOperacao);
 
 	Set<Long> obterIdsCotasGrupo(Long idGrupo);
 

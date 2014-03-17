@@ -61,6 +61,7 @@ public class GrupoCota implements Serializable {
 	@ElementCollection(targetClass = DiaSemana.class) 
 	@CollectionTable(name = "DIA_RECOLHIMENTO_GRUPO_COTA",
 	    joinColumns = @JoinColumn(name = "GRUPO_ID"))
+	@Enumerated(EnumType.STRING)
 	@Column(name = "DIA_ID")
 	protected Set<DiaSemana> diasRecolhimento; 
 	
@@ -70,8 +71,12 @@ public class GrupoCota implements Serializable {
 	private Set<Cota> cotas;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name = "DATA_CADASTRO", nullable = false)
-	private Date dataCadastro;
+	@Column(name = "DATA_VIGENCIA_INICIO", nullable = false)
+	private Date dataInicioVigencia;
+	
+	@Temporal(TemporalType.DATE)
+    @Column(name = "DATA_VIGENCIA_FIM", nullable = true)
+    private Date dataFimVigencia;
 	
 	public GrupoCota() {
 		
@@ -87,7 +92,6 @@ public class GrupoCota implements Serializable {
 		this.tipoGrupo = tipoGrupo;
 		this.diasRecolhimento = diasRecolhimento;
 		this.tipoCota = tipoCota;
-//		this.municipios = municipios;
 		this.cotas = cotas;
 	}
 
@@ -206,18 +210,38 @@ public class GrupoCota implements Serializable {
 		this.municipios = municipios;
 	}
 
-	/**
-	 * @return the dataCadastro
-	 */
-	public Date getDataCadastro() {
-		return dataCadastro;
-	}
+    
+    /**
+     * @return the dataInicioVigencia
+     */
+    public Date getDataInicioVigencia() {
+        return dataInicioVigencia;
+    }
 
-	/**
-	 * @param dataCadastro the dataCadastro to set
-	 */
-	public void setDataCadastro(Date dataCadastro) {
-		this.dataCadastro = dataCadastro;
-	}
+    
+    /**
+     * @param dataInicioVigencia the dataInicioVigencia to set
+     */
+    public void setDataInicioVigencia(Date dataInicioVigencia) {
+        this.dataInicioVigencia = dataInicioVigencia;
+    }
+
+    
+    /**
+     * @return the dataFimVigencia
+     */
+    public Date getDataFimVigencia() {
+        return dataFimVigencia;
+    }
+
+    
+    /**
+     * @param dataFimVigencia the dataFimVigencia to set
+     */
+    public void setDataFimVigencia(Date dataFimVigencia) {
+        this.dataFimVigencia = dataFimVigencia;
+    }
+
+
 	
 }

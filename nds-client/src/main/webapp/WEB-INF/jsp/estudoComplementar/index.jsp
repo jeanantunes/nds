@@ -214,6 +214,8 @@ function somarDistribuicao(){
    	    <legend>Estudo Complementar</legend>
    	    <input type="hidden" id="idLancamento" value="${idLancamento}" />
    	    <input type="hidden" id="idProdutoEdicao" value="${idProdutoEdicao}" />
+   	    <input type="hidden" id="idCopia" value="${idCopia}" />
+   	    
    	    <table width="950" border="0" cellspacing="2" cellpadding="2">
           <tr>
               <td width="78"><strong>Estudo Base:</strong></td>
@@ -280,9 +282,9 @@ function somarDistribuicao(){
                 <td width="84">Reparte Lncto:</td>
                 <td width="70"><input name="reparteLancamento" type="text" id="reparteLancamento" style="width:60px; text-align:center;" value="${reparteDisponivel}"  readonly="readonly" /></td>
                 <td width="46">Sobra:</td>
-                <td width="75"><input name="reparteSobra" type="text" id="reparteSobra" style="width:60px; text-align:center;" value="" onchange="somarDistribuicao();"/></td>
+                <td width="75"><input name="reparteSobra" type="text" id="reparteSobra" style="width:60px; text-align:center;" value="${sobra}" onchange="somarDistribuicao();"/></td>
                 <td width="127">Reparte Distribuido:</td>
-                <td width="60"><input name="reparteDistribuicao" type="text" id="reparteDistribuicao" style="width:60px; text-align:center;" value="${reparteDisponivel}" onchange="somarSobra();" o/></td>
+                <td width="60"><input name="reparteDistribuicao" type="text" id="reparteDistribuicao" style="width:60px; text-align:center;" value="${reparteDistribuido}" onchange="somarSobra();" o/></td>
               </tr>
               <tr>
                 <td align="right"><input name="checkbox" type="checkbox" id="checkboxDistMult" onclick="$('.distrMult').toggle();" /></td>
@@ -302,7 +304,7 @@ function somarDistribuicao(){
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
       
-      <span class="bt_novos"><a href="javascript:$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));matrizDistribuicao.tabSomarCopiarEstudos='';"><img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
+      <span class="bt_novos"><a href="javascript:;" onclick="estudoComplementarController.voltar()"><img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
       <span class="bt_novos"><a href="javascript:;" onclick="$('#codigoEstudo').val('').blur();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
       <span class="bt_novos"><a href="#" onclick="estudoComplementarController.gerarEstudoComplementar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Gerar Estudo" hspace="5" border="0" />Gerar Estudo</a></span>
       <span class="bt_novos"><a href="javascript:;" onclick="estudoComplementarController.analisar()"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" alt="Confirmar" hspace="5" border="0" />Análise</a></span>

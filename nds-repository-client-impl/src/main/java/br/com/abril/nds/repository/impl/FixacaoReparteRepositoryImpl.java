@@ -1,6 +1,8 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FixacaoReparteDTO;
+import br.com.abril.nds.dto.verificadorFixacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
@@ -20,6 +23,8 @@ import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.FixacaoRepartePdvRepository;
@@ -65,8 +70,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         .append(" f.qtdeEdicoes as qtdeEdicoes,")
         .append(" f.dataHora as dataHora,")
         .append(" f.edicaoInicial as edicaoInicial,")
-        .append(" f.edicaoFinal as edicaoFinal,")
-        .append(" f.edicaoFinal - f.edicaoInicial as edicoesAtendidas,")
+        .append(" f.edicaoFinal as edicaoFinal, ")
         .append(" f.cotaFixada.numeroCota as cotaFixada,")
         .append(" f.cotaFixada.id as cotaFixadaId,")
         .append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '')  as nomeCota,")
@@ -247,6 +251,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         final Query query  = getSession().createQuery(sql.toString());
         query.setParameter("cotaSelecionada",  cota);
         
+        query.executeUpdate();
     }
     
     @Override
@@ -359,5 +364,140 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         }
         
     }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> historicoDeEdicoesParaCalcularEdicoesAtendidas(Long lancamentoID, String codigoICD, Integer qtdEdicoes, Long idClassificacao) {
+		
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append(" SELECT ");
+		sql.append(" 	PE.NUMERO_EDICAO ");
+		sql.append(" FROM PRODUTO_EDICAO PE ");
+		sql.append(" 	JOIN produto P ON PE.PRODUTO_ID = P.ID  ");
+		sql.append(" 	JOIN lancamento l ON PE.ID = l.PRODUTO_EDICAO_ID  ");
+		sql.append(" WHERE P.codigo_icd = :codigoICD  ");
+		sql.append(" 	   AND l.STATUS in ('EXPEDIDO', 'EM_BALANCEAMENTO_RECOLHIMENTO', 'BALANCEADO_RECOLHIMENTO', 'EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO') ");
+		sql.append(" 	   AND (l.DATA_LCTO_DISTRIBUIDOR>(select lct.DATA_LCTO_DISTRIBUIDOR from lancamento lct where id = :LancamentoID)) ");
+		sql.append(" 	   AND PE.TIPO_CLASSIFICACAO_PRODUTO_ID = :classificacao");
+		sql.append(" group by PE.ID ");
+		sql.append(" order by l.DATA_LCTO_DISTRIBUIDOR asc ");
+		sql.append(" limit :limite ");
+		
+		final Query query  = getSession().createSQLQuery(sql.toString());
+        
+		query.setParameter("codigoICD",  codigoICD);
+        query.setParameter("LancamentoID",  lancamentoID);
+        query.setParameter("classificacao", idClassificacao);
+        query.setParameter("limite", qtdEdicoes);
+        
+        
+        
+        return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<verificadorFixacaoDTO> obterLcmtsDosProdutosQuePossueFixacao(List<BigInteger> lancamentosDoDia) {
+
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append(" select ");
+		sql.append(" 	pd.codigo_icd as codICDFixacao, ");
+		sql.append(" 	lc.id as idLancamento ");
+		sql.append(" from lancamento lc  ");
+		sql.append(" 	join produto_edicao pe on lc.PRODUTO_EDICAO_ID = pe.ID  ");
+		sql.append(" 	join produto pd on pe.PRODUTO_ID = pd.ID  ");
+		sql.append(" 	left join fixacao_reparte fr on fr.codigo_icd = pd.codigo_icd  ");
+		sql.append(" where lc.ID in (:lancamentosDoDia)  ");
+		sql.append(" group by lc.ID ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameterList("lancamentosDoDia", lancamentosDoDia);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(verificadorFixacaoDTO.class));
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FixacaoReparte> obterFixacoesParaOsProdutosDosLancamentos(List<String> listaCodICDsLacamentos) {
+		
+			StringBuilder hql = new StringBuilder("");
+
+			hql.append(" select fixacao ")
+					.append(" from FixacaoReparte fixacao ")
+					.append(" where fixacao.codigoICD in (:listaCodICD) ");
+
+			Query query = getSession().createQuery(hql.toString());
+
+			query.setParameterList("listaCodICD", listaCodICDsLacamentos);
+			
+		return (List<FixacaoReparte>) query.list();
+	}		
+
+	@Override
+	public BigInteger obterNumeroEdicaoPeloLancamentoID(Long idLancamento) {
+		
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append(" select  ");
+		sql.append(" 	pe.NUMERO_EDICAO  ");
+		sql.append(" from lancamento lc  ");
+		sql.append(" join produto_edicao pe on lc.PRODUTO_EDICAO_ID = pe.ID  ");
+		sql.append(" where lc.ID in (:idLancamento)  ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("idLancamento", idLancamento);
+		
+		return (BigInteger)query.uniqueResult();
+	}
+
+	@Override
+	public BigInteger qntdEdicoesPosterioresAolancamento(String codigoICD, Date dataFixaCadastroFixacao) { 
+
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append("  SELECT COUNT(T.lcId)  ");
+		sql.append("  	FROM (  ");
+		sql.append("  			select ");
+		sql.append("  				lc.id AS lcId ");
+		sql.append("  			from lancamento lc ");
+		sql.append(" 				join produto_edicao pe on lc.PRODUTO_EDICAO_ID = pe.ID  ");
+		sql.append(" 				join produto pd on pe.PRODUTO_ID = pd.ID  ");
+		sql.append(" 			where  ");
+		sql.append(" 				pd.codigo_icd = (:codigoICD)  ");
+		sql.append(" 				and lc.DATA_LCTO_DISTRIBUIDOR>=:dataFixa and lc.DATA_LCTO_DISTRIBUIDOR<:dataCabalistica  ");
+		sql.append(" 			  	and lc.STATUS in ('EXPEDIDO', 'EM_BALANCEAMENTO_RECOLHIMENTO', 'BALANCEADO_RECOLHIMENTO', 'EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO') ");
+		sql.append(" 			group by pe.ID  ");
+		sql.append(" 			order by lc.DATA_LCTO_DISTRIBUIDOR	  ");
+		sql.append(" 		) T  ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataFixa", dataFixaCadastroFixacao);
+		query.setParameter("codigoICD", codigoICD);
+		query.setParameter("dataCabalistica", "3000/01/01");
+	
+		return (BigInteger) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<BigInteger> obterListaLancamentos(Date dataOperacao) {
+		
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append(" select lc.ID from lancamento lc join expedicao ex on lc.EXPEDICAO_ID = ex.ID where Date(ex.DATA_EXPEDICAO)= :data ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("data", dataOperacao);
+		
+		return (List<BigInteger>) query.list();
+	}
     
 }

@@ -195,6 +195,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 					for(ItemNotaEnvio item : ec.getItemNotaEnvios()) {
 						
 						item.setFuroProduto(furoProduto.getId());
+						item.setEstudoCota(null);
 						
 						itemNovaEnvioRepository.merge(item);
 					}

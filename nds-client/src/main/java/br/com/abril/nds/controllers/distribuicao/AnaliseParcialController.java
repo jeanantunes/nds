@@ -29,6 +29,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -90,6 +91,8 @@ public class AnaliseParcialController extends BaseController {
     
     @Autowired
     private EstudoService estudoService;
+    
+    private static final String EDICOES_BASE_SESSION_ATTRIBUTE = "";
 
     @Path("/")
     public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado,String dataLancamentoEdicao) {
@@ -97,6 +100,8 @@ public class AnaliseParcialController extends BaseController {
         EstudoCotaGerado estudoCota = analiseParcialService.buscarPorId(id);
         Lancamento lancamento = lancamentoService.obterPorId(estudoCota.getEstudo().getLancamentoID());
 
+        this.clearEdicoesBaseSession();
+        
         if (modoAnalise == null) {
             result.include("tipoExibicao", "NORMAL");
             session.setAttribute("modoAnalise", "NORMAL");
@@ -182,7 +187,7 @@ public class AnaliseParcialController extends BaseController {
         queryDTO.setFilterSortFrom(filterSortFrom);
         queryDTO.setFilterSortTo(filterSortTo);
         queryDTO.setElemento(elemento);
-        queryDTO.setEdicoesBase(edicoesBase);
+        queryDTO.setEdicoesBase(getEdicoesBase(edicoesBase));
         queryDTO.setEstudoId(id);
         queryDTO.setFaixaDe(faixaDe);
         queryDTO.setFaixaAte(faixaAte);
@@ -202,7 +207,33 @@ public class AnaliseParcialController extends BaseController {
         validator.onErrorUse(Results.json()).withoutRoot().from(table).recursive().serialize();
         result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
+    
+    @SuppressWarnings("unchecked")
+	private List<EdicoesProdutosDTO> getEdicoesBase(List<EdicoesProdutosDTO> edicoesBase) {
+    	
+    	if (edicoesBase != null) {
+    		
+    		this.session.setAttribute(EDICOES_BASE_SESSION_ATTRIBUTE, edicoesBase);
+    		
+    		return edicoesBase;
+    	}
+    	
+    	edicoesBase = (List<EdicoesProdutosDTO>) this.session.getAttribute(EDICOES_BASE_SESSION_ATTRIBUTE);
+    	
+    	return edicoesBase;
+    }
+    
+    @Path("/restaurarBaseInicial")
+    public void restaurarBaseInicial() {
+    	this.clearEdicoesBaseSession();
+    	this.result.nothing();
+    }
 
+    private void clearEdicoesBaseSession() {
+
+    	this.session.removeAttribute(EDICOES_BASE_SESSION_ATTRIBUTE);
+    }
+    
     @Path("/cotasQueNaoEntraramNoEstudo/filtrar")
     public void filtrar(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
 
@@ -229,8 +260,8 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Path("/mudarReparte")
-    public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte) {
-        analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte);
+    public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado) {
+        analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte, reparteDigitado);
         result.nothing();
     }
 
@@ -238,7 +269,7 @@ public class AnaliseParcialController extends BaseController {
     public void mudarReparteLote(Long estudoId, List<CotaQueNaoEntrouNoEstudoDTO> cotas) {
 
         for (CotaQueNaoEntrouNoEstudoDTO cota : cotas) {
-            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().longValue());
+            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().longValue(), cota.getQuantidade().longValue());
             analiseParcialService.atualizaClassificacaoCota(estudoId, cota.getNumeroCota());
         }
 
@@ -246,9 +277,10 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Path("/liberar")
-    public void liberar(Long id) {
+    public void liberar(Long estudoId, List<CotaLiberacaoEstudo> cotas) {
     	
-        analiseParcialService.liberar(id);
+        analiseParcialService.liberar(estudoId, cotas);
+        
         result.nothing();
     }
 

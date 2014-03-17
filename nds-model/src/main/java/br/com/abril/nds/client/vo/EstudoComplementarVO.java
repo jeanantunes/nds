@@ -12,6 +12,7 @@ public class EstudoComplementarVO {
     long idLancamento;
     long idProdutoEdicao;
     boolean multiplo;
+    Long idCopia;
     
 	public int getReparteCota() {
 		return reparteCota;
@@ -72,6 +73,12 @@ public class EstudoComplementarVO {
 	}
 	public void setMultiplo(boolean multiplo) {
 		this.multiplo = multiplo;
+	}
+	public Long getIdCopia() {
+		return idCopia;
+	}
+	public void setIdCopia(Long idCopia) {
+		this.idCopia = idCopia;
 	}
 	
 }

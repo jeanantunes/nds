@@ -50,10 +50,11 @@ public interface CotaService {
 	 * Retorna true se a cota possuir operação diferenciada
 	 * 
 	 * @param numeroCota
+	 * @param dataOperacao TODO
 	 * 
 	 * @return boolean
 	 */
-	boolean isCotaOperacaoDiferenciada(Integer numeroCota);
+	boolean isCotaOperacaoDiferenciada(Integer numeroCota, Date dataOperacao);
 	
 	/**
 	 *

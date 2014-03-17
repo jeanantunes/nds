@@ -5,8 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +50,7 @@ import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -106,6 +110,8 @@ public class ParametrosDistribuidorController extends BaseController {
     private static final String COTAS_SELECIONADAS = "idsCotasSelecionadaGrupo";
     
     private static final String TIPO_COTA = "tipoCotaGrupo";
+    
+    private static final DateFormat  DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
     
     @Autowired
     private GrupoService grupoService;
@@ -497,9 +503,9 @@ public class ParametrosDistribuidorController extends BaseController {
      * Busca todos os Grupos de Cota
      */
     @Post
-    public void obterGrupos(final String sortname, final String sortorder) {
+    public void obterGrupos(final String sortname, final String sortorder, boolean includeHistory) {
         
-        final List<GrupoCotaDTO> grupos = grupoService.obterTodosGrupos(sortname, sortorder);
+        final List<GrupoCotaDTO> grupos = grupoService.obterTodosGrupos(sortname, sortorder, includeHistory);
         
         result.use(FlexiGridJson.class).from(grupos).page(1).total(grupos.size()).serialize();
         
@@ -738,6 +744,12 @@ public class ParametrosDistribuidorController extends BaseController {
     private enum TipoOperacaoDiferenciada {
         
         TIPO_COTA, MUNICIPIO;
+    }
+    
+    @Get
+    public void obterDataEfetivacao(){
+        final Date data = this.grupoService.getDataInicioProximaSemanaSemCE();
+        result.use(Results.json()).from(DATE_FORMAT.format(data),"dataEfetivacao").serialize();
     }
     
 }
