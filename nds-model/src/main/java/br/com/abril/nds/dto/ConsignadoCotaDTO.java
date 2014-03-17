@@ -165,7 +165,7 @@ public class ConsignadoCotaDTO implements Serializable{
 	}
 
 	public void setSequencia(String sequencia) {
-		this.sequencia = sequencia;
+		this.sequencia = sequencia != null ? sequencia : "Postergado";
 	}
 	
 }
