@@ -129,7 +129,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(filtro.getTipoNfe() !=null && !filtro.getTipoNfe().isEmpty()) {
-			hql.append(" AND notaFiscal.notaFiscalInformacoes.processos =:tipoEmissaoNfe");		}
+			hql.append(" AND notaFiscal.notaFiscalInformacoes.processos = :tipoEmissaoNfe");		
+		}
 
 		if(filtro.getNumeroNotaInicial() !=null) {
 			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal >= :numeroInicial ");
@@ -189,7 +190,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getTipoNfe()!=null && !filtro.getTipoNfe().isEmpty()) {
 			query.setParameter("tipoEmissaoNfe", filtro.getTipoNfe());
 		}
-
+		
 		if(filtro.getNumeroNotaInicial()!=null) {
 			query.setParameter("numeroInicial", filtro.getNumeroNotaInicial());
 		}

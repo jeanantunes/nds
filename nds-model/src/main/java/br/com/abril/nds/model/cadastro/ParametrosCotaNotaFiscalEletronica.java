@@ -22,7 +22,7 @@ public class ParametrosCotaNotaFiscalEletronica implements Serializable {
 	/**
 	 * @return the emiteNotaFiscalEletronica
 	 */
-	public Boolean getEmiteNotaFiscalEletronica() {
+	public Boolean isEmiteNotaFiscalEletronica() {
 		return emiteNotaFiscalEletronica;
 	}
 
@@ -47,7 +47,7 @@ public class ParametrosCotaNotaFiscalEletronica implements Serializable {
 		this.emailNotaFiscalEletronica = emailNotaFiscalEletronica;
 	}
 
-	public Boolean getContribuinteICMS() {
+	public Boolean isContribuinteICMS() {
 		return contribuinteICMS;
 	}
 

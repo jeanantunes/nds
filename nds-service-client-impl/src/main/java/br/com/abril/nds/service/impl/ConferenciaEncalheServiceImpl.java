@@ -418,8 +418,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 
 		final boolean indEmiteNfe = (cota.getParametrosCotaNotaFiscalEletronica() != null && 
-				cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() != null) ? 
-				cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() : false;
+				cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() != null) ? 
+				cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() : false;
 
 		return indEmiteNfe;
 

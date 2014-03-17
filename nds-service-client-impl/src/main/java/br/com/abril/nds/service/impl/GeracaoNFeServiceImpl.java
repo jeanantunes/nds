@@ -211,24 +211,39 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			case COTA:
 			case DISTRIBUIDOR:
 				
+				// obter as cotas que estão na tela pelo id das cotas
+				List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoCotasNotafiscal(filtro);
+				
 				if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
 					
-					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
+					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotas);
 					
 				} else {
 					//
 					boolean notaGerada = false;
-					
+					List<Cota> cotasContribuinteEmitente = new ArrayList<Cota>();
 					for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
-							if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {									
-								throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
+							if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+								
+								for (Cota cota : cotas) {
+									if(cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() || cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica()){
+										cotasContribuinteEmitente.add(cota);
+									}
+								}
+								
+								if(cotasContribuinteEmitente.isEmpty()){
+									throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
+								} else {
+									this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasContribuinteEmitente);
+								}
+								
 							}
 							
 							if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS)) {			
 								this.gerarNotaFiscalUnificada(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
 							} else {
-								this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
+								this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotas);
 							}
 							
 							notaGerada = true;
@@ -284,10 +299,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	}
 
 	private void gerarNotasFiscaisCotas(FiltroNFeDTO filtro,
-			List<NotaFiscal> notasFiscais, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao, Map<String, ParametroSistema> parametrosSistema) {
-		
-		// obter as cotas que estão na tela pelo id das cotas
-		List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoCotasNotafiscal(filtro);
+			List<NotaFiscal> notasFiscais, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao, 
+			Map<String, ParametroSistema> parametrosSistema, List<Cota> cotas) {
 		
 		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
 		
