@@ -119,9 +119,8 @@ public class NotaFiscalInformacoes implements Serializable {
 	
 	@ElementCollection
 	@JoinTable(name = "NOTA_FISCAL_PROCESSO", 
-			joinColumns = {@JoinColumn(name = "NOTA_FISCAL_ID", referencedColumnName="ID")})
-	@Column(name = "PROCESSO")
-	@Enumerated(EnumType.STRING)
+			joinColumns = {@JoinColumn(table="NATUREZA_OPERACAO", name = "PROCESSO_NFE_ID", referencedColumnName="ID")},
+			inverseJoinColumns = {@JoinColumn(table="PROCESSOS", name = "PROCESSO", referencedColumnName="ID")})
 	private Set<Processo> processos;
 	
 	@Column(name = "CONDICAO", nullable = true)

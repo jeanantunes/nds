@@ -1626,7 +1626,12 @@ public class DataLoader {
 		tipoNotaFiscalDevolucao.setTipoAtividade(TipoAtividade.MERCANTIL);
 //		tipoNotaFiscalDevolucao.setSerieNotaFiscal(1);
 		tipoNotaFiscalDevolucao.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalDevolucao.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
+		
+		Map<String, Processo> processos = Fixture.processos();
+		
+		Processo pDevolucaoEncalhe = processos.get("DEVOLUCAO_ENCALHE");
+		
+		tipoNotaFiscalDevolucao.getProcesso().add(pDevolucaoEncalhe);
 		save(session,tipoNotaFiscalDevolucao);
 		
 		NaturezaOperacao entradaDevolucaoSimbolicaMercadoriaVendida = new NaturezaOperacao();
@@ -1643,7 +1648,9 @@ public class DataLoader {
 		entradaDevolucaoSimbolicaMercadoriaVendida.setTipoAtividade(TipoAtividade.MERCANTIL);
 //		entradaDevolucaoSimbolicaMercadoriaVendida.setSerieNotaFiscal(2);
 		entradaDevolucaoSimbolicaMercadoriaVendida.setProcesso(new HashSet<Processo>());
-		entradaDevolucaoSimbolicaMercadoriaVendida.getProcesso().add(Processo.VENDA);
+		
+		Processo venda = processos.get("VENDA");
+		entradaDevolucaoSimbolicaMercadoriaVendida.getProcesso().add(venda);
 		save(session,entradaDevolucaoSimbolicaMercadoriaVendida);
 		
 		NaturezaOperacao vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota = new NaturezaOperacao();
@@ -1660,7 +1667,7 @@ public class DataLoader {
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setTipoAtividade(TipoAtividade.MERCANTIL);
 //		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setSerieNotaFiscal(3);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setProcesso(new HashSet<Processo>());
-		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.getProcesso().add(Processo.VENDA);
+		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.getProcesso().add(venda);
 		save(session,vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota);
 		
 		NaturezaOperacao vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor = new NaturezaOperacao();
@@ -1676,8 +1683,8 @@ public class DataLoader {
 //		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setTipoAtividade(TipoAtividade.MERCANTIL);
 //		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setSerieNotaFiscal(4);
-		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setProcesso(new HashSet<Processo>());
-		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.getProcesso().add(Processo.VENDA);
+		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setProcesso(new HashSet<Processo>());		
+		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.getProcesso().add(venda);
 		save(session,vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor);
 		
 		NaturezaOperacao remessaMercadoriaConsignacao = new NaturezaOperacao();
@@ -1694,9 +1701,17 @@ public class DataLoader {
 		remessaMercadoriaConsignacao.setTipoAtividade(TipoAtividade.MERCANTIL);
 //		remessaMercadoriaConsignacao.setSerieNotaFiscal(5);
 		remessaMercadoriaConsignacao.setProcesso(new HashSet<Processo>());
-		remessaMercadoriaConsignacao.getProcesso().add(Processo.SOBRA_REPARTE);
-		remessaMercadoriaConsignacao.getProcesso().add(Processo.FALTA_REPARTE);
-		remessaMercadoriaConsignacao.getProcesso().add(Processo.CONSIGNACAO_REPARTE_NORMAL);		
+		
+		// Esse processo esta armazenado em um MAP.
+		Processo sobraReparte = processos.get("DEVOLUCAO_ENCALHE");
+		remessaMercadoriaConsignacao.getProcesso().add(sobraReparte);
+		
+		Processo faltaReparte = processos.get("FALTA_REPARTE");
+		remessaMercadoriaConsignacao.getProcesso().add(faltaReparte);
+		
+		Processo consignacaoReparteNormal = processos.get("CONSIGNACAO_REPARTE_NORMAL");
+		remessaMercadoriaConsignacao.getProcesso().add(consignacaoReparteNormal);		
+		
 		save(session,remessaMercadoriaConsignacao);
 		
 		NaturezaOperacao remessaMercadoriaConsignacaoDistribuidorCota = new NaturezaOperacao();
@@ -1713,9 +1728,14 @@ public class DataLoader {
 		remessaMercadoriaConsignacaoDistribuidorCota.setTipoAtividade(TipoAtividade.MERCANTIL);
 //		remessaMercadoriaConsignacaoDistribuidorCota.setSerieNotaFiscal(6);
 		remessaMercadoriaConsignacaoDistribuidorCota.setProcesso(new HashSet<Processo>());
-		remessaMercadoriaConsignacao.getProcesso().add(Processo.SOBRA_REPARTE);
-		remessaMercadoriaConsignacao.getProcesso().add(Processo.FALTA_REPARTE);
-		remessaMercadoriaConsignacao.getProcesso().add(Processo.CONSIGNACAO_REPARTE_NORMAL);	
+
+		// Esse Processo esta em um map
+		remessaMercadoriaConsignacao.getProcesso().add(sobraReparte);
+		
+		remessaMercadoriaConsignacao.getProcesso().add(faltaReparte);
+	
+		remessaMercadoriaConsignacao.getProcesso().add(consignacaoReparteNormal);	
+		
 		save(session,remessaMercadoriaConsignacaoDistribuidorCota);
 		
 		NaturezaOperacao devolucaoMercadoriaRecebidaConsignacao = new NaturezaOperacao();
@@ -1732,9 +1752,16 @@ public class DataLoader {
 		devolucaoMercadoriaRecebidaConsignacao.setTipoAtividade(TipoAtividade.MERCANTIL);
 //		devolucaoMercadoriaRecebidaConsignacao.setSerieNotaFiscal(7);
 		devolucaoMercadoriaRecebidaConsignacao.setProcesso(new HashSet<Processo>());
-		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
-		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(Processo.FALTA_ENCALHE);
-		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(Processo.SOBRA_ENCALHE);
+		
+		
+		Processo devolucaoEncalhe = processos.get("DEVOLUCAO_ENCALHE");
+		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(devolucaoEncalhe);
+		
+		Processo faltaEncalhe = processos.get("FALTA_ENCALHE");
+		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(faltaEncalhe);
+		
+		Processo sobraEncalhe = processos.get("SOBRA_ENCALHE");
+		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(sobraEncalhe);
 		save(session,devolucaoMercadoriaRecebidaConsignacao);
 
 		NaturezaOperacao devolucaoMercadoriaRecebidaConsignacaoCota = new NaturezaOperacao();
@@ -1751,9 +1778,10 @@ public class DataLoader {
 		devolucaoMercadoriaRecebidaConsignacaoCota.setTipoAtividade(TipoAtividade.MERCANTIL);
 //		devolucaoMercadoriaRecebidaConsignacaoCota.setSerieNotaFiscal(8);
 		devolucaoMercadoriaRecebidaConsignacaoCota.setProcesso(new HashSet<Processo>());
-		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
-		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(Processo.FALTA_ENCALHE);
-		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(Processo.SOBRA_ENCALHE);
+		
+		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(devolucaoEncalhe);
+		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(faltaEncalhe);
+		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(sobraEncalhe);
 		save(session,devolucaoMercadoriaRecebidaConsignacaoCota);		
 		
 		NaturezaOperacao devolucaoSimbolicaMErcadoriaVendida = new NaturezaOperacao();
@@ -1770,7 +1798,7 @@ public class DataLoader {
 		devolucaoSimbolicaMErcadoriaVendida.setTipoAtividade(TipoAtividade.MERCANTIL);
 //		devolucaoSimbolicaMErcadoriaVendida.setSerieNotaFiscal(9);
 		devolucaoSimbolicaMErcadoriaVendida.setProcesso(new HashSet<Processo>());
-		devolucaoSimbolicaMErcadoriaVendida.getProcesso().add(Processo.VENDA);
+		devolucaoSimbolicaMErcadoriaVendida.getProcesso().add(venda);
 		save(session,devolucaoSimbolicaMErcadoriaVendida);
 		
 		NaturezaOperacao devolucaoSimbolicaMErcadoriaVendidaDistri = new NaturezaOperacao();
@@ -1787,7 +1815,7 @@ public class DataLoader {
 		devolucaoSimbolicaMErcadoriaVendidaDistri.setTipoAtividade(TipoAtividade.MERCANTIL);
 //		devolucaoSimbolicaMErcadoriaVendidaDistri.setSerieNotaFiscal(10);
 		devolucaoSimbolicaMErcadoriaVendidaDistri.setProcesso(new HashSet<Processo>());
-		devolucaoSimbolicaMErcadoriaVendidaDistri.getProcesso().add(Processo.VENDA);
+		devolucaoSimbolicaMErcadoriaVendidaDistri.getProcesso().add(venda);
 		save(session,devolucaoSimbolicaMErcadoriaVendidaDistri);
 
 	}
@@ -1796,6 +1824,8 @@ public class DataLoader {
 	
 	private static void gerarTiposNotasPrestador(Session session) {
 
+	    Map<String, Processo> processos = Fixture.processos();
+	    
 		tipoNotaFiscalRecebimento = new NaturezaOperacao();
 		tipoNotaFiscalRecebimento.setCfopEstado("5115");
 		tipoNotaFiscalRecebimento.setCfopOutrosEstados("6115");
@@ -1810,7 +1840,9 @@ public class DataLoader {
 		tipoNotaFiscalRecebimento.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		tipoNotaFiscalRecebimento.setSerieNotaFiscal(12);
 		tipoNotaFiscalRecebimento.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalRecebimento.getProcesso().add(Processo.VENDA);
+		
+		Processo venda = processos.get("VENDA");
+		tipoNotaFiscalRecebimento.getProcesso().add(venda);
 		save(session,tipoNotaFiscalRecebimento);
 		
 		NaturezaOperacao entradaRetornoRemessaDistribuicao = new NaturezaOperacao();
@@ -1827,7 +1859,8 @@ public class DataLoader {
 		entradaRetornoRemessaDistribuicao.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		entradaRetornoRemessaDistribuicao.setSerieNotaFiscal(11);
 		entradaRetornoRemessaDistribuicao.setProcesso(new HashSet<Processo>());
-		entradaRetornoRemessaDistribuicao.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
+		
+		entradaRetornoRemessaDistribuicao.getProcesso().add(venda);
 		save(session,entradaRetornoRemessaDistribuicao);		
 		
 		NaturezaOperacao devolucaoRemssaDistribuicao = new NaturezaOperacao();
@@ -1844,9 +1877,15 @@ public class DataLoader {
 		devolucaoRemssaDistribuicao.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		devolucaoRemssaDistribuicao.setSerieNotaFiscal(12);
 		devolucaoRemssaDistribuicao.setProcesso(new HashSet<Processo>());
-		devolucaoRemssaDistribuicao.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
-		devolucaoRemssaDistribuicao.getProcesso().add(Processo.FALTA_ENCALHE);
-		devolucaoRemssaDistribuicao.getProcesso().add(Processo.SOBRA_ENCALHE);
+		
+		Processo devolucaoEncalhe = processos.get("DEVOLUCAO_ENCALHE");
+		devolucaoRemssaDistribuicao.getProcesso().add(devolucaoEncalhe);
+		
+		Processo faltaEncalhe = processos.get("FALTA_ENCALHE");
+		devolucaoRemssaDistribuicao.getProcesso().add(faltaEncalhe);
+		
+		Processo sobraEncalhe = processos.get("SOBRA_ENCALHE");
+		devolucaoRemssaDistribuicao.getProcesso().add(sobraEncalhe);
 		save(session,devolucaoRemssaDistribuicao);
 		
 		devolucaoRemssaDistribuicao = new NaturezaOperacao();
@@ -1863,9 +1902,11 @@ public class DataLoader {
 		devolucaoRemssaDistribuicao.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		devolucaoRemssaDistribuicao.setSerieNotaFiscal(12);
 		devolucaoRemssaDistribuicao.setProcesso(new HashSet<Processo>());
-		devolucaoRemssaDistribuicao.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
-		devolucaoRemssaDistribuicao.getProcesso().add(Processo.FALTA_ENCALHE);
-		devolucaoRemssaDistribuicao.getProcesso().add(Processo.SOBRA_ENCALHE);
+		
+		devolucaoRemssaDistribuicao.getProcesso().add(devolucaoEncalhe);
+		devolucaoRemssaDistribuicao.getProcesso().add(faltaEncalhe);
+		devolucaoRemssaDistribuicao.getProcesso().add(sobraEncalhe);
+
 		save(session,devolucaoRemssaDistribuicao);
 
 		
@@ -1883,9 +1924,15 @@ public class DataLoader {
 		remessaDistribuicao.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		remessaDistribuicao.setSerieNotaFiscal(17);
 		remessaDistribuicao.setProcesso(new HashSet<Processo>());
-		remessaDistribuicao.getProcesso().add(Processo.CONSIGNACAO_REPARTE_NORMAL);
-		remessaDistribuicao.getProcesso().add(Processo.FALTA_REPARTE);
-		remessaDistribuicao.getProcesso().add(Processo.SOBRA_REPARTE);
+		
+		Processo consignacaoReparteNormal = processos.get("CONSIGNACAO_REPARTE_NORMAL");
+		remessaDistribuicao.getProcesso().add(consignacaoReparteNormal);
+		
+		Processo faltaReparte = processos.get("FALTA_REPARTE");
+		remessaDistribuicao.getProcesso().add(faltaReparte);
+		
+		Processo sobraReparte = processos.get("SOBRA_REPARTE");
+		remessaDistribuicao.getProcesso().add(sobraReparte);
 		save(session,remessaDistribuicao);		
 		
 		remessaDistribuicao = new NaturezaOperacao();
@@ -1902,9 +1949,9 @@ public class DataLoader {
 		remessaDistribuicao.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		remessaDistribuicao.setSerieNotaFiscal(17);
 		remessaDistribuicao.setProcesso(new HashSet<Processo>());
-		remessaDistribuicao.getProcesso().add(Processo.CONSIGNACAO_REPARTE_NORMAL);
-		remessaDistribuicao.getProcesso().add(Processo.FALTA_REPARTE);
-		remessaDistribuicao.getProcesso().add(Processo.SOBRA_REPARTE);
+		remessaDistribuicao.getProcesso().add(consignacaoReparteNormal);
+		remessaDistribuicao.getProcesso().add(faltaReparte);
+		remessaDistribuicao.getProcesso().add(sobraReparte);
 		save(session,remessaDistribuicao);		
 
 		remessaDistribuicao = new NaturezaOperacao();
@@ -1921,14 +1968,16 @@ public class DataLoader {
 		remessaDistribuicao.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		remessaDistribuicao.setSerieNotaFiscal(17);
 		remessaDistribuicao.setProcesso(new HashSet<Processo>());
-		remessaDistribuicao.getProcesso().add(Processo.CONSIGNACAO_REPARTE_NORMAL);
-		remessaDistribuicao.getProcesso().add(Processo.FALTA_REPARTE);
-		remessaDistribuicao.getProcesso().add(Processo.SOBRA_REPARTE);
+		remessaDistribuicao.getProcesso().add(consignacaoReparteNormal);
+		remessaDistribuicao.getProcesso().add(faltaReparte);
+		remessaDistribuicao.getProcesso().add(sobraReparte);
 		save(session,remessaDistribuicao);	
 	}
 	
 	private static void gerarTiposNotasPrestadorFilial(Session session) {
 		
+	    Map<String, Processo> processos = Fixture.processos();
+	    
 		NaturezaOperacao tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado("5949");
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados("6949");
@@ -1943,7 +1992,9 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.setTipoAtividade(TipoAtividade.PRESTADOR_FILIAL);
 //		tipoNotaFiscalPrestadorFilial.setSerieNotaFiscal(1);
 		tipoNotaFiscalPrestadorFilial.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.CONSIGNACAO_REPARTE_NORMAL);
+		
+		Processo consignacaoReparteNormal = processos.get("CONSIGNACAO_REPARTE_NORMAL");
+		tipoNotaFiscalPrestadorFilial.getProcesso().add(consignacaoReparteNormal);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
 		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
@@ -1960,7 +2011,7 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.setTipoAtividade(TipoAtividade.PRESTADOR_FILIAL);
 //		tipoNotaFiscalPrestadorFilial.setSerieNotaFiscal(1);
 		tipoNotaFiscalPrestadorFilial.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.CONSIGNACAO_REPARTE_NORMAL);
+		tipoNotaFiscalPrestadorFilial.getProcesso().add(consignacaoReparteNormal);
 		save(session,tipoNotaFiscalPrestadorFilial);
 
 		
@@ -1978,7 +2029,9 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.setTipoAtividade(TipoAtividade.PRESTADOR_FILIAL);
 //		tipoNotaFiscalPrestadorFilial.setSerieNotaFiscal(1);
 		tipoNotaFiscalPrestadorFilial.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.FALTA_REPARTE);
+		
+		Processo faltaReparte = processos.get("FALTA_REPARTE");
+		tipoNotaFiscalPrestadorFilial.getProcesso().add(faltaReparte);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
 		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
@@ -1995,7 +2048,7 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.setTipoAtividade(TipoAtividade.PRESTADOR_FILIAL);
 //		tipoNotaFiscalPrestadorFilial.setSerieNotaFiscal(1);
 		tipoNotaFiscalPrestadorFilial.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.FALTA_REPARTE);
+		tipoNotaFiscalPrestadorFilial.getProcesso().add(faltaReparte);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
 		
@@ -2013,7 +2066,9 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.setTipoAtividade(TipoAtividade.PRESTADOR_FILIAL);
 //		tipoNotaFiscalPrestadorFilial.setSerieNotaFiscal(1);
 		tipoNotaFiscalPrestadorFilial.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.NOTA_LANCAMENTO);
+		
+		Processo notaLancamento = processos.get("NOTA_LANCAMENTO");
+		tipoNotaFiscalPrestadorFilial.getProcesso().add(notaLancamento);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
 		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
@@ -2030,7 +2085,7 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.setTipoAtividade(TipoAtividade.PRESTADOR_FILIAL);
 //		tipoNotaFiscalPrestadorFilial.setSerieNotaFiscal(1);
 		tipoNotaFiscalPrestadorFilial.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.NOTA_LANCAMENTO);
+		tipoNotaFiscalPrestadorFilial.getProcesso().add(notaLancamento);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
 		
@@ -2048,7 +2103,9 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.setTipoAtividade(TipoAtividade.PRESTADOR_FILIAL);
 //		tipoNotaFiscalPrestadorFilial.setSerieNotaFiscal(1);
 		tipoNotaFiscalPrestadorFilial.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
+		
+		Processo devolucaoEncalhe = processos.get("DEVOLUCAO_ENCALHE");
+		tipoNotaFiscalPrestadorFilial.getProcesso().add(devolucaoEncalhe);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
 		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
@@ -2065,7 +2122,7 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.setTipoAtividade(TipoAtividade.PRESTADOR_FILIAL);
 //		tipoNotaFiscalPrestadorFilial.setSerieNotaFiscal(1);
 		tipoNotaFiscalPrestadorFilial.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
+		tipoNotaFiscalPrestadorFilial.getProcesso().add(devolucaoEncalhe);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
 		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
@@ -2082,7 +2139,7 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.setTipoAtividade(TipoAtividade.PRESTADOR_FILIAL);
 //		tipoNotaFiscalPrestadorFilial.setSerieNotaFiscal(1);
 		tipoNotaFiscalPrestadorFilial.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
+		tipoNotaFiscalPrestadorFilial.getProcesso().add(devolucaoEncalhe);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
 		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
@@ -2099,7 +2156,7 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.setTipoAtividade(TipoAtividade.PRESTADOR_FILIAL);
 //		tipoNotaFiscalPrestadorFilial.setSerieNotaFiscal(1);
 		tipoNotaFiscalPrestadorFilial.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
+		tipoNotaFiscalPrestadorFilial.getProcesso().add(devolucaoEncalhe);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
 		
@@ -2118,7 +2175,9 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.setTipoAtividade(TipoAtividade.PRESTADOR_FILIAL);
 //		tipoNotaFiscalPrestadorFilial.setSerieNotaFiscal(1);
 		tipoNotaFiscalPrestadorFilial.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.VENDA);
+		
+		Processo venda = processos.get("VENDA");
+		tipoNotaFiscalPrestadorFilial.getProcesso().add(venda);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
 		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
@@ -2135,11 +2194,14 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.setTipoAtividade(TipoAtividade.PRESTADOR_FILIAL);
 //		tipoNotaFiscalPrestadorFilial.setSerieNotaFiscal(1);
 		tipoNotaFiscalPrestadorFilial.setProcesso(new HashSet<Processo>());
-		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.VENDA);
+		tipoNotaFiscalPrestadorFilial.getProcesso().add(venda);
 		save(session,tipoNotaFiscalPrestadorFilial);
 	}
 	
 	private static void gerarTiposNotasPrestadorCotaContribuinte(Session session) {
+	    
+	    Map<String, Processo> processos = Fixture.processos();
+	    
 		NaturezaOperacao entradaRetornoRemessaDistribuicao = new NaturezaOperacao();
 		entradaRetornoRemessaDistribuicao.setCfopEstado("1949");
 		entradaRetornoRemessaDistribuicao.setCfopOutrosEstados("2949");
@@ -2154,7 +2216,9 @@ public class DataLoader {
 		entradaRetornoRemessaDistribuicao.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		entradaRetornoRemessaDistribuicao.setSerieNotaFiscal(11);
 		entradaRetornoRemessaDistribuicao.setProcesso(new HashSet<Processo>());
-		entradaRetornoRemessaDistribuicao.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
+		
+		Processo pDevolucaoEncalhe = processos.get("DEVOLUCAO_ENCALHE");
+		entradaRetornoRemessaDistribuicao.getProcesso().add(pDevolucaoEncalhe);
 		save(session,entradaRetornoRemessaDistribuicao);		
 		
 		NaturezaOperacao vendaMercadoriaRecebicaAnteriormenteConsignacao = new NaturezaOperacao();
@@ -2171,7 +2235,10 @@ public class DataLoader {
 		vendaMercadoriaRecebicaAnteriormenteConsignacao.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		vendaMercadoriaRecebicaAnteriormenteConsignacao.setSerieNotaFiscal(12);
 		vendaMercadoriaRecebicaAnteriormenteConsignacao.setProcesso(new HashSet<Processo>());
-		vendaMercadoriaRecebicaAnteriormenteConsignacao.getProcesso().add(Processo.VENDA);
+		
+	    Processo venda = processos.get("VENDA");
+		vendaMercadoriaRecebicaAnteriormenteConsignacao.getProcesso().add(venda);
+		
 		save(session,vendaMercadoriaRecebicaAnteriormenteConsignacao);
 		
 		NaturezaOperacao devolucaoRemssaDistribuicao = new NaturezaOperacao();
@@ -2188,7 +2255,7 @@ public class DataLoader {
 		devolucaoRemssaDistribuicao.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		devolucaoRemssaDistribuicao.setSerieNotaFiscal(12);
 		devolucaoRemssaDistribuicao.setProcesso(new HashSet<Processo>());
-		devolucaoRemssaDistribuicao.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
+		devolucaoRemssaDistribuicao.getProcesso().add(pDevolucaoEncalhe);
 		save(session,devolucaoRemssaDistribuicao);
 		
 		NaturezaOperacao remessaDistribuicaoNECA = new NaturezaOperacao();
@@ -2205,7 +2272,9 @@ public class DataLoader {
 		remessaDistribuicaoNECA.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		remessaDistribuicaoNECA.setSerieNotaFiscal(13);
 		remessaDistribuicaoNECA.setProcesso(new HashSet<Processo>());
-		remessaDistribuicaoNECA.getProcesso().add(Processo.NOTA_LANCAMENTO);
+		
+	    Processo notaLancamento = processos.get("NOTA_LANCAMENTO");
+		remessaDistribuicaoNECA.getProcesso().add(notaLancamento);
 		save(session,remessaDistribuicaoNECA);		
 		
 		NaturezaOperacao devolucaoEncalhe = new NaturezaOperacao();
@@ -2222,7 +2291,7 @@ public class DataLoader {
 		devolucaoEncalhe.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		devolucaoEncalhe.setSerieNotaFiscal(14);
 		devolucaoEncalhe.setProcesso(new HashSet<Processo>());
-		devolucaoEncalhe.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
+		devolucaoEncalhe.getProcesso().add(pDevolucaoEncalhe);
 		save(session,devolucaoEncalhe);
 		
 		NaturezaOperacao retornoRemessaDistribuicaoNECA = new NaturezaOperacao();
@@ -2239,7 +2308,9 @@ public class DataLoader {
 		retornoRemessaDistribuicaoNECA.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		retornoRemessaDistribuicaoNECA.setSerieNotaFiscal(15);
 		retornoRemessaDistribuicaoNECA.setProcesso(new HashSet<Processo>());
-		retornoRemessaDistribuicaoNECA.getProcesso().add(Processo.FALTA_REPARTE);
+		
+		Processo faltaReparte = processos.get("FALTA_REPARTE");
+		retornoRemessaDistribuicaoNECA.getProcesso().add(faltaReparte);
 		save(session,retornoRemessaDistribuicaoNECA);
 		
 		NaturezaOperacao devolucaoEncalheComplementar = new NaturezaOperacao();
@@ -2256,7 +2327,9 @@ public class DataLoader {
 		devolucaoEncalheComplementar.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		devolucaoEncalheComplementar.setSerieNotaFiscal(16);
 		devolucaoEncalheComplementar.setProcesso(new HashSet<Processo>());
-		devolucaoEncalheComplementar.getProcesso().add(Processo.SOBRA_ENCALHE);
+		
+		Processo sobraEncalhe = processos.get("SOBRA_ENCALHE");
+		devolucaoEncalheComplementar.getProcesso().add(sobraEncalhe);
 		save(session,devolucaoEncalheComplementar);
 		
 		NaturezaOperacao remessaDistribuicao = new NaturezaOperacao();
@@ -2273,7 +2346,9 @@ public class DataLoader {
 		remessaDistribuicao.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		remessaDistribuicao.setSerieNotaFiscal(17);
 		remessaDistribuicao.setProcesso(new HashSet<Processo>());
-		remessaDistribuicao.getProcesso().add(Processo.CONSIGNACAO_REPARTE_NORMAL);
+		
+		Processo consignacaoReparteNormal = processos.get("CONSIGNACAO_REPARTE_NORMAL");
+		remessaDistribuicao.getProcesso().add(consignacaoReparteNormal);
 		save(session,remessaDistribuicao);		
 		
 		NaturezaOperacao remessaDistribuicaoComplementar = new NaturezaOperacao();
@@ -2290,8 +2365,11 @@ public class DataLoader {
 		remessaDistribuicaoComplementar.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		remessaDistribuicaoComplementar.setSerieNotaFiscal(18);
 		remessaDistribuicaoComplementar.setProcesso(new HashSet<Processo>());
-		remessaDistribuicaoComplementar.getProcesso().add(Processo.FALTA_ENCALHE);
-		remessaDistribuicaoComplementar.getProcesso().add(Processo.SOBRA_ENCALHE);
+		
+		Processo faltaEncalhe = processos.get("FALTA_ENCALHE");
+		remessaDistribuicaoComplementar.getProcesso().add(faltaEncalhe);
+		
+		remessaDistribuicaoComplementar.getProcesso().add(sobraEncalhe);
 		save(session,remessaDistribuicaoComplementar);
 	}
 

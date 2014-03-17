@@ -82,6 +82,7 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.repository.ProcessoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -195,6 +196,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private CotaUnificacaoRepository cotaUnificacaoRepository;
+
+	@Autowired
+	private ProcessoRepository processoRepository;
     
     @Override
     @Transactional
@@ -1024,8 +1028,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                     
                     final InformacaoTransporte transporte = notaFiscalService.obterTransporte(cota.getId());
                     
+                    final Processo processo = this.processoRepository.buscarPeloNome("DEVOLUCAO_AO_FORNECEDOR");
+                    
                     final Set<Processo> processos = new HashSet<Processo>();
-                    processos.add(Processo.GERACAO_NF_E);
+                    processos.add(processo);
                     
                     //FIXME: Ajustar a geracao de nota de fechamento de encalhe
                     /*
@@ -1054,9 +1060,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         Boolean contribuinte = Boolean.FALSE;
         
         if (cota.getParametrosCotaNotaFiscalEletronica() != null
-                && cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() != null) {
+                && cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() != null) {
             
-            contribuinte = cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica();
+            contribuinte = cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica();
         }
         
         for (final NaturezaOperacao tipo : listaNaturezasOperacao) {

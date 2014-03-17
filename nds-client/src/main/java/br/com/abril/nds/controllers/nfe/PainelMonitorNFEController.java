@@ -21,7 +21,6 @@ import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
@@ -31,6 +30,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.ProcessoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -87,6 +87,9 @@ public class PainelMonitorNFEController extends BaseController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+    private ProcessoService processoService;
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE)
@@ -395,21 +398,9 @@ public class PainelMonitorNFEController extends BaseController {
 		
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void carregarComboTipoNfe() {
-		
-		List<ItemDTO<String, String>> comboTipoNfe = new ArrayList<ItemDTO<String, String>>();
-
-		comboTipoNfe.add(new ItemDTO(Processo.ENVIO.name(), Processo.ENVIO.getDescricao()));
-		comboTipoNfe.add(new ItemDTO(Processo.ENTRADA_ENCALHE.name(), Processo.ENTRADA_ENCALHE.getDescricao()));
-		comboTipoNfe.add(new ItemDTO(Processo.FALTA_REPARTE.name(), Processo.FALTA_REPARTE.getDescricao()));
-		comboTipoNfe.add(new ItemDTO(Processo.FALTA_ENCALHE.name(), Processo.FALTA_ENCALHE.getDescricao()));
-		comboTipoNfe.add(new ItemDTO(Processo.SOBRA_REPARTE.name(), Processo.SOBRA_REPARTE.getDescricao()));
-		comboTipoNfe.add(new ItemDTO(Processo.SOBRA_ENCALHE.name(), Processo.SOBRA_ENCALHE.getDescricao()));
-		comboTipoNfe.add(new ItemDTO(Processo.VENDA.name(), Processo.VENDA.getDescricao()));
-		comboTipoNfe.add(new ItemDTO(Processo.DEVOLUCAO_AO_FORNECEDOR.name(), Processo.DEVOLUCAO_AO_FORNECEDOR.getDescricao()));
-		comboTipoNfe.add(new ItemDTO(Processo.CALCELADA.name(), Processo.CALCELADA.getDescricao()));
-		comboTipoNfe.add(new ItemDTO(Processo.GERACAO_NF_E.name(), Processo.GERACAO_NF_E.getDescricao()));
+	    String parametros[] = {"ENVIO", "ENTRADA_ENCALHE", "FALTA_REPARTE", "FALTA_ENCALHE", "SOBRA_REPARTE", "SOBRA_ENCALHE", "VENDA", "DEVOLUCAO_AO_FORNECEDOR", "CANCELADA", "GERACAO_NF_E"};
+		List<ItemDTO<String, String>> comboTipoNfe = processoService.buscarProcessos(parametros);
 		result.include("comboTipoNfe", comboTipoNfe);
 	}
 	

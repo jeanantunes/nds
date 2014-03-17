@@ -7,8 +7,10 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -630,6 +632,106 @@ public class Fixture {
 		
 		return lancamento;
 	}
+	
+	
+	public static Map<String, Processo> processos() {
+        
+	    // initial a Map
+	    Map<String, Processo> map = new HashMap<String, Processo>();
+	    
+	    Processo p1 = new Processo();
+	    p1.setId(1L);
+	    p1.setNome("ENVIO");
+	    p1.setDescricao("Envio de repartes");
+	    map.put("ENVIO",p1);
+	    
+	    Processo p2 = new Processo();
+        p2.setId(2L);
+        p2.setNome("VENDA");
+        p2.setDescricao("Venda");
+        map.put("VENDA",p2);
+        
+        Processo p3 = new Processo();
+        p3.setId(1L);
+        p3.setNome("ENTRADA_ENCALHE");
+        p3.setDescricao("Entrada do encalhe");
+        map.put("ENTRADA_ENCALHE", p3);
+        
+        Processo p4 = new Processo();
+        p4.setId(1L);
+        p4.setNome("FALTA_REPARTE");
+        p4.setDescricao("Faltas do reparte");
+        map.put("FALTA_REPARTE", p4);
+        
+        
+        Processo p5 = new Processo();
+        p5.setId(5L);
+        p5.setNome("FALTA_ENCALHE");
+        p5.setDescricao("Faltas do encalhe");
+        map.put("FALTA_ENCALHE", p5);
+        
+        Processo p6 = new Processo();
+        p6.setId(6L);
+        p6.setNome("SOBRA_ENCALHE");
+        p6.setDescricao("Sobras do encalhe");
+        map.put("SOBRA_ENCALHE", p6);
+        
+        Processo p7 = new Processo();
+        p7.setId(7L);
+        p7.setNome("CANCELADA");
+        p7.setDescricao("Cancelada");
+        map.put("CANCELADA", p7);
+        
+        Processo p8 = new Processo();
+        p8.setId(8L);
+        p8.setNome("GERACAO_NF_E");
+        p8.setDescricao("Geração NF-e");
+        map.put("GERACAO_NF_E", p8);
+        
+        Processo p9 = new Processo();
+        p9.setId(9L);
+        p9.setNome("LANCAMENTO_FALTA_SOBRA");
+        p9.setDescricao("Lançamento faltas e sobra");
+        map.put("LANCAMENTO_FALTA_SOBRA", p9);
+
+        Processo p10 = new Processo();
+        p10.setId(10L);
+        p10.setNome("VENDA_SUPLEMENTAR");
+        p10.setDescricao("Venda de Suplementar");
+        map.put("VENDA_SUPLEMENTAR", p10);
+
+        Processo p11 = new Processo();
+        p11.setId(11L);
+        p11.setNome("FECHAMENTO_ENCALHE");
+        p11.setDescricao("Fechamento de Encalhe");
+        map.put("FECHAMENTO_ENCALHE", p11);        
+
+        Processo p12 = new Processo();
+        p12.setId(12L);
+        p12.setNome("DEVOLUCAO_AO_FORNECEDOR");
+        p12.setDescricao("Devolução ao Fornecedor");
+        map.put("DEVOLUCAO_AO_FORNECEDOR", p12);        
+
+        Processo p13 = new Processo();
+        p13.setId(13L);
+        p13.setNome("DEVOLUCAO_ENCALHE");
+        p13.setDescricao("Nota da Devolução do Encalhe");
+        map.put("DEVOLUCAO_ENCALHE", p13);        
+
+        Processo p14 = new Processo();
+        p14.setId(14L);
+        p14.setNome("CONSIGNACAO_REPARTE_NORMAL");
+        p14.setDescricao("Consignação do Reparte Normal");
+        map.put("CONSIGNACAO_REPARTE_NORMAL", p14);        
+
+        Processo p15 = new Processo();
+        p15.setId(15L);
+        p15.setNome("NOTA_LANCAMENTO");
+        p15.setDescricao("Nota de Lançamento (NE/NECA)");
+        map.put("NOTA_LANCAMENTO", p15);        
+        
+        return map;
+    }
 	
 	public static ChamadaEncalhe chamadaEncalhe(Date dataRecolhimento, 
 												ProdutoEdicao produtoEdicao, 
@@ -3743,7 +3845,7 @@ public class Fixture {
         
         ParametrosCotaNotaFiscalEletronica paramNFE = cota.getParametrosCotaNotaFiscalEletronica();
         if(paramNFE != null) {
-            historico.setEmiteNfe(paramNFE.getEmiteNotaFiscalEletronica());
+            historico.setEmiteNfe(paramNFE.isEmiteNotaFiscalEletronica());
             historico.setEmailNfe(paramNFE.getEmailNotaFiscalEletronica());
         }
 
