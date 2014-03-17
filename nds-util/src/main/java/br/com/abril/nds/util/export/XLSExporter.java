@@ -423,9 +423,7 @@ public class XLSExporter implements Exporter {
 
                 row = sheet.createRow(++newRowNum);
 
-                cellNum--;
-
-                if (hasLabel) {
+                if (cellNum > 0) {
 
                     cellNum--;
                 }

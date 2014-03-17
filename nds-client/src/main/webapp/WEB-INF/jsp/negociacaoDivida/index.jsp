@@ -160,7 +160,7 @@
 				
 				<table width="685" border="0" cellpadding="1" cellspacing="1">
 					<tr>
-						<td width="25"><input name="tipoPgtos" type="radio" value=""
+						<td width="25"><input id="pagamentoEm" name="tipoPgtos" type="radio" value=""
 							onclick="negociacaoDividaController.mostraPgto();" /></td>
 						<td width="126">Pagamento em:</td>
 						<td width="187"><select name="filtro.qntdParcelas" id="selectParcelas"

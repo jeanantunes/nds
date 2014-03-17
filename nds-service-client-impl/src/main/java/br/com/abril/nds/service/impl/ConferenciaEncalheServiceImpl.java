@@ -1772,24 +1772,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				                                usuario, 
 				                                indConferenciaContingencia);
 
-		BigDecimal valorTotalReparteOperacaoConferenciaEncalhe = BigDecimal.ZERO;
-		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
-				//conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(controleConfEncalheCota.getId());
-		
-		for (final ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
-			
-			valorTotalReparteOperacaoConferenciaEncalhe = 
-					valorTotalReparteOperacaoConferenciaEncalhe.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getQtdReparte())));
-			valorTotalEncalheOperacaoConferenciaEncalhe = 
-					valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getQtdExemplar())));
-		}
-		
-		reparte = reparte == null ? BigDecimal.ZERO : reparte;
-		
-		this.negociacaoDividaService.abaterNegociacaoPorComissao(
-			cota.getId(), valorTotalReparteOperacaoConferenciaEncalhe, valorTotalEncalheOperacaoConferenciaEncalhe, usuario
-		);
-		
+		this.abaterNegociacao(listaConferenciaEncalhe, cota.getId(), usuario);
+
 		Set<String> nossoNumeroCollection = new LinkedHashSet<String>();
 		
 		final DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
@@ -1869,9 +1853,27 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return documentoConferenciaEncalhe;
 	}
+	
+	private void abaterNegociacao(final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, final Long idCota, final Usuario usuario) {
+		
+		BigDecimal valorTotalReparteOperacaoConferenciaEncalhe = BigDecimal.ZERO;
+		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
 
-	private boolean getDocumentoImpressao(final Boolean documentoImpressaoCota,
-										  final Boolean documentoImpressaoDistribuidor) {
+		for (final ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
+			
+			valorTotalReparteOperacaoConferenciaEncalhe = 
+					valorTotalReparteOperacaoConferenciaEncalhe.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getQtdReparte())));
+			valorTotalEncalheOperacaoConferenciaEncalhe = 
+					valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getQtdExemplar())));
+		}
+		
+		this.negociacaoDividaService.abaterNegociacaoPorComissao(
+			idCota, valorTotalReparteOperacaoConferenciaEncalhe, valorTotalEncalheOperacaoConferenciaEncalhe, usuario
+		);		
+	}
+
+	private boolean getDocumentoImpressao(Boolean documentoImpressaoCota,
+										  Boolean documentoImpressaoDistribuidor) {
 		
 		if (documentoImpressaoCota != null) {
 			

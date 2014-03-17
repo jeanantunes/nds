@@ -314,7 +314,7 @@ var negociacaoDividaController = $.extend(true, {
 			exibirMensagem("WARNING", ["Não foram selecionadas dívidas para negociação."], "");
 			return;
 		}
-
+		
 		$("#formaPgtoForm")[0].reset();
 
 		negociacaoDividaController.limparPopupFormaPgto();
@@ -357,9 +357,7 @@ var negociacaoDividaController = $.extend(true, {
 					buttons: {
 						"Confirmar": function() {
 							
-							negociacaoDividaController.confirmarNegociacao();
-							
-							$("#dialog-NegociacaoformaPgto", negociacaoDividaController.workspace).dialog("close");
+							negociacaoDividaController.confirmarNegociacao();							
 						},
 						"Cancelar": function() {
 							 $("#dialog-NegociacaoformaPgto", negociacaoDividaController.workspace).dialog("close");
@@ -369,6 +367,10 @@ var negociacaoDividaController = $.extend(true, {
 					close: function(event, ui) {
 						
 						negociacaoDividaController.pesquisar();
+					},
+					open: function(event, ui) {
+						
+						negociacaoDividaController.tratarSituacaoCota(negociacaoDividaController.situacaoCota);
 					}
 				});
 			} ,
@@ -521,8 +523,6 @@ var negociacaoDividaController = $.extend(true, {
 	            		$("#botaoImprimirBoleto", negociacaoDividaController.workspace).show();
 	            	}
 	            	
-	            	$(".negociacaoGrid", negociacaoDividaController.workspace).flexReload();
-	            	
 	            } else {
 	            	
 	            	$("#botaoImprimirNegociacao", negociacaoDividaController.workspace).hide();
@@ -619,12 +619,14 @@ var negociacaoDividaController = $.extend(true, {
 			var totalParcTotal = 0;
 			
 			
+			$('#header_table_Ativar', negociacaoDividaController.workspace).hide();
+
 			if(this.situacaoCota == 'ATIVO'){				
 				$('#header_table_Ativar', negociacaoDividaController.workspace).hide();
 			}else{
 				$('#header_table_Ativar', negociacaoDividaController.workspace).show();
 			}
-			
+
 			while(tabela.rows.length > 2){
 				tabela.deleteRow(2);
 			}
@@ -678,6 +680,22 @@ var negociacaoDividaController = $.extend(true, {
 			
 		}
 	},
+	
+	tratarSituacaoCota: function(situacaoCota) {
+	
+		var isInativa = situacaoCota == 'INATIVO';
+
+		if (isInativa) {
+			$('#pagamentoEm', negociacaoDividaController.workspace).click();
+		}
+
+		$('#checknegociacaoAvulsa', negociacaoDividaController.workspace).attr("checked", isInativa);
+
+		$('#checknegociacaoAvulsa', negociacaoDividaController.workspace).attr("disabled", isInativa);
+
+		$('#negociacaoPorComissao', negociacaoDividaController.workspace).attr("disabled", isInativa);
+	},
+
 	ativarAoPagarOnchange:function(idParcela,input){		
 		var parcela = negociacaoDividaController.parcelas[idParcela];
 		parcela.ativarAoPagar = $(input).val();
