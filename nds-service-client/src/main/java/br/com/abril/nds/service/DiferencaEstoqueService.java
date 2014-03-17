@@ -144,5 +144,7 @@ public interface DiferencaEstoqueService {
 			RateioCotaVO rateioCotaVO);
 	
 	boolean validarProdutoEmRecolhimento(ProdutoEdicao produtoEdicao);
+
+    void validarRateioParaCotasInativas(List<RateioCotaVO> rateioCotas);
 	
 }

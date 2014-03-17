@@ -126,13 +126,13 @@
    	    <legend> Follow Up do Sistema </legend>
         <div id="tab-followup">
             <ul>
-                <li><a href="#tabNegocia" 			onclick="followUpSistemaController.toggleButtons('btnsNegociacao');">Negociação</a></li>
-                <li><a href="#tabChamadao" 			onclick="followUpSistemaController.toggleButtons('btnsChamadao');">Chamadão</a></li>
-                <li><a href="#tabDistribuicao"																		  >Distribuição</a></li>
-                <li><a href="#tabAlteracao" 		onclick="followUpSistemaController.toggleButtons('btnsStatusCota');">Alteração de Status Cota</a></li>
-                <li><a href="#tabAtualizacao"		onclick="followUpSistemaController.toggleButtons('btnsAtualizacaoCadastral');">Atualização Cadastral</a></li>
-                <li><a href="#tabPendencia" 		onclick="followUpSistemaController.toggleButtons('btnsArquivoPendencia');">Pend&ecirc;ncias NF-e Encalhe</a></li>
-                <li><a href="#tabCadastroParcial" 	onclick="followUpSistemaController.toggleButtons('btnsParcial');">Cadastro Parcial</a></li>
+                <li><a href="#tabNegocia" 			onclick="followUpSistemaController.toggleButtons('btnsNegociacao', 'tabNegocia');">Negociação</a></li>
+                <li><a href="#tabChamadao" 			onclick="followUpSistemaController.toggleButtons('btnsChamadao', 'tabChamadao');">Chamadão</a></li>
+                <li><a href="#tabDistribuicao"      onclick="followUpSistemaController.toggleButtons('noBtns', 'tabDistribuicao');">Distribuição</a></li>
+                <li><a href="#tabAlteracao" 		onclick="followUpSistemaController.toggleButtons('btnsStatusCota', 'tabAlteracao');">Alteração de Status Cota</a></li>
+                <li><a href="#tabAtualizacao"		onclick="followUpSistemaController.toggleButtons('btnsAtualizacaoCadastral', 'tabAtualizacao');">Atualização Cadastral</a></li>
+                <li><a href="#tabPendencia" 		onclick="followUpSistemaController.toggleButtons('btnsArquivoPendencia', 'tabPendencia');">Pend&ecirc;ncias NF-e Encalhe</a></li>
+                <li><a href="#tabCadastroParcial" 	onclick="followUpSistemaController.toggleButtons('btnsParcial', 'tabCadastroParcial');">Cadastro Parcial</a></li>
             </ul>
             
             <div id="tabNegocia" style="height:auto !important; width:981px !important;">

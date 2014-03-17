@@ -20,9 +20,8 @@ public class FollowupCadastroParcialServiceImpl implements FollowupCadastroParci
 
 	@Override
 	@Transactional
-	public List<ConsultaFollowupCadastroParcialDTO> obterCadastrosParcial(
-			FiltroFollowupCadastroParcialDTO filtro) {
-		return this.repository.obterConsignadosParaChamadao(filtro);
+	public List<ConsultaFollowupCadastroParcialDTO> obterCadastrosParcial(FiltroFollowupCadastroParcialDTO filtro) {
+		return this.repository.obterDadosParaAbaCadastroParcial(filtro);
 	}
 
 }

@@ -601,6 +601,9 @@ public class DiferencaEstoqueController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Campo [Diferença] é obrigatório!");
         }
         
+        if(TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA.equals(tipoDiferenca))
+            diferencaEstoqueService.validarRateioParaCotasInativas(rateioCotas);
+        
         this.validarProdutoEmRecolhimento(direcionadoParaEstoque, codigoProduto,edicaoProduto,null);
         
         if(idDiferenca == null) {
@@ -628,6 +631,8 @@ public class DiferencaEstoqueController extends BaseController {
         result.use(Results.json()).from("").serialize();
     }
     
+    
+
     /*
      * Verifica se o produto informado esta em processo de recolhimento caso a
      * diferença seja redirecionada para cota.
