@@ -10,10 +10,12 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormatoImpressao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -32,6 +34,9 @@ public class ParametrosSistemaController extends BaseController {
 	
 	@Autowired
 	private ParametroSistemaService psService;
+	
+	@Autowired
+	private ParametrosDistribuidorService pdService;
 	
 	
 	/**
@@ -62,7 +67,11 @@ public class ParametrosSistemaController extends BaseController {
 		result.include("tiposAmbientes", tiposAmbientes);
 		result.include("processosEmissaoNFe", processosEmissao);
 		result.include("formatosImpressao", formatosImpressao);
-				
+		
+		boolean utilizaFTF = pdService.getParametrosDistribuidor().getTipoAtividade().equals(TipoAtividade.PRESTADOR_FILIAL)
+				&& dto.getNfeInformacoesTipoEmissor().equals(ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.name());
+		result.include("utilizaFTF", utilizaFTF);
+						
 		return dto;
 	}
 	

@@ -99,7 +99,7 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 			return null;
 		}
 
-		List<NaturezaOperacao> listaTipoNotaFiscal = this.naturezaOperacaoRepository.obterTiposNotasFiscais(tipoOperacao);
+		List<NaturezaOperacao> listaTipoNotaFiscal = this.naturezaOperacaoRepository.obterNaturezasOperacoes(tipoOperacao);
 
 		List<ItemDTO<Long, String>> listaItensNotasFiscais = new ArrayList<ItemDTO<Long,String>>();
 

@@ -16,8 +16,12 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class Processo implements Serializable {
 	
-	private static final long serialVersionUID = -8701595970682586084L;
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4114782712143161860L;
+
 	@Id
 	@GeneratedValue
 	@Column(name="ID")

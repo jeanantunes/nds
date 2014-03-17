@@ -124,10 +124,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     @Override
     public Cota obterPorNumerDaCota(final Integer numeroCota) {
         
+        return this.obterPorNumerDaCota(numeroCota, SituacaoCadastro.ATIVO);
+    }
+    
+    @Override
+    public Cota obterPorNumerDaCota(final Integer numeroCota, SituacaoCadastro situacao) {
+        
         final Criteria criteria = super.getSession().createCriteria(Cota.class);
         
         criteria.add(Restrictions.eq("numeroCota", numeroCota));
-        criteria.add(Restrictions.eq("situacaoCadastro", SituacaoCadastro.ATIVO));
+        criteria.add(Restrictions.eq("situacaoCadastro", situacao));
         
         criteria.setMaxResults(1);
         
@@ -228,21 +234,19 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
             final Integer inicio, final Integer rp, final Date dataOperacao) {
         
         final StringBuilder hqlConsignado = new StringBuilder();
-        
-        hqlConsignado
-        .append(" SELECT SUM(")
-        .append(" COALESCE(MOVIMENTOCOTA.PRECO_COM_DESCONTO, PRODEDICAO.PRECO_VENDA, 0) ")
-        .append(" *(CASE WHEN TIPOMOVIMENTO.OPERACAO_ESTOQUE='ENTRADA' THEN MOVIMENTOCOTA.QTDE ELSE MOVIMENTOCOTA.QTDE * -1 END)) ")
-        .append(" FROM MOVIMENTO_ESTOQUE_COTA MOVIMENTOCOTA ")
-        .append(" LEFT JOIN LANCAMENTO LCTO on (MOVIMENTOCOTA.LANCAMENTO_ID=LCTO.ID AND LCTO.STATUS <> :statusRecolhido) ")
-        .append(" JOIN PRODUTO_EDICAO PRODEDICAO ON(MOVIMENTOCOTA.PRODUTO_EDICAO_ID=PRODEDICAO.ID)  ").append(
-                " JOIN TIPO_MOVIMENTO TIPOMOVIMENTO ON(MOVIMENTOCOTA.TIPO_MOVIMENTO_ID = TIPOMOVIMENTO.ID)  ")
-                .append(" WHERE MOVIMENTOCOTA.COTA_ID = COTA_.ID ")
-                .append(" AND MOVIMENTOCOTA.DATA <= :dataOperacao ").append(
-                        " AND (MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO IS NULL ").append(
-                                " OR MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO =:statusEstoqueFinanceiro) ").append(
-                                        " AND TIPOMOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ").append(
-                                                " AND MOVIMENTOCOTA.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
+        hqlConsignado.append(" SELECT SUM(")
+                     .append(" COALESCE(MOVIMENTOCOTA.PRECO_COM_DESCONTO, PRODEDICAO.PRECO_VENDA, 0) ")
+                     .append(" *(CASE WHEN TIPOMOVIMENTO.OPERACAO_ESTOQUE='ENTRADA' THEN MOVIMENTOCOTA.QTDE ELSE MOVIMENTOCOTA.QTDE * -1 END)) ")
+                     .append(" FROM MOVIMENTO_ESTOQUE_COTA MOVIMENTOCOTA ")
+                     .append(" LEFT JOIN LANCAMENTO LCTO on (MOVIMENTOCOTA.LANCAMENTO_ID=LCTO.ID AND LCTO.STATUS <> :statusRecolhido) ")
+                     .append(" JOIN PRODUTO_EDICAO PRODEDICAO ON(MOVIMENTOCOTA.PRODUTO_EDICAO_ID=PRODEDICAO.ID)  ")
+                     .append(" JOIN TIPO_MOVIMENTO TIPOMOVIMENTO ON(MOVIMENTOCOTA.TIPO_MOVIMENTO_ID = TIPOMOVIMENTO.ID)  ")
+                     .append(" WHERE MOVIMENTOCOTA.COTA_ID = COTA_.ID ")
+                     .append(" AND MOVIMENTOCOTA.DATA <= :dataOperacao ")
+                     .append(" AND (MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO IS NULL ")
+                     .append(" OR MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO =:statusEstoqueFinanceiro) ")
+                     .append(" AND TIPOMOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ")
+                     .append(" AND MOVIMENTOCOTA.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
         
         final StringBuilder hqlDividaAcumulada = new StringBuilder();
         hqlDividaAcumulada.append(" SELECT SUM(COALESCE(D.VALOR,0)) ")
@@ -254,54 +258,58 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
                           .append("	AND C.DT_VENCIMENTO < :dataOperacao ");
         
         final StringBuilder sql = new StringBuilder();
-        
-        sql.append("SELECT geral.IDCOTA, "
-                + " geral.numCota, "
-                + " geral.nome, "
-                + " geral.RAZAOSOCIAL, "
-                + " geral.DATAABERTURA,"
-                + " geral.dividaAcumulada, "
-                + " ( " + hqlConsignado.toString().replaceAll("COTA_.ID","geral.IDCOTA") + ") AS vlrConsignado, "
-                + " SUM(ec_.QTDE_EFETIVA * pe_.PRECO_VENDA) as vlrReparte, ");
-        
-        // faturamento
-        sql.append("       (SELECT SUM(")
-        .append("           (EPC.QTDE_RECEBIDA - EPC.QTDE_DEVOLVIDA) * MOVIMENTOCOTA.PRECO_COM_DESCONTO) / :intervalo ")
-        .append("       FROM ESTOQUE_PRODUTO_COTA EPC ")
-        .append("       JOIN MOVIMENTO_ESTOQUE_COTA MOVIMENTOCOTA ON (MOVIMENTOCOTA.ESTOQUE_PROD_COTA_ID = EPC.ID) ")
-        .append("       WHERE EPC.COTA_ID = geral.IDCOTA ")
-        .append("       AND MOVIMENTOCOTA.DATA BETWEEN :dataOperacaoIntervalo AND :dataOperacao ")
-        .append("       ) AS faturamento, ")
-        // percDivida = dividaAcumulada / vlrConsignado
-        .append("       ((")
-        .append(hqlDividaAcumulada.toString().replaceAll("COTA_.ID","geral.IDCOTA"))
-        .append("       ) / ")
-        .append("       (")
-        .append(hqlConsignado.toString().replaceAll("COTA_.ID","geral.IDCOTA"))
-        .append("       ) * 100) as percDivida, ")
-        .append("       COALESCE(DATEDIFF(DATE_ADD(:dataOperacao, INTERVAL -1 DAY), ")
-        .append("               (SELECT MIN(D.DATA) FROM DIVIDA D JOIN COBRANCA c on (c.DIVIDA_ID=D.ID) WHERE D.COTA_ID = geral.IDCOTA ")
-        .append("                                                 AND D.STATUS in (:statusDividaEmAbertoPendente) ").append(
-                "                                                 AND D.DATA <= :dataOperacao AND c.DT_PAGAMENTO is null) ").append(
-                        "       ),0) AS diasAberto ");
-        
-        
-        sql.append(" from ( ");
-                
-        sql.append("SELECT COTA_.ID AS IDCOTA, ")
-        .append("		COTA_.NUMERO_COTA AS numCota, ")
-        .append("		PESSOA_.NOME AS nome, ")
-        .append("		PESSOA_.RAZAO_SOCIAL AS RAZAOSOCIAL, ")
-                
-        // divida acumulada
-        .append("		(")
-        .append(hqlDividaAcumulada)
-        .append(" 		) AS dividaAcumulada, ")
-        // data abertura
-        .append("		(SELECT ")
-        .append("			MIN(COBRANCA_.DT_VENCIMENTO) FROM COBRANCA COBRANCA_")
-        .append("		WHERE COBRANCA_.COTA_ID=COTA_.ID  ")
-        .append("		AND COBRANCA_.STATUS_COBRANCA= :statusCobrancaNaoPago ) AS DATAABERTURA ");
+        sql.append(" SELECT geral.IDCOTA, ")
+           .append(" geral.numCota, ")
+           .append(" geral.nome, ")
+           .append(" geral.RAZAOSOCIAL, ")
+           .append(" geral.DATAABERTURA, ")
+           .append(" geral.dividaAcumulada, ")
+           .append(" ( " + hqlConsignado.toString().replaceAll("COTA_.ID","geral.IDCOTA") + ") AS vlrConsignado, ")
+           .append(" (select SUM(ec_.QTDE_EFETIVA * pe_.PRECO_VENDA) from ")
+           .append(" ESTUDO_COTA ec_ ")
+           .append(" join ESTUDO e_ on ec_.ESTUDO_ID = e_.ID ")
+           .append(" join LANCAMENTO lancamento_ on (e_.PRODUTO_EDICAO_ID = lancamento_.PRODUTO_EDICAO_ID and e_.ID = lancamento_.ESTUDO_ID AND lancamento_.DATA_LCTO_DISTRIBUIDOR=:dataOperacao) ")
+           .append(" join PRODUTO_EDICAO pe_ on e_.PRODUTO_EDICAO_ID = pe_.ID ")
+           .append(" WHERE ec_.cota_ID=geral.IDCOTA ")
+           .append(" AND (lancamento_.STATUS is null OR lancamento_.STATUS not in (:statusNaoEmitiveis)) ")
+           .append(") as vlrReparte, ")
+           // faturamento
+           .append("       (SELECT SUM(")
+           .append("           (EPC.QTDE_RECEBIDA - EPC.QTDE_DEVOLVIDA) * MOVIMENTOCOTA.PRECO_COM_DESCONTO) / :intervalo ")
+           .append("       FROM ESTOQUE_PRODUTO_COTA EPC ")
+           .append("       JOIN MOVIMENTO_ESTOQUE_COTA MOVIMENTOCOTA ON (MOVIMENTOCOTA.ESTOQUE_PROD_COTA_ID = EPC.ID) ")
+           .append("       WHERE EPC.COTA_ID = geral.IDCOTA ")
+           .append("       AND MOVIMENTOCOTA.DATA BETWEEN :dataOperacaoIntervalo AND :dataOperacao ")
+           .append("       ) AS faturamento, ")
+           // percDivida = dividaAcumulada / vlrConsignado
+           .append("       ((")
+           .append(hqlDividaAcumulada.toString().replaceAll("COTA_.ID","geral.IDCOTA"))
+           .append("       ) / ")
+           .append("       (")
+           .append(hqlConsignado.toString().replaceAll("COTA_.ID","geral.IDCOTA"))
+           .append("       ) * 100) as percDivida, ")
+           .append("       COALESCE(DATEDIFF(DATE_ADD(:dataOperacao, INTERVAL -1 DAY), ")
+           .append("               (SELECT MIN(D.DATA) FROM DIVIDA D JOIN COBRANCA c on (c.DIVIDA_ID=D.ID) WHERE D.COTA_ID = geral.IDCOTA ")
+           .append("                                                 AND D.STATUS in (:statusDividaEmAbertoPendente) ")
+           .append("                                                 AND D.DATA <= :dataOperacao AND c.DT_PAGAMENTO is null) ")
+           .append("       ),0) AS diasAberto ")
+           
+           .append(" from ( ")
+           
+           .append("SELECT COTA_.ID AS IDCOTA, ")
+           .append("		COTA_.NUMERO_COTA AS numCota, ")
+           .append("		PESSOA_.NOME AS nome, ")
+           .append("		PESSOA_.RAZAO_SOCIAL AS RAZAOSOCIAL, ")
+           
+           // divida acumulada
+           .append("		(")
+           .append(hqlDividaAcumulada)
+           .append(" 		) AS dividaAcumulada, ")
+           // data abertura
+           .append("		(SELECT ")
+           .append("			MIN(COBRANCA_.DT_VENCIMENTO) FROM COBRANCA COBRANCA_")
+           .append("		WHERE COBRANCA_.COTA_ID=COTA_.ID  ")
+           .append("		AND COBRANCA_.STATUS_COBRANCA= :statusCobrancaNaoPago ) AS DATAABERTURA ");
         
         this.setFromWhereCotasSujeitasSuspensao(sql);
         
@@ -311,14 +319,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
             sql.append(" LIMIT :inicio,:qtdeResult");
         }
         sql.append(") as geral");
-        
-        sql.append(" join ESTUDO_COTA ec_ on (ec_.cota_ID=geral.IDCOTA) ")
-        .append(" join ESTUDO e_ on ec_.ESTUDO_ID = e_.ID ")
-        .append(" join LANCAMENTO lancamento_ on (e_.PRODUTO_EDICAO_ID = lancamento_.PRODUTO_EDICAO_ID and e_.ID = lancamento_.ESTUDO_ID AND lancamento_.DATA_LCTO_DISTRIBUIDOR=:dataOperacao) ")
-        .append(" join PRODUTO_EDICAO pe_ on e_.PRODUTO_EDICAO_ID = pe_.ID ");
-        
-        sql.append(" WHERE (lancamento_.STATUS is null OR lancamento_.STATUS not in (:status))  ").append(
-                " AND  (lancamento_.STATUS is null OR lancamento_.STATUS not in (:statusNaoEmitiveis)) ");
         
         sql.append(" GROUP BY geral.IDCOTA ");
         
@@ -331,11 +331,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         this.setParametrosCotasSujeitasSuspensao(query, dataOperacao);
         
-        query.setParameterList("status", new String[] { StatusLancamento.CONFIRMADO.name(),
-                StatusLancamento.EM_BALANCEAMENTO.name() });
-        query.setParameterList("statusNaoEmitiveis", new String[] { StatusLancamento.PLANEJADO.name(),
-                StatusLancamento.FECHADO.name(), StatusLancamento.CONFIRMADO.name(),
-                StatusLancamento.EM_BALANCEAMENTO.name(), StatusLancamento.CANCELADO.name() });
+        query.setParameterList("statusNaoEmitiveis", new String[] { 
+                StatusLancamento.CONFIRMADO.name(),
+                StatusLancamento.EM_BALANCEAMENTO.name(),
+                StatusLancamento.PLANEJADO.name(),
+                StatusLancamento.FECHADO.name(), 
+                StatusLancamento.CONFIRMADO.name(),
+                StatusLancamento.EM_BALANCEAMENTO.name(), 
+                StatusLancamento.CANCELADO.name() });
         
         query.setParameterList("tipoMovimentoEstorno", new String[]{GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name()});
         query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
@@ -371,63 +374,61 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     
     private void setFromWhereCotasSujeitasSuspensao(final StringBuilder sql) {
         
-        sql.append(" FROM COTA COTA_ ").append(
-                " LEFT JOIN PARAMETRO_COBRANCA_COTA POLITICACOTA ON(POLITICACOTA.COTA_ID=COTA_.ID) ").append(
-                        " JOIN DISTRIBUIDOR AS POLITICADISTRIB ").append(
-                                " JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ");
-        
-        sql.append(" WHERE SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO!=false ")
-        
-        .append(" AND ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NOT NULL ").append(
-                " 		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <> 0 ").append("		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <= ( ")
-                .append("											SELECT count(DIVIDA.ID) ").append("											FROM DIVIDA DIVIDA ").append(
-                        "											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ").append(
-                                "															   WHERE DIVIDA.COTA_ID=COTA_.ID ").append(
-                                        "                            								   AND COBRANCA_.DT_PAGAMENTO is null ").append(
-                                                "															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ").append(
-                                                        "															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao  )").append("	   ) ").append(
-                                                                "	   OR ")
-                                                                
-                                                                .append("	   (POLITICACOTA.VALOR_SUSPENSAO IS NOT NULL ").append(
-                                                                        "       AND POLITICACOTA.VALOR_SUSPENSAO <> 0 ").append(
-                                                                                "		AND POLITICACOTA.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ").append(
-                                                                                        "											FROM DIVIDA DIVIDA ").append(
-                                                                                                "											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ").append(
-                                                                                                        "															   WHERE DIVIDA.COTA_ID=COTA_.ID ").append(
-                                                                                                                "                            								   AND COBRANCA_.DT_PAGAMENTO is null ").append(
-                                                                                                                        "															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ").append(
-                                                                                                                                "															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao )")
-                                                                                                                                
-                                                                                                                                .append("	   ) ").append("	   OR ")
-                                                                                                                                
-                                                                                                                                .append("	   (POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL and POLITICACOTA.VALOR_SUSPENSAO IS NULL ")
-                                                                                                                                .append("	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA IS NOT NULL ").append(
-                                                                                                                                        "	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <> 0 ").append(
-                                                                                                                                                "		AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <= (").append("											SELECT count(DIVIDA.ID) ")
-                                                                                                                                                .append("											FROM DIVIDA DIVIDA ").append(
-                                                                                                                                                        "											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ").append(
-                                                                                                                                                                "															   WHERE DIVIDA.COTA_ID=COTA_.ID ").append(
-                                                                                                                                                                        "                            								   AND COBRANCA_.DT_PAGAMENTO is null ").append(
-                                                                                                                                                                                "															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ").append(
-                                                                                                                                                                                        "															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao)").append("	   ) ").append(
-                                                                                                                                                                                                "	   OR ")
-                                                                                                                                                                                                
-                                                                                                                                                                                                .append("	   (POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL and POLITICACOTA.VALOR_SUSPENSAO IS NULL ")
-                                                                                                                                                                                                .append("	    AND POLITICADISTRIB.VALOR_SUSPENSAO IS NOT NULL ").append(
-                                                                                                                                                                                                        "	    AND POLITICADISTRIB.VALOR_SUSPENSAO <> 0").append(
-                                                                                                                                                                                                                "		AND POLITICADISTRIB.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ").append(
-                                                                                                                                                                                                                        "											FROM DIVIDA DIVIDA ").append(
-                                                                                                                                                                                                                                "											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ").append(
-                                                                                                                                                                                                                                        "															   WHERE DIVIDA.COTA_ID=COTA_.ID ").append(
-                                                                                                                                                                                                                                                "                            								   AND COBRANCA_.DT_PAGAMENTO is null ").append(
-                                                                                                                                                                                                                                                        "															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ").append(
-                                                                                                                                                                                                                                                                "															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao )")
-                                                                                                                                                                                                                                                                
-                                                                                                                                                                                                                                                                .append("	   ) ").append(") ");
-        
-                
-        sql.append("  group by cota_.ID ");
-        
+        sql.append(" FROM COTA COTA_ ")
+           .append(" LEFT JOIN PARAMETRO_COBRANCA_COTA POLITICACOTA ON(POLITICACOTA.COTA_ID=COTA_.ID) ")
+           .append(" JOIN DISTRIBUIDOR AS POLITICADISTRIB ")
+           .append(" JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ")
+           
+           .append(" WHERE SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO!=false ")
+           .append(" AND ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NOT NULL ")
+           .append(" 		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <> 0 ")
+           .append("		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <= ( ")
+           .append("											SELECT count(DIVIDA.ID) ")
+           .append("											FROM DIVIDA DIVIDA ")
+           .append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+           .append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+           .append("                            								   AND COBRANCA_.DT_PAGAMENTO is null ")
+           .append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
+           .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao  )")
+           .append("	   ) ")
+           .append("	   OR ")
+           .append("	   (POLITICACOTA.VALOR_SUSPENSAO IS NOT NULL ")
+           .append("       AND POLITICACOTA.VALOR_SUSPENSAO <> 0 ")
+           .append("		AND POLITICACOTA.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
+           .append("											FROM DIVIDA DIVIDA ")
+           .append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+           .append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+           .append("                            								   AND COBRANCA_.DT_PAGAMENTO is null ")
+           .append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
+           .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao )")
+           .append("	   ) ")
+           .append("	   OR ")
+           .append("	   (POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL and POLITICACOTA.VALOR_SUSPENSAO IS NULL ")
+           .append("	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA IS NOT NULL ")
+           .append("	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <> 0 ")
+           .append("		AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <= (")
+           .append("											SELECT count(DIVIDA.ID) ")
+           .append("											FROM DIVIDA DIVIDA ")
+           .append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+           .append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+           .append("                            								   AND COBRANCA_.DT_PAGAMENTO is null ")
+           .append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
+           .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao)")
+           .append("	   ) ")
+           .append("	   OR ")
+           .append("	   (POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL and POLITICACOTA.VALOR_SUSPENSAO IS NULL ")
+           .append("	    AND POLITICADISTRIB.VALOR_SUSPENSAO IS NOT NULL ")
+           .append("	    AND POLITICADISTRIB.VALOR_SUSPENSAO <> 0")
+           .append("		AND POLITICADISTRIB.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
+           .append("											FROM DIVIDA DIVIDA ")
+           .append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+           .append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+           .append("                            								   AND COBRANCA_.DT_PAGAMENTO is null ")
+           .append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
+           .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao )")
+           .append("	   ) ")
+           .append(") ")
+           .append("  group by cota_.ID ");
     }
     
     private String obterOrderByCotasSujeitasSuspensao(final String sortOrder, final String sortColumn) {

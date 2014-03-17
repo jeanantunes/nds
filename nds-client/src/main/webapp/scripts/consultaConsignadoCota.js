@@ -236,7 +236,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 			$("#opcaoDetalhe", consultaConsignadoCotaController.workspace).attr("checked", false);			
 		}
 		
-		if(cota != "" && idFornecedor == "" ){
+		if(cota != "" ){
 		
 			$("#numeroNomeCota", consultaConsignadoCotaController.workspace).html(
 				"Consignados da Cota: " + $("#codigoCota", consultaConsignadoCotaController.workspace).val()
