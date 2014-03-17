@@ -71,6 +71,7 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
+import br.com.abril.nds.repository.ProcessoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
@@ -148,6 +149,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
 
+	@Autowired
+	private ProcessoRepository processoRepository;
 	
 	@Transactional
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
@@ -699,9 +702,11 @@ TipoMensagem.ERROR,
 		
 		InformacaoAdicional informacaoAdicional = new InformacaoAdicional();
 		
-		Set<Processo> processos = new HashSet<Processo>(1);		
 		
-		processos.add(Processo.DEVOLUCAO_AO_FORNECEDOR);
+		Processo processo = this.processoRepository.buscarPeloNome("DEVOLUCAO_AO_FORNECEDOR");
+		
+		Set<Processo> processos = new HashSet<Processo>(1);		
+		processos.add(processo);
 		
 		Long idNota = null; 
 		
