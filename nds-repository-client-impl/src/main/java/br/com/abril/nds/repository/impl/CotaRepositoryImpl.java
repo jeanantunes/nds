@@ -124,10 +124,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     @Override
     public Cota obterPorNumerDaCota(final Integer numeroCota) {
         
+        return this.obterPorNumerDaCota(numeroCota, SituacaoCadastro.ATIVO);
+    }
+    
+    @Override
+    public Cota obterPorNumerDaCota(final Integer numeroCota, SituacaoCadastro situacao) {
+        
         final Criteria criteria = super.getSession().createCriteria(Cota.class);
         
         criteria.add(Restrictions.eq("numeroCota", numeroCota));
-        criteria.add(Restrictions.eq("situacaoCadastro", SituacaoCadastro.ATIVO));
+        criteria.add(Restrictions.eq("situacaoCadastro", situacao));
         
         criteria.setMaxResults(1);
         

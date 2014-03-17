@@ -3,16 +3,17 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
+import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
-import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -26,6 +27,16 @@ import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 import br.com.abril.nds.util.ItemAutoComplete;
 
 public interface ConferenciaEncalheService {
+	
+	/**
+	 * Obtém mapa tendo como chave idFornecedor e valor 
+	 * o objeto DataCEConferivel (objeto que possui 2 lista
+	 * de data ce, uma para produto parcial e outra para produto nao parcial).
+	 * 
+	 * @param numeroCota
+	 * @return DataCEConferivelDTO
+	 */
+	public Map<Long, DataCEConferivelDTO> obterDatasChamadaEncalheConferiveis(Integer numeroCota);
 	
 	/**
 	 * Retorna uma lista de box de recolhimento.

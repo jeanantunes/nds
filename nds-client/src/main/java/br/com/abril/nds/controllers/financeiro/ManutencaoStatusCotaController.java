@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.hibernate.metamodel.ValidationException;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -589,6 +590,8 @@ public class ManutencaoStatusCotaController extends BaseController {
 			return;
 		}
 		
+		validarDividasAbertoCota(numeroCota);
+		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 
 		FiltroConsultaConsignadoCotaDTO filtro = new FiltroConsultaConsignadoCotaDTO();
@@ -621,4 +624,16 @@ public class ManutencaoStatusCotaController extends BaseController {
 
 		result.use(Results.json()).from(validacao!=null?validacao:"", "result").recursive().serialize();
 	}	
+	
+	public void validarDividasAbertoCota(Integer numeroCota){
+        Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+        BigDecimal totalDividas = this.dividaService.obterTotalDividasAbertoCota(cota.getId());
+        
+        if (totalDividas!=null){
+            if (totalDividas.floatValue() > 0f){
+                throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"AVISO: A cota ["+cota.getPessoa().getNome()+"] possui um total de "+ CurrencyUtil.formatarValorComSimbolo(totalDividas.floatValue()) +" de dívidas em aberto !"));
+            }
+        }   
+	}
+
 }

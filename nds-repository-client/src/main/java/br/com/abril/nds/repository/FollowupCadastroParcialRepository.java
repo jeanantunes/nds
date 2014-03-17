@@ -8,4 +8,5 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 public interface FollowupCadastroParcialRepository extends Repository<ProdutoEdicao,Long> {
     List<ConsultaFollowupCadastroParcialDTO> obterConsignadosParaChamadao(FiltroFollowupCadastroParcialDTO filtro);
+    List<ConsultaFollowupCadastroParcialDTO> obterDadosParaAbaCadastroParcial(FiltroFollowupCadastroParcialDTO filtro);
 }

@@ -61,6 +61,7 @@ public class GrupoCota implements Serializable {
 	@ElementCollection(targetClass = DiaSemana.class) 
 	@CollectionTable(name = "DIA_RECOLHIMENTO_GRUPO_COTA",
 	    joinColumns = @JoinColumn(name = "GRUPO_ID"))
+	@Enumerated(EnumType.STRING)
 	@Column(name = "DIA_ID")
 	protected Set<DiaSemana> diasRecolhimento; 
 	
