@@ -343,7 +343,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setParameterList("tipoMovimentoEstorno", new String[]{GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name()});
         query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
         query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO.name());
-        query.setParameter("statusCobrancaNaoPago", StatusCobranca.NAO_PAGO.name());
         
         final int intervalo = 35;
         query.setParameter("intervalo", intervalo);
@@ -369,7 +368,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setParameter("ativo", SituacaoCadastro.ATIVO.name());
         query.setParameterList("statusDividaEmAbertoPendente", new String[] { StatusDivida.EM_ABERTO.name(),
                 StatusDivida.PENDENTE_INADIMPLENCIA.name(), StatusDivida.PENDENTE.name() });
-        
+        query.setParameter("statusCobrancaNaoPago", StatusCobranca.NAO_PAGO.name());
     }
     
     private void setFromWhereCotasSujeitasSuspensao(final StringBuilder sql) {
@@ -389,7 +388,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
            .append("                            								   AND COBRANCA_.DT_PAGAMENTO is null ")
            .append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
-           .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao  )")
+           .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
+           .append("                                                               AND COBRANCA_.STATUS_COBRANCA = :statusCobrancaNaoPago)")
            .append("	   ) ")
            .append("	   OR ")
            .append("	   (POLITICACOTA.VALOR_SUSPENSAO IS NOT NULL ")
@@ -400,10 +400,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
            .append("                            								   AND COBRANCA_.DT_PAGAMENTO is null ")
            .append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
-           .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao )")
+           .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
+           .append("                                                               AND COBRANCA_.STATUS_COBRANCA = :statusCobrancaNaoPago)")
            .append("	   ) ")
            .append("	   OR ")
-           .append("	   (POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL and POLITICACOTA.VALOR_SUSPENSAO IS NULL ")
+           .append("	   ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL or POLITICACOTA.VALOR_SUSPENSAO IS NULL) ")
            .append("	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA IS NOT NULL ")
            .append("	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <> 0 ")
            .append("		AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <= (")
@@ -413,10 +414,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
            .append("                            								   AND COBRANCA_.DT_PAGAMENTO is null ")
            .append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
-           .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao)")
+           .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
+           .append("                                                               AND COBRANCA_.STATUS_COBRANCA = :statusCobrancaNaoPago)")
            .append("	   ) ")
            .append("	   OR ")
-           .append("	   (POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL and POLITICACOTA.VALOR_SUSPENSAO IS NULL ")
+           .append("	   ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL or POLITICACOTA.VALOR_SUSPENSAO IS NULL) ")
            .append("	    AND POLITICADISTRIB.VALOR_SUSPENSAO IS NOT NULL ")
            .append("	    AND POLITICADISTRIB.VALOR_SUSPENSAO <> 0")
            .append("		AND POLITICADISTRIB.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
@@ -425,7 +427,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
            .append("                            								   AND COBRANCA_.DT_PAGAMENTO is null ")
            .append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
-           .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao )")
+           .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
+           .append("                                                               AND COBRANCA_.STATUS_COBRANCA = :statusCobrancaNaoPago)")
            .append("	   ) ")
            .append(") ")
            .append("  group by cota_.ID ");
@@ -3104,10 +3107,15 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         final StringBuilder hql = new StringBuilder("SELECT SUM(COALESCE(total.valor,0)) FROM (SELECT  ");
         
-        hql.append("( SELECT SUM(round(COALESCE(D.VALOR,0), 2)) ").append("	FROM DIVIDA D ").append(
-                " JOIN COBRANCA c on (c.DIVIDA_ID=d.ID) ").append("	WHERE D.COTA_ID = COTA_.ID ").append(
-                        " AND c.DT_PAGAMENTO is null ").append("	AND D.STATUS in (:statusDividaEmAbertoPendente) ").append(
-                                "	AND C.DT_VENCIMENTO < :dataOperacao ) as valor ");
+        hql.append("( SELECT SUM(round(COALESCE(D.VALOR,0), 2)) ")
+           .append("	FROM DIVIDA D ")
+           .append(" JOIN COBRANCA c on (c.DIVIDA_ID=d.ID) ")
+           .append("	WHERE D.COTA_ID = COTA_.ID ")
+           .append("    AND c.DT_PAGAMENTO is null ")
+           .append("	AND D.STATUS in (:statusDividaEmAbertoPendente) ")
+           .append("	AND C.DT_VENCIMENTO < :dataOperacao ")
+           .append("    AND c.STATUS_COBRANCA = :statusCobrancaNaoPago ")
+           .append(") as valor ");
         
         this.setFromWhereCotasSujeitasSuspensao(hql);
         
