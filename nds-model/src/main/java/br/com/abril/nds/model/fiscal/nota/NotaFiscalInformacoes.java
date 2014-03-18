@@ -332,5 +332,12 @@ public class NotaFiscalInformacoes implements Serializable {
 	public void setInformacoesAdicionais(String informacoesAdicionais) {
 		this.informacoesAdicionais = informacoesAdicionais;
 	}
-	
+
+	public Set<Processo> getProcessos() {
+		return processos;
+	}
+
+	public void setProcessos(Set<Processo> processos) {
+		this.processos = processos;
+	}
 }

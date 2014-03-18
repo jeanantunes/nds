@@ -29,7 +29,7 @@ import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.GeracaoNFeService;
+import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
@@ -60,7 +60,7 @@ public class GeracaoNFeController extends BaseController {
 	private DistribuidorService distribuidorService;
 	
 	@Autowired 
-	private GeracaoNFeService geracaoNFeService;
+	private NFeService nfeService;
 	
 	@Autowired 
 	private NotaFiscalService notaFiscalService;
@@ -173,19 +173,19 @@ public class GeracaoNFeController extends BaseController {
 		
 		switch (naturezaOperacao.getTipoDestinatario()) {
 		case COTA:
-			cotaExemplaresDTOs = geracaoNFeService.consultaCotaExemplaresSumarizados(filtro);			
-			totalRegistros = geracaoNFeService.consultaCotaExemplareSumarizadoQtd(filtro);
+			cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro);			
+			totalRegistros = nfeService.consultaCotaExemplareSumarizadoQtd(filtro);
 			
 			break;
 			
 		case DISTRIBUIDOR:
-			cotaExemplaresDTOs = geracaoNFeService.consultaCotaExemplaresSumarizados(filtro);			
-			totalRegistros = geracaoNFeService.consultaCotaExemplareSumarizadoQtd(filtro);
+			cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro);			
+			totalRegistros = nfeService.consultaCotaExemplareSumarizadoQtd(filtro);
 			break;
 			
 		case FORNECEDOR:			
-			fornecedorExemplaresDTOs = geracaoNFeService.consultaFornecedorExemplarSumarizado(filtro);
-			totalRegistros = geracaoNFeService.consultaFornecedorExemplaresSumarizadosQtd(filtro);
+			fornecedorExemplaresDTOs = nfeService.consultaFornecedorExemplarSumarizado(filtro);
+			totalRegistros = nfeService.consultaFornecedorExemplaresSumarizadosQtd(filtro);
 			break;
 		}
 		
@@ -223,7 +223,7 @@ public class GeracaoNFeController extends BaseController {
 		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(filtro.getDataInicial(), filtro.getDataFinal());
 		
 		List<CotaExemplaresDTO> cotaExemplaresDTOs = 
-				geracaoNFeService.busca(intervaloBox, intervaloCota, intervaloDateMovimento, listIdFornecedor, 
+				nfeService.busca(intervaloBox, intervaloCota, intervaloDateMovimento, listIdFornecedor, 
 						tipoNotaFiscal, null, null, sortname, sortorder, rp, page, SituacaoCadastro.SUSPENSO);
 		
 		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(cotaExemplaresDTOs.size()).serialize();
@@ -253,7 +253,7 @@ public class GeracaoNFeController extends BaseController {
 		
 		try {
 
-			this.geracaoNFeService.gerarNotaFiscal(filtro);
+			this.nfeService.gerarNotaFiscal(filtro);
 			
 		} catch (Exception e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
@@ -281,11 +281,11 @@ public class GeracaoNFeController extends BaseController {
 		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
 		
 		List<CotaExemplaresDTO> cotaExemplaresDTOs =	
-				geracaoNFeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, listIdFornecedor, 
+				nfeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, listIdFornecedor, 
 						tipoNotaFiscal, null, null, sortname, sortorder, null, null, null);
 		
 		FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null,
+				this.getNDSFileHeader(), null,
 				cotaExemplaresDTOs, CotaExemplaresDTO.class,
 				this.httpServletResponse);
 		
