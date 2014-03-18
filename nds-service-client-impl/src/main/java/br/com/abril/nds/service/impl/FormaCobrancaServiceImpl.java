@@ -2,7 +2,9 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -582,5 +584,35 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 				.obterFormaCobranca(idCota);
 
 		return formaCobranca;
+	}
+	
+	/**
+	 * Obtem mapa com as formas de cobrança ativas
+	 * De todos os fornecedores cadastrados
+	 * Onde a concentração de pagamento é compatível com a data de operação atual
+	 * 
+	 * @param dataOperacao
+	 * @return Map<Fornecedor,List<FormaCobranca>>
+	 */
+	@Override
+	@Transactional
+	public Map<Fornecedor,List<FormaCobranca>> obterMapFornecedorFormasCobranca(Date dataOperacao) {
+		
+		Map<Fornecedor,List<FormaCobranca>> mapFormasCobrancaFornecedor = new HashMap<Fornecedor,List<FormaCobranca>>();
+		
+		List<Fornecedor> todosFornecedores = this.fornecedorService.obterFornecedores();
+		
+		Integer diaDoMes = DateUtil.obterDiaDoMes(dataOperacao);
+
+		Integer diaDaSemana = SemanaUtil.obterDiaDaSemana(dataOperacao);
+		
+		for (Fornecedor fornecedor : todosFornecedores){
+		
+			List<FormaCobranca> formasCobranca = this.formaCobrancaRepository.obterFormasCobrancaPorFornecedor(fornecedor.getId(),diaDoMes,diaDaSemana);
+			
+			mapFormasCobrancaFornecedor.put(fornecedor, formasCobranca);
+		}
+
+		return mapFormasCobrancaFornecedor;
 	}
 }

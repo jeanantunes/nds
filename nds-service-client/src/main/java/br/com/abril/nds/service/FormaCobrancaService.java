@@ -3,8 +3,10 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
@@ -126,4 +128,14 @@ public interface FormaCobrancaService {
     FormaCobranca obterFormaCobrancaPrincipalDistribuidor();
 
 	FormaCobranca obterFormaCobrancaPrincipalCota(Integer numeroCota);
+
+	/**
+	 * Obtem mapa com as formas de cobrança ativas
+	 * De todos os fornecedores cadastrados
+	 * Onde a concentração de pagamento é compatível com a data de operação atual
+	 * 
+	 * @param dataOperacao
+	 * @return Map<Fornecedor,List<FormaCobranca>>
+	 */
+	Map<Fornecedor, List<FormaCobranca>> obterMapFornecedorFormasCobranca(Date dataOperacao);
 }

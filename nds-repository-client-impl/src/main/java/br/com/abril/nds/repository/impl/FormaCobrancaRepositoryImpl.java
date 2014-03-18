@@ -412,4 +412,50 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		
 		query.executeUpdate();
 	}
+	
+	/**
+	 * Obtem lista de FormaCobranca ativa da cota ou do distribuidor
+	 * Onde a concentração de pagamento é compatível com a data de operação atual
+	 * 
+	 * @param idFornecedor
+	 * @param diaDoMes
+	 * @param diaDaSemana
+	 * @return List<FormaCobranca>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FormaCobranca> obterFormasCobrancaPorFornecedor(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select f from FormaCobranca f ");		
+		
+		hql.append(" left join f.fornecedores fnc ");
+		
+		hql.append(" left join f.concentracaoCobrancaCota ccc ");
+		
+		hql.append(" where f.ativa = :indAtiva ");
+		
+		hql.append(" and fnc.id = :idFornecedor ");
+
+	    hql.append(" and ( f.tipoFormaCobranca = :tipoFormaCobranca ");
+			
+	    hql.append("       or ( :diaMes IN ELEMENTS(f.diasDoMes) ");
+				
+		hql.append("             or ccc.codigoDiaSemana = :diaSemana ) )");
+			
+		Query query = super.getSession().createQuery(hql.toString());
+        
+        query.setParameter("indAtiva", true);
+        	
+        query.setParameter("idFornecedor", idFornecedor);
+        
+        query.setParameter("diaMes", diaDoMes);
+        
+        query.setParameter("diaSemana", diaDaSemana);
+        
+        query.setParameter("tipoFormaCobranca", TipoFormaCobranca.DIARIA);
+        
+        return query.list();
+	}
 }
