@@ -1107,6 +1107,12 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     public List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(final FiltroFechamentoEncalheDTO filtro,
             final String sortorder, final String sortname, final Integer page, final Integer rp ) {
         
+        final String hqlCobrancaCotaAVista = "select d.status from Cobranca c " +
+        		" join c.cota cc " +
+        		" join c.divida d " +
+        		" where cc.id = cota.id " +
+        		" and c.dataEmissao = :dataEncalhe ";
+        
         final StringBuilder hql = new StringBuilder();
         
         hql.append("   SELECT  ");
@@ -1119,7 +1125,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         hql.append("   sum( coalesce(mec.qtde, 0)  *  coalesce(mec.valoresAplicados.precoComDesconto, 0)  ) as total ");
         
-        hql.append("   , coalesce(div.status, 'POSTERGADA') as statusCobranca ");
+        hql.append("   , coalesce(div.status, (");
+        
+        hql.append(hqlCobrancaCotaAVista);
+        
+        hql.append("), 'POSTERGADA') as statusCobranca ");
         
         getQueryAnalitico(filtro, hql);
         
