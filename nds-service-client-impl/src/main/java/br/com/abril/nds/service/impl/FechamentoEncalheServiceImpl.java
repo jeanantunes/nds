@@ -927,6 +927,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         if (ObrigacaoFiscal.COTA_TOTAL.equals(distribuidorRepository.obrigacaoFiscal())
                 || ObrigacaoFiscal.COTA_NFE_VENDA.equals(distribuidorRepository.obrigacaoFiscal())) {
+        	
+        	//FIXME: Ajustar a geracao no momento do Fechamento do Encalhe
             this.gerarNotaFiscal(dataEncalhe);
         }
         

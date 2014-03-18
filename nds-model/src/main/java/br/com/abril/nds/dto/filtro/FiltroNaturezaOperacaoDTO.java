@@ -7,7 +7,7 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class FiltroCadastroTipoNotaDTO extends FiltroDTO implements Serializable {
+public class FiltroNaturezaOperacaoDTO extends FiltroDTO implements Serializable {
 
 	private static final long serialVersionUID = -733782325727284635L;
 	
@@ -19,7 +19,7 @@ public class FiltroCadastroTipoNotaDTO extends FiltroDTO implements Serializable
 
 	private OrdenacaoColunaConsulta ordenacaoColuna;
 	
-	public FiltroCadastroTipoNotaDTO() {
+	public FiltroNaturezaOperacaoDTO() {
 	}
 	
 	public enum OrdenacaoColunaConsulta {

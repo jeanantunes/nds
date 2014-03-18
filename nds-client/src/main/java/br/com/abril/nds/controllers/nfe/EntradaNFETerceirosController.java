@@ -33,7 +33,7 @@ import br.com.abril.nds.service.EntradaNFETerceirosService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
-import br.com.abril.nds.service.TipoNotaFiscalService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -81,7 +81,7 @@ public class EntradaNFETerceirosController extends BaseController {
 	private PessoaJuridicaService pessoaJuridicaService;
 	
 	@Autowired
-	private TipoNotaFiscalService tipoNotaFiscalService;
+	private NaturezaOperacaoService tipoNotaFiscalService;
 	
 	@Autowired
 	private CFOPService cfopService;
