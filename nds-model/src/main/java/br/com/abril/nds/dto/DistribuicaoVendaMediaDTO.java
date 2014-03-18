@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.util.ComponentesPDV;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 
 public class DistribuicaoVendaMediaDTO {
 	
@@ -17,7 +18,10 @@ public class DistribuicaoVendaMediaDTO {
 	
 	private List<ProdutoEdicaoDTO> bases = new ArrayList<ProdutoEdicaoDTO>();
 	private List<BonificacaoDTO> bonificacoes = new ArrayList<BonificacaoDTO>();
-	
+
+    @JsonRawValue
+    private String bonificacoesVO;
+
 	private Boolean todasAsCotas;
 	private ComponentesPDV componente;
 	private String elemento,elemento2,elemento3;
@@ -170,5 +174,12 @@ public class DistribuicaoVendaMediaDTO {
 		this.elemento3 = elemento3;
 	}
 
-	
+
+    public String getBonificacoesVO() {
+        return bonificacoesVO;
+    }
+
+    public void setBonificacoesVO(String bonificacoesVO) {
+        this.bonificacoesVO = bonificacoesVO;
+    }
 }
