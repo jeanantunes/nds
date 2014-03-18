@@ -197,9 +197,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Autowired
 	private TelefoneFornecedorRepository telefoneFornecedorRepository;
-
-	@Autowired
-	private NotaFiscalNdsRepository notaFiscalNdsRepository;
 	
 	@Autowired
 	private GeracaoNotaEnvioService geracaoNotaEnvioService;
@@ -1926,32 +1923,32 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			throw new ValidacaoException(TipoMensagem.WARNING,"O intervalo de datas não pode ser nula!");
 		}
 		
-		return this.notaFiscalNdsRepository.consultaCotaExemplaresSumarizados(filtro);
+		return this.notaFiscalRepository.consultaCotaExemplaresSumarizados(filtro);
 	}
 
 	@Override
 	@Transactional
 	public Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro) {
-		return this.notaFiscalNdsRepository.consultaCotaExemplaresSumarizadosQtd(filtro);
+		return this.notaFiscalRepository.consultaCotaExemplaresSumarizadosQtd(filtro);
 	}
 
 	@Override
 	@Transactional
 	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
-		return notaFiscalNdsRepository.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
+		return this.notaFiscalRepository.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
 	}
 
 	@Override
 	@Transactional
 	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro) {
 		LOGGER.info("obter informações dos forncedores sumarizados...");
-		return this.notaFiscalNdsRepository.consultaFornecedorExemplarSumarizado(filtro);
+		return this.notaFiscalRepository.consultaFornecedorExemplarSumarizado(filtro);
 	}
 
 	@Override
 	@Transactional
 	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro) {
-		return this.notaFiscalNdsRepository.consultaFornecedorExemplaresSumarizadosQtd(filtro);
+		return this.notaFiscalRepository.consultaFornecedorExemplaresSumarizadosQtd(filtro);
 	}
 	
 	public Document criarDocumentoCancelamento(NotaFiscal notaFiscal) throws ParserConfigurationException {
