@@ -1220,8 +1220,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 
                 final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
                 
-                final BigDecimal valorCem = new BigDecimal(100);
-                
                 for (final Negociacao negociacao : negociacoes) {
                     
                     // caso todo o valor da conferencia tenha sido usado para
@@ -1233,30 +1231,12 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     final BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
                     final BigDecimal comissaoCota = negociacao.getComissaoOriginalCota();
                     final BigDecimal novaComissao = comissaoCota.subtract(comissao);
-                    
-                    //Reparte
-                    final BigDecimal valorReparteCota = valorTotalReparte.subtract(valorTotalReparte.multiply(comissaoCota.divide(valorCem)));
-                    
-                    final BigDecimal valorReparteNegociacao = valorTotalReparte.subtract(valorTotalReparte.multiply(novaComissao.divide(valorCem)));
-                    
-                    //Encalhe
-                    final BigDecimal valorEncalheCota = valorTotalEncalhe.subtract(valorTotalEncalhe.multiply(comissaoCota.divide(valorCem)));
-                    
-                    final BigDecimal valorEncalheNegociacao = valorTotalEncalhe.subtract(valorTotalEncalhe.multiply(novaComissao.divide(valorCem)));
 
-                    //Venda Comissão Antiga
-                    final BigDecimal vendaCota = valorReparteCota.subtract(valorEncalheCota);
-                    //Venda Comissão Nova
-                    final BigDecimal vendaNegociacao = valorReparteNegociacao.subtract(valorEncalheNegociacao);
-
-                    
                     final BigDecimal valorComissaoCota = 
-                    		vendaCota.multiply(comissaoCota)
-                    				 .divide(valorCem.subtract(comissaoCota));
+                    		this.calcularValorParaComissao(valorTotalReparte, valorTotalEncalhe, comissaoCota);
 
                     final BigDecimal valorNovaComissao = 
-                    		vendaNegociacao.multiply(novaComissao)
-                    				  	   .divide(valorCem.subtract(novaComissao));
+                    		this.calcularValorParaComissao(valorTotalReparte, valorTotalEncalhe, novaComissao);
 
                     final BigDecimal valorDescontar = valorComissaoCota.subtract(valorNovaComissao);
                     
@@ -1314,6 +1294,19 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 }
             }
         }
+    }
+    
+    private BigDecimal calcularValorParaComissao(BigDecimal reparte, BigDecimal encalhe, BigDecimal comissao) {
+
+        final BigDecimal valorReparte = 
+        		reparte.subtract(reparte.multiply(comissao.divide(BigDecimalUtil.CEM)));
+        
+        final BigDecimal valorEncalhe = 
+        		encalhe.subtract(encalhe.multiply(comissao.divide(BigDecimalUtil.CEM)));
+        
+        final BigDecimal valorVenda = valorReparte.subtract(valorEncalhe);
+
+    	return valorVenda.multiply(comissao).divide(BigDecimalUtil.CEM.subtract(comissao));
     }
     
 }

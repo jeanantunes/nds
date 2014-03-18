@@ -63,7 +63,7 @@ public class Cota implements Serializable {
 	private Pessoa pessoa;
 	
 	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
-	private boolean sugereSuspensao;
+	private boolean sugereSuspensao = true;
 	
 	@Column(name = "POSSUI_CONTRATO", nullable = false)
 	private boolean possuiContrato;

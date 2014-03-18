@@ -352,24 +352,43 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     }
     
     /**
-     * Verifica se cota unifica todas as cobrancas
+     * Verifica se cota unifica cobranca de fornecedores
+     * Obtém formas de cobrança compativeis com fornecedor e data de operação
+     * Verifica se próximo fornecedor tambem se encontra na forma de cobrança do fornecedor anterior
      * 
      * @param cota
+     * @param fornecedorAnterior
+     * @param fornecedorAtual
+     * @param mapFormasCobrancaFornecedor
      * @return boolean
      */
-    private boolean isCotaUnificaCobranca(Cota cota){
+	private boolean isUnificaCobranca(Cota cota,
+			                          Fornecedor fornecedorAnterior, 
+    		                          Fornecedor fornecedorAtual, 
+    		                          Map<Fornecedor, List<FormaCobranca>> mapFormasCobrancaFornecedor){
     	
-    	//TODO: Verificar alteração na obtenção de parametro de unificação de cobrança, hoje depende da forma de cobrança
-    	//no caso atual, a forma de cobrança escolhida conforme os parametros passados pode nao coincidir com o parametro unificaCobranca utilizado
-    	//Aguardando resposta de negócio
-    	if (cota.getParametroCobranca() != null){
-    		
-    		return cota.getParametroCobranca().isUnificaCobranca()!=null?cota.getParametroCobranca().isUnificaCobranca():false;
-    	}
+    	List<FormaCobranca> fcs = mapFormasCobrancaFornecedor.get(fornecedorAnterior);
     	
-        PoliticaCobranca pl = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor().getPoliticaCobranca();
+        for (FormaCobranca fc : fcs){
+        	
+        	if (fc.getParametroCobrancaCota()!=null){
+        		
+        		if (fc.getParametroCobrancaCota().getCota().equals(cota)){
+        			
+        		    return (fc.getFornecedores().contains(fornecedorAtual) && !fornecedorAtual.equals(fornecedorAnterior));
+        		}    
+        	}
+        }
         
-        return pl.isUnificaCobranca();  
+        for (FormaCobranca fc : fcs){
+
+        	if (fc.getPoliticaCobranca()!=null){
+        		
+        		return (fc.getFornecedores().contains(fornecedorAtual) && !fornecedorAtual.equals(fornecedorAnterior));
+        	}
+        }
+       
+        return false; 
     }
     
     /**
@@ -638,14 +657,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Map<Cota, List<GerarCobrancaHelper>> consolidadosCotaCentralizacao = new HashMap<Cota, List<GerarCobrancaHelper>>();
 		
+		Map<Fornecedor,List<FormaCobranca>> mapFormasCobrancaFornecedor = this.formaCobrancaService.obterMapFornecedorFormasCobranca(dataOperacao);
+		
 		
 		if (listaMovimentoFinanceiroCota != null && !listaMovimentoFinanceiroCota.isEmpty()){
 			
 			MovimentoFinanceiroCota primeiroMovimentoFinanceiroCota = listaMovimentoFinanceiroCota.get(0);
 			
-			Fornecedor ultimoFornecedor = primeiroMovimentoFinanceiroCota.getFornecedor();
+			Fornecedor fornecedorAnterior = primeiroMovimentoFinanceiroCota.getFornecedor();
 			
-			Fornecedor fornecedorProdutoMovimento = null;
+			Fornecedor fornecedorAtual = null;
 			
 			Cota cotaAnterior = primeiroMovimentoFinanceiroCota.getCota();
 			
@@ -662,9 +683,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				    continue;
 				}
 							    
-				fornecedorProdutoMovimento = movimentoFinanceiroCota.getFornecedor();
+				fornecedorAtual = movimentoFinanceiroCota.getFornecedor();
 
-				if (fornecedorProdutoMovimento == null){
+				if (fornecedorAtual == null){
 			    	
 			    	throw new GerarCobrancaValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 			    			                                                  "Fornecedor não encontrado para o [Movimento Financeiro " +
@@ -672,12 +693,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			    			                                                  cotaAtual.getNumeroCota() + "]."));
 			    }
 				
-				boolean unificaCobranca = this.isCotaUnificaCobranca(cotaAnterior);
+				boolean unificaCobranca = this.isUnificaCobranca(cotaAnterior,
+						                                         fornecedorAnterior, 
+						                                         fornecedorAtual, 
+						                                         mapFormasCobrancaFornecedor);
 				
 				TipoMovimentoFinanceiro tipo = (TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento();
-				
+
 				if (cotaAtual.equals(cotaAnterior) &&
-				   ((fornecedorProdutoMovimento.equals(ultimoFornecedor)) || 
+				   ((fornecedorAtual.equals(fornecedorAnterior)) || 
 				    (unificaCobranca))){
 					
 					movimentos.add(movimentoFinanceiroCota);			
@@ -699,7 +723,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 														    numeroDiasNovaCobranca, 
 														    dataOperacao, 
 														    msgs, 
-														    ultimoFornecedor, 
+														    fornecedorAnterior, 
 														    postergarDividas,
 														    consolidadosCotaCentralizacao,
 														    valorMovimentos, 
@@ -708,7 +732,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 					cotaAnterior = cotaAtual;
 					
-					ultimoFornecedor = movimentoFinanceiroCota.getFornecedor();
+					fornecedorAnterior = fornecedorAtual;
 					
 					movimentos = new ArrayList<MovimentoFinanceiroCota>();
 					
@@ -732,7 +756,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 												    numeroDiasNovaCobranca, 
 												    dataOperacao, 
 												    msgs, 
-												    ultimoFornecedor, 
+												    fornecedorAnterior, 
 												    postergarDividas,
 												    consolidadosCotaCentralizacao,
 												    valorMovimentos, 
