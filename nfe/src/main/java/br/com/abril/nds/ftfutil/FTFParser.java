@@ -3,6 +3,7 @@ package br.com.abril.nds.ftfutil;
 import java.io.BufferedWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,12 +11,16 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.util.export.Delimiter;
 
 public final class FTFParser {
 
 	private boolean trace;
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(FTFParser.class);
 	
 	public FTFParser() {
 		// TODO Auto-generated constructor stub
@@ -74,9 +79,9 @@ public final class FTFParser {
 				}
 			}
 		}
-		if(delimiter!=null){
+		if(delimiter != null) {
 			parser.append(StringUtils.join(campos,delimiter));
-		}else{
+		} else {
 			for (String campo:campos) {
 				
 				if (isTrace()) {
@@ -84,7 +89,9 @@ public final class FTFParser {
 					System.out.println(campo);
 				}
 				
-				parser.append(campo);
+				if(campo != null) {
+					parser.append(campo);
+				}
 			}
 			
 		}
@@ -133,20 +140,54 @@ public final class FTFParser {
 		String className = "";
 		switch (Integer.parseInt(tipoRegistro)) {
 		case 0:
-			className="br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro00";
-			break;
 		case 1:
-			className="br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro01";
-			break;
 		case 9:
-			className="br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro09";
+			className="br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro0"+ Integer.parseInt(tipoRegistro);
 			break;
+		
 		default:
 			break;
 		}
 		
+		Object newInstance = parseLinhaPeloClassName(line, className);
+		
+		return (FTFBaseDTO) newInstance;
+			
+	}
+	
+	public static FTFBaseDTO parseLinhaEnvioFTF(String line) throws Exception {
+		
+		String tipoRegistro = line.substring(0, 1);
+
+		String className = "";
+		switch (Integer.parseInt(tipoRegistro)) {
+		case 0:
+		case 1:
+		case 2:
+		case 5:
+		case 8:
+		case 9:
+			className="br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro0"+ Integer.parseInt(tipoRegistro);
+			break;
+
+		default:
+			break;
+		}
+		
+		Object newInstance = parseLinhaPeloClassName(line, className);
+		
+		return (FTFBaseDTO) newInstance;
+		
+	}
+
+	private static Object parseLinhaPeloClassName(String line, String className)
+			throws ClassNotFoundException, InstantiationException,
+			IllegalAccessException, InvocationTargetException {
+		
 		Class<?> forName = Class.forName(className);
 		Method[] methods = forName.getDeclaredMethods();
+		Field[] fields = forName.getDeclaredFields();
+		
 		List<Method> methodList = new ArrayList<Method>();
 		
 		for (Method method : methods) {
@@ -168,19 +209,39 @@ public final class FTFParser {
 		
 		} );
 		
-		int count=0;
+		int count = 0;
 		for (Method method : methodList) {
-			count+=method.getAnnotation(FTFfield.class).tamanho();
+			count += method.getAnnotation(FTFfield.class).tamanho();
 		}
 		
-		if(count!=line.length()){
-			throw new RuntimeException("Linha do arquivo de retorno com tamanho diferente do mapeamento.");
+		if(methodList.isEmpty()) {
+			
+			for (Field field : fields) {
+				
+				Annotation[] annotations = field.getDeclaredAnnotations();
+				
+				for (Annotation annot: annotations) {
+					
+					if (annot instanceof FTFfield) {
+						
+						FTFfield campo = (FTFfield) annot;
+						count += campo.tamanho();
+						
+					}
+				}
+			}
+			
 		}
+		
+		//if(count != line.length()){
+			//throw new RuntimeException("Linha do arquivo de retorno com tamanho diferente do mapeamento.");
+			LOGGER.error(className + " || Previsto: "+ StringUtils.rightPad(count+"", 4, ' ') +" / Encontrado: "+ StringUtils.rightPad(line.length()+"", 4, ' ') +" | "+ line.toString());
+		//}
 		
 		
 		Object newInstance = forName.newInstance();
 		
-		int pointer=0;
+		int pointer = 0;
 		for (Method m : methodList) {
 			int tamanho = m.getAnnotation(FTFfield.class).tamanho();
 			String tipo = m.getAnnotation(FTFfield.class).tipo();
@@ -188,20 +249,17 @@ public final class FTFParser {
 			
 			Object param = null;
 			
-			if(tipo.equalsIgnoreCase("long")){
-				param = new Long(value);
-			}else{
+			if(tipo.equalsIgnoreCase("long")) {
+				param = Long.valueOf(value != null ? value.trim() : "0");
+			} else {
 				param = value;
-				
 			}
 			
 			m.invoke(newInstance, param);
-			pointer+=tamanho;
+			pointer += tamanho;
 			
 		}
-		
-		return (FTFBaseDTO)newInstance;
-			
+		return newInstance;
 	}
-			
+	
 }

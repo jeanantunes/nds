@@ -16,6 +16,8 @@ public class FiltroConsultaNegociacaoDivida implements Serializable {
 	private Date dataOperacao;
 	
 	private boolean lancamento;
+	
+	private boolean count;
 
 	public PaginacaoVO getPaginacaoVO() {
 		return paginacaoVO;
@@ -39,6 +41,20 @@ public class FiltroConsultaNegociacaoDivida implements Serializable {
 
 	public void setLancamento(boolean lancamento) {
 		this.lancamento = lancamento;
+	}
+
+	/**
+	 * @return the count
+	 */
+	public boolean isCount() {
+		return count;
+	}
+
+	/**
+	 * @param count the count to set
+	 */
+	public void setCount(boolean count) {
+		this.count = count;
 	}
 
 	/**

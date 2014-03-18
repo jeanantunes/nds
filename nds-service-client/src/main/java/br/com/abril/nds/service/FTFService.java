@@ -5,7 +5,6 @@ import java.util.List;
 
 import br.com.abril.nds.dto.FTFReportDTO;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro08;
 import br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro01;
 import br.com.abril.nds.model.ftf.retorno.FTFRetornoRET;
 

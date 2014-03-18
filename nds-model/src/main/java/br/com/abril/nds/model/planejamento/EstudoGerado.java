@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.planejamento;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
@@ -19,20 +20,23 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
+import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.annotations.*;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @SuppressWarnings("serial")
 @Table(name = "ESTUDO_GERADO")
 public class EstudoGerado implements Serializable {
-	
-	@Id
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EstudoGerado.class);
+
+    @Id
 	@Column(name = "ID")
 	protected Long id;
 	
@@ -94,8 +98,12 @@ public class EstudoGerado implements Serializable {
     
     @Column(name = "LIBERADO")
 	private Boolean liberado;
-	
-	public BigInteger getQtdeReparte() {
+
+    @Column(name = "DADOS_VENDA_MEDIA")
+    @Type(type = "text")
+    private String dadosVendaMedia;
+
+    public BigInteger getQtdeReparte() {
 		return qtdeReparte;
 	}
 	
@@ -241,6 +249,27 @@ public class EstudoGerado implements Serializable {
 		this.liberado = liberado;
 	}
 
+    public void setDadosVendaMedia(DistribuicaoVendaMediaDTO dadosVendaMedia) {
+        if (dadosVendaMedia != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            String valueAsString = null;
+            try {
+                valueAsString = mapper.writeValueAsString(dadosVendaMedia);
+            } catch (IOException e) {
+                LOGGER.info("Serialization error.", e);
+            }
+            this.dadosVendaMedia = valueAsString;
+        }
+    }
+
+    public void setDadosVendaMedia(String dadosVendaMedia) {
+        this.dadosVendaMedia = dadosVendaMedia;
+    }
+
+    public String getDadosVendaMedia() {
+        return dadosVendaMedia;
+    }
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -289,6 +318,5 @@ public class EstudoGerado implements Serializable {
 			return false;
 		return true;
 	}
-	
 	
 }

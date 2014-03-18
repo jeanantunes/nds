@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public class BigDecimalUtil {
 	
+	public static final BigDecimal CEM = BigDecimal.valueOf(100);
 	
 	/**
 	 * Soma o valores desprezando nulos passado como paramentro.

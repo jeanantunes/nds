@@ -289,20 +289,6 @@ public class NotaFiscalInformacoes implements Serializable {
 	}
 
 	/**
-	 * @return the processos
-	 */
-	public Set<Processo> getProcessos() {
-		return processos;
-	}
-
-	/**
-	 * @param processos the processos to set
-	 */
-	public void setProcessos(Set<Processo> processos) {
-		this.processos = processos;
-	}
-
-	/**
 	 * @return the condicao
 	 */
 	public Condicao getCondicao() {
