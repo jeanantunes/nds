@@ -637,7 +637,7 @@ public class Fixture {
 	public static Map<String, Processo> processos() {
         
 	    // initial a Map
-	    Map<String, Processo> map = new HashMap<String, Processo>();
+	    final Map<String, Processo> map = new HashMap<String, Processo>();
 	    
 	    Processo p1 = new Processo();
 	    p1.setId(1L);

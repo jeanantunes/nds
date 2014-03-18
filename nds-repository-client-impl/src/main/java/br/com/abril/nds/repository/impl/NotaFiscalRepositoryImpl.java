@@ -89,6 +89,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(NfeDTO.class));
 		
+
 		return query.list();
 
 	}
