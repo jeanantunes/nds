@@ -23,11 +23,10 @@ public final class FTFParser {
 	private static Logger LOGGER = LoggerFactory.getLogger(FTFParser.class);
 	
 	public FTFParser() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public FTFParser(boolean debug) {
-		
 		this.trace = debug;
 	}
 	
@@ -80,12 +79,14 @@ public final class FTFParser {
 			}
 		}
 		if(delimiter != null) {
+			
 			parser.append(StringUtils.join(campos,delimiter));
+			
 		} else {
+			
 			for (String campo:campos) {
 				
 				if (isTrace()) {
-					
 					System.out.println(campo);
 				}
 				
@@ -233,11 +234,16 @@ public final class FTFParser {
 			
 		}
 		
-		//if(count != line.length()){
-			//throw new RuntimeException("Linha do arquivo de retorno com tamanho diferente do mapeamento.");
-			LOGGER.error(className + " || Previsto: "+ StringUtils.rightPad(count+"", 4, ' ') +" / Encontrado: "+ StringUtils.rightPad(line.length()+"", 4, ' ') +" | "+ line.toString());
-		//}
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug(className + " || Previsto: "+ StringUtils.rightPad(String.valueOf(count), 4, ' ') 
+					+" / Encontrado: "+ StringUtils.rightPad(String.valueOf(line.length()), 4, ' ') 
+					+" | "+ line.toString());
+		}
 		
+		if(count != line.length()) {
+			throw new RuntimeException("Linha do arquivo de retorno com tamanho diferente do mapeamento.");
+			
+		}
 		
 		Object newInstance = forName.newInstance();
 		
@@ -245,7 +251,7 @@ public final class FTFParser {
 		for (Method m : methodList) {
 			int tamanho = m.getAnnotation(FTFfield.class).tamanho();
 			String tipo = m.getAnnotation(FTFfield.class).tipo();
-			String value = line.substring(pointer, pointer+tamanho);
+			String value = line.substring(pointer, pointer + tamanho);
 			
 			Object param = null;
 			
