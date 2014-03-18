@@ -364,6 +364,8 @@ var MANTER_COTA = $.extend(true, {
                     	
                     	$("#numeroCotaCPF", this.workspace).attr("disabled", "disabled");
                     	
+                    	$("#tabCota", this.workspace).tabs( "option", "disabled", [4] );
+                    	
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionadaCPF");
                         
                         COTA_CPF.editarCPF(result);
@@ -371,6 +373,8 @@ var MANTER_COTA = $.extend(true, {
                     else {
                     	
                     	$("#numeroCotaCNPJ", this.workspace).attr("disabled", "disabled");
+                    	
+                    	$("#tabCota", this.workspace).tabs( "option", "disabled", [4] );
                     	
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
                         
@@ -1155,6 +1159,8 @@ var COTA_CNPJ = $.extend(true, {
                 }
 
                 MANTER_COTA.montarCombo(dados.listaClassificacao,"#classificacaoSelecionada");
+                
+                $("#tabCota", this.workspace).tabs( "option", "disabled", [4] );
 
                 MANTER_COTA.popupCota(true);
             }
@@ -1368,6 +1374,8 @@ var COTA_CPF = $.extend(true, {
                 }
 
                 MANTER_COTA.montarCombo(dados.listaClassificacao,"#classificacaoSelecionadaCPF");
+                
+                $("#tabCota", this.workspace).tabs( "option", "disabled", [4] );
 
                 MANTER_COTA.popupCota(true);
             }
@@ -1833,7 +1841,7 @@ var SOCIO_COTA = $.extend(true, {
 
             var idSocio = value.id;
 
-            var acao  = '<a href="javascript:;" onclick="SOCIO_COTA.editarSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" /></a>';
+            var acao  = '<a href="javascript:;" onclick="SOCIO_COTA.KSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" /></a>';
 
             if (MANTER_COTA.isModoTelaCadastroCota()) {
                 acao += '<a href="javascript:;" onclick="SOCIO_COTA.removerSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" /></a>';
