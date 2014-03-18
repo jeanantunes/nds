@@ -11,7 +11,6 @@ import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
@@ -209,4 +208,6 @@ public interface ParametroCobrancaCotaService {
 	 * @param formaCobrancaId
 	 */
 	void excluirParametroCobrancaCota(Long formaCobrancaId);
+
+    void verificarDataAlteracaoTipoCota(Long idCota);
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -36,7 +37,7 @@ public class AnaliticoEncalheVO implements Serializable {
 		this.setNumeroCota(dto.getNumeroCota().toString());
 		this.setNomeCota(dto.getNomeCota());
 		this.setBoxEncalhe(dto.getBoxEncalhe());
-		this.setTotal(CurrencyUtil.formatarValor(dto.getTotal()));
+		this.setTotal(CurrencyUtil.formatarValor(MathUtil.round(dto.getTotal(), 2)));
 		this.setStatusCobranca(dto.getStatusCobranca().toString());
 	}
 
