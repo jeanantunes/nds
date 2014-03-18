@@ -1841,7 +1841,7 @@ var SOCIO_COTA = $.extend(true, {
 
             var idSocio = value.id;
 
-            var acao  = '<a href="javascript:;" onclick="SOCIO_COTA.KSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" /></a>';
+            var acao  = '<a href="javascript:;" onclick="SOCIO_COTA.editarSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" /></a>';
 
             if (MANTER_COTA.isModoTelaCadastroCota()) {
                 acao += '<a href="javascript:;" onclick="SOCIO_COTA.removerSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" /></a>';
