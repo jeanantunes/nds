@@ -2,14 +2,19 @@ package br.com.abril.nds.controllers.expedicao;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.collect.Lists;
+import com.google.common.primitives.Longs;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
@@ -17,9 +22,11 @@ import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -31,6 +38,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -56,6 +64,9 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 	private FornecedorService fornecedorService;
 	@Autowired
 	private LancamentoService lancamentoService;
+	
+	@Autowired
+	private DescontoService descontoService;
 	
 	@Autowired
 	private TipoMovimentoService tipoMovimentoService;
@@ -165,25 +176,24 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
 		}
 		
-		        /**
-     * Método com finalidade de redirecionamento para a página
-     */
-		public void confirmacaoExpedicao() {
-		}
-		
-		
-		        /**
-     * Confirma expedição, gera movimentos do distribuidor e cotas e retorna
-     * dados da pesquisa atualizados
-     * 
-     * @param page - nº da página a pesquisar
-     * @param rp - nº de registros por página
-     * @param sortname - nome da coluna de ordenação
-     * @param sortorder - ordenação (asc - desc)
-     * @param idFornecedor - código do fornecedor
-     * @param dtLancamento - data de lançamento
-     * @param estudo - boolean - possui ou não estudo
-     */
+		 /**
+         * Método com finalidade de redirecionamento para a página
+         */
+    	public void confirmacaoExpedicao() {
+    	}
+	
+		/**
+         * Confirma expedição, gera movimentos do distribuidor e cotas e retorna
+         * dados da pesquisa atualizados
+         * 
+         * @param page - nº da página a pesquisar
+         * @param rp - nº de registros por página
+         * @param sortname - nome da coluna de ordenação
+         * @param sortorder - ordenação (asc - desc)
+         * @param idFornecedor - código do fornecedor
+         * @param dtLancamento - data de lançamento
+         * @param estudo - boolean - possui ou não estudo
+         */
 		@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO_ALTERACAO)
 		public void confirmarExpedicao( Integer page, Integer rp, String sortname, 
 				String sortorder, Long idFornecedor, 
@@ -218,6 +228,11 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 				
 				Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+				
+				//Ordena IDS
+				long[] lista = Longs.toArray(selecionados);
+		        Arrays.sort(lista); 
+		        selecionados = Longs.asList(lista);
 				
 				for(int i=0; i<selecionados.size(); i++) {
 					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota,tipoMovimentoJuramentado);
@@ -444,6 +459,30 @@ public class ConfirmacaoExpedicaoController extends BaseController{
             throw new ValidacaoException(TipoMensagem.ERROR,
                     "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
 			}
+		}
+		
+		@Get
+		@Path("obterValorDesconto/{numeroCota}/{codigoProduto}/{numeroEdicao}")
+		public void obterValorDesconto(Integer numeroCota, String codigoProduto, Long numeroEdicao) throws Exception {
+		    
+		    
+		    if(numeroCota.equals(0))
+		        numeroCota = null;
+		    
+		    if(codigoProduto.equals("0"))
+                codigoProduto = null;
+            
+		    
+		    if(numeroEdicao.equals(0L))
+                numeroEdicao = null;
+		    
+		    DescontoDTO dto = descontoService.obterDescontoPor(numeroCota, codigoProduto, numeroEdicao);
+		    
+		    if(dto == null)
+		        dto = new DescontoDTO();
+		    
+		    result.use(Results.json()).from(dto, "result").serialize();
+		    
 		}
 		
 	}

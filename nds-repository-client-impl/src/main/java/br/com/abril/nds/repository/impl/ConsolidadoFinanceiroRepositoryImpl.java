@@ -923,7 +923,11 @@ ConsolidadoFinanceiroRepository {
         
         final StringBuilder hql = new StringBuilder("select ");
         
-        hql.append("        produto11_.CODIGO as codigoProduto, ")
+        hql.append(" consignados.*, sum(qtde) * preco as total from ( ")
+        .append("        select ")
+        .append("        produtoedi8_.ID as idProdutoEdicao, ")
+        .append("		 movimentos4_.ID as idMovimentoEstoqueCota, ")
+        .append("        produto11_.CODIGO as codigoProduto, ")
         .append("        produto11_.NOME as nomeProduto, ")
         .append("        pessoajuri14_.RAZAO_SOCIAL as nomeFornecedor, ")
         .append("        produtoedi8_.NUMERO_EDICAO as numeroEdicao, ")
@@ -933,75 +937,74 @@ ConsolidadoFinanceiroRepository {
         .append("        coalesce(estudocota7_.QTDE_PREVISTA,0) as reparteSugerido, ")
         .append("        coalesce(chamadaEncalheCota.QTDE_PREVISTA,0) as reparteFinal, ")
         .append("        coalesce(estudocota7_.QTDE_PREVISTA-estudocota7_.QTDE_EFETIVA,0) as diferenca, ")
-        .append("        diferenca10_.TIPO_DIFERENCA as motivoTexto, ")
-        .append("        sum(movimentos4_.QTDE) * coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as total, ")
-        .append("        coalesce(chamadaEncalhe.sequencia, 'Postergado') as sequencia ")
-        .append("from ")
+        .append("        case when diferenca10_.TIPO_DIFERENCA is null then '' else diferenca10_.TIPO_DIFERENCA end as motivoTexto, ")
+        .append("        movimentos4_.QTDE as qtde, ")
+        .append(" 		 coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as preco, ")
+        .append("        chamadaEncalhe.sequencia as sequencia ")
+        .append(" from ")
         .append("        CONSOLIDADO_FINANCEIRO_COTA consolidad0_  ")
-        .append("inner join ")
+        .append(" inner join ")
         .append("        COTA cota1_  ")
         .append("                on consolidad0_.COTA_ID=cota1_.ID  ")
-        .append("inner join ")
+        .append(" inner join ")
         .append("        CONSOLIDADO_MVTO_FINANCEIRO_COTA movimentos2_  ")
         .append("                on consolidad0_.ID=movimentos2_.CONSOLIDADO_FINANCEIRO_ID  ")
-        .append("inner join ")
+        .append(" inner join ")
         .append("        MOVIMENTO_FINANCEIRO_COTA movimentof3_  ")
         .append("                on movimentos2_.MVTO_FINANCEIRO_COTA_ID=movimentof3_.ID  ")
-        .append("inner join ")
+        .append(" inner join ")
         .append("        MOVIMENTO_ESTOQUE_COTA movimentos4_  ")
         .append("                on movimentof3_.ID=movimentos4_.MOVIMENTO_FINANCEIRO_COTA_ID  ")
-        .append("inner join ")
+        .append(" inner join ")
         .append("        ESTOQUE_PRODUTO_COTA estoquepro6_  ")
         .append("                on movimentos4_.ESTOQUE_PROD_COTA_ID=estoquepro6_.ID  ")
-        .append("inner join ")
+        .append(" inner join ")
         .append("        PRODUTO_EDICAO produtoedi8_  ")
         .append("                on estoquepro6_.PRODUTO_EDICAO_ID=produtoedi8_.ID  ")
-        .append("inner join ")
+        .append(" inner join ")
         .append("        PRODUTO produto11_  ")
         .append("                on produtoedi8_.PRODUTO_ID=produto11_.ID  ")
-        .append("inner join ")
+        .append(" inner join ")
         .append("        PRODUTO_FORNECEDOR fornecedor12_  ")
         .append("                on produto11_.ID=fornecedor12_.PRODUTO_ID  ")
-        .append("inner join ")
+        .append(" inner join ")
         .append("        FORNECEDOR fornecedor13_  ")
         .append("                on fornecedor12_.fornecedores_ID=fornecedor13_.ID  ")
-        .append("inner join ")
+        .append(" inner join ")
         .append("        PESSOA pessoajuri14_  ")
         .append("                on fornecedor13_.JURIDICA_ID=pessoajuri14_.ID  ")
-        .append("left outer join ")
+        .append(" left outer join ")
         .append("        ESTUDO_COTA estudocota7_  ")
         .append("                on movimentos4_.ESTUDO_COTA_ID=estudocota7_.ID  ")
-        .append("left outer join ")
+        .append(" left outer join ")
         .append("        RATEIO_DIFERENCA rateiosdif9_  ")
         .append("                on estudocota7_.ID=rateiosdif9_.ESTUDO_COTA_ID  ")
-        .append("left outer join ")
+        .append(" left outer join ")
         .append("        DIFERENCA diferenca10_  ")
         .append("                on rateiosdif9_.DIFERENCA_ID=diferenca10_.id  ")
-        .append("inner join ")
+        .append(" inner join ")
         .append("        TIPO_MOVIMENTO tipomovime5_  ")
         .append("                on movimentof3_.TIPO_MOVIMENTO_ID=tipomovime5_.ID  ")
-        .append("inner join ")
+        .append(" inner join ")
         .append("        CHAMADA_ENCALHE_COTA chamadaEncalheCota ")
         .append("                on cota1_.ID = chamadaEncalheCota.COTA_ID ")
-        .append("inner join ")
+        .append(" inner join ")
         .append("        CHAMADA_ENCALHE chamadaEncalhe ")
         .append("                on (produtoedi8_.ID = chamadaEncalhe.PRODUTO_EDICAO_ID ")
         .append("                and chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID) ")
-        .append("where ")
+        .append(" where ")
         .append("        cota1_.NUMERO_COTA = :numeroCota ")
         .append("        and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
         .append("        and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
         .append("        and chamadaEncalheCota.postergado = :naoPostergado ")
-        .append("group by ")
-        .append("        produto11_.CODIGO , ")
-        .append("        produto11_.NOME , ")
-        .append("        produtoedi8_.NUMERO_EDICAO , ")
-        .append("        produtoedi8_.PRECO_VENDA , ")
-        .append("        pessoajuri14_.RAZAO_SOCIAL ")
+        .append(" group by ")
+        .append("        idMovimentoEstoqueCota ")
         
         .append("union all ")
         
         .append("select ")
+        .append("        produtoedi6_.ID as idProdutoEdicao, ")
+        .append("        movimentos2_.ID as idMovimentoEstoqueCota, ")
         .append("        produto9_.CODIGO as codigoProduto, ")
         .append("        produto9_.NOME as nomeProduto, ")
         .append("        pessoajuri12_.RAZAO_SOCIAL as nomeFornecedor, ")
@@ -1013,8 +1016,9 @@ ConsolidadoFinanceiroRepository {
         .append("        estudocota5_.QTDE_EFETIVA as reparteFinal, ")
         .append("        estudocota5_.QTDE_PREVISTA-estudocota5_.QTDE_EFETIVA as diferenca, ")
         .append("        diferenca8_.TIPO_DIFERENCA as motivoTexto, ")
-        .append("        sum(movimentos2_.QTDE) * coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi6_.PRECO_VENDA) as total, ")
-        .append("        coalesce(chamadaEncalhe.sequencia, 'Postergado') as sequencia ")
+        .append("        movimentos2_.QTDE as qtde, ")
+        .append("   	 coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi6_.PRECO_VENDA) as preco, ")
+        .append("        chamadaEncalhe.sequencia as sequencia ")
         .append("from ")
         .append("        MOVIMENTO_FINANCEIRO_COTA movimentof0_  ")
         .append("inner join ")
@@ -1080,11 +1084,12 @@ ConsolidadoFinanceiroRepository {
         .append("                        ) ")
         .append("                )  ")
         .append("group by ")
-        .append("        produto9_.CODIGO , ")
-        .append("        produto9_.NOME , ")
-        .append("        produtoedi6_.NUMERO_EDICAO , ")
-        .append("        produtoedi6_.PRECO_VENDA , ")
-        .append("        pessoajuri12_.RAZAO_SOCIAL ");
+        .append("        idMovimentoEstoqueCota ");
+        
+        hql.append(" ) as consignados ");
+        hql.append(" group by idProdutoEdicao ");
+        
+        
         
         hql.append(this.getOrdenacaoConsignado(filtro));
         
@@ -1105,6 +1110,7 @@ ConsolidadoFinanceiroRepository {
         hql.append(" where mov.id = :idMovimentoFinanceiro ");
         
         final Query query = this.getSession().createQuery(hql.toString());
+        
         query.setParameter("idMovimentoFinanceiro", idMovimentoFinanceiro);
         
         return query.list();
@@ -1204,28 +1210,21 @@ ConsolidadoFinanceiroRepository {
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(final Long idCota) {
+    public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(final Long idCota, Date dataOperacao) {
         
-        final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c, Distribuidor d ");
+        final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c ");
         
-        if (idCota != null){
+        hql.append(" join c.cota cota ");
+        
+        hql.append(" where c.dataConsolidado = :dataOperacao ");
             
-            hql.append(" join c.cota cota ");
-        }
-        
-        hql.append(" where c.dataConsolidado = d.dataOperacao ");
-        
-        if (idCota != null){
-            
-            hql.append(" and cota.id = :idCota ");
-        }
+        hql.append(" and cota.id = :idCota ");
         
         final Query query = this.getSession().createQuery(hql.toString());
         
-        if (idCota != null){
-            
-            query.setParameter("idCota", idCota);
-        }
+        query.setParameter("idCota", idCota);
+        
+        query.setParameter("dataOperacao", dataOperacao);
         
         return query.list();
     }
@@ -1276,7 +1275,7 @@ ConsolidadoFinanceiroRepository {
         .append(" cfc.DEBITO_CREDITO as debitoCredito, ")
         
         //detalharDebitoCredito
-        .append("(select case when count(m.id) > 0 then true else false end ")
+        .append("(select case when count(m.id) > 0 or cfc.DEBITO_CREDITO != 0 then true else false end ")
         .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
         .append(" inner join COTA on COTA.ID = m.COTA_ID")
         .append(" where COTA.NUMERO_COTA = :numeroCota ")

@@ -314,7 +314,7 @@ var negociacaoDividaController = $.extend(true, {
 			exibirMensagem("WARNING", ["Não foram selecionadas dívidas para negociação."], "");
 			return;
 		}
-
+		
 		$("#formaPgtoForm")[0].reset();
 
 		negociacaoDividaController.limparPopupFormaPgto();
@@ -357,9 +357,7 @@ var negociacaoDividaController = $.extend(true, {
 					buttons: {
 						"Confirmar": function() {
 							
-							negociacaoDividaController.confirmarNegociacao();
-							
-							$("#dialog-NegociacaoformaPgto", negociacaoDividaController.workspace).dialog("close");
+							negociacaoDividaController.confirmarNegociacao();							
 						},
 						"Cancelar": function() {
 							 $("#dialog-NegociacaoformaPgto", negociacaoDividaController.workspace).dialog("close");
@@ -369,6 +367,10 @@ var negociacaoDividaController = $.extend(true, {
 					close: function(event, ui) {
 						
 						negociacaoDividaController.pesquisar();
+					},
+					open: function(event, ui) {
+						
+						negociacaoDividaController.tratarSituacaoCota(negociacaoDividaController.situacaoCota);
 					}
 				});
 			} ,
@@ -389,11 +391,11 @@ var negociacaoDividaController = $.extend(true, {
               },
               {
             	  name: "comissaoAtualCota",
-            	  value: priceToFloat($("#comissaoAtualCota", negociacaoDividaController.workspace).val())
+            	  value: $("#comissaoAtualCota", negociacaoDividaController.workspace).val()
               },
               {
             	  name: "comissaoUtilizar",
-            	  value: priceToFloat($("#comissaoUtilizar", negociacaoDividaController.workspace).val())
+            	  value: $("#comissaoUtilizar", negociacaoDividaController.workspace).val()
               },
               {
             	  name: "tipoCobranca",
@@ -457,11 +459,11 @@ var negociacaoDividaController = $.extend(true, {
 					},
 					{
 						name: "parcelas["+ index +"].encargos",
-						value: priceToFloat($("[name=encargoParcela]", negociacaoDividaController.workspace)[index].value)
+						value: $("[name=encargoParcela]", negociacaoDividaController.workspace)[index].value
 					},
 					{
 						name: "parcelas["+ index +"].movimentoFinanceiroCota.valor",
-						value: priceToFloat($("[name=valorParcela]", negociacaoDividaController.workspace)[index].value)
+						value: $("[name=valorParcela]", negociacaoDividaController.workspace)[index].value
 					}
 				);
 			});
@@ -481,7 +483,7 @@ var negociacaoDividaController = $.extend(true, {
 					},
 					{
 						name: "parcelas["+ index +"].movimentoFinanceiroCota.valor",
-						value: priceToFloat($("[name=valorCheque]", negociacaoDividaController.workspace)[index].value)
+						value: $("[name=valorCheque]", negociacaoDividaController.workspace)[index].value
 					}
 				);
 			});
@@ -494,7 +496,7 @@ var negociacaoDividaController = $.extend(true, {
 		
 		params.push({
 			name: 'valorDividaComissao',
-			value: priceToFloat($('#totalSelecionado', negociacaoDividaController.wokspace).html())
+			value: $('#totalSelecionado', negociacaoDividaController.wokspace).html()
 		});
 		
 		params.push({
@@ -504,7 +506,7 @@ var negociacaoDividaController = $.extend(true, {
 		
 		$.postJSON(contextPath + '/financeiro/negociacaoDivida/confirmarNegociacao',
 			params, 
-			function(result) {
+			function(result) {//TODO
 			
 	            if (result.tipoMensagem && result.listaMensagens) {
 	                
@@ -617,12 +619,14 @@ var negociacaoDividaController = $.extend(true, {
 			var totalParcTotal = 0;
 			
 			
+			$('#header_table_Ativar', negociacaoDividaController.workspace).hide();
+
 			if(this.situacaoCota == 'ATIVO'){				
 				$('#header_table_Ativar', negociacaoDividaController.workspace).hide();
 			}else{
 				$('#header_table_Ativar', negociacaoDividaController.workspace).show();
 			}
-			
+
 			while(tabela.rows.length > 2){
 				tabela.deleteRow(2);
 			}
@@ -676,6 +680,22 @@ var negociacaoDividaController = $.extend(true, {
 			
 		}
 	},
+	
+	tratarSituacaoCota: function(situacaoCota) {
+	
+		var isInativa = situacaoCota == 'INATIVO';
+
+		if (isInativa) {
+			$('#pagamentoEm', negociacaoDividaController.workspace).click();
+		}
+
+		$('#checknegociacaoAvulsa', negociacaoDividaController.workspace).attr("checked", isInativa);
+
+		$('#checknegociacaoAvulsa', negociacaoDividaController.workspace).attr("disabled", isInativa);
+
+		$('#negociacaoPorComissao', negociacaoDividaController.workspace).attr("disabled", isInativa);
+	},
+
 	ativarAoPagarOnchange:function(idParcela,input){		
 		var parcela = negociacaoDividaController.parcelas[idParcela];
 		parcela.ativarAoPagar = $(input).val();

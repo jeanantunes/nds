@@ -132,6 +132,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
+import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -284,6 +285,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private DescontoLogisticaService descontoLogisticaService;
+	
+	@Autowired
+	private FixacaoReparteService fixacaoReparteService;
 
 	
 	@Autowired
@@ -1646,6 +1650,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			LOGGER.info("FECHAMENTO DIARIO - PROCESSADA DIVIDAS NAO PAGAS");
 			
+			fixacaoReparteService.verificarFixacao(dataFechamento);
+			
 			return fechamentoDiarioDTO;
 		
 		} catch (FechamentoDiarioException e) {
@@ -1813,6 +1819,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 					
 					break;
 
+				case ALTERACAO_REPARTE_PARA_SUPLEMENTAR:
+
+				    novoTipoDiferenca = TipoDiferenca.PERDA_EM;
+                    
+                    break;
+                    
 				default:
 					
                 throw new RuntimeException("Tipo de Diferença não identificado");

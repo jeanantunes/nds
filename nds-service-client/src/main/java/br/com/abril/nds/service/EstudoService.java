@@ -4,9 +4,11 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 
@@ -23,7 +25,7 @@ public interface EstudoService {
 	
 	void gravarEstudo(EstudoGerado estudo);
 	
-	EstudoGerado criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,Date dataLancamento);
+	EstudoGerado criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,Date dataLancamento,Long lancamentoId);
 
 	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId);
 	
@@ -38,5 +40,6 @@ public interface EstudoService {
 	public Long obterUltimoAutoIncrement();
 	
 	Estudo liberar(Long idEstudoGerado);
-	
+
+    void gravarDadosVendaMedia(Long estudoId, DistribuicaoVendaMediaDTO distribuicaoVendaMedia);
 }

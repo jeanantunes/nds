@@ -177,7 +177,7 @@ public class MatrizRecolhimentoController extends BaseController {
                     balanceamentoRecolhimento.addProdutosRecolhimentoAgrupados(balanceamentoRecolhimentoAux
                             .getProdutosRecolhimentoAgrupados());
                 if (balanceamentoRecolhimentoAux.getProdutosRecolhimentoNaoBalanceados() != null)
-                    balanceamentoRecolhimento.addProdutosRecolhimentoNaoBalanceados(balanceamentoRecolhimento
+                    balanceamentoRecolhimento.addProdutosRecolhimentoNaoBalanceados(balanceamentoRecolhimentoAux
                             .getProdutosRecolhimentoNaoBalanceados());
                 
             }
@@ -194,7 +194,7 @@ public class MatrizRecolhimentoController extends BaseController {
         ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this
                 .obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
         
-        boolean utilizaSedeAtendida = grupoService.countTodosGrupos() > 0;
+        boolean utilizaSedeAtendida = grupoService.countTodosGrupos(dataPesquisa) > 0;
         
         resultadoResumoBalanceamento.setUtilizaSedeAtendida(utilizaSedeAtendida);
         

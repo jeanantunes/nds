@@ -37,7 +37,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		hql.append(" cobranca.valor as vlDivida, ");
 		hql.append(" CASE WHEN (datediff(:dataOperacao, cobranca.dataVencimento)) < 0 ");
 		hql.append(" THEN 0 ELSE datediff(:dataOperacao, cobranca.dataVencimento) END  as prazo, ");
-		hql.append(" (COALESCE(cobranca.encargos, 0) + cobranca.valor) as total, ");
+		hql.append(" (COALESCE(cobranca.encargos, 0) + ceil(cobranca.valor)) as total, ");
 		hql.append(" cobranca.id as idCobranca, ");
 		hql.append(" coalesce(cobranca.encargos, 0) as encargos ");
 		
@@ -61,7 +61,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		}
 		
 		this.setParametrosObterNegociacaoPorCota(query, filtro);
-
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(NegociacaoDividaDTO.class));
 		
 		return query.list();
@@ -74,6 +74,8 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		this.obterNegociacaoPorCotaFrom(hql, filtro);
 		
 		Query query = getSession().createQuery(hql.toString());
+		
+		filtro.setCount(true);
 		
 		this.setParametrosObterNegociacaoPorCota(query, filtro);
 		
@@ -99,8 +101,11 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		query.setParameter("numCota", filtro.getNumeroCota());
 		query.setParameter("status", StatusCobranca.NAO_PAGO);
-		query.setParameter("dataOperacao", filtro.getDataOperacao());
 		query.setParameter("statusDivida", StatusDivida.PENDENTE_INADIMPLENCIA);
+		
+		if(!filtro.isLancamento() ||  !filtro.isCount()) {
+			query.setParameter("dataOperacao", filtro.getDataOperacao());
+		}
 	}
 
 	@Override
@@ -108,7 +113,17 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		Query query = getSession().createQuery("select o from Negociacao o join o.cobrancasOriginarias c where c.id = " + id);
 		return (Negociacao) query.uniqueResult();
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Negociacao obterNegociacaoPorDivida(Long id) {
+
+		Query query = getSession().createQuery("select n from Negociacao n join n.cobrancasOriginarias c join c.divida d where d.id = " + id);
+		return (Negociacao) query.uniqueResult();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Negociacao> obterNegociacaoPorComissaoCota(Long idCota){

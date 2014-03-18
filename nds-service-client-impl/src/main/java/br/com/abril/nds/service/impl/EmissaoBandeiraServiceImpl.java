@@ -37,9 +37,9 @@ public class EmissaoBandeiraServiceImpl implements  EmissaoBandeiraService {
 
 	@Override
 	public byte[] imprimirBandeira(Integer semana, Integer numeroPallets,
-			Date dataEnvio) throws Exception {
+			Date dataEnvio, Long forncedor) throws Exception {
 		
-		List<FornecedorDTO> lista = chamadaEncalheService.obterDadosFornecedoresParaImpressaoBandeira(semana);
+		List<FornecedorDTO> lista = chamadaEncalheService.obterDadosFornecedoresParaImpressaoBandeira(semana, forncedor);
 		List<ImpressaoBandeiraVO> listaRelatorio = new ArrayList<ImpressaoBandeiraVO>(); 
 		
 		for (FornecedorDTO bandeiraDTO : lista){

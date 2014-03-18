@@ -525,6 +525,14 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 						"Atualizacao da Forma de Comercializacao para: " + formaComercializacaoInput.getValue());
 		}
 		
+		if(produto.getTipoProduto()==null ){
+			
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Erro na Inserção do Produto: " + produto.getCodigo()
+					+". Tipo Produto nulo.");
+		}
+		
 		this.getSession().update(produto);
 	}
 

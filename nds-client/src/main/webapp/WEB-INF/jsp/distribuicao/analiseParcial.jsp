@@ -44,7 +44,7 @@ function escondeDados(){
 .class_vlrs{width:35px;}
 .class_vda{width:35px; color:#F00; font-weight:bold;}
 .detalhesDados{position:absolute; display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); width: 978px;}
-<c:if test="${estudoCota.estudo.idEstudoOrigemCopia != null}">
+<c:if test="${estudo.idEstudoOrigemCopia != null}">
 .detalhesDados{margin-left: 62px;}
 </c:if>
 #tabelaDetalheAnalise tr { line-height: normal; }
@@ -175,25 +175,25 @@ table.dadosTab { margin-left: 370px;}
         </div>
 		<fieldset class="classFieldset">
 			<legend> Pesquisar </legend>
-			<input type="hidden" id="produtoEdicaoId" value="${estudoCota.estudo.produtoEdicao.id}" />
+			<input type="hidden" id="produtoEdicaoId" value="${estudo.produtoEdicao.id}" />
 			<input type="hidden" id="faixaDe" value="${faixaDe}" />
 			<input type="hidden" id="faixaAte" value="${faixaAte}" />
 			<input type="hidden" id="reparteCopiado" value="${reparteCopiado}" />
-			<input type="hidden" id="numeroEdicao" value="${estudoCota.estudo.produtoEdicao.numeroEdicao}" />
-			<input type="hidden" id="estudoId" value="${estudoCota.estudo.id}" />
-			<input type="hidden" id="codigoProduto" value="${estudoCota.estudo.produtoEdicao.produto.codigo}" />
-			<input type="hidden" id="produtoId" value="${estudoCota.estudo.produtoEdicao.produto.id}" />
-			<input type="hidden" id="tipoSegmentoProduto" value="${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.id}" />
-			<input type="hidden" id="estudoOrigem" value="${estudoCota.estudo.idEstudoOrigemCopia}" />
+			<input type="hidden" id="numeroEdicao" value="${estudo.produtoEdicao.numeroEdicao}" />
+			<input type="hidden" id="estudoId" value="${estudo.id}" />
+			<input type="hidden" id="codigoProduto" value="${estudo.produtoEdicao.produto.codigo}" />
+			<input type="hidden" id="produtoId" value="${estudo.produtoEdicao.produto.id}" />
+			<input type="hidden" id="tipoSegmentoProduto" value="${estudo.produtoEdicao.produto.tipoSegmentoProduto.id}" />
+			<input type="hidden" id="estudoOrigem" value="${estudo.idEstudoOrigemCopia}" />
 			<input type="hidden" id="dataLancamentoEdicao" value="${dataLancamentoEdicao}" />
-			<input type="hidden" id="tipoClassificacaoProdutoId" value="${estudoCota.estudo.produtoEdicao.tipoClassificacaoProduto.id}" />
+			<input type="hidden" id="tipoClassificacaoProdutoId" value="${estudo.produtoEdicao.tipoClassificacaoProduto.id}" />
 			
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
-					<td>Código: <span>${estudoCota.estudo.produtoEdicao.produto.codigo}</span></td>
-					<td>Produto: <span>${estudoCota.estudo.produtoEdicao.nomeComercial}</span></td>
-					<td>Edição: <span>${estudoCota.estudo.produtoEdicao.numeroEdicao}</span></td>
-					<td>Estudo: <span>${estudoCota.estudo.id}</span></td>
+					<td>Código: <span>${estudo.produtoEdicao.produto.codigo}</span></td>
+					<td>Produto: <span>${estudo.produtoEdicao.nomeComercial}</span></td>
+					<td>Edição: <span>${estudo.produtoEdicao.numeroEdicao}</span></td>
+					<td>Estudo: <span>${estudo.id}</span></td>
                     <c:if test="${tipoExibicao != 'NORMAL'}">
                         <td>Nro. da Parcial: <span>${lancamento.periodoLancamentoParcial.numeroPeriodo}</span></td>
                     </c:if>
@@ -201,17 +201,17 @@ table.dadosTab { margin-left: 370px;}
             </table>
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
                 <tr>
-                    <td>Status do Estudo: <span id="status_estudo">${estudoCota.estudo.isLiberado()?'Liberado':'Não Liberado'}</span></td>
+                    <td>Status do Estudo: <span id="status_estudo">${estudo.isLiberado()?'Liberado':'Não Liberado'}</span></td>
                     <td>Data de Lancamento: <span><fmt:formatDate value="${lancamento.dataLancamentoDistribuidor}" /></span></td>
-                    <td>Reparte Distribuido: <span id="total_reparte_estudo_cabecalho">${estudoCota.estudo.qtdeReparte}</span></td>
+                    <td>Reparte Distribuido: <span id="total_reparte_estudo_cabecalho">${estudo.qtdeReparte}</span></td>
                     <td id="tdEstudoCopiado">Reparte Copiado: <span id="spanReparteCopiado">${reparteCopiado}</span></td>
-                    <td>Pacote Padrão: <span>${estudoCota.estudo.produtoEdicao.pacotePadrao}</span></td>
+                    <td>Pacote Padrão: <span>${estudo.produtoEdicao.pacotePadrao}</span></td>
                 </tr>
             </table>
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
-					<td>Classificação: <span>${estudoCota.estudo.produtoEdicao.tipoClassificacaoProduto.descricao}</span></td>
-					<td>Segmento: <span>${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.descricao}</span></td>
+					<td>Classificação: <span>${estudo.produtoEdicao.tipoClassificacaoProduto.descricao}</span></td>
+					<td>Segmento: <span>${estudo.produtoEdicao.produto.tipoSegmentoProduto.descricao}</span></td>
 					<td>Filtrar por:</td>
 					<td><select name="select5" id="filtroOrdenarPor" style="width: 145px;"
 						onchange="analiseParcialController.apresentarOpcoesOrdenarPor(this.value);">
@@ -247,7 +247,7 @@ table.dadosTab { margin-left: 370px;}
 					</td>
 					<td>Elemento:</td>
 					<td><select id="elementos" name="elementos" style="width: 170px;"
-						onchange="analiseParcialController.filtrarOrdenarPor(${estudoCota.estudo.id})">
+						onchange="analiseParcialController.filtrarOrdenarPor(${estudo.id})">
 							<option value="" selected="selected">Selecione...</option>
 					</select></td>
 					<td>
@@ -259,7 +259,7 @@ table.dadosTab { margin-left: 370px;}
                             <span id="label_n_maiores" style="display: none;" class="label"> Ranking: </span>
                             <span id="label_percentual_de_venda" style="display: none;" class="label"> % Venda: </span>
                             <input id="ordenarPorDe" type="text" style="width: 60px;" /> Até <input id="ordenarPorAte" type="text" style="width: 60px;" /> Exs.
-                            <a href="javascript:analiseParcialController.filtrarOrdenarPor(${estudoCota.estudo.id});">
+                            <a href="javascript:analiseParcialController.filtrarOrdenarPor(${estudo.id});">
                                 <img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" border="0" />
 						    </a>
 					    </span>
@@ -306,7 +306,7 @@ table.dadosTab { margin-left: 370px;}
                             <td id="total_ultimo_reparte">0</td>
                             <td id="total_reparte_sugerido">0</td>
                             <td id="lbl_legenda">&nbsp;</td>
-                            <c:if test="${estudoCota.estudo.idEstudoOrigemCopia != null}">
+                            <c:if test="${estudo.idEstudoOrigemCopia != null}">
                                 <td id="total_reparte_origem">0</td>
                             </c:if>
 							<td id="total_reparte1">0</td>
@@ -346,12 +346,12 @@ table.dadosTab { margin-left: 370px;}
 					</table>
 				</c:if>
 				<span class="bt_novos" title="Imprimir">
-                    <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=PDF&id=${estudoCota.estudo.id}">
+                    <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=PDF&id=${estudo.id}">
                         <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> Imprimir
 				    </a>
 				</span>
                 <span class="bt_novos" title="Gerar Arquivo">
-                    <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=XLS&id=${estudoCota.estudo.id}">
+                    <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=XLS&id=${estudo.id}">
                         <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /> Arquivo
 				    </a>
 				</span>
@@ -393,7 +393,7 @@ table.dadosTab { margin-left: 370px;}
             </c:if>
                 <%--<br/>--%>
 				<span style="font-weight: bold; font-size: 10px;" onclick="dataTableInit()">Saldo à Distribuir:</span>
-				<span id="saldo_reparte" style="font-weight: bold; font-size: 10px;">${estudoCota.estudo.sobra}</span>
+				<span id="saldo_reparte" style="font-weight: bold; font-size: 10px;">${estudo.sobra}</span>
 			</div>
 		</fieldset>
 	</div>
@@ -480,21 +480,21 @@ table.dadosTab { margin-left: 370px;}
 			<table width="600" border="0" cellpadding="2" cellspacing="1">
 				<tr>
 					<td width="45"><strong>Estudo:</strong></td>
-					<td width="76">${estudoCota.estudo.id}</td>
+					<td width="76">${estudo.id}</td>
 					<td width="43"><strong>Código:</strong></td>
-					<td width="42">${estudoCota.estudo.produtoEdicao.produto.codigo}</td>
+					<td width="42">${estudo.produtoEdicao.produto.codigo}</td>
 					<td width="47"><strong>Produto:</strong></td>
-					<td width="117">${estudoCota.estudo.produtoEdicao.produto.nome}</td>
+					<td width="117">${estudo.produtoEdicao.produto.nome}</td>
 					<td width="40"><strong>Edição:</strong></td>
-					<td width="49">${estudoCota.estudo.produtoEdicao.numeroEdicao}</td>
+					<td width="49">${estudo.produtoEdicao.numeroEdicao}</td>
 				</tr>
 			</table>
 			<table width="600" border="0" cellpadding="2" cellspacing="1">
 				<tr>
                     <td width="40"><strong>Class.:</strong></td>
-                    <td width="49">${estudoCota.estudo.produtoEdicao.tipoClassificacaoProduto.descricao}</td>
+                    <td width="49">${estudo.produtoEdicao.tipoClassificacaoProduto.descricao}</td>
 					<td width="104"><strong>Chamada de Capa:</strong></td>
-					<td width="385">${estudoCota.estudo.produtoEdicao.chamadaCapa}</td>
+					<td width="385">${estudo.produtoEdicao.chamadaCapa}</td>
                     <td><a href="javascript:;" onclick="popup_edicoes_produto()"><img src="${pageContext.request.contextPath}/images/ico_editar.gif" alt="Adicionar Edição" border="0"/></a></td>
 				</tr>
 			</table>
@@ -542,8 +542,8 @@ table.dadosTab { margin-left: 370px;}
 
 			<table width="686" border="0" cellpadding="2" cellspacing="1">
 				<tr>
-					<td style="width: 130px;"><strong>Código: </strong> ${estudoCota.estudo.produtoEdicao.produto.codigo}</td>
-					<td><strong>Produto: </strong> ${estudoCota.estudo.produtoEdicao.nomeComercial}</td>
+					<td style="width: 130px;"><strong>Código: </strong> ${estudo.produtoEdicao.produto.codigo}</td>
+					<td><strong>Produto: </strong> ${estudo.produtoEdicao.nomeComercial}</td>
 				</tr>
 			</table>
 			<table width="686" border="0" cellpadding="2" cellspacing="1">
@@ -560,8 +560,8 @@ table.dadosTab { margin-left: 370px;}
 
             <table width="686" border="0" cellpadding="2" cellspacing="1">
                 <tr>
-                    <td style="width: 130px;"><strong>Código: </strong> ${estudoCota.estudo.produtoEdicao.produto.codigo}</td>
-                    <td><strong>Produto: </strong> ${estudoCota.estudo.produtoEdicao.nomeComercial}</td>
+                    <td style="width: 130px;"><strong>Código: </strong> ${estudo.produtoEdicao.produto.codigo}</td>
+                    <td><strong>Produto: </strong> ${estudo.produtoEdicao.nomeComercial}</td>
                 </tr>
             </table>
             <table width="686" border="0" cellpadding="2" cellspacing="1">
@@ -597,11 +597,11 @@ table.dadosTab { margin-left: 370px;}
             <table width="500" border="0" cellspacing="1" cellpadding="1">
                 <tr>
                     <td width="42"><strong>Código:</strong></td>
-                    <td width="92"><span class="codigoProduto">${estudoCota.estudo.produtoEdicao.produto.codigo}</span></td>
+                    <td width="92"><span class="codigoProduto">${estudo.produtoEdicao.produto.codigo}</span></td>
                     <td width="44"><strong>Produto:</strong></td>
-                    <td width="155"><span class="nomeProduto">${estudoCota.estudo.produtoEdicao.produto.nomeComercial}</span></td>
+                    <td width="155"><span class="nomeProduto">${estudo.produtoEdicao.produto.nomeComercial}</span></td>
                     <td width="44"><strong>Classificação:</strong></td>
-                    <td width="155"><span class="tipoClassificacaoProduto">${estudoCota.estudo.produtoEdicao.tipoClassificacaoProduto.descricao}</span></td>
+                    <td width="155"><span class="tipoClassificacaoProduto">${estudo.produtoEdicao.tipoClassificacaoProduto.descricao}</span></td>
                 </tr>
             </table>
 
@@ -661,7 +661,7 @@ table.dadosTab { margin-left: 370px;}
     </div>
 
     <div id="dialog-detalhes" title="Capa">
-		<img src="${pageContext.request.contextPath}/capa/getCapaEdicaoJson?codigoProduto=${estudoCota.estudo.produtoEdicao.produto.codigo}&numeroEdicao=${estudoCota.estudo.produtoEdicao.numeroEdicao}" width="235" height="314" />
+		<img src="${pageContext.request.contextPath}/capa/getCapaEdicaoJson?codigoProduto=${estudo.produtoEdicao.produto.codigo}&numeroEdicao=${estudo.produtoEdicao.numeroEdicao}" width="235" height="314" />
 	</div>
 
     <div id="previewImagemCapa" title="Capa" style="display: none;"><img src="" alt="Imagem Capa" width="180" height="250"/></div>
@@ -678,7 +678,7 @@ table.dadosTab { margin-left: 370px;}
 
 	<script type="text/javascript">
 		 $(function(){
-			analiseParcialController.init('${estudoCota.estudo.id}', '${faixaDe}', '${faixaAte}', '${tipoExibicao}');
+			analiseParcialController.init('${estudo.id}', '${faixaDe}', '${faixaAte}', '${tipoExibicao}');
 		 });
  	</script>
 

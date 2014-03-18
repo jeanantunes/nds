@@ -35,13 +35,13 @@ var suspensaoCotaController = $.extend(true, {
 				display : 'Valor Consignado Total R$',
 				name : 'vlrConsignado',
 				width : 120,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Reparte do Dia R$(Capa)',
 				name : 'vlrReparte',
 				width : 125,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Divida Acumulada R$',
@@ -59,14 +59,14 @@ var suspensaoCotaController = $.extend(true, {
 				display : 'Faturamento R$',
 				name : 'faturamento',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			
 			}, {
 				display : '% Dívida',
 				name : 'percDivida',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Ação',

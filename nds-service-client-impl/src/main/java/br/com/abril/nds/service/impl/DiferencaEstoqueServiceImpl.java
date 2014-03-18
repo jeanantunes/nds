@@ -45,6 +45,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -647,12 +648,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         GrupoMovimentoFinaceiro grupoMovimentoFinaceiro = null;
         OperacaoFinaceira operacaoFinaceira = null;
         
-        if (tipoDiferenca.isFalta()) {
+        if (tipoDiferenca.isFalta() || tipoDiferenca.isAlteracaoReparte()) {
             
             grupoMovimentoFinaceiro = GrupoMovimentoFinaceiro.CREDITO;
             operacaoFinaceira = OperacaoFinaceira.CREDITO;
             
-        } else if (tipoDiferenca.isSobra()) {
+        } else {
             
             grupoMovimentoFinaceiro = GrupoMovimentoFinaceiro.DEBITO;
             operacaoFinaceira = OperacaoFinaceira.DEBITO;
@@ -1622,6 +1623,21 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
         }
         
         return true;
+        
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public void validarRateioParaCotasInativas(List<RateioCotaVO> rateioCotas) {
+        
+        if(rateioCotas == null)
+            return;
+        
+        for(RateioCotaVO rateio : rateioCotas) {
+            Cota cota = cotaRepository.obterPorNumerDaCota(rateio.getNumeroCota(), SituacaoCadastro.INATIVO);
+            if(cota != null)
+                throw new ValidacaoException(TipoMensagem.WARNING, "Cota " + cota.getNumeroCota() + " está inativa.");
+        }
         
     }
     

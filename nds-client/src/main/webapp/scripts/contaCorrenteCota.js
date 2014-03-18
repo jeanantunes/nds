@@ -113,8 +113,9 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 		var parametroPesquisa = [{name:'filtro.numeroCota', value:numeroCota },
 		                         {name:'filtro.idConsolidado', value:idConsolidado },
-		                         {name:'filtro.dataConsolidado', value:dataConsolidado}];
-		
+		                         {name:'filtro.dataConsolidado', value:dataConsolidado},
+		                         {name:'sortname', value:'sequencia'}];
+
 		$.postJSON(
 			contextPath + '/financeiro/contaCorrenteCota/consultarConsignadoCota',
 			parametroPesquisa,
@@ -197,7 +198,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				
 				if (value.cell.detalharDebitoCredito){
 					
-					var valor = (value.cell.debitoCredito != null && value.cell.debitoCredito != 0) * -1 ? value.cell.debitoCredito : '0.0000';
+					var valor = (value.cell.debitoCredito != null && value.cell.debitoCredito != 0) ? value.cell.debitoCredito * -1 : '0.0000';
 					
 					value.cell.debitoCredito = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+
 							   [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + valor +'\');"/>' +
@@ -229,7 +230,7 @@ var contaCorrenteCotaController = $.extend(true, {
 						               (formatMoneyValue(value.cell.valorPago, 2)) : '0.00'; 
 				
 						               
-				value.cell.saldo = (value.cell.saldo != null && value.cell.saldo != 0)?
+				value.cell.saldo = (value.cell.saldo != null && formatMoneyValue(value.cell.saldo, 2) != 0)?
                                    (formatMoneyValue(value.cell.saldo * -1, 2)) : '0.00'; 
                
                 if(value.cell.statusDivida && value.cell.statusDivida == "NEGOCIADA") {	
@@ -541,7 +542,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		},
 		dataType : 'json',	
 		colModel : [{
-			display : 'Sequência',
+			display : 'SM',
 			name : 'sequencia',
 			width : 50,
 			sortable : false,

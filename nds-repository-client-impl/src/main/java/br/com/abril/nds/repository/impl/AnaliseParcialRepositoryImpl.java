@@ -532,7 +532,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  join pessoa pe on pe.id = cota.pessoa_id ");
         sql.append("  left join ranking_segmento rks on rks.cota_id = cota.id ");
         sql.append("     and rks.tipo_segmento_produto_id = ? ");
-        sql.append("     and rks.data_geracao_rank = (select max(data_geracao_rank) from ranking_segmento) ");
 
         StringBuilder where = new StringBuilder();
         List<Object> params = new ArrayList<>();

@@ -101,9 +101,9 @@ public class SemanaUtil {
 	 */
 	public static int obterAnoNumeroSemana(Date data, Integer diaInicioSemana) {
 		
-		int mes = DateUtil.obterMes(data);
+	    Integer mes = DateUtil.obterMes(data);
 		
-		int anoBase = DateUtil.obterAno(data);
+		Integer anoBase = DateUtil.obterAno(data);
 		
 		if (mes == Calendar.JANUARY) {
 			
@@ -141,7 +141,7 @@ public class SemanaUtil {
 		
 		Integer semana = obterNumeroSemanaNoAno(diaInicioSemana, data, anoBase);
 		
-		String anoSemana = anoBase + Util.padLeft(semana.toString(), "0", 2);
+		String anoSemana = Util.padLeft(anoBase.toString(),"0",4) + Util.padLeft(semana.toString(), "0", 2);
 		
 		return Integer.valueOf(anoSemana);
 	}
@@ -222,6 +222,21 @@ public class SemanaUtil {
 		
 		return dataInicioSemana;
 	}
+	
+	public static Date obterDataInicioProximaSemana(Integer diaInicioSemana, Date data) {
+        
+        int numeroAnoSemana =
+            obterAnoNumeroSemana(data, diaInicioSemana);
+
+        Integer anoBase = getAno(numeroAnoSemana);
+        
+        Integer numeroSemana = getSemana(numeroAnoSemana);
+        
+        Date dataInicioSemana =
+            obterDataDaSemanaNoAno(++numeroSemana, diaInicioSemana, anoBase);
+        
+        return dataInicioSemana;
+    }
 	
 	/**
 	 * Retorna o código do dia da semana de uma determinada data.

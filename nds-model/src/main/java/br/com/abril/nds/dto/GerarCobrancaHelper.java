@@ -41,16 +41,6 @@ public class GerarCobrancaHelper {
 		this.fornecedor = fornecedor;
 		this.dataVencimento = dataVencimento;
 		this.dataConsolidado = dateConsolidado;
-		
-		if (formaCobrancaPrincipal.getConcentracaoCobrancaCota() != null && 
-		        !formaCobrancaPrincipal.getConcentracaoCobrancaCota().isEmpty()){
-		    
-		    this.diasSemanaConcentracaoPagamento = new ArrayList<Integer>();
-		    
-		    for (ConcentracaoCobrancaCota c : formaCobrancaPrincipal.getConcentracaoCobrancaCota()){
-		        this.diasSemanaConcentracaoPagamento.add(c.getDiaSemana().getCodigoDiaSemana());
-		    }
-		}
 	}
 
 	public FormaCobranca getFormaCobrancaPrincipal() {
@@ -95,6 +85,19 @@ public class GerarCobrancaHelper {
 	}
 
 	public List<Integer> getDiasSemanaConcentracaoPagamento() {
+		
+		if (formaCobrancaPrincipal!=null && 
+			formaCobrancaPrincipal.getConcentracaoCobrancaCota() != null && 
+			!formaCobrancaPrincipal.getConcentracaoCobrancaCota().isEmpty()){
+			    
+		    this.diasSemanaConcentracaoPagamento = new ArrayList<Integer>();
+		    
+		    for (ConcentracaoCobrancaCota c : formaCobrancaPrincipal.getConcentracaoCobrancaCota()){
+		    	
+		        this.diasSemanaConcentracaoPagamento.add(c.getDiaSemana().getCodigoDiaSemana());
+		    }
+		}
+		
 		return diasSemanaConcentracaoPagamento;
 	}
 

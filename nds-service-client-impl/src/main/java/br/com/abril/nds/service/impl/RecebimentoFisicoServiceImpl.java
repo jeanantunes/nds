@@ -172,6 +172,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 						}
 					}				
 					recebimentoFisicoRepository.remover(recebimentoFisico);
+					notaFiscal.setStatusRecebimento(null);
+					notaFiscalRepository.merge(notaFiscal);
 				}else{
                     throw new ValidacaoException(TipoMensagem.WARNING,
                             "O Recebimento ja foi confirmado, não é possível alterar os dados do mesmo.");

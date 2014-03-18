@@ -60,10 +60,10 @@ public class Divida implements Serializable {
 	@Column(name = "STATUS", nullable = false)
 	private StatusDivida status;
 	
-	@OneToOne(mappedBy = "divida", cascade={CascadeType.MERGE})
+	@OneToOne(mappedBy = "divida", cascade={CascadeType.MERGE, CascadeType.REMOVE})
 	private Cobranca cobranca;
 	
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "DIVIDA_CONSOLIDADO", joinColumns = {
 			@JoinColumn(name = "DIVIDA_ID")},
 			inverseJoinColumns = {@JoinColumn(name="CONSOLIDADO_ID")})

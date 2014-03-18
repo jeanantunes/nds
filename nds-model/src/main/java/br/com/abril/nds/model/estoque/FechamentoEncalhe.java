@@ -26,7 +26,7 @@ public class FechamentoEncalhe implements Serializable {
 	
 	@Column(name="QUANTIDADE", nullable=true)
 	private Long quantidade;
-	
+		
 	
 	@OneToMany
 	@JoinColumns({
