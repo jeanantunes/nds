@@ -311,6 +311,10 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(" MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
+		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL ");
+       
+		sql.append(" OR MEC.STATUS_ESTOQUE_FINANCEIRO =:statusEstoqueFinanceiro) ");
+		
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
 		
 		if(filtro.getIdCota() != null ) { 
@@ -529,7 +533,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
         
         sql.append("	C.ID as cotaId,  ");
 
-		sql.append("    SUM( COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
+		sql.append("    SUM( COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
 
 		this.setarFromWhereConsultaConsignado(sql, filtro);
 		
@@ -598,7 +602,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
         
         sql.append("       PJ.RAZAO_SOCIAL AS nomeFornecedor, ");
         
-		sql.append("    SUM( COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
+		sql.append("    SUM( COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
 
 		this.setarFromWhereConsultaConsignado(sql, filtro);
 		
