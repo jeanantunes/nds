@@ -131,6 +131,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	if (estudoId != null && estudoId != 0l) {
 	    estudo = estudoService.obterEstudo(estudoId);
 	    result.include("estudo", estudo);
+	    result.include("vendaMediaDTO", estudo.getDadosVendaMedia());
 	    produtoEdicao = estudo.getProdutoEdicao();
         produto = estudo.getProdutoEdicao().getProduto();
         lancamentoId = estudo.getLancamentoID();
@@ -407,6 +408,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		}
 	
 	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
+        estudoService.gravarDadosVendaMedia(estudo.getId(), distribuicaoVendaMedia);
 	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
 
 	List<Object> response = new ArrayList<>();
