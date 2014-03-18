@@ -310,11 +310,11 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Date obterDataRecolhimentoPrevista(String codigoProduto, Long numeroEdicao){
+	public Date obterDataRecolhimentoReal(String codigoProduto, Long numeroEdicao){
 
 		codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
 
-		 return lancamentoRepository.obterDataRecolhimentoPrevista(codigoProduto, numeroEdicao);
+		 return lancamentoRepository.obterDataRecolhimentoDistribuidor(codigoProduto, numeroEdicao);
 	}
 	
 	@Transactional(readOnly=true)
