@@ -133,10 +133,10 @@ import br.inf.portalfiscal.nfe.util.XmlDomUtils;
 @Service
 public class NotaFiscalServiceImpl implements NotaFiscalService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(NotaFiscalServiceImpl.class);
 	public static final String VERSAO = "2.2.21";
 	public static final String NAMESPACE = "http://www.portalfiscal.inf.br/nfe";
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(NotaFiscalServiceImpl.class);
 	
 	@Autowired
 	private NotaFiscalRepository notaFiscalRepository;
@@ -372,7 +372,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	private boolean isFaltaMercadoria(NotaFiscal notaFiscal) {
 		return Condicao.FALTA_MERCADORIA == notaFiscal.getNotaFiscalInformacoes().getCondicao();
 	}
-
+	
 	/**
 	 * indetifica se a nota foi gerada com a condição de devolução de encalhe.
 	 * @param tipoNotaFiscal

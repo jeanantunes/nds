@@ -2,15 +2,18 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -20,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlTransient;
 
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalValorCalculado;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
@@ -112,6 +116,12 @@ public class NotaFiscalInformacoes implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_PROCESSAMENTO_INTERNO")
 	private StatusProcessamentoInterno statusProcessamentoInterno;
+	
+	@ElementCollection
+	@JoinTable(name = "NOTA_FISCAL_PROCESSO", 
+			joinColumns = {@JoinColumn(table="NATUREZA_OPERACAO", name = "PROCESSO_NFE_ID", referencedColumnName="ID")},
+			inverseJoinColumns = {@JoinColumn(table="PROCESSO", name = "PROCESSO", referencedColumnName="ID")})
+	private Set<Processo> processos;
 	
 	@Column(name = "CONDICAO", nullable = true)
 	@Enumerated(EnumType.STRING)
@@ -322,5 +332,12 @@ public class NotaFiscalInformacoes implements Serializable {
 	public void setInformacoesAdicionais(String informacoesAdicionais) {
 		this.informacoesAdicionais = informacoesAdicionais;
 	}
-	
+
+	public Set<Processo> getProcessos() {
+		return processos;
+	}
+
+	public void setProcessos(Set<Processo> processos) {
+		this.processos = processos;
+	}
 }
