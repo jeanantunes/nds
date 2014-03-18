@@ -23,22 +23,22 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.CFOPRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
-import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
+import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
@@ -59,13 +59,13 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	private PessoaJuridicaRepository pessoaJuridicaRepository;
 	
 	@Autowired
-	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository naturezaOperacaoRepository;
 	
 	@Autowired
 	private CotaService cotaService;
 	
 	@Autowired
-	private NaturezaOperacaoService tipoNotaFiscalService;
+	private NaturezaOperacaoService naturezaOperacaoService;
 	
 	@Autowired
 	private ControleConferenciaEncalheCotaRepository conferenciaEncalheCotaRepository;
@@ -131,7 +131,9 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 			notaFiscal.setControleConferenciaEncalheCota(conferenciaEncalheCota);
 		}
 		
-		NaturezaOperacao tipoNotaFiscal = this.tipoNotaFiscalRepository.obterNaturezaOperacao(grupoNotaFiscal, tipoAtividade, isContribuinte);
+		//FIXME: Ajustar a funcionalidade de NF-e de Terceiros 
+		//NaturezaOperacao tipoNotaFiscal = this.tipoNotaFiscalRepository.obterNaturezaOperacao(grupoNotaFiscal, tipoAtividade, isContribuinte);
+		NaturezaOperacao tipoNotaFiscal = null;
 
 		if (tipoNotaFiscal == null) {
 			
