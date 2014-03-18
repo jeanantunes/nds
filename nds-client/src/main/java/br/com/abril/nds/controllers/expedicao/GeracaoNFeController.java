@@ -285,7 +285,7 @@ public class GeracaoNFeController extends BaseController {
 						tipoNotaFiscal, null, null, sortname, sortorder, null, null, null);
 		
 		FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null,
+				this.getNDSFileHeader(), null, null,
 				cotaExemplaresDTOs, CotaExemplaresDTO.class,
 				this.httpServletResponse);
 		
