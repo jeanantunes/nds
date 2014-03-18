@@ -45,39 +45,12 @@ public class FollowupCadastroParcialImpl extends AbstractRepositoryModel<Produto
 		
 		query.setParameter("origem", Origem.MANUAL);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				ConsultaFollowupCadastroParcialDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(ConsultaFollowupCadastroParcialDTO.class));
 		
-		if(filtro.getPaginacao() != null) {
-			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-			
-			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-			
-			filtro.getPaginacao().setQtdResultadosTotal(obterConsignadosParaChamadaoTotalRegistros(filtro));
-		}
+		this.configurarPaginacao(filtro, query);
 		
 		return query.list();
 		 
-	}
-
-	private Integer  obterConsignadosParaChamadaoTotalRegistros(FiltroFollowupCadastroParcialDTO filtro) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select count(*) ");
-		hql.append(" from ProdutoEdicao as produtoEdicao ");
-		hql.append(" join produtoEdicao.produto produto ");
-		hql.append(" where  produto.origem = :origem and  not exists ( ");
-		hql.append( 	 getSubqueryPeridoLancamento()    );
-		hql.append(" ) " );
-		Query query =  getSession().createQuery(hql.toString());
-		
-		query.setParameter("origem", Origem.MANUAL);
-	
-		return  ((Long)query.uniqueResult()).intValue();
-	
 	}
 
 	private String getSubqueryPeridoLancamento() {

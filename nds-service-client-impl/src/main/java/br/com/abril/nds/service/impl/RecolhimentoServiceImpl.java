@@ -885,7 +885,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		while(dataRecolhimento.compareTo(periodoRecolhimento.getAte())<=0){
 			
-			if(!lancamentoRepository.existeRecolhimentoNaoBalanceado(dataRecolhimento)
+			if(!lancamentoRepository.existeRecolhimentoBalanceado(dataRecolhimento)
 					&& this.validarDiaRecolhimentoFornecedor(idFornecedor, dataRecolhimento)){
 				dataValida = dataRecolhimento;
 				break;

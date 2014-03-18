@@ -177,7 +177,7 @@ public class MatrizRecolhimentoController extends BaseController {
                     balanceamentoRecolhimento.addProdutosRecolhimentoAgrupados(balanceamentoRecolhimentoAux
                             .getProdutosRecolhimentoAgrupados());
                 if (balanceamentoRecolhimentoAux.getProdutosRecolhimentoNaoBalanceados() != null)
-                    balanceamentoRecolhimento.addProdutosRecolhimentoNaoBalanceados(balanceamentoRecolhimento
+                    balanceamentoRecolhimento.addProdutosRecolhimentoNaoBalanceados(balanceamentoRecolhimentoAux
                             .getProdutosRecolhimentoNaoBalanceados());
                 
             }

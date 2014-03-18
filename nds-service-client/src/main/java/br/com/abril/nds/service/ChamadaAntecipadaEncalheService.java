@@ -46,7 +46,7 @@ public interface ChamadaAntecipadaEncalheService {
 	 * 
 	 * @return Date
 	 */
-	Date obterDataRecolhimentoPrevista(String codigoProduto, Long numeroEdicao);
+	Date obterDataRecolhimentoReal(String codigoProduto, Long numeroEdicao);
 	
 	/**
 	 *  Retorna a quantidade efetiva de produtos edição em estoque.

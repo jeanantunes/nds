@@ -440,12 +440,12 @@ public class LancamentoRepositoryImpl extends
 		return (Lancamento) query.uniqueResult();
 	}
 
-	public Date obterDataRecolhimentoPrevista(String codigoProduto,
+	public Date obterDataRecolhimentoDistribuidor(String codigoProduto,
 			Long numeroEdicao) {
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select lancamento.dataRecolhimentoPrevista  ")
+		hql.append(" select lancamento.dataRecolhimentoDistribuidor  ")
 				.append(" from Lancamento lancamento ")
 				.append(" join lancamento.produtoEdicao produtoEdicao ")
 				.append(" join produtoEdicao.produto produto ")
@@ -1580,7 +1580,7 @@ public class LancamentoRepositoryImpl extends
 	}
 
 	@Override
-	public Boolean existeRecolhimentoNaoBalanceado(Date dataRecolhimento) {
+	public Boolean existeRecolhimentoBalanceado(Date dataRecolhimento) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -1592,7 +1592,8 @@ public class LancamentoRepositoryImpl extends
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameterList("statusRecolhimentoNaoBalanceado",
-				Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO));
+			Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO,
+			              StatusLancamento.RECOLHIDO));
 
 		query.setParameter("dataRecolhimento", dataRecolhimento);
 

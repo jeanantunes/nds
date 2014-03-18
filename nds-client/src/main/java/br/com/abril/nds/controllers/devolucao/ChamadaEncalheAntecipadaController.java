@@ -163,7 +163,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Path("/pesquisarDataProgramada")
 	public void pesquisarDataProgramadaEdicao(String codigoProduto, Long numeroEdicao){
 		
-		Date date  = chamadaAntecipadaEncalheService.obterDataRecolhimentoPrevista(codigoProduto, numeroEdicao);
+		Date date  = chamadaAntecipadaEncalheService.obterDataRecolhimentoReal(codigoProduto, numeroEdicao);
 		
 		String dataFormatada = (date == null)?"":DateUtil.formatarDataPTBR(date);
 		
