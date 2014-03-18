@@ -1770,7 +1770,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			.append(" (produto.nome like :nomeProduto 				")
 			.append(" or produto.codigo like :codigoProduto) 	and	")
 			.append(" cota.numeroCota = :numeroCota and 			")
-			.append(" cec.fechado = false and 	")
 			.append(" lancamentos.status in (:statusLancamento) ");
 			
 			 carregarHQLParametrosFornecedorDatasEncalhe(hql, null, mapaDataCEConferivel);
@@ -1781,8 +1780,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		final Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setParameter("nomeProduto", codigoNomeProduto );
-		query.setParameter("codigoProduto", codigoNomeProduto );
+		query.setParameter("nomeProduto", "%"+codigoNomeProduto+"%" );
+		query.setParameter("codigoProduto", "%"+codigoNomeProduto+"%" );
 		query.setParameter("numeroCota", numeroCota);
 		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO));
 		
