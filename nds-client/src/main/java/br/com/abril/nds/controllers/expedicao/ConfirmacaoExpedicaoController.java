@@ -13,9 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Longs;
-
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
@@ -44,6 +41,8 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+
+import com.google.common.primitives.Longs;
 
 @Resource
 @Path("/confirmacaoExpedicao")
