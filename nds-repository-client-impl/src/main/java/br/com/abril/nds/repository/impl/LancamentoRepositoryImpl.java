@@ -1580,7 +1580,7 @@ public class LancamentoRepositoryImpl extends
 	}
 
 	@Override
-	public Boolean existeRecolhimentoNaoBalanceado(Date dataRecolhimento) {
+	public Boolean existeRecolhimentoBalanceado(Date dataRecolhimento) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -1592,7 +1592,8 @@ public class LancamentoRepositoryImpl extends
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameterList("statusRecolhimentoNaoBalanceado",
-				Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO));
+			Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO,
+			              StatusLancamento.RECOLHIDO));
 
 		query.setParameter("dataRecolhimento", dataRecolhimento);
 

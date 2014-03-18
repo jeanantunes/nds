@@ -349,7 +349,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	void atualizarDataRecolhimentoDistribuidor(Date dataRecolhimento, Long... idLancamento);
 	
-	Boolean existeRecolhimentoNaoBalanceado(Date dataRecolhimento);
+	Boolean existeRecolhimentoBalanceado(Date dataRecolhimento);
 	
 	List<Lancamento> obterLancamentosBalanceadosPorDataRecolhimentoDistrib(Date dataRecolhimentoDistribuidor);
 	
