@@ -248,7 +248,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 				
 				$("#imagemCapaEdicao")
 						.attr("src",contextPath
-										+ "/capa/getCapaEdicaoJson?/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
+										+ "/capa/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
 										+ codigoProduto
 										+ "&numeroEdicao="
 										+ numeroEdicao);
@@ -508,7 +508,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	this.containsBonificacao = function(elemento){
 		for(var i = 0; i < T.bonificacaoSelecionados.length; i++){
 			var bonificacao = T.bonificacaoSelecionados[i];
-			
+
 			if(bonificacao.componente.value == T.componenteBonificacaoSelecionado.value
 					&& bonificacao.elemento.key.$ == elemento.key.$){
 				return true;
@@ -581,7 +581,18 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		}
 		
 		if(T.bonificacaoSelecionados != undefined){
-			for(var i = 0; i < T.bonificacaoSelecionados.length; i++){
+            var doNotStringify = {
+                acao: true,
+                percBonificacaoInput: true,
+                reparteMinimoInput: true,
+                sel: true,
+                todasAsCotas: true,
+                checkBox: true
+            }
+
+            data.push({name: "distribuicaoVendaMedia.bonificacoesVO", value: JSON.stringify(T.bonificacaoSelecionados, function(k,v){if(doNotStringify.hasOwnProperty(k))return undefined; return v;}) });
+
+            for(var i = 0; i < T.bonificacaoSelecionados.length; i++){
 				data.push({name: "distribuicaoVendaMedia.bonificacoes["+i+"].componente", value : T.bonificacaoSelecionados[i].componente.enumValue});
 				data.push({name: "distribuicaoVendaMedia.bonificacoes["+i+"].elemento", value : T.bonificacaoSelecionados[i].elemento.key.$});
 				data.push({name: "distribuicaoVendaMedia.bonificacoes["+i+"].bonificacao", value : T.bonificacaoSelecionados[i].percBonificacao});
@@ -721,6 +732,118 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo' + parametros);
         	}
         );
+    };
+
+    this.recuperarEstadoDaTela = function(vendaMediaDTO) {
+        var componentePDV =  {
+            AREA_DE_INFLUENCIA: 0, BAIRRO: 1, COTAS_A_VISTA: 2, COTAS_NOVAS_RETIVADAS: 3, DISTRITO: 4, GERADOR_DE_FLUXO: 5, REGIAO: 6, TIPO_PONTO_DE_VENDA: 7
+        };
+        var temDicionarioElemento = [0, 2, 3, 5, 6, 7];
+        var elementoPDV = {
+            //area de influencia
+            "AREA COMERCIAL A/B": 1, "AREA COMERCIAL C/D": 2, "COMERCIAL": 3, "CONVENIENCIA VIAGEM": 4, "ESCRITORIO A/B": 5, "ESCRITORIO E FABRICA C/D": 6, "RESIDENCIAL A/B": 7, "RESIDENCIAL C/D": 8,
+            //cota a vista
+            "Consignado": "CONSIGNADO", "Cotas à Vista": "A_VISTA",
+            //cotas novas / reativadas
+            "Sim": 1, "Não": 0,
+            //gerador de fluxo
+            "Academia de Ginastica/Esportes": 46, "Aeroporto": 39, "Agencia de Turismo": 38, "Banco": 40, "Bazares": 49, "Biblioteca": 29, "Casas, Aptos e Condominios": 61, "Centro Comercial": 20, "Centro de Convenções": 36, "Clinica Veterinaria": 57, "Clube": 30, "Corredores de Transito": 15, "Cursinho": 4, "Curso de Informatica": 7, "Curso de Lingua": 6, "Empresa/Industria/Escritorio": 44, "Escola 1 e 2 Grau Particular": 2, "Escola 1 e 2 Grau Publica": 3, "Escola de Arte": 8, "Escola de Musica": 60, "Estação de Metro": 10, "Estadio": 28, "Faculdades/Universidades": 9, "Farmacias e Drogarias": 51, "Feira Livre": 23, "Ferroviaria": 11, "Hospital": 53, "Hotel": 37, "Igreja": 43, "Lab. Clinicos/Consultorios": 52, "Lanchonete e Bares": 17, "Livraria": 31, "Loja de Armarinhos": 50, "Loja de Convivencia": 22, "Loja de Decoração": 47, "Loja de Disco": 58, "Loja de Instrumentos Musicais": 59, "Loja de Material de Construção": 48, "Loja de Material Esportivo": 45, "Loja de Plantas/Floriculturas": 55, "Loja p/ Materias de Jardinagem": 54, "Lojas de Animais": 56, "Mercado Municipal": 24, "Motel": 35, "Padarias": 16, "Parques": 26, "Pontos de Onibus": 13, "Posto de Gasolina": 42, "Praia": 27, "Pre-Escola": 1, "Repartição Publica": 41, "Restaurantes": 18, "Rodoviaria": 12, "Shopping Center": 19, "Superior": 5, "Supermercado e Hipermercado": 21, "Teatro": 32, "Terminais de Onibus": 14, "Varejão/Sacola": 25,
+            //regiao
+            "abc": 19, "Adicionar em lote": 10, "Automatica": 3, "beaba": 17, "Carlao": 15, "Hortolandia 2": 11, "Merge": 2, "RegiaoTeste": 1, "Regressiva": 16, "Rodrigo Teste": 4, "Teste": 5, "Teste 3333": 9, "teste Bonificacao 24.02": 18, "Teste do Merge": 13, "Testess": 20,
+            //tipo ponto de venda
+            "BANCA": 1, "BAZAR/PAPELARIA": 13, "COFFEE-SHOP": 31, "ESCOLA DE ARTE": 39, "HOSPITAL": 26, "LIVRARIA": 27, "LOJA DE CONVENIENCIA": 23, "OUTROS": 4, "PADARIA/BAR": 19, "POSTO DE GASOLINA": 12, "QUIOSQUE": 3, "REVISTARIA": 2, "TABACARIA": 14
+        };
+        var reconstroiBonificacao = function(bonificacao) {
+            bonificacao.percBonificacaoInput = '<input id="percBonificacao-'+ bonificacao.index +'" style="width: 40px; text-align: right;" onchange="distribuicaoVendaMedia.alterarBonificacao(this, '+ bonificacao.index +')"/>';
+            bonificacao.reparteMinimoInput =  '<input id="reparteMinimo-'+ bonificacao.index +'" style="width: 40px; text-align: right;" onchange="distribuicaoVendaMedia.alterarReparteMinimo(this, '+bonificacao.index+')"/>';
+            bonificacao.sel =  '<input id="percBonificacao-'+ bonificacao.index +'" type="checkbox" onchange="distribuicaoVendaMedia.alterarTodasAsCotas(this, '+ bonificacao.index+')" />';
+            bonificacao.acao =  '<a onclick="popup_excluir_bonificacao('+ bonificacao.index +');" href="javascript:;"><img src="images/ico_excluir.gif" border="0"/></a>';
+
+            return bonificacao;
+        };
+
+        window.tmp = vendaMediaDTO;
+
+        if (vendaMediaDTO) {
+            $("#reparteDistribuir").val(vendaMediaDTO.reparteDistribuir);
+            $("#reparteMinimo").val(vendaMediaDTO.reparteMinimo);
+            $("#usarFixacao").prop('checked', vendaMediaDTO.usarFixacao);
+
+            if (vendaMediaDTO.distribuicaoPorMultiplo) {
+                $("#distribuicaoPorMultiplo").click();
+                $("#multiplo").val(vendaMediaDTO.multiplo);
+            }
+
+            if (vendaMediaDTO.bases.length != 0) {
+                T.preencherGridBases($.extend(true, [], vendaMediaDTO.bases));
+                $(document).one("ajaxStop", function() {
+                    $('.dadosBasesGrid select').each(function(k){$(this).val(vendaMediaDTO.bases[k].peso)});
+                });
+            }
+
+            if (vendaMediaDTO.bonificacoes.length != 0) {
+                T.bonificacaoSelecionados = $.extend(true, [], vendaMediaDTO.bonificacoesVO);
+                $(document).one("ajaxStop", function() {
+                    $("#elemento1Grid").flexAddData({
+                        rows : toFlexiGridObject(T.bonificacaoSelecionados.map(function(e){return reconstroiBonificacao(e);})),
+                        page : 1,
+                        total : 1
+                    });
+                    T.preencherTelaBonificacoes();
+                });
+            }
+
+            if (vendaMediaDTO.todasAsCotas) {
+                $("#RDtodasAsCotas").click();
+            }
+
+            if (vendaMediaDTO.componente) {
+                $("#RDcomponente").click();
+                $("#componenteRegiaoDistribuicao").val(componentePDV[vendaMediaDTO.componente]).change();
+                $(document).one("ajaxStop", function() {
+                    if (temDicionarioElemento.indexOf(componentePDV[vendaMediaDTO.componente]) !== -1) {
+                        $("#elementoRegiaoDistribuicao").val(elementoPDV[vendaMediaDTO.elemento]);
+                        $("select[name=elementoRegiaoDistribuicao]:eq(1)").val(elementoPDV[vendaMediaDTO.elemento2]);
+                        $("select[name=elementoRegiaoDistribuicao]:eq(2)").val(elementoPDV[vendaMediaDTO.elemento3]);
+                    } else {
+                        $("#elementoRegiaoDistribuicao").val(vendaMediaDTO.elemento);
+                        $("select[name=elementoRegiaoDistribuicao]:eq(1)").val(vendaMediaDTO.elemento2);
+                        $("select[name=elementoRegiaoDistribuicao]:eq(2)").val(vendaMediaDTO.elemento3);
+                    }
+                });
+            }
+
+            if (vendaMediaDTO.abrangenciaCriterio) {
+                $("#RDAbrangencia").click();
+                $("#RDabrangenciaCriterio").val(vendaMediaDTO.abrangenciaCriterio);
+                $("#RDabrangencia").val(vendaMediaDTO.abrangencia);
+            }
+
+            if (vendaMediaDTO.roteiroEntregaId) {
+                $("#RDroteiroEntrega").click();
+                $("#selRoteiro").val(vendaMediaDTO.roteiroEntregaId);
+            }
+
+            $("#complementarAutomatico").prop('checked', vendaMediaDTO.complementarAutomatico);
+            $("#cotasAVista").prop('checked', vendaMediaDTO.cotasAVista);
+
+            if (vendaMediaDTO.excecaoDeBancasComponente) {
+                $("#RDExcecaoBancas").click();
+                $("#componenteInformacoesComplementares").val(componentePDV[vendaMediaDTO.excecaoDeBancasComponente]).change();
+                $(document).one("ajaxStop", function () {
+                    if (temDicionarioElemento.indexOf(componentePDV[vendaMediaDTO.excecaoDeBancasComponente]) !== -1) {
+                        $("#elementoInformacoesComplementares1").val(elementoPDV[vendaMediaDTO.excecaoDeBancas[0]]);
+                        $("#elementoInformacoesComplementares2").val(elementoPDV[vendaMediaDTO.excecaoDeBancas[1]]);
+                        $("#elementoInformacoesComplementares3").val(elementoPDV[vendaMediaDTO.excecaoDeBancas[2]]);
+                    } else {
+                        $("#elementoInformacoesComplementares1").val(vendaMediaDTO.excecaoDeBancas[0]);
+                        $("#elementoInformacoesComplementares2").val(vendaMediaDTO.excecaoDeBancas[1]);
+                        $("#elementoInformacoesComplementares3").val(vendaMediaDTO.excecaoDeBancas[2]);
+                    }
+
+                });
+            }
+        }
     };
 };
 

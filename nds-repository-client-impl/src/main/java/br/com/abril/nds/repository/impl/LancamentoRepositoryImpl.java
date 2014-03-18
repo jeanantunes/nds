@@ -440,12 +440,12 @@ public class LancamentoRepositoryImpl extends
 		return (Lancamento) query.uniqueResult();
 	}
 
-	public Date obterDataRecolhimentoPrevista(String codigoProduto,
+	public Date obterDataRecolhimentoDistribuidor(String codigoProduto,
 			Long numeroEdicao) {
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select lancamento.dataRecolhimentoPrevista  ")
+		hql.append(" select lancamento.dataRecolhimentoDistribuidor  ")
 				.append(" from Lancamento lancamento ")
 				.append(" join lancamento.produtoEdicao produtoEdicao ")
 				.append(" join produtoEdicao.produto produto ")

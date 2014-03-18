@@ -53,7 +53,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	Lancamento obterLancamentoAnteriorDataLancamento(Date dataLancamento, Long idProdutoEdicao);
 	
-	Date obterDataRecolhimentoPrevista(String codigoProduto, Long numeroEdicao);
+	Date obterDataRecolhimentoDistribuidor(String codigoProduto, Long numeroEdicao);
 
 	/**
 	 * Método que retorna o balanceamento do recolhimento referentes a um
