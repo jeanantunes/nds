@@ -107,9 +107,6 @@ public class NFeServiceImpl implements NFeService {
 	
 	@Autowired
 	protected DistribuidorRepository distribuidorRepository;
-
-	@Autowired 
-	private NotaFiscalNdsRepository notaFiscalNdsRepository;
 	
 	@Autowired 
 	private NaturezaOperacaoRepository naturezaOperacaoRepository;
@@ -400,7 +397,7 @@ public class NFeServiceImpl implements NFeService {
 			case DISTRIBUIDOR:
 				
 				// obter as cotas que estão na tela pelo id das cotas
-				List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoCotasNotafiscal(filtro);
+				List<Cota> cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscal(filtro);
 				
 				if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
 					
@@ -490,7 +487,7 @@ public class NFeServiceImpl implements NFeService {
 	private void gerarNotasFiscaisFornecedor(FiltroNFeDTO filtro, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
 
 		// obter as cotas que estão na tela pelo id das cotas
-		List<EstoqueProduto> estoques = this.notaFiscalNdsRepository.obterConjuntoFornecedorNotafiscal(filtro);
+		List<EstoqueProduto> estoques = this.notaFiscalRepository.obterConjuntoFornecedorNotafiscal(filtro);
 		
 		Map<String, TributoAliquota> tributoRegimeTributario = new HashMap<String, TributoAliquota>();
 		
@@ -514,7 +511,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			// obter os estoques
 			filtro.setIdCota(estoque.getId());
-			List<EstoqueProduto> estoqueProdutos = this.notaFiscalNdsRepository.obterEstoques(filtro);
+			List<EstoqueProduto> estoqueProdutos = this.notaFiscalRepository.obterEstoques(filtro);
 			for (EstoqueProduto estoqueProduto : estoqueProdutos) {
 				
 				ItemNotaFiscalEstoqueProdutoBuilder.montaItemNotaFiscal(notaFiscal, estoqueProduto, tributoRegimeTributario);
@@ -565,7 +562,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			// obter os movimentos de cada cota
 			filtro.setIdCota(cota.getId());
-			List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalNdsRepository.obterMovimentosEstoqueCota(filtro);
+			List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro);
 			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoRegimeTributario);
 			}
@@ -587,7 +584,7 @@ public class NFeServiceImpl implements NFeService {
 		naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
 		naturezaOperacaoRepository.merge(naturezaOperacao);
 		
-		List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoCotasNotafiscal(filtro);
+		List<Cota> cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscal(filtro);
 		notaFiscal.setUsuario(usuarioService.getUsuarioLogado());
 		
 		Map<String, TributoAliquota> tributoAliquota = new HashMap<String, TributoAliquota>();
@@ -607,7 +604,7 @@ public class NFeServiceImpl implements NFeService {
 			// FIX arrumar endereco
 			// obter os movimentos de cada cota
 			filtro.setIdCota(cota.getId());
-			List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalNdsRepository.obterMovimentosEstoqueCota(filtro);
+			List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro);
 			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
 			}
