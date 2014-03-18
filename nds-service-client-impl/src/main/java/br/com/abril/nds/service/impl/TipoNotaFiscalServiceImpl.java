@@ -127,10 +127,17 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 				this.distribuidorRepository.tipoAtividade());
 	}
 
-	@Transactional
 	@Override
-	public List<NaturezaOperacao> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro){
-		return naturezaOperacaoRepository.consultarTipoNotaFiscal(filtro);
+	@Transactional
+	public List<NaturezaOperacao> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro) {
+		
+		List<NaturezaOperacao> naturezasOperacao = naturezaOperacaoRepository.consultarTipoNotaFiscal(filtro);
+		
+		for(NaturezaOperacao no : naturezasOperacao) {
+			if(no.getProcesso() != null) no.getProcesso().isEmpty();
+		}
+		
+		return naturezasOperacao;
 	}
 
 	@Override

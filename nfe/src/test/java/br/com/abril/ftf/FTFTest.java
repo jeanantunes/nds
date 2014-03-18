@@ -17,9 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFParser;
-import br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro00;
-import br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro01;
-import br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro09;
 import br.com.abril.nds.model.ftf.retorno.FTFRetornoRET;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,7 +28,7 @@ public class FTFTest {
 	private static String filePath = "/opt/parametros_nds/ftf/saida/";
 	
 	@Test
-	public void testarArquivo() {
+	public void testarArquivoEnvio() {
 		
 		List<FTFBaseDTO> list = new ArrayList<FTFBaseDTO>();
 		List<FTFRetornoRET> l = new ArrayList<FTFRetornoRET>();
@@ -41,26 +38,12 @@ public class FTFTest {
 		try {
 			br = new BufferedReader(new FileReader(file));
 			
-			while(br.ready()){
+			while(br.ready()) {
 				
 				String line = br.readLine();
-				FTFBaseDTO ftfdto = FTFParser.parseLinhaRetornoFTF(line);
+				FTFBaseDTO ftfdto = FTFParser.parseLinhaEnvioFTF(line);
 				list.add(ftfdto);
 			}
-			
-
-			FTFRetornoRET n = new FTFRetornoRET();
-			for (FTFBaseDTO dto : list) {
-				if(dto instanceof FTFRetTipoRegistro00){
-					n.setTipo00((FTFRetTipoRegistro00)dto);
-				}else if(dto instanceof FTFRetTipoRegistro01){
-					n.getTipo01List().add((FTFRetTipoRegistro01)dto);
-				}else if(dto instanceof FTFRetTipoRegistro09){
-					n.setTipo09((FTFRetTipoRegistro09)dto);
-				}
-			}
-			
-			l.add(n);
 			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
