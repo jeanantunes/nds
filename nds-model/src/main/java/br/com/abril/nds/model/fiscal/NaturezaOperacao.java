@@ -4,17 +4,16 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CollectionTable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -69,10 +68,17 @@ public class NaturezaOperacao implements Serializable {
 	@Column(name = "TIPO_DESTINATARIO", nullable = false)
 	private TipoDestinatario tipoDestinatario;
 	
+	/*
 	@ElementCollection(targetClass = Processo.class, fetch=FetchType.EAGER) 
 	@CollectionTable(name = "PROCESSO_NFE",
 	    joinColumns = @JoinColumn(name = "PROCESSO_NFE_ID"))
 	@Column(name = "PROCESSO")
+	*/
+	@ManyToMany(cascade=CascadeType.ALL)
+	@JoinTable(name="PROCESSO_NFE", joinColumns={
+				@JoinColumn(name="PROCESSO_NFE_ID", referencedColumnName="id", nullable=false)
+	                    },
+	            inverseJoinColumns=@JoinColumn(name="PROCESSO", referencedColumnName="id"))
 	private Set<Processo> processo;
 
 	@Column(name = "CONTRIBUINTE", nullable = false)
@@ -84,7 +90,7 @@ public class NaturezaOperacao implements Serializable {
 	            joinColumns={
 	            		@JoinColumn(table="NATUREZA_OPERACAO", name="NATUREZA_OPERACAO_ID", referencedColumnName="id", nullable=false)
 	                    },
-	            inverseJoinColumns=@JoinColumn(table="TIPO_MOVIMENTO",name="TIPO_MOVIMENTO_ID", referencedColumnName="id"))
+	            inverseJoinColumns=@JoinColumn(table="TIPO_MOVIMENTO", name="TIPO_MOVIMENTO_ID", referencedColumnName="id"))
 	private List<TipoMovimento> tipoMovimento;
 	
 	@Column(name = "NOTA_FISCAL_NUMERO_NF", length=60)
