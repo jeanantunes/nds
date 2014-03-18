@@ -1,16 +1,16 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.SerializationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,10 +41,10 @@ import br.com.abril.nds.util.DateUtil;
  * {@link br.com.abril.nds.model.planejamento.Estudo}.
  * 
  * @author Discover Technology
- *
  */
 @Service
 public class EstudoServiceImpl implements EstudoService {
+    public static final Logger LOGGER = LoggerFactory.getLogger(EstudoServiceImpl.class);
 	
 	@Autowired
 	private EstudoGeradoRepository estudoGeradoRepository;
@@ -105,14 +105,14 @@ public class EstudoServiceImpl implements EstudoService {
     }
 
     @Transactional
-	public List<Long> salvarDivisao(EstudoGerado estudoOriginal,List<EstudoGerado> listEstudo,DivisaoEstudoDTO divisaoEstudo) {
+    public List<Long> salvarDivisao(EstudoGerado estudoOriginal, List<EstudoGerado> listEstudo, DivisaoEstudoDTO divisaoEstudo) {
 
 		List<Long> listIdEstudoAdicionado = null;
 
 		EstudoGerado obterEstudo = this.obterEstudo(listEstudo.get(0).getId());
 		EstudoGerado obterEstudo2 = this.obterEstudo(listEstudo.get(1).getId());
 		
-		if(obterEstudo!=null && obterEstudo2!=null ){
+        if (obterEstudo != null && obterEstudo2 != null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, " Número dos estudo gerados já estão sendo utilizados.");
 		}
 		
@@ -128,17 +128,17 @@ public class EstudoServiceImpl implements EstudoService {
 							.getDataLancamento(), segundoEstudo
 							.getProdutoEdicao().getId());
 
-			if(lancamentoSegundoEstudo==null){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados lançamentos para data "+DateUtil.formatarDataPTBR(segundoEstudo.getDataLancamento()));
+            if (lancamentoSegundoEstudo == null) {
+                throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados lançamentos para data " + DateUtil.formatarDataPTBR(segundoEstudo.getDataLancamento()));
 			}
 			
 			listIdEstudoAdicionado = new ArrayList<Long>();
-			Integer quantidadeReparte = (divisaoEstudo.getQuantidadeReparte()==null)?0:divisaoEstudo.getQuantidadeReparte();
+            Integer quantidadeReparte = (divisaoEstudo.getQuantidadeReparte() == null) ? 0 : divisaoEstudo.getQuantidadeReparte();
 
 			List<EstudoCotaGerado> listEstudoCota = this.estudoCotaGeradoRepository.obterEstudoCotaPorEstudo(estudoOriginal);
 
 			int iEstudo = 0;
-			HashMap<Long,BigInteger> diffEstudosMap = new HashMap<Long,BigInteger>();
+            HashMap<Long, BigInteger> diffEstudosMap = new HashMap<Long, BigInteger>();
 
 			for (EstudoGerado estudo : listEstudo) {
 
@@ -152,13 +152,13 @@ public class EstudoServiceImpl implements EstudoService {
 					estudoCota.setEstudo(estudo);
 
 					//nao dividir reparte menor que o informado em tela
-					if(estudoCota.getReparte()!=null && estudoCota.getReparte().compareTo(new BigInteger(quantidadeReparte.toString()))>0){
+                    if (estudoCota.getReparte() != null && estudoCota.getReparte().compareTo(new BigInteger(quantidadeReparte.toString())) > 0) {
 						//Primeiro estudo gerado
-						if(iEstudo==0){
+                        if (iEstudo == 0) {
 							BigDecimal toDivide = null;
 							BigDecimal i = new BigDecimal(estudoCota.getReparte());
 							toDivide = new BigDecimal(divisaoEstudo.getPercentualDivisaoPrimeiroEstudo()).divide(new BigDecimal("100"));
-							BigInteger bigInteger = i.multiply(toDivide).setScale(0,BigDecimal.ROUND_HALF_UP).toBigInteger();
+                            BigInteger bigInteger = i.multiply(toDivide).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
 							estudoCota.setReparte(bigInteger);
 							
 							diffEstudosMap.put(ec.getId(), ec.getReparte().subtract(bigInteger));
@@ -167,7 +167,7 @@ public class EstudoServiceImpl implements EstudoService {
 							BigDecimal toDivide  = new BigDecimal(50).divide(new BigDecimal("100"));
 							System.out.println(bd.multiply(toDivide).setScale(0,BigDecimal.ROUND_HALF_UP));*/
 							
-						}else{
+                        } else {
 							//Segundo estudo gerado
 //							toDivide = new BigDecimal(divisaoEstudo.getPercentualDivisaoSegundoEstudo()).divide(new BigDecimal("100"));
 							estudoCota.setReparte(diffEstudosMap.get(ec.getId()));
@@ -175,9 +175,9 @@ public class EstudoServiceImpl implements EstudoService {
 					
 						setEstudoCota.add(estudoCota);
 						
-					}else{
+                    } else {
 						
-						if(iEstudo==1 ){
+                        if (iEstudo == 1) {
 							estudoCota.setReparte(BigInteger.ZERO);
 						}
 						setEstudoCota.add(estudoCota);
@@ -186,8 +186,8 @@ public class EstudoServiceImpl implements EstudoService {
 
 				BigInteger somarReparteParaEstudo = BigInteger.ZERO;
 				for (EstudoCotaGerado estudoCota : setEstudoCota) {
-					BigInteger r = estudoCota.getReparte()==null?BigInteger.ZERO:estudoCota.getReparte();
-					somarReparteParaEstudo=somarReparteParaEstudo.add(r);
+                    BigInteger r = estudoCota.getReparte() == null ? BigInteger.ZERO : estudoCota.getReparte();
+                    somarReparteParaEstudo = somarReparteParaEstudo.add(r);
 					estudoCota.setQtdeEfetiva(estudoCota.getReparte());
 					estudoCota.setQtdePrevista(estudoCota.getReparte());
 				}
@@ -197,8 +197,7 @@ public class EstudoServiceImpl implements EstudoService {
 				// Estudo 1 possui o mesmo lancamentoID do estudo original
 				if (iEstudo == 0) {
 					estudo.setLancamentoID(estudoOriginal.getLancamentoID());
-				}
-				else{
+                } else {
 					estudo.setLancamentoID(lancamentoSegundoEstudo.getId());
 				}
 				
@@ -306,4 +305,20 @@ public class EstudoServiceImpl implements EstudoService {
 		return estudo;
 	}
 	
+    @Override
+    @Transactional
+    public void gravarDadosVendaMedia(Long estudoId, DistribuicaoVendaMediaDTO distribuicaoVendaMedia) {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> campos = new HashMap<>();
+        String valueAsString = null;
+        try {
+            valueAsString = mapper.writeValueAsString(distribuicaoVendaMedia);
+        } catch (IOException e) {
+            LOGGER.info("Serialization error.", e);
+        }
+        campos.put("DADOS_VENDA_MEDIA", valueAsString);
+        estudoRepository.alterarPorId(estudoId, campos);
+        estudoGeradoRepository.alterarPorId(estudoId, campos);
+    }
+
 }

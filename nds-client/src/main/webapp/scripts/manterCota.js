@@ -364,6 +364,8 @@ var MANTER_COTA = $.extend(true, {
                     	
                     	$("#numeroCotaCPF", this.workspace).attr("disabled", "disabled");
                     	
+                    	$("#tabCota", this.workspace).tabs( "option", "disabled", [4] );
+                    	
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionadaCPF");
                         
                         COTA_CPF.editarCPF(result);
@@ -371,6 +373,8 @@ var MANTER_COTA = $.extend(true, {
                     else {
                     	
                     	$("#numeroCotaCNPJ", this.workspace).attr("disabled", "disabled");
+                    	
+                    	$("#tabCota", this.workspace).tabs( "option", "disabled", [4] );
                     	
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
                         
@@ -1155,6 +1159,8 @@ var COTA_CNPJ = $.extend(true, {
                 }
 
                 MANTER_COTA.montarCombo(dados.listaClassificacao,"#classificacaoSelecionada");
+                
+                $("#tabCota", this.workspace).tabs( "option", "disabled", [4] );
 
                 MANTER_COTA.popupCota(true);
             }
@@ -1370,6 +1376,8 @@ var COTA_CPF = $.extend(true, {
                 }
 
                 MANTER_COTA.montarCombo(dados.listaClassificacao,"#classificacaoSelecionadaCPF");
+                
+                $("#tabCota", this.workspace).tabs( "option", "disabled", [4] );
 
                 MANTER_COTA.popupCota(true);
             }
