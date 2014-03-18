@@ -202,6 +202,8 @@ var ConferenciaEncalhe = $.extend(true, {
 			}
 		});
 
+		ConferenciaEncalhe.inicializarAutoCompleteSugestaoProdutoEdicao();
+		
 		$("#pesq_prod", ConferenciaEncalhe.workspace).keyup(function (e){
 			
 			if (e.keyCode == 13) {
