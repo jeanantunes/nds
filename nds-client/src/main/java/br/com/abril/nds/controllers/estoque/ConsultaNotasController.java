@@ -37,7 +37,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
-import br.com.abril.nds.service.TipoNotaFiscalService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -80,7 +80,7 @@ public class ConsultaNotasController extends BaseController {
 	private FornecedorService fornecedorService;
 
 	@Autowired
-	private TipoNotaFiscalService tipoNotaFiscalService;
+	private NaturezaOperacaoService tipoNotaFiscalService;
 
 	@Autowired
 	private NotaFiscalEntradaService notaFiscalService;
@@ -224,7 +224,7 @@ public class ConsultaNotasController extends BaseController {
 		}
 
 		List<NaturezaOperacao> tiposNotaFiscal = 
-				this.tipoNotaFiscalService.obterTiposNotasFiscaisPorTipoAtividadeDistribuidor();
+				this.tipoNotaFiscalService.obterNaturezasOperacoesPorTipoAtividadeDistribuidor();
 
 		this.result.include("fornecedores", fornecedoresDistribuicao);
 		this.result.include("tiposNotaFiscal", tiposNotaFiscal);

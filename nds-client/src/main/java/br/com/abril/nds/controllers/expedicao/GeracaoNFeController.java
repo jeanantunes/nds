@@ -33,7 +33,7 @@ import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
-import br.com.abril.nds.service.TipoNotaFiscalService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.Intervalo;
@@ -69,7 +69,7 @@ public class GeracaoNFeController extends BaseController {
 	private FornecedorService fornecedorService;
 	
 	@Autowired
-	private TipoNotaFiscalService tipoNotaFiscalService;
+	private NaturezaOperacaoService tipoNotaFiscalService;
 	
 	@Autowired
 	private HttpServletResponse httpServletResponse;
@@ -264,7 +264,7 @@ public class GeracaoNFeController extends BaseController {
 	
 	public List<ItemDTO<Long, String>> carregarTipoNotaFiscal() {
 		
-		List<ItemDTO<Long, String>> listaTipoNotaFiscal = this.tipoNotaFiscalService.carregarComboTiposNotasFiscais(this.distribuidorService.tipoAtividade());
+		List<ItemDTO<Long, String>> listaTipoNotaFiscal = this.tipoNotaFiscalService.carregarComboNaturezasOperacoes(this.distribuidorService.tipoAtividade());
 		
 		return listaTipoNotaFiscal;
 	}

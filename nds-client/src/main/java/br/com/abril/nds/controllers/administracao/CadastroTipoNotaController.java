@@ -13,7 +13,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.RegistroTipoNotaFiscalVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroNaturezaOperacaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Processo;
@@ -21,7 +21,7 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.TipoNotaFiscalService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -43,7 +43,7 @@ import br.com.caelum.vraptor.Result;
 public class CadastroTipoNotaController extends BaseController {
 
 	@Autowired
-	TipoNotaFiscalService tipoNotaFiscalService;
+	NaturezaOperacaoService tipoNotaFiscalService;
 
 	@Autowired
 	DistribuidorService distribuidorService;
@@ -83,9 +83,9 @@ public class CadastroTipoNotaController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
 		}
 		
-		FiltroCadastroTipoNotaDTO filtro = obterFiltroParaExportacao();
+		FiltroNaturezaOperacaoDTO filtro = obterFiltroParaExportacao();
 		
-		List<NaturezaOperacao> lista = tipoNotaFiscalService.consultarTipoNotaFiscal(filtro);
+		List<NaturezaOperacao> lista = tipoNotaFiscalService.consultarNaturezasOperacoes(filtro);
 		
 		FileExporter.to("consulta-edicoes-fechadas-com-saldo", fileType)
 					.inHTTPResponse(this.getNDSFileHeader(), 
@@ -110,14 +110,14 @@ public class CadastroTipoNotaController extends BaseController {
 	@Path("/pesquisar")
 	public void pesquisar(TipoAtividade operacao, String tipoNota, String sortname, String sortorder, int rp, int page) throws Exception {
 		
-		FiltroCadastroTipoNotaDTO filtro =  tratarFiltroSessao(operacao, tipoNota, sortname, sortorder, rp, page);
+		FiltroNaturezaOperacaoDTO filtro =  tratarFiltroSessao(operacao, tipoNota, sortname, sortorder, rp, page);
 		
-		List<NaturezaOperacao> lista = tipoNotaFiscalService.consultarTipoNotaFiscal(filtro);
+		List<NaturezaOperacao> lista = tipoNotaFiscalService.consultarNaturezasOperacoes(filtro);
 		
 		if (lista == null || lista.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		
-		Integer quantidade = tipoNotaFiscalService.obterQuantidadeTiposNotasFiscais(filtro);
+		Integer quantidade = tipoNotaFiscalService.obterQuantidadeNaturezasOperacoes(filtro);
 		
 		result.use(FlexiGridJson.class).from(getResultadoVO(lista,"<br></br>")).total(quantidade).page(page).serialize();
 	}
@@ -128,16 +128,16 @@ public class CadastroTipoNotaController extends BaseController {
 	 * @param sortname2 
 	 * @param tipoNota 
 	 */
-	private FiltroCadastroTipoNotaDTO tratarFiltroSessao(TipoAtividade operacao, String tipoNota, String sortname, String sortorder, int rp, int page) {
+	private FiltroNaturezaOperacaoDTO tratarFiltroSessao(TipoAtividade operacao, String tipoNota, String sortname, String sortorder, int rp, int page) {
 		
-		FiltroCadastroTipoNotaDTO filtro = new FiltroCadastroTipoNotaDTO();
+		FiltroNaturezaOperacaoDTO filtro = new FiltroNaturezaOperacaoDTO();
 		filtro.setTipoNota(tipoNota);
 		filtro.setTipoAtividade(operacao);
 		
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtro.setPaginacao(paginacao);
 		
-		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroCadastroTipoNotaDTO.OrdenacaoColunaConsulta.values(), sortname));
+		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroNaturezaOperacaoDTO.OrdenacaoColunaConsulta.values(), sortname));
 		session.setAttribute(FILTRO_CADASTRO_TIPO_NOTA_SESSION_ATTRIBUTE, filtro);
 		
 		return filtro;
@@ -147,9 +147,9 @@ public class CadastroTipoNotaController extends BaseController {
 	 * Obtém o filtro de pesquisa para exportação.
 	 * @return
 	 */
-	private FiltroCadastroTipoNotaDTO obterFiltroParaExportacao() {
+	private FiltroNaturezaOperacaoDTO obterFiltroParaExportacao() {
 		
-		FiltroCadastroTipoNotaDTO filtroSessao = (FiltroCadastroTipoNotaDTO) this.session.getAttribute(FILTRO_CADASTRO_TIPO_NOTA_SESSION_ATTRIBUTE);
+		FiltroNaturezaOperacaoDTO filtroSessao = (FiltroNaturezaOperacaoDTO) this.session.getAttribute(FILTRO_CADASTRO_TIPO_NOTA_SESSION_ATTRIBUTE);
 		
 		if (filtroSessao != null) {
 			
