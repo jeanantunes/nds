@@ -31,7 +31,7 @@
 		<div class="area">
 			
 			<span class="bt_novos" >
-				<a isEdicao="true" id="linkConfiguracaoInicial" title="Voltar ConfiguraÃ§Ã£o Inicial" href="javascript:;">
+				<a isEdicao="true" id="linkConfiguracaoInicial" title="Voltar Configuração Inicial" href="javascript:;">
 					<img src="${pageContext.request.contextPath}/images/bt_devolucao.png" border="0" hspace="5" />
 				</a>
 			</span>
@@ -99,7 +99,7 @@
 			
 			<jsp:include page="../messagesDialog.jsp" />
 			
-			<p>Ao prosseguir com essa aÃ§Ã£o vocÃª perderÃ¡ seus dados nÃ£o salvos ou confirmados. Deseja prosseguir?</p>
+			<p>Ao prosseguir com essa ação você perderá seus dados não salvos ou confirmados. Deseja prosseguir?</p>
 			   
 		</div>
 		</form>
@@ -109,7 +109,7 @@
 			
 			<jsp:include page="../messagesDialog.jsp" />
 			
-			<p>Ao voltar a configuraÃ§Ã£o inicial, vocÃª perdarÃ¡ os dados salvos. Deseja prosseguir?</p>
+			<p>Ao voltar a configuração inicial, você perdará os dados salvos. Deseja prosseguir?</p>
 			   
 		</div>
 		</form>
@@ -128,10 +128,10 @@
 		<form id="form-ProdutosNaoBalanceadosAposConfirmacaoMatriz">
 			<div id="dialogProdutosNaoBalanceadosAposConfirmacaoMatriz" title="Balanceamento da Matriz de Recolhimento" style="display:none;">
 				<jsp:include page="../messagesDialog.jsp" />
-				<p>Os seguintes produtos nÃ£o puderam ser balanceados. Todas as datas jÃ¡ estÃ£o confirmadas.</p>
+				<p>Os seguintes produtos não puderam ser balanceados. Todas as datas já estão confirmadas.</p>
 				<br>
 				<p><span id="descdialogProdutosNaoBalanceadosAposConfirmacaoMatriz"></span></p>
-				<p>Deseja que os produtos sejam processados na semana seguinte?</p>   
+				<p>Deseja que os produtos sejam processados na próxima data de recolhimento disponível?</p>   
 			</div>
 		</form>
 		
@@ -235,18 +235,18 @@
 		
 		<div class="linha_separa_fields">&nbsp;</div>
 		
-		<!--  Resumo do PerÃ­odo -->
+		<!--  Resumo do Período -->
 		
 		<fieldset class="classFieldset resumoPeriodo" id="resumoPeriodo" style="display: none;">
 		
-			<legend>Resumo do PerÃ­odo</legend>
+			<legend>Resumo do Período</legend>
 			
 			<div style="width: 950px; overflow-x: auto;">
 				<table id="tableResumoPeriodoBalanceamento" name="tableResumoPeriodoBalanceamento" width="100%" border="0" cellspacing="2" cellpadding="2">
 				</table>
 			</div>
 			
-			<!-- BotÃµes de AÃ§Ã£o -->
+			<!-- Botões de Ação -->
 			
 			<table width="950" border="0" cellspacing="0" cellpadding="0">
 				<tr>
@@ -257,7 +257,7 @@
 						
 					</td>
 					<td width="296">
-						<!-- Removidos BotÃµes Confirmar/Editor/Valor/Salvar -->
+						<!-- Removidos Botões Confirmar/Editor/Valor/Salvar -->
 					</td>
 					
 					<td width="207">
