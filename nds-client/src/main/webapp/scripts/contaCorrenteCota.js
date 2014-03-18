@@ -113,8 +113,9 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 		var parametroPesquisa = [{name:'filtro.numeroCota', value:numeroCota },
 		                         {name:'filtro.idConsolidado', value:idConsolidado },
-		                         {name:'filtro.dataConsolidado', value:dataConsolidado}];
-		
+		                         {name:'filtro.dataConsolidado', value:dataConsolidado},
+		                         {name:'sortname', value:'sequencia'}];
+
 		$.postJSON(
 			contextPath + '/financeiro/contaCorrenteCota/consultarConsignadoCota',
 			parametroPesquisa,
@@ -541,7 +542,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		},
 		dataType : 'json',	
 		colModel : [{
-			display : 'Sequência',
+			display : 'SM',
 			name : 'sequencia',
 			width : 50,
 			sortable : false,

@@ -10,12 +10,16 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.util.export.Delimiter;
 
 public final class FTFParser {
 
 	private boolean trace;
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(FTFParser.class);
 	
 	public FTFParser() {
 		// TODO Auto-generated constructor stub
@@ -174,7 +178,8 @@ public final class FTFParser {
 		}
 		
 		if(count!=line.length()){
-			throw new RuntimeException("Linha do arquivo de retorno com tamanho diferente do mapeamento.");
+			//throw new RuntimeException("Linha do arquivo de retorno com tamanho diferente do mapeamento.");
+			LOGGER.error("Previsto: "+ count +" / Encontrado: "+ line.length() +" | "+ line.toString());
 		}
 		
 		
@@ -189,8 +194,8 @@ public final class FTFParser {
 			Object param = null;
 			
 			if(tipo.equalsIgnoreCase("long")){
-				param = new Long(value);
-			}else{
+				param = Long.valueOf(value != null ? value.trim() : "0");
+			} else {
 				param = value;
 				
 			}
