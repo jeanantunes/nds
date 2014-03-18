@@ -2,7 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
-import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroNaturezaOperacaoDTO;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
@@ -22,33 +22,24 @@ public interface NaturezaOperacaoRepository extends Repository<NaturezaOperacao,
 
 	NaturezaOperacao obterNaturezaOperacao(GrupoNotaFiscal grupoNotaFiscal);
 	
-	List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao, TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente, GrupoNotaFiscal[] grupoNotaFiscal);
+	List<NaturezaOperacao> obterNaturezasOperacoes(TipoOperacao tipoOperacao, TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente, GrupoNotaFiscal[] grupoNotaFiscal);
 
-	public Integer obterQuantidadeTiposNotasFiscais(FiltroCadastroTipoNotaDTO filtro);
+	public Integer obterQuantidadeTiposNotasFiscais(FiltroNaturezaOperacaoDTO filtro);
 	
-	List<NaturezaOperacao> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(TipoAtividade tipoAtividade);
+	List<NaturezaOperacao> obterNaturezasOperacoesPorTipoAtividadeDistribuidor(TipoAtividade tipoAtividade);
 	/**
 	 * Obtem tipos de notas fiscais de cotas nao contribuintes por tipo de atividade parametrizdo.
 	 * 
 	 * @param tipoAtividade Mercantil ou Prestador de Servicos
 	 * @return lista tipo nota fiscal
 	 */
-	public List<NaturezaOperacao> obterTiposNotasFiscaisCotasNaoContribuintesPor(TipoAtividade tipoAtividade);
+	public List<NaturezaOperacao> obterNaturezasOperacoesCotasNaoContribuintesPor(TipoAtividade tipoAtividade);
 	
-	List<NaturezaOperacao> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro);
+	List<NaturezaOperacao> consultarNaturezaOperacao(FiltroNaturezaOperacaoDTO filtro);
 	
 	
 
 	List<NaturezaOperacao> obterTiposNotaFiscal(GrupoNotaFiscal grupoNotaFiscal);
-	/**
-	 * Obtem tipo de nota fiscal.
-	 * 
-	 * @param grupoNotaFiscal
-	 * @param tipoAtividade
-	 * @param isContribuinte
-	 * @return TipoNotaFiscal
-	 */
-	NaturezaOperacao obterNaturezaOperacao(GrupoNotaFiscal grupoNotaFiscal, TipoAtividade tipoAtividade, boolean isContribuinte);
 	
 	NaturezaOperacao obterNaturezaOperacao(Long idNaturezaOperacao);
 }

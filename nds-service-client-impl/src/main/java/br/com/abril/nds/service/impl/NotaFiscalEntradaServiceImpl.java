@@ -38,7 +38,7 @@ import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
-import br.com.abril.nds.service.TipoNotaFiscalService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
@@ -65,7 +65,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	private CotaService cotaService;
 	
 	@Autowired
-	private TipoNotaFiscalService tipoNotaFiscalService;
+	private NaturezaOperacaoService tipoNotaFiscalService;
 	
 	@Autowired
 	private ControleConferenciaEncalheCotaRepository conferenciaEncalheCotaRepository;

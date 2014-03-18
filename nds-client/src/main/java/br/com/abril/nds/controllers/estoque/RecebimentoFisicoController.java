@@ -52,7 +52,7 @@ import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
-import br.com.abril.nds.service.TipoNotaFiscalService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -109,7 +109,7 @@ public class RecebimentoFisicoController extends BaseController {
     private ProdutoService produtoService;
     
     @Autowired
-    private TipoNotaFiscalService tipoNotaService;
+    private NaturezaOperacaoService tipoNotaService;
     
     @Autowired
     private Validator validator;

@@ -5,7 +5,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroNaturezaOperacaoDTO;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
@@ -71,31 +71,9 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		return (NaturezaOperacao) query.uniqueResult();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public NaturezaOperacao obterNaturezaOperacao(GrupoNotaFiscal grupoNotaFiscal, TipoAtividade tipoAtividade, boolean isContribuinte) {
-
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" from TipoNotaFiscal tipoNotaFiscal ")
-		   .append(" where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal ")
-		   .append(" and tipoNotaFiscal.contribuinte = :isContribuinte ")
-		   .append(" and tipoNotaFiscal.tipoAtividade = :tipoAtividade ");
-		
-		Query query = getSession().createQuery(hql.toString());
-
-		query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
-		query.setParameter("isContribuinte", isContribuinte);
-		query.setParameter("tipoAtividade", tipoAtividade);
-
-		return (NaturezaOperacao) query.uniqueResult();
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<NaturezaOperacao> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro){
+	public List<NaturezaOperacao> consultarNaturezaOperacao(FiltroNaturezaOperacaoDTO filtro){
 		
 		StringBuilder hql  = new StringBuilder();
 		
@@ -130,7 +108,7 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public Integer obterQuantidadeTiposNotasFiscais(FiltroCadastroTipoNotaDTO filtro) {
+	public Integer obterQuantidadeTiposNotasFiscais(FiltroNaturezaOperacaoDTO filtro) {
 		
 		String hql  = getHqlConsulta(filtro, true);
 		
@@ -154,7 +132,7 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<NaturezaOperacao> obterTiposNotasFiscaisCotasNaoContribuintesPor(TipoAtividade tipoAtividade) {
+	public List<NaturezaOperacao> obterNaturezasOperacoesCotasNaoContribuintesPor(TipoAtividade tipoAtividade) {
 		
 		String hql = " from NaturezaOperacao no where no.tipoAtividade = :tipoAtividade group by no.id ";
 		
@@ -169,7 +147,7 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<NaturezaOperacao> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(TipoAtividade tipoAtividade) {
+	public List<NaturezaOperacao> obterNaturezasOperacoesPorTipoAtividadeDistribuidor(TipoAtividade tipoAtividade) {
 		
 		String hql = " from NaturezaOperacao tipoNotaFiscal where tipoNotaFiscal.tipoAtividade = :tipoAtividade group by tipoNotaFiscal.id ";
 		
@@ -179,7 +157,7 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		return query.list();
 	}
 	
-	private String getHqlConsulta(FiltroCadastroTipoNotaDTO filtro, boolean count){
+	private String getHqlConsulta(FiltroNaturezaOperacaoDTO filtro, boolean count){
 		
 		StringBuilder hql  = new StringBuilder();
 		
@@ -215,7 +193,7 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		return hql.toString();
 	}
 	
-	private String getOrdenacaoConsulta(FiltroCadastroTipoNotaDTO filtro){
+	private String getOrdenacaoConsulta(FiltroNaturezaOperacaoDTO filtro){
 		
 		if (filtro == null || filtro.getOrdenacaoColuna() == null) {
 			return "";
@@ -263,7 +241,7 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao,
+	public List<NaturezaOperacao> obterNaturezasOperacoes(TipoOperacao tipoOperacao,
 			TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente,
 			GrupoNotaFiscal[] grupoNotaFiscal) {
 
