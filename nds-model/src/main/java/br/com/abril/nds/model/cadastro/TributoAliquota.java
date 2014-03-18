@@ -92,4 +92,7 @@ public class TributoAliquota implements Serializable {
 		this.valor = valor;
 	}
 	
+	public String getNomeTributo() {
+		return tributo != null ? tributo.getNome() : "";
+	}
 }
