@@ -53,6 +53,7 @@ import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.integracao.ParametroSistema;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
@@ -128,6 +129,10 @@ public class NFeServiceImpl implements NFeService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+
+	// Trava para evitar duplicidade ao gerar notas por mais de um usuario simultaneamente
+    // O HashMap suporta mais detalhes e pode ser usado futuramente para restricoes mais finas
+    private static final Map<String, Object> TRAVA_GERACAO_NFe = new HashMap<>();
 	
     /**
      * Obtém os arquivos das DANFE relativas as NFes passadas como parâmetro.
@@ -194,20 +199,20 @@ public class NFeServiceImpl implements NFeService {
 	}
 	
 	@Transactional
-	public NotaFiscal mergeNotaFiscal(NotaFiscal notaFiscal) {
+	public NotaFiscal mergeNotaFiscal(final NotaFiscal notaFiscal) {
 		return notaFiscalRepository.merge(notaFiscal);
 	}
 	
 	@Transactional
-	public NotaEnvio mergeNotaEnvio(NotaEnvio notaEnvio) {
+	public NotaEnvio mergeNotaEnvio(final NotaEnvio notaEnvio) {
 		return notaEnvioRepository.merge(notaEnvio);
 	}
 	
-	private NfeImpressaoDTO obterDadosNENECA(NotaEnvio ne) {
-		NfeImpressaoDTO nfeImpressao = new NfeImpressaoDTO();
+	private NfeImpressaoDTO obterDadosNENECA(final NotaEnvio ne) {
+		final NfeImpressaoDTO nfeImpressao = new NfeImpressaoDTO();
 
 		//TODO: concluir
-		NotaEnvio notaEnvio = notaEnvioRepository.buscarPorId(ne.getNumero()); 
+		final NotaEnvio notaEnvio = notaEnvioRepository.buscarPorId(ne.getNumero()); 
 
 		if(notaEnvio == null) {
 			return null;
@@ -231,33 +236,33 @@ public class NFeServiceImpl implements NFeService {
      */
 	protected URL obterDiretorioReports() {
 
-		URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("/reports/");
+		final URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("/reports/");
 
 		return urlDanfe;
 	}
 
-	private byte[] gerarDocumentoIreportNE(List<NfeImpressaoWrapper> list, boolean indEmissaoDepec) throws JRException, URISyntaxException {
+	private byte[] gerarDocumentoIreportNE(final List<NfeImpressaoWrapper> list, final boolean indEmissaoDepec) throws JRException, URISyntaxException {
 
-		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+		final JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 
-		URL diretorioReports = obterDiretorioReports();
+		final URL diretorioReports = obterDiretorioReports();
 		
-		TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE = distribuidorRepository.tipoImpressaoNENECADANFE();
+		final TipoImpressaoNENECADANFE nenecaDANFE = distribuidorRepository.tipoImpressaoNENECADANFE();
 		
 		String path = diretorioReports.toURI().getPath();
 		
-		switch (tipoImpressaoNENECADANFE) {
+		switch (nenecaDANFE) {
 			case MODELO_1:
 				
-				path += "/ne_modelo1_wrapper.jasper";
+				path.concat("/ne_modelo1_wrapper.jasper");
 				break;
 	
 			case MODELO_2:
-				path += "/ne_modelo2_wrapper.jasper";
+				path.concat("/ne_modelo2_wrapper.jasper");
 				break;	
 				
 			case DANFE:
-				path += "/danfeWrapper.jasper";
+				path.concat("/danfeWrapper.jasper");
 				break;	
 			default:
 				throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do documento da NE");
@@ -278,7 +283,7 @@ public class NFeServiceImpl implements NFeService {
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 	
-	private String getStringDataDeAte(Intervalo<Date> intervalo) {
+	private String getStringDataDeAte(final Intervalo<Date> intervalo) {
 		
 		String dataRecolhimento = null;
 		if(intervalo.getDe().equals(intervalo.getAte())){
@@ -296,17 +301,13 @@ public class NFeServiceImpl implements NFeService {
 	 * 
 	 */
 	
-	// Trava para evitar duplicidade ao gerar notas por mais de um usuario simultaneamente
-    // O HashMap suporta mais detalhes e pode ser usado futuramente para restricoes mais finas
-    private static final Map<String, Object> TRAVA_GERACAO_NFe = new HashMap<>();
-	
 	@Override
 	@Transactional
-	public synchronized List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
-			Intervalo<Integer> intervalorCota,
-			Intervalo<Date> intervaloDateMovimento,
-			List<Long> listIdFornecedor, Long idTipoNotaFiscal, Long idRoteiro, Long idRota,
-			String sortname, String sortorder, Integer resultsPage, Integer page, SituacaoCadastro situacaoCadastro) {
+	public synchronized List<CotaExemplaresDTO> busca(final Intervalo<Integer> intervaloBox,
+			final Intervalo<Integer> intervalorCota,
+			final Intervalo<Date> intervaloDateMovimento,
+			final List<Long> listIdFornecedor, final Long idTipoNotaFiscal, final Long idRoteiro, final Long idRota,
+			final String sortname, final String sortorder, final Integer resultsPage, final Integer page, final SituacaoCadastro situacaoCadastro) {
 		
 		if (TRAVA_GERACAO_NFe.get("NFesSendoGeradas") != null) {
             throw new ValidacaoException(TipoMensagem.WARNING,
@@ -474,7 +475,7 @@ public class NFeServiceImpl implements NFeService {
 		return notas;
 	}
 		
-	private void validarFiltroNFe(FiltroNFeDTO filtro) {
+	private void validarFiltroNFe(final FiltroNFeDTO filtro) {
 		
 		if(filtro.getDataInicial() == null || filtro.getDataFinal() == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "As datas inicial e final não podem ser nulas.");
@@ -532,25 +533,27 @@ public class NFeServiceImpl implements NFeService {
 		return distribuidorRepository.obter();
 	}
 	
-	private void gerarNotasFiscaisCotas(FiltroNFeDTO filtro,
-			List<NotaFiscal> notasFiscais, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao, 
-			Map<String, ParametroSistema> parametrosSistema, List<Cota> cotas) {
+	private void gerarNotasFiscaisCotas(final FiltroNFeDTO filtro,
+			final List<NotaFiscal> notasFiscais, final Distribuidor distribuidor, final NaturezaOperacao naturezaOperacao, 
+			final Map<String, ParametroSistema> parametrosSistema, final List<Cota> cotas) {
 		
 		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
 		
-		Map<String, TributoAliquota> tributoRegimeTributario = new HashMap<String, TributoAliquota>();
+		final Map<String, TributoAliquota> tributoRegimeTributario = new HashMap<String, TributoAliquota>();
 		
-		for(TributoAliquota tributo : distribuidor.getRegimeTributario().getTributosAliquotas()){
-			tributoRegimeTributario.put(tributo.getTributo().getNome(), tributo);
+		for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
+			tributoRegimeTributario.put(tributo.getNomeTributo(), tributo);
 		}
 		
-		for (Cota cota : cotas) {
+		for (final Cota cota : cotas) {
 			
-			NotaFiscal notaFiscal = new NotaFiscal();
+			final NotaFiscal notaFiscal = new NotaFiscal();
 			naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
 			naturezaOperacaoRepository.merge(naturezaOperacao);
 			
-			notaFiscal.setUsuario(this.usuarioService.getUsuarioLogado());
+			final Usuario usuario = this.usuarioService.getUsuarioLogado();
+			
+			notaFiscal.setUsuario(usuario);
 			
 			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
 			
@@ -564,7 +567,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			// obter os movimentos de cada cota
 			filtro.setIdCota(cota.getId());
-			List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro);
+			final List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro);
 			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoRegimeTributario);
 			}
@@ -591,8 +594,8 @@ public class NFeServiceImpl implements NFeService {
 		
 		Map<String, TributoAliquota> tributoAliquota = new HashMap<String, TributoAliquota>();
 		
-		for(TributoAliquota tributo : distribuidor.getRegimeTributario().getTributosAliquotas()){
-			tributoAliquota.put(tributo.getTributo().getNome(), tributo);
+		for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
+			tributoAliquota.put(tributo.getNomeTributo(), tributo);
 		}
 		
 		
@@ -601,13 +604,13 @@ public class NFeServiceImpl implements NFeService {
 		EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, distribuidor);
 		NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, distribuidor, parametrosSistema);
 		NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
-		for (Cota cota : cotas) {
+		for (final Cota cota : cotas) {
 			
 			// FIX arrumar endereco
 			// obter os movimentos de cada cota
 			filtro.setIdCota(cota.getId());
-			List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro);
-			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
+			final List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro);
+			for (final MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
 			}
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
@@ -617,7 +620,7 @@ public class NFeServiceImpl implements NFeService {
 		notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 		
 		//FIXME: Ajustar o transportador Principal
-		if(transportadores.isEmpty() || transportadores == null){
+		if(transportadores == null || transportadores.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Não foi .");
 		}else {			
 			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
@@ -628,25 +631,25 @@ public class NFeServiceImpl implements NFeService {
 	
 	@Override
 	@Transactional
-	public List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroNFeDTO filtro) {
+	public List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(final FiltroNFeDTO filtro) {
 		return notaFiscalService.consultaCotaExemplareSumarizado(filtro);
 	}
 
 	@Override
 	@Transactional
-	public Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro) {
+	public Long consultaCotaExemplareSumarizadoQtd(final FiltroNFeDTO filtro) {
 		return notaFiscalService.consultaCotaExemplareSumarizadoQtd(filtro);
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro) {
+	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(final FiltroNFeDTO filtro) {
 		return notaFiscalService.consultaFornecedorExemplarSumarizado(filtro);
 	}
 
 	@Override
 	@Transactional
-	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro) {
+	public Long consultaFornecedorExemplaresSumarizadosQtd(final FiltroNFeDTO filtro) {
 		return notaFiscalService.consultaFornecedorExemplaresSumarizadosQtd(filtro);
 	}
 }
