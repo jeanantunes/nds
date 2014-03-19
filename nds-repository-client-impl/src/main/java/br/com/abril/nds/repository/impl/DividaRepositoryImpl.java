@@ -24,6 +24,7 @@ import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
@@ -162,6 +163,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         param.put("acumulaDivida", Boolean.FALSE);
         param.put("statusCobranca", StatusCobranca.NAO_PAGO);
         param.put("pendenteAcumulada", StatusDivida.PENDENTE_INADIMPLENCIA);
+        param.put("tipoRoteiroEspecial", TipoRoteiro.ESPECIAL);
         
         if (!isBoleto) {
             param.put("tipoCobrancaBoleto", Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
@@ -235,7 +237,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
            .append(" AND divida.acumulada =:acumulaDivida ")
            .append(" AND cobranca.statusCobranca=:statusCobranca ")
            .append(" AND pdv.caracteristicas.pontoPrincipal = true ")
-           .append(" AND divida.status != :pendenteAcumulada ");
+           .append(" AND divida.status != :pendenteAcumulada ")
+           .append(" AND roteiro.tipoRoteiro != :tipoRoteiroEspecial ");
         
         if (filtro.getNumeroCota() != null) {
             hql.append(" AND cota.numeroCota =:numeroCota ");
@@ -480,8 +483,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
     public List<StatusDividaDTO> obterInadimplenciasCota(final FiltroCotaInadimplenteDTO filtro) {
         
         final StringBuilder sql = new StringBuilder(this.getSqlInadimplenciaClausulaSelect()
-                + this.getSqlInadimplenciaClausulaFrom());
         
+        		+ this.getSqlInadimplenciaClausulaFrom());
         final Map<String, Object> params = new HashMap<>();
         
         tratarFiltro(sql, params, filtro);
@@ -594,9 +597,11 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
                 
                 if (pesquisaVencidosNaoPagos) {
                     
-                    sql.append(" AND ( COBRANCA_.DT_PAGAMENTO IS NULL OR ");
+                    sql.append(" AND (DIVIDA_.STATUS = :statusNegociado OR COBRANCA_.DT_PAGAMENTO IS NULL OR ");
                     sql.append(" COBRANCA_.DT_PAGAMENTO > COBRANCA_.DT_VENCIMENTO ");
                     sql.append("  ) ");
+                    
+                    params.put("statusNegociado", StatusDivida.NEGOCIADA.name());
                     
                 } else {
                     sql.append(" AND COBRANCA_.DT_PAGAMENTO > COBRANCA_.DT_VENCIMENTO ");

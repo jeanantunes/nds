@@ -592,10 +592,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("	left outer join DIA_RECOLHIMENTO_GRUPO_COTA diaRecolhimentoGrupoCota	");
         sql.append("	on grupoCota.id = diaRecolhimentoGrupoCota.grupo_id						");
         
-        sql.append("    where    ");
-        sql.append("   grupoCota.DATA_VIGENCIA_INICIO <= :dataEncalhe");
-        sql.append("         and (grupoCota.DATA_VIGENCIA_FIM is null");
-        sql.append("         or grupoCota.DATA_VIGENCIA_FIM >= :dataEncalhe) and ");
+        sql.append("    where (grupoCota.DATA_VIGENCIA_INICIO is null or grupoCota.DATA_VIGENCIA_INICIO <= :dataEncalhe) ");
+        sql.append("           and (grupoCota.DATA_VIGENCIA_FIM is null or grupoCota.DATA_VIGENCIA_FIM >= :dataEncalhe) and ");
         
         sql.append("    (	grupoCota.id is null		");
         sql.append("    or diaRecolhimentoGrupoCota.dia_id = :diaRecolhimento ) and	");
@@ -1109,6 +1107,12 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     public List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(final FiltroFechamentoEncalheDTO filtro,
             final String sortorder, final String sortname, final Integer page, final Integer rp ) {
         
+        final String hqlCobrancaCotaAVista = "select d.status from Cobranca c " +
+        		" join c.cota cc " +
+        		" join c.divida d " +
+        		" where cc.id = cota.id " +
+        		" and c.dataEmissao = :dataEncalhe ";
+        
         final StringBuilder hql = new StringBuilder();
         
         hql.append("   SELECT  ");
@@ -1121,7 +1125,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         hql.append("   sum( coalesce(mec.qtde, 0)  *  coalesce(mec.valoresAplicados.precoComDesconto, 0)  ) as total ");
         
-        hql.append("   , coalesce(div.status, 'POSTERGADA') as statusCobranca ");
+        hql.append("   , coalesce(div.status, (");
+        
+        hql.append(hqlCobrancaCotaAVista);
+        
+        hql.append("), 'POSTERGADA') as statusCobranca ");
         
         getQueryAnalitico(filtro, hql);
         

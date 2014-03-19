@@ -113,6 +113,7 @@ public class AnaliseParcialController extends BaseController {
         result.include("lancamentoComEstudoLiberado", (lancamento.getEstudo() != null));
         result.include("lancamento", lancamento);
         result.include("estudoCota", estudoCota);
+        result.include("estudo", estudoCota.getEstudo());
         result.include("faixaDe", faixaDe);
         result.include("faixaAte", faixaAte);
         result.include("reparteCopiado", reparteCopiado);

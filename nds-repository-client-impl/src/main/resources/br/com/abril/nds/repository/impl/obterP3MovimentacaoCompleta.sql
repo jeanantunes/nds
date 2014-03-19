@@ -1,5 +1,8 @@
 	
 		 SELECT 
+		 <#if isCount??>
+		 	count(*)
+		 <#else>
 		 cast(:codEmpresa as char) codEmpresa, 
 		 cast(:codFilial as char) codFilial, 
 		 '180' AS naturezaEstoque, 
@@ -58,6 +61,7 @@
 		 '' AS openflex06, 
 		 '' AS openflex07, 
 		 '' AS openflex08 
+		 </#if> 
 		 FROM 
 		     nota_fiscal_entrada AS nfe 
 		 INNER JOIN 

@@ -411,13 +411,12 @@ var analiseParcialController = $.extend(true, {
 
     atualizaReparte : function(input) {
     	
-    	if (!$('#saldo_reparte').val() || $('#saldo_reparte').val() == ""){
+    	if (!$('#saldo_reparte').text() || $('#saldo_reparte').text() == ""){
     		
-    		$('#saldo_reparte').val(0);
+    		$('#saldo_reparte').text(0);
     	}
     	
         var $saldoreparte = $('#saldo_reparte');
-        var saldoReparte = parseInt($saldoreparte.val());
         var $input_reparte = $(input);
         var numeroCota = $input_reparte.attr('numeroCota');
         var reparteDigitado = $input_reparte.val();
@@ -448,11 +447,9 @@ var analiseParcialController = $.extend(true, {
                 		return;
                 	}
                 	
-                	var saldoReparteAtualizado = parseInt($saldoreparte.val(), 10) - reparteSubtraido;
+                	var saldoReparteAtualizado = parseInt($saldoreparte.text(), 10) - reparteSubtraido;
                     
                     $saldoreparte.text(saldoReparteAtualizado);
-                    
-                    $saldoreparte.val(saldoReparteAtualizado);
                 	
                 	analiseParcialController.atualizaAbrangencia();
                     $input_reparte.attr('reparteAtual', reparteDigitado);
@@ -587,9 +584,9 @@ var analiseParcialController = $.extend(true, {
             totalSaldoReparte += parseInt(cell.quantidadeAjuste);
         }
         
-        $("#saldo_reparte").val(totalSaldoReparte);
+        //$("#saldo_reparte").val(totalSaldoReparte);
         
-        $("#saldo_reparte").text(totalSaldoReparte);
+        //$("#saldo_reparte").text(totalSaldoReparte);
         
         return resultado;
     },

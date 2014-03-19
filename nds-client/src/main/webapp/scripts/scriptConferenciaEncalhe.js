@@ -202,16 +202,16 @@ var ConferenciaEncalhe = $.extend(true, {
 			}
 		});
 
-		$("#pesq_prod", ConferenciaEncalhe.workspace).keypress(function (e){
+		ConferenciaEncalhe.inicializarAutoCompleteSugestaoProdutoEdicao();
+		
+		$("#pesq_prod", ConferenciaEncalhe.workspace).keyup(function (e){
 			
 			if (e.keyCode == 13) {
 
 				ConferenciaEncalhe.pesquisaProduto();
 				
-			} else if (e.keyCode != 38 && e.keyCode != 40){
-					
-				ConferenciaEncalhe.mostrar_produtos();
-			}
+			} 
+			
 		});
 		
 		$('#codProduto', ConferenciaEncalhe.workspace).keypress(function(e) {
@@ -269,6 +269,9 @@ var ConferenciaEncalhe = $.extend(true, {
 		this.bindkeypressCodigoBarras();
 		ConferenciaEncalhe.removerAtalhos();
 		$(".atalhosCE", ConferenciaEncalhe.workspace).hide();
+		
+		ConferenciaEncalhe.abrirModalLogadoDoBotao();
+		
 	},
 	
 	tratarEventoTeclaEspaco : function() {
@@ -1488,7 +1491,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					window.event.preventDefault();
 					
-					confirmarPopup_logado()
+					confirmarPopup_logado();
 				},
 				"Cancelar" : function() {
 					
@@ -2007,31 +2010,35 @@ var ConferenciaEncalhe = $.extend(true, {
 		}
 	},
 	
-	mostrar_produtos : function() {
+	inicializarAutoCompleteSugestaoProdutoEdicao : function() {
 		
-		var codigoNomeProduto = $("#pesq_prod", ConferenciaEncalhe.workspace).val().trim();
 		
-		if (codigoNomeProduto && codigoNomeProduto.length > 0){
-			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/pesquisarProdutoPorCodigoNome', 
-					{codigoNomeProduto:codigoNomeProduto}, 
+		
+		$("#pesq_prod", ConferenciaEncalhe.workspace).autocomplete({
+			source: function(request, response) {
+				
+				$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/pesquisarProdutoPorCodigoNome', 
+					{codigoNomeProduto: request.term}, 
 					function(result){
-							
-						$("#pesq_prod", ConferenciaEncalhe.workspace).autocomplete({
-							source: result,
-							select: function(event, ui){
-								
-								$("#codProduto", ConferenciaEncalhe.workspace).val(ui.item.chave.string);
-								ConferenciaEncalhe.ultimoIdProdutoEdicao = ui.item.chave.long;
-							},
-							delay : 0,
-						});
 						
-						$("#pesq_prod", ConferenciaEncalhe.workspace).autocomplete(
-							"search", codigoNomeProduto
-						);
-					}
-			);
-		}
+						response(result);
+						
+					});
+				},
+			
+			select: function(event, ui){
+				
+				$("#codProduto", ConferenciaEncalhe.workspace).val(ui.item.chave.string);
+				ConferenciaEncalhe.ultimoIdProdutoEdicao = ui.item.chave.long;
+			},
+			delay : 500,
+		});
+		
+		
+		
+		
+			
+		
 	},
 
 	fechar_produtos : function() {

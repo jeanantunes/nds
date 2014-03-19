@@ -414,4 +414,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
     CotaVO obterDadosBasicosCota(Integer numeroCota);
     
     TipoDistribuicaoCota obterTipoDistribuicao(Long idCota);
+
+    Cota obterPorNumerDaCota(Integer numeroCota, SituacaoCadastro situacao);
 }

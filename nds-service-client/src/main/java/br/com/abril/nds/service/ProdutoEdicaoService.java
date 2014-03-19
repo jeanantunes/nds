@@ -2,13 +2,13 @@ package br.com.abril.nds.service;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
+import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -79,7 +79,11 @@ public interface ProdutoEdicaoService {
 	 */
 	List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(String codigoProduto);
 
-	List<ProdutoEdicao> obterProdutoPorCodigoNomeParaRecolhimento(String codigoNomeProduto, Integer numeroCota, Integer quantidadeRegisttros);
+	List<ProdutoEdicao> obterProdutoPorCodigoNomeParaRecolhimento(
+			String codigoNomeProduto, 
+			Integer numeroCota, 
+			Integer quantidadeRegistros,
+			Map<Long, DataCEConferivelDTO> mapaDataCEConferivel);
 	
 	
 	/**
@@ -211,8 +215,6 @@ public interface ProdutoEdicaoService {
 
 	void insereVendaRandomica(String codigoProduto, Integer numeroEdicao);
 
-    BigInteger obterReparteDisponivel(Long idProdutoEdicao);
-	
     Integer obterNumeroLancamento(Long idProdutoEdicao, Long idPeriodo);
  
     public void tratarInformacoesAdicionaisProdutoEdicaoArquivo(ProdutoEdicaoDTO prodEdicao);

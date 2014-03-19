@@ -171,7 +171,7 @@ var inadimplenciaController = $.extend(true, {
 			
 			var negociada = row.cell.situacao == "Negociada";
 			var boletoAntecipado = row.cell.situacao == "Boleto em branco";
-			var comissao = (row.cell.comissaoSaldoDivida) && negociada; 
+			var comissao = (row.cell.comissaoSaldoDivida && row.cell.comissaoSaldoDivida > 0) && negociada; 
 			
 			if (!boletoAntecipado){
 			

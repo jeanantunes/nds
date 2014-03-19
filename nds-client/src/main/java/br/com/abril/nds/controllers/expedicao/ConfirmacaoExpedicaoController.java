@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.expedicao;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +41,8 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+
+import com.google.common.primitives.Longs;
 
 @Resource
 @Path("/confirmacaoExpedicao")
@@ -172,25 +175,24 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
 		}
 		
-		        /**
-     * Método com finalidade de redirecionamento para a página
-     */
-		public void confirmacaoExpedicao() {
-		}
-		
-		
-		        /**
-     * Confirma expedição, gera movimentos do distribuidor e cotas e retorna
-     * dados da pesquisa atualizados
-     * 
-     * @param page - nº da página a pesquisar
-     * @param rp - nº de registros por página
-     * @param sortname - nome da coluna de ordenação
-     * @param sortorder - ordenação (asc - desc)
-     * @param idFornecedor - código do fornecedor
-     * @param dtLancamento - data de lançamento
-     * @param estudo - boolean - possui ou não estudo
-     */
+		 /**
+         * Método com finalidade de redirecionamento para a página
+         */
+    	public void confirmacaoExpedicao() {
+    	}
+	
+		/**
+         * Confirma expedição, gera movimentos do distribuidor e cotas e retorna
+         * dados da pesquisa atualizados
+         * 
+         * @param page - nº da página a pesquisar
+         * @param rp - nº de registros por página
+         * @param sortname - nome da coluna de ordenação
+         * @param sortorder - ordenação (asc - desc)
+         * @param idFornecedor - código do fornecedor
+         * @param dtLancamento - data de lançamento
+         * @param estudo - boolean - possui ou não estudo
+         */
 		@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO_ALTERACAO)
 		public void confirmarExpedicao( Integer page, Integer rp, String sortname, 
 				String sortorder, Long idFornecedor, 
@@ -225,6 +227,11 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 				
 				Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+				
+				//Ordena IDS
+				long[] lista = Longs.toArray(selecionados);
+		        Arrays.sort(lista); 
+		        selecionados = Longs.asList(lista);
 				
 				for(int i=0; i<selecionados.size(); i++) {
 					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota,tipoMovimentoJuramentado);

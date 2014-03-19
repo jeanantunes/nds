@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.planejamento;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
@@ -23,9 +24,15 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author francisco.garcia
@@ -36,6 +43,8 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @Table(name = "ESTUDO")
 @SuppressWarnings("serial")
 public class Estudo implements Serializable  {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Estudo.class);
 
 	@Id
 	@Column(name = "ID")
@@ -96,8 +105,12 @@ public class Estudo implements Serializable  {
 
     @Column(name = "ESTUDO_ORIGEM_COPIA")
     protected Long idEstudoOrigemCopia; //Estudo usado para gerar copia proporcional
-	
-	public BigInteger getQtdeReparte() {
+
+    @Column(name = "DADOS_VENDA_MEDIA")
+    @Type(type = "text")
+    protected String dadosVendaMedia;
+
+    public BigInteger getQtdeReparte() {
 		return qtdeReparte;
 	}
 	
@@ -233,6 +246,26 @@ public class Estudo implements Serializable  {
 
 	public void setId(Long id) {
 		this.id = id;
-	}	
-	
+	}
+
+    public void setDadosVendaMedia(DistribuicaoVendaMediaDTO dadosVendaMedia) {
+        if (dadosVendaMedia != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            String valueAsString = null;
+            try {
+                valueAsString = mapper.writeValueAsString(dadosVendaMedia);
+            } catch (IOException e) {
+                LOGGER.info("Serialization error.", e);
+            }
+            this.dadosVendaMedia = valueAsString;
+        }
+    }
+
+    public void setDadosVendaMedia(String dadosVendaMedia) {
+        this.dadosVendaMedia = dadosVendaMedia;
+    }
+
+    public String getDadosVendaMedia() {
+        return dadosVendaMedia;
+    }
 }
