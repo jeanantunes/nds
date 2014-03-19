@@ -2434,12 +2434,14 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" and produto.codigo = :codProduto ");
 		hql.append(" and produtoEdicao.id = :idProdutoEdicao ");
 		hql.append(" and produtoEdicao.produto = produto.id ");
+		hql.append(" and lancamento.id <> :idLancamento ");
 
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("dataLancamento", novaData);
 		query.setParameter("codProduto", produtoLancamentoDTO.getCodigoProduto());
 		query.setParameter("idProdutoEdicao", produtoLancamentoDTO.getIdProdutoEdicao());
+		query.setParameter("idLancamento", produtoLancamentoDTO.getIdLancamento());
 		
 		List lista =  query.list();
 		
