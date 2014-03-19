@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import v1.pessoadetalhe.ebo.abril.types.PessoaDto;
 import v1.pessoadetalhe.ebo.abril.types.PessoaType;
 import br.com.abril.nds.dto.FTFReportDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFParser;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -60,13 +62,29 @@ public class FTFServiceImpl implements FTFService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public FTFReportDTO gerarFtf(List<NotaFiscal> notas, long idNaturezaOperacao) {
+	public FTFReportDTO gerarFtf(List<NotaFiscal> notas) {
+		
+		if(notas == null || notas.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma nota localizada.");
+		}
+		
+		long idNaturezaOperacao = 0;
+		for(NotaFiscal nf : notas) {
+			
+			if(idNaturezaOperacao == 0) {
+				idNaturezaOperacao = nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId();
+			} else {
+				if(idNaturezaOperacao != nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId()) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Lista de Notas fiscais com Naturezas de Operações diferentes.");
+				}
+			}
+			idNaturezaOperacao = nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId();
+		}
+		
+		idNaturezaOperacao = notas.get(0).getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId();
+		
 		List<FTFBaseDTO> list = new ArrayList<FTFBaseDTO>();
 		FTFReportDTO report = new FTFReportDTO();
-		
-		if (notas == null) {
-			notas = fiscalRepository.buscarTodos();
-		}
 		
 		FTFEnvTipoRegistro00 regTipo00 = ftfRepository.obterRegistroTipo00(idNaturezaOperacao);
 		//FIXME: ajustar se estiver certo

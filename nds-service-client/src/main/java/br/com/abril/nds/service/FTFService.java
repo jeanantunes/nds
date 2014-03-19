@@ -12,7 +12,7 @@ public interface FTFService {
 	
 	List<FTFRetornoRET> processarArquivosRet(File...files);
 
-	FTFReportDTO gerarFtf(List<NotaFiscal> notas, long idTipoNotaFiscal);
+	FTFReportDTO gerarFtf(List<NotaFiscal> notas);
 	
 	void atualizarRetornoFTF(List<FTFRetTipoRegistro01> list);
 	
