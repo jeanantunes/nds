@@ -105,7 +105,7 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 	public void setTotalDesconto(BigDecimal totalDesconto) {
 		this.totalDesconto = totalDesconto;
 		if(totalDesconto != null){
-			totalDescontoFormatado = CurrencyUtil.formatarValor(totalDesconto);
+			totalDescontoFormatado = CurrencyUtil.formatarValorQuatroCasas(totalDesconto);
 		}
 	}
 	

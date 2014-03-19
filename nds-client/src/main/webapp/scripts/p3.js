@@ -43,7 +43,8 @@ var p3Controller = $.extend(true,{
 			    	}else{
 			    		$.post(contextPath + "/financeiro/p3/validarQtdRegistros",
 			    				[{name:'dataInicial', value: dateInicial},
-			    				 {name:'dataFinal', value: dateFinal}],	
+			    				 {name:'dataFinal', value: dateFinal},
+			    				 {name:'opcaoDeRelatorio', value: $(f+" .opcaoDeRelatorio:checked").val()}],	
 			    				 function(result) {
 			    			console.log(result);
 			    			if(result.quantidadeGerada>0){

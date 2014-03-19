@@ -54,22 +54,22 @@ public class RankingFaturamentoRepositoryImpl extends AbstractRepositoryModel<Ra
 	public void gerarRankingFaturamentoParaCotasSemRanking() {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" INSERT INTO ranking_faturamento (COTA_ID, FATURAMENTO, DATA_GERACAO_RANK) ");
+		sql.append(" INSERT INTO ranking_faturamento (COTA_ID, FATURAMENTO) ");
 		sql.append(" select ");
 		sql.append("     c.ID, ");
-		sql.append("     0, ");
-		sql.append("     SYSDATE() ");
+		sql.append("     0 ");
 		sql.append(" from ");
 		sql.append("     cota c, ");
-		sql.append("     ranking_faturamento ranking ");
+		sql.append("     lancamento l ");
 		sql.append(" where ");
-		sql.append("     not exists( select "); 
+		sql.append("     not exists(select "); 
 		sql.append("             rs.ID ");
 		sql.append("         from ");
 		sql.append("             ranking_faturamento rs ");
 		sql.append("         where ");
 		sql.append("             rs.COTA_ID = c.id) ");
 		sql.append("         AND C.SITUACAO_CADASTRO IN ('ATIVO' , 'SUSPENSO') ");
+		sql.append("         and l.data_rec_distrib between DATE_SUB(NOW(), INTERVAL + 13 week) and NOW() ");
 		sql.append(" group by c.ID ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());

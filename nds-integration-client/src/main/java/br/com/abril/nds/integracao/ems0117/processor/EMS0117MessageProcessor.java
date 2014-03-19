@@ -202,7 +202,6 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
 				"Atualizacao da Cota " + cota.getNumeroCota());
 
-		cota.setInicioAtividade(new Date());
 		cota.setNumeroCota(input.getCodCota());
 		cota.setPossuiContrato(false);
 		

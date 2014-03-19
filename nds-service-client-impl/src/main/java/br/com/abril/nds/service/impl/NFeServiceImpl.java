@@ -187,12 +187,12 @@ public class NFeServiceImpl implements NFeService {
 		}
 	}
 	
-	@Transactional(readOnly=true)
+	@Transactional
 	public NotaFiscal obterNotaFiscalPorId(NotaFiscal notaFiscal) {
 		return notaFiscalRepository.buscarPorId(notaFiscal.getId());
 	}
 	
-	@Transactional(readOnly=true)
+	@Transactional
 	public NotaEnvio obterNotaEnvioPorId(NotaEnvio notaEnvio) {
 		return notaEnvioRepository.buscarPorId(notaEnvio.getNumero());
 	}
@@ -581,8 +581,8 @@ public class NFeServiceImpl implements NFeService {
 	private void gerarNotaFiscalUnificada(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao, Map<String, ParametroSistema> parametrosSistema) {
 		
 		// obter as cotas que estão na tela pelo id das cotas
-		NotaFiscal notaFiscal = new NotaFiscal();
-		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
+		final NotaFiscal notaFiscal = new NotaFiscal();
+		final List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
 		naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
 		naturezaOperacaoRepository.merge(naturezaOperacao);
 		
