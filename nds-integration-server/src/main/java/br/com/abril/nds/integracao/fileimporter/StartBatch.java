@@ -72,7 +72,10 @@ public class StartBatch {
 			
 			List<String> distribuidores = executor.recuperaDistribuidores(codigoDistribuidor);
 			
+			executor.carregarDiretorios(interfaceEnum);
+			
 			executor.executarRetornosIcd(distribuidores);
+			
 		} else {
 			executor.executarInterface(usuario, interfaceEnum, codigoDistribuidor);
 		}

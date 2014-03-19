@@ -282,6 +282,51 @@ implements MovimentoEstoqueRepository {
 		
 		return (result == null) ? BigDecimal.ZERO : (BigDecimal) result;
 	}
+    	
+    private StringBuilder getSQLDescontoLogistica(){
+            
+        StringBuilder sql = new StringBuilder();
+        
+        sql.append(" ( ");
+        
+        sql.append("    CASE WHEN PE.DESCONTO_LOGISTICA_ID IS NOT NULL THEN ");
+        
+        sql.append("    ( ");
+        
+        sql.append("       SELECT DL.PERCENTUAL_DESCONTO ");
+        
+        sql.append("       FROM DESCONTO_LOGISTICA DL");
+        
+        sql.append("       WHERE DL.ID = PE.DESCONTO_LOGISTICA_ID ");
+        
+        sql.append("    ) ");
+        
+        sql.append("    ELSE ");
+        
+        sql.append("    ( ");
+        
+        sql.append("       CASE WHEN PR.DESCONTO_LOGISTICA_ID IS NOT NULL THEN ");
+        
+        sql.append("       ( ");
+        
+        sql.append("          SELECT DL.PERCENTUAL_DESCONTO ");
+        
+        sql.append("          FROM DESCONTO_LOGISTICA DL");
+        
+        sql.append("          WHERE DL.ID = PR.DESCONTO_LOGISTICA_ID ");
+        
+        sql.append("       ) ");
+        
+        sql.append("       ELSE 0 END");
+        
+        sql.append("    ) ");
+        
+        sql.append("    END ");
+        
+        sql.append(" ) ");
+        
+        return sql;
+    }
 	
 	@SuppressWarnings("unchecked")
 	@Override

@@ -89,14 +89,14 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 		this.preco = preco;
 	}
 	
-	@Field(offset = 88, length = 5)
+	@Field(offset = 88, length = 7)
 	public Double getDesconto() {
 		return desconto;
 	}
 	public void setDesconto(Double desconto) {
 		this.desconto = desconto;
 	}
-	@Field(offset = 93, length = 18)
+	@Field(offset = 95, length = 18)
 	public String getCodigoBarras() {
 		return codigoBarras;
 	}
@@ -104,7 +104,7 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 		this.codigoBarras = codigoBarras;
 	}
 	
-	@Field(offset = 111, length = 10)
+	@Field(offset = 113, length = 10)
 	public Long getCodigoSiscorp() {
 		return codigoSiscorp;
 	}
