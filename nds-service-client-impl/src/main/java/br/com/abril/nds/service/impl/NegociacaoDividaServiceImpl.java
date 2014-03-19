@@ -353,7 +353,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     
                     consolidado = new ConsolidadoFinanceiroCota();
                     consolidado.setCota(cota);
-                    consolidado.setDataConsolidado(dataAtual);
+                    consolidado.setDataConsolidado(dataOperacao);
                     final List<MovimentoFinanceiroCota> movs = new ArrayList<MovimentoFinanceiroCota>();
                     movs.add(parcelaNegociacao.getMovimentoFinanceiroCota());
                     
@@ -387,7 +387,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     consolidadoFinanceiroRepository.adicionar(consolidado);
                     
                     final Divida divida = new Divida();
-                    divida.setData(dataAtual);
+                    divida.setData(dataOperacao);
                     divida.setResponsavel(usuarioResponsavel);
                     divida.setCota(cota);
                     divida.setValor(parcelaNegociacao.getMovimentoFinanceiroCota().getValor());
@@ -424,13 +424,13 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                         cobranca.setCota(cota);
                         cobranca.setBanco(formaCobranca.getBanco());
                         cobranca.setDivida(divida);
-                        cobranca.setDataEmissao(dataAtual);
+                        cobranca.setDataEmissao(dataOperacao);
                         cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
                         cobranca.setDataVencimento(parcelaNegociacao.getDataVencimento());
                         cobranca.setValor(valorTotalParcela);
                         cobranca.setEncargos(parcelaNegociacao.getEncargos());
                         dividaRepository.adicionar(divida);
-                        cobranca.setNossoNumero(Util.gerarNossoNumero(numeroCota, dataAtual, banco.getNumeroBanco(),
+                        cobranca.setNossoNumero(Util.gerarNossoNumero(numeroCota, dataOperacao, banco.getNumeroBanco(),
                                 null, divida.getId(), banco.getAgencia(), banco.getConta(), banco.getCarteira()));
                         cobrancaRepository.adicionar(cobranca);
                     }

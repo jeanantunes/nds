@@ -1134,4 +1134,12 @@ public class ParametroCobrancaCotaController extends BaseController {
         
         result.use(Results.json()).from(entregadorService.verificarEntregador(idCota), "result").serialize();
     }
+    
+    @Post
+    public void verificarDataAlteracaoTipoCota(Long idCota){
+        
+        this.parametroCobrancaCotaService.verificarDataAlteracaoTipoCota(idCota);
+        
+        this.result.use(Results.json()).from("result", "").recursive().serialize();
+    }
 }
