@@ -193,7 +193,8 @@ $(function(){
 			</tr>
 			<tr>
 				<td>Tipo de Cota:</td>
-				<td><select name="tipoCota" id="tipoCota" style="width: 150px;" onchange="parametroCobrancaCotaController.exibeDevolveEncalhe(this.value);">
+				<td><select name="tipoCota" id="tipoCota" style="width: 150px;" onchange="parametroCobrancaCotaController.verificaDataAlteracaoTipoCota(this);"
+				onfocus="this.oldValue = this.value;">
 						<c:forEach varStatus="counter" var="itemTipoCota"
 							items="${listaTiposCota}">
 							<option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
