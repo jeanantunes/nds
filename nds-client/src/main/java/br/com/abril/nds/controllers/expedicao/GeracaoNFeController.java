@@ -156,7 +156,7 @@ public class GeracaoNFeController extends BaseController {
 	}
 	
 	@Post
-	public void pesquisar(FiltroNFeDTO filtro, String sortname, String sortorder, int rp, int page) {
+	public void pesquisar(final FiltroNFeDTO filtro, final String sortname, final String sortorder, final int rp, final int page) {
 		
 		List<CotaExemplaresDTO> cotaExemplaresDTOs = null;
 		List<FornecedorExemplaresDTO> fornecedorExemplaresDTOs = null;
@@ -164,11 +164,11 @@ public class GeracaoNFeController extends BaseController {
 		Long totalRegistros = 0L;
 		request.getSession().setAttribute(FILTRO_SESSION_NOTA_FISCAL, filtro);
 		
-		PaginacaoVO paginacao = carregarPaginacao(sortname, sortorder, rp, page);
+		final PaginacaoVO paginacao = carregarPaginacao(sortname, sortorder, rp, page);
 		
 		filtro.setPaginacaoVO(paginacao);
 		
-		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoService.obterNaturezaOperacaoPorId(filtro.getIdNaturezaOperacao());
+		final NaturezaOperacao naturezaOperacao = this.naturezaOperacaoService.obterNaturezaOperacaoPorId(filtro.getIdNaturezaOperacao());
 		
 		switch (naturezaOperacao.getTipoDestinatario()) {
 		case COTA:
