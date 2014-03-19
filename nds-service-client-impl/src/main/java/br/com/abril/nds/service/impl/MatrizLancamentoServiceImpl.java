@@ -895,17 +895,20 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                 }else{
                 
                 //Adiciona os excedentes
+                	/*
                   if(!produtosLancamentoBalancear.isEmpty()){
                 	 
                      for(ProdutoLancamentoDTO prDTO : produtosLancamentoBalancear){
                    
                 	    if(!produtosLancamentoNaoBalanceadosTotal.contains(prDTO)){
-                          produtosLancamentoNaoBalanceadosTotal.add(prDTO);
+                          //produtosLancamentoNaoBalanceadosTotal.add(prDTO);
                 	    }
                      }
                   }
-                  
-                  produtosLancamentoNaoBalanceadosTotal.addAll(produtosLancamentoBalanceaveisDataPrevista);
+                  */
+                  if(produtosLancamentoBalanceaveisDataPrevista!=null && !produtosLancamentoBalanceaveisDataPrevista.isEmpty()){	
+                    produtosLancamentoNaoBalanceadosTotal.addAll(produtosLancamentoBalanceaveisDataPrevista);
+                  }
                   
                 }
             }
