@@ -1887,8 +1887,13 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         
         dadosBalanceamentoLancamento.setPeriodoDistribuicao(periodoDistribuicao);
         
-        for(Entry<Long, TreeSet<Date>> e : datasDistribuicaoPorFornecedor.entrySet()){
-        	e.getValue().removeAll(dadosBalanceamentoLancamento.getDatasNaoBalanceaveis());
+        if(datasDistribuicaoPorFornecedor!=null && dadosBalanceamentoLancamento!=null && dadosBalanceamentoLancamento.getDatasNaoBalanceaveis()!=null){
+        
+        	for(Entry<Long, TreeSet<Date>> e : datasDistribuicaoPorFornecedor.entrySet()){
+        	  if(e!=null){
+        		e.getValue().removeAll(dadosBalanceamentoLancamento.getDatasNaoBalanceaveis());
+        	  }
+        	}
         }
         		
         dadosBalanceamentoLancamento.setDatasDistribuicaoPorFornecedor(datasDistribuicaoPorFornecedor);
