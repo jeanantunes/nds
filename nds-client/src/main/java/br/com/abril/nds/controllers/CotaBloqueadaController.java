@@ -71,6 +71,22 @@ public class CotaBloqueadaController extends BaseController {
 		result.use(Results.json()).from(existeConferenciaEmAndamento , "result").recursive().serialize();
 	}
 	
+	private String obterNomeUsuarioLockandoCota(String donoDoLockCotaConferida) {
+		
+		final Map<String, String> mapaSessionIDNomeUsuario = (LinkedHashMap<String, String>) this.session.getServletContext()
+				.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
+
+		String nomeUsuario = "Não identificado";
+
+		if (mapaSessionIDNomeUsuario != null
+				&& mapaSessionIDNomeUsuario.get(donoDoLockCotaConferida) != null) {
+			nomeUsuario = mapaSessionIDNomeUsuario.get(donoDoLockCotaConferida);
+		}
+		
+		return nomeUsuario;
+
+	}
+	
 	@Post
 	@Path("/obterCotasBloqueadas")
 	public void obterCotasBloqueadas(){
@@ -85,7 +101,9 @@ public class CotaBloqueadaController extends BaseController {
 				
 				Cota c = this.cotaService.obterPorNumeroDaCota(entry.getKey());
 				
-                cbsVO.add(new CotaBloqueadaVO(entry.getValue(),
+				String nomeUsuario = obterNomeUsuarioLockandoCota(entry.getValue());
+				
+                cbsVO.add(new CotaBloqueadaVO(nomeUsuario,
 						                      c.getNumeroCota(),
 						                      c.getPessoa().getNome()));
 				
