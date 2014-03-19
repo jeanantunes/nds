@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -849,6 +850,28 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		return result;
 	}
 
+	@Override
+	public Integer count_obterP3MovimentacaoCompleta(Date dataInicial,Date dataFinal) {
+
+		String[] sqls = {"obterP3MovimentacaoCompleta","obterP3MovimentacaoCompleta-saida"};
+
+		int count = 0;
+		for (String sqlFile : sqls) {
+			HashMap p = new HashMap();
+			p.put("isCount", Boolean.TRUE);
+			String templateQuery = getTemplateQuery(sqlFile,p );
+			Query query = this.getSession().createSQLQuery(templateQuery);
+			
+			query.setParameter("dataInicial", dataInicial);
+			query.setParameter("dataFinal", dataFinal);
+			
+			Object uniqueResult = query.uniqueResult();
+			count += ((BigInteger) uniqueResult).intValue();
+		}
+
+		return count;
+	}
+	
 	private String getTemplateQuery(String qname, Map datamodel) {
 
 		String templateName = qname+".sql";
