@@ -738,7 +738,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         
         List<Long> porFornenedor;
         
-        getDiasBalanceaveis(filtro, this.getPeriodoDistribuicao(filtro.getData()));
+        final Set<Date> dataBalanceaveis = getDiasBalanceaveis(filtro, this.getPeriodoDistribuicao(filtro.getData()));
         final Set<Date> dataNaoBalanceaveis = getDiasNaoBalanceaveis(filtro,this.getPeriodoDistribuicao(filtro.getData()));
         final Set<Date> datasFornecedor = new TreeSet<Date>();
         
@@ -1885,12 +1885,15 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
             dadosBalanceamentoLancamento = new DadosBalanceamentoLancamentoDTO();
         }
         
-        dadosBalanceamentoLancamento
-        .setPeriodoDistribuicao(periodoDistribuicao);
-        dadosBalanceamentoLancamento
-        .setDatasDistribuicaoPorFornecedor(datasDistribuicaoPorFornecedor);
-        dadosBalanceamentoLancamento
-        .setCapacidadeDistribuicao(distribuidorRepository
+        dadosBalanceamentoLancamento.setPeriodoDistribuicao(periodoDistribuicao);
+        
+        for(Entry<Long, TreeSet<Date>> e : datasDistribuicaoPorFornecedor.entrySet()){
+        	e.getValue().removeAll(dadosBalanceamentoLancamento.getDatasNaoBalanceaveis());
+        }
+        		
+        dadosBalanceamentoLancamento.setDatasDistribuicaoPorFornecedor(datasDistribuicaoPorFornecedor);
+        
+        dadosBalanceamentoLancamento.setCapacidadeDistribuicao(distribuidorRepository
                 .capacidadeDistribuicao());
         
         if (media.compareTo(BigInteger.ZERO) != 0) {
@@ -1900,14 +1903,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         }
         
         dadosBalanceamentoLancamento.setProdutosLancamento(produtosLancamento);
-        dadosBalanceamentoLancamento
-        .setDatasExpectativaReparte(datasExpectativaReparte);
-        dadosBalanceamentoLancamento
-        .setQtdDiasLimiteParaReprogLancamento(distribuidorRepository
-                .qtdDiasLimiteParaReprogLancamento());
+        dadosBalanceamentoLancamento.setDatasExpectativaReparte(datasExpectativaReparte);
+        dadosBalanceamentoLancamento.setQtdDiasLimiteParaReprogLancamento(distribuidorRepository.qtdDiasLimiteParaReprogLancamento());
         dadosBalanceamentoLancamento.setDataLancamento(dataLancamento);
-        dadosBalanceamentoLancamento
-        .setDatasExpedicaoConfirmada(datasExpedicaoConfirmada);
+        dadosBalanceamentoLancamento.setDatasExpedicaoConfirmada(datasExpedicaoConfirmada);
         
         return dadosBalanceamentoLancamento;
     }
