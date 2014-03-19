@@ -763,21 +763,29 @@ var baixaFinanceiraController = $.extend(true, {
 			valorItem = removeMascaraPriceFormat(row.cell.valor);
 			totalDividas = intValue(totalDividas) + intValue(valorItem);
 			
-			var detalhes = '<a href="javascript:;" onclick="baixaFinanceiraController.popup_detalhes(' + row.cell.codigo + ', ' + row.cell.boletoAntecipado + ');" style="cursor:pointer">' +
+			row.cell.acao = '<a href="javascript:;" onclick="baixaFinanceiraController.popup_detalhes(' + row.cell.codigo + ', ' + row.cell.boletoAntecipado + ');" style="cursor:pointer">' +
 					 	   '<img title="Detalhes da Dívida" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
-						   '</a>';	
-		
-			var checkBox;			   
-			if (row.cell.check){			   
-			    checkBox = '<input isEdicao="true" checked="' + row.cell.check + '" type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.codigo +'" onchange="baixaFinanceiraController.calculaSelecionados(this.checked,'+ valorItem +'); dataHolder.hold(\'baixaManual\', '+ row.cell.codigo +', \'checado\', this.checked); " />';	
+						   '</a>';
+			
+			var checkBox;
+			
+			if (!row.cell.codigo){
+				
+				checkBox = '<a onclick="exibirMensagem(\'WARNING\', [\'Para dívidas com boleto em branco é necessário baixar pelo Nosso Número\']);" href="javascript:;" title="Boleto em Branco">'+
+					'<img border="0" hspace="5" src="/nds-client/images/bt_help.png"></a>';
+			} else if (row.cell.check){			   
+			    checkBox = '<input isEdicao="true" checked="' + row.cell.check + '" type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.codigo +
+			    	'" onchange="baixaFinanceiraController.calculaSelecionados(this.checked,'+ valorItem +'); dataHolder.hold(\'baixaManual\', '+ 
+			    	row.cell.codigo +', \'checado\', this.checked); " />';
+			    
 			    baixaFinanceiraController.calculaSelecionados(true, valorItem);
+			} else{
+			    checkBox = '<input isEdicao="true" title="Selecionar Dívida" type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.codigo +
+			    	'" onchange="baixaFinanceiraController.calculaSelecionados(this.checked,'+ valorItem +'); dataHolder.hold(\'baixaManual\', '+ 
+			    	row.cell.codigo +', \'checado\', this.checked); " />';
 			}
-			else{
-			    checkBox = '<input isEdicao="true" title="Selecionar Dívida" type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.codigo +'" onchange="baixaFinanceiraController.calculaSelecionados(this.checked,'+ valorItem +'); dataHolder.hold(\'baixaManual\', '+ row.cell.codigo +', \'checado\', this.checked); " />';
-			}
-
-			row.cell.acao = detalhes;
-		    row.cell.check = checkBox;
+			
+			row.cell.check = checkBox;
 		});
 
 		$("#totalDividasHidden", baixaFinanceiraController.workspace).val(totalDividas);
