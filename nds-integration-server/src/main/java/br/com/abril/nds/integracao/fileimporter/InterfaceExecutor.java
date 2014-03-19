@@ -256,12 +256,23 @@ public class InterfaceExecutor {
 	}
 	
 	public List<String> recuperaDistribuidores(Long codigoDistribuidor) {
-		this.diretorio = parametroSistemaRepository.getParametro("INBOUND_DIR");
-		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
 		List<String> distribuidores = this.getDistribuidores(this.diretorio, codigoDistribuidor);
 		return distribuidores;
 	}
-
+	
+	public void carregarDiretorios(InterfaceEnum interfaceEnum) {
+		
+		String parametroDir = "INBOUND_DIR";
+		
+		if(interfaceEnum.getCodigoInterface() == InterfaceEnum.EMS0140.getCodigoInterface()) {
+			parametroDir += "_NOTA_VAREJO";
+		}
+		
+		this.diretorio = parametroSistemaRepository.getParametro(parametroDir);
+		
+		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
+	}
+	
 	private void executarInterfaceDB(InterfaceEnum interfaceEnum,
 			InterfaceExecucao interfaceExecucao, LogExecucao logExecucao,
 			Long codigoDistribuidor, String nomeUsuario) {
@@ -290,7 +301,8 @@ public class InterfaceExecutor {
 	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, Long codigoDistribuidor, String nomeUsuario) {
 		
 		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
-
+		this.carregarDiretorios(interfaceEnum);
+		
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
 		 
@@ -617,8 +629,19 @@ public class InterfaceExecutor {
 
 		List<File> listaArquivos = new ArrayList<File>();
 		
-		File dir = new File(diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator);
-		File[] files = dir.listFiles((FilenameFilter) new RegexFileFilter(interfaceExecucao.getMascaraArquivo(), IOCase.INSENSITIVE));
+		String pattern = interfaceExecucao.getMascaraArquivo();
+		String dirPath = diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator;
+		
+		if (interfaceExecucao.getId() == InterfaceEnum.EMS0140.getCodigoInterface()) {
+			pattern = String.format("%s_"+pattern, codigoDistribuidor);
+			dirPath = diretorio;
+		} 
+		
+		File dir = new File(dirPath);
+		
+		FilenameFilter filter = (FilenameFilter) new RegexFileFilter(pattern, IOCase.INSENSITIVE);
+		
+		File[] files = dir.listFiles(filter);
 				
 		if (null != files) {
 			Arrays.sort(files, 0, files.length);

@@ -1,5 +1,5 @@
 		 SELECT 
-		 <#if isCount == true>
+		 <#if isCount??>
 		 	count(*)
 		 <#else>
 		 cast(:codEmpresa as char) codEmpresa, 

@@ -52,26 +52,30 @@ public class RankingSegmentoRepositoryImpl extends AbstractRepositoryModel<Ranki
 	public void gerarRankingSegmentoParaCotasSemRanking() {
 		
 		StringBuilder hql = new StringBuilder();
-
+		
 		hql.append(" INSERT INTO ranking_segmento (COTA_ID, TIPO_SEGMENTO_PRODUTO_ID, QTDE, DATA_GERACAO_RANK) ");
 		hql.append(" select ");
-		hql.append("     c.ID as cota_id, ");
-		hql.append("     ranking.TIPO_SEGMENTO_PRODUTO_ID as tipo_segmento_produto_id, ");
-		hql.append("     0 as qtde, ");
-		hql.append("     SYSDATE() ");
+		hql.append("     c.ID, ");
+		hql.append("     tsp.ID, ");
+		hql.append("     0, ");
+		hql.append("     sysdate() ");
 		hql.append(" from ");
 		hql.append("     cota c, ");
-		hql.append("     ranking_segmento ranking ");
+		hql.append("     lancamento l ");
+		hql.append("     join produto_edicao pe on l.PRODUTO_EDICAO_ID = pe.ID ");
+		hql.append("     join produto p on pe.PRODUTO_ID = p.ID ");
+		hql.append("     join tipo_segmento_produto tsp on tsp.ID = p.TIPO_SEGMENTO_PRODUTO_ID ");
 		hql.append(" where ");
-		hql.append("     not exists( select "); 
+		hql.append("     not exists(select "); 
 		hql.append("             rs.ID ");
 		hql.append("         from ");
 		hql.append("             ranking_segmento rs ");
 		hql.append("         where ");
 		hql.append("             rs.COTA_ID = c.id ");
-		hql.append("                 and rs.TIPO_SEGMENTO_PRODUTO_ID = ranking.TIPO_SEGMENTO_PRODUTO_ID) ");
-		hql.append("         AND C.SITUACAO_CADASTRO IN ('ATIVO' , 'SUSPENSO') ");
-		hql.append(" group by c.ID, ranking.TIPO_SEGMENTO_PRODUTO_ID ");
+		hql.append("                 and rs.TIPO_SEGMENTO_PRODUTO_ID = tsp.ID) ");
+		hql.append("     and C.SITUACAO_CADASTRO IN ('ATIVO' , 'SUSPENSO') ");
+		hql.append("     AND l.data_lcto_distribuidor BETWEEN DATE_SUB(NOW(), INTERVAL + 13 week) AND NOW() ");
+		hql.append(" group by c.ID, tsp.ID ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		query.executeUpdate();
