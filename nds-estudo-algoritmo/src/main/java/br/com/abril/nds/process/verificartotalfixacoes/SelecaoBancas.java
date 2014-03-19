@@ -335,10 +335,27 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    }
 	}
 	if (estudo.isUsarFixacao() && cota.getReparteFixado() != null && !cota.getClassificacao().equals(ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
-	    cota.setClassificacao(ClassificacaoCota.ReparteFixado);
 	    
-	    if(estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null){
-	    	cota.setReparteCalculado(estudo.getPacotePadrao(), estudo);
+		cota.setClassificacao(ClassificacaoCota.ReparteFixado);
+
+		if(estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null){
+
+//		    BigDecimal repFixado = new BigDecimal(cota.getReparteFixado());
+//		    
+//		    BigDecimal pctPadrao = new BigDecimal(estudo.getPacotePadrao());
+//		    
+//		    BigDecimal verif = repFixado.divide(pctPadrao, 0, BigDecimal.ROUND_HALF_UP);
+		    
+		    BigDecimal verificador = new BigDecimal(cota.getReparteFixado()).divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP);
+		    
+		    BigInteger reparteArredondadoOuPorMult = BigInteger.valueOf(verificador.intValue()).multiply(estudo.getPacotePadrao());
+	    
+		    if(verificador.intValue() < 1){
+		    	cota.setReparteCalculado(estudo.getPacotePadrao(), estudo);
+		    }else{
+		    	cota.setReparteCalculado(reparteArredondadoOuPorMult, estudo);
+		    }
+	    	
 	    }else{
 	    	cota.setReparteCalculado(cota.getReparteFixado(), estudo);
 	    }
