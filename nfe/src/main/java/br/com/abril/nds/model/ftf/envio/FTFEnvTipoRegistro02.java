@@ -105,7 +105,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCnpjEstabelecimentoEmissor(String cnpjEstabelecimentoEmissor) {
-		this.cnpjEstabelecimentoEmissor = cnpjEstabelecimentoEmissor;
+		this.cnpjEstabelecimentoEmissor = cnpjEstabelecimentoEmissor != null ? cnpjEstabelecimentoEmissor.replaceAll("\\D+","") : null;
 	}
 
 	public String getCodLocal() {

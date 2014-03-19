@@ -110,23 +110,21 @@ public class FTFServiceImpl implements FTFService {
 		}
 		List<FTFEnvTipoRegistro01> listTipoRegistro01Cadastrados = listTipoRegistro01;// = obterPessoasCadastradasCRP(report, listTipoRegistro01);
 		
-		if(validacaoBeans.size() > 0) {
-			//throw new ValidacaoException(TipoMensagem.ERROR, validacaoBeans);
-			for(String err : validacaoBeans) {
-				LOGGER.error(err);
-			}
-			
-		}
-		
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
 			long idNF = Long.parseLong(ftfEnvTipoRegistro01.getNumeroDocOrigem());
 			
 			List<FTFEnvTipoRegistro02> obterResgistroTipo02 = ftfRepository.obterResgistroTipo02(idNF, idNaturezaOperacao);
+			for(FTFEnvTipoRegistro02 ftfetr02 : obterResgistroTipo02) {
+				validacaoBeans.addAll(ftfetr02.validateBean());
+			}
+			
 			ftfEnvTipoRegistro01.setItemNFList(obterResgistroTipo02);
 			
 			FTFEnvTipoRegistro06 regTipo06 = ftfRepository.obterRegistroTipo06(idNF);
-			if(regTipo06 != null)
+			if(regTipo06 != null) {
 				ftfEnvTipoRegistro01.setRegTipo06(regTipo06);
+				validacaoBeans.addAll(regTipo06.validateBean());
+			}
 		}
 		
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
@@ -134,6 +132,14 @@ public class FTFServiceImpl implements FTFService {
 			list.addAll(ftfEnvTipoRegistro01.getItemNFList());
 			if(ftfEnvTipoRegistro01.getRegTipo06() != null)
 				list.add(ftfEnvTipoRegistro01.getRegTipo06());
+		}
+		
+		if(validacaoBeans.size() > 0) {
+			//throw new ValidacaoException(TipoMensagem.ERROR, validacaoBeans);
+			for(String err : validacaoBeans) {
+				LOGGER.error(err);
+			}
+			
 		}
 		
 		String totalPedidos = Integer.toString(listTipoRegistro01Cadastrados.size());

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FTFBaseDTO {
-
+	
 	public List<String> validateBean() {
 		
 		List<String> erros = new ArrayList<String>();

@@ -19,9 +19,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
@@ -113,10 +111,10 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		concatenarTipoPedidoBy(idTipoNotaFiscal, sqlBuilder);
 
 		sqlBuilder.append(" cast(nfn.id as char) as numeroDocOrigem, ");
-		sqlBuilder.append(" 'SIST_NDS' as codSolicitante,  "); 
+		sqlBuilder.append(" 'NDS' as codSolicitante,  "); 
 		sqlBuilder.append(" endereco.LOGRADOURO as  nomeLocalEntregaNf, ");
 		sqlBuilder.append(" DATE_FORMAT(nfn.DATA_EMISSAO,'%d/%m/%Y') as dataPedido, ");
-		sqlBuilder.append(" 'SIST_NDS' as codCentroEmissor, ");
+		sqlBuilder.append(" 'NDS' as codCentroEmissor, ");
 		sqlBuilder.append(" nfn.DOCUMENTO_DESTINATARIO as cpfCnpjDestinatario, ");
 		sqlBuilder.append(" nfn.DOCUMENTO_DESTINATARIO as cpfCnpjEstabelecimentoEntrega, ");
 
@@ -288,7 +286,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		setParametersFromDistribuidor(sqlBuilder);
 
 		concatenarTipoPedidoBy(idTipoNotaFiscal, sqlBuilder);
-		sqlBuilder.append("  nfn.DOCUMENTO_EMITENTE as numeroDocOrigem, ")
+		sqlBuilder.append(" LPAD(nfn.NUMERO_DOCUMENTO_FISCAL, 8, '0') as numeroDocOrigem, ")
 		.append("  cast(nfps.SEQUENCIA as char) as numItemPedido, ")
 		.append("  '' as codSistemaOrigemPedido,  ") //TODO: -- Deve ser cadastrado no FTF, ver com a Edna.
 		.append("  nfps.CODIGO_PRODUTO as codProdutoOuServicoSistemaOrigem, ")
@@ -299,7 +297,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append("  replace(cast(round(valor_desconto,2) as char),'.','') as percentualDescontoItem, ")
 		.append("  '' as valorDescontoComercial, ")
 		.append("  '' as tipoUtilizacaoProduto, ")
-		.append("  cast(nfps.CFOP as char) as codTipoNaturecaOperacao, ")
+		.append("  cast(RIGHT(nfps.CFOP, 3) as char) as codTipoNaturecaOperacao, ")
 		.append("  '' as textoObservacoes, ")
 		.append("  '' as numEdicaoRevista, ")
 		.append("  '' as dataCompetencia, ")

@@ -50,6 +50,46 @@ public class FTFEnvTipoRegistro00 extends FTFBaseDTO implements FTFCommons {
 		this.tipoRegistro = tipoRegistro;
 	}
 
+	public String getCodEstabelecimentoEmissor() {
+		return codEstabelecimentoEmissor;
+	}
+
+	public void setCodEstabelecimentoEmissor(String codEstabelecimentoEmissor) {
+		this.codEstabelecimentoEmissor = codEstabelecimentoEmissor;
+	}
+
+	public String getCnpjEstabelecimentoEmissor() {
+		return cnpjEstabelecimentoEmissor;
+	}
+
+	public void setCnpjEstabelecimentoEmissor(String cnpjEstabelecimentoEmissor) {
+		this.cnpjEstabelecimentoEmissor = cnpjEstabelecimentoEmissor != null ? cnpjEstabelecimentoEmissor.replaceAll("\\D+","") : null;
+	}
+
+	public String getCodLocal() {
+		return codLocal;
+	}
+
+	public void setCodLocal(String codLocal) {
+		this.codLocal = codLocal;
+	}
+
+	public String getTipoPedido() {
+		return tipoPedido;
+	}
+
+	public void setTipoPedido(String tipoPedido) {
+		this.tipoPedido = tipoPedido;
+	}
+
+	public String getNumeroDocOrigem() {
+		return numeroDocOrigem;
+	}
+
+	public void setNumeroDocOrigem(String numeroDocOrigem) {
+		this.numeroDocOrigem = numeroDocOrigem;
+	}
+	
 	public String getDataGeracao() {
 		return dataGeracao;
 	}
@@ -96,46 +136,6 @@ public class FTFEnvTipoRegistro00 extends FTFBaseDTO implements FTFCommons {
 
 	public void setNovoNomeArquivo(String novoNomeArquivo) {
 		this.novoNomeArquivo = novoNomeArquivo;
-	}
-
-	public String getCodEstabelecimentoEmissor() {
-		return codEstabelecimentoEmissor;
-	}
-
-	public void setCodEstabelecimentoEmissor(String codEstabelecimentoEmissor) {
-		this.codEstabelecimentoEmissor = codEstabelecimentoEmissor;
-	}
-
-	public String getCnpjEstabelecimentoEmissor() {
-		return cnpjEstabelecimentoEmissor;
-	}
-
-	public void setCnpjEstabelecimentoEmissor(String cnpjEstabelecimentoEmissor) {
-		this.cnpjEstabelecimentoEmissor = cnpjEstabelecimentoEmissor;
-	}
-
-	public String getCodLocal() {
-		return codLocal;
-	}
-
-	public void setCodLocal(String codLocal) {
-		this.codLocal = codLocal;
-	}
-
-	public String getTipoPedido() {
-		return tipoPedido;
-	}
-
-	public void setTipoPedido(String tipoPedido) {
-		this.tipoPedido = tipoPedido;
-	}
-
-	public String getNumeroDocOrigem() {
-		return numeroDocOrigem;
-	}
-
-	public void setNumeroDocOrigem(String numeroDocOrigem) {
-		this.numeroDocOrigem = numeroDocOrigem;
 	}
 
 }
