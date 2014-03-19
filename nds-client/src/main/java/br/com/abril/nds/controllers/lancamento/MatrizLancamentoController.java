@@ -348,7 +348,7 @@ public class MatrizLancamentoController extends BaseController {
         
         for (final Date dataConfirmada : datasConfirmadas) {
             
-            if (dataConfirmada.compareTo(dataOperacao) < 0) {
+            if (!dataOperacao.before(dataConfirmada)) {
                 
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Não é possível confirmar uma data menor que a data de operação [ "
