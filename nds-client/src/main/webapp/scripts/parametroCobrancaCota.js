@@ -1551,6 +1551,24 @@ var parametroCobrancaCotaController = $.extend(true, {
 			
 			$('#selectDevolveEncalhe', this.workspace).hide();
 		}
+	},
+	
+	verificaDataAlteracaoTipoCota : function(element){
+		
+		var data = [{name: 'idCota', value: $("#_idCota", this.workspace).val()}];
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/verificarDataAlteracaoTipoCota",
+			data,
+			function(result){
+				
+				parametroCobrancaCotaController.exibeDevolveEncalhe(element.value);
+			},
+			function(){
+				
+				element.value = element.oldValue;
+			},
+			null,
+			false
+		);
 	}
 	
 }, BaseController);

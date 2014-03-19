@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
@@ -19,5 +20,7 @@ public interface ParametroCobrancaCotaRepository extends Repository<ParametroCob
 	ParametroCobrancaCota obterParametroCobrancaCotaPorCota(Integer numeroCota);
 
 	boolean verificarCotaSemParametroCobrancaPorFormaCobranca(Long id);
+
+    boolean verificarDataAlteracaoTipoCota(Long idCota, Date dataOperacao);
 
 }
