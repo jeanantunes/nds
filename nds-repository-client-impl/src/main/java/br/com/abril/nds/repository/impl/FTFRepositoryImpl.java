@@ -19,7 +19,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
@@ -90,7 +92,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 			codigoDistribuidor = distribuidor.getCodigoDistribuidorFC();
 		}
 
-		reg00.setNomeArquivo(String.format("NDS%s%s.PED",output, codigoDistribuidor));
+		reg00.setNomeArquivo(String.format("NDS%s%s.PED", output, codigoDistribuidor));
 		reg00.setNumSequencia(output);
 
 		return reg00;

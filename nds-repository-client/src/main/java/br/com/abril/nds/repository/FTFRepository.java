@@ -29,4 +29,5 @@ public interface FTFRepository {
 	FTFEnvTipoRegistro06 obterRegistroTipo06(Long idNF);
 	
 	FTFEnvTipoRegistro08 obterRegistroTipo08(long idTipoNotaFiscal);
+
 }

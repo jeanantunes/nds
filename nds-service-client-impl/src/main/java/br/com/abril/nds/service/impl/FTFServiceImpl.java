@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +47,8 @@ import br.com.abril.nds.util.StringUtil;
 @Service
 public class FTFServiceImpl implements FTFService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(FTFServiceImpl.class);
+	
 	@Autowired
 	private FTFRepository ftfRepository;
 	
@@ -86,15 +90,33 @@ public class FTFServiceImpl implements FTFService {
 		List<FTFBaseDTO> list = new ArrayList<FTFBaseDTO>();
 		FTFReportDTO report = new FTFReportDTO();
 		
+		List<String> validacaoBeans = new ArrayList<String>();
+		
 		FTFEnvTipoRegistro00 regTipo00 = ftfRepository.obterRegistroTipo00(idNaturezaOperacao);
-		//FIXME: ajustar se estiver certo
+		validacaoBeans.addAll(regTipo00.validateBean());
+		
 		FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(notas.get(0).getId());
+		validacaoBeans.addAll(regTipo08.validateBean());
+		
 		FTFEnvTipoRegistro09 regTipo09 = ftfRepository.obterRegistroTipo09(idNaturezaOperacao);
+		validacaoBeans.addAll(regTipo09.validateBean());
 		
 		list.add(regTipo00);
 
 		List<FTFEnvTipoRegistro01> listTipoRegistro01 = ftfRepository.obterResgistroTipo01(notas, idNaturezaOperacao);
+		
+		for(FTFEnvTipoRegistro01 ftfetr01 : listTipoRegistro01) {
+			validacaoBeans.addAll(ftfetr01.validateBean());
+		}
 		List<FTFEnvTipoRegistro01> listTipoRegistro01Cadastrados = listTipoRegistro01;// = obterPessoasCadastradasCRP(report, listTipoRegistro01);
+		
+		if(validacaoBeans.size() > 0) {
+			//throw new ValidacaoException(TipoMensagem.ERROR, validacaoBeans);
+			for(String err : validacaoBeans) {
+				LOGGER.error(err);
+			}
+			
+		}
 		
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
 			long idNF = Long.parseLong(ftfEnvTipoRegistro01.getNumeroDocOrigem());

@@ -7,21 +7,21 @@ import br.com.abril.nds.model.ftf.FTFCommons;
 public class FTFEnvTipoRegistro00 extends FTFBaseDTO implements FTFCommons {
 
 	@FTFfield(tamanho=1, tipo="char", ordem=1)
-	private String tipoRegistro = "0";
+	private String tipoRegistro="0";
 	
-	@FTFfield(tamanho = 2, tipo = "char", ordem = 2)
+	@FTFfield(tamanho=2, tipo="char", ordem=2)
 	private String codEstabelecimentoEmissor;
 
-	@FTFfield(tamanho = 14, tipo = "char", ordem = 3)
+	@FTFfield(tamanho=14, tipo="char", ordem=3)
 	private String cnpjEstabelecimentoEmissor;
 
-	@FTFfield(tamanho = 11, tipo = "char", ordem = 4)
+	@FTFfield(tamanho=11, tipo="char", ordem=4)
 	private String codLocal;
 
-	@FTFfield(tamanho = 2, tipo = "char", ordem = 5)
+	@FTFfield(tamanho=2, tipo="char", ordem=5)
 	private String tipoPedido;
 
-	@FTFfield(tamanho = 8, tipo = "char", ordem = 6)
+	@FTFfield(tamanho=8, tipo="char", ordem=6)
 	private String numeroDocOrigem;
 	
 	@FTFfield(tamanho=10, tipo="char", ordem=7)
@@ -138,5 +138,4 @@ public class FTFEnvTipoRegistro00 extends FTFBaseDTO implements FTFCommons {
 		this.numeroDocOrigem = numeroDocOrigem;
 	}
 
-	
 }
