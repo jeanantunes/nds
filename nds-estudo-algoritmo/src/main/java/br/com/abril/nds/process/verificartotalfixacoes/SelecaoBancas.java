@@ -340,12 +340,6 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
 		if(estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null){
 
-//		    BigDecimal repFixado = new BigDecimal(cota.getReparteFixado());
-//		    
-//		    BigDecimal pctPadrao = new BigDecimal(estudo.getPacotePadrao());
-//		    
-//		    BigDecimal verif = repFixado.divide(pctPadrao, 0, BigDecimal.ROUND_HALF_UP);
-		    
 		    BigDecimal verificador = new BigDecimal(cota.getReparteFixado()).divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP);
 		    
 		    BigInteger reparteArredondadoOuPorMult = BigInteger.valueOf(verificador.intValue()).multiply(estudo.getPacotePadrao());
