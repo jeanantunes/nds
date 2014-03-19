@@ -291,7 +291,7 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                 Date dataAtual = new Date();
                 Date dataLancamento = inputItem.getDataLancamento();
                 dataLancamento = dataLancamento == null ? dataAtual : dataLancamento;
-                Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, produto.getPeb());
+                Date dataRecolhimento = inputItem.getDataRecolhimento();
                 
                 int numeroLancamentoNovo = 1;
                 

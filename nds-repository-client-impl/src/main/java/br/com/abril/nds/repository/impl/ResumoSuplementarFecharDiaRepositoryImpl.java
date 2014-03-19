@@ -252,7 +252,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	    sql.append(" ) 		");
 	    
    		sql.append(" group by estoquepro0_.id ");
-   		sql.append(" having (quantidadeContabil + quantidadeTransferenciaEntrada - quantidadeTransferenciaSaida - quantidadeVenda) <> 0 ");
+   		sql.append(" having ((quantidadeContabil + quantidadeTransferenciaEntrada - quantidadeTransferenciaSaida - quantidadeVenda) <> 0) ");
    		sql.append(" order by idProdutoEdicao "); 
 
 		SQLQuery query = getSession().createSQLQuery(sql.toString())

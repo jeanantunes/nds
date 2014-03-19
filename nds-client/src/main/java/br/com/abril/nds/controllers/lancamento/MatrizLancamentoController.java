@@ -348,7 +348,7 @@ public class MatrizLancamentoController extends BaseController {
         
         for (final Date dataConfirmada : datasConfirmadas) {
             
-            if (dataConfirmada.compareTo(dataOperacao) < 0) {
+            if (!dataOperacao.before(dataConfirmada)) {
                 
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Não é possível confirmar uma data menor que a data de operação [ "
@@ -757,10 +757,17 @@ public class MatrizLancamentoController extends BaseController {
             	boolean existeProdutoEdicaoDia = lancamentoRepositoryService.existeProdutoEdicaoParaDia(produtoLancamentoDTO,novaData);
             	
             	if(existeProdutoEdicaoDia){
+            		
+            		String stNovadata = "";
+            		
+            		if(novaData!=null){
+            			SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+            			stNovadata = ft.format(novaData);
+            		}
             		 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
-            				 "Já existe o produto: "+produtoLancamentoDTO.getNomeProduto()+
-            				 " com a edição: "+produtoLancamentoDTO.getNumeroEdicao()+
-            				 " para o dia :"+novaData));
+            				 "Já existe o produto "+produtoLancamentoDTO.getNomeProduto()+
+            				 " , edição "+produtoLancamentoDTO.getNumeroEdicao()+
+            				 " para o dia "+stNovadata));
             	}
             	
                 produtoLancamentoDTO.setAlterado(true);
