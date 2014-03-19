@@ -26,5 +26,6 @@ public interface P3Repository {
 	Integer count_obterP3ComRegimeEspecial_NotaEnvio(Date dataInicial, Date dataFinal);
 	
 	Integer count_obterP3ComRegimeEspecial_NotaFiscalNovo(Date dataInicial, Date dataFinal);
-	
+
+	Integer count_obterP3MovimentacaoCompleta(Date dataInicial,Date dataFinal); 
 }

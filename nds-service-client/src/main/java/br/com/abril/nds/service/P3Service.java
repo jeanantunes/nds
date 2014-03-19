@@ -7,7 +7,7 @@ public interface P3Service {
 
 	public File gerarTxt(Date dataInicial, Date dataFinal);
 	
-	public Integer countBusca (Date dataInicial, Date dataFinal);
+	public Integer countBusca (Date dataInicial, Date dataFinal, String opcaoDeRelatorio);
 	
 	public File gerarMovimentacaoCompletaTxt(Date dataInicial, Date dataFinal);
 }
