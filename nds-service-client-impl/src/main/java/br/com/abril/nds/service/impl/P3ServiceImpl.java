@@ -162,27 +162,32 @@ public class P3ServiceImpl implements P3Service {
 
 	@Transactional
 	@Override
-	public Integer countBusca(Date dataInicial, Date dataFinal) {
+	public Integer countBusca(Date dataInicial, Date dataFinal,String opcaoDeRelatorio) {
 
 		Integer count = 0;
 
-		Boolean isRegimeEsp = isRegimeEspecial();
+		if(opcaoDeRelatorio.equals("p3")){
+			Boolean isRegimeEsp = isRegimeEspecial();
 
-		if (isRegimeEsp) {
-			count += repoP3.count_obterP3SemRegimeEspecial_Entrada(dataInicial,
-					dataFinal);
-			count += repoP3.count_obterP3SemRegimeEspecial_Saida(dataInicial,
-					dataFinal);
-		} else {
-			count += repoP3.count_obterP3SemRegimeEspecial_Entrada(dataInicial,
-					dataFinal);
-			count += repoP3.count_obterP3SemRegimeEspecial_Saida(dataInicial,
-					dataFinal);
-			count += repoP3.count_obterP3ComRegimeEspecial_NotaEnvio(
-					dataInicial, dataFinal);
-			count += repoP3.count_obterP3ComRegimeEspecial_NotaFiscalNovo(
-					dataInicial, dataFinal);
-		}
+			if (isRegimeEsp) {
+				count += repoP3.count_obterP3SemRegimeEspecial_Entrada(dataInicial,
+						dataFinal);
+				count += repoP3.count_obterP3SemRegimeEspecial_Saida(dataInicial,
+						dataFinal);
+			} else {
+				count += repoP3.count_obterP3SemRegimeEspecial_Entrada(dataInicial,
+						dataFinal);
+				count += repoP3.count_obterP3SemRegimeEspecial_Saida(dataInicial,
+						dataFinal);
+				count += repoP3.count_obterP3ComRegimeEspecial_NotaEnvio(
+						dataInicial, dataFinal);
+				count += repoP3.count_obterP3ComRegimeEspecial_NotaFiscalNovo(
+						dataInicial, dataFinal);
+			}
+	    }else if(opcaoDeRelatorio.equals("movCompleta")){
+	    	count += repoP3.count_obterP3MovimentacaoCompleta(dataInicial, dataFinal);
+	    }
+		
 
 		return count;
 	}

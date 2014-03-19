@@ -40,10 +40,11 @@ public class P3Controller extends BaseController {
 	}
 
 	@Post
-	public void validarQtdRegistros (Date dataInicial, Date dataFinal){
+	public void validarQtdRegistros (Date dataInicial, Date dataFinal,String opcaoDeRelatorio){
 		
-		final Integer count = serviceP3.countBusca(dataInicial, dataFinal);
+		final Integer count = serviceP3.countBusca(dataInicial, dataFinal,opcaoDeRelatorio);
 
+		
 		Object o = new Object(){
 			Integer quantidadeGerada=count;
 		};

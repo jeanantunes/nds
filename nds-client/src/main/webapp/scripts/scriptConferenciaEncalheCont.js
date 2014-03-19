@@ -1,50 +1,5 @@
 var ConferenciaEncalheCont = $.extend(true, {
 	
-	// REMOVER JAVASCRIPT ABAIXO APOS TESTES;
-	
-	contadorIntervalo : null,
-
-	iniciarContagem : function(dataProgramar) {
-		ConferenciaEncalheCont.contadorIntervalo = setInterval(function(){
-			ConferenciaEncalheCont.agendadorConferencia(dataProgramar);
-		},1000);
-	},
-
-	agendadorConferencia : function(dataProgramar) {
-
-		var horaProgramada = new Date(dataProgramar);
-	
-		var agora = new Date();
-	
-		if(agora.getTime()>horaProgramada.getTime()) {
-		  	
-			clearInterval(ConferenciaEncalheCont.contadorIntervalo);
-			
-		  	if(!permissaoAlteracao){
-				exibirAcessoNegado();
-				return;
-			}
-			if (!ConferenciaEncalheCont.modalAberta){
-
-				ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
-				
-				$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
-				
-				setTimeout(function() {
-					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
-				}, 1000);
-			}
-		  	
-		} 
-
-	},
-	
-	// REMOVER JAVASCRIPT ACIMA APOS TESTES;
-	
-	
-	
-	
-	
 	processandoConferenciaEncalhe: false,
 	
 	modalAberta: false,

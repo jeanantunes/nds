@@ -23,12 +23,12 @@ public class GeraDividaDTO implements Serializable{
 	
 	@Export(label = "Box")
 	private String box;
+
+	@Export(label = "Roteiro")
+	private String roteiro;
 	
 	@Export(label = "Rota")
 	private String rota;
-	
-	@Export(label = "Roteiro")
-	private String roteiro;
 	
 	@Export(label = "Cota")
 	private Integer numeroCota;

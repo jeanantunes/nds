@@ -1040,13 +1040,17 @@ public class ConferenciaEncalheController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void atualizarValoresGridInteira(final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, final boolean indConferenciaContingencia) {
 		
-		for(final ConferenciaEncalheDTO conf : listaConferenciaEncalhe) {
-			
-			final Long idConferencia = conf.getIdConferenciaEncalhe();
-			final Long qtdExemplares = (conf.getQtdExemplar()!=null) ? conf.getQtdExemplar().longValue() : 0L;
-			final Boolean juramentada = conf.getJuramentada();
-			
-			atualizarItemConferenciaEncalhe(idConferencia, qtdExemplares, juramentada, null, indConferenciaContingencia);
+		if(listaConferenciaEncalhe!=null && !listaConferenciaEncalhe.isEmpty()) {
+
+			for(final ConferenciaEncalheDTO conf : listaConferenciaEncalhe) {
+				
+				final Long idConferencia = conf.getIdConferenciaEncalhe();
+				final Long qtdExemplares = (conf.getQtdExemplar()!=null) ? conf.getQtdExemplar().longValue() : 0L;
+				final Boolean juramentada = conf.getJuramentada();
+				
+				atualizarItemConferenciaEncalhe(idConferencia, qtdExemplares, juramentada, null, indConferenciaContingencia);
+				
+			}
 			
 		}
 		

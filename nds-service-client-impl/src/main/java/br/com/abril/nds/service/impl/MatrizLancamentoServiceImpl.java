@@ -904,6 +904,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                 	    }
                      }
                   }
+                  
+                  produtosLancamentoNaoBalanceadosTotal.addAll(produtosLancamentoBalanceaveisDataPrevista);
+                  
                 }
             }
         }
