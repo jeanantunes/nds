@@ -17,6 +17,8 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 	
 	private Integer pacotePadrao;
 	
+	private Date dataRecolhimento;
+	
 	private Integer qtdExemplar;
 	
 	private String codigoProduto;
@@ -56,6 +58,16 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 
 	public void setPacotePadrao(Integer pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
+	}
+	
+	@Field(offset = 48, length = 8)
+	@FixedFormatPattern("yyyyMMdd")
+	public Date getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		this.dataRecolhimento = dataRecolhimento;
 	}
 
 	@Field(offset = 40, length = 8)
