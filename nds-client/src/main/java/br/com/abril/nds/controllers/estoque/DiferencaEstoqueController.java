@@ -412,18 +412,22 @@ public class DiferencaEstoqueController extends BaseController {
         if (tipoDiferenca == null) {
             throw new ValidacaoException(TipoMensagem.WARNING,
                     "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
+
+        } else if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)) {
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "'Falta De' não é permitido para lançamentos por cota.");
         }
         
-        if(idDiferenca == null){
+        if(idDiferenca == null) {
             
             incluirLancamentoDiferencaNotaEnvio(tipoDiferenca,dataNotaEnvio,numeroCota,nomeCota,diferencasProdutos);
-        }
-        else{
+            
+        } else {
             
             editarDiferencaNotaEnvio(idDiferenca,diferencasProdutos);
         }
         
-        result.use(Results.json()).from("").serialize();
+        this.result.use(Results.json()).from("").serialize();
     }
     
     private void editarDiferencaNotaEnvio(final Long idDiferenca, final List<DiferencaVO>diferencasProdutos){
