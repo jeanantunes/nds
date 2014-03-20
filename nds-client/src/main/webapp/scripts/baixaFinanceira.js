@@ -985,7 +985,7 @@ var baixaFinanceiraController = $.extend(true, {
 		var data = [
 		   {name: 'nossoNumero', value: nossoNumero},
 		   {name: 'dataPagamento', value: dataPagamento},
-		   {name: 'valor', value: replaceAll(valor.toString(),".",",")}
+		   {name: 'valor', value: valor.toString().replace(".",",")}
 		];
 		
 		$.postJSON(contextPath + "/financeiro/baixa/buscaBoleto",
