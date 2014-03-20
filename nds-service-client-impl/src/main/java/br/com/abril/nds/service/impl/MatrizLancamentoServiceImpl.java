@@ -738,7 +738,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         
         List<Long> porFornenedor;
         
-        getDiasBalanceaveis(filtro, this.getPeriodoDistribuicao(filtro.getData()));
+        final Set<Date> dataBalanceaveis = getDiasBalanceaveis(filtro, this.getPeriodoDistribuicao(filtro.getData()));
         final Set<Date> dataNaoBalanceaveis = getDiasNaoBalanceaveis(filtro,this.getPeriodoDistribuicao(filtro.getData()));
         final Set<Date> datasFornecedor = new TreeSet<Date>();
         
@@ -895,15 +895,21 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                 }else{
                 
                 //Adiciona os excedentes
+                	/*
                   if(!produtosLancamentoBalancear.isEmpty()){
                 	 
                      for(ProdutoLancamentoDTO prDTO : produtosLancamentoBalancear){
                    
                 	    if(!produtosLancamentoNaoBalanceadosTotal.contains(prDTO)){
-                          produtosLancamentoNaoBalanceadosTotal.add(prDTO);
+                          //produtosLancamentoNaoBalanceadosTotal.add(prDTO);
                 	    }
                      }
                   }
+                  */
+                  if(produtosLancamentoBalanceaveisDataPrevista!=null && !produtosLancamentoBalanceaveisDataPrevista.isEmpty()){	
+                    produtosLancamentoNaoBalanceadosTotal.addAll(produtosLancamentoBalanceaveisDataPrevista);
+                  }
+                  
                 }
             }
         }
@@ -1882,12 +1888,20 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
             dadosBalanceamentoLancamento = new DadosBalanceamentoLancamentoDTO();
         }
         
-        dadosBalanceamentoLancamento
-        .setPeriodoDistribuicao(periodoDistribuicao);
-        dadosBalanceamentoLancamento
-        .setDatasDistribuicaoPorFornecedor(datasDistribuicaoPorFornecedor);
-        dadosBalanceamentoLancamento
-        .setCapacidadeDistribuicao(distribuidorRepository
+        dadosBalanceamentoLancamento.setPeriodoDistribuicao(periodoDistribuicao);
+        
+        if(datasDistribuicaoPorFornecedor!=null && dadosBalanceamentoLancamento!=null && dadosBalanceamentoLancamento.getDatasNaoBalanceaveis()!=null){
+        
+        	for(Entry<Long, TreeSet<Date>> e : datasDistribuicaoPorFornecedor.entrySet()){
+        	  if(e!=null){
+        		e.getValue().removeAll(dadosBalanceamentoLancamento.getDatasNaoBalanceaveis());
+        	  }
+        	}
+        }
+        		
+        dadosBalanceamentoLancamento.setDatasDistribuicaoPorFornecedor(datasDistribuicaoPorFornecedor);
+        
+        dadosBalanceamentoLancamento.setCapacidadeDistribuicao(distribuidorRepository
                 .capacidadeDistribuicao());
         
         if (media.compareTo(BigInteger.ZERO) != 0) {
@@ -1897,14 +1911,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         }
         
         dadosBalanceamentoLancamento.setProdutosLancamento(produtosLancamento);
-        dadosBalanceamentoLancamento
-        .setDatasExpectativaReparte(datasExpectativaReparte);
-        dadosBalanceamentoLancamento
-        .setQtdDiasLimiteParaReprogLancamento(distribuidorRepository
-                .qtdDiasLimiteParaReprogLancamento());
+        dadosBalanceamentoLancamento.setDatasExpectativaReparte(datasExpectativaReparte);
+        dadosBalanceamentoLancamento.setQtdDiasLimiteParaReprogLancamento(distribuidorRepository.qtdDiasLimiteParaReprogLancamento());
         dadosBalanceamentoLancamento.setDataLancamento(dataLancamento);
-        dadosBalanceamentoLancamento
-        .setDatasExpedicaoConfirmada(datasExpedicaoConfirmada);
+        dadosBalanceamentoLancamento.setDatasExpedicaoConfirmada(datasExpedicaoConfirmada);
         
         return dadosBalanceamentoLancamento;
     }

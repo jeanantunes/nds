@@ -1393,4 +1393,20 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		return cota.getParametroCobranca().getFornecedorPadrao();
 	}
+
+
+
+    @Override
+    @Transactional(readOnly=true)
+    public void verificarDataAlteracaoTipoCota(Long idCota) {
+        
+        Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+        
+        if (this.parametroCobrancaCotaRepository.verificarDataAlteracaoTipoCota(idCota, dataOperacao)){
+            
+            throw new ValidacaoException(
+                    TipoMensagem.WARNING, 
+                    "Não é permitido alterar o tipo da cota mais de uma vez na mesma data de operação");
+        }
+    }
 }

@@ -269,6 +269,9 @@ var ConferenciaEncalhe = $.extend(true, {
 		this.bindkeypressCodigoBarras();
 		ConferenciaEncalhe.removerAtalhos();
 		$(".atalhosCE", ConferenciaEncalhe.workspace).hide();
+		
+		ConferenciaEncalhe.abrirModalLogadoDoBotao();
+		
 	},
 	
 	tratarEventoTeclaEspaco : function() {
@@ -1488,7 +1491,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					window.event.preventDefault();
 					
-					confirmarPopup_logado()
+					confirmarPopup_logado();
 				},
 				"Cancelar" : function() {
 					

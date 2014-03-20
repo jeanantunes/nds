@@ -508,7 +508,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 										fixacaoReparteRepository.alterar(fixacao);
 										
 									}else{
-										if(numeroEdicaoPeloLancamentoID.intValue() == fixacao.getEdicaoFinal().longValue()){
+										if((numeroEdicaoPeloLancamentoID.intValue() == fixacao.getEdicaoFinal().longValue()) && (!fixacao.isManterFixa())){
 											this.removerFixacaoReparte(fixacao);
 										}
 									}
@@ -522,7 +522,10 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 										fixacaoReparteRepository.alterar(fixacao);
 									}else{
 										fixacao.setEdicoesAtendidas(fixacao.getQtdeEdicoes());
-										this.removerFixacaoReparte(fixacao);
+										
+										if(!fixacao.isManterFixa()){
+											this.removerFixacaoReparte(fixacao);
+										}
 									}
 								}
 							}

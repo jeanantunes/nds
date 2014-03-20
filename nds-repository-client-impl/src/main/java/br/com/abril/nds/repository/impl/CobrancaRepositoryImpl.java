@@ -232,12 +232,13 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
         ((SQLQuery) query).addScalar("dataVencimento", StandardBasicTypes.DATE);
 		((SQLQuery) query).addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery) query).addScalar("boletoAntecipado", StandardBasicTypes.BOOLEAN);
+		((SQLQuery) query).addScalar("nossoNumero", StandardBasicTypes.STRING);
 
         try {
         	
 			query.setResultTransformer(new AliasToBeanConstructorResultTransformer(
 				CobrancaVO.class.getConstructor(
-					BigInteger.class, Integer.class, String.class, Date.class, Date.class, BigDecimal.class, boolean.class)
+					BigInteger.class, Integer.class, String.class, Date.class, Date.class, BigDecimal.class, boolean.class, String.class)
 				)
 			);
 
@@ -259,7 +260,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		hql.append(" SELECT ct.NUMERO_COTA as numeroCota, c.ID as codigo, ");
 		hql.append(" COALESCE(p.NOME, p.RAZAO_SOCIAL) as nome, c.DT_EMISSAO as dataEmissao, "); 
-		hql.append(" c.DT_VENCIMENTO as dataVencimento, c.VALOR as valor, false as boletoAntecipado ");
+		hql.append(" c.DT_VENCIMENTO as dataVencimento, c.VALOR as valor, false as boletoAntecipado, ");
+		hql.append(" c.NOSSO_NUMERO as nossoNumero ");
 		hql.append(" FROM cobranca c ");
 		hql.append(" LEFT JOIN BAIXA_COBRANCA bc on c.ID = bc.COBRANCA_ID ");
 		hql.append(" LEFT JOIN DIVIDA d on d.ID = c.DIVIDA_ID ");
@@ -283,15 +285,16 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 
 		hql.append(" UNION ALL ");
 		
-		hql.append(" SELECT ct.NUMERO_COTA as numeroCota, ba.ID as codigo, ");
-		hql.append(" COALESCE(p.NOME, p.RAZAO_SOCIAL) as nome, ba.`DATA` as dataEmissao, "); 
-		hql.append(" ba.DATA_VENCIMENTO as dataVencimento, ba.VALOR as valor, true as boletoAntecipado ");
+		hql.append(" SELECT ct.NUMERO_COTA as numeroCota, null as codigo, ");
+		hql.append(" COALESCE(p.NOME, p.RAZAO_SOCIAL) as nome, ba.DATA as dataEmissao, "); 
+		hql.append(" ba.DATA_VENCIMENTO as dataVencimento, ba.VALOR as valor, true as boletoAntecipado, ");
+		hql.append(" ba.NOSSO_NUMERO as nossoNumero ");
 		hql.append(" FROM boleto_antecipado ba ");
 		hql.append(" INNER join chamada_encalhe_cota ce on ba.CHAMADA_ENCALHE_COTA_ID = ce.ID ");
 		hql.append(" INNER join cota ct on ct.ID = ce.COTA_ID ");
 		hql.append(" INNER join pessoa p on p.ID = ct.PESSOA_ID ");
 		hql.append(" WHERE ct.NUMERO_COTA = :ncota ");
-		hql.append(" AND ba.STATUs != :quitada ");
+		hql.append(" AND ba.STATUS != :quitada ");
 		
 		return hql;
 	}
