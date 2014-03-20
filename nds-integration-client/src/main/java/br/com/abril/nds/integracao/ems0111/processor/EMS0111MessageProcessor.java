@@ -46,7 +46,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	private Set<Date> datasBalanceaveis = new TreeSet<Date>();
 	private Set<Date> datasNaoBalanceaveis = new TreeSet<Date>();
-	private HashMap<String, Set> datas = new HashMap<String, Set>();
+	private HashMap<String, Set<Date>> datas = new HashMap<String, Set<Date>>();
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
