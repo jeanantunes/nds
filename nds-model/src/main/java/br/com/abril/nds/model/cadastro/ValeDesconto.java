@@ -8,12 +8,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 
 /**
  * Vale desconto será mapeado como um "produto", conforme
@@ -29,9 +26,9 @@ public class ValeDesconto extends ProdutoEdicao {
 
 	private static final long serialVersionUID = 1L;
 	
-	@Enumerated(EnumType.STRING)
-	@Transient
-	private SituacaoTitulo situacaoTitulo;
+//	@Enumerated(EnumType.STRING)
+//	@Transient
+//	private SituacaoTitulo situacaoTitulo;
 	
 	@Column(name="HISTORICO")
 	private String historico;
