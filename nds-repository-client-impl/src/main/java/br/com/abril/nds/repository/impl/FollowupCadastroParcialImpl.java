@@ -75,12 +75,13 @@ public class FollowupCadastroParcialImpl extends AbstractRepositoryModel<Produto
 		sql.append("  from lancamento_parcial lp  			 ");
 		sql.append("  join periodo_lancamento_parcial plp    ");
 		sql.append("  	ON plp.LANCAMENTO_PARCIAL_ID = lp.ID ");
-		sql.append("  left join produto_edicao pe            ");
+		sql.append("  join produto_edicao pe            ");
 		sql.append("  	ON lp.PRODUTO_EDICAO_ID = pe.ID      ");
-		sql.append("  left join produto pd                   ");
+		sql.append("  join produto pd                   ");
 		sql.append("  	ON pe.PRODUTO_ID = pd.ID  			 ");
 		sql.append("  where plp.NUMERO_PERIODO < 2 			 ");
-		
+		sql.append("  AND pe.ORIGEM = 'MANUAL' 		   		 ");
+		sql.append("  group by pe.ID			 			 ");
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		

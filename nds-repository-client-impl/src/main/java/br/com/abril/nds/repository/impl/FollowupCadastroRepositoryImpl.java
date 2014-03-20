@@ -43,7 +43,7 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		hql.append("       coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeJornaleiro, ");
 		hql.append("       coalesce(pdv.contato, '') as responsavel, ");
 		hql.append("       contrato.dataTermino as dataVencimento, ");
-		hql.append("       'Contrato' as tipo ");
+		hql.append("       coalesce(case contrato.recebido  when 1 then 'a vencer/vencido' end, 'Contrato não recebido') as tipo ");
 		hql.append(" from Cota as cota ");
 		hql.append(" JOIN cota.contratoCota as contrato ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
@@ -51,7 +51,7 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 
 		hql.append(" WHERE (((datediff(contrato.dataTermino, sysdate()))-(select d.prazoFollowUp from Distribuidor d))<0) ");
 
-	    hql.append(" order by cota.numeroCota");
+	    hql.append(" group by cota.id order by cota.numeroCota");
 		
 		Query query =  getSession().createQuery(hql.toString());		
 		
@@ -70,7 +70,7 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		hql.append("SELECT cota.numeroCota as numeroCota ");
 		hql.append(" , coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeJornaleiro ");
 		hql.append(" , coalesce(pdv.contato, '') as responsavel");
-		hql.append(" , 'Cota Distribuicao' as tipo ");
+		hql.append(" , coalesce(case cota.parametroDistribuicao.utilizaTermoAdesao  when 1 then 'Termo Adesão não Recebido' end, 'Procuração não recebida') as tipo ");
 		hql.append(" from Cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN cota.pdvs as pdv ");		
@@ -97,7 +97,7 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		sql.append(" SELECT ");
 		
 		sql.append(" pes.RAZAO_SOCIAL as nomeJornaleiro, ");
-		sql.append(" 'Fornecedores' as tipo, ");
+		sql.append(" 'Contrato fornecedor a vencer/Vencido' as tipo, ");
 		sql.append(" forn.VALIDADE_CONTRATO as dataVencimento, ");
 		sql.append(" forn.RESPONSAVEL as responsavel ");
 		

@@ -30,6 +30,8 @@ public class RecolhimentoDTO implements Serializable {
 	
 	private TreeSet<Date> datasRecolhimentoFornecedor;
 	
+	private TreeSet<Date> datasRecolhimentoDisponiveis;
+	
 	private boolean forcarBalanceamento;
 	
 	private List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada;
@@ -129,7 +131,17 @@ public class RecolhimentoDTO implements Serializable {
 		this.datasRecolhimentoFornecedor = datasRecolhimentoFornecedor;
 	}
 
-	/**
+	
+    public TreeSet<Date> getDatasRecolhimentoDisponiveis() {
+        return datasRecolhimentoDisponiveis;
+    }
+
+    
+    public void setDatasRecolhimentoDisponiveis(TreeSet<Date> datasRecolhimentoDisponiveis) {
+        this.datasRecolhimentoDisponiveis = datasRecolhimentoDisponiveis;
+    }
+
+    /**
 	 * @return the forcarBalanceamento
 	 */
 	public boolean isForcarBalanceamento() {
