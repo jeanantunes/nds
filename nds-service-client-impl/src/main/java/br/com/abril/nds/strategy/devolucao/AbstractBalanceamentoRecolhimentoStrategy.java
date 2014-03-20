@@ -13,13 +13,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.service.ProdutoService;
 
 /**
  * Classe abstrata para estratégias de balanceamento de recolhimento.
@@ -76,48 +72,6 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		return balanceamentoRecolhimento;
 	}
 	
-	/*
-	 * Obtém as datas válidas para o balanceamento.
-	 */
-	protected TreeSet<Date> obterDatasParaBalanceamento(RecolhimentoDTO dadosRecolhimento) {
-		
-		Set<Date> obterDatasConfirmadas = 
-			this.obterDatasConfirmadas(dadosRecolhimento.getProdutosRecolhimento());
-		
-		return 
-			this.obterDatasRecolhimento(
-				dadosRecolhimento.getDatasRecolhimentoFornecedor(), obterDatasConfirmadas);
-	}
-	
-	protected TreeSet<Date> obterDatasRecolhimento(TreeSet<Date> datasRecolhimento,
-												   Set<Date> datasConfirmadas) {
-
-		datasRecolhimento.removeAll(datasConfirmadas);
-
-		return datasRecolhimento;
-	}
-	
-	protected Set<Date> obterDatasConfirmadas(List<ProdutoRecolhimentoDTO> produtoRecolhimentoDTOs) {
-		
-		Set<Date> datasConfirmadas = new HashSet<>();
-		
-		for (ProdutoRecolhimentoDTO item : produtoRecolhimentoDTOs) {
-			
-				boolean balanceamentoConfirmado = item.isBalanceamentoConfirmado();
-				
-				if (balanceamentoConfirmado) {
-					
-					if(!datasConfirmadas.contains(item.getDataRecolhimentoDistribuidor())){
-						
-						datasConfirmadas.add(item.getDataRecolhimentoDistribuidor());
-					}
-				}
-			}
-		
-		return datasConfirmadas;
-	}
-
-	
 	/**
 	 * Gera a matriz de recolhimento balanceada de acordo com a estratégia escolhida.
 	 * 
@@ -167,7 +121,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			//TODO
 			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)){
 				
-				if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento, dadosRecolhimento.getDatasRecolhimentoFornecedor())) {
+				if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento, dadosRecolhimento.getDatasRecolhimentoDisponiveis())) {
 					
 					produtosRecolhimentoNaoBalanceaveis.add(produtosRecolhimento.remove(indice--));
 				}
@@ -181,10 +135,10 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 * Verifica se o produto de recolhimento pode ser balanceado ou não.
 	 */
 	private boolean isProdutoNaoBalanceavel(boolean forcarBalanceamento,
-										 	ProdutoRecolhimentoDTO produtoRecolhimento,TreeSet<Date> dataRecolhimentoFornecedor) {
+										 	ProdutoRecolhimentoDTO produtoRecolhimento,TreeSet<Date> datasRecolhimentoDisponiveis) {
 
 		//TODO
-		return (produtoRecolhimento.isBalanceamentoConfirmado() || (produtoRecolhimento.isBalanceamentoSalvo() && !forcarBalanceamento) || (produtoRecolhimento.getPeb()<22 && dataRecolhimentoFornecedor.contains(produtoRecolhimento.getDataRecolhimentoPrevista())));
+		return (produtoRecolhimento.isBalanceamentoConfirmado() || (produtoRecolhimento.isBalanceamentoSalvo() && !forcarBalanceamento) || (produtoRecolhimento.getPeb()<22 && datasRecolhimentoDisponiveis.contains(produtoRecolhimento.getDataRecolhimentoPrevista())));
 	}
 	
 	/*
@@ -327,7 +281,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 			
-			if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento, dadosRecolhimento.getDatasRecolhimentoFornecedor())) {
+			if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento, dadosRecolhimento.getDatasRecolhimentoDisponiveis())) {
 				
 				continue;
 			}
