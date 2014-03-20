@@ -1291,7 +1291,7 @@ ConsolidadoFinanceiroRepository {
         
         .append(" cfc.ENCALHE as encalhe, ")
         .append(" cfc.ENCARGOS as encargos, ")
-        .append(" cfc.PENDENTE as pendente, ")
+        .append(" ROUND(cfc.PENDENTE,2) as pendente, ")
         .append(" cfc.VALOR_POSTERGADO as valorPostergado, ")
         .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
         
@@ -1311,34 +1311,72 @@ ConsolidadoFinanceiroRepository {
         .append(" AND cmfc.CONSOLIDADO_FINANCEIRO_ID=cfc.id ")
         .append(" limit 1 )")
         .append(" AS dataRaiz, ")
+
+        //Valor Pago
+        .append(" ROUND(")
+               
+        .append("    COALESCE( ")
+        //divida paga em cota unificadora: valor pago = total na cota unificada
+        .append("    (SELECT CF.TOTAL ")
+        .append("     FROM DIVIDA D, DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ")
+        .append("     WHERE DC.DIVIDA_ID = D.ID ")
+        .append("     AND DC.CONSOLIDADO_ID = CF.ID ")
+        .append("     AND CF.ID = cfc.ID ")
+        .append("     AND D.COTA_ID <> cota.ID ")
+        .append("     AND D.STATUS = :statusDividaQuitada) * (-1) ")
         
-        .append(" ( select SUM( coalesce(bc.VALOR_PAGO, 0) ) ")
-        .append("           from BAIXA_COBRANCA bc ")
-        .append("           inner join COBRANCA cobranca ")
-        .append("                 ON cobranca.ID = bc.COBRANCA_ID ")
-        .append("           inner join DIVIDA divida ")
-        .append("                 on divida.ID = cobranca.DIVIDA_ID ")
-        .append("		   inner join DIVIDA_CONSOLIDADO d_cons ")
-        .append("				 on divida.ID = d_cons.DIVIDA_ID ")
-        .append("           where bc.STATUS not in (:statusBaixaCobranca) ")
-        .append("           and cota.ID = cobranca.COTA_ID ")
-        .append("           and d_cons.CONSOLIDADO_ID = cfc.ID ")
-        .append("           and cfc.ID) as valorPago, ")
+        .append("    ,")
         
+        .append("    (select SUM( coalesce(bc.VALOR_PAGO, 0) ) - ")
+        //consolidados de cotas unificadas subtraidos do valor pago na cota unificadora
+        .append("    ((SELECT SUM(ROUND(CF.TOTAL,2)) ")
+        .append("      FROM DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ")
+        .append("      WHERE DC.DIVIDA_ID = divida.ID ")
+        .append("      AND DC.CONSOLIDADO_ID = CF.ID ")
+        .append("      AND CF.ID <> cfc.ID ")
+        .append("      AND CF.COTA_ID <> cota.ID) * (-1)) ")
+
+        .append("     from BAIXA_COBRANCA bc ")
+        .append("     inner join COBRANCA cobranca ON cobranca.ID = bc.COBRANCA_ID ")
+        .append("     inner join DIVIDA divida ON divida.ID = cobranca.DIVIDA_ID ")
+        .append("     inner join DIVIDA_CONSOLIDADO d_cons ON divida.ID = d_cons.DIVIDA_ID ")
+        .append("     where bc.STATUS not in (:statusBaixaCobranca) ")
+        .append("     and cota.ID = cobranca.COTA_ID ")
+        .append("     and d_cons.CONSOLIDADO_ID = cfc.ID ")
+        .append("     and cfc.ID) ")
+ 
+        .append("    ,0)")
+        
+        .append(" ,2) as valorPago, ")
+
         //total
-        .append(" cfc.TOTAL as total, ")
+        .append(" ROUND(cfc.TOTAL,2) as total, ")
         
         //CALCULO DO SALDO = total - valorPago
+        .append(" ROUND(")
         .append(" ( ")
         .append("          SELECT CASE WHEN bc.status = :naoPagoPostergado THEN 0 ")
-        .append("          else round(cfc.TOTAL, 2) + SUM(coalesce(bc.VALOR_PAGO,0)) - SUM(coalesce(bc.VALOR_JUROS, 0) + coalesce(bc.VALOR_MULTA, 0) - coalesce(bc.VALOR_DESCONTO,0)) end ")
+        .append("          else ") 
+        
+        .append("              round(cfc.TOTAL, 2) + SUM(coalesce(bc.VALOR_PAGO,0)) - SUM(coalesce(bc.VALOR_JUROS, 0) + coalesce(bc.VALOR_MULTA, 0) - coalesce(bc.VALOR_DESCONTO,0)) ") 
+        
+        .append("              - ")
+        //consolidados de cotas unificadas subtraidos do saldo da cota unificadora
+        .append("              ((SELECT SUM(ROUND(CF.TOTAL,2)) ")
+        .append("                FROM DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ")
+        .append("                WHERE DC.DIVIDA_ID = divida.ID ")
+        .append("                AND DC.CONSOLIDADO_ID = CF.ID ")
+        .append("                AND CF.ID <> cfc.ID ")
+        .append("                AND CF.COTA_ID <> cota.ID) * (-1)) ")
+        
+        .append("          end ")
         .append("          FROM BAIXA_COBRANCA bc ")
         .append("          INNER JOIN COBRANCA cobranca ON cobranca.ID = bc.COBRANCA_ID ")
         .append("          INNER JOIN DIVIDA divida ON divida.ID = cobranca.DIVIDA_ID ")
         .append("		   INNER JOIN DIVIDA_CONSOLIDADO d_cons ON divida.ID = d_cons.DIVIDA_ID ")
         .append("          WHERE bc.STATUS NOT IN (:statusBaixaCobranca)  ")
         .append("          AND cota.ID = cobranca.COTA_ID AND d_cons.CONSOLIDADO_ID = cfc.ID AND cfc.ID  ")
-        .append(" ) as saldo, ")
+        .append(" ),2) as saldo, ")
         
         .append(" coalesce(cfc.CONSIGNADO,0) - coalesce(cfc.ENCALHE,0) ")
         .append(" - coalesce((select sum(coalesce(mfdc.valor,0)) from MOVIMENTO_FINANCEIRO_COTA mfdc ")
@@ -1482,6 +1520,7 @@ ConsolidadoFinanceiroRepository {
         .append("),0) as encargos, ")
         
         //pendente
+        .append("ROUND(")
         .append("coalesce((select sum(m.VALOR) ")
         .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
         .append(" inner join COTA on COTA.ID = m.COTA_ID")
@@ -1493,7 +1532,7 @@ ConsolidadoFinanceiroRepository {
         .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
         .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
         .append(") and m.DATA = mfc.DATA ")
-        .append("),0) as pendente, ")
+        .append("),0),2) as pendente, ")
         
         //valorPostergado
         //valorPostergado credito
@@ -1563,6 +1602,7 @@ ConsolidadoFinanceiroRepository {
         .append(" 0 as valorPago, ")
         
         //total
+        .append("ROUND(")
         .append("(")
         //.append(" (consignado - encalhe + valorPostergado + vendaEncalhe + debitoCredito + encargos + pendente) ")
         .append("coalesce((select sum(m.VALOR) * -1 ")
@@ -1680,8 +1720,7 @@ ConsolidadoFinanceiroRepository {
         .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
         .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
         .append(") and m.DATA = mfc.DATA ")
-        .append("),0) ")
-        .append(" ) as total, ")
+        .append("),0)),2) as total, ")
         
         //saldo
         .append(" 0 as saldo, ")
@@ -1807,6 +1846,8 @@ ConsolidadoFinanceiroRepository {
         query.setParameter("grupoMovPendente", GrupoMovimentoFinaceiro.PENDENTE.name());
         
         query.setParameter("statusPendenteInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA.name());
+        
+        query.setParameter("statusDividaQuitada", StatusDivida.QUITADA.name());
         
         final PaginacaoVO paginacao = filtro.getPaginacao();
         if (paginacao != null) {

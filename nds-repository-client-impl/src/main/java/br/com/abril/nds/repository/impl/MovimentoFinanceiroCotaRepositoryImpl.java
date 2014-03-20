@@ -1461,9 +1461,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	           
 	           .append("),0) ")
 	
-	        .append(") + ")
+	         .append(") + ")
 
-	        .append("(")
+	         .append("(")
 	         
 	           .append(" coalesce(((")
 	           
@@ -1482,18 +1482,18 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	           
 	           .append("),0) ")
 	
-	        .append(") ")
+	         .append(") ")
 
-	      .append(")*(-1) as saldo ")
+	       .append(")*(-1) as saldo ")
 	       
 	       
-	      .append(" from Cota c ")
+	       .append(" from Cota c ")
 	       
-	      .append(" join c.pessoa p ")
+	       .append(" join c.pessoa p ")
 	       
-	      .append(" where c.tipoCota = :tipoCota ")
+	       .append(" where c.tipoCota = :tipoCota ")
 	    
-	      .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
+	       .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
 	    
 	    if (numeroCota != null){
 	      
@@ -1516,48 +1516,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	    
 	    query.setMaxResults(maxResults);
 	    
-	    if (numeroCota != null){
-	      
-	        query.setParameter("numeroCota", numeroCota);
-	    }
-	    
-	    query.setParameter("tipoCota", TipoCota.A_VISTA);
-
-	    query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME);
-
-	    query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
-	    
-	    query.setParameterList("gruposMovimentoReparte", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
-	                                               				       GrupoMovimentoEstoque.COMPRA_ENCALHE, 
-	                                                                   GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
-	    
-	    query.setParameterList("gruposMovimentoEstorno", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE, 
-	                                                                   GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR));
-	    
-	    query.setParameterList("gruposMovimentoFinanceiroCredito", Arrays.asList(GrupoMovimentoFinaceiro.CREDITO,
-	                                                                             GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO,
-	                                                                             GrupoMovimentoFinaceiro.POSTERGADO_CREDITO,
-	                                                                             GrupoMovimentoFinaceiro.ENVIO_ENCALHE,
-	                                                                             GrupoMovimentoFinaceiro.RESGATE_CAUCAO_LIQUIDA));
-	    
-	    query.setParameterList("gruposMovimentoFinanceiroDebito", Arrays.asList(GrupoMovimentoFinaceiro.DEBITO,
-	                                                                            GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
-	                                                                            GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS,
-	                                                                            GrupoMovimentoFinaceiro.POSTERGADO_DEBITO,
-	                                                                            GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR,
-	                                                                            GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
-	                                                                            GrupoMovimentoFinaceiro.JUROS,
-	                                                                            GrupoMovimentoFinaceiro.MULTA,
-	                                                                            GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,                                                            				
-	                                                                            GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA,	                                                             				
-	                                                                            GrupoMovimentoFinaceiro.VENDA_TOTAL,	                                                             				                                                          					                                                             				
-	                                                                            GrupoMovimentoFinaceiro.PENDENTE));
-	
-	    query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
-	    
-	    query.setParameter("statusOperacaoConferencia", StatusOperacao.CONCLUIDO);
-	    
-	    query.setParameter("data", data);
+        this.setParametrosProcessamentoFinanceiroCota(query, numeroCota, data);
 	
 	    query.setResultTransformer(new AliasToBeanResultTransformer(ProcessamentoFinanceiroCotaDTO.class));
 	    
@@ -1706,15 +1665,177 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
  	    	query.setParameter("data", dataOperacao);
  	    }
     	
- 	   query.setParameterList("gruposMovimentoFinanceiroCredito", Arrays.asList(GrupoMovimentoFinaceiro.CREDITO,
-																                GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO,
-																                GrupoMovimentoFinaceiro.POSTERGADO_CREDITO,
-																                GrupoMovimentoFinaceiro.ENVIO_ENCALHE,
-																                GrupoMovimentoFinaceiro.RESGATE_CAUCAO_LIQUIDA));
+ 	    query.setParameterList("gruposMovimentoFinanceiroCredito", Arrays.asList(GrupoMovimentoFinaceiro.CREDITO,
+																                 GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO,
+																                 GrupoMovimentoFinaceiro.POSTERGADO_CREDITO,
+																                 GrupoMovimentoFinaceiro.ENVIO_ENCALHE,
+																                 GrupoMovimentoFinaceiro.RESGATE_CAUCAO_LIQUIDA));
 
 		return (BigDecimal) query.uniqueResult();
 	}
 	
+    /**
+     * Obtem saldo das cotas com tipo À Vista na data de operação atual
+     * @param numeroCota
+     * @param data
+     * @return BigDecimal
+     */
+	@Override
+	public BigDecimal obterSaldoCotasAVista(Integer numeroCota, Date data){
+		
+       StringBuilder hql = new StringBuilder("");
+		
+	   hql.append(" select sum ")
+		    
+		  .append(" (")
+		       
+	        .append(" (")
+	        
+	          .append(" coalesce(((")
+	          
+	          .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+	         
+	          .append(this.movimentoEstoqueCotaRepository.getFromConsignadoCotaAVista("c.id"))
+	       
+	          .append(")*(-1)),0) + ")
+	          
+	          
+	          .append(" coalesce(((")
+	      
+	          .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+	
+	          .append(this.movimentoEstoqueCotaRepository.getFromAVistaCotaAVista("c.id"))
+	
+	          .append(")*(-1)),0) + ")
+	          
+	          
+	          .append(" coalesce((")
+	          
+	          .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+	         
+	          .append(this.movimentoEstoqueCotaRepository.getFromEstornoCotaAVista("c.id"))
+	       
+	          .append("),0) ")
+	          
+	        .append(" ) + ")
+	        
+	        .append(" (")
+	        
+	          .append(" coalesce(((")
+	          
+	          .append("  select sum(coalesce(mfc.valor,0)) ")
+	         
+	          .append(this.getFromDebitoCota("c.id"))
+	       
+	          .append(")*(-1)),0) + ")
+	          
+	   
+	          .append(" coalesce((")
+	          
+	          .append("  select sum(coalesce(mfc.valor,0)) ")
+	         
+	          .append(this.getFromCreditoCota("c.id"))
+	          
+	          .append("),0) ")
+	
+	        .append(") + ")
+	
+	        .append("(")
+	        
+	          .append(" coalesce(((")
+	          
+	          .append("  select sum(coalesce(mfc.valor,0)) ")
+	         
+	          .append(this.getFromPendenteDebitoCota("c.id"))
+	       
+	          .append(")*(-1)),0) + ")
+	          
+	   
+	          .append(" coalesce((")
+	          
+	          .append("  select sum(coalesce(mfc.valor,0)) ")
+	         
+	          .append(this.getFromPendenteCreditoCota("c.id"))
+	          
+	          .append("),0) ")
+	
+	        .append(") ")
+	
+	      .append(")*(-1) as saldo ")
+	      
+	      
+	      .append(" from Cota c ")
+	      
+	      .append(" join c.pessoa p ")
+	      
+	      .append(" where c.tipoCota = :tipoCota ")
+	   
+	      .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
+
+	   if (numeroCota != null){
+		   
+	      hql.append(" and c.numeroCota = :numeroCota ");	 
+	   }
+	   
+	   Query query = this.getSession().createQuery(hql.toString());
+	   
+       this.setParametrosProcessamentoFinanceiroCota(query, numeroCota, data);	
+	   
+	   return (BigDecimal) query.uniqueResult();
+	}	
+	
+	/**
+	 * Define parametros da query de consulta de processamento financeiro de cotas À Vista
+	 * @param query
+	 * @param data
+	 * @param numeroCota
+	 */
+	private void setParametrosProcessamentoFinanceiroCota(Query query, Integer numeroCota, Date data){
+		
+	    if (numeroCota != null){
+		      
+	        query.setParameter("numeroCota", numeroCota);
+	    }
+	    
+	    query.setParameter("tipoCota", TipoCota.A_VISTA);
+
+	    query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME);
+
+	    query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+	    
+	    query.setParameterList("gruposMovimentoReparte", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
+	                                               				       GrupoMovimentoEstoque.COMPRA_ENCALHE, 
+	                                                                   GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
+	    
+	    query.setParameterList("gruposMovimentoEstorno", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE, 
+	                                                                   GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR));
+	    
+	    query.setParameterList("gruposMovimentoFinanceiroCredito", Arrays.asList(GrupoMovimentoFinaceiro.CREDITO,
+	                                                                             GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO,
+	                                                                             GrupoMovimentoFinaceiro.POSTERGADO_CREDITO,
+	                                                                             GrupoMovimentoFinaceiro.ENVIO_ENCALHE,
+	                                                                             GrupoMovimentoFinaceiro.RESGATE_CAUCAO_LIQUIDA));
+	    
+	    query.setParameterList("gruposMovimentoFinanceiroDebito", Arrays.asList(GrupoMovimentoFinaceiro.DEBITO,
+	                                                                            GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
+	                                                                            GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS,
+	                                                                            GrupoMovimentoFinaceiro.POSTERGADO_DEBITO,
+	                                                                            GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR,
+	                                                                            GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
+	                                                                            GrupoMovimentoFinaceiro.JUROS,
+	                                                                            GrupoMovimentoFinaceiro.MULTA,
+	                                                                            GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,                                                            				
+	                                                                            GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA,	                                                             				
+	                                                                            GrupoMovimentoFinaceiro.VENDA_TOTAL,	                                                             				                                                          					                                                             				
+	                                                                            GrupoMovimentoFinaceiro.PENDENTE));
+	
+	    query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+	    
+	    query.setParameter("statusOperacaoConferencia", StatusOperacao.CONCLUIDO);
+	    
+	    query.setParameter("data", data);
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<MovimentoFinanceiroDTO> obterDetalhesVendaDia(Integer numeroCota, 
