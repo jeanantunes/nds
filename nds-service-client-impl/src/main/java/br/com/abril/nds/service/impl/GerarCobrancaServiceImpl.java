@@ -59,6 +59,7 @@ import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.financeiro.TipoNegociacao;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoDistribuidorRepository;
@@ -1822,25 +1823,30 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				if (divida != null) {
 					
+					Negociacao negociacao = this.negociacaoRepository.obterNegociacaoPorCobranca(divida.getCobranca().getId());
+
+					if (negociacao != null && TipoNegociacao.PAGAMENTO_AVULSO.equals(negociacao.getTipoNegociacao())) {
+						
+						continue;
+					}
+
 					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
 					
-					Negociacao negociacao = this.negociacaoRepository.obterNegociacaoPorCobranca(divida.getCobranca().getId());
-					
-					if (negociacao != null) {
-					    
-						if (!negociacao.isNegociacaoAvulsa()) {
-						
-						    this.parcelaNegociacaoRepository.excluirPorNegociacao(negociacao.getId());
-						
-						    this.negociacaoRepository.remover(negociacao);
-						    
-						    this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
-						}
-					
-					} else {
+//					if (negociacao != null) {
+//					    
+//						if (!negociacao.isNegociacaoAvulsa()) {
+//						
+//						    this.parcelaNegociacaoRepository.excluirPorNegociacao(negociacao.getId());
+//						
+//						    this.negociacaoRepository.remover(negociacao);
+//						    
+//						    this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
+//						}
+//					
+//					} else {
 					
 						this.removerDividaCobrancaConsolidado(divida, consolidado, dataOperacao);
-					}
+//					}
 				}
 
 				List<MovimentoFinanceiroCota> mfcs = consolidado.getMovimentos();

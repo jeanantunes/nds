@@ -34,6 +34,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
+import br.com.abril.nds.model.financeiro.TipoNegociacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BancoService;
@@ -165,7 +166,7 @@ public class NegociacaoDividaController extends BaseController {
 		BigDecimal total = BigDecimal.ZERO;
 		for (NegociacaoDividaDetalheVO d : listDividas){
 			
-			d.setValor(d.getValor().setScale(2, RoundingMode.HALF_EVEN));
+			d.setValor(d.getValor());
 			
 			if (d.getTipoMovimentoFinanceiro().getOperacaoFinaceira() == OperacaoFinaceira.CREDITO){
 				total = total.subtract(d.getValor());
@@ -182,7 +183,7 @@ public class NegociacaoDividaController extends BaseController {
 		
 		Object[] dados = new Object[2];
 		dados[0] = tableModel;
-		dados[1] = total;
+		dados[1] = total.setScale(2, RoundingMode.HALF_UP);
 		
 		result.use(Results.json()).from(dados, "result").recursive().serialize();
 	}
@@ -238,9 +239,15 @@ public class NegociacaoDividaController extends BaseController {
 		
 		FormaCobranca formaCobranca = null;
 		
+		TipoNegociacao tipoNegociacao = negociacaoAvulsa ? 
+				TipoNegociacao.PAGAMENTO_AVULSO : TipoNegociacao.PAGAMENTO;
+
 		if (porComissao){
 			
 			parcelas = null;
+			
+			tipoNegociacao = TipoNegociacao.COMISSAO;
+			
 		} else {
 			
 			formaCobranca = new FormaCobranca();
@@ -280,6 +287,7 @@ public class NegociacaoDividaController extends BaseController {
 		idNegociacao = this.negociacaoDividaService.criarNegociacao(
 				filtro.getNumeroCota(), 
 				parcelas, 
+				tipoNegociacao,
 				valorDividaComissao,
 				idsCobrancas, 
 				this.getUsuarioLogado(), 
