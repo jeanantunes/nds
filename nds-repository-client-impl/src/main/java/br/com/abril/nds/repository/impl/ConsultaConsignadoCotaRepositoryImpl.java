@@ -454,9 +454,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT count(consignadoDistribuidor.numeroCota) AS contador ");
+		sql.append(" SELECT count(*) AS contador FROM  ");
 		
-		sql.append(" FROM ( ");
+		sql.append(" ( SELECT consignadoDistribuidor.numeroCota, consignadoDistribuidor.idFornecedor FROM ( ");
 		
 		sql.append(" SELECT c.numero_cota AS numeroCota, forn.ID AS idFornecedor ");
 		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ");
@@ -488,7 +488,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		sql.append(" HAVING SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END)-(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END))>0 ");
 
-		sql.append(" ) AS consignadoDistribuidor ");
+		sql.append(" ) AS consignadoDistribuidor GROUP BY consignadoDistribuidor.numeroCota, consignadoDistribuidor.idFornecedor ) as total ");
 		
 		Query query =  getSession().createSQLQuery(sql.toString());
 		
@@ -533,7 +533,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
         
         sql.append("	C.ID as cotaId,  ");
 
-		sql.append("    SUM( COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
+		sql.append("    SUM( COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
 
 		this.setarFromWhereConsultaConsignado(sql, filtro);
 		
@@ -602,7 +602,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
         
         sql.append("       PJ.RAZAO_SOCIAL AS nomeFornecedor, ");
         
-		sql.append("    SUM( COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
+		sql.append("    SUM( COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
 
 		this.setarFromWhereConsultaConsignado(sql, filtro);
 		

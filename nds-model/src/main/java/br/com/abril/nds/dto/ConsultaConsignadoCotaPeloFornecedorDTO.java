@@ -30,7 +30,7 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 	@Footer(label = "Totais", type = FooterType.SUM)
 	private BigDecimal total;
 	
-	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 5, widthPercent = 12.5f, columnType = ColumType.MOEDA)
+	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 5, widthPercent = 12.5f, columnType = ColumType.MOEDA_QUATRO_CASAS)
 	@Footer(type = FooterType.SUM)
 	private BigDecimal totalDesconto;
 	
