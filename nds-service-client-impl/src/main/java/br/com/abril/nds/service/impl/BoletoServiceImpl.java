@@ -651,7 +651,8 @@ public class BoletoServiceImpl implements BoletoService {
         movimento.setTipoMovimentoFinanceiro(tipoMovimento);
         movimento.setUsuario(usuario);
         movimento.setDataOperacao(dataOperacao);
-        movimento.setValor(pagamento.getValorPagamento());
+        movimento.setValor(
+                pagamento.getValorPagamento().subtract(pagamento.getValorDesconto()).add(pagamento.getValorJuros()).add(pagamento.getValorMulta()));
         movimento.setDataCriacao(Calendar.getInstance().getTime());
         movimento.setTipoEdicao(TipoEdicao.INCLUSAO);
         movimento.setDataVencimento(DateUtil.adicionarDias(dataOperacao,1));
@@ -666,7 +667,7 @@ public class BoletoServiceImpl implements BoletoService {
         boletoAntecipado.setValorDesconto(pagamento.getValorDesconto());
         boletoAntecipado.setValorJuros(pagamento.getValorJuros());
         boletoAntecipado.setValorMulta(pagamento.getValorMulta());
-        boletoAntecipado.setValorPago(pagamento.getValorPagamento());
+        boletoAntecipado.setValorPago(movimento.getValor());
         
         boletoAntecipadoRepository.merge(boletoAntecipado);
     }
