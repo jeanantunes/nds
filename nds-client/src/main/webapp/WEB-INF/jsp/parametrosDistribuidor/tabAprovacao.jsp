@@ -55,19 +55,6 @@
 		</table>
 	</fieldset>
 	<fieldset style="width: 390px !important; margin-bottom: 5px;">
-		<legend>Prazo de Follow up</legend>
-		<table width="320" border="0" cellspacing="2" cellpadding="2">
-			<tr>
-				<td width="280">Aviso prévio para vencímento de contratos
-					(dias)</td>
-				<td width="40"><input
-					name="parametrosDistribuidor.prazoFollowUp" type="text"
-					id="prazoFollowUp" style="float: left; width: 40px;"
-					value="${parametrosDistribuidor.prazoFollowUp}" /></td>
-			</tr>
-		</table>
-	</fieldset>
-	<fieldset style="width: 390px !important; margin-bottom: 5px;">
 		<legend>Aviso Prévio para Validade de Garantia</legend>
 		<table width="320" border="0" cellspacing="2" cellpadding="2">
 			<tr>

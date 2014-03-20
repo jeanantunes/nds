@@ -428,7 +428,7 @@ var followUpSistemaController = $.extend(true, {
 			row.cell.numeroCota='';
 		}
 		
-		if ( row.cell.tipo == 'Fornecedores' ){
+		if ((row.cell.tipo == 'Contrato fornecedor a vencer/Vencido')){
 			row.cell.numeroCota='Fornecedor';
 		}
 		
