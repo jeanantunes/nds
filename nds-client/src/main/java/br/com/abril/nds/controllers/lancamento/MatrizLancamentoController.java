@@ -35,12 +35,12 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -76,7 +76,7 @@ public class MatrizLancamentoController extends BaseController {
     private MatrizLancamentoService matrizLancamentoService;
     
     @Autowired
-    private LancamentoRepository lancamentoRepositoryService;
+    private LancamentoService lancamentoService;
     
     @Autowired
     private HttpSession session;
@@ -89,9 +89,6 @@ public class MatrizLancamentoController extends BaseController {
     
     @Autowired
     private CalendarioService calendarioService;
-    
-    @Value("${data_cabalistica}")
-    private String dataCabalistica;
     
     private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizBalanceamento";
     
@@ -107,6 +104,7 @@ public class MatrizLancamentoController extends BaseController {
         removerAtributoAlteracaoSessao();
         
         session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
+        session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO,null);
         
         final List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO);
         final String data = DateUtil.formatarDataPTBR(new Date());
@@ -754,7 +752,7 @@ public class MatrizLancamentoController extends BaseController {
             	//Verificar se ja possui o produto - edicao no dia.
             	//caso exista, nao permitir que a data seje alterada trac 184
             	
-            	boolean existeProdutoEdicaoDia = lancamentoRepositoryService.existeProdutoEdicaoParaDia(produtoLancamentoDTO,novaData);
+            	boolean existeProdutoEdicaoDia = lancamentoService.existeProdutoEdicaoParaDia(produtoLancamentoDTO,novaData);
             	
             	if(existeProdutoEdicaoDia){
             		
@@ -1374,15 +1372,7 @@ public class MatrizLancamentoController extends BaseController {
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void excluirLancamento(final ProdutoLancamentoVO produtoLancamento) {
         
-        final Date data = DateUtil.parseDataPTBR(dataCabalistica);
-        
-        final Lancamento lancamento = lancamentoRepositoryService.buscarPorId(produtoLancamento.getId());
-        
-        lancamento.setDataLancamentoDistribuidor(data);
-        lancamento.voltarStatusOriginal();
-        // atualizarLancamento(produtoLancamento.getId(),data);
-        
-        lancamentoRepositoryService.merge(lancamento);
+    	lancamentoService.excluirLancamento(produtoLancamento);
         
         result.use(PlainJSONSerialization.class).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Excluido com sucesso!"), "result").recursive().serialize();
