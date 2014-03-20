@@ -300,7 +300,6 @@ public class NFeServiceImpl implements NFeService {
 	 * Geracao NF-e Service
 	 * 
 	 */
-	
 	@Override
 	@Transactional
 	public synchronized List<CotaExemplaresDTO> busca(final Intervalo<Integer> intervaloBox,

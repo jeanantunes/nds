@@ -480,7 +480,10 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		Object uniqueResult = query.uniqueResult();
 
-		return (FTFEnvTipoRegistro08)uniqueResult;
+		FTFEnvTipoRegistro08 reg08 = (FTFEnvTipoRegistro08) uniqueResult;
+		setCommonsParameters(reg08);
+		
+		return reg08;
 
 	}
 }

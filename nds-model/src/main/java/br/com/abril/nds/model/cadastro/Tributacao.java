@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -13,6 +15,23 @@ import javax.persistence.Table;
 @Table(name="TRIBUTACAO")
 public class Tributacao implements Serializable {
 
+	public enum TributacaoTipoOperacao {
+		
+		ENTRADA("Entrada"),
+		SAIDA("Saída"),
+		ENTRADA_SAIDA("Entrada / Saída");
+		
+		private String descricao;
+		
+		TributacaoTipoOperacao(String descricao) {
+			this.descricao = descricao;
+		}
+
+		public String getDescricao() {
+			return descricao;
+		}
+		
+	}
 	/**
 	 * 
 	 */
@@ -36,6 +55,13 @@ public class Tributacao implements Serializable {
 	
 	@Column(name="valor_aliquota")
 	private BigDecimal valorAliquota;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name="tipo_operacao")
+	private TributacaoTipoOperacao tipoOperacao;
+	
+	@Column(name="isento_nao_tributado")
+	private boolean isentoOuNaoTributado;
 	
 	public Long getId() {
 		return id;
@@ -83,6 +109,22 @@ public class Tributacao implements Serializable {
 
 	public void setValorAliquota(BigDecimal valorAliquota) {
 		this.valorAliquota = valorAliquota;
+	}
+
+	public TributacaoTipoOperacao getTipoOperacao() {
+		return tipoOperacao;
+	}
+
+	public void setTipoOperacao(TributacaoTipoOperacao tipoOperacao) {
+		this.tipoOperacao = tipoOperacao;
+	}
+
+	public boolean isIsentoOuNaoTributado() {
+		return isentoOuNaoTributado;
+	}
+
+	public void setIsentoOuNaoTributado(boolean isentoOuNaoTributado) {
+		this.isentoOuNaoTributado = isentoOuNaoTributado;
 	}
 	
 }
