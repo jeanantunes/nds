@@ -403,8 +403,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 		cobranca.setJuros( CurrencyUtil.formatarValor(valorJurosCalculado) );
         cobranca.setMulta( CurrencyUtil.formatarValor(valorMultaCalculado) );
         
-        BigDecimal valorTotal = valor.add(valorJurosCalculado).add(valorMultaCalculado);
-		cobranca.setValorTotal( CurrencyUtil.formatarValor(valorTotal) );
+        BigDecimal valorTotal = valor.add(valorJurosCalculado.setScale(2, RoundingMode.HALF_EVEN)).add(valorMultaCalculado.setScale(2, RoundingMode.HALF_EVEN));
+		cobranca.setValorTotal( CurrencyUtil.formatarValor(MathUtil.round(valorTotal,2)) );
 		
 		return cobranca;
 	}
