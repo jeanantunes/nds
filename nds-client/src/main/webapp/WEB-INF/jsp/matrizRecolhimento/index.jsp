@@ -31,7 +31,7 @@
 		<div class="area">
 
 			<span class="bt_novos" >
-				<a isEdicao="true" id="linkConfiguracaoInicial" title="Voltar ConfiguraÁ„o Inicial" href="javascript:;">
+				<a isEdicao="true" id="linkConfiguracaoInicial" title="Voltar Configura√ß√£o Inicial" href="javascript:;">
 					<img src="${pageContext.request.contextPath}/images/bt_devolucao.png" border="0" hspace="5" />
 				</a>
 			</span>
@@ -99,7 +99,7 @@
 
 			<jsp:include page="../messagesDialog.jsp" />
 
-			<p>Ao prosseguir com essa aÁ„o vocÍ perder· seus dados n„o salvos ou confirmados. Deseja prosseguir?</p>
+			<p>Ao prosseguir com essa a√ß√£o voc√™ perder√° seus dados n√£o salvos ou confirmados. Deseja prosseguir?</p>
 
 		</div>
 		</form>
@@ -109,7 +109,7 @@
 
 			<jsp:include page="../messagesDialog.jsp" />
 
-			<p>Ao voltar a configuraÁ„o inicial, vocÍ perdar· os dados salvos. Deseja prosseguir?</p>
+			<p>Ao voltar a configura√ß√£o inicial, voc√™ perdar√° os dados salvos. Deseja prosseguir?</p>
 
 		</div>
 		</form>
@@ -128,10 +128,10 @@
 		<form id="form-ProdutosNaoBalanceadosAposConfirmacaoMatriz">
 			<div id="dialogProdutosNaoBalanceadosAposConfirmacaoMatriz" title="Balanceamento da Matriz de Recolhimento" style="display:none;">
 				<jsp:include page="../messagesDialog.jsp" />
-				<p>Os seguintes produtos n„o puderam ser balanceados. Todas as datas j· est„o confirmadas.</p>
+				<p>Os seguintes produtos n√£o puderam ser balanceados. Todas as datas j√° est√£o confirmadas.</p>
 				<br>
 				<p><span id="descdialogProdutosNaoBalanceadosAposConfirmacaoMatriz"></span></p>
-				<p>Deseja que os produtos sejam processados na prÛxima data de recolhimento disponÌvel?</p>   
+				<p>Deseja que os produtos sejam processados na pr√≥xima data de recolhimento dispon√≠vel?</p>   
 			</div>
 		</form>
 
@@ -235,18 +235,18 @@
 
 		<div class="linha_separa_fields">&nbsp;</div>
 
-		<!--  Resumo do PerÌodo -->
+		<!--  Resumo do Per√≠odo -->
 
 		<fieldset class="classFieldset resumoPeriodo" id="resumoPeriodo" style="display: none;">
 
-			<legend>Resumo do PerÌodo</legend>
+			<legend>Resumo do Per√≠odo</legend>
 
 			<div style="width: 950px; overflow-x: auto;">
 				<table id="tableResumoPeriodoBalanceamento" name="tableResumoPeriodoBalanceamento" width="100%" border="0" cellspacing="2" cellpadding="2">
 				</table>
 			</div>
 
-			<!-- Botıes de AÁ„o -->
+			<!-- Bot√µes de A√ß√£o -->
 
 			<table width="950" border="0" cellspacing="0" cellpadding="0">
 				<tr>
@@ -257,7 +257,7 @@
 
 					</td>
 					<td width="296">
-						<!-- Removidos Botıes Confirmar/Editor/Valor/Salvar -->
+						<!-- Removidos Bot√µes Confirmar/Editor/Valor/Salvar -->
 					</td>
 
 					<td width="207">
