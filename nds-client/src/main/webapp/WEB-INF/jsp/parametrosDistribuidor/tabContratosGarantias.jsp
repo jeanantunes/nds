@@ -4,7 +4,7 @@
     <tr>
       <td valign="top">
         <fieldset style="width: 420px !important; margin-bottom: 5px; margin-left:10px;">
-          <legend>Condições de Contratação:</legend>
+          <legend>Condições de Contratação</legend>
           <table width="392" border="0" cellspacing="1" cellpadding="1">
             <tr>
               <td>Utiliza Contrato com as Cotas?</td>
@@ -45,6 +45,20 @@
 			  </table>
 			</div>
         </fieldset>
+        
+        <fieldset style="width: 390px !important; margin-bottom: 5px;">
+			<legend>Prazo de Follow up</legend>
+			<table width="320" border="0" cellspacing="2" cellpadding="2">
+				<tr>
+					<td width="280">Aviso prévio para vencimento de contratos(dias)</td>
+					<td width="40"><input
+						name="parametrosDistribuidor.prazoFollowUp" type="text"
+						id="prazoFollowUp" style="float: left; width: 40px;"
+						value="${parametrosDistribuidor.prazoFollowUp}" /></td>
+				</tr>
+			</table>
+		</fieldset>
+        
         <fieldset style="width: 420px !important; margin-bottom: 5px; float: left; margin-left:10px; display: none;">
           <legend>Garantia</legend>
           <table width="335" border="0" cellspacing="0" cellpadding="0">
