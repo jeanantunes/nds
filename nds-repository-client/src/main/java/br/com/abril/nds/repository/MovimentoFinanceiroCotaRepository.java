@@ -214,6 +214,14 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @return BigDecimal
 	 */
 	BigDecimal obterTotalCreditoCota(Integer numeroCota, Date dataOperacao);
+	
+	/**
+     * Obtem saldo das cotas com tipo À Vista na data de operação atual
+     * @param numeroCota
+     * @param data
+     * @return BigDecimal
+     */
+	BigDecimal obterSaldoCotasAVista(Integer numeroCota, Date data);
 
 	List<MovimentoFinanceiroDTO> obterDetalhesVendaDia(Integer numeroCota,
 			Long idConsolildado, List<Long> tiposMovimento, Date data);
