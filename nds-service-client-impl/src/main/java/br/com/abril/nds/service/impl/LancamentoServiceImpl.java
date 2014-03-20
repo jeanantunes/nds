@@ -12,12 +12,15 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
@@ -76,6 +79,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private CalendarioService calendarioService;
+	
+	@Value("${data_cabalistica}")
+    private String dataCabalistica;
     
     private static final List<StatusLancamento> STATUS_LANCAMENTOS_REMOVIVEL = Arrays.asList(
             StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO,
@@ -391,7 +397,7 @@ public class LancamentoServiceImpl implements LancamentoService {
     	this.lancamentoRepository.merge(lancamento);
     }
     
-    public HashMap<String, Set> obterDiasMatrizLancamentoAbertos(){
+    public HashMap<String, Set<Date>> obterDiasMatrizLancamentoAbertos(){
     	List<Object[]> lista = lancamentoRepository.buscarDiasMatrizLancamentoAbertos();
     	
 
@@ -400,7 +406,7 @@ public class LancamentoServiceImpl implements LancamentoService {
     	Set <Date> diasNaoBalanceaveis = new TreeSet<Date>();
     	Date diaOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
 
-    	HashMap<String, Set> listaBalanceavelNaoBalanceavel = new HashMap<>();
+    	HashMap<String, Set<Date>> listaBalanceavelNaoBalanceavel = new HashMap<>();
     	
     	for(Object[] lancamento : lista){
     		
@@ -429,5 +435,34 @@ public class LancamentoServiceImpl implements LancamentoService {
     	
     	return listaBalanceavelNaoBalanceavel;
     }
+    
+    @Override
+    @Transactional
+    public void excluirLancamento(final ProdutoLancamentoVO produtoLancamento) {
+    	
+    	  final Date data = DateUtil.parseDataPTBR(dataCabalistica);
+          
+          final Lancamento lancamento = buscarPorId(produtoLancamento.getId());
+          
+          lancamento.setDataLancamentoDistribuidor(data);
+          lancamento.voltarStatusOriginal();
+          // atualizarLancamento(produtoLancamento.getId(),data);
+          
+          this.lancamentoRepository.merge(lancamento);
+    }
+
+	@Override
+	@Transactional
+	public boolean existeProdutoEdicaoParaDia(
+			ProdutoLancamentoDTO produtoLancamentoDTO, Date novaData) {
+		
+		return this.lancamentoRepository.existeProdutoEdicaoParaDia(produtoLancamentoDTO, novaData);
+	}
+
+	@Override
+	@Transactional
+	public Lancamento buscarPorId(Long id) {
+		return this.lancamentoRepository.buscarPorId(id);
+	}
 
 }

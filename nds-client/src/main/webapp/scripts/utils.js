@@ -232,7 +232,7 @@ function montarTextoMensagem(campoTexto, mensagens) {
 			campoTexto.append('</br>');
 		}
 		
-		campoTexto.append(value);
+		campoTexto.append(value.replace(/\n/g, '<br />'));
 	});
 }
 

@@ -33,7 +33,6 @@ import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
-import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.Intervalo;

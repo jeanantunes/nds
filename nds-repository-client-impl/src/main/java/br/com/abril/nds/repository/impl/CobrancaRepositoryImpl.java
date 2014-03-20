@@ -283,7 +283,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 
 		hql.append(" UNION ALL ");
 		
-		hql.append(" SELECT ct.NUMERO_COTA as numeroCota, ba.ID as codigo, ");
+		hql.append(" SELECT ct.NUMERO_COTA as numeroCota, null as codigo, ");
 		hql.append(" COALESCE(p.NOME, p.RAZAO_SOCIAL) as nome, ba.`DATA` as dataEmissao, "); 
 		hql.append(" ba.DATA_VENCIMENTO as dataVencimento, ba.VALOR as valor, true as boletoAntecipado ");
 		hql.append(" FROM boleto_antecipado ba ");

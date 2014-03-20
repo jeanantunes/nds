@@ -145,6 +145,7 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 			LOGGER.error("\n\nFaltando @Transaction: "+ InformacoesTransaction.getInfo() +"\n\n", e);
 		}
 		
+		//return null;
 		return sessionFactory.openSession();
 	}
 	

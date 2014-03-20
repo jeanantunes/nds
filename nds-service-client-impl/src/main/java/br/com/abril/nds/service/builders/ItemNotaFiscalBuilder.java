@@ -2,6 +2,7 @@ package br.com.abril.nds.service.builders;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,9 +15,11 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Tributacao;
 import br.com.abril.nds.model.cadastro.TributoAliquota;
+import br.com.abril.nds.model.cadastro.Tributacao.TributacaoTipoOperacao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.COFINS;
 import br.com.abril.nds.model.fiscal.nota.CofinsWrapper;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
@@ -137,53 +140,78 @@ public class ItemNotaFiscalBuilder  {
 			detalheNotaFiscal.setImpostos(new Impostos());
 		}
 		
-		for(Tributacao t : movimentoEstoqueCota.getProdutoEdicao().getProduto().getProdutoTributacao()) {
-			detalheNotaFiscal.getProdutoServico().setCst(t.getCstA().toString() + t.getCst().toString());
-			if("ICMS".equals(t.getTributo())) {
-				detalheNotaFiscal.getProdutoServico().setValorAliquotaICMS(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
-				Class<?> clazz;
-				ICMS icms = null;
-				try {
-					clazz = Class.forName("br.com.abril.nds.model.fiscal.nota.ICMS"+ t.getCst().toString());
-					icms = (ICMS) clazz.newInstance();
-				} catch (ClassNotFoundException e) {
-					LOGGER.error("Classe de tributo não encontrada: "+ "br.com.abril.nds.model.fiscal.nota.ICMS"+ t.getCst().toString(), e);
-					throw new ValidacaoException(TipoMensagem.ERROR, "Tributo não encontrada: ICMS"+ t.getCst().toString());
-				} catch (InstantiationException e) {
-					LOGGER.error("Erro ao instanciar classe: "+ "br.com.abril.nds.model.fiscal.nota.ICMS"+ t.getCst().toString(), e);
-					throw new ValidacaoException(TipoMensagem.ERROR, "Tributo não encontrada: ICMS"+ t.getCst().toString());
-				} catch (IllegalAccessException e) {
-					LOGGER.error("Erro ao acessar classe: "+ "br.com.abril.nds.model.fiscal.nota.ICMS"+ t.getCst().toString(), e);
-					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao acessar classe: ICMS"+ t.getCst().toString());
-				}
-				
-				//FIXME: Ajustar o produto para trazer a origem (nacional / estrangeira)
-				icms.setOrigem(OrigemProduto.NACIONAL);
-				icms.setCst(t.getCst().toString());
-				icms.setAliquota(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
-				icms.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(t.getBaseCalculo()));
-				
-				detalheNotaFiscal.getImpostos().setIcms(icms);
+		Map<String, Tributacao> tributacaoProduto = new HashMap<String, Tributacao>();
+		TipoOperacao to = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getTipoOperacao();
+		for (Tributacao t : movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getProdutoTributacao()) {
+			if(to.name().equals(t.getTipoOperacao().name()) || t.getTipoOperacao().equals(TributacaoTipoOperacao.ENTRADA_SAIDA)) {
+				tributacaoProduto.put(t.getTributo(), t);
+			}
+		}
+		
+		Tributacao icmsProduto = tributacaoProduto.get("ICMS");
+		if(icmsProduto != null) {
+			detalheNotaFiscal.getProdutoServico().setCst(icmsProduto.getCstA().toString() + icmsProduto.getCst().toString());
+			detalheNotaFiscal.getProdutoServico().setValorAliquotaICMS(CurrencyUtil.arredondarValorParaDuasCasas(icmsProduto.getValorAliquota()));
+			Class<?> clazz;
+			ICMS icms = null;
+			try {
+				clazz = Class.forName("br.com.abril.nds.model.fiscal.nota.ICMS"+ icmsProduto.getCst().toString());
+				icms = (ICMS) clazz.newInstance();
+			} catch (ClassNotFoundException e) {
+				LOGGER.error("Classe de tributo não encontrada: "+ "br.com.abril.nds.model.fiscal.nota.ICMS"+ icmsProduto.getCst().toString(), e);
+				throw new ValidacaoException(TipoMensagem.ERROR, "Tributo não encontrada: ICMS"+ icmsProduto.getCst().toString());
+			} catch (InstantiationException e) {
+				LOGGER.error("Erro ao instanciar classe: "+ "br.com.abril.nds.model.fiscal.nota.ICMS"+ icmsProduto.getCst().toString(), e);
+				throw new ValidacaoException(TipoMensagem.ERROR, "Tributo não encontrada: ICMS"+ icmsProduto.getCst().toString());
+			} catch (IllegalAccessException e) {
+				LOGGER.error("Erro ao acessar classe: "+ "br.com.abril.nds.model.fiscal.nota.ICMS"+ icmsProduto.getCst().toString(), e);
+				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao acessar classe: ICMS"+ icmsProduto.getCst().toString());
 			}
 			
-			if("IPI".equals(t.getTributo())) {
-				detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
-				
-				IPI ipi = new IPI();
-				
-				ipi.setCst(t.getCst().toString());
-				ipi.setAliquota(t.getValorAliquota());
-				ipi.setValorBaseCalculo(t.getBaseCalculo());
-				ipi.setCodigoEnquadramento(t.getCst());
-				ipi.setIPITrib(new TribIPI());
-				ipi.getIPITrib().setCst(t.getCst());
-				ipi.getIPITrib().setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(t.getValorAliquota()));
-				ipi.getIPITrib().setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(t.getBaseCalculo()));
-				
-				// FIX ME ajustar a classe de valor do ipi
-				ipi.getIPITrib().setValorIPI(CurrencyUtil.arredondarValorParaDuasCasas(t.getBaseCalculo()));
-				detalheNotaFiscal.getImpostos().setIpi(ipi);
-			}
+			//FIXME: Ajustar o produto para trazer a origem (nacional / estrangeira)
+			icms.setOrigem(OrigemProduto.NACIONAL);
+			icms.setCst(icmsProduto.getCst().toString());
+			icms.setAliquota(CurrencyUtil.arredondarValorParaDuasCasas(icmsProduto.getValorAliquota()));
+			icms.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(icmsProduto.getBaseCalculo()));
+			
+			detalheNotaFiscal.getImpostos().setIcms(icms);
+		} else {
+			StringBuilder sb = new StringBuilder().append("ICMS não encontrado para o Produto: ")
+					.append(detalheNotaFiscal.getProdutoServico().getCodigoProduto())
+					.append(" / ")
+					.append(detalheNotaFiscal.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
+			
+			LOGGER.error(sb.toString() );
+			throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
+		}
+		
+		Tributacao ipiProduto = tributacaoProduto.get("IPI");	
+		
+		if(ipiProduto != null) {
+			detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
+			
+			IPI ipi = new IPI();
+			
+			ipi.setCst(ipiProduto.getCst().toString());
+			ipi.setAliquota(ipiProduto.getValorAliquota());
+			ipi.setValorBaseCalculo(ipiProduto.getBaseCalculo());
+			ipi.setCodigoEnquadramento(ipiProduto.getCst());
+			ipi.setIPITrib(new TribIPI());
+			ipi.getIPITrib().setCst(ipiProduto.getCst());
+			ipi.getIPITrib().setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
+			ipi.getIPITrib().setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
+			
+			// FIX ME ajustar a classe de valor do ipi
+			ipi.getIPITrib().setValorIPI(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
+			detalheNotaFiscal.getImpostos().setIpi(ipi);
+		} else {
+			StringBuilder sb = new StringBuilder().append("IPI não encontrado para o Produto: ")
+					.append(detalheNotaFiscal.getProdutoServico().getCodigoProduto())
+					.append(" / ")
+					.append(detalheNotaFiscal.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
+			
+			LOGGER.error(sb.toString() );
+			throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
 		}
 		
 		TributoAliquota tributoSimples = tributoAliquota.get("SIMPLES");
@@ -195,26 +223,39 @@ public class ItemNotaFiscalBuilder  {
 		TributoAliquota tributoPis = tributoAliquota.get("PIS");
 		TributoAliquota tributoCofins = tributoAliquota.get("COFINS");
 		
-		if(tributoPis != null){
+		if(tributoPis != null) {
 			PISWrapper pisWrapper = new PISWrapper();
 			PIS pis = new PIS();
+			
+			if(tributacaoProduto.get("PIS") != null) {
+				
+				pis.setCst(tributacaoProduto.get("PIS").getCst());
+				
+				if(tributacaoProduto.get("PIS").isIsentoOuNaoTributado()) {
+					pis.setValorBaseCalculo(BigDecimal.valueOf(0));
+					pis.setValorAliquota(BigDecimal.valueOf(0));
+					pis.setPercentualAliquota(BigDecimal.valueOf(0));	
+				} else {
+					pis.setValorBaseCalculo(tributacaoProduto.get("PIS").getBaseCalculo());
+					pis.setValorAliquota(tributoPis.getValor());
+					pis.setPercentualAliquota(tributoPis.getValor());
+				}
+			}
+			pis.setValor(detalheNotaFiscal.getProdutoServico().getValorTotalBruto().multiply(tributoPis.getValor().divide(BigDecimal.valueOf(100))));
+			
 			// FIXME Ajustar CST
 			pisWrapper.setPis(pis);
-			pisWrapper.getPis().setCst("01");
-			pisWrapper.getPis().setValorBaseCalculo(tributoPis.getValor());
-			pisWrapper.getPis().setPercentualAliquota(tributoPis.getValor());			
-			pisWrapper.getPis().setValor(detalheNotaFiscal.getProdutoServico().getValorTotalBruto().multiply(tributoPis.getValor().divide(BigDecimal.valueOf(100))));
+			
 			detalheNotaFiscal.getImpostos().setPis(pisWrapper);
+			
 		} else {
-			PISWrapper pisWrapper = new PISWrapper();
-			PIS pis = new PIS();
-			pisWrapper.setPis(pis);
-			// FIXME Ajustar CST
-			pisWrapper.getPis().setCst("01");
-			pisWrapper.getPis().setValorBaseCalculo(BigDecimal.valueOf(0));
-			pisWrapper.getPis().setValor(BigDecimal.valueOf(0));
-			pisWrapper.getPis().setPercentualAliquota(BigDecimal.valueOf(0));			
-			detalheNotaFiscal.getImpostos().setPis(pisWrapper);
+			StringBuilder sb = new StringBuilder().append("PIS não encontrado para o Produto: ")
+					.append(detalheNotaFiscal.getProdutoServico().getCodigoProduto())
+					.append(" / ")
+					.append(detalheNotaFiscal.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
+			
+			LOGGER.error(sb.toString() );
+			throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
 		}
 		
 		if(tributoCofins != null){
@@ -222,26 +263,34 @@ public class ItemNotaFiscalBuilder  {
 			CofinsWrapper cofinsWrapper = new CofinsWrapper();	
 			COFINS cofins = new COFINS();
 			
+			if(tributacaoProduto.get("COFINS") != null) {
+				
+				cofins.setCst(tributacaoProduto.get("COFINS").getCst());
+				
+				if(tributacaoProduto.get("COFINS").isIsentoOuNaoTributado()) {
+					cofins.setValorBaseCalculo(BigDecimal.valueOf(0));
+					cofins.setValorAliquota(BigDecimal.valueOf(0));
+					cofins.setPercentualAliquota(BigDecimal.valueOf(0));	
+				} else {
+					cofins.setValorBaseCalculo(tributacaoProduto.get("COFINS").getBaseCalculo());
+					cofins.setValorAliquota(tributoCofins.getValor());
+					cofins.setPercentualAliquota(tributoCofins.getValor());
+				}
+			}
+			cofins.setValor(detalheNotaFiscal.getProdutoServico().getValorTotalBruto().multiply(tributoCofins.getValor().divide(BigDecimal.valueOf(100))));
+			
 			cofinsWrapper.setCofins(cofins);
 			
-			// FIXME Ajustar CST
-			cofinsWrapper.getCofins().setCst("01");
-			cofinsWrapper.getCofins().setValorBaseCalculo(tributoCofins.getValor());
-			cofinsWrapper.getCofins().setValorAliquota(detalheNotaFiscal.getProdutoServico().getValorTotalBruto().multiply(tributoCofins.getValor().divide(BigDecimal.valueOf(100))));
-			
 			detalheNotaFiscal.getImpostos().setCofins(cofinsWrapper);
-		}else{
-			CofinsWrapper cofinsWrapper = new CofinsWrapper();	
-			COFINS cofins = new COFINS();
 			
-			cofinsWrapper.setCofins(cofins);		
-			// FIXME Ajustar CST
-			cofinsWrapper.getCofins().setCst("01");
-			cofinsWrapper.getCofins().setValorBaseCalculo(BigDecimal.valueOf(0));
-			cofinsWrapper.getCofins().setValor(BigDecimal.valueOf(0));
-			cofinsWrapper.getCofins().setValorAliquota(BigDecimal.valueOf(0));
+		} else {
+			StringBuilder sb = new StringBuilder().append("COFINS não encontrado para o Produto: ")
+					.append(detalheNotaFiscal.getProdutoServico().getCodigoProduto())
+					.append(" / ")
+					.append(detalheNotaFiscal.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
 			
-			detalheNotaFiscal.getImpostos().setCofins(cofinsWrapper);
+			LOGGER.error(sb.toString() );
+			throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
 		}
 		
 		//FIXME: Ajustar o codigo Excessao do ipi

@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.ftf;
 
+import java.util.List;
+
 public interface FTFCommons  {
 
 	public void setCodEstabelecimentoEmissor(String codEstabelecimentoEmissor);
@@ -11,5 +13,7 @@ public interface FTFCommons  {
 	public void setTipoPedido(String tipoPedido);
 
 	public void setNumeroDocOrigem(String numeroDocOrigem);
+	
+	public List<String> validateBean();
 
 }

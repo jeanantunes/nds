@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import v1.pessoadetalhe.ebo.abril.types.PessoaDto;
 import v1.pessoadetalhe.ebo.abril.types.PessoaType;
 import br.com.abril.nds.dto.FTFReportDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFParser;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -43,6 +47,8 @@ import br.com.abril.nds.util.StringUtil;
 @Service
 public class FTFServiceImpl implements FTFService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(FTFServiceImpl.class);
+	
 	@Autowired
 	private FTFRepository ftfRepository;
 	
@@ -60,33 +66,65 @@ public class FTFServiceImpl implements FTFService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public FTFReportDTO gerarFtf(List<NotaFiscal> notas, long idNaturezaOperacao) {
+	public FTFReportDTO gerarFtf(List<NotaFiscal> notas) {
+		
+		if(notas == null || notas.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma nota localizada.");
+		}
+		
+		long idNaturezaOperacao = 0;
+		for(NotaFiscal nf : notas) {
+			
+			if(idNaturezaOperacao == 0) {
+				idNaturezaOperacao = nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId();
+			} else {
+				if(idNaturezaOperacao != nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId()) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Lista de Notas fiscais com Naturezas de Operações diferentes.");
+				}
+			}
+			idNaturezaOperacao = nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId();
+		}
+		
+		idNaturezaOperacao = notas.get(0).getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId();
+		
 		List<FTFBaseDTO> list = new ArrayList<FTFBaseDTO>();
 		FTFReportDTO report = new FTFReportDTO();
 		
-		if (notas == null) {
-			notas = fiscalRepository.buscarTodos();
-		}
+		List<String> validacaoBeans = new ArrayList<String>();
 		
 		FTFEnvTipoRegistro00 regTipo00 = ftfRepository.obterRegistroTipo00(idNaturezaOperacao);
-		//FIXME: ajustar se estiver certo
+		validacaoBeans.addAll(regTipo00.validateBean());
+		
 		FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(notas.get(0).getId());
+		validacaoBeans.addAll(regTipo08.validateBean());
+		
 		FTFEnvTipoRegistro09 regTipo09 = ftfRepository.obterRegistroTipo09(idNaturezaOperacao);
+		validacaoBeans.addAll(regTipo09.validateBean());
 		
 		list.add(regTipo00);
 
 		List<FTFEnvTipoRegistro01> listTipoRegistro01 = ftfRepository.obterResgistroTipo01(notas, idNaturezaOperacao);
+		
+		for(FTFEnvTipoRegistro01 ftfetr01 : listTipoRegistro01) {
+			validacaoBeans.addAll(ftfetr01.validateBean());
+		}
 		List<FTFEnvTipoRegistro01> listTipoRegistro01Cadastrados = listTipoRegistro01;// = obterPessoasCadastradasCRP(report, listTipoRegistro01);
 		
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
 			long idNF = Long.parseLong(ftfEnvTipoRegistro01.getNumeroDocOrigem());
 			
 			List<FTFEnvTipoRegistro02> obterResgistroTipo02 = ftfRepository.obterResgistroTipo02(idNF, idNaturezaOperacao);
+			for(FTFEnvTipoRegistro02 ftfetr02 : obterResgistroTipo02) {
+				validacaoBeans.addAll(ftfetr02.validateBean());
+			}
+			
 			ftfEnvTipoRegistro01.setItemNFList(obterResgistroTipo02);
 			
 			FTFEnvTipoRegistro06 regTipo06 = ftfRepository.obterRegistroTipo06(idNF);
-			if(regTipo06 != null)
+			if(regTipo06 != null) {
 				ftfEnvTipoRegistro01.setRegTipo06(regTipo06);
+				validacaoBeans.addAll(regTipo06.validateBean());
+			}
 		}
 		
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
@@ -94,6 +132,14 @@ public class FTFServiceImpl implements FTFService {
 			list.addAll(ftfEnvTipoRegistro01.getItemNFList());
 			if(ftfEnvTipoRegistro01.getRegTipo06() != null)
 				list.add(ftfEnvTipoRegistro01.getRegTipo06());
+		}
+		
+		if(validacaoBeans.size() > 0) {
+			//throw new ValidacaoException(TipoMensagem.ERROR, validacaoBeans);
+			for(String err : validacaoBeans) {
+				LOGGER.error(err);
+			}
+			
 		}
 		
 		String totalPedidos = Integer.toString(listTipoRegistro01Cadastrados.size());
