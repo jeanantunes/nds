@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -172,6 +174,12 @@ public interface LancamentoService {
     
     void atualizarReparteLancamento(Long idLancamento, BigInteger reparte, BigInteger repartePromocional);
     
-    HashMap<String, Set> obterDiasMatrizLancamentoAbertos();
+    HashMap<String, Set<Date>> obterDiasMatrizLancamentoAbertos();
+
+	boolean existeProdutoEdicaoParaDia(ProdutoLancamentoDTO produtoLancamentoDTO, Date novaData);
+
+	Lancamento buscarPorId(Long id);
+	
+	void excluirLancamento(final ProdutoLancamentoVO produtoLancamento);
 }
  
