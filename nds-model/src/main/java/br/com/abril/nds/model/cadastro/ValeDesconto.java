@@ -26,10 +26,6 @@ public class ValeDesconto extends ProdutoEdicao {
 
 	private static final long serialVersionUID = 1L;
 	
-//	@Enumerated(EnumType.STRING)
-//	@Transient
-//	private SituacaoTitulo situacaoTitulo;
-	
 	@Column(name="HISTORICO")
 	private String historico;
 	
