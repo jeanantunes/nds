@@ -104,6 +104,7 @@ public class MatrizLancamentoController extends BaseController {
         removerAtributoAlteracaoSessao();
         
         session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
+        session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO,null);
         
         final List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO);
         final String data = DateUtil.formatarDataPTBR(new Date());
