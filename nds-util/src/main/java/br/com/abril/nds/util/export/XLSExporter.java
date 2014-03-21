@@ -724,13 +724,13 @@ public class XLSExporter implements Exporter {
 
         style.setFont(this.getFont(sheet, "Calibri", (short) 11, false, false));
 
-        if (ColumType.DECIMAL.equals(styleKey.getColumType())) {
+        if (ColumType.MOEDA.equals(styleKey.getColumType())) {
             if (brazilianCurrencyDF == null) {
                 brazilianCurrencyDF = sheet.getWorkbook().createDataFormat();
             }
             style.setDataFormat(brazilianCurrencyDF.getFormat(brazilianCurrencyMask));
 
-        } else if (ColumType.MOEDA.equals(styleKey.getColumType())) {
+        } else if (ColumType.DECIMAL.equals(styleKey.getColumType())) {
 
             if (decimalValueDF == null) {
                 decimalValueDF = sheet.getWorkbook().createDataFormat();

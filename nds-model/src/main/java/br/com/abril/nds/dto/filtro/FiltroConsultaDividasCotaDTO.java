@@ -93,7 +93,8 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 		NOME_COTA("nome"),
 		DATA_EMISSAO("dataEmissao"),
 		DATA_VENCIMENTO("dataVencimento"),
-		VALOR("valor");
+		VALOR("valor"),
+		NOSSO_NUMERO("nossoNumero");
 		
 		private String nomeColuna;
 		
