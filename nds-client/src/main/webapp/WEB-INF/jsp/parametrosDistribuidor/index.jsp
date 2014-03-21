@@ -93,7 +93,6 @@
 			    <li><a href="#tabNegociacao">Negociação</a></li>
 			    <li><a href="#tabFiscal">Fiscal</a></li>
 			    <li><a href="#tabAprovacao">Aprovação</a></li>
-			    <li><a href="#tabFtf">FTF</a></li>
 			</ul>
 			
             <jsp:include page="tabCadastro.jsp"/>

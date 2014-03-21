@@ -6,7 +6,6 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.EnumType;
@@ -117,7 +116,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	@Column(name = "STATUS_PROCESSAMENTO_INTERNO")
 	private StatusProcessamentoInterno statusProcessamentoInterno;
 	
-	@ElementCollection
+	@OneToMany
 	@JoinTable(name = "NOTA_FISCAL_PROCESSO", 
 			joinColumns = {@JoinColumn(table="NATUREZA_OPERACAO", name = "PROCESSO_NFE_ID", referencedColumnName="ID")},
 			inverseJoinColumns = {@JoinColumn(table="PROCESSO", name = "PROCESSO", referencedColumnName="ID")})

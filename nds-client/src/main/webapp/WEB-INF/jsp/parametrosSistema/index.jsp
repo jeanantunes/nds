@@ -3,10 +3,8 @@
 <head>
 
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
-<script language="text/javascript" type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
-<script language="javascript" type="text/javascript" 
-	src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
+<script language="text/javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parametroSistema.js"></script>
 
 <script type="text/javascript">
@@ -14,7 +12,6 @@
 $(function(){
 	parametroSistemaController.init();
 	bloquearItensEdicao(parametroSistemaController.workspace);
-	
 });
 	
 </script>
