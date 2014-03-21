@@ -66,7 +66,7 @@ public class FTFServiceImpl implements FTFService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public FTFReportDTO gerarFtf(List<NotaFiscal> notas) {
+	public FTFReportDTO gerarFtf(final List<NotaFiscal> notas) {
 		
 		if(notas == null || notas.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma nota localizada.");
@@ -217,7 +217,7 @@ public class FTFServiceImpl implements FTFService {
 	 * @param type 1 CNPJ, 2 CPF
 	 * @param cpfCnpj
 	 */
-	private boolean verificarPessoaWs(String cpfCnpj) {
+	private boolean verificarPessoaWs(final String cpfCnpj) {
 		boolean valid = false;
 //		String testedCpnj = "68252618000182";
 		// validar as pessoas no CRP
@@ -240,15 +240,12 @@ public class FTFServiceImpl implements FTFService {
 	}
 	
 	
-	public List<FTFRetornoRET> processarArquivosRet(File...files){
+	@SuppressWarnings("resource")
+	public List<FTFRetornoRET> processarArquivosRet(final File...files){
 		
 		List<FTFRetornoRET> l = new ArrayList<FTFRetornoRET>();
 		
-		
-		
 		for (File file : files) {
-			
-
 			List<FTFBaseDTO> list = new ArrayList<FTFBaseDTO>();
 			
 			BufferedReader br;
@@ -277,10 +274,13 @@ public class FTFServiceImpl implements FTFService {
 				
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
+				throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel localizar o arquivo no diretorio especifico!");
 			} catch (IOException e) {
 				e.printStackTrace();
+				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar o arquivo!");
 			} catch (Exception e) {
 				e.printStackTrace();
+				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar o arquivo!");
 			}
 			
 		}
@@ -292,7 +292,7 @@ public class FTFServiceImpl implements FTFService {
 
 	
 	
-	public void atualizarRetornoFTF(List<FTFRetTipoRegistro01> list){
+	public void atualizarRetornoFTF(final List<FTFRetTipoRegistro01> list){
 		
 		this.ftfRepository.atualizarRetornoFTF(list);
 		
