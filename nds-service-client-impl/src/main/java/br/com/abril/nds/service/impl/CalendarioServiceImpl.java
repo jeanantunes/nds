@@ -74,7 +74,13 @@ public class CalendarioServiceImpl implements CalendarioService {
     @Override
     @Transactional(readOnly = true)
     public Date adicionarDiasUteis(final Date data, final int numDias) {
-        
+        return this.adicionarDiasUteis(data, numDias, null);
+       
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Date adicionarDiasUteis(final Date data, final int numDias, String localidade){
         final Calendar cal = Calendar.getInstance();
         cal.setTime(data);
         
@@ -82,7 +88,7 @@ public class CalendarioServiceImpl implements CalendarioService {
             
             // Verifica se o dia informado é util.
             // Caso não seja, incrementa até encontrar o primeiro dia útil.
-            while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal)) {
+            while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal, localidade)) {
                 cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
             }
             
@@ -93,7 +99,7 @@ public class CalendarioServiceImpl implements CalendarioService {
                 
                 cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
                 
-                while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal)) {
+                while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal, localidade)) {
                     cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
                 }
             }
@@ -130,7 +136,7 @@ public class CalendarioServiceImpl implements CalendarioService {
             
             cal.setTime(DateUtil.subtrairDias(cal.getTime(), 1));
             
-            while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal)) {
+            while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal, null)) {
                 cal.setTime(DateUtil.subtrairDias(cal.getTime(), 1));
             }
         }
@@ -189,18 +195,27 @@ public class CalendarioServiceImpl implements CalendarioService {
         final Calendar cal = Calendar.getInstance();
         cal.setTime(data);
         
-        return !(DateUtil.isSabadoDomingo(cal) || isFeriado(cal));
+        return !(DateUtil.isSabadoDomingo(cal) || isFeriado(cal, null));
     }
     
     protected boolean isFeriado(final Calendar cal) {
+        return isFeriado(cal, null);
+    }
+
+    protected boolean isFeriado(final Calendar cal, String localidade) {
         
         if (cal != null) {
-            
-            return feriadoRepository.isFeriado(cal.getTime());
+            if(localidade == null){
+                return feriadoRepository.isFeriado(cal.getTime());
+            }else{
+                return feriadoRepository.isFeriado(cal.getTime(), localidade);
+            }
         }
         
         return false;
     }
+    
+    
     
     private void tratarTipoFeriado(final CalendarioFeriadoDTO calendarioFeriado) {
         
