@@ -739,7 +739,7 @@ public class BoletoServiceImpl implements BoletoService {
             
             return boleto;
         }
-        
+       
         final Date dataVencimentoUtil = calendarioService.adicionarDiasUteis(boleto.getDataVencimento(), 0);
         
         dataPagamento = DateUtil.removerTimestamp(dataPagamento);
@@ -2215,7 +2215,7 @@ public class BoletoServiceImpl implements BoletoService {
             return null;
         }
         
-        final Date dataVencimento = gerarCobrancaService.obterDataVencimentoCobrancaCota(dataEmissao, fc.getParametroCobrancaCota().getFatorVencimento());
+        final Date dataVencimento = gerarCobrancaService.obterDataVencimentoCobrancaCota(dataEmissao, fc.getParametroCobrancaCota().getFatorVencimento(), null);
         
         final BoletoEmBrancoDTO bbDTO = new BoletoEmBrancoDTO(ceDTO.getIdChamEncCota(),
                 fornecedor.getId(),
