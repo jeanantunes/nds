@@ -97,15 +97,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 
         List<FixacaoReparteDTO> fixacoesPorProduto = fixacaoReparteRepository.obterFixacoesRepartePorProduto(filtroConsultaFixacaoProdutoDTO);
         
-//        for (FixacaoReparteDTO fixacao : fixacoesPorProduto) {
-//        	
-////        	Integer qtdEdicoes = (fixacao.getQtdeEdicoes() != null ? fixacao.getQtdeEdicoes() : 6);
-//        	
-////        	fixacao.setEdicoesAtendidas(fixacaoReparteRepository.historicoDeEdicoesParaCalcularEdicoesAtendidas(fixacao.getIdLancamento(), fixacao.getCodigoProduto(), 
-////    																											qtdEdicoes, fixacao.getClassificacaoProdutoId()).size());
-//        	
-//		}
-        
         return fixacoesPorProduto;
 	}
 
@@ -552,10 +543,4 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		}
 	}
 
-	@Override
-	public List<BigInteger> obterListaLancamentosRangerData() {
-		
-		return fixacaoReparteRepository.obterListaLancamentosRangerData();
-	}
-	
 }

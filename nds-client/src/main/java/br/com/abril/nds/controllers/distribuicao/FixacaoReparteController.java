@@ -2,10 +2,7 @@ package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -117,11 +114,6 @@ public class FixacaoReparteController extends BaseController {
 	@Path("/")
 	public void fixacaoReparte(){
 		result.include("classificacao",fixacaoReparteService.obterClassificacoesProduto());
-		
-		List<BigInteger> lancamentos = fixacaoReparteService.obterListaLancamentosRangerData();
-			
-		fixacaoReparteService.atualizaFixacao(lancamentos);
-		
 	}
 
 

@@ -49,6 +49,4 @@ public interface FixacaoReparteService {
 	
 	public void verificarFixacao (Date dataOperacaoAserFechada);
 	
-	//remover
-	public List<BigInteger> obterListaLancamentosRangerData();
 }
