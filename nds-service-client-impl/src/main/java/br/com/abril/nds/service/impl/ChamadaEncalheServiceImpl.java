@@ -346,6 +346,9 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				String descricaoQuebraRelatorioCE = cpece.getReparte() +" exes. ("+ DateUtil.formatarData(cpece.getDataMovimento(), Constantes.DAY_MONTH_PT_BR) +")"; //obterDescricaoQuebraRelatorioCE(notas);
 				
 				if(produtoEmissaoDTO.getDescricaoNotaEnvio() != null) {
+					
+					produtoEmissaoDTO.setReparte(produtoEmissaoDTO.getReparte().add(cpece.getReparte()));
+					
 					produtoEmissaoDTO.setDescricaoNotaEnvio(produtoEmissaoDTO.getDescricaoNotaEnvio() +" + "+ descricaoQuebraRelatorioCE);
 				} else {
 					produtoEmissaoDTO.setDescricaoNotaEnvio(descricaoQuebraRelatorioCE);
@@ -380,7 +383,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				produtoDTO.setNotaEnvio(numeroNotaEnvio.toString());
 			}
 			
-			String descricaoQuebraRelatorioCE = obterDescricaoQuebraRelatorioCE(notas);
+			String descricaoQuebraRelatorioCE = obterDescricaoQuebraRelatorioCE(produtoDTO, notas);
 			
 			if(descricaoQuebraRelatorioCE != null && !"".equals(descricaoQuebraRelatorioCE)){
 				produtoDTO.setDescricaoNotaEnvio(descricaoQuebraRelatorioCE);
@@ -398,7 +401,8 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	 * 
 	 * @return String
 	 */
-	private String obterDescricaoQuebraRelatorioCE(List<NotaEnvioProdutoEdicao> notas ) {
+	private String obterDescricaoQuebraRelatorioCE(ProdutoEmissaoDTO produtoDTO, 
+												   List<NotaEnvioProdutoEdicao> notas ) {
 		
 		StringBuffer descricao = new StringBuffer();
 		
@@ -412,6 +416,9 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			descricao.append(plusSignal);
 			
 			if(nota.getReparte()!=null) {
+				
+				produtoDTO.setReparte(produtoDTO.getReparte().add(nota.getReparte()));
+				
 				descricao.append(nota.getReparte());
 				descricao.append(" exes. ");
 			}

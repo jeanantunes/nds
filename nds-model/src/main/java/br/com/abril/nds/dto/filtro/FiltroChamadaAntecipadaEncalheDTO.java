@@ -79,6 +79,7 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	
 	private Long codTipoPontoPDV;
 	
+	private boolean recolhimentoFinal;
 
 	/**
 	 * Construtor padrão.
@@ -523,6 +524,14 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 		} else if (!paginacao.equals(other.paginacao))
 			return false;
 		return true;
+	}
+
+	public boolean isRecolhimentoFinal() {
+		return recolhimentoFinal;
+	}
+
+	public void setRecolhimentoFinal(boolean recolhimentoFinal) {
+		this.recolhimentoFinal = recolhimentoFinal;
 	}
 
 }
