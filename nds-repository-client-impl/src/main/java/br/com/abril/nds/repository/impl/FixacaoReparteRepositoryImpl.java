@@ -71,6 +71,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         .append(" f.dataHora as dataHora,")
         .append(" f.edicaoInicial as edicaoInicial,")
         .append(" f.edicaoFinal as edicaoFinal, ")
+        .append(" f.edicoesAtendidas as edicoesAtendidas, ")
         .append(" f.cotaFixada.numeroCota as cotaFixada,")
         .append(" f.cotaFixada.id as cotaFixadaId,")
         .append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '')  as nomeCota,")
@@ -410,6 +411,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		sql.append(" 	join produto pd on pe.PRODUTO_ID = pd.ID  ");
 		sql.append(" 	left join fixacao_reparte fr on fr.codigo_icd = pd.codigo_icd  ");
 		sql.append(" where lc.ID in (:lancamentosDoDia)  ");
+		sql.append(" and lc.STATUS in ('EXPEDIDO', 'EM_BALANCEAMENTO_RECOLHIMENTO', 'BALANCEADO_RECOLHIMENTO', 'EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO') ");
 		sql.append(" group by lc.ID ");
 		
 		Query query = getSession().createSQLQuery(sql.toString());
@@ -496,6 +498,21 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		Query query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("data", dataOperacao);
+		
+		return (List<BigInteger>) query.list();
+	}
+
+	
+	//remover
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<BigInteger> obterListaLancamentosRangerData() {
+		
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append(" select l.ID from lancamento l where l.DATA_LCTO_DISTRIBUIDOR < '2014/04/15' and l.DATA_LCTO_DISTRIBUIDOR >= '2014/04/01' ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
 		
 		return (List<BigInteger>) query.list();
 	}
