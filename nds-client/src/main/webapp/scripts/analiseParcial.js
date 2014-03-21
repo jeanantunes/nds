@@ -1347,7 +1347,7 @@ var analiseParcialController = $.extend(true, {
                         if ($inputsPreenchidos.filter('[motivo="GN"]').length > 0) {
 
                             var params = [];
-                            params.push({name: 'filtro.produtoDto.codigoProduto', value: $('#codigoProduto').val()});
+                            params.push({name: 'filtro.produtoDto.codigoProduto', value: $('#codigoProduto').text()});
                             params.push({name: 'filtro.produtoDto.idClassificacaoProduto', value: $('#tipoClassificacaoProdutoId').val()});
                             params.push({name: 'filtro.excecaoSegmento', value: true});
 
