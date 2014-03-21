@@ -3,7 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -89,7 +88,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		
 		if(!chamdadasAntecipada.isEmpty()){
 			
-			HashMap<Long,Long> chamadasEncalheASerRemovidas = new HashMap<Long, Long>();
+			Set<Long> chamadasEncalheASerRemovidas = new HashSet<Long>();
 			
 			ChamadaEncalheCota chamadaEncalheCota = null;
 			
@@ -99,13 +98,12 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 				
 				chamadaEncalheCotaRepository.remover(chamadaEncalheCota);
 				
-				chamadasEncalheASerRemovidas.put(chamadaEncalheCota.getChamadaEncalhe().getId(), 
-												 chamadaEncalheCota.getChamadaEncalhe().getId());
+				chamadasEncalheASerRemovidas.add(chamadaEncalheCota.getChamadaEncalhe().getId());
 			}
 			
-			if(!chamadasEncalheASerRemovidas.values().isEmpty()){
+			if(!chamadasEncalheASerRemovidas.isEmpty()){
 				
-				removerChamadasAntecipadas(chamadasEncalheASerRemovidas.values().toArray(new Long[]{}));
+				removerChamadasAntecipadas(chamadasEncalheASerRemovidas);
 			}
 		}
 	}
@@ -115,17 +113,23 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	 * 
 	 * @param idChamadaAntecipada - identificadores da chamada de encalhe
 	 */
-	private void removerChamadasAntecipadas(Long... idChamadaAntecipada){
-		
-		ChamadaEncalhe chamadaEncalhe = null;
-		
-		for(Long id :idChamadaAntecipada){
+	private void removerChamadasAntecipadas(Set<Long> idsChamadaAntecipada) {
+
+		for(Long id :idsChamadaAntecipada){
 			
 			Long qnt = chamadaEncalheCotaRepository.obterQntChamadaEncalheCota(id);
 			
 			if(qnt!= null && qnt == 0){
+
+				ChamadaEncalhe chamadaEncalhe = chamadaEncalheRepository.buscarPorId(id);
 				
-				chamadaEncalhe = chamadaEncalheRepository.buscarPorId(id);
+				for (Lancamento lancamento : chamadaEncalhe.getLancamentos()) {
+					
+					lancamento.setDataRecolhimentoDistribuidor(lancamento.getDataRecolhimentoPrevista());
+				
+					this.lancamentoRepository.alterar(lancamento);
+				}
+				
 				chamadaEncalhe.getLancamentos().clear();
 				
 				chamadaEncalheRepository.remover(chamadaEncalhe);
@@ -177,6 +181,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		infoEncalheDTO.setDataAntecipacao(filtro.getDataAntecipacao());
 		infoEncalheDTO.setNumeroEdicao(filtro.getNumeroEdicao());
 		infoEncalheDTO.setDataProgramada(DateUtil.parseDataPTBR(filtro.getDataProgramada()));
+		infoEncalheDTO.setRecolhimentoFinal(filtro.isRecolhimentoFinal());
 		
 		gravar(infoEncalheDTO);
 	}
@@ -236,7 +241,19 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 			chamadaEncalhe.setSequencia(++sequencia);
 		}
 		
-		chamadaEncalhe.setLancamentos(obterLancamentoPorId(infoEncalheDTO.getChamadasAntecipadaEncalhe()));
+		Set<Lancamento> lancamentos = obterLancamentoPorId(infoEncalheDTO.getChamadasAntecipadaEncalhe());
+		
+		if (infoEncalheDTO.isRecolhimentoFinal()) {
+			
+			for (Lancamento lancamento : lancamentos) {
+				
+				lancamento.setDataRecolhimentoDistribuidor(dataAntecipacao);
+				
+				this.lancamentoRepository.alterar(lancamento);
+			}
+		}
+		
+		chamadaEncalhe.setLancamentos(lancamentos);
 		chamadaEncalhe.setDataRecolhimento(dataAntecipacao);
 		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 		chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.ANTECIPADA);

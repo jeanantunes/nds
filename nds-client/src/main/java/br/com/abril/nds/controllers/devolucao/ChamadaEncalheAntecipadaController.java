@@ -298,13 +298,13 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void gravarCotasPesquisa(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 									String dataRecolhimento,String codigoProduto,
-									Long numeroEdicao,String dataProgramada){
+									Long numeroEdicao,String dataProgramada, boolean recolhimentoFinal){
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
 		validarCotasDuplicadas(listaChamadaEncalheAntecipada,"Existem cotas duplicadas para chamda antecipada de encalhe!");
 		
-		gravarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+		gravarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada, recolhimentoFinal);
 	}
 	
 	
@@ -322,7 +322,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void gravarCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 							String dataRecolhimento, String codigoProduto, 
-							Long numeroEdicao,String dataProgramada,String gravarTodos){
+							Long numeroEdicao,String dataProgramada,String gravarTodos, 
+							boolean recolhimentoFinal) {
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
@@ -331,6 +332,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
 			filtro.setDataAntecipacao(DateUtil.parseDataPTBR(dataRecolhimento));
 			filtro.setDataProgramada(dataProgramada);
+			filtro.setRecolhimentoFinal(recolhimentoFinal);
 			
 			chamadaAntecipadaEncalheService.gravarChamadaAntecipacaoEncalheProduto(filtro);
 
@@ -340,7 +342,9 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		} else{
 			
-			gravarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+			gravarChamadaEncalheAnteicipada(
+				listaChamadaEncalheAntecipada, dataRecolhimento, codigoProduto, numeroEdicao, 
+					dataProgramada, recolhimentoFinal);
 		}	
 	}
 	
@@ -359,7 +363,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	public void reprogramarCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 								String dataRecolhimento, String codigoProduto, 
 								Long numeroEdicao, String dataProgramada, 
-								String gravarTodos) {
+								String gravarTodos,
+								boolean recolhimentoFinal) {
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
@@ -376,7 +381,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		}
 		else{
 		
-			reprogramarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+			reprogramarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada,recolhimentoFinal);
 			
 		}	
 	}
@@ -385,7 +390,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Path("/cancelarChamdaEncalheCotas")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void cancelarChamdaEncalheCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
-											String codigoProduto,Long numeroEdicao,String cancelarTodos){
+											String codigoProduto,Long numeroEdicao,String cancelarTodos, 
+											boolean recolhimentoFinal){
 		
 		if(Boolean.parseBoolean(cancelarTodos)){
 			
@@ -397,7 +403,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			
 			InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
 																								  null,codigoProduto,
-																								  numeroEdicao,null);
+																								  numeroEdicao,null, recolhimentoFinal);
 			
 			chamadaAntecipadaEncalheService.cancelarChamadaAntecipadaCota(infoChamdaAntecipadaEncalheDTO);
 		}
@@ -410,11 +416,11 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Path("/cancelarChamdaEncalheCotasPesquisa")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void cancelarChamdaEncalheCotasPesquisa(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
-												   String codigoProduto,Long numeroEdicao){
+												   String codigoProduto,Long numeroEdicao, boolean recolhimentoFinal){
 		
 		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
 																								  null,codigoProduto,
-																								  numeroEdicao,null);
+																								  numeroEdicao,null,recolhimentoFinal);
 			
 		chamadaAntecipadaEncalheService.cancelarChamadaAntecipadaCota(infoChamdaAntecipadaEncalheDTO);
 		
@@ -433,13 +439,14 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void reprogramarCotasPesquisa(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 										String dataRecolhimento,String codigoProduto,
-										Long numeroEdicao,String dataProgramada){
+										Long numeroEdicao,String dataProgramada,
+										boolean recolhimentoFinal){
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
 		validarCotasDuplicadas(listaChamadaEncalheAntecipada,"Existem cotas duplicadas para reprogramação de chamda antecipada de encalhe!");
 		
-		reprogramarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+		reprogramarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada,recolhimentoFinal);
 	}
 	
 	/**
@@ -452,7 +459,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	private void gravarChamadaEncalheAnteicipada(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 												String dataRecolhimento, String codigoProduto, 
-												Long numeroEdicao,String dataProgramada){
+												Long numeroEdicao,String dataProgramada, boolean recolhimentoFinal){
 		
 		if(listaChamadaEncalheAntecipada == null || listaChamadaEncalheAntecipada.isEmpty()){
 			
@@ -460,7 +467,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		}
 		
 		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
-																		dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+																		dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada,recolhimentoFinal);
 		
 		chamadaAntecipadaEncalheService.gravarChamadaAntecipacaoEncalheProduto(infoChamdaAntecipadaEncalheDTO);
 		
@@ -480,7 +487,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	private void reprogramarChamadaEncalheAnteicipada(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 												String dataRecolhimento, String codigoProduto, 
-												Long numeroEdicao,String dataProgramada){
+												Long numeroEdicao,String dataProgramada,
+												boolean recolhimentoFinal){
 		
 		if(listaChamadaEncalheAntecipada == null || listaChamadaEncalheAntecipada.isEmpty()){
 			
@@ -488,7 +496,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		}
 		
 		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
-																		dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+																		dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada,
+																		recolhimentoFinal);
 		
 		chamadaAntecipadaEncalheService.reprogramarChamadaAntecipacaoEncalheProduto(infoChamdaAntecipadaEncalheDTO);
 		
@@ -508,13 +517,15 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	private InfoChamdaAntecipadaEncalheDTO getInfoChamadaEncalhe(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 																	String dataRecolhimento, String codigoProduto, 
-																	Long numeroEdicao,String dataProgramada) {
+																	Long numeroEdicao,String dataProgramada,
+																	boolean recolhimentoFinal) {
 		
 		InfoChamdaAntecipadaEncalheDTO infoEncalheDTO = new InfoChamdaAntecipadaEncalheDTO();
 		infoEncalheDTO.setCodigoProduto(codigoProduto);
 		infoEncalheDTO.setDataAntecipacao( (dataRecolhimento==null)?null: DateUtil.parseDataPTBR(dataRecolhimento));
 		infoEncalheDTO.setNumeroEdicao(numeroEdicao);
 		infoEncalheDTO.setDataProgramada( (dataProgramada== null)?null:DateUtil.parseDataPTBR(dataProgramada));
+		infoEncalheDTO.setRecolhimentoFinal(recolhimentoFinal);
 		
 		List<ChamadaAntecipadaEncalheDTO> listaChamadaAntecipadaEncalheDTOs = 
 				new ArrayList<ChamadaAntecipadaEncalheDTO>();
