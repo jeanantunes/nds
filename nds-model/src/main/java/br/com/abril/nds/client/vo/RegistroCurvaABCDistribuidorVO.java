@@ -63,12 +63,12 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 		return this.getQuantidadePdvs().toString();
 	}
 
-	@Export(label = "Participação", exhibitionOrder = 9, columnType = ColumType.DECIMAL)
+	@Export(label = "Participação %", exhibitionOrder = 9, columnType = ColumType.DECIMAL)
 	public String getParticipacaoString() {
 		return getParticipacaoFormatado();
 	}
 
-	@Export(label = "Participação Acumulada", exhibitionOrder = 10, columnType = ColumType.DECIMAL)
+	@Export(label = "Participação Acumulada %", exhibitionOrder = 10, columnType = ColumType.DECIMAL)
 	public String getParticipacaoAcumuladaString() {
 		return getParticipacaoAcumuladaFormatado();
 	}

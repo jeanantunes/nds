@@ -176,6 +176,8 @@ public class RelatorioVendasController extends BaseController {
 		
 		List<RegistroCurvaABCDistribuidorVO> lista = null;
 		
+		filtroSessao.setTipoConsultaCurvaABC(tipoRelatorio);
+		
 		if (tipoRelatorio == TipoConsultaCurvaABC.DISTRIBUIDOR) {
 			
 			lista = relatorioVendasService.obterCurvaABCDistribuidor(filtroSessao);
