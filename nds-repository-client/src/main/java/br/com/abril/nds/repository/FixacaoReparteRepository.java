@@ -49,7 +49,4 @@ public interface FixacaoReparteRepository  extends Repository<FixacaoReparte, Lo
 	
 	List<BigInteger> obterListaLancamentos (Date dataOperacao);
 	
-	//remover
-	List<BigInteger> obterListaLancamentosRangerData ();
-
 }
