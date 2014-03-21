@@ -74,15 +74,15 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		hql.append(" SELECT ")
 		.append(" notaFiscal.id as idNotaFiscal,")
-		.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal as numero,")
-		.append(" notaFiscal.notaFiscalInformacoes.identificacao.serie as serie,")
-		.append(" notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao as emissao,")
-		.append(" notaFiscal.notaFiscalInformacoes.identificacao.tipoEmissao as tipoEmissao,")
-		.append(" notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento.documento as cnpjRemetente,")
-		.append(" notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.documento.documento as cnpjDestinatario, ")
-		.append(" notaFiscal.notaFiscalInformacoes.statusProcessamentoInterno as statusNfe,")
-		.append(" notaFiscal.notaFiscalInformacoes.identificacao.naturezaOperacao.descricao as tipoNfe,")
-		.append(" notaFiscal.notaFiscalInformacoes.identificacao.naturezaOperacao.descricao as movimentoIntegracao");
+		.append(" ident.numeroDocumentoFiscal as numero,")
+		.append(" ident.serie as serie,")
+		.append(" ident.dataEmissao as emissao,")
+		.append(" ident.tipoEmissao as tipoEmissao,")
+		.append(" doc.documento as cnpjRemetente,")
+		.append(" docDest.documento as cnpjDestinatario, ")
+		.append(" nfi.statusProcessamentoInterno as statusNfe,")
+		.append(" natOp.descricao as tipoNfe,")
+		.append(" natOp.descricao as movimentoIntegracao");
 		
 		Query query = createFiltroQuery(queryConsultaPainelMonitor(filtro, hql, false, false, false),filtro);
 		
@@ -106,52 +106,47 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	private StringBuilder queryConsultaPainelMonitor(FiltroMonitorNfeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup){
 		
 		hql.append(" FROM NotaFiscal as notaFiscal")
-		.append(" JOIN notaFiscal.usuario as usuario");
-		//.append(" LEFT JOIN notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento as docEmit")
-		//.append(" LEFT JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.documento as docDest");
-		if(	(filtro.getBox()!=null) || filtro.getDataInicial() != null || filtro.getDataFinal() != null ||
-				(filtro.getDocumentoPessoa() != null && !filtro.getDocumentoPessoa().isEmpty() ) || 
-				(filtro.getTipoNfe() != null && !filtro.getTipoNfe().isEmpty() ) || 
-				(filtro.getChaveAcesso() != null && !filtro.getChaveAcesso().isEmpty() ) ||
-				(filtro.getSituacaoNfe() != null && !filtro.getSituacaoNfe().isEmpty() ) || 
-				filtro.getNumeroNotaInicial() != null || filtro.getNumeroNotaFinal()!=null|| filtro.getSerie() != null ) {
-
-				hql.append(" WHERE ");
-		}
+		.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ")
+		.append(" JOIN nfi.identificacao as ident ")
+		.append(" JOIN nfi.identificacaoEmitente as identEmit ")
+		.append(" JOIN nfi.identificacaoDestinatario as identDest")
+		.append(" JOIN nfi.informacaoEletronica as infElet ")
+		.append(" JOIN ident.naturezaOperacao as natOp ")
+		.append(" JOIN natOp.processo as proc ")
+		.append(" JOIN identEmit.documento as doc ")
+		.append(" JOIN identDest.documento as docDest ");
 			
+		hql.append(" WHERE 1=1 ");
+		
 		if(filtro.getDataInicial() !=null) {
 			
-			hql.append(" notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao >= :dataInicial ");
+			hql.append(" AND ident.dataEmissao >= :dataInicial ");
 		}
 
 		if(filtro.getDataFinal() !=null) {
-			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao <= :dataFinal ");
+			hql.append(" AND ident.dataEmissao <= :dataFinal ");
 		}
 
 		if(filtro.getNumeroDocumento() != null){
 			if(filtro.getDocumentoPessoa() !=null && !filtro.getDocumentoPessoa().isEmpty()) {
-				if(filtro.getDocumentoPessoa().equalsIgnoreCase("cpf")){
-					hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento.documento = :documento");
-				}else{
-					hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento.documento = :documento");
-				}
+				hql.append(" AND doc.documento = :documento");
 			}
 		}
 
 		if(filtro.getTipoNfe() !=null && !filtro.getTipoNfe().isEmpty()) {
-			hql.append(" AND notaFiscal.notaFiscalInformacoes.processos = :tipoEmissaoNfe");		
+			hql.append(" AND proc.nome = :tipoEmissaoNfe");		
 		}
 
 		if(filtro.getNumeroNotaInicial() !=null) {
-			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal >= :numeroInicial ");
+			hql.append(" AND ident.numeroDocumentoFiscal >= :numeroInicial ");
 		}
 
 		if(filtro.getNumeroNotaFinal() !=null) {
-			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal <= :numeroFinal ");
+			hql.append(" AND ident.numeroDocumentoFiscal <= :numeroFinal ");
 		}
 
 		if(filtro.getChaveAcesso() !=null && !filtro.getChaveAcesso().isEmpty()) {
-			hql.append(" AND notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso = :chaveAcesso ");
+			hql.append(" AND infElet.chaveAcesso = :chaveAcesso ");
 		}
 
 		if(filtro.getSituacaoNfe() !=null && !filtro.getSituacaoNfe().isEmpty()) {
@@ -159,7 +154,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(filtro.getSerie() !=null) {
-			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.serie = :serie ");
+			hql.append(" AND ident.serie = :serie ");
 		}
 		
 		if(!isCount && !isPagination){

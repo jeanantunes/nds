@@ -68,7 +68,7 @@ public class NaturezaOperacao implements Serializable {
 	@Column(name = "TIPO_DESTINATARIO", nullable = false)
 	private TipoDestinatario tipoDestinatario;
 	
-	@ManyToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL)
 	@JoinTable(name="PROCESSO_NFE", joinColumns={
 				@JoinColumn(name="PROCESSO_NFE_ID", referencedColumnName="id", nullable=false)
 	                    },
