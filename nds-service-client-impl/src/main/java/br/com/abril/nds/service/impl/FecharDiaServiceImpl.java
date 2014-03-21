@@ -353,17 +353,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Transactional
 	public boolean isConsolidadoCotaAVista(Date data){
 
-		List<Cota> cotas = this.cotaRepository.obterCotasTipoAVista(data);
-		
-		for (Cota c : cotas){
-		
-		    ConsolidadoFinanceiroCota cfc = this.consolidadoFinanceiroRepository.buscarPorCotaEData(c.getId(), data);
-		    
-		    if (cfc == null){
-		    	
-		    	return false;
-		    }
-		}
+	    BigDecimal saldo = this.movimentoFinanceiroCotaRepository.obterSaldoCotasAVista(null, data); 
+	    
+	    if (saldo != null && saldo.compareTo(BigDecimal.ZERO) > 0){
+	    	
+	    	return false;
+	    }
 		
 		return true;
 	}

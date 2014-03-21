@@ -31,7 +31,7 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada =
 			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
 		
-		TreeSet<Date> datasParaBalanceamento = super.obterDatasParaBalanceamento(dadosRecolhimento);
+		TreeSet<Date> datasParaBalanceamento = dadosRecolhimento.getDatasRecolhimentoDisponiveis();
 		
 		this.processarProdutosRecolhimentoNaoBalanceaveis(
 			matrizRecolhimentoBalanceada, dadosRecolhimento);

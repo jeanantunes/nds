@@ -490,8 +490,10 @@ public class FollowupController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-		FileExporter.to("FollowUp_dados_negociacao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroNegociacao, null, 
+		FileExporter.to("FollowUp_dados_negociacao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroNegociacao, 
 				lista, ConsultaFollowupNegociacaoDTO.class, this.httpResponse);
+		
+		result.nothing();
 	}
 
 	/**
@@ -515,8 +517,10 @@ public class FollowupController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-		FileExporter.to("FollowUp_Chamadao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+		FileExporter.to("FollowUp_Chamadao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 				listadechamadao, ConsultaFollowupChamadaoDTO.class, this.httpResponse);
+		
+		result.nothing();
 	}
 
 	/**
@@ -540,8 +544,10 @@ public class FollowupController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-		FileExporter.to("FollowUp_pendencias_nfe", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+		FileExporter.to("FollowUp_pendencias_nfe", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 				listasdependencias, ConsultaFollowupPendenciaNFeDTO.class, this.httpResponse);
+		
+		result.nothing();
 	}
 
 	/**
@@ -567,13 +573,14 @@ public class FollowupController extends BaseController {
 			dto.setPeriodoStatus(periodo);
 		}
 		
-		
 		if(listacadastral.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-		FileExporter.to("FollowUp_Status_Cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+		FileExporter.to("FollowUp_Status_Cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 				listacadastral, ConsultaFollowupStatusCotaDTO.class, this.httpResponse);
+		
+		result.nothing();
 	}
 
 	/**
@@ -599,8 +606,10 @@ public class FollowupController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-		FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+		FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 				listasdependencias, ConsultaFollowupCadastroDTO.class, this.httpResponse);
+		
+		result.nothing();
 	}
 
 	/**
@@ -624,8 +633,10 @@ public class FollowupController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-		FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+		FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,  
 				lista, ConsultaFollowupCadastroParcialDTO.class, this.httpResponse);
+		
+		result.nothing();
 	}
 
 	/**

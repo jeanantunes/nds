@@ -130,9 +130,8 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			
 			// Merging - Merge_Fase2 - Produto produto = this.produtoRepository.obterProdutoPorCodigoProdinLike(filtroCurvaABCDistribuidorDTO.getCodigoProduto());
 			
-			filtroCurvaABCDistribuidorDTO.setCodigoProduto(null);
 			FiltroCurvaABCDistribuidorDTO filtroDistribuidor = new FiltroCurvaABCDistribuidorDTO();
-			
+
 			filtroDistribuidor.setDataDe(filtroCurvaABCDistribuidorDTO.getDataDe());
 			filtroDistribuidor.setDataAte(filtroCurvaABCDistribuidorDTO.getDataAte());
 		
