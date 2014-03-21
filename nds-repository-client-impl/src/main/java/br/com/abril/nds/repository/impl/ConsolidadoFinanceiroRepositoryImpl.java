@@ -1329,12 +1329,12 @@ ConsolidadoFinanceiroRepository {
         
         .append("    (select SUM( coalesce(bc.VALOR_PAGO, 0) ) - ")
         //consolidados de cotas unificadas subtraidos do valor pago na cota unificadora
-        .append("    ((SELECT SUM(ROUND(CF.TOTAL,2)) ")
-        .append("      FROM DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ")
-        .append("      WHERE DC.DIVIDA_ID = divida.ID ")
-        .append("      AND DC.CONSOLIDADO_ID = CF.ID ")
-        .append("      AND CF.ID <> cfc.ID ")
-        .append("      AND CF.COTA_ID <> cota.ID) * (-1)) ")
+        .append("    COALESCE(((SELECT SUM(ROUND(CF.TOTAL,2)) ")
+        .append("               FROM DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ")
+        .append("               WHERE DC.DIVIDA_ID = divida.ID ")
+        .append("               AND DC.CONSOLIDADO_ID = CF.ID ")
+        .append("               AND CF.ID <> cfc.ID ")
+        .append("               AND CF.COTA_ID <> cota.ID) * (-1)),0) ")
 
         .append("     from BAIXA_COBRANCA bc ")
         .append("     inner join COBRANCA cobranca ON cobranca.ID = bc.COBRANCA_ID ")
@@ -1362,12 +1362,12 @@ ConsolidadoFinanceiroRepository {
         
         .append("              - ")
         //consolidados de cotas unificadas subtraidos do saldo da cota unificadora
-        .append("              ((SELECT SUM(ROUND(CF.TOTAL,2)) ")
-        .append("                FROM DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ")
-        .append("                WHERE DC.DIVIDA_ID = divida.ID ")
-        .append("                AND DC.CONSOLIDADO_ID = CF.ID ")
-        .append("                AND CF.ID <> cfc.ID ")
-        .append("                AND CF.COTA_ID <> cota.ID) * (-1)) ")
+        .append("              COALESCE(((SELECT SUM(ROUND(CF.TOTAL,2)) ")
+        .append("                         FROM DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ")
+        .append("                         WHERE DC.DIVIDA_ID = divida.ID ")
+        .append("                         AND DC.CONSOLIDADO_ID = CF.ID ")
+        .append("                         AND CF.ID <> cfc.ID ")
+        .append("                         AND CF.COTA_ID <> cota.ID) * (-1)),0) ")
         
         .append("          end ")
         .append("          FROM BAIXA_COBRANCA bc ")

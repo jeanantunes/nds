@@ -437,7 +437,7 @@ function limparLstExcecao1(){
                    	  <table width="270" border="0" cellspacing="2" cellpadding="2">
                         <tr class="class_linha_1">
                           <td width="99"><strong>Status do Estudo:</strong></td>
-                          <td width="157"><strong id="idStatusEstudo">${estudo==null?'' : estudo.status.descricao}</strong></td>
+                          <td width="157"><strong id="idStatusEstudo">${statusEstudo}</strong></td>
                         </tr>
                       </table>
                    	  <table width="275" border="0" cellspacing="2" cellpadding="2">

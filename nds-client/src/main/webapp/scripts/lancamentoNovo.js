@@ -355,15 +355,29 @@ var lancamentoNovoController = $.extend(true, {
 		$("#ui-dialog-title-dialogNovasDiferencas", lancamentoNovoController.workspace).text("Lançamento Faltas e Sobras - Produto");
 		
 		lancamentoNovoController.tratarVisualizacaoOpcaoEstoque({tipoDiferenca: 'ALTERACAO_REPARTE'});		
-
-		$.each(result.rateios, function(linhaAtual, rateio) {
-			
-			$("#cotaInputAlteracaoReparte", lancamentoNovoController.workspace).val(rateio.numeroCota);
-			$("#nomeInputAlteracaoReparte", lancamentoNovoController.workspace).val(rateio.nomeCota);
-			$("#rateioIDInputHiddenAlteracaoReparte", lancamentoNovoController.workspace).val(rateio.idRateio);
-		});
 		
-		lancamentoNovoController.carregarProdutoAlteracaoReparte(result.diferenca);
+		if(typeof result == 'undefined' || result == null){
+			return;
+		}
+		
+		if(typeof result.rateios != 'undefined' && result.rateios != null) {
+			
+			$.each(result.rateios, function(linhaAtual, rateio) {
+				
+				$("#cotaInputAlteracaoReparte", lancamentoNovoController.workspace).val(rateio.numeroCota);
+				$("#nomeInputAlteracaoReparte", lancamentoNovoController.workspace).val(rateio.nomeCota);
+				$("#rateioIDInputHiddenAlteracaoReparte", lancamentoNovoController.workspace).val(rateio.idRateio);
+			});
+			
+		}
+
+		if(typeof result.diferenca != 'undefined' && result.diferenca != null) {
+
+			lancamentoNovoController.carregarProdutoAlteracaoReparte(result.diferenca);
+			
+		}
+		
+		
 	},
 	
 	carregarEdicaoDirecionamentoCota:function(result){
