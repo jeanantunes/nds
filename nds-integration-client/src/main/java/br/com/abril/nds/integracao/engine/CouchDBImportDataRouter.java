@@ -27,6 +27,7 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.AbstractRepository;
 
+
 @Component("couchDBImportDataRouter")
 public class CouchDBImportDataRouter extends AbstractRepository implements ContentBasedRouter {
 
@@ -98,10 +99,11 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 				
 				try {
 					
-					TransactionTemplate template = new TransactionTemplate(transactionManager);
-					
-					template.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
-					template.setPropagationBehavior(TransactionDefinition.PROPAGATION_SUPPORTS);
+					 TransactionTemplate template = new TransactionTemplate(transactionManager);
+                      
+                     template.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
+                     template.setPropagationBehavior(TransactionDefinition.PROPAGATION_SUPPORTS);
+                     template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 					
 					template.execute(new TransactionCallback<Void>() {
 						@Override

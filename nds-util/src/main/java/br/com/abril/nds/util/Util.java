@@ -632,15 +632,6 @@ public abstract class Util {
         return isDiferencaMenorValor(v1, v2, new BigDecimal("0.005"));
     }
     
-    public static void main(final String[] args) {
-        final BigDecimal v1 = new BigDecimal("7.8549");
-        final BigDecimal v2 = null;
-        
-        System.out.println(v1.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-        
-        System.out.println(isDiferencaMenorMeioCentavo(v1, v2));
-    }
-    
     private static String toFirstUpperCase(final String string) {
         
         return string.substring(0,1).toUpperCase() + string.substring(1);
