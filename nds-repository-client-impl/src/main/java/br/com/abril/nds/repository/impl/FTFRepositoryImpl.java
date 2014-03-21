@@ -86,7 +86,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		String output = myFormatter.format(value);
 
 		String codigoDistribuidor = distribuidor.getCodigoDistribuidorDinap();
-		if(StringUtil.isEmpty(codigoDistribuidor)){
+		if(StringUtil.isEmpty(codigoDistribuidor)) {
 			codigoDistribuidor = distribuidor.getCodigoDistribuidorFC();
 		}
 
