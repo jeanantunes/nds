@@ -372,8 +372,10 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		 * Passado a validar por critério MOVIMENTO_ESTOQUE_COTA.status_estoque_financeiro=1 (Movimento COBRADO=1 Não COBRADO=0)
 		 *  
 		 * hql.append("      AND lancamento.STATUS IN (:statusLancamento) ");
-		 * hql.append("      AND lancamento.DATA_REC_PREVISTA >= :dataRecolhimento ");
 		 */
+		
+		hql.append("      AND lancamento.DATA_REC_PREVISTA >= :dataRecolhimento ");
+		
 		hql.append("      AND mec.status_estoque_financeiro = :statusEstoqueFinanceiro ");
 		
 		hql.append("      AND (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) > 0 ");
