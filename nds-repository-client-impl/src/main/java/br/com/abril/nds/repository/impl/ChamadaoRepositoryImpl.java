@@ -497,10 +497,10 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			
 			return;
 		}
-		/*
+		
 		if (filtro.getDataChamadao() != null) {
 			query.setParameter("dataRecolhimento", filtro.getDataChamadao());
-		}*/
+		}
 		
 		if (filtro.getNumeroCota() != null) {
 			query.setParameter("numeroCota", filtro.getNumeroCota());

@@ -401,7 +401,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
      */
 	@Override
 	@Transactional
-	public Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento) {
+	public Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento, String localidade) {
 		
 		FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 		
@@ -412,7 +412,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
         // verifica se a forma de cobrança principal do distribuidor utiliza
         // dias uteis para geração da data de vencimento da cobrança
 		if(formaCobranca.isVencimentoDiaUtil()) {
-			return this.calendarioService.adicionarDiasUteis(dataConsolidado, fatorVencimento);
+			return this.calendarioService.adicionarDiasUteis(dataConsolidado, fatorVencimento, localidade);
 		}
 		
 		return DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
@@ -1001,8 +1001,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					cobrarHoje = true;
 				}
 			}
-			
-			Date dataVencimento = this.obterDataVencimentoCobrancaCota(helperPrincipal.getConsolidadoFinanceiroCota().getDataConsolidado(),fatorVencimento);
+			String localidade = helperPrincipal.getCota().getEnderecoPrincipal().getEndereco().getCidade();
+			Date dataVencimento = this.obterDataVencimentoCobrancaCota(helperPrincipal.getConsolidadoFinanceiroCota().getDataConsolidado(),fatorVencimento, localidade);
 			
 			if(!cobrarHoje) {
 
@@ -1224,8 +1224,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				cobrarHoje = true;
 			}
 		}
-
-		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(),fatorVencimento);
+		String localidade =  cota.getEnderecoPrincipal().getEndereco().getCidade();
+		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(),fatorVencimento, localidade);
 
 		if(!cobrarHoje){
 

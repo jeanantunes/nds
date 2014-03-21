@@ -96,8 +96,9 @@ public interface GerarCobrancaService {
 	/**
     * Obtem Data de Vencimento onforme Parametros 
     * @param dataConsolidado
-    * @param fatorVencimento
+	 * @param fatorVencimento
+	 * @param localidade TODO
     * @return Date
     */
-	Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento);
+	Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento, String localidade);
 }
