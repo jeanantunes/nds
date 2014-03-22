@@ -339,6 +339,23 @@ public class FeriadoRepositoryImpl extends
 		
 		return ((BigInteger)query.uniqueResult()).compareTo(BigInteger.ZERO) > 0;
 	}
+	
+	@Override
+    public boolean isFeriado(Date data, String localidade){
+	    StringBuilder hql = new StringBuilder("select ");
+        hql.append(" count(f.ID) from FERIADO f ")
+           .append(" where (f.DATA = :data ")
+           .append(" or (day(f.DATA) = day(:data) and month(f.DATA) = month(:data) ")
+           .append(" and f.IND_REPETE_ANUALMENTE = :repeteAnual))")
+           .append(" and (f.LOCALIDADE = :localidade or f.LOCALIDADE is null)");
+        
+        Query query = this.getSession().createSQLQuery(hql.toString());
+        query.setParameter("data", data);
+        query.setParameter("localidade", localidade);
+        query.setParameter("repeteAnual", true);
+        
+        return ((BigInteger)query.uniqueResult()).compareTo(BigInteger.ZERO) > 0;
+	}
     
     @Override
     public boolean isNaoOpera(Date data) {

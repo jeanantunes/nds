@@ -151,12 +151,12 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 		this.codigoProduto = codigoProduto;
 	}
 	
-	@Export(label = "Participação", exhibitionOrder = 9, columnType = ColumType.DECIMAL)
+	@Export(label = "% Participação", exhibitionOrder = 9, columnType = ColumType.DECIMAL)
 	public String getParticipacaoString() {
 		return getParticipacaoFormatado();
 	}
 
-	@Export(label = "Participação Acumulada", exhibitionOrder = 10, columnType = ColumType.DECIMAL)
+	@Export(label = "% Participação Acumulada", exhibitionOrder = 10, columnType = ColumType.DECIMAL)
 	public String getParticipacaoAcumuladaString() {
 		return getParticipacaoAcumuladaFormatado();
 	}

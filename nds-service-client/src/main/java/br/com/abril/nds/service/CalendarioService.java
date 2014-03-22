@@ -154,4 +154,6 @@ public interface CalendarioService {
 
     public abstract boolean isDiaOperante(Date data, Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor);
 
+    public abstract Date adicionarDiasUteis(final Date data, final int numDias, String localidade);
+
 }
