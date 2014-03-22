@@ -263,13 +263,12 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		hql.append(" c.DT_VENCIMENTO as dataVencimento, c.VALOR as valor, false as boletoAntecipado, ");
 		hql.append(" c.NOSSO_NUMERO as nossoNumero ");
 		hql.append(" FROM cobranca c ");
-		hql.append(" LEFT JOIN BAIXA_COBRANCA bc on c.ID = bc.COBRANCA_ID ");
-		hql.append(" LEFT JOIN DIVIDA d on d.ID = c.DIVIDA_ID ");
+		hql.append(" LEFT JOIN BAIXA_COBRANCA bc on (c.ID = bc.COBRANCA_ID and bc.STATUS_APROVACAO is null) ");
+		hql.append(" LEFT JOIN DIVIDA d on d.ID = (c.DIVIDA_ID and d.STATUS != :statusPendenteInadimplencia) ");
 		hql.append(" INNER JOIN COTA ct on ct.ID = c.COTA_ID ");
 		hql.append(" INNER JOIN PESSOA p on p.ID = ct.PESSOA_ID ");
 		hql.append(" WHERE ct.NUMERO_COTA = :ncota ");
-		hql.append(" AND bc.STATUS_APROVACAO is null ");
-		hql.append(" AND d.STATUS != :statusPendenteInadimplencia ");
+		hql.append(" AND c.DT_PAGAMENTO IS NULL ");
 		
 		if (filtro.getDataVencimento()!=null){
 		    hql.append(" AND c.DT_VENCIMENTO <= :vcto ");

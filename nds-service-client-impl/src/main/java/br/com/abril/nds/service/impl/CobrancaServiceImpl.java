@@ -670,9 +670,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 			BigDecimal valorDesconto = BigDecimalUtil.obterValorNaoNulo(mapComposicaoBaixaFinanceira.get(itemCobranca.getId()).getDesconto());
 			
 			BigDecimal valorCobranca = itemCobranca.getValor().subtract(this.obterSaldoDivida(itemCobranca.getId()));
-			//valorCobranca = valorCobranca.setScale(2, RoundingMode.HALF_EVEN);
+			valorCobranca = valorCobranca.setScale(2, RoundingMode.HALF_EVEN);
 			BigDecimal valorCobrancaCorrigida = valorCobranca.add(valorJuros).add(valorMulta).subtract(valorDesconto);
-			//valorCobrancaCorrigida = valorCobrancaCorrigida.setScale(2, RoundingMode.HALF_EVEN);
+			valorCobrancaCorrigida = valorCobrancaCorrigida.setScale(2, RoundingMode.HALF_EVEN);
 			
 			if ( valorRestanteAuxiliar.compareTo(valorCobrancaCorrigida) >= 0 ) {
 				
