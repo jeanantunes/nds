@@ -273,6 +273,9 @@ public enum Permissao {
 	ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO("Baixa Financeira", 					                        Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_BAIXA_BANCARIA("Baixa Financeira", 					                         	  	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO, true, null),
 	
+	ROLE_FINANCEIRO_INTEGRACAO_FISCAL_P7_ALTERACAO("Integração Fiscal P7", 					                Permissao.ROLE_FINANCEIRO, true),
+	ROLE_FINANCEIRO_INTEGRACAO_FISCAL_P7("Integração Fiscal P7", 					                        Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_INTEGRACAO_FISCAL_P7_ALTERACAO, true, null),
+		
 	ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA_ALTERACAO("Negociação de Divida",			                         	Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA("Negociação de Divida",			                         	  	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA_ALTERACAO, true, null),
 	
