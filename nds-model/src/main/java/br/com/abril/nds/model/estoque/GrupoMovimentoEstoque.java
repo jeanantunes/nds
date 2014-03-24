@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
 
+
 /**
  * @author francisco.garcia
  * @version 1.0
@@ -93,6 +94,11 @@ public enum GrupoMovimentoEstoque  {
 	PERDA_DE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
 	
 	/**
+	 * Perda EM no estoque de devolução --> PERDA
+	 */
+	PERDA_EM_DEVOLUCAO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
+	
+	/**
 	 * Sobra de pacote distribuidor
 	 */
 	SOBRA_DE_COTA(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO), 
@@ -108,7 +114,8 @@ public enum GrupoMovimentoEstoque  {
 	SOBRA_DE_DIRECIONADA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.COTA),	
 
 	/**
-	 * Saída de sobra de pacote direcionada para cota
+	 * Contra-partida dos movimentos de sobra, quando direcionados para Cota.
+	 * 
 	 */
 	SOBRA_ENVIO_PARA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.GANHO),
 	
@@ -116,6 +123,11 @@ public enum GrupoMovimentoEstoque  {
 	 * Sobra em pacote direcionada para cota
 	 */
 	SOBRA_EM_DIRECIONADA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.COTA),
+	
+	/**
+	 * Sobra em direcionada para estoque de devolução de encalhe
+	 */
+	SOBRA_EM_DEVOLUCAO(OperacaoEstoque.ENTRADA,Dominio.DISTRIBUIDOR,TipoEstoque.DEVOLUCAO_ENCALHE),
 	
 	/**
 	 * Falta de pacote distribuidor
@@ -126,6 +138,16 @@ public enum GrupoMovimentoEstoque  {
 	 * Falta em pacote distribuidor
 	 */
 	FALTA_EM_COTA(OperacaoEstoque.SAIDA, Dominio.COTA, TipoEstoque.LANCAMENTO),
+	
+	/**
+	 * Contra-partida dos movimentos de falta, quando direcionados para cota.
+	 */
+	FALTA_PARA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
+	
+	/**
+	 * Contra-partida dos movimentos de falta, quando direcionados para cota.
+	 */
+	AJUSTE_REPARTE_FALTA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 	
 	/**
 	 * Recebimento do reparte cota
@@ -195,12 +217,17 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Devolução de encalhe do distruibuidor para o fornecedor.
 	 */
-	DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_FORNECEDOR),
-	
+	DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
+
 	/**
 	 * Estorno de encalhe vendido, devido a um cancelamento da venda.
 	 */
 	ESTORNO_VENDA_ENCALHE(OperacaoEstoque.ENTRADA,Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
+	
+	/**
+	 * Estorno de devolução de encalhe , devido a um cancelamento da chamada de encalhe fornecedor.
+	 */
+	ESTORNO_DEVOLUCAO_ENCALHE_FORNECEDOR(OperacaoEstoque.ENTRADA,Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
 	
 	/**
 	 * Estorno de encalhe suplementar vendido, devido a um cancelamento da venda.
@@ -333,13 +360,7 @@ public enum GrupoMovimentoEstoque  {
 	ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 	ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.RECOLHIMENTO),
 	ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR),
-	ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.PRODUTOS_DANIFICADOS),
-	
-	/**
-	 * Grupos de Movimento de Estoque para estorno de perda e ganho gerados na reabertura do fechamento de CE Fornecedor
-	 */
-	ESTORNO_GANHO_EM(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.GANHO),
-	ESTORNO_PERDA_EM(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA);
+	ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.PRODUTOS_DANIFICADOS);
 	
 	private OperacaoEstoque operacaoEstoque;
 	private Dominio dominio;

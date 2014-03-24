@@ -38,7 +38,9 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 		PRECO_CAPA("precoCapa"),
 		VALOR_VENDA("valorVenda"),
 		TIPO("tipo"),
-		ENCALHE("encalhe");
+		ENCALHE("encalhe"),
+		DIFERENCA("diferenca"),
+		ESTOQUE("estoque");
 
 		private String nomeColuna;
 		

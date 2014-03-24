@@ -17,6 +17,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 
@@ -146,5 +147,9 @@ public interface DiferencaEstoqueService {
 	boolean validarProdutoEmRecolhimento(ProdutoEdicao produtoEdicao);
 
     void validarRateioParaCotasInativas(List<RateioCotaVO> rateioCotas);
+	
+	Diferenca lancarDiferencaFechamentoCEIntegracao(Diferenca diferenca, 
+			   MovimentoEstoque movimentoEstoque,
+			   StatusAprovacao statusAprovacao);
 	
 }
