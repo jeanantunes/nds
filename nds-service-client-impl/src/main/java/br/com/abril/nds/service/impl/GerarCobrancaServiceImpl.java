@@ -1832,24 +1832,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
 					
-//					if (negociacao != null) {
-//					    
-//						if (!negociacao.isNegociacaoAvulsa()) {
-//						
-//						    this.parcelaNegociacaoRepository.excluirPorNegociacao(negociacao.getId());
-//						
-//						    this.negociacaoRepository.remover(negociacao);
-//						    
-//						    this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
-//						}
-//					
-//					} else {
+					this.removerDividaCobrancaConsolidado(divida, consolidado, dataOperacao);
 					
-						this.removerDividaCobrancaConsolidado(divida, consolidado, dataOperacao);
-//					}
 				}
-
-				List<MovimentoFinanceiroCota> mfcs = consolidado.getMovimentos();
+				
+				List<MovimentoFinanceiroCota> mfcs = movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDeConsolidado(consolidado.getId());
 				
 				consolidado.setMovimentos(null);
 				
