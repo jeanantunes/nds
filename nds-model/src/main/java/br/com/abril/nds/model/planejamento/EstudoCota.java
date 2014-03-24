@@ -342,7 +342,6 @@ public class EstudoCota implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime * result + ((this.getCota() == null) ? 0 : this.getCota().hashCode());
 		result = prime * result + ((this.getEstudo() == null) ? 0 : this.getEstudo().hashCode());
 		result = prime * result + ((this.getMovimentosEstoqueCota() == null) ? 0 : this.getMovimentosEstoqueCota().hashCode());
 		return result;
