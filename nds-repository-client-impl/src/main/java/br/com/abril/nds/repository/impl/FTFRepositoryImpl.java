@@ -362,7 +362,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	}
 
 	@Override
-	public void atualizarRetornoFTF(List<FTFRetTipoRegistro01> list) {
+	public void atualizarRetornoFTF(final List<FTFRetTipoRegistro01> list) {
 
 		StringBuilder builder  = new StringBuilder("");
 		builder.append("  UPDATE nota_fiscal_novo ") 
@@ -380,7 +380,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 	}
 
-	public FTFEnvTipoRegistro06 obterRegistroTipo06(NotaFiscalReferenciada nota) {
+	public FTFEnvTipoRegistro06 obterRegistroTipo06(final NotaFiscalReferenciada nota) {
 
 		FTFEnvTipoRegistro06 tipoRegistro06 = null;
 		NotaFiscal notaFiscal = nota.getPk().getNotaFiscal();
@@ -401,7 +401,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	}
 
 	@Override
-	public FTFEnvTipoRegistro06 obterRegistroTipo06(Long idNF) {
+	public FTFEnvTipoRegistro06 obterRegistroTipo06(final Long idNF) {
 
 		StringBuilder sb = new StringBuilder();
 

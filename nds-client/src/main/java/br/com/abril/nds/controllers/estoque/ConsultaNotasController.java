@@ -36,8 +36,8 @@ import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
+import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -99,7 +99,7 @@ public class ConsultaNotasController extends BaseController {
 	}
 	
 	@Get
-	public void exportar(FileType fileType) throws IOException {
+	public void exportar(final FileType fileType) throws IOException {
 		
 		if (fileType == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
@@ -137,11 +137,11 @@ public class ConsultaNotasController extends BaseController {
 		
 	}
 
-	public void pesquisarDetalhesNotaFiscal(Long idNota, int page, int rp, String sortname, String sortorder) {
+	public void pesquisarDetalhesNotaFiscal(final Long idNota, final int page, final int rp, final String sortname, final String sortorder) {
 
-		PaginacaoVO paginacao = new PaginacaoVO(sortname, sortorder);
+		final PaginacaoVO paginacao = new PaginacaoVO(sortname, sortorder);
 		
-		DetalheNotaFiscalDTO detalheNotaFiscal = this.notaFiscalService.obterDetalhesNotaFical(idNota, paginacao);
+		final DetalheNotaFiscalDTO detalheNotaFiscal = this.notaFiscalService.obterDetalhesNotaFical(idNota, paginacao);
 
 		if (detalheNotaFiscal == null || detalheNotaFiscal.getItensDetalhados() == null
 									  || detalheNotaFiscal.getItensDetalhados().isEmpty()) {

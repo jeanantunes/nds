@@ -487,7 +487,7 @@ public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribu
 		
 		Boolean regimeEspecial = 
 				(Boolean) this.getSession().createQuery(
-						"select regimeEspecial from Distribuidor").uniqueResult();
+						"select possuiRegimeEspecialDispensaInterna from Distribuidor").uniqueResult();
 		
 		return regimeEspecial == null ? false : regimeEspecial;
 	}
