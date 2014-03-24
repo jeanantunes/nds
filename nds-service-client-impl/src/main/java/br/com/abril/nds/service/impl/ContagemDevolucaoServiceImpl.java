@@ -4,8 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -17,36 +15,29 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.assembler.ChamadaEncalheFornecedorDTOAssembler;
 import br.com.abril.nds.client.vo.ProdutoEdicaoFechadaVO;
 import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.dto.ContagemDevolucaoAgregationValuesDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
-import br.com.abril.nds.dto.chamadaencalhe.ChamadasEncalheFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
@@ -60,7 +51,6 @@ import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
@@ -77,19 +67,21 @@ import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EdicoesFechadasService;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+
 @Service
 public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContagemDevolucaoServiceImpl.class);
 
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
@@ -147,13 +139,17 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
-
+	
+	@Autowired
+	private EstoqueProdutoService estoqueProdutoService;
 	
 	@Transactional
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
 
 		InfoContagemDevolucaoDTO info = new InfoContagemDevolucaoDTO();
-
+		
+		this.tratarFiltroPesquisaFornecedores(filtroPesquisa);
+		
 		ContagemDevolucaoAgregationValuesDTO contagemDevolucaoAgregationValues = 
 				movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(filtroPesquisa);
 
@@ -172,11 +168,38 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		return info;	
 	}
 	
+	private void tratarFiltroPesquisaFornecedores(final FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa){
+		
+		if(filtroPesquisa.getIdFornecedor() == null){
+			
+			filtroPesquisa.setFornecedores(this.obterIdsFornecedoresNaoUnificados());
+		}
+		else{
+			
+			filtroPesquisa.setFornecedores(Lists.newArrayList(filtroPesquisa.getIdFornecedor()));
+		}
+	}
+	
+	private List<Long> obterIdsFornecedoresNaoUnificados(){
+		
+		List<Fornecedor> forncedores = fornecedorService.obterFornecedoresNaoUnificados();
+		
+		Collection<Long> ids = Collections2.transform(forncedores,new Function<Fornecedor, Long>() {
+				public Long apply(final Fornecedor item) {
+					return item.getId();
+				}
+			}
+		);
+		
+		return Lists.newArrayList(ids);
+	}
+	
 	
 	@Override
 	@Transactional(readOnly=true)
 	public List<ContagemDevolucaoConferenciaCegaDTO> obterInfoContagemDevolucaoCega(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
 		
+		this.tratarFiltroPesquisaFornecedores(filtroPesquisa);
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
 				filtroPesquisa, indPerfilUsuarioEncarregado);
@@ -380,6 +403,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		}
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
+		contagem.setIdProdutoEdicao(produtoEdicao.getId());
 		
 		ConferenciaEncalheParcial conferenciaEncalheParcial = new ConferenciaEncalheParcial();
 		
@@ -434,9 +458,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			aprovarConferenciaEncalheParcial(listaConferenciaEncalheParcial, dataOperacao, usuario);
 			
 		}
-		
-		
-		
 	}
 	
 	
@@ -451,7 +472,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		if (produtoEdicao == null) {
 			
 			throw new ValidacaoException(
-TipoMensagem.ERROR,
+					TipoMensagem.ERROR,
                     "Não foi encontrado o produto/edição para inventário de estoque!");
 		}
 
@@ -495,13 +516,10 @@ TipoMensagem.ERROR,
 			parcial.setResponsavel(usuario);
 			parcial.setDataAprovacao(dataOperacao);
 			
-			conferenciaEncalheParcialRepository.alterar(parcial);
-			
-		}
-		
+			conferenciaEncalheParcialRepository.alterar(parcial);	
+		}		
 	}
-	
-	
+
 	private void sinalizarItemNFParcialGerada(ContagemDevolucaoDTO contagem) {
 		
 		List<ConferenciaEncalheParcial> listaConferenciaEncalheParcial = 
@@ -524,8 +542,11 @@ TipoMensagem.ERROR,
 		
 	}
 	
-	
-	private void ajustarDiferencaConferenciaEncalheContagemDevolucao(ContagemDevolucaoDTO contagem, Usuario usuario) {
+	private void processarMovimentosPerdaGanhoEstoque(
+			ContagemDevolucaoDTO contagem, 
+			Usuario usuario,
+			TipoMovimentoEstoque tipoMovimentoPerda,
+			TipoMovimentoEstoque tipoMovimentoSobraEmReparte){
 		
 		if(contagem.getQtdDevolucao() == null) {
 			contagem.setQtdDevolucao(BigInteger.ZERO);
@@ -537,38 +558,85 @@ TipoMensagem.ERROR,
 		
 		BigInteger calculoQdeDiferenca = contagem.getQtdDevolucao().subtract(contagem.getQtdNota());
 		
-		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		produtoEdicao.setId(contagem.getIdProdutoEdicao());					
-
-		Diferenca diferenca = new Diferenca();
-		
 		if( calculoQdeDiferenca.compareTo(BigInteger.ZERO) < 0 ) {
 			
-			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_DE);
+			//TIPO MOVIMENTO SOBRA_EM_ENCALHE (criar tipo de movimento de estoque)
+			if(tipoMovimentoSobraEmReparte == null){
+				tipoMovimentoSobraEmReparte = 
+						tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_EM_DEVOLUCAO);
+			}
+			
+			MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(
+					contagem.getIdProdutoEdicao(),
+					usuario.getId(), calculoQdeDiferenca.abs(), 
+					tipoMovimentoSobraEmReparte);
+			
+			ProdutoEdicao produtoEdicao  = produtoEdicaoRepository.buscarPorId(contagem.getIdProdutoEdicao());
+			
+			this.processarDiferenca(movimentoEstoque, 
+									usuario, 
+									produtoEdicao, 
+									calculoQdeDiferenca, 
+									TipoDiferenca.GANHO_EM, 
+									tipoMovimentoPerda.getGrupoMovimentoEstoque().getTipoEstoque(), 
+									StatusAprovacao.GANHO);
 			
 		} else if(calculoQdeDiferenca.compareTo(BigInteger.ZERO) > 0) {
 			
-			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_DE);
+			//TIPO MOVIMENTO PERDA_EM_DEVOLUCAO
+			if(tipoMovimentoPerda == null){
+				tipoMovimentoPerda = 
+						tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.PERDA_EM_DEVOLUCAO);
+			}
 			
-		} else if(calculoQdeDiferenca.compareTo(BigInteger.ZERO) == 0) {
+			MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(
+					contagem.getIdProdutoEdicao(),
+					usuario.getId(), 
+					calculoQdeDiferenca, 
+					tipoMovimentoPerda,Origem.TRANSFERENCIA_PERDA_EM_DEVOLUCAO_ENCALHE_FORNECEDOR);
 			
-			sinalizarDiferencaApurada(contagem);
+			ProdutoEdicao produtoEdicao  = produtoEdicaoRepository.buscarPorId(contagem.getIdProdutoEdicao());
 			
-			return;
+			this.processarDiferenca(movimentoEstoque, 
+									usuario, 
+									produtoEdicao, 
+									calculoQdeDiferenca, 
+									TipoDiferenca.PERDA_EM, 
+									tipoMovimentoPerda.getGrupoMovimentoEstoque().getTipoEstoque(), 
+									StatusAprovacao.PERDA);
 			
-		}
-		
-		diferenca.setQtde(calculoQdeDiferenca.abs());
-		diferenca.setResponsavel(usuario);
-		diferenca.setProdutoEdicao(produtoEdicao);
-		
-		diferencaEstoqueService.lancarDiferencaAutomaticaContagemDevolucao(diferenca);
-		
-		sinalizarDiferencaApurada(contagem);
+		} 
 		
 	}
 	
-	        /**
+	private Diferenca processarDiferenca(MovimentoEstoque movimentoEstoque,
+			Usuario usuario,
+			ProdutoEdicao produtoEdicao, 
+			BigInteger quantidade,
+			TipoDiferenca tipoDiferenca,
+			TipoEstoque tipoEstoque, 
+			StatusAprovacao statusAprovacao){
+		
+		Diferenca diferenca = new Diferenca();
+		
+		diferenca.setResponsavel(usuario);
+		
+		diferenca.setProdutoEdicao(produtoEdicao);
+		
+		diferenca.setTipoDiferenca(tipoDiferenca);
+			
+		diferenca.setTipoEstoque(tipoEstoque);			
+		
+		diferenca.setQtde(quantidade);
+			
+		diferenca.setQtde(quantidade);
+		
+		diferenca = diferencaEstoqueService.lancarDiferencaFechamentoCEIntegracao(diferenca,movimentoEstoque, statusAprovacao);
+		
+		return diferenca;
+	}
+		
+	 /**
      * Obtém os registro de ConferenciaEncalheParcial relativos a um objeto de
      * contagem agrupado e sinaliza-os mesmo que a diferenca foi apurada.
      * 
@@ -596,9 +664,7 @@ TipoMensagem.ERROR,
 		
 	}
 
-	
-	
-	        /**
+	 /**
      * Separa os itens a serem utilizados na geração da NF por fornecedor,
      * gerando assim uma NF para cada grupo de produtos de um fornecedor.
      * 
@@ -713,8 +779,10 @@ TipoMensagem.ERROR,
 				null, 
 				processos, 
 				Condicao.DEVOLUCAO_ENCALHE);
-
-		this.gerarMovimentoEstoque(listaAgrupadaContagemDevolucao);
+		
+		Usuario usuario = usuarioService.getUsuarioLogado();
+		
+		this.gerarMovimentoEstoque(listaAgrupadaContagemDevolucao,usuario.getId());
 		
 		List<NotaFiscal> listaNotas = new ArrayList<NotaFiscal>();
 		
@@ -733,21 +801,14 @@ TipoMensagem.ERROR,
 		}
 	}
 	
-	private void gerarMovimentoEstoque(List<ContagemDevolucaoDTO> listaContagemDevolucao) {
+	private void gerarMovimentoEstoque(List<ContagemDevolucaoDTO> listaContagemDevolucao, Long idUsuario) {
+		
+		TipoMovimentoEstoque tipoMovimentoDevolucaoEncalhe = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
 		
 		for ( ContagemDevolucaoDTO contagem : listaContagemDevolucao ) {
-
-			TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
-
-			movimentoEstoqueService.gerarMovimentoEstoque(
-					null,
-					contagem.getIdProdutoEdicao(), 
-					usuarioService.getUsuarioLogado().getId(), 
-					contagem.getQtdNota(),
-					tipoMovimento);
-
+			
+			movimentoEstoqueService.gerarMovimentoEstoque(contagem.getIdProdutoEdicao(),idUsuario,contagem.getQtdNota(),tipoMovimentoDevolucaoEncalhe);
 		}
-		
 	}
 	
 	        /**
@@ -894,7 +955,59 @@ TipoMensagem.ERROR,
 		return listaContagemEdicaoFechada;
 	}
 	
-    @Override
+	
+	@Transactional
+	public void efetuarDevolucaoParcial(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario){
+		
+		this.confirmarValoresContagemDevolucao(listaContagemDevolucao, usuario);
+		
+		this.gerarMovimentoEstoque(listaContagemDevolucao, usuario.getId());
+	}
+	
+	@Transactional
+	public void efetuarDevolucaoFinal(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario){
+		
+		this.confirmarValoresContagemDevolucao(listaContagemDevolucao, usuario);
+		
+		List<ContagemDevolucaoDTO> listaAgrupadaContagemDevolucao = 
+				obterListaContagemDevolucaoTotalAgrupado(listaContagemDevolucao, null, false, StatusAprovacao.APROVADO);
+		
+		TipoMovimentoEstoque tipoMovimentoDevolucaoEncalhe = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+		
+		TipoMovimentoEstoque tipoMovimentoSobraEmReparte = null;
+		
+		TipoMovimentoEstoque tipoMovimentoPerda = null;
+		
+		for ( ContagemDevolucaoDTO item : listaAgrupadaContagemDevolucao ) {
+			
+			estoqueProdutoService.processarTransferencaiEntreEstoques(
+					item.getIdProdutoEdicao(),
+					TipoEstoque.LANCAMENTO, 
+					TipoEstoque.DEVOLUCAO_ENCALHE, 
+					usuario.getId());
+			
+			estoqueProdutoService.processarTransferencaiEntreEstoques(
+					item.getIdProdutoEdicao(),
+					TipoEstoque.SUPLEMENTAR, 
+					TipoEstoque.DEVOLUCAO_ENCALHE, 
+					usuario.getId());
+			
+			this.processarMovimentosPerdaGanhoEstoque(
+					item, 
+					usuario, 
+					tipoMovimentoPerda,
+					tipoMovimentoSobraEmReparte);
+			
+			movimentoEstoqueService.gerarMovimentoEstoque(
+					item.getIdProdutoEdicao(),
+					usuario.getId(),
+					item.getQtdNota(),
+					tipoMovimentoDevolucaoEncalhe);
+		}
+	}
+	
+	@Override
     @Transactional
 	public void gerarNotasFiscaisPorFornecedorFecharLancamentos(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) throws FileNotFoundException, IOException {
 		
