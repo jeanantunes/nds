@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -41,5 +42,18 @@ public class TipoMovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<
 		
 		return criteria.list();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> buscarIdTiposMovimentoEstoque(List<GrupoMovimentoEstoque> gruposMovimentoEstoque) {
+
+		Query query = super.getSession().createQuery( " select tm.id from TipoMovimentoEstoque tm "
+				+ " where tm.grupoMovimentoEstoque in (:gruposMovimentoEstoque) ");
+		
+		query.setParameterList("gruposMovimentoEstoque", gruposMovimentoEstoque);
+		
+		return query.list();
+	}
+
 	
 }

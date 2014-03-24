@@ -1908,5 +1908,27 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
  	    query.setParameter("idMovimentoFinanceiroCota", idMovimentoFinanceiroCota);
 
 		return ((MovimentoFinanceiroCota) query.uniqueResult())!=null;
-	}	
+	}
+	
+	
+    public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDeConsolidado(final Long idConsolidado){
+    	
+    	StringBuilder hql = new StringBuilder("")
+    	
+    	.append("  SELECT MFC.* FROM MOVIMENTO_FINANCEIRO_COTA MFC ")
+    	
+    	.append("  WHERE MFC.ID IN ( SELECT DISTINCT MVTO_FINANCEIRO_COTA_ID  ")
+    	
+    	.append("  FROM CONSOLIDADO_MVTO_FINANCEIRO_COTA WHERE CONSOLIDADO_FINANCEIRO_ID = :idConsolidado ) ");
+
+        Query query = this.getSession().createSQLQuery(hql.toString()).addEntity(MovimentoFinanceiroCota.class);
+
+ 	    query.setParameter("idConsolidado", idConsolidado);
+
+		return query.list();
+		
+	}
+	
+	
+	
 }
