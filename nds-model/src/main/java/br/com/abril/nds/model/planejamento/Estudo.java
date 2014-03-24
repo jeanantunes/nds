@@ -274,7 +274,6 @@ public class Estudo implements Serializable  {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime * result + ((this.getEstudoCotas() == null) ? 0 : this.getEstudoCotas().hashCode());
 		result = prime * result + ((this.getLancamentos() == null) ? 0 : this.getLancamentos().hashCode());
 		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
 		return result;

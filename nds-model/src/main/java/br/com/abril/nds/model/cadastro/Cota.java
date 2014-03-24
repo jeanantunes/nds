@@ -629,14 +629,12 @@ public class Cota implements Serializable {
 		this.cotasUnificacao = cotasUnificacao;
 	}
 
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.getId() == null) ? 0 : getId().hashCode());
 		result = prime * result + ((this.getNumeroCota() == null) ? 0 : getNumeroCota().hashCode());
-		result = prime * result + ((this.getBox() == null) ? 0 : getBox().hashCode());
 		result = prime * result + ((this.getChamadaEncalheCotas() == null) ? 0 : getChamadaEncalheCotas().hashCode());
 		result = prime * result + ((this.getClassificacaoEspectativaFaturamento() == null) ? 0 : getClassificacaoEspectativaFaturamento().hashCode());
 		result = prime * result + ((this.getEnderecos() == null) ? 0 : getEnderecos().hashCode());
