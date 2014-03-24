@@ -147,15 +147,15 @@ public class Box implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
-		result = prime * result + ((cotas == null) ? 0 : cotas.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		result = prime * result + ((this.getCodigo() == null) ? 0 : getCodigo().hashCode());
+		result = prime * result + ((this.getCotas()== null) ? 0 : getCotas().hashCode());
+		result = prime * result + ((this.getId() == null) ? 0 : getId().hashCode());
+		result = prime * result + ((this.getNome() == null) ? 0 : getNome().hashCode());
 		result = prime * result
-				+ ((roteirizacao == null) ? 0 : roteirizacao.hashCode());
-		result = prime * result + ((tipoBox == null) ? 0 : tipoBox.hashCode());
+				+ ((this.getRoteirizacao() == null) ? 0 : getRoteirizacao().hashCode());
+		result = prime * result + ((this.getTipoBox() == null) ? 0 : getTipoBox().hashCode());
 		result = prime * result
-				+ ((usuarios == null) ? 0 : usuarios.hashCode());
+				+ ((this.getUsuarios() == null) ? 0 : getUsuarios().hashCode());
 		return result;
 	}
 
@@ -168,37 +168,37 @@ public class Box implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Box other = (Box) obj;
-		if (codigo == null) {
-			if (other.codigo != null)
+		if (this.getCodigo() == null) {
+			if (other.getCodigo() != null)
 				return false;
-		} else if (!codigo.equals(other.codigo))
+		} else if (!this.getCodigo().equals(other.getCodigo()))
 			return false;
-		if (cotas == null) {
-			if (other.cotas != null)
+		if (this.getCotas() == null) {
+			if (other.getCotas() != null)
 				return false;
-		} else if (!cotas.equals(other.cotas))
+		} else if (!this.getCotas().equals(other.getCotas()))
 			return false;
-		if (id == null) {
-			if (other.id != null)
+		if (this.getId() == null) {
+			if (other.getId() != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!this.getId().equals(other.getId()))
 			return false;
-		if (nome == null) {
-			if (other.nome != null)
+		if (this.getNome() == null) {
+			if (other.getNome() != null)
 				return false;
-		} else if (!nome.equals(other.nome))
+		} else if (!this.getNome().equals(other.getNome()))
 			return false;
-		if (roteirizacao == null) {
-			if (other.roteirizacao != null)
+		if (this.getRoteirizacao() == null) {
+			if (other.getRoteirizacao() != null)
 				return false;
-		} else if (!roteirizacao.equals(other.roteirizacao))
+		} else if (!this.getRoteirizacao().equals(other.getRoteirizacao()))
 			return false;
-		if (tipoBox != other.tipoBox)
+		if (this.getTipoBox() != other.getTipoBox())
 			return false;
-		if (usuarios == null) {
-			if (other.usuarios != null)
+		if (this.getUsuarios() == null) {
+			if (other.getUsuarios() != null)
 				return false;
-		} else if (!usuarios.equals(other.usuarios))
+		} else if (!this.getUsuarios().equals(other.getUsuarios()))
 			return false;
 		return true;
 	}

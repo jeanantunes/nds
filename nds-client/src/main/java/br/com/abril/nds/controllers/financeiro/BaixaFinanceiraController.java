@@ -854,12 +854,12 @@ public class BaixaFinanceiraController extends BaseController {
 	                               Long idBanco,
 	                               Date dataPagamento){
 		
-		BigDecimal valorDividasConvertido = CurrencyUtil.converterValor(valorDividas);
-		BigDecimal valorMultaConvertido = CurrencyUtil.converterValor(valorMulta);
-	    BigDecimal valorJurosConvertido = CurrencyUtil.converterValor(valorJuros);
-		BigDecimal valorDescontoConvertido = CurrencyUtil.converterValor(valorDesconto);
-		BigDecimal valorSaldoConvertido = CurrencyUtil.converterValor(valorSaldo);
-		BigDecimal valorPagamentoConvertido = CurrencyUtil.converterValor(valorPagamento);
+		BigDecimal valorDividasConvertido = CurrencyUtil.getBigDecimal(valorDividas);
+		BigDecimal valorMultaConvertido = CurrencyUtil.getBigDecimal(valorMulta);
+	    BigDecimal valorJurosConvertido = CurrencyUtil.getBigDecimal(valorJuros);
+		BigDecimal valorDescontoConvertido = CurrencyUtil.getBigDecimal(valorDesconto);
+		BigDecimal valorSaldoConvertido = CurrencyUtil.getBigDecimal(valorSaldo);
+		BigDecimal valorPagamentoConvertido = CurrencyUtil.getBigDecimal(valorPagamento);
 		
 		this.validarBaixaManualDividas(tipoPagamento, idCobrancas, idBanco,valorMultaConvertido, 
 								  		valorJurosConvertido,valorDescontoConvertido, valorSaldoConvertido,dataPagamento);
