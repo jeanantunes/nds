@@ -64,6 +64,7 @@ public class IntegracaoFiscalRepositoryImpl extends AbstractRepositoryModel<Movi
 		String val = c.get(Calendar.YEAR)+"-"+(c.get(Calendar.MONTH)+1)+"-"+c.get(Calendar.DAY_OF_MONTH);
 		query.setParameter("dataInventario",val);
 		query.setParameter("dataInventario2",val);
+		query.setParameter("dataNow", c);
 		query.setParameter("codEmpresa",dist.getJuridica().getCnpj().substring(0,dist.getJuridica().getCnpj().indexOf("/")).replace(".",""));
 		query.setParameter("codFilial",dist.getCodigo().toString());
 		
@@ -82,12 +83,16 @@ public class IntegracaoFiscalRepositoryImpl extends AbstractRepositoryModel<Movi
 			
 			sql.append(" :codEmpresa cod_empresa, ")
 			.append(" :codFilial cod_filial, ")
-			.append(" replace(cast(round(t.custo_unitario,4) as char),'.',',') custo_unitario,  ") 
+			.append(" DATE_FORMAT(last_day(:dataInventario2),'%d/%m/%Y') dat_inventario, ")
+			.append(" T.codMaterial cod_material, ")
+			.append(" cast(coalesce(T.ncmCodigo,'') as char) as classif_fiscal, ")
+			.append(" replace(cast(round((CASE WHEN t.descontoAplicado > 0 THEN (t.custo_unitario-(t.custo_unitario * (t.descontoAplicado - 100))) ")
+			.append(" 			else t.custo_unitario END), 4) AS char), '.', ',') custo_unitario, ")
+			.append(" replace(cast(round(((CASE WHEN t.descontoAplicado > 0 THEN (t.custo_unitario-(t.custo_unitario * (t.descontoAplicado - 100))) ") 
+			.append(" 	else t.custo_unitario END)* round(sum(entrada) - sum(saida))), 4) AS char), '.', ',') custo_total, ")
 			.append(" cast(round(sum(entrada)-sum(saida)) as char) quantidade, ")
-			.append(" 'UN' as unidade_medida, ")
-			.append(" replace(cast(round((sum(entrada)-sum(saida))*t.custo_unitario,3) as char),'.',',') custo_total, ") 
-			.append(" DATE_FORMAT(last_day(:dataInventario2),'%d/%m/%Y') dat_inventario, ") 
-			.append(" cast(coalesce(T.ncmCodigo,'') as char) as classif_fiscal ");
+			.append(" :dataNow as openflex02, ")
+			.append(" CONCAT(T.codProduto, T.numeroEdicao) openflex03 ");
 			
 		}else{
 			sql.append(" count(*) ");
@@ -97,16 +102,24 @@ public class IntegracaoFiscalRepositoryImpl extends AbstractRepositoryModel<Movi
 				.append(" (select ")
 		        .append(" me.ID as MOVIMENTO_ID, ")
 		        .append(" pe.id as produto_edicao_id, ")
+		        .append(" pe.NUMERO_EDICAO as numeroEdicao, ")
+		        .append(" p.codigo as codProduto, ")
 		        .append(" pe.preco_venda as custo_unitario, ")
 		        .append(" me.DATA as DATA_CRIACAO, ")
 		        .append(" tipomovime1_.DESCRICAO as DESCRICAO, ")
 		        .append(" ncm.codigo as ncmCodigo, ")
+		        .append(" pe.CODIGO_DE_BARRAS as codMaterial, ")
 		        .append(" sum(case  when tipomovime1_.OPERACAO_ESTOQUE='ENTRADA' then me.QTDE ") 
 		            .append(" else 0 ") 
 		        .append(" end) as ENTRADA, ")
 		        .append(" sum(case when tipomovime1_.OPERACAO_ESTOQUE='SAIDA' then me.QTDE ") 
 		            .append(" else 0 ") 
-		        .append(" end) as SAIDA ") 
+		        .append(" end) as SAIDA, ")
+		        
+		        .append(" ifnull(CASE WHEN p.ORIGEM = 'MANUAL' THEN ifnull(pe.DESCONTO, p.desconto) ")
+		        .append(" 	ELSE ifnull(dl.PERCENTUAL_DESCONTO, p.desconto) ")
+		        .append("   	END, 0) as descontoAplicado ")
+		        
 		    .append(" from ")
 		        .append(" MOVIMENTO_ESTOQUE me, ")
 		        .append(" TIPO_MOVIMENTO tipomovime1_ cross ") 
@@ -116,6 +129,7 @@ public class IntegracaoFiscalRepositoryImpl extends AbstractRepositoryModel<Movi
 		        .append(" PRODUTO p ") 
 		        .append(" left join TIPO_PRODUTO tp on p.tipo_produto_id = tp.ID ")
 		        .append(" left join NCM ncm on ncm.ID = tp.NCM_ID ")
+		        .append(" LEFT JOIN desconto_logistica dl ON pe.DESCONTO_LOGISTICA_ID = dl.ID ")
 		        
 		    .append(" where ")
 		        .append(" me.TIPO_MOVIMENTO_ID=tipomovime1_.ID ") 
@@ -168,9 +182,6 @@ public class IntegracaoFiscalRepositoryImpl extends AbstractRepositoryModel<Movi
 		
 		String val = c.get(Calendar.YEAR)+"-"+(c.get(Calendar.MONTH)+1)+"-"+c.get(Calendar.DAY_OF_MONTH);
 		query.setParameter("dataInventario",val);
-		/*query.setParameter("dataInventario2",val);
-		query.setParameter("codEmpresa",dist.getJuridica().getCnpj().substring(0,dist.getJuridica().getCnpj().indexOf("/")).replace(".",""));
-		query.setParameter("codFilial",dist.getCodigo().toString());*/
 		Object uniqueResult = query.uniqueResult();
 		
 		return ((BigInteger)uniqueResult).intValue();

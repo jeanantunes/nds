@@ -25,7 +25,7 @@ $(function(){
 	    	$(".ui-datepicker-calendar").hide();
 	    }
 	});
-	$( "#datepickerMesAno").datepicker($.datepicker.regional[ "pt-BR" ]);
+	$( "#datepickerMesAno").datepicker($.datepicker.regional["pt-BR"]);
 });
 
 function submitForm(f){
@@ -41,6 +41,7 @@ function submitForm(f){
 						console.log(result);
 						if(result.quantidadeGerada>0){
 							$(f).submit();
+							exibirMensagem("SUCCESS", [" Aguarde enquanto o arquivo é gerado e disponibilizado para download! "]);
 						}else{
 							exibirMensagem("WARNING", ["Nenhum dado encontrado para inventário."]);							
 						}
