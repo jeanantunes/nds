@@ -17,10 +17,10 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
-import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.integracao.StatusIntegracaoNFE;
+import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.model.planejamento.fornecedor.StatusCeNDS;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
@@ -68,7 +68,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("		then ");
 		hql.append("			 COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, 0) ");
 		hql.append("		else	");	
-		hql.append("			(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA ");
+		hql.append("			(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA,0) ");
 		hql.append("				- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
 		hql.append("					  	COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) ");
 		hql.append("						 + COALESCE(ESTOQUE_PROD.QTDE,0) ");		
@@ -80,11 +80,10 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("		then");
 		hql.append("			COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, 0) * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO"); 
 		hql.append("		else ");     		
-		hql.append("			(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA ");
+		hql.append("			(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA,0) ");
 		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
 		hql.append("					COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
 		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
-		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR, 0) ");
 		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
 		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) ");		
 		hql.append("			   )");
@@ -95,16 +94,27 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("    	then");
 		hql.append("			COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA, 0) ");
 		hql.append("		else ");
-		hql.append("			COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA, ");
-		hql.append("					COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
-		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
-		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR, 0) ");
-		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
-		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) ");	
-		hql.append("			) ");
+		hql.append("			if(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA is not null,COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,0), ");
+		hql.append("			COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
+		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
+		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
+		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0)) ");	
 		hql.append("	end AS encalhe, ");
 		
-		hql.append(" chmFornecedor.STATUS_INTEGRACAO_NFE AS statusIntegracaoNFE ");
+		hql.append(" chmFornecedor.STATUS_INTEGRACAO_NFE AS statusIntegracaoNFE, ");
+		
+		hql.append(" if( ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO <> 'PARCIAL' && DIFERENC.QTDE is not null && DIFERENC.STATUS_CONFIRMACAO <> 'CANCELADO', ");
+		hql.append(" if( DIFERENC.TIPO_DIFERENCA = 'PERDA_EM', DIFERENC.QTDE * -1, DIFERENC.QTDE ), null)");	
+		hql.append(" AS diferenca, ");
+		
+		hql.append("	case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL' ");
+		hql.append("		then COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA, 0) ");
+		hql.append("		else	");	
+		hql.append("			COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
+		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
+		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
+		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) ");	
+		hql.append("	end AS estoque ");
 		 
 		hql.append(this.obterHqlFrom(filtro));
 		
@@ -131,6 +141,8 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 						.addScalar("encalhe", StandardBasicTypes.BIG_INTEGER)
 						.addScalar("idItemCeIntegracao",StandardBasicTypes.LONG)
 						.addScalar("statusIntegracaoNFE",origemEnumType)
+						.addScalar("diferenca", StandardBasicTypes.BIG_INTEGER)
+						.addScalar("estoque", StandardBasicTypes.BIG_INTEGER)
 						.setResultTransformer(Transformers.aliasToBean(ItemFechamentoCEIntegracaoDTO.class));	
 		
 		this.aplicarParametros(filtro, query);
@@ -220,6 +232,35 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 	
 	private String obterHqlFrom(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
+		StringBuilder hql = montarSqlFrom();
+		
+		hql.append(" WHERE ");
+		
+		hql.append(" chmFornecedor.ANO_REFERENCIA = :anoReferencia  ");
+		
+		hql.append(" AND chmFornecedor.NUMERO_SEMANA = :numeroSemana ");
+		
+		//FILTRA FORNECEDORES UNIFICADOS
+		hql.append(" AND ( FORNEC.FORNECEDOR_UNIFICADOR_ID is not null OR exists  ");
+		
+		hql.append(" 	(SELECT FOR_UNI.ID FROM FORNECEDOR FOR_UNI WHERE FOR_UNI.FORNECEDOR_UNIFICADOR_ID = FORNEC.ID) ) ");
+		
+		if(filtro.getIdFornecedor() != null){
+			
+			hql.append(" AND FORNEC.ID = :idFornecedor ");
+		}
+		
+		if(filtro.getIdItemChamadaEncalheFornecedor() != null){
+			
+			hql.append(" AND ITEM_CH_ENC_FORNECEDOR.ID = :idItemChamadaEncalheFornecedor ");
+		}
+		
+		
+		return hql.toString();
+	}
+
+	private StringBuilder montarSqlFrom() {
+		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" FROM ");
@@ -260,30 +301,13 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 	    hql.append("        ON ( ");
 		hql.append("            PRODFORN.FORNECEDORES_ID = FORNEC.ID ");
 		hql.append("        ) ");
+		hql.append(" LEFT JOIN ");
+	    hql.append("    DIFERENCA DIFERENC ");
+	    hql.append("        ON ( ");
+		hql.append("            DIFERENC.ID = ITEM_CH_ENC_FORNECEDOR.DIFERENCA_ID ");
+		hql.append("        ) ");
 		
-		hql.append(" WHERE ");
-		
-		hql.append(" chmFornecedor.ANO_REFERENCIA = :anoReferencia  ");
-		
-		hql.append(" AND chmFornecedor.NUMERO_SEMANA = :numeroSemana ");
-		
-		//FILTRA FORNECEDORES UNIFICADOS
-		hql.append(" AND ( FORNEC.FORNECEDOR_UNIFICADOR_ID is not null OR exists  ");
-		
-		hql.append(" 	(SELECT FOR_UNI.ID FROM FORNECEDOR FOR_UNI WHERE FOR_UNI.FORNECEDOR_UNIFICADOR_ID = FORNEC.ID) ) ");
-		
-		if(filtro.getIdFornecedor() != null){
-			
-			hql.append(" AND FORNEC.ID = :idFornecedor ");
-		}
-		
-		if(filtro.getIdItemChamadaEncalheFornecedor() != null){
-			
-			hql.append(" AND ITEM_CH_ENC_FORNECEDOR.ID = :idItemChamadaEncalheFornecedor ");
-		}
-		
-		
-		return hql.toString();
+		return hql;
 	}
 	
 	private String obterOrdenacao(FiltroFechamentoCEIntegracaoDTO filtro) {
@@ -423,5 +447,97 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		return (FechamentoCEIntegracaoConsolidadoDTO) query.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracaoComDiferenca(FiltroFechamentoCEIntegracaoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		
+		hql.append("    PROD_EDICAO.ID AS idProdutoEdicao, ");
+		
+		hql.append("    ITEM_CH_ENC_FORNECEDOR.NUEMRO_ITEM AS sequencial, ");
+		
+		hql.append("    PROD.CODIGO AS codigoProduto, ");
+		
+		hql.append("    PROD.NOME AS nomeProduto, ");
+		
+		hql.append("    PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao, ");
+		
+		hql.append("    ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA AS reparte, ");
+		
+		hql.append("	ITEM_CH_ENC_FORNECEDOR.ID AS idItemCeIntegracao, ");
+		
+		hql.append("    ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO AS tipoFormatado, ");
+		
+		hql.append("    ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO AS precoCapa,");
+			
+		hql.append("	(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA,0) ");
+		hql.append("		- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
+		hql.append("		COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) ");
+		hql.append("		+ COALESCE(ESTOQUE_PROD.QTDE,0) )");		
+		hql.append("	) AS venda,");
+		     		
+		hql.append("	(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA,0) ");
+		hql.append("		- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
+		hql.append("		COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
+		hql.append("		+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
+		hql.append("		+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
+		hql.append("		+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) ");		
+		hql.append("			   )");
+		hql.append("			) * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO"); 
+		hql.append("   AS valorVenda,");
+		
+		hql.append("	if(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA is not null,COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,0), ");
+		hql.append("		COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
+		hql.append("		+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
+		hql.append("		+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
+		hql.append("		+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0)) ");	
+		hql.append("	AS encalhe, ");
+		
+		hql.append("	if(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA is null, 0, 	");	
+		hql.append("		COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA, 0) - (COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
+		hql.append("		+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
+		hql.append("		+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
+		hql.append("		+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0))) ");	
+		hql.append("	AS diferenca, ");
+			
+		hql.append("	COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
+		hql.append("	+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
 
+		hql.append("	+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
+		hql.append("	+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) ");	
+		hql.append("	AS estoque ");
+		 
+		hql.append(this.obterHqlFrom(filtro));
+		
+		hql.append(" AND ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO <> :parcial ");
+		
+		hql.append(obterOrdenacao(filtro));
+		
+		Query  query = getSession().createSQLQuery(hql.toString())
+						.addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
+						.addScalar("sequencial", StandardBasicTypes.LONG)
+						.addScalar("codigoProduto", StandardBasicTypes.STRING)
+						.addScalar("nomeProduto", StandardBasicTypes.STRING)
+						.addScalar("numeroEdicao", StandardBasicTypes.LONG)
+						.addScalar("tipoFormatado", StandardBasicTypes.STRING)
+						.addScalar("reparte", StandardBasicTypes.BIG_INTEGER)
+						.addScalar("venda", StandardBasicTypes.BIG_INTEGER)
+						.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL)
+						.addScalar("valorVenda", StandardBasicTypes.BIG_DECIMAL)
+						.addScalar("encalhe", StandardBasicTypes.BIG_INTEGER)
+						.addScalar("idItemCeIntegracao",StandardBasicTypes.LONG)
+						.addScalar("diferenca", StandardBasicTypes.BIG_INTEGER)
+						.addScalar("estoque", StandardBasicTypes.BIG_INTEGER)
+						.setResultTransformer(Transformers.aliasToBean(ItemFechamentoCEIntegracaoDTO.class));	
+		
+		this.aplicarParametros(filtro, query);
+		
+		query.setParameter("parcial", RegimeRecolhimento.PARCIAL.name());
+			
+		return query.list();
+	}
 }

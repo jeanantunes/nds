@@ -67,8 +67,8 @@ public class ChamadaEncalheFornecedorDTOAssembler {
 
                     totalBrutoDocumento = totalBrutoDocumento.add(Util.nvl(icef.getValorVendaApurado(), BigDecimal.ZERO));
                     totalDescontoDocumento = totalDescontoDocumento.add(Util.nvl(icef.getValorMargemApurado(), BigDecimal.ZERO));
-                    totalVendas += icef.getQtdeVendaApurada();
-                    totalItensDevolvidos += icef.getQtdeDevolucaoApurada();
+                    totalVendas += Util.nvl(icef.getQtdeVendaApurada(), 0L);
+                    totalItensDevolvidos += Util.nvl(icef.getQtdeDevolucaoApurada(), 0L);
                     
                 }
                 cefDTO.setTotalBruto(totalBrutoDocumento);

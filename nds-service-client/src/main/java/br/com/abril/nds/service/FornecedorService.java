@@ -186,4 +186,6 @@ public interface FornecedorService {
 	List<Fornecedor> obterFornecedoresDesc();
 	
 	List<ItemDTO<Long, String>> obterFornecedoresUnificados();
+	
+	List<Fornecedor> obterFornecedoresNaoUnificados();
 }

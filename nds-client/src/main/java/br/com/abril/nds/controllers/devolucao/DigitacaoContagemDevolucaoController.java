@@ -117,7 +117,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
      */
 	private void carregarComboFornecedores() {
 		
-		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresAtivos();
+		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresNaoUnificados();
 		
 		List<ItemDTO<Long, String>> listaFornecedoresCombo = new ArrayList<ItemDTO<Long,String>>();
 		
@@ -444,7 +444,7 @@ this.getNDSFileHeader(), filtro,
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
-		contagemDevolucaoService.confirmarContagemDevolucao(listaContagemDevolucaoDTO, getUsuarioLogado());
+		contagemDevolucaoService.efetuarDevolucaoParcial(listaContagemDevolucaoDTO, getUsuarioLogado());
 		
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
@@ -452,9 +452,9 @@ this.getNDSFileHeader(), filtro,
 	}
 	
 	@Post
-	@Path("/geraNota")
+	@Path("/devolucaoFinal")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO_ALTERACAO)
-	public void geraNota(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) throws IOException {
+	public void devolucaoFinal(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) throws IOException {
 		
 		if (listaDigitacaoContagemDevolucao == null 
 				|| listaDigitacaoContagemDevolucao.isEmpty()) {
@@ -464,7 +464,7 @@ this.getNDSFileHeader(), filtro,
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
-		contagemDevolucaoService.gerarNotasFiscaisPorFornecedorFecharLancamentos(listaContagemDevolucaoDTO, getUsuarioLogado());
+		contagemDevolucaoService.efetuarDevolucaoFinal(listaContagemDevolucaoDTO, getUsuarioLogado());
 		
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();

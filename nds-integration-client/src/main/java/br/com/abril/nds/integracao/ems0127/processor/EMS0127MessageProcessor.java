@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.CouchDbClient;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.FormaDevolucao;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.repository.AbstractRepository;
@@ -131,6 +132,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		ce.setTotalMargemInformado(input.getValorTotalMargemInformado());
 		ce.setTotalVendaApurada(input.getValorTotalVendaApurada());
 		ce.setTotalVendaInformada(input.getValorTotalVendaInformada());
+		ce.setControle(input.getNumeroControle());
 		
 		if(input.getItems() != null && !input.getItems().isEmpty()) {
 			ce.setItens(new ArrayList<ItemChamadaEncalheFornecedor>());
@@ -221,6 +223,10 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			ice.setValorMargemInformado(item.getValorMargemInformado());
 			ice.setValorVendaApurado(item.getValorVendaApurada());
 			ice.setValorVendaInformado(item.getValorVendaInformada());
+			
+			if(item.getCodigoFormaDevolucao()!= null){
+				ice.setFormaDevolucao(FormaDevolucao.getByCodigo(item.getCodigoFormaDevolucao().intValue()));
+			}
 			
 			//item.getCodigoLancamentoEdicao()
 

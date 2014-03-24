@@ -767,4 +767,18 @@ public class FornecedorServiceImpl implements FornecedorService {
 		
 		return listaFornecedoresCombo;
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Fornecedor> obterFornecedoresNaoUnificados(){
+		
+		List<Fornecedor> listaFornecedor = fornecedorRepository.obterFornecedoresAtivos();
+		
+		List<Fornecedor> listaFornecedorUnificados = fornecedorRepository.obterFornecedoresUnificados();
+		
+		listaFornecedor.removeAll(listaFornecedorUnificados);
+		
+		return listaFornecedor;
+	}
+	
 }
