@@ -3499,8 +3499,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameterList(
                 "gruposMovimentoReparte",
                 Arrays.asList(
-                        GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO,
-                        GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE));
+                        GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO));
         
         query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));
         

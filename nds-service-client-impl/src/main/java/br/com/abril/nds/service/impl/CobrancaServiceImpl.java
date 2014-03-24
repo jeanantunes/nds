@@ -403,8 +403,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 		cobranca.setJuros( CurrencyUtil.formatarValor(valorJurosCalculado) );
         cobranca.setMulta( CurrencyUtil.formatarValor(valorMultaCalculado) );
         
-        BigDecimal valorTotal = valor.add(valorJurosCalculado).add(valorMultaCalculado);
-		cobranca.setValorTotal( CurrencyUtil.formatarValor(valorTotal) );
+        BigDecimal valorTotal = valor.add(valorJurosCalculado.setScale(2, RoundingMode.HALF_EVEN)).add(valorMultaCalculado.setScale(2, RoundingMode.HALF_EVEN));
+		cobranca.setValorTotal( CurrencyUtil.formatarValor(MathUtil.round(valorTotal,2)) );
 		
 		return cobranca;
 	}
@@ -660,6 +660,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		Map<Long, ComposicaoBaixaFinanceira> mapComposicaoBaixaFinanceira = obterMapaComposicaoBaixasFinanceira(pagamento, cobrancasOrdenadas);
 		
+		//armazena valor arredondado para duas casas para evitar créditos/débitos indevidos oriundos de décimos de centavos
+		BigDecimal valorRestanteAuxiliar = valorPagamentoCobranca.setScale(2, RoundingMode.HALF_EVEN);
+		
 		for (Cobranca itemCobranca:cobrancasOrdenadas) {
 			
 			BigDecimal valorJuros = BigDecimalUtil.obterValorNaoNulo(mapComposicaoBaixaFinanceira.get(itemCobranca.getId()).getJuros());
@@ -671,7 +674,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 			BigDecimal valorCobrancaCorrigida = valorCobranca.add(valorJuros).add(valorMulta).subtract(valorDesconto);
 			valorCobrancaCorrigida = valorCobrancaCorrigida.setScale(2, RoundingMode.HALF_EVEN);
 			
-			if ( valorPagamentoCobranca.compareTo(valorCobrancaCorrigida) >= 0 ) {
+			if ( valorRestanteAuxiliar.compareTo(valorCobrancaCorrigida) >= 0 ) {
 				
 		    	itemCobranca.setDataPagamento(pagamento.getDataPagamento());
 		    	itemCobranca.setTipoBaixa(TipoBaixaCobranca.MANUAL);
@@ -693,6 +696,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 		    	
 				valorPagamentoCobranca = valorPagamentoCobranca.subtract(valorCobrancaCorrigida);
 				
+				valorRestanteAuxiliar = valorPagamentoCobranca.setScale(2, RoundingMode.HALF_EVEN);
+				
 				this.acumuloDividasService.quitarDividasAcumuladas(itemCobranca.getDataPagamento(), itemCobranca.getDivida(),TipoBaixaCobranca.MANUAL);
 		    
 			} else {
@@ -703,20 +708,20 @@ public class CobrancaServiceImpl implements CobrancaService {
 		}
 		
 		
-		if(BigDecimalUtil.isMaiorQueZero(valorPagamentoCobranca)) {
+		if(BigDecimalUtil.isMaiorQueZero(valorRestanteAuxiliar)) {
 			
 			if(cobrancaParcial != null) {
 				
 				this.lancamentoBaixaParcialAMenor(cobrancaParcial, 
 						pagamento, 
-						valorPagamentoCobranca, 
+						valorRestanteAuxiliar, 
 						StatusBaixa.PAGAMENTO_PARCIAL, 
 						statusAprovacao, 
 						mapComposicaoBaixaFinanceira.get(cobrancaParcial.getId()));
 				
 			} else {
 				
-				lancamentoBaixaParcialAMaior(cobrancaTotal, baixaManualTotal, pagamento, valorPagamentoCobranca);
+				lancamentoBaixaParcialAMaior(cobrancaTotal, baixaManualTotal, pagamento, valorRestanteAuxiliar);
 				
 			}
 			

@@ -55,7 +55,7 @@ public class CalendarioServiceImplTest {
 		
 		when(service.adicionarDiasUteis(Matchers.any(Date.class), Matchers.anyInt())).thenCallRealMethod();
 		
-		when(service.isFeriado(Matchers.any(Calendar.class))).thenReturn(false);
+		when(service.isFeriado(Matchers.any(Calendar.class), null)).thenReturn(false);
 		
 		
 		Date dataRetornada = service.adicionarDiasUteis(dataEmissao, numDias);

@@ -106,7 +106,6 @@ import br.com.abril.nds.util.CorpoBoleto;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
-import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.NomeBanco;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.Util;
@@ -651,7 +650,8 @@ public class BoletoServiceImpl implements BoletoService {
         movimento.setTipoMovimentoFinanceiro(tipoMovimento);
         movimento.setUsuario(usuario);
         movimento.setDataOperacao(dataOperacao);
-        movimento.setValor(pagamento.getValorPagamento());
+        movimento.setValor(
+                pagamento.getValorPagamento().subtract(pagamento.getValorDesconto()).add(pagamento.getValorJuros()).add(pagamento.getValorMulta()));
         movimento.setDataCriacao(Calendar.getInstance().getTime());
         movimento.setTipoEdicao(TipoEdicao.INCLUSAO);
         movimento.setDataVencimento(DateUtil.adicionarDias(dataOperacao,1));
@@ -666,7 +666,7 @@ public class BoletoServiceImpl implements BoletoService {
         boletoAntecipado.setValorDesconto(pagamento.getValorDesconto());
         boletoAntecipado.setValorJuros(pagamento.getValorJuros());
         boletoAntecipado.setValorMulta(pagamento.getValorMulta());
-        boletoAntecipado.setValorPago(pagamento.getValorPagamento());
+        boletoAntecipado.setValorPago(movimento.getValor());
         
         boletoAntecipadoRepository.merge(boletoAntecipado);
     }
@@ -739,7 +739,7 @@ public class BoletoServiceImpl implements BoletoService {
             
             return boleto;
         }
-        
+       
         final Date dataVencimentoUtil = calendarioService.adicionarDiasUteis(boleto.getDataVencimento(), 0);
         
         dataPagamento = DateUtil.removerTimestamp(dataPagamento);
@@ -762,9 +762,10 @@ public class BoletoServiceImpl implements BoletoService {
             
             return boleto;
         }
-        
-        final BigDecimal valorBoleto = MathUtil.round(boleto.getValor(), 2);
-        final BigDecimal valorPagamento = MathUtil.round(pagamento.getValorPagamento(), 2);
+        //alterado para HALF_UP, com HALF_EVEN o valor poderia acabar errado, segundo os cálculos feitos dessa maneira
+        //a decisão de arredondar pra cima dependeria de mais cáculos e mais um dígito, levando em conta se este é par ou ímpar
+        final BigDecimal valorBoleto = boleto.getValor().setScale(2, RoundingMode.HALF_UP);
+        final BigDecimal valorPagamento = pagamento.getValorPagamento().setScale(2, RoundingMode.HALF_UP);
         
         // Boleto pago com valor correto
         if (valorPagamento.compareTo(valorBoleto) == 0) {
@@ -1187,6 +1188,11 @@ public class BoletoServiceImpl implements BoletoService {
             baixaAutomatica.setBanco(banco);
             
             baixaCobrancaRepository.adicionar(baixaAutomatica);
+            
+            if (boleto != null) {
+                
+                acumuloDividasService.quitarDividasAcumuladas(dataPagamento, boleto.getDivida(),TipoBaixaCobranca.AUTOMATICA);
+            }
             
             return baixaAutomatica;
         }
@@ -2215,7 +2221,7 @@ public class BoletoServiceImpl implements BoletoService {
             return null;
         }
         
-        final Date dataVencimento = gerarCobrancaService.obterDataVencimentoCobrancaCota(dataEmissao, fc.getParametroCobrancaCota().getFatorVencimento());
+        final Date dataVencimento = gerarCobrancaService.obterDataVencimentoCobrancaCota(dataEmissao, fc.getParametroCobrancaCota().getFatorVencimento(), null);
         
         final BoletoEmBrancoDTO bbDTO = new BoletoEmBrancoDTO(ceDTO.getIdChamEncCota(),
                 fornecedor.getId(),

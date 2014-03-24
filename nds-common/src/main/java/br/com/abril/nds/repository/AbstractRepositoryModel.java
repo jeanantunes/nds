@@ -139,6 +139,7 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 			
 		}
 		
+		//return null;
 		return sessionFactory.openSession();
 	}
 	

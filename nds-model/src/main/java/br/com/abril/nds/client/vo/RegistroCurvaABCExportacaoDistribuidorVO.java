@@ -51,12 +51,12 @@ public class RegistroCurvaABCExportacaoDistribuidorVO {
 		return registroCurvaABCDistribuidorVO.getFaturamentoCapaFormatado();
 	}
 
-	@Export(label = "Participação", exhibitionOrder = 9, columnType = ColumType.DECIMAL)
+	@Export(label = "% Participação", exhibitionOrder = 9, columnType = ColumType.DECIMAL)
 	public String getParticipacao(){
 		return registroCurvaABCDistribuidorVO.getParticipacaoFormatado();
 	}
 
-	@Export(label = "Participação Acumulada", exhibitionOrder = 10, columnType = ColumType.DECIMAL)
+	@Export(label = "% Participação Acumulada", exhibitionOrder = 10, columnType = ColumType.DECIMAL)
 	public String getParticipacaoAcumulada(){
 		return registroCurvaABCDistribuidorVO.getParticipacaoAcumuladaFormatado();
 	}
