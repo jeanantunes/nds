@@ -619,4 +619,5 @@ public class FornecedorRepositoryImpl extends
 
 		return query.list();
 	}
+
 }

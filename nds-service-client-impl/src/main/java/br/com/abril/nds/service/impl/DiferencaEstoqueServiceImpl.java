@@ -165,7 +165,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
     
     @Autowired
     private LancamentoRepository lancamentoRepository;
-    
+  
     
     @Override
     @Transactional(readOnly = true)
@@ -218,27 +218,15 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
     @Transactional
     public void lancarDiferencaAutomaticaContagemDevolucao(final Diferenca diferenca) {
         
-        processarDiferenca(diferenca, TipoEstoque.LANCAMENTO, StatusConfirmacao.CONFIRMADO, true);
-        
-        StatusAprovacao statusAprovacao = StatusAprovacao.GANHO;
-        
-        if (TipoDiferenca.FALTA_DE.equals(diferenca.getTipoDiferenca())
-                || TipoDiferenca.FALTA_EM.equals(diferenca.getTipoDiferenca())){
-            
-            statusAprovacao = StatusAprovacao.PERDA;
-        }
+        processarDiferenca(diferenca, TipoEstoque.DEVOLUCAO_ENCALHE, StatusConfirmacao.CONFIRMADO, true);
         
         final Usuario usuario = usuarioService.getUsuarioLogado();
         
         final Lancamento ultimoLancamento = this.obterUltimoLancamentoProduto(diferenca);
         
-        final MovimentoEstoque movimentoEstoque =
-                this.gerarMovimentoEstoque(diferenca, usuario.getId(),
+        this.gerarMovimentoEstoque(diferenca, usuario.getId(),
                         true, true, ultimoLancamento.getDataLancamentoDistribuidor(), null);
         
-        movimentoEstoque.setStatus(statusAprovacao);
-        
-        movimentoEstoqueRepository.alterar(movimentoEstoque);
     }
     
     @Override
@@ -1653,6 +1641,24 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
                 throw new ValidacaoException(TipoMensagem.WARNING, "Cota " + cota.getNumeroCota() + " está inativa.");
         }
         
+    }
+    
+    @Override
+    @Transactional
+    public Diferenca lancarDiferencaFechamentoCEIntegracao(Diferenca diferenca, 
+    													   MovimentoEstoque movimentoEstoque,
+    													   StatusAprovacao statusAprovacao) {
+       
+       diferenca = processarDiferenca(diferenca, diferenca.getTipoEstoque(),StatusConfirmacao.CONFIRMADO,Boolean.TRUE);
+        
+       LancamentoDiferenca lancamentoDiferenca =
+    		   this.gerarLancamentoDiferenca(statusAprovacao, movimentoEstoque, null);
+       
+       diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+       
+       diferenca = diferencaEstoqueRepository.merge(diferenca);
+       
+       return diferenca;
     }
     
 }
