@@ -20,6 +20,8 @@ public class ContagemDevolucaoDTO implements Serializable {
 
 	private Long idProdutoEdicao;
 	
+	private Long idItemChamadaEncalheFornecedor;
+	
 	@Export(label="Código", fontSize=9)
 	private String codigoProduto;
 	
@@ -189,5 +191,18 @@ public class ContagemDevolucaoDTO implements Serializable {
 	public void setEdicaoFechada(boolean isEdicaoFechada) {
 		this.isEdicaoFechada = isEdicaoFechada;
 	}
+
+
+	public Long getIdItemChamadaEncalheFornecedor() {
+		return idItemChamadaEncalheFornecedor;
+	}
+
+
+	public void setIdItemChamadaEncalheFornecedor(
+			Long idItemChamadaEncalheFornecedor) {
+		this.idItemChamadaEncalheFornecedor = idItemChamadaEncalheFornecedor;
+	}
+	
+	
 	
 }

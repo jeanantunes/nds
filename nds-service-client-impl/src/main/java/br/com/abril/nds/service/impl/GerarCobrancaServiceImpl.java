@@ -445,27 +445,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return dataVencimento;
 	}
 	
-	/**
-	 * Retorna o valor total do boleto com desconto.
-	 * 
-	 * @param idChamadaEncalheFornecedor
-	 * @param valorBrutoBoleto
-	 * 
-	 * @return BigDecimal
-	 */
-	private BigDecimal obterValorBoleto(Long idChamadaEncalheFornecedor, BigDecimal valorBrutoBoleto) {
-		
-		BigDecimal valorTotalDesconto = 
-				itemChamadaEncalheFornecedorRepository.obterTotalDoDescontoItensChamadaEncalheFornecedor(idChamadaEncalheFornecedor);
-		
-		if(valorTotalDesconto == null) {
-			valorTotalDesconto = BigDecimal.ZERO;
-		}
-		
-		return valorBrutoBoleto.subtract(valorTotalDesconto);
-		
-	}
-	
 	@Transactional
 	public List<BoletoDistribuidor> gerarCobrancaBoletoDistribuidor(
 			List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor, 
@@ -488,11 +467,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				boletoDistribuidorRepository.remover(boletoDistribuidor);
 			}
 			
-			chamadaEncalheFornecedor.setFornecedor( chamadaEncalheFornecedor.getItens().get(0).getProdutoEdicao().getProduto().getFornecedor() );
-			
 			Fornecedor fornecedor = chamadaEncalheFornecedor.getFornecedor();
 			
-			Banco banco = chamadaEncalheFornecedor.getFornecedor().getBanco();
+			Banco banco = fornecedor.getBanco();
 			
 			if (banco == null) {
 				
@@ -525,9 +502,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			if(TipoCobranca.BOLETO.equals(tipoCobranca)) {
 				
-				BigDecimal valorLiquidoBoleto = obterValorBoleto(chamadaEncalheFornecedor.getId(), chamadaEncalheFornecedor.getTotalVendaApurada());
-				
-				boletoDistribuidor.setValor(valorLiquidoBoleto);
+				boletoDistribuidor.setValor(chamadaEncalheFornecedor.getTotalCreditoApurado().subtract(chamadaEncalheFornecedor.getTotalMargemApurado()));
 			}
 			
 			boletoDistribuidor.setVias(1);

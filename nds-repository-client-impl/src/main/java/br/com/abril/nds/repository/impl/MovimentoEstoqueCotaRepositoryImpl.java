@@ -1474,11 +1474,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" WHERE (EP.QTDE != 0 ");
         sql.append(" OR EP.QTDE_SUPLEMENTAR != 0 ");
         sql.append(" OR EP.QTDE_DEVOLUCAO_ENCALHE != 0) ");
-        
-        if( filtro.getIdFornecedor() != null ) {
-            
-            sql.append(" AND PROD_FORNEC.FORNECEDORES_ID = :idFornecedor ");
-        }
+           
+        sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
         
         sql.append(" GROUP BY PROD_EDICAO.ID ");
         
@@ -1583,10 +1580,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             
             query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE.name());
         }
-        
-        if(filtro.getIdFornecedor() != null) {
-            query.setParameter("idFornecedor", filtro.getIdFornecedor());
-        }
+       
+        query.setParameterList("idFornecedor", filtro.getFornecedores());
         
         return query;
         
@@ -3473,8 +3468,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameterList(
                 "gruposMovimentoReparte",
                 Arrays.asList(
-                        GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO,
-                        GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE));
+                        GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO));
         
         query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));
         

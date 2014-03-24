@@ -42,6 +42,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -1901,6 +1902,30 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataBase", dataBase);
 		query.setParameter("statusEmRecolhimento",
 				StatusLancamento.EM_RECOLHIMENTO);
+
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosEmRecolhimentoParaFechamento(Date dataBase) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select distinct lancamento ")
+				.append(" from Lancamento lancamento ")
+				.append(" join lancamento.produtoEdicao produtoEdicao ")
+				.append(" join produtoEdicao.movimentoEstoques movimento ")
+				.append(" where lancamento.status = :statusRecolhido ")
+				.append(" and movimento.tipoMovimento.grupoMovimentoEstoque =:grupoRecolhimentoEncalhe ")
+				.append(" and movimento.data <= :dataBase ");
+		
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("dataBase", dataBase);
+		query.setParameter("statusRecolhido",StatusLancamento.RECOLHIDO);
+		query.setParameter("grupoRecolhimentoEncalhe", GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
 
 		return query.list();
 	}
