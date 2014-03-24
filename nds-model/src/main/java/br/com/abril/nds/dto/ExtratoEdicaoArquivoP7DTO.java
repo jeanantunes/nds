@@ -16,10 +16,10 @@ public class ExtratoEdicaoArquivoP7DTO extends FTFBaseDTO {
 	private String cod_filial="";
 	
 	@FTFfield(tamanho=5, tipo="char", ordem = 3)
-	private String nat_estoque="";
+	private String nat_estoque="180";
 	
 	@FTFfield(tamanho=28, tipo="char", ordem = 4)
-	private String centro_custo="";
+	private String centro_custo="@";
 	
 	@FTFfield(tamanho=10, tipo="char", ordem = 5)
 	private String dat_inventario="";
@@ -34,13 +34,13 @@ public class ExtratoEdicaoArquivoP7DTO extends FTFBaseDTO {
 	private String local_estoque="1";
 	
 	@FTFfield(tamanho=28, tipo="char", ordem = 9)
-	private String cta_estoque="";
+	private String cta_estoque="1140301004";
 
 	@FTFfield(tamanho=17, tipo="numeric", ordem = 10)
 	private String quantidade="";
 	
 	@FTFfield(tamanho=3, tipo="char", ordem = 11)
-	private String unidade_medida="";
+	private String unidade_medida="UN";
 	
 	@FTFfield(tamanho=21, tipo="numeric", ordem = 12)
 	private String custo_unitario="";
@@ -55,7 +55,7 @@ public class ExtratoEdicaoArquivoP7DTO extends FTFBaseDTO {
 	private String observacao="";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 16)
-	private String openflex01="";
+	private String openflex01="NDS";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 17)
 	private String openflex02="";
@@ -64,7 +64,7 @@ public class ExtratoEdicaoArquivoP7DTO extends FTFBaseDTO {
 	private String openflex03="";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 19)
-	private String openflex04="";
+	private String openflex04="NDS";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 20)
 	private String openflex05="";
