@@ -297,7 +297,8 @@ public class FechamentoCEIntegracaoController extends BaseController{
 			
 			fechamentoCEIntegracao.setTotalBruto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalBruto()));
 			fechamentoCEIntegracao.setTotalDesconto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalDesconto()));
-			fechamentoCEIntegracao.setTotalLiquido(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalLiquido()));
+			fechamentoCEIntegracao.setTotalLiquido(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalBruto()
+					.subtract(fechamentoConsolidado.getTotalDesconto())));
 		}
 		
 		FileExporter.to("fechamento", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, fechamentoCEIntegracao, 
