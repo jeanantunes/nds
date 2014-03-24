@@ -360,17 +360,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Transactional
 	public boolean isConsolidadoCotaAVista(Date data){
 
-		List<Cota> cotas = this.cotaRepository.obterCotasTipoAVista(data);
-		
-		for (Cota c : cotas){
-		
-		    ConsolidadoFinanceiroCota cfc = this.consolidadoFinanceiroRepository.buscarPorCotaEData(c.getId(), data);
-		    
-		    if (cfc == null){
-		    	
-		    	return false;
-		    }
-		}
+	    BigDecimal saldo = this.movimentoFinanceiroCotaRepository.obterSaldoCotasAVista(null, data); 
+	    
+	    if (saldo != null && saldo.compareTo(BigDecimal.ZERO) > 0){
+	    	
+	    	return false;
+	    }
 		
 		return true;
 	}
@@ -636,11 +631,11 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		resumoConsignado.setValorEntradas(
 	            this.movimentoEstoqueRepository.obterSaldoDistribuidorEntrada(
-	                null, FormaComercializacao.CONSIGNADO));
+	                    dataFechamento, FormaComercializacao.CONSIGNADO));
 
 	        resumoConsignado.setValorSaidas(
 	            this.movimentoEstoqueRepository.obterSaldoDistribuidor(
-	                null, OperacaoEstoque.SAIDA, FormaComercializacao.CONSIGNADO));
+	                    dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONSIGNADO));
 
 		
 		if (resumoConsignado.getSaldoAnterior()==null){resumoConsignado.setSaldoAnterior(BigDecimal.ZERO);}

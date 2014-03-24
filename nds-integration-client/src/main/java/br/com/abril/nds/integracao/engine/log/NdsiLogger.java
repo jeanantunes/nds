@@ -162,12 +162,20 @@ public class NdsiLogger extends AbstractRepository {
 		
 		logExecucaoMensagem.setMensagem(descricaoErroTamanhoLimitado);
 		logExecucaoMensagem.setMensagemInfo(mensagemInfo);
-		if (message.getHeader().containsKey(MessageHeaderProperties.FILE_NAME.getValue()))
-			logExecucaoMensagem.setNomeArquivo((String) message.getHeader().get(MessageHeaderProperties.FILE_NAME.getValue()));
+
+		if (message != null && message.getHeader() != null) {
+			if (message.getHeader().containsKey(MessageHeaderProperties.FILE_NAME.getValue()))
+				logExecucaoMensagem.setNomeArquivo((String) message.getHeader().get(MessageHeaderProperties.FILE_NAME.getValue()));
 			
-		if (message.getHeader().containsKey(MessageHeaderProperties.LINE_NUMBER.getValue()))
-			logExecucaoMensagem.setNumeroLinha((Integer) message.getHeader().get(MessageHeaderProperties.LINE_NUMBER.getValue()));
-		
+			
+			if (message.getHeader().containsKey(MessageHeaderProperties.LINE_NUMBER.getValue()))
+			    logExecucaoMensagem.setNumeroLinha((Integer) message.getHeader().get(MessageHeaderProperties.LINE_NUMBER.getValue()));
+			
+		} else {
+		   logExecucaoMensagem.setNomeArquivo("");
+           logExecucaoMensagem.setNumeroLinha(0);
+		}
+
 		try {
 			TransactionTemplate template = new TransactionTemplate(transactionManager, new DefaultTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
 			template.execute(new TransactionCallback<Void>() {
@@ -185,4 +193,10 @@ public class NdsiLogger extends AbstractRepository {
 	public void setStatusProcesso(StatusExecucaoEnum status){
 		this.statusProcesso = status;
 	}
+	
+	
+	
+    
+
+
 }

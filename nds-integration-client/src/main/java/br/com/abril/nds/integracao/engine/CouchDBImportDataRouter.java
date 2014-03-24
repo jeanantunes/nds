@@ -10,6 +10,7 @@ import org.lightcouch.ViewResult.Rows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -25,6 +26,7 @@ import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.AbstractRepository;
+
 
 @Component("couchDBImportDataRouter")
 public class CouchDBImportDataRouter extends AbstractRepository implements ContentBasedRouter {
@@ -73,6 +75,10 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		// Processamento a ser executado ANTES do processamento principal:
 		messageProcessor.preProcess(tempVar);
 
+		//
+		  ndsiLoggerFactory.getLogger().logInfo(null, EventoExecucaoEnum.SEM_DOMINIO,
+				  "Qtd documentos a processar : "+result.getRows().size());
+
 		do {	
 			
 			for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
@@ -93,7 +99,12 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 				
 				try {
 					
-					TransactionTemplate template = new TransactionTemplate(transactionManager);
+					 TransactionTemplate template = new TransactionTemplate(transactionManager);
+                      
+                     template.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
+                     template.setPropagationBehavior(TransactionDefinition.PROPAGATION_SUPPORTS);
+                     template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+					
 					template.execute(new TransactionCallback<Void>() {
 						@Override
 						public Void doInTransaction(TransactionStatus status) {

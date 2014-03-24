@@ -592,9 +592,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" from ");
 		sql.append(" 	  LANCAMENTO lancamento ");
 		sql.append(" inner join ");
-		sql.append("     ESTUDO estudo ");
-		sql.append("         on estudo.ID = lancamento.ESTUDO_ID ");
-		sql.append(" inner join ");
 		sql.append("     PRODUTO_EDICAO produtoEdicao ");
 		sql.append("         on lancamento.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
 		sql.append(" inner join ");
@@ -2434,12 +2431,14 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" and produto.codigo = :codProduto ");
 		hql.append(" and produtoEdicao.id = :idProdutoEdicao ");
 		hql.append(" and produtoEdicao.produto = produto.id ");
+		hql.append(" and lancamento.id <> :idLancamento ");
 
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("dataLancamento", novaData);
 		query.setParameter("codProduto", produtoLancamentoDTO.getCodigoProduto());
 		query.setParameter("idProdutoEdicao", produtoLancamentoDTO.getIdProdutoEdicao());
+		query.setParameter("idLancamento", produtoLancamentoDTO.getIdLancamento());
 		
 		List lista =  query.list();
 		

@@ -59,6 +59,7 @@ import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.financeiro.TipoNegociacao;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoDistribuidorRepository;
@@ -400,7 +401,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
      */
 	@Override
 	@Transactional
-	public Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento) {
+	public Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento, String localidade) {
 		
 		FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 		
@@ -411,7 +412,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
         // verifica se a forma de cobrança principal do distribuidor utiliza
         // dias uteis para geração da data de vencimento da cobrança
 		if(formaCobranca.isVencimentoDiaUtil()) {
-			return this.calendarioService.adicionarDiasUteis(dataConsolidado, fatorVencimento);
+			return this.calendarioService.adicionarDiasUteis(dataConsolidado, fatorVencimento, localidade);
 		}
 		
 		return DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
@@ -1000,8 +1001,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					cobrarHoje = true;
 				}
 			}
-			
-			Date dataVencimento = this.obterDataVencimentoCobrancaCota(helperPrincipal.getConsolidadoFinanceiroCota().getDataConsolidado(),fatorVencimento);
+			String localidade = helperPrincipal.getCota().getEnderecoPrincipal().getEndereco().getCidade();
+			Date dataVencimento = this.obterDataVencimentoCobrancaCota(helperPrincipal.getConsolidadoFinanceiroCota().getDataConsolidado(),fatorVencimento, localidade);
 			
 			if(!cobrarHoje) {
 
@@ -1223,8 +1224,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				cobrarHoje = true;
 			}
 		}
-
-		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(),fatorVencimento);
+		String localidade =  cota.getEnderecoPrincipal().getEndereco().getCidade();
+		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(),fatorVencimento, localidade);
 
 		if(!cobrarHoje){
 
@@ -1822,25 +1823,30 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				if (divida != null) {
 					
+					Negociacao negociacao = this.negociacaoRepository.obterNegociacaoPorCobranca(divida.getCobranca().getId());
+
+					if (negociacao != null && TipoNegociacao.PAGAMENTO_AVULSO.equals(negociacao.getTipoNegociacao())) {
+						
+						continue;
+					}
+
 					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
 					
-					Negociacao negociacao = this.negociacaoRepository.obterNegociacaoPorCobranca(divida.getCobranca().getId());
-					
-					if (negociacao != null) {
-					    
-						if (!negociacao.isNegociacaoAvulsa()) {
-						
-						    this.parcelaNegociacaoRepository.excluirPorNegociacao(negociacao.getId());
-						
-						    this.negociacaoRepository.remover(negociacao);
-						    
-						    this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
-						}
-					
-					} else {
+//					if (negociacao != null) {
+//					    
+//						if (!negociacao.isNegociacaoAvulsa()) {
+//						
+//						    this.parcelaNegociacaoRepository.excluirPorNegociacao(negociacao.getId());
+//						
+//						    this.negociacaoRepository.remover(negociacao);
+//						    
+//						    this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
+//						}
+//					
+//					} else {
 					
 						this.removerDividaCobrancaConsolidado(divida, consolidado, dataOperacao);
-					}
+//					}
 				}
 
 				List<MovimentoFinanceiroCota> mfcs = consolidado.getMovimentos();

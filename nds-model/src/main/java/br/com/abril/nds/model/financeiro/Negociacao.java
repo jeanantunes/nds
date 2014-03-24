@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -68,6 +70,10 @@ public class Negociacao {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_CRIACAO")
 	private Date dataCriacao;
+	
+	@Column(name="TIPO_NEGOCIACAO")
+	@Enumerated(EnumType.STRING)
+	private TipoNegociacao tipoNegociacao;
 	
 	@OneToMany
 	@JoinTable(name="NEGOCIACAO_MOV_FINAN",
@@ -181,6 +187,20 @@ public class Negociacao {
 
 	public void setDataCriacao(Date dataCriacao) {
 		this.dataCriacao = dataCriacao;
+	}
+
+	/**
+	 * @return the tipoNegociacao
+	 */
+	public TipoNegociacao getTipoNegociacao() {
+		return tipoNegociacao;
+	}
+
+	/**
+	 * @param tipoNegociacao the tipoNegociacao to set
+	 */
+	public void setTipoNegociacao(TipoNegociacao tipoNegociacao) {
+		this.tipoNegociacao = tipoNegociacao;
 	}
 
 	public List<MovimentoFinanceiroCota> getMovimentosFinanceiroCota() {

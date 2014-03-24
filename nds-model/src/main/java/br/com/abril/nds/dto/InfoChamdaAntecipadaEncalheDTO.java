@@ -35,6 +35,8 @@ public class InfoChamdaAntecipadaEncalheDTO implements Serializable {
 	
 	private Date dataProgramada;
 	
+	private boolean recolhimentoFinal;
+	
 	/**
 	 * @return the totalRegistros
 	 */
@@ -146,6 +148,14 @@ public class InfoChamdaAntecipadaEncalheDTO implements Serializable {
 	 */
 	public void setDataProgramada(Date dataProgramada) {
 		this.dataProgramada = dataProgramada;
+	}
+
+	public boolean isRecolhimentoFinal() {
+		return recolhimentoFinal;
+	}
+
+	public void setRecolhimentoFinal(boolean recolhimentoFinal) {
+		this.recolhimentoFinal = recolhimentoFinal;
 	}
 	
 	

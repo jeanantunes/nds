@@ -665,7 +665,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			this.obterDatasRecolhimentoFornecedor(periodoRecolhimento, listaIdsFornecedores);
 		
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
+		
+		TreeSet<Date> datasRecolhimentoDisponiveis =
+		    this.obterDatasRecolhimentoDisponiveis(datasRecolhimentoFornecedor);
 
+		dadosRecolhimento.setDatasRecolhimentoDisponiveis(datasRecolhimentoDisponiveis);
+		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimento = null;
 
 		if (TipoBalanceamentoRecolhimento.EDITOR.equals(tipoBalanceamento)) {
@@ -726,7 +731,27 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return dadosRecolhimento;
 	}
 
-	    /**
+	    private TreeSet<Date> obterDatasRecolhimentoDisponiveis(TreeSet<Date> datasRecolhimentoFornecedor) {
+            
+	        TreeSet<Date> datasRecolhimentoDisponiveis = new TreeSet<>();
+	        
+	        boolean isMatrizRecolhimentoConfirmado;
+	        
+	        for (Date dataRecolhimentoFornecedor : datasRecolhimentoFornecedor) {
+	            
+	            isMatrizRecolhimentoConfirmado =
+	                    this.lancamentoRepository.existeMatrizRecolhimentoConfirmado(dataRecolhimentoFornecedor);
+	            
+	            if (!isMatrizRecolhimentoConfirmado) {
+	                
+	                datasRecolhimentoDisponiveis.add(dataRecolhimentoFornecedor);
+	            }
+	        }
+	        
+            return datasRecolhimentoDisponiveis;
+        }
+
+        /**
      * Monta o perídodo de recolhimento de acordo com a semana informada.
      */
 	@Override

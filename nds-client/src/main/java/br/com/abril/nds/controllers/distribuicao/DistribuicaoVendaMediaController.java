@@ -131,11 +131,15 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	if (estudoId != null && estudoId != 0l) {
 	    estudo = estudoService.obterEstudo(estudoId);
 	    result.include("estudo", estudo);
+	    result.include("idEstudo", estudo.getId());
+	    result.include("statusEstudo", estudo.getStatus().getDescricao());
 	    result.include("vendaMediaDTO", estudo.getDadosVendaMedia());
 	    produtoEdicao = estudo.getProdutoEdicao();
         produto = estudo.getProdutoEdicao().getProduto();
         lancamentoId = estudo.getLancamentoID();
     } else {
+    	result.include("statusEstudo", " ");
+    	result.include("idEstudo", " ");
         produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao.toString());
         produto = produtoEdicao.getProduto();
     }

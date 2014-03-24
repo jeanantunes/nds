@@ -630,7 +630,7 @@ var baixaFinanceiraController = $.extend(true, {
 			},{
 				display : 'Nome',
 				name : 'nome',
-				width : 440,
+				width : 350,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -651,6 +651,12 @@ var baixaFinanceiraController = $.extend(true, {
 				width : 90,
 				sortable : true,
 				align : 'right'
+			}, {
+				display : 'Nosso Número',
+				name : 'nossoNumero',
+				width : 90,
+				sortable : true,
+				align : 'center'
 			}, {
 				display : 'Detalhes',
 				name : 'acao',
@@ -763,21 +769,35 @@ var baixaFinanceiraController = $.extend(true, {
 			valorItem = removeMascaraPriceFormat(row.cell.valor);
 			totalDividas = intValue(totalDividas) + intValue(valorItem);
 			
-			var detalhes = '<a href="javascript:;" onclick="baixaFinanceiraController.popup_detalhes(' + row.cell.codigo + ', ' + row.cell.boletoAntecipado + ');" style="cursor:pointer">' +
-					 	   '<img title="Detalhes da Dívida" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
-						   '</a>';	
-		
-			var checkBox;			   
-			if (row.cell.check){			   
-			    checkBox = '<input isEdicao="true" checked="' + row.cell.check + '" type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.codigo +'" onchange="baixaFinanceiraController.calculaSelecionados(this.checked,'+ valorItem +'); dataHolder.hold(\'baixaManual\', '+ row.cell.codigo +', \'checado\', this.checked); " />';	
-			    baixaFinanceiraController.calculaSelecionados(true, valorItem);
+			var checkBox;
+			
+			if (!row.cell.codigo){
+				
+				checkBox = '<a onclick="exibirMensagem(\'WARNING\', [\'Para dívidas com boleto em branco é necessário baixar pelo Nosso Número\']); '+
+					' $(\'#filtroNossoNumero\', baixaFinanceiraController.workspace).val('+ row.cell.nossoNumero +');" href="javascript:;" title="Boleto em Branco">'+
+					'<img border="0" hspace="5" src="/nds-client/images/bt_help.png"></a>';
+				
+				row.cell.acao = '';
+			} else { 
+				
+				row.cell.acao = '<a href="javascript:;" onclick="baixaFinanceiraController.popup_detalhes(' + row.cell.codigo + ', ' + row.cell.boletoAntecipado + ');" style="cursor:pointer">' +
+			 	   '<img title="Detalhes da Dívida" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
+				   '</a>';
+				
+				if (row.cell.check){
+				    checkBox = '<input isEdicao="true" checked="' + row.cell.check + '" type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.codigo +
+				    	'" onchange="baixaFinanceiraController.calculaSelecionados(this.checked,'+ valorItem +'); dataHolder.hold(\'baixaManual\', '+ 
+				    	row.cell.codigo +', \'checado\', this.checked); " />';
+				    
+				    baixaFinanceiraController.calculaSelecionados(true, valorItem);
+				} else{
+				    checkBox = '<input isEdicao="true" title="Selecionar Dívida" type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.codigo +
+				    	'" onchange="baixaFinanceiraController.calculaSelecionados(this.checked,'+ valorItem +'); dataHolder.hold(\'baixaManual\', '+ 
+				    	row.cell.codigo +', \'checado\', this.checked); " />';
+				}
 			}
-			else{
-			    checkBox = '<input isEdicao="true" title="Selecionar Dívida" type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.codigo +'" onchange="baixaFinanceiraController.calculaSelecionados(this.checked,'+ valorItem +'); dataHolder.hold(\'baixaManual\', '+ row.cell.codigo +', \'checado\', this.checked); " />';
-			}
-
-			row.cell.acao = detalhes;
-		    row.cell.check = checkBox;
+			
+			row.cell.check = checkBox;
 		});
 
 		$("#totalDividasHidden", baixaFinanceiraController.workspace).val(totalDividas);
@@ -954,18 +974,18 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		var valor = null;
 		
-		if ($("#isBoletoAntecipado").val()) {
+		if ($("#isBoletoAntecipado", baixaFinanceiraController.workspace).val()) {
 
 			valor = 
-				eval(priceToFloat($("#valorBoletoHidden", baixaFinanceiraController.workspace).val())) - 
-				eval(priceToFloat($("#encalhe", baixaFinanceiraController.workspace).val()));
+				priceToFloat($("#valorBoletoHidden", baixaFinanceiraController.workspace).val()) - 
+				priceToFloat($("#encalhe", baixaFinanceiraController.workspace).val());
 		}
 		
 		/*BAIXA INDIVIDUAL DE COBRANÇA(BOLETO)*/
 		var data = [
 		   {name: 'nossoNumero', value: nossoNumero},
 		   {name: 'dataPagamento', value: dataPagamento},
-		   {name: 'valor', value: valor}
+		   {name: 'valor', value: valor.toString().replace(".",",")}
 		];
 		
 		$.postJSON(contextPath + "/financeiro/baixa/buscaBoleto",
@@ -1038,7 +1058,7 @@ var baixaFinanceiraController = $.extend(true, {
     	
     	var param ={ nossoNumero : $("#nossoNumero", baixaFinanceiraController.workspace).html(),
     			dataPagamento :$("#dtPagamentoManualBoleto", baixaFinanceiraController.workspace).val(),
-    			valor : $("#valorTotalHidden", baixaFinanceiraController.workspace).val(),
+    			valor : $("#valorBoletoHidden", baixaFinanceiraController.workspace).val(),
     			desconto : desconto,
     			juros : $("#juros", baixaFinanceiraController.workspace).val(),
     			multa : $("#multa", baixaFinanceiraController.workspace).val()

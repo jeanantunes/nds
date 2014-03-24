@@ -61,6 +61,7 @@ import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.financeiro.TipoNegociacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
@@ -186,13 +187,13 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 BigDecimal encargo = (divida.getEncargos() != null) ? divida.getEncargos() : BigDecimal.ZERO;
                 
                 encargo = encargo.add(this.cobrancaService.calcularJuros(banco, cota.getId(), divida.getVlDivida(), divida
-                        .getDtVencimento(), data, formaCobrancaPrincipal)).setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN);
+                        .getDtVencimento(), data, formaCobrancaPrincipal));
                 
                 if (divida.getDtVencimento().compareTo(data) < 0) {
                     encargo = encargo.add(this.cobrancaService.calcularMulta(banco, cota, divida.getVlDivida(),
-                            formaCobrancaPrincipal)).setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN);
+                            formaCobrancaPrincipal));
                 }
-                divida.setEncargos(encargo);
+                divida.setEncargos(encargo.setScale(2, RoundingMode.HALF_EVEN));
                 
                 divida.setVlDivida(divida.getVlDivida().setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN));
 
@@ -209,7 +210,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     
     @Override
     @Transactional
-    public Long criarNegociacao(final Integer numeroCota, final List<ParcelaNegociacao> parcelas,
+    public Long criarNegociacao(final Integer numeroCota, final List<ParcelaNegociacao> parcelas, final TipoNegociacao tipoNegociacao,
             final BigDecimal valorDividaParaComissao, final List<Long> idsCobrancasOriginarias,
             final Usuario usuarioResponsavel, final boolean negociacaoAvulsa, final Integer ativarCotaAposParcela,
             final BigDecimal comissaoParaSaldoDivida, final BigDecimal comissaoOriginalCota,
@@ -302,14 +303,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 parcelaNegociacao.getMovimentoFinanceiroCota().setStatus(StatusAprovacao.APROVADO);
                 parcelaNegociacao.getMovimentoFinanceiroCota().setAprovador(usuarioResponsavel);
                 parcelaNegociacao.getMovimentoFinanceiroCota().setTipoMovimento(tipoMovimentoFinanceiro);
-                parcelaNegociacao.getMovimentoFinanceiroCota().setValor(
-            		parcelaNegociacao.getMovimentoFinanceiroCota().getValor().add(parcelaNegociacao.getEncargos())
-                );
                 parcelaNegociacao.getMovimentoFinanceiroCota().setObservacao("Negociação de dívida.");
 
-                final Fornecedor fornecedor = cota.getParametroCobranca() != null ? cota.getParametroCobranca()
-                        .getFornecedorPadrao() : formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor()
-                        .getPoliticaCobranca().getFornecedorPadrao();
+                final Fornecedor fornecedor = cota.getParametroCobranca() != null && cota.getParametroCobranca().getFornecedorPadrao() != null ? 
+                		cota.getParametroCobranca().getFornecedorPadrao() : 
+                			formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor().getPoliticaCobranca().getFornecedorPadrao();
                         
                         if (fornecedor == null) {
                             
@@ -353,7 +351,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     
                     consolidado = new ConsolidadoFinanceiroCota();
                     consolidado.setCota(cota);
-                    consolidado.setDataConsolidado(dataAtual);
+                    consolidado.setDataConsolidado(dataOperacao);
                     final List<MovimentoFinanceiroCota> movs = new ArrayList<MovimentoFinanceiroCota>();
                     movs.add(parcelaNegociacao.getMovimentoFinanceiroCota());
                     
@@ -370,24 +368,24 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     final GrupoMovimentoFinaceiro grupoMovimentoFinaceiro = ((TipoMovimentoFinanceiro) parcelaNegociacao
                             .getMovimentoFinanceiroCota().getTipoMovimento()).getGrupoMovimentoFinaceiro();
                     
-                    if (OperacaoFinaceira.CREDITO.equals(grupoMovimentoFinaceiro.getOperacaoFinaceira())) {
-                        
-                        consolidado.setDebitoCredito(valorOriginalParcela.negate());
-                        
-                    } else {
-                        
-                        consolidado.setDebitoCredito(valorOriginalParcela);
-                    }
-                    
                     consolidado.setPendente(BigDecimal.ZERO);
                     consolidado.setEncargos(parcelaNegociacao.getEncargos());
                     
-                    consolidado.setTotal(valorTotalParcela);
+                    if (OperacaoFinaceira.DEBITO.equals(grupoMovimentoFinaceiro.getOperacaoFinaceira())) {
+                        
+                        consolidado.setDebitoCredito(valorOriginalParcela.negate());
+                        consolidado.setTotal(valorTotalParcela.negate());
+
+                    } else {
+                        
+                        consolidado.setDebitoCredito(valorOriginalParcela);
+                        consolidado.setTotal(valorTotalParcela);                        
+                    }
                     
                     consolidadoFinanceiroRepository.adicionar(consolidado);
                     
                     final Divida divida = new Divida();
-                    divida.setData(dataAtual);
+                    divida.setData(dataOperacao);
                     divida.setResponsavel(usuarioResponsavel);
                     divida.setCota(cota);
                     divida.setValor(parcelaNegociacao.getMovimentoFinanceiroCota().getValor());
@@ -424,13 +422,13 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                         cobranca.setCota(cota);
                         cobranca.setBanco(formaCobranca.getBanco());
                         cobranca.setDivida(divida);
-                        cobranca.setDataEmissao(dataAtual);
+                        cobranca.setDataEmissao(dataOperacao);
                         cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
                         cobranca.setDataVencimento(parcelaNegociacao.getDataVencimento());
                         cobranca.setValor(valorTotalParcela);
                         cobranca.setEncargos(parcelaNegociacao.getEncargos());
                         dividaRepository.adicionar(divida);
-                        cobranca.setNossoNumero(Util.gerarNossoNumero(numeroCota, dataAtual, banco.getNumeroBanco(),
+                        cobranca.setNossoNumero(Util.gerarNossoNumero(numeroCota, dataOperacao, banco.getNumeroBanco(),
                                 null, divida.getId(), banco.getAgencia(), banco.getConta(), banco.getCarteira()));
                         cobrancaRepository.adicionar(cobranca);
                     }
@@ -455,13 +453,15 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         final Negociacao negociacao = new Negociacao();
         negociacao.setAtivarCotaAposParcela(ativarCotaAposParcela);
         negociacao.setCobrancasOriginarias(cobrancasOriginarias);
+        negociacao.setTipoNegociacao(tipoNegociacao);
         negociacao.setComissaoParaSaldoDivida(comissaoParaSaldoDivida == null ? BigDecimal.ZERO
                 : comissaoParaSaldoDivida);
+        negociacao.setComissaoOriginalCota(comissaoOriginalCota == null ? BigDecimal.ZERO
+        		: comissaoOriginalCota);
         negociacao.setIsentaEncargos(isentaEncargos);
         negociacao.setNegociacaoAvulsa(negociacaoAvulsa);
         negociacao.setFormaCobranca(formaCobranca);
         negociacao.setParcelas(parcelas);
-        negociacao.setComissaoOriginalCota(comissaoOriginalCota);
         negociacao.setValorDividaPagaComissao(valorDividaParaComissao);
         negociacao.setValorOriginal(valorDividaParaComissao);
         negociacao.setDataCriacao(new Date());
@@ -647,7 +647,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         
         if (negociacao != null) {
             
-            if (negociacao.isNegociacaoAvulsa()) {
+            if (TipoNegociacao.PAGAMENTO_AVULSO.equals(negociacao.getTipoNegociacao())) {
                 
                 for (final ParcelaNegociacao parcelaNegociacao : negociacao.getParcelas()) {
                     
@@ -751,7 +751,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         }
         
         // campo negociacao avulsa
-        impressaoNegociacaoDTO.setNegociacaoAvulsa(negociacao.isNegociacaoAvulsa());
+        impressaoNegociacaoDTO.setNegociacaoAvulsa(TipoNegociacao.PAGAMENTO_AVULSO.equals(negociacao.getTipoNegociacao()));
         // campo isenta encargos
         impressaoNegociacaoDTO.setIsentaEncargos(negociacao.isIsentaEncargos());
         
@@ -1221,14 +1221,18 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
                 
                 for (final Negociacao negociacao : negociacoes) {
-                    
+                	
                     // caso todo o valor da conferencia tenha sido usado para
                     // quitação das negociações
                     if (valorTotalReparte.compareTo(BigDecimal.ZERO) <= 0) {
                         break;
                     }
-                    
-                    final BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
+
+                	if (!TipoNegociacao.COMISSAO.equals(negociacao.getTipoNegociacao())) {
+                		continue;
+                	}
+
+                	final BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
                     final BigDecimal comissaoCota = negociacao.getComissaoOriginalCota();
                     final BigDecimal novaComissao = comissaoCota.subtract(comissao);
 
