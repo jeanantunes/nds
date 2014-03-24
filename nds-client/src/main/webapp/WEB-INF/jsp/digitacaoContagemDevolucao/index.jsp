@@ -37,6 +37,30 @@ $(function(){
 
 	<div class="areaBts">
 		<div class="area">
+		
+			<span id="btnSalvar" class="bt_novos" title="Salvar"> 
+				<a isEdicao="true" title="Salvar" rel="tipsy" href="javascript:digitacaoContagemDevolucaoController.salvar();"> 
+					<img border="0" hspace="5" alt="Salvar" src="${pageContext.request.contextPath}/images/ico_salvar.gif" />
+				</a> 
+			</span> 
+			
+			<span id="btnConfirmar" class="bt_novos" title="Devolução Parcial"> 
+				<a isEdicao="true" title="Devolução Parcial" rel="tipsy"  href="javascript:digitacaoContagemDevolucaoController.popupConfirmar();"> 
+					<img border="0" hspace="5" alt="Confirmar" src="${pageContext.request.contextPath}//images/bt_expedicao.png" hspace="5" border="0"/>
+				</a> 
+			</span>
+			
+			<span id="btnConfirmarDevolucaoFinal" class="bt_novos" title="Devolução Final"> 
+				<a isEdicao="true" title="Devolução Final" rel="tipsy"  href="javascript:digitacaoContagemDevolucaoController.popupConfirmarDevolucaoFinal();"> 
+					<img border="0" hspace="5" alt="Confirmar" src="${pageContext.request.contextPath}//images/ico_check.gif" hspace="5" border="0"/>
+				</a> 
+			</span>
+			
+			<span class="bt_novos" title="Imprimir Conferência Cega">
+				<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportarCoferenciaCega?fileType=PDF"  title="Imprimir Conferência Cega" rel="tipsy">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0"/>
+				</a>
+			</span>
 
 			<span class="bt_arq" title="Gerar Arquivo">
 			<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
@@ -68,7 +92,12 @@ $(function(){
 		  		 style="display: none; width: auto; height: auto; overflow: visible;">
 				<p>Confirma a Digitação de Contagem para Devolução?</p>
 			</div>
-		  	
+			
+			<div id="dialog-confirmar-devolucao-final" title="Digitação de Contagem para Devolução" 
+		  		 style="display: none; width: auto; height: auto; overflow: visible;">
+				<p>Confirma Devolução Final?</p>
+			</div>
+			
 			  <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 											 
 				 <tr>
@@ -110,67 +139,15 @@ $(function(){
 		 	
 		 	 <table class="contagemDevolucaoGrid" id="contagemDevolucaoGrid"></table>
 
-			<table width="100%" border="0" cellspacing="2" cellpadding="2">
+			<table border="0" width="100%" cellspacing="2" cellpadding="2">
 				<tr>
-					<td width="51%">
-						
-							<span id="btnSalvar" class="bt_novos" title="Salvar"> 
-							<a isEdicao="true" href="javascript:digitacaoContagemDevolucaoController.salvar();"> 
-							<img border="0" hspace="5" alt="Salvar"
-								src="${pageContext.request.contextPath}/images/ico_salvar.gif" />
-								Salvar
-							</a> 
-							</span> 
-							
-							
-							<!-- NAO ESTA NA VRS STARDARD
-							<span class="bt_novos" title="Incluir Produtos">
-							<a isEdicao="true" href="javascript:;" onclick="digitacaoContagemDevolucaoController.incluirProdutoDialog();">
-							<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0">
-									Incluir Edições
-							</a>
-							</span>
-							-->
-							
-							
-							<span class="bt_novos" title="Gerar NF-e de Dev. ao Fornecedor" >
-							<a isEdicao="true" href="javascript:;" onclick="digitacaoContagemDevolucaoController.geraNota();">
-								<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0">
-								Gerar NF-e
-							</a>
-							</span>
-							
-							<span id="btnConfirmar" class="bt_novos" title="Devolução Parcial"> 
-							<a isEdicao="true" href="javascript:digitacaoContagemDevolucaoController.popupConfirmar();"> 
-								<img border="0" hspace="5" alt="Confirmar"
-								src="${pageContext.request.contextPath}//images/bt_expedicao.png" hspace="5" border="0">
-							Devolução Parcial
-							</a> 
-							</span>
-					</td>
+					<td width="42%"></td>
 					
 					<td width="17%">
 						<strong>Total Geral R$:</strong>
 					</td>
-					<td width="14%" id="totalGeral"></td>
-
-					</tr>
-						<td>
-							<span class="bt_novos" title="Imprimir CE Devolução">
-							<a href="#" onclick="digitacaoContagemDevolucaoController.gerarChamadaEncalheFornecedor();">
-							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0">
-							CE Devolução
-							</a>
-							</span>
-							
-							<span class="bt_novos" title="Imprimir Conferência Cega">
-							<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportarCoferenciaCega?fileType=PDF">
-							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0">
-							Conferência Cega
-							</a>
-							</span>
-								
-						</td>
+					<td width="16%" id="totalGeral"></td>
+					
 					<td width="18%">
 						<span id="bt_sellAll" class="bt_sellAll">
 							<label for="sel" style="margin-right:15px;">Selecionar Todos</label> 
@@ -178,7 +155,8 @@ $(function(){
 							style="float: left;" /> 
 						</span>
 					</td>
-				</tr>
+
+					</tr>
 			</table>
 
 		</div>
