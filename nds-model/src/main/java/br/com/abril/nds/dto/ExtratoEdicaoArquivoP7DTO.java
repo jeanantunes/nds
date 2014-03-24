@@ -1,10 +1,7 @@
 package br.com.abril.nds.dto;
 
-import java.util.Date;
-
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Delimiter;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -19,10 +16,10 @@ public class ExtratoEdicaoArquivoP7DTO extends FTFBaseDTO {
 	private String cod_filial="";
 	
 	@FTFfield(tamanho=5, tipo="char", ordem = 3)
-	private String nat_estoque="180";
+	private String nat_estoque="";
 	
 	@FTFfield(tamanho=28, tipo="char", ordem = 4)
-	private String centro_custo="@";
+	private String centro_custo="";
 	
 	@FTFfield(tamanho=10, tipo="char", ordem = 5)
 	private String dat_inventario="";
@@ -37,13 +34,13 @@ public class ExtratoEdicaoArquivoP7DTO extends FTFBaseDTO {
 	private String local_estoque="1";
 	
 	@FTFfield(tamanho=28, tipo="char", ordem = 9)
-	private String cta_estoque="1140301004";
+	private String cta_estoque="";
 
 	@FTFfield(tamanho=17, tipo="numeric", ordem = 10)
 	private String quantidade="";
 	
 	@FTFfield(tamanho=3, tipo="char", ordem = 11)
-	private String unidade_medida="UN";
+	private String unidade_medida="";
 	
 	@FTFfield(tamanho=21, tipo="numeric", ordem = 12)
 	private String custo_unitario="";
@@ -58,7 +55,7 @@ public class ExtratoEdicaoArquivoP7DTO extends FTFBaseDTO {
 	private String observacao="";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 16)
-	private String openflex01="NDS";
+	private String openflex01="";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 17)
 	private String openflex02="";
@@ -67,7 +64,7 @@ public class ExtratoEdicaoArquivoP7DTO extends FTFBaseDTO {
 	private String openflex03="";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 19)
-	private String openflex04="NDS";
+	private String openflex04="";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 20)
 	private String openflex05="";
