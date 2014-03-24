@@ -187,6 +187,7 @@ table.dadosTab { margin-left: 370px;}
 			<input type="hidden" id="estudoOrigem" value="${estudo.idEstudoOrigemCopia}" />
 			<input type="hidden" id="dataLancamentoEdicao" value="${dataLancamentoEdicao}" />
 			<input type="hidden" id="tipoClassificacaoProdutoId" value="${estudo.produtoEdicao.tipoClassificacaoProduto.id}" />
+			<input type="hidden" id="tipoClassificacaoProdutoDescricao" value="${estudo.produtoEdicao.tipoClassificacaoProduto.descricao}" />
 			
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
