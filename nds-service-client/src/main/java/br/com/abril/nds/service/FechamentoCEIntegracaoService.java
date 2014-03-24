@@ -1,7 +1,6 @@
 package br.com.abril.nds.service;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -47,10 +46,12 @@ public interface FechamentoCEIntegracaoService {
 	FechamentoCEIntegracaoDTO obterCEIntegracaoFornecedor(FiltroFechamentoCEIntegracaoDTO filtro);
 
 	FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro, BigDecimal qntVenda);
-	
-	void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda);
 
 	String reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 	
 	byte[] gerarImpressaoChamadaEncalheFornecedor(FiltroFechamentoCEIntegracaoDTO filtro);
+
+	FechamentoCEIntegracaoDTO obterDiferencaCEIntegracaoFornecedor(FiltroFechamentoCEIntegracaoDTO filtroCE,Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlteradosFechamento);
+	
+	FechamentoCEIntegracaoConsolidadoDTO obterConsolidadoCE(FiltroFechamentoCEIntegracaoDTO filtro);
 }

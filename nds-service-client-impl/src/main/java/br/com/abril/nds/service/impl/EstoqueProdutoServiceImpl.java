@@ -18,9 +18,15 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.TipoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.SemanaUtil;
 
@@ -42,6 +48,12 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoRepository;
+	
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
 	
 	@Transactional(readOnly = true)
 	public EstoqueProduto buscarEstoquePorProduto(Long idProdutoEdicao) {
@@ -117,4 +129,122 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 		return this.estoqueProdutoRespository.buscarQtdEstoquePorProduto(
 			StringUtils.leftPad(codigoProduto, 8, '0'), numeroEdicao);
 	}
+	
+	@Transactional
+	public void processarTransferencaiEntreEstoques(
+			final Long idProdutoEdicao, 
+			final TipoEstoque estoqueSaida, 
+			final TipoEstoque estoqueEntrada,
+			final Long idUsuario){
+		
+		EstoqueProduto estoqueProduto  = estoqueProdutoRespository.buscarEstoquePorProduto(idProdutoEdicao);
+		
+		if(estoqueProduto == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Erro para obter estoque produto!");
+		}
+		
+		//Operacao de saida de estoque
+		TipoMovimentoEstoque tipoMovimentoDe = 
+				tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+						this.obterTipoMovimentoEstoqueTransferencia(estoqueSaida, OperacaoEstoque.SAIDA));
+		
+		//Operação entrada no estoque
+		TipoMovimentoEstoque tipoMovimentoPara = 
+				tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+						this.obterTipoMovimentoEstoqueTransferencia(estoqueEntrada, OperacaoEstoque.ENTRADA));
+		
+		BigInteger quantidadeTransferida = this.obterValorEstoqueProduto(estoqueSaida, estoqueProduto);
+		
+		if(quantidadeTransferida == null){
+			quantidadeTransferida = BigInteger.ZERO;
+		}
+		
+		movimentoEstoqueService.gerarMovimentoEstoque(idProdutoEdicao, idUsuario, quantidadeTransferida, tipoMovimentoDe);
+		
+		movimentoEstoqueService.gerarMovimentoEstoque(idProdutoEdicao, idUsuario, quantidadeTransferida, tipoMovimentoPara);
+	}
+	
+	private GrupoMovimentoEstoque obterTipoMovimentoEstoqueTransferencia(
+			final TipoEstoque tipoEstoque, 
+			final OperacaoEstoque operacaoEstoque){
+	
+        if (tipoEstoque == null) {
+            throw new ValidacaoException(TipoMensagem.ERROR,
+                    "Erro para obter tipo de movimento estoque para transferencia!");
+        }
+        switch(tipoEstoque) {
+        
+	        case LANCAMENTO:
+	            return isOperacaoEntrada(operacaoEstoque)
+	                    ? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO
+	                            :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO;
+	        case SUPLEMENTAR:
+	            return isOperacaoEntrada(operacaoEstoque)
+	                    ? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR
+	                            :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR;
+	        case RECOLHIMENTO:
+	            return isOperacaoEntrada(operacaoEstoque)
+	                    ? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO
+	                            :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO;
+	        case PRODUTOS_DANIFICADOS:
+	            return isOperacaoEntrada(operacaoEstoque)
+	                    ? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS
+	                            :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS;
+	            
+	        case DEVOLUCAO_FORNECEDOR:
+	            return isOperacaoEntrada(operacaoEstoque)
+	                    ? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR
+	                            :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR;
+	            
+	        case DEVOLUCAO_ENCALHE:
+	            return isOperacaoEntrada(operacaoEstoque)
+	                    ? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_ENCALHE
+	                            :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_ENCALHE;
+	            
+	        case GANHO:
+	            return GrupoMovimentoEstoque.GANHO_EM;
+	            
+	        case PERDA:
+	            return GrupoMovimentoEstoque.PERDA_EM;
+	        
+	        default: return null;    
+        }
+    }
+	
+	private BigInteger obterValorEstoqueProduto(final TipoEstoque tipoEstoque, final EstoqueProduto estoqueProduto){
+	
+        if (tipoEstoque == null) {
+            throw new ValidacaoException(TipoMensagem.ERROR,
+                    "Erro para obter tipo de movimento estoque para transferencia!");
+        }
+        switch(tipoEstoque) {
+        
+	        case LANCAMENTO:
+	            return estoqueProduto.getQtde();
+	        
+	        case SUPLEMENTAR:
+	            return estoqueProduto.getQtdeSuplementar();
+	        
+	        case PRODUTOS_DANIFICADOS:
+	            return estoqueProduto.getQtdeDanificado();
+	            
+	        case DEVOLUCAO_FORNECEDOR:
+	            return estoqueProduto.getQtdeDevolucaoFornecedor();
+	            
+	        case DEVOLUCAO_ENCALHE:
+	            return estoqueProduto.getQtdeDevolucaoEncalhe();
+	            
+	        case GANHO:
+	            return estoqueProduto.getQtdeGanho();
+	            
+	        case PERDA:
+	            return estoqueProduto.getQtdePerda();
+	        
+	        default: return null;    
+        }
+    }
+	
+	 private boolean isOperacaoEntrada(final OperacaoEstoque operacaoEstoque){
+	     return (OperacaoEstoque.ENTRADA.equals(operacaoEstoque));
+	 }
 }

@@ -2,7 +2,6 @@ package br.com.abril.nds.service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.ProdutoEdicaoFechadaVO;
@@ -11,7 +10,6 @@ import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.util.Intervalo;
 
 public interface ContagemDevolucaoService {
 
@@ -35,5 +33,8 @@ public interface ContagemDevolucaoService {
 			FiltroDigitacaoContagemDevolucaoDTO filtro,
 			boolean perfilEncarregado);
     
+	void efetuarDevolucaoParcial(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario);
+	
+	void efetuarDevolucaoFinal(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario);
 	
 }

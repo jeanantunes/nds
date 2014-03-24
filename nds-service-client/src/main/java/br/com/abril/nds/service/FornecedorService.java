@@ -194,5 +194,6 @@ public interface FornecedorService {
 	List<ItemDTO<Long, String>> obterFornecedoresDestinatarios(SituacaoCadastro situacaoCadastro);
 	
 	List<ItemDTO<Long, String>> obterFornecedoresUnificados();
-
+	
+	List<Fornecedor> obterFornecedoresNaoUnificados();
 }
