@@ -131,7 +131,12 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Contra-partida dos movimentos de falta, quando direcionados para cota.
 	 */
-	AJUSTE_FALTA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
+	FALTA_PARA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
+	
+	/**
+	 * Contra-partida dos movimentos de falta, quando direcionados para cota.
+	 */
+	AJUSTE_REPARTE_FALTA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 	
 	/**
 	 * Recebimento do reparte cota

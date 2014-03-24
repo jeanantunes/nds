@@ -1207,15 +1207,16 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
             final boolean isAprovacaoAutomatica,
             final boolean validarTransfEstoqueDiferenca,
             final Date dataLancamento, final Origem origem) {
-        
+
         final TipoDiferenca novoTipoDiferenca = 
         		tipoDiferenca.isSobra() ? TipoDiferenca.SOBRA_ENVIO_PARA_COTA :
-        			tipoDiferenca.isFalta() ? TipoDiferenca.AJUSTE_FALTA_PARA_COTA : 
-        				null;
+        			tipoDiferenca.isFalta() ? TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA : 
+        				tipoDiferenca.isAjusteReparteFaltaCota() ? TipoDiferenca.FALTA_PARA_COTA :
+        					null;
 
         if (novoTipoDiferenca != null && 
         		!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
-            
+
             try {
 
                 final Diferenca diferencaSaidaDistribuidor = (Diferenca) BeanUtils.cloneBean(diferenca);
