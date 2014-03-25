@@ -5,7 +5,9 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -18,11 +20,16 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -30,6 +37,7 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.NFeService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
@@ -74,6 +82,9 @@ public class GeracaoNotaEnvioController extends BaseController {
 
     @Autowired
     private NFeService nfeService;
+    
+    @Autowired
+    private NaturezaOperacaoService naturezaOperacaoService;
 
     @Autowired
     private HttpServletResponse httpServletResponse;
@@ -208,14 +219,68 @@ public class GeracaoNotaEnvioController extends BaseController {
 
 		session.setAttribute(COTAS_ID, listaIdCotas);
 	
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Geração de NE."), Constantes.PARAM_MSGS)
-                .recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Geração de NE."), Constantes.PARAM_MSGS).recursive().serialize();
     }
 
-    private byte[] getNotas(){
+    private byte[] getNotas() throws Exception {
 
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 	
+        Distribuidor distribuidor = distribuidorService.obter();
+        
+        FiltroNFeDTO filtroNfe = new FiltroNFeDTO();
+    	
+        NaturezaOperacao natOp = null;
+    	Set<NaturezaOperacao> natOps = distribuidorService.obterNaturezasOperacoesNotasEnvio();
+    	for(Iterator<NaturezaOperacao> i = natOps.iterator(); i.hasNext(); ) {
+    		natOp = i.next();
+    		if(natOp.getTipoAtividade().equals(distribuidor.getTipoAtividade())) {
+    			filtroNfe.setIdNaturezaOperacao(natOp.getId());
+    			break;
+    		}
+    	}
+    	
+    	filtroNfe.setIntervalorCotaInicial(filtro.getIntervaloCota() != null ? filtro.getIntervaloCota().getDe() : null);
+    	filtroNfe.setIntervalorCotaFinal(filtro.getIntervaloCota() != null ? filtro.getIntervaloCota().getAte() : null);
+    	filtroNfe.setDataInicial(filtro.getIntervaloMovimento() != null ? filtro.getIntervaloMovimento().getDe() : null);
+    	filtroNfe.setDataFinal(filtro.getIntervaloMovimento() != null ? filtro.getIntervaloMovimento().getAte() : null);
+    	filtroNfe.setIdRota(filtro.getIdRota());
+    	filtroNfe.setIdRoteiro(filtro.getIdRoteiro());
+    	filtroNfe.setIntervaloBoxInicial(filtro.getIntervaloBox() != null ? filtro.getIntervaloBox().getDe() : null);
+    	filtroNfe.setIntervaloBoxFinal(filtro.getIntervaloBox() != null ? filtro.getIntervaloBox().getAte() : null);
+    	filtroNfe.setListIdFornecedor(filtro.getIdFornecedores());
+        
+    	byte[] notasGeradas = null;
+    	
+        if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+        	
+        	try {
+				nfeService.gerarNotaFiscal(filtroNfe);
+			} catch (IOException e) {
+				LOGGER.error("Erro ao gerar NF-e's.", e);
+			}
+        } else {
+        	
+        	for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+				if(dtnf.getNaturezaOperacao().contains(natOp)) {
+					if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+						
+						return gerarNotasEnvioREDispensaEmissao(filtro);
+						
+					} else {
+						
+						nfeService.gerarNotaFiscal(filtroNfe);
+						
+					}
+				}
+        	}
+        }
+			
+		return notasGeradas;
+    }
+
+	private byte[] gerarNotasEnvioREDispensaEmissao(
+			FiltroConsultaNotaEnvioDTO filtro) throws Exception {
 		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro);
 	
 		if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
@@ -236,9 +301,8 @@ public class GeracaoNotaEnvioController extends BaseController {
 				throw e;
 			}
 		}
-	
 		return notasGeradas;
-    }
+	}
 
     @Post
     public void getArquivoNotaEnvio() {
@@ -270,7 +334,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 		    result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
 		} catch (Exception e) {
             LOGGER.error("Erro genérico ao gerar arquivos de notas de envio: " + e.getMessage(), e);
-		    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
+		    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()), Constantes.PARAM_MSGS).recursive().serialize();
 		}
     }
 

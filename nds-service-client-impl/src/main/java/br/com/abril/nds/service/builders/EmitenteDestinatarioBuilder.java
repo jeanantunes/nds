@@ -10,7 +10,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
-import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.CNPJDestinatario;
 import br.com.abril.nds.model.fiscal.nota.CPFDestinatario;
 import br.com.abril.nds.model.fiscal.nota.DocumentoDestinatario;
@@ -41,6 +41,7 @@ public class EmitenteDestinatarioBuilder {
 			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setNome(pessoaJuridica.getRazaoSocial());
 			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setEmail(pessoaJuridica.getEmail());
 			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setIdPessoaOriginal(pessoaJuridica.getId());
+			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
 			
 		} else if (cota.getPessoa() instanceof PessoaFisica) {			
 			PessoaFisica pessoaFisica = (PessoaFisica) cota.getPessoa();
@@ -62,11 +63,10 @@ public class EmitenteDestinatarioBuilder {
 		} else {
 			documento = new CPFDestinatario();
 		}
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setTipoDestinatario(TipoDestinatario.COTA);
 		documento.setDocumento(cota.getPessoa().getDocumento());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual("123");
 		
-		// notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setId(cota.getEnderecoPrincipal().getEndereco().getId());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(cota.getEnderecoPrincipal().getEndereco().getLogradouro());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(cota.getEnderecoPrincipal().getEndereco().getNumero());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(cota.getEnderecoPrincipal().getEndereco().getComplemento());
@@ -120,6 +120,8 @@ public class EmitenteDestinatarioBuilder {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de destinatário não identificado.");
 		}
 		
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setTipoDestinatario(TipoDestinatario.DISTRIBUIDOR);
+		
 		DocumentoDestinatario documento = new CNPJDestinatario();
 		
 		documento.setDocumento(distribuidor.getJuridica().getDocumento());
@@ -162,5 +164,7 @@ public class EmitenteDestinatarioBuilder {
 		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco() == null) {
 			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEndereco(new NotaFiscalEndereco());
 		}
+		
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setTipoDestinatario(TipoDestinatario.FORNECEDOR);
 	}
 }

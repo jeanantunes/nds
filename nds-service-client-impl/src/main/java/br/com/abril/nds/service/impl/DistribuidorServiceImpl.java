@@ -31,6 +31,7 @@ import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.service.CalendarioService;
@@ -713,5 +714,15 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	public boolean isConferenciaCegaFechamentoEncalhe() {
 		
 		return this.distribuidorRepository.isConferenciaCegaFechamentoEncalhe();
+	}
+
+	@Override
+	@Transactional
+	public Set<NaturezaOperacao> obterNaturezasOperacoesNotasEnvio() {
+		
+		if(this.distribuidorRepository.obter().getNaturezasOperacoesNotasEnvio() != null) {
+			this.distribuidorRepository.obter().getNaturezasOperacoesNotasEnvio().isEmpty();
+		}
+		return this.distribuidorRepository.obter().getNaturezasOperacoesNotasEnvio();
 	}
 }

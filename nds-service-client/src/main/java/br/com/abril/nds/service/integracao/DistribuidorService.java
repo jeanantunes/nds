@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 
 public interface DistribuidorService {
 	
@@ -169,5 +170,7 @@ public interface DistribuidorService {
 	boolean isConferenciaCegaRecebimentoFisico();
 	
 	boolean isConferenciaCegaFechamentoEncalhe();
+	
+	Set<NaturezaOperacao> obterNaturezasOperacoesNotasEnvio();
 	
 }

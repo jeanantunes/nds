@@ -15,8 +15,8 @@ import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
+import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.service.NaturezaOperacaoService;
 
 @Service

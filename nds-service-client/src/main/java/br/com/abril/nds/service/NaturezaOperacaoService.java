@@ -55,5 +55,5 @@ public interface NaturezaOperacaoService {
 	List<NaturezaOperacao> obterNaturezasOperacoes(TipoAtividade tipoAtividade);
 	
 	NaturezaOperacao obterNaturezaOperacaoPorId(Long idNaturezaOperacao);
-	
+
 }
