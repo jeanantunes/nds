@@ -208,7 +208,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetencaoICMSTransporte;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
-import br.com.abril.nds.model.fiscal.nota.Status;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
@@ -3600,7 +3600,7 @@ public class Fixture {
 			Date dataRecebimento,
 			String motivo,
 			Long protocolo,
-			Status status) {
+			StatusRetornado status) {
 		
 		RetornoComunicacaoEletronica retornoComunicacaoEletronica = 
 				new RetornoComunicacaoEletronica();
@@ -3608,7 +3608,7 @@ public class Fixture {
 		retornoComunicacaoEletronica.setDataRecebimento(dataRecebimento);
 		retornoComunicacaoEletronica.setMotivo(motivo);
 		retornoComunicacaoEletronica.setProtocolo(protocolo);
-		retornoComunicacaoEletronica.setStatus(status);
+		retornoComunicacaoEletronica.setStatusRetornado(status);
 		
 		return retornoComunicacaoEletronica;
 		

@@ -386,20 +386,12 @@ public class PainelMonitorNFEController extends BaseController {
 			comboStatusNfe.add(new ItemDTO(statusEmissaoNfe.name(), statusEmissaoNfe.getDescricao()));
 		}
 		
-//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.AGUARDANDO_PROCESSAMENTO.name(), StatusEmissaoNfe.AGUARDANDO_PROCESSAMENTO.getDescricao()));
-//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.EM_PROCESSAMENTO.name(), StatusEmissaoNfe.EM_PROCESSAMENTO.getDescricao()));
-//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.PROCESSAMENTO_REJEITADO.name(), StatusEmissaoNfe.PROCESSAMENTO_REJEITADO.getDescricao()));
-//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.AGUARDANDO_ACAO_DO_USUARIO.name(), StatusEmissaoNfe.AGUARDANDO_ACAO_DO_USUARIO.getDescricao()));
-//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.NFE_AUTORIZADA.name(), StatusEmissaoNfe.NFE_AUTORIZADA.getDescricao()));
-//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.NFE_REJEITADA.name(), StatusEmissaoNfe.NFE_REJEITADA.getDescricao()));
-//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.NFE_DENEGADA.name(), StatusEmissaoNfe.NFE_DENEGADA.getDescricao()));
-
 		result.include("comboStatusNfe", comboStatusNfe);
 		
 	}
 	
 	private void carregarComboTipoNfe() {
-	    String parametros[] = {"ENVIO", "ENTRADA_ENCALHE", "FALTA_REPARTE", "FALTA_ENCALHE", "SOBRA_REPARTE", "SOBRA_ENCALHE", "VENDA", "DEVOLUCAO_AO_FORNECEDOR", "CANCELADA", "GERACAO_NF_E"};
+	    String parametros[] = {"ENVIO", "ENTRADA_ENCALHE", "FALTA_REPARTE", "FALTA_ENCALHE", "SOBRA_REPARTE", "SOBRA_ENCALHE", "VENDA", "DEVOLUCAO_AO_FORNECEDOR"};
 		List<ItemDTO<String, String>> comboTipoNfe = processoService.buscarProcessos(parametros);
 		result.include("comboTipoNfe", comboTipoNfe);
 	}

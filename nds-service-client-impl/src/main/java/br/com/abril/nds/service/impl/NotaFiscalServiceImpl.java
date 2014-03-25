@@ -89,8 +89,8 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
-import br.com.abril.nds.model.fiscal.nota.Status;
-import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.CotaRepository;
@@ -282,7 +282,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			if (dadosRetornoNFE.getNumeroNotaFiscal() != null || dadosRetornoNFE.getProtocolo() != null) {
 				NotaFiscal notaFiscal = null;
 				
-				if(dadosRetornoNFE.getStatus().equals(Status.CANCELAMENTO_HOMOLOGADO)){
+				if(dadosRetornoNFE.getStatus().equals(StatusRetornado.CANCELAMENTO_HOMOLOGADO)){
 					notaFiscal = this.notaFiscalRepository.obterChaveAcesso(dadosRetornoNFE);
 				}else{
 					notaFiscal = this.notaFiscalRepository.buscarNotaFiscalNumeroSerie(dadosRetornoNFE);
@@ -294,18 +294,18 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 					if (informacaoEletronica.getChaveAcesso().equals(dadosRetornoNFE.getChaveAcesso())) {
 
-						if (StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno())) {
-							if (Status.AUTORIZADO.equals(dadosRetornoNFE.getStatus()) || Status.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())) {
+						if (StatusProcessamento.EM_PROCESSAMENTO.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamento())) {
+							if (StatusRetornado.AUTORIZADO.equals(dadosRetornoNFE.getStatus()) || StatusRetornado.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())) {
 								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
 							}
 
-						} else if (StatusProcessamentoInterno.RETORNADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno())) {
+						} else if (StatusProcessamento.RETORNADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamento())) {
 
-							if (Status.AUTORIZADO.equals(informacaoEletronica.getRetornoComunicacaoEletronica().getStatus()) || Status.CANCELAMENTO_HOMOLOGADO.equals(dadosRetornoNFE.getStatus())) {
+							if (StatusRetornado.AUTORIZADO.equals(informacaoEletronica.getRetornoComunicacaoEletronica().getStatusRetornado()) || StatusRetornado.CANCELAMENTO_HOMOLOGADO.equals(dadosRetornoNFE.getStatus())) {
 
 								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
 							}
-						} else if (StatusProcessamentoInterno.SOLICITACAO_CANCELAMENTO.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno())) {
+						} else if (StatusProcessamento.SOLICITACAO_CANCELAMENTO.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamento())) {
 								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
 						} else {
 							throw new ValidacaoException(TipoMensagem.ERROR, "A chave de acesso do arquivo não confere com a base de dados.");
@@ -493,12 +493,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		retornoComunicacaoEletronica.setDataRecebimento(dadosRetornoNFE.getDataRecebimento());
 		retornoComunicacaoEletronica.setMotivo(dadosRetornoNFE.getMotivo());
 		retornoComunicacaoEletronica.setProtocolo(dadosRetornoNFE.getProtocolo());
-		retornoComunicacaoEletronica.setStatus(dadosRetornoNFE.getStatus());
+		retornoComunicacaoEletronica.setStatusRetornado(dadosRetornoNFE.getStatus());
 
 		informacaoEletronica.setRetornoComunicacaoEletronica(retornoComunicacaoEletronica);
 
 		notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(informacaoEletronica);
-		notaFiscal.getNotaFiscalInformacoes().setStatusProcessamentoInterno(StatusProcessamentoInterno.RETORNADA);
+		notaFiscal.getNotaFiscalInformacoes().setStatusProcessamento(StatusProcessamento.RETORNADA);
 
 		return this.notaFiscalRepository.merge(notaFiscal);	
 	}
@@ -517,7 +517,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(id);
 
 		if (notaFiscal != null) {
-			notaFiscal.getNotaFiscalInformacoes().setStatusProcessamentoInterno(StatusProcessamentoInterno.ENVIADA);
+			notaFiscal.getNotaFiscalInformacoes().setStatusProcessamento(StatusProcessamento.EM_PROCESSAMENTO);
 			this.notaFiscalRepository.merge(notaFiscal);
 		}
 	}

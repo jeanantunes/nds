@@ -20,7 +20,7 @@ import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ProcessamentoNFEException;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.fiscal.nota.Status;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.inf.portalfiscal.nfe.TNFe;
 import br.inf.portalfiscal.nfe.TNfeProc;
 import br.inf.portalfiscal.nfe.TProcCancNFe;
@@ -133,7 +133,7 @@ public abstract class NFEImportUtil {
             final Long protocolo = null;
             final Date dataRecebimento = null;
             final String motivo = null;
-            final Status status = null;
+            final StatusRetornado status = null;
             
             retornoNFEDTO.setNumeroNotaFiscal(idNotaFiscal);
             retornoNFEDTO.setCpfCnpj(cpfCnpj);
@@ -177,7 +177,7 @@ public abstract class NFEImportUtil {
             final Date dataRecebimento = nfeProc.getProtNFe().getInfProt().getDhRecbto().toGregorianCalendar()
                     .getTime();
             final String motivo = null;
-            final Status status = Status.obterPeloCodigo(Integer.parseInt(nfeProc.getProtNFe().getInfProt().getCStat()));
+            final StatusRetornado status = StatusRetornado.obterPeloCodigo(Integer.parseInt(nfeProc.getProtNFe().getInfProt().getCStat()));
             
             retornoNFEDTO.setNumeroNotaFiscal(idNotaFiscal);
             retornoNFEDTO.setCpfCnpj(cpfCnpj);
@@ -215,7 +215,7 @@ public abstract class NFEImportUtil {
             final Long protocolo = Long.parseLong(procCancNFe.getInfCanc().getNProt());
             final Date dataRecebimento = procCancNFe.getInfCanc().getDhRecbto().toGregorianCalendar().getTime();
             final String motivo = procCancNFe.getInfCanc().getXMotivo();
-            final Status status = Status.obterPeloCodigo(Integer.parseInt(procCancNFe.getInfCanc().getCStat()));
+            final StatusRetornado status = StatusRetornado.obterPeloCodigo(Integer.parseInt(procCancNFe.getInfCanc().getCStat()));
             
             retornoNFEDTO.setNumeroNotaFiscal(idNotaFiscal);
             retornoNFEDTO.setCpfCnpj(cpfCnpj);

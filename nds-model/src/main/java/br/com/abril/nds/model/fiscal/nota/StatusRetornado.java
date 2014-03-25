@@ -1,6 +1,6 @@
 package br.com.abril.nds.model.fiscal.nota;
 
-public enum Status {
+public enum StatusRetornado {
 
 	AUTORIZADO(100, "Autorizado o uso da NF-e"),
 	CANCELAMENTO_HOMOLOGADO(101, "Cancelamento de NF-e homologado"),
@@ -25,7 +25,7 @@ public enum Status {
 	 * 
 	 * @param descricao - descrição do status
 	 */
-	private Status(Integer codigo, String descricao) {
+	private StatusRetornado(Integer codigo, String descricao) {
 		
 		this.codigo = codigo;
 		this.descricao = descricao;
@@ -52,11 +52,11 @@ public enum Status {
 	 * 
 	 * @param codigo - código do status
 	 * 
-	 * @return {@link Status}
+	 * @return {@link StatusRetornado}
 	 */
-	public static Status obterPeloCodigo(Integer codigo) {
+	public static StatusRetornado obterPeloCodigo(Integer codigo) {
 		
-		for (Status status : Status.values()) {
+		for (StatusRetornado status : StatusRetornado.values()) {
 			
 			if (status.getCodigo().equals(codigo)) {
 				

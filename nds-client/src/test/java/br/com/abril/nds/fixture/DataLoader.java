@@ -206,8 +206,8 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetencaoICMSTransporte;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
-import br.com.abril.nds.model.fiscal.nota.Status;
-import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
@@ -12511,7 +12511,7 @@ public class DataLoader {
 		Date dataRecebimento 	= Fixture.criarData(01, Calendar.JANUARY, 2012); 
 		String motivo 			= "";
 		Long protocolo 			= 32165487L;
-		Status status			= Status.AUTORIZADO;
+		StatusRetornado status			= StatusRetornado.AUTORIZADO;
 		
 		
 		RetornoComunicacaoEletronica retornoComunicacaoEletronica = 
@@ -12599,7 +12599,7 @@ public class DataLoader {
 						valorProdutos, 
 						valorSeguro);
 		
-		StatusProcessamentoInterno statusProcessamentoInterno = StatusProcessamentoInterno.ENVIADA;
+		StatusProcessamento statusProcessamentoInterno = StatusProcessamento.ENVIADA;
 		
 		NotaFiscal notaFiscal = new NotaFiscal();
 		
@@ -12610,7 +12610,7 @@ public class DataLoader {
 		notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(informacaoEletronica);
 		notaFiscal.getNotaFiscalInformacoes().setInformacaoTransporte(informacaoTransporte);
 		notaFiscal.getNotaFiscalInformacoes().setInformacaoValoresTotais(informacaoValoresTotais);
-		notaFiscal.getNotaFiscalInformacoes().setStatusProcessamentoInterno(statusProcessamentoInterno);
+		notaFiscal.getNotaFiscalInformacoes().setStatusProcessamento(statusProcessamentoInterno);
 		
 		session.save(notaFiscal);
 		
