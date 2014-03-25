@@ -117,7 +117,7 @@ public class FixacaoReparteController extends BaseController {
 	public void fixacaoReparte(){
 		result.include("classificacao",fixacaoReparteService.obterClassificacoesProduto());
 		
-		fixacaoReparteService.verificarFixacao(new Date());
+//		fixacaoReparteService.verificarFixacao(new Date());
 	}
 
 
