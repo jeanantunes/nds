@@ -452,12 +452,19 @@ public class LancamentoRepositoryImpl extends
 				.append(" join produtoEdicao.produto produto ")
 
 				.append(" where produto.codigo = :codigoProduto ")
-				.append(" and produtoEdicao.numeroEdicao =:numeroEdicao ");
+				.append(" and produtoEdicao.numeroEdicao =:numeroEdicao ")
+				.append(" and lancamento.status in (:statusLancamento) ")
+				.append(" order by lancamento.dataLancamentoDistribuidor desc ");
 
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("numeroEdicao", numeroEdicao);
 		query.setParameter("codigoProduto", codigoProduto);
+		
+		query.setParameterList("statusLancamento", 
+			Arrays.asList(StatusLancamento.EXPEDIDO, 
+				StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO));
+		
 		query.setMaxResults(1);
 
 		return (Date) query.uniqueResult();
