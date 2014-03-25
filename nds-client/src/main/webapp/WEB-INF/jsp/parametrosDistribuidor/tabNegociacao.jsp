@@ -109,6 +109,7 @@ function checkDescontoSelecionado() {
 						   ${parametrosDistribuidor.aceitaBaixaPagamentoVencido?"checked":""}/>
 				</td>
 			</tr>
+			<!--
 			<tr>
 				<td>
 					<label>Número de dias nova cobrança:</label>
@@ -120,6 +121,7 @@ function checkDescontoSelecionado() {
 						   style="width:40px;" />
 				</td>
 			</tr>
+			-->
 			<tr>
 				<td>
 					<label>Assunto de e-mail de cobrança:</label>
