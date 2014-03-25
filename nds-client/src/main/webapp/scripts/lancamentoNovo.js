@@ -179,7 +179,8 @@ var lancamentoNovoController = $.extend(true, {
 		
 		lancamentoNovoController.tratarVisualizacaoOpcaoEstoque({
 			tipoDiferenca: tipoDiferenca,
-			direcionamento: 'ESTOQUE'
+			direcionamento: 'ESTOQUE',
+			clearInputs: true
 		});
 	},
 	
@@ -1440,9 +1441,12 @@ var lancamentoNovoController = $.extend(true, {
 		var value = params.tipoDiferenca;
 		var direcionamento = params.direcionamento;
 
-		$("#dialogNovasDiferencas input[type='text']", this.workspace).each(function() {
-			$(this).val('');
-		});
+		if (params.clearInputs) {
+
+			$("#dialogNovasDiferencas input[type='text']", this.workspace).each(function() {
+				$(this).val('');
+			});
+		}
 
 		$("#checkboxLancCota", this.workspace).enable();
 
@@ -1481,6 +1485,7 @@ var lancamentoNovoController = $.extend(true, {
 
 			if (direcionamento && direcionamento === 'COTA') {
 				$("#paraCota", this.workspace).check();
+				$("#fieldCota", lancamentoNovoController.workspace).show();
 			} else {				
 				$("#paraEstoque", this.workspace).check();
 			}
