@@ -1697,6 +1697,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		this.processarLancamentosEmRecolhimento(dataOperacao, usuario);
 		
 		this.processarLancamentosVencidos(dataOperacao, usuario);
+		
+		//TODO Habilitar esse processo quando o NDSBKLOG 9 for concluido e testado
+		//this.processarLancamentosFechados(dataOperacao, usuario);
 	}
 
 	private void processarLancamentosEmRecolhimento(Date dataOperacao, Usuario usuario) {
@@ -1727,6 +1730,25 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			this.lancamentoRepository.merge(lancamento);
 		}
+	}
+	
+	private void processarLancamentosFechados(Date dataOperacao, Usuario usuario) {
+		
+		//TODO Habilitar esse processo quando o NDSBKLOG 9 for concluido e testado
+		
+		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosEmRecolhimentoParaFechamento(dataOperacao);
+		
+		if(lancamentos!= null && !lancamentos.isEmpty()){
+
+			for (Lancamento lancamento : lancamentos) {
+				
+				lancamento.setStatus(StatusLancamento.FECHADO);
+				lancamento.setUsuario(usuario);
+				
+				this.lancamentoRepository.merge(lancamento);
+			}
+		}
+		
 	}
 
 	private Integer obterUltimoDiaRecolhimento() {

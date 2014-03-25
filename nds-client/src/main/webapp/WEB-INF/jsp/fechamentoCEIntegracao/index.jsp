@@ -2,6 +2,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fechamentoCEIntegracao.js"></script>
 <script language="javascript" type="text/javascript">
@@ -26,7 +27,20 @@
 	  		<p>Deseja salvar as informações?</p>
 		</div>
 	</form>
-
+	
+	<form id="idFormConfirmacaoFechamento">
+		<div id="dialog-Confirmacao-Fechamento" title="Fechamento CE - Integração" style="display:none;">
+	  		<p>Deseja efetuar o fechamento da CE - Integração?</p>
+		</div>
+	</form>
+	
+	<form id="idFormPerdaGanhos">
+		<div id="dialog-perdas-ganhos-Fechamento" title="Diferença(s) Fechamento CE - Integração" style="display:none;">
+	    	<table class="perdaGanhoGrid"></table>
+		</div>
+	</form>
+	
+	
     <div class="areaBts">
     	<div class="area">
     		
@@ -77,8 +91,9 @@
 		      		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" id="imagemImprimirCE" />
 		      	</a>
 		    </span>
+		    
 		       
-		       <span class="bt_arq bt_acoes_grid_ce">
+		    <span class="bt_arq bt_acoes_grid_ce">
 				  	<a isEdicao="true" href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 				  		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 					</a>

@@ -47,6 +47,5 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 	public void setSemanaFechada(boolean semanaFechada) {
 		this.semanaFechada = semanaFechada;
 	}
-	
-	
+
 }

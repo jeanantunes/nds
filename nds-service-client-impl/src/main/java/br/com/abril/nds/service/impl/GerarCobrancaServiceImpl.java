@@ -445,27 +445,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return dataVencimento;
 	}
 	
-	/**
-	 * Retorna o valor total do boleto com desconto.
-	 * 
-	 * @param idChamadaEncalheFornecedor
-	 * @param valorBrutoBoleto
-	 * 
-	 * @return BigDecimal
-	 */
-	private BigDecimal obterValorBoleto(Long idChamadaEncalheFornecedor, BigDecimal valorBrutoBoleto) {
-		
-		BigDecimal valorTotalDesconto = 
-				itemChamadaEncalheFornecedorRepository.obterTotalDoDescontoItensChamadaEncalheFornecedor(idChamadaEncalheFornecedor);
-		
-		if(valorTotalDesconto == null) {
-			valorTotalDesconto = BigDecimal.ZERO;
-		}
-		
-		return valorBrutoBoleto.subtract(valorTotalDesconto);
-		
-	}
-	
 	@Transactional
 	public List<BoletoDistribuidor> gerarCobrancaBoletoDistribuidor(
 			List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor, 
@@ -488,11 +467,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				boletoDistribuidorRepository.remover(boletoDistribuidor);
 			}
 			
-			chamadaEncalheFornecedor.setFornecedor( chamadaEncalheFornecedor.getItens().get(0).getProdutoEdicao().getProduto().getFornecedor() );
-			
 			Fornecedor fornecedor = chamadaEncalheFornecedor.getFornecedor();
 			
-			Banco banco = chamadaEncalheFornecedor.getFornecedor().getBanco();
+			Banco banco = fornecedor.getBanco();
 			
 			if (banco == null) {
 				
@@ -525,9 +502,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			if(TipoCobranca.BOLETO.equals(tipoCobranca)) {
 				
-				BigDecimal valorLiquidoBoleto = obterValorBoleto(chamadaEncalheFornecedor.getId(), chamadaEncalheFornecedor.getTotalVendaApurada());
-				
-				boletoDistribuidor.setValor(valorLiquidoBoleto);
+				boletoDistribuidor.setValor(chamadaEncalheFornecedor.getTotalCreditoApurado().subtract(chamadaEncalheFornecedor.getTotalMargemApurado()));
 			}
 			
 			boletoDistribuidor.setVias(1);
@@ -1832,24 +1807,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
 					
-//					if (negociacao != null) {
-//					    
-//						if (!negociacao.isNegociacaoAvulsa()) {
-//						
-//						    this.parcelaNegociacaoRepository.excluirPorNegociacao(negociacao.getId());
-//						
-//						    this.negociacaoRepository.remover(negociacao);
-//						    
-//						    this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
-//						}
-//					
-//					} else {
+					this.removerDividaCobrancaConsolidado(divida, consolidado, dataOperacao);
 					
-						this.removerDividaCobrancaConsolidado(divida, consolidado, dataOperacao);
-//					}
 				}
-
-				List<MovimentoFinanceiroCota> mfcs = consolidado.getMovimentos();
+				
+				List<MovimentoFinanceiroCota> mfcs = movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDeConsolidado(consolidado.getId());
 				
 				consolidado.setMovimentos(null);
 				

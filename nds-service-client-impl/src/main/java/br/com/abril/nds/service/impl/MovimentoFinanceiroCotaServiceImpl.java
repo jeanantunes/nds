@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
@@ -48,6 +50,7 @@ import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
@@ -72,6 +75,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     
     @Autowired
     private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+
+    @Autowired
+    private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
     
     @Autowired
     private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
@@ -880,8 +886,22 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     private Map<Long, List<MovimentoEstoqueCota>> obterMovimentosEstoqueReparteComChamadaEncalheOuProdutoContaFirme(
             final Long idCota, final Date dataOperacao) {
         
+    	
+    	List<Long> idTiposMovimentoEstoque = tipoMovimentoEstoqueRepository.buscarIdTiposMovimentoEstoque(Arrays.asList(
+        		GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR,
+                GrupoMovimentoEstoque.COMPRA_ENCALHE,
+                GrupoMovimentoEstoque.RECEBIMENTO_REPARTE,
+                GrupoMovimentoEstoque.SOBRA_EM_COTA,
+                GrupoMovimentoEstoque.FALTA_EM_COTA));
+    	
         final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte = movimentoEstoqueCotaRepository
-                .obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(idCota, dataOperacao);
+                .obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(idCota, dataOperacao, idTiposMovimentoEstoque);
+        
+        StringBuilder idMovs = new StringBuilder();
+        
+        for(MovimentoEstoqueCota m : movimentosEstoqueCotaOperacaoEnvioReparte) {
+        	idMovs.append(m.getId() + ", ");
+        }
         
         final Map<Long, List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = this
                 .agrupaMovimentosEstoqueCotaPorFornecedor(movimentosEstoqueCotaOperacaoEnvioReparte);
@@ -918,8 +938,11 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
      */
     private Map<Long, List<MovimentoEstoqueCota>> obterMovimentosEstoqueEstorno(final Long idCota) {
         
+    	final List<Long> idTiposMovimentoEstorno = tipoMovimentoEstoqueRepository.buscarIdTiposMovimentoEstoque(
+    			Arrays.asList(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE, GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR));
+    	
         final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno = movimentoEstoqueCotaRepository
-                .obterMovimentosEstornados(idCota);
+                .obterMovimentosEstornados(idCota, idTiposMovimentoEstorno);
         
         final Map<Long, List<MovimentoEstoqueCota>> movimentosEstornoAgrupadosPorFornecedor = this
                 .agrupaMovimentosEstoqueCotaPorFornecedor(movimentosEstoqueCotaOperacaoEstorno);
