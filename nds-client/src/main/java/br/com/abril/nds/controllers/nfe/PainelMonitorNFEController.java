@@ -399,7 +399,7 @@ public class PainelMonitorNFEController extends BaseController {
 	}
 	
 	private void carregarComboTipoNfe() {
-	    String parametros[] = {"ENVIO", "ENTRADA_ENCALHE", "FALTA_REPARTE", "FALTA_ENCALHE", "SOBRA_REPARTE", "SOBRA_ENCALHE", "VENDA", "DEVOLUCAO_AO_FORNECEDOR", "CANCELADA", "GERACAO_NF_E"};
+	    String parametros[] = {"ENVIO", "ENTRADA_ENCALHE", "FALTA_REPARTE", "FALTA_ENCALHE", "SOBRA_REPARTE", "SOBRA_ENCALHE", "VENDA", "DEVOLUCAO_AO_FORNECEDOR"};
 		List<ItemDTO<String, String>> comboTipoNfe = processoService.buscarProcessos(parametros);
 		result.include("comboTipoNfe", comboTipoNfe);
 	}
