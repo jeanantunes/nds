@@ -453,7 +453,7 @@ public class NFeServiceImpl implements NFeService {
 		}
 		
 		if(notas == null || notas.isEmpty())
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota fiscal.");
 		
 		for (NotaFiscal notaFiscal : notas) {
 			notaFiscalRepository.adicionar(notaFiscal);
@@ -497,8 +497,8 @@ public class NFeServiceImpl implements NFeService {
 			tributoRegimeTributario.put(tributo.getTributo().getNome(), tributo);
 		}
 		
-		
 		for (EstoqueProduto estoque : estoques) {
+			
 			NotaFiscal notaFiscal = new NotaFiscal();
 			
 			// popular distribuidor

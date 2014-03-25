@@ -36,10 +36,9 @@ public interface NaturezaOperacaoRepository extends Repository<NaturezaOperacao,
 	public List<NaturezaOperacao> obterNaturezasOperacoesCotasNaoContribuintesPor(TipoAtividade tipoAtividade);
 	
 	List<NaturezaOperacao> consultarNaturezaOperacao(FiltroNaturezaOperacaoDTO filtro);
-	
-	
 
 	List<NaturezaOperacao> obterTiposNotaFiscal(GrupoNotaFiscal grupoNotaFiscal);
 	
 	NaturezaOperacao obterNaturezaOperacao(Long idNaturezaOperacao);
+
 }

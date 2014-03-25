@@ -15,6 +15,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -31,6 +32,7 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.Validate;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 
 /**
  * Cadastro do Distribuidor
@@ -356,6 +358,19 @@ public class Distribuidor {
 	@OneToOne
 	@JoinColumn(name="REGIME_TRIBUTARIO_ID")
 	private RegimeTributario regimeTributario;
+	
+	/**
+	 * Lista de naturezas de operacoes para Notas de Envio
+	 * Deve existir 1, e apenas 1, para cada tipo de Atividade
+	 */
+	@OneToMany
+	@JoinTable(
+	            name="NATUREZA_OPERACAO_NOTA_ENVIO",
+	            joinColumns={
+	            		@JoinColumn(table="DISTRIBUIDOR", name="DISTRIBUIDOR_ID", referencedColumnName="id", nullable=false)
+	                    },
+	            inverseJoinColumns=@JoinColumn(table="NATUREZA_OPERACAO", name="NATUREZA_OPERACAO_ID", referencedColumnName="id"))
+	private Set<NaturezaOperacao> naturezasOperacoesNotasEnvio = new HashSet<NaturezaOperacao>();
 	
 	public Long getId() {
 		return id;
@@ -1263,6 +1278,15 @@ public class Distribuidor {
 		return regimeTributario != null ? regimeTributario.getTributosAliquotas() : null;
 	}
 	
+	public Set<NaturezaOperacao> getNaturezasOperacoesNotasEnvio() {
+		return naturezasOperacoesNotasEnvio;
+	}
+
+	public void setNaturezasOperacoesNotasEnvio(
+			Set<NaturezaOperacao> naturezasOperacoesNotasEnvio) {
+		this.naturezasOperacoesNotasEnvio = naturezasOperacoesNotasEnvio;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

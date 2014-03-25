@@ -6,6 +6,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -17,6 +19,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.util.TipoSecao;
@@ -32,11 +35,16 @@ public class IdentificacaoDestinatario implements Serializable {
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = -3558149602330018787L;
-	
+
+	@XmlTransient
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "PESSOA_DESTINATARIO_ID_REFERENCIA")
-	@XmlTransient
 	private NotaFiscalPessoa pessoaDestinatarioReferencia;
+
+	@XmlTransient
+	@Enumerated(EnumType.STRING)
+	@Column(name="TIPO_DESTINATARIO")
+	private TipoDestinatario tipoDestinatario;
 	
 	/**
 	 * CNPJ CPF
@@ -102,17 +110,22 @@ public class IdentificacaoDestinatario implements Serializable {
 	 */
 	public IdentificacaoDestinatario() {
 	}
-
 	
 	public NotaFiscalPessoa getPessoaDestinatarioReferencia() {
 		return pessoaDestinatarioReferencia;
 	}
-
 	
 	public void setPessoaDestinatarioReferencia(NotaFiscalPessoa pessoaDestinatarioReferencia) {
 		this.pessoaDestinatarioReferencia = pessoaDestinatarioReferencia;
 	}
 
+	public TipoDestinatario getTipoDestinatario() {
+		return tipoDestinatario;
+	}
+
+	public void setTipoDestinatario(TipoDestinatario tipoDestinatario) {
+		this.tipoDestinatario = tipoDestinatario;
+	}
 
 	/**
 	 * @return the documento
