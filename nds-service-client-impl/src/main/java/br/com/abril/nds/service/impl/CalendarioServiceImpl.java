@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -694,11 +693,7 @@ public class CalendarioServiceImpl implements CalendarioService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
         }
         
-        final List<TipoFeriado> tiposFeriado = Arrays.asList(TipoFeriado.ESTADUAL, TipoFeriado.FEDERAL);
-        
-        final List<Feriado> feriados = feriadoRepository.obterFeriados(data, tiposFeriado, false);
-        
-        return !feriados.isEmpty();
+        return feriadoRepository.isNaoOpera(data);
     }
     
     @Override
@@ -710,28 +705,10 @@ public class CalendarioServiceImpl implements CalendarioService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
         }
         
-        boolean feriadoMunicipalSemOperacao = false;
+       final String localidadeDistribuidor = distribuidorRepository.cidadeDistribuidor();
         
-        final List<TipoFeriado> tiposFeriado = Arrays.asList(TipoFeriado.MUNICIPAL);
+       return feriadoRepository.isNaoOpera(data, localidadeDistribuidor);
         
-        final List<Feriado> feriados = feriadoRepository.obterFeriados(data, tiposFeriado, false);
-        
-        if (!feriados.isEmpty()) {
-            
-            final String localidadeDistribuidor = distribuidorRepository.cidadeDistribuidor();
-            
-            for (final Feriado feriado : feriados) {
-                
-                if (localidadeDistribuidor != null && feriado.getLocalidade() != null
-                        && feriado.getLocalidade().toUpperCase().equals(localidadeDistribuidor.toUpperCase())) {
-                    
-                    feriadoMunicipalSemOperacao = true;
-                    
-                    break;
-                }
-            }
-        }
-        return feriadoMunicipalSemOperacao;
     }
     
     /**
