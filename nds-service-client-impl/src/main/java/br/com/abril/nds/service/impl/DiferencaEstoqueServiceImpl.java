@@ -504,15 +504,23 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                     listaMovimentosEstoqueCota.add(movimentoEstoqueCota);
                 }
                 
-                if (diferenca.getTipoDiferenca().isSobra()
+                if (diferenca.getTipoDiferenca().isSobra()  
                         || diferenca.getTipoDiferenca().isAlteracaoReparte()) {
                     
                     movimentoEstoque = this.gerarMovimentoEstoque(
                             diferenca, diferenca.getResponsavel().getId(), diferenca.isAutomatica(),
                             validarTransfEstoqueDiferenca,
                             ultimoLancamento.getDataLancamentoDistribuidor(), origem);
-                }
                 
+                } else if (diferenca.getTipoDiferenca().isFalta() && 
+                		TipoDirecionamentoDiferenca.COTA.equals(diferenca.getTipoDirecionamento())) {
+                	
+                	this.tratarDiferencasDirecionadasParaCota(
+                            diferenca, diferenca.getTipoDiferenca(), diferenca.getResponsavel().getId(), 
+                            diferenca.isAutomatica(), validarTransfEstoqueDiferenca,
+                            ultimoLancamento.getDataLancamentoDistribuidor(), origem);
+                }
+
                 //Verifica se ha direcionamento de produtos para o estoque do distribuidor
                 if (diferenca.getQtde().compareTo(qntTotalRateio) > 0) {
                     
@@ -781,10 +789,10 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
             
         case PERDA:
             return GrupoMovimentoEstoque.PERDA_EM;
-            
-        }
-        return null;
-        
+		default:
+
+	        return null;            
+        }        
     }
     
     private boolean isOperacaoEntrada(final OperacaoEstoque operacaoEstoque){
@@ -1140,11 +1148,11 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
         
         final TipoDiferenca tipoDiferenca = diferenca.getTipoDiferenca();
         
-        this.tratarSobrasDirecionadasParaCota(
-                diferenca, tipoDiferenca, idUsuario, isAprovacaoAutomatica,
-                validarTransfEstoqueDiferenca, dataLancamento, origem
-                );
-        
+        this.tratarDiferencasDirecionadasParaCota(
+            diferenca, tipoDiferenca, idUsuario, isAprovacaoAutomatica,
+            validarTransfEstoqueDiferenca, dataLancamento, origem
+        );
+
         StatusIntegracao statusIntegracao = null;
         
         if (tipoDiferenca.isAlteracaoReparte()) {
@@ -1181,27 +1189,33 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
                 isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, statusIntegracao, origem);
     }
     
-    private void tratarSobrasDirecionadasParaCota(final Diferenca diferenca,
+    private void tratarDiferencasDirecionadasParaCota(final Diferenca diferenca,
             final TipoDiferenca tipoDiferenca,
             final Long idUsuario,
             final boolean isAprovacaoAutomatica,
             final boolean validarTransfEstoqueDiferenca,
             final Date dataLancamento, final Origem origem) {
-        
-        if (tipoDiferenca.isSobra() && 
+
+        final TipoDiferenca novoTipoDiferenca = 
+        		tipoDiferenca.isSobra() ? TipoDiferenca.SOBRA_ENVIO_PARA_COTA :
+        			tipoDiferenca.isFalta() ? TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA : 
+        				tipoDiferenca.isAjusteReparteFaltaCota() ? TipoDiferenca.FALTA_PARA_COTA :
+        					null;
+
+        if (novoTipoDiferenca != null && 
         		!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
-            
+
             try {
-                
+
                 final Diferenca diferencaSaidaDistribuidor = (Diferenca) BeanUtils.cloneBean(diferenca);
-                
-                diferencaSaidaDistribuidor.setTipoDiferenca(TipoDiferenca.SOBRA_ENVIO_PARA_COTA);
-                
+
+                diferencaSaidaDistribuidor.setTipoDiferenca(novoTipoDiferenca);
+
                 this.gerarMovimentoEstoque(
-                        diferencaSaidaDistribuidor, idUsuario, isAprovacaoAutomatica,
-                        validarTransfEstoqueDiferenca, dataLancamento, origem
-                        );
-                
+                    diferencaSaidaDistribuidor, idUsuario, isAprovacaoAutomatica,
+                    validarTransfEstoqueDiferenca, dataLancamento, origem
+                );
+
             } catch (final Exception e) {
                 
                 throw new IllegalArgumentException(e);
@@ -1213,8 +1227,8 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
         
         GrupoMovimentoEstoque grupoMovimentoEstoque;
         
-        if (TipoDiferenca.SOBRA_ENVIO_PARA_COTA.equals(tipoDiferenca)) {
-        	
+        if (tipoDiferenca.isAjusteDistribuidor()) {
+
         	return tipoDiferenca.getTipoMovimentoEstoque();
         	
         } else if (tipoDiferenca.isDiferencaDe()) {

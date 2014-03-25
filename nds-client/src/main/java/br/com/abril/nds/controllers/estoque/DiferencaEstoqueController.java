@@ -2655,7 +2655,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         return diferencaEstoqueService.obterRateiosCotaPorIdDiferenca(idDiferenca);
     }
     
-    @SuppressWarnings("incomplete-switch")
     private BigInteger obterReparteAtualProdutoEdicao(final DiferencaVO diferencaVO, final Long idProdutoEdicao) {
         
         if(diferencaVO.getTipoEstoque() == null){
