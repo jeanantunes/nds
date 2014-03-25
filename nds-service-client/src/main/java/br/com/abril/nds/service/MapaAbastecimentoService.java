@@ -1,8 +1,7 @@
 package br.com.abril.nds.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.MapaCotaDTO;
@@ -12,6 +11,7 @@ import br.com.abril.nds.dto.ProdutoEdicaoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
+import br.com.abril.nds.vo.ProdutoEdicaoVO;
 
 public interface MapaAbastecimentoService {
 
@@ -47,7 +47,7 @@ public interface MapaAbastecimentoService {
 	 * @param filtro
 	 * @return
 	 */
-	TreeMap<String, ProdutoMapaDTO> obterMapaDeImpressaoPorBox(
+	Map<String, ProdutoMapaDTO> obterMapaDeImpressaoPorBox(
 			FiltroMapaAbastecimentoDTO filtro);
 	
 	/**
@@ -56,7 +56,7 @@ public interface MapaAbastecimentoService {
 	 * @param filtro
 	 * @return
 	 */
-	HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(
+	Map<Integer, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(
 			FiltroMapaAbastecimentoDTO filtro);
 
 	/**
@@ -176,6 +176,12 @@ public interface MapaAbastecimentoService {
 	 * @param filtro
 	 * @return
 	 */
-	HashMap<Long, MapaProdutoCotasDTO> obterMapaDeImpressaoPorEntregador(
+	Map<Long, MapaProdutoCotasDTO> obterMapaDeImpressaoPorEntregador(
 			FiltroMapaAbastecimentoDTO filtro);
+	
+	Map<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>> obterMapaDeImpressaoPorBoxRotaQuebraCota(
+            FiltroMapaAbastecimentoDTO filtro);
+
+	Map<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>> obterMapaDeImpressaoPorBoxQuebraPorCota(
+	        FiltroMapaAbastecimentoDTO filtro);
 }

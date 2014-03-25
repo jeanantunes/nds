@@ -51,6 +51,8 @@ public class UsuarioDTO implements Serializable {
 	private List<Permissao> permissoes;
 
 	private List<GrupoPermissaoDTO> gruposSelecionadosList;
+	
+	private boolean supervisor;
 
 	public Long getId() {
 		return id;
@@ -204,6 +206,14 @@ public class UsuarioDTO implements Serializable {
 
 	public void setIdsGrupos(List<Long> idsGrupos) {
 		this.idsGrupos = idsGrupos;
+	}
+
+	public boolean isSupervisor() {
+		return supervisor;
+	}
+
+	public void setSupervisor(boolean supervisor) {
+		this.supervisor = supervisor;
 	}
 	
 }

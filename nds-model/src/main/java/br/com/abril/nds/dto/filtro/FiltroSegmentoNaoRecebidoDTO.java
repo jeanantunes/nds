@@ -2,7 +2,6 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
-import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -29,41 +28,7 @@ public class FiltroSegmentoNaoRecebidoDTO implements Serializable {
 	
 	private PaginacaoVO paginacao;
 
-	@Override
-	public boolean equals(Object object) {
-		if (this == object)
-			return true;
-
-		if (object == null)
-			return false;
-
-		if (this.getClass() != object.getClass())
-			return false;
-
-		FiltroSegmentoNaoRecebidoDTO other = (FiltroSegmentoNaoRecebidoDTO) object;
-
-		String otherNomeCota = "";
-		String nomeCota = "";
-
-		if (other.getNomeCota() != null) {
-			otherNomeCota = other.getNomeCota();
-		}
-
-		if (this.getNomeCota() != null) {
-			nomeCota = this.getNomeCota();
-		}
-
-		if (this.getNumeroCota() == other.getNumeroCota()
-				&& nomeCota.equals(otherNomeCota)
-				&& this.getTipoSegmentoProdutoId() == other
-						.getTipoSegmentoProdutoId()
-				&& this.isCotasAtivas() == other.isCotasAtivas()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
+	
 	public Long getTipoSegmentoProdutoId() {
 		return tipoSegmentoProdutoId;
 	}
@@ -130,6 +95,57 @@ public class FiltroSegmentoNaoRecebidoDTO implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (cotasAtivas ? 1231 : 1237);
+		result = prime * result
+				+ ((nomeCota == null) ? 0 : nomeCota.hashCode());
+		result = prime * result
+				+ ((numeroCota == null) ? 0 : numeroCota.hashCode());
+		result = prime
+				* result
+				+ ((tipoSegmentoProdutoId == null) ? 0 : tipoSegmentoProdutoId
+						.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroSegmentoNaoRecebidoDTO other = (FiltroSegmentoNaoRecebidoDTO) obj;
+		if (cotasAtivas != other.cotasAtivas)
+			return false;
+		if (nomeCota == null) {
+			if (other.nomeCota != null)
+				return false;
+		} else if (!nomeCota.equals(other.nomeCota))
+			return false;
+		if (numeroCota == null) {
+			if (other.numeroCota != null)
+				return false;
+		} else if (!numeroCota.equals(other.numeroCota))
+			return false;
+		if (tipoSegmentoProdutoId == null) {
+			if (other.tipoSegmentoProdutoId != null)
+				return false;
+		} else if (!tipoSegmentoProdutoId.equals(other.tipoSegmentoProdutoId))
+			return false;
+		return true;
 	}
 
 }

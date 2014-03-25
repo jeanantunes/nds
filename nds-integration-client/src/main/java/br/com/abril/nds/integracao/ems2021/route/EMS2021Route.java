@@ -1,6 +1,8 @@
 package br.com.abril.nds.integracao.ems2021.route;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems2021.processor.EMS2021MessageProcessor;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -8,6 +10,8 @@ import br.com.abril.nds.integracao.engine.RouteInterface;
 import br.com.abril.nds.integracao.engine.data.CouchDBImportRouteTemplate;
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 
+@Component
+@Scope("prototype")
 public class EMS2021Route extends CouchDBImportRouteTemplate {
 	
 	@Autowired

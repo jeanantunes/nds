@@ -12,19 +12,24 @@ import java.util.Enumeration;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import br.com.abril.nds.client.job.AjusteReparteJob;
+import br.com.abril.nds.client.job.FixacaoReparteJob;
 import br.com.abril.nds.client.job.IntegracaoOperacionalDistribuidorJob;
 import br.com.abril.nds.client.job.RankingFaturamentoJob;
 import br.com.abril.nds.client.job.RankingSegmentoJob;
+import br.com.abril.nds.client.job.RegiaoJob;
 import br.com.abril.nds.util.PropertiesUtil;
 import br.com.abril.nds.util.QuartzUtil;
 
@@ -36,7 +41,8 @@ import br.com.abril.nds.util.QuartzUtil;
  */
 public class ApplicationContextListener implements ServletContextListener {
 
-	private Logger logger = Logger.getLogger(ApplicationContextListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContextListener.class);
+    private static final Marker FATAL = MarkerFactory.getMarker("FATAL");
 
 	@Override
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {
@@ -51,12 +57,12 @@ public class ApplicationContextListener implements ServletContextListener {
 
 				DriverManager.deregisterDriver(driver);
 
-				logger.info(String.format("Desregistrando driver JDBC: %s",
+                LOGGER.info(String.format("Desregistrando driver JDBC: %s",
 						driver));
 
 			} catch (SQLException e) {
 
-				logger.error(String.format(
+                LOGGER.error(String.format(
 						"Erro desregistrando driver JDBC:  %s", driver), e);
 			}
 
@@ -65,38 +71,37 @@ public class ApplicationContextListener implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
-		
+
 		try {
 			
-			final WebApplicationContext springContext = 
-				WebApplicationContextUtils.getWebApplicationContext(
-					servletContextEvent.getServletContext());
+			final WebApplicationContext springContext = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext());
 			
-			SchedulerFactoryBean schedulerFactoryBean =
-				springContext.getBean(SchedulerFactoryBean.class);
+			SchedulerFactoryBean schedulerFactoryBean =	springContext.getBean(SchedulerFactoryBean.class);
 			 
 			Scheduler scheduler = schedulerFactoryBean.getScheduler();
 			
 //			this.agendarIntegracaoOperacionalDistribuidor(scheduler);
 //			this.agendaExeclusaoAjusteReparte(scheduler);
 //			this.agendarExclusaoDeEstudos(scheduler);
-//			this.agendarGeracaoRankings(scheduler);
+			this.agendarGeracaoRankings(scheduler);
+//			this.agendaExclusaoFixacaoReparte();
+//			this.agendaExclusaoRegiao();
 			
 			scheduler.start();
 			
 		} catch (SchedulerException e) {
 			
-			logger.fatal("Falha ao inicializar agendador do Quartz", e);
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", e);
 
 			throw new RuntimeException(e);
 		}
-
+		
 	}
 
-	/*
-	 * Efetua o agendamento do serviço de integração operacional do
-	 * distribuidor.
-	 */
+	        /*
+     * Efetua o agendamento do serviço de integração operacional do
+     * distribuidor.
+     */
 	private void agendarIntegracaoOperacionalDistribuidor(Scheduler scheduler) {
 
 		try {
@@ -125,7 +130,7 @@ public class ApplicationContextListener implements ServletContextListener {
 
 		} catch (SchedulerException se) {
 
-			logger.fatal("Falha ao inicializar agendador do Quartz", se);
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", se);
 
 			throw new RuntimeException(se);
 		}
@@ -159,7 +164,7 @@ public class ApplicationContextListener implements ServletContextListener {
 
 		} catch (SchedulerException se) {
 
-			logger.fatal("Falha ao inicializar agendador do Quartz", se);
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", se);
 
 			throw new RuntimeException(se);
 		}
@@ -176,8 +181,12 @@ public class ApplicationContextListener implements ServletContextListener {
 				"integracao-distribuidor.properties");
 		
 		
-		String intervaloExecucaoGeracaoRanking = propertiesUtil
-				.getPropertyValue("intervalo.execucao.geracao.ranking");
+		String intervaloExecucaoGeracaoRankingFaturamento = propertiesUtil
+				.getPropertyValue("intervalo.execucao.geracao.ranking.faturamento");
+		
+		String intervaloExecucaoGeracaoRankingSegmento = propertiesUtil
+				.getPropertyValue("intervalo.execucao.geracao.ranking.segmento");
+		
 		
 		JobDetail jobRankingFaturamento = newJob(RankingFaturamentoJob.class)
 				.withIdentity(RankingFaturamentoJob.class.getName(), groupName)
@@ -191,32 +200,29 @@ public class ApplicationContextListener implements ServletContextListener {
 		CronTrigger cronTriggerRankingFaturamento = newTrigger()
 				.withIdentity("gerarRankingFaturamentoTrigger", groupName)
 				.withSchedule(
-						cronSchedule(intervaloExecucaoGeracaoRanking))
+						cronSchedule(intervaloExecucaoGeracaoRankingFaturamento))
 				.build();
 		
 		CronTrigger cronTriggerRankingSegmento = newTrigger()
 				.withIdentity("gerarRankingSegmentoTrigger", groupName)
 				.withSchedule(
-						cronSchedule(intervaloExecucaoGeracaoRanking))
+						cronSchedule(intervaloExecucaoGeracaoRankingSegmento))
 				.build();
 
 		try {
 			scheduler.scheduleJob(jobRankingFaturamento, cronTriggerRankingFaturamento);
 			scheduler.scheduleJob(jobRankingSegmento, cronTriggerRankingSegmento);
 		} catch (SchedulerException e) {
-			logger.fatal("Falha ao inicializar agendador do Quartz", e);
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", e);
 
 			throw new RuntimeException(e);
 		}
-		
-		
 	}
 
 	
-	/*
-	 * Efetua o agendamento do serviço de exclusão de ajuste de reparte.
-	 * 
-	 */
+	        /*
+     * Efetua o agendamento do serviço de exclusão de ajuste de reparte.
+     */
 	private void agendaExeclusaoAjusteReparte(Scheduler scheduler) {
 
 		try {
@@ -245,7 +251,85 @@ public class ApplicationContextListener implements ServletContextListener {
 
 		} catch (SchedulerException se) {
 
-			logger.fatal("Falha ao inicializar agendador do Quartz", se);
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", se);
+
+			throw new RuntimeException(se);
+		}
+	}
+	
+	        /*
+     * Efetua o agendamento do serviço de exclusão de fixacao por reparte.
+     */
+	private void agendaExclusaoFixacaoReparte(Scheduler scheduler) {
+
+		try {
+
+			String groupName = "integracaoGroup";
+
+			QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
+
+			PropertiesUtil propertiesUtil = new PropertiesUtil(
+					"integracao-distribuidor.properties");
+
+			String intervaloExecucao = propertiesUtil
+					.getPropertyValue("intervalo.execucao.fixacao.reparte");
+
+			JobDetail job = newJob(FixacaoReparteJob.class)
+					.withIdentity(FixacaoReparteJob.class.getName(), groupName)
+					.build();
+
+			CronTrigger cronTrigger = newTrigger()
+					.withIdentity("fixacaoReparteTrigger", groupName)
+					.withSchedule(
+							cronSchedule(intervaloExecucao))
+					.build();
+
+			scheduler.scheduleJob(job, cronTrigger);
+
+			scheduler.start();
+
+		} catch (SchedulerException se) {
+
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", se);
+
+			throw new RuntimeException(se);
+		}
+	}
+	
+	        /*
+     * Efetua o agendamento do serviço de exclusão de Regiões.
+     */
+	private void agendaExclusaoRegiao(Scheduler scheduler) {
+
+		try {
+
+			String groupName = "integracaoGroup";
+
+			QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
+
+			PropertiesUtil propertiesUtil = new PropertiesUtil(
+					"integracao-distribuidor.properties");
+
+			String intervaloExecucao = propertiesUtil
+					.getPropertyValue("intervalo.execucao.regiao");
+
+			JobDetail job = newJob(RegiaoJob.class)
+					.withIdentity(RegiaoJob.class.getName(), groupName)
+					.build();
+
+			CronTrigger cronTrigger = newTrigger()
+					.withIdentity("regiaoTrigger", groupName)
+					.withSchedule(
+							cronSchedule(intervaloExecucao))
+					.build();
+
+			scheduler.scheduleJob(job, cronTrigger);
+
+			scheduler.start();
+
+		} catch (SchedulerException se) {
+
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", se);
 
 			throw new RuntimeException(se);
 		}

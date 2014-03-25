@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.SerializationUtils;
@@ -22,12 +23,13 @@ import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.TipoClassificacaoEstudoCota;
+import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.repository.DistribuicaoRepository;
-import br.com.abril.nds.repository.EstudoCotaRepository;
-import br.com.abril.nds.repository.EstudoRepository;
+import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
+import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CopiaProporcionalDeDistribuicaoService;
 import br.com.abril.nds.util.StringUtil;
@@ -36,10 +38,10 @@ import br.com.abril.nds.util.StringUtil;
 public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporcionalDeDistribuicaoService {
 	
 	@Autowired
-	private EstudoRepository estudoRepository;
+	private EstudoGeradoRepository estudoGeradoRepository;
 	
 	@Autowired
-	private EstudoCotaRepository estudoCotaRepository;
+	private EstudoCotaGeradoRepository estudoCotaGeradoRepository;
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
@@ -80,10 +82,10 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 		
 		validarCopiaProporcionalDeDistribuicao(vo);
 		
-		Estudo estudo = estudoRepository.obterEstudoECotasPorIdEstudo(vo.getIdEstudo());
+		EstudoGerado estudo = estudoGeradoRepository.obterEstudoECotasPorIdEstudo(vo.getIdEstudo());
 		
-		Set<EstudoCota> set = estudo.getEstudoCotas();
-		List<EstudoCota> cotas = obterListEstudoCotas(set);
+		Set<EstudoCotaGerado> set = estudo.getEstudoCotas();
+		List<EstudoCotaGerado> cotas = obterListEstudoCotas(set);
 		
 		if (!cotas.isEmpty()) {
 			estudo = criarCopiaDeEstudo(vo, estudo);
@@ -97,31 +99,36 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 		}
 		
 		estudo.setProdutoEdicao(produtoEdicao);
-		estudoRepository.alterar(estudo);
+		estudoGeradoRepository.alterar((EstudoGerado)estudo);
 		
 		
 		return estudo.getId();
 	}
 	
-	private List<EstudoCota> obterListEstudoCotas(Set<EstudoCota> set) {
+	private List<EstudoCotaGerado> obterListEstudoCotas(Set<EstudoCotaGerado> set) {
 		
-		List<EstudoCota> cotas = new ArrayList<EstudoCota>();
+		List<EstudoCotaGerado> cotas = new ArrayList<EstudoCotaGerado>();
 		
 		if (set != null && !set.isEmpty()) {
 			
-			Iterator<EstudoCota> iterator = set.iterator();
+			Iterator<EstudoCotaGerado> iterator = set.iterator();
 			
 			while (iterator.hasNext()) {
 				
-				EstudoCota estudoCota = iterator.next();
+				EstudoCotaGerado estudoCota = iterator.next();
 				
 				if (estudoCota.getReparte() == null) {
 					estudoCota.setReparte(BigInteger.ZERO);
 				}
 				
+				estudoCota.setReparteInicial(estudoCota.getReparte());
+				
 				if (StringUtil.isEmpty(estudoCota.getClassificacao())) {
 					estudoCota.setClassificacao("");
 				}
+				
+				if(estudoCota.getTipoEstudo() == null)
+				    estudoCota.setTipoEstudo(TipoEstudoCota.NORMAL);
 				
 				cotas.add(estudoCota);
 			}
@@ -131,7 +138,7 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 		return cotas;
 	}
 	
-	private Map<String, BigInteger> obterMapClassifiqReparte(List<EstudoCota> cotas) {
+	private Map<String, BigInteger> obterMapClassifiqReparte(List<EstudoCotaGerado> cotas) {
 
 		Map<String, BigInteger> mapClassifiqReparte = new HashMap<String, BigInteger>();
 
@@ -139,7 +146,7 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 
 		String key = null;
 
-		for (EstudoCota estCota : cotas) {
+		for (EstudoCotaGerado estCota : cotas) {
 
 			key = estCota.getClassificacao();
 			reparte = estCota.getReparte();
@@ -155,32 +162,30 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 		return mapClassifiqReparte;
 	}
 	
-	private Estudo obterCopiaDeEstudo(Estudo estudo) {
+	private EstudoGerado obterCopiaDeEstudo(EstudoGerado estudo) {
 		
-		Estudo estudoCopia = (Estudo)SerializationUtils.clone(estudo);
+		EstudoGerado estudoCopia = (EstudoGerado)SerializationUtils.clone(estudo);
 		estudoCopia.setId(null);
 		estudoCopia.setDataAlteracao(new Date());
-		estudoCopia.setEstudoCotas(new HashSet<EstudoCota>());
+		estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>());
 		
-		Long id = estudoRepository.adicionar(estudoCopia);
-		estudoCopia = estudoRepository.buscarPorId(id);
+		Long id = estudoGeradoRepository.adicionar(estudoCopia);
+		estudoCopia = estudoGeradoRepository.buscarPorId(id);
 	
 		return estudoCopia;
 	}
 	
-	private Estudo criarCopiaDeEstudo(CopiaProporcionalDeDistribuicaoVO vo, Estudo estudo) {
+	private EstudoGerado criarCopiaDeEstudo(CopiaProporcionalDeDistribuicaoVO vo, EstudoGerado estudo) {
 		
-		Estudo estudoCopia = obterCopiaDeEstudo(estudo);
-		
-		Set<EstudoCota> set = estudo.getEstudoCotas();
-		List<EstudoCota> cotas = obterListEstudoCotas(set);
+		EstudoGerado estudoCopia = obterCopiaDeEstudo(estudo);
+		Set<EstudoCotaGerado> set = estudo.getEstudoCotas();
+		List<EstudoCotaGerado> cotas = obterListEstudoCotas(set);
 		
 		if (cotas.isEmpty()) {
 			return estudoCopia;
 		}
 		
 		Map<String, BigInteger> mapReparte =  obterMapClassifiqReparte(cotas);
-		
 		BigInteger totalFixacao = BigInteger.ZERO;
 		BigInteger repCalculado = BigInteger.ZERO;
 		BigInteger repartDistrib = BigInteger.ZERO;
@@ -188,78 +193,57 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 		BigInteger repFinal = BigInteger.ZERO;
 		BigInteger indiceRepProporcional = BigInteger.ZERO;
 		
-		EstudoCota cota = null;
+		EstudoCotaGerado cota = null;
 		
-		for (EstudoCota estudoCota:cotas) {
-			
-			cota = (EstudoCota)SerializationUtils.clone(estudoCota);
-			
+		for (EstudoCotaGerado estudoCota:cotas) {
+			cota = (EstudoCotaGerado)SerializationUtils.clone(estudoCota);
 			repartDistrib = vo.getReparteDistribuido();
 			pactPadrao = vo.getPacotePadrao();
-			
 			repCalculado = cota.getReparte();
-			
 			if (vo.isFixacao()) {
-				
 				totalFixacao = mapReparte.get("FX").add(mapReparte.get("MM"));
-				
 				if (totalFixacao.compareTo(repartDistrib) > 0) {
-					
 					throw new ValidacaoException(TipoMensagem.WARNING, "Fixação é maior que o reparte");
 				}
-				
 				repartDistrib = repartDistrib.subtract(totalFixacao);
-				
 				repFinal = obterSomaReparteFinal(mapReparte, false, TipoClassificacaoEstudoCota.FX, TipoClassificacaoEstudoCota.MM);
-				
 				indiceRepProporcional =  repartDistrib.divide(repFinal);  //repartDistrib / repFinal;
-				
 				repCalculado = obterCalculoDistribMultiplos(repCalculado, indiceRepProporcional, pactPadrao);
 				
 			} else {
-				
 				repFinal = obterSomaReparteFinal(mapReparte);
-				
 				indiceRepProporcional = repartDistrib.divide(repFinal);
-				
 				repCalculado = obterCalculoDistribMultiplos(repCalculado, indiceRepProporcional, pactPadrao);
 			}
-			
 			cota.setReparte(repCalculado);
-			
+			cota.setReparteInicial(repCalculado);
 			cota.setId(null);
 			cota.setEstudo(estudoCopia);
-			estudoCotaRepository.adicionar(cota);
+			estudoCotaGeradoRepository.adicionar(cota);
 		}
-		
 		BigInteger totalSoma = obterSomaReparteFinal(mapReparte, false, TipoClassificacaoEstudoCota.FX, TipoClassificacaoEstudoCota.MM);
-		
-		if (repartDistrib.compareTo(totalSoma) > 0) { 
-			
-			efetuarDistribuicaoProporcional(cotas, repartDistrib.intValue(), 1);	
+		if (repartDistrib.compareTo(totalSoma) > 0) {
+			efetuarDistribuicaoProporcional(cotas, repartDistrib.intValue(), 1);
 		}
 		else {
-			
 			efetuarDistribuicaoProporcional(cotas, repartDistrib.intValue(), -1);
 		}
-		
 		return estudoCopia;
 	}
 	
 	
-	private void efetuarDistribuicaoProporcional(List<EstudoCota> cotas, Integer valorPrincipal, Integer valorRetirado) {
+	private void efetuarDistribuicaoProporcional(List<EstudoCotaGerado> cotas, Integer valorPrincipal, Integer valorRetirado) {
 	
-		Collections.sort(cotas, new Comparator<EstudoCota>() {
+		Collections.sort(cotas, new Comparator<EstudoCotaGerado>() {
 
 			@Override
-			public int compare(EstudoCota ec1, EstudoCota ec2) {
-				
+			public int compare(EstudoCotaGerado ec1, EstudoCotaGerado ec2) {
 				return (ec1.getReparte().compareTo(ec2.getReparte()));
 			}
 			
 		});
 		
-		EstudoCota estudoCota = null;
+		EstudoCotaGerado estudoCota = null;
 		Integer reparte = 0;
 		
 		int i = cotas.size() -1;
@@ -274,6 +258,8 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 				reparte = estudoCota.getReparte().intValue() + valorRetirado;
 				valorPrincipal -= (valorRetirado < 0)? (valorRetirado * -1):valorRetirado;
 				estudoCota.setReparte(new BigInteger(reparte.toString()));
+				estudoCota.setReparteInicial(new BigInteger(reparte.toString()));
+				
 			}
 			
 			i--;
@@ -304,49 +290,33 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 		
 		BigInteger repFinal = BigInteger.ZERO;
 		
-		Iterator<String> classifiqIterator = mapReparte.keySet().iterator();
-		
-		while (classifiqIterator.hasNext()) {
-			String key = classifiqIterator.next();
-			
+		for(Entry<String, BigInteger> entry :mapReparte.entrySet()){
+			String key = entry.getKey();
 			if(mapReparte.containsKey(key)) {
-				
 				if (tipoClassificacao == null || tipoClassificacao.length == 0) {
-					
 					repFinal = repFinal.add(mapReparte.get(key));
 				}
-				
 				else {
-					
 					for (TipoClassificacaoEstudoCota tp:tipoClassificacao) {
-						
 						if(comparaIgual) {
-							
 							if (key.equals(tp.name())) {
-								
-								repFinal = repFinal.add(mapReparte.get(key));
+								repFinal = repFinal.add(entry.getValue());
 							}
 						} 
 						else {
-							
 							if (!key.equals(tp.name())) {
-								
-								repFinal = repFinal.add(mapReparte.get(key));
+								repFinal = repFinal.add(entry.getValue());
 							}
 						}
 					}
 				}
 			}
 		}
-		
 		return repFinal;
 	}
 	
 	@SuppressWarnings(value = { "all" })
 	private BigInteger obterSomaReparteFinal(Map<String, BigInteger> mapReparte) {
-		
 		return obterSomaReparteFinal(mapReparte, false, null);
 	}
-	
-	
 }

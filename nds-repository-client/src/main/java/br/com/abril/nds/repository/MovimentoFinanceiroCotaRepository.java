@@ -30,12 +30,13 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * 
 	 * 
 	 * @param numeroCota
+	 * @param dataOperacao
 	 * 
 	 * @return List - DebitoCreditoCotaDTO
 	 */
-	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota);
+	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota, Date dataOperacao);
 	
-	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota);	
+	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota, Date dataOperacao);	
 
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);	
@@ -213,4 +214,32 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @return BigDecimal
 	 */
 	BigDecimal obterTotalCreditoCota(Integer numeroCota, Date dataOperacao);
+	
+	/**
+     * Obtem saldo das cotas com tipo À Vista na data de operação atual
+     * @param numeroCota
+     * @param data
+     * @return BigDecimal
+     */
+	BigDecimal obterSaldoCotasAVista(Integer numeroCota, Date data);
+
+	List<MovimentoFinanceiroDTO> obterDetalhesVendaDia(Integer numeroCota,
+			Long idConsolildado, List<Long> tiposMovimento, Date data);
+
+	/**
+	 * Verifica existência de MovimentoFinanceiroCota Consolidado por id
+	 * @param idMovimentoFinanceiroCota
+	 * @return boolean
+	 */
+	boolean isMovimentoFinanceiroCotaConsolidado(Long idMovimentoFinanceiroCota);
+	
+	/**
+	 * Obtém lista de movimento financeiro cota relativo ao id de consolidado.
+	 * 
+	 * @param idConsolidado
+	 * 
+	 * @return List - MovimentoFinanceiroCota
+	 */
+    public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDeConsolidado(final Long idConsolidado);
+
 }

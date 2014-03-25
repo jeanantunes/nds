@@ -1,5 +1,7 @@
 package br.com.abril.nds.client.vo;
 
+import java.util.List;
+
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
@@ -12,105 +14,71 @@ import br.com.abril.nds.vo.EnderecoVO;
  */
 public class ParametrosDistribuidorVO {
 
-    // Aba Cadastro / Fiscal
+    // -= Aba Cadastro / Fiscal =-
+	// Frame Cadastro Distribuidor
     private String razaoSocial;
-    
     private String nomeFantasia;
-    
     private String cnpj;
-    
     private String inscricaoEstadual;
-    
     private String inscricaoMunicipal;
-    
     private String email;
-    
     private String codigoDistribuidorDinap;
-    
     private String codigoDistribuidorFC;
-    
-    private TipoAtividade regimeTributario;
-    
-    private ObrigacaoFiscal obrigacaoFiscal;
-    
-    private boolean regimeEspecial;
-    
+    // Frame Endereço
     private EnderecoVO endereco = new EnderecoVO();
+    // Frame Fiscal
+    private TipoAtividade regimeTributario;
+    private ObrigacaoFiscal obrigacaoFiscal;
+    private boolean regimeEspecial;
     
     private String numeroTelefone;
     
     private String numeroDDD;
     
-    // Aba Operação
-    
+    // -= Aba Operação =-
     // Frame Parciais / Matriz de Lançamento
     private int relancamentoParciaisEmDias;
-    
     // Frame Recolhimento
-    
     private TipoContabilizacaoCE tipoContabilizacaoCE;
-    
     private boolean aceitaEncalheJuramentada;
-    
     private boolean diaRecolhimentoPrimeiro;
-    
     private boolean diaRecolhimentoSegundo;
-
     private boolean diaRecolhimentoTerceiro;
-
     private boolean diaRecolhimentoQuarto;
-
     private boolean diaRecolhimentoQuinto;
-
     private boolean limiteCEProximaSemana;
-    
     private boolean supervisionaVendaNegativa;
-
     private boolean conferenciaCegaRecebimento;
-
     private boolean conferenciaCegaEncalhe;
     
     private boolean pararAcumuloDividas;
 
     // Frame Capacidade de Manuseio
     private Integer capacidadeManuseioHomemHoraLancamento;
-    
     private Integer capacidadeManuseioHomemHoraRecolhimento;
 
     // Frame Reutilização de Código de Cota
     private Long reutilizacaoCodigoCotaInativa;
-
     private boolean utilizaSugestaoIncrementoCodigo;
     
+    // -= Aba Documentos =-
     // Frame Emissão de Documentos
     private boolean slipImpressao;
-
     private boolean slipEmail;
-
     private boolean boletoImpressao;
-
     private boolean boletoEmail;
-
     private boolean boletoSlipImpressao;
-
     private boolean boletoSlipEmail;
-
     private boolean reciboImpressao;
-
     private boolean reciboEmail;
-
     private boolean notaEnvioImpressao;
-
     private boolean notaEnvioEmail;
-
     private boolean chamadaEncalheImpressao;
-
     private boolean chamadaEncalheEmail;
-    
     // Frame Impressão Interface LED
     // MODELO_1 ou MODELO_2 ou MODELO_3
     private String impressaoInterfaceLED;
-    
+
     private String nomeArquivoInterfaceLED1;
     
     private String nomeArquivoInterfaceLED2;
@@ -120,22 +88,18 @@ public class ParametrosDistribuidorVO {
     // Frame Impressão NECA / DANFE
     // MODELO_1, MODELO_2 ou DANFE
     private String impressaoNECADANFE;
-
     // Frame Impressão CE
     // MODELO_1 ou MODELO_2
     private String impressaoCE;
     
-    // Aba Contratos e Garantias
+    // -= Aba Contratos e Garantias =-
     // Frame Condições de Contratação
     private boolean utilizaContratoComCotas;
-    
     private Integer prazoContrato;
-
     private String informacoesComplementaresContrato;
 
     // Frame Procuração
     private boolean utilizaProcuracaoEntregadores;
-
     private String informacoesComplementaresProcuracao;
     
     /**
@@ -150,29 +114,16 @@ public class ParametrosDistribuidorVO {
 
     //Frame Garantia
     private boolean utilizaGarantiaPdv;
-    
     private boolean utilizaChequeCaucao;
-
     private Integer validadeChequeCaucao;
-    
     private boolean utilizaFiador;
-    
     private Integer validadeFiador;
-    
     private boolean utilizaImovel;
-    
     private Integer validadeImovel;
-    
     private boolean utilizaCaucaoLiquida;
-    
     private Integer validadeCaucaoLiquida;
-    
     private boolean utilizaNotaPromissoria;
-    
     private Integer validadeNotaPromissoria;
-    
-   
-    
     private Integer validadeAntecedenciaValidade;
     
     /**
@@ -188,65 +139,53 @@ public class ParametrosDistribuidorVO {
     // Aba Negociação
     // Frame Negociação de Dívidas
     private String sugereSuspensaoQuandoAtingirBoletos;
-
     private String sugereSuspensaoQuandoAtingirReais;
-
     private Boolean parcelamentoDividas;
-    
-
     private Boolean utilizaDesconto;
-    
-
     private String percentualDesconto;
-    
     private String negociacaoAteParcelas;
-    
     private boolean aceitaBaixaPagamentoMaior;
-    
     private boolean aceitaBaixaPagamentoMenor;
-    
     private boolean aceitaBaixaPagamentoVencido;
-    
     private Integer numeroDiasNovaCobranca;
-    
     private String assuntoEmailCobranca;
-    
     private String mensagemEmailCobranca;
     
     // Aba Aprovação
     // Frame Aprovação
     private boolean utilizaControleAprovacao;
-
     private boolean paraDebitosCreditos;
-
     private boolean negociacao;
-    
     private boolean ajusteEstoque;
-    
     private boolean postergacaoCobranca;
-    
     private boolean devolucaoFornecedor;
-    
     private boolean faltasSobras;
-    
+
     private boolean consolidadoCota;
     
     private String aprovacaoFaltaDe;
-    
     private String aprovacaoSobraDe;
-    
     private String aprovacaoFaltaEm;
-
     private String aprovacaoSobraEm;
-
     private Integer prazoFollowUp;
-    
     private Integer prazoAvisoPrevioValidadeGarantia;
-    
     private Integer chamadaoDiasSuspensao;
-    
     private String chamadaoValorConsignado;
-
+    
+    // Aba Distribuição
+    // Grid Distribuição
+	private boolean geracaoAutomaticaEstudo;
+	private Integer vendaMediaMais;
+	private boolean pracaVeraneio;
+	private boolean complementarAutomatico;
+	private Integer percentualMaximoFixacao;
+    
+	// Tabela Classificação de Cota
+	private List<DistribuidorClassificacaoCotaVO> listClassificacaoCota;
+	
+	// Tabela % Excedente
+	private List<DistribuidorPercentualExcedenteVO> listPercentualExcedente;
+	
     /**
      * @return the razaoSocial
      */
@@ -823,7 +762,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param validadeCheque the validadeChequeCaucao to set
+     * @param validadeChequeCaucao the validadeChequeCaucao to set
      */
     public void setValidadeChequeCaucao(Integer validadeChequeCaucao) {
         this.validadeChequeCaucao = validadeChequeCaucao;
@@ -1321,4 +1260,62 @@ public class ParametrosDistribuidorVO {
 	public void setNumeroDDD(String numeroDDD) {
 		this.numeroDDD = numeroDDD;
 	}
+
+	public boolean isGeracaoAutomaticaEstudo() {
+		return geracaoAutomaticaEstudo;
+	}
+
+	public void setGeracaoAutomaticaEstudo(boolean geracaoAutomaticaEstudo) {
+		this.geracaoAutomaticaEstudo = geracaoAutomaticaEstudo;
+	}
+
+	public Integer getVendaMediaMais() {
+		return vendaMediaMais;
+	}
+
+	public void setVendaMediaMais(Integer vendaMediaMais) {
+		this.vendaMediaMais = vendaMediaMais;
+	}
+
+	public boolean isPracaVeraneio() {
+		return pracaVeraneio;
+	}
+
+	public void setPracaVeraneio(boolean pracaVeraneio) {
+		this.pracaVeraneio = pracaVeraneio;
+	}
+
+	public boolean isComplementarAutomatico() {
+		return complementarAutomatico;
+	}
+
+	public void setComplementarAutomatico(boolean complementarAutomatico) {
+		this.complementarAutomatico = complementarAutomatico;
+	}
+
+	public Integer getPercentualMaximoFixacao() {
+		return percentualMaximoFixacao;
+	}
+
+	public void setPercentualMaximoFixacao(Integer percentualMaximoFixacao) {
+		this.percentualMaximoFixacao = percentualMaximoFixacao;
+	}
+
+	public List<DistribuidorClassificacaoCotaVO> getListClassificacaoCota() {
+		return listClassificacaoCota;
+	}
+
+	public void setListClassificacaoCota(
+			List<DistribuidorClassificacaoCotaVO> listClassificacaoCota) {
+		this.listClassificacaoCota = listClassificacaoCota;
+	}
+
+	public List<DistribuidorPercentualExcedenteVO> getListPercentualExcedente() {
+		return listPercentualExcedente;
+	}
+
+	public void setListPercentualExcedente(
+			List<DistribuidorPercentualExcedenteVO> listPercentualExcedente) {
+		this.listPercentualExcedente = listPercentualExcedente;
+	}    
 }

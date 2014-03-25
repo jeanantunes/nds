@@ -1,21 +1,28 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
+import br.com.abril.nds.dto.GerarCobrancaHelper;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -29,12 +36,14 @@ import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
+import br.com.abril.nds.model.financeiro.BoletoEmail;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaBoletoEmBranco;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -50,15 +59,17 @@ import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.financeiro.TipoNegociacao;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoDistribuidorRepository;
+import br.com.abril.nds.repository.BoletoEmailRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
-import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
@@ -68,6 +79,7 @@ import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoReposit
 import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.BoletoEmailService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
@@ -87,6 +99,8 @@ import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class GerarCobrancaServiceImpl implements GerarCobrancaService {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(GerarCobrancaServiceImpl.class);
 
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
@@ -146,7 +160,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	private FormaCobrancaService formaCobrancaService;
 	
 	@Autowired
+	private BoletoEmailService boletoEmailService;
+	
+	@Autowired
 	private NegociacaoDividaRepository negociacaoRepository;
+	
+	@Autowired
+	private BoletoEmailRepository boletoEmailRepository;
 	
 	@Autowired
 	private ParcelaNegociacaoRepository parcelaNegociacaoRepository;
@@ -155,13 +175,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	private ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
 	
 	@Autowired
-	private ControleConferenciaEncalheCotaRepository conferenciaEncalheCotaRepository;
-	
+	private CotaUnificacaoRepository cotaUnificacaoRepository;
+
 	/**
-	 * Obtém a situação da cota
-	 * @param idCota
-	 * @return SituacaoCadastro
-	 */
+     * Obtém a situação da cota
+     * 
+     * @param idCota
+     * @return SituacaoCadastro
+     */
 	private SituacaoCadastro obterSitiacaoCadastroCota(Long idCota){
 		Cota cota  = this.cotaRepository.buscarPorId(idCota);
 		return cota.getSituacaoCadastro();
@@ -182,13 +203,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	}
 	
 	/**
-	 * Gera cobranças para Cotas específicas
-	 * 
-	 * @param cotas
-	 * @param idUsuario
-	 * @param enviaEmail
-	 * @throws GerarCobrancaValidacaoException
-	 */
+     * Gera cobranças para Cotas específicas
+     * 
+     * @param cotas
+     * @param idUsuario
+     * @param enviaEmail
+     * @throws GerarCobrancaValidacaoException
+     */
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
 	public void gerarCobranca(List<Cota> cotas, 
@@ -200,11 +221,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	        try {
 	        
-	            Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
+	            Set<String> nossoNumeroEnvioEmail = new HashSet<String>();
 	        
 	            this.gerarCobrancaCota(cota.getId(), 
 	            		               idUsuario, 
 	            		               nossoNumeroEnvioEmail,
+	            		               new HashSet<String>(),
 	            		               false);
 	        
 	            if (enviaEmail){
@@ -215,7 +237,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	            
 	                } catch (ValidacaoException e) {
 	  
-	                    e.printStackTrace();
+	                    LOGGER.error(e.getMessage(), e);
 	                }
 	            }
 	        
@@ -231,22 +253,24 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * 
 	 * @param idCota
 	 * @param idUsuario
-	 * @param setNossoNumero
+	 * @param setNossoNumeroEnvioEmail
+	 * @param setNossoNumeroCentralizacao
 	 * @throws GerarCobrancaValidacaoException
 	 */
 	@Override
-	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class, timeout = 500)
 	public void gerarCobranca(Long idCota, 
 			                  Long idUsuario, 
-			                  Map<String, Boolean> setNossoNumero)
+			                  Set<String> setNossoNumero,
+			                  Set<String> setNossoNumeroCentralizacao)
 		throws GerarCobrancaValidacaoException {
 		
 		this.gerarCobrancaCota(idCota, 
 				               idUsuario, 
 				               setNossoNumero,
+				               setNossoNumeroCentralizacao,
         		               false);
 		
-		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
 	}
 	
 	/**
@@ -277,231 +301,135 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * @throws GerarCobrancaValidacaoException
 	 */
 	@Override
-	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class, timeout = 500)
 	public void gerarDividaPostergada(Long idCota, 
 			                          Long idUsuario)
 		throws GerarCobrancaValidacaoException {
 		
 		this.gerarCobrancaCota(idCota, 
 				               idUsuario, 
-				               new HashMap<String, Boolean>(),
+				               new HashSet<String>(),
+				               new HashSet<String>(),
         		               true);
 	}
 	
-	/**
-	 * Gera Cobraça para uma ou todas as cotas com pendências financeiras
-	 * A divida pode ser postergada caso não hava forma de cobrança compativel com a pendência ou
-	 * se o parametro postergarDividas == true
-	 * 
-	 * @param idCota
-	 * @param idUsuario
-	 * @param setNossoNumero
-	 * @param postergarDividas
-	 * @throws GerarCobrancaValidacaoException
-	 */
-	private void gerarCobrancaCota(Long idCota, 
-			                       Long idUsuario, 
-			                       Map<String, Boolean> setNossoNumero,
-			                       boolean postergarDividas) 
-			throws GerarCobrancaValidacaoException {
+    /**
+     * Salva informações pendência de envio de documento de cobrança por email
+     * 
+     * @param nossoNumeroEnvioEmail
+     */
+    private void salvarBoletoEmailPendenteEnvio(Set<String> nossoNumeroEnvioEmail){
+    	
+		if (nossoNumeroEnvioEmail!=null && !nossoNumeroEnvioEmail.isEmpty()){
 
-		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-		
-		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
-		
-		Integer numeroDiasNovaCobranca = this.distribuidorRepository.obterNumeroDiasNovaCobranca(); 
-		
-		// buscar movimentos financeiros da cota, se informada, caso contrario de todas as cotas
-		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
-				this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(idCota);
-		
-		List<String> msgs = new ArrayList<String>();
-		
-		if (listaMovimentoFinanceiroCota != null && !listaMovimentoFinanceiroCota.isEmpty()){
-			
-			//Varre todos os movimentos encontrados, agrupando por cota e por fornecedor
-			Cota ultimaCota = listaMovimentoFinanceiroCota.get(0).getCota();
-			
-			Fornecedor ultimoFornecedor = listaMovimentoFinanceiroCota.get(0).getFornecedor();
-			
-			if (ultimoFornecedor == null){
-		    	
-		    	throw new GerarCobrancaValidacaoException(
-		    			new ValidacaoVO(
-		    			TipoMensagem.WARNING, 
-		    			"Fornecedor não encontrado para o [Movimento Financeiro " + 
-		    					listaMovimentoFinanceiroCota.get(0).getId() + "] [Cota " + ultimaCota.getNumeroCota() + "]."));
-		    }
-			
-			BigDecimal valorMovimentos = BigDecimal.ZERO;
-			
-			List<MovimentoFinanceiroCota> movimentos = new ArrayList<MovimentoFinanceiroCota>();
-			
-			String nossoNumero = null;
+		    this.boletoEmailService.salvarBoletoEmail(nossoNumeroEnvioEmail);
+		}
+    }
+    
+    /**
+     * Verifica se cota esta suspensa, se estiver verifica se existe chamada de encalhe na data de operação
+     * 
+     * Vparam cotaAnterior
+     * @param cotaAtual
+     * @param dataOperacao
+     * @return boolean
+     */
+    private boolean isCotaSuspensaSemChamadaEncalhe(Cota cotaAnterior, Cota cotaAtual, Date dataOperacao){
 
-			Fornecedor fornecedorProdutoMovimento = null;
+		if (SituacaoCadastro.SUSPENSO.equals(cotaAnterior.getSituacaoCadastro()) &&
+			!this.cotaUnificacaoRepository.verificarCotaUnificada(cotaAnterior.getNumeroCota())){
 			
-			Cota cotaAtual = null;
-			
-			FormaCobranca formaCobranca = null;
-			FormaCobranca formaCobrancaClone = null;
-
-			boolean unificaCobranca = false;
-			
-			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
+			if (!cotaAtual.equals(cotaAnterior)){
 				
-				//verifica se cota esta suspensa, se estiver verifica se existe chamada de encalhe na data de operação
-				if (SituacaoCadastro.SUSPENSO.equals(ultimaCota.getSituacaoCadastro())){
+				if (this.chamadaEncalheCotaRepository.obterQtdListaChamaEncalheCota(cotaAnterior.getNumeroCota(), 
+					dataOperacao, null, false, false, false) <= 0){
 					
-					if (!movimentoFinanceiroCota.getCota().equals(ultimaCota)){
-						
-						if (this.chamadaEncalheCotaRepository.obterQtdListaChamaEncalheCota(ultimaCota.getNumeroCota(), 
-								dataOperacao, null, false, false, false) <= 0){
-							
-							continue;
-						}
-					}
+					return true;
 				}
-				
-				cotaAtual = movimentoFinanceiroCota.getCota();
-			    
-				fornecedorProdutoMovimento = movimentoFinanceiroCota.getFornecedor();
-
-				if (fornecedorProdutoMovimento == null){
-			    	
-			    	throw new GerarCobrancaValidacaoException(
-			    			new ValidacaoVO(TipoMensagem.WARNING, 
-			    			"Fornecedor não encontrado para o [Movimento Financeiro " + 
-			    			movimentoFinanceiroCota.getId() + "] [Cota " + cotaAtual.getNumeroCota() + "]."));
-			    }
-				
-				if (unificaCobranca || 
-				   (movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
-				   (fornecedorProdutoMovimento != null && fornecedorProdutoMovimento.equals(ultimoFornecedor) ||
-					fornecedorProdutoMovimento == ultimoFornecedor))){
-					
-					movimentos.add(movimentoFinanceiroCota);
-
-					TipoMovimentoFinanceiro tipo = 
-						(TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento();
-					  
-					if (tipo.getOperacaoFinaceira().equals(OperacaoFinaceira.CREDITO)){
-					    
-					    valorMovimentos = valorMovimentos.add(
-					    	movimentoFinanceiroCota.getValor().negate());
-					    
-					} else {
-					    
-						valorMovimentos = valorMovimentos.add(
-							movimentoFinanceiroCota.getValor());
-					}
-					
-				} else {
-					
-					formaCobranca = 
-							formaCobrancaService.obterFormaCobranca(
-									ultimaCota != null ? ultimaCota.getId() : null, 
-									ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
-									dataOperacao, valorMovimentos);
-
-					formaCobrancaClone = this.cloneFormaCobranca(formaCobranca);
-					
-					if (formaCobrancaClone != null){
-						
-						if (formaCobrancaClone.getPoliticaCobranca() != null){
-					    	
-					    	unificaCobranca = formaCobrancaClone.getPoliticaCobranca().isUnificaCobranca();
-					    } else if (formaCobrancaClone.getParametroCobrancaCota() != null){
-					    	
-					    	unificaCobranca = formaCobrancaClone.getParametroCobrancaCota().isUnificaCobranca();
-					    }
-					}
-					
-					//Decide se gera movimento consolidado ou postergado para a cota
-					nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, 
-																	movimentos,
-																	usuario, 
-																	numeroDiasNovaCobranca,
-																	dataOperacao, 
-																	msgs, 
-																	ultimoFornecedor,
-																	formaCobrancaClone,
-																	postergarDividas);
-					
-					if (nossoNumero != null){
-						
-						setNossoNumero.put(nossoNumero,
-								formaCobrancaClone == null ? false :
-									formaCobrancaClone.isRecebeCobrancaEmail());
-					}
-					
-					//Limpa dados para contabilizar próxima cota
-					ultimaCota = movimentoFinanceiroCota.getCota();
-					
-					if (!unificaCobranca){
-						
-						ultimoFornecedor = movimentoFinanceiroCota.getFornecedor();
-					} else {
-						
-						ultimoFornecedor = null;
-					}
-					
-					movimentos = new ArrayList<MovimentoFinanceiroCota>();
-					
-					movimentos.add(movimentoFinanceiroCota);
-					
-					valorMovimentos = movimentoFinanceiroCota.getValor();
-				}
-			}
-			
-			if (formaCobranca == null){
-				
-				formaCobranca = 
-						formaCobrancaService.obterFormaCobranca(
-								ultimaCota != null ? ultimaCota.getId() : null, 
-								ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
-								dataOperacao, valorMovimentos);
-					
-				formaCobrancaClone = this.cloneFormaCobranca(formaCobranca);  
-			}
-			
-			//Decide se gera movimento consolidado ou postergado para a ultima cota
-			nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, 
-															movimentos, 
-															usuario, 
-															numeroDiasNovaCobranca, 
-															dataOperacao, 
-															msgs, 
-															fornecedorProdutoMovimento, 
-															formaCobrancaClone,
-															postergarDividas);
-			
-			if (nossoNumero != null){
-				
-				setNossoNumero.put(nossoNumero,
-						formaCobrancaClone == null ? false :
-							formaCobrancaClone.isRecebeCobrancaEmail());
 			}
 		}
 		
-		if (!msgs.isEmpty()){
-			
-			throw new GerarCobrancaValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, msgs));
+		return false;
+    }
+    
+    /**
+     * Verifica se cota unifica cobranca de fornecedores
+     * Obtém formas de cobrança compativeis com fornecedor e data de operação
+     * Verifica se próximo fornecedor tambem se encontra na forma de cobrança do fornecedor anterior
+     * 
+     * @param cota
+     * @param fornecedorAnterior
+     * @param fornecedorAtual
+     * @param mapFormasCobrancaFornecedor
+     * @return boolean
+     */
+	private boolean isUnificaCobranca(Cota cota,
+			                          Fornecedor fornecedorAnterior, 
+    		                          Fornecedor fornecedorAtual, 
+    		                          Map<Fornecedor, List<FormaCobranca>> mapFormasCobrancaFornecedor){
+    	
+    	List<FormaCobranca> fcs = mapFormasCobrancaFornecedor.get(fornecedorAnterior);
+    	
+        for (FormaCobranca fc : fcs){
+        	
+        	if (fc.getParametroCobrancaCota()!=null){
+        		
+        		if (fc.getParametroCobrancaCota().getCota().equals(cota)){
+        			
+        		    return (fc.getFornecedores().contains(fornecedorAtual) && !fornecedorAtual.equals(fornecedorAnterior));
+        		}    
+        	}
+        }
+        
+        for (FormaCobranca fc : fcs){
+
+        	if (fc.getPoliticaCobranca()!=null){
+        		
+        		return (fc.getFornecedores().contains(fornecedorAtual) && !fornecedorAtual.equals(fornecedorAnterior));
+        	}
+        }
+       
+        return false; 
+    }
+    
+    /**
+     * Obtem Data de Vencimento onforme Parametros 
+     * 
+     * @param dataConsolidado
+     * @param fatorVencimento
+     * @return Date
+     */
+	@Override
+	@Transactional
+	public Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento, String localidade) {
+		
+		FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		
+		if(formaCobranca == null){
+			return DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
 		}
+		
+        // verifica se a forma de cobrança principal do distribuidor utiliza
+        // dias uteis para geração da data de vencimento da cobrança
+		if(formaCobranca.isVencimentoDiaUtil()) {
+			return this.calendarioService.adicionarDiasUteis(dataConsolidado, fatorVencimento, localidade);
+		}
+		
+		return DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
 	}
-
+	
 	/**
-	 * Retorna a data de vencimento para o boleto, sendo esta calculada 
-	 * da seguinte forma:
-	 * 
-	 * É recuperada a data da Terça-feira dentro da semana utilizada na pesquisa 
-	 * principal do fechamentoCEIntegração. A esta data são adicionados 2 dias
-	 * úteis.
-	 * 
-	 * @param anoSemana
-	 * 
-	 * @return Date
-	 */
+     * Retorna a data de vencimento para o boleto, sendo esta calculada da
+     * seguinte forma:
+     * 
+     * É recuperada a data da Terça-feira dentro da semana utilizada na pesquisa
+     * principal do fechamentoCEIntegração. A esta data são adicionados 2 dias
+     * úteis.
+     * 
+     * @param anoSemana
+     * 
+     * @return Date
+     */
 	private Date obterDataVencimentoBoletoDistribuidor(int anoSemana) {
 		
 		int anoBase = SemanaUtil.getAno(anoSemana);
@@ -515,27 +443,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		Date dataVencimento = this.calendarioService.adicionarDiasUteis(dataFechamentoSemana, 2);
 				
 		return dataVencimento;
-	}
-	
-	/**
-	 * Retorna o valor total do boleto com desconto.
-	 * 
-	 * @param idChamadaEncalheFornecedor
-	 * @param valorBrutoBoleto
-	 * 
-	 * @return BigDecimal
-	 */
-	private BigDecimal obterValorBoleto(Long idChamadaEncalheFornecedor, BigDecimal valorBrutoBoleto) {
-		
-		BigDecimal valorTotalDesconto = 
-				itemChamadaEncalheFornecedorRepository.obterTotalDoDescontoItensChamadaEncalheFornecedor(idChamadaEncalheFornecedor);
-		
-		if(valorTotalDesconto == null) {
-			valorTotalDesconto = BigDecimal.ZERO;
-		}
-		
-		return valorBrutoBoleto.subtract(valorTotalDesconto);
-		
 	}
 	
 	@Transactional
@@ -560,15 +467,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				boletoDistribuidorRepository.remover(boletoDistribuidor);
 			}
 			
-			chamadaEncalheFornecedor.setFornecedor( chamadaEncalheFornecedor.getItens().get(0).getProdutoEdicao().getProduto().getFornecedor() );
-			
 			Fornecedor fornecedor = chamadaEncalheFornecedor.getFornecedor();
 			
-			if (chamadaEncalheFornecedor.getFornecedor().getBanco() == null) {
-				throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor selecionado não possui banco vinculado!");
-			}
+			Banco banco = fornecedor.getBanco();
 			
-			Banco banco = chamadaEncalheFornecedor.getFornecedor().getBanco();
+			if (banco == null) {
+				
+                throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor " + fornecedor.getJuridica().getNome()
+                    + " não possui banco vinculado!");
+			}
 			
 			String nossoNumeroDistribuidor = Util.gerarNossoNumeroDistribuidor(
 					codigoDistribuidor, 
@@ -595,9 +502,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			if(TipoCobranca.BOLETO.equals(tipoCobranca)) {
 				
-				BigDecimal valorLiquidoBoleto = obterValorBoleto(chamadaEncalheFornecedor.getId(), chamadaEncalheFornecedor.getTotalVendaApurada());
-				
-				boletoDistribuidor.setValor(valorLiquidoBoleto);
+				boletoDistribuidor.setValor(chamadaEncalheFornecedor.getTotalCreditoApurado().subtract(chamadaEncalheFornecedor.getTotalMargemApurado()));
 			}
 			
 			boletoDistribuidor.setVias(1);
@@ -618,11 +523,608 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						
 		return valorMinimo;
 	}
+
+    /**
+     * Obtem forma de cobranca da Cota
+     * 
+     * @param cota
+     * @param valor
+     * @param fornecedor
+     * @param dataOperacao
+     * @return FormaCobranca
+     */
+    private FormaCobranca obterFormaCobranca(Cota cota,
+    		                                 BigDecimal valor, 
+    		                                 Fornecedor fornecedor, 
+    		                                 Date dataOperacao){
+
+		FormaCobranca fc = this.formaCobrancaService.obterFormaCobranca(cota == null ? null : cota.getId(), 
+				                                                        fornecedor == null ? null : fornecedor.getId(), 
+													                    dataOperacao,
+													                    valor);
+		
+		return fc;
+    }
+    
+    /**
+     * Processa Consolidado e gera Divida e Cobrança para cotas sem Centralização
+     * Apura cotas com cetralização para serem processadas após agrupamento
+     * 
+     * @param cota
+     * @param movimentos
+     * @param usuario
+     * @param qtdDiasNovaCobranca
+     * @param dataOperacao
+     * @param msgs
+     * @param fornecedor
+     * @param postergarDividas
+     * @param consolidadosCotaCentralizacao
+     * @param vlMovFinanTotal
+     * @param vlMovPostergado
+     * @param setNossoNumero
+     * @throws GerarCobrancaValidacaoException
+     */
+    private void processarConsolidadoDividaCobranca(Cota cota,
+											        List<MovimentoFinanceiroCota> movimentos,
+											        Usuario usuario, 
+											        int qtdDiasNovaCobranca, 
+											        Date dataOperacao, 
+											        List<String> msgs,
+											        Fornecedor fornecedor,
+											        boolean postergarDividas,
+											        Map<Cota, List<GerarCobrancaHelper>> consolidadosCotaCentralizacao,
+											        BigDecimal vlMovFinanTotal,
+											        BigDecimal vlMovPostergado,
+											        Set<String> setNossoNumero) throws GerarCobrancaValidacaoException{
+    	
+    	Map<Cota, List<GerarCobrancaHelper>> consolidadosCota = new HashMap<Cota, List<GerarCobrancaHelper>>();
+    	
+    	this.processarConsolidado(cota, 
+								  movimentos, 
+								  usuario, 
+								  qtdDiasNovaCobranca, 
+								  dataOperacao, 
+								  msgs, 
+								  fornecedor, 
+								  postergarDividas, 
+								  consolidadosCota, 
+								  consolidadosCotaCentralizacao,
+								  vlMovFinanTotal, 
+								  vlMovPostergado);
+
+		if (!consolidadosCota.isEmpty()){
+		
+			this.gerarDividaCobrancaSemCentralizacao(usuario, 
+				                                     dataOperacao, 
+				                                     setNossoNumero, 
+				                                     consolidadosCota,
+				                                     msgs);
+		}
+    }
 	
 	/**
-	 * Consolida os movimentos financeiros
-	 * Gera Divida e Cobrança
-	 * Posterga as pendências financeiras caso os parametros postergarDividas==true ou formaCobrancaPrincipal==null
+     * Gera Cobraça para uma ou todas as cotas com pendências financeiras A
+     * divida pode ser postergada caso não hava forma de cobrança compativel com
+     * a pendência ou se o parametro postergarDividas == true
+     * 
+     * @param idCota
+     * @param idUsuario
+     * @param setNossoNumero
+     * @param setNossoNumeroCentralizacao
+     * @param postergarDividas
+     * @throws GerarCobrancaValidacaoException
+     */
+	private void gerarCobrancaCota(Long idCota, 
+			                       Long idUsuario, 
+			                       Set<String> setNossoNumero,
+			                       Set<String> setNossoNumeroCentralizacao,
+			                       boolean postergarDividas) throws GerarCobrancaValidacaoException {
+		
+
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
+		
+		Integer numeroDiasNovaCobranca = this.distribuidorRepository.obterNumeroDiasNovaCobranca(); 
+		
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(idCota, dataOperacao);
+		
+		List<String> msgs = new ArrayList<String>();
+		
+		Map<Cota, List<GerarCobrancaHelper>> consolidadosCotaCentralizacao = new HashMap<Cota, List<GerarCobrancaHelper>>();
+		
+		Map<Fornecedor,List<FormaCobranca>> mapFormasCobrancaFornecedor = this.formaCobrancaService.obterMapFornecedorFormasCobranca(dataOperacao);
+		
+		
+		if (listaMovimentoFinanceiroCota != null && !listaMovimentoFinanceiroCota.isEmpty()){
+			
+			MovimentoFinanceiroCota primeiroMovimentoFinanceiroCota = listaMovimentoFinanceiroCota.get(0);
+			
+			Fornecedor fornecedorAnterior = primeiroMovimentoFinanceiroCota.getFornecedor();
+			
+			Fornecedor fornecedorAtual = null;
+			
+			Cota cotaAnterior = primeiroMovimentoFinanceiroCota.getCota();
+			
+			BigDecimal valorMovimentos = BigDecimal.ZERO;
+			
+			List<MovimentoFinanceiroCota> movimentos = new ArrayList<MovimentoFinanceiroCota>();
+
+			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
+				
+				Cota cotaAtual = movimentoFinanceiroCota.getCota();
+
+				if (this.isCotaSuspensaSemChamadaEncalhe(cotaAnterior, cotaAtual, dataOperacao)){
+							
+				    continue;
+				}
+							    
+				fornecedorAtual = movimentoFinanceiroCota.getFornecedor();
+
+				if (fornecedorAtual == null){
+			    	
+			    	throw new GerarCobrancaValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+			    			                                                  "Fornecedor não encontrado para o [Movimento Financeiro " +
+			    			                                                  movimentoFinanceiroCota.getId() + "] [Cota " + 
+			    			                                                  cotaAtual.getNumeroCota() + "]."));
+			    }
+				
+				boolean unificaCobranca = this.isUnificaCobranca(cotaAnterior,
+						                                         fornecedorAnterior, 
+						                                         fornecedorAtual, 
+						                                         mapFormasCobrancaFornecedor);
+				
+				TipoMovimentoFinanceiro tipo = (TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento();
+
+				if (cotaAtual.equals(cotaAnterior) &&
+				   ((fornecedorAtual.equals(fornecedorAnterior)) || 
+				    (unificaCobranca))){
+					
+					movimentos.add(movimentoFinanceiroCota);			
+					  
+					if (tipo.getOperacaoFinaceira().equals(OperacaoFinaceira.CREDITO)){
+					    
+					    valorMovimentos = valorMovimentos.add(movimentoFinanceiroCota.getValor().negate());
+					    
+					} else {
+					    
+						valorMovimentos = valorMovimentos.add(movimentoFinanceiroCota.getValor());
+					}
+					
+				} else {
+
+					this.processarConsolidadoDividaCobranca(cotaAnterior, 
+														    movimentos, 
+														    usuario, 
+														    numeroDiasNovaCobranca, 
+														    dataOperacao, 
+														    msgs, 
+														    fornecedorAnterior, 
+														    postergarDividas,
+														    consolidadosCotaCentralizacao,
+														    valorMovimentos, 
+														    valorMovimentos,
+														    setNossoNumero);
+
+					cotaAnterior = cotaAtual;
+					
+					fornecedorAnterior = fornecedorAtual;
+					
+					movimentos = new ArrayList<MovimentoFinanceiroCota>();
+					
+					movimentos.add(movimentoFinanceiroCota);
+					
+					if (tipo.getOperacaoFinaceira().equals(OperacaoFinaceira.CREDITO)){
+					    
+						valorMovimentos = movimentoFinanceiroCota.getValor().negate();	
+					}
+				    else {
+				    
+				    	valorMovimentos = movimentoFinanceiroCota.getValor();
+				    }
+				}
+			}
+			
+			//Ultima cota
+			this.processarConsolidadoDividaCobranca(cotaAnterior, 
+												    movimentos, 
+												    usuario, 
+												    numeroDiasNovaCobranca, 
+												    dataOperacao, 
+												    msgs, 
+												    fornecedorAnterior, 
+												    postergarDividas,
+												    consolidadosCotaCentralizacao,
+												    valorMovimentos, 
+												    valorMovimentos,
+												    setNossoNumero);
+		}
+		
+		//Processamento de Divida e Cobrança de Cotas com Centralização
+		if (!consolidadosCotaCentralizacao.isEmpty()){
+		
+			this.gerarDividaCobrancaComCentralizacao(usuario, 
+									                 dataOperacao, 
+									                 setNossoNumeroCentralizacao, 
+									                 consolidadosCotaCentralizacao,
+									                 msgs);
+		}
+	}
+
+	/**
+	 * Gera Divida e Cobrança para Cota sem Centralizacao
+	 * 
+	 * @param usuario
+	 * @param dataOperacao
+	 * @param setNossoNumero
+	 * @param consolidadosCota
+	 * @param msgs
+	 * @throws GerarCobrancaValidacaoException 
+	 */
+	private void gerarDividaCobrancaSemCentralizacao(Usuario usuario, 
+						                             Date dataOperacao, 
+						                             Set<String> setNossoNumero,
+						                             Map<Cota, List<GerarCobrancaHelper>> consolidadosCota,
+						                             List<String> msgs) throws GerarCobrancaValidacaoException{
+		
+        for (Entry<Cota, List<GerarCobrancaHelper>> entry : consolidadosCota.entrySet()){
+			
+			List<GerarCobrancaHelper> lista = entry.getValue();
+			
+			Cota cota =  entry.getKey();
+			
+			GerarCobrancaHelper helperPrincipal = null;
+			
+			List<ConsolidadoFinanceiroCota> consolidados = new ArrayList<ConsolidadoFinanceiroCota>();
+			
+			for (GerarCobrancaHelper helper : lista){
+				
+				if (helper.getCota().equals(cota)){
+					
+					helperPrincipal = helper;
+				}
+				
+				consolidados.add(helper.getConsolidadoFinanceiroCota());
+			}
+			
+			if (helperPrincipal == null){
+			    
+			    helperPrincipal = lista.get(0);
+			}
+
+			this.gerarDividaCobranca(cota, 
+									 helperPrincipal.getFormaCobrancaPrincipal(),
+									 helperPrincipal.isCobrarHoje(),
+									 consolidados,
+									 usuario, 
+									 helperPrincipal.getQtdDiasNovaCobranca(), 
+									 msgs, 
+									 helperPrincipal.getFornecedor(), 
+									 helperPrincipal.getDiasSemanaConcentracaoPagamento(), 
+									 dataOperacao, 
+									 helperPrincipal.getDataVencimento(),
+									 helperPrincipal.getDataConsolidado(),
+									 setNossoNumero);
+		}
+		
+        this.salvarBoletoEmailPendenteEnvio(setNossoNumero);
+		
+		if (!msgs.isEmpty()){
+			
+			throw new GerarCobrancaValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, msgs));
+		}
+	}
+	
+	/**
+	 * Verifica se a cobrança deve ser realizada no dia atual
+	 * 
+	 * @param formaCobranca
+	 * @param dataOperacao
+	 * @param fatorVencimento
+	 * @return boolean
+	 */
+	private boolean cobrarHoje(FormaCobranca formaCobranca,
+			                   Date dataOperacao, 
+			                   Integer fatorVencimento){
+		
+		boolean cobrarHoje = false;
+		
+		Calendar c = null;
+		
+		TipoFormaCobranca tipoFormaCobranca = formaCobranca.getTipoFormaCobranca();
+		
+		switch(tipoFormaCobranca){
+		
+			case DIARIA:
+				
+				cobrarHoje = true;
+				
+				break;
+			
+			case QUINZENAL:
+				
+				c = Calendar.getInstance();
+				
+				c.setTime(dataOperacao);
+				
+				cobrarHoje = formaCobranca.getDiasDoMes().contains(c.get(Calendar.DAY_OF_MONTH));
+				
+				break;
+			
+			case MENSAL:
+				
+				c = Calendar.getInstance();
+				
+				c.setTime(dataOperacao);
+				
+				cobrarHoje = formaCobranca.getDiasDoMes().get(0).equals(c.get(Calendar.DAY_OF_MONTH));
+				
+				break;
+			
+			case SEMANAL:
+				
+				c = Calendar.getInstance();
+				
+				c.setTime(dataOperacao);
+				
+				for (ConcentracaoCobrancaCota conc : formaCobranca.getConcentracaoCobrancaCota()){
+					
+					cobrarHoje = c.get(Calendar.DAY_OF_WEEK) == conc.getDiaSemana().getCodigoDiaSemana();
+					
+					if (cobrarHoje){
+						
+						break;
+					}
+				}
+				
+				break;
+		}
+	
+		return cobrarHoje;
+	}
+	
+	/**
+	 * Gera Divida e Cobrança para Cota com Centralizacao
+	 * 
+	 * @param usuario
+	 * @param dataOperacao
+	 * @param setNossoNumero
+	 * @param consolidadosCota
+	 * @param msgs
+	 * @throws GerarCobrancaValidacaoException 
+	 */
+	private void gerarDividaCobrancaComCentralizacao(Usuario usuario, 
+						                             Date dataOperacao, 
+						                             Set<String> setNossoNumero,
+						                             Map<Cota, List<GerarCobrancaHelper>> consolidadosCota,
+						                             List<String> msgs) throws GerarCobrancaValidacaoException{
+		
+        for (Entry<Cota, List<GerarCobrancaHelper>> entry : consolidadosCota.entrySet()){
+			
+			List<GerarCobrancaHelper> lista = entry.getValue();
+			
+			Cota cotaUnificadora =  entry.getKey();
+			
+			BigDecimal valorTotalMovimentos = BigDecimal.ZERO;
+			
+			GerarCobrancaHelper helperPrincipal = null;
+			
+			List<ConsolidadoFinanceiroCota> consolidados = new ArrayList<ConsolidadoFinanceiroCota>();
+			
+			for (GerarCobrancaHelper helper : lista){
+				
+				valorTotalMovimentos = valorTotalMovimentos.add(helper.getConsolidadoFinanceiroCota().getTotal().setScale(2, RoundingMode.HALF_UP));
+				
+				if (helper.getCota().equals(cotaUnificadora)){
+					
+					helperPrincipal = helper;
+				}
+				
+				consolidados.add(helper.getConsolidadoFinanceiroCota());
+			}
+			
+			if (helperPrincipal == null){
+			    
+			    helperPrincipal = lista.get(0);
+			}
+
+			FormaCobranca formaCobranca = this.obterFormaCobranca(cotaUnificadora, 
+					                                              valorTotalMovimentos.abs(), 
+					                                              helperPrincipal.getFornecedor(), 
+					                                              dataOperacao);
+
+			if (formaCobranca == null){
+				
+				MovimentoFinanceiroCota movimentoFinanceiroCota = this.gerarPostergado(cotaUnificadora,
+						                                                               helperPrincipal.getQtdDiasNovaCobranca(), 
+															                           msgs, 
+															                           helperPrincipal.getFornecedor(),
+															                           consolidados, 
+															                           valorTotalMovimentos, 
+															                           usuario,
+															                           helperPrincipal.getDiasSemanaConcentracaoPagamento(), 
+															                           dataOperacao,
+															                           null);
+
+			    this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
+			    
+			    return;
+			}
+			
+			helperPrincipal.setFormaCobrancaPrincipal(formaCobranca);
+			
+			Integer fatorVencimento = 0;
+			
+			ParametroCobrancaCota parametroCobrancaCota = formaCobranca.getParametroCobrancaCota();
+			
+			boolean cobrarHoje = false;
+			
+			if(parametroCobrancaCota!=null && parametroCobrancaCota.getFatorVencimento()!=null) {
+				
+				fatorVencimento = parametroCobrancaCota.getFatorVencimento();
+			}
+			else {
+				
+				PoliticaCobranca politicaCobranca = formaCobranca.getPoliticaCobranca();
+				
+				if(politicaCobranca != null && politicaCobranca.getFatorVencimento() != null){
+					
+					fatorVencimento = politicaCobranca.getFatorVencimento();
+				}
+				else{
+					
+					cobrarHoje = true;
+				}
+			}
+			String localidade = helperPrincipal.getCota().getEnderecoPrincipal().getEndereco().getCidade();
+			Date dataVencimento = this.obterDataVencimentoCobrancaCota(helperPrincipal.getConsolidadoFinanceiroCota().getDataConsolidado(),fatorVencimento, localidade);
+			
+			if(!cobrarHoje) {
+
+				cobrarHoje = this.cobrarHoje(formaCobranca, dataOperacao, fatorVencimento);
+			}
+			
+			if (dataVencimento == null){
+				
+	            msgs.add("Não foi possível calcular data de vencimento da cobrança, verifique os parâmetros de cobrança da cota número: "
+	                    + cotaUnificadora.getNumeroCota());
+				
+				return;
+			}
+
+			this.gerarDividaCobrancaCentralizacao(cotaUnificadora,  
+												  formaCobranca, 
+												  valorTotalMovimentos, 
+												  cobrarHoje, 
+                                                  consolidados, 
+												  usuario, 
+												  helperPrincipal.getQtdDiasNovaCobranca(), 
+												  msgs, 
+												  helperPrincipal.getFornecedor(), 
+												  helperPrincipal.getDiasSemanaConcentracaoPagamento(), 
+												  dataOperacao, 
+												  dataVencimento, 
+												  helperPrincipal.getDataConsolidado(), 
+												  setNossoNumero);
+			
+		}
+		
+        this.salvarBoletoEmailPendenteEnvio(setNossoNumero);
+		
+		if (!msgs.isEmpty()){
+			
+			throw new GerarCobrancaValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, msgs));
+		}
+	}
+	
+	/**
+	 * Adiciona GerarCobrancaHelper em Lista
+	 * 
+	 * @param cota
+	 * @param consolidadosCota
+	 * @param consolidadoFinanceiroCota
+	 * @param fornecedor
+	 * @param formaCobrancaPrincipal
+	 * @param dataVencimento
+	 * @param qtdDiasNovaCobranca
+	 * @param cobrarHoje
+	 */
+	private void addConsolidadoHelper(Cota cota,
+                                      Map<Cota, List<GerarCobrancaHelper>> consolidadosCota,
+                                      ConsolidadoFinanceiroCota consolidadoFinanceiroCota,
+                                      Fornecedor fornecedor,
+	                                  FormaCobranca formaCobrancaPrincipal,
+	                                  Date dataVencimento,
+	                                  int qtdDiasNovaCobranca,
+	                                  boolean cobrarHoje){
+		
+			
+        if (!consolidadosCota.containsKey(cota)){
+			
+			consolidadosCota.put(cota, new ArrayList<GerarCobrancaHelper>());
+		}
+		
+		GerarCobrancaHelper gcHelper = new GerarCobrancaHelper(cota,
+															   formaCobrancaPrincipal, 
+															   cobrarHoje, 
+															   consolidadoFinanceiroCota, 
+															   qtdDiasNovaCobranca, 
+															   fornecedor, 
+															   dataVencimento,
+															   consolidadoFinanceiroCota.getDataConsolidado());
+        
+		consolidadosCota.get(cota).add(gcHelper);
+	}
+
+	/**
+	 * Processa Consolidado
+	 * Dintingue cotas com ou sem Centralização
+	 * Separa Informações de consolidados em Cotas Centralizadoras e Cotas que não Centralizam
+	 * 
+	 * @param cota
+	 * @param movimentos
+	 * @param usuario
+	 * @param qtdDiasNovaCobranca
+	 * @param dataOperacao
+	 * @param msgs
+	 * @param fornecedor
+	 * @param postergarDividas
+	 * @param consolidadosCota
+	 * @param consolidadosCotaCentralizacao
+	 * @param vlMovFinanTotal
+	 * @param vlMovPostergado
+	 */
+	private void processarConsolidado(Cota cota,
+								      List<MovimentoFinanceiroCota> movimentos,
+								      Usuario usuario, 
+								      int qtdDiasNovaCobranca, 
+								      Date dataOperacao, 
+								      List<String> msgs,
+								      Fornecedor fornecedor,
+								      boolean postergarDividas,
+								      Map<Cota, List<GerarCobrancaHelper>> consolidadosCota,
+								      Map<Cota, List<GerarCobrancaHelper>> consolidadosCotaCentralizacao,
+								      BigDecimal vlMovFinanTotal,
+								      BigDecimal vlMovPostergado){
+		
+		Cota cotaCentralizadora = this.cotaUnificacaoRepository.obterCotaUnificadoraPorCota(cota.getNumeroCota());
+		
+		if (cotaCentralizadora == null){
+			
+			FormaCobranca formaCobranca = this.obterFormaCobranca(cota,
+					                                              vlMovFinanTotal,
+					                                              fornecedor, 
+												                  dataOperacao);
+			
+			this.getConsolidadoHelperSemCentralizacao(cota, 
+					                                  movimentos, 
+					                                  usuario, 
+					                                  qtdDiasNovaCobranca, 
+					                                  dataOperacao, 
+					                                  msgs, 
+					                                  fornecedor, 
+					                                  formaCobranca, 
+					                                  postergarDividas, 
+					                                  consolidadosCota, 
+					                                  vlMovFinanTotal);
+		}
+		else{
+
+			this.getConsolidadoHelperComCentralizacao(cota,
+					                                  cotaCentralizadora, 
+								                      movimentos, 
+								                      qtdDiasNovaCobranca, 
+								                      dataOperacao, 
+								                      fornecedor,
+								                      consolidadosCotaCentralizacao);
+		}	
+	}
+	
+	/**
+	 * Cotas sem Centralizacao
+	 * Gera Consolidado
+	 * Extrai informações de forma de cobrança compativel com os parametros passados
+	 * Monta Helper com Informações do consolidado gerado e adiciona la lista
 	 * 
 	 * @param cota
 	 * @param movimentos
@@ -632,16 +1134,141 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * @param msgs
 	 * @param fornecedor
 	 * @param formaCobrancaPrincipal
-	 * @return String
+	 * @param postergarDividas
+	 * @param consolidadosCota
+	 * @param vlMovFinanTotal
 	 */
-	private String inserirConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos,
-			                                    Usuario usuario, 
-			                                    int qtdDiasNovaCobranca, 
-			                                    Date dataOperacao, 
-			                                    List<String> msgs,
-			                                    Fornecedor fornecedor,
-			                                    FormaCobranca formaCobrancaPrincipal,
-			                                    boolean postergarDividas){
+	private void getConsolidadoHelperSemCentralizacao(Cota cota,
+													  List<MovimentoFinanceiroCota> movimentos,
+													  Usuario usuario, 
+													  int qtdDiasNovaCobranca, 
+											          Date dataOperacao, 
+											          List<String> msgs,
+											          Fornecedor fornecedor,
+											          FormaCobranca formaCobrancaPrincipal,
+											          boolean postergarDividas,
+											          Map<Cota, List<GerarCobrancaHelper>> consolidadosCota,
+											          BigDecimal vlMovFinanTotal){
+		
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = this.montarConsolidadoFinanceiro(cota, movimentos, dataOperacao);
+		
+	    // insere postergado pois não encontrou forma de cobrança ou parametros
+        // do método exigem postergação
+		if (formaCobrancaPrincipal == null || postergarDividas==true){
+			
+			MovimentoFinanceiroCota movPost = this.gerarPostergado(cota, 
+					                                               qtdDiasNovaCobranca, 
+					                                               msgs, 
+					                                               fornecedor, 
+							                                       Arrays.asList(consolidadoFinanceiroCota), 
+							                                       vlMovFinanTotal,
+							                                       usuario, 
+							                                       null, 
+							                                       dataOperacao,
+							                                       postergarDividas?"Processamento Financeiro - Divida postergada":null);
+			
+			if (movPost != null){
+				
+				this.movimentoFinanceiroCotaRepository.adicionar(movPost);
+			}
+			
+			return;
+		}
+		
+		//obtem a data de vencimento de acordo com o dia em que se concentram os pagamentos da cota
+		Integer fatorVencimento = 0;
+		
+		ParametroCobrancaCota parametroCobrancaCota = formaCobrancaPrincipal.getParametroCobrancaCota();
+		
+		boolean cobrarHoje = false;
+		
+		if(parametroCobrancaCota!=null && parametroCobrancaCota.getFatorVencimento()!=null) {
+			
+			fatorVencimento = parametroCobrancaCota.getFatorVencimento();
+		}
+		else {
+			
+			PoliticaCobranca politicaCobranca = formaCobrancaPrincipal.getPoliticaCobranca();
+			
+			if(politicaCobranca != null && politicaCobranca.getFatorVencimento() != null){
+				
+				fatorVencimento = politicaCobranca.getFatorVencimento();
+			}
+			else{
+			    
+				cobrarHoje = true;
+			}
+		}
+		String localidade =  cota.getEnderecoPrincipal().getEndereco().getCidade();
+		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(),fatorVencimento, localidade);
+
+		if(!cobrarHoje){
+
+			cobrarHoje = this.cobrarHoje(formaCobrancaPrincipal, dataOperacao, fatorVencimento);
+		}
+		
+		if (dataVencimento == null){
+			
+            msgs.add("Não foi possível calcular data de vencimento da cobrança, verifique os parâmetros de cobrança da cota número: "
+                    + cota.getNumeroCota());
+			
+			return;
+		}
+		
+   	    this.addConsolidadoHelper(cota, 
+   	    		                  consolidadosCota, 
+   	    		                  consolidadoFinanceiroCota, 
+   	    		                  fornecedor, 
+   	    		                  formaCobrancaPrincipal, 
+   	    		                  dataVencimento, 
+   	    		                  qtdDiasNovaCobranca, 
+   	    		                  cobrarHoje);
+	}
+
+	/**
+	 * Cotas com Centralização
+	 * Gera Consolidado
+	 * Monta Helper com Informações do consolidado gerado e adiciona na lista
+	 * 
+	 * @param cota
+	 * @param cotaCentralizadora
+	 * @param movimentos
+	 * @param qtdDiasNovaCobranca
+	 * @param dataOperacao
+	 * @param fornecedor
+	 * @param consolidadosCota
+	 */
+	private void getConsolidadoHelperComCentralizacao(Cota cota,
+			                                          Cota cotaCentralizadora,
+													  List<MovimentoFinanceiroCota> movimentos,
+													  int qtdDiasNovaCobranca, 
+											          Date dataOperacao,
+											          Fornecedor fornecedor,
+											          Map<Cota, List<GerarCobrancaHelper>> consolidadosCota){
+		
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = this.montarConsolidadoFinanceiro(cota, movimentos, dataOperacao);
+
+   	    this.addConsolidadoHelper(cotaCentralizadora, 
+   	    		                  consolidadosCota, 
+   	    		                  consolidadoFinanceiroCota, 
+   	    		                  fornecedor, 
+   	    		                  null, 
+   	    		                  null, 
+   	    		                  qtdDiasNovaCobranca, 
+   	    		                  false);
+	}
+
+	/**
+	 * Consolida os movimentos financeiros
+	 * 
+	 * @param cota
+	 * @param movimentos
+	 * @param dataOperacao
+	 * @return ConsolidadoFinanceiroCota
+	 */
+	private ConsolidadoFinanceiroCota montarConsolidadoFinanceiro(Cota cota,
+								                                  List<MovimentoFinanceiroCota> movimentos,
+								                                  Date dataOperacao){
 		
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = new ConsolidadoFinanceiroCota();
 		consolidadoFinanceiroCota.setCota(cota);
@@ -659,6 +1286,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentos){
 			
 			if (!movimentoFinanceiroCota.getCota().getId().equals(cota.getId())) {
+				
 				continue;
 			}
 			
@@ -677,6 +1305,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				case LANCAMENTO_CAUCAO_LIQUIDA:
 				case RESGATE_CAUCAO_LIQUIDA:
 				case VENDA_TOTAL:
+				case NEGOCIACAO_COMISSAO:
 					
 					vlMovFinanDebitoCredito = 
 						this.adicionarValor(vlMovFinanDebitoCredito, movimentoFinanceiroCota);
@@ -746,160 +1375,220 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		consolidadoFinanceiroCota.setConsignado(vlMovConsignado.abs());
 		consolidadoFinanceiroCota.setPendente(vlMovPendente);
 		
-		//insere postergado pois não encontrou forma de cobrança ou parametros do método exigem postergação
-		if (formaCobrancaPrincipal == null || postergarDividas==true){
-			
-			MovimentoFinanceiroCota movPost = this.gerarPostergado(cota, 
-					                                               qtdDiasNovaCobranca, 
-					                                               msgs, 
-					                                               fornecedor, 
-							                                       consolidadoFinanceiroCota, 
-							                                       vlMovFinanTotal, 
-							                                       vlMovPostergado, 
-							                                       usuario, 
-							                                       null, 
-							                                       dataOperacao,
-							                                       postergarDividas?"Processamento Financeiro - Divida postergada":null);
-			
-			this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
-			
-			if (movPost != null){
-				
-				this.movimentoFinanceiroCotaRepository.adicionar(movPost);
-			}
-			
-			return null;
-		}
+		this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);	
 		
-		List<Integer> diasSemanaConcentracaoPagamento = null;
-		
-		//obtem a data de vencimento de acordo com o dia em que se concentram os pagamentos da cota
-		Integer fatorVencimento = 0;
-		
-		ParametroCobrancaCota parametroCobrancaCota = cota.getParametroCobranca();
-		
-		TipoFormaCobranca tipoFormaCobrancaAntiga = null;
-		
-		if(parametroCobrancaCota!=null && parametroCobrancaCota.getFatorVencimento()!=null) {
-			fatorVencimento = parametroCobrancaCota.getFatorVencimento();
-		}
-		else {
-			
-			if(formaCobrancaPrincipal.getPoliticaCobranca().getFatorVencimento() != null){
-				
-				fatorVencimento = formaCobrancaPrincipal.getPoliticaCobranca().getFatorVencimento();
-			}
-			
-			tipoFormaCobrancaAntiga = formaCobrancaPrincipal.getTipoFormaCobranca();
-			formaCobrancaPrincipal.setTipoFormaCobranca(null);
-		}
-		
-		boolean cobrarHoje = false;
-		
-		Calendar c = null;
-		
-		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(),fatorVencimento);
-		
-		//acertar a data de vencimento de a cota usa parametros de cobranca do distribuidor
-		if(formaCobrancaPrincipal.getTipoFormaCobranca() == null) {
-			cobrarHoje = true;
-		} else {
-			// switch usado para se é usado os parametros de cobranca da propria cota
-			switch(formaCobrancaPrincipal.getTipoFormaCobranca()){
-			
-				case DIARIA:
-					cobrarHoje = true;
-					break;
-				
-				case QUINZENAL:
-					c = Calendar.getInstance();
-					c.setTime(dataOperacao);
-					cobrarHoje = formaCobrancaPrincipal.getDiasDoMes().contains(c.get(Calendar.DAY_OF_MONTH));
-					break;
-				
-				case MENSAL:
-					c = Calendar.getInstance();
-					c.setTime(dataOperacao);
-					cobrarHoje = formaCobrancaPrincipal.getDiasDoMes().get(0).equals(c.get(Calendar.DAY_OF_MONTH));
-					break;
-				
-				case SEMANAL:
-					c = Calendar.getInstance();
-					c.setTime(dataOperacao);
-					for (ConcentracaoCobrancaCota conc : formaCobrancaPrincipal.getConcentracaoCobrancaCota()){
-						cobrarHoje = c.get(Calendar.DAY_OF_WEEK) == conc.getDiaSemana().getCodigoDiaSemana();
-						if (cobrarHoje){
-							break;
-						}
-					}
-					break;
-					
-			}
-			
-		}
-		
-		/*
-		 * Recoloca o TipoFormaCobranca no Local Antigo
-		 */
-		if(parametroCobrancaCota !=null && parametroCobrancaCota.getFatorVencimento() == null) {
-			formaCobrancaPrincipal.setTipoFormaCobranca(tipoFormaCobrancaAntiga);
-		}
-		
-		if (dataVencimento == null){
-			
-			msgs.add("Não foi possível calcular data de vencimento da cobrança, verifique os parâmetros de cobrança da cota número: " + cota.getNumeroCota());
-			
-			return null;
-		}
-		
-		Divida novaDivida = null;
-		
-		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
-		
-		boolean cotaSuspensa = SituacaoCadastro.SUSPENSO.equals(this.obterSitiacaoCadastroCota(cota.getId()));
+		return consolidadoFinanceiroCota;
+	}
 
-		BigDecimal valorMinino = 
-				this.obterValorMinino(cota, formaCobrancaPrincipal.getValorMinimoEmissao());
-		
-		Banco banco = formaCobrancaPrincipal.getBanco();
-		
-		//caso tenha alcançado o valor minino de cobrança e seja um dia de concentração de cobrança, ou a cota esteja suspensa
+    /**
+	 * Gera Divida e Cobrança para cada Consolidado criado para Cota Centralizadora
+	 * 
+	 * @param cota
+	 * @param formaCobrancaPrincipal
+	 * @param vlMovFinanTotal
+	 * @param cobrarHoje
+	 * @param consolidadosFinanceiroCota
+	 * @param usuario
+	 * @param qtdDiasNovaCobranca
+	 * @param msgs
+	 * @param fornecedor
+	 * @param diasSemanaConcentracaoPagamento
+	 * @param dataOperacao
+	 * @param dataVencimento
+	 * @param dataConsolidado
+	 * @param setNossoNumero
+	 */
+	 private void gerarDividaCobrancaCentralizacao(Cota cota,
+						                           FormaCobranca formaCobrancaPrincipal,
+				 								   BigDecimal vlMovFinanTotal,
+				 								   boolean cobrarHoje,
+				 								   List<ConsolidadoFinanceiroCota> consolidadosFinanceiroCota,
+				 								   Usuario usuario, 
+				 								   int qtdDiasNovaCobranca, 
+			 									   List<String> msgs, 
+			 									   Fornecedor fornecedor,
+												   List<Integer> diasSemanaConcentracaoPagamento, 
+												   Date dataOperacao, 
+												   Date dataVencimento,
+												   Date dataConsolidado,
+												   Set<String> setNossoNumero) {
+	  			
+        MovimentoFinanceiroCota movimentoFinanceiroCota = null;
+  	    		
+  	    Divida novaDivida = null;
+  			
+  		boolean cotaSuspensa = SituacaoCadastro.SUSPENSO.equals(this.obterSitiacaoCadastroCota(cota.getId()));
+  
+ 		BigDecimal valorMinino = this.obterValorMinino(cota, formaCobrancaPrincipal.getValorMinimoEmissao());
+  			
+  		Banco banco = formaCobrancaPrincipal.getBanco();
+ 			
 		if ( (vlMovFinanTotal.compareTo(BigDecimal.ZERO) < 0) &&
-				(vlMovFinanTotal.abs().compareTo(valorMinino) > 0 && cobrarHoje) || 
-				(vlMovFinanTotal.abs().compareTo(valorMinino) > 0 && cotaSuspensa)){
+			 (vlMovFinanTotal.abs().compareTo(valorMinino) > 0 && cobrarHoje) || 
+			 (vlMovFinanTotal.abs().compareTo(valorMinino) > 0 && cotaSuspensa)){
 			
-			novaDivida = new Divida();
+		    novaDivida = new Divida();
 			novaDivida.setValor(vlMovFinanTotal.abs());
-			novaDivida.setData(consolidadoFinanceiroCota.getDataConsolidado());
-			novaDivida.setConsolidado(consolidadoFinanceiroCota);
+			novaDivida.setData(dataConsolidado);
+			novaDivida.setConsolidados(consolidadosFinanceiroCota);
 			novaDivida.setCota(cota);
 			novaDivida.setStatus(StatusDivida.EM_ABERTO);
 			novaDivida.setResponsavel(usuario);
 			novaDivida.setOrigemNegociacao(false);
 			
 		} else if (vlMovFinanTotal.compareTo(valorMinino) != 0) {
-
-			movimentoFinanceiroCota = this.gerarPostergado(cota,
+  
+	        movimentoFinanceiroCota = this.gerarPostergado(cota,
 					                                       qtdDiasNovaCobranca, 
 					                                       msgs, 
 					                                       fornecedor,
-					                                       consolidadoFinanceiroCota, 
-					                                       vlMovFinanTotal, 
-					                                       vlMovFinanTotal, 
+					                                       consolidadosFinanceiroCota, 
+					                                       vlMovFinanTotal,
 					                                       usuario,
 					                                       diasSemanaConcentracaoPagamento, 
 					                                       dataOperacao,
 					                                       null);
 		}
 		
-		this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
+		Cobranca cobranca = this.salvarDividaCobranca(formaCobrancaPrincipal, 
+										      		  novaDivida, 
+										      		  cota, 
+										      		  banco, 
+										      		  dataOperacao, 
+										      		  dataVencimento, 
+										      		  fornecedor);
 		
+		if (movimentoFinanceiroCota != null){
+			
+			this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
+		}
+		
+		if (cobranca != null){
+			
+			setNossoNumero.add(cobranca.getNossoNumero());
+		}
+	}
+
+	/**
+	 * Gera Divida e Cobrança para cada Consolidado criado
+	 * 
+	 * @param cota
+	 * @param formaCobrancaPrincipal
+	 * @param cobrarHoje
+	 * @param consolidadoFinanceiroCota
+	 * @param usuario
+	 * @param qtdDiasNovaCobranca
+	 * @param msgs
+	 * @param fornecedor
+	 * @param diasSemanaConcentracaoPagamento
+	 * @param dataOperacao
+	 * @param dataVencimento
+	 * @param dataConsolidado
+	 * @return List<String>
+	 */
+	private void gerarDividaCobranca(Cota cota, 
+	                                 FormaCobranca formaCobrancaPrincipal,
+									 boolean cobrarHoje, 
+									 List<ConsolidadoFinanceiroCota> consolidadoFinanceiroCota,
+									 Usuario usuario, 
+									 int qtdDiasNovaCobranca, 
+									 List<String> msgs, 
+									 Fornecedor fornecedor,
+									 List<Integer> diasSemanaConcentracaoPagamento, 
+									 Date dataOperacao, 
+									 Date dataVencimento,
+									 Date dataConsolidado,
+									 Set<String> setNossoNumero) {
+		
+	    Divida novaDivida = null;
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
+		
+		boolean cotaSuspensa = SituacaoCadastro.SUSPENSO.equals(this.obterSitiacaoCadastroCota(cota.getId()));
+
+		BigDecimal valorMinino = this.obterValorMinino(cota, formaCobrancaPrincipal.getValorMinimoEmissao());
+		
+		Banco banco = formaCobrancaPrincipal.getBanco();
+
+		for (ConsolidadoFinanceiroCota consolidado : consolidadoFinanceiroCota){
+			
+			BigDecimal valorConsolidado = consolidado.getTotal().setScale(2, RoundingMode.HALF_UP);
+			
+			// caso tenha alcançado o valor minino de cobrança e seja um dia de
+            // concentração de cobrança, ou a cota esteja suspensa
+			if ( (valorConsolidado.compareTo(BigDecimal.ZERO) < 0) &&
+			     (valorConsolidado.abs().compareTo(valorMinino) > 0 && cobrarHoje) || 
+				 (valorConsolidado.abs().compareTo(valorMinino) > 0 && cotaSuspensa)){
+				
+				novaDivida = new Divida();
+				novaDivida.setValor(valorConsolidado.abs());
+				novaDivida.setData(dataConsolidado);
+				novaDivida.setConsolidados(Arrays.asList(consolidado));
+				novaDivida.setCota(cota);
+				novaDivida.setStatus(StatusDivida.EM_ABERTO);
+				novaDivida.setResponsavel(usuario);
+				novaDivida.setOrigemNegociacao(false);
+									
+                Cobranca cobranca = this.salvarDividaCobranca(formaCobrancaPrincipal, 
+									                		  novaDivida, 
+									                		  cota, 
+									                		  banco, 
+									                		  dataOperacao, 
+									                		  dataVencimento, 
+									                		  fornecedor);	
+
+				if (cobranca != null && setNossoNumero != null){
+					
+					setNossoNumero.add(cobranca.getNossoNumero());
+				}
+			} 
+			else if (valorConsolidado.compareTo(valorMinino) != 0) {
+
+				movimentoFinanceiroCota = this.gerarPostergado(cota,
+						                                       qtdDiasNovaCobranca, 
+						                                       msgs, 
+						                                       fornecedor,
+						                                       consolidadoFinanceiroCota, 
+						                                       valorConsolidado,
+						                                       usuario,
+						                                       diasSemanaConcentracaoPagamento, 
+						                                       dataOperacao,
+						                                       null);
+				
+				this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
+			}
+		}
+	}
+	
+	/**
+	 * Salva Divida e Cobrança conforme parametros de Forma Cobrança
+	 * 
+	 * @param formaCobrancaPrincipal
+	 * @param novaDivida
+	 * @param cota
+	 * @param banco
+	 * @param dataOperacao
+	 * @param dataVencimento
+	 * @param fornecedor
+	 * @return Cobranca
+	 */
+	private Cobranca salvarDividaCobranca(FormaCobranca formaCobrancaPrincipal, 
+				                          Divida novaDivida,
+				                          Cota cota,
+				                          Banco banco,
+				                          Date dataOperacao,
+				                          Date dataVencimento,
+				                          Fornecedor fornecedor){
+			
 		Cobranca cobranca = null;
 		
 		if (novaDivida != null){
+			
 			if (novaDivida.getId() == null){
+				
 				this.dividaRepository.adicionar(novaDivida);
 			} else {
+				
 				this.dividaRepository.alterar(novaDivida);
 			}
 			
@@ -922,7 +1611,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				case BOLETO_EM_BRANCO:
 					cobranca = new CobrancaBoletoEmBranco();
 				break;
-				case OUTROS:
+                default:
 					cobranca = new CobrancaOutros();
 				break;
 			}
@@ -962,82 +1651,43 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			cobranca.setValor(novaDivida.getValor());
 			
 			this.cobrancaRepository.adicionar(cobranca);
-		}
+		}			
 		
-		if (movimentoFinanceiroCota != null){
-			
-			this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
-		}
-		
-		if (cobranca != null){
-			
-			return cobranca.getNossoNumero();
-		}
-		
-		return null;
-	}
-	
-   /**
-    * Obtem Data de Vencimento onforme Parametros 
-    * @param dataConsolidado
-    * @param fatorVencimento
-    * @return Date
-    */
-	@Override
-	@Transactional
-	public Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento) {
-		
-		FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
-		
-		if(formaCobranca == null){
-			return DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
-		}
-		
-		//verifica se a forma de cobrança principal do distribuidor utiliza dias uteis para geração da data de vencimento da cobrança
-		if(formaCobranca.isVencimentoDiaUtil()) {
-			return this.calendarioService.adicionarDiasUteis(dataConsolidado, fatorVencimento);
-		}
-		
-		return DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
+		return cobranca;
 	}
 
 	/**
-	 * Posterga as pendências financeiras da cota
-	 * 
-	 * @param cota
-	 * @param qtdDiasNovaCobranca
-	 * @param msgs
-	 * @param fornecedor
-	 * @param consolidadoFinanceiroCota
-	 * @param vlMovFinanTotal
-	 * @param vlMovFinanPostergado
-	 * @param usuario
-	 * @param diasSemanaConcentracaoPagamento
-	 * @param dataOperacao
-	 * @param descPostergado
-	 * @return MovimentoFinanceiroCota
-	 */
+     * Posterga as pendências financeiras da cota
+     * 
+     * @param cota
+     * @param qtdDiasNovaCobranca
+     * @param msgs
+     * @param fornecedor
+     * @param consolidadoFinanceiroCota
+     * @param vlMovFinanTotal
+     * @param usuario
+     * @param diasSemanaConcentracaoPagamento
+     * @param dataOperacao
+     * @param descPostergado
+     * @return MovimentoFinanceiroCota
+     */
 	private MovimentoFinanceiroCota gerarPostergado(Cota cota,
 			                                        int qtdDiasNovaCobranca, 
 			                                        List<String> msgs, 
 			                                        Fornecedor fornecedor,
-			                                        ConsolidadoFinanceiroCota consolidadoFinanceiroCota,
-			                                        BigDecimal vlMovFinanTotal, 
-			                                        BigDecimal vlMovFinanPostergado, 
+			                                        List<ConsolidadoFinanceiroCota> consolidadoFinanceiroCota,
+			                                        BigDecimal vlMovFinanTotal,
 			                                        Usuario usuario,
 			                                        List<Integer> diasSemanaConcentracaoPagamento, 
 			                                        Date dataOperacao,
 			                                        String descPostergado) {
-		
-		//gerar postergado
-		consolidadoFinanceiroCota.setValorPostergado(vlMovFinanPostergado);
 		
 		Calendar diaPostergado = Calendar.getInstance();
 		diaPostergado.setTime(dataOperacao);
 		diaPostergado.add(Calendar.DAY_OF_MONTH, qtdDiasNovaCobranca);
 	
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
-		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) > 0){
+		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) < 0){
 			
 			tipoMovimentoFinanceiro = 
 					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
@@ -1051,7 +1701,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		if (tipoMovimentoFinanceiro == null) {
 			
-			msgs.add("Tipo de movimento para postergação não encontrado!");
+            msgs.add("Tipo de movimento para postergação não encontrado!");
 			
 			return null;
 		}
@@ -1060,14 +1710,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 			if (diasSemanaConcentracaoPagamento == null){
 				
-				descPostergado = "Forma de cobrança não encontrada para a cota: "+ cota.getNumeroCota() +", a cobrança será postergada.";
+                descPostergado = "Forma de cobrança não encontrada para a cota: " + cota.getNumeroCota()
+                    + ", a cobrança será postergada.";
 			} else if (!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))){
 				
-				descPostergado = "Não existe acúmulo de pagamento para este dia (" + 
+                descPostergado = "Não existe acúmulo de pagamento para este dia ("
+                        +
 						new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + ")";
 			} else {
 				
-				descPostergado = "Valor mínimo para dívida não atingido";
+                descPostergado = "Valor mínimo para dívida não atingido";
 			}
 		}
 		
@@ -1109,7 +1761,21 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 	}
 	
-	@Transactional
+	/**
+	 * Remove pendencia de envio de boletos por email da Cobranca
+	 * @param cobrancaId
+	 */
+	private void excluirBoletoEmailAssociacao(Long cobrancaId){
+		
+		BoletoEmail be = this.boletoEmailRepository.obterBoletoEmailPorCobranca(cobrancaId);
+		
+		if (be != null){
+		
+		    this.boletoEmailRepository.remover(be);
+		}
+	}
+	
+	@Transactional(timeout = 500)
 	@Override
 	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao, boolean excluiFinanceiro) {
 		
@@ -1118,9 +1784,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if (idMovimentoFinanceiroCota != null){
 
 			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadoPorIdMovimentoFinanceiro(idMovimentoFinanceiroCota);
+		
 		} else {
 			
-			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota);
+			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota, dataOperacao);
 		}
 		
 		if (consolidados != null) {
@@ -1130,43 +1797,33 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				Divida divida = this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId());
 				
 				if (divida != null) {
-				
-					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
 					
 					Negociacao negociacao = this.negociacaoRepository.obterNegociacaoPorCobranca(divida.getCobranca().getId());
-					
-					if (negociacao != null) {
-					    
-						if (!negociacao.isNegociacaoAvulsa()) {
-						
-						    this.parcelaNegociacaoRepository.excluirPorNegociacao(negociacao.getId());
-						
-						    this.negociacaoRepository.remover(negociacao);
-						    
-						    this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
-						}
-					
-					} else {
-					
-						this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
-					}
-				}
 
-				List<MovimentoFinanceiroCota> mfcs = consolidado.getMovimentos();
+					if (negociacao != null && TipoNegociacao.PAGAMENTO_AVULSO.equals(negociacao.getTipoNegociacao())) {
+						
+						continue;
+					}
+
+					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
+					
+					this.removerDividaCobrancaConsolidado(divida, consolidado, dataOperacao);
+					
+				}
+				
+				List<MovimentoFinanceiroCota> mfcs = movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDeConsolidado(consolidado.getId());
 				
 				consolidado.setMovimentos(null);
 				
 				this.consolidadoFinanceiroRepository.alterar(consolidado);
-								
-				if (excluiFinanceiro){
+				
+                if (excluiFinanceiro && mfcs!=null && !mfcs.isEmpty()){
 					
-	                if (mfcs!=null && !mfcs.isEmpty()){
-						
-				    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(mfcs);
-					}
+			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(mfcs);
 				}
-                              				                        
+                
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
+			    
 			}
 		}
 		
@@ -1176,9 +1833,17 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	private void removerDividaCobrancaConsolidado(Divida divida, ConsolidadoFinanceiroCota consolidado,
 			Date dataOperacao){
 		
-		this.cobrancaRepository.remover(divida.getCobranca());
+		Cobranca cobranca = divida.getCobranca();
 		
-	    this.dividaRepository.remover(divida);
+		if (cobranca != null){
+		    
+			this.excluirBoletoEmailAssociacao(cobranca.getId());
+			
+		}
+		
+		this.dividaRepository.remover(divida);
+		
+		
 	}
 	
 	private void removerPostergados(Long idCota, Date dataOperacao){
@@ -1257,7 +1922,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
 		
 		if (parametroDistribuicaoCota == null ||
-				(parametroDistribuicaoCota.getSlipImpresso() == null 				|| parametroDistribuicaoCota.getSlipImpresso() == false) &&
+				(parametroDistribuicaoCota.getSlipImpresso() == null 			|| parametroDistribuicaoCota.getSlipImpresso() == false) &&
 				(parametroDistribuicaoCota.getSlipEmail() == null 				|| parametroDistribuicaoCota.getSlipEmail() == false) &&
 				(parametroDistribuicaoCota.getBoletoImpresso() == null 			|| parametroDistribuicaoCota.getBoletoImpresso() == false) &&
 				(parametroDistribuicaoCota.getBoletoEmail() == null 			|| parametroDistribuicaoCota.getBoletoEmail() == false) &&
@@ -1286,25 +1951,80 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		return true;
 	}
+	
+	@Override
+    @Transactional(readOnly=true)
+    public boolean aceitaEmissaoDocumento(Cota cota, TipoEmissaoDocumento tipoEmissaoDocumento) {
+
+        Boolean aceitaEmissao = this.getMapaEmissaoDocumentos(cota).get(tipoEmissaoDocumento); 
+
+        return aceitaEmissao == null ? false : aceitaEmissao;
+    }
+
+    @Override
+	@Transactional(readOnly=true)
+	public boolean aceitaEmissaoDocumento(Long idCota, TipoEmissaoDocumento tipoEmissaoDocumento) {
+        
+        Cota cota = cotaRepository.buscarPorId(idCota);
+        
+        return aceitaEmissaoDocumento(cota, tipoEmissaoDocumento);
+		
+	}
+	
+	private HashMap<TipoEmissaoDocumento, Boolean> getMapaEmissaoDocumentos(Cota cota) {		
+		
+		HashMap<TipoEmissaoDocumento, Boolean> map = new HashMap<TipoEmissaoDocumento, Boolean>();
+
+		ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
+		
+		if (parametroDistribuicaoCota == null) {
+			
+			parametroDistribuicaoCota = new ParametroDistribuicaoCota();
+		}
+
+		map.put(TipoEmissaoDocumento.EMAIL_BOLETO_RECIBO, parametroDistribuicaoCota.getBoletoEmail());
+		map.put(TipoEmissaoDocumento.EMAIL_BOLETO_SLIP, parametroDistribuicaoCota.getBoletoSlipEmail());
+		map.put(TipoEmissaoDocumento.EMAIL_CHAMADA_ENCALHE, parametroDistribuicaoCota.getChamadaEncalheEmail());
+		map.put(TipoEmissaoDocumento.EMAIL_NOTA_ENVIO, parametroDistribuicaoCota.getNotaEnvioEmail());
+		map.put(TipoEmissaoDocumento.EMAIL_SLIP, parametroDistribuicaoCota.getSlipEmail());
+		
+		map.put(TipoEmissaoDocumento.IMPRESSAO_BOLETO_RECIBO, parametroDistribuicaoCota.getBoletoImpresso());
+		map.put(TipoEmissaoDocumento.IMPRESSAO_BOLETO_SLIP, parametroDistribuicaoCota.getBoletoSlipImpresso());
+		map.put(TipoEmissaoDocumento.IMPRESSAO_CHAMADA_ENCALHE, parametroDistribuicaoCota.getChamadaEncalheImpresso());
+		map.put(TipoEmissaoDocumento.IMPRESSAO_NOTA_ENVIO, parametroDistribuicaoCota.getNotaEnvioImpresso());
+		map.put(TipoEmissaoDocumento.IMPRESSAO_SLIP, parametroDistribuicaoCota.getSlipImpresso());
+
+		for (Entry<TipoEmissaoDocumento, Boolean> entry : map.entrySet()) {
+			
+			Boolean value = entry.getValue();
+			
+			if (value == null) {
+				
+				entry.setValue(this.parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaEnvioEmail(entry.getKey().getParametroEmissao()));
+			}
+		}
+
+		return map;
+	}
 
 	private void enviarDocumentosCobrancaEmail(String nossoNumero, String email) throws AutenticacaoEmailException {
 		
 		byte[] anexo = this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
 		
-		this.emailService.enviar("Cobrança", 
-								 "Segue documento de cobrança em anexo.", 
+        this.emailService.enviar("Cobrança", "Segue documento de cobrança em anexo.",
 								 new String[]{email}, 
 								 new AnexoEmail("Cobranca",anexo,TipoAnexo.PDF));		
 	}
 	
 	/**
-	 * Envia Cobranças para email da Cota
-	 * @param cota
-	 * @param nossoNumeroEnvioEmail
-	 */
+     * Envia Cobranças para email da Cota
+     * 
+     * @param cota
+     * @param nossoNumeroEnvioEmail
+     */
 	@Override
 	@Transactional
-	public void enviarDocumentosCobrancaEmail(Cota cota, Map<String, Boolean> nossoNumeroEnvioEmail) {
+	public void enviarDocumentosCobrancaEmail(Cota cota, Set<String> nossoNumeroEnvioEmail) {
 		
         String email = cota.getPessoa().getEmail();
 		
@@ -1313,41 +2033,24 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			return;
 		}
 		
-        for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
+		Iterator<String> iterator = nossoNumeroEnvioEmail.iterator(); 
+		
+        while(iterator.hasNext()){
 			
-			if (nossoNumeroEnvioEmail.get(nossoNumero)){
-
-				if (this.aceitaEnvioEmail(cota, nossoNumero)) {
-					
-					try {
-			            
-						this.enviarDocumentosCobrancaEmail(nossoNumero, email);
-	            
-	                } catch (AutenticacaoEmailException e) {
-	  
-	                    e.printStackTrace();
-	                }
-				}
+        	String nossoNumero = iterator.next();
+        	
+			if (this.aceitaEnvioEmail(cota, nossoNumero)) {
+				
+				try {
+		            
+					this.enviarDocumentosCobrancaEmail(nossoNumero, email);
+            
+                } catch (AutenticacaoEmailException e) {
+  
+                    LOGGER.error(e.getMessage(), e);
+                }
 			}
 		}	
 	}
 	
-	private FormaCobranca cloneFormaCobranca(FormaCobranca formaCobranca) {
-		
-		if (formaCobranca==null){
-			
-			return null;
-		}
-		
-		try {
-			
-			return (FormaCobranca) BeanUtils.cloneBean(formaCobranca);
-			
-		} catch (Exception e) {
-
-			throw new ValidacaoException(
-					TipoMensagem.ERROR,
-					"Erro ao tentar obter [FormaCobranca]!");
-		}
-	}
 }

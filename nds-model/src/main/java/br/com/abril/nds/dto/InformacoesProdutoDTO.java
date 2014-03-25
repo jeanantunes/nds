@@ -19,16 +19,16 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 
 	private static final long serialVersionUID = -1681228943537091591L;
 	
-	@Export(label = "Numero Ediçao", alignment=Alignment.LEFT, exhibitionOrder = 1)
+    @Export(label = "Numero Ediçao", alignment = Alignment.LEFT, exhibitionOrder = 1)
 	private Long numeroEdicao;
 	
-	@Export(label = "Nome Edição", alignment=Alignment.LEFT, exhibitionOrder = 2)
+    @Export(label = "Nome Edição", alignment = Alignment.LEFT, exhibitionOrder = 2)
 	private String nomeProduto;
 	
-	@Export(label = "Período", alignment=Alignment.LEFT, exhibitionOrder = 3)
+    @Export(label = "Período", alignment = Alignment.LEFT, exhibitionOrder = 3)
 	private PeriodicidadeProduto periodo;
 	
-	@Export(label = "Preço R$", alignment=Alignment.LEFT, exhibitionOrder = 4)
+    @Export(label = "Preço R$", alignment = Alignment.LEFT, exhibitionOrder = 4)
 	private BigDecimal preco;
 	
 	@Export(label = "Status", alignment=Alignment.LEFT, exhibitionOrder = 5)
@@ -40,8 +40,8 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	@Export(label = "Venda", alignment=Alignment.LEFT, exhibitionOrder = 7)
 	private BigInteger venda;
 
-	@Export(label = "Abrangência", alignment=Alignment.LEFT, exhibitionOrder = 8)
-	private BigInteger percentualAbrangencia;
+    @Export(label = "Abrangência", alignment = Alignment.LEFT, exhibitionOrder = 8)
+	private Double percentualAbrangencia;
 	
 	@Export(label = "Data Lcto", alignment=Alignment.LEFT, exhibitionOrder = 9)
 	private String dataLcto;
@@ -53,16 +53,16 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private String algoritmo;	
 	
 	@Export(label = "Rep. Min.", alignment=Alignment.LEFT, exhibitionOrder = 12)
-	private String reparteMinimoGhoma;
+	private BigInteger reparteMinimo;
 	
 	@Export(label = "Estudo", alignment=Alignment.LEFT, exhibitionOrder = 13)
 	private Long estudo;
 	
-	@Export(label = "Usuário", alignment=Alignment.LEFT, exhibitionOrder = 14)
+    @Export(label = "Usuário", alignment = Alignment.LEFT, exhibitionOrder = 14)
 	private String nomeUsuario;
 	
 	@Export(label = "Data", alignment=Alignment.LEFT, exhibitionOrder = 15)
-	private Date dataInsercao;
+	private String dataAlteracao;
 	
 	@Export(label = "Hora", alignment=Alignment.LEFT, exhibitionOrder = 16)
 	private String hora;
@@ -72,12 +72,17 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private String dataInser;
 	private Usuario usuario;
 	private String codProduto;
-		
+	private String tipoClassificacaoProdutoDescricao;
+	private Boolean estudoLiberado;
+	private BigInteger qtdeReparteEstudo;
+	private String codigoICD;
+	
 	public String getNomeUsuario() {
 		return nomeUsuario;
 	}
+	
 	public void setNomeUsuario(String nomeUsuario) {
-		if(nomeUsuario.equals("") || nomeUsuario == null){
+		if(nomeUsuario == null || nomeUsuario.equals("")){
 			this.nomeUsuario = "";
 		}else{
 			this.nomeUsuario = nomeUsuario;
@@ -130,31 +135,28 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 		return reparteDistribuido;
 	}
 	public void setReparteDistribuido(BigInteger reparteDistribuido) {
-		if ((reparteDistribuido == null) || (reparteDistribuido.equals(""))){
-			this.reparteDistribuido = new BigInteger("0");
+        if (reparteDistribuido == null) {
+			this.reparteDistribuido = BigInteger.ZERO;
 		}else{
 			this.reparteDistribuido = reparteDistribuido;
 		}
 	}
+	
 	public BigInteger getVenda() {
 		return venda;
 	}
 	public void setVenda(BigInteger venda) {
-		if ((venda == null) || (venda.equals(""))){
-			this.venda = new BigInteger("0");
+		if(venda == null){
+			this.venda = BigInteger.ZERO;	
 		}else{
 			this.venda = venda;
 		}
 	}
-	public BigInteger getPercentualAbrangencia() {
+	public Double getPercentualAbrangencia() {
 		return percentualAbrangencia;
 	}
-	public void setPercentualAbrangencia(BigInteger percentualAbrangencia) {
-		if ((percentualAbrangencia == null) || (percentualAbrangencia.equals(""))){
-			this.percentualAbrangencia = new BigInteger("0");
-		}else{
+	public void setPercentualAbrangencia(Double percentualAbrangencia) {
 			this.percentualAbrangencia = percentualAbrangencia;
-		}
 	}
 	public String getDataLcto() {
 		return dataLcto;
@@ -174,27 +176,29 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public void setDataInser(String dataInser) {
 		this.dataInser = dataInser;
 	}
-	public String getReparteMinimoGhoma() {
-		return reparteMinimoGhoma;
+	public BigInteger getReparteMinimo() {
+		return reparteMinimo;
 	}
-	public void setReparteMinimoGhoma(String reparteMinimoGhoma) {
-		if ((reparteMinimoGhoma == null) || (reparteMinimoGhoma.equals(""))){
-			this.reparteMinimoGhoma = ("");
+	public void setReparteMinimo(BigInteger reparteMinimo) {
+        if (reparteMinimo == null) {
+			this.reparteMinimo = BigInteger.ZERO;
 		}else{
-			this.reparteMinimoGhoma = reparteMinimoGhoma;
+			this.reparteMinimo = reparteMinimo;
 		}
 	}
+
 	public Long getEstudo() {
 		return estudo;
 	}
 	public void setEstudo(Long estudo) {
 		this.estudo = estudo;
 	}
-	public Date getDataInsercao() {
-		return dataInsercao;
+	public String getDataAlteracao() {
+		return dataAlteracao;
 	}
-	public void setDataInsercao(Date dataInsercao) {
-		this.dataInsercao = dataInsercao;
+	public void setDataAlteracao(Date data) {
+		this.dataAlteracao = DateUtil.formatarDataPTBR(data);
+		this.hora = DateUtil.formatarHoraMinuto(data);
 	}
 	public String getDatalanc() {
 		return datalanc;
@@ -208,13 +212,49 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public void setDataRecb(String dataRecb) {
 		this.dataRecb = dataRecb;
 	}
-	public void setHora(String hora) {
-		this.hora = hora;
-	}
 	public String getCodProduto() {
 		return codProduto;
 	}
 	public void setCodProduto(String codProduto) {
 		this.codProduto = codProduto;
+	}
+
+	public String getTipoClassificacaoProdutoDescricao() {
+		return tipoClassificacaoProdutoDescricao;
+	}
+
+	public void setTipoClassificacaoProdutoDescricao(
+			String tipoClassificacaoProdutoDescricao) {
+		this.tipoClassificacaoProdutoDescricao = tipoClassificacaoProdutoDescricao;
+	}
+
+	public String getNomeProduto() {
+		return nomeProduto;
+	}
+
+	public void setNomeProduto(String nomeProduto) {
+		this.nomeProduto = nomeProduto;
+	}
+
+	public Boolean getEstudoLiberado() {
+		return estudoLiberado;
+	}
+
+	public void setEstudoLiberado(Boolean estudoLiberado) {
+		this.estudoLiberado = estudoLiberado;
+	}
+
+	public BigInteger getQtdeReparteEstudo() {
+		return qtdeReparteEstudo;
+	}
+
+	public void setQtdeReparteEstudo(BigInteger qtdeReparteEstudo) {
+		this.qtdeReparteEstudo = qtdeReparteEstudo;
+	}
+	public String getCodigoICD() {
+		return codigoICD;
+	}
+	public void setCodigoICD(String codigoICD) {
+		this.codigoICD = codigoICD;
 	}
 }

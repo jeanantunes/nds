@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.planejamento;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,8 +33,10 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 @Entity
 @Table(name = "LANCAMENTO_PARCIAL")
 @SequenceGenerator(name = "LANCAMENTO_PARCIAL_SEQ", initialValue = 1, allocationSize = 1)
-public class LancamentoParcial {
+public class LancamentoParcial implements Serializable{
 	
+	private static final long serialVersionUID = -7421475045435988608L;
+
 	@Id
 	@GeneratedValue(generator = "LANCAMENTO_PARCIAL_SEQ")
 	@Column(name = "ID")
@@ -57,6 +60,16 @@ public class LancamentoParcial {
 
 	@OneToMany(mappedBy = "lancamentoParcial", cascade={CascadeType.REMOVE})
 	private List<PeriodoLancamentoParcial> periodos = new ArrayList<PeriodoLancamentoParcial>();
+	
+	public PeriodoLancamentoParcial getPrimeiroPeriodoParcial(){
+		
+		for(PeriodoLancamentoParcial item : this.periodos ){
+			if(item.getNumeroPeriodo() == 1 && item.getLancamentoPeriodoParcial().getNumeroLancamento() == 1){
+				return item;
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * @return the id

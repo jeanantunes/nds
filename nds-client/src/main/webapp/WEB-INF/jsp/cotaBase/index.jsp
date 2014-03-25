@@ -1,5 +1,4 @@
 <head>
-
 <script type="text/javascript" src="scripts/cotaBase.js"></script>
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 <script language="javascript" type="text/javascript">
@@ -20,6 +19,8 @@ $(function(){
 </head>
  
 <body>
+
+<div id="cotasBaseHidden" style="display: none;" ></div>
 
 <div id="dialog-defineReparte" title="Nova Cota Base" style="display:none;">
   <fieldset style="width:605px!important;">
@@ -109,14 +110,24 @@ $(function(){
             <td width="306"><div id="nomeCotaDetalhe"></div> </td>
           </tr>
         </table>
-
 	</fieldset>
     <br clear="all" />
     <fieldset style="width:880px!important; margin-top:10px;">
    		<legend>Nome: <div id="nomeCotaDetalhe"></div></legend>
     	<table class="consultaEquivalentesDetalheGrid" id="consultaEquivalentesDetalheGrid" ></table>
 	</fieldset>
-
+	<div id="botoesImprimirDoPopUpDetalhe">
+		<span class="bt_novos" title="Gerar Arquivo">
+				<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=XLS&tipoDeLista=pesquisaDetalhes">
+				    <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
+				</a>
+		</span>
+		<span class="bt_novos" title="Imprimir">
+				<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=PDF&tipoDeLista=pesquisaDetalhes">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
+				</a>
+		</span>
+	</div>
 </div>
 
 <div id="dialog-segmentos" title="Segmentos não recebidos" style="display:none;">
@@ -131,7 +142,7 @@ $(function(){
 
 <div id="dialog-foto-pdv" title="Foto PDV" style="display:none;">
   <fieldset style="width:630px!important;">
-   	<legend>Nome: Banca da Vila</legend>
+   	<legend>Nome: <span id="idNomePdv"></span></legend>
     	<img src="${pageContext.request.contextPath}/images/pdv/no_image.jpeg" id="idImagem" name="idImagem" width="630" height="400" />
 	</fieldset>
 </div>

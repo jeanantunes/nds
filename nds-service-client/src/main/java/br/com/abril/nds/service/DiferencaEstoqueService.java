@@ -17,6 +17,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 
@@ -116,6 +117,8 @@ public interface DiferencaEstoqueService {
 	
 	public Diferenca lancarDiferenca(Diferenca diferenca, TipoEstoque tipoEstoque);
 	
+	public Diferenca lancarDiferencaAutomatica(Diferenca diferenca, TipoEstoque tipoEstoque);
+	
 	void validarDadosParaImpressaoNaData(String dataMovimentoFormatada);
 
 	HashMap<Long, Set<Diferenca>> verificarDiferencasIguais(
@@ -142,5 +145,11 @@ public interface DiferencaEstoqueService {
 			RateioCotaVO rateioCotaVO);
 	
 	boolean validarProdutoEmRecolhimento(ProdutoEdicao produtoEdicao);
+
+    void validarRateioParaCotasInativas(List<RateioCotaVO> rateioCotas);
+	
+	Diferenca lancarDiferencaFechamentoCEIntegracao(Diferenca diferenca, 
+			   MovimentoEstoque movimentoEstoque,
+			   StatusAprovacao statusAprovacao);
 	
 }

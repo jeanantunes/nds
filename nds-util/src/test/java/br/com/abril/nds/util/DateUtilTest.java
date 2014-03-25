@@ -13,25 +13,6 @@ import org.junit.Test;
 
 public class DateUtilTest {
 	
-	@Test
-	public void obterNumeroSegundaSemanaAno2012ComInicioNaTerca() {
-		
-		int semana = SemanaUtil.obterNumeroSemana(DateUtil.parseDataPTBR("10/01/2012"), Calendar.TUESDAY);
-		
-		Assert.assertEquals(2, semana);
-	}
-	
-	@Test
-	public void obterDataDaPrimeiraSemanaDoAno2012() {
-		
-		Date dataEsperada = DateUtil.parseDataPTBR("06/01/2013");
-		
-		Integer anoBase = DateUtil.obterAno(new Date());
-		
-		Date dataObtida = SemanaUtil.obterDataDaSemanaNoAno(1, Calendar.SUNDAY, anoBase);
-		
-		Assert.assertEquals(dataEsperada, dataObtida);
-	}
 	
 	@Test
 	public void obterDiaDaSemana() {

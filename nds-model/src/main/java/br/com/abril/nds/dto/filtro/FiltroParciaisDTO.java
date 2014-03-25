@@ -3,7 +3,7 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
-import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
@@ -187,8 +187,8 @@ public class FiltroParciaisDTO implements Serializable  {
 	public void setPaginacao(PaginacaoVO paginacao) {
 		this.paginacao = paginacao;
 	}
-	public StatusLancamentoParcial getStatusEnum() {
-		return StatusLancamentoParcial.valueOf(status);
+	public StatusLancamento getStatusEnum() {
+		return StatusLancamento.valueOf(status);
 	}
 	/**
 	 * @return the nomeFornecedor

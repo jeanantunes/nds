@@ -5,10 +5,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.apache.commons.lang.time.DateUtils;
 
 public class DateUtil {
+
+    private DateUtil() {
+
+    };
     
 	public static final String PADRAO_HORA_MINUTO = "HH:mm";
 
@@ -57,10 +62,8 @@ public class DateUtil {
     /**
      * Formata a data com a informação de hora e minutos
      * 
-     * @param data
-     *            data para formatação
-     * @return informação de horas e minutos da data no padrão
-     *         {@link DateUtil#PADRAO_HORA_MINUTO}
+     * @param data data para formatação
+     * @return informação de horas e minutos da data no padrão {@link DateUtil#PADRAO_HORA_MINUTO}
      */
 	public static String formatarHoraMinuto(Date data) {
 	    return formatarData(data, PADRAO_HORA_MINUTO);
@@ -76,14 +79,13 @@ public class DateUtil {
 		return formatarData(data, Constantes.DATE_PATTERN_PT_BR);
 	}
 
-	/**
-	 * Normaliza uma data, para comparações, zerando os valores de hora (hora,
-	 * minuto, segundo e milissendo).
-	 * 
-	 * @param dt
-	 * 
-	 * @return
-	 */
+	                                                /**
+     * Normaliza uma data, para comparações, zerando os valores de hora (hora, minuto, segundo e milissendo).
+     * 
+     * @param dt
+     * 
+     * @return
+     */
 	public static Date normalizarDataSemHora(Date dt) {
 		
 		Calendar cal = Calendar.getInstance();
@@ -96,6 +98,27 @@ public class DateUtil {
 		return cal.getTime();
 	}
 	
+    /**
+     * Adiciona Horas Minutoss e Segundos atuais a uma data
+     * 
+     * @param date
+     * @return
+     */
+    public static Date adicionarHMS(Date date) {
+
+        Calendar current = Calendar.getInstance();
+
+        Calendar newDate = Calendar.getInstance();
+        newDate.setTime(date);
+
+        newDate.set(Calendar.HOUR_OF_DAY, current.get(Calendar.HOUR_OF_DAY));
+        newDate.set(Calendar.MINUTE, current.get(Calendar.MINUTE));
+        newDate.set(Calendar.SECOND, current.get(Calendar.SECOND));
+        newDate.set(Calendar.MILLISECOND, current.get(Calendar.MILLISECOND));
+        
+        return newDate.getTime();
+	}
+
 	public static boolean isDataInicialMaiorDataFinal(Date dataInicial, Date dataFinal) {
 		
 		if (dataInicial != null && dataFinal != null) {
@@ -105,16 +128,24 @@ public class DateUtil {
 		
 		return false;
 	}
+	
+	public static boolean isDataInicialMaiorIgualDataFinal(Date dataInicial, Date dataFinal) {
+		
+		if (dataInicial != null && dataFinal != null) {
+			
+			return dataInicial.compareTo(dataFinal) > 0 || dataInicial.compareTo(dataFinal) == 0;
+		}
+		
+		return false;
+	}
 
-	/**
-	 * Avança o número de dias a data
-	 * 
-	 * @param data
-	 *            data para adição de dias
-	 * @param numDias
-	 *            número de dias para adicionar
-	 * @return data com o número de dias adicionados
-	 */
+	                                                /**
+     * Avança o número de dias a data
+     * 
+     * @param data data para adição de dias
+     * @param numDias número de dias para adicionar
+     * @return data com o número de dias adicionados
+     */
 	public static Date adicionarDias(Date data, int numDias) {
 		if (data == null) {
 			return null;
@@ -140,14 +171,14 @@ public class DateUtil {
 		return calendar;
 	}
 	
-	/**
-	 * Subtrai o número de dias da data
-	 * 
-	 * @param data - data para subtração de dias
-	 * @param numDias - número de dias para subtrair
-	 * 
-	 * @return nova data com o número de dias subtratidos
-	 */
+	                                                /**
+     * Subtrai o número de dias da data
+     * 
+     * @param data - data para subtração de dias
+     * @param numDias - número de dias para subtrair
+     * 
+     * @return nova data com o número de dias subtratidos
+     */
 	public static Date subtrairDias(Date data, int numDias) {
 		if (data == null) {
 			return null;
@@ -159,14 +190,14 @@ public class DateUtil {
 	}
 	
 	
-	/**
-	 * Subtrai o número de meses da data
-	 * 
-	 * @param data - data para subtração de meses
-	 * @param numMes - número de meses para subtrair
-	 * 
-	 * @return nova data com o número de meses subtraidos
-	 */
+	                                                /**
+     * Subtrai o número de meses da data
+     * 
+     * @param data - data para subtração de meses
+     * @param numMes - número de meses para subtrair
+     * 
+     * @return nova data com o número de meses subtraidos
+     */
 	public static Date subtrairMeses(Date data, int numMes) {
 		if (data == null) {
 			return null;
@@ -178,23 +209,23 @@ public class DateUtil {
 	}
 	
 	
-	/**
-	 * Método que verifica se a data informada é sábado ou domingo
-	 * 
-	 * @param cal - data para comparação
-	 * 
-	 * @return variável indicando se a data é sábado ou domingo
-	 */
+	                                                /**
+     * Método que verifica se a data informada é sábado ou domingo
+     * 
+     * @param cal - data para comparação
+     * 
+     * @return variável indicando se a data é sábado ou domingo
+     */
 	public static boolean isSabadoDomingo(Calendar cal) {
-		return (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
-				|| (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY);
+		return cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY
+				|| cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
 	}
 
 	public static Date parseData(String data, String formato) {
 
-		if(data == null)
+        if (data == null) {
 			return null;
-		
+        }
 		try {
 			
 			DateFormat f = new SimpleDateFormat(formato);
@@ -278,18 +309,38 @@ public class DateUtil {
 		return obterAno(calendar);
 	}
 	
-	/**
-	 * Retorna o dia do mês de uma determinada data.
-	 * 
-	 * @param data - data
-	 * 
-	 * @return Dia do mês (verificar constantes da classe java.util.Calendar)
-	 */
+	public static Date obterDtInicioSemanaPorNumeroSemanaAno(Integer inicioSemana,Integer numeroSemana, Integer ano){
+		GregorianCalendar dataInicio = new GregorianCalendar();
+		dataInicio.set(Calendar.YEAR, ano);  
+		dataInicio.setFirstDayOfWeek(inicioSemana);  
+		dataInicio.set(Calendar.WEEK_OF_YEAR, numeroSemana);  
+		
+	
+		Date retorno = dataInicio.getTime();
+		
+		return retorno;
+	}
+
+	public static int obterDiaDaSemana(Date data) {
+		
+		Calendar calendar = toCalendar(data);
+		
+		return calendar.get(Calendar.DAY_OF_WEEK);
+		
+	}
+	
+	                                                /**
+     * Retorna o dia do mês de uma determinada data.
+     * 
+     * @param data - data
+     * 
+     * @return Dia do mês (verificar constantes da classe java.util.Calendar)
+     */
 	public static int obterDiaDoMes(Date data) {
 		
 		if (data == null) {
 			
-			throw new IllegalArgumentException("Data inválida!");
+            throw new IllegalArgumentException("Data inválida!");
 		}
 		
 		Calendar calendar = Calendar.getInstance();
@@ -299,15 +350,15 @@ public class DateUtil {
 		return calendar.get(Calendar.DAY_OF_MONTH);
 	}
 
-	/**
-	 * Valida se a data está entre o período informado.
-	 * 
-	 * @param dataComparacao - data para comparação
-	 * @param dataInicial - data inicial do período
-	 * @param dataFinal - data final do período
-	 * 
-	 * @return flag indicando se a data está entre o período
-	 */
+	                                                /**
+     * Valida se a data está entre o período informado.
+     * 
+     * @param dataComparacao - data para comparação
+     * @param dataInicial - data inicial do período
+     * @param dataFinal - data final do período
+     * 
+     * @return flag indicando se a data está entre o período
+     */
 	public static boolean validarDataEntrePeriodo(Date dataComparacao,
 												  Date dataInicial,
 												  Date dataFinal) {
@@ -337,7 +388,7 @@ public class DateUtil {
 				return "Fevereiro";
 			
 			case Calendar.MARCH:
-				return "Março";
+            return "Março";
 				
 			case Calendar.APRIL:
 				return "Abril";
@@ -371,4 +422,20 @@ public class DateUtil {
 				return "Dezembro";
 		}
 	}
+
+	public static Date obterDataDaSemanaNoAno(int numeroSemana,
+			int codigoDiaSemana, Date dataAtual) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static int obterNumeroSemanaNoAno(Date dataAtual, int codigoDiaSemana) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	
+	
+	
+	
 }

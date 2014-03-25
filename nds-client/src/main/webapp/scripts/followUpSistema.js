@@ -2,9 +2,9 @@ var followUpSistemaController = $.extend(true, {
 	
 	init : function () {
 		$( "#tab-followup", followUpSistemaController.workspace ).tabs();
-		
+
 		$(".chamadaoGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
-			url : contextPath + '/followup/pesquisaDadosChamadao',
+			//url : contextPath + '/followup/pesquisaDadosChamadao',
 			dataType : 'json',
 			preProcess: followUpSistemaController.exPreProcFollowupChamadao,
 			colModel : [ {
@@ -54,8 +54,49 @@ var followUpSistemaController = $.extend(true, {
 			height : 255
 	    }));
 
+
+		$(".distribuicaoGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
+			//url : contextPath + '/followup/pesquisaDistribuicaoCotasAjustes',
+	        preProcess:  followUpSistemaController.exPreProcFollowupDistribuicao, 
+			dataType : 'json',
+			colModel : [ {
+				display : 'Cota',
+				name : 'numeroCota',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nomeJornaleiro',
+				width : 290,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Mensagem',
+				name : 'mensagem',
+				width : 290,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Dias restantes',
+				name : 'qtdDiasRestantes',
+				width : 150,
+				sortable : true,
+				align : 'left'
+			}],
+			sortname : "numeroCota",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 880,
+			height : 255
+		}));
+
+
 		$(".pendenciasGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
-			url : contextPath + '/followup/pesquisaDadosPendenciaNFEEncalhe',
+			//url : contextPath + '/followup/pesquisaDadosPendenciaNFEEncalhe',
 			dataType : 'json',
 			preProcess: followUpSistemaController.exPreProcFollowupPendenciasnfe,
 			colModel : [ {
@@ -106,7 +147,7 @@ var followUpSistemaController = $.extend(true, {
 		}));
 
 		$(".alteracaoStatusGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
-			url : contextPath + '/followup/pesquisaDadosStatusCota',
+			//url : contextPath + '/followup/pesquisaDadosStatusCota',
 	        preProcess:  followUpSistemaController.exPreProcFollowupStatusCota, 
 			dataType : 'json',
 			colModel : [ {
@@ -157,7 +198,7 @@ var followUpSistemaController = $.extend(true, {
 		}));
 
 		$(".atualizacaoCadastralGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
-			url : contextPath + '/followup/pesquisaDadosCadastrais',
+			//url : contextPath + '/followup/pesquisaDadosCadastrais',
 	        preProcess:  followUpSistemaController.exPreProcFollowupCadastro, 
 			dataType : 'json',
 			colModel : [ {
@@ -201,7 +242,7 @@ var followUpSistemaController = $.extend(true, {
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
-			rp : 15,
+			rp : 30,
 			showTableToggleBtn : true,
 			width : 950,
 			height : 255
@@ -266,7 +307,7 @@ var followUpSistemaController = $.extend(true, {
 		});
 		
 		$(".atualizacaoCadastralParcialGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
-			url : contextPath + '/followup/pesquisaDadosCadastroParcial',
+			//url : contextPath + '/followup/pesquisaDadosCadastroParcial',
 	        preProcess:  followUpSistemaController.exPreProcFollowupCadastroParcial, 
 			dataType : 'json',
 			colModel : [ {
@@ -382,8 +423,20 @@ var followUpSistemaController = $.extend(true, {
 		if ( row.cell.dataVencimento == undefined ){
 				row.cell.dataVencimento='';
 		}
+		
+		if ( row.cell.numeroCota == undefined ){
+			row.cell.numeroCota='';
+		}
+		
+		if ((row.cell.tipo == 'Contrato fornecedor a vencer/Vencido')){
+			row.cell.numeroCota='Fornecedor';
+		}
+		
+		if ( row.cell.responsavel == undefined ){
+			row.cell.responsavel='';
+		}
 			
-		});
+	});
 	
 	if(resultado.rows.length == 0){
 		$('#botoesArquivoAtualizacaoCadastral').hide();
@@ -398,6 +451,15 @@ var followUpSistemaController = $.extend(true, {
 		}
    		return resultado;
 	},
+	
+	exPreProcFollowupDistribuicao : function (resultado) {
+
+		if(resultado.rows.length == 0){
+			$('#botoesArquivoDistribuicao').hide();
+		}
+		return resultado;
+	},
+	
 	exPreProcFollowupCadastroParcial : function (resultado) {
 		
 		if(resultado.rows.length == 0){
@@ -414,12 +476,122 @@ var followUpSistemaController = $.extend(true, {
 		return resultado;
 	},
 	
-	toggleButtons : function(idDivActive) {
+	toggleButtons : function(idDivActive, tabActive) {
 		
-		$(".divButtonsWrapper",  followUpSistemaController.workspace).hide();
-		$("#"+idDivActive,  followUpSistemaController.workspace).show();
+		if(idDivActive != 'noBtns'){
+			$(".divButtonsWrapper",  followUpSistemaController.workspace).hide();
+			$("#"+idDivActive,  followUpSistemaController.workspace).show();
+		}
 		
+		followUpSistemaController.executarRequisicao(tabActive);
+	},
+	
+	chamadaoTab : function(){
+		
+		$(".chamadaoGrid", this.workspace).flexOptions({
+			url: contextPath + '/followup/pesquisaDadosChamadao',
+			dataType : 'json'
+		});
+		
+		$(".chamadaoGrid", this.workspace).flexReload();
+		
+	},
+	
+	distribuicaoTab : function(){
+		
+		$(".distribuicaoGrid", this.workspace).flexOptions({
+			url: contextPath + '/followup/pesquisaDistribuicaoCotasAjustes',
+			dataType : 'json'
+		});
+		
+		$(".distribuicaoGrid", this.workspace).flexReload();
+		
+	},
+	
+	tabPendencias : function(){
+		
+		$(".pendenciasGrid", this.workspace).flexOptions({
+			url: contextPath + '/followup/pesquisaDadosPendenciaNFEEncalhe',
+			dataType : 'json'
+		});
+		
+		$(".pendenciasGrid", this.workspace).flexReload();
+		
+	},
+	
+	
+	 tabAlteracaoStatus : function(){
+		
+		$(".alteracaoStatusGrid", this.workspace).flexOptions({
+			url: contextPath + '/followup/pesquisaDadosStatusCota',
+			dataType : 'json'
+		});
+		
+		$(".alteracaoStatusGrid", this.workspace).flexReload();
+		
+	},
+		
+	tabAtualizacaoCadastral : function(){
+		
+		$(".atualizacaoCadastralGrid", this.workspace).flexOptions({
+			url: contextPath + '/followup/pesquisaDadosCadastrais',
+			dataType : 'json'
+		});
+		
+		$(".atualizacaoCadastralGrid", this.workspace).flexReload();
+		
+	},
+	
+	tabNegociacao : function(){
+		
+		$(".negociacaoGrid", this.workspace).flexOptions({
+			url: contextPath + '/followup/pesquisaDadosNegociacao',
+			dataType : 'json'
+		});
+		
+		$(".negociacaoGrid", this.workspace).flexReload();
+		
+	},
+		
+	tabParcial : function(){
+		
+		$(".atualizacaoCadastralParcialGrid", this.workspace).flexOptions({
+			url: contextPath + '/followup/pesquisaDadosCadastroParcial',
+			dataType : 'json'
+		});
+		
+		$(".atualizacaoCadastralParcialGrid", this.workspace).flexReload();
+		
+	},
+	
+	
+	executarRequisicao : function(tab){
+		
+		switch (tab) {
+		case "tabChamadao":
+			followUpSistemaController.chamadaoTab();
+			break;
+		case "tabDistribuicao":
+			followUpSistemaController.distribuicaoTab();
+			break;	
+		case "tabPendencia":
+			followUpSistemaController.tabPendencias();
+			break;
+		case "tabAlteracao":
+			followUpSistemaController.tabAlteracaoStatus();
+			break;
+		case "tabAtualizacao":
+			followUpSistemaController.tabAtualizacaoCadastral();
+			break;
+		case "tabNegocia":
+			followUpSistemaController.tabNegociacao();
+			break;
+		case "tabCadastroParcial":
+			followUpSistemaController.tabParcial();
+			break;
+		}
 	}
+	
 	
 }, BaseController);
 

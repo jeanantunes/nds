@@ -26,6 +26,7 @@ import org.hibernate.annotations.CascadeType;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
+import br.com.abril.nds.model.integracao.StatusIntegracaoNFE;
 
 /**
  * Chamada de Encalhe do Fornecedor para retorno
@@ -95,25 +96,25 @@ public class ChamadaEncalheFornecedor implements Serializable {
     @Column(name = "CODIGO_PREENCHIMENTO", nullable = false)
     private String codigoPreenchimento;
 
-    @Column(name = "TOTAL_VENDA_APURADA", nullable = false, precision=18, scale=4)
+    @Column(name = "TOTAL_VENDA_APURADA", nullable = false)
     private BigDecimal totalVendaApurada;
 
-    @Column(name = "TOTAL_CREDITO_APURADO", nullable = false, precision=18, scale=4)
+    @Column(name = "TOTAL_CREDITO_APURADO", nullable = false)
     private BigDecimal totalCreditoApurado;
 
-    @Column(name = "TOTAL_VENDA_INFORMADA", nullable = false, precision=18, scale=4)
+    @Column(name = "TOTAL_VENDA_INFORMADA", nullable = false)
     private BigDecimal totalVendaInformada;
 
-    @Column(name = "TOTAL_CREDITO_INFORMADO", nullable = false, precision=18, scale=4)
+    @Column(name = "TOTAL_CREDITO_INFORMADO", nullable = false)
     private BigDecimal totalCreditoInformado;
 
-    @Column(name = "TOTAL_MARGEM_INFORMADO", nullable = false, precision=18, scale=4)
+    @Column(name = "TOTAL_MARGEM_INFORMADO", nullable = false)
     private BigDecimal totalMargemInformado;
 
-    @Column(name = "TOTAL_MARGEM_APURADO", nullable = false, precision=18, scale=4)
+    @Column(name = "TOTAL_MARGEM_APURADO", nullable = false)
     private BigDecimal totalMargemApurado;
 
-    @Column(name = "NOTA_VALORES_DIVERSOS", nullable = false, precision=18, scale=4)
+    @Column(name = "NOTA_VALORES_DIVERSOS", nullable = false)
     private BigDecimal notaValoresDiversos;
 
     @OneToMany(mappedBy = "chamadaEncalheFornecedor")
@@ -123,6 +124,10 @@ public class ChamadaEncalheFornecedor implements Serializable {
     @Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_INTEGRACAO")
     private StatusIntegracao statusIntegracao;
+    
+    @Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_INTEGRACAO_NFE")
+    private StatusIntegracaoNFE statusIntegracaoNFE;
     
     /**
      * Será atribuido a data de Operação do Distribuidor
@@ -453,6 +458,20 @@ public class ChamadaEncalheFornecedor implements Serializable {
 
 	public void setStatusIntegracao(StatusIntegracao statusIntegracao) {
 		this.statusIntegracao = statusIntegracao;
+	}
+
+	/**
+	 * @return the statusIntegracaoNFE
+	 */
+	public StatusIntegracaoNFE getStatusIntegracaoNFE() {
+		return statusIntegracaoNFE;
+	}
+
+	/**
+	 * @param statusIntegracaoNFE the statusIntegracaoNFE to set
+	 */
+	public void setStatusIntegracaoNFE(StatusIntegracaoNFE statusIntegracaoNFE) {
+		this.statusIntegracaoNFE = statusIntegracaoNFE;
 	}
 
 	public Date getDataFechamentoNDS() {

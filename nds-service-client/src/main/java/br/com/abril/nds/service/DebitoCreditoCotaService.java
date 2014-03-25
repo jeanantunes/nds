@@ -4,9 +4,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
+import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 
 public interface DebitoCreditoCotaService {
 
@@ -58,4 +62,35 @@ public interface DebitoCreditoCotaService {
 	 * @return BigDecimal
 	 */
 	BigDecimal obterTotalCreditoCota(Integer numeroCota, Date dataOperacao);
+
+	/**
+	 * Obtem lista de Débitos e Créditos quem não pertencem à reparte ou encalhe
+	 * @param cota
+	 * @param dataOperacao
+	 * @return List<DebitoCreditoCotaDTO>
+	 */
+	List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(Cota cota,
+			Date dataOperacao);
+
+	/**
+	 * Obtem Outros Valores
+	 * 
+	 * @param infoConfereciaEncalheCota
+	 * @param cota
+	 * @param dataOperacao
+	 */
+	void carregarDadosDebitoCreditoDaCota(
+			InfoConferenciaEncalheCota infoConfereciaEncalheCota, Cota cota,
+			Date dataOperacao);
+
+	/**
+	 * Verifica se o Movimento Financeiro pode ser Editado
+	 * Nao consolidado
+	 * Lancamento automatico
+	 * Data do movimento maior que a data de operação
+	 * 
+	 * @param movimentoFinanceiroCota
+	 * @return boolean
+	 */
+	boolean isMovimentoEditavel(MovimentoFinanceiroCota movimentoFinanceiroCota);
 }

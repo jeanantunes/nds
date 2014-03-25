@@ -2,7 +2,9 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -463,9 +465,17 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		if (idFornecedor == null) {
 
-			throw new ValidacaoException(
+			PoliticaCobranca politica = this.politicaCobrancaRepository.buscarPoliticaCobrancaPrincipal();
+
+			idFornecedor = politica.getFornecedorPadrao() != null ? 
+					politica.getFornecedorPadrao().getId()
+					: null;
+
+			if (idFornecedor == null) {
+				throw new ValidacaoException(
 					TipoMensagem.WARNING,
 					"Para a obtenção de uma Forma de Cobrança é necessário que seja informado um [Fornecedor] ou que haja [Fornecedor Padrão] definido nos parâmetros financeiros da [Cota]!");
+			}
 		}
 
 		FormaCobranca formaCobranca = this.obterFormaCobrancaCota(idCota,
@@ -473,16 +483,16 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		if (formaCobranca == null) {
 
-	        formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor,
-					data, valor);
-
-	        //Se a cota possuir uma Forma de Cobrança ativa, 
+			//Se a cota possuir uma Forma de Cobrança ativa, 
 	        //mesmo que não se enquadre nos parâmetros passados, 
 	        //retorna null e a Cobrança é postergada
 			if (cota!=null && this.cotaPossuiFormaCobranca(cota)) { 
 				  
 		        return null; 
 			}
+			
+	        formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor,
+					data, valor);
 		}
 
 		return formaCobranca;
@@ -562,5 +572,47 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	public FormaCobranca obterFormaCobrancaPrincipalDistribuidor() {
 
 		return this.formaCobrancaRepository.obterFormaCobranca();
+	}
+
+	@Override
+	@Transactional
+	public FormaCobranca obterFormaCobrancaPrincipalCota(Integer numeroCota) {
+		
+		Long idCota = this.cotaRepository.obterIdPorNumeroCota(numeroCota);
+		
+		FormaCobranca formaCobranca = this.formaCobrancaRepository
+				.obterFormaCobranca(idCota);
+
+		return formaCobranca;
+	}
+	
+	/**
+	 * Obtem mapa com as formas de cobrança ativas
+	 * De todos os fornecedores cadastrados
+	 * Onde a concentração de pagamento é compatível com a data de operação atual
+	 * 
+	 * @param dataOperacao
+	 * @return Map<Fornecedor,List<FormaCobranca>>
+	 */
+	@Override
+	@Transactional
+	public Map<Fornecedor,List<FormaCobranca>> obterMapFornecedorFormasCobranca(Date dataOperacao) {
+		
+		Map<Fornecedor,List<FormaCobranca>> mapFormasCobrancaFornecedor = new HashMap<Fornecedor,List<FormaCobranca>>();
+		
+		List<Fornecedor> todosFornecedores = this.fornecedorService.obterFornecedores();
+		
+		Integer diaDoMes = DateUtil.obterDiaDoMes(dataOperacao);
+
+		Integer diaDaSemana = SemanaUtil.obterDiaDaSemana(dataOperacao);
+		
+		for (Fornecedor fornecedor : todosFornecedores){
+		
+			List<FormaCobranca> formasCobranca = this.formaCobrancaRepository.obterFormasCobrancaPorFornecedor(fornecedor.getId(),diaDoMes,diaDaSemana);
+			
+			mapFormasCobrancaFornecedor.put(fornecedor, formasCobranca);
+		}
+
+		return mapFormasCobrancaFornecedor;
 	}
 }

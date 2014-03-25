@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
-import br.com.abril.nds.dto.DiaSemanaDTO;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
@@ -14,7 +14,7 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 	
 	private TipoFormaCobranca periodicidade;
 	
-	private List<DiaSemanaDTO> semanalDias;
+	private List<DiaSemana> semanalDias;
 	
 	private Integer quinzenalDia1; 
 	
@@ -118,11 +118,11 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 		this.isentaEncargos = isentaEncargos;
 	}
 
-	public List<DiaSemanaDTO> getSemanalDias() {
+	public List<DiaSemana> getSemanalDias() {
 		return semanalDias;
 	}
 
-	public void setSemanalDias(List<DiaSemanaDTO> semanalDias) {
+	public void setSemanalDias(List<DiaSemana> semanalDias) {
 		this.semanalDias = semanalDias;
 	}
 
@@ -141,11 +141,4 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 	public void setValorEncargoSelecionado(BigDecimal valorEncargoSelecionado) {
 		this.valorEncargoSelecionado = valorEncargoSelecionado;
 	}
-
-	
-	
-	
-	
-	
-
 }

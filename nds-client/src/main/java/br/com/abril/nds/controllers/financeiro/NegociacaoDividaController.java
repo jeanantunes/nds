@@ -32,16 +32,21 @@ import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
+import br.com.abril.nds.model.financeiro.TipoNegociacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.PDFUtil;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -86,6 +91,9 @@ public class NegociacaoDividaController extends BaseController {
 	private DescontoService descontoService;
 	
 	private Result result;
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
 	
 	public NegociacaoDividaController(Result result) {
 		super();
@@ -155,7 +163,29 @@ public class NegociacaoDividaController extends BaseController {
 		
 		List<NegociacaoDividaDetalheVO> listDividas = negociacaoDividaService.obterDetalhesCobranca(idCobranca);
 		
-		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(1).serialize();
+		BigDecimal total = BigDecimal.ZERO;
+		for (NegociacaoDividaDetalheVO d : listDividas){
+			
+			d.setValor(d.getValor());
+			
+			if (d.getTipoMovimentoFinanceiro().getOperacaoFinaceira() == OperacaoFinaceira.CREDITO){
+				total = total.subtract(d.getValor());
+			} else {
+				total = total.add(d.getValor());
+			}
+		}
+		
+		TableModel<CellModelKeyValue<NegociacaoDividaDetalheVO>> tableModel = 
+				new TableModel<CellModelKeyValue<NegociacaoDividaDetalheVO>>();
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listDividas));
+		tableModel.setPage(1);
+		tableModel.setTotal(listDividas.size());
+		
+		Object[] dados = new Object[2];
+		dados[0] = tableModel;
+		dados[1] = total.setScale(2, RoundingMode.HALF_UP);
+		
+		result.use(Results.json()).from(dados, "result").recursive().serialize();
 	}
 	
 	@Path("/obterQuantidadeParcelas.json")
@@ -182,7 +212,7 @@ public class NegociacaoDividaController extends BaseController {
 		List<NegociacaoDividaDTO> listDividas = negociacaoDividaService.obterDividasPorCota(filtro);
 		
 		FileExporter.to("consulta-box", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null,
+				this.getNDSFileHeader(), null, 
 				listDividas, NegociacaoDividaDTO.class,
 				this.httpServletResponse);
 		
@@ -209,9 +239,15 @@ public class NegociacaoDividaController extends BaseController {
 		
 		FormaCobranca formaCobranca = null;
 		
+		TipoNegociacao tipoNegociacao = negociacaoAvulsa ? 
+				TipoNegociacao.PAGAMENTO_AVULSO : TipoNegociacao.PAGAMENTO;
+
 		if (porComissao){
 			
 			parcelas = null;
+			
+			tipoNegociacao = TipoNegociacao.COMISSAO;
+			
 		} else {
 			
 			formaCobranca = new FormaCobranca();
@@ -251,12 +287,14 @@ public class NegociacaoDividaController extends BaseController {
 		idNegociacao = this.negociacaoDividaService.criarNegociacao(
 				filtro.getNumeroCota(), 
 				parcelas, 
+				tipoNegociacao,
 				valorDividaComissao,
 				idsCobrancas, 
 				this.getUsuarioLogado(), 
 				negociacaoAvulsa, 
 				ativarAposPagar, 
 				comissaoUtilizar, 
+				comissaoAtualCota,
 				isentaEncargos,
 				formaCobranca,
 				idBanco);
@@ -277,15 +315,27 @@ public class NegociacaoDividaController extends BaseController {
 		
 		BigDecimal comissaoCota = this.descontoService.obterComissaoCota(numeroCota);
 		
-		if (comissao == null || BigDecimal.ZERO.compareTo(comissao) == 0 ||
-				comissaoCota == null || BigDecimal.ZERO.compareTo(comissaoCota) == 0){
+		if (comissao == null || BigDecimal.ZERO.compareTo(comissao) == 0) {
 			
 			this.result.use(Results.json()).from("", "result").serialize();
 		} else {
 			
-			List<BigDecimal> valoresDesconto = new ArrayList<BigDecimal>();
+			comissaoCota = comissaoCota == null ? BigDecimal.ZERO : comissaoCota;
+			
+			List<Object> valoresDesconto = new ArrayList<Object>();
 			valoresDesconto.add(comissao);
 			valoresDesconto.add(comissaoCota.setScale(2, RoundingMode.HALF_EVEN));
+			
+			//forma cobrança 'default' da cota
+			FormaCobranca formaDefault = 
+				this.formaCobrancaService.obterFormaCobrancaPrincipalCota(numeroCota);
+			
+			if (formaDefault == null){
+				
+				formaDefault = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+			}
+			
+			valoresDesconto.add(formaDefault.getTipoCobranca());
 			
 			this.result.use(Results.json()).from(valoresDesconto, "result").recursive().serialize();
 		}

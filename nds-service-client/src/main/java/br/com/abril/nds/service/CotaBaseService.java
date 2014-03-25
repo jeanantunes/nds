@@ -15,7 +15,7 @@ public interface CotaBaseService {
 
 	void salvar(CotaBase cotaBase);
 
-	CotaBase obterCotaNova(Integer numeroCota);
+	CotaBase obterCotaNova(Integer numeroCota, Boolean ativo);
 
 	FiltroCotaBaseDTO obterCotaDoFiltro(CotaBase cotaBase);
 

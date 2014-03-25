@@ -15,7 +15,7 @@ var consultaBoletosController = $.extend(true, {
 			}, {
 				display : 'Data Emissão',
 				name : 'dtEmissao',
-				width : 100,
+				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -33,25 +33,25 @@ var consultaBoletosController = $.extend(true, {
 			}, {
 				display : 'Encargos',
 				name : 'encargos',
-				width : 80,
+				width : 65,
 				sortable : true,
 				align : 'right',
 			}, {
 				display : 'Valor R$',
 				name : 'valor',
-				width : 90,
+				width : 80,
 				sortable : true,
 				align : 'right',
 			}, {
 				display : 'Tipo Baixa',
 				name : 'tipoBaixa',
-				width : 100,
+				width : 95,
 				sortable : true,
 				align : 'center',
 			}, {
 				display : 'Status',
 				name : 'status',
-				width : 80,
+				width : 145,
 				sortable : true,
 				align : 'left',
 			}, {

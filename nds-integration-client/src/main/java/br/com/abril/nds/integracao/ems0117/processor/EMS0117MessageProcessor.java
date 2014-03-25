@@ -10,8 +10,7 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0117.inbound.EMS0117Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -203,7 +202,6 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
 				"Atualizacao da Cota " + cota.getNumeroCota());
 
-		cota.setInicioAtividade(new Date());
 		cota.setNumeroCota(input.getCodCota());
 		cota.setPossuiContrato(false);
 		
@@ -515,7 +513,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 						}
 						
 						try {
-							ec.getEndereco().setNumero(new Integer(input.getNumLogradouro()).toString());
+							ec.getEndereco().setNumero(Integer.valueOf(input.getNumLogradouro()).toString());
 						} catch (Exception e) {
 							ec.getEndereco().setNumero(input.getNumLogradouro());
 						}
@@ -706,11 +704,11 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 private boolean compararObjEnderecoMdcNds(Endereco endereco, EMS0117Input input){
 		
-		if(endereco == null && input != null ){
-			return false;
+		if(endereco == null && input == null ){
+			return true;
 		}
 		
-		if(endereco != null && input == null ){
+		if(endereco == null ^ input == null ){
 			return false;
 		}
 		
@@ -737,7 +735,7 @@ private boolean compararObjEnderecoMdcNds(Endereco endereco, EMS0117Input input)
 		
 		String numeroMDC = "";
 		try {
-			numeroMDC = new Integer(input.getNumLogradouro()).toString();
+			numeroMDC = Integer.valueOf(input.getNumLogradouro()).toString();
 		} catch (Exception e) {
 			//Numero com carcater não numérico
 			numeroMDC = input.getNumLogradouro();

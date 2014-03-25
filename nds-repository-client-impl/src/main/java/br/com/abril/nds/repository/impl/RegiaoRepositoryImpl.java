@@ -3,10 +3,13 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.RegiaoCotaDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RegiaoRepository;
@@ -33,6 +36,7 @@ public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> 
 		
 		hql.append(" FROM Regiao as regiao ");
 		hql.append(" JOIN regiao.idUsuario as usuario");
+		hql.append(" order by regiao.nomeRegiao");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
@@ -41,25 +45,72 @@ public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> 
 		
 		return query.list();
 	}
-	
-//
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public List<TipoSegmentoProduto> carregarSegmentos() {
-//
-//		StringBuilder hql = new StringBuilder();
-//		
-//		hql.append("SELECT");
-//		hql.append(" segmento.id,");
-//		hql.append(" segmento.descricao");
-//		hql.append(" FROM TIPO_SEGMENTO_PRODUTO as segmento ");
-//		
-//		Query query =  getSession().createQuery(hql.toString());
-//		
-//		query.setResultTransformer(new AliasToBeanResultTransformer(
-//				TipoSegmentoProduto.class));
-//		
-//		return query.list();		
-//	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RegiaoCotaDTO> buscarCotasPorSegmento(FiltroCotasRegiaoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT DISTINCT ");
+		
+		hql.append(" cota.numeroCota as numeroCota, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,");
+		hql.append(" tipoPontoPDV.descricao as tipoPDV, ");
+		hql.append(" cota.situacaoCadastro as tipoStatus ");
+		
+		hql.append(" FROM RankingSegmento as ranking ");
+		hql.append(" LEFT JOIN ranking.cota as cota ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" LEFT JOIN cota.pdvs as pdv ");
+		hql.append(" LEFT JOIN pdv.segmentacao as segmentacao ");
+		hql.append(" LEFT JOIN segmentacao.tipoPontoPDV as tipoPontoPDV ");
+		hql.append(" LEFT JOIN ranking.tipoSegmentoProduto as segmento ");
+
+		hql.append(" WHERE segmento.id = :idSegmento ");
+		hql.append(" AND pdv.caracteristicas.pontoPrincipal = true");
+		hql.append(" order by ranking.quantidade desc ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idSegmento", filtro.getIdSegmento());
+		query.setMaxResults(filtro.getLimiteBuscaPorSegmento());
+		query.setResultTransformer(new AliasToBeanResultTransformer(RegiaoCotaDTO.class));
+		
+		return query.list();
+	}
+	
+	@Override
+	public void execucaoQuartz() {
+		this.quartz1();
+		this.quartz2();
+	}
+	
+	private void quartz1 (){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" delete ");
+		hql.append(" 	from ");
+		hql.append("		 REGISTRO_COTA_REGIAO ");
+		hql.append(" 	where ");
+		hql.append(" 		REGIAO_ID in ( ");
+		hql.append(" 			select regiao.ID ");
+		hql.append(" 			from  regiao ");
+		hql.append(" 			where  datediff(now(),data_regiao)>90 and REGIAO_IS_FIXA = 0 ) ");
+		
+		SQLQuery createSQLQuery = this.getSession().createSQLQuery(hql.toString());
+		
+		createSQLQuery.executeUpdate();
+	}
+	
+	private void quartz2 (){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" delete from regiao WHERE datediff(now(),data_regiao)>90 and REGIAO_IS_FIXA = 0; ");
+		SQLQuery createSQLQuery = this.getSession().createSQLQuery(hql.toString());
+		
+		createSQLQuery.executeUpdate();
+	}
 }

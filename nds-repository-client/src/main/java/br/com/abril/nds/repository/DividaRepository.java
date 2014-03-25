@@ -15,6 +15,14 @@ import br.com.abril.nds.vo.PaginacaoVO;
 
 public interface DividaRepository extends Repository<Divida, Long>{
 
+	/**
+	 * Exclui os registros da table de ligação divida_consolidado
+	 * referente ao divida em questão.
+	 *  
+	 * @param idDivida
+	 */
+	void excluirDividaConsolidado(final Long idDivida);
+	
 	Divida obterDividaParaAcumuloPorCota(Long idCota);
 	
 	/**

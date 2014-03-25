@@ -1,6 +1,8 @@
 var mixCotaProdutoController = $.extend(true, {
 //Grid de cota 	
+	
 	init : function() {
+		
 		$('.porProduto').hide();
 		$('.porCota').hide();
 		
@@ -8,8 +10,8 @@ var mixCotaProdutoController = $.extend(true, {
 			preProcess: function(data){return mixCotaProdutoController.executarPreprocessamentoGridCota(data);},
 			dataType : 'json',
 			colModel : [ {
-				display : 'Código',
-				name : 'codigoProduto',
+				display : 'CÃ³digo',
+				name : 'codigoICD',
 				width : 50,
 				sortable : true,
 				align : 'left'
@@ -20,43 +22,43 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			},  {
-				display : 'Classificação',
+				display : 'ClassificaÃ§Ã£o',
 				name : 'classificacaoProduto',
 				width : 80,
 				sortable : true,
 				align : 'left'
 			},  {
-				display : 'Rep. Médio',
+				display : 'Rep. MÃ©dio',
 				name : 'reparteMedio',
 				width : 60,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Vda. Média',
+				display : 'Vda. MÃ©dia',
 				name : 'vendaMedia',
 				width : 60,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Últ. Rep.',
+				display : 'Ult. Rep.',
 				name : 'ultimoReparte',
 				width : 60,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Rep. Inf. Mín.',
-				name : 'reparteMinimo',
+				display : 'Rep. Inf. Min.',
+				name : 'reparteMinimoInput',
 				width : 70,
 				sortable : true,
 				align : 'right'
 			},  {
 				display : 'Rep. Inf. Max.',
-				name : 'reparteMaximo',
+				name : 'reparteMaximoInput',
 				width : 70,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Usuário',
+				display : 'UsuÃ¡rio',
 				name : 'usuario',
 				width : 80,
 				sortable : true,
@@ -74,7 +76,7 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},  {
-				display : 'Ação',
+				display : 'AÃ§Ã£o',
 				name : 'acao',
 				width : 50,
 				sortable : true,
@@ -107,37 +109,37 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			},  {
-				display : 'Rep. Médio',
+				display : 'Rep. MÃ©dio',
 				name : 'reparteMedio',
 				width : 70,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Vda. Média',
+				display : 'Vda. MÃ©dia',
 				name : 'vendaMedia',
 				width : 70,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Últ. Rep.',
+				display : 'Ult. Rep.',
 				name : 'ultimoReparte',
 				width : 70,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Rep. Inf. Mín.',
-				name : 'reparteMinimo',
+				display : 'Rep. Inf. Min.',
+				name : 'reparteMinimoInput',
 				width : 80,
 				sortable : true,
 				align : 'right'
 			},  {
 				display : 'Rep. Inf. Max.',
-				name : 'reparteMaximo',
+				name : 'reparteMaximoInput',
 				width : 80,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Usuário',
+				display : 'UsuÃ¡rio',
 				name : 'usuario',
 				width : 80,
 				sortable : true,
@@ -155,7 +157,7 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},  {
-				display : 'Ação',
+				display : 'AÃ§Ã£o',
 				name : 'acao',
 				width : 50,
 				sortable : true,
@@ -175,7 +177,7 @@ var mixCotaProdutoController = $.extend(true, {
 			preProcess: function(data){return mixCotaProdutoController.preProcessarListaPdv(data);},
 			dataType : 'json',
 			colModel : [ {
-				display : 'Código',
+				display : 'CÃ³digo',
 				name : 'id',
 				width : 50,
 				sortable : true,
@@ -187,7 +189,7 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Endereço',
+				display : 'EndereÃ§o',
 				name : 'endereco',
 				width : 320,
 				sortable : true,
@@ -195,7 +197,7 @@ var mixCotaProdutoController = $.extend(true, {
 			},  {
 				display : 'Reparte',
 				name : 'reparte',
-				width : 40,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}],
@@ -209,9 +211,9 @@ var mixCotaProdutoController = $.extend(true, {
 			height : 200
 		});
 		
-		
-		
 		},
+		
+		
 		
 	//funcao de pre-processamento do resultado da busca de fixacao por produto
 	//, exibindo/escondendo botoes de geracao de excel/pdf dependendo do resultado da pesquisa
@@ -225,7 +227,7 @@ var mixCotaProdutoController = $.extend(true, {
 			);
 			$("#spanLegendCota").text(""); //limpa o titulo produto, evitando permanecer valores digitados em pesquisa anterior
 			$("#btNovoMixCota").show();
-			$("#btAddLoteMixCota").hide();
+//			$("#btAddLoteMixCota").hide();
 			$("#btGerarArquivoMixCota").hide();
 			$("#btImprimirMixCota").hide();
 			$("#btExcluirTudoCota").hide();
@@ -233,7 +235,7 @@ var mixCotaProdutoController = $.extend(true, {
 		}else{
 			$("#spanLegendCota").text($("#codigoCotaMix").val() + "-" +$("#nomeCotaMix").val());// preenche fieldset com os valores digitados no fitro
 			$("#btNovoMixCota").show();
-			$("#btAddLoteMixCota").show();
+//			$("#btAddLoteMixCota").show();
 			$("#btGerarArquivoMixCota").show();
 			$("#btImprimirMixCota").show();
 			$("#btExcluirTudoCota").show();
@@ -244,11 +246,22 @@ var mixCotaProdutoController = $.extend(true, {
 		}
 		
 		var i;
+		
 		for (i = 0 ; i < data.rows.length; i++) {
 
 			var lastIndex = data.rows[i].cell.length;
 			
 			data.rows[i].cell["acao"]=mixCotaProdutoController.getActionsGridCota(data.rows[i].cell);
+			data.rows[i].cell["reparteMinimoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+")' />";
+			data.rows[i].cell["reparteMaximoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+")' />";
+				
+				
+			//arrumar formatacao campos bigdecimal para duas casas decimais
+			var ar = ["reparteMedio","vendaMedia","ultimoReparte"];
+			for ( var int = 0; int < ar.length; int++) {
+				var valorarrumado = parseFloat(data.rows[i].cell[ar[int]]).toFixed(0);
+				data.rows[i].cell[ar[int]]=valorarrumado;
+			}
 		}
 		
 		$('.mixCotasGrid').show();
@@ -258,18 +271,68 @@ var mixCotaProdutoController = $.extend(true, {
 		return data;
 	},	
 	
+	updateReparteMinMax:function(input,tipoCampo,idMix,lastValue){
+		
+			
+		var listaNovoReparte = new Array();
+		 
+		if(input.value.trim().length==0 ){
+
+			listaNovoReparte.push({
+				  name : "novoValorReparte" , 
+				  value : lastValue
+				  });
+			
+			return;
+			
+		 }else{
+			 
+			 listaNovoReparte.push({
+				 name : "novoValorReparte" , 
+				 value : input.value
+			 });
+		 }
+		 
+		 listaNovoReparte.push({
+			  name : "tipoCampo" , 
+			  value : tipoCampo
+			  });
+		 
+		 listaNovoReparte.push({
+			  name : "idMix" , 
+			  value : idMix
+			  });
+		 
+		 
+		$.postJSON(contextPath + '/distribuicao/mixCotaProduto/updateReparteMixCotaProduto', listaNovoReparte  , function(){
+
+			if($("#radio").attr('checked') == 'checked'){
+				$(".mixCotasGrid").flexReload();
+			}
+			else{
+				$(".mixProdutosGrid").flexReload();
+			}
+			
+		}, function(){
+			input.value=lastValue;
+			
+			
+		});
+		
+		
+	},
 	//retorna acoes de edicao e exclusao de fixacao por cota
 	getActionsGridCota: function (cell){
 		
 		components="";
 		
-		imgAlteracao =  '<a href="javascript:;" id="editar" onclick="mixCotaProdutoController.editarRepartePorPdv(' + cell.id + ','+cell.reparteMaximo + ','+cell.idCota+', \'' + cell.idProduto + '\')" ' +
+		imgAlteracao =  '<a href="javascript:;" id="editar" onclick="mixCotaProdutoController.editarRepartePorPdv(' + cell.id + ',' + cell.reparteMinimo + ','+cell.reparteMaximo + ','+cell.idCota+', \'' + cell.codigoICD + '\')" ' +
 		' style="cursor:pointer;border:0px;margin:5px" title="Reparte por PDV ">' +
 		'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 		'</a>' ;
 		
 		imgExcluir = '<a href="javascript:;" onclick="mixCotaProdutoController.excluirMixCota(' + cell.id + ')" '  +
-		' style="cursor:pointer;border:0px;margin:5px" title="Excluir FixaÃ§Ã£o">' +
+		' style="cursor:pointer;border:0px;margin:5px" title="Excluir Mix">' +
 		'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 		'</a>';
 		
@@ -305,10 +368,10 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	//retorna msg de sucesso durante exclusao de mix por cota
 	exclusaoMixCotaSucesso:function(result){
-		if($("#radio").attr('checked') == 'checked'){
+		if($(".mixCotasGrid").is(":visible")){
 			$(".mixCotasGrid").flexReload();
 		}
-		else{
+		else if($(".mixProdutosGrid").is(":visible")){
 			$(".mixProdutosGrid").flexReload();
 		}
 		
@@ -344,7 +407,7 @@ var mixCotaProdutoController = $.extend(true, {
 			
 			$("#spanLegendProduto").text(""); //limpa o titulo produto, evitando permanecer valores digitados em pesquisa anterior
 			$("#btNovoMixProduto").show();
-			$("#btAddLoteMixProduto").hide();
+//			$("#btAddLoteMixProduto").show();
 			$("#btGerarArquivoMixProduto").hide();
 			$("#btImprimirMixProduto").hide();
 			$("#btExcluirTudoProduto").hide();
@@ -353,7 +416,7 @@ var mixCotaProdutoController = $.extend(true, {
 			// pesquisa achou resultado
 			$("#spanLegendProduto").text($("#codigoProdutoMix").val() + "-" +$("#nomeProdutoMix").val());// preenche fieldset com os valores digitados no fitro
 			$("#btNovoMixProduto").show();
-			$("#btAddLoteMixProduto").show();
+// 			$("#btAddLoteMixProduto").show();
 			$("#btGerarArquivoMixProduto").show();
 			$("#btImprimirMixProduto").show();
 			$("#btExcluirTudoProduto").show();
@@ -369,6 +432,8 @@ var mixCotaProdutoController = $.extend(true, {
 			var lastIndex = data.rows[i].cell.length;
 			
 			data.rows[i].cell["acao"]=mixCotaProdutoController.getActionsGridProduto(data.rows[i].cell);
+			data.rows[i].cell["reparteMinimoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+")' />";
+			data.rows[i].cell["reparteMaximoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+")' />";
 		}
 		
 		$('.mixProdutosGrid').show();
@@ -384,20 +449,20 @@ var mixCotaProdutoController = $.extend(true, {
 	getActionsGridProduto: function (cell){
 	components="";
 		
-		imgAlteracao =  '<a href="javascript:;" id="editar" onclick="mixCotaProdutoController.editarRepartePorPdv(' + cell.id + ','+cell.reparteMaximo + ','+cell.idCota+', \'' + cell.idProduto + '\')" ' +
+		imgAlteracao =  '<a href="javascript:;" id="editar" onclick="mixCotaProdutoController.editarRepartePorPdv(' + cell.id + ','+cell.reparteMinimo + ',' + cell.reparteMaximo + ','+cell.idCota+', \'' + cell.codigoProduto + '\')" ' +
 		' style="cursor:pointer;border:0px;margin:5px" title="Reparte por PDV ">' +
 		'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 		'</a>' ;
 		
 		imgExcluir = '<a href="javascript:;" onclick="mixCotaProdutoController.excluirMixCota(' + cell.id + ')" '  +
-		' style="cursor:pointer;border:0px;margin:5px" title="Excluir FixaÃ§Ã£o">' +
+		' style="cursor:pointer;border:0px;margin:5px" title="Excluir Mix">' +
 		'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 		'</a>';
 		
 		//Checa quantidade de pdvs. Caso seja maior que 1 o retorna botoes editar/excluir senao apenas o botao excluir
-		if (cell.qtdPdv > 1) {
+//		if (cell.qtdPdv > 1) {
 			components = imgAlteracao;
-		}
+//		}
 			components += imgExcluir;
 		
 		return  components;
@@ -426,11 +491,11 @@ var mixCotaProdutoController = $.extend(true, {
 	//retorna msg de sucesso durante exclusao Todos
 	exclusaoTodosSucesso:function(result){
 		if($("#radio").attr('checked') == 'checked'){
-			$(".mixCotasGrid").flexReload();
+			$(".mixCotasGrid").flexAddData();
 		}else{
-			$(".mixProdutosGrid").flexReload();
+			$(".mixProdutosGrid").flexAddData();
 		}
-		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["OperaÃ§Ã£o Realizada com sucesso!"]);
 	},
 	
 	//retorna msg de erro durante exclusao Todos
@@ -527,21 +592,14 @@ var mixCotaProdutoController = $.extend(true, {
 		exibirMensagem("ERROR", ["Houve um erro durante a exclusÃ£o "]);
 	},
 	
-	//Adiciona nova linha ao grid por Cota
-	novoMixPorCota : function(){
+	
+	editarMixPorCota : function(){
 		
-		$("#dialog-incluir-mix-cota").dialog({
+		$("#dialog-editar-mix-cota").dialog({
 			resizable: false,
 			height:'auto',
 			width:'auto',
 			modal: true,
-			open:function(){
-
-				$("#tableNovoCota tbody tr:gt(0)").remove();
-				$("#tableNovoCota tbody tr:eq(0) input[type='text']").val('');
-				mixCotaProdutoController.definirIdInput();
-				
-			},
 			buttons: {
 				"Confirmar": function() {
 					var listaNovosMixCota=new Array();
@@ -552,7 +610,19 @@ var mixCotaProdutoController = $.extend(true, {
 								  value : $("#codigoCotaMix").val()
 								  });
 							 
-							 $("#tableNovoCota tbody tr").each(function(idx, linha){
+								var nomeCota = $("#nomeCotaMix").val();
+								var nrCota = $("#codigoCotaMix").val();
+								
+							 $("#tableEdicaoMixCota tbody tr").each(function(idx, linha){
+								 
+								 listaNovosMixCota.push({
+									  name : "listaNovosMixCota["+idx+"].numeroCota" , 
+									  value : nrCota
+								 });
+								 listaNovosMixCota.push({
+									  name : "listaNovosMixCota["+idx+"].nomeCota" , 
+									  value : nomeCota
+								 });
 								 listaNovosMixCota.push({
 									  name : "listaNovosMixCota["+idx+"].codigoProduto" , 
 									  value : $("#codigoModal"+idx).val()
@@ -569,8 +639,95 @@ var mixCotaProdutoController = $.extend(true, {
 									  name : "listaNovosMixCota["+idx+"].reparteMaximo" , 
 									  value : $("#repMaximo"+idx).val()
 									  });
+								 listaNovosMixCota.push({
+									  name : "listaNovosMixCota["+idx+"].classificacaoProduto" , 
+									  value : $("#classifMixModal"+idx).val()
+									  });
 							 });
-							 $.postJSON(contextPath + '/distribuicao/mixCotaProduto/adicionarMixCota',listaNovosMixCota,function(result){ mixCotaProdutoController.adicionarMixCotaSucesso();});
+							 $.postJSON(contextPath + '/distribuicao/mixCotaProduto/adicionarMixCota',listaNovosMixCota,function(result){ mixCotaProdutoController.adicionarMixCotaSucesso();},
+									 function(result){ mixCotaProdutoController.adicionarMixCotaSucesso();});
+							 $(this).dialog("close");
+					}
+				},
+				"Cancelar": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+			
+		
+	},
+	
+	//Adiciona nova linha ao grid por Cota
+	novoMixPorCota : function(){
+		
+		$("#dialog-incluir-mix-cota").dialog({
+			resizable: false,
+			height:'auto',
+			width:'auto',
+			modal: true,
+			open:function(){
+				
+				$("#tableNovoCota tbody tr:gt(0)").remove();
+				$("#tableNovoCota tbody tr:eq(0) input[type='text']").val('');
+				$('#classifMixModal').val("NORMAL");
+				mixCotaProdutoController.definirIdInput();
+				
+			},
+			buttons: {
+				"Confirmar": function() {
+					var listaNovosMixCota=new Array();
+					var qntItens=0;
+					//tudo preenchido
+					if(mixCotaProdutoController.validarInputs()){
+					listaNovosMixCota.push({
+								  name : "cotaId" , 
+								  value : $("#codigoCotaMix").val()
+								  });
+					
+							 $("#tableNovoCota tbody tr").each(function(idx, linha){
+								 listaNovosMixCota.push({
+									  "name" : "listaNovosMixCota["+idx+"].numeroCota" , 
+									  "value" : $("#codigoCotaMix").val()
+								 });
+								 listaNovosMixCota.push({
+									  "name" : "listaNovosMixCota["+idx+"].nomeCota" , 
+									  "value" : $("#nomeCotaMix").val()
+								 });
+								 listaNovosMixCota.push({
+									  name : "listaNovosMixCota["+idx+"].codigoProduto" , 
+									  value : $("#codigoModal"+idx).val()
+									  });
+								 listaNovosMixCota.push({
+									  name : "listaNovosMixCota["+idx+"].nomeProduto" , 
+									  value : $("#produtoModal"+idx).val()
+									  });
+								 listaNovosMixCota.push({
+									  name : "listaNovosMixCota["+idx+"].reparteMinimo" , 
+									  value : $("#repMinimo"+idx).val()
+									  });
+								 listaNovosMixCota.push({
+									  name : "listaNovosMixCota["+idx+"].reparteMaximo" , 
+									  value : $("#repMaximo"+idx).val()
+									  });
+								 listaNovosMixCota.push({
+									  name : "listaNovosMixCota["+idx+"].classificacaoProduto" , 
+									  value : $("#classifMixModal"+idx).val()
+									  });
+								 qntItens ++;
+							 });
+							 
+							 $.postJSON(contextPath + '/distribuicao/mixCotaProduto/adicionarMixCota',listaNovosMixCota,function(result){ 
+								 
+								 mixCotaProdutoController.adicionarMixCotaSucesso();
+								 },
+									 function(result){ 
+
+										 if(result.mensagens.listaMensagens.length != qntItens){
+											 $(".mixCotasGrid").flexReload(); 
+										 }
+									 
+								 });
 							 $(this).dialog("close");
 					}
 				},
@@ -589,7 +746,7 @@ var mixCotaProdutoController = $.extend(true, {
 		//valida codigo duplicado
 		for ( var int = 0; int < countLinhas; int++) {
 			if(a.indexOf($("#codigoModal"+int).val())>-1){
-				exibirMensagem("WARNING", ["Código de produto já utilizado."]);
+				exibirMensagem("WARNING", ["CÃ³digo de produto jÃ¡ utilizado."]);
 				return false;
 			}else{
 				a.push($("#codigoModal"+int).val());
@@ -604,7 +761,7 @@ var mixCotaProdutoController = $.extend(true, {
 			var repMax = parseInt($("#repMaximo"+int2).val());
 			
 			if(repMin>repMax){
-				exibirMensagem("WARNING", ["Reparte Mínimo maior que Reparte Máximo para o produto."]);
+				exibirMensagem("WARNING", ["Reparte MÃ­nimo maior que Reparte MÃ¡ximo para o produto."]);
 				return false;
 			}
 		}
@@ -615,18 +772,20 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	adicionarMixCotaSucesso:function(result){
 		$(".mixCotasGrid").flexReload();
-		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["OperaÃ§Ã£o Realizada com sucesso!"]);
 	},
 	
 	adicionarMixProdutoSucesso:function(result){
 		$(".mixProdutosGrid").flexReload();
-		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["OperaÃ§Ã£o Realizada com sucesso!"]);
 	},
 	
 	
 	//Adiciona nova linha ao grid por Produto
 	novoMixPorProduto : function(){
-		
+		if($("#codigoProdutoMix").val()==''){exibirMensagem("WARNING", ["Pesquise um produto para o Mix."]); return; }
+		if($("#filtroClassificacaoMix").val()==''){exibirMensagem("WARNING", ["Selecione uma classificaÃ§Ã£o."]); return; }
+
 		$("#dialog-incluir-mix-produto").dialog({
 			resizable: false,
 			height:'auto',
@@ -654,7 +813,10 @@ var mixCotaProdutoController = $.extend(true, {
 								 
 								 	
 //								 $(linha).find("input[type='text']").each(function(){
-									 
+								 list.push({
+									  name : "listaNovosMixProduto["+idx+"].codigoProduto" , 
+									  value : $("#codigoProdutoMix").val()
+								 });
 								 list.push({
 										  name : "listaNovosMixProduto["+idx+"].numeroCota" , 
 										  value : $("#numeroCotaModal"+idx).val()
@@ -671,10 +833,15 @@ var mixCotaProdutoController = $.extend(true, {
 										  name : "listaNovosMixProduto["+idx+"].reparteMaximo" , 
 										  value : $("#repMaximo"+idx).val()
 										  });
+								 list.push({
+									  name : "listaNovosMixProduto["+idx+"].classificacaoProduto" , 
+									  value : $("#filtroClassificacaoMix").val()
+									  });
 //								 });
 							 });
 							 
-							 $.postJSON(contextPath + '/distribuicao/mixCotaProduto/adicionarMixProduto',list,function(result){ mixCotaProdutoController.adicionarMixProdutoSucesso();});
+							 $.postJSON(contextPath + '/distribuicao/mixCotaProduto/adicionarMixProduto',list,function(result){ mixCotaProdutoController.adicionarMixProdutoSucesso();},
+									 function(result){ /*mixCotaProdutoController.adicionarMixProdutoSucesso();*/});
 							 $(this).dialog("close");
 				},
 				"Cancelar": function() {
@@ -685,7 +852,18 @@ var mixCotaProdutoController = $.extend(true, {
 		
 	},
 	
-	
+	excluirLinha:function(linha) {
+		
+		if (linha.parents('table').find('tr').size() > 2) {
+			
+			linha.parent().parent().remove();
+			mixCotaProdutoController.definirIdInput();
+		}
+		else {
+			
+			$(linha).parents('tr').find("input:text").val('');
+		}
+	},
 	
 	addLinha:function(){
 		if($("#tableNovoCota tbody tr td input:text[value='']").length > 0){
@@ -696,6 +874,7 @@ var mixCotaProdutoController = $.extend(true, {
 			novaLinha.find("input").val("");
 			novaLinha.insertAfter("#tableNovoCota tr:last");
 			$("#tableNovoCota tr:last").find("input[type='image']").show();
+			$("#excluirLinha0").show();
 			this.definirIdInput();
 		}
 		
@@ -709,7 +888,7 @@ var mixCotaProdutoController = $.extend(true, {
 			novaLinha = $("#tableNovoProduto tr:last").clone();
 			novaLinha.find("input").val("");
 			novaLinha.insertAfter("#tableNovoProduto tr:last");
-			$("#tableNovoProduto tr:last").find("input[type='image']").show();
+//			$("#tableNovoProduto tr:last").find("input[type='image']").show();
 			this.definirIdInputProduto();
 		}
 		
@@ -723,6 +902,7 @@ var mixCotaProdutoController = $.extend(true, {
 			$(tr).find("input:text:eq(1)").attr("id","produtoModal"+idx);
 			$(tr).find("input:text:eq(2)").attr("id","repMinimo"+idx);
 			$(tr).find("input:text:eq(3)").attr("id","repMaximo"+idx);
+			$(tr).find("select:eq(0)").attr("id","classifMixModal"+idx);
 			
 		});
 	},
@@ -743,7 +923,14 @@ var mixCotaProdutoController = $.extend(true, {
 	
 
 	//funcao que executa chamada postJSON que busca dados do mix 
-	editarRepartePorPdv:function (id,reparteMaximo, idCota, idProduto){
+	editarRepartePorPdv:function (id, reparteMinimo, reparteMaximo, idCota, idProduto){
+	
+		if (reparteMinimo !=  reparteMaximo) {
+			
+			exibirMensagem("WARNING", ["OperaÃ§Ã£o nÃ£o pode ser realizada. Reparte mÃ­nimo deve ser igual ao reparte mÃ¡ximo."]);
+			return;
+		}
+		
 		var reparteTotal= reparteMaximo;
 		//parametros da pesquisa de repartes por pdv 
 		parametrosPesquisaReparte = [];
@@ -769,6 +956,7 @@ var mixCotaProdutoController = $.extend(true, {
 			$("#codigoProdutoModalReparte").text(result.codigoProduto);
 			$("#nomeProdutoModalReparte").text(result.nomeProduto);
 			$("#classificacaoModalReparte").text(result.classificacaoProduto);
+//			$(".reparteGridinput:eq(0)").val(reparteTotal);
 		});
 		
 		
@@ -780,6 +968,7 @@ var mixCotaProdutoController = $.extend(true, {
 			width:650,
 			modal: true,
 			open:	mixCotaProdutoController.preencherGridPdv(parametrosPesquisaReparte),		//Funcao que abre o modal de repartes por pdv
+			
 			buttons: {
 				"Confirmar": function() {
 					var somaReparte=0;
@@ -826,7 +1015,7 @@ var mixCotaProdutoController = $.extend(true, {
 						  });
 					  
 					if(somaReparte > reparteTotal){
-						//abre dialog de confirmação de alteração de reparte maximo
+						//abre dialog de confirmaï¿½ï¿½o de alteraï¿½ï¿½o de reparte maximo
 						$("#dialog-confirma-reparte").dialog({
 							resizable: false,
 							height:'auto',
@@ -855,12 +1044,14 @@ var mixCotaProdutoController = $.extend(true, {
 						});
 						
 					}else{
-						$.postJSON(contextPath + '/distribuicao/mixCotaProduto/salvarGridPdvReparte', listaPDV);
-						if($("#radio").attr('checked') == 'checked'){
-							$(".mixCotasGrid").flexReload();
-						}else{
-							$(".mixProdutosGrid").flexReload();
-						}
+						$.postJSON(contextPath + '/distribuicao/mixCotaProduto/salvarGridPdvReparte', listaPDV,
+								function(result){
+									if($("#radio").attr('checked') == 'checked'){
+										$(".mixCotasGrid").flexReload();
+									}else{
+										$(".mixProdutosGrid").flexReload();
+									}
+						});
 						listaPDV =[];
 						$("#dialog-defineReparte").dialog("close");
 					}
@@ -912,12 +1103,20 @@ var mixCotaProdutoController = $.extend(true, {
 			data.rows = data.result[1].rows;
 		}
 		var i;
+		
+		if(data.rows.length==1){
+			exibirMensagem("WARNING", ["OperaÃ§Ã£o nÃ£o pode ser realizada. A cota possui somente 01 PDV."]);
+			$( "#dialog-defineReparte" ).dialog("close");
+			return;
+		}
+		
+		
 		for (i = 0 ; i < data.rows.length; i++) {
 
-			var lastIndex = data.rows[i].cell.length;
-			
-			data.rows[i].cell["reparte"]=mixCotaProdutoController.getInputReparte(data.rows[i].cell);
+			disabled = (data.rows.length==1)?"disabled='disabled'":"";
+			data.rows[i].cell["reparte"]=mixCotaProdutoController.getInputReparte(data.rows[i].cell,disabled);
 		}
+		
 		$('.pdvCotaGrid').show();
 		if (data.result){
 			return data.result[1];
@@ -935,8 +1134,8 @@ var mixCotaProdutoController = $.extend(true, {
 	},
 	
 	//funcao que retorna input de reparte a grid de reparte por pdv
-	getInputReparte:function(cell){
-		return "<input type='text' class='reparteGridinput' name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
+	getInputReparte:function(cell,disabled){
+		return "<input type='text' maxlength='5' size='7' "+disabled+" class='reparteGridinput' name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
 		
 	},
 	//funcao de exibicao de grid
@@ -979,7 +1178,7 @@ var mixCotaProdutoController = $.extend(true, {
 	
 		get : function(campo) {
 			
-			var elemento = $("#" + campo, fixacaoReparteController.workspace);
+			var elemento = $("#" + campo, mixCotaProdutoController.workspace);
 			
 			if(elemento.attr('type') == 'checkbox') {
 				return (elemento.attr('checked') == 'checked') ;
@@ -995,7 +1194,7 @@ var mixCotaProdutoController = $.extend(true, {
 			var data = [];
 			data.push({name:'filtro.codigoProduto',	value: $("#codigoProdutoMix").val()});
 			data.push({name:'filtro.nomeProduto',	value: $("#nomeProdutoMix").val()});
-			data.push({name:'filtro.classificacaoProduto',	value: $("select['select'] option:selected").val()});
+			data.push({name:'filtro.classificacaoProduto',	value: $("#filtroClassificacaoMix option:selected").val()});
 			
 			return data;
 		},
@@ -1010,6 +1209,181 @@ var mixCotaProdutoController = $.extend(true, {
 			return data;
 		},
 		
-	
+		addLoteMix:function(){
+			$("#modalUploadArquivoMix").dialog({
+				resizable: false,
+				height:'auto',
+				width:400,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						mixCotaProdutoController.executarSubmitArquivo();
+					},
+					"Cancelar": function() {
+						$("#excelFile").val("");
+						$(this).dialog("close");
+					}
+				},
+			});
+			
+		},
+		
+		//submit do arquivo adicionar em lote
+		executarSubmitArquivo:function(){
+			 var fileName = $("#excelFile").val();
+		      
+		       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+		       if(ext!="xls" & ext!="xlsx"){
+		    	   exibirMensagem("WARNING", ["Somente arquivos com extensÃ£o .XLS ou .XLSX sÃ£o permitidos."]);
+		    	   $(this).val('');
+		    	   return;
+		       }else{
+		    	   
+		    	   $("#formUploadLoteMix").ajaxSubmit({
+					
+						success: function(responseText, statusText, xhr, $form)  { 
+						
+							if(responseText === null) {
+								exibirMensagemDialog("SUCCESS", ["Todo o arquivo foi importado com sucesso!"],"");
+							} else {
+							
+								var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;
+								if(typeof(mensagens)!='undefined'){
+									var tipoMensagem = mensagens.tipoMensagem;
+									var listaMensagens = mensagens.listaMensagens;
+									
+									if (tipoMensagem && listaMensagens) {
+										
+										if (tipoMensagem != 'SUCCESS') {
+											
+											exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+										}
+										$(this).dialog( "close" );
+										exibirMensagem(tipoMensagem, listaMensagens);	
+									}
+									
+								}else if (typeof(responseText.mixCotaDTOInconsistente)=='object'){
+																		
+									var a = new Array();
+									a.push("O arquivo possui [" + responseText.mixCotaDTOInconsistente.length + "] registros inconsistentes:");
+									for ( var int = 0; int < responseText.mixCotaDTOInconsistente.length; int++) {
+										a.push("Produto["+responseText.mixCotaDTOInconsistente[int].codigoProduto+"]"
+												+", Cota["+responseText.mixCotaDTOInconsistente[int].numeroCota+"]"
+												+", Reparte Minimo["+responseText.mixCotaDTOInconsistente[int].reparteMinimo+"]"
+												+", Reparte Maximo["+responseText.mixCotaDTOInconsistente[int].reparteMaximo+"] : "+responseText.mixCotaDTOInconsistente[int].error);
+									}
+									exibirMensagemDialog("WARNING", a);
+									return;
+									
+								}
+							}
+							
+							$('#modalUploadArquivoMix').dialog('close');
+						}, 
+						type: 'POST',
+						dataType: 'json'
+					});
+		    	   
+		       }
+		},
+		
+		abrirCopiaDialog:function(){
+			var type  =$("input[type=radio][name=radio]:checked").val();
+			type = type.toLowerCase();
+			var target = type+'Copia-dialog';
+			
+			var idsCopiaCota="#cotaOrigemInput,#nomeCotaOrigemInput,#cotaDestinoInput,#nomeCotaDestinoInput";
+			var idsCopiaProduto="#codigoProdutoOrigemInput,#nomeProdutoOrigemInput,#codigoProdutoDestinoInput,#nomeProdutoDestinoInput";
+			
+			$("#"+target).dialog({
+				resizable: false,
+				height:'auto',
+				width:500,
+				draggable: false,
+				modal: true,
+				buttons: {
+					"InÃ­ciar cÃ³pia": function() {
+
+						var len=0;
+						
+						
+						if(type=='cota') {
+							len = $(idsCopiaCota).filter(function(){return this.value == "";}).length;
+						}else if(type=='produto'){
+							len = $(idsCopiaProduto).filter(function(){return this.value == "";}).length;
+							
+						}
+
+						if(len>0){
+							exibirMensagem("WARNING",["Dados para cÃ³pia nÃ£o preenchidos."]);
+							return;
+						}
+						
+						var msgWar=null;
+						if(type=='cota' && ($("#cotaOrigemInput").val()==$("#cotaDestinoInput").val())){
+							msgWar="Cota Origem nÃ£o pode ser igual a cota destino.";
+						}else if(type=='produto' && ($("#codigoProdutoOrigemInput").val()==$("#codigoProdutoDestinoInput").val() )){
+							msgWar="Produto Origem nÃ£o pode ser igual a produto destino.";
+						}
+						
+						if(msgWar!=null){
+							exibirMensagem("WARNING",[msgWar]);
+							return;
+						}
+						
+						var data = [];
+//						console.log(type);
+						data.push({name:"copiaMix.tipoCopia",	value: type.toUpperCase()});
+						data.push({name:"copiaMix.cotaNumeroOrigem",	value: $("#cotaOrigemInput").val()});
+						data.push({name:"copiaMix.nomeCotaOrigem",	value: $("#nomeCotaOrigemInput").val()});
+						data.push({name:"copiaMix.cotaNumeroDestino",	value: $("#cotaDestinoInput").val()});
+						data.push({name:"copiaMix.nomeCotaDestino",	value: $("#nomeCotaDestinoInput").val()});
+						
+						data.push({name:"copiaMix.codigoProdutoOrigem",	value: $("#codigoProdutoOrigemInput").val()});
+						data.push({name:"copiaMix.nomeProdutoOrigem",	value: $("#nomeProdutoOrigemInput").val()});
+						data.push({name:"copiaMix.codigoProdutoDestino",	value: $("#codigoProdutoDestinoInput").val()});
+						data.push({name:"copiaMix.nomeProdutoDestino",	value: $("#nomeProdutoDestinoInput").val()});
+						
+						modal = this;
+						$.postJSON(contextPath + '/distribuicao/mixCotaProduto/gerarCopiaMix',  data, 
+								function(result){
+								$(modal).dialog("close");
+										exibirMensagem("WARNING",result.listaMensagens);
+								},
+								function(result){ });
+					},
+					"Cancelar": function() {
+						$(this).dialog("close");
+					}
+				},
+				close:function(){$(idsCopiaCota+","+idsCopiaProduto).val('');}
+			});
+			
+			
+		},
+		
+		pesquisarPorCodigoProduto : function (idCodigo, idProduto, idClassificacao){
+			
+//			$.postJSON(contextPath + '/distribuicao/mixCotaProduto/removerMixCotaProduto', mixCotaProdutoController.getIdExcluir(idMix) , mixCotaProdutoController.exclusaoMixCotaSucesso, mixCotaProdutoController.exclusaoMixCotaErro);
+			
+			var codigoPdt = $(idCodigo).val();
+			
+			$.postJSON(contextPath + '/distribuicao/mixCotaProduto/pesquisarPorCodigoProdutoAutoComplete',
+					{codigo : codigoPdt},
+					function(result) {
+						if (result) {
+
+							if(codigoPdt.length == 6){
+								$(idCodigo).val(result[0].codigoICD);
+							}else{
+								$(idCodigo).val(result[0].codigo);
+							}
+							$(idProduto).val(result[0].nome);
+							$(idClassificacao).val(result[1]);
+						}
+					}
+			);
+		}
+		
 	}, BaseController);
 //@ sourceURL=mixCotaProduto.js

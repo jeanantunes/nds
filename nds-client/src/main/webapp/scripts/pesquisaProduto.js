@@ -42,22 +42,12 @@ function PesquisaProduto(workspace) {
 	this.autoCompletarPorNomeProduto = function(idProduto, isFromModal) {
 		
 		pesquisaProduto.pesquisaRealizada = false;
-		
 		var nomeProduto = $(idProduto, pesquisaProduto.workspace).attr("value");
 		
-		if (nomeProduto && nomeProduto.length > 2){
-
-			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {'filtro.nome': nomeProduto},
-					   function(result) { 
-				
-				           pesquisaProduto.exibirAutoComplete(result, idProduto); 
-				       },
-					   null, 
-					   isFromModal);
-		}	
-		else{
-			
-			$(idProduto, pesquisaProduto.workspace).autocomplete({source:[]});
+		if (nomeProduto && nomeProduto.length > 2) {
+			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {nomeProduto:nomeProduto},
+					   function(result) { pesquisaProduto.exibirAutoComplete(result, idProduto); },
+					   null, isFromModal);
 		}
 	},
 	
@@ -81,8 +71,7 @@ function PesquisaProduto(workspace) {
 															isFromModal, successCallBack, errorCallBack);
 			}
 			
-		}, 
-		100);
+		}, 100);
 	},
 	
 	//Validação do número da edição
@@ -93,7 +82,7 @@ function PesquisaProduto(workspace) {
 		if (codigoProduto && codigoProduto.length > 0
 				&& numeroEdicao && numeroEdicao.length > 0) {
 			
-			var data = {'filtro.codigo': codigoProduto, numeroEdicao: numeroEdicao};
+			var data = {codigoProduto:codigoProduto,numeroEdicao:numeroEdicao};
 
 			$.postJSON(contextPath + "/produto/validarNumeroEdicao",
 					data, function(result) { pesquisaProduto.validaNumeroEdicaoSucessoCallBack(idCodigo, idEdicao, successCallBack); },
@@ -136,7 +125,7 @@ function PesquisaProduto(workspace) {
 		pesquisaProduto.pesquisaRealizada = true;
 		
 		if (successCallBack) {
-			successCallBack();
+			successCallBack(result);
 		}
 	},
 	
@@ -161,6 +150,7 @@ function PesquisaProduto(workspace) {
 			},
 			select : function(event, ui) {
 				pesquisaProduto.descricaoAtribuida = true;
+				
 			},
 			minLength: 4,
 			delay : 0,
@@ -184,8 +174,8 @@ function PesquisaProduto(workspace) {
 		$(idEdicao, pesquisaProduto.workspace).val("");
 		$(idEdicao, pesquisaProduto.workspace).attr("disabled", "disabled");
 		
-		 var data = [{name:"filtro.nome",  value: nomeProduto},
-        			 {name:"filtro.codigo",value: codigoProduto}
+		 var data = [{name:"nomeProduto",  value:nomeProduto},
+        			 {name:"codigoProduto",value:codigoProduto}
 					];
 		
 		if (nomeProduto && nomeProduto.length > 0) {
@@ -239,7 +229,7 @@ function PesquisaProduto(workspace) {
 	},
 	
 	this.pesquisarPorNomeErrorCallBack = function(idCodigo, idProduto, idEdicao, errorCallBack) {
-
+		$(idProduto, pesquisaProduto.workspace).val("");
 		$(idProduto, pesquisaProduto.workspace).focus();
 		
 		if (errorCallBack) {
@@ -305,6 +295,22 @@ function PesquisaProduto(workspace) {
 		
 	},
 	
+	//Mostrar auto complete por código do produto
+	//Auto complete após a 5° posição 
+	this.autoCompletarPorCodigoProduto = function(idCampoCodProduto, isFromModal) {
+		
+		pesquisaProduto.pesquisaRealizada = false;
+		
+		var codProduto = $(idCampoCodProduto, pesquisaProduto.workspace).val();
+		
+		if (codProduto && codProduto.length >= 5) {
+			$.postJSON(contextPath + "/produto/autoCompletarPorCodProduto", {codigoProduto:codProduto},
+					   function(result) { pesquisaProduto.exibirAutoComplete(result, idCampoCodProduto); },
+					   null, isFromModal);
+		}
+	},
+	
+	
 	this.exibirAutoCompleteEdicao = function(result, idEdicao) {
 		
 		$(idEdicao, pesquisaProduto.workspace).autocomplete({
@@ -312,6 +318,8 @@ function PesquisaProduto(workspace) {
 		});
 	};
 	
+	
+	
+	
 }
-
 //@ sourceURL=pesquisaProduto.js

@@ -125,12 +125,12 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 		this.reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
 	}
 
-	@Export(label = "Participação", exhibitionOrder = 8, columnType = ColumType.DECIMAL)
+	@Export(label = "% Participação", exhibitionOrder = 8, columnType = ColumType.DECIMAL)
 	public String getParticipacaoString() {
 		return getParticipacaoFormatado();
 	}
 
-	@Export(label = "Participação Acumulada", exhibitionOrder = 9, columnType = ColumType.DECIMAL)
+	@Export(label = "% Participação Acumulada", exhibitionOrder = 9, columnType = ColumType.DECIMAL)
 	public String getParticipacaoAcumuladaString() {
 		return getParticipacaoAcumuladaFormatado();
 	}
@@ -210,8 +210,7 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 		
 		if (porcentagemMargemDistribuidor != null){
 			this.porcentagemMargemDistribuidorFormatado = 
-					CurrencyUtil.formatarValor(
-						porcentagemMargemDistribuidor.multiply(CEM).setScale(2, RoundingMode.HALF_EVEN));
+					CurrencyUtil.formatarValor(porcentagemMargemDistribuidor);
 		}
 	}
 	

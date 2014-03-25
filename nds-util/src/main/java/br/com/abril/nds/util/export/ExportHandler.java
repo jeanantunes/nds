@@ -56,8 +56,11 @@ public class ExportHandler {
 				
 				exportRows.add(exportRow);
 			}
-			
-			exportFooters.addAll(footerHandler.get());
+
+			if (footerHandler.get() != null) {
+
+				exportFooters.addAll(footerHandler.get());
+			}
 
 			exportModel.setFilters(exportFilters);
 			
@@ -561,6 +564,8 @@ public class ExportHandler {
 			exportHeader.setExhibitionOrder(exportAnnotation.exhibitionOrder());
 			
 			exportHeader.setColumnWidth(exportAnnotation.widthPercent() == 0f ? null : exportAnnotation.widthPercent());
+			
+			exportHeader.setXlsAutoSize(exportAnnotation.xlsAutoSize());
 			
 			exportHeaders.add(exportHeader);
 		}

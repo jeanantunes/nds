@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
 
@@ -13,6 +14,7 @@ import br.com.abril.nds.vo.PeriodoVO;
  * @author Discover Technology
  *
  */
+@Exportable
 public class FiltroStatusCotaDTO implements Serializable {
 
 	/**

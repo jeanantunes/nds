@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
@@ -43,8 +44,10 @@ public class TelefoneController extends BaseController {
 	
 	private static String LISTA_TELEFONES_EXIBICAO = "";
 	
+	@Autowired
 	private Result result;
 	
+	@Autowired
 	private HttpSession httpSession;
 	
 	@Autowired
@@ -132,7 +135,7 @@ public class TelefoneController extends BaseController {
 			
 			for (TelefoneAssociacaoDTO tDto : listaTelefonesExibir){
 				
-				if (!telefonesRemover.contains(new Long(tDto.getReferencia()))){
+				if (!telefonesRemover.contains(Long.valueOf(tDto.getReferencia()))){
 					
 					telefonesSessao.put(tDto.getReferencia(), tDto);
 				}
@@ -145,10 +148,7 @@ public class TelefoneController extends BaseController {
 
 			Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
 			
-			LinkedList<TelefoneAssociacaoDTO> lista = new LinkedList<TelefoneAssociacaoDTO>();
-			for (Integer key : telefonesSessao.keySet()){
-				lista.add(telefonesSessao.get(key));
-			}
+			LinkedList<TelefoneAssociacaoDTO> lista = new LinkedList<TelefoneAssociacaoDTO>(telefonesSessao.values());
 			
 			telefonesSessao = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
 			
@@ -341,9 +341,9 @@ public class TelefoneController extends BaseController {
 
 		List<CellModel> listaCellModel = new ArrayList<CellModel>();
 
-		for (Integer key : listaEnderecoAssociacao.keySet()) {
+		for (Entry<Integer, TelefoneAssociacaoDTO> entry : listaEnderecoAssociacao.entrySet()) {
 			
-			TelefoneAssociacaoDTO telefoneAssociacao = listaEnderecoAssociacao.get(key);
+			TelefoneAssociacaoDTO telefoneAssociacao = entry.getValue();
 
 			CellModel cellModel = new CellModel(
 				telefoneAssociacao.getReferencia(), 

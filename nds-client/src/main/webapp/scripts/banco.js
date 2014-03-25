@@ -325,10 +325,10 @@ var bancoController = $.extend(true, {
 					 digito     : $("#newDigito", this.workspace).val(),
 					 apelido    : $("#newApelido", this.workspace).val(),
 					 carteira   : $("#newCarteira", this.workspace).val(),
-					 juros      : priceToFloat($("#newJuros", this.workspace).val()),
+					 juros      : $("#newJuros", this.workspace).val(),
 					 ativo      : $("#newAtivo", this.workspace).is(':checked'),
-					 multa      : priceToFloat($("#newMulta", this.workspace).val()),
-					 vrMulta    : priceToFloat($("#newVrMulta", this.workspace).val()),
+					 multa      : $("#newMulta", this.workspace).val(),
+					 vrMulta    : $("#newVrMulta", this.workspace).val(),
 					 instrucoes : $("#newInstrucoes", this.workspace).val()
 			
 			};
@@ -359,10 +359,10 @@ var bancoController = $.extend(true, {
 					 digito     : $("#alterDigito", this.workspace).val(),
 					 apelido    : $("#alterApelido", this.workspace).val(),
 					 carteira   : $("#alterCarteira", this.workspace).val(),
-					 juros      : priceToFloat($("#alterJuros", this.workspace).val()),					
+					 juros      : $("#alterJuros", this.workspace).val(),					
 					 ativo      : $("#alterAtivo", this.workspace).is(':checked'),					
-					 multa      : priceToFloat($("#alterMulta", this.workspace).val()),
-					 vrMulta    : priceToFloat($("#alterVrMulta", this.workspace).val()),
+					 multa      : $("#alterMulta", this.workspace).val(),
+					 vrMulta    : $("#alterVrMulta", this.workspace).val(),
 					 instrucoes : $("#alterInstrucoes", this.workspace).val()};
 
 			$.postJSON(contextPath + "/banco/alteraBanco", param,
@@ -438,6 +438,7 @@ var bancoController = $.extend(true, {
 			$("#newAgencia", this.workspace).val("");
 			$("#newConta", this.workspace).val("");
 			$("#newDigito", this.workspace).val("");
+			$("#newDigitoAgencia", this.workspace).val("");
 			$("#newApelido", this.workspace).val("");
 			$("#newCarteira", this.workspace).val("");
 			$("#newJuros", this.workspace).val("");

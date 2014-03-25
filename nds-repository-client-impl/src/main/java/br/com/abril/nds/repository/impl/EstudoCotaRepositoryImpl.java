@@ -15,8 +15,7 @@ import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.util.Intervalo;
 
 /**
- * Classe de implementação referente ao acesso a dados da entidade 
- * {@link br.com.abril.nds.model.planejamento.EstudoCota}.
+ * Classe de implementação referente ao acesso a dados da entidade {@link br.com.abril.nds.model.planejamento.EstudoCota}.
  * 
  * @author Discover Technology
  *
@@ -28,7 +27,6 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	 * Construtor.
 	 */
 	public EstudoCotaRepositoryImpl() {
-		
 		super(EstudoCota.class);
 	}
 
@@ -40,11 +38,8 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 				   + " and estudoCota.estudo.dataLancamento >= :dataReferencia";
 		
 		Query query = super.getSession().createQuery(hql);
-
 		query.setParameter("numeroCota", numeroCota);
-		
 		query.setParameter("dataReferencia", dataReferencia);
-		
 		query.setMaxResults(1);
 		
 		return (EstudoCota) query.uniqueResult();
@@ -72,24 +67,22 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
+	public List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Long idLancamento, Long idProdutoEdicao) {
 			
 		String hql = " select estudoCota.id as id, " 
 				   + " estudoCota.qtdeEfetiva as qtdeEfetiva, "
-				   + " cota.id as idCota "
+				   + " cota.id as idCota, "
+				   + " estudoCota.tipoEstudo as tipoEstudo "  
 				   + " from EstudoCota estudoCota "
 				   + " join estudoCota.estudo estudo "
 				   + " join estudoCota.cota cota "
 				   + " join estudo.produtoEdicao produtoEdicao "
-				   + " where estudo.dataLancamento = :dataLancamento " 
+				   + " where estudo.lancamentoID = :idLancamento " 
 				   + " and produtoEdicao.id = :idProdutoEdicao";
 		
 		Query query = super.getSession().createQuery(hql);
-		
-		query.setParameter("dataLancamento", dataLancamento);
-		
+		query.setParameter("idLancamento", idLancamento);
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
-		
 		query.setResultTransformer(Transformers.aliasToBean(EstudoCotaDTO.class));
 		
 		return query.list();
@@ -104,7 +97,6 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 				   + " and estudoCota.cota.id = :idCota";
 		
 		Query query = super.getSession().createQuery(hql);
-		
 		query.setParameter("dataLancamento", dataLancamento);
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
@@ -116,9 +108,8 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		return (EstudoCota) query.uniqueResult();
 	}
 	
-	public EstudoCota obterEstudoCotaDeLancamentoComEstudoFechado(Date dataLancamentoDistribuidor, 
-																  Long idProdutoEdicao, 
-																  Integer numeroCota) {
+    @Override
+    public EstudoCota obterEstudoCotaDeLancamentoComEstudoFechado(Date dataLancamentoDistribuidor, Long idProdutoEdicao, Integer numeroCota) {
 		
 		String hql = " from EstudoCota estudoCota "
 				   + " where estudoCota.estudo.dataLancamento <= :dataLancamentoDistribuidor " 
@@ -127,13 +118,9 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 				   + " order by estudoCota.estudo.dataLancamento desc ";
 		
 		Query query = super.getSession().createQuery(hql);
-		
 		query.setParameter("dataLancamentoDistribuidor", dataLancamentoDistribuidor);
-		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
-		
 		query.setParameter("numeroCota", numeroCota);
-
 		query.setMaxResults(1);
 		
 		return (EstudoCota) query.uniqueResult();
@@ -147,7 +134,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 														  String exibirNotasEnvio) {
 		
 		StringBuffer sql = new StringBuffer("SELECT DISTINCT estudoCota ");
-		
+
 		sql.append(" FROM EstudoCota estudoCota ");
 		sql.append(" JOIN estudoCota.cota cota ");
 		sql.append(" JOIN estudoCota.estudo estudo ");
@@ -155,10 +142,11 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		sql.append(" JOIN estudo.produtoEdicao produtoEdicao ");
 		sql.append(" JOIN produtoEdicao.produto produto ");
 		sql.append(" JOIN produto.fornecedores fornecedor ");
+
 		sql.append(" LEFT JOIN estudoCota.itemNotaEnvios itemNotaEnvios ");
 		sql.append(" WHERE cota.id IN (:idCotas) ");
-		sql.append(" AND estudo.dataLancamento = lancamento.dataLancamentoPrevista ");
 		sql.append(" AND lancamento.status NOT IN (:listaExclusaoStatusLancamento) ");
+		sql.append(" AND estudoCota.qtdeEfetiva > 0 ");
 		
 		if("EMITIDAS".equals(exibirNotasEnvio)) {
 			sql.append(" AND itemNotaEnvios is not null ");
@@ -180,21 +168,43 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		
 		query.setParameterList("idCotas", idCotas);
 
-		query.setParameterList("listaExclusaoStatusLancamento", new StatusLancamento[] {StatusLancamento.FURO, StatusLancamento.PLANEJADO, StatusLancamento.FECHADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO, StatusLancamento.CANCELADO});
-	
+		query.setParameterList("listaExclusaoStatusLancamento", new StatusLancamento[] {StatusLancamento.FURO,StatusLancamento.PLANEJADO, StatusLancamento.FECHADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO, StatusLancamento.CANCELADO});
+		
 		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
-			
 			query.setParameterList("listaFornecedores", listaIdsFornecedores);
 		}
-		
 		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
-			
 			query.setParameter("dataInicio", periodo.getDe());
 			
 			query.setParameter("dataFim", periodo.getAte());
 		}
 
-		return query.list();
+	return query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+	@Override
+    public List<EstudoCota> obterEstudosCota(Long idEstudo) {
+	String hql = " from EstudoCota estudoCota where estudoCota.estudo.id = :estudo";
+
+	Query query = super.getSession().createQuery(hql);
+	query.setParameter("estudo", idEstudo);
+		
+	return query.list();
 	}
-	
+    
+    @Override
+	public void removerEstudosCotaPorEstudos(List<Long> listIdEstudos) {
+		
+		StringBuilder hql = new StringBuilder(" delete from EstudoCota ec ");
+		
+		hql.append(" where ec.estudo.id in (:listIdEstudos) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameterList("listIdEstudos", listIdEstudos);
+		
+		query.executeUpdate();
+	}
+    
 }

@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -14,15 +13,19 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheVendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.repository.VendaProdutoRepository;
 import br.com.abril.nds.service.VendaProdutoService;
-import br.com.abril.nds.util.MathUtil;
 
 @Service
 public class VendaProdutoServiceImpl implements VendaProdutoService {
 	
 	@Autowired
 	private VendaProdutoRepository vendaProdutoRepository;
+	
+	@Autowired
+	private TipoClassificacaoProdutoRepository tipoClassificacaoProduto;
 
 	@Override
 	@Transactional
@@ -53,14 +56,14 @@ public class VendaProdutoServiceImpl implements VendaProdutoService {
 			
 			lancamentoPorEdicao.setPeriodo(numPeriodo++ + "º");
 			lancamentoPorEdicao.setVendaAcumulada(vendaAcumulada);
-			
-			BigDecimal percentualVenda =
-				MathUtil.divide(new BigDecimal(lancamentoPorEdicao.getVenda().multiply(new BigInteger("100"))),
-								new BigDecimal(lancamentoPorEdicao.getReparte()));
-			
-			lancamentoPorEdicao.setPercentualVenda(percentualVenda);
 		}
 		
 		return listaLancamentoPorEdicao;
+	}
+	
+	@Override
+	@Transactional
+	public List<TipoClassificacaoProduto> buscarClassificacaoProduto() {
+		return tipoClassificacaoProduto.buscarTodos();
 	}
 }

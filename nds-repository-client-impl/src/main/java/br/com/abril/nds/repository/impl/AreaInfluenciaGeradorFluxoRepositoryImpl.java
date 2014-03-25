@@ -45,7 +45,7 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		Query query =  getSession().createQuery(hql.toString());
 		
 		// Adicionando os valores dos parametros na query
-		setParameters(query);
+		super.setParameters(query,parameters);
 		
 		hql.append("ORDER BY cota.numeroCota asc");
 		
@@ -95,7 +95,7 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		Query query =  getSession().createQuery(hql.toString());
 		
 		// Adicionando os valores dos parametros na query
-		setParameters(query);
+		super.setParameters(query, parameters);
 		
 		/* Transforma o resultado da query a partir dos alias
 		 * onde cada alias é igual ao nome do atributo no DTO 
@@ -131,6 +131,8 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		
 		// FROM
 		hql.append(" from EstoqueProdutoCota as estoqueProdutoCota");
+		//hql.append(" from Cota as cota");
+		//hql.append(" left join cota.estoqueProdutoCotas as estoqueProdutoCota");
 		hql.append(" left join estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" left join estoqueProdutoCota.cota as cota ");
 		hql.append(" left join cota.enderecos as cotaEndereco ");
@@ -210,17 +212,6 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		}
 		
 		return hql;
-	}
-
-	/**
-	 * @param paramNumeroCota
-	 * @param paramNomeCota
-	 * @param query
-	 */
-	private void setParameters(Query query) {
-		for (String key : parameters.keySet()) {
-			query.setParameter(key, parameters.get(key));
-		}
 	}
 	
 	/**

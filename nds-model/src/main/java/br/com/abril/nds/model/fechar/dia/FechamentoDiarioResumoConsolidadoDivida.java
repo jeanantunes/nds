@@ -36,13 +36,13 @@ public class FechamentoDiarioResumoConsolidadoDivida implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private TipoCobranca tipoCobranca;
 	
-	@Column(name="VALOR_TOTAL", precision=18, scale=4)
+	@Column(name="VALOR_TOTAL")
 	private BigDecimal valorTotal;
 	
-	@Column(name="VALOR_PAGO", precision=18, scale=4)
+	@Column(name="VALOR_PAGO")
 	private BigDecimal valorPago;
 	
-	@Column(name="VALOR_INADIMPLENTE", precision=18, scale=4)
+	@Column(name="VALOR_INADIMPLENTE")
 	private BigDecimal valorInadimplencia;
 	
 	public Long getId() {

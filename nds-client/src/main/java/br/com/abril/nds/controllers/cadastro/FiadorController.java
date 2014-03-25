@@ -496,7 +496,7 @@ public class FiadorController extends BaseController {
 		Map<Integer, TelefoneAssociacaoDTO> listaTelefone = (Map<Integer, TelefoneAssociacaoDTO>) 
 				this.httpSession.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		
-		if (listaTelefone == null || listaTelefone.keySet().isEmpty()){
+		if (listaTelefone == null || listaTelefone.isEmpty()){
 			
 			List<TelefoneAssociacaoDTO> list = (List<TelefoneAssociacaoDTO>) 
 					this.httpSession.getAttribute(LISTA_TELEFONES_EXIBICAO);
@@ -801,9 +801,9 @@ public class FiadorController extends BaseController {
 		
 		List<String> msgsValidacao = new ArrayList<String>();
 		
-		String mensagemDataNascimentoFiadorInvalida = "";
+		String mensagemDataNascimentoFiadorInvalida = null;
 		
-		String mensagemDataNascimentoConjugeInvalida = "";
+		String mensagemDataNascimentoConjugeInvalida = null;
 		
 		CPFValidator cpfValidator = new CPFValidator(true);
 
@@ -867,7 +867,7 @@ public class FiadorController extends BaseController {
 		if (pessoa.getDataNascimento() == null) {
 			
 			mensagemDataNascimentoFiadorInvalida = 
-					mensagemDataNascimentoFiadorInvalida.isEmpty() ? 
+					mensagemDataNascimentoFiadorInvalida == null ? 
 							"Data Nascimento é obrigatório." : mensagemDataNascimentoFiadorInvalida;  
 			
 			msgsValidacao.add(mensagemDataNascimentoFiadorInvalida);
@@ -930,10 +930,10 @@ public class FiadorController extends BaseController {
 			if (pessoa.getDataNascimento() == null){
 
 				mensagemDataNascimentoConjugeInvalida = 
-						mensagemDataNascimentoConjugeInvalida.isEmpty() ? 
+						mensagemDataNascimentoConjugeInvalida==null ? 
 								"Data Nascimento do conjuge é obrigatório." : mensagemDataNascimentoConjugeInvalida;  
 				
-				msgsValidacao.add(mensagemDataNascimentoFiadorInvalida);
+				msgsValidacao.add(mensagemDataNascimentoConjugeInvalida);
 			}
 			
 			if (pessoa.getSexo() == null){

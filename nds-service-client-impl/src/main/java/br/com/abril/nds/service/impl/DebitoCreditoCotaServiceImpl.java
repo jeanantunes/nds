@@ -11,20 +11,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
+import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoxRepository;
+import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 
@@ -41,6 +50,9 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	private BoxRepository boxRepository;
 	
 	@Autowired
+	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
+	
+	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
 	@Autowired
@@ -48,6 +60,9 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Override
 	@Transactional
@@ -76,7 +91,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 
 		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 		
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(debitoCredito.getNumeroCota());
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(debitoCredito.getNumeroCota());
 		
 		movimentoFinanceiroCotaDTO.setCota(cota);
 
@@ -181,7 +196,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		if (numeroCota!=null){
 		
-			cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+			cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 			
 			if (cota!=null){
 			
@@ -233,5 +248,246 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	public BigDecimal obterTotalCreditoCota(Integer numeroCota, Date dataOperacao){
 		
 		return this.movimentoFinanceiroCotaRepository.obterTotalCreditoCota(numeroCota, dataOperacao);
+	}
+	
+    private void adicionarDebitoCreditoDeConsolidado(List<DebitoCreditoCotaDTO> listaDebitoCredito, BigDecimal valor, String descricaoCredito, String descricaoDebito, Date dataVencimento, Date dataLancamento) {
+		
+		if(valor == null || BigDecimal.ZERO.compareTo(valor) == 0) {
+			
+			return;
+		}
+		
+		DebitoCreditoCotaDTO debitoCredito = new DebitoCreditoCotaDTO();
+		
+		if(BigDecimal.ZERO.compareTo(valor) < 0) {
+			
+			debitoCredito.setObservacoes(descricaoCredito);
+			debitoCredito.setTipoLancamentoEnum(OperacaoFinaceira.CREDITO);
+			debitoCredito.setTipoMovimento(Constantes.COMPOSICAO_COBRANCA_CREDITO);
+		
+		} else {
+			
+			debitoCredito.setObservacoes(descricaoDebito);
+			debitoCredito.setTipoLancamentoEnum(OperacaoFinaceira.DEBITO);
+			debitoCredito.setTipoMovimento(Constantes.COMPOSICAO_COBRANCA_DEBITO);
+		
+		}
+		
+		debitoCredito.setDataVencimento(dataVencimento);
+		
+		debitoCredito.setDataLancamento(dataLancamento);
+		
+		debitoCredito.setValor(valor.abs());
+		
+		listaDebitoCredito.add(debitoCredito);
+		
+	}
+	
+	/**
+	 * Obtem lista de Débitos e Créditos quem não pertencem à reparte ou encalhe
+	 * @param cota
+	 * @param dataOperacao
+	 * @return List<DebitoCreditoCotaDTO>
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(Cota cota, Date dataOperacao){
+		
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacao = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacaoComissao = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO);
+		
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
+		
+		this.validar_adicionar_tiposMovimentosFinanceirosIgnorados(
+				tipoMovimentoFinanceiroEnvioEncalhe,
+				tipoMovimentoFinanceiroRecebimentoReparte,
+				tipoMovimentoFinanceiroNegociacao,
+				tipoMovimentoFinanceiroNegociacaoComissao,
+				tiposMovimentoFinanceiroIgnorados);
+		
+
+		//DEBITOS E CREDITOS DA COTA NA DATA DE OPERACAO
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaNaoConsolidado = 
+				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(cota.getNumeroCota(), 
+													dataOperacao, 
+													tiposMovimentoFinanceiroIgnorados);
+
+		listaDebitoCreditoCompleta.addAll(listaDebitoCreditoCotaNaoConsolidado);
+		
+		//NEGOCIACOES AVULSAS DA COTA
+		List<DebitoCreditoCotaDTO> listaDebitoNegociacaoNaoAvulsaMaisEncargos = 
+				movimentoFinanceiroCotaRepository.obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(cota.getNumeroCota(), dataOperacao);
+		
+		if(listaDebitoNegociacaoNaoAvulsaMaisEncargos != null && !listaDebitoNegociacaoNaoAvulsaMaisEncargos.isEmpty()) {
+			
+			for(DebitoCreditoCotaDTO negociacao : listaDebitoNegociacaoNaoAvulsaMaisEncargos) {
+				
+				negociacao.setTipoLancamentoEnum(OperacaoFinaceira.DEBITO);
+				
+				negociacao.setObservacoes("Negociação Avulsa e Encargos.");
+				
+				listaDebitoCreditoCompleta.add(negociacao);
+			}
+		}
+
+		
+		//DÉBIDO OU CRÉDITO DO CONSOLIDADO
+		List<DebitoCreditoCotaDTO> outrosDebitoCreditoDoConsolidado = obterOutrosDebitoCreditoDeConsolidado(cota.getId(), dataOperacao);
+		
+		if(outrosDebitoCreditoDoConsolidado!=null && !outrosDebitoCreditoDoConsolidado.isEmpty()) {
+			listaDebitoCreditoCompleta.addAll(outrosDebitoCreditoDoConsolidado);
+		}
+		
+		return listaDebitoCreditoCompleta;
+	}
+
+
+	private void validar_adicionar_tiposMovimentosFinanceirosIgnorados(
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe,
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte,
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacao,
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacaoComissao,
+			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados) {
+		
+		if(tipoMovimentoFinanceiroEnvioEncalhe != null)
+			tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
+
+		if (tipoMovimentoFinanceiroRecebimentoReparte != null)
+			tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
+		
+		if(tipoMovimentoFinanceiroNegociacao != null)
+			tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroNegociacao);
+
+		if(tipoMovimentoFinanceiroNegociacaoComissao != null)
+			tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroNegociacaoComissao);
+	}
+	
+	/**
+	 * Obtem Outros Valores
+	 * 
+	 * @param infoConfereciaEncalheCota
+	 * @param cota
+	 * @param dataOperacao
+	 */
+	@Transactional
+	@Override
+	public void carregarDadosDebitoCreditoDaCota(InfoConferenciaEncalheCota infoConfereciaEncalheCota, 
+												  Cota cota,
+												  Date dataOperacao) {
+		
+		
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = this.obterListaDebitoCreditoCotaDTO(cota, dataOperacao);
+		
+		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCompleta);		
+	}
+	
+	/**
+	 * Obtém débito ou crédito do consolidado da cota
+	 * 
+	 * @param idCota
+	 * @param dataOperacao
+	 * 
+	 * @return DebitoCreditoCotaDTO
+	 */
+	private List<DebitoCreditoCotaDTO> obterOutrosDebitoCreditoDeConsolidado(Long idCota, Date dataOperacao) {
+
+		List<DebitoCreditoCotaDTO> listaDebitoCredito = new ArrayList<DebitoCreditoCotaDTO>();
+		
+		ConsolidadoFinanceiroCota consolidado = this.consolidadoFinanceiroRepository.buscarPorCotaEData(idCota, dataOperacao);
+		
+		if (consolidado == null) {
+			
+			return null;
+		}
+		
+		Date dataConsolidadoPostergado = this.consolidadoFinanceiroRepository.obterDataAnteriorImediataPostergacao(consolidado);
+
+		if (dataConsolidadoPostergado != null) {
+			
+			String dataConsolidadoPostergadoFormatada = DateUtil.formatarData(dataConsolidadoPostergado,"dd/MM/yy");
+			
+			adicionarDebitoCreditoDeConsolidado(
+					listaDebitoCredito,
+					consolidado.getValorPostergado(), 
+					"Credito Post. " + dataConsolidadoPostergadoFormatada,
+					"Pgto. Post. " + dataConsolidadoPostergadoFormatada,
+					consolidado.getDataConsolidado(), 
+					DateUtil.parseDataPTBR(DateUtil.formatarData(consolidado.getDataConsolidado(),"dd/MM/yy")));
+		}
+						
+		adicionarDebitoCreditoDeConsolidado(
+				listaDebitoCredito,
+				consolidado.getDebitoCredito(), 
+				OperacaoFinaceira.CREDITO.getDescricao(),
+				OperacaoFinaceira.DEBITO.getDescricao(),
+				consolidado.getDataConsolidado(), 
+				DateUtil.parseDataPTBR(DateUtil.formatarData(consolidado.getDataConsolidado(),"dd/MM/yy")));
+
+		adicionarDebitoCreditoDeConsolidado(
+				listaDebitoCredito,
+				consolidado.getEncargos(),
+				"Encargos", "Encargos",
+				consolidado.getDataConsolidado(), 
+				DateUtil.parseDataPTBR(DateUtil.formatarData(consolidado.getDataConsolidado(),"dd/MM/yy")));
+
+		adicionarDebitoCreditoDeConsolidado(
+				listaDebitoCredito,
+				consolidado.getPendente(),
+				"Pendente", "Pendente",
+				consolidado.getDataConsolidado(), 
+				DateUtil.parseDataPTBR(DateUtil.formatarData(consolidado.getDataConsolidado(),"dd/MM/yy")));
+		
+		adicionarDebitoCreditoDeConsolidado(
+				listaDebitoCredito,
+				consolidado.getVendaEncalhe().negate(),
+				"Venda Encalhe", "Venda Encalhe",
+				consolidado.getDataConsolidado(), 
+				DateUtil.parseDataPTBR(DateUtil.formatarData(consolidado.getDataConsolidado(),"dd/MM/yy")));
+		
+		return listaDebitoCredito;
+ 	}
+	
+	/**
+	 * Verifica se o Movimento Financeiro pode ser Editado
+	 * Nao consolidado
+	 * Lancamento automatico
+	 * Data do movimento maior que a data de operação
+	 * 
+	 * @param movimentoFinanceiroCota
+	 * @return boolean
+	 */
+	@Override
+	@Transactional(readOnly = true)
+    public boolean isMovimentoEditavel(MovimentoFinanceiroCota movimentoFinanceiroCota) {
+		
+		boolean movimentoEditavel = true;
+		
+		if (this.movimentoFinanceiroCotaRepository.isMovimentoFinanceiroCotaConsolidado(movimentoFinanceiroCota.getId())) {
+			
+			movimentoEditavel = false;
+		}
+		
+		if (!movimentoFinanceiroCota.isLancamentoManual()) {
+			
+			movimentoEditavel = false;
+		}
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		dataOperacao = DateUtil.removerTimestamp(dataOperacao);
+		
+		if (dataOperacao.compareTo(movimentoFinanceiroCota.getData()) >= 0) {
+			
+			movimentoEditavel = false;
+		}
+		
+		return movimentoEditavel;
 	}
 }

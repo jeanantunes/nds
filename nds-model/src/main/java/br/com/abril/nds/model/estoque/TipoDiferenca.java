@@ -16,12 +16,19 @@ public enum TipoDiferenca {
 	FALTA_EM(GrupoMovimentoEstoque.FALTA_EM, "Falta em", GrupoMovimentoEstoque.FALTA_EM_COTA),
 	SOBRA_DE(GrupoMovimentoEstoque.SOBRA_DE, "Sobra de", GrupoMovimentoEstoque.SOBRA_DE_COTA),
 	SOBRA_EM(GrupoMovimentoEstoque.SOBRA_EM, "Sobra em", GrupoMovimentoEstoque.SOBRA_EM_COTA),
+	SOBRA_ENVIO_PARA_COTA(GrupoMovimentoEstoque.SOBRA_ENVIO_PARA_COTA, "Sobra envio para Cota"),
+	FALTA_PARA_COTA(GrupoMovimentoEstoque.FALTA_PARA_COTA, "Falta para Cota"),
+	AJUSTE_REPARTE_FALTA_COTA(GrupoMovimentoEstoque.AJUSTE_REPARTE_FALTA_COTA, "Ajuste de falta para Cota"),
 	SOBRA_DE_DIRECIONADA_COTA(GrupoMovimentoEstoque.SOBRA_DE_DIRECIONADA_PARA_COTA, "Sobra DE direcionada para Cota", GrupoMovimentoEstoque.SOBRA_DE_COTA),
 	SOBRA_EM_DIRECIONADA_COTA(GrupoMovimentoEstoque.SOBRA_EM_DIRECIONADA_PARA_COTA, "Sobra EM direcionada para Cota", GrupoMovimentoEstoque.SOBRA_EM_COTA),
 	PERDA_EM(GrupoMovimentoEstoque.PERDA_EM, "Perda em"),
 	PERDA_DE(GrupoMovimentoEstoque.PERDA_DE, "Perda de"),
 	GANHO_EM(GrupoMovimentoEstoque.GANHO_EM, "Ganho em"),
-	GANHO_DE(GrupoMovimentoEstoque.GANHO_DE, "Ganho de");
+	GANHO_DE(GrupoMovimentoEstoque.GANHO_DE, "Ganho de"),
+	ALTERACAO_REPARTE_PARA_LANCAMENTO(GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO, "Alteração de Reparte", GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA),
+	ALTERACAO_REPARTE_PARA_RECOLHIMENTO(GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO, "Alteração de Reparte", GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA),
+	ALTERACAO_REPARTE_PARA_SUPLEMENTAR(GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR, "Alteração de Reparte", GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA),
+	ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS(GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS, "Alteração de Reparte", GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA);
 	
 	private GrupoMovimentoEstoque grupoMovimentoEstoque;
 	
@@ -40,6 +47,12 @@ public enum TipoDiferenca {
 	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_PERDA = EnumSet.of(PERDA_DE, PERDA_EM);
 	
 	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_GANHO = EnumSet.of(GANHO_DE, GANHO_EM);
+	
+	private static final Set<TipoDiferenca> AJUSTES_DISTRIBUIDOR = EnumSet.of(SOBRA_ENVIO_PARA_COTA, FALTA_PARA_COTA, AJUSTE_REPARTE_FALTA_COTA);
+	
+	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_ALTERACAO_REPARTE = 
+		EnumSet.of(ALTERACAO_REPARTE_PARA_LANCAMENTO, ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS, 
+			ALTERACAO_REPARTE_PARA_RECOLHIMENTO, ALTERACAO_REPARTE_PARA_SUPLEMENTAR);
 	
 	private TipoDiferenca(GrupoMovimentoEstoque grupoMovimentoEstoqueCota, 
 						  String descricao) {
@@ -89,6 +102,10 @@ public enum TipoDiferenca {
 	    return TIPOS_DIFERENCA_FALTA.contains(this);
 	}
 	
+	public boolean isAjusteReparteFaltaCota() {
+	    return AJUSTE_REPARTE_FALTA_COTA.equals(this);
+	}
+	
 	/**
      * Verifica se a diferença é do tipo SOBRA
      * 
@@ -104,6 +121,14 @@ public enum TipoDiferenca {
 	
 	public boolean isGanho() {
 		return TIPOS_DIFERENCA_GANHO.contains(this);  
+	}
+	
+	public boolean isAlteracaoReparte() {
+		return TIPOS_DIFERENCA_ALTERACAO_REPARTE.contains(this);
+	}
+	
+	public boolean isAjusteDistribuidor() {
+		return AJUSTES_DISTRIBUIDOR.contains(this);
 	}
 	
 	/**

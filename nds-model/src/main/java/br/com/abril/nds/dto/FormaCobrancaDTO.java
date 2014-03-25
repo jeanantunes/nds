@@ -52,6 +52,8 @@ public class FormaCobrancaDTO {
 	Set<Fornecedor> fornecedores;
 	Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota;
 	
+	private String unificacao;
+	
 	public FormaCobrancaDTO(){
 		
 	}
@@ -59,7 +61,8 @@ public class FormaCobrancaDTO {
 	//CONTRUTOR PARA DADOS DA GRID
 	public FormaCobrancaDTO(Long idFormaCobranca, String fornecedor,
 			String concentracaoPagto, String tipoPagto, String detalhesTipoPagto,
-			boolean parametroDistribuidor) {
+			boolean parametroDistribuidor,
+			String descUnificacao) {
 		super();
 		this.idFormaCobranca = idFormaCobranca;
 		this.fornecedor = fornecedor;
@@ -67,6 +70,7 @@ public class FormaCobrancaDTO {
 		this.tipoPagto = tipoPagto;
 		this.detalhesTipoPagto = detalhesTipoPagto;
 		this.parametroDistribuidor = parametroDistribuidor;
+		this.unificacao = descUnificacao;
 	}
 	
 	//CONTRUTOR PARA O FORMULARIO
@@ -367,6 +371,14 @@ public class FormaCobrancaDTO {
 
 	public void setFornecedores(Set<Fornecedor> fornecedores) {
 		this.fornecedores = fornecedores;
+	}
+
+	public String getUnificacao() {
+		return unificacao;
+	}
+
+	public void setUnificacao(String unificacao) {
+		this.unificacao = unificacao;
 	}
 
 }

@@ -62,7 +62,7 @@ public class AjusteReparteController extends BaseController {
 		this.result = result;
 	}
 	
-	@Path("/")	
+	@Path("/")
 	public void index(){
 		this.carregarComboMotivoStatusCota();
 		this.carregarComboSegmento();
@@ -70,6 +70,7 @@ public class AjusteReparteController extends BaseController {
 	
 	@Post
 	@Path("/novoAjuste")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE_ALTERACAO)
 	public void salvarAjuste (AjusteReparteDTO ajusteDTO){
 		
 		AjusteReparte ajuste = DTOParaModel(ajusteDTO);
@@ -78,32 +79,40 @@ public class AjusteReparteController extends BaseController {
 		
 		ajusteService.salvarAjuste(ajuste);
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste incluído com sucesso."),	"result").recursive().serialize();
+        this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste incluído com sucesso."),
+                "result").recursive().serialize();
 	}
 	
 	@Post
 	@Path("/incluirAjusteSegmento")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE_ALTERACAO)
 	public void salvarAjusteSegmento (AjusteReparteDTO ajusteDTO, BigDecimal [] ajustes, Long [] segmentos){
-		
-		Cota cota = cotaService.obterPorNumeroDaCota(ajusteDTO.getNumeroCota());
-		
-		Long idCota = cota.getId();
+
+		validarInsercaoPorSegmento(ajustes, segmentos);
 		
 		evitarCotaRepetidaSegmento(ajusteDTO);
 		
-		int qtdAjustesCadastrados = ajusteService.qtdAjusteSegmento(idCota);
+        // Testar essa inserção deste IF if(seg...)
 		
-		 for (int i = qtdAjustesCadastrados; i < 3; i++) {
-			 		TipoSegmentoProduto segmento = ajusteService.buscarSegmentoPorID(segmentos[i]);
+		for (int i = 0; i < segmentos.length; i++) {
+			 		if(segmentos[i] != null){
+					TipoSegmentoProduto segmento = ajusteService.buscarSegmentoPorID(segmentos[i]);
 					ajusteDTO.setAjusteAplicado(ajustes[i]);
 					ajusteDTO.setTipoSegmento_Ajuste(segmento);
 					evitarSegmentosRepetidos(ajusteDTO, segmento);
 					AjusteReparte ajusteModel = DTOParaModel(ajusteDTO);
 					ajusteService.salvarAjuste(ajusteModel);
+			 		}
 		 }
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste incluído com sucesso."), 
+        this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste incluído com sucesso."),
 				"result").recursive().serialize();
+	}
+
+	private void validarInsercaoPorSegmento(BigDecimal[] ajustes, Long[] segmentos) {
+		if((segmentos.length == 0) || (ajustes.length == 0)){
+            throw new ValidacaoException(TipoMensagem.WARNING, "Informe no mínimo 1 segmento com 1 índice para ajuste.");
+		}
 	}
 	
 	@Post
@@ -139,6 +148,7 @@ public class AjusteReparteController extends BaseController {
 	
 	@Post
 	@Path("/alterarAjuste")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE_ALTERACAO)
 	public void alterarAjuste(AjusteReparteDTO ajusteDTO, Long id) {
 		ajusteDTO.setIdAjusteReparte(id);
 		
@@ -155,6 +165,7 @@ public class AjusteReparteController extends BaseController {
 	
 	@Post
 	@Path("/alterarAjusteSegmento")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE_ALTERACAO)
 	public void alterarAjusteSegmento(AjusteReparteDTO ajusteDTO, Long id, BigDecimal ajuste, Long [] segmentos) {
 		
 		TipoSegmentoProduto segmento = ajusteService.buscarSegmentoPorID(segmentos[0]);
@@ -200,12 +211,12 @@ public class AjusteReparteController extends BaseController {
 	
 	@Post
 	@Path("/excluirAjuste")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE_ALTERACAO)
 	public void excluirAjuste(Long id) {
 		
 		ajusteService.excluirAjuste(id);
 
-		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste excluído com sucesso."), 
+        this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste excluído com sucesso."),
 				"result").recursive().serialize();
 	}
 	
@@ -223,8 +234,7 @@ public class AjusteReparteController extends BaseController {
 	public void qtdAjustesSegmento (Integer nmCota){
 
 		if (nmCota == null){
-			nmCota = 0;
-			throw new ValidacaoException(TipoMensagem.WARNING, "Insira o número da cota.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Insira o número da cota.");
 		}else{
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(nmCota );
@@ -238,14 +248,22 @@ public class AjusteReparteController extends BaseController {
 		}
 	}
 	
+	@Post
+	@Path("/carregarVendaMedia")
+	public void carregarVendaMedia() {
+		Integer vendaMediaMais = ajusteService.buscarVendaMedia();
+
+		result.use(Results.json()).withoutRoot().from(vendaMediaMais).recursive().serialize();
+	}
+	
 	private void validarEntradaAjuste(AjusteReparteDTO ajusteDTO) {
 		
 		if (ajusteDTO.getNumeroCota() == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING,	"Número da cota é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota é obrigatório.");
 		}
 		
 		if (ajusteDTO.getNomeCota() == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING,	"Nome da cota é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Nome da cota é obrigatório.");
 		}
 		
 		if (ajusteDTO.getFormaAjuste() == null) {
@@ -253,7 +271,7 @@ public class AjusteReparteController extends BaseController {
 		}
 		
 		if (ajusteDTO.getAjusteAplicado() == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING,	"Selecione um tipo de ajuste.");
+			throw new ValidacaoException(TipoMensagem.WARNING,	"Informe um indice para ajuste.");
 		}
 		
 		if (ajusteDTO.getMotivoAjuste() == null) {
@@ -265,20 +283,21 @@ public class AjusteReparteController extends BaseController {
 		
 		if((ajusteDTO.getStatus().toString()) != "Ativo"){
 			if(ajusteDTO.getStatus().toString() != "Suspenso"){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Esta cota não pode receber ajuste. (O seu Status não é ATIVO ou SUSPENSO)");
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Esta cota não pode receber ajuste. (O seu Status não é ATIVO ou SUSPENSO)");
 			}
 		}
 
 		if (ajusteDTO.getDataInicioCadastro() == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING,	"Data inicial é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Data inicial é obrigatório.");
 		}
 		
 		if (ajusteDTO.getDataFimCadastro() == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING,	"Data final é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Data final é obrigatório.");
 		}
 		
 		if (ajusteDTO.getDataFimCadastro().before(ajusteDTO.getDataInicioCadastro())){
-			throw new ValidacaoException(TipoMensagem.WARNING,	"A Data Final não pode ser antes que a Data Inicial.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "A Data Final não pode ser antes que a Data Inicial.");
 		}
 	}
 
@@ -287,7 +306,7 @@ public class AjusteReparteController extends BaseController {
 
 		for (AjusteReparteDTO ajusteJaCadastrado : ajustesJaCadastrados) {
 			if ((ajusteJaCadastrado.getNumeroCota()) == (ajusteDTO.getNumeroCota())) {
-				throw new ValidacaoException(TipoMensagem.ERROR, "Cota em Ajuste, já cadastrada.");
+                throw new ValidacaoException(TipoMensagem.ERROR, "Cota em Ajuste, já cadastrada.");
 			}
 		}
 	}
@@ -297,7 +316,7 @@ public class AjusteReparteController extends BaseController {
 
 		for (AjusteReparteDTO ajusteJaCadastrado : ajustesJaCadastrados) {
 			if (((ajusteJaCadastrado.getNumeroCota()) == (ajusteDTO.getNumeroCota())) && ((ajusteJaCadastrado.getFormaAjusteAplicado()) != (ajusteDTO.getFormaAjuste().toString())) ) {
-				throw new ValidacaoException(TipoMensagem.ERROR, "Cota em Ajuste, já cadastrada.");
+                throw new ValidacaoException(TipoMensagem.ERROR, "Cota em Ajuste, já cadastrada.");
 			}
 		}
 	}
@@ -305,13 +324,19 @@ public class AjusteReparteController extends BaseController {
 	private void evitarSegmentosRepetidos(AjusteReparteDTO ajusteDTO, TipoSegmentoProduto segmento) {
 		Cota cota = cotaService.obterPorNumeroDaCota(ajusteDTO.getNumeroCota());
 		Long idCota = cota.getId();
+		AjusteReparteDTO ajusteCadastrado = new AjusteReparteDTO();
 		
 		List<AjusteReparteDTO> cotaEmAjuste = ajusteService.buscarPorIdCota(idCota);
 		
+		if(ajusteDTO.getIdAjusteReparte() != null){
+			ajusteCadastrado = ajusteService.buscarPorIdAjuste(ajusteDTO.getIdAjusteReparte());
+		}
 		
-		for (AjusteReparteDTO ajusteReparteDTO : cotaEmAjuste) {
-			if ((ajusteReparteDTO.getIdSegmento()) == (segmento.getId())){
-				throw new ValidacaoException(TipoMensagem.ERROR, "Ajuste por segmento já cadastrado.");
+		if(ajusteCadastrado.getIdSegmento() != ajusteDTO.getTipoSegmento_Ajuste().getId()){
+			for (AjusteReparteDTO ajusteReparteDTO : cotaEmAjuste) {
+				if ((ajusteReparteDTO.getIdSegmento()) == (segmento.getId())){
+                    throw new ValidacaoException(TipoMensagem.ERROR, "Ajuste por segmento já cadastrado.");
+				}
 			}
 		}
 	}
@@ -341,10 +366,10 @@ public class AjusteReparteController extends BaseController {
 		List<AjusteReparteDTO> listaAjustes = ajusteService.buscarCotasEmAjuste (null);
 			
 			if(listaAjustes.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A pesquisa realizada não obteve resultado.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 			}
 			
-			FileExporter.to("AJUSTE_REPARTE", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+        FileExporter.to("AJUSTE_REPARTE", fileType).inHTTPResponse(this.getNDSFileHeader(), null,
 					listaAjustes, AjusteReparteDTO.class, this.httpResponse);
 		
 		result.nothing();
@@ -353,7 +378,7 @@ public class AjusteReparteController extends BaseController {
 	private void validarDiferencaData(Date date1, Date date2) { 
 		long diferenca = ((date1.getTime()-date2.getTime())/86400000);
 			if (diferenca > 180){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Período não pode ser maior que 180 dias.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Período não pode ser maior que 180 dias.");
 			}
 		}
 }

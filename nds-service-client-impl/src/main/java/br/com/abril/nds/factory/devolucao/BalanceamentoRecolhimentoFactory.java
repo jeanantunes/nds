@@ -10,7 +10,7 @@ import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
  * Fábrica de estratégias de balanceamento de recolhimento.
  * 
  * @author Discover Technology
- *
+ * 
  */
 public class BalanceamentoRecolhimentoFactory {
 

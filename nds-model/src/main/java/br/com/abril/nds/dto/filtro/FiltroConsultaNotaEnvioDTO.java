@@ -1,5 +1,6 @@
 package br.com.abril.nds.dto.filtro;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -9,9 +10,14 @@ import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
-public class FiltroConsultaNotaEnvioDTO {
+public class FiltroConsultaNotaEnvioDTO  implements Serializable{
 
-	private Date dataEmissao;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3159178471266292426L;
+    
+    private Date dataEmissao;
 	
 	private List<Long> idFornecedores;
 	
@@ -30,6 +36,8 @@ public class FiltroConsultaNotaEnvioDTO {
 	private PaginacaoVO paginacaoVO;
 	
 	private String exibirNotasEnvio;
+	
+	private boolean filtroRoteiroEspecial;
 	
 	/**
 	 * @return the dataEmissao
@@ -159,4 +167,27 @@ public class FiltroConsultaNotaEnvioDTO {
 		this.exibirNotasEnvio = exibirNotasEnvio;
 	}
 	
+	public boolean isFiltroBoxEspecial() {
+
+		if (this.intervaloBox != null) {
+			return (this.intervaloBox.getDe() != null && this.intervaloBox.getAte() != null) &&
+					(this.intervaloBox.getDe() == 0 && this.intervaloBox.getAte() == 0);
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return the filtroRoteiroEspecial
+	 */
+	public boolean isFiltroEspecial() {
+		return filtroRoteiroEspecial || this.isFiltroBoxEspecial();
+	}
+
+	/**
+	 * @param filtroRoteiroEspecial the filtroRoteiroEspecial to set
+	 */
+	public void setFiltroRoteiroEspecial(boolean filtroRoteiroEspecial) {
+		this.filtroRoteiroEspecial = filtroRoteiroEspecial;
+	}
 }

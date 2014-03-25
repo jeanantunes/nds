@@ -38,9 +38,7 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 
 		HashMap<String, Object> param = aplicarParametros(filtro);
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupChamadaoDTO.class));
@@ -74,8 +72,8 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		
 		hql.append(" WHERE cota.situacaoCadastro = 'SUSPENSO' ");
 		hql.append(" AND ce.tipoChamadaEncalhe = 'CHAMADAO' ");
-		
-		hql.append(" GROUP BY cota.id  ");		
+		hql.append(" GROUP BY cota.numeroCota, pessoa.nome");		
+		hql.append(" ORDER BY cota.numeroCota, pessoa.nome");
 
 		return hql.toString();
 	}

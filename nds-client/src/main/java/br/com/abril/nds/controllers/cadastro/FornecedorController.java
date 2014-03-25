@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -18,10 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.ComboTipoFornecedorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
-import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO.ColunaOrdenacao;
@@ -29,6 +28,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.CanalDistribuicao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -105,9 +105,11 @@ public class FornecedorController extends BaseController {
 	@Path("/")
 	public void index() {
 
-		obterTiposFornecedor();
+		this.result.include("combo", this.tipoFornecedorService.obterComboTipoFornecedor());
 		
-		this.obterBancos();
+		this.result.include("listaBancos", this.bancoService.getComboBancos(true));
+		
+		this.result.include("canaisDistribuicao", CanalDistribuicao.values());
 	}
 
 	/**
@@ -187,15 +189,19 @@ public class FornecedorController extends BaseController {
 		
 		Origem origemFornecedor = obterOrigemFornecedor(fornecedorDTO);
 		
+		this.validarDadosCadastrais(fornecedorDTO, origemFornecedor);
+		
 		Fornecedor fornecedor = null;
 		
 		if(Origem.MANUAL.equals(origemFornecedor)) {
-			validarFornecedorOrigemManual(fornecedorDTO);
+			
 			fornecedor = criarObjetoFornecedorOrigemManual(fornecedorDTO);
 		} else {
-			validarFornecedorOrigemInterface(fornecedorDTO);
+			
 			fornecedor = criarObjetoFornecedorOrigemInterface(fornecedorDTO);
 		}
+		
+		fornecedor.setCanalDistribuicao(fornecedorDTO.getCanalDistribuicao());
 		
 		String mensagemSucesso;
 		
@@ -219,6 +225,151 @@ public class FornecedorController extends BaseController {
 		processarTelefonesFornecedor(fornecedor.getId());
 
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, mensagemSucesso), "result").recursive().serialize();
+	}
+	
+	private void validarDadosCadastrais(FornecedorDTO fornecedorDTO, Origem origem){
+		
+		List<String> mensagens = new ArrayList<String>();
+		
+		if(Origem.MANUAL.equals(origem)) {
+			
+			if(fornecedorDTO.getInscricaoEstadual() == null || fornecedorDTO.getInscricaoEstadual().isEmpty()) {
+				mensagens.add("O preenchimento do campo [Inscrição Estadual] é obrigatório.");
+			}
+			
+			if (fornecedorDTO.getCodigoInterface() == null) {
+				
+				mensagens.add("O preenchimento do campo [Codigo] é obrigatório.");
+			
+			} else {
+				
+				if(	fornecedorDTO.getCodigoInterface() > Constantes.MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL) {
+					
+					mensagens.add(	" Valor do campo [Codigo] não deve exceder "+ Constantes.MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL + 
+									" para fornecedor de origem MANUAL.");
+					
+				} else {
+					
+					Fornecedor fornecedor = fornecedorService.obterFornecedorPorCodigoInterface(fornecedorDTO.getCodigoInterface());
+					
+					if(fornecedor!=null && !fornecedor.getId().equals(fornecedorDTO.getIdFornecedor())) {
+						mensagens.add(" Valor do campo [Codigo] já esta sendo utilizado.");
+					}
+					
+				}
+				
+			}
+			
+			if (fornecedorDTO.getRazaoSocial() == null || fornecedorDTO.getRazaoSocial().isEmpty()) {
+				
+				mensagens.add("O preenchimento do campo [Razao Social] é obrigatório.");
+			}
+			
+			CNPJValidator cnpjValidator = new CNPJValidator(true);
+			
+			if (fornecedorDTO.getCnpj() == null || fornecedorDTO.getCnpj().isEmpty()) {
+				
+				mensagens.add("O preenchimento do campo [CNPJ] é obrigatório.");
+			
+			} else {
+				
+				try{
+					
+					cnpjValidator.assertValid(fornecedorDTO.getCnpj());
+				
+				} catch(InvalidStateException e){
+					
+					mensagens.add("CNPJ inválido.");
+				}
+			}
+			
+			if(fornecedorDTO.getIdBanco() == null) {
+				mensagens.add("O preenchimento do [Banco] é obrigatório.");
+			}
+			
+			if (fornecedorDTO.getIdFornecedor() != null) {
+				Fornecedor fornecedorCadastrado = fornecedorService.obterFornecedorPorId(fornecedorDTO.getIdFornecedor());
+				if (fornecedorCadastrado != null) {
+					String cnpjAlterado = fornecedorDTO.getCnpj().replaceAll("[/.-]", "");
+					if (!fornecedorCadastrado.getJuridica().getCnpj().equals( cnpjAlterado )) {
+						mensagens.add("Não é possível alterar o CNPJ do fornecedor cadastrado!");
+					}
+				}
+			}
+			
+			if (!StringUtil.isEmpty(fornecedorDTO.getEmailNfe())) {
+				if (!Util.validarEmail(fornecedorDTO.getEmailNfe())) {
+					mensagens.add("O preenchimento do campo [E-mail NFe] está inválido!");
+				}
+			}
+			
+			if (!StringUtil.isEmpty(fornecedorDTO.getEmail())) {
+				if (!Util.validarEmail(fornecedorDTO.getEmail())) {
+					mensagens.add("O preenchimento do campo [E-mail] está inválido!");
+				}
+			}
+			
+			if (fornecedorDTO.isPossuiContrato()) {
+				
+				if (fornecedorDTO.getValidadeContrato() == null || fornecedorDTO.getValidadeContrato().isEmpty()) {
+				
+					mensagens.add("O preenchimento do campo [Validade] é obrigatório.");
+
+				} else {
+				
+					SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
+					
+					try {
+						
+						simpleDateFormat.parse(fornecedorDTO.getValidadeContrato());
+						
+					} catch (ParseException e) {
+		
+						mensagens.add("O preenchimento do campo [Validade] não é válido.");
+					}
+				}
+			}
+
+			String cnpj = "";
+			
+			if (fornecedorDTO.getCnpj() != null && !fornecedorDTO.getCnpj().isEmpty()) {
+				cnpj = fornecedorDTO.getCnpj().replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
+			}
+			
+			PessoaJuridica juridica = 
+					this.pessoaJuridicaService.buscarPorCnpj(cnpj);
+			
+			if (juridica != null) {
+				
+				boolean juridicaCadastrada = 
+						this.fornecedorService.isPessoaJaCadastrada(juridica.getId(), fornecedorDTO.getIdFornecedor());
+				
+				if (juridicaCadastrada) {
+					
+					mensagens.add("Pessoa Jurídica já cadastrada para outro fornecedor.");
+				}	
+			}
+			
+			this.validaTelefones(mensagens);
+
+	        this.validarEnderecos(mensagens);
+			
+		} else {
+			
+			if(fornecedorDTO.getIdBanco() == null) {
+				mensagens.add("O preenchimento do [Banco] é obrigatório.");
+			}
+		}
+		
+		if (fornecedorDTO.getCanalDistribuicao() == null){
+			
+			mensagens.add("O preenchimento do [Canal Distribuição] é obrigatório.");
+		}
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
 	}
 	
 	@Post
@@ -324,20 +475,6 @@ public class FornecedorController extends BaseController {
 		this.result.use(CustomJson.class).from(mapa).serialize();
 	}
 	
-	private void obterTiposFornecedor() {
-
-		List<ComboTipoFornecedorDTO> combo = this.tipoFornecedorService.obterComboTipoFornecedor();
-
-		this.result.include("combo", combo);
-	}
-	
-	private void obterBancos() {
-
-		List<ItemDTO<Integer, String>> bancos = this.bancoService.getComboBancos(true);
-
-		this.result.include("listaBancos", bancos);
-	}
-	
 	/**
 	 * Valida existência de endereço e existência de endereço principal
 	 * @param mensagensValidacao
@@ -383,7 +520,7 @@ public class FornecedorController extends BaseController {
     
     	Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 
-		if (map.keySet().isEmpty()) {
+		if (map.isEmpty()) {
 			
 			mensagensValidacao.add("Pelo menos um telefone deve ser cadastrado para o fornecedor.");
 		
@@ -391,9 +528,9 @@ public class FornecedorController extends BaseController {
 			
 			boolean temPrincipal = false;
 			
-			for (Integer key : map.keySet()){
+			for (Entry<Integer, TelefoneAssociacaoDTO> entry : map.entrySet()){
 
-				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
+				TelefoneAssociacaoDTO telefoneAssociacaoDTO = entry.getValue();
 				
 				if (telefoneAssociacaoDTO.isPrincipal()) {
 					
@@ -409,152 +546,6 @@ public class FornecedorController extends BaseController {
 			}
 		}
     }
-    
-    private void validarFornecedorOrigemInterface(FornecedorDTO fornecedorDTO) {
-
-    	List<String> mensagens = new ArrayList<String>();
-    	
-		if(fornecedorDTO.getIdBanco() == null) {
-			mensagens.add("O preenchimento do [Banco] é obrigatório.");
-		}
-		
-		if (!mensagens.isEmpty()) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
-		}
-		
-    }
-    
-	private void validarFornecedorOrigemManual(FornecedorDTO fornecedorDTO) {
-		
-		List<String> mensagens = new ArrayList<String>();
-		
-		
-		if(fornecedorDTO.getInscricaoEstadual() == null || fornecedorDTO.getInscricaoEstadual().isEmpty()) {
-			mensagens.add("O preenchimento do campo [Inscrição Estadual] é obrigatório.");
-		}
-		
-		if (fornecedorDTO.getCodigoInterface() == null) {
-			
-			mensagens.add("O preenchimento do campo [Codigo] é obrigatório.");
-		
-		} else {
-			
-			if(	fornecedorDTO.getCodigoInterface() > Constantes.MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL) {
-				
-				mensagens.add(	" Valor do campo [Codigo] não deve exceder "+ Constantes.MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL + 
-								" para fornecedor de origem MANUAL.");
-				
-			} else {
-				
-				Fornecedor fornecedor = fornecedorService.obterFornecedorPorCodigoInterface(fornecedorDTO.getCodigoInterface());
-				
-				if(fornecedor!=null && !fornecedor.getId().equals(fornecedorDTO.getIdFornecedor())) {
-					mensagens.add(" Valor do campo [Codigo] já esta sendo utilizado.");
-				}
-				
-			}
-			
-		}
-		
-		if (fornecedorDTO.getRazaoSocial() == null || fornecedorDTO.getRazaoSocial().isEmpty()) {
-			
-			mensagens.add("O preenchimento do campo [Razao Social] é obrigatório.");
-		}
-		
-		CNPJValidator cnpjValidator = new CNPJValidator(true);
-		
-		if (fornecedorDTO.getCnpj() == null || fornecedorDTO.getCnpj().isEmpty()) {
-			
-			mensagens.add("O preenchimento do campo [CNPJ] é obrigatório.");
-		
-		} else {
-			
-			try{
-				
-				cnpjValidator.assertValid(fornecedorDTO.getCnpj());
-			
-			} catch(InvalidStateException e){
-				
-				mensagens.add("CNPJ inválido.");
-			}
-		}
-		
-		if(fornecedorDTO.getIdBanco() == null) {
-			mensagens.add("O preenchimento do [Banco] é obrigatório.");
-		}
-		
-		if (fornecedorDTO.getIdFornecedor() != null) {
-			Fornecedor fornecedorCadastrado = fornecedorService.obterFornecedorPorId(fornecedorDTO.getIdFornecedor());
-			if (fornecedorCadastrado != null) {
-				String cnpjAlterado = fornecedorDTO.getCnpj().replaceAll("[/.-]", "");
-				if (!fornecedorCadastrado.getJuridica().getCnpj().equals( cnpjAlterado )) {
-					mensagens.add("Não é possível alterar o CNPJ do fornecedor cadastrado!");
-				}
-			}
-		}
-		
-		if (!StringUtil.isEmpty(fornecedorDTO.getEmailNfe())) {
-			if (!Util.validarEmail(fornecedorDTO.getEmailNfe())) {
-				mensagens.add("O preenchimento do campo [E-mail NFe] está inválido!");
-			}
-		}
-		
-		if (!StringUtil.isEmpty(fornecedorDTO.getEmail())) {
-			if (!Util.validarEmail(fornecedorDTO.getEmail())) {
-				mensagens.add("O preenchimento do campo [E-mail] está inválido!");
-			}
-		}
-		
-		if (fornecedorDTO.isPossuiContrato()) {
-			
-			if (fornecedorDTO.getValidadeContrato() == null || fornecedorDTO.getValidadeContrato().isEmpty()) {
-			
-				mensagens.add("O preenchimento do campo [Validade] é obrigatório.");
-
-			} else {
-			
-				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
-				
-				try {
-					
-					simpleDateFormat.parse(fornecedorDTO.getValidadeContrato());
-					
-				} catch (ParseException e) {
-	
-					mensagens.add("O preenchimento do campo [Validade] não é válido.");
-				}
-			}
-		}
-
-		String cnpj = "";
-		
-		if (fornecedorDTO.getCnpj() != null && !fornecedorDTO.getCnpj().isEmpty()) {
-			cnpj = fornecedorDTO.getCnpj().replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
-		}
-		
-		PessoaJuridica juridica = 
-				this.pessoaJuridicaService.buscarPorCnpj(cnpj);
-		
-		if (juridica != null) {
-			
-			boolean juridicaCadastrada = 
-					this.fornecedorService.isPessoaJaCadastrada(juridica.getId(), fornecedorDTO.getIdFornecedor());
-			
-			if (juridicaCadastrada) {
-				
-				mensagens.add("Pessoa Jurídica já cadastrada para outro fornecedor.");
-			}	
-		}
-		
-		this.validaTelefones(mensagens);
-
-        this.validarEnderecos(mensagens);
-        
-		if (!mensagens.isEmpty()) {
-			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
-		}
-	}
 	
 	/*
 	 * Método responsável por processar os endereços do entregador.
@@ -773,6 +764,8 @@ public class FornecedorController extends BaseController {
 		}
 		
 		fornecedorDTO.setValidadeContrato(DateUtil.formatarDataPTBR(fornecedor.getValidadeContrato()));
+		
+		fornecedorDTO.setCanalDistribuicao(fornecedor.getCanalDistribuicao());
 		
 		return fornecedorDTO;
 	}

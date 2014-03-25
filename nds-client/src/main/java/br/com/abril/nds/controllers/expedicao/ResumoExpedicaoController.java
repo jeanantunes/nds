@@ -366,7 +366,7 @@ public class ResumoExpedicaoController extends BaseController {
  
 		ResultadoResumoExpedicaoVO<ResumoExpedicaoBoxVO> resultadoResumoExpedicao = 
 			new ResultadoResumoExpedicaoVO<ResumoExpedicaoBoxVO>(
-				tableModel, retornoExpedicaoVO.getTotalReparte().intValue(), valorTotalFaturadoFormatado);
+				tableModel, (retornoExpedicaoVO.getTotalReparte() == null)?0:retornoExpedicaoVO.getTotalReparte().intValue(), valorTotalFaturadoFormatado);
 
 		result.use(Results.json()).withoutRoot().from(resultadoResumoExpedicao).recursive().serialize();
 	}
@@ -446,7 +446,7 @@ public class ResumoExpedicaoController extends BaseController {
 
 		ResultadoResumoExpedicaoVO<ResumoExpedicaoVO> resultadoResumoExpedicao = 
 			new ResultadoResumoExpedicaoVO<ResumoExpedicaoVO>(
-				tableModel, retornoExpedicaoVO.getTotalReparte().intValue(), valorTotalFaturadoFormatado);
+				tableModel, (retornoExpedicaoVO.getTotalReparte() == null)?0: retornoExpedicaoVO.getTotalReparte().intValue(), valorTotalFaturadoFormatado);
 
 		result.use(Results.json()).withoutRoot().from(resultadoResumoExpedicao).recursive().serialize();
 
@@ -481,14 +481,14 @@ public class ResumoExpedicaoController extends BaseController {
 			resumoExpedicaoVO.setDescricaoProduto(expd.getNomeProduto());
 			resumoExpedicaoVO.setEdicaoProduto(getValor(expd.getNumeroEdicao()));
 			resumoExpedicaoVO.setPrecoCapa(CurrencyUtil.formatarValor(expd.getPrecoCapa()));
-			resumoExpedicaoVO.setReparte(expd.getQntReparte().add(expd.getQntDiferenca()));
+			resumoExpedicaoVO.setReparte(expd.getQntReparte() == null ? BigInteger.ZERO: expd.getQntReparte());
 			resumoExpedicaoVO.setQntDiferenca(expd.getQntDiferenca());
 			
 			BigDecimal valorDiferenca = 
 				expd.getPrecoCapa().multiply(new BigDecimal(expd.getQntDiferenca()));
 			
 			resumoExpedicaoVO.setValorFaturado(
-				CurrencyUtil.formatarValor(expd.getValorFaturado().add(valorDiferenca)));
+				CurrencyUtil.formatarValor( (expd.getValorFaturado() == null)? valorDiferenca : expd.getValorFaturado().add(valorDiferenca)));
 			
 			listaLancamentosExpedidos.add(resumoExpedicaoVO);
 		}

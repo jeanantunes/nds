@@ -24,7 +24,7 @@
       <tr>
         <td>Status:</td>
         <td width="135">
-        	<select name="selectStatus" id="selectStatus">
+        	<select name="selectStatusPDV" id="selectStatusPDV">
 	          
 	          <option selected="selected" value="-1"> </option>
 	          

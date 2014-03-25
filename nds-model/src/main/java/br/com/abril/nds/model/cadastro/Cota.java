@@ -33,6 +33,7 @@ import org.hibernate.annotations.Cascade;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.distribuicao.RankingSegmento;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -62,7 +63,7 @@ public class Cota implements Serializable {
 	private Pessoa pessoa;
 	
 	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
-	private boolean sugereSuspensao;
+	private boolean sugereSuspensao = true;
 	
 	@Column(name = "POSSUI_CONTRATO", nullable = false)
 	private boolean possuiContrato;
@@ -89,7 +90,7 @@ public class Cota implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "BOX_ID")
-	private Box box; 
+	private Box box;
 	
 	@Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
 	@OneToMany(mappedBy = "cota")
@@ -100,7 +101,7 @@ public class Cota implements Serializable {
 	
 	@OneToOne(mappedBy = "cota")
 	private ParametroCobrancaCota parametroCobranca;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_COTA", columnDefinition = "VARCHAR(255)", nullable=false)
 	private TipoCota tipoCota;
@@ -122,7 +123,12 @@ public class Cota implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private TipoDistribuicaoCota tipoDistribuicaoCota;
 	
-
+	@OneToMany(mappedBy="cota", fetch=FetchType.LAZY)
+	private List<RankingSegmento> rankingSegmento;
+	
+	@OneToMany(mappedBy="cota", fetch=FetchType.LAZY)
+	private List<EstoqueProdutoCota> estoqueProdutoCota;
+	
 	/**
 	 * Data de início de atividade da cota
 	 */
@@ -173,7 +179,7 @@ public class Cota implements Serializable {
 	@OneToMany(mappedBy = "cota", cascade = {CascadeType.ALL})
 	private Set<HistoricoTitularidadeCota> titularesCota =new HashSet<HistoricoTitularidadeCota>();
 	
-	/**
+	/** 
 	 * Referente a garantias da cota.
 	 */
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
@@ -182,6 +188,13 @@ public class Cota implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "ALTERACAO_TIPO_COTA")
 	private Date alteracaoTipoCota;
+	
+	@ManyToMany(mappedBy = "cotas", fetch = FetchType.LAZY)
+	private Set<CotaUnificacao> cotasUnificacao;
+	
+	@Column(name = "RECEBE_RECOLHE_PARCIAIS", insertable=false,  updatable=false)
+	private Integer recebeRecolheParciais;
+	///insertable = false, updatable = false
 	
 	public Cota() {
         this.inicioAtividade = new Date();
@@ -563,15 +576,6 @@ public class Cota implements Serializable {
 	public void setCotaGarantia(CotaGarantia cotaGarantia) {
 		this.cotaGarantia = cotaGarantia;
 	}
-
-	public TipoDistribuicaoCota getTipoDistribuicaoCota() {
-		return tipoDistribuicaoCota;
-	}
-
-
-	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
-		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
-	}
 	
 	public EnderecoCota getEnderecoPrincipal(){
 		for(EnderecoCota item:this.getEnderecos()){
@@ -600,13 +604,58 @@ public class Cota implements Serializable {
 		return null;
 	}
 
+	public TipoDistribuicaoCota getTipoDistribuicaoCota() {
+		return tipoDistribuicaoCota;
+	}
+
+	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
+		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
+	}
+
+	public List<RankingSegmento> getRankingSegmento() {
+		return rankingSegmento;
+	}
+
+
+	public void setRankingSegmento(List<RankingSegmento> rankingSegmento) {
+		this.rankingSegmento = rankingSegmento;
+	}
+
+
+	public List<EstoqueProdutoCota> getEstoqueProdutoCota() {
+		return estoqueProdutoCota;
+	}
+
+
+	public void setEstoqueProdutoCota(List<EstoqueProdutoCota> estoqueProdutoCota) {
+		this.estoqueProdutoCota = estoqueProdutoCota;
+	}
+
+
+	public Integer getRecebeRecolheParciais() {
+		return recebeRecolheParciais;
+	}
+
+
+	public void setRecebeRecolheParciais(Integer recebeRecolheParciais) {
+		this.recebeRecolheParciais = recebeRecolheParciais;
+	}
+	
 
 	public Date getAlteracaoTipoCota() {
 		return alteracaoTipoCota;
 	}
 
-
 	public void setAlteracaoTipoCota(Date alteracaoTipoCota) {
 		this.alteracaoTipoCota = alteracaoTipoCota;
 	}
+
+	public Set<CotaUnificacao> getCotasUnificacao() {
+		return cotasUnificacao;
+	}
+
+	public void setCotasUnificacao(Set<CotaUnificacao> cotasUnificacao) {
+		this.cotasUnificacao = cotasUnificacao;
+	}
+	
 }

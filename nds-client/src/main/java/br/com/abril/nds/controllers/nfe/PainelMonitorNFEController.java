@@ -82,6 +82,7 @@ public class PainelMonitorNFEController extends BaseController {
 	private static final String NFES_PARA_IMPRESSAO_DANFES= "nfesParaImpressaoDanfes";
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE)
 	public void index(){
 		
 		carregarComboSituacaoNfe();

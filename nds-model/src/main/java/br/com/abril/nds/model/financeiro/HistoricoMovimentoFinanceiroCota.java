@@ -31,7 +31,7 @@ public class HistoricoMovimentoFinanceiroCota extends HistoricoEdicao {
 	@JoinColumn(name = "TIPO_MOVTO_ID")
 	private TipoMovimentoFinanceiro tipoMovimento;
 	
-	@Column(name = "VALOR", nullable = false, precision=18, scale=4)
+	@Column(name = "VALOR", nullable = false)
 	private BigDecimal valor;
 	
 	@Temporal(TemporalType.DATE)

@@ -18,19 +18,19 @@
 		<authentication-provider ref="preauthAuthProvider" />		
 	</authentication-manager>
 
-	<bean id="webgateFilter" class="org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
-		<property name="principalRequestHeader" value="SM_USER" />
-		<property name="authenticationManager" ref="authenticationManager" />
-	</bean>
+	<beans:bean id="webgateFilter" class="org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
+		<beans:property name="principalRequestHeader" value="SM_USER" />
+		<beans:property name="authenticationManager" ref="authenticationManager" />
+	</beans:bean>
 
-	<bean id="preauthAuthProvider"	class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
-		<property name="preAuthenticatedUserDetailsService">
-			<bean id="userDetailsServiceWrapper"
+	<beans:bean id="preauthAuthProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+		<beans:property name="preAuthenticatedUserDetailsService">
+			<beans:bean id="userDetailsServiceWrapper"
 				class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
-				<property name="userDetailsService" ref="userDetailsService" />
-			</bean>
-		</property>
-	</bean>
+				<beans:property name="userDetailsService" ref="userDetailsService" />
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
 			
 	<beans:import resource="applicationContext-security-common.xml" />
 </beans:beans>

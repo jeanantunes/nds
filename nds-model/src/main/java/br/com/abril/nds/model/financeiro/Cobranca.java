@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -70,10 +71,10 @@ public abstract class Cobranca {
 	@Column(name = "DT_PAGAMENTO", nullable = true)
 	protected Date dataPagamento;
 	
-	@Column(name = "ENCARGOS", nullable = true, precision=18, scale=4)
+	@Column(name = "ENCARGOS", nullable = true)
 	protected BigDecimal encargos;
 
-	@Column(name = "VALOR", nullable = false, precision=18, scale=4)
+	@Column(name = "VALOR", nullable = false)
 	protected BigDecimal valor;
 	
 	@Enumerated(EnumType.STRING)
@@ -99,7 +100,7 @@ public abstract class Cobranca {
 	@JoinColumn(name = "DIVIDA_ID")
 	protected Divida divida;
 	
-	@OneToMany(mappedBy = "cobranca")
+	@OneToMany(mappedBy = "cobranca", cascade = CascadeType.ALL)
 	protected List<BaixaCobranca> baixasCobranca = new ArrayList<BaixaCobranca>();
 	
 	@Column(name="VIAS")
@@ -118,6 +119,10 @@ public abstract class Cobranca {
 	
 	@Column(name="ENVIAR_POR_EMAIL")
 	private boolean enviarPorEmail;
+	
+	@ManyToOne
+	@JoinColumn(name="COBRANCA_CENTRALIZACAO_ID")
+	private CobrancaCentralizacao cobrancaCentralizacao;
 	
 	public Long getId() {
 		return id;
@@ -309,5 +314,19 @@ public abstract class Cobranca {
 	 */
 	public void setEnviarPorEmail(boolean enviarPorEmail) {
 		this.enviarPorEmail = enviarPorEmail;
+	}
+
+	/**
+	 * @return the cobrancaCentralizacao
+	 */
+	public CobrancaCentralizacao getCobrancaCentralizacao() {
+		return cobrancaCentralizacao;
+	}
+
+	/**
+	 * @param cobrancaCentralizacao the cobrancaCentralizacao to set
+	 */
+	public void setCobrancaCentralizacao(CobrancaCentralizacao cobrancaCentralizacao) {
+		this.cobrancaCentralizacao = cobrancaCentralizacao;
 	}	
 }

@@ -171,7 +171,7 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 			
 		hql.append("             or ccc.codigoDiaSemana = :diaSemana ) )");
 		
-		hql.append(" and f.principal = :principal ");
+		hql.append(" and p.principal = :principal ");
 		
 
 		Query query = super.getSession().createQuery(hql.toString());
@@ -385,20 +385,77 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         return query.list();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<FormaCobranca> obterFormasCobrancaAtivaCotas(Boolean ativa) {
+	public boolean obterFormasCobrancaAtivaCotas(Boolean ativa, Long idFormaCobranca) {
 		
-		StringBuilder hql = new StringBuilder();
-		hql.append(" select f ")
-			.append("from FormaCobranca f ")
-			.append("where f.ativa = :ativa  ");
-
-		Query query = super.getSession().createQuery(hql.toString());
+		Query query = super.getSession().createQuery(
+				"select case when count(f.id) > 0 then true else false end " +
+				"from FormaCobranca f " +
+				"join f.parametroCobrancaCota pc " +
+				"where f.ativa = :ativa " +
+				"and f.id = :idFormaCobranca ");
         
 		query.setParameter("ativa", ativa);
+		query.setParameter("idFormaCobranca", idFormaCobranca);
 
-		return query.list();
+		return (boolean) query.uniqueResult();
 	}
 
+	@Override
+	public void removerFormasCobrancaCota(Integer numeroCota) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"delete from ParametroCobrancaCota c join c.cota cota where cota.numeroCota = :numeroCota");
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.executeUpdate();
+	}
+	
+	/**
+	 * Obtem lista de FormaCobranca ativa da cota ou do distribuidor
+	 * Onde a concentração de pagamento é compatível com a data de operação atual
+	 * 
+	 * @param idFornecedor
+	 * @param diaDoMes
+	 * @param diaDaSemana
+	 * @return List<FormaCobranca>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FormaCobranca> obterFormasCobrancaPorFornecedor(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select f from FormaCobranca f ");		
+		
+		hql.append(" left join f.fornecedores fnc ");
+		
+		hql.append(" left join f.concentracaoCobrancaCota ccc ");
+		
+		hql.append(" where f.ativa = :indAtiva ");
+		
+		hql.append(" and fnc.id = :idFornecedor ");
+
+	    hql.append(" and ( f.tipoFormaCobranca = :tipoFormaCobranca ");
+			
+	    hql.append("       or ( :diaMes IN ELEMENTS(f.diasDoMes) ");
+				
+		hql.append("             or ccc.codigoDiaSemana = :diaSemana ) )");
+			
+		Query query = super.getSession().createQuery(hql.toString());
+        
+        query.setParameter("indAtiva", true);
+        	
+        query.setParameter("idFornecedor", idFornecedor);
+        
+        query.setParameter("diaMes", diaDoMes);
+        
+        query.setParameter("diaSemana", diaDaSemana);
+        
+        query.setParameter("tipoFormaCobranca", TipoFormaCobranca.DIARIA);
+        
+        return query.list();
+	}
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.engine;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -17,6 +18,8 @@ import br.com.abril.nds.repository.AbstractRepository;
 
 @Component("fileOutputRouter")
 public class FileOutputRouter extends AbstractRepository implements ContentBasedRouter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileOutputRouter.class);
 
 	@Autowired
 	private PlatformTransactionManager transactionManager;
@@ -55,9 +58,9 @@ public class FileOutputRouter extends AbstractRepository implements ContentBased
 					return null;
 				}
 			});
-		} catch(Throwable e) {
+		} catch(Exception e) {
 			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 
 	}

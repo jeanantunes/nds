@@ -32,30 +32,36 @@ var parametroCobrancaCotaController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			},{
-				display : 'Concentração de Pagamento',
+				display : 'Concentração',
 				name : 'concentracaoPagto',
-				width : 220,
+				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Tipo de Pagamento',
+				display : 'Tipo Pagamento',
 				name : 'tipoPagto',
 				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Detalhes - Tipo de Pagamento',
+				display : 'Banco',
 				name : 'detalhesTipoPagto',
-				width : 250,
+				width : 165,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Parâmetro Distribuidora',
+				display : 'P.Dist',
 				name : 'parametroDistribuidor',
-				width : 120,
+				width : 40,
 				sortable : true,
 				align : 'left'
-			},{
+			}, {
+				display : 'Unificação',
+				name : 'unificacao',
+				width : 100,
+				sortable : false,
+				align : 'center'
+			}, {
 				display : 'Ação',
 				name : 'acao',
 				width : 50,
@@ -90,7 +96,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 		});
 		
 		$("#numBanco", this.workspace).numeric();
-		$("#nomeBanco", this.workspace).numeric();
 		$("#agencia", this.workspace).numeric();
 		$("#agenciaDigito", this.workspace).numeric();
 		$("#conta", this.workspace).numeric();
@@ -224,9 +229,14 @@ var parametroCobrancaCotaController = $.extend(true, {
 
     montarComboBox : function(result,name,onChange) {
 		
+    	var desabilitar = "";
+    	if ($("#" + name, parametroCobrancaCotaController.workspace).attr("disabled")){
+    		desabilitar = "disabled='disabled'";
+    	}
+    	
 		var options = "";
 		
-		options += "<select name='"+name+"' id='"+name+"' style='width:220px;' onchange='"+onChange+"'>";
+		options += "<select " + desabilitar + " name='"+name+"' id='"+name+"' style='width:220px;' onchange='"+onChange+"'>";
 		options += "<option value=''>Selecione</option>";
 		$.each(result, function(index, row) {
 			options += "<option value='" + row.key.$ + "'>"+ row.value.$ +"</option>";	
@@ -295,7 +305,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		var comboFornecedoresPadrao =  parametroCobrancaCotaController.montarComboBox(result,"fornecedorPadrao","");
 		
-	    $("#fornecedoresPadrao", this.workspace).html(comboFornecedoresPadrao);
+	    $("#fornecedorPadrao", this.workspace).html(comboFornecedoresPadrao);
 	},
 
     mostrarGrid : function(idCota) {
@@ -349,7 +359,30 @@ var parametroCobrancaCotaController = $.extend(true, {
             
             row.cell.principal = row.cell.principal ? '<img src="'+ contextPath +'/images/ico_check.gif" hspace="5" border="0px" title="Forma de cobrança principal">' : '';
             
-			row.cell.acao = linkEditar + linkExcluir;
+            if (!row.cell.unificacao || row.cell.unificacao.toUpperCase() == 'UNIFICADORA'){
+            
+            	row.cell.acao = linkEditar + linkExcluir;
+            } else {
+            	
+            	$.each($("#formFinanceiro input", parametroCobrancaCotaController.workspace),
+            		function(idx, item){
+            			$(item).attr("disabled", "disabled");
+            		}
+            	);
+            	
+            	$.each($("#formFinanceiro select", parametroCobrancaCotaController.workspace),
+            		function(idx, item){
+            			$(item).attr("disabled", "disabled");
+            		}
+            	);
+            	
+            	row.cell.acao = '';
+            }
+            
+            if (!row.cell.unificacao){
+            	
+            	row.cell.unificacao = '';
+            }
 		});
 			
 		//$(".grids", this.workspace).show();
@@ -393,25 +426,39 @@ var parametroCobrancaCotaController = $.extend(true, {
 		}
 	},
 	
+	opcaoPagtoBoletoEmBranco : function(isBoletoEmBranco){
+		
+		if (isBoletoEmBranco){
+		
+		    parametroCobrancaCotaController.opcaoTipoFormaCobranca('DIARIA');
+		}
+		
+		$("#semanal", this.workspace).prop('disabled', isBoletoEmBranco);
+		
+		$("#quinzenal", this.workspace).prop('disabled', isBoletoEmBranco);
+		
+		$("#mensal", this.workspace).prop('disabled', isBoletoEmBranco);
+		
+		return isBoletoEmBranco;
+	},
+	
 	opcaoPagto : function(op){
-				
+		
+		$('#divRecebeEmail', this.workspace).show();
+		
 		if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
 			$('#divComboBanco', this.workspace).show();
-			$('#divRecebeEmail', this.workspace).show();
 			$('#divDadosBancarios', this.workspace).hide();
 	    }
 		else if ((op=='CHEQUE')||(op=='TRANSFERENCIA_BANCARIA')){
 			$('#divComboBanco', this.workspace).show();
 			$('#divDadosBancarios', this.workspace).show();
-			$('#divRecebeEmail', this.workspace).hide();
 		}    
 		else if (op=='DEPOSITO'){
 			$('#divDadosBancarios', this.workspace).hide();
-			$('#divRecebeEmail', this.workspace).hide();
 			$('#divComboBanco', this.workspace).show();
 		}    
 		else{
-			$('#divRecebeEmail', this.workspace).hide();
 			$('#divComboBanco', this.workspace).hide();
 			$('#divDadosBancarios', this.workspace).hide();
 		}	
@@ -420,6 +467,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 	obterParametrosDistribuidor : function (op) {
 		
 		this.opcaoPagto(op);
+		
+		var isOpBoletoEmBranco = parametroCobrancaCotaController.opcaoPagtoBoletoEmBranco(op=='BOLETO_EM_BRANCO');
+		
+		if(isOpBoletoEmBranco){
+		    
+			return;
+		}
 		
 		var data = [{name: 'op', value: op}];
 		
@@ -982,8 +1036,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 	
 	obterFormaCobranca : function(idFormaCobranca){
+		
+		//hidden
+		$("#_idFormaCobranca", this.workspace).val(idFormaCobranca);
+		
 		var data = [{name: 'idFormaCobranca', value: idFormaCobranca}, 
 		            {name: 'modoTela', value: parametroCobrancaCotaController.modoTela.value }];
+		
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/obterFormaCobranca",
 				   data,
 				   parametroCobrancaCotaController.sucessCallbackFormaCobranca, 
@@ -992,9 +1051,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 
 	sucessCallbackFormaCobranca : function(resultado) {
-		
-		//hidden
-		$("#_idFormaCobranca", this.workspace).val(resultado.idFormaCobranca);
 		
 		parametroCobrancaCotaController.carregarComboTipoCobranca(resultado.tipoCobranca);
 		
@@ -1495,6 +1551,24 @@ var parametroCobrancaCotaController = $.extend(true, {
 			
 			$('#selectDevolveEncalhe', this.workspace).hide();
 		}
+	},
+	
+	verificaDataAlteracaoTipoCota : function(element){
+		
+		var data = [{name: 'idCota', value: $("#_idCota", this.workspace).val()}];
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/verificarDataAlteracaoTipoCota",
+			data,
+			function(result){
+				
+				parametroCobrancaCotaController.exibeDevolveEncalhe(element.value);
+			},
+			function(){
+				
+				element.value = element.oldValue;
+			},
+			null,
+			false
+		);
 	}
 	
 }, BaseController);

@@ -55,7 +55,7 @@ public class HistoricoSituacaoCota extends HistoricoEdicao implements Serializab
 	@Column(name = "PROCESSADO", nullable = true)
 	private boolean processado;
 	@Column(name = "RESTAURADO", nullable = true)
-	private boolean restaurado;
+	private Boolean restaurado;
 	
 	public Long getId() {
 		return id;
@@ -147,11 +147,11 @@ public class HistoricoSituacaoCota extends HistoricoEdicao implements Serializab
 		this.processado = processado;
 	}
 
-	public boolean isRestaurado() {
+	public Boolean isRestaurado() {
 		return restaurado;
 	}
 
-	public void setRestaurado(boolean restaurado) {
+	public void setRestaurado(Boolean restaurado) {
 		this.restaurado = restaurado;
 	}
 

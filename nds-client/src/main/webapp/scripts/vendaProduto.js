@@ -7,14 +7,34 @@ var vendaProdutoController = $.extend(true, {
 	intervalo : null,
 
 	init : function() {
+		
+		var workSpace = vendaProdutoController.workspace;
 
-		$(".area", vendaProdutoController.workspace).hide();
+		var autoComp = new AutoCompleteCampos(workSpace);
+		
+		$('#codigo', workSpace).bind({
+			keyup: function(){
+				autoComp.autoCompletarPorCodigo ("/produto/autoCompletarPorCodProduto",'#codigo', '#produto', 'codigoProduto', false, 4);
+			},
+			blur: function(){
+				autoComp.pesquisarPorCodigo ("/produto/pesquisarPorCodigoProduto",'#codigo', '#produto', 'codigoProduto');
+			}
+		});
+		
+		$('#produto', workSpace).bind({
+			keyup: function(){
+				autoComp.autoCompletarPorNome("/produto/autoCompletarPorNomeProduto",'#codigo', '#produto', 'nomeProduto', false, 2);
+			},
+			blur: function(){
+				autoComp.pesquisarPorNome("/produto/pesquisarPorNomeProduto",'#codigo', '#produto', 'nomeProduto');
+			}
+		});
+		
+		$(".area", workSpace).hide();
 		
 		window.addEventListener('blur', function() {
 			window.clearInterval(vendaProdutoController.intervalo);
 		});
-
-		$("#produto", vendaProdutoController.workspace).autocomplete({source: ""});				
 
 		$(".parciaisGrid", vendaProdutoController.workspace).flexigrid({
 			preProcess: vendaProdutoController.executarPreProcessamento,
@@ -25,6 +45,18 @@ var vendaProdutoController = $.extend(true, {
 				width : 100,
 				sortable : true,
 				align : 'left'
+			}, {
+				display : 'Período',
+				name : 'periodoFormatado',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Estudo',
+				name : 'numeroEstudo',
+				width : 70,
+				sortable : true,
+				align : 'center'
 			}, {
 				display : 'Dt. Lcto',
 				name : 'dataLancamento',
@@ -81,7 +113,7 @@ var vendaProdutoController = $.extend(true, {
 				align : 'center'
 			}],
 			sortname : "numEdicao",
-			sortorder : "desc",
+			sortorder : "asc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -189,150 +221,6 @@ var vendaProdutoController = $.extend(true, {
 		});
 	},
 	
-	pesquisarPorCodigoProduto : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-		var codigoProduto = $(idCodigo,this.workspace).val();
-
-		codigoProduto = $.trim(codigoProduto);
-
-		$(idCodigo,this.workspace).val(codigoProduto);
-
-		$(idProduto,this.workspace).val("");
-
-		if (codigoProduto && codigoProduto.length > 0) {
-
-			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-					{codigoProduto:codigoProduto},
-					function(result) { vendaProdutoController.pesquisarPorCodigoSuccessCallBack(result, idProduto, successCallBack); },
-					function() { vendaProdutoController.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
-
-		} else {
-
-			if (errorCallBack) {
-				errorCallBack();
-			}
-		}
-	},
-
-	autoCompletarPorNome : function(idProduto, isFromModal) {
-		
-		vendaProdutoController.pesquisaRealizada = false;
-
-		var nome = $(idProduto,this.workspace).val();
-
-		if (nome && nome.length > 2) {
-			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {'filtro.nome': nome},
-					function(result) { vendaProdutoController.exibirAutoComplete(result, idProduto); },
-					null, isFromModal);
-		}
-	},
-	
-	pesquisarPorNome : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-		setTimeout(function() {
-			
-			clearInterval(vendaProdutoController.intervalo); 
-		
-		}, 10 * 1000);
-
-		vendaProdutoController.intervalo = setInterval(function() {
-			
-			if (vendaProdutoController.descricaoAtribuida) {
-
-				if (vendaProdutoController.pesquisaRealizada) {
-					
-					clearInterval(vendaProdutoController.intervalo);
-
-					return;
-				}
-
-				vendaProdutoController.pesquisarPorNomeAposIntervalo(idCodigo, idProduto,
-						isFromModal, successCallBack, errorCallBack);
-			}
-
-		}, 100);
-		
-	},
-
-	pesquisarPorNomeAposIntervalo : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-		
-		clearInterval(vendaProdutoController.intervalo);
-
-		vendaProdutoController.pesquisaRealizada = true;
-
-		var nomeProduto = $(idProduto,this.workspace).val();
-
-		nomeProduto = $.trim(nomeProduto);
-
-		$(idCodigo,this.workspace).val("");
-
-		if (nomeProduto && nomeProduto.length > 0) {
-			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"filtro.nome" : nomeProduto},
-					function(result) { vendaProdutoController.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, successCallBack); },
-					function() { vendaProdutoController.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, errorCallBack); }, isFromModal);
-		} else {
-
-			if (errorCallBack) {
-				errorCallBack();
-			}
-		}
-	},
-	
-	pesquisarPorCodigoSuccessCallBack : function(result, idProduto, successCallBack, idCodigo, isFromModal) {
-
-		$(idProduto,this.workspace).val(result.nome);
-
-		vendaProdutoController.pesquisaRealizada = true;
-
-		if (successCallBack) {
-			successCallBack();
-		}
-	},
-
-	pesquisarPorCodigoErrorCallBack : function(idCodigo, errorCallBack) {
-		$(idCodigo,this.workspace).val("");
-		$(idCodigo).focus();
-
-		if (errorCallBack) {
-			errorCallBack();
-		}
-	},
-
-	pesquisarPorNomeSuccessCallBack : function(result, idCodigo, idProduto, successCallBack) {
-		if (result != "") {
-			$(idCodigo,this.workspace).val(result.codigo);
-			$(idProduto,this.workspace).val(result.nome);
-
-			if (successCallBack) {
-				successCallBack();
-			}
-		}
-	},
-
-	pesquisarPorNomeErrorCallBack : function(idCodigo, idProduto, errorCallBack) {
-		$(idProduto,this.workspace).val("");
-		$(idProduto).focus();
-
-		if (errorCallBack) {
-			errorCallBack();
-		}
-	},	
-
-	exibirAutoComplete : function(result, idProduto) {
-		
-		$(idProduto).autocomplete({
-			source : result,
-			focus : function(event, ui) {
-				vendaProdutoController.descricaoAtribuida = false;
-			},
-			close : function(event, ui) {
-				vendaProdutoController.descricaoAtribuida = true;
-			},
-			select : function(event, ui) {
-				vendaProdutoController.descricaoAtribuida = true;
-			},
-			minLength: 4,
-			delay : 0,
-		});
-	},
 	
 	completarPesquisa : function(chave){
 		$("#codigo", vendaProdutoController.workspace).val(chave.codigoProduto);
@@ -360,6 +248,9 @@ var vendaProdutoController = $.extend(true, {
 		data.push({name:'filtro.edicao',		value: vendaProdutoController.get("edicoes")});
 		data.push({name:'filtro.idFornecedor',		value: vendaProdutoController.get("idFornecedor")});		
 		data.push({name:'filtro.nomeFornecedor',	value: $('#idFornecedor option:selected', vendaProdutoController.workspace).text()});
+		data.push({name:'filtro.numeroCota',		value: vendaProdutoController.get("numeroCota")});
+		data.push({name:'filtro.nomeCota',		value: vendaProdutoController.get("nomeCota")});
+		data.push({name:'filtro.idClassificacaoProduto',		value: vendaProdutoController.get("selectClassificacao")});
 		
 		return data;
 	},
@@ -397,7 +288,7 @@ var vendaProdutoController = $.extend(true, {
 			
 			if (row.cell.parcial) {
 				
-				linkDetalhe = '<a href="javascript:;" onclick="vendaProdutoController.popup_detalhes(\'' + row.cell.codigoProduto + '\',' + row.cell.numEdicao + ');" style="cursor:pointer">' +
+				linkDetalhe = '<a href="javascript:;" onclick="vendaProdutoController.popup_detalhes(' + row.cell.codigoProduto + ',' + row.cell.numEdicao + ');" style="cursor:pointer">' +
 							  	'<img title="Lançamentos da Edição" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
 							  '</a>';
 			} else {

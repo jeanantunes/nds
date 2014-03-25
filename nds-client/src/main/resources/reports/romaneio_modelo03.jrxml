@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo03" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" whenResourceMissingType="Empty">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo03" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" whenResourceMissingType="Empty" uuid="5d07c543-9348-4ee6-9942-a93fdf0be294">
 	<property name="ireport.zoom" value="1.6105100000000057"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -7,6 +7,8 @@
 		<defaultValueExpression><![CDATA["C:\\Projetos\\Abril\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="QTD_COLUNAS_PRODUTO" class="java.lang.Integer"/>
+	<parameter name="RAZAO_SOCIAL_DISTRIBUIDOR" class="java.lang.String"/>
+	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -43,12 +45,24 @@
 	<field name="nomeProduto5" class="java.lang.String">
 		<fieldDescription><![CDATA[nomeProduto5]]></fieldDescription>
 	</field>
+	<group name="resetPageNumberGroup" isResetPageNumber="true" minHeightToStartNewPage="1">
+		<groupExpression><![CDATA[$F{itens}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+	</group>
 	<pageHeader>
-		<band height="115">
+		<band height="67">
 			<subreport runToBottom="false">
-				<reportElement x="0" y="0" width="802" height="115" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="0" y="0" width="802" height="67" isPrintWhenDetailOverflows="true" uuid="1cc7d197-bdeb-43d8-9b9c-a1a7bac126f0"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO_DISTRIBUIDOR">
+					<subreportParameterExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAZAO_SOCIAL_DISTRIBUIDOR">
+					<subreportParameterExpression><![CDATA[$P{RAZAO_SOCIAL_DISTRIBUIDOR}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="NOME_BOX">
 					<subreportParameterExpression><![CDATA[$F{entregaBox}]]></subreportParameterExpression>
@@ -59,11 +73,11 @@
 				<subreportParameter name="NOME_ROTEIRO">
 					<subreportParameterExpression><![CDATA[$F{roteiro}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="DATA_GERACAO">
-					<subreportParameterExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{dataGeracao})]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="NOME_ROTA">
 					<subreportParameterExpression><![CDATA[$F{rota}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_GERACAO">
+					<subreportParameterExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{dataGeracao})]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "romaneio_page_header.jasper"]]></subreportExpression>
@@ -73,7 +87,7 @@
 	<detail>
 		<band height="440" splitType="Stretch">
 			<subreport runToBottom="true">
-				<reportElement x="0" y="0" width="802" height="440"/>
+				<reportElement x="0" y="0" width="802" height="440" uuid="e753229a-f6fe-47cd-bd8a-8787bf24c773"/>
 				<subreportParameter name="NOME_PRODUTO_4">
 					<subreportParameterExpression><![CDATA[$F{nomeProduto4}]]></subreportParameterExpression>
 				</subreportParameter>

@@ -9,6 +9,7 @@ import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.DetalhesDividaVO;
 import br.com.abril.nds.dto.PagamentoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -84,6 +85,7 @@ public interface CobrancaService {
 	 */
 	CobrancaVO obterDadosCobranca(Long idCobranca, Date dataPagamento);
 	
+	CobrancaVO obterDadosCobrancaBoletoAntecipado(String nossoNumero, Date dataPagamento, BigDecimal valor);
 	
 	/**
 	 * Método responsável por obter dados somados de cobranças por códigos
@@ -139,6 +141,13 @@ public interface CobrancaService {
 	void confirmarBaixaManualDividas(List<Long> idsBaixaCobranca);
 
 	List<TipoCobranca> obterTiposCobrancaCadastradas();
-
+	
+	/**
+	 * Valida se a data de pagamento é maior que a data de emissao das cobrancas selecionadas
+	 * 
+	 * @param idCobrancas
+	 * @param dataPagamento
+	 */
+	void validarDataPagamentoCobranca(List<Long> idCobrancas, Date dataPagamento) throws ValidacaoException;
 	
 }

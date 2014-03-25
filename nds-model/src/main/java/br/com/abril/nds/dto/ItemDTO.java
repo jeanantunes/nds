@@ -114,5 +114,9 @@ public class ItemDTO<K extends Serializable, V extends Serializable> implements 
 		return "ItemDTO [key=" + key + ", value=" + value + "]";
 	}
 	
+	public String toFormattedString(){
+		return  key + "- " + value;
+	}
+	
 
 }

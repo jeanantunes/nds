@@ -71,9 +71,7 @@ public class TipoMovimentoRepositoryImpl extends AbstractRepositoryModel<TipoMov
 				
 		Query query =  getSession().createQuery(hql.toString());
 				
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				TipoMovimentoDTO.class));
@@ -100,9 +98,7 @@ public class TipoMovimentoRepositoryImpl extends AbstractRepositoryModel<TipoMov
 				
 		Query query =  getSession().createQuery(hql.toString());
 				
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		Long qtde = (Long) query.uniqueResult();
 		

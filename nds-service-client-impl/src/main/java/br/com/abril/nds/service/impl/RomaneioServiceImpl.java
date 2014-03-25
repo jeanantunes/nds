@@ -1,6 +1,8 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,7 +32,10 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.RomaneioRepository;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.RomaneioService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -42,6 +47,12 @@ public class RomaneioServiceImpl implements RomaneioService {
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	protected ParametrosDistribuidorService parametrosDistribuidorService;
+	
+	@Autowired
+	protected DistribuidorService distribuidorService;
 	
 	@Override
 	@Transactional
@@ -95,9 +106,9 @@ public class RomaneioServiceImpl implements RomaneioService {
 			// Formata os romaneios para o relatório:
 			if (lstRomaneioDTO != null && !lstRomaneioDTO.isEmpty()){
 				
-				Long idRota = Long.valueOf(0);
-				Long idRoteiro = Long.valueOf(0);
-				Long idBox = Long.valueOf(0);
+				Long idRota = null;
+				Long idRoteiro = null;
+				Long idBox = null;
 				
 				RomaneioModelo01DTO dto = null;
 				for (RomaneioDTO romaneio : lstRomaneioDTO){
@@ -197,10 +208,18 @@ public class RomaneioServiceImpl implements RomaneioService {
 			}
 			
 			
+			InputStream inputStream = this.parametrosDistribuidorService.getLogotipoDistribuidor();
+			
+			if(inputStream == null) {
+				inputStream = new ByteArrayInputStream(new byte[0]);
+			}
+			
 			JRDataSource jrDataSource = new JRBeanCollectionDataSource(lstRelatorio);
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 			parameters.put("QTD_COLUNAS_PRODUTO", qtdColunasProduto);
+			parameters.put("LOGO_DISTRIBUIDOR", JasperUtil.getImagemRelatorio(inputStream));
+			parameters.put("RAZAO_SOCIAL_DISTRIBUIDOR", this.distribuidorService.obterRazaoSocialDistribuidor());
 			
 			if (FileType.PDF == fileType) {
 			

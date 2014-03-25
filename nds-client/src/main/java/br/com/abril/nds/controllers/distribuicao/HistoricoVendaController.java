@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,45 +16,44 @@ import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.CotaDTO;
-import br.com.abril.nds.dto.CotaQueRecebeExcecaoDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.HistoricoVendaPopUpDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.dto.ProdutoRecebidoDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
-import br.com.abril.nds.dto.filtro.FiltroExcecaoSegmentoParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
-import br.com.abril.nds.model.distribuicao.Regiao;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EnderecoService;
+import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RegiaoService;
+import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.UfEnum;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.serialization.xstream.XStreamBuilder;
-import br.com.caelum.vraptor.serialization.xstream.XStreamJSONSerialization;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -63,7 +63,6 @@ public class HistoricoVendaController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroHistoricoVendaDTO";
 	
-	private static final ValidacaoVO VALIDACAO_VO_SUCESSO = new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.");
 	private static final ValidacaoVO VALIDACAO_VO_LISTA_VAZIA = new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 	
 	@Autowired
@@ -73,10 +72,7 @@ public class HistoricoVendaController extends BaseController {
 	private RegiaoService regiaoService;
 	
 	@Autowired
-	private XStreamJSONSerialization jsonSerializer;
-	
-	@Autowired
-	private XStreamBuilder xStreamBuilder; 
+	private InformacoesProdutoService infoProdService;
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
@@ -91,6 +87,12 @@ public class HistoricoVendaController extends BaseController {
 	private EnderecoService enderecoService;
 	
 	@Autowired
+	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
+	
+	@Autowired
+	private ProdutoService produtoService;
+	
+	@Autowired
 	private Result result;
 
 	@Autowired
@@ -102,10 +104,22 @@ public class HistoricoVendaController extends BaseController {
 	@Path("/")
 	public void historicoVenda(){
 		result.include("componenteList", ComponentesPDV.values());
+		this.carregarComboClassificacao();
+		result.include("classificacaoProduto",tipoClassificacaoProdutoService.obterTodos());
 	}
 	
 	@Post
-	public void pesquisaProduto(FiltroHistoricoVendaDTO filtro){
+	public void pesquisaProduto(FiltroHistoricoVendaDTO filtro, Long tipoClassificacaoProdutoId, String sortorder, String sortname, int page, int rp){
+		
+		filtro.setTipoClassificacaoProdutoId(tipoClassificacaoProdutoId);
+		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+			
+		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroHistoricoVendaDTO.OrdemColuna.values(), sortname));
+		
+//		Produto produto = this.produtoService.obterProdutoPorCodigo(filtro.getProdutoDto().getCodigoProduto());
+		filtro.getProdutoDto().setCodigoProduto(Util.padLeft(filtro.getProdutoDto().getCodigoProduto(), "0", 8));
+		
 		// valida se o filtro foi devidamente preenchido pelo usuário
 		filtroValidate(filtro.validarEntradaFiltroProduto(), filtro);
 		
@@ -126,7 +140,7 @@ public class HistoricoVendaController extends BaseController {
 		// valida se o campo percentual venda está preenchido
 		filtroValidate(filtro.validarPorQtdReparte(), filtro);
 		
-		List<CotaDTO> cotas = cotaService.buscarCotasQueInquadramNoRangeDeReparte(filtro.getQtdReparteInicial(), filtro.getQtdReparteFinal(), filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
+		List<CotaDTO> cotas = cotaService.buscarCotasQueEnquadramNoRangeDeReparte(filtro.getQtdReparteInicial(), filtro.getQtdReparteFinal(), filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
 		
 		validarLista(cotas);
 		
@@ -145,7 +159,7 @@ public class HistoricoVendaController extends BaseController {
 		// valida se o campo percentual venda está preenchido
 		filtroValidate(filtro.validarPorQtdVenda(), filtro);
 		
-		List<CotaDTO> cotas = cotaService.buscarCotasQueInquadramNoRangeVenda(filtro.getQtdVendaInicial(), filtro.getQtdVendaFinal(), filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
+		List<CotaDTO> cotas = cotaService.buscarCotasQueEnquadramNoRangeVenda(filtro.getQtdVendaInicial(), filtro.getQtdVendaFinal(), filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
 		
 		validarLista(cotas);
 		
@@ -198,6 +212,28 @@ public class HistoricoVendaController extends BaseController {
 	}
 	
 	@Post
+	public void pesquisarTodasAsCotas(FiltroHistoricoVendaDTO filtro){
+		
+		// valida se existem produtos selecionados
+		filtroValidate(filtro.validarListaProduto(), filtro);
+		
+		// valida se o código ou nome da cota foram informados
+		//filtroValidate(filtro.validarPorCota(), filtro);
+		
+//		filtro.getCotaDto().setNomePessoa(PessoaUtil.removerSufixoDeTipo(filtro.getCotaDto().getNomePessoa()));
+		
+		List<CotaDTO> cotas = cotaService.buscarCotasHistorico(filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
+		
+		validarLista(cotas);
+		
+		TableModel<CellModelKeyValue<CotaDTO>> tableModel = new TableModel<CellModelKeyValue<CotaDTO>>();
+		
+		this.configurarTableModelSemPaginacao(cotas, tableModel);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	@Post
 	public void pesquisaCotaPorComponentes(FiltroHistoricoVendaDTO filtro){
 		// valida se existem produtos selecionados
 		filtroValidate(filtro.validarListaProduto(), filtro);
@@ -220,24 +256,83 @@ public class HistoricoVendaController extends BaseController {
 	 * Faz a entrada da análise histórico de vendas (TELA ANÁLISE)
 	 * 
 	 */
-	@Get
-	public void analiseHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas){
+	@Post
+	public void analiseHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Integer> cotas){
 		
-		Collections.sort(listProdutoEdicaoDto);
+		ordenarEdicoesMaiorParaMenor(listProdutoEdicaoDto);
 		
 		result.include("listProdutoEdicao", listProdutoEdicaoDto);
 		
 		session.setAttribute("listProdutoEdicao", listProdutoEdicaoDto);
 		session.setAttribute("listCotas", cotas);
 	}
+
+	private void ordenarEdicoesMaiorParaMenor(List<ProdutoEdicaoDTO> listProdutoEdicaoDto) {
+		Collections.sort(listProdutoEdicaoDto, new Comparator<ProdutoEdicaoDTO>() {
+
+			@Override
+			public int compare(ProdutoEdicaoDTO o1, ProdutoEdicaoDTO o2) {				
+				return o2.getNumeroEdicao().compareTo(o1.getNumeroEdicao());
+			}
+		});
+	}
 	
+	@SuppressWarnings("unchecked")
 	@Post
-	public void carregarGridAnaliseHistorico(){
+	public void carregarGridAnaliseHistorico(String sortorder, String sortname){
 		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
 		
-		List<Cota> listCota = (List<Cota>) session.getAttribute("listCotas");
+		List<Integer> listCota = (List<Integer>) session.getAttribute("listCotas");
 		
-		List<AnaliseHistoricoDTO> listAnaliseHistorico = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota);
+		List<AnaliseHistoricoDTO> listAnaliseHistorico = 
+			cotaService.buscarHistoricoCotas(
+				listProdutoEdicaoDTO, listCota, sortorder, sortname);
+		
+		AnaliseHistoricoDTO suma = new AnaliseHistoricoDTO();
+		suma.setReparteMedio(0d);
+		suma.setVendaMedia(0d);
+		for (AnaliseHistoricoDTO dto : listAnaliseHistorico){
+			
+			suma.setNumeroCota(suma.getNumeroCota() + (dto.getNumeroCota() == null ? 0 : 1));
+			suma.setQtdPdv(dto.getQtdPdv() + suma.getQtdPdv());
+			suma.setReparteMedio(dto.getReparteMedio() + suma.getReparteMedio());
+			
+			if (dto.getVendaMedia() != null){
+				suma.setVendaMedia(dto.getVendaMedia() + suma.getVendaMedia());
+			}
+
+			if (dto.getEd1Reparte() != null){
+				suma.setEd1Reparte(dto.getEd1Reparte() + (suma.getEd1Reparte() == null ? 0 : suma.getEd1Reparte()));
+				suma.setEd1Venda(dto.getEd1Venda() + (suma.getEd1Venda() == null ? 0 : suma.getEd1Venda()));
+			}
+			
+			if (dto.getEd2Reparte() != null){
+				suma.setEd2Reparte(dto.getEd2Reparte() + (suma.getEd2Reparte() == null ? 0 : suma.getEd2Reparte()));
+				suma.setEd2Venda(dto.getEd2Venda() + (suma.getEd2Venda() == null ? 0 : suma.getEd2Venda()));
+			}
+			
+			if (dto.getEd3Reparte() != null){
+				suma.setEd3Reparte(dto.getEd3Reparte() + (suma.getEd3Reparte() == null ? 0 : suma.getEd3Reparte()));
+				suma.setEd3Venda(dto.getEd3Venda() + (suma.getEd3Venda() == null ? 0 : suma.getEd3Venda()));
+			}
+			
+			if (dto.getEd4Reparte() != null){
+				suma.setEd4Reparte(dto.getEd4Reparte() + (suma.getEd4Reparte() == null ? 0 : suma.getEd4Reparte()));
+				suma.setEd4Venda(dto.getEd4Venda() + (suma.getEd4Venda() == null ? 0 : suma.getEd4Venda()));
+			}
+			
+			if (dto.getEd5Reparte() != null){
+				suma.setEd5Reparte(dto.getEd5Reparte() + (suma.getEd5Reparte() == null ? 0 : suma.getEd5Reparte()));
+				suma.setEd5Venda(dto.getEd5Venda() + (suma.getEd5Venda() == null ? 0 : suma.getEd5Venda()));
+			}
+			
+			if (dto.getEd6Reparte() != null){
+				suma.setEd6Reparte(dto.getEd6Reparte() + (suma.getEd6Reparte() == null ? 0 : suma.getEd6Reparte()));
+				suma.setEd6Venda(dto.getEd6Venda() + (suma.getEd6Venda() == null ? 0 : suma.getEd6Venda()));
+			}
+		}
+		
+		listAnaliseHistorico.add(suma);
 		
 		TableModel<CellModelKeyValue<AnaliseHistoricoDTO>> tableModel = new TableModel<CellModelKeyValue<AnaliseHistoricoDTO>>();
 		
@@ -272,39 +367,41 @@ public class HistoricoVendaController extends BaseController {
 		List<ItemDTO<Long, String>> resultList = new ArrayList<ItemDTO<Long, String>>();
 	
 		switch (componente) {
-		case TipoPontodeVenda:
+		case TIPO_PONTO_DE_VENDA:
 			for(TipoPontoPDV tipo : pdvService.obterTiposPontoPDVPrincipal()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
-		case Area_de_Influência:
+		case AREA_DE_INFLUENCIA:
 			for(AreaInfluenciaPDV tipo : pdvService.obterAreasInfluenciaPDV()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
 
-		case Bairro:
+		case BAIRRO:
 			for(String tipo : enderecoService.obterBairrosCotas()){
 				resultList.add(new ItemDTO(tipo,tipo));
 			}
 			break;
-		case Distrito:
+		case DISTRITO:
 			for(UfEnum tipo : UfEnum.values()){
 				resultList.add(new ItemDTO(tipo.getSigla(),tipo.getSigla()));
 			}
 			break;
-		case GeradorDeFluxo:
-			for(TipoGeradorFluxoPDV tipo : pdvService.obterTodosTiposGeradorFluxo()){
+		case GERADOR_DE_FLUXO:
+			for(TipoGeradorFluxoPDV tipo : pdvService.obterTodosTiposGeradorFluxoOrdenado()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
-		case CotasAVista:
-			
+		case COTAS_A_VISTA:
+		    resultList.add(new ItemDTO("CONSIGNADO", "Consignado"));
+		    resultList.add(new ItemDTO("A_VISTA", "Cotas à Vista"));
 			break;
-		case CotasNovasRetivadas :
-			
+		case COTAS_NOVAS_RETIVADAS :
+		    resultList.add(new ItemDTO(1, "Sim"));
+		    resultList.add(new ItemDTO(0, "Não"));
 			break;
-		case Região:
+		case REGIAO:
 			for (RegiaoDTO regiao : regiaoService.buscarRegiao()) {
 				resultList.add(new ItemDTO(regiao.getIdRegiao(), regiao.getNomeRegiao()));
 			}
@@ -321,12 +418,16 @@ public class HistoricoVendaController extends BaseController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
-		List<Cota> listCota = (List<Cota>) session.getAttribute("listCotas");
+		List<Integer> listCota = (List<Integer>) session.getAttribute("listCotas");
 		
-		List<AnaliseHistoricoDTO> dto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota);
+		List<AnaliseHistoricoDTO> dto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, null, null);
 		
-		FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, dto,
-				AnaliseHistoricoDTO.class, this.httpResponse);
+		try {
+			FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, dto,
+					AnaliseHistoricoDTO.class, this.httpResponse);
+		} catch (Exception e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Não foi possível gerar o arquivo ." + fileType.toString()));
+		}
 		
 		result.nothing();
 	}
@@ -367,7 +468,16 @@ public class HistoricoVendaController extends BaseController {
 	private void filtroValidate(boolean isValid, FiltroHistoricoVendaDTO filtro){
 		if (!isValid) {
 			throw new ValidacaoException(TipoMensagem.WARNING, filtro.getValidationMsg());
-		}
+		}		
 	}
 	
+	private void carregarComboClassificacao(){
+		List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
+		List<TipoClassificacaoProduto> classificacoes = infoProdService.buscarClassificacao();
+		
+		for (TipoClassificacaoProduto tipoClassificacaoProduto : classificacoes) {
+			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
+		}
+		result.include("listaClassificacao",comboClassificacao);		
+	}
 }

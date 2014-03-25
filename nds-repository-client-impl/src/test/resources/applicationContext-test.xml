@@ -15,7 +15,9 @@
 	<util:properties id="queries" location="classpath:/query.properties" />
 
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
-
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<constructor-arg ref="dataSource" />	
+	</bean>
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
@@ -29,7 +31,6 @@
 		<property name="username" value="root" />
 		<property name="password" value="root" />
     </bean> 
-
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
@@ -39,6 +40,18 @@
 	        	<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
+				
+				<!-- CONNECTION -->
+				
+				<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
+				<prop key="hibernate.connection.zeroDateTimeBehavior">convertToNull</prop>
+				
+				<!-- CACHE -->
+				
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+
 			</props>
 		</property>
 	</bean>
@@ -52,8 +65,8 @@
 		<property name="protocol" value="http"/>
 		<property name="host" value="localhost"/>
 		<property name="port" value="5984"/>
-		<property name="username" value=""/>
-		<property name="password" value=""/>
+		<property name="username" value="admin"/>
+		<property name="password" value="admin"/>
 		<property name="bachSize" value="500"/>
 	</bean>
 
@@ -77,7 +90,7 @@
 		<property name="hibernateProperties">
 			<props>
         		<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
-				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">false</prop>
 				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
 			</props>

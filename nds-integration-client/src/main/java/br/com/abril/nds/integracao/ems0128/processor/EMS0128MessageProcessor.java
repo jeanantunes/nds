@@ -56,7 +56,6 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		Query query = queryMovimentoEstoque();
 		
 		tempVar.set( query.list() );		
-			
 	}
 
 	
@@ -74,7 +73,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 				
 				EMS0128Input doc = (EMS0128Input) row.getDoc();
 				
-				if (!doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
+                if (doc != null && !doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
 				
 					List<EMS0128InputItem> itemsRemove = new ArrayList<EMS0128InputItem>();
 					for (EMS0128InputItem eitem : doc.getItems()) {
@@ -129,8 +128,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						getSession().merge(movimento);
 						getSession().flush();
 					}						
-					
-					
+										
 					if(!itemsRemove.isEmpty()) {
 						
 						doc.getItems().removeAll(itemsRemove);
@@ -147,7 +145,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 					if (doc != null && (doc.getItems() == null || doc.getItems().isEmpty())) {
 						couchDbClient.remove(doc);
 					}
-					
+
 				}
 			}
 		} catch (NoDocumentException ex) {
@@ -216,7 +214,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		EMS0128InputItem item = new EMS0128InputItem();
 		
 		MovimentoEstoque me = (MovimentoEstoque) message.getBody();
-		
+
 		item.setNumSequenciaDetalhe(itens++);
 		item.setIdMovimento(me.getId());
 		

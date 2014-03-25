@@ -71,6 +71,18 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	 * @param ativa
 	 * @return
 	 */
-	List<FormaCobranca> obterFormasCobrancaAtivaCotas(Boolean ativa);
-	
+	boolean obterFormasCobrancaAtivaCotas(Boolean ativa, Long idFormaCobranca);
+
+	void removerFormasCobrancaCota(Integer numeroCota);
+
+	/**
+	 * Obtem lista de FormaCobranca ativa da cota ou do distribuidor
+	 * Onde a concentração de pagamento é compatível com a data de operação atual
+	 * 
+	 * @param idFornecedor
+	 * @param diaDoMes
+	 * @param diaDaSemana
+	 * @return List<FormaCobranca>
+	 */
+	List<FormaCobranca> obterFormasCobrancaPorFornecedor(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana);
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
@@ -15,6 +16,8 @@ public interface NegociacaoDividaRepository extends Repository<Negociacao, Long>
 	Long obterCotaPorNumeroCount(FiltroConsultaNegociacaoDivida filtro);
 
 	Negociacao obterNegociacaoPorCobranca(Long id);
+	
+	Negociacao obterNegociacaoPorDivida(Long id);
 
 	List<Negociacao> obterNegociacaoPorComissaoCota(Long idCota);
 	
@@ -23,4 +26,8 @@ public interface NegociacaoDividaRepository extends Repository<Negociacao, Long>
 	Long obterQuantidadeNegociacaoFollowup(FiltroFollowupNegociacaoDTO filtro);
 	
 	Long obterIdCobrancaPor(Long idNegociacao);
+
+	Negociacao obterNegociacaoPorMovFinanceiroId(Long movFinanId);
+
+	BigDecimal obterValorPagoDividaNegociadaComissao(Long negociacaoId);
 }

@@ -22,11 +22,12 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private Integer codigoCota;
 	private Long edicaoProduto; 
 	private String nomeCota;
-	private Boolean quebraPorCota;
-	private Boolean useSM;
+	private boolean quebraPorCota;
+	private boolean useSM;
 	private Long idEntregador;
-	private Boolean excluirProdutoSemReparte;
-	
+	private boolean excluirProdutoSemReparte;
+	private boolean porRepartePromocional;
+	private boolean produtoEspecifico;
 			
 	private PaginacaoVO paginacao;
 	
@@ -265,14 +266,14 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	/**
 	 * @return the quebraPorCota
 	 */
-	public Boolean getQuebraPorCota() {
+	public boolean getQuebraPorCota() {
 		return quebraPorCota;
 	}
 
 	/**
 	 * @param quebraPorCota the quebraPorCota to set
 	 */
-	public void setQuebraPorCota(Boolean quebraPorCota) {
+	public void setQuebraPorCota(boolean quebraPorCota) {
 		this.quebraPorCota = quebraPorCota;
 	}
 
@@ -316,25 +317,25 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		this.edicaoProduto = edicaoProduto;
 	}
 
-	public Boolean getUseSM() {
+	public boolean getUseSM() {
 		return useSM;
 	}
 
-	public void setUseSM(Boolean useSM) {
+	public void setUseSM(boolean useSM) {
 		this.useSM = useSM;
 	}
 
 	/**
 	 * @return the excluirProdutoSemReparte
 	 */
-	public Boolean getExcluirProdutoSemReparte() {
+	public boolean getExcluirProdutoSemReparte() {
 		return excluirProdutoSemReparte;
 	}
 
 	/**
 	 * @param excluirProdutoSemReparte the excluirProdutoSemReparte to set
 	 */
-	public void setExcluirProdutoSemReparte(Boolean excluirProdutoSemReparte) {
+	public void setExcluirProdutoSemReparte(boolean excluirProdutoSemReparte) {
 		this.excluirProdutoSemReparte = excluirProdutoSemReparte;
 	}
 
@@ -364,6 +365,22 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	 */
 	public void setIdEntregador(Long idEntregador) {
 		this.idEntregador = idEntregador;
+	}
+
+	public boolean isPorRepartePromocional() {
+		return porRepartePromocional;
+	}
+
+	public void setPorRepartePromocional(boolean porRepartePromocional) {
+		this.porRepartePromocional = porRepartePromocional;
+	}
+
+	public boolean isProdutoEspecifico() {
+		return produtoEspecifico;
+	}
+
+	public void setProdutoEspecifico(boolean produtoEspecifico) {
+		this.produtoEspecifico = produtoEspecifico;
 	}
 	
 	

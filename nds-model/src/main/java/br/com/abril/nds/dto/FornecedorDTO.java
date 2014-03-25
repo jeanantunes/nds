@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.CanalDistribuicao;
 
 /**
  * DTO utilizado para transporte de dados referentes a entidade Fornecedor. 
@@ -45,6 +46,10 @@ public class FornecedorDTO implements Serializable {
 	private Origem origem;
 
 	private String emailNfe;
+	
+	private String praca;
+	
+	private CanalDistribuicao canalDistribuicao;
 	
 	/**
 	 * @return the idFornecedor
@@ -268,5 +273,21 @@ public class FornecedorDTO implements Serializable {
 	 */
 	public void setEmailNfe(String emailNfe) {
 		this.emailNfe = emailNfe;
+	}
+
+	public String getPraca() {
+		return praca;
+	}
+
+	public void setPraca(String praca) {
+		this.praca = praca;
+	}
+
+	public CanalDistribuicao getCanalDistribuicao() {
+		return canalDistribuicao;
+	}
+
+	public void setCanalDistribuicao(CanalDistribuicao canalDistribuicao) {
+		this.canalDistribuicao = canalDistribuicao;
 	}
 }

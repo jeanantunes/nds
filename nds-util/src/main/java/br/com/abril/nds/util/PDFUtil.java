@@ -12,15 +12,21 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.util.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class PDFUtil {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(PDFUtil.class);
 	
 	public static byte[] mergePDFs(List<byte[]> arquivos) {
 
@@ -31,23 +37,27 @@ public class PDFUtil {
 				pdfs.add(new ByteArrayInputStream(byteFile));
 			}
 			
-			return PDFUtil.concatPDFs(pdfs, true);
+			return PDFUtil.concatPDFs(pdfs, true, null);
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 
 		return null;
 	}
 
 	public static byte[] concatPDFs(List<InputStream> streamOfPDFFiles, boolean paginate) throws Exception {
+		return concatPDFs(streamOfPDFFiles, paginate, null);
+	}
+
+	public static byte[] concatPDFs(List<InputStream> streamOfPDFFiles, boolean paginate, PdfObject rotate) throws Exception {
 
 		File file = File.createTempFile("pdfUtil", "pdf");		
-		
-		
+	
 		OutputStream outputStream = new FileOutputStream(file);
-		
+	
 		Document document = new Document();
+		
 		try {
 			List<InputStream> pdfs = streamOfPDFFiles;
 			List<PdfReader> readers = new ArrayList<PdfReader>();
@@ -63,7 +73,7 @@ public class PDFUtil {
 			}
 			// Create a writer for the outputstream
 			PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-
+			
 			document.open();
 			BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA,
 					BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
@@ -81,11 +91,15 @@ public class PDFUtil {
 
 				// Create a new page in the target for each source page.
 				while (pageOfCurrentReaderPDF < pdfReader.getNumberOfPages()) {
+					
 					document.newPage();
 					pageOfCurrentReaderPDF++;
 					currentPageNumber++;
-					page = writer.getImportedPage(pdfReader,
-							pageOfCurrentReaderPDF);
+					if (rotate != null) {
+						writer.addPageDictEntry(PdfName.ROTATE,rotate);
+					}
+					page = writer.getImportedPage(pdfReader,pageOfCurrentReaderPDF);
+					
 					cb.addTemplate(page, 0, 0);
 
 					// Code for pagination.
@@ -109,6 +123,7 @@ public class PDFUtil {
 			
 			file.delete();
 			
+			
 			return retorno;			
 		
 		} finally {
@@ -117,8 +132,8 @@ public class PDFUtil {
 			try {
 				if (outputStream != null)
 					outputStream.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
 			}
 		}
 	}

@@ -92,4 +92,13 @@ public class GrupoPermissaoServiceImpl implements GrupoPermissaoService {
 		return grupos;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public void removerGrupoPermissaoPermissao(Permissao permissao) {
+
+		this.grupoPermissaoRepository.removerGrupoPermissaoPermissao(permissao);
+	}
 }

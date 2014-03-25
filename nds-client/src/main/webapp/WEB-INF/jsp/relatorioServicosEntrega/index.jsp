@@ -4,26 +4,6 @@
 
 <body>
 
-    <div class="areaBts">
-		<div class="area">
-			<span class="bt_arq">
-			    <a href="${pageContext.request.contextPath}/administracao/relatorioServicosEntrega/exportar?fileType=XLS" rel="bandeira">
-			        <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-                </a>
-			</span> 
-			
-			<span class="bt_arq"> 
-				<a href="${pageContext.request.contextPath}/administracao/relatorioServicosEntrega/exportar?fileType=PDF">
-				    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-				</a>
-			</span>
-		</div>
-	</div>
-    <br/>
-    <br/>
-    <br/>
-
-
 	<form id="relatorioServicosEntregaForm">
 	<input type="hidden" name="filtro.idCota" id="relatorioServicosEntrega_idCota"/>
 	
@@ -58,6 +38,8 @@
     	<legend>Transportadores Cadastrados</legend>
         <div class="grids" style="display:none;">
        		<table class="relatorioServicosEntrega_transportadoresGrid"></table>
+        	<span class="bt_arquivo"><a href="${pageContext.request.contextPath}/administracao/relatorioServicosEntrega/exportar?fileType=XLS">Arquivo</a></span>
+			<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/administracao/relatorioServicosEntrega/exportar?fileType=PDF">Imprimir</a></span>
         </div>
     </fieldset>
     

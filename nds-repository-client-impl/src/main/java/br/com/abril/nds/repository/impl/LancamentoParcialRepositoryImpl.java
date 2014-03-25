@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.ParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 
@@ -60,7 +61,7 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
+		hql.append(" select distinct lancamentoParcial.id as idLancamentoParcial, produtoEdicao.id as idProdutoEdicao, ");
 		hql.append(" 		lancamentoParcial.lancamentoInicial as dataLancamento, ");
 		hql.append(" 		lancamentoParcial.recolhimentoFinal as dataRecolhimento, ");
 		hql.append(" 		produto.codigo as codigoProduto, ");
@@ -79,9 +80,7 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		
 		HashMap<String, Object> param = buscarParametrosLancamentosParciais(filtro);
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ParcialDTO.class));
@@ -101,61 +100,48 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 	private String getSqlFromEWhereLancamentosParciais(FiltroParciaisDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
-	
 
-		hql.append(" from LancamentoParcial lancamentoParcial ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" join lancamento.periodoLancamentoParcial periodo ");
+		hql.append(" join periodo.lancamentoParcial lancamentoParcial ");
 		hql.append(" join lancamentoParcial.produtoEdicao produtoEdicao ");
-		hql.append(" join produtoEdicao.produto produto ");
 		hql.append(" join produtoEdicao.produto produto ");
 		hql.append(" join produto.fornecedores fornecedor ");
 		hql.append(" join fornecedor.juridica juridica ");
 		
-		hql.append(" where not exists( ");
-		
-		hql.append(" from PeriodoLancamentoParcial parcial ") 
-			.append(" where parcial.lancamentoParcial.id = lancamentoParcial.id ")
-			.append(" and parcial.status = 'CANCELADO' )  ");
+		hql.append(" where periodo.status <> 'CANCELADO' ");
 		
 		hql.append(" and lancamentoParcial.status <> 'CANCELADO' ");
 		
-		boolean usarAnd = true;
+		hql.append(" and lancamento.tipoLancamento =:tipoLancamento");
 		
 		if(filtro.getCodigoProduto() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " produto.codigo =:codProduto ");
-			usarAnd = true;
+			hql.append(" and  produto.codigo =:codProduto ");
 		}
 		
 		if(filtro.getNomeProduto() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " lower(produto.nome)like:nomeProduto ");
-			usarAnd = true;
+			hql.append(" and  lower(produto.nome)like:nomeProduto ");
 		}
 		
 		if(filtro.getEdicaoProduto() != null){ 
-			hql.append( (usarAnd ? " and ":" where ") + " produtoEdicao.numeroEdicao=:edProduto ");
-			usarAnd = true;
+			hql.append( " and  produtoEdicao.numeroEdicao=:edProduto ");
 		}
 		
 		if(filtro.getIdFornecedor() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " fornecedor.id=:idFornecedor ");
-			usarAnd = true;
+			hql.append(" and  fornecedor.id=:idFornecedor ");
 		}
 		
 		if(filtro.getDataInicialDate() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " lancamentoParcial.lancamentoInicial>=:dtInicial ");
-			usarAnd = true;
+			hql.append(" and  lancamentoParcial.lancamentoInicial>=:dtInicial ");
 		}
 		
 		if(filtro.getDataFinalDate() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " lancamentoParcial.lancamentoInicial<=:dtFinal ");
-			usarAnd = true;
+			hql.append(" and  lancamentoParcial.lancamentoInicial<=:dtFinal ");
 		}
 		
 		if(filtro.getStatus() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " lancamentoParcial.status=:status ");
-			usarAnd = true;
+			hql.append( " and  lancamento.status=:status ");
 		}
-		
-		
 
 		return hql.toString();
 	}
@@ -212,6 +198,8 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		
 		HashMap<String,Object> param = new HashMap<String, Object>();
 		
+		param.put("tipoLancamento", TipoLancamento.LANCAMENTO);
+		
 		if(filtro.getCodigoProduto() != null) 
 			param.put("codProduto", filtro.getCodigoProduto());
 		
@@ -242,7 +230,7 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(lancamentoParcial) ");
+		hql.append(" select count(distinct lancamentoParcial.id ) ");
 		
 		hql.append(getSqlFromEWhereLancamentosParciais(filtro));
 		
@@ -250,10 +238,7 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		
 		HashMap<String, Object> param = buscarParametrosLancamentosParciais(filtro);
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}	
-		
+		setParameters(query, param);
 		Long totalRegistros = (Long) query.uniqueResult();
 		
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();

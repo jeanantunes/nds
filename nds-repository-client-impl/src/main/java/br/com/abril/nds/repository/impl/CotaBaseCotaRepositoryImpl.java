@@ -35,7 +35,7 @@ public class CotaBaseCotaRepositoryImpl extends AbstractRepositoryModel<CotaBase
 	}
 
 	@Override
-	public boolean isCotaBaseAtiva(CotaBase cotaBase) {
+	public boolean isCotaBaseAtiva(CotaBase cotaBase, Integer[] numerosDeCotasBase) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -47,13 +47,21 @@ public class CotaBaseCotaRepositoryImpl extends AbstractRepositoryModel<CotaBase
         
         hql.append(" AND  cotaBaseCota.ativo = true ");
         
+        if (numerosDeCotasBase != null) {
+        	hql.append(" AND cota.numeroCota not in (:numerosDeCotasBase)" );
+        }
+        
         Query query =  getSession().createQuery(hql.toString());
         
         query.setParameter("idCotaBase", cotaBase.getId());
         
+        if (numerosDeCotasBase != null) {
+        	query.setParameterList("numerosDeCotasBase", numerosDeCotasBase);
+        }
+        
         Long isAtiva = (Long) query.uniqueResult();
         
-		return isAtiva != null ? true : false;
+		return isAtiva > 0 ? true : false;
 	}
 
 	@Override
@@ -69,6 +77,8 @@ public class CotaBaseCotaRepositoryImpl extends AbstractRepositoryModel<CotaBase
         hql.append(" WHERE cotaBaseCota.cotaBase.id = :idCotaBase ");   
         
         hql.append(" AND  cotaBaseCota.cota.id = :idCotaPataDesativar ");
+        
+        hql.append(" AND  cotaBaseCota.ativo = true");
         
         Query query =  getSession().createQuery(hql.toString());
         

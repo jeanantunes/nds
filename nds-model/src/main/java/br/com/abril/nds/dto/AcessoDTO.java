@@ -15,6 +15,10 @@ public class AcessoDTO implements Serializable {
 	private Permissao visualizacao;
 	
 	private Permissao alteracao;
+	
+	private String observacao;
+	
+	private boolean habilitado = true;
 
 	public AcessoDTO(){};
 		
@@ -23,6 +27,7 @@ public class AcessoDTO implements Serializable {
 		this.visualizacao = permissao;
 		this.alteracao = permissao.getPermissaoAlteracao();
 		this.pai = permissao.getPermissaoPai();
+		this.observacao = permissao.getObservacao();
 	}
 	
 	public String getDescricao() {
@@ -56,6 +61,26 @@ public class AcessoDTO implements Serializable {
 	public void setPai(Permissao pai) {
 		this.pai = pai;
 	}
-	
-	
+
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+
+	/**
+	 * @return the habilitado
+	 */
+	public boolean isHabilitado() {
+		return habilitado;
+	}
+
+	/**
+	 * @param habilitado the habilitado to set
+	 */
+	public void setHabilitado(boolean habilitado) {
+		this.habilitado = habilitado;
+	}
 }

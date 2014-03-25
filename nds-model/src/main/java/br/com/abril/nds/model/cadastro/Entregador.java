@@ -50,7 +50,7 @@ public class Entregador {
 	@Column(name = "COMISSIONADO", nullable = false)
 	private boolean comissionado;
 	
-	@Column(name = "PERCENTUAL_COMISSAO", precision=18, scale=4)
+	@Column(name = "PERCENTUAL_COMISSAO")
 	private BigDecimal percentualComissao;
 	
 	@Column(name = "PROCURACAO", nullable = false)
@@ -69,10 +69,10 @@ public class Entregador {
 	@JoinColumn(name="ROTA_ID")
 	private Rota rota;
 	
-    @Column(name = "TAXA_FIXA", precision=18, scale=4)
+    @Column(name = "TAXA_FIXA", precision = 16, scale = 4)
     private BigDecimal taxaFixa;
     
-    @Column(name = "PERCENTUAL_FATURAMENTO", precision=18, scale=4)
+    @Column(name = "PERCENTUAL_FATURAMENTO", precision = 16, scale = 4)
     private BigDecimal percentualFaturamento;
 
 	/**

@@ -190,6 +190,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.produto.nome as nomeProduto,	");
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.numeroEdicao as numeroEdicao,	");
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.id as idProdutoEdicao,			");
+		hql.append(" conferencia.diaRecolhimento as dia,								");
 		
 		hql.append(" coalesce(conferencia.movimentoEstoqueCota.valoresAplicados.precoComDesconto,  conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda, 0) as precoVenda,	");
 		
@@ -282,7 +283,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		sql.append(" SELECT plp.TIPO as tipoLancamento");
 		sql.append(" FROM LANCAMENTO lanc "); 
-		sql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		sql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		sql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		sql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
 		sql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
@@ -323,7 +324,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" CASE WHEN ");
 		hql.append(" (SELECT plp.TIPO ");
 		hql.append(" FROM LANCAMENTO lanc  ");
-		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
 		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
@@ -333,7 +334,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID) IS NULL THEN "); 
 		hql.append(" CASE WHEN (SELECT plp.TIPO ");
 		hql.append(" FROM LANCAMENTO lanc "); 
-		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
 		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
@@ -513,13 +514,15 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" CONF_ENCALHE.ID AS idConferenciaEncalhe,           		");
 		
+		hql.append(" CONF_ENCALHE.DIA_RECOLHIMENTO AS dia,           			");
+		
 		hql.append(" CONF_ENCALHE.QTDE AS qtdExemplar,                  		");
 		
 		hql.append(" CASE WHEN ");
 		
 		hql.append(" (SELECT plp.TIPO ");
 		hql.append(" FROM LANCAMENTO lanc  ");
-		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
 		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
@@ -530,7 +533,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" CASE WHEN (SELECT plp.TIPO ");
 		hql.append(" FROM LANCAMENTO lanc "); 
-		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
 		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
@@ -601,6 +604,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		
 		((SQLQuery)query).addScalar("idConferenciaEncalhe", StandardBasicTypes.LONG);
+		((SQLQuery)query).addScalar("dia", StandardBasicTypes.INTEGER);
 		((SQLQuery)query).addScalar("qtdExemplar", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery)query).addScalar("isContagemPacote", StandardBasicTypes.BOOLEAN);
 		((SQLQuery)query).addScalar("qtdReparte", StandardBasicTypes.BIG_INTEGER);

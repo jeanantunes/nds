@@ -10,29 +10,25 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaNaoRecebeSegmentoDTO;
 import br.com.abril.nds.dto.SegmentoNaoRecebeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroSegmentoNaoRecebidoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.distribuicao.SegmentoNaoRecebido;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.SegmentoNaoRecebidoRepository;
-import br.com.abril.nds.repository.TipoSegmentoProdutoRepository;
 import br.com.abril.nds.service.SegmentoNaoRecebidoService;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoService {
 
 	@Autowired
-	private TipoSegmentoProdutoRepository tipoSegmentoProdutoRepo;
-	
-	@Autowired
 	private SegmentoNaoRecebidoRepository segmentoNaoRecebidoRepo;
 	
-	@Transactional(readOnly = true)
-	@Override
-	public List<TipoSegmentoProduto> obterTipoSegmentoProduto() {
-		// TODO Auto-generated method stub
-		return tipoSegmentoProdutoRepo.buscarTodos() ;
-	}
-
+	@Autowired
+	private CotaRepository cotaRepository;
+	
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaNaoRecebeSegmentoDTO> obterCotasNaoRecebemSegmento(FiltroSegmentoNaoRecebidoDTO filtro) {
@@ -43,13 +39,6 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 	@Override
 	public void excluirSegmentoNaoRecebido(Long segmentoNaoRecebidoId) {
 		segmentoNaoRecebidoRepo.removerPorId(segmentoNaoRecebidoId);	
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public TipoSegmentoProduto obterTipoProdutoSegmentoPorId(Long id) {
-		// TODO Auto-generated method stub
-		return tipoSegmentoProdutoRepo.buscarPorId(id);
 	}
 
 	@Transactional
@@ -63,30 +52,35 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaDTO> obterCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro) {
+		if (segmentoNaoRecebidoRepo.isCotaJaInserida(filtro.getTipoSegmentoProdutoId(), filtro.getNumeroCota())) {
+			Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota Duplicada! Status: " + cota.getSituacaoCadastro().toString()));
+		}
 		return  segmentoNaoRecebidoRepo.obterCotasNaoEstaoNoSegmento(filtro);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(
-			FiltroSegmentoNaoRecebidoDTO filtro) {
-		// TODO Auto-generated method stub
+	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(FiltroSegmentoNaoRecebidoDTO filtro) {
 		return segmentoNaoRecebidoRepo.obterSegmentosNaoRecebidosCadastradosNaCota(filtro);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<TipoSegmentoProduto> obterSegmentosElegiveisParaInclusaoNaCota(
-			FiltroSegmentoNaoRecebidoDTO filtro) {
-		// TODO Auto-generated method stub
+	public List<TipoSegmentoProduto> obterSegmentosElegiveisParaInclusaoNaCota(FiltroSegmentoNaoRecebidoDTO filtro) {
 		return segmentoNaoRecebidoRepo.obterSegmentosElegiveisParaInclusaoNaCota(filtro);
 	}
 
 	@Override
 	@Transactional
-	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(
-			Cota cota) {
+	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(Cota cota) {
 		return segmentoNaoRecebidoRepo.obterSegmentosNaoRecebidosCadastradosNaCota(cota);
 	}
-
+	
+	@Override
+	@Transactional
+	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosCotaBase(Long idCota) {
+		return segmentoNaoRecebidoRepo.obterSegmentosNaoRecebidosCadastradosNaCotaBase(idCota);
+	}
+	 
 }

@@ -5,7 +5,6 @@ package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -37,7 +36,7 @@ public class CaucaoLiquida implements Serializable {
 	@Column(name="ID")
 	private Long id;
 	
-	@Column(name="VALOR", precision=18, scale=4)
+	@Column(name="VALOR")
 	private BigDecimal valor;
 	
 	@Column(name="DATA_ATUALIZACAO")

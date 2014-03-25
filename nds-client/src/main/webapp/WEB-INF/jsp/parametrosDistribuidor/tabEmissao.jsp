@@ -18,7 +18,7 @@
 					type="checkbox" ${parametrosDistribuidor.slipEmail ? "checked" : ""}/></td>
 			</tr>
 			<tr class="class_linha_2">
-				<td>Boleto</td>
+				<td>Boleto / Recibo</td>
 				<td align="center"><input
 					name="parametrosDistribuidor.boletoImpressao" id="boletoImpressao"
 					type="checkbox" ${parametrosDistribuidor.boletoImpressao ? "checked" : ""}/></td>
@@ -35,15 +35,15 @@
 					name="parametrosDistribuidor.boletoSlipEmail" id="boletoSlipEmail"
 					type="checkbox" ${parametrosDistribuidor.boletoSlipEmail ? "checked" : ""}/></td>
 			</tr>
-			<tr class="class_linha_2">
-				<td>Recibo</td>
-				<td align="center"><input
-					name="parametrosDistribuidor.reciboImpressao" id="reciboImpressao"
-					type="checkbox" ${parametrosDistribuidor.reciboImpressao ? "checked" : ""}/></td>
-				<td align="center"><input
-					name="parametrosDistribuidor.reciboEmail" id="reciboEmail"
-					type="checkbox" ${parametrosDistribuidor.reciboEmail ? "checked" : ""}/></td>
-			</tr>
+<!-- 			<tr class="class_linha_2"> -->
+<!-- 				<td>Recibo</td> -->
+<!-- 				<td align="center"><input -->
+<!-- 					name="parametrosDistribuidor.reciboImpressao" id="reciboImpressao" -->
+<%-- 					type="checkbox" ${parametrosDistribuidor.reciboImpressao ? "checked" : ""}/></td> --%>
+<!-- 				<td align="center"><input -->
+<!-- 					name="parametrosDistribuidor.reciboEmail" id="reciboEmail" -->
+<%-- 					type="checkbox" ${parametrosDistribuidor.reciboEmail ? "checked" : ""}/></td> --%>
+<!-- 			</tr> -->
 			<tr class="class_linha_1">
 				<td>Nota de Envio</td>
 				<td align="center"><input

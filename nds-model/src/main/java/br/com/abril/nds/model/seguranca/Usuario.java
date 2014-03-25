@@ -106,6 +106,9 @@ public class Usuario implements Serializable {
 	@Column(name = "SYS")
 	private boolean sys;
 	
+	@Column(name = "SUPERVISOR")
+	private boolean supervisor;
+	
 	public Usuario() {
 		
 	}
@@ -257,5 +260,12 @@ public class Usuario implements Serializable {
 	public void setBox(Box box) {
 		this.box = box;
 	}
-	
+
+	public boolean isSupervisor() {
+		return supervisor;
+	}
+
+	public void setSupervisor(boolean supervisor) {
+		this.supervisor = supervisor;
+	}
 }

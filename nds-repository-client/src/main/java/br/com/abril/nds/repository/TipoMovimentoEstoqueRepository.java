@@ -11,4 +11,6 @@ public interface TipoMovimentoEstoqueRepository extends Repository<TipoMovimento
 
 	List<TipoMovimentoEstoque> buscarTiposMovimentoEstoque(List<GrupoMovimentoEstoque> gruposMovimentoEstoque);
 	
+	List<Long> buscarIdTiposMovimentoEstoque(List<GrupoMovimentoEstoque> gruposMovimentoEstoque);
+	
 }

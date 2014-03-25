@@ -64,6 +64,8 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private BigDecimal valorTotal;
 	
+	private String valorTotalString;
+	
 	private TipoDiferenca tipoDiferenca;
 	
 	private Origem origemItemNota;
@@ -175,7 +177,13 @@ public class RecebimentoFisicoDTO implements Serializable {
 	}
 
 	public BigDecimal getPrecoCapa() {
+		
+		if(precoCapa==null){
+			return BigDecimal.ZERO;
+		}
+		
 		return precoCapa;
+		
 	}
 
 	public void setPrecoCapa(BigDecimal precoCapa) {
@@ -312,7 +320,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 	}
 
 	public BigDecimal getPrecoItem() {
-		return precoItem;
+		return this.precoItem;
 	}
 
 	public void setPrecoItem(BigDecimal precoItem) {
@@ -375,7 +383,11 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.produtoSemCadastro = produtoSemCadastro;
 	}
 
-	
-	
+	public String getValorTotalString() {
+		return valorTotalString;
+	}
 
+	public void setValorTotalString(String valorTotalString) {
+		this.valorTotalString = valorTotalString;
+	}
 }

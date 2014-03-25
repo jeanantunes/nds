@@ -34,7 +34,23 @@
 		        val = parseFloat(val);
 		                
 		        return val;
+		    },
+		    
+			stringValue : function () {
+				
+				var val;
+			    				        	
+				val =  input.val();
+			        	
+		        if (!val) return "0,0"; 
+		        
+		        if (val.indexOf(".") >= 0) {
+		        	val = val.replace(".", ",");
+		        }
+		                
+		        return val;
 		    }
+		    
 			
 	};
 	

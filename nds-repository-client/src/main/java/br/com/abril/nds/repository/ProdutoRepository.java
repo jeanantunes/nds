@@ -27,6 +27,15 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	
 	List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxRegRetorno);
 	/**
+	 * Obtém produtos cujo código começa com o código informado.
+	 * 
+	 * @param codigo - código do produto
+	 * 
+	 * @return {@link List<Produto>}
+	 */
+	List<Produto> obterProdutoLikeCodigo(String codigo);
+	
+	/**
 	 * Obtém um produto de acordo com o número do produto.
 	 * 
 	 * @param nome - nome do produto
@@ -42,17 +51,17 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	 * 
 	 * @return {@link Produto}
 	 */
-	Produto obterProdutoPorCodigo(String codigoProduto);
+	Produto obterProdutoPorCodigoProdin(String codigoProduto);
 	
 	Produto obterProdutoBalanceadosPorCodigo(String codigoProduto, Date dataLancamento);
 	
 	String obterNomeProdutoPorCodigo(String codigoProduto);
 	
 	List<ConsultaProdutoDTO> pesquisarProdutos(String codigo, String produto, String fornecedor, String editor,
-			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp);
+			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica);
 
 	Integer pesquisarCountProdutos(String codigo, String produto,
-			String fornecedor, String editor, Long codigoTipoProduto);
+			String fornecedor, String editor, Long codigoTipoProduto, Boolean isGeracaoAutomatica);
 
 	Produto obterProdutoPorID(Long id);
 	
@@ -67,8 +76,16 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	GrupoProduto obterGrupoProduto(String codigoProduto);
 	
 	List<Produto> buscarProdutosBalanceadosOrdenadosNome(Date dataLancamento);
-	
+
 	BigDecimal obterDescontoLogistica(Long idProduto);
+
+	List<String> verificarProdutoExiste(String... codigoProduto);
+
+    Produto obterProdutoPorCodigoICD(String codigoProduto);
+
+    Produto obterProdutoPorCodigoICDLike(String codigoProduto);
+
+    Produto obterProdutoPorCodigoProdinLike(String codigoProduto);
 	
 	String obterUltimoCodigoProdutoRegional();
 	

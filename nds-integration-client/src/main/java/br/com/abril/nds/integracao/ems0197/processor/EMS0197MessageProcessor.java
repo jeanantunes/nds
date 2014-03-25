@@ -4,24 +4,24 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigInteger;
-import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.dto.DetalhesPickingDTO;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Detalhe;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Header;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Trailer;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.DescontoService;
@@ -47,8 +47,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	
 	private Date dataLctoDistrib;
 
-	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
-	
 	/** Quantidade de arquivos processados. */
 	private int quantidadeArquivosGerados = 0;
 	
@@ -57,43 +55,37 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		
 		this.quantidadeArquivosGerados = 0;
 		
-		List<PDV> jornaleiros = obterPDVsPricipais();
+		List<EMS0197Header> listHeaders = this.criarHeader(dataLctoDistrib);
 		
-		for (PDV jornaleiro : jornaleiros){
+		for (EMS0197Header outheader : listHeaders){
 
 			try{
 				
-				String nomeArquivo = String.format("%1$04d%2$s", 
-						jornaleiro.getCota().getNumeroCota(),
-						sdf.format(dataLctoDistrib)); 												
+				String nomeArquivo = String.format("%1$05d%2$s", 
+						Integer.parseInt(outheader.getNumeroCota()), outheader.getFormatedDate()); 												
 				
 				PrintWriter print = new PrintWriter(new FileWriter(
-						message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO)
+						message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
 						+ File.separator + REPARTE_FOLDER +File.separator + nomeArquivo + REPARTE_EXT));
 				
-				EMS0197Header outHeader = createHeader(jornaleiro);
-				
-				print.println(fixedFormatManager.export(outHeader));
-					
+				print.println(fixedFormatManager.export(outheader));
 			
-				for(MovimentoEstoqueCota movimentoEstoqueCota : jornaleiro.getCota().getMovimentoEstoqueCotas()){
+				List<DetalhesPickingDTO> listDetalhes = getDetalhesPicking(outheader.getIdCota(), this.dataLctoDistrib);
+				
+				for(DetalhesPickingDTO pickingDTO : listDetalhes){
 					
-					EMS0197Detalhe outDetalhe = createDetalhes(jornaleiro, movimentoEstoqueCota.getProdutoEdicao(), movimentoEstoqueCota.getQtde());
+					EMS0197Detalhe outDetalhe = createDetalhes(pickingDTO);
 
 					print.println(fixedFormatManager.export(outDetalhe));
 				}
 					
-				EMS0197Trailer outTrailer = createTrailer(jornaleiro);
+				EMS0197Trailer outTrailer = createTrailer(outheader.getNumeroCota(), listDetalhes.size());
 				
 				print.println(fixedFormatManager.export(outTrailer));
 					
 				print.flush();
 				print.close();
 						
-				/*
-				 * A quantidade de arquivos gerados é incrementado aqui pois 
-				 * considera-se que o arquivo foi gerado corretamente.
-				 */
 				this.quantidadeArquivosGerados++;
 			}
 			catch(IOException e){
@@ -108,10 +100,13 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	 * @param jornaleiro
 	 * @return
 	 */
-	private EMS0197Trailer createTrailer(PDV jornaleiro) {
+	private EMS0197Trailer createTrailer(String numeroCota, Integer qtdRegistros) {
+		
 		EMS0197Trailer outTrailer = new EMS0197Trailer();
-		outTrailer.setNumeroCota(jornaleiro.getCota().getNumeroCota().toString());
-		outTrailer.setQtdeRegTipo2(jornaleiro.getCota().getMovimentoEstoqueCotas().size());
+		
+		outTrailer.setNumeroCota(numeroCota);
+		outTrailer.setQtdeRegTipo2(qtdRegistros);
+		
 		return outTrailer;
 	}
 
@@ -122,73 +117,132 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	 * @param movimentoEstoqueCota
 	 * @return
 	 */
-	private EMS0197Detalhe createDetalhes(PDV jornaleiro,
-			ProdutoEdicao produtoEdicao, BigInteger qtd) {
+	private EMS0197Detalhe createDetalhes(DetalhesPickingDTO pickingDTO) {
 		
 		EMS0197Detalhe outDetalhe = new EMS0197Detalhe();
 		
-		outDetalhe.setCodigoCota(jornaleiro.getCota().getNumeroCota().toString());
+		outDetalhe.setCodigoCota(pickingDTO.getNumeroCota().toString());
 		
-		outDetalhe.setCodProduto(produtoEdicao.getProduto().getCodigo().toString());
-		outDetalhe.setNumEdicao(produtoEdicao.getNumeroEdicao().toString());
-		outDetalhe.setNomeProduto(produtoEdicao.getProduto().getNome());
-		outDetalhe.setCodigoDeBarrasPE(produtoEdicao.getCodigoDeBarras());
-		outDetalhe.setPrecoCustoPE(produtoEdicao.getPrecoCusto().toString());
-		outDetalhe.setPrecoVendaPE(produtoEdicao.getPrecoVenda().toString());												
+		outDetalhe.setCodProduto(pickingDTO.getCodigoProduto());
 		
-		outDetalhe.setDescontoPE(
-				descontoService.obterValorDescontoPorCotaProdutoEdicao(null, jornaleiro.getCota().getId(), produtoEdicao).toString());		
+		outDetalhe.setNumEdicao(pickingDTO.getCodigoEdicao().toString());
 		
-		outDetalhe.setQtdeMEC(qtd.toString());
+		outDetalhe.setNomeProduto(pickingDTO.getNomeProduto());
+		
+		outDetalhe.setCodigoDeBarrasPE(pickingDTO.getCodigoDeBarrasProdutoEdicao());
+		
+		outDetalhe.setPrecoCustoPE(pickingDTO.getPrecoCustoProdutoEdicao().toString());
+		
+		outDetalhe.setPrecoVendaPE(pickingDTO.getPrecoVendaProdutoEdicao().toString());												
+		
+		outDetalhe.setDescontoPE(pickingDTO.getValorDescontoMEC().toString());
+		
+		outDetalhe.setQtdeMEC(pickingDTO.getQtdeMEC().toString());
 		
 		return outDetalhe;
 	}
 
-	/**
-	 * Cria o cabeçalho para o arquivo
-	 * 
-	 * @param jornaleiro
-	 * @return
-	 */
-	private EMS0197Header createHeader(PDV jornaleiro) {
+	
+	@SuppressWarnings("unchecked")
+	public List<EMS0197Header> criarHeader(Date data) {
+
+		StringBuilder sql = new StringBuilder();
 		
-		EMS0197Header outHeader = new EMS0197Header();
-		outHeader.setCodigoCota(jornaleiro.getCota().getNumeroCota().toString());
-		outHeader.setNomePDV(jornaleiro.getNome());
-		outHeader.setDataLctoDistrib(sdf.format(dataLctoDistrib));
+		sql.append(" select distinct(c.id) as idCota, c.numero_cota as numeroCota");
+		sql.append(" , pdv.NOME as nomePDV "); 
+		sql.append(" , mec.data as dataLctoDistrib ");
+		sql.append(" from cota c ");
+		sql.append(" join pdv pdv on pdv.cota_id = c.id  ");
+		sql.append(" join movimento_estoque_cota mec on mec.cota_id = c.ID ");
+		sql.append(" join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ");
+		sql.append(" where mec.DATA = :data ");
+		sql.append(" and pdv.PONTO_PRINCIPAL = true ");
+		sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE in (:grupos) ");
 		
-		return outHeader;
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("data", data);
+		query.setParameterList("grupos", 
+				Arrays.asList( 
+						GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO.name(),
+						GrupoMovimentoEstoque.SOBRA_DE_COTA.name(), 
+						GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+						GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(), 
+						GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
+						GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE.name()
+				));
+		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("dataLctoDistrib", StandardBasicTypes.DATE);
+		query.addScalar("numeroCota", StandardBasicTypes.STRING );
+		query.addScalar("nomePDV", StandardBasicTypes.STRING );
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(EMS0197Header.class));
+		
+		return (List<EMS0197Header>) query.list();
 	}
-
-
+	
 	/**
-	 * Obtém lista de PDVs principais
 	 * 
+	 * @param idCota
+	 * @param data
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private List<PDV> obterPDVsPricipais() {
+	public List<DetalhesPickingDTO> getDetalhesPicking(Long idCota, Date data) {
 		
-		StringBuffer sql = new StringBuffer();
-		
-		sql.append("SELECT DISTINCT pdv FROM PDV pdv");
-		sql.append(" JOIN FETCH pdv.cota cotaPDV ");
-		sql.append(" JOIN FETCH cotaPDV.movimentoEstoqueCotas mec ");
-		sql.append(" LEFT JOIN FETCH mec.produtoEdicao pe ");
-		sql.append(" LEFT JOIN FETCH pe.produto pd ");
-		sql.append(" LEFT JOIN pe.lancamentos lan ");
-		sql.append(" LEFT JOIN mec.tipoMovimento tip ");
-		sql.append(" WHERE pdv.caracteristicas.pontoPrincipal = true ");
-		sql.append(" AND	lan.dataLancamentoDistribuidor = :dataInformada");
-		sql.append(" AND	tip.grupoMovimentoEstoque='RECEBIMENTO_REPARTE'");
-		sql.append(" ORDER BY cotaPDV.numeroCota");
-		
-		Query query = getSession().createQuery(sql.toString());
-	    query.setParameter("dataInformada", this.dataLctoDistrib);
+		StringBuilder sql = new StringBuilder();
 
-		return (List<PDV>) query.list();
+		sql.append(" select c.id as idCota ");
+		sql.append(" ,c.numero_cota as numeroCota ");
+		sql.append(" ,mec.qtde as qtdeMEC ");
+		sql.append(" ,p.codigo as codigoProduto ");
+		sql.append(" ,p.nome as nomeProduto ");
+		sql.append(" ,l.sequencia_matriz as sequenciaMatriz ");
+		sql.append(" ,pe.numero_edicao as codigoEdicao ");
+		sql.append(" ,pe.preco_custo as precoCustoProdutoEdicao ");
+		sql.append(" ,pe.preco_venda as precoVendaProdutoEdicao ");
+		sql.append(" ,mec.valor_desconto as valorDescontoMEC ");
+		sql.append(" ,pe.codigo_de_barras as codigoDeBarrasProdutoEdicao ");
+		sql.append(" from movimento_estoque_cota mec ");
+		sql.append(" join lancamento l on l.id = mec.lancamento_id ");
+		sql.append(" join cota c on mec.COTA_ID = c.ID  ");
+		sql.append(" join produto_edicao pe on pe.id = mec.produto_edicao_id ");
+		sql.append(" join produto p on p.id = pe.produto_id ");
+		sql.append(" join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ");
+		sql.append(" where mec.data = :data ");
+		sql.append(" and c.id = :idCota ");
+		sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE in (:grupos) ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("data", data);
+		query.setParameter("idCota", idCota);
+		query.setParameterList("grupos", 
+				Arrays.asList( 
+						GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO.name(),
+						GrupoMovimentoEstoque.SOBRA_DE_COTA.name(), 
+						GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+						GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(), 
+						GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
+						GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE.name()
+				));
+		
+		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		query.addScalar("qtdeMEC", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("codigoEdicao", StandardBasicTypes.LONG);
+		query.addScalar("codigoDeBarrasProdutoEdicao", StandardBasicTypes.STRING);
+		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+		query.addScalar("sequenciaMatriz", StandardBasicTypes.INTEGER);
+		query.addScalar("precoCustoProdutoEdicao", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("precoVendaProdutoEdicao", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valorDescontoMEC", StandardBasicTypes.BIG_DECIMAL);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DetalhesPickingDTO.class));
+
+		return (List<DetalhesPickingDTO>) query.list();
 	}
-					
 						
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {

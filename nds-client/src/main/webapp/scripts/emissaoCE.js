@@ -36,24 +36,56 @@ var EmissaoCEController = $.extend(true, {
 		
         $("#imprimirBoletosEmBranco").click(function(){
 			
-			_this.obterDadosImpressaoBoletosEmBranco();
+			_this.obterDadosImpressaoBoletosEmBranco(true);
 		});
 		
 		this.inicializarGrids();
 	},
 
-	obterDadosImpressaoBoletosEmBranco : function(){
+	popupConfirmacaoReemissaoBoletosAntecipados : function(){
+
+		$( "#dialog-reemissao-boleto-antecipado", this.workspace).dialog({
+			resizable: false,
+			height:120,
+			width:720,
+			modal: true,
+			buttons: {
+				"Sim": function() {
+
+					EmissaoCEController.obterDadosImpressaoBoletosEmBranco(false);
+					
+					$( this ).dialog( "close" );
+				},
+				"Não": function() {
+					
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-reemissao-boleto-antecipado", this.workspace).parents("form")
+		});	
+	},
+
+	obterDadosImpressaoBoletosEmBranco : function(verificarReemissao){
 		
 		var _this = this;
 		
+        var data = [{name:'verificarReemissao', value: verificarReemissao}];
+		
 		$.postJSON(
-				contextPath + "/emissaoCE/obterDadosImpressaoBoletosEmBranco", null,
+				contextPath + "/emissaoCE/obterDadosImpressaoBoletosEmBranco", data,
 				function(result) { 
 
                     if (result && result.boolean == true){
 					    
 						_this.imprimirBoletoEmBranco();
 					}
+                    else{
+                    	
+                    	if(result.boolean == false){
+                    	
+                    	    _this.popupConfirmacaoReemissaoBoletosAntecipados();
+                    	}
+                    }
 				},
 				null
 		);

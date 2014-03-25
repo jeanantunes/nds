@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -36,5 +37,50 @@ public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepositoryModel
 		return query.list();
 		
 	}
+	
+	
+	
 
+	@Override
+	public ParametroCobrancaCota obterParametroCobrancaCotaPorCota(Integer numeroCota) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select p from ParametroCobrancaCota p where p.cota.numeroCota = :numeroCota");
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		return (ParametroCobrancaCota) query.uniqueResult();
+	}
+
+	@Override
+	public boolean verificarCotaSemParametroCobrancaPorFormaCobranca(Long id) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select case when count(c.id) > 0 then true else false end " +
+				"from Cota c " +
+				"left join c.parametroCobranca p " +
+				"join p.formasCobrancaCota f " +
+				"where f.id = :id " +
+				"and p.id is null ");
+		
+		query.setParameter("id", id);
+		
+		return (boolean) query.uniqueResult();
+	}
+
+    @Override
+    public boolean verificarDataAlteracaoTipoCota(Long idCota, Date dataOperacao) {
+        
+        Query query = this.getSession().createQuery(
+                " select case when c.alteracaoTipoCota = :data then true else false end " +
+                " from Cota c " +
+                " where c.id = :idCota ");
+        
+        query.setParameter("idCota", idCota);
+        query.setParameter("data", dataOperacao);
+        
+        return (Boolean)query.uniqueResult();
+    }
 }

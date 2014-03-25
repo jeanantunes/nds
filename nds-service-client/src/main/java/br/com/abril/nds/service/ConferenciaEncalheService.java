@@ -3,20 +3,20 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
+import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -27,6 +27,16 @@ import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 import br.com.abril.nds.util.ItemAutoComplete;
 
 public interface ConferenciaEncalheService {
+	
+	/**
+	 * Obtém mapa tendo como chave idFornecedor e valor 
+	 * o objeto DataCEConferivel (objeto que possui 2 lista
+	 * de data ce, uma para produto parcial e outra para produto nao parcial).
+	 * 
+	 * @param numeroCota
+	 * @return DataCEConferivelDTO
+	 */
+	public Map<Long, DataCEConferivelDTO> obterDatasChamadaEncalheConferiveis(Integer numeroCota);
 	
 	/**
 	 * Retorna uma lista de box de recolhimento.
@@ -56,13 +66,35 @@ public interface ConferenciaEncalheService {
 	
 	
 	/**
+	 * Obtém o primeiro dia de recolhimento para da data de
+	 * CE programada da cota de operação diferenciada em questão.
+	 * 
+	 * @param numeroCota
+	 * @param dataRecolhimentoCE
+	 * 
+	 * @return Date
+	 */
+	public Date obterDataPrimeiroDiaEncalheOperacaoDiferenciada(Integer numeroCota, Date dataRecolhimentoCE);
+	
+	/**
+	 * Verifica se a cota informada possui operação diferenciada. 
+	 * 
+	 * Caso possua, é verificado se o dia da semana da data de operação se encontra nos dias
+	 * de operação diferenciada configurados para a cota em questão. 
+	 * 
+	 * @param numeroCota
+	 */
+	public void verificarCotaOperacaoDiferenciada(Integer numeroCota);
+
+	
+	/**
 	 * 
 	 * @param conferenciaEncalhe
 	 * @param cota
 	 * @param dataOperacao
 	 * @param indConferenciaContingencia
 	 */
-	public void validarQtdeEncalheExcedeQtdeReparte(
+	public boolean validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
 			Cota cota, 
 			Date dataOperacao, 
@@ -226,31 +258,15 @@ public interface ConferenciaEncalheService {
 	 * @param listaIdConferenciaEncalheParaExclusao
 	 * @param usuario
 	 * @param indConferenciaContingencia
+	 * @param reparte
 	 */
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario,
-			boolean indConferenciaContingencia) throws GerarCobrancaValidacaoException;
-	
-	/**
-	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota para impressora matricial
-	 * 
-	 * @param idControleConferenciaEncalheCota
-	 * @param incluirNumeroSlip
-	 * @return
-	 */
-	public byte[] gerarSlipMatricial(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
-	
-	/**
-	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota
-	 * 
-	 * @param idControleConferenciaEncalheCota
-	 * @param incluirNumeroSlip
-	 * @return
-	 */
-	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip, TipoArquivo tpArquivo);
+			boolean indConferenciaContingencia,
+			BigDecimal reparte) throws GerarCobrancaValidacaoException;
 	
 	/**
 	 * Obtem valor total para geração de crédito na C.E.
@@ -261,16 +277,18 @@ public interface ConferenciaEncalheService {
 
 	public Long[] obterIdsFornecedorDoProduto(ProdutoEdicao produtoEdicao);
 	
-	public SlipDTO setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
-
-	List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(Cota cota, Date dataOperacao);
-	
 	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras);
 	
 	boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota);
 	
 	boolean isLancamentoParcial(Long idProdutoEdicao);
 	
-	void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao);
+	void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao, boolean indOperacaoDiferenciada);
+
+	BigDecimal obterValorTotalDesconto(Integer numeroCota, Date dataOperacao);
+
+	BigDecimal obterValorTotalReparteSemDesconto(Integer numeroCota,Date dataOperacao);
+
+	BigDecimal obterValorTotalReparte(Integer numeroCota, Date dataOperacao);
 	
 }

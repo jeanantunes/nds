@@ -9,10 +9,8 @@
     <tr>
       <td><strong>Código:</strong></td>
       <td>
-      
-      	<input type="text" name="fornecedorDTO.codigoInterface" id="fornecedorController-codigoInterface" maxlength="11" style="width:100px" />
-      	
-      
+      	<input type="text" name="fornecedorDTO.codigoInterface" id="fornecedorController-codigoInterface" 
+      		maxlength="4" style="width:100px" onkeyup="this.value = this.value.replace(/[^0-9\.]/g,'');" />
       </td>
       <td><strong>Início de Atividade:</strong></td>
       <td><span id="fornecedorController-inicioAtividade"></span></td>
@@ -84,6 +82,17 @@
 			</c:forEach>
 		</select>
       </td>
+    </tr>
+    <tr>
+    	<td>Canal Distribui&ccedil;&atilde;o</td>
+    	<td>
+    		<select id="fornecedorController-canalDistribuicao" name="fornecedorDTO.canalDistribuicao" 
+    			style="width: 150px;">
+	    		<c:forEach items="${canaisDistribuicao}" var="canal">
+	    			<option value="${canal}">${canal.descricao}</option>
+	    		</c:forEach>	
+    		</select>
+    	</td>
     </tr>
     </table>
     <br />

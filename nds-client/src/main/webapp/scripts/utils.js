@@ -5,7 +5,7 @@ $(document).ready(function() {
 
 	jQuery(":input[maxlength]").keyup(function () {
 	    var focus = jQuery(this);
-	    var valFocus;
+	    var valFocus = null;
 	    try {
 	        if (typeof jQuery(focus).mask() == 'string') {
 	            valFocus = jQuery(focus).val().replace("_", "");
@@ -321,17 +321,35 @@ function montarComboBoxUnicaOpcao(value, label, element) {
         $(element).html(newOption(value, label));
 }
 
-function carregarCombo(url, params, element, selected, idDialog ){
+function carregarCombo(url, params, element, selected, idDialog, callback){
     $.postJSON(url, params,
         function(result){
             var combo =  montarComboBox(result, false);
             combo = newOption('-1', 'Selecione...') + combo;
-            $(element).html(combo);
-            if (selected) {
-                $(element).val(selected);
-            } else {
-                $(element).val('-1');
+            
+            if($(element).length>1){
+            	$.each(element,function(idx,cpm){
+            		$(cpm).html(combo);
+                	if (selected) {
+                		$(cpm).val(selected);
+                	} else {
+                		$(cpm).val('-1');
+                	}
+            		
+            	});
+            }else{
+            	$(element).html(combo);
+            	if (selected) {
+            		$(element).val(selected);
+            	} else {
+            		$(element).val('-1');
+            	}
+            	
             }
+            if (callback) {
+            	callback();
+            }
+            
         },null,true, idDialog);
 }
 
@@ -490,9 +508,41 @@ function onlyNumeric(event){
         else {
             // Ensure that it is a number and stop the keypress
             if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
-                event.preventDefault(); 
+            	event.preventDefault();
             }   
         }
+        
+        
+}
+
+function formatarMilhar(num) {
+    x = 0;
+
+    if (num < 0) {
+        num = Math.abs(num);
+        x = 1;
+    }
+
+    if (isNaN(num))
+        num = "0";
+
+    num = Math.floor((num * 100 + 0.5) / 100).toString();
+
+    for (var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++)
+        num = num.substring(0, num.length - (4 * i + 3)) + '.' + num.substring(num.length - (4 * i + 3));
+
+    ret = num;
+
+    if (x == 1) ret = ' - ' + ret;
+
+    return ret;
+}
+
+function getCurrentTabContainer(){
+	var currentTabId = $(".ui-tabs-selected").find("a").attr("href");
+	var currentTab = $(currentTabId);
+	
+	return currentTab;
 }
 
 function focusSelectRefField(objectField){
@@ -533,7 +583,7 @@ function bloquearItensEdicao(workspace) {
 	if($('#permissaoAlteracao',workspace).val()=="true")
 		return;
 	
-	$('a[isEdicao="true"]',workspace).each(function() {
+	$('a[isEdicao="true"][isedicao="true"]',workspace).each(function() {
 		this.href="#";
 		$(this).removeAttr("onClick");
 		$(this).unbind('click');
@@ -542,7 +592,7 @@ function bloquearItensEdicao(workspace) {
 		});
 	});
 	
-	$('input[isEdicao="true"]',workspace).each(function() {
+	$('input[isEdicao="true"][isedicao="true"]',workspace).each(function() {
 		$(this).attr("disabled",true);
 		$(this).removeAttr("onClick");
 	});
@@ -561,6 +611,20 @@ function verificarPermissaoAcesso(workspace) {
 	
 	return false;
 }
+
+function removeTabByTitle(title) {
+	
+	var tabToRemove=-1;
+	$("#workspace li.ui-state-default a").each(function(idx,comp){
+		if($(comp).text()==title){
+			tabToRemove=idx;
+		}
+	});
+	if(tabToRemove>-1){
+		$("#workspace").tabs("remove",tabToRemove);
+	}
+}
+
 
 function direcionar(novaTab, path){
 	    
@@ -669,6 +733,42 @@ function disableShortcutRefresh(e) {
     	if(navigator.platform == "MacIntel") return (handler.keys[82] && handler.keys[91]);
     	return ((e.wich || e.keyCode) == 82 && (e.ctrlKey || window.event.ctrlKey));
     };
+}
+
+function addTabWithPost(tabs, label, postResponse, blankPath) {
+	tabs.tabs({load : function( event, ui ) { $('#'+ ui.panel.id).html(postResponse); }});
+	tabs.tabs('addTab', label, blankPath);
+}
+
+
+function insertTelaAnalise(divToHide, divToShow, estudo){
+
+	var matrizSelecionado_estudo =null;
+	
+	if(typeof(histogramaPosEstudoController)!="undefined"){
+		matrizSelecionado_estudo = histogramaPosEstudoController.matrizSelecionado.estudo;
+	}
+	
+    var idEstudo =  matrizSelecionado_estudo || estudo;
+    var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + idEstudo;
+    if ($('#parcial').val() === 'true') {
+		urlAnalise += '&modoAnalise=PARCIAL';
+	}
+
+	$.get(
+			urlAnalise,
+			null, // parametros
+			function(html){ // onSucessCallBack
+				$(divToHide).hide();
+				$(divToShow).html(html);
+				$(divToShow).show();
+
+				$( divToShow + ' #botaoVoltarTelaAnalise').attr("onclick","").click(function voltarTelaAnalise(){
+					$(divToShow).hide();
+					$(divToHide).show();
+				});
+		});
+	
 }
 
 

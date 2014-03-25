@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -22,15 +23,17 @@ public class GeraDividaDTO implements Serializable{
 	
 	@Export(label = "Box")
 	private String box;
+
+	@Export(label = "Roteiro")
+	private String roteiro;
 	
 	@Export(label = "Rota")
 	private String rota;
 	
-	@Export(label = "Roteiro")
-	private String roteiro;
-	
 	@Export(label = "Cota")
 	private Integer numeroCota;
+	
+	private Long idCota;
 	
 	@Export(label = "Nome")
 	private String nomeCota;
@@ -228,7 +231,7 @@ public class GeraDividaDTO implements Serializable{
 	 * @param valor the valor to set
 	 */
 	public void setValor(BigDecimal valor) {
-		this.valor = valor;
+		this.valor = valor == null ? null : valor.setScale(2, RoundingMode.HALF_EVEN);
 	}
 	/**
 	 * @return the tipoCobranca
@@ -254,6 +257,22 @@ public class GeraDividaDTO implements Serializable{
 	public void setSuportaEmail(Boolean suportaEmail) {
 		this.suportaEmail = suportaEmail;
 	}
+
+    
+    /**
+     * @return the idCota
+     */
+    public Long getIdCota() {
+        return idCota;
+    }
+
+    
+    /**
+     * @param idCota the idCota to set
+     */
+    public void setIdCota(Long idCota) {
+        this.idCota = idCota;
+    }
 	
 	
 	 

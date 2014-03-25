@@ -31,9 +31,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 		
 		HashMap<String, Object> param = getParametrosVendaProdutoEncalhe(filtro);
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		return (Long) query.uniqueResult();		
 	}
@@ -66,9 +64,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 		
 		HashMap<String, Object> param = getParametrosVendaProdutoEncalhe(filtro);
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		return query.list();
 	}
@@ -99,9 +95,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 		
 		param.put("horarioVenda", filtro.getHorarioVenda());
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		return query.list();
 	}
@@ -120,9 +114,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 		
 		HashMap<String, Object> param = getParametrosVendaProdutoEncalhe(filtro);
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(VendaEncalheDTO.class));
 		

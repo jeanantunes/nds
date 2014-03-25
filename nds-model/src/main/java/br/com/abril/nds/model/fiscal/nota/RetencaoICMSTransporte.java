@@ -38,28 +38,28 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 	/**
 	 * vServ
 	 */
-	@Column(name="VL_SERVICO", nullable=false, precision=18, scale=4)
+	@Column(name="VL_SERVICO", nullable=false, precision=15, scale=2)
 	@NFEExport(secao = TipoSecao.X11, posicao = 0)
 	private BigDecimal valorServico;
 	
 	/**
 	 * vBCRet
 	 */
-	@Column(name="VL_BC_RET_ICMS", nullable=false, precision=18, scale=4)
+	@Column(name="VL_BC_RET_ICMS", nullable=false, precision=15, scale=2)
 	@NFEExport(secao = TipoSecao.X11, posicao = 1)
 	private BigDecimal valorBaseCalculo;
 	
 	/**
 	 * pICMSRet
 	 */
-	@Column(name="PER_ALIQUOTA", nullable=false, precision=18, scale=4)
+	@Column(name="PER_ALIQUOTA", nullable=false, precision=5, scale=2)
 	@NFEExport(secao = TipoSecao.X11, posicao = 2)
 	private BigDecimal percentualAliquota;
 	
 	/**
 	 * vICMSRet
 	 */
-	@Column(name="VL_ICMS", nullable=false, precision=18, scale=4)
+	@Column(name="VL_ICMS", nullable=false, precision=15, scale=2)
 	@NFEExport(secao = TipoSecao.X11, posicao = 3)
 	private BigDecimal valorICMS;
 	

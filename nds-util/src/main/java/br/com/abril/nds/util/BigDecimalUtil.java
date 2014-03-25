@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public class BigDecimalUtil {
 	
+	public static final BigDecimal CEM = BigDecimal.valueOf(100);
 	
 	/**
 	 * Soma o valores desprezando nulos passado como paramentro.
@@ -27,6 +28,25 @@ public class BigDecimalUtil {
 		}
 		
 		return false;
+	}
+	
+	public static boolean isMenorQueZero(BigDecimal valor) {
+		
+		if(valor!=null && valor.compareTo(BigDecimal.ZERO)<0) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public static boolean eq(BigDecimal value1, BigDecimal value2) {
+		
+		return value1.compareTo(value2) == 0;
+	}
+	
+	public static boolean neq(BigDecimal value1, BigDecimal value2) {
+		
+		return !eq(value1, value2);
 	}
 	
 	/**

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpSession;
 
@@ -45,16 +46,6 @@ public class CotaBloqueadaController extends BaseController {
 		
 	}
 
-    private Map<Integer, String> obterUsuariosEmConferenciaEncalhe(){
-		
-		synchronized (this.session.getServletContext()) {
-			
-			@SuppressWarnings("unchecked")
-			Map<Integer, String> mapaUsuarioConferencia = (LinkedHashMap<Integer, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
-			
-			return mapaUsuarioConferencia;
-		}
-	}
 
 	private Map<Integer, String> obterCotasEmConferenciaEncalhe(){
 		
@@ -80,25 +71,39 @@ public class CotaBloqueadaController extends BaseController {
 		result.use(Results.json()).from(existeConferenciaEmAndamento , "result").recursive().serialize();
 	}
 	
+	private String obterNomeUsuarioLockandoCota(String donoDoLockCotaConferida) {
+		
+		final Map<String, String> mapaSessionIDNomeUsuario = (LinkedHashMap<String, String>) this.session.getServletContext()
+				.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
+
+		String nomeUsuario = "Não identificado";
+
+		if (mapaSessionIDNomeUsuario != null
+				&& mapaSessionIDNomeUsuario.get(donoDoLockCotaConferida) != null) {
+			nomeUsuario = mapaSessionIDNomeUsuario.get(donoDoLockCotaConferida);
+		}
+		
+		return nomeUsuario;
+
+	}
+	
 	@Post
 	@Path("/obterCotasBloqueadas")
 	public void obterCotasBloqueadas(){
 		
 		Map<Integer, String> mapaCotaConferidaUsuario = this.obterCotasEmConferenciaEncalhe();
 		
-		Map<Integer, String> mapaUsuarioConferencia = this.obterUsuariosEmConferenciaEncalhe();
-		
 		List<CotaBloqueadaVO> cbsVO = new ArrayList<CotaBloqueadaVO>();
 		
 		if (mapaCotaConferidaUsuario!=null && !mapaCotaConferidaUsuario.isEmpty()){
 		
-			for ( Integer numeroCota : mapaCotaConferidaUsuario.keySet()){
+			for ( Entry<Integer, String> entry : mapaCotaConferidaUsuario.entrySet()){
 				
-				Cota c = this.cotaService.obterPorNumeroDaCota(numeroCota);
+				Cota c = this.cotaService.obterPorNumeroDaCota(entry.getKey());
 				
-				String sessionId = mapaCotaConferidaUsuario.get(numeroCota);
+				String nomeUsuario = obterNomeUsuarioLockandoCota(entry.getValue());
 				
-				cbsVO.add(new CotaBloqueadaVO(mapaUsuarioConferencia.get(sessionId),
+                cbsVO.add(new CotaBloqueadaVO(nomeUsuario,
 						                      c.getNumeroCota(),
 						                      c.getPessoa().getNome()));
 				

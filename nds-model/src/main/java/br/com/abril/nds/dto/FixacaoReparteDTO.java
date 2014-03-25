@@ -3,51 +3,61 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.apache.commons.lang.StringUtils;
 
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.upload.XlsMapper;
 import br.com.abril.nds.vo.PaginacaoVO;
-
-
-
 
 @SuppressWarnings("serial")
 @Exportable
-public class FixacaoReparteDTO implements Serializable{
+public class FixacaoReparteDTO implements Serializable {
+	
+	private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 	
 	private Long id;
 	
 	@Export(label ="exemplares")
+	@XlsMapper(value="qtd")
 	private Integer qtdeExemplares;
 	
 	private Date dataHora;
 	
 	@Export(label ="ed. inicial")
+	@XlsMapper(value="edinicial")
 	private Integer edicaoInicial;
 	
 	@Export(label ="ed. final")
+	@XlsMapper(value="edfinal")
 	private Integer edicaoFinal;
 	
-	@Export(label ="codigo")
+	@Export(label ="cota")
+	@XlsMapper(value="cota")
 	private Integer cotaFixada;
 	
-	@Export(label ="codigo")
+	@Export(label ="numero")
 	private String nomeCota;
 	
 	@Export(label ="classificacao")
+	@XlsMapper(value="classific")
 	private String classificacaoProduto;
+
+    private Long classificacaoProdutoId;
 	
 	@Export(label ="usuario")
 	private String usuario;
 	
-	private String cotaFixadaString;
-	
 	@Export(label ="produto")
+	@XlsMapper(value="codpub")
 	private String produtoFixado;
 	
 	@Export(label ="qtde ed")
+	@XlsMapper(value="qtdedicoes")
 	private Integer qtdeEdicoes;
 	
 	@Export(label ="data")
@@ -65,85 +75,64 @@ public class FixacaoReparteDTO implements Serializable{
 	private Integer edicoesAtendidas;
 	
 	private BigInteger edicao;
-	private String edicaoString;
 	private BigDecimal reparte;
-	private String reparteString;
 	private BigDecimal venda;
-	private String vendaString;
 	private Date dataLancamento;
 	private String dataLancamentoString;
 	private Date dataRecolhimento;
 	private String dataRecolhimentoString;
 	private String status;
 	private PaginacaoVO paginacaoVO;
-	private boolean qtdeEdicoesMarcado;
+	private Boolean qtdeEdicoesMarcado;
+	private Boolean manterFixa;
 	private String codigoProduto;
-
+	private Long cotaFixadaId;
+	private Long produtoFixadoId;
+	private Long idLancamento;
+	private Date dataFixaCadastroDaFixacao;
+	
 	public String getDataLancamentoString() {
 		return dataLancamentoString;
-	}
-
-	public void setDataLancamentoString(String dataLancamentoString) {
-		this.dataLancamentoString = dataLancamentoString;
 	}
 
 	public String getDataRecolhimentoString() {
 		return dataRecolhimentoString;
 	}
 
-	public void setDataRecolhimentoString(String dataRecolhimentoString) {
-		this.dataRecolhimentoString = dataRecolhimentoString;
-	}
-
 	public String getEdicaoString() {
-		return this.edicao.toString();
-	}
-
-	public void setEdicaoString(String edicaoString) {
-		this.edicaoString = edicaoString;
+		if (edicao != null) {
+			return edicao.toString();
+		}
+		return "";
 	}
 
 	public String getReparteString() {
-		if(this.reparte==null){
-			return "";
-		}else{
-			return this.reparte.toString();
+		if (reparte != null) {
+			return reparte.toString();
 		}
-	}
-
-	public void setReparteString(String reparteString) {
-		this.reparteString = reparteString;
+		return "";
 	}
 
 	public String getVendaString() {
-		return this.vendaString;
-	}
-
-	public void setVendaString(String vendaString) {
-		this.vendaString = vendaString;
+		if (venda != null) {
+			return venda.toString();
+		}
+		return "";
 	}
 
 	public BigInteger getEdicao() {
-		if(this.edicao==null){
-			return null;
-		}else{
-			 this.setEdicaoString(this.edicao.toString());
-		}
 		return edicao;
 	}
 
 	public void setEdicao(BigInteger edicao) {
-		this.edicaoString = edicao.toString();
 		this.edicao = edicao;
 	}
 
 	public BigDecimal getReparte() {
-		this.setReparteString(this.reparteString.toString());
 		return reparte;
 	}
 
 	public void setReparte(BigDecimal reparte) {
-		this.reparteString= reparte.toString();
 		this.reparte = reparte;
 	}
 
@@ -152,7 +141,6 @@ public class FixacaoReparteDTO implements Serializable{
 	}
 
 	public void setVenda(BigDecimal venda) {
-		this.vendaString= venda.toString();
 		this.venda = venda;
 	}
 
@@ -161,9 +149,10 @@ public class FixacaoReparteDTO implements Serializable{
 	}
 
 	public void setDataLancamento(Date dataLancamento) {
-		
-		this.dataLancamentoString =DateUtil.formatarData(dataLancamento, "dd/MM/yyyy");
 		this.dataLancamento = dataLancamento;
+		if (dataLancamento != null) {
+			dataLancamentoString = formatter.format(dataLancamento);
+		}
 	}
 
 	public Date getDataRecolhimento() {
@@ -171,59 +160,42 @@ public class FixacaoReparteDTO implements Serializable{
 	}
 
 	public void setDataRecolhimento(Date dataRecolhimento) {
-		this.dataRecolhimentoString =DateUtil.formatarData(dataRecolhimento, "dd/MM/yyyy");
 		this.dataRecolhimento = dataRecolhimento;
+		if (dataRecolhimento != null) {
+			dataRecolhimentoString = formatter.format(dataRecolhimento);
+		}
 	}
 
 	public String getStatus() {
-		return status;
+		return StringUtils.trimToEmpty(status);
 	}
 
 	public void setStatus(String status) {
-		if(status==null){
-			status="";
-		}else{
-			this.status = status;			
-		}
-		
+		this.status = status;			
 	}
 
 	public String getClassificacaoProduto() {
-		return classificacaoProduto;
+		return StringUtils.trimToEmpty(classificacaoProduto);
 	}
 
 	public void setClassificacaoProduto(String classificacaoProduto) {
-		if(classificacaoProduto==null){
-			this.classificacaoProduto="";
-		}else{
-			this.classificacaoProduto = classificacaoProduto;	
-		}
-		
+		this.classificacaoProduto = classificacaoProduto;	
 	}
 
 	public String getNomeProduto() {
-		return nomeProduto;
+		return StringUtils.trimToEmpty(nomeProduto);
 	}
 
 	public void setNomeProduto(String nomeProduto) {
-		if(nomeProduto ==null){
-			this.nomeProduto="";
-		}else{
-			this.nomeProduto = nomeProduto;			
-		}
+		this.nomeProduto = nomeProduto;			
 	}
 
 	public String getUsuario() {
-		return usuario;
+		return StringUtils.trimToEmpty(usuario);
 	}
 
 	public void setUsuario(String usuario) {
-		if(usuario==null){
-			this.usuario="";
-		}else{
-			this.usuario = usuario;
-		}
-		
+		this.usuario = usuario;
 	}
 
 	public Integer getQtdeEdicoes() {
@@ -231,45 +203,43 @@ public class FixacaoReparteDTO implements Serializable{
 	}
 
 	public void setQtdeEdicoes(Integer qtdeEdicoes) {
-		if(qtdeEdicoes==null){
-			this.qtdeEdicoes = 0;
-		}else{
+		this.qtdeEdicoes = 0;
+		if (qtdeEdicoes != null) {
 			this.qtdeEdicoes = qtdeEdicoes;
 		}
 	}
 
 	public Integer getQtdeExemplares() {
-		
 		return qtdeExemplares;
 	}
 
 	public void setQtdeExemplares(Integer qtdeExemplares) {
-		
-		if(qtdeExemplares==null){
-			this.qtdeExemplares = 0;
-		}else{
+		this.qtdeExemplares = 0;
+		if (qtdeExemplares != null) {
 			this.qtdeExemplares = qtdeExemplares;
 		}
-		
 	}
 
+	//FIXME
 	public String getData() {
 		return data;
 	}
 
+	//FIXME
 	public void setData(String data) {
-		if(data ==null){
-			this.data ="";
-		}else{
+		if (data == null) {
+			this.data = "";
+		} else {
 			this.data = DateUtil.formatarData(this.getDataHora(),"dd/MM/yyyy");			
 		}
-		
 	}
 
+	//FIXME
 	public String getHora() {
 		return hora;
 	}
 
+	//FIXME
 	public void setHora(String hora) {
 		this.hora = DateUtil.formatarHoraMinuto(this.getDataHora());
 	}
@@ -335,15 +305,17 @@ public class FixacaoReparteDTO implements Serializable{
 	}
 
 	public void setEdicoesAtendidas(Integer edicoesAtendidas) {
-		if(edicoesAtendidas == null){
-			this.edicoesAtendidas = 0;
-		}else{
+		this.edicoesAtendidas = 0;
+		if (edicoesAtendidas != null) {
 			this.edicoesAtendidas = edicoesAtendidas;			
 		}
 	}
 
 	public String getCotaFixadaString() {
-		return cotaFixadaString;
+		if (cotaFixada != null) {
+			return cotaFixada.toString();
+		}
+		return "";
 	}
 
 	public Date getDataHora() {
@@ -354,10 +326,6 @@ public class FixacaoReparteDTO implements Serializable{
 		this.dataHora = dataHora;
 		this.setData(DateUtil.formatarData(dataHora, "dd/MM"));
 		this.setHora(DateUtil.formatarHoraMinuto(dataHora));
-	}
-
-	public void setCotaFixadaString(String cotaFixadaString) {
-		this.cotaFixadaString = cotaFixadaString;
 	}
 
 	public Long getQtdPdv() {
@@ -384,5 +352,52 @@ public class FixacaoReparteDTO implements Serializable{
 		this.codigoProduto = codigoProduto;
 	}
 
+	public Boolean isManterFixa() {
+		return manterFixa;
+	}
+
+	public void setManterFixa(Boolean manterFixa) {
+		this.manterFixa = manterFixa;
+	}
+
+	public Long getCotaFixadaId() {
+		return cotaFixadaId;
+	}
+
+	public void setCotaFixadaId(Long cotaFixadaId) {
+		this.cotaFixadaId = cotaFixadaId;
+	}
+
+	public Long getProdutoFixadoId() {
+		return produtoFixadoId;
+	}
+
+	public void setProdutoFixadoId(Long produtoFixadoId) {
+		this.produtoFixadoId = produtoFixadoId;
+	}
+
+    public Long getClassificacaoProdutoId() {
+        return classificacaoProdutoId;
+    }
+
+    public void setClassificacaoProdutoId(Long classificacaoProdutoId) {
+        this.classificacaoProdutoId = classificacaoProdutoId;
+    }
+
+	public Long getIdLancamento() {
+		return idLancamento;
+	}
+
+	public void setIdLancamento(Long idLancamento) {
+		this.idLancamento = idLancamento;
+	}
+
+	public Date getDataFixaCadastroDaFixacao() {
+		return dataFixaCadastroDaFixacao;
+	}
+
+	public void setDataFixaCadastroDaFixacao(Date dataFixaCadastroDaFixacao) {
+		this.dataFixaCadastroDaFixacao = dataFixaCadastroDaFixacao;
+	}
 	
 }

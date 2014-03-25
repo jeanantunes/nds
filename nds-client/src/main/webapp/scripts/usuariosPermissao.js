@@ -108,6 +108,9 @@ var usuariosPermissaoController = $.extend(true, {
 							
 							usuariosPermissaoController.bindData(result, $("#novo_usuario_form", usuariosPermissaoController.workspace));
 							
+							$("#supervisor", usuariosPermissaoController.workspace).attr("checked", 
+									result.usuarioDTO.supervisor);
+							
 							if (result.usuarioDTO.contaAtiva == "ativa") {
 								$('#usuarioAtivaTrue').attr('checked', true).button("refresh");								
 							} else {
@@ -145,6 +148,10 @@ var usuariosPermissaoController = $.extend(true, {
 				buttons: {
 					"Confirmar": function() {
 						var self = this;
+						
+						$("#supervisor", usuariosPermissaoController.workspace).val(
+								$("#supervisor:checked", usuariosPermissaoController.workspace).length > 0);
+						
 						var obj = $("#novo_usuario_form", usuariosPermissaoController.workspace).serializeObject();
 						
 						var permissoes = new Array();

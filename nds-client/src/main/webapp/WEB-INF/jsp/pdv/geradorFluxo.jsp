@@ -42,7 +42,7 @@
 	    
     		<fieldset style="margin-top:5px; width:250px!important;">
 		    	
-		    	<legend>Gerador Fluxo Secundário</legend>
+		    	<legend>Gerador Fluxo Secund&aacute;rio</legend>
 			    
 			    <select name="selectFluxoSecundario" size="10" multiple="multiple" id="selectFluxoSecundario" style="height:200px; width:245px;">
 		    	</select>
@@ -54,4 +54,3 @@
 	 </table>
 
 </fieldset>
-

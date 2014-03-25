@@ -12,14 +12,10 @@ import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 
 public interface SegmentoNaoRecebidoService {
 
-	List<TipoSegmentoProduto> obterTipoSegmentoProduto();
-	
 	List<CotaNaoRecebeSegmentoDTO> obterCotasNaoRecebemSegmento(FiltroSegmentoNaoRecebidoDTO filtro);
 
 	void excluirSegmentoNaoRecebido(Long segmentoNaoRecebidoId);
 		
-	TipoSegmentoProduto obterTipoProdutoSegmentoPorId(Long id);
-	
 	void inserirCotasSegmentoNaoRecebido(List<SegmentoNaoRecebido> segmentoNaoRecebido);
 	
 	List<CotaDTO> obterCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro);
@@ -29,5 +25,13 @@ public interface SegmentoNaoRecebidoService {
 	List<TipoSegmentoProduto> obterSegmentosElegiveisParaInclusaoNaCota(FiltroSegmentoNaoRecebidoDTO filtro);
 	
 	List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(Cota cota);
+
+	/**
+	 * Obtem o segmetos não recebidos das cotas base da cota passada via parametro.
+	 * @param idCota
+	 * @return
+	 */
+	public abstract List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosCotaBase(
+			Long idCota);
 
 }

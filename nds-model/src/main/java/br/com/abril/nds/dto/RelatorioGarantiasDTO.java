@@ -4,13 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.model.cadastro.TipoGarantia;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaOutros;
 
 public class RelatorioGarantiasDTO implements Serializable{
 

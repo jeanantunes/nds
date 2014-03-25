@@ -65,12 +65,12 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		hql.append(" INNER JOIN cota.pessoa as pessoa ");
 		hql.append(" WHERE ");
 		
-		if (filtro.getIdTipoClassificacaoProduto() != null && !filtro.getIdTipoClassificacaoProduto().equals(0)) {
+        if (filtro.getIdTipoClassificacaoProduto() != null && filtro.getIdTipoClassificacaoProduto() != 0) {
 			hql.append(" tipoClassificacaoProduto.id = :tipoClassificacaoProduto )");
 			parameters.put("tipoClassificacaoProduto", filtro.getIdTipoClassificacaoProduto());
 		}
 		
-		hql.append(" order by cota.numeroCota ");
+		hql.append(" order by numeroCota, nomePessoa");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -89,22 +89,26 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT ");
-		hql.append(" classificacaoNaoRecebida.id as idClassificacaoNaoRecebida, "); // ID ClassificacaoNaoRecebida
+		hql.append(" classificacaoNaoRecebida.id as idClassificacaoNaoRecebida,"); // ID ClassificacaoNaoRecebida
+		hql.append(" classificacaoNaoRecebida.usuario.nome as nomeUsuario,"); //NOME USUARIO
+		hql.append(" classificacaoNaoRecebida.dataAlteracao as dataAlteracao,"); //DATA DE ALTERACAO
 		hql.append(" cota.numeroCota as numeroCota, "); // NUMERO DA COTA
-		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') as nomePessoa "); // NOME DA COTA
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') as nomePessoa"); // NOME DA COTA
 		
-		hql.append(" FROM ClassificacaoNaoRecebida as classificacaoNaoRecebida ");
-		hql.append(" INNER JOIN classificacaoNaoRecebida.tipoClassificacaoProduto as tipoClassificacaoProduto ");
-		hql.append(" INNER JOIN classificacaoNaoRecebida.cota as cota ");
-		hql.append(" INNER JOIN cota.pessoa as pessoa ");
+		hql.append(" FROM ClassificacaoNaoRecebida as classificacaoNaoRecebida");
+		hql.append(" INNER JOIN classificacaoNaoRecebida.tipoClassificacaoProduto as tipoClassificacaoProduto");
+		hql.append(" INNER JOIN classificacaoNaoRecebida.cota as cota");
+		hql.append(" INNER JOIN cota.pessoa as pessoa");
 		
-		// O filtro sempre terá OU nomeCota OU codigoCota
+        // O filtro sempre terá OU nomeCota OU codigoCota
 		hql.append(" WHERE ");
 		
-		if (filtro.getIdTipoClassificacaoProduto() != null && !filtro.getIdTipoClassificacaoProduto().equals(0)) {
+        if (filtro.getIdTipoClassificacaoProduto() != null && filtro.getIdTipoClassificacaoProduto() != 0L) {
 			hql.append(" tipoClassificacaoProduto.id = :tipoClassificacaoProduto ");
 			parameters.put("tipoClassificacaoProduto", filtro.getIdTipoClassificacaoProduto());
 		}
+		
+		hql.append(" order by numeroCota, nomePessoa");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -135,7 +139,7 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		hql.append(" INNER JOIN classificacaoNaoRecebida.cota as cota ");
 		hql.append(" INNER JOIN cota.pessoa as pessoa ");
 		
-		// O filtro sempre terá OU nomeCota OU codigoCota
+        // O filtro sempre terá OU nomeCota OU codigoCota
 		hql.append(" WHERE ");
 		
 		if (filtro.getCotaDto() != null) {
@@ -147,6 +151,8 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 				parameters.put("nomePessoa", filtro.getCotaDto().getNomePessoa());
 			}
 		}
+		
+		hql.append(" order by tipoClassificacaoProduto.descricao");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -219,12 +225,6 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		
 		if (paginacao.getPosicaoInicial() != null) {
 			query.setFirstResult(paginacao.getPosicaoInicial());
-		}
-	}
-	
-	private void setParameters(Query query, Map<String, Object> parameters) {
-		for (String key : parameters.keySet()) {
-			query.setParameter(key, parameters.get(key));
 		}
 	}
 

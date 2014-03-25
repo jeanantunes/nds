@@ -101,7 +101,7 @@ a{color:#000;}
 .containerHome{width:980px; margin:auto auto;}
 .container{width:980px; margin:auto auto;clear:both;}
 
-/* configuração do fieldset da home */
+/* configuraÃ§Ã£o do fieldset da home */
 .containerHome fieldset{ width:211px; float:left; border:1px solid #ccc; min-height:225px;}
 .containerHome fieldset legend{ color:#000; font-weight:bold; font-size:12px;}
 .containerHome fieldset legend img{float:left; margin-right:5px; margin-top:-5px;}
@@ -110,8 +110,8 @@ a{color:#000;}
 .containerHome fieldset li a{color:#00649F; text-decoration:none; font-size:12px;}
 .containerHome fieldset li a:hover{color:#000; text-decoration:underline;}
 
-/* configuração do fieldset das telas internas */
-fieldset{ /* width:200px; não definir tamanho fixo para um elemento geral */ min-width:200px; margin-right:12px; float:left; border:1px solid #ccc;}
+/* configuraÃ§Ã£o do fieldset das telas internas */
+fieldset{ /* width:200px; nÃ£o definir tamanho fixo para um elemento geral */ min-width:200px; margin-right:12px; float:left; border:1px solid #ccc;}
 fieldset legend{ color:#000; font-weight:bold; font-size:12px;}
 fieldset legend img{float:left; margin-right:5px; margin-top:-5px;}
 fieldset ul{}
@@ -168,6 +168,9 @@ fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 
 
 .bt_atualizarIco{background:url(../images/ico_atualizar.gif) no-repeat left center; width:21px; height:20px; float:left;}
 .bt_atualizarIco a{text-decoration:none; width:20px; display:block;}
+
+.bt_excluirLancamentoIco{background:url(../images/ico_excluir.gif) no-repeat left center; width:20px; height:20px; float:left;}
+.bt_excluirLancamentoIco a{text-decoration:none; width:20px; display:block;}
 
 .bt_liberaDivida{background:url(../images/ico_add_novo.gif) no-repeat left center; width:16px; height:16px; float:left;}
 .bt_liberaDivida a{text-decoration:none;}
@@ -246,7 +249,7 @@ select, input{font-size: 12px; }
 .posicaoAtual table td{border-bottom:1px solid #efefef; line-height:22px;}
 
 
-/* CONFIGURAÇÃO MONITOR */
+/* CONFIGURAÃ‡ÃƒO MONITOR */
 .corpoMonitor{width:1917px;}
 .corpoMonitor .logo{margin:6px 0px 0px 10px;}
 .corpoMonitor .headerMonitor{
@@ -667,6 +670,12 @@ input[type='text'], input[type='password'], textarea {
 div#ui-tabs-\*.ui-tabs-panel {
 	background-color: blue!important;
 }
+
+.distribuicaoVendaMedia-tab{
+  height: auto !important; 
+  margin-top: 10px;
+  margin-left: 10px;
+ }
 
 .ui-autocomplete { 
 	height: 200px; overflow-y: scroll; overflow-x: hidden;

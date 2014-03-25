@@ -35,9 +35,11 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 				.append("        COALESCE(SUM(pe.precoVenda * ep." + coluna
 						+ "), 0) as valor  ")
 				.append("   FROM EstoqueProduto as ep ")
-				.append("   JOIN ep.produtoEdicao as pe ");
+				.append("   JOIN ep.produtoEdicao as pe ")
+				.append("   JOIN pe.produto.fornecedores f ");
+		
 		if (filtro.getIdFornecedor() != null && filtro.getIdFornecedor() != -1) {
-			hql.append("   JOIN pe.produto.fornecedores f ");
+			
 			hql.append("  WHERE f.id = :idFornecedor ");
 		}
 

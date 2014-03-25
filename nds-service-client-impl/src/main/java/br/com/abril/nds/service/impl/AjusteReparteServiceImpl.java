@@ -77,9 +77,9 @@ public class AjusteReparteServiceImpl implements AjusteReparteService  {
 		return this.ajusteRepository.buscarPorIdCota(numCota);
 	}
 
-//	@Override
-//	public void excluirAjustePorCota(Cota cota) {
-//		ajusteRepository.removerPorCota(cota);
-//		
-//	}
+	@Override
+	@Transactional
+	public Integer buscarVendaMedia() {
+		return this.ajusteRepository.vendaMedia();
+	}
 }

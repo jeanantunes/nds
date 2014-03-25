@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cobranca" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40" uuid="5e15e782-e660-47c2-aab8-8df682619c95">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cobranca" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40">
 	<property name="ireport.zoom" value="1.0263162364614133"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -31,53 +31,53 @@
 	<pageHeader>
 		<band height="150" splitType="Stretch">
 			<image>
-				<reportElement uuid="57f3f75e-9442-43b2-aa45-0a76709292d9" x="0" y="0" width="168" height="60"/>
+				<reportElement x="0" y="0" width="168" height="60"/>
 				<imageExpression><![CDATA[$P{imagem}]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement uuid="bd0f0246-d970-4709-a29e-630927e1f4e5" x="187" y="0" width="72" height="20"/>
+				<reportElement x="187" y="0" width="72" height="20"/>
 				<textElement>
 					<font fontName="Calibri" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Cota:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="08f5e347-8b29-4eec-bd4d-f112ebc399e8" x="187" y="20" width="72" height="20"/>
+				<reportElement x="187" y="20" width="72" height="20"/>
 				<textElement>
 					<font fontName="Calibri" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Box:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="bc526b67-7e78-49db-88b1-ef37482993fb" x="187" y="40" width="72" height="20"/>
+				<reportElement x="187" y="40" width="72" height="20"/>
 				<textElement>
 					<font fontName="Calibri" size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Rota/Roteiro:]]></text>
+				<text><![CDATA[Roteiro/Rota:]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="56e4a884-0927-48a7-8a14-49ad6ed85c48" x="259" y="0" width="296" height="20"/>
+				<reportElement x="259" y="0" width="296" height="20"/>
 				<textElement>
 					<font fontName="Calibri" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numeroCota} + " - " + $F{nomeCota}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="6c776326-5501-4fc1-a2ad-13f2db80c519" x="259" y="20" width="296" height="20"/>
+				<reportElement x="259" y="20" width="296" height="20"/>
 				<textElement>
 					<font fontName="Calibri" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{box}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="32de87ca-e60b-42f4-812d-0108f1fc06c5" x="259" y="40" width="296" height="20"/>
+				<reportElement x="259" y="40" width="296" height="20"/>
 				<textElement>
 					<font fontName="Calibri" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{rota} + " " + $F{roteiro}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{roteiro} + " " + $F{rota}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="2c1699dd-4913-489e-97ca-3ab7e037d867" x="0" y="90" width="555" height="20"/>
+				<reportElement x="0" y="90" width="555" height="20"/>
 				<textElement>
 					<font fontName="Arial" size="11" isBold="false"/>
 				</textElement>
@@ -88,14 +88,15 @@
 	<detail>
 		<band height="240">
 			<textField>
-				<reportElement uuid="9bb7dfde-f76b-4f0c-aa8c-1e2d8b21ebe3" x="0" y="0" width="555" height="20" isRemoveLineWhenBlank="true"/>
+				<reportElement x="0" y="0" width="555" height="20" isRemoveLineWhenBlank="true"/>
 				<textElement markup="styled">
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Caro <u>" + $F{nomeCota} + "</u>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="5b21d8da-9962-464b-bd10-ae0994dc1b5f" positionType="Float" x="0" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="0" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
+					<property name="ireport.encoding" value="UTF-8"/>
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)]]></printWhenExpression>
 				</reportElement>
 				<textElement markup="styled">
@@ -105,7 +106,8 @@
 + ($F{valorExtenso}) + "),</b> na conta corrente informada abaixo, até <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + ":</u></b>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="2bf4fb9e-48d2-4824-a8f5-ea19f68f4bb8" positionType="Float" x="0" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="0" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
+					<property name="ireport.encoding" value="UTF-8"/>
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DINHEIRO)]]></printWhenExpression>
 				</reportElement>
 				<textElement markup="styled">
@@ -115,7 +117,8 @@
 + ($F{valorExtenso}) + "),</b> até a data <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + " </u></b> na sede da <b>" + $P{nomeDistribuidor} + ".</b>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="2bf4fb9e-48d2-4824-a8f5-ea19f68f4bb8" positionType="Float" x="0" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="0" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
+					<property name="ireport.encoding" value="UTF-8"/>
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.CHEQUE)]]></printWhenExpression>
 				</reportElement>
 				<textElement markup="styled">
@@ -125,7 +128,8 @@
 + ($F{valorExtenso}) + "),</b> até a data <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + " </u></b> na sede da <b>" + $P{nomeDistribuidor} + ".</b>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="2bf4fb9e-48d2-4824-a8f5-ea19f68f4bb8" positionType="Float" x="1" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="1" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
+					<property name="ireport.encoding" value="UTF-8"/>
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.OUTROS)]]></printWhenExpression>
 				</reportElement>
 				<textElement markup="styled">
@@ -135,7 +139,8 @@
 + ($F{valorExtenso}) + "),</b> até a data <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + " </u></b> na sede da <b>" + $P{nomeDistribuidor} + ".</b>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="2bf4fb9e-48d2-4824-a8f5-ea19f68f4bb8" positionType="Float" x="0" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="0" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
+					<property name="ireport.encoding" value="UTF-8"/>
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
 				<textElement markup="styled">
@@ -145,7 +150,7 @@
 + ($F{valorExtenso}) + "),</b> na conta corrente informada abaixo, até <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + ":</u></b>"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="4756bba6-13cd-4b39-8a54-7187b6ebd3c7" positionType="Float" x="0" y="82" width="70" height="20" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="0" y="82" width="70" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
 || $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
@@ -155,7 +160,7 @@
 				<text><![CDATA[Banco:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="20fd721b-0696-446c-a4ae-5b2555ea2fb4" positionType="Float" x="0" y="101" width="70" height="20" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="0" y="101" width="70" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
 || $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
@@ -165,7 +170,7 @@
 				<text><![CDATA[Agência:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="581c6c65-8b85-4766-a6f0-043f62f6bf02" positionType="Float" x="0" y="120" width="70" height="20" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="0" y="120" width="70" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
 || $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
@@ -175,7 +180,7 @@
 				<text><![CDATA[Conta:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="64ff7243-e0e2-47a1-99ab-681b258071c9" positionType="Float" x="0" y="139" width="70" height="20" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="0" y="139" width="70" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
 || $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
@@ -185,7 +190,7 @@
 				<text><![CDATA[Favorecido:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="2def4e3f-a081-414b-b9b9-15967f832a8d" positionType="Float" x="70" y="82" width="485" height="20" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="70" y="82" width="485" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
 || $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
@@ -195,7 +200,7 @@
 				<textFieldExpression><![CDATA[$F{nomeBanco}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="f17f3a5d-5258-427e-9f15-6647ad79a9dc" positionType="Float" x="70" y="101" width="485" height="20" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="70" y="101" width="485" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
 || $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
@@ -205,7 +210,7 @@
 				<textFieldExpression><![CDATA[$F{agencia}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="0b6e57c2-ebc3-4c51-8281-57e0b07c90d7" positionType="Float" x="70" y="120" width="485" height="20" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="70" y="120" width="485" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
 || $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
@@ -215,7 +220,7 @@
 				<textFieldExpression><![CDATA[$F{conta}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="23c768f9-be3e-470c-85ba-1d757f8447e1" positionType="Float" x="70" y="139" width="485" height="20" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="70" y="139" width="485" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
 || $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
@@ -225,7 +230,7 @@
 				<textFieldExpression><![CDATA[$F{nomeFavorecido}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="9fbd853e-64f2-4d0a-a94e-b94e0bdcd293" positionType="Float" x="0" y="185" width="555" height="33"/>
+				<reportElement positionType="Float" x="0" y="185" width="555" height="33"/>
 				<textElement>
 					<font fontName="Arial" size="12"/>
 				</textElement>
@@ -236,42 +241,42 @@
 	<columnFooter>
 		<band height="292">
 			<staticText>
-				<reportElement uuid="9107940f-a03f-4e6b-b6bc-975477fcbd80" x="0" y="0" width="555" height="20"/>
+				<reportElement x="0" y="0" width="555" height="20"/>
 				<textElement>
 					<font fontName="Arial" size="12"/>
 				</textElement>
 				<text><![CDATA[Atenciosamente.]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="7f6f8d21-2094-403d-83a8-a875d6d3a0f1" x="0" y="33" width="555" height="20"/>
+				<reportElement x="0" y="33" width="555" height="20"/>
 				<textElement markup="none">
 					<font fontName="Calibri" size="11" isBold="true" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{nomeDistribuidor}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="43690606-80a9-4368-a2f9-9ff68b5d7610" x="51" y="53" width="505" height="20"/>
+				<reportElement x="51" y="53" width="505" height="20"/>
 				<textElement markup="none">
 					<font fontName="Calibri" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{enderecoDistribuidor}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="5a894c1f-8311-45f6-bc16-efce40815257" x="1" y="53" width="51" height="20"/>
+				<reportElement x="1" y="53" width="51" height="20"/>
 				<textElement>
 					<font fontName="Calibri" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Endereço:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="deaf7523-0d5a-4ad8-af8e-87c93f837808" x="0" y="73" width="51" height="20"/>
+				<reportElement x="0" y="73" width="51" height="20"/>
 				<textElement>
 					<font fontName="Calibri" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Telefone:]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="9b8f5fc4-ec59-4931-b520-9ecd4ec6698f" x="50" y="73" width="505" height="20"/>
+				<reportElement x="50" y="73" width="505" height="20"/>
 				<textElement markup="none">
 					<font fontName="Calibri" size="11"/>
 				</textElement>

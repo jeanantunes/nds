@@ -174,13 +174,13 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     /**
      * Taxa fica de entrega
      */
-    @Column(name = "DISTRIBUICAO_TAXA_FIXA_ENTREGA", precision=18, scale=4)
+    @Column(name = "DISTRIBUICAO_TAXA_FIXA_ENTREGA")
     private BigDecimal taxaFixaEntrega;
     
     /**
      * Percentual do faturamento que corresponde a entrega
      */
-    @Column(name = "DISTRIBUICAO_PERCENTUAL_FATURAMENTO_ENTREGA", precision=18, scale=4)
+    @Column(name = "DISTRIBUICAO_PERCENTUAL_FATURAMENTO_ENTREGA")
     private BigDecimal percentualFaturamentoEntrega;
     
    

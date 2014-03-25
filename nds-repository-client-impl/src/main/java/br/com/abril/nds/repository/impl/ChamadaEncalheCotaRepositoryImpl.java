@@ -478,9 +478,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		HashMap<String, Object> param = getParametrosCotasProgramadaParaAntecipacaoEncalhe(filtro);
 
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 
 		query.setMaxResults(1);
 
@@ -505,9 +503,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		HashMap<String, Object> param = getParametrosCotasProgramadaParaAntecipacaoEncalhe(filtro);
 
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		return (Long) query.uniqueResult();
 	}
 
@@ -541,9 +537,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		HashMap<String, Object> param = getParametrosCotasProgramadaParaAntecipacaoEncalhe(filtro);
 
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 
 		if (filtro.getPaginacao() != null) {
 
@@ -590,8 +584,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			param.put("roteiro", filtro.getRoteiro());
 		}
 
-		if (filtro.getCodMunicipio() != null) {
-			param.put("codigoCidadeIBGE", filtro.getCodMunicipio());
+		if (filtro.getDescMunicipio() != null) {
+			param.put("cidade", filtro.getDescMunicipio());
 		}
 
 		if (filtro.getCodTipoPontoPDV() != null) {
@@ -659,9 +653,9 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			hql.append(" JOIN produto.fornecedores fornecedor ");
 		}
 		
-		if(filtro.getCodMunicipio()!= null){
-			hql.append(" JOIN pdv.enderecos enderecoPDV ")
-				.append(" JOIN enderecoPDV.endereco endereco ");
+		if(filtro.getDescMunicipio()!= null){
+			hql.append(" JOIN cota.enderecos enderecoCota ")
+				.append(" JOIN enderecoCota.endereco endereco ");
 		}
 			
 		hql.append(" WHERE ")
@@ -696,8 +690,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			hql.append(" AND roteiro.id =:roteiro ");
 		}
 		
-		if(filtro.getCodMunicipio()!= null){
-			hql.append(" AND endereco.codigoCidadeIBGE =:codigoCidadeIBGE ");
+		if(filtro.getDescMunicipio()!= null){
+			hql.append(" AND endereco.cidade =:cidade ");
 		}
 		
 		if(filtro.getCodTipoPontoPDV()!= null){

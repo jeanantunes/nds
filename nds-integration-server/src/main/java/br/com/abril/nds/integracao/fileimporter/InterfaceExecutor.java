@@ -29,6 +29,8 @@ import org.lightcouch.NoDocumentException;
 import org.lightcouch.View;
 import org.lightcouch.ViewResult;
 import org.lightcouch.ViewResult.Rows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -67,18 +69,21 @@ import com.healthmarketscience.jackcess.Table;
 
 /**
  * Realiza a execução das interfaces de integração. <br>
- * Lê as linhas dos arquivos de entrada, transforma em documentos e grava no CouchDB. 
+ * Lê as linhas dos arquivos de entrada, transforma em documentos e grava no
+ * CouchDB.
  */
 @Service
 public class InterfaceExecutor {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(InterfaceExecucao.class);
 	
 	public static final String SPRING_FILE_LOCATION = "classpath:spring/applicationContext-ndsi-cli.xml"; 
 
 	private static ApplicationContext applicationContext;
 	
-	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
+    private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
 
-	private static String NAO_HA_IMAGENS = "Não há imagens a serem processados";
+    private static String NAO_HA_IMAGENS = "Não há imagens a serem processados";
 
 	//private static Logger LOGGER = LoggerFactory.getLogger(InterfaceExecutor.class);
 	
@@ -137,23 +142,23 @@ public class InterfaceExecutor {
 	}
 	
 	
-	/**
-	 * Executa a interface selecionada para todos os distribuidores.
-	 * 
-	 * @param nomeUsuario login do usuário, para efeitos de log
-	 * @param interfaceEnum interface a ser executada
-	 */
+	                    /**
+     * Executa a interface selecionada para todos os distribuidores.
+     * 
+     * @param nomeUsuario login do usuário, para efeitos de log
+     * @param interfaceEnum interface a ser executada
+     */
 	public void executarInterface(String nomeUsuario, InterfaceEnum interfaceEnum) {
 		this.executarInterface(nomeUsuario, interfaceEnum, null);
 	}
 	
-	/**
-	 * Executa a interface selecionada para o distribuidor selecionado.
-	 * 
-	 * @param nomeUsuario login do usuário, para efeitos de log
-	 * @param interfaceEnum interface a ser executada
-	 * @param codigoDistribuidor código do distribuidor
-	 */
+	                    /**
+     * Executa a interface selecionada para o distribuidor selecionado.
+     * 
+     * @param nomeUsuario login do usuário, para efeitos de log
+     * @param interfaceEnum interface a ser executada
+     * @param codigoDistribuidor código do distribuidor
+     */
 	public void executarInterface(String nomeUsuario, InterfaceEnum interfaceEnum, Long codigoDistribuidor) {
 		
 		// Busca dados de configuracao
@@ -163,7 +168,7 @@ public class InterfaceExecutor {
 			throw new RuntimeException("Interface " + interfaceEnum.getCodigoInterface() + " nao cadastrada");
 		}
 		
-		// Loga início
+        // Loga início
 		Date dataInicio = new Date();
 		LogExecucao logExecucao = this.logarInicio(dataInicio, interfaceExecucao, nomeUsuario);
 		
@@ -178,9 +183,9 @@ public class InterfaceExecutor {
 			} else {
 				this.executarInterfaceArquivo(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
 			}
-		} catch (Throwable t) {
+        } catch (Exception e) {
 			this.processadoComSucesso = false;
-			t.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
 		} finally {
 			// Loga fim
 			this.logarFim(logExecucao);
@@ -251,12 +256,23 @@ public class InterfaceExecutor {
 	}
 	
 	public List<String> recuperaDistribuidores(Long codigoDistribuidor) {
-		this.diretorio = parametroSistemaRepository.getParametro("INBOUND_DIR");
-		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
 		List<String> distribuidores = this.getDistribuidores(this.diretorio, codigoDistribuidor);
 		return distribuidores;
 	}
-
+	
+	public void carregarDiretorios(InterfaceEnum interfaceEnum) {
+		
+		String parametroDir = "INBOUND_DIR";
+		
+		if(interfaceEnum.getCodigoInterface() == InterfaceEnum.EMS0140.getCodigoInterface()) {
+			parametroDir += "_NOTA_VAREJO";
+		}
+		
+		this.diretorio = parametroSistemaRepository.getParametro(parametroDir);
+		
+		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
+	}
+	
 	private void executarInterfaceDB(InterfaceEnum interfaceEnum,
 			InterfaceExecucao interfaceExecucao, LogExecucao logExecucao,
 			Long codigoDistribuidor, String nomeUsuario) {
@@ -285,10 +301,11 @@ public class InterfaceExecutor {
 	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, Long codigoDistribuidor, String nomeUsuario) {
 		
 		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
-
+		this.carregarDiretorios(interfaceEnum);
+		
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
-		
+		 
 			List<File> arquivos = this.recuperaArquivosProcessar(this.diretorio, this.pastaInterna, interfaceExecucao, distribuidor);
 			
 			if (arquivos == null || arquivos.isEmpty()) {
@@ -306,10 +323,10 @@ public class InterfaceExecutor {
 					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.SUCESSO, null);
 					arquivo.delete();
 					
-				} catch (Throwable e) {
+				} catch (Exception e) {
 					
 					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.FALHA, e.getMessage());
-					e.printStackTrace();
+					LOGGER.error(e.getMessage(), e);
 					continue;
 					
 				}
@@ -359,21 +376,20 @@ public class InterfaceExecutor {
 					in = new FileInputStream(imagem);					
 					couchDbClient.saveAttachment(in, imagem.getName().replace(".jpeg", ".jpg"), "image/jpeg", doc.get_id(), doc.get_rev());
 				} catch (FileNotFoundException e1) {
-					this.logarArquivo(null, null, null, StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
-					//e1.printStackTrace();
+                    this.logarArquivo(StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
 				} finally {
 					if (null != in) {
 						try {
 							in.close();
-						} catch (IOException e1) {							
-							e1.printStackTrace();
+                        } catch (IOException ex) {
+                            LOGGER.error(ex.getMessage(), ex);
 						}
 					}
 				}
 				
 			} catch (Exception e) {
-				this.logarArquivo(null, null, null, StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
-				//e.printStackTrace();
+                this.logarArquivo(StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
+				//LOGGER.error(e.getMessage(), e);
 			}
 			
 		}
@@ -486,7 +502,7 @@ public class InterfaceExecutor {
 				saveOrUpdate(couchDbClient, doc);
 			}
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 		
@@ -552,7 +568,8 @@ public class InterfaceExecutor {
 				continue;
 			} 
 
-			// TODO: verificar tamanho correto das linhas nos arquivos: difere da definição
+            // TODO: verificar tamanho correto das linhas nos arquivos: difere
+            // da definição
 //			if (linha.length() != interfaceEnum.getTamanhoLinha().intValue()) {
 //				throw new ValidacaoException(TAMANHO_LINHA);
 //			}
@@ -601,19 +618,30 @@ public class InterfaceExecutor {
 		scanner.close();
 	}
 
-	/**
-	 * Recupera a lista de arquivos a serem processados.
-	 * 
-	 * @param interfaceExecucao interface sendo executada
-	 * @param codigoDistribuidor código do distribuidor
-	 * @return lista de arquivos a serem processados
-	 */
+	                    /**
+     * Recupera a lista de arquivos a serem processados.
+     * 
+     * @param interfaceExecucao interface sendo executada
+     * @param codigoDistribuidor código do distribuidor
+     * @return lista de arquivos a serem processados
+     */
 	private List<File> recuperaArquivosProcessar(String diretorio, String pastaInterna, InterfaceExecucao interfaceExecucao, String codigoDistribuidor) {
 
 		List<File> listaArquivos = new ArrayList<File>();
 		
-		File dir = new File(diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator);
-		File[] files = dir.listFiles((FilenameFilter) new RegexFileFilter(interfaceExecucao.getMascaraArquivo(), IOCase.INSENSITIVE));
+		String pattern = interfaceExecucao.getMascaraArquivo();
+		String dirPath = diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator;
+		
+		if (interfaceExecucao.getId() == InterfaceEnum.EMS0140.getCodigoInterface()) {
+			pattern = String.format("%s_"+pattern, codigoDistribuidor);
+			dirPath = diretorio;
+		} 
+		
+		File dir = new File(dirPath);
+		
+		FilenameFilter filter = (FilenameFilter) new RegexFileFilter(pattern, IOCase.INSENSITIVE);
+		
+		File[] files = dir.listFiles(filter);
 				
 		if (null != files) {
 			Arrays.sort(files, 0, files.length);
@@ -643,9 +671,9 @@ public class InterfaceExecutor {
 		
 	}
 	
-	/**
-	 * Loga o início da execução de uma interface de integração.
-	 */
+	                    /**
+     * Loga o início da execução de uma interface de integração.
+     */
 	
 	private LogExecucao logarInicio(Date dataInicio, InterfaceExecucao interfaceExecucao, String nomeLoginUsuario) {
 		
@@ -659,6 +687,9 @@ public class InterfaceExecutor {
 		return logExecucaoRepository.inserir(logExecucao);
 	}
 	
+    private void logarArquivo(StatusExecucaoEnum status, String mensagem) {
+        this.logarArquivo(null, null, null, status, mensagem);
+    }
 	/**
 	 * Loga o processamento de um arquivo
 	 */
@@ -680,9 +711,9 @@ public class InterfaceExecutor {
 		this.logExecucaoArquivoRepository.inserir(logExecucaoArquivo);
 	}
 	
-	/**
-	 * Loga o final da execução da interface de integração.
-	 */
+	                    /**
+     * Loga o final da execução da interface de integração.
+     */
 	
 	private void logarFim(LogExecucao logExecucao) {
 		

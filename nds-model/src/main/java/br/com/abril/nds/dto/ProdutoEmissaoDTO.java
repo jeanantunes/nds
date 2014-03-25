@@ -342,5 +342,4 @@ public class ProdutoEmissaoDTO implements Serializable{
 	public void setConfereciaRealizada(Boolean confereciaRealizada) {
 		this.confereciaRealizada = confereciaRealizada;
 	}
-	
 }

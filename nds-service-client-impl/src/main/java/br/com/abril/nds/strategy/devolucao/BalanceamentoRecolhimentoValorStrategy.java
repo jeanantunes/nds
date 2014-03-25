@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -36,9 +35,7 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 		BigDecimal valorTotalProdutosRecolhimento = 
 			this.obterValorTotalProdutosRecolhimento(produtosRecolhimento);
 		
-		Set<Date> obterDatasConfirmadas = super.obterDatasConfirmadas(dadosRecolhimento.getProdutosRecolhimento());
-		
-		TreeSet<Date> datasRecolhimento = super.obterDatasRecolhimento(dadosRecolhimento.getDatasRecolhimentoFornecedor(), obterDatasConfirmadas);
+		TreeSet<Date> datasRecolhimento = dadosRecolhimento.getDatasRecolhimentoDisponiveis();
 		
 		Integer qtdeDiasRecolhimento = datasRecolhimento.size();
 		

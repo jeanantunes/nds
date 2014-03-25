@@ -207,4 +207,20 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepositoryModel<Poli
 		
 		return criteria.list();
 	}
+
+	@Override
+	public boolean verificarPorTipoCobrancaPor(TipoCobranca tipoCobranca) {
+		
+		Query query = this.getSession().createQuery(
+				"select case when count(p.id) > 0 then true else false end " +
+				"from PoliticaCobranca p " +
+				"join p.formaCobranca fc " +
+				"where fc.tipoCobranca = :tipoCobranca " +
+				"and p.ativo = :indAtiva ");
+		
+		query.setParameter("tipoCobranca", tipoCobranca);
+		query.setParameter("indAtiva", true);
+		
+		return (boolean) query.uniqueResult();
+	}
 }

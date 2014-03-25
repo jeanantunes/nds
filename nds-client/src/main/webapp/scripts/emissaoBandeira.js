@@ -6,13 +6,19 @@ var emissaoBandeiraController = $.extend(true, {
 		$("#semanaPesquisa", this.workspace).numeric();
 		$("#numeroPallets", this.workspace).numeric();
 		
-		$(".areaBts",this.workspace).hide();
+		$("#dataEnvio", this.workspac ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$("#dataEnvio", this.workspace).mask("99/99/9999");
+		
+		$(".bt_arq",this.workspace).hide();
 				
 	},
 	
 	initBandeiraManual : function() {
-		$("#semanaBandeiraManual").numeric();
-				
+		$("#dataEnvioManual", emissaoBandeiraController.workspace).mask("99/99/9999");
 	},
 	
 	
@@ -61,19 +67,18 @@ var emissaoBandeiraController = $.extend(true, {
 	
 	pesquisar : function() {
 		
-		emissaoBandeiraController.anoSemanaPesquisa = $("#semanaPesquisa", this.workspace).val;
+		emissaoBandeiraController.anoSemanaPesquisa = $("#semanaPesquisa", this.workspace).val();
+		emissaoBandeiraController.fornecedor = $("#fornecedor", this.workspace).val();
 		
 		$(".bandeirasRcltoGrid", this.workspace).flexOptions({
 			url: contextPath + "/devolucao/emissaoBandeira/pesquisar",
-			params: [{name:'anoSemana', value:emissaoBandeiraController.anoSemanaPesquisa}] 
+			params: [{name:'anoSemana', value:emissaoBandeiraController.anoSemanaPesquisa},
+			         {name:'fornecedor', value:emissaoBandeiraController.fornecedor}] 
 		   ,
 			newp: 1
 		});
-	
 		
 		$(".bandeirasRcltoGrid", this.workspace).flexReload();
-				
-		$(".areaBts",this.workspace).show();
 	},
 	
 	executarPreProcessamento : function(resultado) {
@@ -85,8 +90,11 @@ var emissaoBandeiraController = $.extend(true, {
 		}	
         if (tipoMensagem && listaMensagens) {
               exibirMensagem(tipoMensagem, listaMensagens);
+              $(".grids", emissaoBandeiraController.workspace).hide();
+              $(".bt_arq", emissaoBandeiraController.workspace).hide();
          } else { 
         	 $(".grids", emissaoBandeiraController.workspace).show();
+        	 $(".bt_arq", emissaoBandeiraController.workspace).show();
          } 	 
 		
 		return resultado;
@@ -96,6 +104,7 @@ var emissaoBandeiraController = $.extend(true, {
 		
 		window.location = contextPath + "/devolucao/emissaoBandeira/imprimirArquivo?"
 			+ "anoSemana=" + emissaoBandeiraController.anoSemanaPesquisa
+			+ "&fornecedor=" + emissaoBandeiraController.fornecedor
 			+ "&sortname=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).flexGetSortName()
 			+ "&sortorder=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).getSortOrder()
 			+ "&rp=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).flexGetRowsPerPage()
@@ -107,27 +116,40 @@ var emissaoBandeiraController = $.extend(true, {
 	
 	imprimirBandeira:function(){
 		
-		$( "#dialog-pallets", this.workspace).dialog({
+		var _this = this;
+		
+		$("#dialog-pallets", _this.workspace).dialog({
 			resizable: false,
 			height:'auto',
 			width:'auto',
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					
+					var	nrPallets = $.trim($("#numeroPallets", _this.workspace).val()),
+						dtEnvio = $("#dataEnvio", _this.workspace).val();
+					
+					if (!nrPallets || !dtEnvio){
+						
+						exibirMensagem('WARNING', ['Número de Pallets e Data de Envio são obrigatórios.']);
+						return;
+					}
+					
 					$( this ).dialog( "close" );
-					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?semana=" + emissaoBandeiraController.anoSemanaPesquisa+ "&numeroPallets=" + $.trim( $("#numeroPallets").val());
+					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?anoSemana=" + 
+					emissaoBandeiraController.anoSemanaPesquisa+ 
+					"&fornecedor=" + emissaoBandeiraController.fornecedor+
+					"&numeroPallets=" + nrPallets +
+					"&dataEnvio=" + dtEnvio;
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
 			},
-			form: $("#dialog-pallets", this.workspace).parents("form")
+			form: $("#dialog-pallets", _this.workspace).parents("form")
 		});
 		
-		
-		
 		return false;
-
 	},
 	
 	bandeiraManual : function() {
@@ -135,26 +157,39 @@ var emissaoBandeiraController = $.extend(true, {
 		
 	},
 	imprimirBandeiraManual:function(){
-	
 		
-		$( "#dialog-pallets-bandeira-manual", this.workspace).dialog({
+		var _this = this;
+		$( "#dialog-pallets-bandeira-manual", _this.workspace).dialog({
 			resizable: false,
 			height:'auto',
 			width:'auto',
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					
+					var semana = $.trim( $("#semana", _this.workspace).val()),
+					nrPallets = $.trim( $("#numeroPalletsBandeiraManual", _this.workspace).val()),
+					titulo = escape($.trim( $("#titulo", _this.workspace).val())),
+					praca = $.trim( $("#praca", _this.workspace).val()),
+					dtEnvio = $.trim($("#dataEnvioManual", _this.workspace).val()),
+					forncedor = $.trim($("#inputfornecedor", _this.workspace).val()),
+					canal = $.trim($("#canal", _this.workspace).val());
+					
+					if (!semana || !nrPallets || !titulo || !praca || !dtEnvio || !forncedor || !canal){
+						
+						exibirMensagem('WARNING', ['Todos os campos são obrigatórios.']);
+						return;
+					}
+					
 					$( this ).dialog( "close" );
 					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeiraManual?"+
-					"anoSemana=" + $.trim( $("#semanaBandeiraManual").val())
-					+ "&numeroPallets=" + $.trim( $("#numeroPalletsBandeiraManual").val())
-					+"&nome="+$.trim( $("#tipoOperacaoBandeiraManual").val())
-					+"&codigoPracaNoProdin="+$.trim( $("#codigoPracaProconBandeiraManual").val())
-					+"&praca="+$.trim( $("#pracaBandeiraManual").val())
-					+"&destino="+$.trim( $("#destinoBandeiraManual").val())
-					+"&canal="+$.trim( $("#canalBandeiraManual").val());
-
-					
+					"anoSemana=" + semana
+					+"&numeroPallets=" + nrPallets
+					+"&titulo=" + titulo
+					+"&praca=" + praca
+					+"&dataEnvio=" + dtEnvio
+					+"&fornecedor=" + forncedor
+					+"&canal=" + canal;
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );

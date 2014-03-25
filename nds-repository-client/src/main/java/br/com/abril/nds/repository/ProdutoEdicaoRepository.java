@@ -3,9 +3,11 @@ package br.com.abril.nds.repository;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
+import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -120,7 +122,8 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	
 	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, 
 												  Integer numeroCota,
-												  Integer quantidadeRegistros);
+												  Integer quantidadeRegistros,
+												  Map<Long, DataCEConferivelDTO> mapaDataCEConferivel);
 	
 	/**
 	 * Obtém uma lista de produtos edição de acordo com o parâmetro iformado.
@@ -152,7 +155,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return
 	 */
 	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int initialResult, int maxResults);
 	
@@ -164,7 +167,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return
 	 */
 	public Integer countPesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde);
 	
 	/**
@@ -209,13 +212,13 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * Verifica se o número da edição já foi cadastrado para outra edição 
 	 * de um mesmo Produto. 
 	 * 
-	 * @param codigoProduto Código do Produto.
+	 * @param idProduto Código do Produto.
 	 * @param numeroEdicao Número da Edição a ser verificada.
 	 * @param idProdutoEdicao ID da Edição (caso exista).
 	 * 
 	 * @return
 	 */
-	public boolean isNumeroEdicaoCadastrada(String codigoProduto, 
+	public boolean isNumeroEdicaoCadastrada(Long idProduto, 
 			Long numeroEdicao, Long idProdutoEdicao);
 	
 	/**
@@ -275,10 +278,11 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	
 	/**
 	 * Obtém o último número da edição
-	 * @param codigoProduto
-	 * @return
+	 * @param idProduto
+	 * 
+	 * @return numeroEdicao
 	 */
-	public Long obterUltimoNumeroEdicao(String codigoProduto);
+	public Long obterUltimoNumeroEdicao(Long idProduto);
 
 	/**
 	 * Retorna os produtoEdicao de distribuidores que não estão sendo utilizados no sistema (e consequentemente podem ser alterados)
@@ -324,15 +328,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	public AnaliseHistogramaDTO obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,Integer de,Integer ate, String[] edicoes);
 
-	
-	/**
-	 * 
-	 * @param idEstudoBase
-	 * @param produtoEdicao
-	 * @return
-	 */
-	public Boolean estudoPodeSerSomado(Long idEstudoBase, ProdutoEdicao produtoEdicao);
-	
 	/**
 	 * Retorna o percentual de desconto logistica de um produto edição
 	 * 
@@ -352,4 +347,30 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	public Boolean isEdicaoParcial(Long idProdutoEdicao);
 	
+	public Boolean estudoPodeSerSomado(Long idEstudoBase, String codigoProduto);
+	
+	ProdutoEdicaoDTO findReparteEVenda(ProdutoEdicaoDTO dto);
+
+	List<ProdutoEdicaoDTO> findReparteEVenda(
+			List<ProdutoEdicaoDTO> produtosEdicao);
+
+	void insereVendaRandomica(ProdutoEdicao produtoEdicao);
+
+	List<ProdutoEdicao> listProdutoEdicaoPorCodProdutoNumEdicoes(
+			String codigoProduto, Long numeroEdicaoInicial,
+			Long numeroEdicaoFinal);
+
+    boolean isEdicaoAberta(Long produtoEdicaoId);
+    
+    public List<Long> obterNumeroDas6UltimasEdicoesFechadas(Long idProduto);
+    
+    public List<Long> obterNumeroDas6UltimasEdicoesFechadasPorICD(String codigoICD);
+
+	public BigDecimal obterVendaEsmagadaMedia(String codigoProduto, Integer numeroEdicao, Integer numeroCotaEsmagada);
+
+	int obterQtdEdicoesPresentes(String codigoProduto, String[] edicoes,
+			Integer numeroCotaEsmagada);
+
+	public boolean cotaTemProduto(String codigoProduto, Integer numeroEdicao,
+			Integer numeroCota);
 }

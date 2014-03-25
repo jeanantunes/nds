@@ -99,7 +99,7 @@
     				 		onkeyup="pesquisaCotaFaltasSobras.autoCompletarPorNome('#descricaoCota');" 
 		      		 	    onblur="pesquisaCotaFaltasSobras.pesquisarPorNomeCota('#numeroCota', '#descricaoCota');" >
     			</td>
-    			<td>Tipo de Difernça:</td>
+    			<td>Tipo de Diferença:</td>
     			<td colspan="2">
     					<select name="tipoDiferenca" id="tipoDiferenca" style="width: 120px;">
 						<option selected="selected" value="">Todos</option>
@@ -188,5 +188,4 @@
 		</div>
 	</form>
 	</div>
-	
 </body>

@@ -29,7 +29,6 @@ public class ParametroCobrancaDTO {
 	boolean unificada;
 	boolean envioEmail;
 	boolean principal;
-	boolean cobradoPeloBackoffice;
 	
 	String instrucoes;
 	
@@ -84,7 +83,6 @@ public class ParametroCobrancaDTO {
 		this.unificada = unificada;
 		this.envioEmail = envioEmail;
 		this.principal = principal;
-		this.cobradoPeloBackoffice = cobradoPeloBackoffice;
 		this.instrucoes = instrucoes;
 		this.diasDoMes = diasDoMes;
 		this.domingo = domingo;
@@ -359,15 +357,6 @@ public class ParametroCobrancaDTO {
 	 */
 	public void setFormaCobrancaBoleto(FormaCobrancaBoleto formaCobrancaBoleto) {
 		this.formaCobrancaBoleto = formaCobrancaBoleto;
-	}
-
-	public boolean isCobradoPeloBackoffice() {
-		return cobradoPeloBackoffice;
-	}
-
-
-	public void setCobradoPeloBackoffice(boolean cobradoPeloBackoffice) {
-		this.cobradoPeloBackoffice = cobradoPeloBackoffice;
 	}
 
 

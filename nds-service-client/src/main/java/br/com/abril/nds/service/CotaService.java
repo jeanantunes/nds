@@ -25,11 +25,13 @@ import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.ComponentesPDV;
@@ -44,6 +46,16 @@ import br.com.abril.nds.util.Intervalo;
  */
 public interface CotaService {
 
+	/**
+	 * Retorna true se a cota possuir operação diferenciada
+	 * 
+	 * @param numeroCota
+	 * @param dataOperacao TODO
+	 * 
+	 * @return boolean
+	 */
+	boolean isCotaOperacaoDiferenciada(Integer numeroCota, Date dataOperacao);
+	
 	/**
 	 *
 	 * Retorna uma lista de Cotas em função dos filtros informado.
@@ -72,6 +84,8 @@ public interface CotaService {
 
 	Cota obterPorId(Long idCota);
 
+	List<CotaDTO> obterPorNomeAutoComplete(String nome);
+	
 	/**
 	 * Obtém uma lista dos endereços cadastrados para uma determinada cota.
 	 *
@@ -353,9 +367,9 @@ public interface CotaService {
 	
 	List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
 
-	List<CotaDTO> buscarCotasQueInquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+	List<CotaDTO> buscarCotasQueEnquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
-	List<CotaDTO> buscarCotasQueInquadramNoRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+	List<CotaDTO> buscarCotasQueEnquadramNoRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
 	List<CotaDTO> buscarCotasQuePossuemPercentualVendaSuperior(BigDecimal percentVenda, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
@@ -363,7 +377,8 @@ public interface CotaService {
 	
 	List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
-	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas);
+	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, 
+			List<Integer> numeroCotas, final String sortorder, final String sortname);
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
 	
@@ -374,9 +389,19 @@ public interface CotaService {
 	 */
 	boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota);
 
+	public void apagarTipoCota(Long idCota, String TipoCota);
+	
+	public List<DistribuidorClassificacaoCota> obterListaClassificacao();
+
+	public abstract boolean cotaVinculadaCotaBase(Long idCota);
+	
 	void verificarCotasSemRoteirizacao(Intervalo<Integer> intervaloCota,
 			Intervalo<Date> intervaloDataLancamento,
 			Intervalo<Date> intervaloDataRecolhimento);
+	
+	List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray);
+	
+	public TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota);
 	
 	/**
 	 * Obtem lista de Cotas dos numeros de cotas passados como parametro
@@ -385,6 +410,9 @@ public interface CotaService {
 	 */
 	List<Cota> obterCotasPorNumeros(List<Integer> numerosCota);
 
+	public abstract boolean isTipoDistribuicaoCotaEspecifico(Integer numeroCota,
+			TipoDistribuicaoCota tipoDistribuicaoCota);
+	
 	boolean salvarTipoCota(long idCota, TipoCota tipoCota);
 
 	/**
@@ -394,6 +422,8 @@ public interface CotaService {
      * @return boolean
      */
 	boolean isCotaAlteradaNaData(Cota cota, Date data);
+	
+	List<CotaDTO> buscarCotasHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 
 	/**
 	 * Obtem cotas por intervalo de numero de cotas

@@ -49,9 +49,9 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	
     List<Cota> buscarCotaFechamentoChamadaEncalhe(Date dataEncalhe);
     
-    Integer obterTotalCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
+    Integer obterTotalCotasAusentes(Date dataEncalhe, Integer diaRecolhimento, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
 
-    List<CotaAusenteEncalheDTO> obterCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
+    List<CotaAusenteEncalheDTO> obterCotasAusentes(Date dataEncalhe, Integer diaRecolhimento, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
     
     int buscarQuantidadeConferenciaEncalheNovo(FiltroFechamentoEncalheDTO filtro);
     
@@ -74,10 +74,13 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	List<FechamentoFisicoLogicoDTO> buscarMovimentoEstoqueCotaVendaProduto(
 			FiltroFechamentoEncalheDTO filtro, ArrayList<Long> listaDeCodigosProduto);
 
-	Integer obterTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
+	Integer obterTotalCotasAusentesSemPostergado(Date dataEncalhe, Integer diaRecolhimento, boolean isSomenteCotasSemAcao,
+			String sortorder, String sortname, int page, int rp, boolean ignorarUnificacao);
 	
 	boolean verificarExistenciaFechamentoEncalheConsolidado(Date dataEncalhe);
 	
 	Boolean buscaControleConferenciaEncalhe(Date dataEncalhe);
+
+	Boolean validarEncerramentoOperacaoEncalhe(Date data);
 	
 }

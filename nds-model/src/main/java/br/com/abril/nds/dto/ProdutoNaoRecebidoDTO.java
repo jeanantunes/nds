@@ -1,7 +1,5 @@
 package br.com.abril.nds.dto;
 
-import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
-
 
 public class ProdutoNaoRecebidoDTO {
 

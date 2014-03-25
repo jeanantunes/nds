@@ -25,7 +25,7 @@ var romaneiosController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Endereço',
-				name : 'logradouro',
+				name : 'endereco',
 				width : 450,
 				sortable : false,
 				align : 'left'
@@ -70,11 +70,13 @@ var romaneiosController = $.extend(true, {
 		
 		var params = [];
 		
-		params.push({name: 'filtro.data',      value: $("#dataLancamento", romaneiosController.workspace).val()});
-		params.push({name: 'filtro.idBox',     value:$('#idBox', romaneiosController.workspace).val()});
-		params.push({name: 'filtro.idRoteiro', value:$('#idRoteiro', romaneiosController.workspace).val()});
-		params.push({name: 'filtro.idRota',    value:$('#idRota', romaneiosController.workspace).val()});
-		params.push({name: 'filtro.nomeRota',  value: $('#idRota option:selected', romaneiosController.workspace).text()});
+		params.push({name: 'filtro.data',      	value: $("#dataLancamento", romaneiosController.workspace).val()});
+		params.push({name: 'filtro.codigoBox', 	value:$('#codigoBox', romaneiosController.workspace).val()});
+		params.push({name: 'filtro.idRoteiro', 	value:$('#idRoteiro', romaneiosController.workspace).val()});
+		params.push({name: 'filtro.idRota',    	value:$('#idRota', romaneiosController.workspace).val()});
+		params.push({name: 'filtro.nomeRota',	value: $('#idRota option:selected', romaneiosController.workspace).text()});
+		params.push({name: 'filtro.nomeRoteiro',value: $('#idRoteiro option:selected', romaneiosController.workspace).text()});
+		params.push({name: 'filtro.nomeBox',  	value: $('#codigoBox option:selected', romaneiosController.workspace).text()});
 		
 		var produtos = $("#selectProdutos", romaneiosController.workspace).val();
 		
@@ -103,6 +105,8 @@ var romaneiosController = $.extend(true, {
 			);
 			
 			$(".grids", romaneiosController.workspace).hide();
+			
+			romaneiosController.esconderBotoes();
 
 			return resultado;
 		}
@@ -116,6 +120,8 @@ var romaneiosController = $.extend(true, {
 		});
 		
 		$(".grids", romaneiosController.workspace).show();
+		
+		romaneiosController.mostrarBotoes();
 		
 		return resultado;
 	},
@@ -178,6 +184,141 @@ var romaneiosController = $.extend(true, {
 			$("#selectProdutos", romaneiosController.workspace).html("");
 			$("#selectProdutos", romaneiosController.workspace).multiselect();
 		}
+	},
+	
+	/**
+	 * Recarregar combos por Box
+	 */
+    changeBox : function(){
+		
+    	var codigoBox = $("#codigoBox").val();
+    	
+    	var idRoteiro = $("#idRoteiro").val();
+    	
+    	var idRota = $("#idRota").val();
+    	
+    	var params = [{
+			            name : "codigoBoxDe",
+			            value : codigoBox	
+					  }];
+    	
+    	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorBox', params, 
+			function(result) {
+    		
+    		    var listaRota = result[0];
+    		    
+    		    var listaRoteiro = result[1];
+    		    
+    		    var listaBox = result[2];
+    		
+    		    romaneiosController.recarregarCombo($("#idRota", romaneiosController.workspace), listaRota, idRota);
+ 		    
+    		    romaneiosController.recarregarCombo($("#idRoteiro", romaneiosController.workspace), listaRoteiro, idRoteiro); 
+    		    
+    		    romaneiosController.recarregarCombo($("#codigoBox", romaneiosController.workspace), listaBox, codigoBox);
+    	    }    
+		);
+	},
+	
+	/**
+	 * Recarregar combos por Rota
+	 */
+    changeRota : function(){
+    	
+        var codigoBox = $("#codigoBox").val();
+    	
+        var idRoteiro = $("#idRoteiro").val();
+        
+    	var idRota = $("#idRota").val();
+    	
+    	var params = [{
+			            name : "idRota",
+			            value : idRota	
+					  }];
+	    
+    	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorRota', params, 
+			function(result) {
+    		
+    		    var listaRoteiro = result[0];
+    		 
+    		    var listaBox = result[1];
+    		    
+    		    var listaRota = result[2];
+
+    		    romaneiosController.recarregarCombo($("#codigoBox", romaneiosController.workspace), listaBox, codigoBox);
+ 		    
+    		    romaneiosController.recarregarCombo($("#idRoteiro", romaneiosController.workspace), listaRoteiro, idRoteiro); 
+    		    
+    		    romaneiosController.recarregarCombo($("#idRota", romaneiosController.workspace), listaRota, idRota);
+    	    }    
+		);
+	},
+	
+	/**
+	 * Recarregar combos por Roteiro
+	 */
+    changeRoteiro : function(){
+    	
+        var codigoBox = $("#codigoBox").val();
+    	
+        var idRoteiro = $("#idRoteiro").val();
+        
+    	var idRota = $("#idRota").val();
+    	
+     	var params = [{
+			            name : "idRoteiro",
+			            value : idRoteiro	
+					  }];
+     	
+     	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorRoteiro', params, 
+			function(result) {
+    		
+    		    var listaRota = result[0];
+    		 
+    		    var listaBox = result[1];
+    		    
+    		    var listaRoteiro = result[2];
+ 		    
+    		    romaneiosController.recarregarCombo($("#idRota", romaneiosController.workspace), listaRota, idRota);  
+    		    
+    		    romaneiosController.recarregarCombo($("#codigoBox", romaneiosController.workspace), listaBox, codigoBox);
+     		    
+    		    romaneiosController.recarregarCombo($("#idRoteiro", romaneiosController.workspace), listaRoteiro, idRoteiro); 
+    	    }    
+		);
+	},
+	
+	/**
+	 * Recarregar combo
+	 */
+	recarregarCombo : function (comboNameComponent, content, valSelected){
+		
+		comboNameComponent.empty();
+
+		comboNameComponent.append(new Option('Selecione...', '', true, true));
+		
+	    $.each(content, function(index, row) {
+		    	
+	    	comboNameComponent.append(new Option(row.value.$, row.key.$, true, true));
+		});
+
+	    if (valSelected) {
+	    	
+	        $(comboNameComponent).val(valSelected);
+	    } else {
+	    	
+	        $(comboNameComponent).val('');
+	    }
+	},
+	
+	mostrarBotoes : function() {
+		
+		$(".areaBts", romaneiosController.workspace).find("span").show();
+	},
+	
+	esconderBotoes : function() {
+		
+		$(".areaBts", romaneiosController.workspace).find("span").hide();
 	}
 		
 }, BaseController);

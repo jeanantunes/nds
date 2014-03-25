@@ -36,7 +36,7 @@ function imprimir(){
     	</span>
     </td>
     <td width="269" align="center" valign="middle"><h3>${nomeDistribuidor}</h3></td>
-    <td width="408" align="right" valign="middle"><h1>Mapa de Abastecimento por Produto&nbsp;</h1></td>
+    <td width="408" align="right" valign="middle"><h1>Mapa de Abastecimento por Produto Espec&iacute;fico</h1></td>
     </tr>
   <tr>
     <td colspan="3" align="center" valign="middle"></td>
@@ -47,7 +47,7 @@ function imprimir(){
             <tr class="class_linha_3">
               <td colspan="2" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><table width="100%" border="0" cellspacing="1" cellpadding="1">
                 <tr>
-                  <td width="9%"><strong>Produto</strong>: </td>
+                  <td width="20%"><strong>Produto</strong>: </td>
                   <td width="36%"><strong>${mapa.nomeProduto}</strong></td>
                   <td width="23%"><strong>Código de Barras:</strong></td>
                   <td width="32%">${mapa.codigoDeBarras}</td>
@@ -57,6 +57,10 @@ function imprimir(){
                   <td>${mapa.numeroEdicao}</td>
                   <td><strong>Preço Capa R$:</strong></td>
                   <td>${mapa.precoCapa}</td>
+                </tr>
+                <tr>
+                	<td><strong>Reparte Promocional</strong></td>
+                	<td>${mapa.repartePromocional}</td>
                 </tr>
               </table></td>
             </tr>
@@ -73,7 +77,12 @@ function imprimir(){
                 <tr class="box_rel">
                 	
                   <c:forEach items="${box.value.rotasQtde}" var="rota" varStatus="statusRota" >
-	                	<td width="60" align="center" style="border-right:1px solid #000; border-bottom:1px solid #000;">${rota.key}</td>
+	                	<td align="center" 
+	                		style="border-right:1px solid #000; border-bottom:1px solid #000; word-break: break-all; width: 60px; overflow: hidden; text-overflow: ellipsis;">
+	                		<c:if test="${!rota.key.startsWith('|')}">
+	                  	 		${rota.key}
+	                  	 	</c:if>
+	                	</td>
                   </c:forEach>
                   
                   <td width="80" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
@@ -81,18 +90,17 @@ function imprimir(){
                 <tr class="box_dados">
                 	
                   <c:forEach items="${box.value.rotasQtde}" var="rota" varStatus="statusRota" >
-                  	<td align="center" style=" border-bottom:1px solid #000; border-right:1px solid #000;">${rota.value}</td>
+                  	<td align="center" style=" border-bottom:1px solid #000; border-right:1px solid #000; font-size: 18px;">${rota.value eq 0 ? '' : rota.value}</td>
                   </c:forEach>
                   
                   
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">${box.value.qtdeTotal}</td>
+                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000; font-size: 18px;">${box.value.qtdeTotal}</td>
                 </tr>
                
                 
               </table></td>
             </tr>
          </c:forEach>
-           
 </table>
 </body>
 </html>

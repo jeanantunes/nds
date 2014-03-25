@@ -18,8 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BoletoVO;
-import br.com.abril.nds.client.vo.DividaGeradaVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.BoletoCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO.OrdenacaoColunaBoletos;
@@ -31,13 +31,12 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.BoletoAntecipado;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
-import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
@@ -62,6 +61,7 @@ import br.com.caelum.vraptor.view.Results;
  * @author Discover Technology
  *
  */
+@SuppressWarnings("deprecation")
 @Resource
 @Path("/financeiro/boletos")
 @Rules(Permissao.ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA)
@@ -72,9 +72,6 @@ public class ConsultaBoletosController extends BaseController {
 	
 	@Autowired
 	private CotaService cotaService;
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
 	
     @Autowired
 	private Validator validator;
@@ -167,16 +164,17 @@ public class ConsultaBoletosController extends BaseController {
 		
 		
 		//BUSCA BOLETOS
-		List<Boleto> boletos = this.boletoService.obterBoletosPorCota(filtroAtual);
+		List<BoletoCotaDTO> boletosDTO = this.boletoService.obterBoletosPorCota(filtroAtual);
 		
 		//VERIFICA SE CAMPO PARA ENVIO SERA ABERTO NAO
-		boletos = this.boletoService.verificaEnvioDeEmail(boletos);
+		boletosDTO = this.boletoService.verificaEnvioDeEmail(boletosDTO);
 		
 		
 		//CARREGA DIRETO DA ENTIDADE PARA A TABELA
 		List<CellModel> listaModelo = new LinkedList<CellModel>();
 		
-		if (boletos.size()==0) {
+		if (boletosDTO.size()==0) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} 
 		
@@ -204,19 +202,31 @@ public class ConsultaBoletosController extends BaseController {
 //		/////
 		
 		
-		for (Boleto boleto : boletos){
+		for (BoletoCotaDTO boletoDTO : boletosDTO){
+			
+			String statusBoleto = "";
+			
+			if (boletoDTO.isBoletoAntecipado()){
+				
+				statusBoleto = "Boleto em branco" + (boletoDTO.getStatusDivida().equals(StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO)?" - Não pago":" - Pago");
+			}
+			else{
+				
+				statusBoleto = ((boletoDTO.getStatusDivida() != null && StatusDivida.PENDENTE_INADIMPLENCIA.equals(boletoDTO.getStatusDivida())) ?  
+		                        StatusDivida.PENDENTE_INADIMPLENCIA.getDescricao() : 
+                                (boletoDTO.getStatusCobranca()!=null?boletoDTO.getStatusCobranca().toString():""));
+			}    
+			
 			listaModelo.add(new CellModel(1,
-			  (boleto.getNossoNumero()!=null?boleto.getNossoNumero():""),
-			  (boleto.getDataEmissao()!=null?DateUtil.formatarData(boleto.getDataEmissao(),"dd/MM/yyyy"):""),
-			  (boleto.getDataVencimento()!=null?DateUtil.formatarData(boleto.getDataVencimento(),"dd/MM/yyyy"):""),
-			  (boleto.getDataPagamento()!=null?DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy"):""),
-			  (boleto.getEncargos()!=null? formatoMoeda.format(boleto.getEncargos()) : ""),
-			  (boleto.getValor()!=null? formatoMoeda.format(boleto.getValor()) : ""),
-			  (boleto.getTipoBaixa()!=null?boleto.getTipoBaixa().getDescricao():""),
-			  ((boleto.getDivida() != null && StatusDivida.PENDENTE_INADIMPLENCIA.equals(boleto.getDivida().getStatus())) ?  
-					  StatusDivida.PENDENTE_INADIMPLENCIA.getDescricao() : 
-						  (boleto.getStatusCobranca()!=null?boleto.getStatusCobranca().toString():"")),
-			  (boleto.isRecebeCobrancaEmail())
+										  (boletoDTO.getNossoNumero()!=null?boletoDTO.getNossoNumero():""),
+										  (boletoDTO.getDataEmissao()!=null?DateUtil.formatarData(boletoDTO.getDataEmissao(),"dd/MM/yyyy"):""),
+										  (boletoDTO.getDataVencimento()!=null?DateUtil.formatarData(boletoDTO.getDataVencimento(),"dd/MM/yyyy"):""),
+										  (boletoDTO.getDataPagamento()!=null?DateUtil.formatarData(boletoDTO.getDataPagamento(),"dd/MM/yyyy"):""),
+										  (boletoDTO.getEncargos()!=null? formatoMoeda.format(boletoDTO.getEncargos()) : ""),
+										  (boletoDTO.getValor()!=null? formatoMoeda.format(boletoDTO.getValor()) : ""),
+										  (boletoDTO.getTipoBaixa()!=null?boletoDTO.getTipoBaixa().getDescricao():""),
+										   statusBoleto,
+			                              (boletoDTO.isRecebeCobrancaEmail())
 			)
           );
 		}	
@@ -242,6 +252,27 @@ public class ConsultaBoletosController extends BaseController {
 
 	}
 	
+	private byte[] obterImpressaoBoleto(String nossoNumero){
+		
+		byte[] b = null;
+		
+		try{
+			
+			b = this.boletoService.gerarImpressaoBoleto(nossoNumero);
+			
+			if (b == null){
+				
+			    b = this.boletoService.gerarImpressaoBoletoEmBranco(nossoNumero);
+			}
+		}	
+		catch(Exception e){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar impressão do Boleto. "+e.getMessage());
+		}
+		
+		return b;
+	}
+	
 	/**
 	 * Exibe o boleto em formato PDF.
 	 * @param nossoNumero
@@ -252,7 +283,12 @@ public class ConsultaBoletosController extends BaseController {
 	@Rules(Permissao.ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA_ALTERACAO)
 	public void imprimeBoleto(String nossoNumero) throws Exception{
 
-		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
+		byte[] b = this.obterImpressaoBoleto(nossoNumero);
+		
+		if (b == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "O boleto "+nossoNumero+" não foi encontrado.");
+		}
 
 		this.httpResponse.setContentType("application/pdf");
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
@@ -274,9 +310,13 @@ public class ConsultaBoletosController extends BaseController {
 	@Post
 	@Path("/verificaBoleto")
 	public void verificaBoleto(String nossoNumero) throws Exception{
+		
 		if(validarBoletoPago(nossoNumero)){
+			
 			result.use(Results.json()).from(nossoNumero,"result").recursive().serialize();
+			
 	    }else{
+	    	
 	    	throw new ValidacaoException(TipoMensagem.WARNING, "O boleto "+nossoNumero+" já está pago.");
 	    }
 	}
@@ -292,6 +332,7 @@ public class ConsultaBoletosController extends BaseController {
 	public void enviaBoleto(String nossoNumero) throws Exception{
 
 		if (!validarBoletoPago(nossoNumero)){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "O boleto "+nossoNumero+" já está pago.");
 		}
 		
@@ -341,7 +382,16 @@ public class ConsultaBoletosController extends BaseController {
 	 * @param nossoNumero
 	 */
 	public boolean validarBoletoPago(String nossoNumero){
+		
 		Boleto boleto = boletoService.obterBoletoPorNossoNumero(nossoNumero,null);
+		
+		if (boleto == null){
+			
+			BoletoAntecipado boletoantecipado = this.boletoService.obterBoletoEmBrancoPorNossoNumero(nossoNumero);
+			
+			return (boletoantecipado.getStatus()!=StatusDivida.QUITADA);
+		}
+		
 		return (boleto.getStatusCobranca()!=StatusCobranca.PAGO);
 	}
 	
@@ -352,26 +402,27 @@ public class ConsultaBoletosController extends BaseController {
 	 * 
 	 * @throws IOException Exceção de E/S
 	 */
+	@SuppressWarnings("deprecation")
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroConsultaBoletosCotaDTO filtro = this.obterFiltroExportacao();
 		
-		List<Boleto> boletos = this.boletoService.obterBoletosPorCota(filtro);
+		List<BoletoCotaDTO> boletosDTO = this.boletoService.obterBoletosPorCota(filtro);
 		
 		List<BoletoVO> listaBoletos = new ArrayList<BoletoVO>();
 		
-		for (Boleto boleto : boletos) {	
+		for (BoletoCotaDTO boletoDTO : boletosDTO) {	
 			
 			BoletoVO boletoVO = new BoletoVO();
 			
-			boletoVO.setNossoNumero(StringUtils.defaultString(boleto.getNossoNumero()));
-			boletoVO.setDataEmissao(boleto.getDataEmissao());
-			boletoVO.setDataVencimento(boleto.getDataVencimento());
-			boletoVO.setDataPagamento(boleto.getDataPagamento());
-			boletoVO.setEncargos(MathUtil.defaultValue(boleto.getEncargos()));
-			boletoVO.setValor(MathUtil.defaultValue(boleto.getValor()));
-			boletoVO.setTipoBaixa(boleto.getTipoBaixa()!=null?boleto.getTipoBaixa().getDescricao():"");
-			boletoVO.setStatus(boleto.getStatusCobranca());
+			boletoVO.setNossoNumero(StringUtils.defaultString(boletoDTO.getNossoNumero()));
+			boletoVO.setDataEmissao(boletoDTO.getDataEmissao());
+			boletoVO.setDataVencimento(boletoDTO.getDataVencimento());
+			boletoVO.setDataPagamento(boletoDTO.getDataPagamento());
+			boletoVO.setEncargos(MathUtil.defaultValue(boletoDTO.getEncargos()));
+			boletoVO.setValor(MathUtil.defaultValue(boletoDTO.getValor()));
+			boletoVO.setTipoBaixa(boletoDTO.getTipoBaixa()!=null?boletoDTO.getTipoBaixa().getDescricao():"");
+			boletoVO.setStatus(boletoDTO.getStatusCobranca());
 			
 			listaBoletos.add(boletoVO);
 		}
@@ -379,6 +430,9 @@ public class ConsultaBoletosController extends BaseController {
 		FileExporter.to("boleto-cota", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 				listaBoletos, BoletoVO.class, this.httpResponse);
+		
+		result.nothing();
+		
 	}
 	
 	/*

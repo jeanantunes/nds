@@ -87,6 +87,8 @@ public class HistoricoDescontoFornecedorRepositoryImpl extends AbstractRepositor
 		
 		query.setParameter("fornecedorId", fornecedor.getId());
 		
+		query.setMaxResults(1);
+		
 		Object resultado = query.uniqueResult();
 		
 		return resultado==null? null : (HistoricoDescontoFornecedor) query.uniqueResult();

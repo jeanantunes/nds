@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -18,7 +19,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
 @Table(name = "REGIAO")
-@SequenceGenerator(name="REGIAO_SEQ", initialValue = 1, allocationSize = 1)
+@SequenceGenerator(name = "REGIAO_SEQ", initialValue = 1, allocationSize = 1)
 public class Regiao implements Serializable {
 
 	/**
@@ -26,18 +27,20 @@ public class Regiao implements Serializable {
 	 */
 	private static final long serialVersionUID = 4841355309648872908L;
 
-
 	@Id
 	@GeneratedValue(generator = "REGIAO_SEQ")
 	@Column(name = "ID")
 	private Long id;
-	
+
 	@Column(name = "NOME_REGIAO", nullable = false)
 	private String nomeRegiao;
-	
+
 	@Column(name = "REGIAO_IS_FIXA", nullable = false)
 	private boolean regiaoIsFixa;
-	
+
+	/**
+	 * Data de início da Região
+	 */
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_REGIAO", nullable = false)
 	private Date dataRegiao;
@@ -45,10 +48,10 @@ public class Regiao implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario idUsuario;
-	
+
 	public Regiao() {
-        this.dataRegiao = new Date();
-    }
+		this.dataRegiao = new Date();
+	}
 
 	public Usuario getIdUsuario() {
 		return idUsuario;
@@ -58,11 +61,10 @@ public class Regiao implements Serializable {
 		this.idUsuario = idUsuario;
 	}
 
-
 	public Long getId() {
 		return id;
 	}
-	
+
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -89,25 +91,5 @@ public class Regiao implements Serializable {
 
 	public void setDataRegiao(Date dataRegiao) {
 		this.dataRegiao = dataRegiao;
-	}
-
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Regiao other = (Regiao) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
 	}
 }

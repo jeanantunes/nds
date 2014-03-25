@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
+import br.com.abril.nds.dto.RedistribuicaoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
@@ -36,20 +37,6 @@ public interface PeriodoLancamentoParcialRepository extends
 	PeriodoLancamentoParcial obterPeriodoPorIdLancamento(Long idLancamento);
 
 	/**
-	 * Retorna se novo periodo é válido para o Lancamento
-	 * 
-	 * @param idLancamento
-	 *            - Id do lançamento a ser alterado
-	 * @param dataLancamento
-	 *            - Nova data de Lancamento
-	 * @param dataRecolhimento
-	 *            - Nova data de Recolhimento
-	 * @return
-	 */
-	Boolean verificarValidadeNovoPeriodoParcial(Long idLancamento,
-			Date dataLancamento, Date dataRecolhimento);
-
-	/**
 	 * Obtem detalhes das vendas do produtoEdição nas datas de Lancamento e
 	 * Recolhimento
 	 * 
@@ -60,17 +47,6 @@ public interface PeriodoLancamentoParcialRepository extends
 	 */
 	List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento,
 			Date dataRecolhimento, Long idProdutoEdicao);
-
-	/**
-	 * Obtém lançamento de periodo parcial posterior.
-	 * 
-	 * @param dataRecolhimento
-	 * 
-	 * @param idLancamento
-	 * @return
-	 */
-	Lancamento obterLancamentoPosterior(Long idProdutoEdicao,
-			Date dataRecolhimento);
 
 	/**
 	 * Obtém lançamento de periodo parcial anterior.
@@ -111,4 +87,40 @@ public interface PeriodoLancamentoParcialRepository extends
 	 */
 	Long obterQntPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial);
 
+	List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodo);
+	
+	PeriodoLancamentoParcial obterPeriodoPorNumero(Integer numeroPeriodo,Long idLancamentoParcial);
+	
+	List<Lancamento> obterRedistribuicoesPosterioresAoLancamento(Long idPeriodo,Date dataLancamento);
+	
+	List<Lancamento> obterRedistribuicoesAnterioresAoLancamento(Long idPeriodo,Date dataLancamento);
+	
+	List<Lancamento> obterRedistribuicoes(Long idPeriodo);
+	
+	List<PeriodoLancamentoParcial> obterProximosPeriodos(Integer numeroPeriodo,Long idLancamentoParcial) ;
+	
+	boolean isLancamentoConferenciaEncalheCotaPeriodoFinal(Long idProdutoEdicao,Long idCota,Date dataRecolhimento);
+	
+	/**
+	 * Obtém o primeiro período antes da data de recolhimento especificada.
+	 * 
+	 * @param dataRecolhimento
+	 * 
+	 * @param idProdutoEdicao
+	 * 
+	 * @return PeriodoLancamentoParcial
+	 */
+	PeriodoLancamentoParcial obterPeriodoAnterior(Date dataRecolhimento, Long idProdutoEdicao);
+	
+	/**
+	 * Obtém o primeiro período após a data de recolhimento especificada.
+	 * 
+	 * @param dataRecolhimento
+	 * 
+	 * @param idProdutoEdicao
+	 * 
+	 * @return PeriodoLancamentoParcial
+	 */
+	PeriodoLancamentoParcial obterPeriodoPosterior(Date dataRecolhimento, Long idProdutoEdicao);
 }
+

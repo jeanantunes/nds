@@ -44,6 +44,7 @@ import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -81,14 +82,31 @@ public class DividaServiceImpl implements DividaService {
 
 	@Autowired
 	private FormaCobrancaService formaCobrancaService;
-	
+
+	private long calculaDiasEmAtraso(StatusDividaDTO item, Date dataOperacao){
+		
+		long qntDias = 0L;
+		
+		if (StatusDivida.QUITADA.getDescricao().equals(item.getSituacao())){
+			
+			qntDias = DateUtil.obterDiferencaDias(DateUtil.parseDataPTBR(item.getDataVencimento()), 
+												  DateUtil.parseDataPTBR(item.getDataPagamento()));
+		}
+		else{
+			
+			qntDias = DateUtil.obterDiferencaDias(DateUtil.parseDataPTBR(item.getDataVencimento()), dataOperacao);
+		}
+			
+		return ( (qntDias <= 0) ? 0L : qntDias);
+	}
+
 	@Override
 	@Transactional
 	public List<StatusDividaDTO> obterInadimplenciasCota(
 			FiltroCotaInadimplenteDTO filtro) {
 		
 		List<StatusDividaDTO> dividas = dividaRepository.obterInadimplenciasCota(filtro);
-		
+
 		if(!dividas.isEmpty()){
 		
 			Date dataOperacao = filtro.getDataOperacaoDistribuidor();
@@ -99,20 +117,8 @@ public class DividaServiceImpl implements DividaService {
 			}
 			
 			for(StatusDividaDTO item : dividas){
-				
-				long qntDias = 0L;
-				
-				if (StatusDivida.QUITADA.getDescricao().equals(item.getSituacao())){
 					
-					qntDias = DateUtil.obterDiferencaDias(DateUtil.parseDataPTBR(item.getDataVencimento()), 
-														  DateUtil.parseDataPTBR(item.getDataPagamento()));
-				}
-				else{
-					
-					qntDias = DateUtil.obterDiferencaDias(DateUtil.parseDataPTBR(item.getDataVencimento()), dataOperacao);
-				}
-					
-				item.setDiasAtraso( (qntDias <= 0) ? 0L : qntDias);
+				item.setDiasAtraso(this.calculaDiasEmAtraso(item, dataOperacao));
 			}
 		}
 		
@@ -145,13 +151,14 @@ public class DividaServiceImpl implements DividaService {
 		
 		Divida dividaAtual = this.dividaRepository.buscarPorId(idDivida);
 		
-		dividas.add(dividaAtual);
-		
-		this.adicionarDividasRaiz(dividas, dividaAtual);
-		
-		for(Divida d : dividas) {
-			d.getCobranca();
+		if (dividaAtual == null){
+			
+			return null;
 		}
+		    
+		dividas.add(dividaAtual);
+			
+		this.adicionarDividasRaiz(dividas, dividaAtual);
 		
 		return dividas;
 	}
@@ -164,7 +171,19 @@ public class DividaServiceImpl implements DividaService {
 		
 		Divida dividaAtual = this.dividaRepository.buscarPorId(idDivida);
 		
-		List<Negociacao> listaNegociacao = dividaAtual.getCobranca().getNegociacao();
+		if (dividaAtual == null){
+			
+			return null;
+		}
+		
+		Cobranca cobranca = dividaAtual.getCobranca();
+		
+		if (cobranca == null){
+			
+			return null;
+		}
+		
+		List<Negociacao> listaNegociacao = cobranca.getNegociacao();
 		
 		if (listaNegociacao != null && !listaNegociacao.isEmpty()) {
 		
@@ -333,6 +352,15 @@ public class DividaServiceImpl implements DividaService {
 		List<Cobranca> listaCobrancas = 
 			this.cobrancaRepository.obterCobrancasPorIDS(listaIdsCobranca);
 		
+		for(Cobranca cobranca : listaCobrancas) {
+		
+				if (!cobranca.getDataVencimento().before(dataPostergacao)) {
+
+					throw new ValidacaoException(
+					TipoMensagem.WARNING, "A data da postergação tem de ser maior que a data de vencimento.");
+				}
+		}
+		
 		BigDecimal encargos = BigDecimal.ZERO;
 		
 		FormaCobranca formaCobrancaPrincipal = 
@@ -366,29 +394,34 @@ public class DividaServiceImpl implements DividaService {
 	@Override
 	@Transactional(readOnly=true)
 	public DividaComissaoDTO obterDadosDividaComissao(Long idDivida) {
-		Divida divida = dividaRepository.buscarPorId(idDivida);
-		Cobranca cobranca = divida.getCobranca();
 
-		Negociacao negociacao = negociacaoRepository.obterNegociacaoPorCobranca(cobranca.getId());
-		
-		if(negociacao == null)
+		Negociacao negociacao = negociacaoRepository.obterNegociacaoPorDivida(idDivida);
+
+		if(negociacao == null){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há negociação associada a essa dívida");
-		
-		BigDecimal valorPago = negociacao.getValorDividaPagaComissao();
-		if(valorPago == null) {
-			valorPago = BigDecimal.ZERO;
-		}
-		BigDecimal valorOriginal = BigDecimal.ZERO;
-		for(Cobranca c : negociacao.getCobrancasOriginarias()) {
-			valorOriginal = valorOriginal.add(c.getValor());
 		}
 		
+		BigDecimal valorOriginal = negociacao.getValorOriginal();
+		
+		if(valorOriginal == null) {
+			
+			valorOriginal = BigDecimal.ZERO;
+		}
+		
+		BigDecimal valorPago = 
+			this.negociacaoRepository.obterValorPagoDividaNegociadaComissao(
+				negociacao.getId());
+		
+		valorPago = valorPago == null ? BigDecimal.ZERO : valorPago;
+		
+		BigDecimal valorResidual = valorOriginal.subtract(valorPago);
 		
 		DividaComissaoDTO resultado = new DividaComissaoDTO();
-		resultado.setPorcentagem(negociacao.getComissaoParaSaldoDivida());
-		resultado.setValorPago(valorPago);
-		resultado.setValorDivida(valorOriginal);
-		resultado.setValorResidual(valorOriginal.add(valorPago.multiply(new BigDecimal(-1))));
+		resultado.setPorcentagem(CurrencyUtil.formatarValor(negociacao.getComissaoParaSaldoDivida()));
+		resultado.setValorPago(CurrencyUtil.formatarValor(valorPago));
+		resultado.setValorDivida(CurrencyUtil.formatarValor(valorOriginal));
+		resultado.setValorResidual(CurrencyUtil.formatarValor(valorResidual));
 		
 		return resultado;
 	}

@@ -8,7 +8,7 @@ import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.CotaProdutoEmissaoCEDTO;
-import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -43,19 +43,23 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 	Date obterProximaDataEncalhe(Date base);
 
 	List<BandeirasDTO> obterBandeirasNoIntervalo(
-			Intervalo<Date> intervaloRecolhimento, PaginacaoVO paginacaoVO);
+			Intervalo<Date> intervaloRecolhimento, TipoChamadaEncalhe tipoChamadaEncalhe, Long fornecedor, PaginacaoVO paginacaoVO);
 
-	List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(
-			Intervalo<Date> intervalo);
+	List<FornecedorDTO> obterDadosFornecedoresParaImpressaoBandeira(
+			Intervalo<Date> intervalo, Long fornecedor);
 
 	Long countObterBandeirasNoIntervalo(Intervalo<Date> intervalo);
+
+    Long countObterBandeirasNoIntervalo(Intervalo<Date> intervalo, TipoChamadaEncalhe tipoChamadaEncalhe, Long fornecedor);
 	
-	List<ChamadaEncalhe> obterChamadaEncalhePorProdutoEdicao(ProdutoEdicao produtoEdicao,TipoChamadaEncalhe tipoChamadaEncalhe);
+	List<ChamadaEncalhe> obterChamadasEncalhe(ProdutoEdicao produtoEdicao, TipoChamadaEncalhe tipoChamadaEncalhe, Date dataRecolhimento);
 
 	Integer obterMaiorSequenciaPorDia(Date dataRecolhimento);
 
 	Set<Lancamento> obterLancamentos(Long idChamadaEncalhe);
 
 	List<CotaProdutoEmissaoCEDTO> obterDecomposicaoReparteSuplementarRedistribuicao(FiltroEmissaoCE filtro);
+
+    public abstract Date obterMaxDataRecolhimento(final TipoChamadaEncalhe tipoChamadaEncalhe);
 	
 }

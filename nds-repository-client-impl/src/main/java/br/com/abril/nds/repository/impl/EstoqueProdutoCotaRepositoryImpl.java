@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -13,6 +14,7 @@ import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
@@ -88,18 +90,39 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select estoqueProdutoCota ")
+		hql.append(" select estoqueProdutoCota ")
 		   .append(" from EstudoCota estudoCota ")
 		   .append(" join estudoCota.estudo estudo ")
 		   .append(" join estudo.lancamentos lancamento, EstoqueProdutoCota estoqueProdutoCota ")
 		   
 		   .append(" where estoqueProdutoCota.produtoEdicao = estudo.produtoEdicao ")
 		   .append(" and estoqueProdutoCota.cota = estudoCota.cota")
-		   .append(" and lancamento.id = :idLancamento");
+		   .append(" and lancamento.id = :idLancamento ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("idLancamento", idLancamento);
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<EstoqueProdutoCota> buscarEstoqueProdutoCotaCompraSuplementar(Long idLancamento){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select estoqueProdutoCota ")
+		   .append(" from EstoqueProdutoCota estoqueProdutoCota ")
+		   .append(" join estoqueProdutoCota.movimentos mec ")
+		   .append(" join mec.tipoMovimento tm ")
+		   .append(" join mec.lancamento l ")
+		   .append(" where l.id = :idLancamento ")
+		   .append(" and tm.grupoMovimentoEstoque in ( :gruposMovimento ) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idLancamento", idLancamento);
+		query.setParameterList("gruposMovimento", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR));
 		
 		return query.list();
 	}
@@ -151,62 +174,90 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		
 		return (BigDecimal) query.uniqueResult();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
+	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto, String classificacaoProduto, Integer numeroCota){
 		
 		StringBuilder sql = new StringBuilder("");
 
-		sql.append(" select  produto_edicao.NUMERO_EDICAO as edicao, ");
-		sql.append("  	estoque_produto_cota.QTDE_RECEBIDA as reparte,");
+		sql.append(" select ");
+		sql.append("    produto_edicao.NUMERO_EDICAO as edicao, ");
+		sql.append("    produto.codigo_icd as codigoProduto, ");
+		sql.append("    ifnull(tcp.descricao, '') as classificacaoProduto, ");
+		sql.append("    ifnull(estoque_produto_cota.QTDE_RECEBIDA, 0) as reparte,");
 		sql.append("  	ifnull(estoque_produto_cota.QTDE_RECEBIDA - estoque_produto_cota.QTDE_DEVOLVIDA, 0 ) as venda, ");
-		sql.append("  	historico_lancamento.STATUS as status, ");
+		sql.append("  	lancamento.STATUS as status, ");
 		sql.append("  	lancamento.DATA_LCTO_PREVISTA as dataLancamento, ");
 		sql.append(" 	lancamento.DATA_REC_PREVISTA as dataRecolhimento");
-		sql.append("  		 from estoque_produto_cota  ");
-		sql.append(" 			join produto_edicao on estoque_produto_cota.PRODUTO_EDICAO_ID = produto_edicao.id ");
-		sql.append("  			join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ");
-		sql.append("  			join historico_lancamento on historico_lancamento.LANCAMENTO_ID = lancamento.ID ");
-		sql.append(" 			join produto on produto.ID = produto_edicao.PRODUTO_ID");
-		sql.append(" where produto.codigo = :produtoBusca ");
-		sql.append("	group by produto_edicao.NUMERO_EDICAO limit 6");
+		sql.append(" from produto_edicao ");
+		sql.append("	left join estoque_produto_cota on estoque_produto_cota.PRODUTO_EDICAO_ID = produto_edicao.id ");
+		sql.append("	join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ");
+		sql.append("	join produto on produto.ID = produto_edicao.PRODUTO_ID");
+		sql.append("	left join tipo_classificacao_produto tcp on tcp.ID = produto_edicao.TIPO_CLASSIFICACAO_PRODUTO_ID");
+		sql.append(" where produto.codigo_icd = :produtoBusca ");
+		sql.append(" and estoque_produto_cota.COTA_ID = (select c.ID from cota c where c.NUMERO_COTA = :numeroCota ) ");
 		
+				
+        if (!classificacaoProduto.equalsIgnoreCase("-1")) {
+            sql.append(" and tcp.id = :classificacaoProduto ");
+        }
+		sql.append("    group by produto_edicao.NUMERO_EDICAO ");
+		sql.append("    order by produto_edicao.NUMERO_EDICAO desc ");
+		sql.append("    limit 6");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
-		query.setParameter("produtoBusca", produto.getCodigo());
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				FixacaoReparteDTO.class));
+		query.setParameter("produtoBusca", produto.getCodigoICD());
+		query.setParameter("numeroCota", numeroCota);
+		
+        if (!classificacaoProduto.equalsIgnoreCase("-1")) {
+            query.setParameter("classificacaoProduto", classificacaoProduto);
+        }
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(FixacaoReparteDTO.class));
 		
 		return query.list();
 	}
 		
 	@SuppressWarnings("unchecked")
-	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota){
+	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota, String codigoProduto, String classificacaoProduto){
 			
 			StringBuilder sql = new StringBuilder("");
 	
-			sql.append(" select  produto_edicao.NUMERO_EDICAO as edicao, ");
+			sql.append(" select  produto.codigo_icd as codigoProduto, ");
+			sql.append("    ifnull(tcp.descricao, '') as classificacaoProduto, ");
+			sql.append("    produto_edicao.NUMERO_EDICAO as edicao, ");
 			sql.append("  	estoque_produto_cota.QTDE_RECEBIDA as reparte,");
 			sql.append("  	ifnull(estoque_produto_cota.QTDE_RECEBIDA - estoque_produto_cota.QTDE_DEVOLVIDA, 0 ) as venda, ");
-			sql.append("  	historico_lancamento.STATUS as status, ");
+			sql.append("  	lancamento.STATUS as status, ");
 			sql.append("  	lancamento.DATA_LCTO_PREVISTA as dataLancamento, ");
 			sql.append(" 	lancamento.DATA_REC_PREVISTA as dataRecolhimento");
 			sql.append("  		 from estoque_produto_cota  ");
 			sql.append(" 			join produto_edicao on estoque_produto_cota.PRODUTO_EDICAO_ID = produto_edicao.id ");
 			sql.append("  			join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ");
-			sql.append("  			join historico_lancamento on historico_lancamento.LANCAMENTO_ID = lancamento.ID ");
 			sql.append(" 			join produto on produto.ID = produto_edicao.PRODUTO_ID");
-			sql.append(" where cota_id = :cotaBusca ");
-			sql.append("	group by edicao order by dataLancamento desc limit 6");
-			
-			
+			sql.append(" 			left join tipo_classificacao_produto tcp on tcp.ID = produto_edicao.TIPO_CLASSIFICACAO_PRODUTO_ID");
+            sql.append(" where cota_id = :cotaBusca ");
+            sql.append(" and produto.CODIGO_ICD = :produtoBusca ");
+
+            if (!classificacaoProduto.equalsIgnoreCase("-1")) {
+                sql.append(" and tcp.ID = :classificacaoProduto");
+            }
+
+            sql.append("	group by edicao order by edicao desc limit 6");
+
 			SQLQuery query = getSession().createSQLQuery(sql.toString());
 			
 			query.setParameter("cotaBusca", cota.getId());
-			query.setResultTransformer(new AliasToBeanResultTransformer(
-					FixacaoReparteDTO.class));
+			query.setParameter("produtoBusca", codigoProduto);
+
+            if (!classificacaoProduto.equalsIgnoreCase("-1")) {
+                query.setParameter("classificacaoProduto", classificacaoProduto);
+            }
+
+            query.setResultTransformer(new AliasToBeanResultTransformer(FixacaoReparteDTO.class));
 			
 			return query.list();
 	}
+	
 }

@@ -33,12 +33,14 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	 * @return {@link List<EstoqueProdutoCota>}
 	 */
 	List<EstoqueProdutoCota> buscarListaEstoqueProdutoCota(Long idLancamento);
-
+	
+	List<EstoqueProdutoCota> buscarEstoqueProdutoCotaCompraSuplementar(Long idLancamento);
+	
 	BigDecimal obterConsignado(boolean cotaInadimplente);
 
 	BigInteger obterTotalEmEstoqueProdutoCota(Long idCota, Long idProdutoEdicao);
 	
-	List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto);
+	List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto, String classificacaoProduto, Integer numeroCota);
 	
-	List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota);
+	List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota, String codigoProduto, String classificacaoProduto);
 }

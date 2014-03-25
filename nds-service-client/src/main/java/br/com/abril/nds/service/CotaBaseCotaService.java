@@ -15,6 +15,8 @@ public interface CotaBaseCotaService {
 	 * Regra: Após 180 dias do cadastro de cota base para uma cota nova, a cota nova não vai ter mais cotas base amarrado a elas.
 	 * 
 	 */	
+	boolean isCotaBaseAtiva(CotaBase cotaBase, Integer[] numerosDeCotasBase);
+
 	boolean isCotaBaseAtiva(CotaBase cotaBase);
 
 	/*

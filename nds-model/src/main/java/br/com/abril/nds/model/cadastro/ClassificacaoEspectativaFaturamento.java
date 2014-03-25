@@ -6,7 +6,7 @@ public enum ClassificacaoEspectativaFaturamento {
 	A  ("A - R$ 4.000,00 a R$ 999999,99"),
 	B  ("B - R$ 2.000,00 a R$ 3.999,99"),
 	C  ("C - R$ 1.000,00 a R$ 1.999,99"),
-	D  ("D - R$ 0.01 a R$ 999,99");
+	D  ("D - R$ 0.00 a R$ 999,99");
 	
 	private String descricao;
 	

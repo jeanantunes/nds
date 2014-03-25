@@ -14,8 +14,8 @@ public class CabecalhoNotaDTO {
 	private Date dataEntrada;
 	private String valorTotal;
 	
-
-
+	
+	
 	public Long getNumeroNotaEnvio() {
 		return numeroNotaEnvio;
 	}
@@ -23,7 +23,7 @@ public class CabecalhoNotaDTO {
 	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
 		this.numeroNotaEnvio = numeroNotaEnvio;
 	}
-
+	
 	/**
 	 * @return the fornecedor
 	 */

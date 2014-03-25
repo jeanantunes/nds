@@ -3,23 +3,31 @@ var ModoTela = {
     HISTORICO_TITULARIDADE : {value: 'HISTORICO_TITULARIDADE'}
 };
 
+
 var TAB_COTA = new TabCota('tabCota');
+
+var autoCompl;
 
 var MANTER_COTA = $.extend(true, {
 
     numeroCota:"",
     idCota:"",
+    tipoCota:"",
     tipoCotaSelecionada:"",
     tipoCota_CPF:"FISICA",
     tipoCota_CNPJ:"JURIDICA",
-					confirmado:false,
+	confirmado:false,
     fecharModalCadastroCota:false,
     isAlteracaoTitularidade: false,
     _workspace: this.workspace,
     modoTela: null,
     idHistorico:"",
-
+    resultCotaLength:0,
+    
     init: function() {
+    	
+    	autoCompl = new AutoCompleteCampos(MANTER_COTA.workspace);
+    	
         this.definirModoTelaCadastroCota();
 
         $( "#tabpdv", this.workspace ).tabs();
@@ -27,6 +35,18 @@ var MANTER_COTA = $.extend(true, {
         $("#descricaoPessoa", this.workspace).autocomplete({source: ""});
 
         $("#numCota", this.workspace).numeric();
+        
+        $('#logradouroPesquisa').keyup(function (){
+        	autoCompl.autoCompletarPorNomeSimples("/cadastro/endereco/pesquisarLogradouros", '#logradouroPesquisa', "nomeLogradouro", 1);
+    	});
+        
+        $('#bairroPesquisa').keyup(function (){
+        	autoCompl.autoCompletarPorNomeSimples("/cadastro/endereco/pesquisarBairros", '#bairroPesquisa', "nomeBairro", 1);
+    	});
+        
+        $('#municipioPesquisa').keyup(function (){
+        	autoCompl.autoCompletarPorNomeSimples("/cadastro/endereco/pesquisarLocalidades", '#municipioPesquisa', "nomeLocalidade", 1);
+    	});
 
         COTA_FORNECEDOR.initTabFornecedorCota();
 
@@ -47,6 +67,32 @@ var MANTER_COTA = $.extend(true, {
         		
         		return true;
         	});
+        });
+    },
+    
+    verificaTipoCota : function(tipoCotaCPF) {
+    	
+    	if (MANTER_COTA.idCota == "") {
+    		return;
+    	}
+    	
+    	$("<div>")
+    	.html("O Mix (para o tipo alternativo) e a Fixação (para o tipo convencional) desta Cota serão apagados, confirma?")
+    	.dialog({
+    		title: "Confirmação",
+            resizable: false,
+            height:'auto',
+            width:350,
+            modal: true,
+            buttons: {
+                "Confirmar": function() {
+                    $( this, this.workspace ).dialog( "close" );
+					$.postJSON(contextPath + "/cadastro/cota/apagarTipoCota", {idCota:MANTER_COTA.idCota, tipoCota:tipoCotaCPF.value});
+                },
+                "Cancelar": function() {
+                    $( this, this.workspace ).dialog( "close" );
+                }
+            },
         });
     },
     
@@ -128,6 +174,9 @@ var MANTER_COTA = $.extend(true, {
             {name:"numeroCpfCnpj",value:$("#txtCPF_CNPJ", this.workspace).val()},
             {name:"logradouro",value:$("#logradouroPesquisa", this.workspace).val()},
             {name:"bairro",value:$("#bairroPesquisa", this.workspace).val()},
+            
+            {name:"status",value:$("#selectStatus", this.workspace).val()},
+            
             {name:"municipio",value:$("#municipioPesquisa", this.workspace).val()}
         ];
         return formData;
@@ -143,7 +192,7 @@ var MANTER_COTA = $.extend(true, {
 
     carregarTelefones:function(){
     	
-    	MANTER_COTA._indCadastroCotaAlterado = false;
+    	 MANTER_COTA._indCadastroCotaAlterado = false;
     	
         COTA.definirReadonly(!MANTER_COTA.isModoTelaCadastroCota());
 
@@ -190,6 +239,7 @@ var MANTER_COTA = $.extend(true, {
     },
 
     carregarDistribuicao:function(){
+
         DISTRIB_COTA.definirModoTela(MANTER_COTA.modoTela, MANTER_COTA.idHistorico);
         if (MANTER_COTA.isModoTelaCadastroCota()) {
             TAB_COTA.funcaoSalvar = DISTRIB_COTA.salvar;
@@ -253,9 +303,11 @@ var MANTER_COTA = $.extend(true, {
                 '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Cota" />' +
                 '</a>';
 
-            row.cell.acao = linkEdicao + linkExclusao;
+            row.cell.acao = linkEdicao + linkExclusao; 
         });
 
+        MANTER_COTA.resultCotaLength=resultado.rows.length;
+        
         $("#gridsCota", this.workspace).show();
 
         return resultado;
@@ -312,6 +364,8 @@ var MANTER_COTA = $.extend(true, {
                     	
                     	$("#numeroCotaCPF", this.workspace).attr("disabled", "disabled");
                     	
+                    	$("#tabCota", this.workspace).tabs( "option", "disabled", [4] );
+                    	
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionadaCPF");
                         
                         COTA_CPF.editarCPF(result);
@@ -319,6 +373,8 @@ var MANTER_COTA = $.extend(true, {
                     else {
                     	
                     	$("#numeroCotaCNPJ", this.workspace).attr("disabled", "disabled");
+                    	
+                    	$("#tabCota", this.workspace).tabs( "option", "disabled", [4] );
                     	
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
                         
@@ -343,8 +399,21 @@ var MANTER_COTA = $.extend(true, {
     montarCombo:function(result,idCombo){
 
         var comboClassificacao =  montarComboBox(result, false);
+        
+        if(idCombo == "#classificacaoSelecionadaCPF" ){
+        	var inicio = '<select name="cotaDTO.classificacaoSelecionada" id="classificacaoSelecionadaCPF" style="width:300px;" disabled="disabled">';
+        	var fim = '</select>';
+        	$("#selectClassificacaoCPF", MANTER_COTA._workspace).html(inicio + comboClassificacao + fim);
+        }else if(idCombo == "#classificacaoSelecionada"){
+        	var inicio = '<select name="cotaDTO.classificacaoSelecionada" id="classificacaoSelecionada" style="width:300px;" disabled="disabled">';
+        	var fim = '</select>';
+        	$("#selectClassificacao", MANTER_COTA._workspace).html(inicio + comboClassificacao + fim);
 
-        $(idCombo, MANTER_COTA._workspace).html(comboClassificacao);
+        }else{
+        	$(idCombo, MANTER_COTA._workspace).html(comboClassificacao);        	
+        	
+        }
+
     },
 
     salvarDadosCadastrais:function(){
@@ -391,7 +460,7 @@ var MANTER_COTA = $.extend(true, {
 
         if(!er.exec($(idInput, this.workspace).val())) {
             $(idInput, this.workspace).focus();
-            exibirMensagemDialog("WARNING",["E-mail inv&aacute;lido."],"");
+            exibirMensagemDialog("WARNING",["E-mail inv&aacutelido."],"");
         }
     },
 
@@ -427,12 +496,12 @@ var MANTER_COTA = $.extend(true, {
 
         $('input[id^="dataNascimento"]', this.workspace).mask("99/99/9999");
 
-        $('input[id^="periodoCota"]', this.workspace).datepicker({
-            showOn: "button",
-            buttonImage: contextPath+"/images/calendar.gif",
-            buttonImageOnly: true,
-            dateFormat: "dd/mm/yy"
-        });
+//        $('input[id^="periodoCota"]', this.workspace).datepicker({
+//            showOn: "button",
+//            buttonImage: contextPath+"/images/calendar.gif",
+//            buttonImageOnly: true,
+//            dateFormat: "dd/mm/yy"
+//        });
 
         $('input[id^="dataNascimento"]', this.workspace).datepicker({
             showOn: "button",
@@ -458,7 +527,7 @@ var MANTER_COTA = $.extend(true, {
                     },
                     {id:"btn_cancelar_cota",text:"Cancelar",
                         click:function(){
-                        	MANTER_COTA.fecharModalCadastroCota = false;
+                            MANTER_COTA.fecharModalCadastroCota = false;
                             $( this, this.workspace ).dialog( "close" );
                         }
                     }
@@ -588,44 +657,6 @@ var MANTER_COTA = $.extend(true, {
         $(".ui-dialog-title-dialog-cota", this.workspace).html(value);
     },
 
-    pesquisarLogradouros: function(idCampoPesquisa) {
-
-        var nomeLogra = $(idCampoPesquisa, this.workspace).val();
-
-        nomeLogra = $.trim(nomeLogra);
-
-        $(idCampoPesquisa, this.workspace).autocomplete({source: ""});
-
-        if (nomeLogra && nomeLogra.length > 2) {
-
-            $.postJSON(
-                contextPath + "/cadastro/endereco/pesquisarLogradouros", {nomeLogradouro:nomeLogra},
-                function(result) {
-                    MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa);
-                }
-            );
-        }
-    },
-
-    pesquisarBairros: function(idCampoPesquisa) {
-
-        var nomeBairro = $(idCampoPesquisa, this.workspace).val();
-
-        nomeBairro = $.trim(nomeBairro);
-
-        $(idCampoPesquisa, this.workspace).autocomplete({source: ""});
-
-        if (nomeBairro && nomeBairro.length > 2) {
-
-            $.postJSON(
-                contextPath + "/cadastro/endereco/pesquisarBairros", {nomeBairro:nomeBairro},
-                function(result) {
-                    MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa);
-                }
-            );
-        }
-    },
-
     /**
      * Flag que indica alteraÃ§Ãµes no cadastro da cota.
      */
@@ -664,7 +695,8 @@ var MANTER_COTA = $.extend(true, {
     	
     	$.each(inputAbas, function(index, value){
     		
-        	$(value).change(function() {		
+        	$(value).change(function() {
+        		
         		MANTER_COTA._indCadastroCotaAlterado = true;
 
         	});
@@ -674,26 +706,6 @@ var MANTER_COTA = $.extend(true, {
     	
     },
     
-    
-    pesquisarMunicipios: function(idCampoPesquisa) {
-
-        var nomeMunicipio = $(idCampoPesquisa, this.workspace).val();
-
-        nomeMunicipio = $.trim(nomeMunicipio);
-
-        $(idCampoPesquisa, this.workspace).autocomplete({source: ""});
-
-        if (nomeMunicipio && nomeMunicipio.length > 2) {
-
-            $.postJSON(
-                contextPath + "/cadastro/endereco/pesquisarLocalidades", {nomeLocalidade:nomeMunicipio},
-                function(result) {
-                    MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa);
-                }
-            );
-        }
-    },
-
     exibirAutoComplete: function(result, idCampo) {
 
         $(idCampo, this.workspace).autocomplete({
@@ -765,14 +777,13 @@ var MANTER_COTA = $.extend(true, {
         $.postJSON(contextPath + "/cadastro/cota/historicoTitularidade", data,
             function(result){
                 if(result){
-                    if(result.tipoPessoa == MANTER_COTA.tipoCota_CPF) {
+                    if(result.tipoPessoa == MANTER_COTA.tipoCota_CPF){
                     	
                     	if(result.listaClassificacao) {
-                    		MANTER_COTA.montarCombo(result.listaClassificacao, "#classificacaoSelecionadaCPF");
+                    		 MANTER_COTA.montarCombo(result.listaClassificacao, "#classificacaoSelecionadaCPF");
                     	}
                     	
                         COTA_CPF.editarCPF(result);
-                        
                     } else {
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
                         COTA_CNPJ.editarCNPJ(result);
@@ -825,8 +836,11 @@ var MANTER_COTA = $.extend(true, {
     verificarEntregador : function(){
 
         if (MANTER_COTA.idCota && MANTER_COTA.idCota != ""){
+
+        	var param = {idCota:MANTER_COTA.idCota};
+        	
             $.postJSON(contextPath + "/cota/parametroCobrancaCota/verificarEntregador",
-                {name:"idCota", value: MANTER_COTA.idCota},
+            	param,
                 function (result){
                     if (result && result.boolean){
 
@@ -842,9 +856,41 @@ var MANTER_COTA = $.extend(true, {
                 true,
                 "dialog-cota"
             );
+            this.carregarDistribuicao();
+            MANTER_COTA.confirmado = false;
         }
     },
     
+    imprimir:function(type){
+    	
+    	if(MANTER_COTA.resultCotaLength==0){
+    		exibirMensagemDialog("WARNING",["Sem resultados para exportar."]);
+    		return;
+    	}
+    	if(type){
+    		
+    		window.location = contextPath + "/cadastro/cota/exportar?fileType="+type;
+    		//$.getJSON(contextPath + "/cadastro/cota/exportar?fileType="+type,null, null);
+    		
+    	}
+    },
+    
+    uniqArray: function(dirtyArr, keyParam) {
+    	var cleanArrObj = {},
+    		returnArr = [];
+    	
+    	for ( var i=0; i < dirtyArr.length; i++ ) {
+    		if(dirtyArr[i].value !== '') {
+    			cleanArrObj[dirtyArr[i][keyParam]] = dirtyArr[i];
+    		}
+    	}
+    	
+    	for ( key in cleanArrObj ) {
+    		returnArr.push(cleanArrObj[key]);
+    	}
+    	
+    	return returnArr;
+    }
 
 }, BaseController);
 
@@ -1011,7 +1057,7 @@ var COTA_FORNECEDOR = $.extend(true, {
         
         var param = {idCota:MANTER_COTA.idCota};
         
-        param = serializeArrayToPost('fornecedores', fornecedores, param)
+        param = serializeArrayToPost('fornecedores', fornecedores, param);
 
         $.postJSON(
             contextPath + "/cadastro/cota/salvarFornecedores",
@@ -1113,6 +1159,8 @@ var COTA_CNPJ = $.extend(true, {
                 }
 
                 MANTER_COTA.montarCombo(dados.listaClassificacao,"#classificacaoSelecionada");
+                
+                $("#tabCota", this.workspace).tabs( "option", "disabled", [4] );
 
                 MANTER_COTA.popupCota(true);
             }
@@ -1150,19 +1198,23 @@ var COTA_CNPJ = $.extend(true, {
         $("#emailNF", this.workspace).val(result.emailNF);
         $("#emiteNFE", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
         $("#classificacaoSelecionada", this.workspace).val(result.classificacaoSelecionada);
-        $("#historicoPrimeiraCota", this.workspace).val(result.historicoPrimeiraCota);
-        $("#historicoPrimeiraPorcentagem", this.workspace).val( eval( result.historicoPrimeiraPorcentagem));
-        $("#historicoSegundaCota", this.workspace).val(result.historicoSegundaCota);
-        $("#historicoSegundaPorcentagem", this.workspace).val( eval( result.historicoSegundaPorcentagem));
-        $("#historicoTerceiraCota", this.workspace).val(result.historicoTerceiraCota);
-        $("#historicoTerceiraPorcentagem", this.workspace).val( eval( result.historicoTerceiraPorcentagem));
+        $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoDistribuicaoCota);
+        
+        $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
+        
+        $("#historicoPrimeiraCota", this.workspace).val((result.cotasBases[0] != undefined) ? result.cotasBases[0].numeroCota : "").disable();
+        $("#historicoSegundaCota", this.workspace).val((result.cotasBases[1] != undefined) ? result.cotasBases[1].numeroCota : "").disable();
+        $("#historicoTerceiraCota", this.workspace).val((result.cotasBases[2] != undefined) ? result.cotasBases[2].numeroCota : "").disable();
+        $("#historicoPrimeiraPorcentagem", this.workspace).val((result.cotasBases[0] != undefined) ? result.cotasBases[0].nomeCota : "").disable();
+        $("#historicoSegundaPorcentagem", this.workspace).val((result.cotasBases[1] != undefined) ? result.cotasBases[1].nomeCota : "").disable();
+        $("#historicoTerceiraPorcentagem", this.workspace).val((result.cotasBases[2] != undefined) ? result.cotasBases[2].nomeCota : "").disable();
 
         if(result.inicioPeriodo){
-            $("#periodoCotaDe", this.workspace).val(result.inicioPeriodo.$);
+            $("#periodoCotaDe", this.workspace).val(result.inicioPeriodo.$).disable();
         }
 
         if(result.fimPeriodo){
-            $("#periodoCotaAte", this.workspace).val(result.fimPeriodo.$);
+            $("#periodoCotaAte", this.workspace).val(result.fimPeriodo.$).disable();
         }
         
         COTA_CNPJ.gridAntigosProprietarios.init(result);
@@ -1180,21 +1232,33 @@ var COTA_CNPJ = $.extend(true, {
         }
     },
 
-    salvarDadosBasico:function (){    	
+    salvarDadosBasico:function (){
+
         var formData = $("#formDadosBasicoCnpj", this.workspace).serializeArray();
+
         formData.push({name:"cotaDTO.idCota", value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
+        formData.push({name:"cotaDTO.tipoDistribuicaoCota", value: $('[name="cotaDTO.tipoDistribuicaoCota"]:visible', this.workspace).val()});
+
+        var existeCota = false;
+        for (var i = 0; i < formData.length; i++) {
+        	if (formData[i].value == 'cotaDTO.numeroCota') {
+        		existeCota = true;
+        		break;
+        	}
+        }
+        if (!existeCota) {
+	        if (MANTER_COTA.numeroCota) {
+	        	formData.push({name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota});
+	        } else {
+	        	formData.push({name:"cotaDTO.numeroCota", value: $('[name="cotaDTO.numeroCota"]').val()});
+	        }
+        }
         
-        if ($('#numeroCotaCNPJ').is(':disabled')) {
-        	formData.push({name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota});
-        }
-        else {
-        	formData.push({name:"cotaDTO.numeroCota", value: $('#numeroCotaCNPJ').val()});
-        }
-        	
+        var uniqFormData = MANTER_COTA.uniqArray(formData, 'name');
 
         $.postJSON(contextPath + "/cadastro/cota/salvarCotaCNPJ",
-            formData ,
+    		uniqFormData,
             function(result){
                 MANTER_COTA.idCota = result.idCota;
                 MANTER_COTA.numeroCota = result.numeroCota;
@@ -1231,14 +1295,14 @@ var COTA_CNPJ = $.extend(true, {
         $("#emailNF", this.workspace).val("");
         $("#emiteNFE", this.workspace).attr("checked", null);
         $("#classificacaoSelecionada", this.workspace).val("");
-        $("#historicoPrimeiraCota", this.workspace).val("");
-        $("#historicoPrimeiraPorcentagem", this.workspace).val("" );
-        $("#historicoSegundaCota", this.workspace).val("");
-        $("#historicoSegundaPorcentagem", this.workspace).val("");
-        $("#historicoTerceiraCota", this.workspace).val("");
-        $("#historicoTerceiraPorcentagem", this.workspace).val("");
-        $("#periodoCotaDe", this.workspace).val("");
-        $("#periodoCotaAte", this.workspace).val("");
+        $("#historicoPrimeiraCota", this.workspace).val("").disable();
+        $("#historicoPrimeiraPorcentagem", this.workspace).val("" ).disable();
+        $("#historicoSegundaCota", this.workspace).val("").disable();
+        $("#historicoSegundaPorcentagem", this.workspace).val("").disable();
+        $("#historicoTerceiraCota", this.workspace).val("").disable();
+        $("#historicoTerceiraPorcentagem", this.workspace).val("").disable();
+        $("#periodoCotaDe", this.workspace).val("").disable();
+        $("#periodoCotaAte", this.workspace).val("").disable();
 
         clearMessageDialogTimeout(null);
     },
@@ -1310,6 +1374,8 @@ var COTA_CPF = $.extend(true, {
                 }
 
                 MANTER_COTA.montarCombo(dados.listaClassificacao,"#classificacaoSelecionadaCPF");
+                
+                $("#tabCota", this.workspace).tabs( "option", "disabled", [4] );
 
                 MANTER_COTA.popupCota(true);
             }
@@ -1355,23 +1421,29 @@ var COTA_CPF = $.extend(true, {
         $("#emailNFCPF", this.workspace).val(result.emailNF);
         $("#emiteNFECPF", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
         $("#classificacaoSelecionadaCPF", this.workspace).val(result.classificacaoSelecionada);
-        $("#historicoPrimeiraCotaCPF", this.workspace).val(result.historicoPrimeiraCota);
-        $("#historicoPrimeiraPorcentagemCPF", this.workspace).val( eval( result.historicoPrimeiraPorcentagem));
-        $("#historicoSegundaCotaCPF", this.workspace).val(result.historicoSegundaCota);
-        $("#historicoSegundaPorcentagemCPF", this.workspace).val( eval( result.historicoSegundaPorcentagem));
-        $("#historicoTerceiraCotaCPF", this.workspace).val(result.historicoTerceiraCota);
-        $("#historicoTerceiraPorcentagemCPF", this.workspace).val( eval( result.historicoTerceiraPorcentagem));
+        $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoDistribuicaoCota);
+        
+//        //Ajuste 0153
+//        $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
+        
+        $("#historicoPrimeiraCotaCPF", this.workspace).val((result.cotasBases[0] != undefined) ? result.cotasBases[0].numeroCota : "").disable();
+        $("#historicoSegundaCotaCPF", this.workspace).val((result.cotasBases[1] != undefined) ? result.cotasBases[1].numeroCota : "").disable();
+        $("#historicoTerceiraCotaCPF", this.workspace).val((result.cotasBases[2] != undefined) ? result.cotasBases[2].numeroCota : "").disable();
+        $("#historicoPrimeiraPorcentagemCPF", this.workspace).val((result.cotasBases[0] != undefined) ? result.cotasBases[0].nomeCota : "").disable();
+        $("#historicoSegundaPorcentagemCPF", this.workspace).val((result.cotasBases[1] != undefined) ? result.cotasBases[1].nomeCota : "").disable();
+        $("#historicoTerceiraPorcentagemCPF", this.workspace).val((result.cotasBases[2] != undefined) ? result.cotasBases[2].nomeCota : "").disable();
 
         if(result.dataNascimento){
+            //$("#dataNascimento", this.workspace).val(result.dataNascimento.$);
             $("#dataNascimento", this.workspace).val((result.dataNascimento && result.dataNascimento.$) ? result.dataNascimento.$ : result.dataNascimento);
         }
 
         if(result.inicioPeriodo){
-            $("#periodoCotaDeCPF", this.workspace).val(result.inicioPeriodo.$);
+            $("#periodoCotaDeCPF", this.workspace).val(result.inicioPeriodo.$).disable();
         }
 
         if(result.fimPeriodo){
-            $("#periodoCotaAteCPF", this.workspace).val(result.fimPeriodo.$);
+            $("#periodoCotaAteCPF", this.workspace).val(result.fimPeriodo.$).disable();
         }
 
         COTA_CPF.gridAntigosProprietarios.init(result);
@@ -1389,20 +1461,25 @@ var COTA_CPF = $.extend(true, {
         }
     },
 
+    
     salvarDadosBasico:function (){
 
         var formData = $("#formDadosBasicoCpf", this.workspace).serializeArray();
 
         formData.push({name:"cotaDTO.idCota",value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
+        formData.push({name:"cotaDTO.tipoDistribuicaoCota", value: $('[name="cotaDTO.tipoDistribuicaoCota"]:visible', this.workspace).val()});
 
-        var numeroCota = {name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota};
-        if ($('#numeroCotaCPF').is(':disabled')) {
-            formData.push(numeroCota);
+        if (MANTER_COTA.numeroCota) {
+        	formData.push({name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota});
+        } else {
+        	formData.push({name:"cotaDTO.numeroCota", value: $('[name="cotaDTO.numeroCota"]').val()});
         }
+        
+        var uniqFormData = MANTER_COTA.uniqArray(formData, 'name');
 
         $.postJSON(contextPath + "/cadastro/cota/salvarCotaCPF",
-            formData ,
+    		uniqFormData,
             function(result){
 
                 MANTER_COTA.idCota = result.idCota;
@@ -1418,10 +1495,12 @@ var COTA_CPF = $.extend(true, {
                     MANTER_COTA.isAlteracaoTitularidade = false;
                 }
                 
-                if(result.dataNascimento) $("#dataNascimento", this.workspace).val(result.dataNascimento.$);
+                if(result.dataNascimento) {
+                	$("#dataNascimento", this.workspace).val(result.dataNascimento.$);
+                }
                 
                 MANTER_COTA._indCadastroCotaAlterado = false;
-                
+
             },
             null,
             true
@@ -1469,14 +1548,14 @@ var COTA_CPF = $.extend(true, {
         $("#emailNFCPF", this.workspace).val("");
         $("#emiteNFECPF", this.workspace).attr("checked", null);
         $("#classificacaoSelecionadaCPF", this.workspace).val("");
-        $("#historicoPrimeiraCotaCPF", this.workspace).val("");
-        $("#historicoPrimeiraPorcentagemCPF", this.workspace).val("");
-        $("#historicoSegundaCotaCPF", this.workspace).val("");
-        $("#historicoSegundaPorcentagemCPF", this.workspace).val("");
-        $("#historicoTerceiraCotaCPF", this.workspace).val("");
-        $("#historicoTerceiraPorcentagemCPF", this.workspace).val("");
-        $("#periodoCotaDeCPF", this.workspace).val("");
-        $("#periodoCotaAteCPF", this.workspace).val("");
+        $("#historicoPrimeiraCotaCPF", this.workspace).val("").disable();
+        $("#historicoPrimeiraPorcentagemCPF", this.workspace).val("").disable();
+        $("#historicoSegundaCotaCPF", this.workspace).val("").disable();
+        $("#historicoSegundaPorcentagemCPF", this.workspace).val("").disable();
+        $("#historicoTerceiraCotaCPF", this.workspace).val("").disable();
+        $("#historicoTerceiraPorcentagemCPF", this.workspace).val("").disable();
+        $("#periodoCotaDeCPF", this.workspace).val("").disable();
+        $("#periodoCotaAteCPF", this.workspace).val("").disable();
 
         clearMessageDialogTimeout(null);
     }

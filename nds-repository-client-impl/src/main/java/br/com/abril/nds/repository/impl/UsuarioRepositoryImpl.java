@@ -24,7 +24,7 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
 	}
 	
 
-	//TODO Definição de Usuario de Importação
+    // TODO Definição de Usuario de Importação
 	public Usuario getUsuarioImportacao() {
 		return getUsuarioByLogin("importacao");		
 	}
@@ -98,7 +98,7 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
 			criteria.add(Restrictions.or(condicao, Restrictions.ilike("login", "%" + nome + "%")));
 		}
 		
-		//Deve trazer apenas registros diferentes de usuários do sistema.
+        // Deve trazer apenas registros diferentes de usuários do sistema.
 		criteria.add(Restrictions.eq("sys", false));
 
 		return criteria;
@@ -140,5 +140,29 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
 		query.executeUpdate();
 		
 	}
-	
+
+
+	@Override
+	public boolean verificarUsuarioSupervisor(String usuario, String senha) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select count(id) from Usuario where login = :usuario and senha = :senha and supervisor = :indTrue");
+		
+		query.setParameter("usuario", usuario);
+		query.setParameter("senha", senha);
+		query.setParameter("indTrue", true);
+		
+		return (Long)query.uniqueResult() > 0;
+	}
+    
+    @Override
+    public Boolean isSupervisor(String login) {
+        Criteria criteria = getSession().createCriteria(Usuario.class);
+        criteria.add(Restrictions.eq("login", login));
+        criteria.add(Restrictions.eq("supervisor", true));
+        
+        criteria.setProjection(Projections.rowCount());
+        return (Long) criteria.uniqueResult() > 0;
+    }
 }

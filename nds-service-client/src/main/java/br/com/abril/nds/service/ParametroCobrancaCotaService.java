@@ -202,4 +202,12 @@ public interface ParametroCobrancaCotaService {
 	 * @return Fornecedor
 	 */
 	Fornecedor obterFornecedorPadraoCota(Long idCota);
+
+	/**
+	 * Remove parametro de cobranca da cota e suas formas de cobranca
+	 * @param formaCobrancaId
+	 */
+	void excluirParametroCobrancaCota(Long formaCobrancaId);
+
+    void verificarDataAlteracaoTipoCota(Long idCota);
 }

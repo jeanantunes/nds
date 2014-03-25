@@ -302,7 +302,7 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Path("/iniciaTelaCotas")
 	public void iniciaTelaCotas(boolean boxEspecial) {
-		List<String> uf = new ArrayList<String>();
+		List<String> uf;
 		if(!boxEspecial) {
 			uf = enderecoService.obterUnidadeFederativaPDVSemRoteirizacao();
 		} else {
@@ -323,6 +323,10 @@ public class RoteirizacaoController extends BaseController {
 	 */
 	@Path("/incluirRoteiro")
 	public void incluirRoteiro(Long idBox, Integer ordem, String nome, TipoRoteiro tipoRoteiro) {
+		
+		if(idBox == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um Box para adicionar um roteiro.");
+		}
 		
 		this.validarDadosInclusao(ordem, nome);
 		
@@ -434,7 +438,7 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Path("/buscalistaMunicipio")
 	public void buscalistaMunicipio(String uf, boolean boxEspecial) {
-		List<String> lista = new ArrayList<String>();
+		List<String> lista;
 		if(!boxEspecial) {
 			lista = enderecoService.obterLocalidadesPorUFPDVSemRoteirizacao(uf);
 		} else {
@@ -446,7 +450,7 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Path("/buscalistaBairro")
 	public void buscalistaBairro(String uf, String municipio, boolean boxEspecial) {
-		List<String> bairros = new ArrayList<String>();
+		List<String> bairros;
 		if(!boxEspecial) {
 			bairros = enderecoService.obterBairrosPDVSemRoteirizacao(uf, municipio);
 		} else {
@@ -684,7 +688,7 @@ public class RoteirizacaoController extends BaseController {
 			
 			FileExporter.to("roteirizacao", fileType)
 				.inHTTPResponse(
-					this.getNDSFileHeader(), filtroSessao, null, 
+					this.getNDSFileHeader(), filtroSessao, 
 					lista, ConsultaRoteirizacaoDTO.class, this.response);
 		
 		} else {
@@ -694,9 +698,12 @@ public class RoteirizacaoController extends BaseController {
 			
 			FileExporter.to("roteirizacao", fileType)
 				.inHTTPResponse(
-					this.getNDSFileHeader(), filtroSessao, null, 
-					listaConsultaRoteirizacaoSumarizado, ConsultaRoteirizacaoSumarizadoPorCotaVO.class, this.response);
+					this.getNDSFileHeader(), filtroSessao, 
+					listaConsultaRoteirizacaoSumarizado, 
+					ConsultaRoteirizacaoSumarizadoPorCotaVO.class, this.response);
 		}
+		
+		this.result.nothing();
 	}
 	
 	
@@ -780,14 +787,12 @@ public class RoteirizacaoController extends BaseController {
 	@Path("/imprimirArquivo")
 	public void imprimirArquivo(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro  tipoRoteiro, Integer numeroCota, Boolean pesquisaRoteizicaoPorCota , String sortname, String sortorder, 
 			int rp, int page, FileType fileType) {
-
-		List<ConsultaRoteirizacaoDTO> lista  = new ArrayList<ConsultaRoteirizacaoDTO>();
-		
 		try {
 			
-			lista = roteirizacaoService.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
+			List<ConsultaRoteirizacaoDTO> lista = roteirizacaoService.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 			
-			FileExporter.to("roteirizacao", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista,ConsultaRoteirizacaoDTO.class, this.response);
+			FileExporter.to("roteirizacao", fileType).inHTTPResponse(this.getNDSFileHeader(), null, 
+					lista, ConsultaRoteirizacaoDTO.class, this.response);
 			
 		} catch (Exception e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
@@ -867,7 +872,7 @@ public class RoteirizacaoController extends BaseController {
 		List<PdvRoteirizacaoDTO> pdvs = rota.getPdvs();
 	    
 	    if (pdvs != null){
-	    
+	    	ordenarPdvsPeloIndiceDaLista(rota);
 		    Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
 		    PaginacaoUtil.ordenarEmMemoria(pdvs, ordenacao, sortname);
 		    result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
@@ -1362,6 +1367,10 @@ public class RoteirizacaoController extends BaseController {
 	@Path("/transferirRotasComNovoRoteiro")
 	public void transferirRotasComNovoRoteiro(List<Long> rotasId, Long idBox, Integer ordem, String roteiroNome, TipoRoteiro tipoRoteiro) {
 		
+		if(idBox == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um Box para adicionar um roteiro.");
+		}
+		
 		Roteiro roteiro = populaRoteiro(idBox, ordem, roteiroNome, tipoRoteiro);
 		
 		validarDadosInclusao(ordem, roteiroNome);
@@ -1410,8 +1419,21 @@ public class RoteirizacaoController extends BaseController {
 	}
 	
 	@Post("/transferirPDVs")
-    public void transferirPDVs(Long idRoteiro, Long idRotaAnterior, Long idRotaNova, Integer ordemRota, List<Long> pdvs){
-						        
+    public void transferirPDVs(Long idRoteiro, Long idRotaAnterior, String _idRotaNova, Integer ordemRota, List<Long> pdvs){
+		
+		Long idRotaNova = null;
+		Integer novaOrdem = null;
+		
+		if (_idRotaNova != null){
+			if (_idRotaNova.contains("_")){
+				
+				novaOrdem = Integer.parseInt(_idRotaNova.replaceFirst("_", ""));
+			} else {
+				
+				idRotaNova = Long.parseLong(_idRotaNova);
+			}
+		}
+		
         RotaRoteirizacaoDTO rotaAnterior = this.getRotaDTOSessaoPeloID(idRotaAnterior, idRoteiro);
         
         List<PdvRoteirizacaoDTO> pdvsTransferencia = new ArrayList<PdvRoteirizacaoDTO>(pdvs.size());
@@ -1425,8 +1447,13 @@ public class RoteirizacaoController extends BaseController {
         RotaRoteirizacaoDTO rotaNovaDTO;
         
         try {
-        
-        	rotaNovaDTO = this.getRotaDTOSessaoPeloID(idRotaNova, idRoteiro);
+        	if (idRotaNova == null){
+        		
+        		rotaNovaDTO = this.getRotaDTOSessaoPelaOrdem(novaOrdem, idRoteiro);
+        	} else {
+        		
+        		rotaNovaDTO = this.getRotaDTOSessaoPeloID(idRotaNova, idRoteiro);
+        	}
         
         } catch (ValidacaoException ve) {
         	

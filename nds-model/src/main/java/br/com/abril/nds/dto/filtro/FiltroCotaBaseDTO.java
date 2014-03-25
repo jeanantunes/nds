@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Exportable;
@@ -30,6 +31,8 @@ public class FiltroCotaBaseDTO implements Serializable {
 	
 	private String dataInicialFormatado;
 	private String dataFinalFormatado;
+	
+	private TipoDistribuicaoCota tpDistribCota;
 	
 	public Long getIdCota() {
 		return idCota;
@@ -167,8 +170,13 @@ public class FiltroCotaBaseDTO implements Serializable {
 	public void setDiasRestantes(String diasRestantes) {
 		this.diasRestantes = diasRestantes;
 	}
-	
-	
 
+	public TipoDistribuicaoCota getTpDistribCota() {
+		return tpDistribCota;
+	}
+
+	public void setTpDistribCota(TipoDistribuicaoCota tpDistribCota) {
+		this.tpDistribCota = tpDistribCota;
+	}
 
 }

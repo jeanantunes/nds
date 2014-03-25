@@ -610,4 +610,18 @@ public class DistribuidorRepositoryImpl extends
 		
 		return (Integer) this.getSession().createQuery(hql.toString()).uniqueResult();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isConferenciaCegaFechamentoEncalhe() {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" p.conferenciaCegaEncalhe ")
+		   .append(" from Distribuidor d ")
+		   .append(" join d.parametrosRecolhimentoDistribuidor p ");
+		
+		return (boolean) this.getSession().createQuery(hql.toString()).uniqueResult();
+	}
 }

@@ -58,6 +58,8 @@ public class ChamadaEncalheFornecedorDTOAssembler {
             for (Entry<Long, List<ItemChamadaEncalheFornecedor>> documento : mapaItensPorDocumento.entrySet()) {
                 BigDecimal totalBrutoDocumento = BigDecimal.ZERO;
                 BigDecimal totalDescontoDocumento = BigDecimal.ZERO;
+                Long totalVendas = 0L;
+                Long totalItensDevolvidos = 0L;
                 ChamadaEncalheFornecedorDTO cefDTO = chamadasDTO.newDocumento();
                 cefDTO.setNumeroDocumento(documento.getKey());
                 for (ItemChamadaEncalheFornecedor icef : documento.getValue()) {
@@ -65,10 +67,15 @@ public class ChamadaEncalheFornecedorDTOAssembler {
 
                     totalBrutoDocumento = totalBrutoDocumento.add(Util.nvl(icef.getValorVendaApurado(), BigDecimal.ZERO));
                     totalDescontoDocumento = totalDescontoDocumento.add(Util.nvl(icef.getValorMargemApurado(), BigDecimal.ZERO));
+                    totalVendas += Util.nvl(icef.getQtdeVendaApurada(), 0L);
+                    totalItensDevolvidos += Util.nvl(icef.getQtdeDevolucaoApurada(), 0L);
+                    
                 }
                 cefDTO.setTotalBruto(totalBrutoDocumento);
                 cefDTO.setTotalDesconto(totalDescontoDocumento);
                 cefDTO.setTotalLiquido(totalBrutoDocumento.subtract(totalDescontoDocumento));
+                cefDTO.setTotalQtdeDevolvido(totalItensDevolvidos);
+                cefDTO.setTotalQtdeVenda(totalVendas);
 
                 BigDecimal porcentagemDesconto = BigDecimal.ZERO;
                 if (BigDecimal.ZERO.compareTo(totalBrutoDocumento) != 0) {
@@ -88,11 +95,7 @@ public class ChamadaEncalheFornecedorDTOAssembler {
             }
         }
         
-        List<ChamadasEncalheFornecedorDTO> chamadasEncalhe = new ArrayList<ChamadasEncalheFornecedorDTO>();
-        
-        for(Long key : mapaChamadasDTO.keySet()) {
-        	chamadasEncalhe.add(mapaChamadasDTO.get(key));
-        }
+        List<ChamadasEncalheFornecedorDTO> chamadasEncalhe = new ArrayList<ChamadasEncalheFornecedorDTO>(mapaChamadasDTO.values());
         
         return chamadasEncalhe;
         

@@ -1,7 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.SQLQuery;
@@ -9,7 +9,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
-import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuicaoRepository;
@@ -23,55 +23,98 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoDistribuicaoVO> obterMatrizDistribuicao(FiltroLancamentoDTO filtro) {
+	public List<ProdutoDistribuicaoVO> obterMatrizDistribuicao(FiltroDistribuicaoDTO filtro) {
 		StringBuilder sql = new StringBuilder();
 		
 	 sql.append(" select ")
-		.append(" lanc.ID as idLancamento,")
+		.append(" lanc.id as idLancamento,")
 		.append(" prod.CODIGO as codigoProduto,") 
 		.append(" prod.NOME as nomeProduto,")
+		.append(" prodEdic.ID as idProdutoEdicao,")
 		.append(" prodEdic.NUMERO_EDICAO as numeroEdicao,")
-		.append(" prod.PERIODICIDADE as periodo, ")
+		.append(" plp.NUMERO_PERIODO as periodo, ")
 		.append(" prodEdic.PRECO_VENDA as precoVenda,")
 		.append(" tpClassProd.DESCRICAO as classificacao,")
 		.append(" prod.PACOTE_PADRAO as pctPadrao,")
 		.append(" pessoa.NOME_FANTASIA as nomeFornecedor,")
 		.append(" estoqueProdJuram.QTDE as juram,")
 		.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
+		.append(" estoqueProd.QTDE as estoque,")
 		.append(" lanc.REPARTE_PROMOCIONAL as promo,")
-		.append(" DATE_FORMAT(lanc.DATA_LCTO_DISTRIBUIDOR,'%d/%m/%Y') as dataLancto,")
+		//.append(" lanc.DATA_LCTO_PREVISTA as dataLanctoSemFormatacao,")
+		.append(" lanc.DATA_LCTO_DISTRIBUIDOR as dataLanctoSemFormatacao,")
 		.append(" case estudo.liberado when 1 then 'LIBERADO'")
 		.append(" else ''")
-	    .append(" end as liberado,")
-	    .append(" estudo.ID as idEstudo,")
-	    .append(" prodEdic.REPARTE_DISTRIBUIDO as reparte,")
-	    .append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib,")
-	    .append(" prodEdic.CODIGO_DE_BARRAS as codigoBarraProduto")
-	    .append(" from produto prod")
+		.append(" end as liberado,")
+		.append(" estudo.ID as idEstudo,")
+		.append(" estudo.data_lancamento as dataLancamentoEstudo,")
+		//.append(" lanc.REPARTE as reparte,")
+		.append("case lanc.REPARTE when 0 then case plp.NUMERO_PERIODO when 1 then (select reparte from lancamento where id = lanc.id) - lanc.REPARTE_PROMOCIONAL else estoqueProd.QTDE end else lanc.REPARTE end as reparte,") 
+		.append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib,")
+		.append(" lanc.REPARTE as lancto,")
+		.append(" floor(estudo.QTDE_REPARTE) as repDistrib")
+		.append(" from produto prod")
 		.append(" join produto_edicao prodEdic on prodEdic.PRODUTO_ID = prod.ID")
 		.append(" left join estoque_produto estoqueProd on estoqueProd.PRODUTO_EDICAO_ID = prodEdic.ID ")
 		.append(" left join estoque_produto_cota_juramentado estoqueProdJuram on estoqueProdJuram.PRODUTO_EDICAO_ID = prodEdic.ID ")
+		
 		.append(" join lancamento lanc on lanc.PRODUTO_EDICAO_ID = prodEdic.ID")
-		.append(" left join estudo estudo on estudo.PRODUTO_EDICAO_ID = prodEdic.ID")
-		.append(" left join tipo_classificacao_produto tpClassProd on prod.TIPO_CLASSIFICACAO_PRODUTO_ID = tpClassProd.ID")
+		.append(" left join estudo_gerado estudo on lanc.ID = estudo.LANCAMENTO_ID and estudo.produto_edicao_id = prodEdic.id ")
+			
+		.append(" left join tipo_classificacao_produto tpClassProd on prodEdic.TIPO_CLASSIFICACAO_PRODUTO_ID = tpClassProd.ID")
 		.append(" join produto_fornecedor prodForn on prodForn.PRODUTO_ID = prod.ID")
 		.append(" join fornecedor forn on forn.ID = prodForn.fornecedores_ID")
 		.append(" join pessoa ON pessoa.ID = forn.JURIDICA_ID")
+		.append(" left join PERIODO_LANCAMENTO_PARCIAL plp ON plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID ")
+		.append(" left join LANCAMENTO_PARCIAL lancamento_parcial ON plp.LANCAMENTO_PARCIAL_ID = lancamento_parcial.ID")
 		.append(" where prod.ATIVO = true")
 		.append(" and prodEdic.ATIVO = true")
-		.append(" and lanc.status = 'BALANCEADO'")
+		
+		.append(" and case when (select distinct count(*) from lancamento l where l.status in('BALANCEADO','EM_BALANCEAMENTO') and l.DATA_LCTO_DISTRIBUIDOR = lanc.DATA_LCTO_DISTRIBUIDOR) =0 then  ")
+	    .append(" lanc.status in ('PLANEJADO', 'CONFIRMADO',  'FURO') ")
+	    .append(" else ")
+	    .append(" lanc.status in ('BALANCEADO', 'EM_BALANCEAMENTO') ")
+	    .append(" end ")
+	    
+		//.append(" and lanc.status in ('BALANCEADO', 'PLANEJADO', 'CONFIRMADO', 'EM_BALANCEAMENTO', 'FURO')")
 		.append(" and forn.SITUACAO_CADASTRO = 'ATIVO'")
 		.append(" and lanc.EXPEDICAO_ID is null")
-	 	.append(" and lanc.DATA_LCTO_PREVISTA = :dataLanctoPrev")
-	 	.append(" order by liberado");
+		.append(" and (lanc.PERIODO_LANCAMENTO_PARCIAL_ID is null or lanc.PERIODO_LANCAMENTO_PARCIAL_ID = plp.id) ");
+	 
+	 	if(filtro.getEstudoId()!=null){
+	 		sql.append(" and estudo.id = :estudoId");
+	 	}
+		if(filtro.getData()!=null){
+			sql.append(" and lanc.DATA_LCTO_DISTRIBUIDOR = :dataLanctoPrev");
+		}
 		
+	 	if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
+	 		sql.append(" and forn.id in (:idFornecedores)");
+	 	}
+	 	
+	 	sql.append(" order by codigoProduto, numeroEdicao");
+	 	
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
-		query.setParameter("dataLanctoPrev", new java.sql.Date(filtro.getData().getTime()));
+		
+		if(filtro.getEstudoId()!=null){
+			query.setParameter("estudoId",filtro.getEstudoId());
+	 	}
+		
+		if(filtro.getData()!=null){
+			query.setParameter("dataLanctoPrev", new java.sql.Date(filtro.getData().getTime()));
+		}
+		
+		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
+			
+			query.setParameterList("idFornecedores", filtro.getIdsFornecedores());
+		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoDistribuicaoVO.class));
 		
 		List<ProdutoDistribuicaoVO> result = query.list();
+		
+		Collections.sort(result);
 		
 		return result;
 	}
@@ -85,14 +128,14 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" prod.CODIGO as codigoProduto,")
 		.append(" prod.NOME as nomeProduto,")
 		.append(" prodEdic.NUMERO_EDICAO as numeroEdicao,")
-		.append(" DATE_FORMAT(lanc.DATA_LCTO_DISTRIBUIDOR,'%d/%m/%Y') as dataLancto,")
-	    .append(" prodEdic.REPARTE_DISTRIBUIDO as reparte,")
-	    .append(" tpClassProd.DESCRICAO as classificacao")
-	    .append(" from produto prod")
+		.append(" lanc.DATA_LCTO_PREVISTA as dataLanctoSemFormatacao,")
+		.append(" estudo.QTDE_REPARTE as reparte,")
+		.append(" tpClassProd.DESCRICAO as classificacao")
+		.append(" from produto prod")
 		.append(" join produto_edicao prodEdic on prodEdic.PRODUTO_ID = prod.ID")
 		.append(" join lancamento lanc on lanc.PRODUTO_EDICAO_ID = prodEdic.ID")
-		.append(" join estudo estudo on estudo.PRODUTO_EDICAO_ID = prodEdic.ID")
-		.append(" left join tipo_classificacao_produto tpClassProd on prod.TIPO_CLASSIFICACAO_PRODUTO_ID = tpClassProd.ID")
+		.append(" join estudo_gerado estudo on estudo.LANCAMENTO_ID = lanc.ID")
+		.append(" left join tipo_classificacao_produto tpClassProd on prodEdic.TIPO_CLASSIFICACAO_PRODUTO_ID = tpClassProd.ID")
 		.append(" where prod.ATIVO = true")
 		.append(" and prodEdic.ATIVO = true")
 		.append(" and lanc.status = 'BALANCEADO'")
@@ -103,10 +146,55 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		query.setParameter("idEstudo", idEstudo);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoDistribuicaoVO.class));
+
+        return (ProdutoDistribuicaoVO)query.uniqueResult();
+	}
+
+	@Override
+	public ProdutoDistribuicaoVO obterMatrizDistribuicaoPorEstudo(BigInteger id) {
+		StringBuilder sql = new StringBuilder();
 		
-		ProdutoDistribuicaoVO result = (ProdutoDistribuicaoVO)query.uniqueResult();
-		
-		return result;
+		 sql.append(" select ")
+			.append(" lanc.ID as idLancamento,")
+			.append(" prod.CODIGO as codigoProduto,") 
+			.append(" prod.NOME as nomeProduto,")
+			.append(" prodEdic.ID as idProdutoEdicao,")
+			.append(" prodEdic.NUMERO_EDICAO as numeroEdicao,")
+			.append(" prod.PERIODICIDADE as periodo, ")
+			.append(" prodEdic.PRECO_VENDA as precoVenda,")
+			.append(" tpClassProd.DESCRICAO as classificacao,")
+			.append(" prod.PACOTE_PADRAO as pctPadrao,")
+			.append(" pessoa.NOME_FANTASIA as nomeFornecedor,")
+			.append(" estoqueProdJuram.QTDE as juram,")
+			.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
+			.append(" lanc.REPARTE_PROMOCIONAL as promo,")
+			.append(" lanc.DATA_LCTO_PREVISTA as dataLanctoSemFormatacao,")
+			.append(" case estudo.liberado when 1 then 'LIBERADO'")
+			.append(" else ''")
+			.append(" end as liberado,")
+			.append(" estudo.ID as idEstudo,")
+			.append(" estudo.QTDE_REPARTE as reparte,")
+			.append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib,")
+			.append(" lanc.REPARTE as lancto")
+			.append(" from produto prod")
+			.append(" join produto_edicao prodEdic on prodEdic.PRODUTO_ID = prod.ID")
+			.append(" left join estoque_produto estoqueProd on estoqueProd.PRODUTO_EDICAO_ID = prodEdic.ID ")
+			.append(" left join estoque_produto_cota_juramentado estoqueProdJuram on estoqueProdJuram.PRODUTO_EDICAO_ID = prodEdic.ID ")
+			.append(" join lancamento lanc on lanc.PRODUTO_EDICAO_ID = prodEdic.ID")
+			.append(" left join estudo_gerado estudo on lanc.ID = estudo.LANCAMENTO_ID")
+			.append(" left join tipo_classificacao_produto tpClassProd on prodEdic.TIPO_CLASSIFICACAO_PRODUTO_ID = tpClassProd.ID")
+			.append(" join produto_fornecedor prodForn on prodForn.PRODUTO_ID = prod.ID")
+			.append(" join fornecedor forn on forn.ID = prodForn.fornecedores_ID")
+			.append(" join pessoa ON pessoa.ID = forn.JURIDICA_ID")
+			.append(" where estudo.id = :idEstudo");
+			
+			SQLQuery query = getSession().createSQLQuery(sql.toString());
+			
+			query.setParameter("idEstudo", id);
+			
+			query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoDistribuicaoVO.class));
+			
+			return (ProdutoDistribuicaoVO)query.uniqueResult();
 	}
 	
 }

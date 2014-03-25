@@ -27,7 +27,7 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	/**
 	 * pRedBC
 	 */
-	@Column(name="PERCENTUAL_REDUCAO", precision=18, scale=4, nullable=true)
+	@Column(name="PERCENTUAL_REDUCAO",precision=5, scale=2, nullable=true)
 	@NFEWhens(value = {
 			@NFEWhen(condition = NFEConditions.ICMS_20, export = @NFEExport(secao = TipoSecao.N04, posicao = 3)),
 			@NFEWhen(condition = NFEConditions.ICMS_51, export = @NFEExport(secao = TipoSecao.N07, posicao = 3)),

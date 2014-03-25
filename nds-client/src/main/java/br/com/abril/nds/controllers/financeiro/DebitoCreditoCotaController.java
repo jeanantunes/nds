@@ -653,7 +653,7 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		DebitoCreditoDTO debitoCredito = new DebitoCreditoDTO();
 		
-		debitoCredito.setPermiteAlteracao(this.isMovimentoEditavel(movimentoFinanceiroCota));
+		debitoCredito.setPermiteAlteracao(this.debitoCreditoCotaService.isMovimentoEditavel(movimentoFinanceiroCota));
 
 		Pessoa pessoa = movimentoFinanceiroCota.getCota().getPessoa();
 
@@ -671,7 +671,7 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		this.result.use(Results.json()).from(debitoCredito, "result").recursive().serialize();
 	}
-
+	
 	private TableModel<CellModel> getTableModel(List<MovimentoFinanceiroCota> listaDebitoCredito) {
 
 		List<CellModel> listaCellModel = new ArrayList<CellModel>();
@@ -680,7 +680,7 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaDebitoCredito) {
 
-			boolean isEditavel = this.isMovimentoEditavel(movimentoFinanceiroCota);
+			boolean isEditavel = this.debitoCreditoCotaService.isMovimentoEditavel(movimentoFinanceiroCota);
 
 			String dataLancamento = 
 					formatField(movimentoFinanceiroCota.getDataCriacao());
@@ -723,32 +723,6 @@ public class DebitoCreditoCotaController extends BaseController{
 		tableModel.setTotal(listaCellModel.size());
 
 		return tableModel;
-	}
-	
-	private boolean isMovimentoEditavel(MovimentoFinanceiroCota movimentoFinanceiroCota) {
-		
-		boolean movimentoEditavel = true;
-		
-		if (!movimentoFinanceiroCota.getConsolidadoFinanceiroCota().isEmpty()) {
-			
-			movimentoEditavel = false;
-		}
-		
-		if (!movimentoFinanceiroCota.isLancamentoManual()) {
-			
-			movimentoEditavel = false;
-		}
-		
-		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-		
-		dataOperacao = DateUtil.removerTimestamp(dataOperacao);
-		
-		if (dataOperacao.compareTo(movimentoFinanceiroCota.getData()) >= 0) {
-			
-			movimentoEditavel = false;
-		}
-		
-		return movimentoEditavel;
 	}
 
 	private String formatField(Object field) {

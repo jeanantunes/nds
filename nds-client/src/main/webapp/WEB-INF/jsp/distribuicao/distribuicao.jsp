@@ -1,11 +1,16 @@
-<head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/distribuicao.js"></script>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 
 	<script type="text/javascript">
 
-		var ${param.tela} = new Distribuicao('${param.tela}');
+	var ${param.tela} = null;
+	$(function() {
+		${param.tela} = new Distribuicao('${param.tela}');
+	});
+	
 		
 	</script>
 	
@@ -15,7 +20,6 @@
 		.divProcuracaoRecebida, .divTermoAdesaoRecebido,
 		#dialogMudancaTipoEntrega { display: none; }
 	</style>
-</head>
 
 	<div id="dialogMudancaTipoEntrega" title="Mudança do Tipo de Entrega">
 				
@@ -78,13 +82,13 @@
     			</table>
     			<!-- Entrega de Reparte de Venda -->
         		<input id="${param.tela}repPorPontoVenda" name="repPorPontoVenda" type="checkbox"  value="" style="margin-top:9px;" />
-        		<label for="${param.tela}entregaReparteVenda" style="width:190px;float:left;">Reparte por PDV</label>
+        		<label for="${param.tela}entregaReparteVenda" style="width:190px;float:left;">Entrega de Reparte de Venda</label>
 
          		<br clear="all" />
 
         		<!-- Solicitação Num. Atrasados -->
 				<input id="${param.tela}solNumAtras" name="solNumAtrs" type="checkbox" value="" style="margin-top:9px;"/>
-				<label for="${param.tela}solNumAtrs" style="width: 190px;">Solicitação Num. Atrasados - Internet</label>
+				<label for="${param.tela}solNumAtrs" style="width: 190px;">Solicitação N&ordm;. Atrasados - Internet</label>
 
          		<br clear="all" />
 
@@ -95,8 +99,8 @@
 				<br clear="all" />
 				
 				<!-- Recebe Complementar -->
-				<input id="${param.tela}recebeComplementar"  name="recebeComplementar" type="checkbox" value="" style="margin-top:9px;" />
-				<label for="recebeComplementar" style="width: 190px;">Recebe Complementar</label> 
+				<input id="${param.tela}recebeComplementar"  name="recebeComplementar" type="checkbox" style="margin-top:9px;" />
+				<label for="${param.tela}recebeComplementar" style="width: 190px;">Cota Recebe Complementar</label> 
 				
     		</td>
     		<td width="10" style="width:10px;">
@@ -117,8 +121,7 @@
 							<select id="${param.tela}tipoEntrega" name="select4"  style="width:155px"
 									onchange="DISTRIB_COTA.mostarPopUpAteracaoTipoEntrega(this.value);">
 								<option selected="selected">...</option>
-
-								<c:forEach items="${listaTipoEntrega}" var="item">
+								<c:forEach items="${listTipoEntrega}" var="item">
 									<option value="${item.key}">${item.value}</option>
 								</c:forEach>
 							</select>
@@ -239,7 +242,7 @@
 							</td>
       					</tr>
     					<tr>
-							<td>Boleto</td>
+							<td>Boleto / Recibo</td>
 							<td align="center">
 								<input id="${param.tela}boletoImpresso" type="checkbox" />
 							</td>
@@ -256,15 +259,15 @@
 								<input id="${param.tela}boletoSlipEmail" type="checkbox" />
 							</td>
       					</tr>
-    					<tr>
-							<td>Recibo</td>
-							<td align="center">
-								<input id="${param.tela}reciboImpresso" type="checkbox" />
-							</td>
-							<td align="center">
-								<input id="${param.tela}reciboEmail" type="checkbox" />
-							</td>
-      					</tr>
+<!--     					<tr> -->
+<!-- 							<td>Recibo</td> -->
+<!-- 							<td align="center"> -->
+<%-- 								<input id="${param.tela}reciboImpresso" type="checkbox" /> --%>
+<!-- 							</td> -->
+<!-- 							<td align="center"> -->
+<%-- 								<input id="${param.tela}reciboEmail" type="checkbox" /> --%>
+<!-- 							</td> -->
+<!--       					</tr> -->
 					    <tr>
 					      	<td>Note de Envio</td>
 						  	<td align="center">

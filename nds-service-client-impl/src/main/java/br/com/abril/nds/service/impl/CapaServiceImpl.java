@@ -21,6 +21,7 @@ import br.com.abril.nds.model.Capa;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CapaService;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 
 import com.google.gson.JsonObject;
 
@@ -46,55 +47,33 @@ public class CapaServiceImpl implements CapaService {
 		this.couchDbClient = new CouchDbClient(DB_NAME,true, couchDbProperties.getProtocol(), couchDbProperties.getHost(), couchDbProperties.getPort(), couchDbProperties.getUsername(), couchDbProperties.getPassword());
 	}
 
-	@Override
-	@Transactional(readOnly=true)
-	public boolean hasCapa(long idProdutoEdicao) {
-		ProdutoEdicao produtoEdicao = getProdutoEdicao(idProdutoEdicao);
-		return hasCapa(produtoEdicao.getProduto().getCodigo(),
-				produtoEdicao.getNumeroEdicao());
-	}
-
-	@Override
-	@Transactional(readOnly=true)
-	public Attachment getCapa(long idProdutoEdicao) {
-		ProdutoEdicao produtoEdicao = getProdutoEdicao(idProdutoEdicao);
-		return getCapa(produtoEdicao.getProduto().getCodigo(),
-				produtoEdicao.getNumeroEdicao());
-	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public InputStream getCapaInputStream(long idProdutoEdicao) {
+		
 		ProdutoEdicao produtoEdicao = getProdutoEdicao(idProdutoEdicao);
+		
 		return getCapaInputStream(produtoEdicao.getProduto().getCodigo(),
 				produtoEdicao.getNumeroEdicao());
 	}
 
-	@Override
-	@Transactional(readOnly=true)
-	public void saveCapa(long idProdutoEdicao, Attachment capa) {
-		ProdutoEdicao produtoEdicao = getProdutoEdicao(idProdutoEdicao);
-		saveCapa(produtoEdicao.getProduto().getCodigo(),
-				produtoEdicao.getNumeroEdicao(), capa);
-
-	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public void saveCapa(long idProdutoEdicao, String contentType, InputStream inputStream) {
 		ProdutoEdicao produtoEdicao = getProdutoEdicao(idProdutoEdicao);
 		
-        //Remove capa antiga
 		try{
 			
-			String id = toId(produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao());
-			// Obter o atributo 'rev':
-			JsonObject json = couchDbClient.find(JsonObject.class, id);	
-		    this.couchDbClient.remove(json);
+			String docName = getDocName(produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao());
+			
+			JsonObject json = couchDbClient.find(JsonObject.class, docName);	
+		   
+			this.couchDbClient.remove(json);
 		}
 		catch (NoDocumentException e){
 			
-			e.printStackTrace();
 		}
 		
 		saveCapa(produtoEdicao.getProduto().getCodigo(),
@@ -103,49 +82,50 @@ public class CapaServiceImpl implements CapaService {
 	}
 
 	@Override
-	public boolean hasCapa(String codigoProduto, long numeroEdicao) {		
-		return couchDbClient.contains(toId(codigoProduto, numeroEdicao));
+	@Transactional
+	public InputStream getCapaInputStream(String codigoProduto,long numeroEdicao) {
+		String docName = getDocName(codigoProduto, numeroEdicao);
+		String fileName = getCapaFileName(docName);
+		return couchDbClient.find(docName+"/"+fileName);
 	}
-
 	
-
-	@Override
-	public Attachment getCapa(String codigoProduto, long numeroEdicao) {
-		String id = toId(codigoProduto, numeroEdicao);
-		Capa capa = couchDbClient.find(Capa.class,id);
+	private String getCapaFileName(String docName) {
+		Capa capa = findCapa(docName);
+		return getCapaFileName(capa);
+	}
+	
+	private String getCapaFileName(Capa capa) {
+		return capa.getAttachments().keySet().iterator().next();
+	}
+	
+	private Capa findCapa(String docName) {
+		Capa capa = couchDbClient.find(Capa.class, docName);
 		
-		if(!capa.getAttachments().containsKey(id + DEFAULT_EXTENSION)){
-			throw new NoDocumentException("Capa: "+ id +  " - imagem inexistente.");
+		if(capa.getAttachments() == null || capa.getAttachments().isEmpty()){
+			throw new NoDocumentException("Capa: "+ docName +  " - imagem inexistente.");
 		}
-		return capa.getAttachments().get(id + DEFAULT_EXTENSION);
+		return capa;
 	}
-
+	
 	@Override
-	public InputStream getCapaInputStream(String codigoProduto,
-			long numeroEdicao) {
-		String id = toId(codigoProduto, numeroEdicao);
-		return couchDbClient.find(id + "/" + id+ DEFAULT_EXTENSION);
-	}
-
-	@Override
-	public void saveCapa(String codigoProduto, long numeroEdicao,
-			Attachment attachment) {
-		String id = toId(codigoProduto, numeroEdicao);
+	@Transactional
+	public void saveCapa(String codigoProduto, long numeroEdicao, Attachment attachment) {
+		String docName = getDocName(codigoProduto, numeroEdicao);
 		
 		Capa capa = new Capa();
 		
-		capa.setId(id);
-		capa.getAttachments().put(id + DEFAULT_EXTENSION, attachment);
+		capa.setId(docName);
+		capa.getAttachments().put(docName + FileType.JPG.getExtension(), attachment);
 		couchDbClient.save(capa);
 
 	}
 
 	@Override
-	public void saveCapa(String codigoProduto, long numeroEdicao,
-			String contentType, InputStream inputStream) {		
-		String id = toId(codigoProduto, numeroEdicao);
+	@Transactional
+	public void saveCapa(String codigoProduto, long numeroEdicao, String contentType, InputStream inputStream) {		
+		String docName = getDocName(codigoProduto, numeroEdicao);
 		
-		couchDbClient.saveAttachment(inputStream, id + DEFAULT_EXTENSION, contentType, toId(codigoProduto, numeroEdicao),null);
+		couchDbClient.saveAttachment(inputStream, docName + FileType.JPG.getExtension(), contentType, getDocName(codigoProduto, numeroEdicao),null);
 	}
 	
 	
@@ -154,7 +134,7 @@ public class CapaServiceImpl implements CapaService {
 	 * @param numeroEdicao
 	 * @return
 	 */
-	private String toId(String codigoProduto, long numeroEdicao) {		
+	private String getDocName(String codigoProduto, long numeroEdicao) {		
 		return StringUtils.leftPad(codigoProduto, 8,'0') +  StringUtils.leftPad(""+numeroEdicao, 4,'0') ;
 	}
 
@@ -179,12 +159,11 @@ public class CapaServiceImpl implements CapaService {
 	public void deleteCapa(long idProdutoEdicao) {
 		
 		ProdutoEdicao pe = getProdutoEdicao(idProdutoEdicao);
-		String id = toId(pe.getProduto().getCodigo(), pe.getNumeroEdicao());
+		String docName = getDocName(pe.getProduto().getCodigo(), pe.getNumeroEdicao());
 		
 		try{
 			
-			// Obter o atributo 'rev':
-		    JsonObject json = couchDbClient.find(JsonObject.class, id);	
+		    JsonObject json = couchDbClient.find(JsonObject.class, docName);	
 		    this.couchDbClient.remove(json);
 		}
 		catch (NoDocumentException e){

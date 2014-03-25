@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -25,5 +26,18 @@ public class AreaInfluenciaPDVRepositoryImpl extends AbstractRepositoryModel<Are
 		criteria.add(Restrictions.in("codigo", codigos));
 		
 		return criteria.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<AreaInfluenciaPDV> obterTodasAreaInfluenciaPDV() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from AreaInfluenciaPDV order by descricao");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		return query.list();
 	}
 }

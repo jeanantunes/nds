@@ -32,8 +32,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
@@ -79,10 +83,10 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "NOME_COMERCIAL", nullable = true, unique = false, length = 60)
 	private String nomeComercial;
 	
-	@Column(name = "PRECO_VENDA", nullable = true, precision=18, scale=4)
+	@Column(name = "PRECO_VENDA", nullable = true)
 	protected BigDecimal precoVenda;
 	
-	@Column(name = "PRECO_PREVISTO", nullable = true, precision=18, scale=4)
+	@Column(name = "PRECO_PREVISTO", nullable = true)
 	protected BigDecimal precoPrevisto;
 	
 	@Column(name = "REPARTE_DISTRIBUIDO", nullable = true)
@@ -97,7 +101,7 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "CARACTERISTICA_PRODUTO")
 	protected String caracteristicaProduto;
 	
-	@Column(name = "PRECO_CUSTO", precision=18, scale=4)
+	@Column(name = "PRECO_CUSTO")
 	protected BigDecimal precoCusto;
 	
 	@Column(name = "PESO", nullable = false)
@@ -111,6 +115,7 @@ public class ProdutoEdicao implements Serializable {
 	protected Produto produto;
 	
 	@OneToMany(mappedBy = "produtoEdicao")
+    @LazyCollection(LazyCollectionOption.FALSE)
 	protected Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
 	@OneToMany(mappedBy = "produtoEdicao", fetch=FetchType.LAZY)
@@ -133,7 +138,7 @@ public class ProdutoEdicao implements Serializable {
 	/**
 	 * Percentual de expectativa de venda do produto
 	 */
-	@Column(name = "EXPECTATIVA_VENDA", precision=18, scale=4)
+	@Column(name = "EXPECTATIVA_VENDA")
 	protected BigDecimal expectativaVenda;
 	
 	/**
@@ -188,7 +193,7 @@ public class ProdutoEdicao implements Serializable {
 	@Embedded
 	private SegmentacaoProduto segmentacao;
 
-	@Column(name="DESCONTO", precision=18, scale=4)
+	@Column(name="DESCONTO")
 	private BigDecimal desconto;
 	
 	@Column(name="DESCRICAO_DESCONTO")
@@ -203,6 +208,13 @@ public class ProdutoEdicao implements Serializable {
     @OneToMany(mappedBy = "produtoEdicao", fetch=FetchType.LAZY)
     private Set<HistoricoEstoqueProduto> historicoEstoqueProduto;
 
+    /**
+     * Classificação do Produto
+     */
+    @OneToOne(fetch=FetchType.EAGER, optional=true)
+    @JoinColumn(name="TIPO_CLASSIFICACAO_PRODUTO_ID")
+    private TipoClassificacaoProduto tipoClassificacaoProduto;
+    
 	public ProdutoEdicao() {
 	}
 	
@@ -636,6 +648,14 @@ public class ProdutoEdicao implements Serializable {
 		this.historicoEstoqueProduto = historicoEstoqueProduto;
 	}
 
+    public TipoClassificacaoProduto getTipoClassificacaoProduto() {
+        return tipoClassificacaoProduto;
+    }
+
+    public void setTipoClassificacaoProduto(TipoClassificacaoProduto tipoClassificacaoProduto) {
+        this.tipoClassificacaoProduto = tipoClassificacaoProduto;
+    }
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -672,5 +692,5 @@ public class ProdutoEdicao implements Serializable {
 	public String toString() {
 		return produto.toString() + "-" + numeroEdicao.toString();
 	}
-	
+
 }

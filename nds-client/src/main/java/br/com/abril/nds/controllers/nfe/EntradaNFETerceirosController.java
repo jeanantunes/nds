@@ -142,20 +142,20 @@ public class EntradaNFETerceirosController extends BaseController {
 		
 		ConsultaEntradaNFETerceirosRecebidasDTO nota1 = new ConsultaEntradaNFETerceirosRecebidasDTO();
 		nota1.setChaveAcesso("chaveAcesso");
-		nota1.setContemDiferenca(new Integer(1));
+		nota1.setContemDiferenca(Integer.valueOf(1));
 		nota1.setDataEmissao(new Date());
 		nota1.setNome("Victor Henrique");
-		nota1.setNumeroNota(new Long("12231"));
+		nota1.setNumeroNota(Long.valueOf("12231"));
 		nota1.setSerie("192837456");
 		nota1.setTipoNotaFiscal("SAIDA");
 		nota1.setValorNota(new BigDecimal(9090));
 		
 		ConsultaEntradaNFETerceirosRecebidasDTO nota2 = new ConsultaEntradaNFETerceirosRecebidasDTO();
 		nota2.setChaveAcesso("chaveAcesso2");
-		nota2.setContemDiferenca(new Integer(0));
+		nota2.setContemDiferenca(Integer.valueOf(0));
 		nota2.setDataEmissao(new Date());
 		nota2.setNome("Victor Henrique");
-		nota2.setNumeroNota(new Long(445566));
+		nota2.setNumeroNota(Long.valueOf(445566));
 		nota2.setSerie("910293758921");
 		nota2.setTipoNotaFiscal("SAIDA");
 		nota2.setValorNota(new BigDecimal(9090));
@@ -208,10 +208,10 @@ public class EntradaNFETerceirosController extends BaseController {
 		nota1.setChaveAcesso("1234");
 		nota1.setDataEncalhe(new Date());
 		nota1.setDiferenca(new BigDecimal(444));
-//		nota1.setIdNotaFiscalEntrada(new Long(15));
+//		nota1.setIdNotaFiscalEntrada(Long.valueOf(15));
 		nota1.setNome("Victor Montanher");
-		nota1.setNumeroCota(new Integer(1234));
-		nota1.setNumeroNfe(new Long(778899));
+		nota1.setNumeroCota(Integer.valueOf(1234));
+		nota1.setNumeroNfe(Long.valueOf(778899));
 		nota1.setSerie("4356");
 		nota1.setStatus("APROVADO");
 		nota1.setTipoNotaFiscal("Entrada");
@@ -222,10 +222,10 @@ public class EntradaNFETerceirosController extends BaseController {
 		nota2.setChaveAcesso("9876");
 		nota2.setDataEncalhe(new Date());
 		nota2.setDiferenca(new BigDecimal(444));
-//		nota2.setIdNotaFiscalEntrada(new Long(15));
+//		nota2.setIdNotaFiscalEntrada(Long.valueOf(15));
 		nota2.setNome("Victor Henrique Montanher");
-		nota2.setNumeroCota(new Integer(1234));
-		nota2.setNumeroNfe(new Long(778899));
+		nota2.setNumeroCota(Integer.valueOf(1234));
+		nota2.setNumeroNfe(Long.valueOf(778899));
 		nota2.setSerie("4356");
 		nota2.setStatus("APROVADO");
 		nota2.setTipoNotaFiscal("Complementar");

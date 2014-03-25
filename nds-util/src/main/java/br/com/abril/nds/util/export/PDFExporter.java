@@ -201,7 +201,7 @@ public class PDFExporter implements Exporter {
 	
 	private Image createLogotipoImage(InputStream logo) throws IOException, BadElementException {
 		
-		if(logo == null || logo.available() == 0){
+		if(logo == null){
 			return null;
 		}
 		

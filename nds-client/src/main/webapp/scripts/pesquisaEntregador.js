@@ -13,7 +13,7 @@ function PesquisaEntregador(workspace) {
 		
 		nome = $.trim(nome);
 		
-		$(idCampoNomeEntregador, T.workspace).autocomplete({source: ""});
+		//$(idCampoNomeEntregador, T.workspace).autocomplete({source: ""});
 		
 		if (nome && nome.length > 2) {
 			
@@ -91,7 +91,7 @@ function PesquisaEntregador(workspace) {
 		if (nome && nome.length > 0) {
 			$.postJSON(
 				contextPath + "/cadastro/entregador/pesquisarPorNome", 
-				{nome:nome},
+				{'nome':nome},
 				function(result) {
 					T.pesquisarPorNomeSuccessCallBack(result, idCampoIdEntregador, idCampoNomeEntregador, successCallBack);
 				},
@@ -137,3 +137,5 @@ function PesquisaEntregador(workspace) {
 	};
 	
 }
+
+//@ sourceURL=pesquisaEntregador.js

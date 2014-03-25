@@ -168,4 +168,11 @@ public interface BoxRepository extends Repository<Box,Long> {
 
 
 	public String obterDescricaoBoxPorCota(Integer numeroCota);
+	
+	/**
+	 * Obtem lista de Box por Código
+	 * @param codigosBox
+	 * @return List<Box>
+	 */
+	List<Box> obterBoxPorCodigo(Integer codigoBox);
 }

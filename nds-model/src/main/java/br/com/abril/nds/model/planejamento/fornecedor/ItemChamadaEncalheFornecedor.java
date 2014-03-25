@@ -13,12 +13,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.Diferenca;
 
 /**
  * Item da Chamada de Encalhe do Fornecedor para retorno
@@ -65,7 +67,7 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Enumerated(EnumType.STRING)
     private RegimeRecolhimento regimeRecolhimento;
 
-    @Column(name = "PRECO_UNITARIO", nullable = false, precision=18, scale=4)
+    @Column(name = "PRECO_UNITARIO", nullable = false)
     private BigDecimal precoUnitario;
 
     @Temporal(TemporalType.DATE)
@@ -78,7 +80,7 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Column(name = "QTDE_VENDA_APURADA")
     private Long qtdeVendaApurada;
 
-    @Column(name = "VALOR_VENDA_APURADO", precision=18, scale=4)
+    @Column(name = "VALOR_VENDA_APURADO")
     private BigDecimal valorVendaApurado;
 
     @Column(name = "QTDE_DEVOLUCAO_INFORMADA")
@@ -87,7 +89,7 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Column(name = "QTDE_VENDA_INFORMADA")
     private Long qtdeVendaInformada;
 
-    @Column(name = "VALOR_VENDA_INFORMADO", precision=18, scale=4)
+    @Column(name = "VALOR_VENDA_INFORMADO")
     private BigDecimal valorVendaInformado;
 
     @Column(name = "NUMERO_NOTA_ENVIO", nullable = false)
@@ -105,11 +107,15 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Column(name = "QTDE_DEVOLUCAO_PARCIAL")
     private Long qtdeDevolucaoParcial;
 
-    @Column(name = "VALOR_MARGEM_INFORMADO", precision=18, scale=4)
+    @Column(name = "VALOR_MARGEM_INFORMADO")
     private BigDecimal valorMargemInformado;
 
-    @Column(name = "VALOR_MARGEM_APURADO", nullable = false, precision=18, scale=4)
+    @Column(name = "VALOR_MARGEM_APURADO", nullable = false)
     private BigDecimal valorMargemApurado;
+    
+    @OneToOne
+    @JoinColumn(name = "DIFERENCA_ID")
+    private Diferenca diferenca;
     
     /**
      * @return the id
@@ -448,7 +454,21 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
         this.valorMargemApurado = valorMargemApurado;
     }
 
-    /* (non-Javadoc)
+	/**
+	 * @return the diferenca
+	 */
+	public Diferenca getDiferenca() {
+		return diferenca;
+	}
+
+	/**
+	 * @param diferenca the diferenca to set
+	 */
+	public void setDiferenca(Diferenca diferenca) {
+		this.diferenca = diferenca;
+	}
+
+	/* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override

@@ -38,7 +38,7 @@ var descontoDistribuidorController = $.extend(true,{
 		    $("#selectFornecedorSelecionado_option option",this.workspace).each(function (index) {
 		    	fornecedores.push($(this).val());
 		    });
-		    var param = {desconto:$("#descontoGeral",this.workspace).justPercent("floatValue")};
+		    var param = {desconto:$("#descontoGeral",this.workspace).justPercent("stringValue")};
 		    
 		    param = serializeArrayToPost('fornecedores', fornecedores, param);
 
@@ -109,8 +109,8 @@ var descontoDistribuidorController = $.extend(true,{
 						sortable : false,
 						align : 'center'
 					}],
-					sortname : "sequencial",
-					sortorder : "asc",
+					sortname : "dataAlteracao",
+					sortorder : "desc",
 					usepager : true,
 					useRp : true,
 					rp : 15,

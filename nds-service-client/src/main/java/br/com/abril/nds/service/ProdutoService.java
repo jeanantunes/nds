@@ -4,7 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -34,6 +37,16 @@ public interface ProdutoService {
 	
 	List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxResult);
 	/**
+	 * Obtém produtos cujo código começa com o código informado.
+	 * 
+	 * @param nomeProduto - código do produto
+	 * 
+	 * @return {@link List<Produto>}
+	 */
+	List<Produto> obterProdutoLikeCodigo(String codigo);
+
+	
+	/**
 	 * Obtém um produto de acordo com o código do produto.
 	 * 
 	 * @param codigoProduto - código do produto
@@ -48,12 +61,12 @@ public interface ProdutoService {
 
 	List<ConsultaProdutoDTO> pesquisarProdutos(String codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto,
-			String sortorder, String sortname, int page, int rp);
+			String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica);
 
 	void removerProduto(Long id);
 
 	Integer pesquisarCountProdutos(String codigo, String produto,
-			String fornecedor, String editor, Long codigoTipoProduto);
+			String fornecedor, String editor, Long codigoTipoProduto, Boolean isGeracaoAutomatica);
 	
 	/**
 	 * Verifica se o Produto está em estoque
@@ -99,6 +112,16 @@ public interface ProdutoService {
 	
 	List<Produto> obterProdutosBalanceadosOrdenadosNome(Date dataLancamento);
 
-	String obterCodigoDisponivel();
+	List<String> verificarProdutoExiste(String...codigoProduto);
+	
+	List<TipoSegmentoProduto> carregarSegmentos();
+	
+	List<TipoClassificacaoProduto> carregarClassificacaoProduto();
+
+    Produto obterProdutoPorProdin (String codigoProdin);
+
+    String obterCodigoDisponivel();
+    
+    Long obterIdFornecedorUnificadorPorCodigoProduto(String codigoProduto);
 	
 }

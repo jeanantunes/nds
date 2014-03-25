@@ -41,6 +41,50 @@ DELETE FROM nota_envio;
 DELETE FROM baixa_cobranca;
 DELETE FROM cobranca;
 
+DELETE FROM acumulo_divida;
+
+delete from negociacao_mov_finan;
+
+DELETE FROM movimento_financeiro_cota;
+
+DELETE FROM baixa_cobranca;
+
+delete from boleto_email;
+
+DELETE FROM cobranca;
+DELETE FROM divida;
+
+DELETE FROM consolidado_financeiro_cota;
+
+DELETE FROM estoque_produto_cota;
+
+UPDATE lancamento SET lancamento.EXPEDICAO_ID = null;
+DELETE FROM expedicao;
+
+UPDATE lancamento SET status = 'CONFIRMADO';
+
+UPDATE lancamento SET status = 'FECHADO' WHERE data_rec_prevista < sysdate();
+
+delete from desconto;
+
+delete from forma_cobranca_fornecedor;
+
+delete from concentracao_cobranca_cota;
+
+delete from politica_cobranca;
+
+delete from formacobranca_diasdomes;
+
+delete from negociacao;
+
+delete from forma_cobranca;
+
+update fornecedor set banco_id = null where banco_id is not null;
+
+delete from banco;
+
+DELETE f.* FROM fornecedor f INNER JOIN pessoa p ON p.id = f.juridica_id WHERE p.nome_fantasia <> 'Dinap' AND p.nome_fantasia <> 'FC' AND p.nome_fantasia <> 'Treelog';
+
 CREATE TABLE ids (
     id INTEGER
 );

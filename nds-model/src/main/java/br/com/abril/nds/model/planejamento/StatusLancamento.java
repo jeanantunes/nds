@@ -8,12 +8,14 @@ public enum StatusLancamento {
 	EM_BALANCEAMENTO("Em Balanceamento"),
 	BALANCEADO("Balanceado"),
 	ESTUDO_FECHADO("Estudo Fechado"),
-	EXPEDIDO("Expedido"),
-	EM_BALANCEAMENTO_RECOLHIMENTO("Em Balanceamento Recolhimento"),
-	BALANCEADO_RECOLHIMENTO("Balanceado Recolhimento"),
+	EXPEDIDO("Expedido"),// Edições abertas
+	EM_BALANCEAMENTO_RECOLHIMENTO("Em Balanceamento Recolhimento"),// Edições abertas
+	BALANCEADO_RECOLHIMENTO("Balanceado Recolhimento"),// Edições abertas
 	EM_RECOLHIMENTO("Em Recolhimento"),
-	RECOLHIDO("Recolhido"),
 	CANCELADO("Cancelado"),
+	
+	//Edição Fechada
+	RECOLHIDO("Recolhido"),
 	FECHADO("Fechado");
 	
 	/** Descrição do status. */

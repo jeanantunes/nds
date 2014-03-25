@@ -20,10 +20,15 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				             {name:"rota",value:$("#rota",chamdaEncalheAnteipadaController.workspace).val()},
 				             {name:"roteiro",value:$("#roteiro",chamdaEncalheAnteipadaController.workspace).val()},
 				             {name:"programacaoRealizada",value:chamdaEncalheAnteipadaController.getProgramacaoRealizada},
+				             {name:"recolhimentoFinal",value:chamdaEncalheAnteipadaController.getRecolhimentoFinal},
 				             {name:"municipio",value:$("#municipio",chamdaEncalheAnteipadaController.workspace).val()},
 				             {name:"tipoPontoPDV",value:$("#tipoPontoPDV",chamdaEncalheAnteipadaController.workspace).val()}
 				            ];
 			return formData;
+		},
+		
+		getRecolhimentoFinal:function(){
+			return ($("#checkRecolhimentoFinal",chamdaEncalheAnteipadaController.workspace).attr("checked") == "checked");
 		},
 		
 		getProgramacaoRealizada:function(){
@@ -121,14 +126,14 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		},
 		
 		gravar: function (){
-			
-			var listaChamadaEncalheAntecipada = null;
-			
+				
 			var params = {'codigoProduto':chamdaEncalheAnteipadaController.getHiddenProduto(),
 				'numeroEdicao':chamdaEncalheAnteipadaController.getHiddenNumeroEdicao(),
 				'dataRecolhimento':$("#dataAntecipacao",chamdaEncalheAnteipadaController.workspace).val(),
 				'dataProgramada':$("#dataProgramada").val(),
-				'gravarTodos':$("#sel", chamdaEncalheAnteipadaController.workspace).is(':checked')};
+				'gravarTodos':$("#sel", chamdaEncalheAnteipadaController.workspace).is(':checked'),
+				'recolhimentoFinal':chamdaEncalheAnteipadaController.getRecolhimentoFinal()
+			};
 			
 			if(chamdaEncalheAnteipadaController.tipoPesquisaGridCota == chamdaEncalheAnteipadaController.tipoPesquisaSelecionado){
 				
@@ -829,7 +834,9 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			var params = {
 					codigoProduto:chamdaEncalheAnteipadaController.getHiddenProduto(),
 					numeroEdicao:chamdaEncalheAnteipadaController.getHiddenNumeroEdicao(),
-					'cancelarTodos':$("#sel", chamdaEncalheAnteipadaController.workspace).is(':checked')};
+					'cancelarTodos':$("#sel", chamdaEncalheAnteipadaController.workspace).is(':checked'),
+					'recolhimentoFinal':chamdaEncalheAnteipadaController.getRecolhimentoFinal()
+				};
 
 			if(chamdaEncalheAnteipadaController.tipoPesquisaGridCota == chamdaEncalheAnteipadaController.tipoPesquisaSelecionado){				
 				params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGridPesquisaCota), params);
@@ -886,7 +893,9 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					'numeroEdicao':chamdaEncalheAnteipadaController.getHiddenNumeroEdicao(),
 					'dataRecolhimento':$("#dataAntecipacao",chamdaEncalheAnteipadaController.workspace).val(),
 					'dataProgramada': $("#dataProgramada",chamdaEncalheAnteipadaController.workspace).val(),
-					'gravarTodos':$("#sel", chamdaEncalheAnteipadaController.workspace).is(':checked')};
+					'gravarTodos':$("#sel", chamdaEncalheAnteipadaController.workspace).is(':checked'),
+					'recolhimentoFinal':chamdaEncalheAnteipadaController.getRecolhimentoFinal()
+				};
 			
 			if(chamdaEncalheAnteipadaController.tipoPesquisaGridCota == chamdaEncalheAnteipadaController.tipoPesquisaSelecionado){
 				

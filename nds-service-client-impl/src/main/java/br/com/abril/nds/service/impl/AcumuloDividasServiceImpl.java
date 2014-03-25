@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.financeiro.AcumuloDivida;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
@@ -15,14 +16,16 @@ import br.com.abril.nds.repository.AcumuloDividasRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.service.AcumuloDividasService;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 
 /**
  * Implementação do serviço responsável pelo acumulo de dívidas.
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Service
+@Transactional(readOnly = true)
 public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 
 	@Autowired
@@ -47,7 +50,7 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
+
 	public void criarAcumuloDivida(AcumuloDivida acumuloDivida) {
 
 		this.acumuloDividasRepository.adicionar(acumuloDivida);
@@ -57,7 +60,7 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
+    @Transactional(readOnly = false)
 	public AcumuloDivida atualizarAcumuloDivida(AcumuloDivida acumuloDivida) {
 
 		return this.acumuloDividasRepository.merge(acumuloDivida);
@@ -67,7 +70,6 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional(readOnly=true)
 	public BigInteger obterNumeroMaximoAcumuloCota(Long idCota) {
 
 		BigInteger numeroAcumulo = this.acumuloDividasRepository.obterNumeroMaximoAcumuloCota(idCota);
@@ -79,8 +81,8 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
-	public void quitarDividasAcumuladas(Date dataPagamento, Divida dividaAtual) {
+    @Transactional(readOnly = false)
+	public void quitarDividasAcumuladas(Date dataPagamento, Divida dividaAtual, TipoBaixaCobranca tipoBaixa) {
 		
 		if (dividaAtual == null) 			
 			return;
@@ -102,9 +104,11 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 					
 			dividaAtual.getCobranca().setDataPagamento(dataPagamento);
 			
+			dividaAtual.getCobranca().setTipoBaixa(tipoBaixa);
+				
 			this.cobrancaRepository.alterar(dividaAtual.getCobranca());
 			
-			this.quitarDividasAcumuladas(dataPagamento, dividaAtual);
+			this.quitarDividasAcumuladas(dataPagamento, dividaAtual,tipoBaixa);
 		}		
 	}
 	
@@ -112,7 +116,6 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional(readOnly = true)
 	public BigInteger obterNumeroDeAcumulosDivida(Long idConsolidadoFinanceiroCota) {
 		
 		BigInteger numeroDeAcumulosDivida =

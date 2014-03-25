@@ -1,5 +1,8 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +23,43 @@ public class PeriodoLancamentoParcialServiceImpl implements PeriodoLancamentoPar
 	@Transactional
 	public List<PeriodoParcialDTO> obterPeriodosParciais(FiltroParciaisDTO filtro) {
 		
-		return periodoLancamentoParcialRepository.obterPeriodosParciais(filtro);
+		List<PeriodoParcialDTO> periodosParciais = periodoLancamentoParcialRepository.obterPeriodosParciais(filtro); 
 		
+		BigInteger reparteAcumulado = BigInteger.ZERO;
+		
+		BigInteger vendasAcumuladas = BigInteger.ZERO;
+		
+		for(PeriodoParcialDTO item : periodosParciais ){
+			
+			BigInteger valoReparte = item.getReparte().add(item.getSuplementacao()); 
+			
+			//Venda
+			item.setVendas(valoReparte.subtract(item.getEncalhe()));
+			
+			//% Venda
+			if(item.getVendas().compareTo(BigInteger.ZERO) > 0){
+				BigDecimal vlVenda = new BigDecimal(item.getVendas());
+				vlVenda = vlVenda.multiply(new BigDecimal("100"));
+				item.setPercVenda(vlVenda.divide(new BigDecimal(valoReparte),2, RoundingMode.HALF_UP));
+			}
+			
+			// Reparte Acumulado
+			reparteAcumulado = reparteAcumulado.add(valoReparte);
+			item.setReparteAcum(reparteAcumulado);
+			
+			//Vendas Acumuladas
+			vendasAcumuladas = vendasAcumuladas.add(item.getVendas());
+			item.setVendaAcumulada(vendasAcumuladas);
+			
+			//% Venda Acumulada
+			if(item.getVendaAcumulada().compareTo(BigInteger.ZERO)> 0){
+				BigDecimal vlVendaAcm = new BigDecimal(item.getVendaAcumulada());
+				vlVendaAcm = vlVendaAcm.multiply(new BigDecimal("100"));
+				item.setPercVendaAcumulada(vlVendaAcm.divide(new BigDecimal(item.getReparteAcum()),2,RoundingMode.HALF_UP));
+			}
+		}
+		
+		return periodosParciais;
 	}
 	
 	@Transactional

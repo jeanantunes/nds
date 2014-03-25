@@ -48,7 +48,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 				
 		hql.append(" SELECT dados.DESCONTO_ID as idTipoDesconto,p.CODIGO as codigoProduto, p.NOME as nomeProduto, "
 				+"	 	pe.NUMERO_EDICAO as numeroEdicao, d.VALOR as desconto, u.NOME as nomeUsuario, "
-				+"	 	d.DATA_ALTERACAO as dataAlteracao, dados.QTDE_PROX_LANCAMENTOS as qtdeProxLcmt, dados.QTDE_COTAS as qtdeCotas");
+				+"	 	d.DATA_ALTERACAO as dataAlteracao, dados.QTDE_PROX_LANCAMENTOS as qtdeProxLcmtAtual,dados.QTDE_PROX_LANCAMENTOS_ORIGINAL as qtdeProxLcmt, dados.QTDE_COTAS as qtdeCotas");
 		
 		addQueryTipoDescontoProduto(hql);
 		
@@ -76,21 +76,21 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	
 	private StringBuilder addQueryTipoDescontoProduto(StringBuilder sql) {
 			
-		sql.append(" FROM (SELECT DESCONTO_ID, PRODUTO_ID, null as EDICAO_ID, hdp.USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, null as QTDE_COTAS "  
+		sql.append(" FROM (SELECT DESCONTO_ID, PRODUTO_ID, null as EDICAO_ID, hdp.USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, null as QTDE_PROX_LANCAMENTOS_ORIGINAL, null as QTDE_COTAS "  
 					+"	 FROM HISTORICO_DESCONTO_PRODUTOS hdp "	
 					+"	 UNION "	
 					
-					+"	 SELECT DESCONTO_ID, PRODUTO_ID, PRODUTO_EDICAO_ID as EDICAO_ID, hdcpe.USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, count(COTA_ID) as QTDE_COTAS "
+					+"	 SELECT DESCONTO_ID, PRODUTO_ID, PRODUTO_EDICAO_ID as EDICAO_ID, hdcpe.USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, null as QTDE_PROX_LANCAMENTOS_ORIGINAL, count(COTA_ID) as QTDE_COTAS "
 					+"	 FROM HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe " 
 					+"	 where produto_id is not null " 
 					+"	 group by DESCONTO_ID "	
 					+"	 UNION "	
 					
-					+"	 SELECT DESCONTO_ID, PRODUTO_ID, PRODUTO_EDICAO_ID as EDICAO_ID, hdpe.USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, null as QTDE_COTAS "
+					+"	 SELECT DESCONTO_ID, PRODUTO_ID, PRODUTO_EDICAO_ID as EDICAO_ID, hdpe.USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, null as QTDE_PROX_LANCAMENTOS_ORIGINAL, null as QTDE_COTAS "
 					+"	 FROM HISTORICO_DESCONTO_PRODUTO_EDICOES hdpe "	
 					+"	 UNION "	
 					
-					+"	 SELECT dpl.DESCONTO_ID, PRODUTO_ID, null as EDICAO_ID, dpl.USUARIO_ID, QUANTIDADE_PROXIMOS_LANCAMENTOS as QTDE_PROX_LANCAMENTOS, " 
+					+"	 SELECT dpl.DESCONTO_ID, PRODUTO_ID, null as EDICAO_ID, dpl.USUARIO_ID, QUANTIDADE_PROXIMOS_LANCAMENTOS, QUANTIDADE_PROXIMOS_LANCAMENTOS_ORIGINAL, " 
 					+"	 CASE WHEN dpl.APLICADO_A_TODAS_AS_COTAS=1 THEN null ELSE count(dlc.DESCONTO_LANCAMENTO_ID) END as QTDE_COTAS " 
 					+"	 FROM DESCONTO_PROXIMOS_LANCAMENTOS dpl "
 					+"	 LEFT OUTER JOIN DESCONTO_LANCAMENTO_COTA dlc on (dlc.DESCONTO_LANCAMENTO_ID=dpl.ID) "
@@ -116,7 +116,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		if(sortColum != null && sortOrder != null)
 			hql.append(" order by " + sortColum + " " + sortOrder);
 		else
-			hql.append(" order by nomeProduto, dataAlteracao desc ");
+			hql.append(" order by dataAlteracao desc , nomeProduto");
 		
 	}
 
@@ -152,8 +152,6 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	public List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao) {
 		
 		StringBuilder sql = new StringBuilder();
-			
-		sql = new StringBuilder();
 		sql.append("  SELECT c.NUMERO_COTA as numeroCota, coalesce(p.NOME, p.RAZAO_SOCIAL) as nome ")
 			.append(" FROM COTA c ")
 			.append(" JOIN PESSOA p ON (c.PESSOA_ID=p.ID) ")
@@ -168,14 +166,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 			.append(" LEFT OUTER JOIN DESCONTO_PROXIMOS_LANCAMENTOS dpl ON dpl.id = dlc.desconto_lancamento_id ")
 			.append(" WHERE dpl.DESCONTO_ID = :descontoID ")
 			.append(" GROUP BY numeroCota ");
-/*
-		if (sortname != null && !sortname.isEmpty()) { 
 
-			sql.append(" order by ");
-			sql.append(sortname);
-			sql.append(" ");
-			sql.append(sortorder != null ? sortorder : "");
-		}*/
 		sql.append(" order by numeroCota " + ordenacao.name() + " ");
 		
 		Query query = getSession().createSQLQuery(sql.toString());
@@ -263,9 +254,15 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		
 		"  where dadosCompletos.qtdeCotas>0 " + 
 		"  ) ");
-		         
-		    
 		
+		sql.append(" 	group by 			");
+		sql.append("	idTipoDesconto, 	");          
+		sql.append("	codigoProduto,  	");        
+		sql.append("	nomeProduto,    	");     
+		sql.append("	numeroEdicao,   	");     
+		sql.append("	desconto,       	");   
+		sql.append("	nomeUsuario,    	");       
+		sql.append("	dataAlteracao   	");        
 
 		if (sortname != null && !sortname.isEmpty()) { 
 

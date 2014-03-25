@@ -228,8 +228,6 @@ public class AjusteReparteDTO implements Serializable {
 			segmento.setId((long) 0);
 			this.tipoSegmento_Ajuste = segmento;
 		}
-		
-		
 	}
 	public Long getIdSegmento() {
 		return idSegmento;

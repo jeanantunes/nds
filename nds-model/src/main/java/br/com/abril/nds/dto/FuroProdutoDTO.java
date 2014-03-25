@@ -1,7 +1,6 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;

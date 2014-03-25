@@ -61,6 +61,7 @@ public class RetornoNFEController extends BaseController {
 	private static final String LISTA_NOTAS_DE_RETORNO = "listaNotasDeRetorno";
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_NFE_RETORNO_NFE)
 	public void index() {	
 	}
 

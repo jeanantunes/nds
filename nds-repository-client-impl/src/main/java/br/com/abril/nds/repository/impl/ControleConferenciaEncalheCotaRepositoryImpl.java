@@ -104,7 +104,6 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<Long> obterListaIdControleConferenciaEncalheCota(FiltroConsultaEncalheDTO filtro) {
 		
 		StringBuffer sql = new StringBuffer();
@@ -139,6 +138,25 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		sql.append("	( CONTROLE_CONF_ENC_COTA.DATA_OPERACAO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO 	");
 		sql.append("	AND  CONTROLE_CONF_ENC_COTA.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ) ");
 		
+		sql.append("	inner join COTA on ");
+		sql.append("	( COTA.ID = CHAMADA_ENCALHE_COTA.COTA_ID) ");
+		
+		sql.append("	inner join pdv on (cota.ID = pdv.cota_id and pdv.ponto_PRINCIPAL = true) ");
+		
+		sql.append("	inner join BOX on ");
+		sql.append("	( BOX.ID = COTA.BOX_ID) ");
+		
+		sql.append("	inner join ROTEIRIZACAO on ");
+		sql.append("	( ROTEIRIZACAO.BOX_ID = BOX.ID) ");
+		
+		sql.append("	inner join ROTEIRO on ");
+		sql.append("	( ROTEIRO.ROTEIRIZACAO_ID = ROTEIRIZACAO.ID) ");
+		
+		sql.append("	inner join ROTA on ");
+		sql.append("	( ROTA.ROTEIRO_ID = ROTEIRO.ID) ");
+		
+		sql.append("	INNER JOIN ROTA_PDV ON (ROTA.ID = ROTA_PDV.ROTA_ID and rota_pdv.pdv_id = pdv.id) ");
+		
 		sql.append("	where	");
 		
 		sql.append("	(CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
@@ -153,6 +171,8 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
 		}
 
+		sql.append("	ORDER BY BOX.NOME, ROTEIRO.ORDEM, ROTA.ORDEM, ROTA_PDV.ORDEM ");
+		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
@@ -369,5 +389,34 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO);
 		
 		return (query.list().size() > 0);
+	}
+    
+    /**
+     * Obtém ControleConferenciaEncalheCota por Cobrança
+     * @param idCobranca
+     * @return ControleConferenciaEncalheCota
+     */
+    @Override
+	public ControleConferenciaEncalheCota obterControleConferenciaEncalheCotaPorIdCobranca(Long idCobranca) {
+		
+		StringBuffer hql = new StringBuffer("");
+		
+		hql.append(" select c from ControleConferenciaEncalheCota c ");		
+		
+		hql.append(" join c.cobrancasControleConferenciaEncalheCota cobrancaControleConferencia ");
+		
+		hql.append(" join cobrancaControleConferencia.cobranca cobranca ");
+		
+		hql.append(" where cobranca.id = :idCobranca ");
+		
+		hql.append(" and c.status = :statusConcluido ");
+		
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("idCobranca", idCobranca);
+		
+		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO);
+		
+		return (ControleConferenciaEncalheCota) query.uniqueResult();
 	}
 }

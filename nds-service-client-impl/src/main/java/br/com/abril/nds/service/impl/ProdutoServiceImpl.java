@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +22,17 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.repository.DescontoLogisticaRepository;
 import br.com.abril.nds.repository.EditorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
+import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
+import br.com.abril.nds.repository.TipoSegmentoProdutoRepository;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -36,13 +42,13 @@ import br.com.abril.nds.service.ProdutoService;
  * {@link br.com.abril.nds.model.cadastro.Produto}
  * 
  * @author Discover Technology
- */
+ */ 
 @Service
 public class ProdutoServiceImpl implements ProdutoService {
 
 	@Autowired
 	private ProdutoRepository produtoRepository;
-	
+
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
 	
@@ -57,12 +63,18 @@ public class ProdutoServiceImpl implements ProdutoService {
 	
 	@Autowired
 	private TipoProdutoRepository tipoProdutoRepository;
+	
+	@Autowired
+	private RecebimentoFisicoRepository recebimentoFisicoRepository;
 		
 	@Autowired
 	private DescontoLogisticaRepository descontoLogisticaRepository;
 	
 	@Autowired
-	private RecebimentoFisicoRepository recebimentoFisicoRepository;
+	private TipoSegmentoProdutoRepository segmentoRepository;
+	
+	@Autowired
+	private TipoClassificacaoProdutoRepository tipoClassRepo;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -97,11 +109,26 @@ public class ProdutoServiceImpl implements ProdutoService {
 	@Override
 	@Transactional(readOnly = true)
 	public Produto obterProdutoPorCodigo(String codigoProduto) {
-		if (codigoProduto == null || codigoProduto.isEmpty()){
+
+		if (StringUtils.isBlank(codigoProduto)){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Código é obrigatório.");
 		}
-		
-		return produtoRepository.obterProdutoPorCodigo(codigoProduto);
+        Produto produto;
+        switch (codigoProduto.length()) {
+            case 6:
+                produto = produtoRepository.obterProdutoPorCodigoProdin(codigoProduto.concat("01"));
+                break;
+            default:
+                produto = produtoRepository.obterProdutoPorCodigoProdin(codigoProduto);
+        }
+        if (produto == null) {
+            produto = produtoRepository.obterProdutoPorCodigoICD(codigoProduto);
+        } if (produto == null) {
+            produto = produtoRepository.obterProdutoPorCodigoICDLike(codigoProduto);
+        } if ((produto == null) && (codigoProduto.length() <=8)) {
+            produto = produtoRepository.obterProdutoPorCodigoProdinLike(codigoProduto);
+        }
+        return produto;
 	}
 	
 	@Override
@@ -135,20 +162,20 @@ public class ProdutoServiceImpl implements ProdutoService {
 	public List<ConsultaProdutoDTO> pesquisarProdutos(String codigo,
 			String produto, String fornecedor, String editor,
 			Long codigoTipoProduto, String sortorder, String sortname,
-			int page, int rp) {
+			int page, int rp,  Boolean isGeracaoAutomatica) {
 				
 		return this.produtoRepository.pesquisarProdutos(
 			codigo, produto, fornecedor, editor, 
-			codigoTipoProduto, sortorder, sortname, page, rp);
+			codigoTipoProduto, sortorder, sortname, page, rp, isGeracaoAutomatica);
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public Integer pesquisarCountProdutos(String codigo,
 			String produto, String fornecedor, String editor,
-			Long codigoTipoProduto) {
+			Long codigoTipoProduto, Boolean isGeracaoAutomatica) {
 				
-		return this.produtoRepository.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto);
+		return this.produtoRepository.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto, isGeracaoAutomatica);
 	}
 
 	@Override
@@ -195,27 +222,6 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
 	
 	/**
-	 * Alteração de fornecedor do Produto, verificando se o mesmo pode ser alterado
-	 * @param produto
-	 * @param fornecedor
-	 */
-	private void alteraFornecedorProduto(Produto produto, Fornecedor fornecedor){
-		
-		if ( !this.recebimentoFisicoRepository.produtoPossuiRecebimentoFisico(produto.getId())){
-			
-			produto.setFornecedores(new HashSet<Fornecedor>());
-			produto.addFornecedor(fornecedor);
-		}
-		else{
-			
-			if (!fornecedor.getId().equals(produto.getId())){
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "O [Produto] já possui movimentações e o campo [Fornecedor] não pode ser alterado.");
-			}
-		}
-	}
-
-	/**
 	 * @see br.com.abril.nds.service.ProdutoService#salvarProduto(br.com.abril.nds.model.cadastro.Produto, java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Long)
 	 */
 	@Override
@@ -250,11 +256,13 @@ public class ProdutoServiceImpl implements ProdutoService {
 				produtoExistente.setTributacaoFiscal(produto.getTributacaoFiscal());
 				produtoExistente.setPacotePadrao(produto.getPacotePadrao());
 				produtoExistente.setSegmentacao(produto.getSegmentacao());
-				
+				produtoExistente.setIsGeracaoAutomatica(produto.getIsGeracaoAutomatica());
+				produtoExistente.setTipoSegmentoProduto(produto.getTipoSegmentoProduto());
+
 				produtoExistente.setEditor(editor);
-
+				
 				this.alteraFornecedorProduto(produtoExistente, fornecedor);
-
+				
 				produtoExistente.setTipoProduto(tipoProduto);
 				
 				if (Origem.MANUAL == produtoExistente.getOrigem()){
@@ -312,6 +320,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 	 * @see br.com.abril.nds.service.ProdutoService#obterProdutosPelosIds(java.util.List)
 	 */
 	@Override
+	@Transactional
 	public List<Produto> obterProdutosPelosIds(List<Long> idsProdutos) {
 		
 		List<Produto> listaProdutos = new ArrayList<Produto>();
@@ -342,6 +351,70 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
+	public List<Produto> obterProdutoLikeCodigo(String codigo) {
+			if (codigo == null || codigo.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.ERROR, "Nome é obrigatório.");
+			}
+			
+			return produtoRepository.obterProdutoLikeCodigo(codigo);
+	}
+
+	@Override
+	@Transactional
+	public List<String> verificarProdutoExiste(String... codigosProduto) {
+
+        List<String> produtosValidos = new ArrayList<>();
+        for (String codigoProduto : codigosProduto) {
+            Produto produto = obterProdutoPorCodigo(codigoProduto);
+            if (produto != null) {
+                produtosValidos.add(codigoProduto);
+            }
+        }
+
+        return produtosValidos;
+    }
+
+    @Override
+	@Transactional
+	public List<TipoSegmentoProduto> carregarSegmentos() {
+		return segmentoRepository.buscarTodos();
+	}
+
+	@Override
+	@Transactional
+	public List<TipoClassificacaoProduto> carregarClassificacaoProduto() {
+		return tipoClassRepo.buscarTodos();
+	}
+
+    @Override
+	@Transactional
+	public Produto obterProdutoPorProdin(String codigoProdin) {
+		return produtoRepository.obterProdutoPorCodigoProdin(codigoProdin);
+	}
+    
+    /**
+     * Alteração de fornecedor do Produto, verificando se o mesmo pode ser alterado
+     * @param produto
+     * @param fornecedor
+     */
+    private void alteraFornecedorProduto(Produto produto, Fornecedor fornecedor){
+            
+        if ( !this.recebimentoFisicoRepository.produtoPossuiRecebimentoFisico(produto.getId())){
+                
+                produto.setFornecedores(new HashSet<Fornecedor>());
+                produto.addFornecedor(fornecedor);
+        }else{
+                
+            if (!fornecedor.getId().equals(produto.getId())){
+                    
+                throw new ValidacaoException(TipoMensagem.WARNING, "O [Produto] já possui movimentações e o campo [Fornecedor] não pode ser alterado.");
+            }
+        }
+    }
+       
+    @Override
+    @Transactional
 	public String obterCodigoDisponivel() {
 		
 		String ultimoCodigoRegional = this.produtoRepository.obterUltimoCodigoProdutoRegional();
@@ -357,13 +430,35 @@ public class ProdutoServiceImpl implements ProdutoService {
 			ultimoCodigoRegional = ultimoCodigoRegional.replaceAll("[^\\d]", "0");
 		}
 		
-		ultimoCodigoRegional = new Long(Long.valueOf(ultimoCodigoRegional) + 1).toString();
+		ultimoCodigoRegional = Long.valueOf(Long.valueOf(ultimoCodigoRegional) + 1).toString();
 		
 		while (this.produtoRepository.existeProdutoRegional(ultimoCodigoRegional)){
 			
-			ultimoCodigoRegional = new Long(Long.valueOf(ultimoCodigoRegional) + 1).toString();
+			ultimoCodigoRegional = Long.valueOf(Long.valueOf(ultimoCodigoRegional) + 1).toString();
 		}
 		
 		return ultimoCodigoRegional;
 	}
+    
+    @Override
+	@Transactional
+	public Long obterIdFornecedorUnificadorPorCodigoProduto(String codigoProduto) {
+
+		Produto produto = this.obterProdutoPorCodigo(codigoProduto);
+        
+		if (produto == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado!");
+		}
+		
+		Fornecedor fornecedor = produto.getFornecedor();
+		
+		if (fornecedor.getFornecedorUnificador() != null) {
+			
+			fornecedor = fornecedor.getFornecedorUnificador();
+		}
+		
+        return fornecedor.getId();
+	}
+    
 }

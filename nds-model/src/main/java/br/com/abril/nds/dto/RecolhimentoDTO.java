@@ -24,7 +24,13 @@ public class RecolhimentoDTO implements Serializable {
 	
 	private BigInteger capacidadeRecolhimentoDistribuidor;
 	
+	private long mediaRecolhimentoDistribuidor = 0L;
+	
+	private long count = 0L;
+	
 	private TreeSet<Date> datasRecolhimentoFornecedor;
+	
+	private TreeSet<Date> datasRecolhimentoDisponiveis;
 	
 	private boolean forcarBalanceamento;
 	
@@ -54,6 +60,32 @@ public class RecolhimentoDTO implements Serializable {
 		this.capacidadeRecolhimentoDistribuidor = capacidadeRecolhimentoDistribuidor;
 	}
 
+	/**
+	 * @return the capacidadeRecolhimentoDistribuidor
+	 */
+	public long getMediaRecolhimentoDistribuidor() {
+
+ 	 return mediaRecolhimentoDistribuidor+((mediaRecolhimentoDistribuidor/100)*1);
+
+	}
+
+	/**
+	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to set
+	 */
+	public void setMediaRecolhimentoDistribuidor(
+			long mediaRecolhimentoDistribuidor) {
+		this.mediaRecolhimentoDistribuidor = mediaRecolhimentoDistribuidor;
+	}
+	
+	/**
+	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to add
+	 */
+	public void addMediaRecolhimentoDistribuidor(
+			long mediaRecolhimentoDistribuidor) {
+		this.mediaRecolhimentoDistribuidor = this.mediaRecolhimentoDistribuidor+mediaRecolhimentoDistribuidor;
+		count = count+1;
+	}
+	
 	/**
 	 * @return the mapaExpectativaEncalheTotalDiaria
 	 */
@@ -99,7 +131,17 @@ public class RecolhimentoDTO implements Serializable {
 		this.datasRecolhimentoFornecedor = datasRecolhimentoFornecedor;
 	}
 
-	/**
+	
+    public TreeSet<Date> getDatasRecolhimentoDisponiveis() {
+        return datasRecolhimentoDisponiveis;
+    }
+
+    
+    public void setDatasRecolhimentoDisponiveis(TreeSet<Date> datasRecolhimentoDisponiveis) {
+        this.datasRecolhimentoDisponiveis = datasRecolhimentoDisponiveis;
+    }
+
+    /**
 	 * @return the forcarBalanceamento
 	 */
 	public boolean isForcarBalanceamento() {

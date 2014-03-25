@@ -21,7 +21,6 @@ public interface ControleConferenciaEncalheCotaRepository  extends Repository<Co
 	 * 
 	 * @return List<Date>
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Date> obterDatasControleConferenciaEncalheCotaFinalizada(Long idCota, Date dataDe, Date dataAte);
 	
 	/**
@@ -79,4 +78,10 @@ public interface ControleConferenciaEncalheCotaRepository  extends Repository<Co
 	 */
 	boolean isConferenciaEncalheCotaFinalizada(Long idCota, Date dataOperacao);
 
+	/**
+     * Obtém ControleConferenciaEncalheCota por Cobrança
+     * @param idCobranca
+     * @return ControleConferenciaEncalheCota
+     */
+	ControleConferenciaEncalheCota obterControleConferenciaEncalheCotaPorIdCobranca(Long idCobranca);
 }

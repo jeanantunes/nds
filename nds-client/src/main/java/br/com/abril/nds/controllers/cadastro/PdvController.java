@@ -36,8 +36,8 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CodigoDescricao;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaService;
@@ -78,7 +78,7 @@ public class PdvController extends BaseController {
 	
 	public static final String SUCESSO_UPLOAD  = "Upload realizado com sucesso.";
 			
-	private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluída  com sucesso.";
+    private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluída  com sucesso.";
 	
 	private static final String IMAGEM_PDV = "imagemPdv";
 	
@@ -108,9 +108,9 @@ public class PdvController extends BaseController {
 	
 	}
 	
-	/**
-	 * Carrega dados básicos para abrir tela de PDV
-	 */
+	                /**
+     * Carrega dados básicos para abrir tela de PDV
+     */
 	public void preCarregamento() {
 		
 		String dataAtual = new SimpleDateFormat("dd/MM/yyyy").format(new Date());		
@@ -121,7 +121,7 @@ public class PdvController extends BaseController {
 		result.include("listaTipoLicencaMunicipal",getListaDescricao(pdvService.obterTipoLicencaMunicipal()));
 		
 		result.include("listaTipoPontoPDV",getListaDescricao(pdvService.obterTiposPontoPDV()));
-		result.include("listaCaracteristicaPDV",getListaCaracteristica());
+//		result.include("listaCaracteristicaPDV",getLicstaCaracteristica());
 		result.include("listaAreaInfluenciaPDV",getListaDescricao(pdvService.obterTipoAreaInfluencia()));
 		
 	}
@@ -158,19 +158,21 @@ public class PdvController extends BaseController {
 	@Post
 	@Path("/carregarGeradorFluxo")
 	public void carregarGeradorFluxo(List<Long> codigos, ModoTela modoTela, Long idPdv){
-	    List<ItemDTO<Long, String>> listaDescricao;
-	    Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
-	    if (ModoTela.CADASTRO_COTA == modoTela) {
-	        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxo(cod));
-	    } else {
-	        Set<Long> codigosGeradores = new HashSet<Long>(Arrays.asList(cod));
-	        List<GeradorFluxoDTO> dtos = pdvService.obterGeradoresFluxoHistoricoTitularidadePDV(idPdv, codigosGeradores);
-	        listaDescricao = new ArrayList<ItemDTO<Long,String>>(dtos.size());
-	        for (GeradorFluxoDTO geradorFluxoDTO : dtos) {
-                listaDescricao.add(new ItemDTO<Long, String>(geradorFluxoDTO.getCodigo(), geradorFluxoDTO.getDescricao()));
-            }
-	    }
-        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
+	  	    List<ItemDTO<Long, String>> listaDescricao;
+		    Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+		    if (ModoTela.CADASTRO_COTA == modoTela) {
+		        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxo(cod));
+		    } else {
+		        Set<Long> codigosGeradores = new HashSet<Long>(Arrays.asList(cod));
+		        List<GeradorFluxoDTO> dtos = pdvService.obterGeradoresFluxoHistoricoTitularidadePDV(idPdv, codigosGeradores);
+		        listaDescricao = new ArrayList<ItemDTO<Long,String>>(dtos.size());
+		        for (GeradorFluxoDTO geradorFluxoDTO : dtos) {
+	                listaDescricao.add(new ItemDTO<Long, String>(geradorFluxoDTO.getCodigo(), geradorFluxoDTO.getDescricao()));
+	            }
+		    }
+	        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
+	  
+		   
 	}
 	
 	@Post
@@ -182,6 +184,8 @@ public class PdvController extends BaseController {
 	        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxoNotIn(cod));
 	    }		
         result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
+        // TODO ALMIR VERIFICAR SE É PRINCIPAL PARA BLOQUER O GERADOR DE FLUXO
+        
 	}
 	
 	
@@ -222,17 +226,20 @@ public class PdvController extends BaseController {
         result.use(Results.json()).from(getListaDescricao(pdvService.obterTipoAreaInfluencia()), "result").recursive().serialize();
     }
 
-	/**
-	 * Retorna uma lista de caracteristicas de segmentação do PDV
-	 * 
-	 * @return List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>>
-	 */
-	private List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>> getListaCaracteristica(){
+	                /**
+     * Retorna uma lista de caracteristicas de segmentação do PDV
+     * 
+     * @return List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>>
+     */
+	private List<ItemDTO<String, String>> getListaCaracteristica(){
 		
-		List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>> itens = new ArrayList<ItemDTO<TipoCaracteristicaSegmentacaoPDV,String>>();
+		//AJUSTE EMS-0159
+        // • Características: características possíveis do PDV (banca, livraria,
+        // revistaria, etc..)
+		List<ItemDTO<String, String>> itens = new ArrayList<ItemDTO<String,String>>();
 		
-		for( TipoCaracteristicaSegmentacaoPDV item: TipoCaracteristicaSegmentacaoPDV.values()) {
-			itens.add(new ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>(item, item.getDescricao()));
+		for( TipoPontoPDV item: pdvService.obterTiposPontoPDV()) {
+			itens.add(new ItemDTO<String, String>(item.getDescricao(), item.getDescricao()));
 		}
 		
 		return itens;
@@ -310,15 +317,16 @@ public class PdvController extends BaseController {
 		return itens;
 	}
 	
-	/**
-	 * Lista os PDVS associados à cota ou ao Histórico de titularidade da cota
-	 * de acordo com o modo em que a tela está operando
-	 * @param idCota Identificador da cota
-	 * @param idHistorico identificador do histórico
-	 * @param modoTela modo em que a tela está operando
-	 * @param sortname nome da coluna para ordenação 
-	 * @param sortorder sentido da ordenação
-	 */
+	                /**
+     * Lista os PDVS associados à cota ou ao Histórico de titularidade da cota
+     * de acordo com o modo em que a tela está operando
+     * 
+     * @param idCota Identificador da cota
+     * @param idHistorico identificador do histórico
+     * @param modoTela modo em que a tela está operando
+     * @param sortname nome da coluna para ordenação
+     * @param sortorder sentido da ordenação
+     */
 	@Post
 	@Path("/consultar")
 	public void consultarPDVs(Long idCota, Long idHistorico, ModoTela modoTela, String sortname, String sortorder){
@@ -396,7 +404,7 @@ public class PdvController extends BaseController {
 		
 		pdvService.excluirPDV(idPdv);
 	
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 		
@@ -489,31 +497,33 @@ public class PdvController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo Expositor deve ser informado!");
 		}
 		
-		@SuppressWarnings("unchecked")
-		List<EnderecoAssociacaoDTO> listaEnderecosExibicao = 
-				(List<EnderecoAssociacaoDTO>) httpSession.getAttribute(LISTA_ENDERECOS_EXIBICAO);
-		
-		if(listaEnderecosExibicao == null || listaEnderecosExibicao.isEmpty()){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre ao menos um endereço para o PDV.");
-		}    
-		
-		boolean enderecoPdvCadastrado = false;
-		
-		for (EnderecoAssociacaoDTO item : listaEnderecosExibicao){
-			
-			if (item.getTipoEndereco()!=null){
-				
-				enderecoPdvCadastrado = true;
-				
-				break;
-			}
-		}
-		
-		if (!enderecoPdvCadastrado){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Altere ao menos um endereço e defina seu tipo para o PDV.");
-		}
+		 @SuppressWarnings("unchecked")
+         List<EnderecoAssociacaoDTO> listaEnderecosExibicao = 
+                         (List<EnderecoAssociacaoDTO>) httpSession.getAttribute(LISTA_ENDERECOS_EXIBICAO);
+         
+         if(listaEnderecosExibicao == null || listaEnderecosExibicao.isEmpty()){
+                 
+            throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre ao menos um endereço para o PDV.");
+         }    
+         
+         boolean enderecoPdvCadastrado = false;
+         
+         for (EnderecoAssociacaoDTO item : listaEnderecosExibicao){
+                 
+                 if (item.getTipoEndereco()!=null){
+                         
+                         enderecoPdvCadastrado = true;
+                         
+                         break;
+                 }
+         }
+         
+         if (!enderecoPdvCadastrado){
+                 
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Altere ao menos um endereço e defina seu tipo para o PDV.");
+         }
+         
 		
 		pdvDTO.setImagem((FileInputStream) httpSession.getAttribute(IMAGEM_PDV));
 		
@@ -529,7 +539,7 @@ public class PdvController extends BaseController {
 			
 			this.httpSession.setAttribute(EnderecoController.ENDERECO_PENDENTE, Boolean.FALSE);
 		
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+            result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 					"result").serialize();
 			
 		}catch (EnderecoUniqueConstraintViolationException e) {
@@ -616,8 +626,8 @@ public class PdvController extends BaseController {
 	@Path("/adicionarPeriodo")
 	public void adicionarPeriodo(List<PeriodoFuncionamentoDTO> periodos, PeriodoFuncionamentoDTO novoPeriodo){		
 		
-		if(novoPeriodo.getTipoPeriodoFuncionamentoPDV() == null) 
-			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de período deve ser selecionado.");
+        if (novoPeriodo == null || novoPeriodo.getTipoPeriodoFuncionamentoPDV() == null)
+            throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de período deve ser selecionado.");
 		
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
@@ -632,21 +642,18 @@ public class PdvController extends BaseController {
 		if( !TipoPeriodoFuncionamentoPDV.VINTE_QUATRO_HORAS.getDescricao().equals(novoPeriodo.getNomeTipoPeriodo()) ) {
  		
 			if(novoPeriodo.getInicio() == null || novoPeriodo.getInicio().trim().isEmpty()) {
-				throw new ValidacaoException(
-						TipoMensagem.WARNING,"Horário de início não foi preenchido corretamente.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "Horário de início não foi preenchido corretamente.");
 			}
 	
 			if(novoPeriodo.getFim() == null || novoPeriodo.getFim().trim().isEmpty()) {
-				throw new ValidacaoException(
-						TipoMensagem.WARNING,"Horário de términio não foi preenchido corretamente.");
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Horário de términio não foi preenchido corretamente.");
 			}
 			
 			validarHorario(novoPeriodo);
 		} else {
-			if(novoPeriodo!=null) {
-				novoPeriodo.setInicio(null);
-				novoPeriodo.setFim(null);
-			}
+            novoPeriodo.setInicio(null);
+            novoPeriodo.setFim(null);
 		}
 		
 		pdvService.validarPeriodos(periodos);
@@ -698,13 +705,13 @@ public class PdvController extends BaseController {
 			Date fim = DateUtil.parseData(novoPeriodo.getFim(), "HH:mm");
 						
 			if(DateUtil.isDataInicialMaiorDataFinal(inicio, fim)) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Hora de início deve ser menor que de fim.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "Hora de início deve ser menor que de fim.");
 			}
 			
 		} catch(ValidacaoException ve) {
 			throw ve;
 		}catch (Exception e) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Horário inválido.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Horário inválido.");
 		}
 		
 		
@@ -913,13 +920,13 @@ public class PdvController extends BaseController {
 		return (enderecoPendente==null || !enderecoPendente);
 	}
 	
-	/**
-	 * Carrega endereços ligados ao PDV e Cota
-	 * Dados serão utilizados pelo componente de Endereço
-	 * 
-	 * @param idPdv - Id do PDV
-	 * @param idCota - Id da Cota
-	 */
+	                /**
+     * Carrega endereços ligados ao PDV e Cota Dados serão utilizados pelo
+     * componente de Endereço
+     * 
+     * @param idPdv - Id do PDV
+     * @param idCota - Id da Cota
+     */
 	private void carregarEnderecosPDV(Long idPdv, Long idCota) {
 		
 		if (this.isNotEnderecoPendente()){
@@ -940,30 +947,28 @@ public class PdvController extends BaseController {
     /**
      * Carrega os endereços do histórico de titularidade do PDV
      * 
-     * @param idPdv
-     *            identificador do PDV
+     * @param idPdv identificador do PDV
      */
 	private void carregarEnderecosHistoricoTitularidadePDV(Long idPdv) {
 	    List<EnderecoAssociacaoDTO> enderecos = pdvService.obterEnderecosHistoricoTitularidadePDV(idPdv);
 	    armazenarEnderecosSessao(enderecos);
 	}
 	
-	 /**
+	                 /**
      * Carrega os telefones do histórico de titularidade do PDV
      * 
-     * @param idPdv
-     *            identificador do PDV
+     * @param idPdv identificador do PDV
      */
 	private void carregarTelefonesHistoricoTitularidade(Long idPdv) {
 	    List<TelefoneAssociacaoDTO> telefones = pdvService.obterTelefonesHistoricoTitularidadePDV(idPdv);
 	    armazenarTelefonesSessao(telefones);
 	}
 		
-	/**
-	 * Carrega dados  de Telefone e Endereço da cota para novo PDV
-	 * 
-	 * @param idCota - Id da Cota
-	 */
+	                /**
+     * Carrega dados de Telefone e Endereço da cota para novo PDV
+     * 
+     * @param idCota - Id da Cota
+     */
 	@Post
 	@Path("/novo")
 	public void carregarDadosNovoPdv(Long idCota) {
@@ -977,11 +982,12 @@ public class PdvController extends BaseController {
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}
 	
-	/**
-	 * Recarrega os endereços e telefones adicionados pelo cadastro de pdv para mesma pessoa.
-	 * 
-	 * @param idCota
-	 */
+	                /**
+     * Recarrega os endereços e telefones adicionados pelo cadastro de pdv para
+     * mesma pessoa.
+     * 
+     * @param idCota
+     */
 	@Post
 	public void recarregarEnderecoTelefoneCota(Long idCota){
 		

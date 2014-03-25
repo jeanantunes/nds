@@ -13,6 +13,8 @@ import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0135InputItem;
 import br.com.abril.nds.integracao.model.canonic.EMS0136Input;
+import br.com.abril.nds.integracao.model.canonic.EMS0140Input;
+import br.com.abril.nds.integracao.model.canonic.EMS0140InputItem;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentDetail;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentMaster;
@@ -34,7 +36,9 @@ public enum InterfaceEnum {
 	EMS0128(128L, null, EMS0128Input.class, TipoInterfaceEnum.DB),
 	EMS0134(134L, null, null),
 	EMS0135(135L, null, EMS0135InputItem.class, EMS0135Input.class, TipoInterfaceEnum.DETALHE_INLINE),
+	EMS0140(140L, null, EMS0140InputItem.class, EMS0140Input.class, TipoInterfaceEnum.DETALHE_INLINE),
 	EMS0136(136L, null, EMS0136Input.class),
+	EMS0137(137L, null, null, TipoInterfaceEnum.DB),
 	EMS0138(128L, null, null, TipoInterfaceEnum.DB),
 	EMS0185(185L, null, null);
 

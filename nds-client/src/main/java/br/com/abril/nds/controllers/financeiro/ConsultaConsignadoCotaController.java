@@ -3,7 +3,9 @@ package br.com.abril.nds.controllers.financeiro;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,6 +27,7 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ConsultaConsignadoCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
@@ -81,26 +84,40 @@ public class ConsultaConsignadoCotaController extends BaseController {
 	@Post
 	@Path("/buscarTotalGeralCota")
 	public void buscarTotalGeralCota(FiltroConsultaConsignadoCotaDTO filtro){
-		
+	    
 		if(filtro.getIdCota() != null){
 			cota = obterCota(filtro.getIdCota().intValue());
 			if(cota == null){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cota inesxistente.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente.");
 			}
 			filtro.setIdCota(cota.getId());			
 		}
 		
-		if(filtro.getIdFornecedor() == -1 || filtro.getIdFornecedor() == 0){
+		Map<String, Object> mapaResultado = new HashMap<String, Object>();
+		
+		List<TotalConsultaConsignadoCotaDetalhado> totaisFornecedores = null;
+		
+		BigDecimal totalGeral = BigDecimal.ZERO;
+		
+		if (filtro.getIdFornecedor() == -1) {
+			
 			filtro.setIdFornecedor(null);
+			
+			totaisFornecedores = 
+				this.consultaConsignadoCota.buscarTotalDetalhado(filtro);
+			
+			for(TotalConsultaConsignadoCotaDetalhado tt : totaisFornecedores) {
+			    totalGeral = totalGeral.add(tt.getTotal());
+			}
+			
+			mapaResultado.put("totaisFornecedores", totaisFornecedores);
+		} else {
+		    totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
 		}
 		
-		BigDecimal totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
-		String totalFormatado = "";
-		
-		totalFormatado = CurrencyUtil.formatarValor(totalGeral);
-		
-		this.result.use(Results.json()).from(totalFormatado, "result").recursive().serialize();
-		
+		mapaResultado.put("totalGeral", CurrencyUtil.formatarValor(totalGeral));
+
+		this.result.use(CustomJson.class).put("result", mapaResultado).serialize();
 	}
 	
 	@Post
@@ -126,8 +143,12 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		html.append("<table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>");
 		List<TotalConsultaConsignadoCotaDetalhado> listaGeralDetalhado = this.consultaConsignadoCota.buscarTotalDetalhado(filtro);
 		int cont = 0;
+		
+		BigDecimal tt = BigDecimal.ZERO;
+		
 		for(TotalConsultaConsignadoCotaDetalhado total: listaGeralDetalhado){
-			html.append("<tr>");
+			tt = tt.add(total.getTotal());
+		    html.append("<tr>");
 			if(cont==0){
 				html.append("<td width='71'><strong>Total:</strong></td>");				
 			}else{
@@ -137,9 +158,10 @@ public class ConsultaConsignadoCotaController extends BaseController {
 			html.append("<td width='60' align='right'><strong>"+CurrencyUtil.formatarValor(total.getTotal())+"</strong></td>");
 			html.append("</tr>");
 			cont++;			
+			
 		}
-		BigDecimal totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
-		String totalFormatado = CurrencyUtil.formatarValor(totalGeral);
+		
+		String totalFormatado = CurrencyUtil.formatarValor(tt);
 		
 		html.append("<tr> ");
 		html.append("<td style='border-top:1px solid #000;'><strong>Total Geral:</strong></td>");
@@ -159,7 +181,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 	
 		cota = obterCota(filtro.getIdCota().intValue());
 		if(cota == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inesxistente.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente.");
 		}
 		filtro.setIdCota(cota.getId());
 				
@@ -281,8 +303,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 			filtro.setNomeFornecedor("Todos");
 		}
 		
-		if(filtro.getIdCota() != null
-				&& filtro.getIdFornecedor() == null) {
+		if(filtro.getIdCota() != null) {
 				
 			List<ConsultaConsignadoCotaDTO> listaConsignadoCota = 
 					this.consultaConsignadoCota.buscarConsignadoCota(filtro, false);
@@ -291,7 +312,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
-			FileExporter.to("consignado_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+			FileExporter.to("consignado_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 					listaConsignadoCota, ConsultaConsignadoCotaDTO.class, this.httpResponse);	
 			
 		}else{
@@ -303,7 +324,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
-			FileExporter.to("consignado_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+			FileExporter.to("consignado_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 					listaConsignadoCota, ConsultaConsignadoCotaPeloFornecedorDTO.class, this.httpResponse);
 			
 		}

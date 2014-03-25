@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -7,6 +8,7 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 
 
@@ -14,9 +16,10 @@ public interface GrupoService {
  
 	/**
 	 * Obtém todos os Grupos
+	 * @param includeHistory 
 	 * @return List<GrupoCota> grupos
 	 */
-	List<GrupoCotaDTO> obterTodosGrupos(String sortname, String sortorder) ;
+	List<GrupoCotaDTO> obterTodosGrupos(String sortname, String sortorder, boolean includeHistory) ;
 
 	void excluirGrupo(Long idGrupo);
 
@@ -25,12 +28,12 @@ public interface GrupoService {
 	 * 
 	 * @return
 	 */
-	List<CotaTipoDTO> obterCotaPorTipo(TipoCaracteristicaSegmentacaoPDV tipoCota, Integer page, Integer rp, String sortname, String sortorder);
+	List<CotaTipoDTO> obterCotaPorTipo(TipoDistribuicaoCota tipoCota, Integer page, Integer rp, String sortname, String sortorder);
 
 	/**
 	 * Obtém quantidade retornada pela consuta de cota por tipo
 	 */
-	int obterCountCotaPorTipo(TipoCaracteristicaSegmentacaoPDV tipoCota);
+	int obterCountCotaPorTipo(TipoDistribuicaoCota tipoCota);
 
 	/**
 	 * Retorna Municipios e a quantidade de cotas para cada - resultado paginado
@@ -88,7 +91,9 @@ public interface GrupoService {
 	Set<Long> obterCotasDoGrupo(Long idGrupo);
 
 	
-	Integer countTodosGrupos();
+	Integer countTodosGrupos(Date dataOperacao);
+
+    public abstract Date getDataInicioProximaSemanaSemCE();
 
 
 

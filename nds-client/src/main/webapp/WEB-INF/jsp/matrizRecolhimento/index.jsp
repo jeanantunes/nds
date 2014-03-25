@@ -1,49 +1,49 @@
 	<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
-	
+
 	<head>
-		
+
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-		
+
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamento.js"></script>
 
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamentoRecolhimento.js"></script>
-	
+
 		<script type="text/javascript">
 
 			var pathTela = "${pageContext.request.contextPath}";
 
 			var balanceamento = new Balanceamento(pathTela, "balanceamento");
-			
+
 			$(function() {
 				balanceamentoRecolhimentoController.inicializar(balanceamento);
 				bloquearItensEdicao(balanceamentoRecolhimentoController.workspace);
 			});
-			
+
 		</script>
-		
+
 	</head>
-	
+
 	<body>
-		
+
 		<input id="utilizaSedeAtendida" type="hidden" value="false">
-		
+
 		<div class="areaBts resumoPeriodo" style="display: none;">
 		<div class="area">
-			
+
 			<span class="bt_novos" >
 				<a isEdicao="true" id="linkConfiguracaoInicial" title="Voltar Configuração Inicial" href="javascript:;">
 					<img src="${pageContext.request.contextPath}/images/bt_devolucao.png" border="0" hspace="5" />
 				</a>
 			</span>
-			
-			
-			
+
+
+
 			<span class="bt_novos" >
 				<a isEdicao="true" id="linkEditor" href="javascript:;" title="Balancear Editor">
 					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_add_novo.gif">
 				</a>
 			</span>
-			
+
 			<span class="bt_novos" >
 				<a isEdicao="true" id="linkValor" href="javascript:;" title="Balancear Volume / Valor">
 					<img style="width: 16px;height: 16px;" border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_financeiro.png">
@@ -54,25 +54,18 @@
 					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
 				</a>
 			</span>
-			
-			<span class="bt_novos" >
-				<a isEdicao="true" id="linkConfirmar" href="javascript:;" title="Confirmar balanceamento">
-					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
-				</a>
-			</span>
-		
+
 			<span class="bt_novos" >
 				<a id="linkMatrizFornecedor" title="Matriz Fornecedor" href="javascript:;" onclick="balanceamentoRecolhimentoController.exibirMatrizFornecedor();">
 					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_detalhes.png">
 				</a>
 			</span>
-			
+
 			<span class="bt_novos hidden_buttons" style="display:none;">
 				<a isEdicao="true" id="linkReprogramar" href="javascript:;" title="Reprogramar" >
 					<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
 				</a>
 			</span>
-			
 			<span class="bt_arq" >
   					<a href="${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
@@ -84,62 +77,73 @@
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0"/>
 				</a>
 			</span>
-			
-			
+
+			<span class="bt_novos" >
+				<a isEdicao="true" id="linkConfirmar" href="javascript:;"  title="Confirmar balanceamento">
+					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+				</a>
+			</span>
+
+			<span class="bt_novos" >
+				<a isEdicao="true" id="linkReabrirMatriz" title="Reabrir Matriz">
+					<img border="0" hspace="5" onclick='balanceamentoRecolhimentoController.obterDatasConfirmadasParaReaberturaPost();' src="${pageContext.request.contextPath}/images/ico_reopen.gif">
+				</a>
+			</span>
+
 		</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
-		
+
 		<form id="form-confirm" >
 		<div id="dialog-confirm" title="Balanceamento da Matriz de Recolhimento">
-			
+
 			<jsp:include page="../messagesDialog.jsp" />
-			
+
 			<p>Ao prosseguir com essa ação você perderá seus dados não salvos ou confirmados. Deseja prosseguir?</p>
-			   
+
 		</div>
 		</form>
-		
+
 		<form id="form-confirm-config-inicial">
 		<div id="dialog-confirm-config-inicial" title="Balanceamento da Matriz de Recolhimento" style="display:none;">
-			
+
 			<jsp:include page="../messagesDialog.jsp" />
-			
+
 			<p>Ao voltar a configuração inicial, você perdará os dados salvos. Deseja prosseguir?</p>
-			   
+
 		</div>
 		</form>
-		
+
 		<form id="form-alertAceite">
-		
+
 			<div id="alertAceite" title="Balanceamento da Matriz de Recolhimento" style="display:none;">
-				
+
 				<jsp:include page="../messagesDialog.jsp" />
-				
+
 				<p id="mensagemValidacaoReprogramacao" />
 			</div>
-		
+
 		</form>
-		
+
 		<form id="form-ProdutosNaoBalanceadosAposConfirmacaoMatriz">
 			<div id="dialogProdutosNaoBalanceadosAposConfirmacaoMatriz" title="Balanceamento da Matriz de Recolhimento" style="display:none;">
 				<jsp:include page="../messagesDialog.jsp" />
 				<p>Os seguintes produtos não puderam ser balanceados. Todas as datas já estão confirmadas.</p>
 				<br>
 				<p><span id="descdialogProdutosNaoBalanceadosAposConfirmacaoMatriz"></span></p>
-				<p>Deseja que os produtos sejam processados na semana seguinte?</p>   
+				<p>Deseja que os produtos sejam processados na próxima data de recolhimento disponível?</p>   
 			</div>
 		</form>
-		
-		
-		
+
+
+
 		<form id="form-confirm-balanceamento">
 		<div id="dialog-confirm-balanceamento" title="Balanceamento" style="display:none;">
-		    
+
 		    <jsp:include page="../messagesDialog.jsp">
 				<jsp:param value="dialog-confirmar" name="messageDialog"/>
 			</jsp:include>
-			
+
 		    <fieldset style="width:250px!important;">
 		    	<legend>Confirmar Balanceamento</legend>
 
@@ -149,12 +153,29 @@
 		    </fieldset>
 		</div>
 		</form>
-		
+
+		<form id="form-reabrir-matriz">
+		<div id="dialog-reabrir-matriz" title="Balanceamento" style="display:none;">
+
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialog-reabertura" name="messageDialog"/>
+			</jsp:include>
+
+		    <fieldset style="width:250px!important;">
+		    	<legend>Reabrir Matrizes Confirmadas</legend>
+
+		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableReaberturaMatrizConfirmada">
+		        </table>
+
+		    </fieldset>
+		</div>
+		</form>
+
 		<form id="formReprogramarBalanceamento">
 		<div id="dialogReprogramarBalanceamento" title="Reprogramar Recolhimentos">
-		    
+
 		    <jsp:include page="../messagesDialog.jsp" />
-		    
+
 		    <p>
 			    <strong>Nova Data:</strong>
 			    <input name="novaDataRecolhimento" type="text"
@@ -162,13 +183,13 @@
 		    </p>
 		</div>
 		</form>
-		
+
 		<!-- Filtro de Pesquisa -->
-		 
+
 		<fieldset class="fieldFiltro" style="margin-top: 0px;">
-		
+
 			<legend>Pesquisar Balanceamento da Matriz de Recolhimento </legend>
-			
+
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td width="76">Fornecedor:</td>
@@ -211,67 +232,67 @@
 				</tr>
 			</table>
 		</fieldset>
-		
+
 		<div class="linha_separa_fields">&nbsp;</div>
-		
+
 		<!--  Resumo do Período -->
-		
+
 		<fieldset class="classFieldset resumoPeriodo" id="resumoPeriodo" style="display: none;">
-		
+
 			<legend>Resumo do Período</legend>
-			
+
 			<div style="width: 950px; overflow-x: auto;">
 				<table id="tableResumoPeriodoBalanceamento" name="tableResumoPeriodoBalanceamento" width="100%" border="0" cellspacing="2" cellpadding="2">
 				</table>
 			</div>
-			
+
 			<!-- Botões de Ação -->
-			
+
 			<table width="950" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td width="115">
-						
+
 					</td>
 					<td width="117">
-						
+
 					</td>
 					<td width="296">
 						<!-- Removidos Botões Confirmar/Editor/Valor/Salvar -->
 					</td>
-					
+
 					<td width="207">
-						
+
 					</td>
-					
+
 					<td width="215">
-						
+
 					</td>
 				</tr>
 			</table>
 		</fieldset>
-		
+
 		<!-- Balanceamento -->
-		
+
 		<fieldset id="fieldsetGrids" class="classFieldset" style="width: 1073px!important;">
-		
+
 			<legend>Balanceamento da Matriz de Recolhimento </legend>
-			
+
 			<div class="grids" style="display: none;">
-	  						<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right;">
-							    <a id="linkFechar" href="javascript:;" onclick="balanceamentoRecolhimentoController.fecharGridBalanceamento();">
-								    <img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
-									     hspace="5" border="0" />Fechar
-							    </a>
-						    </span>
-	
-	         						
+				<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right;">
+					<a id="linkFechar" href="javascript:;" onclick="balanceamentoRecolhimentoController.fecharGridBalanceamento();">
+						<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
+							 hspace="5" border="0" />Fechar
+					</a>
+				</span>
+
+
 				<br clear="all" style="margin-top: 20px;" />
-				
+
 				<input type="hidden" id="dataBalanceamentoHidden" />
-				
+
 				<!-- GRID -->
 				<table class="balanceamentoGrid"></table>
-				
+
 				<table width="950" border="0" cellspacing="2" cellpadding="2">
 					<tr>
 						<td width="152"></td>
@@ -287,13 +308,13 @@
 				</table>
 			</div>
 		</fieldset>
-		
+
 		<form id="form-detalhe-produto">
 		<div id="dialog-detalhe-produto" title="Detalhes do Produto" style="display:none;">
     		<jsp:include page="../produtoEdicao/detalheProduto.jsp" />
 		</div>
 		</form>
-		
+
 		<div class="linha_separa_fields">&nbsp;</div>
-		
+
 	</body>

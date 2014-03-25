@@ -4,11 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
@@ -31,7 +29,6 @@ import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -50,7 +47,7 @@ import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ProdutoEdicaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -387,148 +384,67 @@ public class MapaAbastecimentoController extends BaseController {
 
 			switch(filtro.getTipoConsulta()) {
 			case BOX:
-				filtro.getPaginacao().setQtdResultadosPorPagina(null);
-				filtro.getPaginacao().setPaginaAtual(null);
-
-				filtro.getPaginacao().setSortColumn("nomeEdicao");
-				filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
-				TreeMap<String, ProdutoMapaDTO> produtosMapaBox = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
-
-				boolean cotasSemRoteirizacao = false;
-				List<String> arrayCotasSemRoteirizacaoBox = new ArrayList<String>();
-				Set<Entry<String, ProdutoMapaDTO>> entrySet = produtosMapaBox.entrySet();
-				java.util.Iterator<Entry<String, ProdutoMapaDTO>> iterator = entrySet.iterator();
-
-
-				while(iterator.hasNext()) {
-					Entry<String, ProdutoMapaDTO> next = iterator.next();
-					if(next.getValue() == null) {
-						cotasSemRoteirizacao = true;
-
-						arrayCotasSemRoteirizacaoBox.add(next.getKey());
-					}
-				}
-
-				if(cotasSemRoteirizacao == true) {
-					result.include("result", arrayCotasSemRoteirizacaoBox);
+				filtro.setPaginacao(null);
+				
+				setaNomeParaImpressao();
+				
+				if (filtro.getQuebraPorCota()){
+				    result.forwardTo(MapaAbastecimentoController.class).impressaoPorBoxQuebraCota(filtro);
 				} else {
-					setaNomeParaImpressao();
-					result.forwardTo(MapaAbastecimentoController.class).impressaoPorBox(produtosMapaBox);
+				    result.forwardTo(MapaAbastecimentoController.class).impressaoPorBox(filtro);
 				}
-				break;
-
+			break;
 			case ROTA:
-				filtro.getPaginacao().setQtdResultadosPorPagina(null);
-				filtro.getPaginacao().setPaginaAtual(null);
-
-				List<String> arrayCotasSemRoteirizacaoRota = new ArrayList<String>();
-				HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> produtosMapaRota = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
-
-				if(produtosMapaRota == null) {
-					List<ProdutoAbastecimentoDTO> boxProdutoRota = this.mapaAbastecimentoService.obterMapaAbastecimentoPorBoxRota(filtro);
-
-					for(ProdutoAbastecimentoDTO produtoCotaRota : boxProdutoRota) {
-						if((produtoCotaRota.getCodigoBox() == null || produtoCotaRota.getCodigoRota() == null) &&
-								! arrayCotasSemRoteirizacaoRota.contains(produtoCotaRota.getCodigoCota() + " - " + produtoCotaRota.getNomeCota())) {
-							arrayCotasSemRoteirizacaoRota.add(produtoCotaRota.getCodigoCota() + " - " + produtoCotaRota.getNomeCota());
-						}
-					}
-					result.include("result", arrayCotasSemRoteirizacaoRota);
-				} else {
-					result.forwardTo(MapaAbastecimentoController.class).impressaoPorRota(filtro);
-				}
-				break;
+				
+			    if (filtro.getQuebraPorCota()){
+			        result.forwardTo(MapaAbastecimentoController.class).impressaoPorRotaQuebraCota(filtro);
+			    } else {
+			        result.forwardTo(MapaAbastecimentoController.class).impressaoPorRota(filtro);
+			    }
+				
+			break;
 			case COTA:
-				filtro.getPaginacao().setQtdResultadosPorPagina(null);
-				filtro.getPaginacao().setPaginaAtual(null);
-
-				List<String> arrayCotasSemRoteirizacaoCota = new ArrayList<String>();
-				HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> produtosMapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
-				if(produtosMapaCota == null) {
-
-					arrayCotasSemRoteirizacaoCota.add(filtro.getCodigoCota() + " - " + filtro.getNomeCota());
-
-					result.include("result", arrayCotasSemRoteirizacaoCota);
-				} else {
-					setaNomeParaImpressao();
-					result.forwardTo(MapaAbastecimentoController.class).impressaoPorCota(filtro);
-				}
-				break;
+				filtro.setPaginacao(null);
+				setaNomeParaImpressao();
+				result.forwardTo(MapaAbastecimentoController.class).impressaoPorCota(filtro);
+			break;
 			case PRODUTO:
 
 				if(filtro.getEdicaoProduto()!=null) {	
 
-					filtro.getPaginacao().setQtdResultadosPorPagina(null);
-					filtro.getPaginacao().setPaginaAtual(null);
-
+					filtro.setPaginacao(null);
+					
 					ProdutoEdicaoMapaDTO produtoEdicaoMapaEdicaoProduto = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
 
-					if( produtoEdicaoMapaEdicaoProduto.getCotasSemRoteirizacao() != null &&  !produtoEdicaoMapaEdicaoProduto.getCotasSemRoteirizacao().isEmpty()){
-						result.include("result", produtoEdicaoMapaEdicaoProduto.getCotasSemRoteirizacao());
-					} else {
-						result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(produtoEdicaoMapaEdicaoProduto);
-					}
+					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(produtoEdicaoMapaEdicaoProduto);
 
 				} else {
-
-					List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
-					List<ProdutoAbastecimentoDTO> listaMovimentoProdutoEdicao = this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoEdicao(filtro);
-
-					List<String> arrayCotasSemRoteirizacaoProduto= new ArrayList<String>();
-					for(ProdutoAbastecimentoDTO movimentoProdutoEdicao : listaMovimentoProdutoEdicao) {
-						if(movimentoProdutoEdicao.getCodigoBox() == null) {
-							//arrayCotasSemRoteirizacaoProduto.add(movimentoProdutoEdicao.getCota().getNumeroCota() + " - " + movimentoProdutoEdicao.getCota().getPessoa().getNome());
-						}
-					}
-
-
-					if(! arrayCotasSemRoteirizacaoProduto.isEmpty()) {
-						result.include("result", arrayCotasSemRoteirizacaoProduto);
-					} else {
-						result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto(filtro);
-					}	
+					
+					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto(filtro);
 				}
-				break;
-				
+			break;	
 			case PROMOCIONAL:
+				filtro.setPorRepartePromocional(true);
 				result.include("isPromocional", true);
 				result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto(filtro);
 								
-				break;
+			break;
 			case PRODUTO_ESPECIFICO:
-				filtro.getPaginacao().setQtdResultadosPorPagina(null);
-				filtro.getPaginacao().setPaginaAtual(null);
-
+				filtro.setPaginacao(null);
+				
 				ProdutoEdicaoMapaDTO produtoEdicaoMapaEspecifico = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
 
-				if( produtoEdicaoMapaEspecifico.getCotasSemRoteirizacao() != null && !produtoEdicaoMapaEspecifico.getCotasSemRoteirizacao().isEmpty()){
-					result.include("result", produtoEdicaoMapaEspecifico.getCotasSemRoteirizacao());
-				} else {
-					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(produtoEdicaoMapaEspecifico);
-				}
+				result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(produtoEdicaoMapaEspecifico);
 
-				break;
+			break;
 			case PRODUTO_X_COTA:
-				List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaDeAbastecimentoPorProdutoQuebrandoPorCota(filtro);
-				List<String> arrayCotasNaoRoteirizadas = new ArrayList<String>();
-				for(ProdutoAbastecimentoDTO cotaMapa : lista ) {
-					Cota cota = this.cotaService.obterPorNumeroDaCota(cotaMapa.getCodigoCota());
-
-					if(cota.getBox() == null) {
-						arrayCotasNaoRoteirizadas.add(cotaMapa.getCodigoCota() + " - " + cotaMapa.getNomeCota());
-					}
-				}
-
-				if(!arrayCotasNaoRoteirizadas.isEmpty()) {	
-					result.include("result", filtro.getCodigoCota() + " - " + filtro.getNomeCota());
-				} else {
-					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoQuebraCota(filtro);
-				}
-				break;	
+				
+				result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoQuebraCota(filtro);
+				
+			break;	
 			case ENTREGADOR:
 				
-				filtro.getPaginacao().setQtdResultadosPorPagina(null);
-				filtro.getPaginacao().setPaginaAtual(null);
+				filtro.setPaginacao(null);
 				
 				result.forwardTo(MapaAbastecimentoController.class).impressaoPorEntregador(filtro);
 				break;
@@ -542,27 +458,48 @@ public class MapaAbastecimentoController extends BaseController {
 
 	}
 
-	public void impressaoPorBox(TreeMap<String, ProdutoMapaDTO> produtosMapa) {
+	public void impressaoPorBox(FiltroMapaAbastecimentoDTO filtro) {
+	    
+	    Map<String, ProdutoMapaDTO> produtosMapaBox = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
+	    
+		result.include("produtosMapa",produtosMapaBox.values());
 
-		result.include("produtosMapa",produtosMapa.values());
-
+	}
+	
+	public void impressaoPorBoxQuebraCota(FiltroMapaAbastecimentoDTO filtro) {
+	    
+	    Map<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>> produtosMapaBox = 
+	            mapaAbastecimentoService.obterMapaDeImpressaoPorBoxQuebraPorCota(filtro);
+	    
+	    result.include("produtosMapa",produtosMapaBox);
+	    result.include("dataLancamento", filtro.getDataLancamento());
 	}
 
 	public void impressaoPorRota(FiltroMapaAbastecimentoDTO filtro) {
 
-		filtro.getPaginacao().setQtdResultadosPorPagina(null);
-		filtro.getPaginacao().setPaginaAtual(null);
+		filtro.setPaginacao(null);
 
-		HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
+		Map<Integer, Map<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
 		setaNomeParaImpressao();
 		result.include("mapa", produtosMapa);
 
 	}
+	
+	public void impressaoPorRotaQuebraCota(FiltroMapaAbastecimentoDTO filtro) {
+
+	    filtro.setPaginacao(null);
+
+	    Map<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>> produtosMapa = 
+                mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRotaQuebraCota(filtro);
+        
+        setaNomeParaImpressao();
+        result.include("mapa", produtosMapa);
+        result.include("dataLancamento", filtro.getDataLancamento());
+    }
 
 	public void impressaoPorProduto(FiltroMapaAbastecimentoDTO filtro) {
 
-		filtro.getPaginacao().setQtdResultadosPorPagina(null);
-		filtro.getPaginacao().setPaginaAtual(null);
+		filtro.setPaginacao(null);
 
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
 
@@ -573,7 +510,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 	public void impressaoPorEntregador(FiltroMapaAbastecimentoDTO filtro) {
 
-		HashMap<Long, MapaProdutoCotasDTO> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorEntregador(filtro);
+		Map<Long, MapaProdutoCotasDTO> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorEntregador(filtro);
 
 		Entregador entregador = entregadorService.buscarPorId(filtro.getIdEntregador());
 
@@ -591,12 +528,6 @@ public class MapaAbastecimentoController extends BaseController {
 
 	public void impressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
 
-		filtro.getPaginacao().setQtdResultadosPorPagina(null);
-		filtro.getPaginacao().setPaginaAtual(null);
-
-		filtro.getPaginacao().setSortColumn("nomeEdicao");
-		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
-
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
 		setaNomeParaImpressao();
 		result.include("mapa", mapaCota);
@@ -611,8 +542,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 	public void impressaoPorProdutoQuebraCota(FiltroMapaAbastecimentoDTO filtro) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {	
 
-		filtro.getPaginacao().setQtdResultadosPorPagina(null);
-		filtro.getPaginacao().setPaginaAtual(null);
+		filtro.setPaginacao(null);
 
 		MapaProdutoCotasDTO produtoCotaMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
 		setaNomeParaImpressao();
@@ -727,18 +657,20 @@ public class MapaAbastecimentoController extends BaseController {
 
 	private void popularGridPorProduto(FiltroMapaAbastecimentoDTO filtro) {
 
-		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorCota(filtro);
+		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorProdutoEdicao(filtro);
 
 		if (lista == null || lista.isEmpty()) {
 			mostrarMensagemListaVazia();
 		}
 
-		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorCota(filtro);
+		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorProdutoEdicao(filtro);
 
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
 	}
 	
 	private void popularGridPorRepartePromocional(FiltroMapaAbastecimentoDTO filtro) {
+		
+		filtro.setPorRepartePromocional(true);
 		
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorCota(filtro);
 
@@ -752,7 +684,9 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 
 	private void popularGridPorProdutoEspecifico(FiltroMapaAbastecimentoDTO filtro) {
-
+		
+		filtro.setProdutoEspecifico(true);
+		
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorProdutoEdicao(filtro);
 
 		if (lista == null || lista.isEmpty()) {

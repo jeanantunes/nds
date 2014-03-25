@@ -5,16 +5,21 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import com.google.common.base.Strings;
+
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.upload.XlsMapper;
 
 public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoDTO> {
 
@@ -23,56 +28,98 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	 */
 	private static final long serialVersionUID = 1L;
 	
+    // Atributos que também são utilizados para a funcionalidade Add_em_lote
+
+	@XlsMapper(value="cod_produto_prodin")
+	private String codigoProduto;
+	
+	@XlsMapper(value="num_edicao")
+	private Long numeroEdicao;
+	
+	@XlsMapper(value="classificacao")
+	private String classificacao;
+	
+	@XlsMapper(value="pacote_padrao")
+	private Integer pacotePadrao;
+	
+	@XlsMapper(value="nome_comercial_produto")
+	private String nomeComercial;
+	
+	@XlsMapper(value="tipo_distribuicao")
+	private String lancamento;
+	
+	@XlsMapper(value="preco_previsto")
+	private String preco;
+	
+	@XlsMapper(value="data_lancamento_previsto")
+	private String dtLancPrevisto;
+	
+	@XlsMapper(value="data_recolhimento_previsto")
+	private String dtRecPrevisto;
+	
+	@XlsMapper(value="reparte_previsto")
+	private BigInteger repartePrevisto;
+	
+	@XlsMapper(value="reparte_promocional")
+	private BigInteger repartePromocional;
+	
+	@XlsMapper(value="parcial")
+	private String recolhimentoParcial;
+	
+	@XlsMapper(value="cod_barras")
+	private String codigoDeBarras;
+	
+	@XlsMapper(value="cod_corporativo")
+	private String codigoDeBarrasCorporativo;
+	
+	private BigDecimal precoPrevisto;
 	private Long id;
 	private Integer sequenciaMatriz;
-	private String codigoDeBarras;
-	private Long numeroEdicao;
 	private BigDecimal precoVenda;
 	private BigDecimal desconto;
 	private BigDecimal precoComDesconto;
-	private int pacotePadrao;
-	private int peb;
+	private Integer peb;
 	private BigDecimal precoCusto;
 	private Long peso;
-	private String codigoProduto;
+	private Long idProduto;
 	private PeriodicidadeProduto periodicidade;
 	private Integer numeroPeriodicidade;
-	
+	private TipoClassificacaoProduto tipoClassificacaoProduto;
+	private String tipoClassificacaoFormatado;
 	private String nomeProduto;
-	private String nomeComercial;
 	private GrupoProduto grupoProduto;
-	
 	private boolean possuiBrinde;
 	private String descricaoBrinde;
 	private Long idBrinde;
-	
 	private BigDecimal expectativaVenda;
 	private boolean permiteValeDesconto;
 	private boolean parcial;
+	private Integer periodo;
 	private Integer dia;
 	private Date dataRecolhimentoDistribuidor;
 	
-	// Usados na listagem de Edições:
+    // Usados na listagem de Edições:
 	private Date dataLancamento;
+    private Long idFornecedor;
 	private String nomeFornecedor;
 	private TipoLancamento tipoLancamento;
+	private StatusLancamento situacaoLancamento;
 	private String statusLancamento;
 	private String statusSituacao;
 	private String temBrinde;
+	private String status;
 	
-	// Campos para cadastrar uma nova Edição:
+    // Campos para cadastrar uma nova Edição:
 	// codigoProduto;
 	private String nomeComercialProduto;
 	private String fase;
 	private Integer numeroLancamento;	
-	// numeroEdicao; pacotePadrao;
-	private BigDecimal precoPrevisto;
+	// numeroEdicao; pacotePadrao; precoPrevisto
 	// precoVenda; (Real)
-	private BigInteger repartePrevisto;
-	private BigInteger repartePromocional;
-
+	// repartePrevisto; 
+	// repartePromocional
 	// codigoDeBarras
-	private String codigoDeBarrasCorporativo;
+	// codigoDeBarrasCorporativo
 	private String descricaoDesconto;
 	// desconto;
 	private String chamadaCapa;
@@ -85,16 +132,17 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String boletimInformativo;
 	
 	// Lancamento:
-	// tipoLancamento;
+	// tipoLancamento; 
 	private Date dataLancamentoPrevisto;
 	private Date dataRecolhimentoPrevisto;
 	private Date dataRecolhimentoReal;
 	private Integer semanaRecolhimento;
 	private Boolean origemInterface;
+	private Boolean lancamentoExcluido;
 	private String editor;
 	private String caracteristicaProduto;
 	
-	//Segmentação
+    // Segmentação
 	private ClasseSocial classeSocial;
 	private Sexo sexo;
 	private FaixaEtaria faixaEtaria;
@@ -110,6 +158,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String precoPrevistoFormatado;
 	
 	private ModoTela modoTela;
+
+	private String segmentacao;
+	
+	private Double venda;
+	private Double percentualVenda;
+	private Long reparteEstudo;
+	private Long tipoSegmentoProdutoId;
 	
 	public ProdutoEdicaoDTO() {};
 	
@@ -137,7 +192,8 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	 * Tipo de chamada de encalhe deste produtoEdicao
 	 */
 	private TipoChamadaEncalhe tipoChamadaEncalhe;
-	
+
+	private String dataRecolhimentoDistribuidorFormatada;
 	
 	public Long getId() {
 		return id;
@@ -168,7 +224,6 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	}
 	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
-		this.precoVendaFormatado = CurrencyUtil.formatarValor(precoVenda);
 	}
 	public BigDecimal getDesconto() {
 		return desconto;
@@ -176,16 +231,16 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
-	public int getPacotePadrao() {
+	public Integer getPacotePadrao() {
 		return pacotePadrao;
 	}
-	public void setPacotePadrao(int pacotePadrao) {
+	public void setPacotePadrao(Integer pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
 	}
-	public int getPeb() {
+	public Integer getPeb() {
 		return peb;
 	}
-	public void setPeb(int peb) {
+	public void setPeb(Integer peb) {
 		this.peb = peb;
 	}
 	public BigDecimal getPrecoCusto() {
@@ -247,6 +302,9 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	}
 	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
 		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+		if (dataRecolhimentoDistribuidor != null) {
+			this.dataRecolhimentoDistribuidorFormatada = DateUtil.formatarDataPTBR(dataRecolhimentoDistribuidor); 
+		}
 	}
 	public TipoChamadaEncalhe getTipoChamadaEncalhe() {
 		return tipoChamadaEncalhe;
@@ -272,7 +330,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 			this.dataLancamentoFormatada = DateUtil.formatarDataPTBR(dataLancamento); 
 		}
 	}
-
+	
 	/**
 	 * @return the nomeFornecedor
 	 */
@@ -311,10 +369,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	}
 	
 	public void setStatusLancamento(String statusLancamento) {
-		this.statusLancamento = "";
-		if (null != statusLancamento) {
-			this.statusLancamento = statusLancamento;
-		}
+		this.statusLancamento = statusLancamento;
 	}
 	
 	/**
@@ -323,6 +378,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public String getStatusSituacao() {
 		return this.statusSituacao;
 	}
+
+	public void setStatusSituacao(StatusLancamento statusSituacao) {
+		this.statusSituacao = "";
+    	if (null != statusSituacao) {
+	       this.statusSituacao = statusSituacao.getDescricao();
+    	}
+   }
 	
 	public void setStatusSituacao(String statusSituacao) {
 		this.statusSituacao = "";
@@ -339,7 +401,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 		return this.temBrinde;
 	}
 	public void setTemBrinde(Boolean temBrinde) {
-		this.temBrinde = temBrinde.booleanValue() ? "Sim" : "Não";
+        this.temBrinde = temBrinde.booleanValue() ? "Sim" : "Não";
 	}
 
 	/**
@@ -361,12 +423,26 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public BigDecimal getPrecoPrevisto() {
 		return precoPrevisto;
 	}
-	/**
+	
+	
+    public String getPreco() {
+        return preco;
+    }
+
+    
+    public void setPreco(String preco) {
+        this.preco = preco;
+        if(Strings.isNullOrEmpty(preco))
+            return;        
+        setPrecoPrevisto(BigDecimal.valueOf(Double.parseDouble(preco.replace(",", "."))));
+    }
+
+    /**
 	 * @param precoPrevisto the precoPrevisto to set
 	 */
 	public void setPrecoPrevisto(BigDecimal precoPrevisto) {
 		this.precoPrevisto = precoPrevisto;
-		this.precoPrevistoFormatado = CurrencyUtil.formatarValor(precoPrevisto);
+		this.precoPrevistoFormatado = CurrencyUtil.formatarValor(this.precoPrevisto);
 	}
 	/**
 	 * @return the dataLancamentoPrevisto
@@ -513,6 +589,15 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public void setOrigemInterface(Boolean origemInterface) {
 		this.origemInterface = origemInterface;
 	}
+	
+	public Boolean isLancamentoExcluido() {
+		return lancamentoExcluido;
+	}
+
+	public void setLancamentoExcluido(Boolean lancamentoExcluido) {
+		this.lancamentoExcluido = lancamentoExcluido;
+	}
+
 	/**
 	 * @return the descricaoDesconto
 	 */
@@ -736,13 +821,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	@Override
     public int compareTo(ProdutoEdicaoDTO o) {  
-        if (o.getNumeroEdicao() > this.getNumeroEdicao()) {  
-            return -1;  
-        } else if (o.getNumeroEdicao() < this.getNumeroEdicao()){  
-            return 1;  
-        } else {  
-            return 0;  
-        }  
+        return o.getNumeroEdicao().compareTo(this.getNumeroEdicao());
     }
 
 	public PeriodicidadeProduto getPeriodicidade() {
@@ -762,6 +841,147 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 		return qtdVendasFormatada;
 	}
 
+	public String getDataRecolhimentoDistribuidorFormatada() {
+		return dataRecolhimentoDistribuidorFormatada;
+	}
+
+	public void setDataRecolhimentoDistribuidorFormatada(
+			String dataRecolhimentoDistribuidorFormatada) {
+		this.dataRecolhimentoDistribuidorFormatada = dataRecolhimentoDistribuidorFormatada;
+	}
+
+	public String getSegmentacao() {
+		return segmentacao;
+	}
+
+	public void setSegmentacao(String segmentacao) {
+		this.segmentacao = segmentacao;
+	}
+
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
+	}
+
+	public Double getVenda() {
+		return venda;
+	}
+
+	public void setVenda(Double venda) {
+		this.venda = venda;
+	}
+
+	public Long getReparteEstudo() {
+		return reparteEstudo;
+	}
+
+	public void setReparteEstudo(Long reparteEstudo) {
+		this.reparteEstudo = reparteEstudo;
+	}
+
+	public Double getPercentualVenda() {
+		return percentualVenda;
+	}
+
+	public void setPercentualVenda(Double percentualVenda) {
+		this.percentualVenda = percentualVenda;
+	}
+
+	public Long getTipoSegmentoProdutoId() {
+		return tipoSegmentoProdutoId;
+	}
+
+	public void setTipoSegmentoProdutoId(Long tipoSegmentoProdutoId) {
+		this.tipoSegmentoProdutoId = tipoSegmentoProdutoId;
+	}
+
+	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
+		return tipoClassificacaoProduto;
+	}
+
+	public void setTipoClassificacaoProduto(TipoClassificacaoProduto tipoClassificacaoProduto) {
+		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
+		this.tipoClassificacaoFormatado = tipoClassificacaoProduto.getDescricao();
+	}
+
+	public String getStatus() {
+	    return status;
+	}
+
+	public void setStatus(String status) {
+	    this.status = status;
+	}
+
+	public Integer getPeriodo() {
+	    return periodo;
+	}
+
+	public void setPeriodo(Integer periodo) {
+	    this.periodo = periodo;
+	}
+
+	public Long getIdProduto() {
+	    return idProduto;
+	}
+
+	public void setIdProduto(Long idProduto) {
+	    this.idProduto = idProduto;
+	}
+	
+	public String getLancamento() {
+		return lancamento;
+	}
+
+	public void setLancamento(String lancamento) {
+		this.lancamento = lancamento.toUpperCase().replace("Ç", "C");
+	}
+
+	public String getDtLancPrevisto() {
+		return dtLancPrevisto;
+	}
+
+	public void setDtLancPrevisto(String dtLancPrevisto) {
+		this.dtLancPrevisto = dtLancPrevisto;
+	}
+
+	public String getDtRecPrevisto() {
+		return dtRecPrevisto;
+	}
+
+	public void setDtRecPrevisto(String dtRecPrevisto) {
+		this.dtRecPrevisto = dtRecPrevisto;
+	}
+
+	public String getRecolhimentoParcial() {
+		return recolhimentoParcial;
+	}
+
+	public void setRecolhimentoParcial(String recolhimentoParcial) {
+		this.recolhimentoParcial = recolhimentoParcial;
+	}
+	
+
+	/**
+	 * @return the modoTela
+	 */
+	public ModoTela getModoTela() {
+		return modoTela;
+	}
+
+	/**
+	 * @param modoTela the modoTela to set
+	 */
+	public void setModoTela(ModoTela modoTela) {
+		this.modoTela = modoTela;
+	}
+
+	public enum ModoTela {
+		NOVO, EDICAO, REDISTRIBUICAO;
+	}
+	
 	/**
 	 * @return the precoVendaFormatado
 	 */
@@ -789,23 +1009,30 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public void setPrecoPrevistoFormatado(String precoPrevistoFormatado) {
 		this.precoPrevistoFormatado = precoPrevistoFormatado;
 	}
-	
-	/**
-	 * @return the modoTela
-	 */
-	public ModoTela getModoTela() {
-		return modoTela;
+
+	public StatusLancamento getSituacaoLancamento() {
+		return situacaoLancamento;
 	}
 
-	/**
-	 * @param modoTela the modoTela to set
-	 */
-	public void setModoTela(ModoTela modoTela) {
-		this.modoTela = modoTela;
+	public void setSituacaoLancamento(StatusLancamento situacaoLancamento) {
+		this.situacaoLancamento = situacaoLancamento;
 	}
 
-	public enum ModoTela {
-		NOVO, EDICAO, REDISTRIBUICAO;
-	}
-	
+	public String getTipoClassificacaoFormatado() {
+		return tipoClassificacaoFormatado;
+    }
+    
+    /**
+     * @return the idFornecedor
+     */
+    public Long getIdFornecedor() {
+        return idFornecedor;
+    }
+    
+    /**
+     * @param idFornecedor the idFornecedor to set
+     */
+    public void setIdFornecedor(Long idFornecedor) {
+        this.idFornecedor = idFornecedor;
+    }
 }

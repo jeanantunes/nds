@@ -23,7 +23,7 @@ var contasAPagarController = $.extend(true, {
 			buttonImageOnly: true
 		});
 		
-		this.initcontasAPagarListaProdutosGrid();		
+		this.initcontasAPagarListaProdutosGrid();
 		this.initGridPesquisarPorProduto();
 		this.initGridPesquisarPorFornecedor();
 		this.initGridParciais();
@@ -31,25 +31,25 @@ var contasAPagarController = $.extend(true, {
 		this.initGridEncalhe();
 		this.initGridFaltasSobras();
 		
-		$('.areaBts').hide();
+		$('#contasAPagar_areaBts').hide();
 	},
 	
 	
 	pesqDistribuidor : function() {
-		$('.distrFornecedor', this.workspace).show();
-		$('.filtroFornecedor', this.workspace).show();
-		$('.porProdutos', this.workspace).hide();
-		$('.filtroProduto', this.workspace).hide();
+		$('#contasAPagar_distrFornecedor', this.workspace).show();
+		$('#contasAPagar_filtroFornecedor', this.workspace).show();
+		$('#contasAPagar_porProdutos', this.workspace).hide();
+		$('#contasAPagar_filtroProduto', this.workspace).hide();
 		$('.filtroBusca', this.workspace).show();
 		$('.grids', this.workspace).show();
 	},
 	
 
 	pesqProduto : function() {
-		$('.distrFornecedor', this.workspace).hide();
-		$('.filtroFornecedor', this.workspace).hide();
-		$('.porProdutos', this.workspace).show();
-		$('.filtroProduto', this.workspace).show();
+		$('#contasAPagar_distrFornecedor', this.workspace).hide();
+		$('#contasAPagar_filtroFornecedor', this.workspace).hide();
+		$('#contasAPagar_porProdutos', this.workspace).show();
+		$('#contasAPagar_filtroProduto', this.workspace).show();
 		$('.filtroBusca', this.workspace).show();
 		$('.grids', this.workspace).show();
 	},
@@ -127,7 +127,7 @@ var contasAPagarController = $.extend(true, {
 		var url = contasAPagarController.path + 'pesquisarPorProduto.json';
 		params = serializeArrayToPost('filtro.produtoEdicaoIDs', contasAPagarController.obterSelecaoColunaCheckProdutoEdicao(), params);
 		
-		$(".porProdutosGrid").flexOptions({
+		$("#contasAPagar_porProdutosGrid").flexOptions({
 			url : url,
 			params: serializeParamsToFlexiGridPost(params),
 			preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
@@ -144,16 +144,19 @@ var contasAPagarController = $.extend(true, {
 				$("#contasAPagar_gridProdutoTotalPagto").html(result.totalPagto);
 				$("#contasAPagar_gridProdutoTotalDesconto").html(result.totalDesconto);
 				$("#contasAPagar_gridProdutoValorLiquido").html(result.valorLiquido);
-				
-				$(".porProdutosGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
+				$("#contasAPagar_porProdutosGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
+				$('#contasAPagar_gridProduto').show();
+				$('#contasAPagar_areaBts').show();
 			},
-			null,
+			function(result) {
+				
+				$('#contasAPagar_gridProduto').hide();
+				$('#contasAPagar_areaBts').hide();
+			},
 			true
 		);
 		
-		$('.gridProduto').show();
 		
-		$('.areaBts').show();
 	},
 	
 	
@@ -177,16 +180,19 @@ var contasAPagarController = $.extend(true, {
 				$("#contasAPagar_gridFornecedorTotalBruto").html(result.totalBruto);
 				$("#contasAPagar_gridFornecedorTotalDesconto").html(result.totalDesconto);
 				$("#contasAPagar_gridFornecedorSaldo").html(result.saldo);
-				
 				$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
+				$('#contasAPagar_gridDistrib').show();
+				$('#contasAPagar_areaBts').show();
 			},
-			null,
+			function(result) {
+				
+				$('#contasAPagar_gridDistrib').hide();
+				$('#contasAPagar_areaBts').hide();
+			},
 			true
 		);
 
-		$('.gridDistrib').show();
 		
-		$('.areaBts').show();
 	},
 	
 	
@@ -202,7 +208,7 @@ var contasAPagarController = $.extend(true, {
 
 		$(".contasAPagarListaProdutosGrid").flexReload();
 		
-		$('.areaBts').show();
+		$('#contasAPagar_areaBts').show();
 	},
 	
 	
@@ -605,7 +611,7 @@ var contasAPagarController = $.extend(true, {
 	
 	initGridPesquisarPorProduto : function(){
 		
-		$(".porProdutosGrid").flexigrid({
+		$("#contasAPagar_porProdutosGrid").flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Rclt',

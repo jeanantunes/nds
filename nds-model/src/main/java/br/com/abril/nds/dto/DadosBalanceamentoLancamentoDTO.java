@@ -29,6 +29,8 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	
 	private BigInteger capacidadeDistribuicao;
 	
+	private BigInteger mediaDistribuicao = BigInteger.ZERO;
+	
 	private Map<Long, TreeSet<Date>> datasDistribuicaoPorFornecedor;
 	
 	private Integer qtdDiasLimiteParaReprogLancamento;
@@ -38,6 +40,18 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	private Set<Date> datasExpedicaoConfirmada;
 	
 	private Intervalo<Date> periodoDistribuicao;
+	
+	private Set<Date> datasBalanceaveis;
+	
+	private Set<Date> datasNaoBalanceaveis;
+
+	public Set<Date> getDatasNaoBalanceaveis() {
+		return datasNaoBalanceaveis;
+	}
+
+	public void setDatasNaoBalanceaveis(Set<Date> datasNaoBalanceaveis) {
+		this.datasNaoBalanceaveis = datasNaoBalanceaveis;
+	}
 
 	/**
 	 * Construtor padrão.
@@ -59,6 +73,28 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	public void setCapacidadeDistribuicao(BigInteger capacidadeDistribuicao) {
 		this.capacidadeDistribuicao = capacidadeDistribuicao;
 	}
+	
+	/**
+	 * @return the capacidadeDistribuicao
+	 */
+	public BigInteger getMediaDistribuicao() {
+		return mediaDistribuicao;
+	}
+
+	/**
+	 * @param capacidadeDistribuicao the capacidadeDistribuicao to set
+	 */
+	public void setMediaDistribuicao(BigInteger mediaDistribuicao) {
+		this.mediaDistribuicao = mediaDistribuicao;
+	}
+	
+	/**
+	 * @param capacidadeDistribuicao the capacidadeDistribuicao to set
+	 */
+	public void addMediaDistribuicao(BigInteger mediaDistribuicao) {
+		this.mediaDistribuicao = this.mediaDistribuicao.add(mediaDistribuicao);
+	}
+
 
 	/**
 	 * @return the datasExpectativaReparte
@@ -86,6 +122,17 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	 */
 	public void setProdutosLancamento(List<ProdutoLancamentoDTO> produtosLancamento) {
 		this.produtosLancamento = produtosLancamento;
+	}
+	
+	/**
+	 * @param produtosLancamento the produtosLancamento to set
+	 */
+	public void addProdutosLancamento(List<ProdutoLancamentoDTO> produtosLancamento) {
+		if(this.produtosLancamento==null){
+		  this.produtosLancamento =produtosLancamento;
+		}else{
+		 this.produtosLancamento.addAll(produtosLancamento);
+		}
 	}
 
 
@@ -130,6 +177,20 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	 */
 	public void setDatasExpedicaoConfirmada(Set<Date> datasExpedicaoConfirmada) {
 		this.datasExpedicaoConfirmada = datasExpedicaoConfirmada;
+	}
+
+	/**
+	 * @return the datasExpedicaoConfirmada
+	 */
+	public Set<Date> getDatasBalanceaveis() {
+		return datasBalanceaveis;
+	}
+
+	/**
+	 * @param datasExpedicaoConfirmada the datasExpedicaoConfirmada to set
+	 */
+	public void setDatasBalanceaveis(Set<Date> datasBalanceaveis) {
+		this.datasBalanceaveis = datasBalanceaveis;
 	}
 
 	/**

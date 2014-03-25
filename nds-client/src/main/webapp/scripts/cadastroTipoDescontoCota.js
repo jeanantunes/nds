@@ -6,6 +6,7 @@ var descontoCotaController = $.extend(true,{
 		$("#selectFornecedor_option_especifico",this.workspace).clear();
 		
 		$("#numCotaEspecifico",this.workspace).val("");
+		$("#descontoEspecifico",this.workspace).val("");
 		$("#descontoEspecifico",this.workspace).justPercent("floatValue");
 		$("#descricaoCotaEspecifico",this.workspace).val("");
 		
@@ -33,7 +34,7 @@ var descontoCotaController = $.extend(true,{
 	novoDescontoEspecifico: function() {
 		
 		var cotaEspecifica = $("#numCotaEspecifico", this.workspace).val();
-		var descontoEspecifico = $("#descontoEspecifico", this.workspace).justPercent("floatValue");
+		var descontoEspecifico = $("#descontoEspecifico", this.workspace).justPercent("stringValue");
 		
 		var fornecedores = new Array();
 		
@@ -164,4 +165,3 @@ var descontoCotaController = $.extend(true,{
 	}
 }, BaseController);
 //@ sourceURL=tipoDescontoCota.js
-	

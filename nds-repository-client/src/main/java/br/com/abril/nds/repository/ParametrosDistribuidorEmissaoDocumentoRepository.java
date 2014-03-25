@@ -17,4 +17,14 @@ public interface ParametrosDistribuidorEmissaoDocumentoRepository extends Reposi
 	 */
 	public boolean isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento tipoParametrosDistribuidorEmissaoDocumento);
 	
+	/**
+	 * Obtem parâmetro utiliza envio por email de acordo com o tipo 
+	 * de documento do distribuidor pesquisado.
+	 * 
+	 * @param tipoParametrosDistribuidorEmissaoDocumento
+	 * 
+	 * @return boolean
+	 */
+	public boolean isUtilizaEnvioEmail(TipoParametrosDistribuidorEmissaoDocumento tipoParametrosDistribuidorEmissaoDocumento);
+	
 }

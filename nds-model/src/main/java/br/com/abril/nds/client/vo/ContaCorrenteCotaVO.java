@@ -33,6 +33,8 @@ public class ContaCorrenteCotaVO implements Serializable {
 	
 	private Date dataRaiz;
 	
+	private String statusDivida;
+	
 	private Date dataPendente;
 	
 	private String nomeBox;
@@ -78,6 +80,8 @@ public class ContaCorrenteCotaVO implements Serializable {
 	
 	@Export(label = "Saldo R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal saldo;
+	
+	private boolean detalharDebitoCredito;
 	
 	/**
 	 * Construtor padrão.
@@ -225,7 +229,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setTotal(BigDecimal total) {
 		this.total = 
 				total != null ? 
-						total.setScale(4, RoundingMode.HALF_EVEN) : total;;
+						total.setScale(2, RoundingMode.HALF_UP) : total;
 	}
 
 	public Long getId() {
@@ -350,4 +354,21 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setInadimplente(boolean inadimplente) {
 		this.inadimplente = inadimplente;
 	}
+
+	public String getStatusDivida() {
+		return statusDivida;
+	}
+
+	public void setStatusDivida(String statusDivida) {
+		this.statusDivida = statusDivida;
+	}
+
+	public boolean isDetalharDebitoCredito() {
+		return detalharDebitoCredito;
+	}
+
+	public void setDetalharDebitoCredito(boolean detalharDebitoCredito) {
+		this.detalharDebitoCredito = detalharDebitoCredito;
+	}
+
 }

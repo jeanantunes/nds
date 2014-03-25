@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.ViewContaCorrenteCotaRepository;
@@ -28,6 +30,9 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 	
 	@Autowired
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -50,7 +55,8 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 						GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO,
 						GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS,
 						GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA,
-						GrupoMovimentoFinaceiro.RESGATE_CAUCAO_LIQUIDA
+						GrupoMovimentoFinaceiro.RESGATE_CAUCAO_LIQUIDA,
+						GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO
 					)
 				);
 
@@ -94,5 +100,25 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 		return this.movimentoFinanceiroCotaRepository.
 				obterSomatorioTipoMovimentoPorConsolidado(
 						idConsolidado, data, numeroCota, tiposMovimento);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<MovimentoFinanceiroDTO> consultarValorVendaDia(
+			Integer numeroCota, Long idConsolidado, Date data){
+		
+		if (idConsolidado != null){
+			
+			data = null;
+		}
+		
+		List<Long> tiposMovimento = 
+			this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
+				Arrays.asList(GrupoMovimentoFinaceiro.ENVIO_ENCALHE,
+						GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
+						GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO));
+
+		return this.movimentoFinanceiroCotaRepository.obterDetalhesVendaDia(
+				numeroCota, idConsolidado, tiposMovimento,	data);
 	}
 }

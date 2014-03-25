@@ -338,6 +338,7 @@ var tipoDescontoController = $.extend(true, {
 		$( '#tpoProduto', tipoDescontoController.workspace ).hide();
 		$( '.especifico', tipoDescontoController.workspace ).hide();
 		$( '.produto', tipoDescontoController.workspace ).hide();
+		
 	},
 
 	mostra_especifico : function(){

@@ -206,7 +206,15 @@
 				</td>
 	
 			  	<td>Com CE</td>
+			  	
+			  	<td align="right">
+					<input class="campoDePesquisa" type="checkbox" id="checkRecolhimentoFinal" name="checkRecolhimentoFinal">
+				</td>
+			    
+			    <td>Recolhimento Final</td>
+			  	
 				 <td>&nbsp;</td>
+				 
 			    <td width="136" colspan="2">
 			    	<span class="bt_novos">
 			    		<a href="javascript:;" onclick="chamdaEncalheAnteipadaController.pesquisar();" id="btn_pesquisa_ce" class="botaoPesquisar"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
@@ -280,5 +288,4 @@
 				</fieldset>
 				</div>
 	</form>
-	
 </body>

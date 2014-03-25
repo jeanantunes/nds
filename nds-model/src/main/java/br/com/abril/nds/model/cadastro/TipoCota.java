@@ -19,4 +19,5 @@ public enum TipoCota {
 	public String toString() {
 		return this.descricao;
 	}
+	
 }

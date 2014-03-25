@@ -90,10 +90,7 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepositoryModel<Movim
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-        for (String key : param.keySet()) {
-			
-			query.setParameter(key, param.get(key));
-		}
+        setParameters(query, param);
 
         query.setParameterList("gruposExcluidos", gruposExcluidos);
         
@@ -183,10 +180,7 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepositoryModel<Movim
 						
 		Query query = this.getSession().createQuery(hql.toString());
 
-		for (String key : param.keySet()) {
-			
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		query.setParameterList("gruposExcluidos", gruposExcluidos);
     	
@@ -266,10 +260,7 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepositoryModel<Movim
 			query.setMaxResults(maxResults);
 		}
 		
-		for (String key : param.keySet()) {
-			
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		query.setParameterList("gruposExcluidos", gruposExcluidos);
 		

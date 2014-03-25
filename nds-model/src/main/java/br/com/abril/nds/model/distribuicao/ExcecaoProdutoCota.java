@@ -35,17 +35,24 @@ public class ExcecaoProdutoCota implements Serializable {
 	private Long id;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "COTA_ID")
+	@JoinColumn(name = "COTA_ID", nullable = true)
 	private Cota cota;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "PRODUTO_ID")
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "PRODUTO_ID", nullable = true)
 	private Produto produto;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "TIPO_CLASSIFICACAO_PRODUTO_ID")
+	private TipoClassificacaoProduto tipoClassificacaoProduto;
+	
+	@Column(name = "CODIGO_ICD", nullable = false)
+	private String codigoICD;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_ALTERACAO")
 	private Date dataAlteracao;
@@ -100,6 +107,23 @@ public class ExcecaoProdutoCota implements Serializable {
 
 	public void setTipoExcecao(TipoExcecao tipoExcecao) {
 		this.tipoExcecao = tipoExcecao;
+	}
+
+	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
+		return tipoClassificacaoProduto;
+	}
+
+	public void setTipoClassificacaoProduto(
+			TipoClassificacaoProduto tipoClassificacaoProduto) {
+		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
+	}
+
+	public String getCodigoICD() {
+		return codigoICD;
+	}
+
+	public void setCodigoICD(String codigoICD) {
+		this.codigoICD = codigoICD;
 	}
 
 }

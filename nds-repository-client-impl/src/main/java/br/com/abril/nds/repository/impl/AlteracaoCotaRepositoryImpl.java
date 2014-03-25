@@ -51,8 +51,12 @@ public class AlteracaoCotaRepositoryImpl extends
 		query.addScalar("box", StandardBasicTypes.STRING);
 
 		PaginacaoVO vo = filtroAlteracaoCotaDTO.getPaginacao();
-		query.setMaxResults(vo.getQtdResultadosPorPagina());
-		query.setFirstResult(vo.getPosicaoInicial());
+		
+		if (vo != null) {
+			query.setMaxResults(vo.getQtdResultadosPorPagina());
+			query.setFirstResult(vo.getPosicaoInicial());
+		}
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaAlteracaoCotaDTO.class));
 

@@ -9,8 +9,6 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 
 public interface PessoaService {
 
-	List<PessoaJuridica> buscarPorCnpj(String cnpj);
-
 	void salvarPessoa(Pessoa pessoa);
 	
 	List<PessoaFisica> obterSociosPorFiador(Long idFiador, Set<Long> idsIgnorar, Set<String> cpfsIgnorar);

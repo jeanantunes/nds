@@ -95,13 +95,9 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		HashMap<String, Object> paramList = this.buscarParametrosListVendaProduto();
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
+		setParameters(query, paramList);
 		
-		for(String key : paramList.keySet()){
-			query.setParameterList(key, (List) paramList.get(key));
-		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(VendaProdutoDTO.class));
 		
@@ -333,13 +329,9 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		HashMap<String, Object> paramList = this.buscarParametrosListVendaProduto();
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
+		setParameters(query, paramList);
 		
-		for(String key : paramList.keySet()){
-			query.setParameterList(key, (List) paramList.get(key));
-		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(LancamentoPorEdicaoDTO.class));
 				

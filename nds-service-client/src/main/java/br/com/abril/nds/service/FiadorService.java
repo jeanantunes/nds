@@ -14,7 +14,6 @@ import br.com.abril.nds.model.cadastro.Garantia;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.TelefoneFiador;
-import br.com.abril.nds.util.Constantes;
 
 public interface FiadorService {
 

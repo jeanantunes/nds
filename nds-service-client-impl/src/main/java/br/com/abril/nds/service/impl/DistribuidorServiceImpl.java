@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -32,6 +35,7 @@ import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -55,9 +59,13 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
 	
+	@Autowired
+	private CotaService cotaService;
+	
+	
 	@Override
 	@Transactional(readOnly = true)
-	public boolean isDistribuidor(Integer codigo) {
+	public boolean isDistribuidor(final Integer codigo) {
 		
 		return 
 			this.codigoDistribuidorDinap().equals(codigo.toString())
@@ -72,7 +80,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 
 	@Override
 	@Transactional
-	public void alterar(Distribuidor distribuidor) {
+	public void alterar(final Distribuidor distribuidor) {
 		distribuidorRepository.alterar(distribuidor);
 	}
 
@@ -80,12 +88,12 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional
 	public DistribuidorDTO obterDadosEmissao() {
 		
-		Distribuidor distribuidor = this.obter();
+		final Distribuidor distribuidor = this.obter();
 		
-		DistribuidorDTO dto = new DistribuidorDTO();
+		final DistribuidorDTO dto = new DistribuidorDTO();
 		
 		dto.setRazaoSocial(distribuidor.getJuridica().getRazaoSocial().toUpperCase());
-		Endereco endereco = distribuidor.getEnderecoDistribuidor().getEndereco(); 
+		final Endereco endereco = distribuidor.getEnderecoDistribuidor().getEndereco(); 
 		dto.setEndereco(endereco.getLogradouro().toUpperCase()  + " " + endereco.getNumero());
 		dto.setCnpj(distribuidor.getJuridica().getCnpj());
 		dto.setCidade(endereco.getCidade().toUpperCase());
@@ -107,8 +115,8 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional(readOnly = true)
 	public List<ItemDTO<TipoGarantia, String>> getComboTiposGarantia() {
 		
-		List<ItemDTO<TipoGarantia,String>> comboTiposGarantia =  new ArrayList<ItemDTO<TipoGarantia,String>>();
-		for (TipoGarantia itemTipoGarantia: TipoGarantia.values()){
+		final List<ItemDTO<TipoGarantia,String>> comboTiposGarantia =  new ArrayList<ItemDTO<TipoGarantia,String>>();
+		for (final TipoGarantia itemTipoGarantia: TipoGarantia.values()){
 			comboTiposGarantia.add(new ItemDTO<TipoGarantia,String>(itemTipoGarantia, itemTipoGarantia.getDescTipoGarantia()));
 		}
 		return comboTiposGarantia;
@@ -119,8 +127,8 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional(readOnly = true)
 	public List<ItemDTO<TipoStatusGarantia, String>> getComboTiposStatusGarantia() {
 		
-		List<ItemDTO<TipoStatusGarantia,String>> comboTiposStatusGarantia =  new ArrayList<ItemDTO<TipoStatusGarantia,String>>();
-		for (TipoStatusGarantia itemTipoStatusGarantia: TipoStatusGarantia.values()){
+		final List<ItemDTO<TipoStatusGarantia,String>> comboTiposStatusGarantia =  new ArrayList<ItemDTO<TipoStatusGarantia,String>>();
+		for (final TipoStatusGarantia itemTipoStatusGarantia: TipoStatusGarantia.values()){
 			comboTiposStatusGarantia.add(new ItemDTO<TipoStatusGarantia,String>(itemTipoStatusGarantia, itemTipoStatusGarantia.getDescTipoStatusGarantia()));
 		}
 		return comboTiposStatusGarantia;
@@ -242,7 +250,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional(readOnly = true)
 	public Integer qtdDiasLimiteParaReprogLancamento() {
 		
-		Integer qtd = this.distribuidorRepository.qtdDiasLimiteParaReprogLancamento();
+		final Integer qtd = this.distribuidorRepository.qtdDiasLimiteParaReprogLancamento();
 		
 		return qtd == null ? 0 : qtd;
 	}
@@ -366,10 +374,11 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return this.distribuidorRepository.obterId();
 	}
 	
+	@Override
 	@Transactional(readOnly = true)
 	public int obterOrdinalUltimoDiaRecolhimento() {
 		
-		ParametrosRecolhimentoDistribuidor parametroRecolhimento = 
+		final ParametrosRecolhimentoDistribuidor parametroRecolhimento = 
 				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
 		
 		int ordinal = 0;
@@ -383,20 +392,55 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return ordinal;
 	}
 	
-	@Transactional(readOnly = true)
-	public List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(Date dataRecolhimento, Long ...idsFornecedor) {
+	public List<Integer> getListaDiaOrdinalAceitaRecolhimento() {
 		
-		ParametrosRecolhimentoDistribuidor parametroRecolhimento = 
+		final ParametrosRecolhimentoDistribuidor parametroRecolhimento = 
 				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
 		
-		List<Integer> diasSemanaDistribuidorOpera = 
+		final List<Integer> listaDiaOrdinalAceitaRecolhimento = new ArrayList<>();
+		
+		if(parametroRecolhimento.isDiaRecolhimentoPrimeiro()){
+			listaDiaOrdinalAceitaRecolhimento.add(1);
+		}
+		
+		if(parametroRecolhimento.isDiaRecolhimentoSegundo()){
+			listaDiaOrdinalAceitaRecolhimento.add(2);
+		}
+		
+		if(parametroRecolhimento.isDiaRecolhimentoTerceiro()){
+			listaDiaOrdinalAceitaRecolhimento.add(3);
+		}
+		
+		if(parametroRecolhimento.isDiaRecolhimentoQuarto()){
+			listaDiaOrdinalAceitaRecolhimento.add(4);
+		}
+		
+		if(parametroRecolhimento.isDiaRecolhimentoQuinto()){
+			listaDiaOrdinalAceitaRecolhimento.add(5);
+		}
+		
+		return listaDiaOrdinalAceitaRecolhimento;
+		
+	}
+	
+
+	/**
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.integracao.DistribuidorService#obterDatasAposFinalizacaoPrazoRecolhimento(java.util.Date, java.lang.Long[])
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(final Date dataRecolhimento, final Long ...idsFornecedor) {
+		
+		final ParametrosRecolhimentoDistribuidor parametroRecolhimento = 
+				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
+		
+		final List<Integer> diasSemanaDistribuidorOpera = 
 				this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(OperacaoDistribuidor.RECOLHIMENTO,idsFornecedor);
 		
-		List<Date> datas = new ArrayList<>();
+		final List<Date> datas = new ArrayList<>();
 		
-		Map<Integer,Date> mapDataRecolhimentoValida = new HashMap<>();
-		
-		mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataRecolhimento,diasSemanaDistribuidorOpera);
+		final Map<Integer,Date> mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataRecolhimento,diasSemanaDistribuidorOpera);
 		
 		if(parametroRecolhimento.isDiaRecolhimentoPrimeiro()){
 			
@@ -430,47 +474,95 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	 * Obtem o dia de recolhimento do distribuidor para a data de 
 	 * Conferencia divergente da data de Recolhimento prevista
 	 * 
-	 * @param dataConferencia
+	 * @param dataOperacaoConferencia
 	 * @param dataRecolhimento
-	 * @param produtoEdicao
-	 * @return Integer
+	 * @param numeroCota
+	 * @param produtoEdicaoId
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Integer obterDiaDeRecolhimentoDaData(Date dataConferencia, Date dataRecolhimento, Long produtoEdicaoId){
+	public Integer obterDiaDeRecolhimentoDaData(
+			final Date dataOperacaoConferencia, 
+			final Date dataRecolhimento, 
+			final Integer numeroCota, 
+			final Long produtoEdicaoId,
+			final List<Long> idFornecedores){
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarPorID(produtoEdicaoId);
+		boolean indCotaOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacaoConferencia);
 		
-		if (dataRecolhimento.compareTo(dataConferencia) > 0) {
-			
-			return null;
+		Date dataPrimeiroDiaRecolhimento = null;
 		
-		} else if (dataRecolhimento.compareTo(dataConferencia) == 0) {
-			
-			return 1;
-		} 
+		if(indCotaOperacaoDiferenciada) {
+			dataPrimeiroDiaRecolhimento = conferenciaEncalheService.obterDataPrimeiroDiaEncalheOperacaoDiferenciada(numeroCota, dataRecolhimento);
+		} else {
+			dataPrimeiroDiaRecolhimento = dataRecolhimento;
+		}
+		
+		
+		
+		if(!indCotaOperacaoDiferenciada) {
 
-		Long[] listaIdsFornecedores = this.conferenciaEncalheService.obterIdsFornecedorDoProduto(produtoEdicao);
+			if (dataRecolhimento.compareTo(dataOperacaoConferencia) > 0) {
+				return null;
+			} else if (dataRecolhimento.compareTo(dataOperacaoConferencia) == 0) {
+				return 1;
+			} 
+			
+		}
+		
+		Long[] listaIdsFornecedores = null;
+		
+		if(produtoEdicaoId != null) {
+			
+			final ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarPorID(produtoEdicaoId);
+			
+			listaIdsFornecedores = this.conferenciaEncalheService.obterIdsFornecedorDoProduto(produtoEdicao);
+		
+		} else if(idFornecedores != null && !idFornecedores.isEmpty()){
+			
+			listaIdsFornecedores = idFornecedores.toArray(new Long[idFornecedores.size()]);
+			
+		} else {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sem informações de fornecedores, não foi possível obter informações de recolhimento.");
+			
+		}
 
-		List<Integer> diasSemanaDistribuidorOpera = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(OperacaoDistribuidor.RECOLHIMENTO,
+		final List<Integer> diasSemanaDistribuidorOpera = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(OperacaoDistribuidor.RECOLHIMENTO,
 				                                                                                                                listaIdsFornecedores);
 		
-		Map<Integer,Date> mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataRecolhimento, diasSemanaDistribuidorOpera);
+		final Map<Integer, Date> mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataPrimeiroDiaRecolhimento, diasSemanaDistribuidorOpera);
 		
-		for(Integer dia : mapDataRecolhimentoValida.keySet()) {
+		for(final Entry<Integer, Date> entry : mapDataRecolhimentoValida.entrySet()) {
 			
-			if(mapDataRecolhimentoValida.get(dia).compareTo(dataConferencia) == 0) {
+			if(entry.getValue().compareTo(dataOperacaoConferencia) == 0) {
 				
-				return dia;
+				return entry.getKey();
 			}
 		}
 
 		return 0;
 	}
 	
-	private Map<Integer,Date> obterDatasValidaParaRecolhimento(Date dataRecolhimento,List<Integer> diasSemanaDistribuidorOpera) {
+	
+	
+	
+	
+	
+	/**
+	 * Retorna um mapa com as data de recolhimento possíveis tendo como chave
+	 * os valores de 1 a 5 representando a sequencia ordinal dos dias de recolhimento 
+	 * como primerio até quinto dia.
+	 *  
+	 * 
+	 * @param dataRecolhimento
+	 * @param diasSemanaDistribuidorOpera
+	 * 
+	 * @return Map<Integer,Date>
+	 */
+	private Map<Integer,Date> obterDatasValidaParaRecolhimento(final Date dataRecolhimento, final List<Integer> diasSemanaDistribuidorOpera) {
 		
-		Map<Integer,Date> mapDataRecolhimentoValida = new HashMap<>();
+		final Map<Integer,Date> mapDataRecolhimentoValida = new HashMap<>();
 		
 		Date dataRecolhimentoValida = null;
 		
@@ -480,7 +572,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 			
 			if(diasRecolhimento > 1){
 				
-				dataRecolhimentoValida = processarDataRecolhimento(DateUtil.adicionarDias(mapDataRecolhimentoValida.get(diasRecolhimento-1),1),diasSemanaDistribuidorOpera);
+				dataRecolhimentoValida = processarDataRecolhimento(DateUtil.adicionarDias(mapDataRecolhimentoValida.get(diasRecolhimento-1),1),diasSemanaDistribuidorOpera, true);
 				
 				mapDataRecolhimentoValida.put(diasRecolhimento, dataRecolhimentoValida);
 			}
@@ -500,21 +592,56 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return mapDataRecolhimentoValida;
 	}
 	
-	private Date processarDataRecolhimento (Date novaData,List<Integer> diasSemanaDistribuidorOpera){
+	private Date processarDataRecolhimento (final Date novaData, final List<Integer> diasSemanaDistribuidorOpera, final boolean adicionaDias){
 		
 		Date dataAProcessar = obterDataValidaParaRecolhimento(novaData,diasSemanaDistribuidorOpera);
 		
+		final int qtdDias = adicionaDias ? 1 : -1;
+		
 		if(dataAProcessar == null){
 			
-			dataAProcessar = processarDataRecolhimento(DateUtil.adicionarDias(novaData,1),diasSemanaDistribuidorOpera);
+			dataAProcessar = processarDataRecolhimento(DateUtil.adicionarDias(novaData,qtdDias),diasSemanaDistribuidorOpera, adicionaDias);
 		}
 		
 		return dataAProcessar;
 	}
 	
-	private Date obterDataValidaParaRecolhimento(Date novaData,List<Integer> diasSemanaDistribuidorOpera){
+	
+	/**
+	 * Método que obtém uma lista de datas de recolhimento 
+	 * anteriores ou posterior a dataAtual informada em que o distribuidor opera.
+	 * 
+	 * 
+	 * @param dataAtual
+	 * @param qtndDiasUteis
+	 * @param diasSemanaDistribuidorOpera
+	 * @param posterior
+	 * 
+	 * @return List - Date
+	 */
+	@Override
+	public List<Date> obterListaDatasRecolhimentoAPartirDataAtual(
+			Date dataAtual, 
+			int qtndDiasUteis, 
+			final List<Integer> diasSemanaDistribuidorOpera,
+			final boolean posterior) {
 		
-		int codigoDiaCorrente = SemanaUtil.obterDiaDaSemana(novaData);
+		final List<Date> listaDatasRecolhimento = new ArrayList<>();
+
+		final int qtdDias =  posterior ? 1 : -1;
+		
+		do {
+			dataAtual = processarDataRecolhimento(DateUtil.adicionarDias(dataAtual, qtdDias), diasSemanaDistribuidorOpera, false);
+			listaDatasRecolhimento.add(dataAtual);
+		} while(--qtndDiasUteis> 0);
+		
+		return listaDatasRecolhimento;
+		
+	}
+	
+	private Date obterDataValidaParaRecolhimento(final Date novaData,final List<Integer> diasSemanaDistribuidorOpera){
+		
+		final int codigoDiaCorrente = SemanaUtil.obterDiaDaSemana(novaData);
 		
 		if( diasSemanaDistribuidorOpera.contains(codigoDiaCorrente) &&
 				!calendarioService.isFeriadoSemOperacao(novaData) &&
@@ -530,7 +657,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional
 	public void bloqueiaProcessosLancamentosEstudos() {
 		// Bloqueia no sistema os processoss relacionados a estudo e lancamentos
-		Distribuidor distribuidor = this.obter();
+		final Distribuidor distribuidor = this.obter();
 		distribuidor.setInterfacesMatrizExecucao(true);
 		distribuidor.setDataInicioInterfacesMatrizExecucao(new Date());
 		this.alterar(distribuidor);
@@ -540,7 +667,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional
 	public void desbloqueiaProcessosLancamentosEstudos() {
 		// Bloqueia no sistema os processoss relacionados a estudo e lancamentos
-		Distribuidor distribuidor = this.obter();
+		final Distribuidor distribuidor = this.obter();
 		distribuidor.setInterfacesMatrizExecucao(false);
 		distribuidor.setDataInicioInterfacesMatrizExecucao(null);
 		this.alterar(distribuidor);
@@ -549,13 +676,13 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Override
 	@Transactional
 	public boolean verificaDesbloqueioProcessosLancamentosEstudos() {
-		Distribuidor distribuidor = this.obter();
-		Date dataInicioExecucaoInterfaces = distribuidor.getDataInicioInterfacesMatrizExecucao();
+		final Distribuidor distribuidor = this.obter();
+		final Date dataInicioExecucaoInterfaces = distribuidor.getDataInicioInterfacesMatrizExecucao();
 		
 		if (distribuidor.isInterfacesMatrizExecucao() && dataInicioExecucaoInterfaces != null) {
 
-			Date horaAtual = new Date();
-			Calendar calendarDuasHorasApos = Calendar.getInstance();
+			final Date horaAtual = new Date();
+			final Calendar calendarDuasHorasApos = Calendar.getInstance();
 			calendarDuasHorasApos.clear();
 			calendarDuasHorasApos.setTimeInMillis(dataInicioExecucaoInterfaces.getTime());
 			calendarDuasHorasApos.add(Calendar.HOUR, 2);
@@ -578,4 +705,13 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return this.distribuidorRepository.isConferenciaCegaRecebimentoFisico();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public boolean isConferenciaCegaFechamentoEncalhe() {
+		
+		return this.distribuidorRepository.isConferenciaCegaFechamentoEncalhe();
+	}
 }

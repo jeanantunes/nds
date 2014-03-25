@@ -1,7 +1,6 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author Discover Technology

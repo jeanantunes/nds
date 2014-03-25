@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
 
+
 /**
  * @author francisco.garcia
  * @version 1.0
@@ -19,6 +20,11 @@ public enum GrupoMovimentoEstoque  {
 	ESTORNO_RECEBIMENTO_FISICO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO), 
 	
 	/**
+	 * Estorno do recebimento de mercadorias distribuidor (Reparte promocional)
+	 */
+	ESTORNO_REPARTE_PROMOCIONAL(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO), 
+	
+	/**
 	 * Envio de reparte à cota pelo distribuidor
 	 */
 	ENVIO_JORNALEIRO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
@@ -34,7 +40,7 @@ public enum GrupoMovimentoEstoque  {
 	 * Ocorre durante o a funcionalidade "Fechamento Encalhe" (Fechamento Estoque Físico X Lógico)
 	 * representando a saída de produtos do distribuidor que antes entraram de forma juramentada.
 	 */
-	ENVIO_JORNALEIRO_JURAMENTADO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.JURAMENTADO),
+	ENVIO_JORNALEIRO_JURAMENTADO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
 
 	
 	/**
@@ -88,6 +94,11 @@ public enum GrupoMovimentoEstoque  {
 	PERDA_DE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
 	
 	/**
+	 * Perda EM no estoque de devolução --> PERDA
+	 */
+	PERDA_EM_DEVOLUCAO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
+	
+	/**
 	 * Sobra de pacote distribuidor
 	 */
 	SOBRA_DE_COTA(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO), 
@@ -100,12 +111,23 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Sobra de pacote direcionada para cota
 	 */
-	SOBRA_DE_DIRECIONADA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.COTA),
+	SOBRA_DE_DIRECIONADA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.COTA),	
+
+	/**
+	 * Contra-partida dos movimentos de sobra, quando direcionados para Cota.
+	 * 
+	 */
+	SOBRA_ENVIO_PARA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.GANHO),
 	
 	/**
 	 * Sobra em pacote direcionada para cota
 	 */
 	SOBRA_EM_DIRECIONADA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.COTA),
+	
+	/**
+	 * Sobra em direcionada para estoque de devolução de encalhe
+	 */
+	SOBRA_EM_DEVOLUCAO(OperacaoEstoque.ENTRADA,Dominio.DISTRIBUIDOR,TipoEstoque.DEVOLUCAO_ENCALHE),
 	
 	/**
 	 * Falta de pacote distribuidor
@@ -116,6 +138,16 @@ public enum GrupoMovimentoEstoque  {
 	 * Falta em pacote distribuidor
 	 */
 	FALTA_EM_COTA(OperacaoEstoque.SAIDA, Dominio.COTA, TipoEstoque.LANCAMENTO),
+	
+	/**
+	 * Contra-partida dos movimentos de falta, quando direcionados para cota.
+	 */
+	FALTA_PARA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
+	
+	/**
+	 * Contra-partida dos movimentos de falta, quando direcionados para cota.
+	 */
+	AJUSTE_REPARTE_FALTA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 	
 	/**
 	 * Recebimento do reparte cota
@@ -185,12 +217,17 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Devolução de encalhe do distruibuidor para o fornecedor.
 	 */
-	DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_FORNECEDOR),
-	
+	DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
+
 	/**
 	 * Estorno de encalhe vendido, devido a um cancelamento da venda.
 	 */
 	ESTORNO_VENDA_ENCALHE(OperacaoEstoque.ENTRADA,Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
+	
+	/**
+	 * Estorno de devolução de encalhe , devido a um cancelamento da chamada de encalhe fornecedor.
+	 */
+	ESTORNO_DEVOLUCAO_ENCALHE_FORNECEDOR(OperacaoEstoque.ENTRADA,Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
 	
 	/**
 	 * Estorno de encalhe suplementar vendido, devido a um cancelamento da venda.
@@ -314,7 +351,16 @@ public enum GrupoMovimentoEstoque  {
 	 * Entrada de estoque suplementar rollout do sistema
 	 * Criado em conjunto com Cesar Marracho
 	 */
-	ENTRADA_ESTOQUE_SUPLEMENTAR(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR);
+	ENTRADA_ESTOQUE_SUPLEMENTAR(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR),
+
+	/**
+	 * Grupos de movimento de estoque para alterações de reparte das cotas (lançamento de faltas e sobras).
+	 */
+	ALTERACAO_REPARTE_COTA(OperacaoEstoque.SAIDA, Dominio.COTA, TipoEstoque.LANCAMENTO),
+	ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
+	ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.RECOLHIMENTO),
+	ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR),
+	ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.PRODUTOS_DANIFICADOS);
 	
 	private OperacaoEstoque operacaoEstoque;
 	private Dominio dominio;

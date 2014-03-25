@@ -14,9 +14,10 @@ $(document).ajaxComplete(function(event, jqXHR, ajaxOptions) {
     }
 });
 
-$(document).ajaxError(function(event, jqXHR, ajaxOptions) {
+$(document).ajaxError(function(event, jqXHR, ajaxOptions, thrownError) {
 	 if (jqXHR.status != 601) {
     	 alert("Ocorreu um erro na requisição.\nConsulte o log do Servidor para mais informações" );
+    	 alert(thrownError);
      }
 });
 
@@ -468,7 +469,7 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 		timeout: 18000000, //5 horas
 		dataType: dataType,
 		success: function(json) {
-			
+			bloquearItensEdicao(BaseController.workspace);
 			var tipoMensagem = null;
 			var listaMensagens = null;
 			
@@ -811,4 +812,20 @@ function cloneObject(source) {
     }
 }
 
+function selectTabTitle(title){
+
+	var tabToSelect=-1;
+	$("#workspace li.ui-state-default a").each(function(idx,comp){
+		//console.log($(comp).text());
+		if($(comp).text()==title){
+			tabToSelect=idx;
+		}
+	});
+	if(tabToSelect>-1){
+		$("#workspace").tabs("select",tabToSelect);
+	}
+		
+}
+
+	
 //@ sourceURL=NDS.js

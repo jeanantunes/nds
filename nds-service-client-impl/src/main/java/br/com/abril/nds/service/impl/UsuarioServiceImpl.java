@@ -9,17 +9,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * @author InfoA2
  */
 @Service
+@Transactional(readOnly = true)
 public class UsuarioServiceImpl implements UsuarioService {
 
 	@Autowired
@@ -38,13 +42,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 	 * @see br.com.abril.nds.service.UsuarioService#quantidade(br.com.abril.nds.model.seguranca.Usuario)
 	 */
 	@Override
-	@Transactional(readOnly=true)
+
 	public int quantidade(Usuario usuario) {
 		return Integer.valueOf(usuarioRepository.quantidade(usuario).toString());
 	}
 
 	@Override
-	@Transactional
+    @Transactional(readOnly = false)
 	public void salvar(Usuario usuario) {
 		if (usuario.getId() == null || usuario.getId() == 0) {
 			usuarioRepository.adicionar(usuario);
@@ -53,7 +57,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
-	@Transactional
+    @Transactional(readOnly = false)
 	public void excluir(Long codigoUsuario) {
 		Usuario usuario = usuarioRepository.buscarPorId(codigoUsuario);
 		usuario.setPermissoes(new HashSet<Permissao>());
@@ -62,14 +66,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
-	@Transactional
 	public Usuario buscar(Long codigoUsuario) {
 		Usuario usuario = usuarioRepository.buscarPorId(codigoUsuario);
 		return usuario;
 	}
 
 	@Override
-	@Transactional
 	public boolean validarSenha(Long idUsuario, String senha) {
 		Usuario usuario = usuarioRepository.buscarPorId(idUsuario);
 		if (usuario.getSenha().equals(senha)) {
@@ -79,34 +81,29 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
-	@Transactional
 	public List<GrupoPermissao> buscarGrupoPermissoes(Long codigoUsuario) {
 		return new ArrayList(usuarioRepository.buscarPorId(codigoUsuario).getGruposPermissoes());
 	}
 
 	@Override
-	@Transactional
 	public List<Permissao> buscarPermissoes(Long codigoUsuario) {
 		return new ArrayList(usuarioRepository.buscarPorId(codigoUsuario).getPermissoes());
 	}
 
 	@Override
-	@Transactional(readOnly=true)
 	public String getNomeUsuarioLogado() {
-		String loginUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+        String loginUsuario = getCurrentUserName();
 		return usuarioRepository.getNomeUsuarioPorLogin(loginUsuario);
 	}
 
 	@Override
-	@Transactional(readOnly=true)
 	public Usuario getUsuarioLogado() {
-		String loginUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+        String loginUsuario = getCurrentUserName();
 		return usuarioRepository.getUsuarioLogado(loginUsuario);
 	}
 
 	
 	@Override
-	@Transactional(readOnly=true)
 	public boolean existeUsuario(String login) {
 		if (usuarioRepository.getNomeUsuarioPorLogin(login) != null) {
 			return true;
@@ -119,5 +116,59 @@ public class UsuarioServiceImpl implements UsuarioService {
 	public void alterarSenha(Usuario usuario) {
 		usuarioRepository.alterarSenha(usuario);
 	}
+
+	@Override
+	public boolean verificarUsuarioSupervisor(String usuario, String senha) {
+		
+		try {
+			senha = Util.encriptar(senha);
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "Houve problema com a senha informada. Tente novamente.");
+		}
+		
+		return this.usuarioRepository.verificarUsuarioSupervisor(usuario, senha);
+	}
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * br.com.abril.nds.service.UsuarioService#isSupervisor(java.lang.String)
+     */
+    @Override
+    public Boolean isSupervisor(String login) {
+        return usuarioRepository.isSupervisor(login);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * br.com.abril.nds.service.UsuarioService#isSupervisor(java.lang.String)
+     */
+    @Override
+    public Boolean isSupervisor() {
+        String loginUsuario = getCurrentUserName();
+        return this.isSupervisor(loginUsuario);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * br.com.abril.nds.service.UsuarioService#isSupervisor(java.lang.String)
+     */
+    @Override
+    public Boolean isNotSupervisor() {
+        
+        return !this.isSupervisor();
+    }
+    
+    private String getCurrentUserName() {
+        String loginUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+        return loginUsuario;
+    }
 
 }

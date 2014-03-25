@@ -1,11 +1,10 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.util.DateUtil;
 
 public class EdicoesProdutosDTO implements Serializable {
@@ -15,41 +14,58 @@ public class EdicoesProdutosDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1296064141305343451L;
 	
-	private Long edicao;
-	private PeriodicidadeProduto periodo;
+	private BigInteger edicao;
+	private String periodo;
 	private BigInteger venda;
 	private Date dtLancamento;
 	private Date dtRecolhimento;
-	private StatusLancamento status;
+	private String status;
 	private String capa;
 	private String sel;
 	private BigInteger reparte;
 	private String nomeProduto;
-	private String descricaoTipoProduto;
+	private BigInteger idTipoClassificacao;
+	private String descricaoTipoClassificacao;
 	private String codigoProduto;
+	private String descricaoTipoSegmento;
+	private Long produtoEdicaoId;
 	
 	/* Campos para grid */
 	private String dataLancamento;
 	private String dataRecolhimento;
-	
-	public Long getEdicao() {
+
+    private Integer ordemExibicao;
+    private boolean parcial;
+    private boolean edicaoAberta;
+
+    public EdicoesProdutosDTO() {}
+
+    public EdicoesProdutosDTO(Long id) {
+        produtoEdicaoId = id;
+    }
+
+    public BigInteger getEdicao() {
 		return edicao;
 	}
-	public void setEdicao(Long edicao) {
+	public void setEdicao(BigInteger edicao) {
 		this.edicao = edicao;
 	}
-	public PeriodicidadeProduto getPeriodo() {
+	public String getPeriodo() {
 		return periodo;
 	}
-	public void setPeriodo(PeriodicidadeProduto periodo) {
+	public void setPeriodo(String periodo) {
 		this.periodo = periodo;
 	}
 	
 	public BigInteger getVenda() {
 		return venda;
 	}
-	public void setVenda(BigInteger venda) {
-		this.venda = venda;
+	public void setVenda(BigDecimal venda) {
+	    if (venda == null) {
+		this.venda = null;
+	    } else {
+		this.venda = venda.toBigInteger();
+	    }
 	}
 	public Date getDtLancamento() {
 		return dtLancamento;
@@ -65,10 +81,10 @@ public class EdicoesProdutosDTO implements Serializable {
 		this.dtRecolhimento = dtRecolhimento;
 		this.dataRecolhimento = DateUtil.formatarDataPTBR(dtRecolhimento);
 	}
-	public StatusLancamento getStatus() {
+	public String getStatus() {
 		return status;
 	}
-	public void setStatus(StatusLancamento status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 	public String getCapa() {
@@ -99,8 +115,12 @@ public class EdicoesProdutosDTO implements Serializable {
 	public BigInteger getReparte() {
 		return reparte;
 	}
-	public void setReparte(BigInteger reparte) {
-		this.reparte = reparte;
+	public void setReparte(BigDecimal reparte) {
+	    if (reparte == null) {
+		this.reparte = null;
+	    } else {
+		this.reparte = reparte.toBigInteger();
+	    }
 	}
 	public String getNomeProduto() {
 		return nomeProduto;
@@ -108,20 +128,61 @@ public class EdicoesProdutosDTO implements Serializable {
 	public void setNomeProduto(String nomeProduto) {
 		this.nomeProduto = nomeProduto;
 	}
-	public String getDescricaoTipoProduto() {
-		return descricaoTipoProduto;
-	}
-	public void setDescricaoTipoProduto(String descricaoTipoProduto) {
-		this.descricaoTipoProduto = descricaoTipoProduto;
-	}
+	
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
 	}
-	
-	
-	
-	
+	public String getDescricaoTipoClassificacao() {
+		return descricaoTipoClassificacao;
+	}
+	public void setDescricaoTipoClassificacao(String descricaoTipoClassificacao) {
+		this.descricaoTipoClassificacao = descricaoTipoClassificacao;
+	}
+	public String getDescricaoTipoSegmento() {
+		return descricaoTipoSegmento;
+	}
+	public void setDescricaoTipoSegmento(String descricaoTipoSegmento) {
+		this.descricaoTipoSegmento = descricaoTipoSegmento;
+	}
+	public Long getProdutoEdicaoId() {
+	    return produtoEdicaoId;
+	}
+	public void setProdutoEdicaoId(Long produtoEdicaoId) {
+	    this.produtoEdicaoId = produtoEdicaoId;
+	}
+
+    public Integer getOrdemExibicao() {
+        return ordemExibicao;
+    }
+
+    public void setOrdemExibicao(Integer ordemExibicao) {
+        this.ordemExibicao = ordemExibicao;
+    }
+
+    public boolean isParcial() {
+        return parcial;
+    }
+
+    public void setParcial(boolean parcial) {
+        this.parcial = parcial;
+    }
+
+    public boolean isEdicaoAberta() {
+        return edicaoAberta;
+    }
+
+    public void setEdicaoAberta(boolean edicaoAberta) {
+        this.edicaoAberta = edicaoAberta;
+    }
+
+    public BigInteger getIdTipoClassificacao() {
+        return idTipoClassificacao;
+    }
+
+    public void setIdTipoClassificacao(BigInteger idTipoClassificacao) {
+        this.idTipoClassificacao = idTipoClassificacao;
+    }
 }

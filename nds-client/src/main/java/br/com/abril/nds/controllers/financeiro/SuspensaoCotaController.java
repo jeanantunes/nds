@@ -25,6 +25,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -43,19 +44,20 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/suspensaoCota")
 @Rules(Permissao.ROLE_FINANCEIRO_SUSPENSAO_COTA)
 public class SuspensaoCotaController extends BaseController {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(SuspensaoCotaController.class);
 
-	protected static final String WARNING_SUSPENSAO_COTA_SUSPENSA = "Não foi possível realizar a suspensão pois a cota já estava suspensa.";
-	protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há sugestões para suspensão de cota.";
+    protected static final String WARNING_SUSPENSAO_COTA_SUSPENSA = "Não foi possível realizar a suspensão pois a cota já estava suspensa.";
+    protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há sugestões para suspensão de cota.";
 	protected static final String NENHUM_REGISTRO_SELECIONADO = "Nenhum registro foi selecionado!";
-	protected static final String SEM_BAIXA_NA_DATA = "Não foi feita baixa bancária na data de operação atual.";
+    protected static final String SEM_BAIXA_NA_DATA = "Não foi feita baixa bancária na data de operação atual.";
 	protected static final int RESULTADOS_POR_PAGINA_INCIAL = 15;
-	protected static final String ERRO_CARREGAR_SUGESTAO_SUSPENSAO = "Erro inesperado ao carregar sugestão de suspensão de cotas.";
+    protected static final String ERRO_CARREGAR_SUGESTAO_SUSPENSAO = "Erro inesperado ao carregar sugestão de suspensão de cotas.";
 	protected static final String ERRO_SUSPENDER_COTAS = "Erro inesperado ao suspender cotas.";
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	private static final String PAGINACAO_SESSION_ATTRIBUTE = "paginacaoSuspensaoCotaSession";
 	
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SuspensaoCotaController.class);
+
 		
 	@Autowired
 	private HttpServletResponse httpResponse;
@@ -102,7 +104,7 @@ public class SuspensaoCotaController extends BaseController {
 			status = e.getValidacao().getTipoMensagem();
 		} catch(Exception e) {			
 			mensagens.add(ERRO_CARREGAR_SUGESTAO_SUSPENSAO);
-			LOG.error(ERRO_CARREGAR_SUGESTAO_SUSPENSAO, e);
+			LOGGER.error(ERRO_CARREGAR_SUGESTAO_SUSPENSAO, e);
 			status = TipoMensagem.ERROR;
 		}
 		
@@ -129,7 +131,7 @@ public class SuspensaoCotaController extends BaseController {
 		for(Cobranca cobranca : cobrancas) {
 			dividas.add(new DividaDTO(
 					DateUtil.formatarData(cobranca.getDataVencimento(), FORMATO_DATA), 
-					CurrencyUtil.formatarValor(cobranca.getValor())));
+					CurrencyUtil.formatarValorQuatroCasas(MathUtil.round(cobranca.getValor(), 4))));
 		}
 		result.use(Results.json()).from(dividas, "result").serialize();
 	}
@@ -139,7 +141,7 @@ public class SuspensaoCotaController extends BaseController {
 		
 		Long total = cotaService.obterTotalCotasSujeitasSuspensao();
 		Integer inicio = (page-1)*rp;
-		if(total.equals(0)) {
+        if (total == 0L) {
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,MSG_PESQUISA_SEM_RESULTADO));
 		}	
@@ -204,11 +206,12 @@ public class SuspensaoCotaController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
 	}
 	
-	/**
-	 * Adiciona ou remove todos os itens da pesquisa a lista de itens selecionados da sessão.
-	 * 
-	 * @param selecionado - true(adiciona todos) false (remove todos)
-	 */	
+	            /**
+     * Adiciona ou remove todos os itens da pesquisa a lista de itens
+     * selecionados da sessão.
+     * 
+     * @param selecionado - true(adiciona todos) false (remove todos)
+     */	
 	@Post
 	public void selecionarTodos(Boolean selecionado){
 		
@@ -261,12 +264,12 @@ public class SuspensaoCotaController extends BaseController {
 			} catch (InvalidParameterException e) {
 				
 				mensagens.add(WARNING_SUSPENSAO_COTA_SUSPENSA);
-				LOG.error(WARNING_SUSPENSAO_COTA_SUSPENSA, e);
+				LOGGER.error(WARNING_SUSPENSAO_COTA_SUSPENSA, e);
 				status = TipoMensagem.WARNING;
 				
 			} catch(Exception e ) {
 				mensagens.add(ERRO_SUSPENDER_COTAS);
-				LOG.error(ERRO_SUSPENDER_COTAS, e);
+				LOGGER.error(ERRO_SUSPENDER_COTAS, e);
 				status = TipoMensagem.ERROR;
 			}
 		}
@@ -303,13 +306,13 @@ public class SuspensaoCotaController extends BaseController {
 		}
 	}
 	
-	/**
-	 * Exporta os dados da pesquisa.
-	 * 
-	 * @param fileType - tipo de arquivo
-	 * 
-	 * @throws IOException Exceção de E/S
-	 */
+	            /**
+     * Exporta os dados da pesquisa.
+     * 
+     * @param fileType - tipo de arquivo
+     * 
+     * @throws IOException Exceção de E/S
+     */
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		

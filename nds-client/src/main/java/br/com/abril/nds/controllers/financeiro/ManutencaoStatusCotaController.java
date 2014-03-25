@@ -6,11 +6,13 @@ import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.hibernate.metamodel.ValidationException;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -36,7 +38,11 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.CotaBaseRepository;
+import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
+import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.service.ConsultaConsignadoCotaService;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
@@ -105,6 +111,15 @@ public class ManutencaoStatusCotaController extends BaseController {
 	
 	@Autowired
 	private ConsultaConsignadoCotaService consignadoCotaService;
+	
+	@Autowired
+	private CotaBaseRepository cotaBaseRepository;
+	
+	@Autowired
+	private MixCotaProdutoRepository mixCotaProdutoRepository;
+	
+	@Autowired
+	private HistoricoSituacaoCotaRepository historicoSituacaoCotaRepository;
 	
 	@Autowired
 	private SchedulerFactoryBean schedulerFactoryBean;
@@ -426,6 +441,19 @@ public class ManutencaoStatusCotaController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha as informações do Status da Cota");
 		}
 		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(novoHistoricoSituacaoCota.getCota().getNumeroCota());
+			
+		if (cota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente!");
+		}
+		
+		if(SituacaoCadastro.INATIVO.equals(cota.getSituacaoCadastro())){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível ativar uma cota com status Inativa!");
+		
+		}
+		
 		List<String> listaMensagens = new ArrayList<String>();
 		
 		if (novoHistoricoSituacaoCota.getNovaSituacao() == null) {
@@ -440,13 +468,9 @@ public class ManutencaoStatusCotaController extends BaseController {
 			
 		} else {
 			
-			Cota cota = 
-				this.cotaService.obterPorNumeroDaCota(novoHistoricoSituacaoCota.getCota().getNumeroCota());
+			String defaultMessage = "Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos: ";
 			
-			if (cota == null) {
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente!");
-			}
+			boolean indLeastOneNecessaryMsg = false;
 			
 			if (novoHistoricoSituacaoCota.getNovaSituacao()==SituacaoCadastro.ATIVO){
 				
@@ -455,16 +479,14 @@ public class ManutencaoStatusCotaController extends BaseController {
 				Long qtde = this.enderecoService.obterQtdEnderecoAssociadoCota(cota.getId());
 				
 			    if (qtde == null || qtde == 0){
-			    	
-			    	msgs.add(
-			    		"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Endereço] cadatrado!");
+			    	msgs.add(indLeastOneNecessaryMsg ? "Um [Endereço] cadastrado!" : defaultMessage + " Um [Endereço] cadastrado!");
+			    	indLeastOneNecessaryMsg = true;
 			    }
 			    
 			    qtde = this.telefoneService.obterQtdTelefoneAssociadoCota(cota.getId());
 			    if (qtde == null || qtde == 0){
-			    	
-			    	msgs.add(
-			    		"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Telefone] cadatrado!");
+			    	msgs.add(indLeastOneNecessaryMsg ? "Um [Telefone] cadastrado!" : defaultMessage + " Um [Telefone] cadastrado!");
+			    	indLeastOneNecessaryMsg = true;
 			    }
 			    
 				if (this.distribuidorService.utilizaGarantiaPdv()){
@@ -472,18 +494,52 @@ public class ManutencaoStatusCotaController extends BaseController {
 					qtde = this.cotaGarantiaService.getQtdCotaGarantiaByCota(cota.getId());
 					
 					if (qtde == null || qtde == 0){
-						
-						msgs.add(
-							"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Garantia] cadatrada!");
+						msgs.add(indLeastOneNecessaryMsg ? "Uma [Garantia] cadastrada!" : defaultMessage + " Uma [Garantia] cadastrada!");
+						indLeastOneNecessaryMsg = true;
 					}
 				}
 				
 				qtde = this.roteirizacaoService.obterQtdRotasPorCota(cota.getNumeroCota());
 				
 				if (qtde == null || qtde == 0){
+					msgs.add(indLeastOneNecessaryMsg ? "Uma [Roteirização] cadastrada!" : defaultMessage + " Uma [Roteirização] cadastrada!");
+					indLeastOneNecessaryMsg = true;
+				}
+				
+				//segundo César, situação PENDENTE == cota nova
+				if (cota.getSituacaoCadastro() == SituacaoCadastro.PENDENTE){
 					
-					msgs.add(
-						"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Roteirização] cadatrada!");
+					if (cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.CONVENCIONAL){
+						
+						if (!this.cotaBaseRepository.cotaTemCotaBase(cota.getId())){
+							
+							msgs.add(
+								"É obrigatório o cadastro de Cota Base para mudança de status para Ativo de cotas novas.");
+						}
+						
+					} else {
+						
+						if (!this.mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(null, cota.getId())){
+							
+							msgs.add(
+								"É obrigatório o cadastro de Mix para mudança de status para Ativo de cotas novas.");
+						}
+					}
+				} else if (cota.getSituacaoCadastro() == SituacaoCadastro.SUSPENSO &&
+					cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.CONVENCIONAL){
+					
+					HistoricoSituacaoCota ultimoHistorico = 
+						this.historicoSituacaoCotaRepository.obterUltimoHistorico(
+							cota.getNumeroCota(), SituacaoCadastro.SUSPENSO);
+					
+					long diasSuspensao = DateUtil.obterDiferencaDias(ultimoHistorico.getDataInicioValidade(), 
+							Calendar.getInstance().getTime());
+					
+					if (diasSuspensao >= 90 && !this.cotaBaseRepository.cotaTemCotaBase(cota.getId())){
+						
+						msgs.add(
+							"Cota suspensa por mais de 90 dias, cadastro de Cota Base obrigatório para mudança de status para Ativo");
+					}
 				}
 				
 				if (!msgs.isEmpty()){
@@ -534,6 +590,8 @@ public class ManutencaoStatusCotaController extends BaseController {
 			return;
 		}
 		
+		validarDividasAbertoCota(numeroCota);
+		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 
 		FiltroConsultaConsignadoCotaDTO filtro = new FiltroConsultaConsignadoCotaDTO();
@@ -566,4 +624,16 @@ public class ManutencaoStatusCotaController extends BaseController {
 
 		result.use(Results.json()).from(validacao!=null?validacao:"", "result").recursive().serialize();
 	}	
+	
+	public void validarDividasAbertoCota(Integer numeroCota){
+        Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+        BigDecimal totalDividas = this.dividaService.obterTotalDividasAbertoCota(cota.getId());
+        
+        if (totalDividas!=null){
+            if (totalDividas.floatValue() > 0f){
+                throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"AVISO: A cota ["+cota.getPessoa().getNome()+"] possui um total de "+ CurrencyUtil.formatarValorComSimbolo(totalDividas.floatValue()) +" de dívidas em aberto !"));
+            }
+        }   
+	}
+
 }

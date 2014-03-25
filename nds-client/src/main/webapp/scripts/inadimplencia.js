@@ -168,11 +168,19 @@ var inadimplenciaController = $.extend(true, {
 		}
 		
 		$.each(grid.rows, function(index, row) {
+			
 			var negociada = row.cell.situacao == "Negociada";
-			var comissao = (row.cell.comissaoSaldoDivida) && negociada; 
+			var boletoAntecipado = row.cell.situacao == "Boleto em branco";
+			var comissao = (row.cell.comissaoSaldoDivida && row.cell.comissaoSaldoDivida > 0) && negociada; 
 			
-			row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida, row.cell.numCota, row.cell.nome, comissao);		
+			if (!boletoAntecipado){
 			
+			    row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida, row.cell.numCota, row.cell.nome, comissao);
+			}
+			else{
+				
+				row.cell.detalhe = "<img src=\"" + contextPath + "/images/bt_financeiro.png\" border=\"0\" hspace=\"5\" title=\"Boleto em Branco\" />";
+			}
 	  	});
 		
 		$("#idQtde", inadimplenciaController.workspace).html(qtde);

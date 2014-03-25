@@ -12,15 +12,16 @@ public enum InterfaceEnum {
 	EMS0119(119L, null, EMS0119Input.class),
 	EMS0125(125L, null, EMS0125Input.class),
 	EMS0126(126L, null, EMS0126Input.class),
-	//EMS0127(127L, null, null),
 	EMS0128(128L, null, EMS0128Input.class, TipoInterfaceEnum.DB),
 	EMS0134(134L, null, null),
 	EMS0135(135L, null, EMS0135InputItem.class, EMS0135Input.class, TipoInterfaceEnum.DETALHE_INLINE),
 	EMS0136(136L, null, EMS0136Input.class),
 	EMS0127(127L, null, EMS0127InputItem.class, EMS0127Input.class, TipoInterfaceEnum.DETALHE_INLINE),
 	EMS0138(128L, null, null, TipoInterfaceEnum.DB),
+	EMS0140(140L, null, EMS0140InputItem.class, EMS0140Input.class, TipoInterfaceEnum.DETALHE_INLINE),
 	EMS0185(185L, null, null),
-	EMS2021(2021L, null, EMS2021InputItem.class, EMS2021Input.class, TipoInterfaceEnum.DETALHE_INLINE);
+	EMS2021(2021L, null, EMS2021Input.class, TipoInterfaceEnum.DB),
+	EMS0137(137L, null, EMS0137InputItem.class, EMS0137Input.class, TipoInterfaceEnum.DETALHE_INLINE);
 
 	private Long codigoInterface;
 	private Integer tamanhoLinha;

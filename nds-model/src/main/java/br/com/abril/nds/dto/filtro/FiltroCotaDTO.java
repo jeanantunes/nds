@@ -32,20 +32,26 @@ public class FiltroCotaDTO implements Serializable {
 	@Export(label = "Município")
 	private String municipio;
 	
+	@Export(label = "Status")
+	private String status;
+	
 	private PaginacaoVO paginacao;
 	
 	private OrdemColuna ordemColuna;
 	
+	private Long cotaId;
+	
 	public FiltroCotaDTO() {}
 	
 	public FiltroCotaDTO(Integer numeroCota, String nomeCota ,String numeroCpfCnpj,
-			String logradouro, String bairro, String municipio) {
+			String logradouro, String bairro, String municipio, String status) {
 		this.numeroCota = numeroCota;
 		this.numeroCpfCnpj = numeroCpfCnpj;
 		this.nomeCota = nomeCota;
 		this.logradouro = logradouro;
 		this.bairro = bairro;
 		this.municipio = municipio;
+		this.status = status;
 	}
 	
 	public enum OrdemColuna{
@@ -220,4 +226,22 @@ public class FiltroCotaDTO implements Serializable {
 			return false;
 		return true;
 	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Long getCotaId() {
+		return cotaId;
+	}
+
+	public void setCotaId(Long cotaId) {
+		this.cotaId = cotaId;
+	}
+	
+	
 }

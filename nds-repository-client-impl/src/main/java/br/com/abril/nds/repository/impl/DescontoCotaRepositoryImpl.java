@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,7 +13,9 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DescontoCotaRepository;
 
@@ -30,6 +33,36 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Desconto buscarDescontoCotaProdutoExcessao(TipoDesconto tipoDesconto, BigDecimal valorDesconto, Integer numeroCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select desconto 					");
+		hql.append(" from DescontoCotaProdutoExcessao d ");
+		hql.append(" inner join d.desconto desconto		");
+		
+		hql.append(" where ");
+		
+		hql.append(" d.cota.numeroCota = :numeroCota and 	");
+		hql.append(" d.produtoEdicao is null and 			");
+		hql.append(" d.tipoDesconto = :tipoDesconto and 	");
+		hql.append(" desconto.valor = :valorDesconto 				");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("tipoDesconto", tipoDesconto);
+		query.setParameter("valorDesconto", valorDesconto);
+		
+		query.setMaxResults(1);
+		
+		return (Desconto) query.uniqueResult();
+	}
+	
+	/**
 	 * Retorna query de Tipos de Desconto Específico da Cota
 	 * @return StringBuilder
 	 */
@@ -37,29 +70,35 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		
         StringBuilder hql = new StringBuilder();
         
-        hql.append("select desconto.id as idTipoDesconto ");
-		hql.append(", usuario.nome as nomeUsuario ");
-		hql.append(", hdcpe.valor as desconto ");
-		hql.append(", hdcpe.dataAlteracao as dataAlteracao ");
-		hql.append(", c.numeroCota as numeroCota ");
-		hql.append(", coalesce(pessoa.razaoSocial, pessoa.nome, '') as nomeCota ");
-		hql.append(", (case ");
-		hql.append("when (select count(hdcpe1.desconto.id) from HistoricoDescontoCotaProdutoExcessao hdcpe1 ");
-		hql.append("where hdcpe1.desconto.id = hdcpe.desconto.id ");
-		hql.append("group by hdcpe1.desconto.id) > 1 ");
-		hql.append("then 'Diversos' ");
-		hql.append("when (select count(hdcpe1.desconto.id) from HistoricoDescontoCotaProdutoExcessao hdcpe1 ");
-		hql.append("where hdcpe1.desconto.id = hdcpe.desconto.id ");
-		hql.append("group by hdcpe1.desconto.id) = 1 then juridica.razaoSocial ");
-		hql.append("else null end) as fornecedor");
-	    hql.append(", 'Específico' as descTipoDesconto ");
-        hql.append("from HistoricoDescontoCotaProdutoExcessao hdcpe ");
-        hql.append("join hdcpe.desconto desconto ");
-        hql.append("join hdcpe.usuario usuario ");
-        hql.append("join hdcpe.cota c ");
-        hql.append("join c.pessoa as pessoa ");
-        hql.append("join hdcpe.fornecedor as fornecedor ");
-        hql.append("join fornecedor.juridica as juridica ");
+        hql.append("	select	");
+        
+        hql.append("	desconto.id as idTipoDesconto,				");
+		hql.append("	usuario.nome as nomeUsuario,				");
+		hql.append("	desconto.valor as desconto,					");
+		hql.append("	desconto.dataAlteracao as dataAlteracao,	");
+		hql.append("	c.numeroCota as numeroCota,					");
+		
+		hql.append("	coalesce(pessoa.razaoSocial, pessoa.nome, '') as nomeCota,	");
+		hql.append("	(case when (select count(hdcpe1.desconto.id)				");
+		hql.append("	from HistoricoDescontoCotaProdutoExcessao hdcpe1			");
+		hql.append("	where hdcpe1.desconto.id = dcpe.desconto.id					");
+		hql.append("	group by hdcpe1.desconto.id) > 1							");
+		hql.append("	then 'Diversos'	");
+		
+		hql.append("	when (select count(hdcpe1.desconto.id)				");
+		hql.append("	from HistoricoDescontoCotaProdutoExcessao hdcpe1	");
+		hql.append("	where hdcpe1.desconto.id = dcpe.desconto.id			");
+		hql.append("	group by hdcpe1.desconto.id) = 1 then juridica.razaoSocial ");
+		hql.append("	else null end) as fornecedor,	");
+	    hql.append("	'Específico' as descTipoDesconto ");
+        
+	    hql.append("	from DescontoCotaProdutoExcessao dcpe ");
+        hql.append("	join dcpe.desconto desconto ");
+        hql.append("	join dcpe.usuario usuario ");
+        hql.append("	join dcpe.cota c ");
+        hql.append("	join c.pessoa as pessoa ");
+        hql.append("	join dcpe.fornecedor as fornecedor ");
+        hql.append("	join fornecedor.juridica as juridica ");
         
         return hql;
 	}
@@ -72,7 +111,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 	 */
 	private StringBuilder ordenacaoDescontoCota(FiltroTipoDescontoCotaDTO filtro,StringBuilder hql){
 		
-		if (filtro.getOrdenacaoColuna() == null){
+		if (filtro ==null || filtro.getOrdenacaoColuna() == null){
 			
 			return hql;
 		}
@@ -129,18 +168,18 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 
 		StringBuilder hql = queryDescontoCota();
 
-		hql.append(" where hdcpe.produto is null and  hdcpe.produtoEdicao is null ");
+		hql.append(" where dcpe.produto is null and  dcpe.produtoEdicao is null ");
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
-		if(filtro.getNumeroCota() != null) {
+		if(filtro != null && filtro.getNumeroCota() != null) {
 			
 			hql.append(" and c.numeroCota = :numeroCota ");
 			param.put("numeroCota", filtro.getNumeroCota());
 		}
 				
-		hql.append(" group by hdcpe.desconto, hdcpe.dataAlteracao ");
+		hql.append(" group by c.id, desconto.id  ");
 		
-		if(filtro.getPaginacao()!=null){
+		if(filtro != null  && filtro.getPaginacao()!=null){
 			
 			if (filtro.getPaginacao().getSortColumn() != null && 
 				!filtro.getPaginacao().getSortColumn().trim().isEmpty()) {
@@ -160,19 +199,20 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		
 		Query query =  getSession().createQuery(hql.toString());
 				
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				TipoDescontoCotaDTO.class));
 		
-		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-
+		if (filtro != null) {
+			if (filtro.getPaginacao() != null
+					&& filtro.getPaginacao().getPosicaoInicial() != null)
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			if (filtro.getPaginacao() != null
+					&& filtro.getPaginacao().getQtdResultadosPorPagina() != null)
+				query.setMaxResults(filtro.getPaginacao()
+						.getQtdResultadosPorPagina());
+		}
 		return query.list();
 	}
 
@@ -187,14 +227,19 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
  
         StringBuilder hql = new StringBuilder();
         
-        hql.append(" select hdcpe.id as id ");
-        hql.append(" from HistoricoDescontoCotaProdutoExcessao hdcpe ");
-        hql.append(" join hdcpe.desconto desconto ");
-        hql.append(" join hdcpe.cota c ");
-        hql.append(" join hdcpe.fornecedor as fornecedor ");
+        hql.append("	select	");
         
-        hql.append(" where hdcpe.produto.id is null and  hdcpe.produtoEdicao.id is null ");
-		
+        hql.append("	desconto.id, c.id	");
+        
+	    hql.append("	from DescontoCotaProdutoExcessao dcpe ");
+        hql.append("	join dcpe.desconto desconto ");
+        hql.append("	join dcpe.usuario usuario ");
+        hql.append("	join dcpe.cota c ");
+        hql.append("	join c.pessoa as pessoa ");
+        hql.append("	join dcpe.fornecedor as fornecedor ");
+        hql.append("	join fornecedor.juridica as juridica ");
+        
+        hql.append(" where dcpe.produto is null and  dcpe.produtoEdicao is null ");
         
         HashMap<String, Object> param = new HashMap<String, Object>();
 		if(filtro.getNumeroCota() != null) {
@@ -203,60 +248,14 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 			param.put("numeroCota", filtro.getNumeroCota());
 		}
 		
-		hql.append(" group by desconto.id ");
+		hql.append(" group by c.id, desconto.id  ");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		return query.list().size();
 	}
 
-	@Override
-	public DescontoCota buscarUltimoDescontoValido(Fornecedor fornecedor, Cota cota) {
-		
-		return obterDescontoValido(null, fornecedor, cota);
-	}
 	
-	@Override
-	public DescontoCota buscarUltimoDescontoValido(Long idDesconto,Fornecedor fornecedor, Cota cota) {
-		
-		return obterDescontoValido(idDesconto, fornecedor, cota);
-	}
-
-	private DescontoCota obterDescontoValido(Long idDesconto,Fornecedor fornecedor, Cota cota) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select desconto from DescontoCota desconto JOIN desconto.fornecedores fornecedor JOIN desconto.cota cota  ")
-			.append("where desconto.dataAlteracao = ")
-			.append(" ( select max(descontoSub.dataAlteracao) from DescontoCota descontoSub  ")
-				.append(" JOIN descontoSub.fornecedores fornecedorSub JOIN descontoSub.cota cotaSub ")
-				.append(" where fornecedorSub.id =:idFornecedor ")
-				.append(" and cotaSub.id =:idCota ");
-				if(idDesconto!= null){
-					hql.append(" and descontoSub.id not in (:idUltimoDesconto) ");
-				}
-				
-		hql.append(" ) ")
-			.append(" AND fornecedor.id =:idFornecedor ")
-			.append(" AND cota.id =:idCota ");
-	
-		Query query = getSession().createQuery(hql.toString());
-		
-		query.setParameter("idFornecedor",fornecedor.getId());
-		
-		if(idDesconto!= null){
-			
-			query.setParameter("idUltimoDesconto", idDesconto);
-		}
-		
-		query.setParameter("idCota", cota.getId());
-		
-		query.setMaxResults(1);
-		
-		return (DescontoCota)  query.uniqueResult();
-	}
 }

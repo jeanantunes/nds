@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,7 +73,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	@Transactional
 	public List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Integer numCota,GrupoMovimentoEstoque grupoMovimentoEstoque) {
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numCota);
 		
 		return this.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), grupoMovimentoEstoque);
 	}
@@ -154,7 +155,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	public Long obterQuantidadeReparteProdutoCota(Long idProdutoEdicao,
 			Integer numeroCota) {		
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		TipoMovimentoEstoque tipoMovimentoCota =
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
@@ -301,13 +302,12 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE
 		);
 
-		Iterator<ProdutoEdicao> iterator = mapaSuplementar.keySet().iterator();
 
-		while (iterator.hasNext()) {
+		for (Entry<ProdutoEdicao, TransferenciaReparteSuplementarDTO> entry:mapaSuplementar.entrySet()) {
 
-			ProdutoEdicao produtoEdicao = iterator.next();
+			ProdutoEdicao produtoEdicao = entry.getKey();
 
-			TransferenciaReparteSuplementarDTO transferencia = mapaSuplementar.get(iterator);
+			TransferenciaReparteSuplementarDTO transferencia = entry.getValue();
 
 			this.movimentoEstoqueService.gerarMovimentoEstoque(
 				produtoEdicao.getId(), usuario.getId(), 
@@ -319,6 +319,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	 * @see br.com.abril.nds.service.MovimentoEstoqueCotaService#envioConsignadoNotaCancelada(br.com.abril.nds.model.fiscal.nota.NotaFiscal)
 	 */
 	@Override
+	@Transactional
 	public void envioConsignadoNotaCancelada(NotaFiscal notaFiscalCancelada) {
 		
 		TipoMovimentoEstoque tipoMovimento = 
@@ -346,6 +347,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	}
 	
 	@Override
+	@Transactional
 	public Date obterDataUltimaMovimentacaoReparteExpedida(Integer numeroCota,
 														   Long idProdutoEdicao) {
 		

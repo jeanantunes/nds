@@ -33,6 +33,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 
 /**
  * Entidade que representa o PDV associado
@@ -151,7 +152,7 @@ public class PDV implements Serializable {
 	 * Porcentagem que o PDV representa no total do faturamento
 	 * da cota
 	 */
-	@Column(name = "PORCENTAGEM_FATURAMENTO", precision=18, scale=4)
+	@Column(name = "PORCENTAGEM_FATURAMENTO")
 	private BigDecimal porcentagemFaturamento;
 	
 	/**
@@ -191,12 +192,16 @@ public class PDV implements Serializable {
 		
 	@Column(name = "TIPO_EXPOSITOR")
 	private String tipoExpositor;
-	  	
-	@OneToOne(mappedBy = "pdv",cascade=CascadeType.REMOVE)	  	
+
+	@OneToOne(mappedBy = "pdv")	  	
 	private GeradorFluxoPDV geradorFluxoPDV;
 	
 	@OneToMany(mappedBy = "pdv")
 	private List<RotaPDV> rotas =  new ArrayList<RotaPDV>();
+
+	@OneToMany(mappedBy="pdv")
+	@Cascade(org.hibernate.annotations.CascadeType.REMOVE)
+	private List<FixacaoRepartePdv> fixacaoRepartePdv;	
 	
 	public Long getId() {
 		return id;
@@ -458,7 +463,21 @@ public class PDV implements Serializable {
         this.rotas = rotas;
     }
 
-    public EnderecoPDV getEnderecoEntrega(){
+    /**
+	 * @return the fixacaoRepartePdv
+	 */
+	public List<FixacaoRepartePdv> getFixacaoRepartePdv() {
+		return fixacaoRepartePdv;
+	}
+
+	/**
+	 * @param fixacaoRepartePdv the fixacaoRepartePdv to set
+	 */
+	public void setFixacaoRepartePdv(List<FixacaoRepartePdv> fixacaoRepartePdv) {
+		this.fixacaoRepartePdv = fixacaoRepartePdv;
+	}
+
+	public EnderecoPDV getEnderecoEntrega(){
 		for(EnderecoPDV item:this.getEnderecos()){
 			if(item.getTipoEndereco()==TipoEndereco.LOCAL_ENTREGA){
 				return item;

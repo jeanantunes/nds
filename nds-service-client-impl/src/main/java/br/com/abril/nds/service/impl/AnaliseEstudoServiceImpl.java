@@ -22,4 +22,5 @@ public class AnaliseEstudoServiceImpl implements AnaliseEstudoService  {
 	public List<AnaliseEstudoDTO> buscarTodosEstudos(FiltroAnaliseEstudoDTO filtro) {
 		return analiseEstudoRepository.buscarEstudos(filtro);
 	}
+
 }

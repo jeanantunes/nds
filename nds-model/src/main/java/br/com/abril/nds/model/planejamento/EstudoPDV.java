@@ -1,0 +1,83 @@
+package br.com.abril.nds.model.planejamento;
+
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.math.BigInteger;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: Pedro
+ * Date: 27/05/13
+ * Time: 14:10
+ * To change this template use File | Settings | File Templates.
+ */
+@Entity
+@Table(name = "ESTUDO_PDV")
+@SequenceGenerator(name = "ESTUDO_PDV_SEQ", initialValue = 1, allocationSize = 1)
+public class EstudoPDV implements Serializable {
+
+    private static final long serialVersionUID = -6947627816099090543L;
+
+    @Id
+    @GeneratedValue(generator = "ESTUDO_PDV_SEQ")
+    @Column(name = "ID")
+    private Long id;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "ESTUDO_ID")
+    private EstudoGerado estudo;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "COTA_ID")
+    private Cota cota;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "PDV_ID")
+    private PDV pdv;
+
+    @Column(name = "REPARTE")
+    private BigInteger reparte;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public EstudoGerado getEstudo() {
+        return estudo;
+    }
+
+    public void setEstudo(EstudoGerado estudo) {
+        this.estudo = estudo;
+    }
+
+    public Cota getCota() {
+        return cota;
+    }
+
+    public void setCota(Cota cota) {
+        this.cota = cota;
+    }
+
+    public PDV getPdv() {
+        return pdv;
+    }
+
+    public void setPdv(PDV pdv) {
+        this.pdv = pdv;
+    }
+
+    public BigInteger getReparte() {
+        return reparte;
+    }
+
+    public void setReparte(BigInteger reparte) {
+        this.reparte = reparte;
+    }
+}

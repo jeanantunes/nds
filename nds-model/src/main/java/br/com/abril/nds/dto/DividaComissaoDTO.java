@@ -1,40 +1,35 @@
 package br.com.abril.nds.dto;
 
-import java.math.BigDecimal;
 
 public class DividaComissaoDTO {
 	
-	private BigDecimal porcentagem;
-	private BigDecimal valorDivida;
-	private BigDecimal valorPago;
-	private BigDecimal valorResidual;
+	private String porcentagem;
+	private String valorDivida;
+	private String valorPago;
+	private String valorResidual;
 	
-	public BigDecimal getPorcentagem() {
+	public String getPorcentagem() {
 		return porcentagem;
 	}
-	public void setPorcentagem(BigDecimal porcentagem) {
+	public void setPorcentagem(String porcentagem) {
 		this.porcentagem = porcentagem;
 	}
-	public BigDecimal getValorDivida() {
+	public String getValorDivida() {
 		return valorDivida;
 	}
-	public void setValorDivida(BigDecimal valorDivida) {
+	public void setValorDivida(String valorDivida) {
 		this.valorDivida = valorDivida;
 	}
-	public BigDecimal getValorPago() {
+	public String getValorPago() {
 		return valorPago;
 	}
-	public void setValorPago(BigDecimal valorPago) {
+	public void setValorPago(String valorPago) {
 		this.valorPago = valorPago;
 	}
-	public BigDecimal getValorResidual() {
+	public String getValorResidual() {
 		return valorResidual;
 	}
-	public void setValorResidual(BigDecimal valorResidual) {
+	public void setValorResidual(String valorResidual) {
 		this.valorResidual = valorResidual;
 	}
-	
-	
-
-
 }

@@ -7,6 +7,7 @@ var fechamentoEncalheController = $.extend(true, {
 	arrayCotasAusentesSession: [],
 	checkMarcarTodosCotasAusentes : false,
 	checkAllGrid: false,
+	isAllFechamentos: true,
 	nonSelected: [],
 	fechamentosManuais: [],
 	
@@ -14,7 +15,7 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		var sizeNomeProduto = 110;
 		
-		if($("#permissaoColExemplDevolucao").val() != "true"){
+		if($("#permissaoColExemplDevolucao", fechamentoEncalheController.workspace).val() != "true"){
 			sizeNomeProduto = 465;
 		}
 		
@@ -177,13 +178,17 @@ var fechamentoEncalheController = $.extend(true, {
 			singleSelect : true
 		});
 		
-		if($("#permissaoColExemplDevolucao").val() != "true"){
+		if($("#permissaoColExemplDevolucao", fechamentoEncalheController.workspace).val() != "true"){
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(6,false);
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(7,false);
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(9,false);
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(11,false);
-			$("#btnEncerrarOperacaoEncalhe", fechamentoEncalheController.workspace).hide();
 			$('.bt_sellAll', fechamentoEncalheController.workspace).hide();
+		}
+		
+		if($("#permissaoBtnConfirmar", fechamentoEncalheController.workspace).val() != "true"){
+			$("#btnEncerrarOperacaoEncalhe", fechamentoEncalheController.workspace).hide();
+			$("#bt_cotas_ausentes", fechamentoEncalheController.workspace).hide();
 		}
 	},
 	
@@ -235,7 +240,11 @@ var fechamentoEncalheController = $.extend(true, {
         } 
 		
 		if (resultado.rows && resultado.rows.length > 0) {
-			$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).show();
+			
+			if($("#permissaoBtnConfirmar", fechamentoEncalheController.workspace).val() == "true"){
+				$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).show();
+			}
+			
 			$('.divBotoesPrincipais', fechamentoEncalheController.workspace).show();
 			$('#btAnaliticoEncalhe', fechamentoEncalheController.workspace).show();
 		}
@@ -256,9 +265,9 @@ var fechamentoEncalheController = $.extend(true, {
 			row.cell.fisico = '<input class="" isEdicao="true" type="text" value="'+ (valorFisico != undefined ? valorFisico : "") +'" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + '/>';
 
 			if((row.cell.replicar == 'true' || fechamentoEncalheController.checkAllGrid) && ($.inArray(row.cell.produtoEdicao, fechamentoEncalheController.nonSelected) < 0)) {
-				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ ' checked />';
+				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index +', this, ' + row.cell.produtoEdicao + ');"' + fechado+ ' checked />';
 			} else {
-				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ '/>';
+				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index +', this, ' + row.cell.produtoEdicao + ');"' + fechado+ '/>';
 			}	
 			
 			if (fechado != '') {
@@ -294,6 +303,8 @@ var fechamentoEncalheController = $.extend(true, {
 				fechamentoEncalheController.limparInputsFisico(i);
 			}
 		}
+		
+		fechamentoEncalheController.isAllFechamentos = true;
 	},
 	
 	replicarItens : function() {
@@ -311,9 +322,16 @@ var fechamentoEncalheController = $.extend(true, {
 		});
 	},
 	
-	replicar:function(index){
+	replicar:function(index, campo, produtoEdicao){
+
 		$("#sel",this.workspace).attr("checked",false);
 		fechamentoEncalheController.replicarItem(index, true);
+		
+		var inputFisico = $(campo).parents("tr").find("input[name='fisico']");
+		
+		fechamentoEncalheController.onChangeFisico(inputFisico, index, produtoEdicao);
+		
+		fechamentoEncalheController.isAllFechamentos = false;
 	},
 	
 	limparInputsFisico: function(index) {
@@ -387,6 +405,8 @@ var fechamentoEncalheController = $.extend(true, {
 		}
 		
 		fechamentoEncalheController.fechamentosManuais[produtoEdicao] = campo.value;
+		
+		fechamentoEncalheController.isAllFechamentos = false;
 		
 	},
 	
@@ -479,12 +499,12 @@ var fechamentoEncalheController = $.extend(true, {
 				} else {
 					
 					fechamentoEncalheController.isFechamento = true;
-					fechamentoEncalheController.popup_encerrarEncalhe(true);
 					
+					fechamentoEncalheController.popup_encerrarEncalhe(true);
 				}	
 				
 				fechamentoEncalheController.fechamentosManuais = [];
-				
+				fechamentoEncalheController.nonSelected = [];
 			},
 		  	null,
 		   	false
@@ -515,8 +535,9 @@ var fechamentoEncalheController = $.extend(true, {
 						params,
 						function (result) {
 
-							var tipoMensagem = result.tipoMensagem;
-							var listaMensagens = result.listaMensagens;
+							var tipoMensagem = result.mensagem.tipoMensagem;
+							
+							var listaMensagens = result.mensagem.listaMensagens;
 							
 							if (tipoMensagem && listaMensagens) {
 								
@@ -524,8 +545,16 @@ var fechamentoEncalheController = $.extend(true, {
 								
 								_this.dialog("close");
 								
-								return;
+								if(result.isImprimirBoletos){
+									
+									window.open(contextPath + "/devolucao/fechamentoEncalhe/imprimirBoletosCotasAusentes", 
+											"_blank");
+									
+								}
 								
+								fechamentoEncalheController.emitirBoletosFechamentoEncalhe();
+
+								return;
 							}
 
 							if (result.isNenhumaCotaAusente == 'true') {
@@ -535,10 +564,10 @@ var fechamentoEncalheController = $.extend(true, {
 							} else {
 								
 								fechamentoEncalheController.isFechamento = true;
-								fechamentoEncalheController.popup_encerrarEncalhe(true);
 								
+								fechamentoEncalheController.popup_encerrarEncalhe(true);
 							}
-							
+	
 							fechamentoEncalheController.pesquisar();
 							
 							_this.dialog("close");
@@ -674,7 +703,7 @@ var fechamentoEncalheController = $.extend(true, {
 			}
 		};
 		
-		if($("#permissaoColExemplDevolucao").val() != "true"){
+		if($("#permissaoColExemplDevolucao", fechamentoEncalheController.workspace).val() != "true"){
 			delete buttons.Postergar;
 			delete buttons.Cobrar;
 		}
@@ -699,6 +728,8 @@ var fechamentoEncalheController = $.extend(true, {
 			
 			var checkBox = '<span></span>';
 			
+			var unificacao = row.cell.unificacao ? "disabled='disabled'" : "";
+			
 			if (row.cell.indPossuiChamadaEncalheCota) { 
 			
 				if(row.cell.fechado) {
@@ -713,7 +744,7 @@ var fechamentoEncalheController = $.extend(true, {
 							if(row.cell.postergado == true || row.cell.postergado == "true") {
 								checkBox = '<input checked="checked" isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" disabled="disabled" />';
 							} else {
-								checkBox = '<input checked="checked" isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" />';
+								checkBox = '<input checked="checked" isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" '+ unificacao +' />';
 							}
 
 							checked = true;
@@ -724,7 +755,7 @@ var fechamentoEncalheController = $.extend(true, {
 						if(row.cell.postergado == true || row.cell.postergado == "true") {
 							checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" disabled="disabled" />';
 						} else {
-							checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" />';
+							checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" '+ unificacao +' />';
 						}
 						
 					}
@@ -734,13 +765,13 @@ var fechamentoEncalheController = $.extend(true, {
 				
 				if(row.cell.indMFCNaoConsolidado==true){
 				
-				    checkBox = '<input isEdicao="true" type="checkbox" onclick="return false" onkeydown="return false" checked="checked" name="checkboxGridCotas_comDivida" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+				    checkBox = '<input isEdicao="true" type="checkbox" onclick="return false" onkeydown="return false" checked="checked" name="checkboxGridCotas_comDivida" id="checkboxGridCotas" value="' + row.cell.idCota + '" '+ unificacao +' />';	
 				    
 				    fechamentoEncalheController.preencherArrayCotasAusentes(row.cell.idCota, true);
 				}
 				else{
 					
-					checkBox = '<input isEdicao="true" type="checkbox" onclick="return false" onkeydown="return false" name="checkboxGridCotas_comDivida" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';
+					checkBox = '<input isEdicao="true" type="checkbox" onclick="return false" onkeydown="return false" name="checkboxGridCotas_comDivida" id="checkboxGridCotas" value="' + row.cell.idCota + '" '+ unificacao +' />';
 				    
 					fechamentoEncalheController.preencherArrayCotasAusentes(row.cell.idCota, false);
 				}
@@ -939,6 +970,7 @@ var fechamentoEncalheController = $.extend(true, {
 							"Confirmar" : function() {
 								
 								fechamentoEncalheController.cobrarCotas();
+
 								$("#dialog-confirmar-regerar-cobranca", fechamentoEncalheController.workspace).dialog("close");
 							},
 							"Cancelar" : function(){
@@ -1127,7 +1159,7 @@ var fechamentoEncalheController = $.extend(true, {
 				data.push({name:'listaNaoReplicados[' + index + '].fisico', value: $("#" + value, fechamentoEncalheController.workspace).val()});
 			 });
 
-			 data.push({name:"isAllFechamentos", value: fechamentoEncalheController.checkAllGrid});
+			 data.push({name:"isAllFechamentos", value: fechamentoEncalheController.checkAllGrid || fechamentoEncalheController.isAllFechamentos});
 		 }
 
 		 for(var index in fechamentoEncalheController.fechamentosManuais) { 
@@ -1234,6 +1266,48 @@ var fechamentoEncalheController = $.extend(true, {
 				}
 			}
 		);	
+	}, 
+
+	obterStatusEmissaoBoletosFechamentoEncalhe : function() {
+		
+		$.postJSON(contextPath + "/financeiro/boletoEmail/obterStatusEmissaoBoletosFechamentoEncalhe", 
+			null,
+			function(result) {
+			
+				if(!result || result == '' || result == 'ENVIO_FINALIZADO' || result.tipoMensagem) {
+					
+					$('#mensagemLoading').text('Aguarde, carregando ...');
+					
+					if (result && result.tipoMensagem){
+						
+						exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					}
+					
+				} else {
+					
+					$('#mensagemLoading').text(result);
+										
+					setTimeout(fechamentoEncalheController.obterStatusEmissaoBoletosFechamentoEncalhe,5000);
+				}
+			}
+		);	
+	}, 
+	
+    emitirBoletosFechamentoEncalhe : function() {
+		
+		$.postJSON(contextPath + "/financeiro/boletoEmail/emitirBoletosFechamentoEncalhe", 
+			null,
+			function(result) {
+					
+				if (result && result.tipoMensagem){
+						
+					exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					
+				}
+			}
+		);	
+		
+		setTimeout(fechamentoEncalheController.obterStatusEmissaoBoletosFechamentoEncalhe,5000);
 	} 
 	
 }, BaseController);

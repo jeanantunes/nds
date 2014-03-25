@@ -5,9 +5,11 @@ var analiseHistoricoVendaController = $.extend(true, {
 		var flexGridService = new FlexGridService();
 		
 		// EXPORTAÇÃO
-		$('#analiseHistoricoVendaXLS').attr('href', contextPath + "/distribuicao/historicoVenda/exportar?fileType=XLS");
+		$('#analiseHistoricoVendaXLS', analiseHistoricoVendaController.workspace).attr(
+				'href', contextPath + "/distribuicao/historicoVenda/exportar?fileType=XLS");
 		
-		$('#analiseHistoricoVendaPDF').attr('href', contextPath + "/distribuicao/historicoVenda/exportar?fileType=PDF");
+		$('#analiseHistoricoVendaPDF', analiseHistoricoVendaController.workspace).attr(
+				'href', contextPath + "/distribuicao/historicoVenda/exportar?fileType=PDF");
 		
 		analiseHistoricoVendaController.Grids = {
 				BaseHistoricoGrid : flexGridService.GridFactory.createGrid({
@@ -43,13 +45,13 @@ var analiseHistoricoVendaController = $.extend(true, {
 							align : 'right'
 						}, {
 							display : 'REP',
-							name : 'reparteMedioFormat',
+							name : 'reparteMedio',
 							width : 35,
 							sortable : true,
 							align : 'right'
 						}, {
 							display : 'VDA',
-							name : 'vendaMediaFormat',
+							name : 'vendaMedia',
 							width : 35,
 							sortable : true,
 							align : 'right'
@@ -171,19 +173,18 @@ var analiseHistoricoVendaController = $.extend(true, {
 						width : 690,
 						height : 200
 					}
-				}),
+				})
 		};
 	},
 	
 	popularPopUpInformacoesCota : function(cotaDto){
-		
 		if(cotaDto){
-		       $('#popUpNumeroCota').text(cotaDto.numeroCota);
-		       $('#popUpNomePessoa').text(cotaDto.nomePessoa);
-		       $('#popUpTipoCota').text(cotaDto.tipoDistribuicaoCota);
-		       $('#popUpRanking').text(cotaDto.rankId);
-		       $('#popUpFaturamentoCota').text(cotaDto.faturamentoFormatado);
-		       $('#popUpData').text(cotaDto.dataGeracaoFormat);
+		       $('#popUpNumeroCota', analiseHistoricoVendaController.workspace).text(cotaDto.numeroCota);
+		       $('#popUpNomePessoa', analiseHistoricoVendaController.workspace).text(cotaDto.nomePessoa);
+		       $('#popUpTipoCota', analiseHistoricoVendaController.workspace).text(cotaDto.tipoDistribuicaoCota);
+		       $('#popUpRanking', analiseHistoricoVendaController.workspace).text(cotaDto.rankId);
+		       $('#popUpFaturamentoCota', analiseHistoricoVendaController.workspace).text(cotaDto.faturamentoFormatado);
+		       $('#popUpData', analiseHistoricoVendaController.workspace).text(cotaDto.dataGeracaoFormat);
 		  }
 	},
 	
@@ -191,40 +192,24 @@ var analiseHistoricoVendaController = $.extend(true, {
 		
 		analiseHistoricoVendaController.popularPopUpInformacoesCota(response.cotaDto);
 		
-		for ( var i in response.tableModel.rows) {
-			row = response.tableModel.rows[i];
-			
-			if (row.cell.principal) {
-				row.cell.principal = "<img src='images/ico_check.gif' />";
-			}else {
-				row.cell.principal = "";
+		if (response.tableModel) {
+			for ( var i in response.tableModel.rows) {
+				row = response.tableModel.rows[i];
+				
+				if (row.cell.principal) {
+					row.cell.principal = "<img src='images/ico_check.gif' />";
+				}else {
+					row.cell.principal = "";
+				}
+				
 			}
-			
 		}
 		
 		return response.tableModel;
 		
 	},
 	
-	preProcessAnaliseGrid : function montarRodape(result){
-		var rodape = {
-				qtdCota  : 0,
-				qtdPdv  :  0,
-				reparteMedio  :0,
-				vendaMedia :  0,
-				ed1Rep : 0,
-				ed1Venda : 0,
-				ed2Rep :  0,
-				ed2Venda : 0,
-				ed3Rep :  0,
-				ed3Venda : 0,
-				ed4Rep :  0,
-				ed4Venda : 0,
-				ed5Rep :  0,
-				ed5Venda : 0,
-				ed6Rep :  0,
-				ed6Venda : 0
-		};
+	preProcessAnaliseGrid : function preProcessAnaliseGrid(result){
 		
 		for ( var index in result.rows) {
 			row = result.rows[index];
@@ -233,49 +218,52 @@ var analiseHistoricoVendaController = $.extend(true, {
 			link = '<a href="javascript:;" onclick="analiseHistoricoVendaController.popup_cotas_detalhes('+row.cell.numeroCota+');" style="cursor:pointer">'+row.cell.nomePessoa+'</a>';
 			row.cell.nomePessoa = link;
 			
-			rodape.qtdCota  +=  parseInt((row.cell.numeroCota ? 1 : 0));
-			rodape.qtdPdv  +=  parseInt((row.cell.qtdPdv || 0));
-			rodape.reparteMedio  +=  parseFloat((row.cell.reparteMedioFormat.replace(",",".") ||  0));
-			rodape.vendaMedia +=  parseFloat((row.cell.vendaMediaFormat.replace(",",".") ||  0));
-			rodape.ed1Rep += parseInt((row.cell.ed1Reparte ||  0));
-			rodape.ed1Venda +=  parseInt((row.cell.ed1Venda ||  0));
-			rodape.ed2Rep +=  parseInt((row.cell.ed2Reparte ||  0));
-			rodape.ed2Venda +=  parseInt((row.cell.ed2Venda ||  0));
-			rodape.ed3Rep +=  parseInt((row.cell.ed3Reparte ||  0));
-			rodape.ed3Venda +=  parseInt((row.cell.ed3Venda ||  0));
-			rodape.ed4Rep +=  parseInt((row.cell.ed4Reparte ||  0));
-			rodape.ed4Venda +=  parseInt((row.cell.ed4Venda ||  0));
-			rodape.ed5Rep +=  parseInt((row.cell.ed5Reparte ||  0));
-			rodape.ed5Venda +=  parseInt((row.cell.ed5Venda ||  0));
-			rodape.ed6Rep +=  parseInt((row.cell.ed6Reparte ||  0));
-			rodape.ed6Venda +=  parseInt((row.cell.ed6Venda ||  0));
+			row.cell.ed1Reparte = row.cell.ed1Reparte || row.cell.ed1Reparte == 0 ? row.cell.ed1Reparte : "";
+			row.cell.ed1Venda = row.cell.ed1Venda || row.cell.ed1Venda == 0 ? row.cell.ed1Venda : "";
+			row.cell.ed2Reparte = row.cell.ed2Reparte || row.cell.ed2Reparte == 0 ? row.cell.ed2Reparte : "";
+			row.cell.ed2Venda = row.cell.ed2Venda || row.cell.ed2Venda == 0 ? row.cell.ed2Venda : "";
+			row.cell.ed3Reparte = row.cell.ed3Reparte || row.cell.ed3Reparte == 0 ? row.cell.ed3Reparte : "";
+			row.cell.ed3Venda = row.cell.ed3Venda || row.cell.ed3Venda == 0 ? row.cell.ed3Venda : "";
+			row.cell.ed4Reparte = row.cell.ed4Reparte || row.cell.ed4Reparte == 0 ? row.cell.ed4Reparte : "";
+			row.cell.ed4Venda = row.cell.ed4Venda || row.cell.ed4Venda == 0 ? row.cell.ed4Venda : "";
+			row.cell.ed5Reparte = row.cell.ed5Reparte || row.cell.ed5Reparte == 0 ? row.cell.ed5Reparte : "";
+			row.cell.ed5Venda = row.cell.ed5Venda || row.cell.ed5Venda == 0 ? row.cell.ed5Venda : "";
+			row.cell.ed6Reparte = row.cell.ed6Reparte || row.cell.ed6Reparte == 0 ? row.cell.ed6Reparte : "";
+			row.cell.ed6Venda = row.cell.ed6Venda || row.cell.ed6Venda == 0 ? row.cell.ed6Venda : "";
+			
+			row.cell.reparteMedio = (row.cell.reparteMedio || 0).toFixed(0);
+			row.cell.vendaMedia = (row.cell.vendaMedia || 0).toFixed(0);
+			
 		}
 		
-		 html = '<td width="50" >Qtde Cotas:</td>' +
-		        '<td width="103" >' + rodape.qtdCota + '</td>' +
-		        '<td width="30" align="right">' + rodape.qtdPdv + '</td>' +
-		        '<td width="32" align="right">' + rodape.reparteMedio.toFixed(2) + '</td>' +
-		        '<td width="32" align="right">' + rodape.vendaMedia.toFixed(2) + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed1Rep + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed1Venda + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed2Rep + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed2Venda + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed3Rep + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed3Venda + '</span></td>' +
-		        '<td width="32" align="right">' + rodape.ed4Rep + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed4Venda + '</span></td>' +
-		        '<td width="32" align="right">' + rodape.ed5Rep + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed5Venda + '</span></td>' +
-		        '<td width="32" align="right">' + rodape.ed6Rep + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed6Venda + '</span></td>' +
+		var resumo = result.rows[result.rows.length - 1].cell;
+		
+		html = '<td width="50" >Qtde Cotas:</td>' +
+		        '<td width="103" >' + resumo.numeroCota + '</td>' +
+		        '<td width="30" align="right">' + resumo.qtdPdv + '</td>' +
+		        '<td width="32" align="right">' + resumo.reparteMedio + '</td>' +
+		        '<td width="32" align="right">' + (analiseHistoricoVendaController.isFaixaZero ? 0 : resumo.vendaMedia) + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed1Reparte ? resumo.ed1Reparte : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed1Venda ? resumo.ed1Venda : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed2Reparte ? resumo.ed2Reparte : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed2Venda ? resumo.ed2Venda : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed3Reparte ? resumo.ed3Reparte : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed3Venda ? resumo.ed3Venda : '') + '</span></td>' +
+		        '<td width="32" align="right">' + (resumo.ed4Reparte ? resumo.ed4Reparte : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed4Venda ? resumo.ed4Venda : '') + '</span></td>' +
+		        '<td width="32" align="right">' + (resumo.ed5Reparte ? resumo.ed5Reparte: '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed5Venda ? resumo.ed5Venda : '') + '</span></td>' +
+		        '<td width="32" align="right">' + (resumo.ed6Reparte ? resumo.ed6Reparte : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed6Venda ? resumo.ed6Venda : '') + '</span></td>' +
 		        '<td width="15" >&nbsp;</td>';
 		 
-		 $('#rodapeAnaliseHistorico').html(html);
+		 $('#rodapeAnaliseHistorico', analiseHistoricoVendaController.workspace).html(html);
+		 
+		 result.rows.splice(result.rows.length - 1, 1);
 		 
 		 return result;
-		 
 	},
-
+	
 	// PopUp visulizado quando o usuário clica no nome da cota dentro do Grid Principal
 	popup_cotas_detalhes : function popup_cotas_detalhes(numeroCota) {
 		$( "#dialog-cotas-detalhes" ).dialog({

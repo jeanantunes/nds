@@ -36,15 +36,27 @@ public class ProdutoLancamentoVO  implements Serializable {
 	@Export(label="Total R$", exhibitionOrder = 7, widthPercent = 8)
 	private String valorTotal;
 	
-	@Export(label="Físico", exhibitionOrder = 8)
+	@Export(label="PEB", exhibitionOrder = 8)
+	private Long peb;
+	
+	@Export(label="Físico", exhibitionOrder = 9)
 	private String reparteFisico;
 	
-	@Export(label="Distribuição", exhibitionOrder = 9)
+	@Export(label="Distribuição", exhibitionOrder = 10)
 	private String distribuicao;
 	
-	@Export(label="Previsto", exhibitionOrder = 10, widthPercent = 9)
+	@Export(label="Previsto", exhibitionOrder = 11, widthPercent = 9)
 	private String dataLancamentoPrevista;
 	
+	@Export(label="Excluir", exhibitionOrder = 12, widthPercent = 9)
+	private boolean cancelado;
+	
+	@Export(label="Status", exhibitionOrder = 13, widthPercent = 9)
+	private String statusLancamento;
+	
+	@Export(label="Fornecedor", exhibitionOrder = 14, widthPercent = 9)
+	private Long fornecedorId;
+
 	private String novaDataLancamento;
 	
 	private boolean bloquearData;
@@ -54,6 +66,7 @@ public class ProdutoLancamentoVO  implements Serializable {
 	private boolean destacarLinha;
 	
 	private boolean possuiFuro;
+	
 	
 	/**
 	 * @return the id
@@ -69,11 +82,26 @@ public class ProdutoLancamentoVO  implements Serializable {
 		this.id = id;
 	}
 
+	public String getStatusLancamento() {
+		return statusLancamento;
+	}
+
+	public void setStatusLancamento(String statusLancamento) {
+		this.statusLancamento = statusLancamento;
+	}
 	/**
 	 * @return the codigoProduto
 	 */
 	public String getCodigoProduto() {
 		return codigoProduto;
+	}
+
+	public Long getFornecedorId() {
+		return fornecedorId;
+	}
+
+	public void setFornecedorId(Long fornecedorId) {
+		this.fornecedorId = fornecedorId;
 	}
 
 	/**
@@ -299,5 +327,26 @@ public class ProdutoLancamentoVO  implements Serializable {
 	public void setPossuiFuro(boolean possuiFuro) {
 		this.possuiFuro = possuiFuro;
 	}
+
+	public Long getPeb() {
+		return peb;
+	}
+
+	public void setPeb(Long peb) {
+		this.peb = peb;
+	}
+	
+	public boolean isCancelado() {
+		return cancelado;
+	}
+
+	public void setCancelado(boolean cancelado) {
+		this.cancelado = cancelado;
+	}
+
+
+
+	
+
 
 }

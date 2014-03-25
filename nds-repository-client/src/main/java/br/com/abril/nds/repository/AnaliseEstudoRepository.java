@@ -8,5 +8,5 @@ import br.com.abril.nds.dto.filtro.FiltroAnaliseEstudoDTO;
 public interface AnaliseEstudoRepository {
 
 	List<AnaliseEstudoDTO> buscarEstudos (FiltroAnaliseEstudoDTO filtro);
-
+	
 }

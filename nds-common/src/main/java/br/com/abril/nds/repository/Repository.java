@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface com operações básicas de repositório
@@ -17,9 +18,13 @@ public interface Repository<T, K extends Serializable> {
 	
 	void remover(T entity);
 	
+	void saveOrUpdate(T entity);
+	
 	T buscarPorId(K id);
 	
 	List<T> buscarTodos();
+	
+	void alterarPorId(K id, Map<String, String> campos);
 	
 	void alterar(T entity);
 	

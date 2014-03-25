@@ -1,71 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo02_subreport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="b9a1acd8-3f02-4a4a-a2a4-d856e8bf08e1">
 	<property name="ireport.zoom" value="1.6105100000000079"/>
-	<property name="ireport.x" value="330"/>
+	<property name="ireport.x" value="285"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="PACOTE_PADRAO" class="java.lang.Long"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
+	<field name="pacote" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[pacote]]></fieldDescription>
+	</field>
+	<field name="qtdProduto1" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto1]]></fieldDescription>
+	</field>
+	<field name="nomeRota" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeRota]]></fieldDescription>
+	</field>
+	<field name="qtdProduto5" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto5]]></fieldDescription>
+	</field>
+	<field name="qtdProduto0" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto0]]></fieldDescription>
+	</field>
+	<field name="idRota" class="java.lang.Long">
+		<fieldDescription><![CDATA[idRota]]></fieldDescription>
+	</field>
+	<field name="reparteTotal" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[reparteTotal]]></fieldDescription>
+	</field>
 	<field name="numeroNotaEnvio" class="java.lang.Long">
 		<fieldDescription><![CDATA[numeroNotaEnvio]]></fieldDescription>
-	</field>
-	<field name="numeroCota" class="java.lang.Integer">
-		<fieldDescription><![CDATA[numeroCota]]></fieldDescription>
 	</field>
 	<field name="nome" class="java.lang.String">
 		<fieldDescription><![CDATA[nome]]></fieldDescription>
 	</field>
-	<field name="logradouro" class="java.lang.String">
-		<fieldDescription><![CDATA[logradouro]]></fieldDescription>
+	<field name="qtdProduto4" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto4]]></fieldDescription>
 	</field>
-	<field name="bairro" class="java.lang.String">
-		<fieldDescription><![CDATA[bairro]]></fieldDescription>
+	<field name="qtdProduto3" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto3]]></fieldDescription>
 	</field>
-	<field name="cidade" class="java.lang.String">
-		<fieldDescription><![CDATA[cidade]]></fieldDescription>
+	<field name="cota" class="java.lang.String">
+		<fieldDescription><![CDATA[cota]]></fieldDescription>
 	</field>
-	<field name="uf" class="java.lang.String">
-		<fieldDescription><![CDATA[uf]]></fieldDescription>
-	</field>
-	<field name="pacote" class="java.lang.Number">
-		<fieldDescription><![CDATA[pacote]]></fieldDescription>
-	</field>
-	<field name="quebra" class="java.lang.Number">
+	<field name="quebra" class="java.math.BigInteger">
 		<fieldDescription><![CDATA[quebra]]></fieldDescription>
 	</field>
-	<field name="reparteTotal" class="java.lang.Number">
-		<fieldDescription><![CDATA[reparteTotal]]></fieldDescription>
+	<field name="idRoteiro" class="java.lang.Long">
+		<fieldDescription><![CDATA[idRoteiro]]></fieldDescription>
 	</field>
-	<field name="tipoLogradouro" class="java.lang.String"/>
-	<field name="numeroLogradouro" class="java.lang.String"/>
-	<variable name="SOMA_REPARTE_TOTAL" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{reparteTotal}]]></variableExpression>
-	</variable>
-	<variable name="SOMA_QUEBRA" class="java.lang.Integer" calculation="Sum">
-		<variableExpression><![CDATA[($P{PACOTE_PADRAO} == 0) ? 0 : $F{reparteTotal}.intValue() % $P{PACOTE_PADRAO}]]></variableExpression>
-	</variable>
-	<variable name="SOMA_PACOTE" class="java.lang.Integer" calculation="Sum">
-		<variableExpression><![CDATA[($P{PACOTE_PADRAO} == 0) ? 0 : $F{reparteTotal}.intValue() / $P{PACOTE_PADRAO}]]></variableExpression>
-	</variable>
+	<field name="idBox" class="java.lang.Long">
+		<fieldDescription><![CDATA[idBox]]></fieldDescription>
+	</field>
+	<field name="nomeRoteiro" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeRoteiro]]></fieldDescription>
+	</field>
+	<field name="nomeBox" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeBox]]></fieldDescription>
+	</field>
+	<field name="idCota" class="java.lang.Long">
+		<fieldDescription><![CDATA[idCota]]></fieldDescription>
+	</field>
+	<field name="qtdProduto2" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto2]]></fieldDescription>
+	</field>
+	<field name="qtdCotas" class="java.lang.Long">
+		<fieldDescription><![CDATA[qtdCotas]]></fieldDescription>
+	</field>
+	<field name="numeroTelefone" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroTelefone]]></fieldDescription>
+	</field>
+	<field name="numeroCota" class="java.lang.Integer">
+		<fieldDescription><![CDATA[numeroCota]]></fieldDescription>
+	</field>
+	<field name="endereco" class="java.lang.String"/>
 	<columnHeader>
-		<band height="28" splitType="Stretch">
+		<band height="14" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="450e0592-474c-4bf6-a7d3-fa2369d4c8ae" mode="Opaque" x="420" y="0" width="150" height="14" backcolor="#999999"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Quantidades]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="43cdab60-9cc4-4175-a451-84b92a125539" mode="Opaque" x="0" y="14" width="50" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="0" y="0" width="40" height="14" backcolor="#999999" uuid="43cdab60-9cc4-4175-a451-84b92a125539"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -78,7 +91,7 @@
 				<text><![CDATA[Nº NE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="c42fe572-345d-45ef-b221-f936e58e05cb" mode="Opaque" x="40" y="14" width="40" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="40" y="0" width="40" height="14" backcolor="#999999" uuid="c42fe572-345d-45ef-b221-f936e58e05cb"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -92,7 +105,7 @@
 				<text><![CDATA[Cota]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="41571949-f76a-43a5-8ace-15f56dd85277" mode="Opaque" x="80" y="14" width="140" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="80" y="0" width="140" height="14" backcolor="#999999" uuid="41571949-f76a-43a5-8ace-15f56dd85277"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -106,7 +119,7 @@
 				<text><![CDATA[Nome]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="2af9992e-07cd-4121-b1d9-ff497e179f95" mode="Opaque" x="220" y="14" width="200" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="220" y="0" width="200" height="14" backcolor="#999999" uuid="2af9992e-07cd-4121-b1d9-ff497e179f95"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -120,7 +133,7 @@
 				<text><![CDATA[Endereço]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="4b5d02d4-aa9e-4965-8c45-0cd5c6b94c58" mode="Opaque" x="420" y="14" width="50" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="420" y="0" width="50" height="14" backcolor="#999999" uuid="4b5d02d4-aa9e-4965-8c45-0cd5c6b94c58"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -133,7 +146,7 @@
 				<text><![CDATA[Pacote]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="d2d0f422-0d28-4954-8d60-a3e6bada88cc" mode="Opaque" x="470" y="14" width="50" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="470" y="0" width="50" height="14" backcolor="#999999" uuid="d2d0f422-0d28-4954-8d60-a3e6bada88cc"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -146,7 +159,7 @@
 				<text><![CDATA[Quebra]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="99f42951-6abd-47bd-8640-d1eafdeb3cf4" mode="Opaque" x="520" y="14" width="50" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="520" y="0" width="50" height="14" backcolor="#999999" uuid="99f42951-6abd-47bd-8640-d1eafdeb3cf4"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -160,7 +173,7 @@
 				<text><![CDATA[Rep. Total]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="51b4fa6a-d0c8-48c0-bbcd-c7ecb04fa640" mode="Opaque" x="570" y="14" width="60" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="570" y="0" width="60" height="14" backcolor="#999999" uuid="51b4fa6a-d0c8-48c0-bbcd-c7ecb04fa640"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -174,7 +187,7 @@
 				<text><![CDATA[Hora]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="6b32c1c2-76f9-47db-8b79-498c0e9b3782" mode="Opaque" x="630" y="14" width="172" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="630" y="0" width="172" height="14" backcolor="#999999" uuid="6b32c1c2-76f9-47db-8b79-498c0e9b3782"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -192,7 +205,7 @@
 	<detail>
 		<band height="30" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="bda5d563-49e6-4ca8-bd57-8c8c32ce4f07" stretchType="RelativeToTallestObject" x="570" y="0" width="60" height="30" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="570" y="0" width="60" height="30" isPrintWhenDetailOverflows="true" uuid="bda5d563-49e6-4ca8-bd57-8c8c32ce4f07"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -203,7 +216,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="301a3986-a00f-466e-bb36-22d2b1b1f733" stretchType="RelativeToTallestObject" x="0" y="0" width="40" height="30"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="40" height="30" uuid="301a3986-a00f-466e-bb36-22d2b1b1f733"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -214,7 +227,7 @@
 				<textFieldExpression><![CDATA[$F{numeroNotaEnvio}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="e33aa9af-2333-4f3c-a225-59a0dddaaf1b" stretchType="RelativeToTallestObject" x="40" y="0" width="40" height="30"/>
+				<reportElement stretchType="RelativeToTallestObject" x="40" y="0" width="40" height="30" uuid="e33aa9af-2333-4f3c-a225-59a0dddaaf1b"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -225,7 +238,7 @@
 				<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="2abfb1f0-c439-4037-8eab-64e06f2ce734" stretchType="RelativeToTallestObject" x="80" y="0" width="140" height="30"/>
+				<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="140" height="30" uuid="2abfb1f0-c439-4037-8eab-64e06f2ce734"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -236,7 +249,7 @@
 				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="07be797b-aef4-4c18-b28e-44e13b222229" stretchType="RelativeToTallestObject" x="220" y="0" width="200" height="30"/>
+				<reportElement stretchType="RelativeToTallestObject" x="220" y="0" width="200" height="30" uuid="07be797b-aef4-4c18-b28e-44e13b222229"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -244,15 +257,10 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[($F{tipoLogradouro} == null ? "" : $F{tipoLogradouro} + " ")
-+ ($F{logradouro} == null ? "" : $F{logradouro} + ", ")
-+ ($F{numeroLogradouro} == null ? "" : $F{numeroLogradouro} + ", ")
-+ ($F{bairro} == null ? "" : $F{bairro} + ", ")
-+ ($F{cidade} == null ? "" : $F{cidade} + ", ")
-+ ($F{uf} == null ? "" : $F{uf})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{endereco}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="8752fb96-2f6b-4736-a8ec-5e4f42fec888" stretchType="RelativeToTallestObject" x="420" y="0" width="50" height="30"/>
+				<reportElement stretchType="RelativeToTallestObject" x="420" y="0" width="50" height="30" uuid="8752fb96-2f6b-4736-a8ec-5e4f42fec888"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -263,7 +271,7 @@
 				<textFieldExpression><![CDATA[($P{PACOTE_PADRAO} == 0) ? 0 : $F{reparteTotal}.intValue() / $P{PACOTE_PADRAO}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="f732aa31-37d0-4ae6-9909-7848a3a09703" stretchType="RelativeToTallestObject" x="470" y="0" width="50" height="30"/>
+				<reportElement stretchType="RelativeToTallestObject" x="470" y="0" width="50" height="30" uuid="f732aa31-37d0-4ae6-9909-7848a3a09703"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -274,7 +282,7 @@
 				<textFieldExpression><![CDATA[new java.text.DecimalFormat("0.##").format(($P{PACOTE_PADRAO} == 0) ? 0 : $F{reparteTotal}.intValue() % $P{PACOTE_PADRAO})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="578af40f-a3a4-4cb0-80d0-00cab25e1f66" stretchType="RelativeToTallestObject" x="520" y="0" width="50" height="30"/>
+				<reportElement stretchType="RelativeToTallestObject" x="520" y="0" width="50" height="30" uuid="578af40f-a3a4-4cb0-80d0-00cab25e1f66"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -285,7 +293,7 @@
 				<textFieldExpression><![CDATA[$F{reparteTotal}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="8a8a556a-fc68-4090-91a8-59ad2640bed2" stretchType="RelativeToTallestObject" x="630" y="0" width="172" height="30" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="630" y="0" width="172" height="30" isPrintWhenDetailOverflows="true" uuid="8a8a556a-fc68-4090-91a8-59ad2640bed2"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -298,33 +306,31 @@
 		</band>
 	</detail>
 	<lastPageFooter>
-		<band height="21">
+		<band height="15">
 			<textField>
-				<reportElement uuid="89b325d3-ce9b-4566-9628-f92358d46a43" x="0" y="6" width="100" height="15"/>
+				<reportElement x="40" y="0" width="762" height="15" uuid="89b325d3-ce9b-4566-9628-f92358d46a43"/>
+				<box leftPadding="3">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
 				<textElement verticalAlignment="Middle" markup="html"/>
-				<textFieldExpression><![CDATA[" <b>Total Cotas:</b> " + $V{REPORT_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement uuid="11ce4413-2ece-4c07-8f5c-9c477a1d6c5c" x="520" y="5" width="50" height="16"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+			<staticText>
+				<reportElement x="0" y="0" width="40" height="15" uuid="8197833f-acdf-45e1-b5e9-699c03e6cac3"/>
+				<box leftPadding="3">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{SOMA_REPARTE_TOTAL}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement uuid="ab2c980c-36eb-4926-b79c-41a4811b83ee" x="470" y="5" width="50" height="16"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("0.##").format($V{SOMA_QUEBRA})]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement uuid="ea28ffe9-5e42-4643-bbc5-da5590e87fc8" x="420" y="5" width="50" height="16"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("0.##").format($V{SOMA_PACOTE})]]></textFieldExpression>
-			</textField>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
 		</band>
 	</lastPageFooter>
 </jasperReport>

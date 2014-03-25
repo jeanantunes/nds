@@ -53,6 +53,7 @@ public class CotaVO implements Serializable {
 	@Export(label = "Box", exhibitionOrder = 3, widthPercent = 9, fontSize = 9)
 	private String descricaoBox;
 	
+	private String tipoDistribuicaoCota;
 	
 	private SituacaoCadastro situacaoCadastro;
 	
@@ -259,8 +260,6 @@ public class CotaVO implements Serializable {
 		return true;
 	}
 
-
-
 	/**
 	 * @return the situacaoCadastro
 	 */
@@ -268,13 +267,19 @@ public class CotaVO implements Serializable {
 		return situacaoCadastro;
 	}
 
-
-
 	/**
 	 * @param situacaoCadastro the situacaoCadastro to set
 	 */
 	public void setSituacaoCadastro(SituacaoCadastro situacaoCadastro) {
 		this.situacaoCadastro = situacaoCadastro;
+	}
+	
+	public String getTipoDistribuicaoCota() {
+		return tipoDistribuicaoCota;
+	}
+
+	public void setTipoDistribuicaoCota(String tipoDistribuicaoCota) {
+		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
 	}
 	
 }

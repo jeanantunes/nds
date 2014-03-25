@@ -24,17 +24,17 @@ public class RepartePDVRepositoryImpl extends  AbstractRepositoryModel<RepartePD
 		super(RepartePDV.class);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public RepartePDV buscarPorId(Long id){
 		return super.buscarPorId(id);
 	}
 	
-	 public List<RepartePDVDTO> obterRepartePdvMixPorCota(Long idCota){
+	 @SuppressWarnings("unchecked")
+	public List<RepartePDVDTO> obterRepartePdvMixPorCota(Long idCota){
 		 StringBuilder hql = new StringBuilder();
 		hql.append(" SELECT  pdv.nome as nomePDV, rep.reparte as reparte, " )
 			.append(" coalesce(mix.cota.pessoa.nomeFantasia, mix.cota.pessoa.razaoSocial, mix.cota.pessoa.nome, '')  as nomeCota, ")
-			.append("  mix.produto.tipoClassificacaoProduto.descricao as classificacaoProduto, ")
+//			.append("  mix.produto.tipoClassificacaoProduto.descricao as classificacaoProduto, ") //FIXME tipoClassificacaoProduto é atributo de produtoEdicao
 			.append("  endereco.logradouro  as  endereco ")
 			.append(" FROM RepartePDV rep, MixCotaProduto mix ")
 			.append(" RIGHT JOIN rep.pdv pdv ")
@@ -83,6 +83,36 @@ public class RepartePDVRepositoryImpl extends  AbstractRepositoryModel<RepartePD
 	        q.setParameter("idProduto", idProduto);
 	        q.setParameter("idPdv", idPdv);
 	        return (RepartePDV) q.uniqueResult();
+		
+	}
+
+	@Override
+	public List<RepartePDV> buscarPorIdFixacao(Long id) {
+		return this.buscarPorIdTipoReferencia("fixacaoReparte",id);
+	}
+	
+	@Override
+	public List<RepartePDV> buscarPorIdMix(Long id) {
+		return this.buscarPorIdTipoReferencia("mixCotaProduto",id);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RepartePDV> buscarPorCota(Long idCota) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				" from RepartePDV rep WHERE rep.mixCotaProduto.cota.id = :idCota ");
+		
+		query.setParameter("idCota", idCota);
+        
+        return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<RepartePDV> buscarPorIdTipoReferencia(String type,Long id) {
+		Query q = getSession().createQuery(" from RepartePDV rep WHERE rep."+type+".id = :idTipo ");
+        q.setParameter("idTipo", id);
+        return (List<RepartePDV>)q.list();
 		
 	}
 	

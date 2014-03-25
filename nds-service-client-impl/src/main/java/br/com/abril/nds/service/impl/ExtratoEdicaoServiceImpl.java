@@ -73,6 +73,8 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		
 		filtroExtratoEdicao.setGruposExcluidos(obterGruposMovimentoEstoqueExtratoEdicao());
 		
+		filtroExtratoEdicao.setCodigoProduto(Util.padLeft(filtroExtratoEdicao.getCodigoProduto(), "0", 8));
+		
 		List<ExtratoEdicaoDTO> listaExtratoEdicao = movimentoEstoqueRepository.obterListaExtratoEdicao(filtroExtratoEdicao, StatusAprovacao.APROVADO);
 		
 		if (listaExtratoEdicao.isEmpty()){
@@ -141,7 +143,8 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		
 		String novaDescricao = itemExtratoEdicao.getDescMovimento();
 		
-		if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
+		if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())
+				&& !diferenca.getTipoDiferenca().isAlteracaoReparte()) {
 			
 			novaDescricao = novaDescricao + " COTA";
 		}

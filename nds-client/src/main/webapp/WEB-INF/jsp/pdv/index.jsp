@@ -8,12 +8,15 @@
 </fieldset>
 <br clear="all" />
 
-<div id="dialog-excluirPdv" title="Atenção" style="display:none">
-	<p>Confirmar exclusão PDV ?</p>
+<div id="dialog-excluirPdv" title="Aten&ccedil;&atilde;o" style="display:none">
+	<p>Confirmar exclus&atilde;o PDV ?</p>
 </div>
 
 <div id="dialog-cancelar-cadastro-pdv" title="PDV" style="display: none;">
-	<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
+	<p>Dados n&atilde;o salvos ser&atilde;o perdidos. Confirma o cancelamento?</p>
+</div>
+<div id="dialog-confirmaGeradorFluxo" title="Ponto Principal" style="display: none;">
+	<p>Gerador de fluxo  &eacute; obrigat&oacute;rio para o ponto principal.</p>
 </div>
 
 <div id="dialog-pdv" title="PDV Cota">
@@ -28,10 +31,10 @@
 		
 		<div id="tabpdv">
 		    <ul>
-		        <li><a href="#tabpdv-1">Dados Básicos</a></li>
-		        <li><a href="#tabpdv-2" onclick="ENDERECO_PDV.popularGridEnderecos();">Endereços</a></li>
+		        <li><a href="#tabpdv-1">Dados B&aacute;sicos</a></li>
+		        <li><a href="#tabpdv-2" onclick="ENDERECO_PDV.popularGridEnderecos();">Endere&ccedil;os</a></li>
 		        <li><a href="#tabpdv-3" onclick="TELEFONE_PDV.carregarTelefones();">Telefones</a></li>
-		        <li><a href="#tabpdv-4">Caract. / Segmentação</a></li>
+		        <li><a href="#tabpdv-4">Caract. / Segmenta&ccedil;&atilde;o</a></li>
 		        <li><a href="#tabpdv-6">Gerador de Fluxo</a></li>
 		        <li><a href="#tabpdv-7">MAP</a></li>
 		       
@@ -52,6 +55,7 @@
 		</div>
 </div>
 
-<div id="dialog-confirmaPontoPrincipal" title="Ponto Principal" style="display: none;">
-	<p>Já existe um ponto principal, deseja substitui-lo por este?</p>
+<div id= "dialog-confirmaPontoPrincipal" title="Ponto Principal" style="display: none;">
+	<p>J&aacute; existe um ponto principal, deseja substitui-lo por este?</p>
 </div>
+

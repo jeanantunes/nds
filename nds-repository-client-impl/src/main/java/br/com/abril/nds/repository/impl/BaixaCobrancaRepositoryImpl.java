@@ -78,10 +78,7 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
-		
+		setParameters(query, param);
 		return (Long) query.uniqueResult();
 	}
 	
@@ -138,9 +135,7 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 
 		if (filtro.getPaginacao() != null) {
 			

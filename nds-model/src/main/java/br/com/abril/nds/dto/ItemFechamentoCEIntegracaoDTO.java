@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.model.integracao.StatusIntegracaoNFE;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -42,7 +43,13 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	@Export(label = "Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 8)
 	private BigInteger encalhe;
 	
-	@Export(label = "Valor Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 9)
+	@Export(label = "Estoque", alignment = Alignment.RIGHT, exhibitionOrder = 9)
+	private BigInteger estoque;
+	
+	@Export(label = "Diferença", alignment = Alignment.RIGHT, exhibitionOrder = 10)
+	private BigInteger diferenca;
+	
+	@Export(label = "Valor Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 11)
 	private String valorVendaFormatado;
 		
 	private String tipoFormatado;
@@ -52,6 +59,15 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	private Long idProdutoEdicao;
 	
 	private Long idItemCeIntegracao;
+	
+	private StatusIntegracaoNFE statusIntegracaoNFE;
+	
+	private boolean integracaoNFEAprovado;
+	
+    public boolean getIntegracaoNFEAprovado(){
+    	integracaoNFEAprovado =  (statusIntegracaoNFE != null && StatusIntegracaoNFE.isAprovado(statusIntegracaoNFE));
+    	return integracaoNFEAprovado;
+    }
 	
 	@Export(label = "Tipo", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	public String getTipoFormatado() {
@@ -163,4 +179,30 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	public void setIdItemCeIntegracao(Long idItemCeIntegracao) {
 		this.idItemCeIntegracao = idItemCeIntegracao;
 	}
+
+	public StatusIntegracaoNFE getStatusIntegracaoNFE() {
+		return statusIntegracaoNFE;
+	}
+
+	public void setStatusIntegracaoNFE(StatusIntegracaoNFE statusIntegracaoNFE) {
+		this.statusIntegracaoNFE = statusIntegracaoNFE;
+	}
+
+	public BigInteger getDiferenca() {
+		return diferenca;
+	}
+
+	public void setDiferenca(BigInteger diferenca) {
+		this.diferenca = diferenca;
+	}
+
+	public BigInteger getEstoque() {
+		return estoque;
+	}
+
+	public void setEstoque(BigInteger estoque) {
+		this.estoque = estoque;
+	}
+	
+	
 }

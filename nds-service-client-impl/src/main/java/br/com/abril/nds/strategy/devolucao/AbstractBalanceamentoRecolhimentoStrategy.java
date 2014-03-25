@@ -72,48 +72,6 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		return balanceamentoRecolhimento;
 	}
 	
-	/*
-	 * Obtém as datas válidas para o balanceamento.
-	 */
-	protected TreeSet<Date> obterDatasParaBalanceamento(RecolhimentoDTO dadosRecolhimento) {
-		
-		Set<Date> obterDatasConfirmadas = 
-			this.obterDatasConfirmadas(dadosRecolhimento.getProdutosRecolhimento());
-		
-		return 
-			this.obterDatasRecolhimento(
-				dadosRecolhimento.getDatasRecolhimentoFornecedor(), obterDatasConfirmadas);
-	}
-	
-	protected TreeSet<Date> obterDatasRecolhimento(TreeSet<Date> datasRecolhimento,
-												   Set<Date> datasConfirmadas) {
-
-		datasRecolhimento.removeAll(datasConfirmadas);
-
-		return datasRecolhimento;
-	}
-	
-	protected Set<Date> obterDatasConfirmadas(List<ProdutoRecolhimentoDTO> produtoRecolhimentoDTOs) {
-		
-		Set<Date> datasConfirmadas = new HashSet<>();
-		
-		for (ProdutoRecolhimentoDTO item : produtoRecolhimentoDTOs) {
-			
-				boolean balanceamentoConfirmado = item.isBalanceamentoConfirmado();
-				
-				if (balanceamentoConfirmado) {
-					
-					if(!datasConfirmadas.contains(item.getDataRecolhimentoDistribuidor())){
-						
-						datasConfirmadas.add(item.getDataRecolhimentoDistribuidor());
-					}
-				}
-			}
-		
-		return datasConfirmadas;
-	}
-
-	
 	/**
 	 * Gera a matriz de recolhimento balanceada de acordo com a estratégia escolhida.
 	 * 
@@ -160,9 +118,10 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = produtosRecolhimento.get(indice);
 			
-			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
+			//TODO
+			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)){
 				
-				if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento)) {
+				if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento, dadosRecolhimento.getDatasRecolhimentoDisponiveis())) {
 					
 					produtosRecolhimentoNaoBalanceaveis.add(produtosRecolhimento.remove(indice--));
 				}
@@ -176,10 +135,10 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 * Verifica se o produto de recolhimento pode ser balanceado ou não.
 	 */
 	private boolean isProdutoNaoBalanceavel(boolean forcarBalanceamento,
-										 	ProdutoRecolhimentoDTO produtoRecolhimento) {
-		
-		return produtoRecolhimento.isBalanceamentoConfirmado()
-				|| (produtoRecolhimento.isBalanceamentoSalvo() && !forcarBalanceamento);
+										 	ProdutoRecolhimentoDTO produtoRecolhimento,TreeSet<Date> datasRecolhimentoDisponiveis) {
+
+		//TODO
+		return (produtoRecolhimento.isBalanceamentoConfirmado() || (produtoRecolhimento.isBalanceamentoSalvo() && !forcarBalanceamento) || (produtoRecolhimento.getPeb()<22 && datasRecolhimentoDisponiveis.contains(produtoRecolhimento.getDataRecolhimentoPrevista())));
 	}
 	
 	/*
@@ -322,7 +281,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 			
-			if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento)) {
+			if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento, dadosRecolhimento.getDatasRecolhimentoDisponiveis())) {
 				
 				continue;
 			}
@@ -380,7 +339,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			expectativaEncalheABalancear = expectativaEncalheTotalAtualNaData.add(expectativaEncalheABalancear);
 		}
 		
-		if (expectativaEncalheABalancear.compareTo(new BigDecimal(capacidadeManuseio)) > 0) {
+		if (expectativaEncalheABalancear.compareTo(new BigDecimal(capacidadeManuseio)) > 0) { 
 			
 			excessoExpectativaEncalhe = expectativaEncalheABalancear.subtract(new BigDecimal(capacidadeManuseio));
 		}
@@ -395,6 +354,8 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 											   List<ProdutoRecolhimentoDTO> produtosRecolhimentoAtuais,
 											   List<ProdutoRecolhimentoDTO> produtosRecolhimentoNovos,
 											   Date dataBalanceamento) {
+		
+		//matrizRecolhimento, produtosRecolhimentoNaData, produtosRecolhimentoElegiveis, dataBalanceamento
 		
 		if (produtosRecolhimentoNovos == null || produtosRecolhimentoNovos.isEmpty()) {
 			

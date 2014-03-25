@@ -1,35 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo01" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty">
-	<property name="ireport.zoom" value="1.9487171000000125"/>
-	<property name="ireport.x" value="58"/>
-	<property name="ireport.y" value="570"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo01" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="90dc556d-7224-4ba2-987c-113c8d013eeb">
+	<property name="ireport.zoom" value="1.000000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image"/>
+	<parameter name="RAZAO_SOCIAL_DISTRIBUIDOR" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="roteiro" class="java.lang.String">
-		<fieldDescription><![CDATA[roteiro]]></fieldDescription>
+	<field name="nomeProduto5" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto5]]></fieldDescription>
 	</field>
-	<field name="entregaBox" class="java.lang.String">
-		<fieldDescription><![CDATA[entregaBox]]></fieldDescription>
-	</field>
-	<field name="rota" class="java.lang.String">
-		<fieldDescription><![CDATA[rota]]></fieldDescription>
+	<field name="nomeProduto" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto]]></fieldDescription>
 	</field>
 	<field name="dataGeracao" class="java.util.Date">
 		<fieldDescription><![CDATA[dataGeracao]]></fieldDescription>
 	</field>
+	<field name="entregaBox" class="java.lang.String">
+		<fieldDescription><![CDATA[entregaBox]]></fieldDescription>
+	</field>
+	<field name="pacotePadrao" class="java.lang.Long">
+		<fieldDescription><![CDATA[pacotePadrao]]></fieldDescription>
+	</field>
+	<field name="nomeProduto4" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto4]]></fieldDescription>
+	</field>
+	<field name="rota" class="java.lang.String">
+		<fieldDescription><![CDATA[rota]]></fieldDescription>
+	</field>
 	<field name="itens" class="java.util.List">
 		<fieldDescription><![CDATA[itens]]></fieldDescription>
 	</field>
+	<field name="nomeProduto1" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto1]]></fieldDescription>
+	</field>
+	<field name="nomeProduto3" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto3]]></fieldDescription>
+	</field>
+	<field name="roteiro" class="java.lang.String">
+		<fieldDescription><![CDATA[roteiro]]></fieldDescription>
+	</field>
+	<field name="nomeProduto2" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto2]]></fieldDescription>
+	</field>
+	<field name="edicao" class="java.lang.Long">
+		<fieldDescription><![CDATA[edicao]]></fieldDescription>
+	</field>
+	<field name="codigoProduto" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoProduto]]></fieldDescription>
+	</field>
+	<field name="nomeProduto0" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto0]]></fieldDescription>
+	</field>
+	<field name="reparteTotal" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[reparteTotal]]></fieldDescription>
+	</field>
+	<group name="resetPageNumberGroup" isResetPageNumber="true" minHeightToStartNewPage="1">
+		<groupExpression><![CDATA[$F{itens}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+	</group>
 	<pageHeader>
-		<band height="115">
+		<band height="67">
 			<subreport>
-				<reportElement x="0" y="0" width="802" height="115" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="0" y="0" width="802" height="67" isPrintWhenDetailOverflows="true" uuid="08b9b537-259e-413a-9f48-b8c6baf8bfeb"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO_DISTRIBUIDOR">
+					<subreportParameterExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAZAO_SOCIAL_DISTRIBUIDOR">
+					<subreportParameterExpression><![CDATA[$P{RAZAO_SOCIAL_DISTRIBUIDOR}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="NOME_BOX">
 					<subreportParameterExpression><![CDATA[$F{entregaBox}]]></subreportParameterExpression>
@@ -54,7 +101,7 @@
 	<detail>
 		<band height="440" splitType="Stretch">
 			<subreport runToBottom="true">
-				<reportElement x="0" y="0" width="802" height="440" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="0" y="0" width="802" height="440" isPrintWhenDetailOverflows="true" uuid="c42feef6-ae7f-427c-84e1-d7adf92c1cc1"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>

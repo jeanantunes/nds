@@ -10,12 +10,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaBaseDTO;
 import br.com.abril.nds.dto.CotaBaseHistoricoDTO;
+import br.com.abril.nds.dto.ResumoCotaBasesDTO;
 import br.com.abril.nds.dto.SegmentoNaoRecebeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaBaseDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -50,9 +52,13 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_CADASTRO_COTA_BASE)
 public class CotaBaseController extends BaseController {
 	
+	private static final String COTA_BASE_DETALHES = "cotaBaseDetalhes";
+	
 	private static final String COTA_BASE_DTO = "cotaBaseDTO";
 	
 	private static final String COTA_BASE_HISTORICO = "cotaBaseHistorico";
+	
+	private static final String COTA_FILTRO = "cotaFiltro";
 	
 	@Autowired
 	private CotaBaseService cotaBaseService;
@@ -85,25 +91,33 @@ public class CotaBaseController extends BaseController {
 	public void pesquisarCotaNova(Integer numeroCota){
 		tratarFiltroPesquisaCota(numeroCota);
 		
-		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota);
+		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota, true);
 		
 		boolean existeCotaBase = false;
 		if(cotaBase != null){
 			existeCotaBase = this.cotaBaseCotaService.isCotaBaseAtiva(cotaBase);			
 		}
 		
-		FiltroCotaBaseDTO filtro = null;
-		
-		if(existeCotaBase){
-			filtro = this.cotaBaseService.obterCotaDoFiltro(cotaBase);
-			filtro.setDiasRestantes(calcularDiasRestantes(filtro.getDataFinal()));
-		}else{
-			filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, false, true, numeroCota);
-		}
-		
+		FiltroCotaBaseDTO filtro = (existeCotaBase)?this.cotaBaseService.obterCotaDoFiltro(cotaBase):
+			this.cotaBaseService.obterDadosFiltro(cotaBase, false, true, numeroCota);
+			
 		if(filtro == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada!");
 		}
+		
+		if(filtro.getTpDistribCota() != null && filtro.getTpDistribCota().getDescTipoDistribuicaoCota().equalsIgnoreCase("Alternativo")){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não é do tipo Convencional!!");
+		}
+		
+		if (existeCotaBase) {
+			filtro.setDiasRestantes(calcularDiasRestantes(filtro.getDataFinal()));
+		}
+		else {
+			filtro.setDataInicial(null);
+			filtro.setDataFinal(null);
+		}		
+		
+		session.setAttribute(COTA_FILTRO, filtro);
 		
 		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();		
 	}
@@ -121,7 +135,7 @@ public class CotaBaseController extends BaseController {
 		
 		Integer diasRestantes = (int) ((m1 - m2) / (24*60*60*1000));
 		
-		return diasRestantes.toString();
+		return (diasRestantes > 0)?diasRestantes.toString():"0";
 	}
 
 	private void tratarFiltroPesquisaCota(Integer numeroCota) {
@@ -168,6 +182,36 @@ public class CotaBaseController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
+	
+
+	/**
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	private List<CotaBaseDTO> obterListaCotaBaseFormatada(CotaBaseDTO dto) {
+		
+		List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterListaCotaPesquisaGeral(dto);
+		
+		if(!listaCotaBase.isEmpty()){
+			
+			List<CotaBaseDTO> listaFormatada = new ArrayList<CotaBaseDTO>();
+			
+			for(CotaBaseDTO cotaBase : listaCotaBase){
+				cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtFinal()));
+				if(cotaBase.getDtFinal().after(new Date())){
+					cotaBase.setSituacao("Ativo");
+				}else{
+					cotaBase.setSituacao("Inativo");
+				}
+				
+				listaFormatada.add(cotaBase);
+			}
+			
+		}
+
+		return listaCotaBase;
+	}
 
 	
 	@Post
@@ -180,24 +224,7 @@ public class CotaBaseController extends BaseController {
 		
 		tratarPaginacao(dto);
 		
-		List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterListaCotaPesquisaGeral(dto);
-		
-		if(listaCotaBase.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
-		}
-		List<CotaBaseDTO> listaFormatada = new ArrayList<CotaBaseDTO>();
-		
-		for(CotaBaseDTO cotaBase : listaCotaBase){
-			cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtFinal()));
-			if(cotaBase.getDtFinal().after(new Date())){
-				cotaBase.setSituacao("Ativo");
-			}else{
-				cotaBase.setSituacao("Inativo");
-			}
-			
-			listaFormatada.add(cotaBase);
-		}
-		
+		List<CotaBaseDTO> listaFormatada = obterListaCotaBaseFormatada(dto);
 		
 		TableModel<CellModelKeyValue<CotaBaseDTO>> tableModel =
 				new TableModel<CellModelKeyValue<CotaBaseDTO>>();
@@ -245,12 +272,25 @@ public class CotaBaseController extends BaseController {
 	
 
 	private List<CotaBaseDTO> obterListaDeCotasBase(Integer numeroCota, CotaBaseDTO dto) {
-		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota);
+		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota, true);
 		List<CotaBaseDTO> listaCotaBase = new ArrayList<CotaBaseDTO>();
 		if(cotaBase != null){
-			listaCotaBase = this.cotaBaseService.obterCotasBases(this.cotaBaseService.obterCotaNova(numeroCota),dto );			
+			listaCotaBase = this.cotaBaseService.obterCotasBases(this.cotaBaseService.obterCotaNova(numeroCota, true),dto );	
 		}
 		return listaCotaBase;
+	}
+	
+	private void validarCota(Cota cota, CotaBase cotaBase, Integer[] numerosDeCotasBase) {
+		
+		if(cota.getSituacaoCadastro() == SituacaoCadastro.INATIVO) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + cota.getNumeroCota() + "\" não está ativa!");
+		} 
+		
+		if(cotaBase != null && numerosDeCotasBase != null && this.cotaBaseCotaService.isCotaBaseAtiva(cotaBase, numerosDeCotasBase)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + cota.getNumeroCota() + "\" tem cota base ativa!");
+		}
 	}
 	
 	@Post
@@ -259,40 +299,41 @@ public class CotaBaseController extends BaseController {
 		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		
-		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota);
-		boolean existeCotaBase = false;
-		if(cotaBase != null){
-			 existeCotaBase = this.cotaBaseCotaService.isCotaBaseAtiva(cotaBase);
+		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota, true);
+		
+		validarCota(cota, cotaBase, null);
+		
+		FiltroCotaBaseDTO filtroPrincipal = (FiltroCotaBaseDTO) session.getAttribute(COTA_FILTRO);
+		
+		FiltroCotaBaseDTO filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, true, true, numeroCota);
+		
+		if(filtro == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não pode ser adicionada!");
 		}
 		
-		FiltroCotaBaseDTO filtro = null;
-		
-		if(cota.getSituacaoCadastro() != SituacaoCadastro.ATIVO){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não está ativa!");
-		}else if(existeCotaBase){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" tem cota base ativa!");
-		}else{			
-			filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, true, true, numeroCota);			
+		else if(filtro.getTpDistribCota().getDescTipoDistribuicaoCota().equalsIgnoreCase("Alternativo")){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não é do tipo Convencional!!");
 		}
 		
-		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();
+		else if(filtroPrincipal.getNumeroCota().equals(filtro.getNumeroCota()) ){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + filtro.getNumeroCota() + "\" não pode ser adicionada!");
+		}else{
+			this.result.use(Results.json()).from(filtro, "result").recursive().serialize();			
+		}
+		
 		
 	}
+
 	@Post
 	@Path("/excluirCotaBase")
 	public void excluirCotaBase(Integer numeroCotaNova, Long idCotaBase){
 		
-		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCotaNova);
+		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCotaNova, true);
 		
 		Cota cotaParaDesativar = this.cotaService.obterPorId(idCotaBase);
 		
-		Long qtdDeCotasBaseAtivas = this.cotaBaseCotaService.quantidadesDeCotasAtivas(cotaBase);
+		cotaBaseCotaService.desativarCotaBase(cotaBase, cotaParaDesativar);			
 		
-		if(qtdDeCotasBaseAtivas >= 2){
-			cotaBaseCotaService.desativarCotaBase(cotaBase, cotaParaDesativar);			
-		}else{
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não pode deixar a cota principal sem cota base.");
-		}
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota excluida com sucesso."), "result").recursive().serialize();
 		
@@ -300,13 +341,30 @@ public class CotaBaseController extends BaseController {
 	
 	@Post
 	@Path("/confirmarCotasBase")
-	public void confirmarCotasBase(Integer[] numerosDeCotasBase, Integer idCotaNova, BigDecimal indiceAjuste){
+	public void confirmarCotasBase(Integer[] numerosDeCotasBase, Integer idCotaNova, BigDecimal indiceAjuste, String cotasBaseCadastradas){
 		
 		Cota cotaNova = this.cotaService.obterPorNumeroDaCota(idCotaNova);	
 		
-		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(idCotaNova);
+		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(idCotaNova, false);
 		
-		if(cotaBase != null){
+		Integer []numerosDeCotasBaseValidacao =  null;
+		
+		if (!StringUtils.isEmpty(cotasBaseCadastradas)) {
+
+			String[] cotasBaseCadastradasArr = cotasBaseCadastradas.split(",");
+			
+			numerosDeCotasBaseValidacao = new Integer[cotasBaseCadastradasArr.length];
+			
+			for (int i=0; i < cotasBaseCadastradasArr.length; i++) {
+				
+				numerosDeCotasBaseValidacao[i] = Integer.valueOf(cotasBaseCadastradasArr[i]);
+			}
+			
+		}
+		
+		validarCota(cotaNova, cotaBase, numerosDeCotasBaseValidacao);
+		
+		if(cotaBase != null) {
 			
 			List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterCotasBases(cotaBase, null);		
 			
@@ -332,7 +390,7 @@ public class CotaBaseController extends BaseController {
 		
 		tratarPaginacaoHistorico(dto);
 		
-		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota);
+		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota, false);
 		
 		if(cotaBase == null){
 			throw new ValidacaoException(TipoMensagem.WARNING,"Essa cota ainda não possui histórico");
@@ -358,10 +416,13 @@ public class CotaBaseController extends BaseController {
 	
 	@Post
 	@Path("/segmentosRecebidos")
-	public void segmentosRecebidos(Long idCota){
+	public void segmentosRecebidos(Integer numeroCota){
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		
 		List<SegmentoNaoRecebeCotaDTO> listaSegmentosNaoRecebidos = this.segmentoNaoRecebidoService.
-				obterSegmentosNaoRecebidosCadastradosNaCota(this.cotaService.obterPorId(idCota));		
+				obterSegmentosNaoRecebidosCadastradosNaCota(cota);		
+		
+		listaSegmentosNaoRecebidos.addAll(this.segmentoNaoRecebidoService.obterSegmentosNaoRecebidosCadastradosCotaBase(cota.getId()));
 		
 		if(listaSegmentosNaoRecebidos.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
@@ -380,18 +441,27 @@ public class CotaBaseController extends BaseController {
 		
 	}
 	
-	@Post
-	@Path("/obterTelaDetalhes")
-	public void obterTelaDetalhes(Integer numeroCota){
+	
+	private List<CotaBaseDTO> obterListaAuxiliar(CotaBaseDTO cotaBaseDTO) {
 		
-		List<CotaBaseDTO> listaDetalheCota = this.cotaBaseService.obterListaTelaDetalhe(this.cotaBaseService.obterCotaNova(numeroCota));
+		List<CotaBaseDTO> listaDetalheCota = this.cotaBaseService.obterListaTelaDetalhe(this.cotaBaseService.obterCotaNova(cotaBaseDTO.getNumeroCota(), false));
+		
+		if (listaDetalheCota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum detalhe encontrado.");
+		}
 		
 		List<CotaBaseDTO> listaAuxiliar = new ArrayList<CotaBaseDTO>();
 		CotaBaseDTO dtoParaVisao = new CotaBaseDTO();
 		
 		int cont = 0;
 		for(CotaBaseDTO dto : listaDetalheCota){
-			Double indice = Double.parseDouble(dto.getIndiceAjuste().replace(',', '.') );
+			Double indice = null;
+			if(dto.getIndiceAjuste() == null){
+				indice = 0.0;
+			}else{
+				indice = Double.parseDouble(dto.getIndiceAjuste().replace(',', '.') );				
+			}
 			if(cont == 0){
 				dtoParaVisao.setEquivalente01(dto.getNumeroCota() + " - " + dto.getNomeCota());			
 			}else if(cont == 1){
@@ -401,59 +471,82 @@ public class CotaBaseController extends BaseController {
 			}
 			cont++;
 			dtoParaVisao.setIndiceAjuste(new BigDecimal(indice));
+			
+			listaAuxiliar.add(dtoParaVisao);			
 		}
 		
-		listaAuxiliar.add(dtoParaVisao);
+		return listaAuxiliar;
+	}
+	
+	@Post
+	@Path("/obterTelaDetalhes")
+	public void obterTelaDetalhes(Integer numeroCota) {
 		
-		TableModel<CellModelKeyValue<CotaBaseDTO>> tableModel =
-				new TableModel<CellModelKeyValue<CotaBaseDTO>>();
+		CotaBaseDTO cotaBaseDTO = new CotaBaseDTO();
+		
+		cotaBaseDTO.setNumeroCota(numeroCota);
+		
+		session.setAttribute(COTA_BASE_DETALHES, cotaBaseDTO);
+		
+		List<CotaBaseDTO> listaAuxiliar = obterListaAuxiliar(cotaBaseDTO);
+		
+		List<CotaBaseDTO> listaFinal = new ArrayList<CotaBaseDTO>();
+		
+		listaFinal.add(listaAuxiliar.get(0));
+		
+		TableModel<CellModelKeyValue<CotaBaseDTO>> tableModel = new TableModel<CellModelKeyValue<CotaBaseDTO>>();
 
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaAuxiliar));
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFinal));
 		
 		tableModel.setPage(1);
 
-		tableModel.setTotal(listaAuxiliar.size());
+		tableModel.setTotal(listaFinal.size());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
 	}
 	
 	@Get
 	public void exportar(FileType fileType, String tipoDeLista) throws IOException {
 		
-		if(tipoDeLista.equals("pesquisaGeral")){
+		if(tipoDeLista.equals("pesquisaGeral")) {
+			
 			CotaBaseDTO dto = (CotaBaseDTO) session.getAttribute(COTA_BASE_DTO);
 			
-			List<CotaBaseDTO> listaCotaBase = obterListaDeCotasBase(dto.getNumeroCota(), dto);
-			
-			List<CotaBaseDTO> listaFormatada = new ArrayList<CotaBaseDTO>();
-			
-			for(CotaBaseDTO cotaBase : listaCotaBase){
-				cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtFinal()));
-				listaFormatada.add(cotaBase);
-			}
-			
-			if(listaCotaBase.isEmpty()){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
-			}
+			List<CotaBaseDTO> listaFormatada = obterListaCotaBaseFormatada(dto);
 			
 			FileExporter.to("PESQUISA_GERAL_COTA_BASE", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					listaFormatada, CotaBaseDTO.class, this.httpResponse);
 			
-		}else if(tipoDeLista.equals("pesquisaHistorico")){
+		} else if(tipoDeLista.equals("pesquisaHistorico")) {
 			
 			CotaBaseDTO dto = (CotaBaseDTO) session.getAttribute(COTA_BASE_HISTORICO);
 			
-			List<CotaBaseHistoricoDTO> listaCotaBase = this.cotaBaseService.obterCotasHistorico(this.cotaBaseService.obterCotaNova(dto.getNumeroCota()),  dto);
-			
-			if(listaCotaBase.isEmpty()){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
-			}
+			List<CotaBaseHistoricoDTO> listaCotaBase = this.cotaBaseService.obterCotasHistorico(this.cotaBaseService.obterCotaNova(dto.getNumeroCota(), false),  dto);
 			
 			FileExporter.to("PESQUISA_HISTORICO_COTA_BASE", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					listaCotaBase, CotaBaseHistoricoDTO.class, this.httpResponse);			
+		
+		} else if(tipoDeLista.equals("pesquisaDetalhes")) {
+			
+			CotaBaseDTO dto = (CotaBaseDTO) session.getAttribute(COTA_BASE_DETALHES);
+			
+			List<ResumoCotaBasesDTO> listResumo = new ArrayList<ResumoCotaBasesDTO>();
+			
+			for (CotaBaseDTO cotaBaseDTO:obterListaAuxiliar(dto)) {
+				
+				ResumoCotaBasesDTO resumoCotaBasesDTO = new ResumoCotaBasesDTO();
+				resumoCotaBasesDTO.setIndiceAjuste(cotaBaseDTO.getIndiceAjuste());
+				resumoCotaBasesDTO.setEquivalente01(cotaBaseDTO.getEquivalente01());
+				resumoCotaBasesDTO.setEquivalente02(cotaBaseDTO.getEquivalente02());
+				resumoCotaBasesDTO.setEquivalente03(cotaBaseDTO.getEquivalente03());
+				listResumo.add(resumoCotaBasesDTO);
+				break;
+			}
+			
+			FileExporter.to("PESQUISA_DETALHES_COTA_BASE", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+						listResumo, ResumoCotaBasesDTO.class, this.httpResponse);		
+				
 		}
-	
 		
 		result.nothing();
 	}

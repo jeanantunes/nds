@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
+import br.com.abril.nds.model.financeiro.TipoNegociacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 
@@ -21,9 +22,9 @@ public interface NegociacaoDividaService {
 
 	List<NegociacaoDividaDTO> obterDividasPorCota(FiltroConsultaNegociacaoDivida filtro);
 	
-	Long criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, BigDecimal valorDividaPagaComissao, 
+	Long criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, TipoNegociacao tipoNegociacao, BigDecimal valorDividaPagaComissao, 
 			List<Long> idsCobrancasOriginarias, Usuario usuarioResponsavel, boolean negociacaoAvulsa, Integer ativarCotaAposParcela,
-			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca, Long idBanco);
+			BigDecimal comissaoParaSaldoDivida, BigDecimal comissaoOriginalCota, boolean isentaEncargos, FormaCobranca formaCobranca, Long idBanco);
 	
 	Negociacao obterNegociacaoPorId(Long idNegociacao);
 	
@@ -43,4 +44,6 @@ public interface NegociacaoDividaService {
 	 * @return Integer
 	 */
 	Integer obterQuantidadeParcelasConformeValorMinimo(FiltroCalculaParcelas filtro);
+	
+	void abaterNegociacaoPorComissao(Long idCota, BigDecimal valorTotalReparte, BigDecimal valorTotalEncalhe, Usuario usuario);
 }

@@ -17,6 +17,11 @@ var gruposPermissaoController = $.extend(true, {
 			$("#grupoPermissaonome", gruposPermissaoController.workspace).val("");
 			$("#grupoPermissaoId", gruposPermissaoController.workspace).val("");
 			
+			$(".permissaoGrid", gruposPermissaoController.workspace).flexOptions({
+				url : contextPath + "/administracao/gruposAcesso/obterPermissoes",
+			}).flexReload();
+
+			
 			this.popup_grupo();
 		},
 		popup_grupo : function() {
@@ -124,23 +129,29 @@ var gruposPermissaoController = $.extend(true, {
 			$('input[tipo="permissao"]').attr("checked", false);
 			$('#permissaoGridConteudo').appendTo($('#localPermissaoGridGrupo'));
 
-			$.getJSON(
-					this.path + "/editarGrupoPermissao",
-					{codigoGrupo:idGrupo}, 
-					function(result) {
-						if (result) {
-							
-							$("#grupoPermissaonome", gruposPermissaoController.workspace).val(result.nome);
-							$("#grupoPermissaoId", gruposPermissaoController.workspace).val(result.id);
-							
-							$.each(result.permissoes, function(index, role) {
-								$('input[tipo="permissao"][role="'+role+'"][isPai="false"]').attr("checked", true);
-							});							
+			$(".permissaoGrid", gruposPermissaoController.workspace).flexOptions({
+				url : contextPath + "/administracao/gruposAcesso/obterPermissoes",
+				onSuccess: function() {
+					$.getJSON(
+						contextPath + "/administracao/gruposAcesso/editarGrupoPermissao",
+						{codigoGrupo:idGrupo}, 
+						function(result) {
+							if (result) {
+								
+								$("#grupoPermissaonome", gruposPermissaoController.workspace).val(result.nome);
+								$("#grupoPermissaoId", gruposPermissaoController.workspace).val(result.id);
+								
+								$.each(result.permissoes, function(index, role) {
+									$('input[tipo="permissao"][role="'+role+'"][isPai="false"]').attr("checked", true);
+								});							
+								
+								gruposPermissaoController.popup_grupo();
+							}
 						}
-					}
-				);
-			
-			this.popup_grupo();
+					);
+				}
+			}).flexReload();
+
 		},
 		initGruposGrid : function() {
 			$(".gruposGrid", gruposPermissaoController.workspace).flexigrid({
@@ -191,7 +202,6 @@ var gruposPermissaoController = $.extend(true, {
 			});
 			
 			$(".permissaoGrid", gruposPermissaoController.workspace).flexigrid({
-				url : contextPath + '/administracao/gruposAcesso/obterPermissoes',
 				preProcess : gruposPermissaoController.preProcessPermissao,
 				dataType : 'json',
 				colModel : [ {
@@ -219,7 +229,7 @@ var gruposPermissaoController = $.extend(true, {
 		},
 		
 		preProcessPermissao : function(data) {
-			
+
 			$.each(data.rows, function(indice, linha) { 
 				
 				if(linha.cell.pai)
@@ -227,17 +237,24 @@ var gruposPermissaoController = $.extend(true, {
 				else	
 					linha.cell.descricao = '<div style="font-weight: bolder;padding: 0px">' + linha.cell.descricao + '</div>'; 
 				
+				if (linha.cell.observacao){
+					
+					linha.cell.descricao = '<span><a title="' + linha.cell.observacao + '"/>'+
+						linha.cell.descricao
+						+'</span>';
+				}
+				
 				var alteracao = linha.cell.alteracao;
 				
 				var visualizacao = linha.cell.visualizacao;
 								
 				if(visualizacao)
-					linha.cell.visualizacao = gruposPermissaoController.getInput(false, visualizacao, linha.cell.pai, alteracao);
+					linha.cell.visualizacao = gruposPermissaoController.getInput(false, visualizacao, linha.cell.pai, alteracao, linha.cell.habilitado);
 				else
 					linha.cell.visualizacao = '';
 				
 				if(alteracao)
-					linha.cell.alteracao = gruposPermissaoController.getInput(true, visualizacao, linha.cell.pai, alteracao);				
+					linha.cell.alteracao = gruposPermissaoController.getInput(true, visualizacao, linha.cell.pai, alteracao, linha.cell.habilitado);				
 				else
 					linha.cell.alteracao = ''; 
 			});
@@ -245,11 +262,12 @@ var gruposPermissaoController = $.extend(true, {
 			return data;
 		},
 		
-		getInput : function(isAlteracao, permissao, pai, alteracao) {
+		getInput : function(isAlteracao, permissao, pai, alteracao, habilitado) {
 						 
 			var isPai = !pai ? true : false;
 			
 			var onchange = '';
+			var disabled = '';
 			
 			if (isPai)
 				onchange = 'gruposPermissaoController.paiSelecionado(this)';
@@ -267,10 +285,13 @@ var gruposPermissaoController = $.extend(true, {
 			if(!alteracao)
 				alteracao='';
 			
+			if (!habilitado)
+				disabled = 'disabled="disabled"';
+			
 			var role = isAlteracao ? alteracao : permissao;
 						
 			return '<input class="permissao" tipo="permissao" type="checkbox" onchange="'+onchange+'" role="'+role+'" permissao="'+permissao
-						+'"  alteracao="'+alteracao+'" pai="'+pai+'" isAlteracao="'+isAlteracao+'" isPai="'+isPai+'"/>';
+						+'"  alteracao="'+alteracao+'" pai="'+pai+'" isAlteracao="'+isAlteracao+'" isPai="'+isPai+ '"' +  disabled + '/>';
 		},
 		
 		paiSelecionado : function(elemento) {
@@ -336,3 +357,5 @@ var gruposPermissaoController = $.extend(true, {
 		}
 		
 }, BaseController);
+
+//@ sourceURL=gruposPermissao.js

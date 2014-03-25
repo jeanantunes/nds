@@ -148,7 +148,8 @@ public class GeracaoNotaEnvioController extends BaseController {
 	Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro);
 	if (qtdResult == null || qtdResult == 0){
 
-	    throw new ValidacaoException(TipoMensagem.WARNING, "Não existem notas a serem geradas para o filtro escolhido.");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Não existem notas a serem geradas para o filtro escolhido.");
 	}
 
 	List<ConsultaNotaEnvioDTO> listaCotaExemplares = this.geracaoNotaEnvioService.busca(filtro);
@@ -186,8 +187,8 @@ public class GeracaoNotaEnvioController extends BaseController {
 	List<ConsultaNotaEnvioDTO> consultaNotaEnvioDTO =	
 		geracaoNotaEnvioService.busca(filtro);
 
-	FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(
-		this.getNDSFileHeader(), filtro, null,
+	FileExporter.to("nota-envio", fileType).inHTTPResponse(
+this.getNDSFileHeader(), filtro,
 		consultaNotaEnvioDTO, ConsultaNotaEnvioDTO.class,
 		this.httpServletResponse);
 
@@ -206,7 +207,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 		filtro.getIntervaloMovimento(), filtro.getIdFornecedores(), null, null);
 
 	result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
-		"Transferência de reparte para suplementar realizada com sucesso."),
+                        "Transferência de reparte para suplementar realizada com sucesso."),
 		Constantes.PARAM_MSGS).recursive().serialize();
     }
 
@@ -217,7 +218,8 @@ public class GeracaoNotaEnvioController extends BaseController {
 		session.setAttribute(COTAS_ID, listaIdCotas);
 	
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
-			"Geração de NE."),Constantes.PARAM_MSGS).recursive().serialize();
+ "Geração de NE."), Constantes.PARAM_MSGS)
+                .recursive().serialize();
     }
 
     private byte[] getNotas(){
@@ -228,7 +230,8 @@ public class GeracaoNotaEnvioController extends BaseController {
 	
 		if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
 	
-		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+                    "Não foram encontrado itens para exportar"));
 		}
 	
 		byte[] notasGeradas = null;
@@ -252,32 +255,32 @@ public class GeracaoNotaEnvioController extends BaseController {
     public void getArquivoNotaEnvio() {
 
 		try {
+			
 		    byte[] notasGeradas = this.getNotas();
 	
 		    if (notasGeradas != null) {
 	
-			DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
-	
-			this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
-	
-			OutputStream output;
-	
-			output = this.httpResponse.getOutputStream();
-	
-			output.write(notasGeradas);
-	
-			httpResponse.getOutputStream().close();
-	
-			session.setAttribute(COTAS_ID, null);
-	
-			result.use(Results.nothing());
-	
+				DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
+		
+				this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
+		
+				OutputStream output;
+		
+				output = this.httpResponse.getOutputStream();
+		
+				output.write(notasGeradas);
+		
+				httpResponse.getOutputStream().close();
+		
+				session.setAttribute(COTAS_ID, null);
+		
+				result.use(Results.nothing());
 		    }
 		} catch (ValidacaoException e) {
-		    LOGGER.error("Erro de validação ao gerar arquivos de notas de envio: " + e.getMessage(), e);
+            LOGGER.error("Erro de validação ao gerar arquivos de notas de envio: " + e.getMessage(), e);
 		    result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
-		}catch (Exception e) {
-		    LOGGER.error("Erro genérico ao gerar arquivos de notas de envio: " + e.getMessage(), e);
+		} catch (Exception e) {
+            LOGGER.error("Erro genérico ao gerar arquivos de notas de envio: " + e.getMessage(), e);
 		    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
 		}
     }
@@ -293,7 +296,8 @@ public class GeracaoNotaEnvioController extends BaseController {
 		(FiltroConsultaNotaEnvioDTO) this.session.getAttribute(FILTRO_CONSULTA_NOTA_ENVIO);
 
 	if (filtro == null) {
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+                    "Não foram encontrado itens para exportar"));
 	}
 
 	return filtro;
@@ -348,7 +352,7 @@ public class GeracaoNotaEnvioController extends BaseController {
     		notaEnvio = geracaoNotaEnvioService.visualizar(filtro);
 
     	} else {
-    		result.include("errorMessage", "É necessário informar o número da Cota.");
+            result.include("errorMessage", "É necessário informar o número da Cota.");
     	}
 
     	String dataRecolhimento = null;
@@ -357,7 +361,7 @@ public class GeracaoNotaEnvioController extends BaseController {
     		dataRecolhimento =  DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe());
     	else
     		dataRecolhimento =  "De "  + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe()) + "</br>" +
-    				"até " + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getAte());
+ "até " + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getAte());
 
     	result.include("dataLancamento", dataRecolhimento);
     	result.include("notaEnvio", notaEnvio);

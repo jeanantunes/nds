@@ -16,31 +16,31 @@ public class ConsultaProdutoDTO implements Serializable {
 
 	private Long id;
 	
-	@Export(label="Código", alignment=Alignment.CENTER)
+	@Export(label="Código", alignment=Alignment.CENTER, widthPercent=8)
 	private String codigo;
 
 	@Export(label="Produto", alignment=Alignment.LEFT)
 	private String produtoDescricao;
 	
-	@Export(label="Tipo Produto", alignment=Alignment.LEFT)
+	@Export(label="Tipo Produto", alignment=Alignment.LEFT, widthPercent=10)
 	private String tipoProdutoDescricao;
 	
 	@Export(label="Editor", alignment=Alignment.LEFT)
 	private String nomeEditor;
 	
-	@Export(label="Fornecedor", alignment=Alignment.LEFT)
+	@Export(label="Fornecedor", alignment=Alignment.LEFT, widthPercent=12)
 	private String tipoContratoFornecedor;
 	
-	@Export(label="PEB", alignment=Alignment.CENTER)
+	@Export(label="PEB", alignment=Alignment.CENTER, widthPercent=6)
 	private Integer peb;
 	
-	@Export(label="Pcte. Padrão" , alignment=Alignment.CENTER)
+	@Export(label="Pcte. Padrão" , alignment=Alignment.CENTER, widthPercent=6)
 	private Integer pacotePadrao;
 	
-	@Export(label="Desconto %", alignment=Alignment.RIGHT)
+	@Export(label="Desconto %", alignment=Alignment.RIGHT, widthPercent=8)
 	private BigDecimal percentualDesconto;
 
-	@Export(label="Periodicidade", alignment=Alignment.CENTER)
+	@Export(label="Periodicidade", alignment=Alignment.CENTER, widthPercent=10)
 	private PeriodicidadeProduto periodicidade;
 
 	

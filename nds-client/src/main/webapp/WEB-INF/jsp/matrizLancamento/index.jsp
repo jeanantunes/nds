@@ -1,4 +1,4 @@
-<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}"/>
 <head>
 
 <style>
@@ -53,6 +53,14 @@ balanceamentoLancamento.inicializar();
 </head>
 
 <body>
+
+<form id="form-excluir-lancamento">
+	<div id="dialog-excluir-lancamento" title="Remover Lançamento" style="display:none">
+			
+		<p>Deseja realmente excluir este lançamento?</p>
+			   
+	</div>
+</form>
 
 <form id="form-confirm">
 <div id="dialog-confirm" title="Balanceamento da Matriz de Lançamento">
@@ -109,29 +117,22 @@ balanceamentoLancamento.inicializar();
 			  		<div class="area">
 			  			<span class="bt_novos" style="display: none;">
 		        			<!-- Voltar Configuração Inicial -->
-		        			<a id="linkVoltarConfiguracaoInicial" href="javascript:;" onclick="balanceamentoLancamento.abrirAlertaVoltarConfiguracaoInicial();" rel="tipsy" title="Clique para Voltar Configuração Inicial"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" /></a>
+		        			<a id="linkVoltarConfiguracaoInicial" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.abrirAlertaVoltarConfiguracaoInicial();" rel="tipsy" title="Clique para Voltar Configuração Inicial"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" /></a>
 		        		</span>
 			  			
 			  			<span class="bt_novos" style="display: none;">
 			  				<!-- Reprogramar -->
-			  				<a id="linkReprogramar" href="javascript:;" onclick="balanceamentoLancamento.reprogramarSelecionados();" rel="tipsy" title="Clique para Reprogramar"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" /></a>                    
-		                </span>
-		                
-		                <span class="bt_novos" style="border-width: 2px; border-color: #00CD00; display: none;">
-		                    <!-- CONFIRMAR -->	
-		                    <a id="linkConfirmar" href="javascript:;" onclick="balanceamentoLancamento.obterConfirmacaoBalanceamento();" rel="tipsy" title="Confirmar Balanceamento">
-		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
-		                    </a>
+			  				<a id="linkReprogramar" href="javascript:;" isEdicao="true" onclick="balanceamentoLancamento.reprogramarSelecionados();" rel="tipsy" title="Clique para Reprogramar"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" /></a>                    
 		                </span>
 		                
 		                <span class="bt_novos" style="display: none;">
-							<a isEdicao="true" id="linkSalvar" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Salvar">
+							<a isEdicao="true" id="linkSalvar" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Salvar">
 								<img src="<c:url value='images/ico_salvar.gif'/>"  hspace="5" border="0" />
 							</a>
 						</span>
 						
 						<span class="bt_novos" style="display: none;">
-							<a id="linkMatrizFornecedor" title="Matriz Fornecedor" href="javascript:;" onclick="balanceamentoLancamento.carregarGrid(null, true);">
+							<a id="linkMatrizFornecedor" isEdicao="true" title="Matriz Fornecedor" href="javascript:;" onclick="balanceamentoLancamento.carregarGrid(null, true);">
 								<img src="<c:url value='images/ico_detalhes.png'/>"  hspace="5" border="0" />
 							</a>
 						</span>
@@ -150,6 +151,19 @@ balanceamentoLancamento.inicializar();
 							    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						    </a>
 						</span>
+						
+						<span class="bt_novos" style="border-width: 2px; border-color: #00CD00; display: none;">
+		                    <!-- CONFIRMAR -->	
+		                    <a id="linkConfirmar" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.obterConfirmacaoBalanceamento();" rel="tipsy" title="Confirmar Balanceamento">
+		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
+		                    </a>
+		                </span>
+		                
+						<span class="bt_novos" style="display: none;">
+				            <a id="linkReabrirMatriz" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.obterDatasConfirmadasParaReabertura();" rel="tipsy" title="Reabrir Matriz" >
+					             <img src="<c:url value='images/ico_reopen.gif'/>"  hspace="5" border="0" />
+				           </a> 
+			            </span>
 			  		</div>
 			  </div>
 			  <div class="linha_separa_fields">&nbsp;</div>
@@ -233,6 +247,24 @@ balanceamentoLancamento.inicializar();
 		    </fieldset>
 		</div>
 		</form>
+		
+		<form id="form-reabrir-matriz">
+		<div id="dialog-reabrir-matriz" title="Balanceamento" style="display:none;">
+		    
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialog-reabertura" name="messageDialog"/>
+			</jsp:include>
+			
+		    <fieldset style="width:250px!important;">
+		    	<legend>Reabrir Matrizes Confirmadas</legend>
+
+		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableReaberturaMatrizConfirmada">
+		        </table>
+
+		    </fieldset>
+		</div>
+		</form>
 	
+		
 
 </body>

@@ -11,6 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
 @Embeddable
 public class ParametroDistribuicaoCota implements Serializable {
 
@@ -41,8 +43,8 @@ public class ParametroDistribuicaoCota implements Serializable {
 	@Column(name = "RECEBE_RECOLHE_PARCIAIS", nullable = true)
 	private Boolean recebeRecolheParciais;
 	
-	@Column(name = "RECEBE_COMPLEMENTAR", nullable = true)
-	private Boolean recebeComplementar;
+	@Column(name = "RECEBE_COMPLEMENTAR",nullable = false, columnDefinition = "boolean default false")
+	private Boolean recebeComplementar = true;
 	
 	@Column(name = "NOTA_ENVIO_IMPRESSO", nullable = true)
 	private Boolean notaEnvioImpresso;

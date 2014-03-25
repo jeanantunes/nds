@@ -97,6 +97,10 @@ public class EmissaoCEController extends BaseController {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
 		
+		session.setAttribute(BOLETOS_EM_BRANCO, null);
+		
+		session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, null);
+		
 		String data = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
 		result.include("data",data);		
 		result.include("listaBoxes",carregarBoxes(boxService.buscarTodos(TipoBox.LANCAMENTO)));
@@ -109,6 +113,10 @@ public class EmissaoCEController extends BaseController {
 
 	@Post
 	public void pesquisar(FiltroEmissaoCE filtro, String sortname, String sortorder) {
+		
+        session.setAttribute(BOLETOS_EM_BRANCO, null);
+		
+		session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, null);
 		
 		filtro.setOrdenacao(sortorder);
 		
@@ -229,11 +237,7 @@ public class EmissaoCEController extends BaseController {
 		return listaRoteiros;
 	}
 
-	private void obterDadosImpressaoCE(FiltroEmissaoCE filtro){
-	
-        session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, null);
-		
-		session.setAttribute(BOLETOS_EM_BRANCO, null);
+	private DadosImpressaoEmissaoChamadaEncalhe obterDadosImpressaoCE(FiltroEmissaoCE filtro){
 		
 		TipoImpressaoCE tipoImpressao = this.distribuidorService.tipoImpressaoCE();
 		
@@ -250,41 +254,64 @@ public class EmissaoCEController extends BaseController {
 			filtro.setQtdCapasPorPagina(49);
 			filtro.setQtdMaximaProdutosComTotalizacao(20);
 		}
-		
-		DadosImpressaoEmissaoChamadaEncalhe dados = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
 
-		session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, dados);
+		DadosImpressaoEmissaoChamadaEncalhe dados = (DadosImpressaoEmissaoChamadaEncalhe) session.getAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE);
+		
+		if (dados == null){
+
+		    dados = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
+		    
+		    session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, dados);
+		}    
+		
+		return dados;
 	}
 	
 	@Post
 	@Path("/obterDadosImpressaoBoletosEmBranco")
-	public void obterDadosImpressaoBoletosEmBranco() {
+	public void obterDadosImpressaoBoletosEmBranco(boolean verificarReemissao) { 
 		
-		FiltroEmissaoCE filtro = getFiltroSessao();
-		
-		this.obterDadosImpressaoCE(filtro);
+		session.setAttribute(BOLETOS_EM_BRANCO, null);
 		
 		boolean existemBoletosEmBranco = false;
 		
-		DadosImpressaoEmissaoChamadaEncalhe dados = (DadosImpressaoEmissaoChamadaEncalhe) session.getAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE);
-		
-		if (dados==null){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir a Boleto em Branco !");
-		}
-		
-		List<BoletoEmBrancoDTO> boletosEmBranco = this.obterDadosBoletosEmBrancoPorListaCE(dados.getCotasEmissao(), filtro);
+		FiltroEmissaoCE filtro = getFiltroSessao();
 
-		if (boletosEmBranco!=null && boletosEmBranco.size() > 0){
+		boolean boletosEmitidosNoPeriodo = this.boletoService.existeBoletoAntecipadoPeriodoRecolhimentoECota(filtro.getNumCotaDe(),
+				                                                                                             filtro.getNumCotaAte(), 
+				                                                                                             filtro.getDtRecolhimentoDe(), 
+				                                                                                             filtro.getDtRecolhimentoAte());
+
+		if (!verificarReemissao || !boletosEmitidosNoPeriodo){
 			
-			this.boletoService.salvaBoletosAntecipado(boletosEmBranco);
+			DadosImpressaoEmissaoChamadaEncalhe dados = this.obterDadosImpressaoCE(filtro);
 			
-			session.setAttribute(BOLETOS_EM_BRANCO, boletosEmBranco);	
+			if (dados == null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir a Boleto em Branco !");
+			}
 			
-			existemBoletosEmBranco = true;
+			List<BoletoEmBrancoDTO> boletosEmBranco = this.obterDadosBoletosEmBrancoPorListaCE(dados.getCotasEmissao(), filtro);
+			
+			if (boletosEmBranco!=null && boletosEmBranco.size() > 0){
+				
+				this.boletoService.salvaBoletosAntecipado(boletosEmBranco);
+				
+				session.setAttribute(BOLETOS_EM_BRANCO, boletosEmBranco);	
+				
+				existemBoletosEmBranco = true;
+			}
+			else{
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir a Boleto em Branco !");
+			}
+			
+			result.use(Results.json()).from(existemBoletosEmBranco,"result").recursive().serialize();
+	    }
+		else{
+			
+			result.use(Results.json()).from(existemBoletosEmBranco,"result").recursive().serialize();
 		}
-		
-		result.use(Results.json()).from(existemBoletosEmBranco,"result").recursive().serialize();
 	}
 
 	public void imprimirCE() {
@@ -330,13 +357,11 @@ public class EmissaoCEController extends BaseController {
 
 		FiltroEmissaoCE filtro = getFiltroSessao();
 		
-        this.obterDadosImpressaoCE(filtro);
+		DadosImpressaoEmissaoChamadaEncalhe dados = this.obterDadosImpressaoCE(filtro);
 
 		boolean apresentaCapas = (filtro.getCapa() == null) ? false : filtro.getCapa();
 		
 		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
-		
-		DadosImpressaoEmissaoChamadaEncalhe dados = (DadosImpressaoEmissaoChamadaEncalhe) session.getAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE);
 		
 		if (dados == null){
 		    
@@ -403,6 +428,7 @@ public class EmissaoCEController extends BaseController {
 	 * 
 	 * @throws IOException Exceção de E/S
 	 */
+	@SuppressWarnings("deprecation")
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		

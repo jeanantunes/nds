@@ -1,32 +1,38 @@
 package br.com.abril.nds.model.planejamento;
 
+import java.io.IOException;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.seguranca.Usuario;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author francisco.garcia
@@ -34,74 +40,77 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
  * @created 14-fev-2012 11:35:31
  */
 @Entity
-@Table(name = "ESTUDO", uniqueConstraints = { @UniqueConstraint(columnNames = {
-		"DATA_LANCAMENTO", "PRODUTO_EDICAO_ID" }) })
-@SequenceGenerator(name = "ESTUDO_SEQ", initialValue = 1, allocationSize = 1)
-public class Estudo implements Serializable {
-	
-	private static final long serialVersionUID = -6789370916662533013L;
-	
+@Table(name = "ESTUDO")
+@SuppressWarnings("serial")
+public class Estudo implements Serializable  {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Estudo.class);
+
 	@Id
-	@GeneratedValue(generator = "ESTUDO_SEQ")
 	@Column(name = "ID")
-	private Long id;
-	@Column(name = "QTDE_REPARTE", nullable = false)
-	private BigInteger qtdeReparte;
-	@Column(name = "DATA_LANCAMENTO", nullable = false)
-	@Temporal(TemporalType.DATE)
-	private Date dataLancamento;
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
-	private ProdutoEdicao produtoEdicao;
-	@NotFound(action = NotFoundAction.IGNORE)
-	@OneToMany(mappedBy = "estudo")
-	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
+	protected Long id;
 	
-	@OneToMany(mappedBy = "estudo", cascade = {CascadeType.REMOVE, CascadeType.MERGE})
-	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
+	@Column(name = "QTDE_REPARTE", nullable = false)
+	protected BigInteger qtdeReparte;
+
+	@Column(name = "DATA_LANCAMENTO")
+	@Temporal(TemporalType.DATE)
+	protected Date dataLancamento;
+
+	@ManyToOne
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
+	protected ProdutoEdicao produtoEdicao;
+
+	@NotFound(action = NotFoundAction.IGNORE)
+	@OneToMany(mappedBy = "estudo", fetch = FetchType.LAZY)
+	protected Set<Lancamento> lancamentos = new HashSet<Lancamento>();
+	
+	@Column(name = "LANCAMENTO_ID")
+	protected Long lancamentoID;
+	
+	@Cascade(value={CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.DELETE})
+	@OneToMany(mappedBy = "estudo", fetch = FetchType.LAZY)
+	protected Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
 	
 	/** Status do Estudo. */
 	@Column(name = "STATUS", nullable = false)
 	@Enumerated(EnumType.STRING)
-	private StatusLancamento status;
+	protected StatusLancamento status;
 	
 	/** Data de cadastro do Estudo no sistema. */
 	@Column(name = "DATA_CADASTRO", nullable = false)
 	@Temporal(TemporalType.DATE)
-	private Date dataCadastro;
+	protected Date dataCadastro;
 	
 	/** Data de alteração do Estudo no sistema. */
 	@Column(name = "DATA_ALTERACAO")
 	@Temporal(TemporalType.DATE)
-	private Date dataAlteracao;
-	
-	@Column(name = "LIBERADO")
-	private Integer liberado;
-	
+	protected Date dataAlteracao;
+
 	@Column(name = "REPARTE_DISTRIBUIR")
-	private BigInteger reparteDistribuir;
+	protected BigInteger reparteDistribuir;
+	
+	@Column(name = "SOBRA")
+	protected BigInteger sobra;
 	
 	@Column(name = "DISTRIBUICAO_POR_MULTIPLOS")
-	private Integer distribuicaoPorMultiplos;
+	protected Integer distribuicaoPorMultiplos; //TODO no estudo usa boolean, verificar alteração
 	
 	@Column(name = "PACOTE_PADRAO")
-	private BigInteger pacotePadrao;
+	protected BigInteger pacotePadrao; //TODO BigDecimal
 	
-	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_PDV", precision=18, scale=4)
-	private BigDecimal percentualProporcaoExcedentePDV;
-	
-	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_VENDA", precision=18, scale=4)
-	private BigDecimal percentualProporcaoExcedenteVenda;
-	
-	public Long getId() {
-		return id;
-	}
-	
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public BigInteger getQtdeReparte() {
+	@ManyToOne (optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "USUARIO_ID")
+	protected Usuario usuario;
+
+    @Column(name = "ESTUDO_ORIGEM_COPIA")
+    protected Long idEstudoOrigemCopia; //Estudo usado para gerar copia proporcional
+
+    @Column(name = "DADOS_VENDA_MEDIA")
+    @Type(type = "text")
+    protected String dadosVendaMedia;
+
+    public BigInteger getQtdeReparte() {
 		return qtdeReparte;
 	}
 	
@@ -128,7 +137,7 @@ public class Estudo implements Serializable {
 	public Lancamento getLancamento() {
 		return lancamentos.isEmpty() ? null : lancamentos.iterator().next();
 	}
-
+	
 	/**
 	 * @return the estudoCotas
 	 */
@@ -167,14 +176,6 @@ public class Estudo implements Serializable {
 		this.dataAlteracao = dataAlteracao;
 	}
 
-	public Integer getLiberado() {
-		return liberado;
-	}
-
-	public void setLiberado(Integer liberado) {
-		this.liberado = liberado;
-	}
-
 	public Set<Lancamento> getLancamentos() {
 		return lancamentos;
 	}
@@ -207,22 +208,64 @@ public class Estudo implements Serializable {
 		this.pacotePadrao = pacotePadrao;
 	}
 
-	public BigDecimal getPercentualProporcaoExcedentePDV() {
-		return percentualProporcaoExcedentePDV;
+	public Usuario getUsuarioId() {
+		return usuario;
 	}
 
-	public void setPercentualProporcaoExcedentePDV(
-			BigDecimal percentualProporcaoExcedentePDV) {
-		this.percentualProporcaoExcedentePDV = percentualProporcaoExcedentePDV;
+	public void setUsuarioId(Usuario usuarioId) {
+		this.usuario = usuarioId;
 	}
 
-	public BigDecimal getPercentualProporcaoExcedenteVenda() {
-		return percentualProporcaoExcedenteVenda;
+	public Long getLancamentoID() {
+		return lancamentoID;
 	}
 
-	public void setPercentualProporcaoExcedenteVenda(
-			BigDecimal percentualProporcaoExcedenteVenda) {
-		this.percentualProporcaoExcedenteVenda = percentualProporcaoExcedenteVenda;
+	public void setLancamentoID(Long lancamentoID) {
+		this.lancamentoID = lancamentoID;
 	}
-	
+
+	public BigInteger getSobra() {
+		return sobra;
+	}
+
+	public void setSobra(BigInteger sobra) {
+		this.sobra = sobra;
+	}
+
+    public Long getIdEstudoOrigemCopia() {
+        return idEstudoOrigemCopia;
+    }
+
+    public void setIdEstudoOrigemCopia(Long idEstudoOrigemCopia) {
+        this.idEstudoOrigemCopia = idEstudoOrigemCopia;
+    }
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+    public void setDadosVendaMedia(DistribuicaoVendaMediaDTO dadosVendaMedia) {
+        if (dadosVendaMedia != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            String valueAsString = null;
+            try {
+                valueAsString = mapper.writeValueAsString(dadosVendaMedia);
+            } catch (IOException e) {
+                LOGGER.info("Serialization error.", e);
+            }
+            this.dadosVendaMedia = valueAsString;
+        }
+    }
+
+    public void setDadosVendaMedia(String dadosVendaMedia) {
+        this.dadosVendaMedia = dadosVendaMedia;
+    }
+
+    public String getDadosVendaMedia() {
+        return dadosVendaMedia;
+    }
 }

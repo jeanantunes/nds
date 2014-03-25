@@ -202,7 +202,7 @@ public class Distribuidor {
 	 */
 	@Column(name = "QTD_DIAS_ENCALHE_ATRASADO_ACEITAVEL", nullable = false)
 	private int qtdDiasEncalheAtrasadoAceitavel = 4;
-	
+
 	@Column(name="QNT_DIAS_VENCIMENTO_VENDA_ENCALHE")
 	private Integer qntDiasVencinemtoVendaEncalhe;
 	
@@ -321,6 +321,15 @@ public class Distribuidor {
 	
 	@Column(name = "PARAR_ACUM_DIVIDAS", nullable = false)
 	private boolean pararAcumuloDividas;
+	
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<DistribuidorClassificacaoCota> listClassificacaoCota;
+	
+	@OneToOne(mappedBy = "distribuidor", cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	private DistribuidorGridDistribuicao gridDistribuicao;
+	
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<DistribuidorPercentualExcedente> listPercentualExcedente;
 	
 	public Long getId() {
 		return id;
@@ -1158,5 +1167,31 @@ public class Distribuidor {
 	 */
 	public void setPararAcumuloDividas(boolean pararAcumuloDividas) {
 		this.pararAcumuloDividas = pararAcumuloDividas;
+	}
+	
+	public List<DistribuidorClassificacaoCota> getListClassificacaoCota() {
+		return listClassificacaoCota;
+	}
+
+	public void setListClassificacaoCota(
+            List<DistribuidorClassificacaoCota> listClassificacaoCota) {
+		this.listClassificacaoCota = listClassificacaoCota;
+	}
+
+	public DistribuidorGridDistribuicao getGridDistribuicao() {
+		return gridDistribuicao;
+	}
+
+	public void setGridDistribuicao(DistribuidorGridDistribuicao gridDistribuicao) {
+		this.gridDistribuicao = gridDistribuicao;
+	}
+
+	public List<DistribuidorPercentualExcedente> getListPercentualExcedente() {
+		return listPercentualExcedente;
+	}
+
+	public void setListPercentualExcedente(
+            List<DistribuidorPercentualExcedente> listPercentualExcedente) {
+		this.listPercentualExcedente = listPercentualExcedente;
 	}
 }

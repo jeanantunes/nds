@@ -8,17 +8,17 @@ import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
-public class EMS0129Picking2Detalhe implements ModeloPickingDetalheInterface {
+public class EMS0129Picking2Detalhe implements InterfaceDetalhesPicking {
 
 	private String tipoRegistro;
 	
-	private Integer codigoCota;
+	private String codigoCota;
 	
-	private Integer sequenciaNotaEnvio;
+	private String sequenciaNotaEnvio;
 	
 	private String codigoProduto;
 	
-	private Long edicao;
+	private String edicao;
 	
 	private String nomePublicacao;
 	
@@ -62,7 +62,7 @@ public class EMS0129Picking2Detalhe implements ModeloPickingDetalheInterface {
 	}
 	
 	@Field(offset = 3, length = 4, align = Align.RIGHT)
-	public Integer getCodigoCota() {
+	public String getCodigoCota() {
 		return codigoCota;
 	}
 	
@@ -72,7 +72,7 @@ public class EMS0129Picking2Detalhe implements ModeloPickingDetalheInterface {
 	}
 	
 	@Field(offset = 8, length = 3, align = Align.RIGHT)
-	public Integer getSequenciaNotaEnvio() {
+	public String getSequenciaNotaEnvio() {
 		return sequenciaNotaEnvio;
 	}
 	
@@ -92,7 +92,7 @@ public class EMS0129Picking2Detalhe implements ModeloPickingDetalheInterface {
 	}
 	
 	@Field(offset = 21, length = 4, align = Align.RIGHT)
-	public Long getEdicao() {
+	public String getEdicao() {
 		return edicao;
 	}
 	
@@ -154,11 +154,11 @@ public class EMS0129Picking2Detalhe implements ModeloPickingDetalheInterface {
 		return separador10;
 	}
 
-	public void setCodigoCota(Integer codigoCota) {
+	public void setCodigoCota(String codigoCota) {
 		this.codigoCota = codigoCota;
 	}
 
-	public void setSequenciaNotaEnvio(Integer sequenciaNotaEnvio) {
+	public void setSequenciaNotaEnvio(String sequenciaNotaEnvio) {
 		this.sequenciaNotaEnvio = sequenciaNotaEnvio;
 	}
 
@@ -166,7 +166,7 @@ public class EMS0129Picking2Detalhe implements ModeloPickingDetalheInterface {
 		this.codigoProduto = codigoProduto;
 	}
 
-	public void setEdicao(Long edicao) {
+	public void setEdicao(String edicao) {
 		this.edicao = edicao;
 	}
 

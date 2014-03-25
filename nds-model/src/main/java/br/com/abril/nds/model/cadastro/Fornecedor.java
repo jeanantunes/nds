@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -74,7 +76,7 @@ public class Fornecedor implements Serializable {
 
 	@Column(name="RESPONSAVEL")
 	private String responsavel;
-
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
@@ -82,7 +84,14 @@ public class Fornecedor implements Serializable {
 	@OneToMany(mappedBy = "fornecedor")
 	@Cascade(value={CascadeType.ALL})
 	private Set<EnderecoFornecedor> enderecos = new HashSet<EnderecoFornecedor>();
-
+	
+	@ManyToOne(fetch=FetchType.LAZY, optional=true)
+	@JoinColumn(name="FORNECEDOR_UNIFICADOR_ID")
+	private Fornecedor fornecedorUnificador;
+	
+	@OneToMany(mappedBy="fornecedorUnificador", fetch=FetchType.LAZY)
+	private List<Fornecedor> fornecedoresUnificados;
+	
 	@OneToMany(mappedBy = "fornecedor")
 	@Cascade(value={CascadeType.ALL})
 	private Set<TelefoneFornecedor> telefones = new HashSet<TelefoneFornecedor>();
@@ -102,7 +111,7 @@ public class Fornecedor implements Serializable {
 	@OneToOne(optional = true)
 	@JoinColumn(name = "DESCONTO_ID")
 	private Desconto desconto;
-
+	
 	/**
 	 * Fornecedores associados à Cota
 	 */
@@ -111,8 +120,12 @@ public class Fornecedor implements Serializable {
 	inverseJoinColumns = {@JoinColumn(name = "COTA_ID")})
 	private Set<Cota> cotas = new HashSet<Cota>();
 	
-	@Column(name="MARGEM_DISTRIBUIDOR", precision=18, scale=4)
+	@Column(name="MARGEM_DISTRIBUIDOR")
 	private BigDecimal margemDistribuidor;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name="CANAL_DISTRIBUICAO")
+	private CanalDistribuicao canalDistribuicao;
 	
 	public Fornecedor(){}
 	
@@ -311,5 +324,31 @@ public class Fornecedor implements Serializable {
 			return false;
 		return true;
 	}
+
+	public CanalDistribuicao getCanalDistribuicao() {
+		return canalDistribuicao;
+	}
+
+	public void setCanalDistribuicao(CanalDistribuicao canalDistribuicao) {
+		this.canalDistribuicao = canalDistribuicao;
+	}
+
+	public Fornecedor getFornecedorUnificador() {
+		return fornecedorUnificador;
+	}
+
+	public void setFornecedorUnificador(Fornecedor fornecedorUnificador) {
+		this.fornecedorUnificador = fornecedorUnificador;
+	}
+
+	public List<Fornecedor> getFornecedoresUnificados() {
+		return fornecedoresUnificados;
+	}
+
+	public void setFornecedoresUnificados(List<Fornecedor> fornecedoresUnificados) {
+		this.fornecedoresUnificados = fornecedoresUnificados;
+	}
+	
+	
 
 }

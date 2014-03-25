@@ -47,4 +47,6 @@ public interface PoliticaCobrancaRepository extends Repository<PoliticaCobranca,
 	void desativarPoliticaCobranca(long idPolitica);
 	
 	List<TipoCobranca> obterTiposCobrancaDistribuidor();
+
+	boolean verificarPorTipoCobrancaPor(TipoCobranca tipoCobranca);
 }

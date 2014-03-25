@@ -29,7 +29,7 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 	
 	List<EstudoCota> obterEstudoCota(Long isCota, Date dataDe, Date dataAte);
 	
-	List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao);
+	List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Long idLancamento, Long idProdutoEdicao);
 	
 	EstudoCota obterEstudoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota);
 	
@@ -40,4 +40,8 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 												   List<Long> listaIdsFornecedores,
 												   String exibirNotasEnvio);
 	
+	List<EstudoCota> obterEstudosCota(Long idEstudo);
+	
+	void removerEstudosCotaPorEstudos(List<Long> listIdEstudos);
+
 }

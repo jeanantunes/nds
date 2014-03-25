@@ -113,8 +113,9 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 		var parametroPesquisa = [{name:'filtro.numeroCota', value:numeroCota },
 		                         {name:'filtro.idConsolidado', value:idConsolidado },
-		                         {name:'filtro.dataConsolidado', value:dataConsolidado}];
-		
+		                         {name:'filtro.dataConsolidado', value:dataConsolidado},
+		                         {name:'sortname', value:'sequencia'}];
+
 		$.postJSON(
 			contextPath + '/financeiro/contaCorrenteCota/consultarConsignadoCota',
 			parametroPesquisa,
@@ -186,17 +187,27 @@ var contaCorrenteCotaController = $.extend(true, {
 									 (formatMoneyValue(value.cell.encalhe * -1)) + '</a>' : '0.0000';
 				
 				value.cell.valorVendaDia = (value.cell.valorVendaDia != null && value.cell.valorVendaDia != 0)?
-					                          (formatMoneyValue(value.cell.valorVendaDia)) : '0.0000'; 
+	                          '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_valorVendaDia(' +
+	                          [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + value.cell.debitoCredito * -1 +'\');"/>' + 
+	                          (formatMoneyValue(value.cell.valorVendaDia)) : '0.0000'; 
 					                          
 
 				value.cell.vendaEncalhe = (value.cell.vendaEncalhe != null && value.cell.vendaEncalhe != 0)?'<a href="javascript:;" onclick="vendaEncalhe.showDialog('+
 										  [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\','+ $("#cotaHidden", contaCorrenteCotaController.workspace).val() +
 										  ',\''+value.cell.nomeBox+'\');"/>' + (formatMoneyValue(Math.abs(value.cell.vendaEncalhe))) + '</a>' : '0.0000';
 				
-				value.cell.debitoCredito = (value.cell.debitoCredito != null && value.cell.debitoCredito != 0)?'<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+
-										   [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + value.cell.debitoCredito * -1 +'\');"/>' +
-											(formatMoneyValue(value.cell.debitoCredito * -1)) +'</a>' : '0.0000';
-
+				if (value.cell.detalharDebitoCredito){
+					
+					var valor = (value.cell.debitoCredito != null && value.cell.debitoCredito != 0) ? value.cell.debitoCredito * -1 : '0.0000';
+					
+					value.cell.debitoCredito = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+
+							   [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + valor +'\');"/>' +
+								(formatMoneyValue(valor)) +'</a>';
+				} else {
+					
+					value.cell.debitoCredito = '0.0000';
+				}
+										  
 				value.cell.encargos = (value.cell.encargos != null && value.cell.encargos != 0)?'<a href="javascript:;" onclick="contaCorrenteCotaController.popup_encargos('+
 									  [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado +'\');"/>' + 
 									  (formatMoneyValue(Math.abs(value.cell.encargos))) +'</a>' : '0.0000';
@@ -219,20 +230,24 @@ var contaCorrenteCotaController = $.extend(true, {
 						               (formatMoneyValue(value.cell.valorPago, 2)) : '0.00'; 
 				
 						               
-				value.cell.saldo = (value.cell.saldo != null && value.cell.saldo != 0)?
+				value.cell.saldo = (value.cell.saldo != null && formatMoneyValue(value.cell.saldo, 2) != 0)?
                                    (formatMoneyValue(value.cell.saldo * -1, 2)) : '0.00'; 
-
-               if (value.cell.inadimplente) {
+               
+                if(value.cell.statusDivida && value.cell.statusDivida == "NEGOCIADA") {	
+                	
+                	value.cell.cobrado = '<img src="'+ contextPath +'/images/hammer.png" alt="Dívida Negociada"/>';
+                	
+                } else if (value.cell.inadimplente) {
 				
-            	   value.cell.cobrado = '<img src="'+ contextPath +'/images/seta_sobe.gif"/>';
+            	   value.cell.cobrado = '<img src="'+ contextPath +'/images/seta_sobe.gif" alt="Dívida Acumulada"/>';
                
                } else if (value.cell.cobrado){
 					
-					value.cell.cobrado = '<img src="'+ contextPath +'/images/bt_financeiro.png"/>';
+					value.cell.cobrado = '<img src="'+ contextPath +'/images/bt_financeiro.png" alt="Cobrança Gerada" />';
 				
 				} else {
 					
-					value.cell.cobrado = '<img src="'+ contextPath +'/images/ico_boletos.gif"/>';
+					value.cell.cobrado = '<img src="'+ contextPath +'/images/ico_boletos.gif" alt="Dívida Postergada" />';
 					value.cell.saldo = (value.cell.total != null && value.cell.total != 0)?
 					                   (formatMoneyValue(value.cell.total, 2)) : '0.00';
 				}
@@ -527,7 +542,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		},
 		dataType : 'json',	
 		colModel : [{
-			display : 'Sequência',
+			display : 'SM',
 			name : 'sequencia',
 			width : 50,
 			sortable : false,
@@ -752,9 +767,45 @@ var contaCorrenteCotaController = $.extend(true, {
 			sortname : "dataLancamento",
 			sortorder : "asc"
 		});
-		
-		$(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).flexOptions({
-			url : contextPath + '/financeiro/contaCorrenteCota/consultarDebitoCreditoCota'
+	},
+	
+	montarGridValorVendaDia : function(){
+		$(".valorVendaDiaGrid", contaCorrenteCotaController.workspace).flexigrid({
+			preProcess : function(data){
+				
+				$.each(data.rows, function(index, value) {
+					
+					value.cell.dataLancamento = value.cell.data;
+					value.cell.observacoes = value.cell.descricao;
+					value.cell.valor = formatMoneyValue(value.cell.valor);
+				});
+				
+				return data;
+			},
+			dataType : 'json',	
+			colModel : [ {
+				display : 'Data',
+				name : 'dataLancamento',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor R$',
+				name : 'valor',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Observação',
+				name : 'observacoes',
+				width : 390,
+				sortable : true,
+				align : 'left'
+			}],
+			width : 600,
+			height : 190,
+			sortname : "dataLancamento",
+			sortorder : "asc"
 		});
 	},
 	
@@ -801,6 +852,45 @@ var contaCorrenteCotaController = $.extend(true, {
 				contaCorrenteCotaController.dataDebitoCredito = dataConsolidado;
 				
 				$(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).flexOptions({
+					params : dadosPesquisa
+				});
+			}
+		);
+	},
+	
+	popup_valorVendaDia : function(idConsolidado, dataConsolidado, valorTotal){
+		
+		var dadosPesquisa = [
+		   {name:'idConsolidado', value: idConsolidado},
+		   {name:'data', value:dataConsolidado},
+		   {name:'numeroCota', value: $("#cotaHidden", contaCorrenteCotaController.workspace).val()}
+		];
+		
+		$.postJSON(contextPath + "/financeiro/contaCorrenteCota/consultarValorVendaDia",
+			dadosPesquisa,
+			function (result){
+				
+				contaCorrenteCotaController.montarGridValorVendaDia();
+				$("#dialog-valor-venda-dia", contaCorrenteCotaController.workspace ).dialog({
+					resizable: false,
+					height:340,
+					width:660,
+					modal: true,
+					buttons: {
+						"Fechar": function() {
+							$( this ).dialog( "close" );
+							
+							$(".valorVendaDiaGrid", contaCorrenteCotaController.workspace).show();
+						},
+					},
+					form: $("#dialog-valor-venda-dia", this.workspace).parents("form"),
+				});
+				
+				$(".valorVendaDiaGrid", contaCorrenteCotaController.workspace).flexAddData({
+					page: result.page, total: result.total, rows: result.rows
+				});
+				
+				$(".valorVendaDiaGrid", contaCorrenteCotaController.workspace).flexOptions({
 					params : dadosPesquisa
 				});
 			}

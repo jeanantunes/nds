@@ -204,6 +204,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	 * @see br.com.abril.nds.service.LogExecucaoMensagemService#listarProcessos()
 	 */
 	@Override
+	@Transactional
 	public List<ProcessoDTO> listarProcessos() {
 		
 		Date dataOperacao = this. distribuidorService.obterDataOperacaoDistribuidor();
@@ -494,6 +495,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	 * @see br.com.abril.nds.service.PainelProcessamentoService#obterEstadoOperacional()
 	 */
 	@Override
+	@Transactional
 	public String obterEstadoOperacional() {
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 
@@ -518,7 +520,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		List<DetalheInterfaceVO> lista = new ArrayList<DetalheInterfaceVO>();
 		DetalheInterfaceVO detalheInterfaceVO = null;
 		String info = null;
-		Map<String, String> mapaInformacoes = new HashMap<String, String>(); 
+		Map<String, String> mapaInformacoes; 
 		for (LogExecucaoMensagem logExecucaoMensagem : logExecucaoRepository.obterMensagensLogInterface(codigoLogExecucao)) {
 			info = logExecucaoMensagem.getMensagemInfo();
 			if (info == null) {
@@ -552,5 +554,4 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	    }
 	    return map;
 	}
-
 }

@@ -80,7 +80,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 			
 			this.validarCotaAusenteNaData(numCota, data);
 			
-			Cota cota = this.cotaRepository.obterPorNumerDaCota(numCota);
+			Cota cota = this.cotaRepository.obterPorNumeroDaCota(numCota);
 			
 			List<GrupoMovimentoEstoque> gruposMovimentoEstoqueCota = 
 				Arrays.asList(
@@ -133,7 +133,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 		
 		for (Integer numCota : numCotas) {
 				
-			Cota cota = this.cotaRepository.obterPorNumerDaCota(numCota);
+			Cota cota = this.cotaRepository.obterPorNumeroDaCota(numCota);
 
 			List<MovimentoEstoqueCota> movimentosCota = 
 				this.movimentoEstoqueCotaRepository.obterMovimentoCotaLancamentoPorTipoMovimento(
@@ -335,7 +335,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 					//Retira do estoque da distribuidora a quantidade diponível a ser enviada de volta p/ cota ausente
 					
 					//Lança movimento para restituir o saldo do distribuidor
-					this.movimentoEstoqueService.gerarMovimentoEstoque(cotaAusente.getData(), 
+					this.movimentoEstoqueService.gerarMovimentoEstoque(null, 
 							                                           movimento.getProdutoEdicao().getId(), 
 																	   idUsuario, 
 																	   qtdeARestaurarCotaAusenteSuplementar, 
@@ -440,7 +440,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 			
 			total += rateioDTO.getQtde();
 			
-			Cota cota = this.cotaRepository.obterPorNumerDaCota(rateioDTO.getNumCota());
+			Cota cota = this.cotaRepository.obterPorNumeroDaCota(rateioDTO.getNumCota());
 			
 			BigInteger qtdeRateio = BigInteger.valueOf(rateioDTO.getQtde());
 			
@@ -453,7 +453,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 					GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
 			this.movimentoEstoqueService.gerarMovimentoEstoque(
-				data, produtoEdicao.getId(), 
+				null, produtoEdicao.getId(), 
 					idUsuario, qtdeRateio, tipoMovimento);
 			
 			this.movimentoEstoqueService.gerarMovimentoCota(
@@ -492,7 +492,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 	@Transactional(readOnly = true)
 	public void verificarExistenciaReparteCota(Date data, Integer numeroCota) {
 		
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		Validate.notNull(cota, "Cota inexistente");
 		

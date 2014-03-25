@@ -1,7 +1,6 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.util.CellModelKeyValue;

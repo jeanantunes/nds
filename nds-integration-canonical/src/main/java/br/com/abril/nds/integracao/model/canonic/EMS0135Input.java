@@ -15,12 +15,19 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 	private static final long serialVersionUID = -2655294342766612808L;
 	
 	private Integer distribuidor;
+	
 	private Date dataEmissao;
+	
 	private Long notaFiscal;
+	
 	private String serieNotaFiscal;
+	
 	private String chaveAcessoNF;
+	
 	private String cnpjEmissor;
+	
 	private String numeroNotaEnvio;
+	
 	private List<EMS0135InputItem> item = new ArrayList<EMS0135InputItem>();
 	
 	@Field(offset = 1, length = 7)
@@ -57,7 +64,7 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 		this.serieNotaFiscal = serieNotaFiscal;
 	}	
 	
-	@Field(offset = 121, length = 44)
+	@Field(offset = 123, length = 44)
 	public String getChaveAcessoNF() {
 		return chaveAcessoNF;
 	}
@@ -68,7 +75,7 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 	/**
 	 * @return the cnpjEmissor
 	 */
-	@Field(offset = 165, length = 14)
+	@Field(offset = 167, length = 14)
 	public String getCnpjEmissor() {
 		return cnpjEmissor;
 	}
@@ -83,7 +90,7 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 	/**
 	 * @return the numeroNotaEnvio
 	 */
-	@Field(offset = 179, length = 6)
+	@Field(offset = 181, length = 6)
 	public String getNumeroNotaEnvio() {
 		return numeroNotaEnvio;
 	}

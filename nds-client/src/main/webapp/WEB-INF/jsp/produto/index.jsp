@@ -1,6 +1,8 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/utils.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numberformatter-1.2.3.min.js"></script>
 	<script type="text/javascript">
@@ -10,32 +12,29 @@
 	produtoController.inicializar(pesquisaProdutoCadastroProduto);
 	
 	</script>
-
 	<style>
 		label { 
-			vertical-align:super; 
+		        vertical-align:super; 
 		}
 		
 		#dialog-novo label { 
-			width:370px; margin-bottom:10px; float:left; font-weight:bold; line-height:26px; 
+		        width:370px; margin-bottom:10px; float:left; font-weight:bold; line-height:26px; 
 		}
 		
 		.ui-tabs .ui-tabs-panel {
 		   /*padding: 6px!important;*/
 		}
-	</style>
+    </style>
 
-</head>
+	</head>
 
 <body>
 
-	<form action="/produto" id="excluir_form">
-	<div id="dialog-excluir" title="Excluir Produto">
-		<p>Confirma a exclus&atilde;o deste Produto?</p>
-	</div>
-	</form>
-
-
+        <form action="/produto" id="excluir_form">
+        <div id="dialog-excluir" title="Excluir Produto">
+                <p>Confirma a exclus&atilde;o deste Produto?</p>
+        </div>
+        </form>
 	<form action="/produto" id="incluir_form">
 	<div id="dialog-novo" title="Incluir Novo Produto">
      
@@ -47,6 +46,18 @@
      	<fieldset style="margin-bottom: 10px;">
      		<legend>Dados Basicos</legend>
 			<table width="800" border="0" cellspacing="1" cellpadding="1">
+				<tr id="trCodigo">
+					<td width="135"><strong>C&oacute;digo:</strong></td>
+					<td width="260"><input type="text" name="codigoProdutoCadastro" id="codigoProdutoCadastro" onkeyup="produtoController.atualizaICD();" style="width:80px;" maxlength="12" onkeydown="onlyNumeric(event);"/></td>
+					
+					<td width="50"  name="tdCodigoProdutoICDCadastro" ><strong>C&oacute;digo ICD:</strong></td>
+					<td width="120" name="tdCodigoProdutoICDCadastro"><input type="text" onkeydown="onlyNumeric(event);" name="codigoProdutoICDCadastro" id="codigoProdutoICDCadastro" style="width:80px;" maxlength="6" /></td>
+					
+				</tr>
+				<tr id="trProd">
+					<td width="142"><strong>Produto:</strong></td>
+					<td width="250"><input type="text" class="habilitarCampoInterface" name="nomeProduto" id="nomeProduto" style="width:244px;" maxlength="60" /></td>
+				</tr>
 				<tr id="trForn">
 					<td><strong>Fornecedor:</strong></td>
 					<td>
@@ -59,15 +70,6 @@
 						<select class="habilitarCampoInterface" name="comboEditor" id="comboEditor" style="width:210px;" >
 						</select>
 					</td>
-				</tr>
-				<tr id="trCodigo">
-					<td width="135"><strong>C&oacute;digo:</strong></td>
-					<td width="260">
-						<input type="text" name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="8"
-							onchange="produtoController.validarCodigoProduto();"/>
-					</td>
-					<td width="142"><strong>Produto:</strong></td>
-					<td width="250"><input type="text" class="habilitarCampoInterface" name="nomeProduto" id="nomeProduto" style="width:244px;" maxlength="60" /></td>
 				</tr>
 				<tr>
 					<td><strong> Slogan do Produto:</strong></td>
@@ -129,16 +131,19 @@
 											<td width="120">Periodicidade: </td>
 											<td style="width:200px;">
 												<select name="comboPeriodicidade" id="comboPeriodicidade" style="width:150px;" class="habilitarCampoInterface" >
-													<option value="" selected="selected"></option>
-													<option value="SEMANAL" >Semanal</option>
-													<option value="QUINZENAL" >Quinzenal</option>
-													<option value="MENSAL" >Mensal</option>
-													<option value="TRIMESTRAL" >Trimestral</option>
-													<option value="SEMESTRAL" >Semestral</option>
-													<option value="ANUAL" >Anual</option>
+													<option value="">Selecione</option>
+													<c:forEach varStatus="counter" var="itemPeriodicidade" items="${listaPeriodicidade}">
+									                    <option value="${itemPeriodicidade.key}">${itemPeriodicidade.value}</option>
+									                </c:forEach>
 												</select>
 											</td>
 										</tr>
+										<tr>
+											<td>Geração Automática:</td>
+												<td style="width:100px;">
+													<input type="checkbox" class="habilitarCampoInterface" id="selGeracaoAuto" name="selGeracaoAuto" style="float: left; margin-right: 25px;" />
+											</td>
+										<tr>
 									</table>
 								</fieldset>
 							</td>
@@ -165,7 +170,7 @@
 				</td>
 				
 				<td style="vertical-align: top;" >
-					<fieldset style="width:385px!important; margin:0 auto!important 10px auto!important; height: 205px;" id="fieldSegmentacao">
+					<fieldset style="width:385px!important; margin:0 auto!important 10px auto!important; height: 180px;" id="fieldSegmentacao">
 						<legend>P&uacute;blico-Alvo</legend>
 						<table width="380" border="0" cellspacing="1" cellpadding="1">
 							<tr>
@@ -211,6 +216,18 @@
 											</td>
 										</tr>
 										
+										<tr>
+											<td><strong>Forma Física:</strong></td>
+											<td>
+												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoFormaFisica" id="segmentacaoFormaFisica" style="width:150px;">
+							                        <option value="">Selecione</option>
+							                        <c:forEach varStatus="counter" var="itemFormaFisica" items="${listaFormaFisica}">
+									                    <option value="${itemFormaFisica.key}">${itemFormaFisica.value}</option>
+									                </c:forEach>
+							                    </select> 
+											</td>
+										</tr>
+										
 										
 										<tr>
 											<td width="137"><strong>Formato:</strong></td>
@@ -223,47 +240,19 @@
 							                    </select> 
 											</td>
 										</tr>
-										
-										
+
 										<tr>
-											<td><strong>Tipo de Lan&ccedil;amento:</strong></td>
-											<td>
-												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoTipoLancamento" id="segmentacaoTipoLancamento" style="width:150px;">
-							                        <option value="">Selecione</option>
-							                        <c:forEach varStatus="counter" var="itemTipoLancamento" items="${listaTipoLancamento}">
-									                    <option value="${itemTipoLancamento.key}">${itemTipoLancamento.value}</option>
-									                </c:forEach>
-							                    </select> 
-											</td>
+											<td><strong>Segmento:</strong></td>
+											<td><select class="habilitarCampoInterfaceSegmentacao"
+												name="comboTipoSegmento" id="comboTipoSegmento"
+												style="width: 150px;">
+													<option value="">Selecione</option>
+													<c:forEach varStatus="counter" var="itemSegmento"
+														items="${listaSegmentoProduto}">
+														<option value="${itemSegmento.key}">${itemSegmento.value}</option>
+													</c:forEach>
+											</select></td>
 										</tr>
-										
-										
-										<tr>
-											<td><strong>Tema Principal:</strong></td>
-											<td>
-												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoTemaPrincipal" id="segmentacaoTemaPrincipal" style="width:150px;">
-							                        <option value="">Selecione</option>
-							                        <c:forEach varStatus="counter" var="itemTema" items="${listaTemaProduto}">
-									                    <option value="${itemTema.key}">${itemTema.value}</option>
-									                </c:forEach>
-							                    </select> 
-											</td>
-										</tr>
-										
-										
-										<tr>
-											<td><strong>Tema Secundario:</strong></td>
-											<td>
-												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoTemaSecundario" id="segmentacaoTemaSecundario" style="width:150px;">
-							                        <option value="">Selecione</option>
-							                        <c:forEach varStatus="counter" var="itemTema" items="${listaTemaProduto}">
-									                    <option value="${itemTema.key}">${itemTema.value}</option>
-									                </c:forEach>
-							                    </select> 
-											</td>
-										</tr>
-										
-										
 									</table>
 								</td>
 							</tr>
@@ -280,7 +269,7 @@
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="produtoController.novoProduto();" rel="tipsy" title="Novo Produto">
+				<a href="javascript:;" onclick="produtoController.novoProduto();" isEdicao="true" rel="tipsy" title="Novo Produto">
 					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
 				</a>
 			</span>
@@ -318,9 +307,7 @@
 					<!-- <input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
 					       onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"
 					       onblur="pesquisaProdutoCadastroProduto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false, undefined, undefined);"/>  -->
-					<input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
-					       onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"
-					       onblur="pesquisaProdutoCadastroProduto.pesquisarPorNomeProduto('#codigoProduto', '#produto', null, false);"/>
+					<input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"/>
 				</td>
 				<td width="99">Fornecedor:</td>
 				<td width="251">
@@ -332,7 +319,7 @@
 			</tr>
 			<tr>
 				<td>Editor:</td>
-				<td colspan="3" >
+				<td colspan="3" style="width:470px;">
 					<input type="text" style="width:410px;" name="edicao" id="edicao" maxlength="20"/>
 				</td>
 				<td>Tipo de Produto:</td>
@@ -342,6 +329,15 @@
 						<c:forEach items="${listaTipoProduto}" var="tipoProduto" >
 							<option value="${tipoProduto.id}">${tipoProduto.descricao}</option>
 						</c:forEach>
+					</select>
+				</td>
+				<td>Geração Automática:</td>
+				<td style="width:100px;">
+					<select id="comboGeracaoAutomatica" style="width:65px;">
+						<option value="-1" selected="selected"></option>
+						<option value="0">Sim</option>
+						<option value="1">Não</option>
+						<option value="2">Ambos</option>
 					</select>
 				</td>
 				<td>

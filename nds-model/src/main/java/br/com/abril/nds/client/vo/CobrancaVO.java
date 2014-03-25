@@ -1,7 +1,12 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
 
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -13,6 +18,7 @@ public class CobrancaVO implements Serializable  {
 	 */
 	private static final long serialVersionUID = -5988272381369010529L;
 
+	
 	//BOLETO
 	private String codigo;
 	
@@ -49,6 +55,24 @@ public class CobrancaVO implements Serializable  {
 	private String multa;
 	private String valorSaldo;
 	
+	private boolean boletoAntecipado;
+	
+	public CobrancaVO() {
+		
+	}
+	
+	public CobrancaVO(BigInteger codigo, Integer numeroCota, String nome, Date dataEmissao, 
+					  Date dataVencimento, BigDecimal valor, boolean boletoAntecipado, String nossoNumero) {		
+		this.numeroCota= numeroCota;
+		this.codigo = codigo == null ? "" : codigo.toString();
+		this.nome = nome;
+		this.dataEmissao = DateUtil.formatarDataPTBR(dataEmissao);
+		this.dataVencimento = DateUtil.formatarDataPTBR(dataVencimento);
+		this.valor = CurrencyUtil.formatarValor(valor);
+		this.boletoAntecipado = boletoAntecipado;
+		this.nossoNumero = nossoNumero;
+	}
+	
 
 	public String getCota() {
 		return cota;
@@ -77,7 +101,7 @@ public class CobrancaVO implements Serializable  {
 	public String getDataEmissao() {
 		return dataEmissao;
 	}
-
+	
 	public void setDataEmissao(String dataEmissao) {
 		this.dataEmissao = dataEmissao;
 	}
@@ -85,7 +109,7 @@ public class CobrancaVO implements Serializable  {
 	public String getDataVencimento() {
 		return dataVencimento;
 	}
-
+	
 	public void setDataVencimento(String dataVencimento) {
 		this.dataVencimento = dataVencimento;
 	}
@@ -93,7 +117,7 @@ public class CobrancaVO implements Serializable  {
 	public String getValor() {
 		return valor;
 	}
-
+	
 	public void setValor(String valor) {
 		this.valor = valor;
 	}
@@ -305,8 +329,19 @@ public class CobrancaVO implements Serializable  {
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
-	
-	
 
+	/**
+	 * @return the boletoAntecipado
+	 */
+	public boolean isBoletoAntecipado() {
+		return boletoAntecipado;
+	}
+
+	/**
+	 * @param boletoAntecipado the boletoAntecipado to set
+	 */
+	public void setBoletoAntecipado(boolean boletoAntecipado) {
+		this.boletoAntecipado = boletoAntecipado;
+	}
 
 }

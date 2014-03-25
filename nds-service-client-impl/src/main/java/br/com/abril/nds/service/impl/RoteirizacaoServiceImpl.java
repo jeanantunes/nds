@@ -425,13 +425,14 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	
 	
-	//NOVA ROTEIRIZAÇÃO
+    // NOVA ROTEIRIZAÇÃO
 	
-	/**
-	 * Obtém um Roteiro do box considerando a ordem
-	 * @param idBox
-	 * @return Roteiro
-	 */
+	    /**
+     * Obtém um Roteiro do box considerando a ordem
+     * 
+     * @param idBox
+     * @return Roteiro
+     */
 	@Override
 	@Transactional(readOnly=true)
 	public Roteiro obterRoteiroDeBoxPorOrdem(Long idBox){
@@ -445,11 +446,12 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		return roteiro;
 	}
 	
-	/**
-	 * Obtém um Rota do Roteiro considerando a ordem
-	 * @param idRoteiro
-	 * @return Rota
-	 */
+	    /**
+     * Obtém um Rota do Roteiro considerando a ordem
+     * 
+     * @param idRoteiro
+     * @return Rota
+     */
 	@Override
 	@Transactional(readOnly=true)
 	public Rota obterRotaDeRoteiroPorOrdem(Long idRoteiro){
@@ -478,9 +480,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Transactional
 	@Override
 	public List<Roteiro> obterListaRoteiroPorBox(Long idBox, String descricaoRoteiro){
-		List<Roteiro> listaRoteiro = new ArrayList<Roteiro>();
-		listaRoteiro = this.roteiroRepository.buscarRoteiroDeBox(idBox, descricaoRoteiro);
-		return listaRoteiro;
+		return this.roteiroRepository.buscarRoteiroDeBox(idBox, descricaoRoteiro);
 	}
 	
 	/**
@@ -515,10 +515,11 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		return RoteirizacaoDTO.toDTO(roteirizacao, disponiveis, false);
 	}
   	
-	/**
-	 * Obtém PDVS's disponiveis
-	 * @return List<PdvRoteirizacaoDTO>
-	 */
+	    /**
+     * Obtém PDVS's disponiveis
+     * 
+     * @return List<PdvRoteirizacaoDTO>
+     */
 	@Override
 	@Transactional
 	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, 
@@ -611,7 +612,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			pdvDTO.setEndereco(endereco != null ? 
 					endereco.getTipoLogradouro() + " " +
 					endereco.getLogradouro() + " " + 
-					"nº.: " + endereco.getNumero() + ", " +
+ "nº.: " + endereco.getNumero() + ", " +
 					endereco.getCidade() +
 					", CEP: " + Util.adicionarMascaraCEP(endereco.getCep()) : "");
 
@@ -623,13 +624,14 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		return listaPdvDTO;
 	}
 	
-	/**
-	 * Verifica se pdv esta disponivel (não vinculado a um box roteirizado)
-	 * @param idPdv identificador do PDV
-	 * @param idBox identificador do BOX
-	 * @return boolean true box está disponível para roteirização, false
-	 * caso contrário
-	 */
+	    /**
+     * Verifica se pdv esta disponivel (não vinculado a um box roteirizado)
+     * 
+     * @param idPdv identificador do PDV
+     * @param idBox identificador do BOX
+     * @return boolean true box está disponível para roteirização, false caso
+     *         contrário
+     */
 	@Override
 	@Transactional(readOnly = true)
 	public boolean verificaDisponibilidadePdv(Long idPdv, Long idBox) {
@@ -650,10 +652,11 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		return box == null;
 	}
 		
-	/**
-	 * Inclui Cota Pdv na Roteirização
-	 * @param List<Long> idPdvs
-	 */
+	    /**
+     * Inclui Cota Pdv na Roteirização
+     * 
+     * @param List<Long> idPdvs
+     */
 	@Override
 	@Transactional
 	public void incluirCotaPdv(List<Long> idPdvs, Long idRota) {
@@ -671,10 +674,11 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	    rotaRepository.merge(rota);
 	}
 	
-	/**
-	 * Exclui Cota Pdv na Roteirização
-	 * @param List<Long> idPdvs
-	 */
+	    /**
+     * Exclui Cota Pdv na Roteirização
+     * 
+     * @param List<Long> idPdvs
+     */
 	@Override
 	@Transactional
 	public void excluirCotaPdv(List<Long> idPdvs, Long idRota) {
@@ -737,7 +741,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 		for (Entregador entregador : entregadores) {
 		
-			String nome = entregador.getCodigo() + " - " + entregador.getPessoa().getNome();
+			String nome = entregador.getPessoa().getNome();
 										
 			ordem++;
 				
@@ -786,7 +790,8 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 
 
     /**
-     * atualiza os pdvs transferidos para uma rota pertencente a outra roteirização
+     * atualiza os pdvs transferidos para uma rota pertencente a outra
+     * roteirização
      * 
      * @param rotasNovosPDVsTransferidos
      */
@@ -813,7 +818,8 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
     
     /**
-     * atualiza as rotas transferidas para um roteiro pertencente a outra roteirização
+     * atualiza as rotas transferidas para um roteiro pertencente a outra
+     * roteirização
      * 
      * @param roteirosNovasRotasTransferidas
      */
@@ -876,11 +882,10 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
     	}
     }
     
-	/**
+	    /**
      * Salva as informações de uma nova roteirização
      * 
-     * @param roteirizacaoDTO
-     *            dto com as informações da nova roteirização
+     * @param roteirizacaoDTO dto com as informações da nova roteirização
      * @return Roteirizacao criada com as informações do DTO
      */
 	private Roteirizacao salvarNovaRoteirizacao(RoteirizacaoDTO roteirizacaoDTO) {
@@ -926,22 +931,22 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         return roteirizacao;
     }
 	
-	/**
-	 * Valida se a Rota é um entregador sem PDVs
-	 * 
-	 * @param rotaDTO
-	 * @return
-	 */
+	    /**
+     * Valida se a Rota é um entregador sem PDVs
+     * 
+     * @param rotaDTO
+     * @return
+     */
 	private boolean isRotaEntregadorSemPDVs(RotaRoteirizacaoDTO rotaDTO) {
 		return (rotaDTO.isEntregador() && !rotaDTO.hasPDVsAssociados());
 	}
 
-	/**
-	 * Atribui o box da roteirização para cota para facilitar as consultas
-	 * 
-	 * @param pdvDTO
-	 * @param box
-	 */
+	    /**
+     * Atribui o box da roteirização para cota para facilitar as consultas
+     * 
+     * @param pdvDTO
+     * @param box
+     */
 	private void atribuirBoxCota(PdvRoteirizacaoDTO pdvDTO, Box box) {
 		
 		if (box != null){
@@ -958,11 +963,10 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 
 	
-	/**
+	    /**
      * Atualiza as informações de uma roteirização existente
      * 
-     * @param roteirizacaoDTO
-     *            dto com as informações da roteirização existente
+     * @param roteirizacaoDTO dto com as informações da roteirização existente
      * @return Roteirizacao alterada com as informações do DTO
      */
 	private Roteirizacao atualizarRoteirizacaoExistente(RoteirizacaoDTO roteirizacaoDTO) {
@@ -1031,6 +1035,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 					rota = this.rotaRepository.buscarPorId(rotaDTO.getId());
                     
 					rota.setRoteiro(roteiro);
+					rota.setOrdem(rotaDTO.getOrdem());
 					
 					if (rota != null) {
 						
@@ -1116,7 +1121,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 	}
 
-	/**
+	    /**
      * Processa as transferências de roteiro da roteirização
      * 
      * @param roteirizacaoDTO dto com as informações de transferência de roteiro
@@ -1180,10 +1185,8 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
     /**
      * Associa o box a uma nova roteirização
      * 
-     * @param roteirizacaoDTO
-     *            dto com as informações da roteirização
-     * @param novaRoteirizacao
-     *            Roteirizacao para associação do Box
+     * @param roteirizacaoDTO dto com as informações da roteirização
+     * @param novaRoteirizacao Roteirizacao para associação do Box
      */
     private void associarBoxRoteirizacao(RoteirizacaoDTO roteirizacaoDTO, Roteirizacao novaRoteirizacao) {
        
@@ -1201,27 +1204,25 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         }
     }
 
-	/**
-	 * Valida se o box informado já possui uma roteiriação associada
-	 * 
-	 * @param box
-	 */
+	    /**
+     * Valida se o box informado já possui uma roteiriação associada
+     * 
+     * @param box
+     */
 	private void validarAssociacaoBoxRoteirizacao(Box box) {
 		Roteirizacao existente = roteirizacaoRepository.obterRoteirizacaoPorBox(box.getId());
 		
 		if (existente != null) {
-		    throw new ValidacaoException(TipoMensagem.ERROR, "Box já está associado a uma Roteirização!");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Box já está associado a uma Roteirização!");
 		}
 	}
    
     /**
      * Adiciona um novo PDV à Rota
      * 
-     * @param rota
-     *            Rota para associação
-     * @param pdvDTO
-     *            PDV para associação
-     * @param box Box ao qual a roteirização está associada 
+     * @param rota Rota para associação
+     * @param pdvDTO PDV para associação
+     * @param box Box ao qual a roteirização está associada
      **/
     private void novoPDVRota(Rota rota, PdvRoteirizacaoDTO pdvDTO, Box box) {
 
@@ -1232,6 +1233,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
     
     /**
      * Adiciona uma nova Rota à Roteirização
+     * 
      * @param roteiro roteiro para associação
      * @param rotaDTO rota para associação
      * @return Nova Rota associada
@@ -1245,6 +1247,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
     
     /**
      * Adiciona um novo roteiro à roteirização
+     * 
      * @param roteirizacao roteirização para associação
      * @param tipoRoteiro Tipo do Roteiro para associação
      * @param roteiroDTO roteiro para associação
@@ -1308,7 +1311,8 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 		if (rota.getAssociacoesVeiculoMotoristaRota() != null && !rota.getAssociacoesVeiculoMotoristaRota().isEmpty() ) {
 			throw new ValidacaoException(
-					new ValidacaoVO(TipoMensagem.WARNING, "Não é possível modificar esta rota, pois ele esta associada a um transportador."));
+new ValidacaoVO(TipoMensagem.WARNING,
+                    "Não é possível modificar esta rota, pois ele esta associada a um transportador."));
 		}
 
 	}
@@ -1329,7 +1333,8 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			
 			}catch(ValidacaoException ve) {
 				throw new ValidacaoException(
-						new ValidacaoVO(TipoMensagem.WARNING, "Não é possível modificar este roteiro, pois ele esta associado a um transportador. "));
+new ValidacaoVO(TipoMensagem.WARNING,
+                        "Não é possível modificar este roteiro, pois ele esta associado a um transportador. "));
 			}
 		}
 		
@@ -1585,9 +1590,11 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 
 	@Override
+	@Transactional
 	public List<Roteiro> buscarRoteiroCodigoBox(Long codigoBoxDe, Long codigoBoxAte) {
 		
-		if(codigoBoxDe == null && codigoBoxDe == null) return new ArrayList<Roteiro>();
+        if (codigoBoxDe == null && codigoBoxAte == null)
+            return new ArrayList<Roteiro>();
 		
 		return roteiroRepository.buscarRoteiroCodigoBox(codigoBoxDe, codigoBoxAte);
 		

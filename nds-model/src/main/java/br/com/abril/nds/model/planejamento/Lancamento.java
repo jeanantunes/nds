@@ -15,11 +15,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -29,6 +27,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -42,8 +41,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
  */
 @Entity
 @Table(name = "LANCAMENTO", uniqueConstraints = {
-	@UniqueConstraint(columnNames = {"DATA_LCTO_PREVISTA", "PRODUTO_EDICAO_ID" }),
-	@UniqueConstraint(columnNames = {"DATA_LCTO_DISTRIBUIDOR", "PRODUTO_EDICAO_ID" })
+	@UniqueConstraint(columnNames = {"DATA_LCTO_DISTRIBUIDOR", "PRODUTO_EDICAO_ID", "PERIODO_LANCAMENTO_PARCIAL_ID" })
 })
 @SequenceGenerator(name = "LANCAMENTO_SEQ", initialValue = 1, allocationSize = 1)
 public class Lancamento implements Serializable {
@@ -107,21 +105,23 @@ public class Lancamento implements Serializable {
 	@OneToMany(mappedBy = "lancamento", cascade = CascadeType.REMOVE)
 	private List<HistoricoLancamento> historicos = new ArrayList<HistoricoLancamento>();
 		
+	@Column(name = "NUMERO_REPROGRAMACOES")
+	private Integer numeroReprogramacoes;
+	
 	@Column(name = "SEQUENCIA_MATRIZ", nullable = true)
 	private Integer sequenciaMatriz;
 	
 	@NotFound(action = NotFoundAction.IGNORE)
 	@ManyToOne(cascade = {CascadeType.ALL})
-	@JoinColumns({
-		@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false),
-		@JoinColumn(name = "DATA_LCTO_PREVISTA", referencedColumnName = "DATA_LANCAMENTO", insertable = false, updatable = false) })
+	@JoinColumn(name = "ESTUDO_ID", insertable = true, updatable = true)
 	private Estudo estudo;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "EXPEDICAO_ID")
 	private Expedicao expedicao;
 	
-	@OneToOne(mappedBy="lancamento",cascade = {CascadeType.ALL})
+	@ManyToOne
+    @JoinColumn(name = "PERIODO_LANCAMENTO_PARCIAL_ID")
 	private PeriodoLancamentoParcial periodoLancamentoParcial;
 
 	@OneToMany(mappedBy = "lancamento")
@@ -255,6 +255,14 @@ public class Lancamento implements Serializable {
 	
 	public void addRecebimento(ItemRecebimentoFisico itemRecebimentoFisico) {
 		this.recebimentos.add(itemRecebimentoFisico);
+	}
+	
+	public Integer getNumeroReprogramacoes() {
+		return numeroReprogramacoes;
+	}
+	
+	public void setNumeroReprogramacoes(Integer numeroReprogramacoes) {
+		this.numeroReprogramacoes = numeroReprogramacoes;
 	}
 	
 	public Integer getSequenciaMatriz() {
@@ -415,5 +423,24 @@ public class Lancamento implements Serializable {
 
 	public void setDataFinMatDistrib(Date dataFinMatDistrib) {
 		this.dataFinMatDistrib = dataFinMatDistrib;
+	}
+	
+	public void voltarStatusOriginal() {
+		
+		if (this.produtoEdicao == null) {
+			
+			return;
+		}
+
+		Origem origem = this.produtoEdicao.getOrigem();
+		
+		if (Origem.MANUAL.equals(origem)) {
+			
+			this.status = StatusLancamento.PLANEJADO;
+		
+		} else if (Origem.INTERFACE.equals(origem)) {
+			
+			this.status = StatusLancamento.CONFIRMADO;
+		}
 	}
 }

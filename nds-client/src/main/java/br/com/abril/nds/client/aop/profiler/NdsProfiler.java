@@ -3,8 +3,8 @@ package br.com.abril.nds.client.aop.profiler;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+
 
 @Aspect
 public class NdsProfiler {
@@ -25,9 +25,7 @@ public class NdsProfiler {
 		
 		Object output = pjp.proceed();
 		
-		long elapsedTime = System.currentTimeMillis() - start;
-		
-		msgRep = new StringBuilder("");			
+		long elapsedTime = System.currentTimeMillis() - start;	
 		StringBuilder str = new StringBuilder("")
 			.append("Repository: Tempo total da execução do método ")
 			.append(pjp.toShortString().replace("execution(", "").replace("))", ")"))

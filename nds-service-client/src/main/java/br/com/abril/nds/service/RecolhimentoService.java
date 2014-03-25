@@ -4,10 +4,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
@@ -89,4 +91,14 @@ public interface RecolhimentoService {
 										 TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 										 List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada);
 	
+	String reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario);
+	
+	/**
+	 * Obtém as datas de recolhimento dos fornecedores informados.
+	 */
+	public TreeSet<Date> obterDatasRecolhimentoFornecedor(Intervalo<Date> periodoRecolhimento,
+														   List<Long> listaIdsFornecedores);
+
+	public void validarLancamentoParaReabertura(List<Date> datasConfirmadas);
+
 }

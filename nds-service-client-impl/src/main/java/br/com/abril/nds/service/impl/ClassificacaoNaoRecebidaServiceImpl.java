@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ClassificacaoNaoRecebidaDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoRecebeClassificacaoDTO;
 import br.com.abril.nds.dto.CotaQueRecebeClassificacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroClassificacaoNaoRecebidaDTO;
@@ -74,6 +75,23 @@ public class ClassificacaoNaoRecebidaServiceImpl implements	ClassificacaoNaoRece
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota com status PENDENTE.");
 			
 		default:
+			return classificacaoNaoRecebidarRepository.obterClassificacoesNaoRecebidasPelaCota(filtro);
+		}
+	}
+	
+
+	@Transactional
+	public List<ClassificacaoNaoRecebidaDTO> obterClassificacoesNaoRecebidasPelaCota(Cota cota) {
+		
+		switch (cota.getSituacaoCadastro()) {
+		case INATIVO:
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota com status INATIVO.");
+			
+		default:
+			FiltroClassificacaoNaoRecebidaDTO filtro = new FiltroClassificacaoNaoRecebidaDTO();
+			CotaDTO cotadto = new CotaDTO();
+			cotadto.setNumeroCota(cota.getNumeroCota());
+			filtro.setCotaDto(cotadto);
 			return classificacaoNaoRecebidarRepository.obterClassificacoesNaoRecebidasPelaCota(filtro);
 		}
 	}

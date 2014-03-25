@@ -17,7 +17,7 @@ import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.CotaProdutoEmissaoCEDTO;
 import br.com.abril.nds.dto.DadosImpressaoEmissaoChamadaEncalhe;
-import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.NotaEnvioProdutoEdicao;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
@@ -30,6 +30,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -83,10 +84,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	
 	@Autowired
 	private NotaEnvioRepository notaEnvioRepository;
-	
-	private static final Integer CODIGO_DINAP_INTERFACE = 9999999;
-	
-	private static final Integer CODIGO_FC_INTERFACE = 9999998;
 	
 	@Override
 	@Transactional
@@ -349,6 +346,9 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				String descricaoQuebraRelatorioCE = cpece.getReparte() +" exes. ("+ DateUtil.formatarData(cpece.getDataMovimento(), Constantes.DAY_MONTH_PT_BR) +")"; //obterDescricaoQuebraRelatorioCE(notas);
 				
 				if(produtoEmissaoDTO.getDescricaoNotaEnvio() != null) {
+					
+					produtoEmissaoDTO.setReparte(produtoEmissaoDTO.getReparte().add(cpece.getReparte()));
+					
 					produtoEmissaoDTO.setDescricaoNotaEnvio(produtoEmissaoDTO.getDescricaoNotaEnvio() +" + "+ descricaoQuebraRelatorioCE);
 				} else {
 					produtoEmissaoDTO.setDescricaoNotaEnvio(descricaoQuebraRelatorioCE);
@@ -383,7 +383,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				produtoDTO.setNotaEnvio(numeroNotaEnvio.toString());
 			}
 			
-			String descricaoQuebraRelatorioCE = obterDescricaoQuebraRelatorioCE(notas);
+			String descricaoQuebraRelatorioCE = obterDescricaoQuebraRelatorioCE(produtoDTO, notas);
 			
 			if(descricaoQuebraRelatorioCE != null && !"".equals(descricaoQuebraRelatorioCE)){
 				produtoDTO.setDescricaoNotaEnvio(descricaoQuebraRelatorioCE);
@@ -401,7 +401,8 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	 * 
 	 * @return String
 	 */
-	private String obterDescricaoQuebraRelatorioCE(List<NotaEnvioProdutoEdicao> notas ) {
+	private String obterDescricaoQuebraRelatorioCE(ProdutoEmissaoDTO produtoDTO, 
+												   List<NotaEnvioProdutoEdicao> notas ) {
 		
 		StringBuffer descricao = new StringBuffer();
 		
@@ -415,6 +416,9 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			descricao.append(plusSignal);
 			
 			if(nota.getReparte()!=null) {
+				
+				produtoDTO.setReparte(produtoDTO.getReparte().add(nota.getReparte()));
+				
 				descricao.append(nota.getReparte());
 				descricao.append(" exes. ");
 			}
@@ -534,7 +538,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		for(CotaEmissaoDTO dto : lista) {
 			
-			cota = cotaRepository.obterPorNumerDaCota(dto.getNumCota());
+			cota = cotaRepository.obterPorNumeroDaCota( dto.getNumCota());
 
 			Endereco endereco = this.obterEnderecoImpressaoCE(cota);
 
@@ -641,7 +645,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	
 	@Override
 	@Transactional
-	public List<BandeirasDTO> obterBandeirasDaSemana(Integer semana, PaginacaoVO paginacaoVO) {
+	public List<BandeirasDTO> obterBandeirasDaSemana(Integer semana, Long fornecedor, PaginacaoVO paginacaoVO) {
 		
 		Intervalo<Date> periodoRecolhimento = null;
 		
@@ -651,12 +655,12 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
-		return chamadaEncalheRepository.obterBandeirasNoIntervalo(periodoRecolhimento, paginacaoVO);
+		return chamadaEncalheRepository.obterBandeirasNoIntervalo(periodoRecolhimento, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO, fornecedor, paginacaoVO);
 	}
 	
 	@Override
 	@Transactional
-	public Long countObterBandeirasDaSemana(Integer semana) {
+	public Long countObterBandeirasDaSemana(Integer semana, Long fornecedor) {
 		
 		Intervalo<Date> periodoRecolhimento = null;
 		
@@ -666,12 +670,12 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
-		return chamadaEncalheRepository.countObterBandeirasNoIntervalo(periodoRecolhimento);
+		return chamadaEncalheRepository.countObterBandeirasNoIntervalo(periodoRecolhimento, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO, fornecedor);
 	}
 	
 	@Override
 	@Transactional
-	public List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana) {
+	public List<FornecedorDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana, Long fornecedor) {
 		
 		Intervalo<Date> periodoRecolhimento = null;
 		
@@ -681,21 +685,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
-		List<FornecedoresBandeiraDTO>  fornecedores = chamadaEncalheRepository.obterDadosFornecedoresParaImpressaoBandeira(periodoRecolhimento);
-		
-		for(FornecedoresBandeiraDTO dto: fornecedores) {
-			
-			dto.setPraca(this.distribuidorService.cidadeDistribuidor());
-			
-			if(dto.getCodigoInterface().equals(CODIGO_DINAP_INTERFACE))
-				dto.setCodigoPracaNoProdin(this.distribuidorService.codigoDistribuidorDinap());
-			
-			else if(dto.getCodigoInterface().equals(CODIGO_FC_INTERFACE))				
-				dto.setCodigoPracaNoProdin(this.distribuidorService.codigoDistribuidorFC());
-			
-			dto.setSemana(semana);
-		}
-		
-		return fornecedores;
+		return chamadaEncalheRepository.obterDadosFornecedoresParaImpressaoBandeira(periodoRecolhimento, fornecedor);
 	}
 }

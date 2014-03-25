@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -36,9 +35,8 @@ import com.ancientprogramming.fixedformat4j.format.ParseException;
 @Component("fixedLenghtContentBasedDataRouter")
 public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	
-	private final Logger logger = LoggerFactory.getLogger(FixedLenghtContentBasedDataRouter.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(FixedLenghtContentBasedDataRouter.class);
 	
-	private static final int START_TIME_POSITION_COLON = 100;
 	
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
@@ -92,7 +90,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			}
 		}
 		catch (Exception e) {
-			logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
 		}
 	}
 	
@@ -101,9 +99,9 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 		try {
 			
 			final MessageProcessor messageProcessor = fileRouteTemplate.getMessageProcessor();
-			AtomicReference<Object> tempVar = null;
+
 			// Processamento a ser executado ANTES do processamento principal:
-			messageProcessor.preProcess(tempVar);
+            messageProcessor.preProcess(null);
 					
 			File processingFile = new File(normalizeFileName(file.getParent()), file.getName() + ".processing");
 
@@ -125,7 +123,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 					message.getHeader().put(MessageHeaderProperties.FILE_CREATION_DATE.getValue(), new Date(file.lastModified()));
 					message.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), lineNumber);
 					message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), fileRouteTemplate.getUserName());
-					message.setTempVar(tempVar);
+                    message.setTempVar(null);
 					
 					String line = scanner.nextLine();
 					lineNumber++;
@@ -156,39 +154,16 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 										@Override
 										public Void doInTransaction(TransactionStatus status) {
 											
-											long start = System.currentTimeMillis();
-											//LOGGER.info("Interface: Chamando método: "+ pjp.toShortString() +".");
-											
-											/*StringBuilder msgRep = new StringBuilder("");
-											int indexRep = 0;
-											StringBuilder spacesRep = new StringBuilder("");*/
-											
 											messageProcessor.processMessage(message);
 											
 											getSession().flush();
 											getSession().clear();
-											/*
-											long elapsedTime = System.currentTimeMillis() - start;
-											
-											msgRep = new StringBuilder("");
-												
-											String str = "Interface: Tempo total da execução do método messageProcessor.processMessage(..) " + elapsedTime + " milisegundos ("+ ((double) elapsedTime / 1000) +" segundos).";
-											indexRep = str.toString().lastIndexOf(':');
-											while(indexRep < START_TIME_POSITION_COLON) {
-												spacesRep.append(" ");
-												indexRep++;
-											}
-											msgRep.append(str.substring(0, str.lastIndexOf(':')));
-											msgRep.append(spacesRep.toString());
-											msgRep.append(str.substring(str.lastIndexOf(':'), str.length()));
-											
-											logger.info(msgRep.toString());*/
-	
+							
 											return null;
 										}
 									});
 								}catch (Exception e) {
-									logger.error(e.getMessage(), e);
+                                    LOGGER.error(e.getMessage(), e);
 									
 									ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());								
 								}
@@ -207,7 +182,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 					}
 					
 				}catch (Exception e) {
-					logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
 					
 					if(e instanceof ParseException){
 						
@@ -235,11 +210,11 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			
 			FileUtils.moveFile(processingFile, archiveFile);
 			
-			// Processamento a ser executado APÓS o processamento principal:
-			messageProcessor.posProcess(tempVar);
+            // Processamento a ser executado APÓS o processamento principal:
+            messageProcessor.posProcess(null);
 			
 		} catch (SecurityException e) {			
-			throw new RuntimeException("Não Conseguiu renomear o Arquivo", e);
+            throw new RuntimeException("Não Conseguiu renomear o Arquivo", e);
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
@@ -249,12 +224,8 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	}
 
 
-	private synchronized void renameFile(File file, File processingFile) {
-		if (!file.renameTo(processingFile)) {
-			throw new RuntimeException("Não Conseguiu renomear o Arquivo");
-		}
-	}
 	
+
 	private static Class<?> findType(String line,
 			FixedLengthRouteTemplate fixedLengthInputModel) {
 		for (FixedLengthTypeMapping<?> mapping : fixedLengthInputModel
@@ -262,13 +233,15 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			FixedLengthField field = mapping.getField();
 
 			// PARA FICAR IGUAL AO FRAMEWORK Fixedformat4j, O OFFSET COMECA EM 1
-			int offset = field.getOffset() - 1;
 
-			if (field != null
-					&& field.getValue().equals(
+			if (field != null) {
+                int offset = field.getOffset() - 1;
+                
+                if (field.getValue().equals(
 							line.substring(offset, offset + field.getLength()))) {
 				return mapping.getTargetClass();
-			}
+                }
+            }
 		}
 
 		return fixedLengthInputModel.getTypeMapping().getTargetClass();

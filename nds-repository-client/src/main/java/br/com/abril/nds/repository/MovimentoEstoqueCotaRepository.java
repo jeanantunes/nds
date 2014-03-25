@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoAgregationValuesDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.CotaReparteDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
@@ -93,6 +94,14 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public ContagemDevolucaoAgregationValuesDTO obterQuantidadeContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro);
 	
+	/**
+	 * Obtém a qtde registros da pesquisa de ConsultaEncalhe.
+	 * 
+	 * @param filtro
+	 * 
+	 * @return Qtde - Integer
+	 */
+	public Integer obterQtdeConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	/**
 	 * Obtém o valorTotalGeral da pesquisa de contagemDevolucao 
@@ -119,6 +128,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque);
 	
 	/**
+<<<<<<< HEAD
 	 * Obtém o somatorio do campo qtde do Movimento de Estoque da cota pelo Tipo de Movimento.
 	 * 
 	 * @param periodo
@@ -131,15 +141,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 													            Long idCota, 
 													            GrupoMovimentoEstoque... gruposMovimentoEstoque);
 		
-	/**
-	 * Obtém a qtde registros da pesquisa de ConsultaEncalhe.
-	 * 
-	 * @param filtro
-	 * 
-	 * @return Qtde - Integer
-	 */
-	public Integer obterQtdeConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
-	
 	/**
 	 * Obtém o valor total do encalhe para a cota (caso específicada)
 	 * e período de recolhimento.
@@ -414,17 +415,21 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe ou com Produtos Conta Firme
 	 * @param idCota
 	 * @param dataControleConferencia
+	 * @param idTiposMovimentoEstoque
+	 * 
 	 * @return List<MovimentoEstoqueCota>
 	 */
-    public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(Long idCota, Date dataControleConferencia);
+	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(final Long idCota, final Date dataControleConferencia, final List<Long> idTiposMovimentoEstoque);
 	
 	/**
 	 * Obtém movimentos de estoque da cota que forão estornados
 	 * Considera movimentos de estoque provenientes dos fluxos de Venda de Encalhe e Suplementar
 	 * @param idCota
+	 * @param idsTipoMovimentoEstorno
+	 * 
 	 * @return List<MovimentoEstoqueCota>
 	 */
-	public List<MovimentoEstoqueCota> obterMovimentosEstornados(Long idCota);
+    public List<MovimentoEstoqueCota> obterMovimentosEstornados(final Long idCota, final List<Long> idsTipoMovimentoEstorno);
 
 	public List<MovimentoEstoqueCota> obterPorLancamento(Long idLancamento);
 
@@ -469,6 +474,12 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, GrupoMovimentoEstoque grupoMovimentoEstoque);
 
 	/**
+	 * 
+	 * @param idEstudo
+	 */
+	public abstract void removerMovimentoEstoqueCotaPorEstudo(Long idEstudo);
+
+	/**
 	 * Obtém a data da última movimentação de reparte expedida.
 	 * 
 	 * @param numeroCota - numero da cota
@@ -480,14 +491,11 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			   											   Long idProdutoEdicao);
 	
 	/**
-	 * Adiciona/Altera lista de Movimentos de Estoque da Cota
-	 * @param movimentosEstoqueCota
-	 */
-	public void mergeAll(List<MovimentoEstoqueCota> movimentosEstoqueCota);
-	
-	/**
 	 * Adiciona em lote a lista de Movimentos de Estoque da Cota
 	 * @param movimentosEstoqueCota
 	 */
 	public void adicionarEmLoteDTO(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota);
+	
+	List<CotaReparteDTO> obterReparte(Long idLancamento, Long idProdutoEdicao);
+	
 }

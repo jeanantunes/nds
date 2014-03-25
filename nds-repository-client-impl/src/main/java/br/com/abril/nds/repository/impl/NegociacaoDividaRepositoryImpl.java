@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.NonUniqueResultException;
@@ -34,9 +35,9 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		hql.append(" SELECT cobranca.dataEmissao as dtEmissao, ");
 		hql.append(" cobranca.dataVencimento as dtVencimento, ");
 		hql.append(" cobranca.valor as vlDivida, ");
-		hql.append(" CASE WHEN (datediff(current_date(), cobranca.dataVencimento)) < 0 ");
-		hql.append(" THEN 0 ELSE datediff(current_date(), cobranca.dataVencimento) END  as prazo, ");
-		hql.append(" (COALESCE(cobranca.encargos, 0) + cobranca.valor) as total, ");
+		hql.append(" CASE WHEN (datediff(:dataOperacao, cobranca.dataVencimento)) < 0 ");
+		hql.append(" THEN 0 ELSE datediff(:dataOperacao, cobranca.dataVencimento) END  as prazo, ");
+		hql.append(" (COALESCE(cobranca.encargos, 0) + ceil(cobranca.valor)) as total, ");
 		hql.append(" cobranca.id as idCobranca, ");
 		hql.append(" coalesce(cobranca.encargos, 0) as encargos ");
 		
@@ -60,7 +61,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		}
 		
 		this.setParametrosObterNegociacaoPorCota(query, filtro);
-
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(NegociacaoDividaDTO.class));
 		
 		return query.list();
@@ -74,6 +75,8 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		Query query = getSession().createQuery(hql.toString());
 		
+		filtro.setCount(true);
+		
 		this.setParametrosObterNegociacaoPorCota(query, filtro);
 		
 		return (Long) query.uniqueResult();
@@ -85,11 +88,12 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		hql.append(" JOIN cobranca.cota ");
 		hql.append(" JOIN cobranca.divida divida ");
 		hql.append(" WHERE cobranca.cota.numeroCota = :numCota ");
-		hql.append(" AND cobranca.statusCobranca = :status ");	
+		hql.append(" AND cobranca.statusCobranca = :status ");
+		hql.append(" AND divida.status != :statusDivida ");
 		
 		if(!filtro.isLancamento()){
-			hql.append(" AND divida.data < (select dataOperacao from Distribuidor)");
-			hql.append(" AND cobranca.dataVencimento <= current_date() ");
+			hql.append(" AND divida.data < :dataOperacao");
+			hql.append(" AND cobranca.dataVencimento <= :dataOperacao ");
 		}
 	}
 	
@@ -97,6 +101,11 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		query.setParameter("numCota", filtro.getNumeroCota());
 		query.setParameter("status", StatusCobranca.NAO_PAGO);
+		query.setParameter("statusDivida", StatusDivida.PENDENTE_INADIMPLENCIA);
+		
+		if(!filtro.isLancamento() ||  !filtro.isCount()) {
+			query.setParameter("dataOperacao", filtro.getDataOperacao());
+		}
 	}
 
 	@Override
@@ -104,7 +113,17 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		Query query = getSession().createQuery("select o from Negociacao o join o.cobrancasOriginarias c where c.id = " + id);
 		return (Negociacao) query.uniqueResult();
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Negociacao obterNegociacaoPorDivida(Long id) {
+
+		Query query = getSession().createQuery("select n from Negociacao n join n.cobrancasOriginarias c join c.divida d where d.id = " + id);
+		return (Negociacao) query.uniqueResult();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Negociacao> obterNegociacaoPorComissaoCota(Long idCota){
@@ -115,7 +134,8 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		   .append(" where cota.id = :idCota ")
 		   .append(" and ne.comissaoParaSaldoDivida is not null ")
 		   .append(" and ne.valorDividaPagaComissao is not null ")
-		   .append(" and ne.valorDividaPagaComissao > 0 ");
+		   .append(" and ne.valorDividaPagaComissao > 0 ")
+		   .append(" order by ne.dataCriacao ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idCota", idCota);
@@ -255,7 +275,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" join cobrancaPendente.divida dividaPendente ")
 			
-			.append(" join dividaPendente.consolidado consolidadoPendente ")
+			.append(" join dividaPendente.consolidados consolidadoPendente ")
 			
 			.append(" join consolidadoPendente.movimentos movimentoFinanceiroPendente ")
 			
@@ -290,7 +310,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" join cobrancaData.divida dividaData ")
 			
-			.append(" join dividaData.consolidado consolidadoData ")
+			.append(" join dividaData.consolidados consolidadoData ")
 			
 			.append(" join consolidadoData.movimentos movimentoFinanceiroData ")
 			
@@ -315,7 +335,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" join cobrancaValor.divida dividaValor ")
 			
-			.append(" join dividaValor.consolidado consolidadoValor ")
+			.append(" join dividaValor.consolidados consolidadoValor ")
 			
 			.append(" join consolidadoValor.movimentos movimentoFinanceiroValor ")
 			
@@ -343,7 +363,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" join cobrancaValor.divida dividaValor ")
 			
-			.append(" join dividaValor.consolidado consolidadoValor ")
+			.append(" join dividaValor.consolidados consolidadoValor ")
 			
 			.append(" join consolidadoValor.movimentos movimentoFinanceiroValor ")
 			
@@ -386,7 +406,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" join cobrancaNumeroParcela.divida dividaNumeroParcela ")
 			
-			.append(" join dividaNumeroParcela.consolidado consolidadoNumeroParcela ")
+			.append(" join dividaNumeroParcela.consolidados consolidadoNumeroParcela ")
 			
 			.append(" join consolidadoNumeroParcela.movimentos movimentoFinanceiroNumeroParcela ")
 			
@@ -411,7 +431,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 
 				.append(" join cobrancaValor.divida dividaValor ")
 
-				.append(" join dividaValor.consolidado consolidadoValor ")
+				.append(" join dividaValor.consolidados consolidadoValor ")
 
 				.append(" join consolidadoValor.movimentos movimentoFinanceiroValor ")
 
@@ -441,5 +461,31 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			return null;
 		}
 	}
-	
+
+	@Override
+	public Negociacao obterNegociacaoPorMovFinanceiroId(Long movFinanId) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select n from Negociacao n join n.movimentosFinanceiroCota m where m.id = :movFinanId");
+		
+		query.setParameter("movFinanId", movFinanId);
+		
+		return (Negociacao) query.uniqueResult();
+	}
+
+	@Override
+	public BigDecimal obterValorPagoDividaNegociadaComissao(Long negociacaoId) {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" sum (m.valor) from ")
+		   .append(" Negociacao n ")
+		   .append(" join n.movimentosFinanceiroCota m ")
+		   .append(" where n.id = :negociacaoId ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("negociacaoId", negociacaoId);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 }

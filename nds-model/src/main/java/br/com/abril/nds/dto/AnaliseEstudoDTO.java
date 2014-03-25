@@ -1,34 +1,40 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
-import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class AnaliseEstudoDTO implements Serializable {
 
 	private static final long serialVersionUID = 5998039236971366942L;
 
-	private Estudo estudo;
+	private EstudoGerado estudo;
 	private Long numeroEstudo;
 	private String codigoProduto;
 	private String nomeProduto;
 	private ProdutoEdicao prodEdicao;
 	private Long numeroEdicaoProduto;
-	private Integer codPeriodoProd;
 	private String descicaoTpClassifProd;
+	private boolean permiteParcial;
 	
-	private String statusEstudo = "";
+	private Integer codPeriodoProd;
+	private String descricaoStatus;
 	
-	private StatusLancamento statusRecolhiOuExpedido;
-	private Integer statusLiberadoOuGerado;
+	private boolean statusGeradoOuLiberado;
+	
+	private StatusLancamento statusEstudo;
 	
 	private TipoClassificacaoProduto tpClassifProduto;
 	private PeriodicidadeProduto periodoProduto;
+	
+	private String dataLancamento;
 	
 	private PaginacaoVO paginacao;
 	
@@ -73,6 +79,7 @@ public class AnaliseEstudoDTO implements Serializable {
 	}
 	public void setPeriodoProduto(PeriodicidadeProduto periodoProduto) {
 		this.periodoProduto = periodoProduto;
+		this.codPeriodoProd = periodoProduto.getOrdem();
 	}
 	public Integer getCodPeriodoProd() {
 		return codPeriodoProd;
@@ -92,28 +99,48 @@ public class AnaliseEstudoDTO implements Serializable {
 	public void setProdEdicao(ProdutoEdicao prodEdicao) {
 		this.prodEdicao = prodEdicao;
 	}
-	public Estudo getEstudo() {
+	public EstudoGerado getEstudo() {
 		return estudo;
 	}
-	public void setEstudo(Estudo estudo) {
+	public void setEstudo(EstudoGerado estudo) {
 		this.estudo = estudo;
 	}
-	public String getStatusEstudo() {
+	public boolean isPermiteParcial() {
+	    return permiteParcial;
+	}
+	public void setPermiteParcial(boolean permiteParcial) {
+	    this.permiteParcial = permiteParcial;
+	}
+	public String getDataLancamento() {
+		return dataLancamento;
+	}
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = DateUtil.formatarDataPTBR(dataLancamento);
+	}
+	public String getDescricaoStatus() {
+		return descricaoStatus;
+	}
+	public void setDescricaoStatus(String descricaoStatus) {
+		this.descricaoStatus = descricaoStatus;
+	}
+	public StatusLancamento getStatusEstudo() {
 		return statusEstudo;
 	}
-	public void setStatusEstudo(String statusEstudo) {
+	public void setStatusEstudo(StatusLancamento statusEstudo) {
 		this.statusEstudo = statusEstudo;
+		this.descricaoStatus = statusEstudo.getDescricao();
 	}
-	public StatusLancamento getStatusRecolhiOuExpedido() {
-		return statusRecolhiOuExpedido;
+	public boolean isStatusGeradoOuLiberado() {
+		return statusGeradoOuLiberado;
 	}
-	public void setStatusRecolhiOuExpedido(StatusLancamento statusRecolhiOuExpedido) {
-		this.statusRecolhiOuExpedido = statusRecolhiOuExpedido;
+	public void setStatusGeradoOuLiberado(boolean statusGeradoOuLiberado) {
+		this.statusGeradoOuLiberado = statusGeradoOuLiberado;
+		
+		if(statusGeradoOuLiberado){
+			this.descricaoStatus = "Liberado";
+		}else{
+			this.descricaoStatus = "Gerado";
+		}
 	}
-	public Integer getStatusLiberadoOuGerado() {
-		return statusLiberadoOuGerado;
-	}
-	public void setStatusLiberadoOuGerado(Integer statusLiberadoOuGerado) {
-		this.statusLiberadoOuGerado = statusLiberadoOuGerado;
-	}
+	
 }

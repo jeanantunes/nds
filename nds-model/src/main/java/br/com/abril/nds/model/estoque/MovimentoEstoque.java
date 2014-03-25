@@ -119,5 +119,4 @@ public class MovimentoEstoque extends AbstractMovimentoEstoque {
 		this.furoProduto = furoProduto;
 	}
 	
-	
 }

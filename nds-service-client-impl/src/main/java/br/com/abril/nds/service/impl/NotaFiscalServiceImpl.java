@@ -1112,7 +1112,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 //				| NoSuchFieldException | SecurityException e) {
 //			
 //			LOGGER.warn(e.getLocalizedMessage(), e);
-//			e.printStackTrace();
+//			LOGGER.error(e.getMessage(), e);
 //		}
 		
 		if (notaFiscal.getIdentificacao().getDescricaoNaturezaOperacao().length() > tamanhoCampoMapeado){
@@ -1122,7 +1122,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		notaFiscalRepository.adicionar(notaFiscal);
 		
-		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao();
 
 		int sequencia = 1;
 		for (ItemNotaFiscalSaida itemNotaFiscal : listItemNotaFiscal) {
@@ -1192,6 +1192,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * br.com.abril.nds.util.Intervalo, java.util.List, java.util.List)
 	 */
 	@Override
+	@Transactional
 	public List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(
 			ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, Cota cota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProdutos,
@@ -1249,6 +1250,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					parametrosRecolhimentoDistribuidor, idCota, periodo, listaIdFornecedores, 
 					listaIdProdutos, tipoNotaFiscal);
 			break;
+		default:
+            break;
 		}
 
 		return itensNotaFiscal;
@@ -1432,7 +1435,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		
-		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao();
 		
 		for (MovimentoEstoqueCota movimentoEstoqueCota : listaMovimentoEstoqueCota) {
 
@@ -1609,6 +1612,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 *            movimento estoque cota
 	 * @return
 	 */
+	@Transactional
 	public List<NotaFiscalReferenciada> obterNotasReferenciadas(
 			List<ItemNotaFiscalSaida> listaItensNotaFiscal) {
 

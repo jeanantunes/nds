@@ -25,11 +25,19 @@ public class PeriodoLancamentosProdutoEdicaoVO implements Serializable {
 	
 	private String status;
 
+	private Integer numeroPeriodo;
+	
 	private Integer numeroLancamento;
 	
 	private BigInteger reparte;
 	
+	private BigInteger repartePromocional;
 	
+	private boolean destacarLinha;
+	
+    private Long idLancamento;
+	
+
 	public Date getDataLancamentoDistribuidor() {
 		return dataLancamentoDistribuidor;
 	}
@@ -71,6 +79,20 @@ public class PeriodoLancamentosProdutoEdicaoVO implements Serializable {
 	}
 
 	/**
+	 * @return the numeroPeriodo
+	 */
+	public Integer getNumeroPeriodo() {
+		return numeroPeriodo;
+	}
+
+	/**
+	 * @param numeroPeriodo the numeroPeriodo to set
+	 */
+	public void setNumeroPeriodo(Integer numeroPeriodo) {
+		this.numeroPeriodo = numeroPeriodo;
+	}
+
+	/**
 	 * @return the numeroLancamento
 	 */
 	public Integer getNumeroLancamento() {
@@ -97,5 +119,47 @@ public class PeriodoLancamentosProdutoEdicaoVO implements Serializable {
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
+
+	/**
+	 * @return the repartePromocional
+	 */
+	public BigInteger getRepartePromocional() {
+		return repartePromocional;
+	}
+
+	/**
+	 * @param repartePromocional the repartePromocional to set
+	 */
+	public void setRepartePromocional(BigInteger repartePromocional) {
+		this.repartePromocional = repartePromocional;
+	}
+
+	/**
+	 * @return the destacarLinha
+	 */
+	public boolean isDestacarLinha() {
+		return destacarLinha;
+	}
+
+	/**
+	 * @param destacarLinha the destacarLinha to set
+	 */
+	public void setDestacarLinha(boolean destacarLinha) {
+		this.destacarLinha = destacarLinha;
+	}
+    
+    /**
+     * @return the idLancamento
+     */
+    public Long getIdLancamento() {
+        return idLancamento;
+    }
+    
+    /**
+     * @param idLancamento the idLancamento to set
+     */
+    public void setIdLancamento(Long idLancamento) {
+        this.idLancamento = idLancamento;
+    }
 	
 }

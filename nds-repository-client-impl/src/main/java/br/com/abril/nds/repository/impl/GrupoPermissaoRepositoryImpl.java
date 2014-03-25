@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.client.vo.ResultadoGrupoVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaGrupoDTO;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.GrupoPermissaoRepository;
  
@@ -46,4 +48,18 @@ public class GrupoPermissaoRepositoryImpl extends AbstractRepositoryModel<GrupoP
 		return criteria.list();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removerGrupoPermissaoPermissao(Permissao permissao) {
+
+		String sql = " DELETE FROM grupo_permissao_permissao WHERE PERMISSAO_ID = :permissao ";
+		
+		Query query = getSession().createSQLQuery(sql);
+		
+		query.setParameter("permissao", permissao.name());
+		
+		query.executeUpdate();
+	}
 }

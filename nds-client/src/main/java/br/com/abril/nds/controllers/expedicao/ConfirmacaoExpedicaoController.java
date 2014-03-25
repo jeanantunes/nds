@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.expedicao;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,9 +19,11 @@ import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -32,16 +35,22 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
+import com.google.common.primitives.Longs;
+
 @Resource
 @Path("/confirmacaoExpedicao")
 @Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO)
 public class ConfirmacaoExpedicaoController extends BaseController{
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfirmacaoExpedicaoController.class);
+
 
 	@Autowired
 	private final Result result;
@@ -56,6 +65,9 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 	private LancamentoService lancamentoService;
 	
 	@Autowired
+	private DescontoService descontoService;
+	
+	@Autowired
 	private TipoMovimentoService tipoMovimentoService;
 		
 	protected static final String SUCESSO = "SUCCESS";
@@ -63,20 +75,20 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 	protected static final String FALHA = "ERROR";
 	protected static final Long COMBO_VAZIO = -1L;
 	
-	protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
-	protected static final String DATA_INVALIDA = "A data informada é inválida";
-	protected static final String CONFIRMACAO_EXPEDICAO_SUCESSO = "Expedições confirmadas com sucesso!";
-	protected static final String CONFIRMACAO_EXPEDICAO_ESTOQUE_INDISPONIVEL = "Expedições não confirmadas. Estoque indisponível para todos os lançamentos selecionados !";
+    protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
+    protected static final String DATA_INVALIDA = "A data informada é inválida";
+    protected static final String CONFIRMACAO_EXPEDICAO_SUCESSO = "Expedições confirmadas com sucesso!";
+    protected static final String CONFIRMACAO_EXPEDICAO_ESTOQUE_INDISPONIVEL = "Expedições não confirmadas. Estoque indisponível para todos os lançamentos selecionados !";
 	protected static final String NENHUM_REGISTRO_SELECIONADO="Nenhum registro foi selecionado!";
-	protected static final String ERRO_CONFIRMAR_EXPEDICOES="Erro não esperado ao confirmar expedições.";
-	protected static final String ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS = "Erro não esperado ao pesquisar lançamentos não expedidos.";
-	protected static final String MSG_NAO_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO = "Não há produtos a serem expedidos na data informada.";
-	//protected static final String MSG_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO = "Há matriz de lançamento confirmada.";
+    protected static final String ERRO_CONFIRMAR_EXPEDICOES = "Erro não esperado ao confirmar expedições.";
+    protected static final String ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS = "Erro não esperado ao pesquisar lançamentos não expedidos.";
+    protected static final String MSG_NAO_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO = "Não há produtos a serem expedidos na data informada.";
+    // protected static final String MSG_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO
+    // = "Há matriz de lançamento confirmada.";
 		
 	protected static final String STATUS_EXPEDICAO = "statusExpedicao";
 	
-	private static final Logger LOG = LoggerFactory
-				.getLogger(ConfirmacaoExpedicaoController.class);
+
 		
 		/**
 		 * Construtor
@@ -136,11 +148,12 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
 		}
 		
-		/**
-		 * Adiciona ou remove todos os itens da pesquisa a lista de itens selecionados da sessão.
-		 * 
-		 * @param selecionado - true(adiciona todos) false (remove todos)
-		 */
+		        /**
+     * Adiciona ou remove todos os itens da pesquisa a lista de itens
+     * selecionados da sessão.
+     * 
+     * @param selecionado - true(adiciona todos) false (remove todos)
+     */
 		@Post
 		@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO_ALTERACAO)
 		public void selecionarTodos(Boolean selecionado){
@@ -162,25 +175,24 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
 		}
 		
+		 /**
+         * Método com finalidade de redirecionamento para a página
+         */
+    	public void confirmacaoExpedicao() {
+    	}
+	
 		/**
-		 * Método com finalidade de redirecionamento para a página
-		 */
-		public void confirmacaoExpedicao() {
-		}
-		
-		
-		/**
-		 * Confirma expedição, gera movimentos do distribuidor e cotas e retorna dados da 
-		 * pesquisa atualizados
-		 * 
-		 * @param page - nº da página a pesquisar
-		 * @param rp - nº de registros por página
-		 * @param sortname - nome da coluna de ordenação
-		 * @param sortorder - ordenação (asc - desc)
-		 * @param idFornecedor - código do fornecedor
-		 * @param dtLancamento - data de lançamento
-		 * @param estudo - boolean - possui ou não estudo
-		 */
+         * Confirma expedição, gera movimentos do distribuidor e cotas e retorna
+         * dados da pesquisa atualizados
+         * 
+         * @param page - nº da página a pesquisar
+         * @param rp - nº de registros por página
+         * @param sortname - nome da coluna de ordenação
+         * @param sortorder - ordenação (asc - desc)
+         * @param idFornecedor - código do fornecedor
+         * @param dtLancamento - data de lançamento
+         * @param estudo - boolean - possui ou não estudo
+         */
 		@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO_ALTERACAO)
 		public void confirmarExpedicao( Integer page, Integer rp, String sortname, 
 				String sortorder, Long idFornecedor, 
@@ -208,13 +220,21 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				TipoMovimentoEstoque tipoMovimento =
 					tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 				
+				TipoMovimentoEstoque tipoMovimentoJuramentado =
+						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO);
+				
 				TipoMovimentoEstoque tipoMovimentoCota =
 						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 				
 				Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 				
+				//Ordena IDS
+				long[] lista = Longs.toArray(selecionados);
+		        Arrays.sort(lista); 
+		        selecionados = Longs.asList(lista);
+				
 				for(int i=0; i<selecionados.size(); i++) {
-					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota);
+					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota,tipoMovimentoJuramentado);
 					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));	
 				}
 				
@@ -238,7 +258,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				mensagens.clear();
 				mensagens.add(ERRO_CONFIRMAR_EXPEDICOES);
 				status=TipoMensagem.ERROR.name();
-				LOG.error(ERRO_CONFIRMAR_EXPEDICOES, e);
+				LOGGER.error(ERRO_CONFIRMAR_EXPEDICOES, e);
 			}
 			
 			session.setAttribute(STATUS_EXPEDICAO, "FINALIZADO");
@@ -259,7 +279,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		
 		private Object getMsgProcessamento(Integer atual, Integer total) {
 			
-			return "Processando Expedições... " + " (" + atual + "/" + total + ")";
+        return "Processando Expedições... " + " (" + atual + "/" + total + ")";
 		}
 
 		@Post
@@ -267,7 +287,8 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			
 			String status = (String) session.getAttribute(STATUS_EXPEDICAO);
 			
-			result.use(Results.json()).withoutRoot().from(status == null ? "Processando Expedições..." : status).recursive().serialize();
+        result.use(Results.json()).withoutRoot().from(status == null ? "Processando Expedições..." : status)
+                .recursive().serialize();
 		}
 		
 	
@@ -291,21 +312,23 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			result.include("fornecedores",fornecedores);
 		}
 		
-		/**
-		 * Realiza pesquisa de expedições por filtro, e retorna JSON com a mesma.
-		 * 		 
-		 * @param page - nº da página a pesquisar
-		 * @param rp - nº de registros por página
-		 * @param sortname - nome da coluna de ordenação
-		 * @param sortorder - ordenação (asc - desc)
-		 * @param idFornecedor - código do fornecedor
-		 * @param dtLancamento - data de lançamento
-		 * @param estudo - boolean - possui ou não estudo
-		 * @param ultimaPesquisa - data/hora gerada ao clique do botão pesquisar utilizada para identificar
-		 * 	uma nova pesquisa(data diferente da guardada em sessão), pódendo assim limpar seleções e lançar
-		 * 	mensagens de validação de filtro de pesquisa, que não correrão ao paginar os dados
-		 * 
-		 */
+		        /**
+     * Realiza pesquisa de expedições por filtro, e retorna JSON com a mesma.
+     * 
+     * @param page - nº da página a pesquisar
+     * @param rp - nº de registros por página
+     * @param sortname - nome da coluna de ordenação
+     * @param sortorder - ordenação (asc - desc)
+     * @param idFornecedor - código do fornecedor
+     * @param dtLancamento - data de lançamento
+     * @param estudo - boolean - possui ou não estudo
+     * @param ultimaPesquisa - data/hora gerada ao clique do botão pesquisar
+     *            utilizada para identificar uma nova pesquisa(data diferente da
+     *            guardada em sessão), pódendo assim limpar seleções e lançar
+     *            mensagens de validação de filtro de pesquisa, que não correrão
+     *            ao paginar os dados
+     * 
+     */
 		public void pesquisarExpedicoes(Integer page, Integer rp, String sortname, 
 						String sortorder, Long idFornecedor, 
 						String dtLancamento, Boolean estudo, String ultimaPesquisa){
@@ -338,7 +361,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				mensagens.clear();
 				mensagens.add(ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS);
 				status=TipoMensagem.ERROR.name();
-				LOG.error(ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS, e);
+				LOGGER.error(ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS, e);
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 			}
 			
@@ -354,18 +377,19 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();						
 		}	
 			
-		/**
-		 * Gera a tabela utilizada pelo FlexGrid de acordo com os filtros e dados de paginação
-		 * 
-		 * @param page - nº da página a pesquisar
-		 * @param rp - nº de registros por página
-		 * @param sortname - nome da coluna de ordenação
-		 * @param sortorder - ordenação (asc - desc)
-		 * @param idFornecedor - código do fornecedor
-		 * @param dtLancamento - data de lançamento
-		 * @param estudo - boolean - possui ou não estudo
-		 * @return
-		 */
+		        /**
+     * Gera a tabela utilizada pelo FlexGrid de acordo com os filtros e dados de
+     * paginação
+     * 
+     * @param page - nº da página a pesquisar
+     * @param rp - nº de registros por página
+     * @param sortname - nome da coluna de ordenação
+     * @param sortorder - ordenação (asc - desc)
+     * @param idFornecedor - código do fornecedor
+     * @param dtLancamento - data de lançamento
+     * @param estudo - boolean - possui ou não estudo
+     * @return
+     */
 		public TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> gerarGrid( Integer page, Integer rp, String sortname, 
 				String sortorder, Long idFornecedor, 
 				String dtLancamento, Boolean estudo){
@@ -418,11 +442,11 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			return grid;
 		}
 		
-		/**
-		 * Válida
-		 * 
-		 * @param dataLancamento
-		 */
+		        /**
+     * Válida
+     * 
+     * @param dataLancamento
+     */
 		private void validarExistenciaMatriz(Date dataLancamento) {
 			if(!lancamentoService.existeMatrizBalanceamentoConfirmado(dataLancamento)){
 				throw new ValidacaoException("/pesquisarExpedicoes",new ValidacaoVO(TipoMensagem.WARNING,MSG_NAO_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO));
@@ -431,8 +455,33 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		
 		private void verificarExecucaoInterfaces() {
 			if (distribuidorService.verificaDesbloqueioProcessosLancamentosEstudos()) {
-				throw new ValidacaoException(TipoMensagem.ERROR, "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
+            throw new ValidacaoException(TipoMensagem.ERROR,
+                    "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
 			}
+		}
+		
+		@Get
+		@Path("obterValorDesconto/{numeroCota}/{codigoProduto}/{numeroEdicao}")
+		public void obterValorDesconto(Integer numeroCota, String codigoProduto, Long numeroEdicao) throws Exception {
+		    
+		    
+		    if(numeroCota.equals(0))
+		        numeroCota = null;
+		    
+		    if(codigoProduto.equals("0"))
+                codigoProduto = null;
+            
+		    
+		    if(numeroEdicao.equals(0L))
+                numeroEdicao = null;
+		    
+		    DescontoDTO dto = descontoService.obterDescontoPor(numeroCota, codigoProduto, numeroEdicao);
+		    
+		    if(dto == null)
+		        dto = new DescontoDTO();
+		    
+		    result.use(Results.json()).from(dto, "result").serialize();
+		    
 		}
 		
 	}

@@ -4,17 +4,17 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+
 public class NegociacaoDividaDetalheVO implements Serializable{
 
 	private static final long serialVersionUID = 6521983915168304492L;
 	
 	private Date data;
 	
-	private String tipo = "";
+	private TipoMovimentoFinanceiro tipoMovimentoFinanceiro;
 	
-	private String valor;
-	
-	private Double valorDouble;
+	private BigDecimal valor;
 		
 	private String observacao;
 
@@ -26,21 +26,20 @@ public class NegociacaoDividaDetalheVO implements Serializable{
 		this.data = data;
 	}
 
-	public String getTipo() {
-		return tipo;
+	public TipoMovimentoFinanceiro getTipoMovimentoFinanceiro() {
+		return tipoMovimentoFinanceiro;
 	}
 
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	public void setTipoMovimentoFinanceiro(TipoMovimentoFinanceiro tipoMovimentoFinanceiro) {
+		this.tipoMovimentoFinanceiro = tipoMovimentoFinanceiro;
 	}
 
-	public String getValor() {
+	public BigDecimal getValor() {
 		return valor;
 	}
 
 	public void setValor(BigDecimal valor) {
-		this.valorDouble = valor.doubleValue();
-		this.valor = valor.toString();
+		this.valor = valor;
 	}
 
 	public String getObservacao() {
@@ -50,15 +49,4 @@ public class NegociacaoDividaDetalheVO implements Serializable{
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
 	}
-
-	public Double getValorDouble() {
-		return valorDouble;
-	}
-
-	public void setValorDouble(Double valorDouble) {
-		this.valorDouble = valorDouble;
-	}
-	
-	
-
 }

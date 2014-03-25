@@ -104,16 +104,50 @@ public interface DistribuidorService {
 	
 	boolean utilizaControleAprovacaoFaltaSobra();
 	
+	public List<Integer> getListaDiaOrdinalAceitaRecolhimento();
+	
+	List<Date> obterListaDatasRecolhimentoAPartirDataAtual(
+			Date dataAtual, 
+			int qtndDiasUteis, 
+			final List<Integer> diasSemanaDistribuidorOpera,
+			final boolean posterior);
+	
+	/**
+	 * Método que devolve uma lista de datas nas quais o recolhimento será permitido
+	 * a partir da dataRecolhimento e fornecedores informados. 
+	 * 
+	 * O método utiliza as seguinte parametrizações feita em 'Parâmetros Distribuidor':
+	 * 
+	 * Dias de Recolhimento -> Ordinal dos dias em que é aceito o recolhimento (1º. 2º, ... 5º dias)
+	 * Recolhimento 		-> Dias da semana em que é aceito o recolhimento por fornecedor.
+	 * 
+	 * 
+	 * 
+	 * @param dataRecolhimento
+	 * @param idsFornecedor
+	 * 
+	 * @return List - Date
+	 */
 	List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(Date dataRecolhimento, Long ...idsFornecedor);
 	
 	/**
-	 * Obtem o dia de recolhimento do distribuidor para a data de Conferencia divergente da data de Recolhimento prevista
+	 * Obtem o dia de recolhimento do distribuidor para a data de Conferencia 
+	 * divergente da data de Recolhimento prevista
+	 * 
 	 * @param dataConferencia
 	 * @param dataRecolhimento
-	 * @param long1
+	 * @param numeroCota
+	 * @param idProdutoEdicao
+	 * @param idFornecedores
+	 * 
 	 * @return Integer
 	 */
-	Integer obterDiaDeRecolhimentoDaData(Date dataConferencia, Date dataRecolhimento, Long idProdutoEdicao);
+	Integer obterDiaDeRecolhimentoDaData(
+			Date dataConferencia, 
+			Date dataRecolhimento, 
+			Integer numeroCota, 
+			Long idProdutoEdicao,
+			List<Long> idFornecedores);
 	
 	/**
 	 * Bloqueia os processos que alteram estudos ou balanceamentos de matriz
@@ -133,5 +167,7 @@ public interface DistribuidorService {
 	boolean verificaDesbloqueioProcessosLancamentosEstudos();
 	
 	boolean isConferenciaCegaRecebimentoFisico();
+	
+	boolean isConferenciaCegaFechamentoEncalhe();
 	
 }

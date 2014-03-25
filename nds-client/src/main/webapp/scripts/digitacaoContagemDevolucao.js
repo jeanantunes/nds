@@ -112,6 +112,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				);
 				
 				$("#grids", digitacaoContagemDevolucaoController.workspace).hide();
+				
+				$(".areaBts", digitacaoContagemDevolucaoController.workspace).hide();
 
 				return resultado.tableModel;
 			}
@@ -180,6 +182,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			$("#totalGeral", digitacaoContagemDevolucaoController.workspace).html(resultado.valorTotal);
 			
 			$("#grids", digitacaoContagemDevolucaoController.workspace).show();
+			
+			$(".areaBts", digitacaoContagemDevolucaoController.workspace).show();
 			
 			return resultado.tableModel;
 		},
@@ -342,10 +346,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		},
 		
 		
-		geraNota :function(){
+		devolucaoFinal :function(){
 			var param = serializeArrayToPost('listaDigitacaoContagemDevolucao', digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao());	
 			$.postJSON(
-				contextPath + "/devolucao/digitacao/contagem/geraNota", 
+				contextPath + "/devolucao/digitacao/contagem/devolucaoFinal", 
 				param,
 				function(result) {
 					digitacaoContagemDevolucaoController.pesquisar();
@@ -386,6 +390,31 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 					}
 				},
 				form: $("#dialog-confirmar", this.workspace).parents("form")
+			});
+		},
+		
+		/**
+ 		Monta o componente de confiramção da ação de Confirmar contagem de devolução
+	**/
+		popupConfirmarDevolucaoFinal: function () {
+	
+			$("#dialog-confirmar-devolucao-final", digitacaoContagemDevolucaoController.workspace).dialog({
+				resizable : false,
+				height : 140,
+				width : 320,
+				modal : true,
+				buttons : {
+					"Confirmar" : function() {
+						
+						digitacaoContagemDevolucaoController.devolucaoFinal();
+						
+						$(this).dialog("close");
+					},
+					"Cancelar" : function() {
+						$(this).dialog("close");
+					}
+				},
+				form: $("#dialog-confirmar-devolucao-final", this.workspace).parents("form")
 			});
 		},
 		

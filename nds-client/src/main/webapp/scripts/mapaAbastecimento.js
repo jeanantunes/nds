@@ -52,7 +52,7 @@
 					   
 					   $("#selectProdutos", _workspace).html(options);
 					   
-					   $("#dialog-pesq-produtos").dialog({
+					   $("#dialog-pesq-produtos", _workspace).dialog({
 							resizable: false,
 							height:300,
 							width:500,
@@ -139,7 +139,7 @@
 	
 	this.bloquearLinkProdutos = function() {
 		
-		var linkProdutos = $("#linkProdutos");
+		var linkProdutos = $("#linkProdutos", _workspace);
 		
 		linkProdutos.attr("style", "opacity: 0.5;");
 		
@@ -150,7 +150,7 @@
 	
 	this.desbloquearLinkProdutos = function() {
 		
-		var linkProdutos = $("#linkProdutos");
+		var linkProdutos = $("#linkProdutos", _workspace);
 		
 		linkProdutos.attr("style", "");
 		linkProdutos.attr("onclick", linkProdutos.attr("onclick").replace("return;", "" ));
@@ -158,7 +158,7 @@
 	
 	this.pesquisar = function() {
 				
-		var tipoConsulta = $("#tipoConsulta").val();
+		var tipoConsulta = $("#tipoConsulta", _workspace).val();
 		
 		var params = T.getDadosFiltro();
 
@@ -309,6 +309,14 @@
 				if(this.cell.codigoRota == undefined) {
 					this.cell.codigoRota = "Sem rota definida";
 				}
+				
+				if(!this.cell.reparte){
+					this.cell.reparte = 0;
+				}
+				
+				if (!this.cell.qtdeExms){
+					this.cell.qtdeExms = 0;
+				}
 			});	
 		}
 		return result;
@@ -332,8 +340,8 @@
 		var codigoCota = T.get('codigoCota');
 		var nomeCota = T.get('nomeCota');
 
-		$("#codigoCotaHeader").html(codigoCota);
-		$("#nomeCotaHeader").html(nomeCota);
+		$("#codigoCotaHeader", _workspace).html(codigoCota);
+		$("#nomeCotaHeader", _workspace).html(nomeCota);
 		
 		return result;
 	},
@@ -347,13 +355,13 @@
 		if(produto) {
 			var codigoProduto = produto.id;
 			var nomeProduto = produto.nome;
-			$("#codigoProdutoHeader").html(codigoProduto);
-			$("#nomeProdutoHeader").html(nomeProduto);
+			$("#codigoProdutoHeader", _workspace).html(codigoProduto);
+			$("#nomeProdutoHeader", _workspace).html(nomeProduto);
 		}
 		
 		var edicaoProduto = T.get('edicao');
 
-		$("#edicaoProdutoHeader").html(edicaoProduto);
+		$("#edicaoProdutoHeader", _workspace).html(edicaoProduto);
 		
 		return result;
 	},
@@ -449,9 +457,9 @@
 	this.displayEntregador = function(display) {
 		
 		if(display===true)
-			$('.entregador').show();
+			$('.entregador', _workspace).show();
 		else
-			$('.entregador').hide();
+			$('.entregador', _workspace).hide();
 		
 	},
 	
@@ -476,15 +484,15 @@
 			T.limparProdutosSelecionados();
 			break;
 		case 'COTA':
-			T.bloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao');
-			T.desbloquearCampos('codigoCota','nomeCota','quebraPorCota');
+			T.bloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao','quebraPorCota');
+			T.desbloquearCampos('codigoCota','nomeCota');
 			T.displayEntregador(false);
 			T.bloquearLinkProdutos();
 			T.limparProdutosSelecionados();
 			break;
 		case 'PRODUTO_X_COTA' :
-			T.bloquearCampos('box','rota','roteiro');
-			T.desbloquearCampos('codigoCota','nomeCota','quebraPorCota', 'codigoProduto','nomeProduto','edicao');
+			T.bloquearCampos('box','rota','roteiro','quebraPorCota');
+			T.desbloquearCampos('codigoCota','nomeCota', 'codigoProduto','nomeProduto','edicao');
 			T.desbloquearLinkProdutos();
 			T.displayEntregador(false);
 			break;
@@ -559,7 +567,12 @@
 		data.push({name:'filtro.codigoCota',		value: T.get("codigoCota")});
 		data.push({name:'filtro.nomeCota',			value: T.get("nomeCota")});
 		data.push({name:'filtro.quebraPorCota',	value: T.get("quebraPorCota")});
-		data.push({name:'filtro.idEntregador',	value: T.get("idEntregador")});
+		
+		if ($(".entregador", workspace).is(":visible")){
+			data.push({name:'filtro.idEntregador',	value: T.get("idEntregador")});
+		}
+		
+		data.push({name:'filtro.excluirProdutoSemReparte', value: T.get("excluirProdutoSemReparte")});
 		
 		return data;
 	},

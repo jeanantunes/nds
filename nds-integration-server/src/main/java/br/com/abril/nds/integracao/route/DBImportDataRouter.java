@@ -57,15 +57,13 @@ public class DBImportDataRouter extends AbstractRepository implements BaseRouter
 												
 						messageProcessor.processMessage(message);
 						
-					} catch(Throwable e) {
+					} catch(Exception e) {
 						ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
-						e.printStackTrace();
 					}
 					
-					//String erro = (String) message.getHeader().get(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue()); 
 										
 				}		
-				// Processamento a ser executado APÓS o processamento principal:
+                // Processamento a ser executado APÓS o processamento principal:
 				messageProcessor.posProcess(tempVar);
 				return null;
 			}

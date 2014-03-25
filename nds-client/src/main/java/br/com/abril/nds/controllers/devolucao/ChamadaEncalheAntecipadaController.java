@@ -29,7 +29,6 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -39,6 +38,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoService;
@@ -104,6 +104,9 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Autowired
 	private PdvService pdvService;
 	
+	@Autowired
+	private EnderecoService enderecoService;
+	
 	@Path("/")
 	public void index() {
 		
@@ -130,7 +133,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	
 	private void carregarMunicipios(){
 		
-		List<ItemDTO<Integer, String>> municipios = pdvService.buscarMunicipiosPdvPrincipal();
+		List<ItemDTO<String, String>> municipios = enderecoService.buscarMunicipioAssociadasCota();
 		
 		result.include("listaMunicipios",municipios);
 	}
@@ -160,7 +163,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Path("/pesquisarDataProgramada")
 	public void pesquisarDataProgramadaEdicao(String codigoProduto, Long numeroEdicao){
 		
-		Date date  = chamadaAntecipadaEncalheService.obterDataRecolhimentoPrevista(codigoProduto, numeroEdicao);
+		Date date  = chamadaAntecipadaEncalheService.obterDataRecolhimentoReal(codigoProduto, numeroEdicao);
 		
 		String dataFormatada = (date == null)?"":DateUtil.formatarDataPTBR(date);
 		
@@ -178,7 +181,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Post
 	@Path("/pesquisar")
 	public void pesquisarCotasPorProduto(String codigoProduto,Long numeroEdicao,Long box,Long fornecedor, 
-										 Long rota,Long roteiro,boolean programacaoRealizada,Integer municipio,Long tipoPontoPDV,
+										 Long rota,Long roteiro,boolean programacaoRealizada,String municipio,Long tipoPontoPDV,
 										 String sortorder, String sortname, int page, int rp){
 		
 		validarParametrosPesquisa(codigoProduto, numeroEdicao);
@@ -255,14 +258,14 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Post
 	@Path("/obterQuantidadeExemplares")
 	public void obterQuantidadeExemplaresPorCota(Integer numeroCota, String codigoProduto, Long numeroEdicao,Long fornecedor,
-												 boolean programacaoRealizada,Integer municipio, Long tipoPontoPDV){
+												 boolean programacaoRealizada,String municipio, Long tipoPontoPDV){
 		
 		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO();
 		filtro.setNumeroCota(numeroCota);
 		filtro.setCodigoProduto(codigoProduto);
 		filtro.setNumeroEdicao(numeroEdicao);
 		filtro.setFornecedor(fornecedor);
-		filtro.setCodMunicipio(municipio);
+		filtro.setDescMunicipio(municipio);
 		filtro.setCodTipoPontoPDV(tipoPontoPDV);
 		
 		BigInteger quantidade = BigInteger.ZERO;
@@ -295,13 +298,13 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void gravarCotasPesquisa(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 									String dataRecolhimento,String codigoProduto,
-									Long numeroEdicao,String dataProgramada){
+									Long numeroEdicao,String dataProgramada, boolean recolhimentoFinal){
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
 		validarCotasDuplicadas(listaChamadaEncalheAntecipada,"Existem cotas duplicadas para chamda antecipada de encalhe!");
 		
-		gravarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+		gravarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada, recolhimentoFinal);
 	}
 	
 	
@@ -319,7 +322,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void gravarCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 							String dataRecolhimento, String codigoProduto, 
-							Long numeroEdicao,String dataProgramada,String gravarTodos){
+							Long numeroEdicao,String dataProgramada,String gravarTodos, 
+							boolean recolhimentoFinal) {
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
@@ -328,6 +332,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
 			filtro.setDataAntecipacao(DateUtil.parseDataPTBR(dataRecolhimento));
 			filtro.setDataProgramada(dataProgramada);
+			filtro.setRecolhimentoFinal(recolhimentoFinal);
 			
 			chamadaAntecipadaEncalheService.gravarChamadaAntecipacaoEncalheProduto(filtro);
 
@@ -337,7 +342,9 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		} else{
 			
-			gravarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+			gravarChamadaEncalheAnteicipada(
+				listaChamadaEncalheAntecipada, dataRecolhimento, codigoProduto, numeroEdicao, 
+					dataProgramada, recolhimentoFinal);
 		}	
 	}
 	
@@ -356,7 +363,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	public void reprogramarCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 								String dataRecolhimento, String codigoProduto, 
 								Long numeroEdicao, String dataProgramada, 
-								String gravarTodos) {
+								String gravarTodos,
+								boolean recolhimentoFinal) {
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
@@ -373,7 +381,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		}
 		else{
 		
-			reprogramarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+			reprogramarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada,recolhimentoFinal);
 			
 		}	
 	}
@@ -382,7 +390,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Path("/cancelarChamdaEncalheCotas")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void cancelarChamdaEncalheCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
-											String codigoProduto,Long numeroEdicao,String cancelarTodos){
+											String codigoProduto,Long numeroEdicao,String cancelarTodos, 
+											boolean recolhimentoFinal){
 		
 		if(Boolean.parseBoolean(cancelarTodos)){
 			
@@ -394,7 +403,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			
 			InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
 																								  null,codigoProduto,
-																								  numeroEdicao,null);
+																								  numeroEdicao,null, recolhimentoFinal);
 			
 			chamadaAntecipadaEncalheService.cancelarChamadaAntecipadaCota(infoChamdaAntecipadaEncalheDTO);
 		}
@@ -407,11 +416,11 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Path("/cancelarChamdaEncalheCotasPesquisa")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void cancelarChamdaEncalheCotasPesquisa(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
-												   String codigoProduto,Long numeroEdicao){
+												   String codigoProduto,Long numeroEdicao, boolean recolhimentoFinal){
 		
 		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
 																								  null,codigoProduto,
-																								  numeroEdicao,null);
+																								  numeroEdicao,null,recolhimentoFinal);
 			
 		chamadaAntecipadaEncalheService.cancelarChamadaAntecipadaCota(infoChamdaAntecipadaEncalheDTO);
 		
@@ -430,13 +439,14 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void reprogramarCotasPesquisa(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 										String dataRecolhimento,String codigoProduto,
-										Long numeroEdicao,String dataProgramada){
+										Long numeroEdicao,String dataProgramada,
+										boolean recolhimentoFinal){
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
 		validarCotasDuplicadas(listaChamadaEncalheAntecipada,"Existem cotas duplicadas para reprogramação de chamda antecipada de encalhe!");
 		
-		reprogramarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+		reprogramarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada,recolhimentoFinal);
 	}
 	
 	/**
@@ -449,7 +459,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	private void gravarChamadaEncalheAnteicipada(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 												String dataRecolhimento, String codigoProduto, 
-												Long numeroEdicao,String dataProgramada){
+												Long numeroEdicao,String dataProgramada, boolean recolhimentoFinal){
 		
 		if(listaChamadaEncalheAntecipada == null || listaChamadaEncalheAntecipada.isEmpty()){
 			
@@ -457,7 +467,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		}
 		
 		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
-																		dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+																		dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada,recolhimentoFinal);
 		
 		chamadaAntecipadaEncalheService.gravarChamadaAntecipacaoEncalheProduto(infoChamdaAntecipadaEncalheDTO);
 		
@@ -477,7 +487,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	private void reprogramarChamadaEncalheAnteicipada(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 												String dataRecolhimento, String codigoProduto, 
-												Long numeroEdicao,String dataProgramada){
+												Long numeroEdicao,String dataProgramada,
+												boolean recolhimentoFinal){
 		
 		if(listaChamadaEncalheAntecipada == null || listaChamadaEncalheAntecipada.isEmpty()){
 			
@@ -485,7 +496,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		}
 		
 		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
-																		dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+																		dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada,
+																		recolhimentoFinal);
 		
 		chamadaAntecipadaEncalheService.reprogramarChamadaAntecipacaoEncalheProduto(infoChamdaAntecipadaEncalheDTO);
 		
@@ -505,13 +517,15 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	private InfoChamdaAntecipadaEncalheDTO getInfoChamadaEncalhe(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 																	String dataRecolhimento, String codigoProduto, 
-																	Long numeroEdicao,String dataProgramada) {
+																	Long numeroEdicao,String dataProgramada,
+																	boolean recolhimentoFinal) {
 		
 		InfoChamdaAntecipadaEncalheDTO infoEncalheDTO = new InfoChamdaAntecipadaEncalheDTO();
 		infoEncalheDTO.setCodigoProduto(codigoProduto);
 		infoEncalheDTO.setDataAntecipacao( (dataRecolhimento==null)?null: DateUtil.parseDataPTBR(dataRecolhimento));
 		infoEncalheDTO.setNumeroEdicao(numeroEdicao);
 		infoEncalheDTO.setDataProgramada( (dataProgramada== null)?null:DateUtil.parseDataPTBR(dataProgramada));
+		infoEncalheDTO.setRecolhimentoFinal(recolhimentoFinal);
 		
 		List<ChamadaAntecipadaEncalheDTO> listaChamadaAntecipadaEncalheDTOs = 
 				new ArrayList<ChamadaAntecipadaEncalheDTO>();
@@ -819,6 +833,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		FileExporter.to("chamada-encalhe-antecipada", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, infoChamdaAntecipadaEncalheDTO, 
 					listaChamadaEncalheAntecipadaVO, ChamadaEncalheAntecipadaVO.class, this.httpServletResponse);
+		result.nothing();
 		
 	}
 	
@@ -856,7 +871,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@SuppressWarnings("unchecked")
 	@Get
 	public void exportarPesquisaCotas(FileType fileType,String dataProgaramada,String codigoProduto, 
-										Long numeroEdicao, Long fornecedor,Integer municipio,Long tipoPontoPDV) throws IOException{
+										Long numeroEdicao, Long fornecedor,String municipio,Long tipoPontoPDV) throws IOException{
 		
 		List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada = 
 				(List<ChamadaEncalheAntecipadaVO>) session.getAttribute(LISTA_PESQUISA_COTA);
@@ -866,7 +881,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		filtro.setCodigoProduto(codigoProduto);
 		filtro.setFornecedor(fornecedor);
 		filtro.setNumeroEdicao(numeroEdicao);
-		filtro.setCodMunicipio(municipio);
+		filtro.setDescMunicipio(municipio);
 		filtro.setCodTipoPontoPDV(tipoPontoPDV);
 		
 		atribuirValoresFIltro(filtro);
@@ -974,21 +989,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			}
 		}
 		
-		if(filtro.isProgramacaoCE()){
-			filtro.setDescComCE("Sim");
-		}
-		else{
-			filtro.setDescComCE("Não");
-		}
-		
-		if(filtro.getCodMunicipio()!= null){
-			
-			Endereco endereco = pdvService.buscarMunicipioPdvPrincipal(filtro.getCodMunicipio());
-			if(endereco!= null){
-				filtro.setDescMunicipio(endereco.getCidade());
-			}
-		}
-		
+		filtro.setDescComCE( filtro.isProgramacaoCE()?"Sim":"Não");
+
 		if(filtro.getCodTipoPontoPDV()!= null){
 			
 			TipoPontoPDV tipoPontoPDV = pdvService.obterTipoPontoPDVPrincipal(filtro.getCodTipoPontoPDV());

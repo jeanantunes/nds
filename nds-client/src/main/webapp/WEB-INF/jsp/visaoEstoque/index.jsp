@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}"/>
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/visaoEstoque.js"></script>
 	
@@ -20,13 +21,13 @@
 	    <div class="area">
 	
 			<span class="bt_arq">
-				<a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalhe?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+				<a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 				</a>
 			</span>
 			
 			<span class="bt_arq">
-			    <a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalhe?fileType=PDF" rel="tipsy" title="Imprimir">
+			    <a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 				    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 				</a>
 			</span>
@@ -52,7 +53,7 @@
 	          		<select name="filtro.idFornecedor" style="width: 250px;" id="visaoEstoque_filtro_idFornecedor">
 						<option selected="selected" value="-1"></option>
 						<c:forEach items="${listFornecedores}" var="fornecedor">
-							<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
+							<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
 						</c:forEach>
 					</select>
 	          	</td>

@@ -1,7 +1,12 @@
 package br.com.abril.nds.repository;
 
-public interface RankingSegmentoRepository {
+import br.com.abril.nds.model.distribuicao.RankingSegmento;
 
-	void executeJobGerarRankingSegmento();
+public interface RankingSegmentoRepository extends Repository<RankingSegmento, Long> {
+
+	void gerarRankingSegmento();
 	
+	void gerarRankingSegmentoParaCotasSemRanking();
+	
+	void deletarRankingSegmento();
 }

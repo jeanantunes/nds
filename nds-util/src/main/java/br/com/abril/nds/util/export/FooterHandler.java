@@ -74,7 +74,7 @@ public class FooterHandler {
 	 * @return List<ExportFooter>
 	 */
 	public List<ExportFooter> get() {
-		
+
 		return this.exportFooterList;
 	}
 

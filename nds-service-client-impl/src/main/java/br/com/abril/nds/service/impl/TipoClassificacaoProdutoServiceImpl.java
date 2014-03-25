@@ -19,7 +19,7 @@ public class TipoClassificacaoProdutoServiceImpl implements	TipoClassificacaoPro
 	@Transactional(readOnly = true)
 	@Override
 	public List<TipoClassificacaoProduto> obterTodos() {
-		return repo.buscarTodos();
+		return repo.obterTodos();
 	}
 
 	@Transactional
@@ -27,5 +27,11 @@ public class TipoClassificacaoProdutoServiceImpl implements	TipoClassificacaoPro
 	public TipoClassificacaoProduto buscarPorId(Long id) {
 		return repo.buscarPorId(id);
 	}
+
+    @Override
+    @Transactional(readOnly=true)
+    public TipoClassificacaoProduto obterPorClassificacao(String classificacao) {
+       return repo.obterPorClassificacao(classificacao);
+    }
 
 }

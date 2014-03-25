@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,24 +35,24 @@ import br.com.abril.nds.util.export.fiscal.nota.comparator.NFESecaoComparator;
  */
 public class NFEExporter {
 
-	/**
-	 * Separador de campos nas seções.
-	 */
+	    /**
+     * Separador de campos nas seções.
+     */
 	public static final String SEPARADOR_SECAO = "|"; 
 
-	/**
-	 * Máscara padrão de data.
-	 */
+	    /**
+     * Máscara padrão de data.
+     */
 	public static final String MASCARA_DATA = "yyyy-MM-dd";
 	
-	/**
-	 * Máscara padrão de número.
-	 */
+	    /**
+     * Máscara padrão de número.
+     */
 	public static final String MASCARA_NUMBER = "#.####"; 
 
-	/**
-	 * String vázia.
-	 */
+	    /**
+     * String vázia.
+     */
 	public static final String STRING_VAZIA = ""; 
 	
 	/**
@@ -65,58 +65,58 @@ public class NFEExporter {
 	 */
 	public List<NFEExporter> listaNFEExporters;
 	
-	/**
-	 * Contador de iteração da listaNFEExporters
-	 */
+	    /**
+     * Contador de iteração da listaNFEExporters
+     */
 	private Integer indexListaNFEExporters;
 	
-	/**
-	 * Lista das sessoes do arquivo de exportação
-	 */
+	    /**
+     * Lista das sessoes do arquivo de exportação
+     */
 	private TreeMap<TipoSecao, List<CampoSecao>> mapSecoes = new TreeMap<TipoSecao, List<CampoSecao>>(new NFESecaoComparator());
 	
-	/**
-	 * Construtor padrão
-	 */
+	    /**
+     * Construtor padrão
+     */
 	public NFEExporter(){
 		this.clear();
 	}
 	
 	
-	/**
-	 * Limpa todas as seções atuais.
-	 */
+	    /**
+     * Limpa todas as seções atuais.
+     */
 	public void clear(){
 		this.mapSecoes = new TreeMap<TipoSecao, List<CampoSecao>>(new NFESecaoComparator());
 		this.listaNFEExporters = new ArrayList<NFEExporter>();
 	}
 	
 	
-	/**
-	 * Faz a varredura de um objeto buscando as anotações NFEExport ou
-	 * NFEExports e adicona os dados nas lista de seções.
-	 * 
-	 * @param notaFiscal - Objeto da Nota Fiscal.
-	 * @return - String com toda as seções.
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
-	 */
+	    /**
+     * Faz a varredura de um objeto buscando as anotações NFEExport ou
+     * NFEExports e adicona os dados nas lista de seções.
+     * 
+     * @param notaFiscal - Objeto da Nota Fiscal.
+     * @return - String com toda as seções.
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     */
 	public <NF> void execute(NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		this.execute(notaFiscal, new ArrayList<Object>(), null);
 	}
 	
-	/**
-	 * Faz a varredura de um objeto buscando as anotações NFEExport ou
-	 * NFEExports e adicona os dados nas lista de seções. E mantem o históricos
-	 * dos objetos Pais.
-	 * 
-	 * @param notaFiscal
-	 * @param listaParents
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 */
+	    /**
+     * Faz a varredura de um objeto buscando as anotações NFEExport ou
+     * NFEExports e adicona os dados nas lista de seções. E mantem o históricos
+     * dos objetos Pais.
+     * 
+     * @param notaFiscal
+     * @param listaParents
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
 	private <NF> void execute(NF notaFiscal, List<Object> listaParents, TipoSecao[] secaoVazia) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		
 		if (listaParents != null) {
@@ -229,20 +229,23 @@ public class NFEExporter {
 			}
 
 		} else if (valor != null && nfeExportType != null) {
-			TipoSecao secaoVazia[] = nfeExportType.secaoPadrao();
-			if (TipoSecao.EMPTY.equals(secaoVazia)) {
-				secaoVazia = null;
-			}
-			execute(valor, listaParents, secaoVazia);
+            TipoSecao secaoVazias[] = nfeExportType.secaoPadrao();
+            for (TipoSecao secaoVazia : secaoVazias) {
+                if (TipoSecao.EMPTY.equals(secaoVazia)) {
+                    secaoVazia = null;
+                }
+            }
+            
+            execute(valor, listaParents, secaoVazias);
 		} 
 	}
 		
 	
-	 /**
-	 * Adiciona um campo em uma seção.
-	 * 
-	 * @param novoCampo campo
-	 */
+	     /**
+     * Adiciona um campo em uma seção.
+     * 
+     * @param novoCampo campo
+     */
 	private void addCampoSecao(CampoSecao novoCampo) {
 			
 		List<CampoSecao> camposSecao = mapSecoes.get(novoCampo.getSessao());
@@ -271,12 +274,12 @@ public class NFEExporter {
 		this.mapSecoes.put(secao, camposSecao);
 	}
 	
-	/**
-	 * Cria um campo a partir da annotation e adiciona o campo a seção. 
-	 * 
-	 * @param nfeExport annotation
-	 * @param valor valor do campo
-	 */
+	    /**
+     * Cria um campo a partir da annotation e adiciona o campo a seção.
+     * 
+     * @param nfeExport annotation
+     * @param valor valor do campo
+     */
 	public void addCampoSecao(NFEExport nfeExport,Object valor){
 		
 		CampoSecao campoSessao = new CampoSecao();
@@ -295,9 +298,9 @@ public class NFEExporter {
 		return toString();
 	}
 
-	/**
-	 * Adiciona valores padrões no documento.
-	 */
+	    /**
+     * Adiciona valores padrões no documento.
+     */
 	private void addCamposDefault() {				
 		CampoSecao versao = new CampoSecao(TipoSecao.A,  0, "2.00");
 		addCampoSecao(versao);
@@ -319,16 +322,14 @@ public class NFEExporter {
 		addCampoSecao(nomePaisDestinatario);
 	}
 	
-	/**
-	 * Converte as seções em Strings.
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
+	    /**
+     * Converte as seções em Strings.
+     * 
+     * @see java.lang.Object#toString()
+     */
 	public String toString() {
 		
 		StringBuilder sBuilder = new StringBuilder();
-		
-		Set<TipoSecao> secoes = this.mapSecoes.keySet();
 		
 		ordenaListaNFEEporters();
 		
@@ -340,13 +341,13 @@ public class NFEExporter {
 			primeiraSecao = this.listaNFEExporters.get(this.indexListaNFEExporters).getPrimeiraSecao();
 		}
 		
-		for (TipoSecao secao : secoes) {
+		for (Entry<TipoSecao, List<CampoSecao>> entry : this.mapSecoes.entrySet()) {
 			
-			sBuilder.append(listaNFEExportersToString(primeiraSecao, secao));
+			sBuilder.append(listaNFEExportersToString(primeiraSecao, entry.getKey()));
 			
-			String sSecao = this.gerarStringSecao(secao);
+			String sSecao = this.gerarStringSecao(entry.getKey());
 			
-			List<CampoSecao> campos = this.mapSecoes.get(secao);
+			List<CampoSecao> campos = entry.getValue();
 			
 			for (CampoSecao campo : campos) {
 				
@@ -418,15 +419,15 @@ public class NFEExporter {
 	}
 	
 	
-	/**
-	 * Converte um Tipo Secao para string utilizando pipes para preencher todas as posições que a secao pode ter
-	 * 
-	 * EX: seção A possui 8 posições
-	 * 	   A|||||||||
-	 * 
-	 * @param secao tipo seção;
-	 * @return
-	 */
+	    /**
+     * Converte um Tipo Secao para string utilizando pipes para preencher todas
+     * as posições que a secao pode ter
+     * 
+     * EX: seção A possui 8 posições A|||||||||
+     * 
+     * @param secao tipo seção;
+     * @return
+     */
 	private String gerarStringSecao(TipoSecao secao) {
 		StringBuilder sSecao = new StringBuilder();
 			sSecao.append(secao.getSigla());
@@ -436,16 +437,16 @@ public class NFEExporter {
 	}
 	
 	
-	/**
-	 * Converte o campo para String com a mascara especificada, se não tiver a
-	 * mascara utiliza a mascara padrão, e trunca o campo de acordo com o
-	 * tamanho.
-	 * 
-	 * @param valor - Valor a ser convertido.
-	 * @param mascara - Mascara para o valor.
-	 * @param tamanho - Tamanho a ser truncado.
-	 * @return - Valor convertido, mascarado e truncado.
-	 */
+	    /**
+     * Converte o campo para String com a mascara especificada, se não tiver a
+     * mascara utiliza a mascara padrão, e trunca o campo de acordo com o
+     * tamanho.
+     * 
+     * @param valor - Valor a ser convertido.
+     * @param mascara - Mascara para o valor.
+     * @param tamanho - Tamanho a ser truncado.
+     * @return - Valor convertido, mascarado e truncado.
+     */
 	private String converteCampoParaString(CampoSecao campo){
 		
 		Object valor = campo.getValor();
@@ -509,14 +510,14 @@ public class NFEExporter {
 		return valorString.replace(SEPARADOR_SECAO, STRING_VAZIA);
 	}
 	
-	/**
-	 * Adiciona uma string de campo à uma string da seção.
-	 * 
-	 * @param secao - Linha da seção atual.
-	 * @param valor - Valor a ser incluído.
-	 * @param posicao - Posição que será incluído na linha.
-	 * @return Linha da seção com o campo adicionado.
-	 */
+	    /**
+     * Adiciona uma string de campo à uma string da seção.
+     * 
+     * @param secao - Linha da seção atual.
+     * @param valor - Valor a ser incluído.
+     * @param posicao - Posição que será incluído na linha.
+     * @return Linha da seção com o campo adicionado.
+     */
 	private String addStringCampoToStringSecao(String secao, String valor, int posicao) {
 		
 		String[] quebra = secao.split("\\"+SEPARADOR_SECAO);
@@ -533,12 +534,12 @@ public class NFEExporter {
 	}
 
 	
-	/**
-	 * Verifica se é Numérico (BigDecimal, Double, Integer, Long ou BigInteger).
-	 * 
-	 * @param valor - valor a ser comprado.
-	 * @return - True se for e False se não for. 
-	 */
+	    /**
+     * Verifica se é Numérico (BigDecimal, Double, Integer, Long ou BigInteger).
+     * 
+     * @param valor - valor a ser comprado.
+     * @return - True se for e False se não for.
+     */
 	private boolean isNumeric(Object valor) {
 		return (valor != null)
 				&& ((valor instanceof BigDecimal) || (valor instanceof Double)
@@ -548,34 +549,34 @@ public class NFEExporter {
 						|| (valor instanceof Byte) || (valor instanceof Short) || (valor instanceof Float));
 	}
 
-	/**
-	 * Verifica se é Literal (String ou Character).
-	 * 
-	 * @param valor - valor a ser comprado.
-	 * @return - True se for e False se não for. 
-	 */
+	    /**
+     * Verifica se é Literal (String ou Character).
+     * 
+     * @param valor - valor a ser comprado.
+     * @return - True se for e False se não for.
+     */
 	private boolean isLiteral(Object valor) {
 		return (valor != null)
 				&& ((valor instanceof String) || (valor instanceof Character));
 	}
 
-	/**
-	 * Verifica se é Data (Date ou Calendar).
-	 * 
-	 * @param valor - valor a ser comprado.
-	 * @return - True se for e False se não for. 
-	 */
+	    /**
+     * Verifica se é Data (Date ou Calendar).
+     * 
+     * @param valor - valor a ser comprado.
+     * @return - True se for e False se não for.
+     */
 	private boolean isDate(Object valor) {
 		return (valor != null)
 				&& ((valor instanceof Date) || (valor instanceof Calendar));
 	}
 	
-	/**
-	 * Verifica se é Enum
-	 * 
-	 * @param valor
-	 * @return
-	 */
+	    /**
+     * Verifica se é Enum
+     * 
+     * @param valor
+     * @return
+     */
 	private boolean isEnum(Object valor) {
 		return (valor != null) && valor.getClass().getEnumConstants() != null;
 	}

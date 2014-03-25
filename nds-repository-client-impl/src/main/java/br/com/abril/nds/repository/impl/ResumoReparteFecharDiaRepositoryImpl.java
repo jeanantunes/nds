@@ -8,10 +8,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
@@ -20,6 +19,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
+import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ResumoReparteFecharDiaRepository;
@@ -30,20 +30,20 @@ import br.com.abril.nds.vo.PaginacaoVO;
 @Repository
 public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository implements ResumoReparteFecharDiaRepository {
     
-    private static final Logger LOG = LoggerFactory.getLogger(ResumoReparteFecharDiaRepositoryImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResumoReparteFecharDiaRepositoryImpl.class);
 	
 
 	@Override
 	public SumarizacaoReparteDTO obterSumarizacaoReparte(Date data,Date dataReparteHistoico) {
 		
-	    Objects.requireNonNull(data, "Data para contagem dos lançamentos expedidos não deve ser nula!");
+        Objects.requireNonNull(data, "Data para contagem dos lançamentos expedidos não deve ser nula!");
         
 	    //Sql que obtem o os produtos que foram expedidos
         String templateHqlProdutoEdicaoExpedido = new StringBuilder("(select distinct(produtoEdicaoExpedido.id) from Expedicao expedicao ")
            .append(" join expedicao.lancamentos lancamento join lancamento.produtoEdicao produtoEdicaoExpedido where " )
            .append(" lancamento.status <> :statusFuro and lancamento.dataLancamentoDistribuidor =:data )").toString();
         
-        //Sql que obtem as diferenças apontadas para o distribuidor
+        // Sql que obtem as diferenças apontadas para o distribuidor
         String templateHqlDiferenca =  new StringBuilder("(select  ")
 	        .append(" COALESCE( sum(CASE  ")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='SOBRA_DE' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
@@ -59,13 +59,14 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 	        .append(" where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:tipoDiferenca) ")
 	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(")").toString();
        
-        //Sql que obtem as diferencas apontadas para distribuidor que estão pendentes de aprovação do GFS
+        // Sql que obtem as diferencas apontadas para distribuidor que estão
+        // pendentes de aprovação do GFS
         String templateHqlDiferencaGFSPendenteDeAprovacao =  new StringBuilder("(select sum(diferenca.qtde * diferenca.produtoEdicao.precoVenda) ")
 	    	.append(" from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
-	        .append(" where lancamentoDiferenca.status in (:statusDiferencaGFS) and  diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s) ")
+	        .append(" where lancamentoDiferenca.movimentoEstoque.statusIntegracao in (:statusIntegracaoGFS) and  diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s) ")
 	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as %s ").toString();
         
-        //Sql que obtem as diferenças direcionadas apenas para as cotas
+        // Sql que obtem as diferenças direcionadas apenas para as cotas
         String templateHqlDiferencaRateioCota =  new StringBuilder("(select ")
 	        .append(" COALESCE( sum(CASE  ")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda  * -1) ")
@@ -128,7 +129,13 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         query.setParameter("grupoMovimentoRecebimentoFisico", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
         query.setParameter("grupoMovimentoEstornoEnvioJornaleiro", GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
         
-        query.setParameterList("statusDiferencaGFS", Arrays.asList(StatusAprovacao.PENDENTE));
+        query.setParameterList("statusIntegracaoGFS", Arrays.asList(StatusIntegracao.EM_PROCESSAMENTO,
+													        		StatusIntegracao.EM_PROCESSO,
+													        		StatusIntegracao.SOLICITADO,
+													        		StatusIntegracao.NAO_INTEGRADO,
+													        		StatusIntegracao.RE_INTEGRADO,
+													        		StatusIntegracao.INTEGRADO,
+													        		StatusIntegracao.AGUARDANDO_GFS));
         
         query.setParameterList("tipoDiferencaSobras", Arrays.asList(TipoDiferenca.SOBRA_DE,
         															TipoDiferenca.SOBRA_EM,
@@ -166,7 +173,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
             
         	String msg = "Erro definindo result transformer para classe: " + SumarizacaoReparteDTO.class.getName();
             
-        	LOG.error(msg, e);
+        	LOGGER.error(msg, e);
             
             throw new RuntimeException(msg, e);
         } 
@@ -233,19 +240,20 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 				      hql.append("produtoEdicao.precoVenda as precoVenda, ");
 				      hql.append("COALESCE( hstEstoque.qtde,0 ) + ").append(templateHqlRecebimentoEstoqueFisico).append(" as qtdeReparte, ");
         
-        //Diferenças, convertendo as qtde sempre para exemplares
+        // Diferenças, convertendo as qtde sempre para exemplares
         hql.append(String.format(templateHqlDiferenca,  "tipoDiferencaSobraDe", "qtdeSobraDe")).append(",");
         hql.append(String.format(templateHqlDiferenca,  "tipoDiferencaSobraEm", "qtdeSobraEm")).append(",");
         hql.append(String.format(templateHqlDiferenca,  "tipoDiferencaFaltaDe", "qtdeFaltaDe")).append(",");
         hql.append(String.format(templateHqlDiferenca,  "tipoDiferencaFaltaEm", "qtdeFaltaEm")).append(",");
         
-        //Quantidade efetiva distribuída, considerando movimento de envio de reparte, como também o estorno, em caso de furo
+        // Quantidade efetiva distribuída, considerando movimento de envio de
+        // reparte, como também o estorno, em caso de furo
         hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEnvioJornaleiro ");
         hql.append("then movimentoEstoque.qtde else (movimentoEstoque.qtde * -1) end) from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data "); 
         hql.append("and movimentoEstoque.produtoEdicao.id = produtoEdicao.id and movimentoEstoque.status = :statusAprovado ");
         hql.append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro, :grupoMovimentoEstornoEnvioJornaleiro)) as qtdeDistribuido, ");
         
-        //Transferências de estoque de lançamento, entrada e saída
+        // Transferências de estoque de lançamento, entrada e saída
         hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoTransferenciaLancamentoEntrada ");
         hql.append("then movimentoEstoque.qtde else (movimentoEstoque.qtde * -1) end) from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data "); 
         hql.append("and movimentoEstoque.produtoEdicao.id = produtoEdicao.id and movimentoEstoque.status = :statusAprovado ");
@@ -296,7 +304,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
             query.setResultTransformer(new AliasToBeanConstructorResultTransformer(constructor));
         } catch (NoSuchMethodException | SecurityException e) {
             String msg = "Erro definindo result transformer para classe: " + ReparteFecharDiaDTO.class.getName();
-            LOG.error(msg, e);
+            LOGGER.error(msg, e);
             throw new RuntimeException(msg, e);
         } 
         return query.list();

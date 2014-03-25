@@ -9,6 +9,7 @@ import java.util.List;
 
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.util.Util;
 
@@ -28,6 +29,8 @@ public class ProdutoLancamentoDTO implements Serializable {
 	private Long idProduto;
 	
 	private Long idFornecedor;
+	
+	private String tipoLancamento;
 	
 	private Long numeroEdicao;
 
@@ -80,7 +83,40 @@ public class ProdutoLancamentoDTO implements Serializable {
   	private BigInteger distribuicao;
   	
   	private Integer sequenciaMatriz;
+  	
+  	private Long peb;
+  	
+  	private boolean cancelado;
 	
+  	private boolean alterado;
+  	
+
+
+	public String getTipoLancamento() {
+		return tipoLancamento;
+	}
+
+	public void setTipoLancamento(String tipoLancamento) {
+
+		this.tipoLancamento = tipoLancamento;
+	}
+
+	public boolean isAlterado() {
+		return alterado;
+	}
+
+	public void setAlterado(boolean alterado) {
+		this.alterado = alterado;
+	}
+
+	public boolean isCancelado() {
+		return cancelado;
+	}
+
+	public void setCancelado(boolean cancelado) {
+		this.cancelado = cancelado;
+	}
+
 	/**
 	 * Construtor padrão.
 	 */
@@ -276,11 +312,27 @@ public class ProdutoLancamentoDTO implements Serializable {
 		
 		this.parcial = Util.getEnumByStringValue(TipoLancamentoParcial.values(), parcial);
 		
-		if (this.parcial == null) {
-			this.descricaoLancamento = "Lancamento";
+		if (this.tipoLancamento != null && this.tipoLancamento.equals(TipoLancamento.REDISTRIBUICAO.name())) {
+			this.descricaoLancamento = TipoLancamento.REDISTRIBUICAO.getDescricao();
+
+		} else if (this.parcial != null) {
+			if(this.parcial.equals(TipoLancamentoParcial.FINAL.name())){
+			 
+				this.descricaoLancamento = TipoLancamentoParcial.FINAL.getDescricao();
+			 
+	 	    } if(this.parcial.equals(TipoLancamentoParcial.PARCIAL.name())){
+			
+	 	    	this.descricaoLancamento = TipoLancamentoParcial.PARCIAL.getDescricao();
+	 	    } else{
+	 	    	
+	 	    	this.descricaoLancamento = this.parcial.getDescricao();
+	 	    }
+
 		} else {
-			this.descricaoLancamento = this.parcial.getDescricao();
+			this.descricaoLancamento = TipoLancamento.LANCAMENTO.getDescricao();
 		}
+		
+		
 	}
 	
 	/**
@@ -543,6 +595,14 @@ public class ProdutoLancamentoDTO implements Serializable {
 		} else if (!idLancamento.equals(other.idLancamento))
 			return false;
 		return true;
+	}
+
+	public Long getPeb() {
+		return peb;
+	}
+
+	public void setPeb(Long peb) {
+		this.peb = peb;
 	}
 	
 }

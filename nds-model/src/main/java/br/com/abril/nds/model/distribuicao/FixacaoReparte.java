@@ -2,9 +2,7 @@ package br.com.abril.nds.model.distribuicao;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,9 +13,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
@@ -33,17 +32,21 @@ public class FixacaoReparte {
 	@ManyToOne
 	@JoinColumn(name = "ID_COTA")
 	private Cota cotaFixada;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_CLASSIFICACAO_EDICAO", nullable = true)
+    private TipoClassificacaoProduto classificacaoProdutoEdicao;
 	
-	@ManyToOne
-	@JoinColumn(name = "ID_PRODUTO")
-	private Produto produtoFixado;
+	@Column(name = "CODIGO_ICD")
+	private String codigoICD;
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_USUARIO")
 	private Usuario usuario;
-	
-	@OneToMany(mappedBy="fixacaoReparte", cascade={CascadeType.REMOVE})
-	List<RepartePDV> repartesPDV;
+
+	@Cascade({CascadeType.REMOVE,CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
+	@OneToMany(mappedBy="fixacaoReparte")
+	List<FixacaoRepartePdv> repartesPDV;
 	
 	@Column(name="QTDE_EDICOES")
 	private Integer qtdeEdicoes;
@@ -63,6 +66,12 @@ public class FixacaoReparte {
 	@Column(name="DATA_HORA")
 	private Date dataHora;
 	
+	@Column(name="MANTER_FIXA")
+	private Boolean manterFixa = false;
+	
+	@Column(name="DATA_FIXA_CADASTRO_FIXACAO")
+	private Date dataFixa;
+	
 	public Long getId() {
 		return id;
 	}
@@ -79,12 +88,12 @@ public class FixacaoReparte {
 		this.cotaFixada = cotaFixada;
 	}
 
-	public Produto getProdutoFixado() {
-		return produtoFixado;
+	public String getCodigoICD() {
+		return codigoICD;
 	}
 
-	public void setProdutoFixado(Produto produtoFixado) {
-		this.produtoFixado = produtoFixado;
+	public void setCodigoICD(String codigoICD) {
+		this.codigoICD = codigoICD;
 	}
 
 
@@ -160,17 +169,36 @@ public class FixacaoReparte {
 		
 	}
 
-	public List<RepartePDV> getRepartesPDV() {
+	public List<FixacaoRepartePdv> getRepartesPDV() {
 		return repartesPDV;
 	}
 
-	public void setRepartesPDV(List<RepartePDV> repartesPDV) {
+	public void setRepartesPDV(List<FixacaoRepartePdv> repartesPDV) {
 		this.repartesPDV = repartesPDV;
 	}
 
+	public Boolean isManterFixa() {
+		return manterFixa;
+	}
 
+	public void setManterFixa(Boolean manterFixa) {
+		this.manterFixa = manterFixa;
+	}
 
-	
+    public TipoClassificacaoProduto getClassificacaoProdutoEdicao() {
+        return classificacaoProdutoEdicao;
+    }
 
+    public void setClassificacaoProdutoEdicao(TipoClassificacaoProduto classificacaoProdutoEdicao) {
+        this.classificacaoProdutoEdicao = classificacaoProdutoEdicao;
+    }
+
+	public Date getDataFixa() {
+		return dataFixa;
+	}
+
+	public void setDataFixa(Date dataFixa) {
+		this.dataFixa = dataFixa;
+	}
+    
 }
-

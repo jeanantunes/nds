@@ -5,8 +5,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
+import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -77,7 +79,11 @@ public interface ProdutoEdicaoService {
 	 */
 	List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(String codigoProduto);
 
-	List<ProdutoEdicao> obterProdutoPorCodigoNomeParaRecolhimento(String codigoNomeProduto, Integer numeroCota, Integer quantidadeRegisttros);
+	List<ProdutoEdicao> obterProdutoPorCodigoNomeParaRecolhimento(
+			String codigoNomeProduto, 
+			Integer numeroCota, 
+			Integer quantidadeRegistros,
+			Map<Long, DataCEConferivelDTO> mapaDataCEConferivel);
 	
 	
 	/**
@@ -109,7 +115,7 @@ public interface ProdutoEdicaoService {
 	 * @return
 	 */
 	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int page, int maxResults);
 	
@@ -121,8 +127,8 @@ public interface ProdutoEdicaoService {
 	 * 
 	 * @return
 	 */
-	public Integer countPesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde);
 	
 	/**
@@ -133,7 +139,7 @@ public interface ProdutoEdicaoService {
 	 * @param contentType
 	 * @param imgInputStream
 	 */
-	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream);
+	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream,boolean istrac29);
 	
 	/**
 	 * Exclui uma Edição da base de dados.<br>
@@ -180,7 +186,7 @@ public interface ProdutoEdicaoService {
 	 * 
 	 * @return
 	 */
-	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao, boolean redistribuicao, String situacaoProdutoEdicao);
+	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, Long idProdutoEdicao, boolean redistribuicao, String situacaoProdutoEdicao);
 
 	public ProdutoEdicao buscarPorID(Long idProdutoEdicao);
 	
@@ -206,5 +212,13 @@ public interface ProdutoEdicaoService {
 	public List<AnaliseHistogramaDTO> obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,String[] faixasVenda, String[] edicoes);
 
 	public abstract List<ItemAutoComplete> obterPorCodigoBarraILike(String codigoBarra);
+
+	void insereVendaRandomica(String codigoProduto, Integer numeroEdicao);
+
+    Integer obterNumeroLancamento(Long idProdutoEdicao, Long idPeriodo);
+ 
+    public void tratarInformacoesAdicionaisProdutoEdicaoArquivo(ProdutoEdicaoDTO prodEdicao);
+    
+    List<ProdutoEdicao> obterProdutosEdicaoPorId(Set<Long> idsProdutoEdicao);
 	
 }

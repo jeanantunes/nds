@@ -216,7 +216,8 @@ public class ConsultaNotasController extends BaseController {
 		
 		for (Fornecedor f : fornecedores){
 			
-			if (!f.getJuridica().getNomeFantasia().equals("Dinap") && !f.getJuridica().getNomeFantasia().equals("FC")){
+			
+			if (f.getFornecedorUnificador()==null){
 				
 				fornecedoresDistribuicao.add(f);
 			}

@@ -61,12 +61,12 @@ var parametrosDistribuidorController = $.extend(true, {
 				var startTag = '<table width="441" border="0" cellpadding="0" cellspacing="1" id="tableDiasDistribuidorFornecedor"><tr class="header_table"><td>Fornecedor</td><td align="center">Lançamento</td><td align="center">Recolhimento</td><td align="center">&nbsp;</td></tr>';
 				var endTag = '</table>';
 				var newTable = startTag;
-				$.each(resultado.rows, function(index, row) {
+				$.each(resultado, function(index, row) {
 					newTable += '<tr class="class_linha_1"><td width="139">' + 
-					row.cell.fornecedor.juridica.nomeFantasia + '</td><td width="144" align="center">' + 
-					row.cell.diasLancamento + '</td><td width="125" align="center">' + 
-					row.cell.diasRecolhimento + 
-					'</td><td width="28" align="center"><a href="javascript:;" onclick="parametrosDistribuidorController.excluirDiasDistribuidorFornecedor(' + row.cell.fornecedor.id + ')" ><img src="'+ contextPath +'/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></a></td></tr>';
+					row.fornecedor.juridica.nomeFantasia + '</td><td width="144" align="center">' + 
+					row.diasLancamento + '</td><td width="125" align="center">' + 
+					row.diasRecolhimento + 
+					'</td><td width="28" align="center"><a href="javascript:;" onclick="parametrosDistribuidorController.excluirDiasDistribuidorFornecedor(' + row.fornecedor.id + ')" ><img src="'+ contextPath +'/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></a></td></tr>';
 				});
 				newTable += endTag;
 				$('#spanDiasDistribuidorFornecedor', this.workspace).html(newTable);
@@ -199,7 +199,56 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaDe', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe', value: $('#prazoAvisoPrevioValidadeGarantiaSobraDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaEm', this.workspace).is(':checked')},
-			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm', this.workspace).is(':checked')}
+			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm', this.workspace).is(':checked')},
+			//Grid Distribuicao
+			{name:'parametrosDistribuidor.geracaoAutomaticaEstudo', value: $('#geracaoAutomaticaEstudo', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.vendaMediaMais', value: $('#vendaMediaMais', this.workspace).val()},
+			{name:'parametrosDistribuidor.pracaVeraneio', value: $('#pracaVeraneio', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.complementarAutomatico', value: $('#complementarAutomatico', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.percentualMaximoFixacao', value: $('#percentualMaximoFixacao', this.workspace).val()},
+			
+			//Grid Classificacao Cota
+			{name:'parametrosDistribuidor.listClassificacaoCota[0].id', value: $('#listClassificacaoCota0\\.id').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[0].codigoClassificacaoCota', value: $('#listClassificacaoCota0\\.codigoClassificacaoCota').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[0].valorDe', value: $('#listClassificacaoCota0\\.valorDe').val().replace(/^.*\s|\./g, '').replace(/,/g, ',')},
+			{name:'parametrosDistribuidor.listClassificacaoCota[0].valorAte', value:$('#listClassificacaoCota0\\.valorAte').val().replace(/^.*\s|\./g, '').replace(/,/g, ',')},
+			
+			{name:'parametrosDistribuidor.listClassificacaoCota[1].id', value: $('#listClassificacaoCota1\\.id').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[1].codigoClassificacaoCota', value: $('#listClassificacaoCota1\\.codigoClassificacaoCota').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[1].valorDe', value: $('#listClassificacaoCota1\\.valorDe').val().replace(/^.*\s|\./g, '').replace(/,/g, ',')},
+			{name:'parametrosDistribuidor.listClassificacaoCota[1].valorAte', value:$('#listClassificacaoCota1\\.valorAte').val().replace(/^.*\s|\./g, '').replace(/,/g, ',')},
+			
+			{name:'parametrosDistribuidor.listClassificacaoCota[2].id', value: $('#listClassificacaoCota2\\.id').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[2].codigoClassificacaoCota', value: $('#listClassificacaoCota2\\.codigoClassificacaoCota').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[2].valorDe', value: $('#listClassificacaoCota2\\.valorDe').val().replace(/^.*\s|\./g, '').replace(/,/g, ',')},
+			{name:'parametrosDistribuidor.listClassificacaoCota[2].valorAte', value:$('#listClassificacaoCota2\\.valorAte').val().replace(/^.*\s|\./g, '').replace(/,/g, ',')},
+			
+			{name:'parametrosDistribuidor.listClassificacaoCota[3].id', value: $('#listClassificacaoCota3\\.id').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[3].codigoClassificacaoCota', value: $('#listClassificacaoCota3\\.codigoClassificacaoCota').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[3].valorDe', value: $('#listClassificacaoCota3\\.valorDe').val().replace(/^.*\s|\./g, '').replace(/,/g, ',')},
+			{name:'parametrosDistribuidor.listClassificacaoCota[3].valorAte', value:$('#listClassificacaoCota3\\.valorAte').val().replace(/^.*\s|\./g, '').replace(/,/g, ',')},
+			
+			{name:'parametrosDistribuidor.listClassificacaoCota[4].id', value: $('#listClassificacaoCota4\\.id').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[4].codigoClassificacaoCota', value: $('#listClassificacaoCota4\\.codigoClassificacaoCota').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[4].valorDe', value: $('#listClassificacaoCota4\\.valorDe').val().replace(/^.*\s|\./g, '').replace(/,/g, ',')},
+			{name:'parametrosDistribuidor.listClassificacaoCota[4].valorAte', value:$('#listClassificacaoCota4\\.valorAte').val().replace(/^.*\s|\./g, '').replace(/,/g, ',')},
+			
+			//Grid Percentual Excedente
+			{name:'parametrosDistribuidor.listPercentualExcedente[0].id', value: $('#listPercentualExcedente0\\.id').val()},
+			{name:'parametrosDistribuidor.listPercentualExcedente[0].eficiencia', value: $('#listPercentualExcedente0\\.eficiencia').val()},
+			{name:'parametrosDistribuidor.listPercentualExcedente[0].venda', value: $('#listPercentualExcedente0\\.venda').val()},
+			{name:'parametrosDistribuidor.listPercentualExcedente[0].pdv', value: $('#listPercentualExcedente0\\.pdv').val()},
+			
+			{name:'parametrosDistribuidor.listPercentualExcedente[1].id', value: $('#listPercentualExcedente1\\.id').val()},
+			{name:'parametrosDistribuidor.listPercentualExcedente[1].eficiencia', value: $('#listPercentualExcedente1\\.eficiencia').val()},
+			{name:'parametrosDistribuidor.listPercentualExcedente[1].venda', value: $('#listPercentualExcedente1\\.venda').val()},
+			{name:'parametrosDistribuidor.listPercentualExcedente[1].pdv', value: $('#listPercentualExcedente1\\.pdv').val()},
+			
+			{name:'parametrosDistribuidor.listPercentualExcedente[2].id', value: $('#listPercentualExcedente2\\.id').val()},
+			{name:'parametrosDistribuidor.listPercentualExcedente[2].eficiencia', value: $('#listPercentualExcedente2\\.eficiencia').val()},
+			{name:'parametrosDistribuidor.listPercentualExcedente[2].venda', value: $('#listPercentualExcedente2\\.venda').val()},
+			{name:'parametrosDistribuidor.listPercentualExcedente[2].pdv', value: $('#listPercentualExcedente2\\.pdv').val()},
+			
 		];
 		
 		$.postJSON(parametrosDistribuidorController.path + "gravar",
@@ -238,6 +287,39 @@ var parametrosDistribuidorController = $.extend(true, {
 	},
 
 	popup_confirm: function() {
+	    
+	    var arrayMensagemWarning = new Array();
+	    
+	    var vendaMediaMais = $('#vendaMediaMais', this.workspace).val();
+	    var percentualMaximoFixacao = $('#percentualMaximoFixacao', this.workspace).val();
+	    
+	    var eficiencia0 = parseInt($('#listPercentualExcedente0\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente0\\.pdv', this.workspace).val());
+	    var eficiencia1 = parseInt($('#listPercentualExcedente1\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente1\\.pdv', this.workspace).val());
+	    var eficiencia2 = parseInt($('#listPercentualExcedente2\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente2\\.pdv', this.workspace).val());
+	    
+	    if(vendaMediaMais > 10 || vendaMediaMais < 1) {
+		arrayMensagemWarning.push("- \'Venda Média +\' deve ser de 01 a 10!");
+	    }
+		
+	    if(percentualMaximoFixacao > 75 || percentualMaximoFixacao < 1) {
+		arrayMensagemWarning.push("- \'% Máximo de Fixação\' deve ser de 1% a 75%!");
+	    }
+	    
+	    if(eficiencia0 != 100) {
+		arrayMensagemWarning.push("- '\> 60 %\' deve ter o total da soma igual a 100%!");
+	    }
+	    
+	    if(eficiencia1 != 100) {
+		arrayMensagemWarning.push("- '\> 30% a 60%\' deve ter o total da soma igual a 100%!");
+	    }
+	    
+	    if(eficiencia2 != 100) {
+		arrayMensagemWarning.push("- '\0% a 30%\' deve ter o total da soma igual a 100%!");
+	    }
+	    
+	    if(arrayMensagemWarning.length > 0) {
+		exibirMensagem('WARNING', arrayMensagemWarning);
+	    } else {
 		
 		$("#dialog-confirm", this.workspace).dialog({
 			resizable: false,
@@ -255,8 +337,9 @@ var parametrosDistribuidorController = $.extend(true, {
 			}, 
 			form: $("#dialog-confirm", this.workspace).parents("form")
 		});
+	    }
 	},
-		
+	
 	popup_pesq_fornecedor: function() {
 		
 		$("#dialog-pesq-fornecedor", this.workspace).dialog({
@@ -486,7 +569,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		$("#chamadaoValorConsignado", this.workspace).maskMoney({
 			 thousands:'.', 
-			 decimal:',', 
+			 decimal:',' 
 		});
 		
 		$("#chamadaoDiasSuspensao", this.workspace).maskMoney({
@@ -517,7 +600,16 @@ var parametrosDistribuidorController = $.extend(true, {
 		parametrosDistribuidorController.utilizaContratoCotasListener();
 		
 		
-		$("#tabDistribuidor", this.workspace).tabs();
+		$("#tabDistribuidor", this.workspace).tabs({
+			show: function(event,ui){
+				var btnSalvar = $('#btnSalvar', this.workspace);
+				if(ui.index == 2){
+					btnSalvar.hide();
+				}else{
+					btnSalvar.show();
+				}
+			}
+		});
 		
 		parametrosDistribuidorController.alternarControleAprovacao();
 		
@@ -567,18 +659,97 @@ var parametrosDistribuidorController = $.extend(true, {
 		$("#numeroDDD", this.workspace).numeric();
 		$("#numeroTelefone", this.workspace).numeric();
 		
+		
+		// Configs iniciais da aba Distribuição - F2
+		$('#listClassificacaoCota0\\.valorDe', this.workspace)
+		.add('#listClassificacaoCota0\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota1\\.valorDe', this.workspace)
+		.add('#listClassificacaoCota1\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota2\\.valorDe', this.workspace)
+		.add('#listClassificacaoCota2\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota3\\.valorDe', this.workspace)
+		.add('#listClassificacaoCota3\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota4\\.valorDe', this.workspace)
+		.add('#listClassificacaoCota4\\.valorAte', this.workspace)
+		.on('blur', function() {
+			$(this).formatCurrency({
+				symbol: 'R$ ',
+				decimalSymbol: ',',
+				digitGroupSymbol: '.'
+			});
+			
+		})
+		.formatCurrency({
+			symbol: 'R$ ',
+			decimalSymbol: ',',
+			digitGroupSymbol: '.'
+		});
+		
+		if ($('#listClassificacaoCota4\\.valorDe', this.workspace).val() === '') {
+			$('#listClassificacaoCota4\\.valorDe', this.workspace).val('0.00').formatCurrency({
+				symbol: 'R$ ',
+				decimalSymbol: ',',
+				digitGroupSymbol: '.'
+			});
+		}
+		
+		$('#listClassificacaoCota1\\.valorAte', this.workspace)
+		.on('blur', function(){
+			if (this.value) {
+				$('#listClassificacaoCota0\\.valorAte', this.workspace)
+				.val(this.value)
+				.formatCurrency({
+					symbol: 'R$ ',
+					decimalSymbol: ',',
+					digitGroupSymbol: '.'
+				});
+			}
+		});
+		
+		$('#listClassificacaoCota2\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota3\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota4\\.valorAte', this.workspace)
+		.on('blur', function(){
+			if (this.value) {
+				var intId = parseInt(this.id.match(/\d/), 10);
+				var intIdValorDe = intId - 1;
+				var campoValorDe = $('#listClassificacaoCota' + intIdValorDe + '\\.valorDe');
+				var numValorAte = parseFloat(this.value.replace(/\D/g,'')) / 100;
+				campoValorDe.val((numValorAte + 0.01).toFixed(2)).formatCurrency({
+					symbol: 'R$ ',
+					decimalSymbol: ',',
+					digitGroupSymbol: '.'
+				});
+				if (intId === 2) {
+					$('#listClassificacaoCota0\\.valorDe').val(campoValorDe.val());
+				}
+			}
+		});
+		
+		$('#vendaMediaMais', this.workspace)
+		.add('#percentualMaximoFixacao', this.workspace)
+		.add('#listPercentualExcedente0\\.venda', this.workspace)
+		.add('#listPercentualExcedente0\\.pdv', this.workspace)
+		.add('#listPercentualExcedente1\\.venda', this.workspace)
+		.add('#listPercentualExcedente1\\.pdv', this.workspace)
+		.add('#listPercentualExcedente2\\.venda', this.workspace)
+		.add('#listPercentualExcedente2\\.pdv', this.workspace)
+		.numeric();
+		
+		// fim F2
+		
 	},
 	
 	desabilitarItens : function() {
 
-		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [6] );
+		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [7] );
 		$("#chamadaoDiasSuspensao", this.workspace).disable();
 		$("#chamadaoValorConsignado", this.workspace).disable();
-		$("#utilizaDesconto", this.workspace).disable();
-		$("#percentualDesconto", this.workspace).disable();
-		$("#parcelamentoDividas", this.workspace).disable();
-		$("#negociacaoAteParcelas", this.workspace).disable();
 		
+		//$("#utilizaDesconto", this.workspace).disable();
+		//$("#percentualDesconto", this.workspace).disable();
+		//$("#parcelamentoDividas", this.workspace).disable();
+		//$("#negociacaoAteParcelas", this.workspace).disable();
 	},
 	
 	dialogConfirmarGrupo: function() {

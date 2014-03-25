@@ -164,7 +164,7 @@ public class FiadorServiceImpl implements FiadorService {
 		List<Cota> listaCotas = new ArrayList<Cota>();
 		if (listaCotasAssociar != null){
 			for (Integer numeroCota : listaCotasAssociar){
-				listaCotas.add(this.cotaRepository.obterPorNumerDaCota(numeroCota));
+				listaCotas.add(this.cotaRepository.obterPorNumeroDaCota(numeroCota));
 			}
 		}
 		

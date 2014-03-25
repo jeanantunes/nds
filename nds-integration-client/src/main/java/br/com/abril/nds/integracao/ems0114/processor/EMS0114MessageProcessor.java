@@ -13,15 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.canonic.EMS0114Input;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.integracao.model.canonic.EMS0114Input;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.ParciaisService;
 
 @Component
 public class EMS0114MessageProcessor extends AbstractRepository implements
@@ -35,9 +37,11 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
 
+	@Autowired
+	private ParciaisService parciaisService;
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -138,10 +142,36 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			lancamento.setAlteradoInteface(true);
 			this.getSession().merge(lancamento);
 			
+			this.tratarParciais(lancamento, message, codigoProduto, edicao);
 		}
-		
 	}
 
+	private boolean tratarParciais(Lancamento lancamento, Message message, String codigoProduto, Long edicao) {
+		
+		try {
+			
+			PeriodoLancamentoParcial periodoLancamentoParcial = lancamento.getPeriodoLancamentoParcial();
+			
+			if (periodoLancamentoParcial != null) {
+				
+				this.parciaisService.reajustarRedistribuicoes(
+					periodoLancamentoParcial,
+					lancamento.getDataLancamentoDistribuidor(),
+					lancamento.getDataRecolhimentoDistribuidor());
+			}
+		
+			return false;
+			
+		} catch (Exception e) {
+			ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					String.format("Erro ao processar as parcias para o Produto %1$s Edicao %2$s. " + e.getMessage(),
+								  codigoProduto, edicao));
+			
+			return true;
+		}
+	}
 	
 	/**
 	 * Obtém o Lançamento com a data de recolhimento mais próximo da data de 
@@ -159,6 +189,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 
 		criteria.add(Restrictions.gt("dataRecolhimentoPrevista", dataGeracaoArquivo));
 		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		criteria.add(Restrictions.eq("tipoLancamento", TipoLancamento.LANCAMENTO));
 		criteria.addOrder(Order.asc("dataRecolhimentoPrevista"));
 		
 		criteria.setFetchSize(1);
@@ -174,6 +205,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 
 		criteria.add(Restrictions.le("dataRecolhimentoPrevista", dataGeracaoArquivo));
 		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		criteria.add(Restrictions.eq("tipoLancamento", TipoLancamento.LANCAMENTO));
 		criteria.addOrder(Order.desc("dataRecolhimentoPrevista"));
 		
 		criteria.setFetchSize(1);
@@ -205,7 +237,5 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 	
 	@Override
 	public void posProcess(Object tempVar) {
-		// TODO Auto-generated method stub
 	}
-	
 }

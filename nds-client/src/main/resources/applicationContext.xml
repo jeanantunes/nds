@@ -7,29 +7,27 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:jee="http://www.springframework.org/schema/jee"
 	xmlns:task="http://www.springframework.org/schema/task" 
-	xsi:schemaLocation="
-    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
-    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
-    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
-    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
-    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
-    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
 	<aop:aspectj-autoproxy/>
 	
 	<context:annotation-config />
-	<context:property-placeholder location="classpath:nds-client.properties" />
+	<context:property-placeholder location="classpath:nds-client.properties, classpath:prophecies.properties" ignore-unresolvable="true" />
 	<context:component-scan base-package="br.com.abril.nds" />
 	
 	<!-- TOMCAT -->
-	<jee:jndi-lookup id="dataSource" jndi-name="${jndi-name}"/>	
+	<jee:jndi-lookup id="dataSource" jndi-name="${jndi-name}"/>
 	<jee:jndi-lookup  id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties" />
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<constructor-arg ref="dataSource" />	
+	</bean>
 
 	<task:annotation-driven />
 	
 	<util:properties id="properties" location="classpath:nds-client.properties" />		
 	<util:properties id="queries" location="classpath:/query.properties" />
+	<util:properties id="query_estudo" location="classpath:/query-estudo.properties" />
 	
 	<!-- <bean id="ndsProfiler" class="br.com.abril.nds.client.aop.profiler.NdsProfiler"/> -->
 	
@@ -37,7 +35,13 @@
 		
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
 	
+	
+	<!-- MASTER -->
 	<!-- <bean id="interceptor" class="br.com.abril.nds.interceptor.auditoria.EntityInterceptor" /> -->
+	
+	<!-- F2 -->
+	<!-- Descomentar abaixo para ligar o bloqueador -->
+	<!-- <bean id="interceptor" class="br.com.abril.nds.interceptor.EntityInterceptor" />-->
 	
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -48,9 +52,9 @@
 			<props>			
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
 				<prop key="hibernate.show_sql">true</prop>
-				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.format_sql">false</prop>
 				<prop key="hibernate.jdbc.batch_size">50</prop>
-				<!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->
+				<!-- prop key="hibernate.hbm2ddl.auto">update</prop-->
 				
 				<!-- CONNECTION -->
 				
@@ -77,6 +81,7 @@
 			</props>
 		</property>
 		
+		<!-- Descomentar abaixo para ligar o bloqueador -->
 		<!-- <property name="entityInterceptor">
     		<ref local="interceptor" />
   		</property> -->
@@ -89,12 +94,12 @@
 	</bean>
 	
 	<tx:annotation-driven transaction-manager="transactionManager" />
-	
+
 	<bean id="jobFactoryBean" class="br.com.abril.nds.client.quartz.AutowiringSpringBeanJobFactory"></bean>
 	
 	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
     	<property name="configLocation" value="classpath:quartz.properties"/>
         <property name="jobFactory" ref="jobFactoryBean"/>
 	</bean>
-
+	
 </beans>

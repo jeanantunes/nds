@@ -43,6 +43,30 @@ public class ParametrosDistribuidorEmissaoDocumentoRepositoryImpl extends Abstra
 		return (isUtilizaImpressao == null) ? false : isUtilizaImpressao; 
 		
 	}
-	
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isUtilizaEnvioEmail(TipoParametrosDistribuidorEmissaoDocumento tipoParametrosDistribuidorEmissaoDocumento) {
+
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select  				");
+		hql.append(" p.utilizaEmail	 		");
+		hql.append(" from ");
+		hql.append(" ParametrosDistribuidorEmissaoDocumento p ");
+		hql.append(" where   ");
+		hql.append(" p.tipoParametrosDistribuidorEmissaoDocumento = :tipoParametrosDistribuidorEmissaoDocumento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("tipoParametrosDistribuidorEmissaoDocumento", tipoParametrosDistribuidorEmissaoDocumento);
+		
+		query.setMaxResults(1);
+		
+		Boolean isUtilizaImpressao = (Boolean) query.uniqueResult();
+		
+		return (isUtilizaImpressao == null) ? false : isUtilizaImpressao; 
+	}
 }

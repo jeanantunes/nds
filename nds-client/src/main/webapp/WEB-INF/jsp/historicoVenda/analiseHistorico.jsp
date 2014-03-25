@@ -5,6 +5,7 @@
 
 $(function() {
 	analiseHistoricoVendaController.init();
+	//if(typeof(montarDados) == "function")montarDados(anaLiseHistogramaController.workspace);
 });
 
 
@@ -37,7 +38,7 @@ function escondeDados(){
 .class_media{width:35px; color:#F00; font-weight:bold;}
 .class_vlrs{width:35px;}
 .class_vda{width:35px; color:#F00; font-weight:bold;}
-.detalhesDados{position:absolute; display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); z-index:1; width:950px; }
+.detalhesDados{display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); z-index:1; width:950px; }
 </style>
 
 <div id="dialog-cotas-detalhes" title="Pontos de Vendas" style="display:none;">  
@@ -110,7 +111,7 @@ function escondeDados(){
                 	</c:if>
                 	<c:if test="${status.last}">
                 		<c:forEach var="i" begin="1" end="${6 - status.count}">
-	                		<td width="85" align="center" class="header_table">0000</td>
+	                		<td width="85" align="center" class="header_table"></td>
                 		</c:forEach>
                 	</c:if>
                 </c:forEach>

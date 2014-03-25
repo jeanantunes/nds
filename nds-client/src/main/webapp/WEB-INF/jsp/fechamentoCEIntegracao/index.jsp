@@ -2,7 +2,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
-<script type="text/javascript" src="scripts/fechamentoCEIntegracao.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fechamentoCEIntegracao.js"></script>
 <script language="javascript" type="text/javascript">
 
 	$(function() {
@@ -19,9 +21,35 @@
 <body>
 
 	<iframe src="" id="download-iframe-fechamento" style="display:none;"></iframe>
-
+	
+	<form id="idFormConfirmacaoSalvar">
+		<div id="dialog-ConfirmacaoSalvar" title="Fechamento CE - Integração" style="display:none;">
+	  		<p>Deseja salvar as informações?</p>
+		</div>
+	</form>
+	
+	<form id="idFormConfirmacaoFechamento">
+		<div id="dialog-Confirmacao-Fechamento" title="Fechamento CE - Integração" style="display:none;">
+	  		<p>Deseja efetuar o fechamento da CE - Integração?</p>
+		</div>
+	</form>
+	
+	<form id="idFormPerdaGanhos">
+		<div id="dialog-perdas-ganhos-Fechamento" title="Diferença(s) Fechamento CE - Integração" style="display:none;">
+	    	<table class="perdaGanhoGrid"></table>
+		</div>
+	</form>
+	
+	
     <div class="areaBts">
     	<div class="area">
+    		
+    		<span class="bt_novos bt_acoes_grid_ce" id="btnSalvarCE" >
+		      	<a isEdicao="true" href="javascript:;" title="Salvar" rel="tipsy" title="Salvar">
+		      		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" id="imagemSalvarCE" />
+		      	</a>
+		    </span>
+		    
     		<span class="bt_novos bt_acoes_grid_ce" id="btnFechamento" >
 		      	<a isEdicao="true" href="javascript:;" title="Fechamento" rel="tipsy" title="Fechamento">
 		      		<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" id="imagemFechamento" />
@@ -57,9 +85,15 @@
 				</c:if>					       
 	       
 	       </span>
+		   
+		   <span class="bt_novos bt_acoes_grid_ce" id="btnImpressaoCE" >
+		      	<a isEdicao="true" href="javascript:;" title="Imprimir CE Devolução" rel="tipsy">
+		      		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" id="imagemImprimirCE" />
+		      	</a>
+		    </span>
+		    
 		       
-		       
-		       <span class="bt_arq bt_acoes_grid_ce">
+		    <span class="bt_arq bt_acoes_grid_ce">
 				  	<a isEdicao="true" href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 				  		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 					</a>

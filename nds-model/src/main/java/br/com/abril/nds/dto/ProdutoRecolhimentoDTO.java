@@ -70,6 +70,18 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	private boolean produtoAgrupado;
 	
 	private List<Long> idsLancamentosAgrupados = new ArrayList<>();
+	
+	//TODO
+	private Long peb;
+
+	public Long getPeb() {
+
+      return peb;
+	}
+
+	public void setPeb(Long peb) {
+		this.peb = peb;
+	}
 
 	/**
 	 * Construtor padrão.

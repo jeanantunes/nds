@@ -1,10 +1,13 @@
 package br.com.abril.nds.model.financeiro;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,6 +17,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 
@@ -40,6 +45,9 @@ public class Negociacao {
 	@Column(name = "COMISSAO_PARA_SALDO_DIVIDA", precision=18, scale=4)
 	private BigDecimal comissaoParaSaldoDivida;
 	
+	@Column(name = "COMISSAO_ORIGINAL_COTA", precision=18, scale=4)
+	private BigDecimal comissaoOriginalCota;
+	
 	@Column(name = "NEGOCIACAO_AVULSA")
 	private boolean negociacaoAvulsa;
 	
@@ -55,6 +63,23 @@ public class Negociacao {
 	
 	@Column(name = "VALOR_DIVIDA_PAGA_COMISSAO", precision=18, scale=4)
 	private BigDecimal valorDividaPagaComissao;
+	
+	@Column(name = "VALOR_ORIGINAL", precision=18, scale=4)
+	private BigDecimal valorOriginal;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATA_CRIACAO")
+	private Date dataCriacao;
+	
+	@Column(name="TIPO_NEGOCIACAO")
+	@Enumerated(EnumType.STRING)
+	private TipoNegociacao tipoNegociacao;
+	
+	@OneToMany
+	@JoinTable(name="NEGOCIACAO_MOV_FINAN",
+			joinColumns = @JoinColumn(name="NEGOCIACAO_ID"),
+			inverseJoinColumns = @JoinColumn(name="MOV_FINAN_ID"))
+	private List<MovimentoFinanceiroCota> movimentosFinanceiroCota;
 
 	public Long getId() {
 		return id;
@@ -86,6 +111,20 @@ public class Negociacao {
 
 	public void setComissaoParaSaldoDivida(BigDecimal comissaoParaSaldoDivida) {
 		this.comissaoParaSaldoDivida = comissaoParaSaldoDivida;
+	}
+
+	/**
+	 * @return the comissaoOriginalCota
+	 */
+	public BigDecimal getComissaoOriginalCota() {
+		return comissaoOriginalCota;
+	}
+
+	/**
+	 * @param comissaoOriginalCota the comissaoOriginalCota to set
+	 */
+	public void setComissaoOriginalCota(BigDecimal comissaoOriginalCota) {
+		this.comissaoOriginalCota = comissaoOriginalCota;
 	}
 
 	public boolean isNegociacaoAvulsa() {
@@ -126,5 +165,50 @@ public class Negociacao {
 
 	public void setValorDividaPagaComissao(BigDecimal valorDividaPagaComissao) {
 		this.valorDividaPagaComissao = valorDividaPagaComissao;
+	}
+
+	/**
+	 * @return the valorOriginal
+	 */
+	public BigDecimal getValorOriginal() {
+		return valorOriginal;
+	}
+
+	/**
+	 * @param valorOriginal the valorOriginal to set
+	 */
+	public void setValorOriginal(BigDecimal valorOriginal) {
+		this.valorOriginal = valorOriginal;
+	}
+
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+
+	/**
+	 * @return the tipoNegociacao
+	 */
+	public TipoNegociacao getTipoNegociacao() {
+		return tipoNegociacao;
+	}
+
+	/**
+	 * @param tipoNegociacao the tipoNegociacao to set
+	 */
+	public void setTipoNegociacao(TipoNegociacao tipoNegociacao) {
+		this.tipoNegociacao = tipoNegociacao;
+	}
+
+	public List<MovimentoFinanceiroCota> getMovimentosFinanceiroCota() {
+		return movimentosFinanceiroCota;
+	}
+
+	public void setMovimentosFinanceiroCota(
+			List<MovimentoFinanceiroCota> movimentosFinanceiroCota) {
+		this.movimentosFinanceiroCota = movimentosFinanceiroCota;
 	}
 }

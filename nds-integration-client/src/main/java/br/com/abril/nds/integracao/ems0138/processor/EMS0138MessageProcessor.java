@@ -6,8 +6,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
 import org.lightcouch.CouchDbClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +15,7 @@ import br.com.abril.nds.dto.chamadaencalhe.integracao.ChamadaEncalheFornecedorIn
 import br.com.abril.nds.dto.chamadaencalhe.integracao.ChamadaEncalheFornecedorIntegracaoItemDTO;
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -56,8 +55,6 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 		message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), "MySQL : NDS : nds-client : root");
 		
 		EMS0138NotasCEIntegracao notasCEIntegracao = new EMS0138NotasCEIntegracao(); 
-		
-		List<NotaFiscal> notasFiscais = obterNotasFiscais();
 		List<ChamadaEncalheFornecedorIntegracaoDTO> chamadasEncalhe = obterChamadasEncalhe(message);
 		
 		notasCEIntegracao.setTipoDocumento("EMS0139");
@@ -127,7 +124,7 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 				NotaFiscalSaidaFornecedor nfsf = obterNotaFiscal(icef.getNumeroNotaEnvio());
 				
 				if(nfsf == null) {
-					ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Nota Fiscal Inexistente para a chamada de encalhe: "+ cefDTO.getNumeroChamadaEncalhe() +" / Item: "+ icef.getNumeroItem());
+					ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Nota Fiscal Inexistente para a chamada de encalhe: "+ cefDTO.getNumeroChamadaEncalhe());
 					continue;
 				}
 				
@@ -143,8 +140,7 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 				
 			}
 			
-			if(cefDTO.getItens() != null && cefDTO.getItens().size() > 0)
-				chamadasEncalheFornecedorDTO.add(cefDTO);
+			chamadasEncalheFornecedorDTO.add(cefDTO);
 			
 		}
 		

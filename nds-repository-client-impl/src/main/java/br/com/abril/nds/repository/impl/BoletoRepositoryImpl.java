@@ -7,12 +7,16 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.BoletoCotaDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
@@ -30,28 +34,29 @@ import br.com.abril.nds.vo.PaginacaoVO;
 
 
 /**
- * Classe de implementação referente ao acesso a dados da entidade 
+ * Classe de implementação referente ao acesso a dados da entidade
  * {@link br.com.abril.nds.model.financeiro.Boleto}
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Repository
 public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> implements BoletoRepository {
 
 	
-	/**
-	 * Construtor padrão
-	 */
+	    /**
+     * Construtor padrão
+     */
 	public BoletoRepositoryImpl() {
 		super(Boleto.class);
 	}
 
-	/**
-	 * Método responsável por obter a quantidade de boletos
-	 * @param filtro
-	 * @return quantidade: quantidade de boletos
-	 */
+	    /**
+     * Método responsável por obter a quantidade de boletos
+     * 
+     * @param filtro
+     * @return quantidade: quantidade de boletos
+     */
 	@Override
 	public long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro){
 		long quantidade = 0;
@@ -86,94 +91,260 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		return quantidade;
 	}
 	
-	/**
-	 * Método responsável por obter uma lista de boletos
-	 * @param filtro
-	 * @return query.list(): lista de boletos
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro) {
-
-		StringBuilder hql = new StringBuilder();
-		hql.append(" from Boleto b where ");		
-		hql.append(" b.cota.numeroCota = :ncota ");
+	private StringBuilder getSQLBoletosCota(FiltroConsultaBoletosCotaDTO filtro){
+	
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT ");	
+		
+		sql.append(" COB.NOSSO_NUMERO as nossoNumero, ");	
+		
+		sql.append(" COB.DT_EMISSAO as dataEmissao, ");	
+		
+		sql.append(" COB.DT_VENCIMENTO as dataVencimento, ");	
+		
+		sql.append(" COB.DT_PAGAMENTO as dataPagamento, ");	
+		
+		sql.append(" COB.ENCARGOS as encargos, ");	
+		
+		sql.append(" ROUND(COB.VALOR,2) as valor, ");	
+		
+		sql.append(" COB.TIPO_BAIXA as tipoBaixa, ");	
+		
+		sql.append(" COB.STATUS_COBRANCA as statusCobranca, ");	
+		
+		sql.append(" D.STATUS as statusDivida, ");	
+		
+		sql.append(" 'false' as boletoAntecipado, ");	
+		
+		sql.append(" 'true' as recebeCobrancaEmail ");	
+		
+		sql.append(" FROM COBRANCA COB ");	
+		
+		sql.append(" INNER JOIN COTA C ON C.ID = COB.COTA_ID ");
+		
+		sql.append(" INNER JOIN DIVIDA D ON D.ID = COB.DIVIDA_ID ");
+		
+		sql.append(" WHERE COB.TIPO_COBRANCA = :tipoCobrancaBoleto ");		
+		
+		sql.append(" AND C.NUMERO_COTA = :ncota ");
 
 		if (filtro.getDataVencimentoDe()!=null){
-		    hql.append(" and b.dataVencimento >= :vctode ");
-		}
-		if (filtro.getDataVencimentoAte()!=null){
-		    hql.append(" and b.dataVencimento <= :vctoate ");
-		}
-		if (filtro.getStatus()!=null){	  
-			hql.append(" and b.statusCobranca = :status");
+		
+			sql.append(" AND COB.DT_VENCIMENTO >= :vctode ");
 		}
 		
-		if (filtro.getOrdenacaoColuna() != null) {
+		if (filtro.getDataVencimentoAte()!=null){
+		    
+			sql.append(" AND COB.DT_VENCIMENTO <= :vctoate ");
+		}
+		
+		if (filtro.getStatus()!=null){	  
+			
+			sql.append(" AND COB.STATUS_COBRANCA = :status");
+		}
+		
+		return sql;
+	}
+	
+	private StringBuilder getSQLBoletosAntecipadosCota(FiltroConsultaBoletosCotaDTO filtro){
+		
+		StringBuilder sql = new StringBuilder();
+		
+        sql.append(" SELECT ");	
+		
+		sql.append(" BA.NOSSO_NUMERO as nossoNumero, ");	
+		
+		sql.append(" BA.DATA as dataEmissao, ");	
+		
+		sql.append(" BA.DATA_VENCIMENTO as dataVencimento, ");	
+		
+		sql.append(" BA.DATA_PAGAMENTO as dataPagamento, ");	
+
+		sql.append(" COALESCE(BA.VALOR_JUROS,0) + COALESCE(BA.VALOR_MULTA,0) as encargos, ");	
+		
+		sql.append(" ROUND(BA.VALOR,2) as valor, ");	
+		
+		sql.append(" BA.TIPO_BAIXA as tipoBaixa, ");	
+		
+		sql.append(" null as statusCobranca, ");	
+		
+		sql.append(" BA.STATUS as statusDivida, ");	
+		
+		sql.append(" 'true' as boletoAntecipado, ");	
+		
+		sql.append(" 'true' as recebeCobrancaEmail ");	
+		
+		sql.append(" FROM BOLETO_ANTECIPADO BA ");	
+		
+		sql.append(" INNER JOIN CHAMADA_ENCALHE_COTA AS CE ON (CE.ID = BA.CHAMADA_ENCALHE_COTA_ID) ");
+		
+		sql.append(" INNER JOIN COTA C ON C.ID = CE.COTA_ID ");
+		
+		sql.append(" WHERE C.NUMERO_COTA = :ncota ");
+		
+		sql.append(" AND BA.BOLETO_ANTECIPADO_ID IS NULL ");
+
+		if (filtro.getDataVencimentoDe()!=null){
+		
+			sql.append(" AND BA.DATA_VENCIMENTO >= :vctode ");
+		}
+		
+		if (filtro.getDataVencimentoAte()!=null){
+		    
+			sql.append(" AND BA.DATA_VENCIMENTO <= :vctoate ");
+		}
+		
+		if (filtro.getStatus()!=null){	  
+			
+			sql.append(" AND BA.STATUS = :statusBa ");
+		}
+		
+		return sql;
+	}
+	
+	private StringBuilder getOrdenacaoConsultaBoletos(FiltroConsultaBoletosCotaDTO filtro){
+		
+		StringBuilder sql = new StringBuilder();
+		
+        if (filtro.getOrdenacaoColuna() != null) {
+			
 			switch (filtro.getOrdenacaoColuna()) {
+			
 				case NOSSO_NUMERO:
-					hql.append(" order by b.cota.numeroCota ");
+					
+					sql.append(" ORDER BY nossoNumero ");
+					
 					break;
 				case DATA_EMISSAO:
-					hql.append(" order by b.dataEmissao ");
+					
+					sql.append(" ORDER BY dataEmissao ");
+					
 					break;
 				case DATA_VENCIMENTO:
-					hql.append(" order by b.dataVencimento ");
+
+					sql.append(" ORDER BY dataVencimento ");
+					
 					break;
 				case DATA_PAGAMENTO:
-					hql.append(" order by b.dataPagamento ");
+					
+					sql.append(" ORDER BY dataPagamento ");
+					
 					break;
 				case ENCARGOS:
-					hql.append(" order by b.encargos ");
+					
+					sql.append(" ORDER BY encargos ");
+					
 					break;
 				case VALOR:
-					hql.append(" order by b.valor ");
+					
+					sql.append(" ORDER BY valor ");
+					
 					break;
 				case TIPO_BAIXA:
-					hql.append(" order by b.tipoBaixa ");
+					
+					sql.append(" ORDER BY tipoBaixa ");
+					
 					break;
 				case STATUS_COBRANCA:
-					hql.append(" order by b.statusCobranca ");
+					
+					sql.append(" ORDER BY statusCobranca ");
+					
 					break;
 				default:
+					
 					break;
 			}
+			
 			if (filtro.getPaginacao().getOrdenacao() != null) {
-				hql.append(filtro.getPaginacao().getOrdenacao().toString());
+				
+				sql.append(filtro.getPaginacao().getOrdenacao().toString());
 			}	
 		}
+
+		return sql;
+	}
+	
+	    /**
+     * Método responsável por obter uma lista de boletos
+     * 
+     * @param filtro
+     * @return query.list(): lista de boletos
+     */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<BoletoCotaDTO> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro) {
+
+		StringBuilder sql = new StringBuilder();
 		
-		Query query = super.getSession().createQuery(hql.toString());
+        sql.append(this.getSQLBoletosCota(filtro));
+        
+        sql.append(" UNION ALL ");
+        
+        sql.append(this.getSQLBoletosAntecipadosCota(filtro));
+
+		sql.append(this.getOrdenacaoConsultaBoletos(filtro));
+		
+		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
+		query.addScalar("nossoNumero", StandardBasicTypes.STRING);
+		query.addScalar("dataEmissao", StandardBasicTypes.DATE);
+		query.addScalar("dataVencimento", StandardBasicTypes.DATE);
+		query.addScalar("dataPagamento", StandardBasicTypes.DATE);
+		query.addScalar("encargos", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("tipoBaixa");
+		query.addScalar("statusCobranca");
+		query.addScalar("statusDivida");
+		query.addScalar("boletoAntecipado", StandardBasicTypes.BOOLEAN);
+		query.addScalar("recebeCobrancaEmail", StandardBasicTypes.BOOLEAN);
+		
 		query.setParameter("ncota", filtro.getNumeroCota());
 		
 		if (filtro.getDataVencimentoDe()!=null){
+			
 		    query.setDate("vctode", filtro.getDataVencimentoDe());
 		}
+		
 		if (filtro.getDataVencimentoAte()!=null){
+			
 		    query.setDate("vctoate", filtro.getDataVencimentoAte());
 		}
+		
 		if (filtro.getStatus()!=null){	
-		    query.setParameter("status", filtro.getStatus());
+			
+		    query.setParameter("status", filtro.getStatus().name());
+		    
+            query.setParameter("statusBa",
+                    (filtro.getStatus().equals(StatusCobranca.PAGO) ? StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO
+                            : StatusDivida.QUITADA).name());
 		}
 
+		query.setParameter("tipoCobrancaBoleto", TipoCobranca.BOLETO.name());
+		
         if (filtro.getPaginacao() != null) {
+        	
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+				
 				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 			}
 			
 			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				
 				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
 		}
+        
+        query.setResultTransformer(Transformers.aliasToBean(BoletoCotaDTO.class));
 
 		return query.list();
 	}
 	
-	/**
-	 * Método responsável por obter Boleto individual 
-	 * @param nossoNumero
-	 * @param dividaAcumulada
-	 */
+	    /**
+     * Método responsável por obter Boleto individual
+     * 
+     * @param nossoNumero
+     * @param dividaAcumulada
+     */
 	@Override
 	public Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada) {
 		
@@ -745,27 +916,35 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 	}
 
-
-	public Long verificaEnvioDeEmail(Boleto boleto) {
+	public Long verificaEnvioDeEmail(String nossoNumero) {
 		
 		StringBuilder hql = new StringBuilder();
+		
 		hql.append("select count(forma_cobranca.recebeCobrancaEmail) " +
-						"from Cobranca as cobranca join " +
-						"cobranca.cota as cota join " +
-						"cota.parametroCobranca as parametro_cobranca_cota join " +
-						"parametro_cobranca_cota.formasCobrancaCota as forma_cobranca " +
-						"where " + 
-						"forma_cobranca.recebeCobrancaEmail = true " +
-						"and " +
-						"forma_cobranca.ativa= true " +
-						"and " +
-						"cota.id = :cotaId " +
-						"and " +
-						"cobranca.id = :cobrancaId");
+		
+				   "from Cobranca as cobranca join " +
+				   
+				   "cobranca.cota as cota join " +
+				   
+				   "cota.parametroCobranca as parametro_cobranca_cota join " +
+				   
+				   "parametro_cobranca_cota.formasCobrancaCota as forma_cobranca " +
+				   
+				   "where " + 
+				   
+				   "forma_cobranca.recebeCobrancaEmail = true " +
+				   
+				   "and " +
+				   
+				   "forma_cobranca.ativa= true " +
+				   
+				   "and " +
+				   
+				   "cobranca.nossoNumero = :nossoNumero");
 						
 		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("cotaId", boleto.getCota().getId().longValue());
-		query.setParameter("cobrancaId", boleto.getId());
+
+		query.setParameter("nossoNumero", nossoNumero);
 	    
 		return  (Long) query.uniqueResult();
 

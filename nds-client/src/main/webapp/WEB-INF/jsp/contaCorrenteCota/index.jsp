@@ -196,6 +196,14 @@
 	</div>
 </form>
 
+<form id="form-valor-venda-dia">
+	<div id="dialog-valor-venda-dia" title="Detalhe Tipo de Movimento" style="display: none;">
+		<fieldset>
+			<table class="valorVendaDiaGrid"></table>
+		</fieldset>
+	</div>
+</form>
+
 <form id="form-encargos">
 	<div id="dialog-encargos" title="Detalhes do Encargo" style="display: none;">
 		<fieldset>
@@ -285,9 +293,42 @@
       </form>
       <div class="linha_separa_fields">&nbsp;</div>
       <div class="grids" style="display: none;">
+      	<style>
+			#legenda {
+				text-align: center;
+			}
+			#legenda td {
+				padding: 5px;
+			}
+      	</style>
+      	
 	      <fieldset class="fieldGrid">
 	       	  <legend>Conta-Corrente Selecionado: <span id="cotanomeselecionado"></span></legend>
 	       	  <table class="itemContaCorrenteCotaGrid"></table>
 	      </fieldset>
+
+	      <div id="legenda">
+      	<table>
+      		<tbody>
+      			<tr>
+      				<td><strong>Legenda:</strong></td>
+      				<td><img src="${pageContext.request.contextPath}/images/bt_financeiro.png" alt="Cobrança Gerada"></td>
+      				<td>Cobrança Gerada</td>
+      			
+      				<td><img src="${pageContext.request.contextPath}/images/hammer.png" alt="Dívida Negociada"></td>
+      				<td>Dívida Negociada</td>
+      			
+      				<td><img src="${pageContext.request.contextPath}/images/ico_boletos.gif" alt="Dívida Postergada"></td>
+      				<td>Dívida Postergada</td>
+      			
+      				<td><img src="${pageContext.request.contextPath}/images/seta_sobe.gif" alt="Dívida Acumulada"></td>
+      				<td>Dívida Acumulada</td>
+      			</tr>
+      		</tbody>
+      	</table>
       </div>
+      </div>
+
+      
+
 </body>

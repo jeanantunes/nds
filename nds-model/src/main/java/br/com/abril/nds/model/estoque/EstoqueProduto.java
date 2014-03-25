@@ -61,7 +61,7 @@ public class EstoqueProduto implements Serializable {
 	@OneToMany(mappedBy = "estoqueProduto")
 	private List<MovimentoEstoque> movimentos = new ArrayList<MovimentoEstoque>();
 	
-	//@Version
+	@Version
 	@Column(name = "VERSAO")
 	private Long versao = 0L;
 	

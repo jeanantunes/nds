@@ -9,9 +9,9 @@ function Distribuicao(tela) {
 
     this.inicializar = function() {
 		
-    	D.verificarTipoConvencional();
+    	  D.verificarTipoConvencional();
 		
-	},
+	},                        
     
 	this.verificarTipoConvencional = function(idCota) {
 		
@@ -21,14 +21,15 @@ function Distribuicao(tela) {
 				param,
 				function(result) {
 
-					if (result && result.boolean){
+					if (result){
 						
-						D.$('recebeComplementar').removeAttr('disabled');
-						D.$('recebeComplementar').attr('checked','checked');
-					} else {
-					
-						D.$('recebeComplementar').removeAttr('checked');
-						D.$('recebeComplementar').attr('disabled', true);
+						if (result.boolean){
+							
+							D.$('recebeComplementar').removeAttr('disabled');
+						} else {
+							
+							D.$('recebeComplementar').attr('disabled', true);
+						}
 					}
 				},
 				
@@ -143,7 +144,7 @@ function Distribuicao(tela) {
 		
 		if(dto.basesCalculo)
 			D.montarComboBaseCalculo(dto.basesCalculo);
-				
+		
 		$("input[name='numCotaUpload']").val(dto.numCota);
 		
 		D.set('numCota',				dto.numCota);
@@ -158,6 +159,13 @@ function Distribuicao(tela) {
 		D.set('repPorPontoVenda',	    dto.repPorPontoVenda);
 		D.set('solNumAtras',			dto.solNumAtras);
 		D.set('recebeRecolhe',			dto.recebeRecolhe);
+		
+		if(dto.tipoDistribuicaoCota=='CONVENCIONAL'){
+			D.set('recebeComplementar',	dto.recebeComplementar);			
+		}else {
+			D.set('recebeComplementar',	false);
+		}
+		
 		D.set('neImpresso',				dto.neImpresso);
 		D.set('neEmail',				dto.neEmail);
 		D.set('ceImpresso',				dto.ceImpresso);
@@ -482,10 +490,17 @@ function Distribuicao(tela) {
 				if (result.boolean){
 					
 					$(".divImpressaoTermoAdesao").show();
-					$(".divUtilizaTermoAdesao").show();
-					$(".divTermoAdesaoRecebido").show();
-				}
-				else{
+					
+					if(D.get("utilizaTermoAdesao")==true){
+					  $(".divUtilizaTermoAdesao").show();
+					  $(".divTermoAdesaoRecebido").show();
+					}else{
+					  $(".divUtilizaTermoAdesao").hide();
+					  $(".divTermoAdesaoRecebido").hide();
+					}
+					  
+					
+				}else{
 				
 				    $(".divImpressaoTermoAdesao").hide();
 				    $(".divUtilizaTermoAdesao").hide();
@@ -519,9 +534,14 @@ function Distribuicao(tela) {
 		
 		D.mostrarEsconderConteudoTipoEntrega(exibirDiv, "divConteudoEntregaBanca",
 											 "divUtilizaTermoAdesao", "divTermoAdesaoRecebido",
-											 "utilizaTermoAdesao", "termoAdesaoRecebido", limparCampos);
+											 "utilizaTermoAdesao", limparCampos);
 		
 		D.distribuidorUtilizaTermoAdesao();
+		
+		D.mostrarEsconderConteudoTipoEntrega(false,
+				 "divUtilizaTermoAdesao", "divTermoAdesaoRecebido",
+				 "utilizaTermoAdesao", limparCampos);
+		
 	};
 	
 	this.mostrarEsconderConteudoEntregador = function(exibirDiv, limparCampos) {

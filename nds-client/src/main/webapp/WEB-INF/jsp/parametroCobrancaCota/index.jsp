@@ -193,7 +193,8 @@ $(function(){
 			</tr>
 			<tr>
 				<td>Tipo de Cota:</td>
-				<td><select name="tipoCota" id="tipoCota" style="width: 150px;" onchange="parametroCobrancaCotaController.exibeDevolveEncalhe(this.value);">
+				<td><select name="tipoCota" id="tipoCota" style="width: 150px;" onchange="parametroCobrancaCotaController.verificaDataAlteracaoTipoCota(this);"
+				onfocus="this.oldValue = this.value;">
 						<c:forEach varStatus="counter" var="itemTipoCota"
 							items="${listaTiposCota}">
 							<option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
@@ -219,7 +220,7 @@ $(function(){
 			<tr>
 			    <td>Fornecedor Padrão:</td>
 				<td>
-					<div id="fornecedoresPadrao" />
+					<select id="fornecedorPadrao" style="width: 220px;"></select>
 				</td>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
@@ -482,23 +483,23 @@ $(function(){
 
 
 
-			<div id="divRecebeEmail" style="display: none;">
+<!-- 			<div id="divRecebeEmail" style="display: none;"> -->
 
-				<div name="formularioDadosBoleto" id="formularioDadosBoleto">
+<!-- 				<div name="formularioDadosBoleto" id="formularioDadosBoleto"> -->
 
-					<table width="417" border="0" cellpadding="2" cellspacing="2">
+<!-- 					<table width="417" border="0" cellpadding="2" cellspacing="2"> -->
 
-						<tr>
-							<td align="right"><input type="checkbox" id="recebeEmail"
-								name="recebeEmail" /></td>
-							<td>Receber por E-mail?</td>
-						</tr>
+<!-- 						<tr> -->
+<!-- 							<td align="right"><input type="checkbox" id="recebeEmail" -->
+<!-- 								name="recebeEmail" /></td> -->
+<!-- 							<td>Receber Cobrança/Recibo por E-mail?</td> -->
+<!-- 						</tr> -->
 
-					</table>
+<!-- 					</table> -->
 
-				</div>
+<!-- 				</div> -->
 
-			</div>
+<!-- 			</div> -->
 
 			<div id="divDadosBancarios" style="display: none;">
 
@@ -582,4 +583,3 @@ $(function(){
 
 
 <!-- /PESSOA FISICA - FINANCEIRO -->
-

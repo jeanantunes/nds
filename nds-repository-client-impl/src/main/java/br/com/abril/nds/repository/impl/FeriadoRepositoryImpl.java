@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -29,9 +30,9 @@ import br.com.abril.nds.util.DateUtil;
 public class FeriadoRepositoryImpl extends
 		AbstractRepositoryModel<Feriado, Long> implements FeriadoRepository {
 
-	/**
-	 * Construtor padrão.
-	 */
+	                    /**
+     * Construtor padrão.
+     */
 	public FeriadoRepositoryImpl() {
 		super(Feriado.class);
 	}
@@ -231,12 +232,13 @@ public class FeriadoRepositoryImpl extends
 		super.alterar(entity);
 	}
 
-	/**
-	 * Verifica se já existe um feriado com repetição anual cadastrado com 
-	 * os mesmo dia e mês e tipo do feriado recebido como parâmetro
-	 * @param feriado feriado para verificação de feriado com repetição anual 
-	 * já cadastrado com as caracteristicas do feriado recebido
-	 */
+	                    /**
+     * Verifica se já existe um feriado com repetição anual cadastrado com os
+     * mesmo dia e mês e tipo do feriado recebido como parâmetro
+     * 
+     * @param feriado feriado para verificação de feriado com repetição anual já
+     *            cadastrado com as caracteristicas do feriado recebido
+     */
 	protected void verificarFeriadoAnualExistente(Feriado feriado) {
 		Date data = feriado.getData();
 		TipoFeriado tipoFeriado = feriado.getTipoFeriado();
@@ -252,15 +254,15 @@ public class FeriadoRepositoryImpl extends
 		if (existente != null && !feriado.equals(existente)) {
 			throw new DataIntegrityViolationException(
 					"Feriado anual com o tipo " + tipoFeriado
-							+ " já cadastrado para a data " + DateUtil.formatarDataPTBR(data));
+                    + " já cadastrado para a data " + DateUtil.formatarDataPTBR(data));
 		}
 	}
 
 	@Override
 	public Feriado obterFeriadoAnualTipo(Date data, TipoFeriado tipo) {
 		Validate.notNull(data,
-				"Data para pesquisa do feriado não deve ser nula!");
-		Validate.notNull(tipo, "Tipo do feriado não deve ser nulo!");
+ "Data para pesquisa do feriado não deve ser nula!");
+        Validate.notNull(tipo, "Tipo do feriado não deve ser nulo!");
 
 		StringBuilder hql = new StringBuilder(
 				"from Feriado where tipoFeriado = :tipoFeriado ");
@@ -325,12 +327,50 @@ public class FeriadoRepositoryImpl extends
 	public boolean isFeriado(Date data){
 		
 		StringBuilder hql = new StringBuilder("select ");
-		hql.append(" count(f.id) from Feriado f ")
-		   .append(" where f.data = :data");
+		hql.append(" count(f.ID) from FERIADO f ")
+		   .append(" where f.DATA = :data")
+		   .append(" or (day(f.DATA) = day(:data) and month(f.DATA) = month(:data) ")
+		   .append(" and f.IND_REPETE_ANUALMENTE = :repeteAnual)");
 		
-		Query query = this.getSession().createQuery(hql.toString());
+		Query query = this.getSession().createSQLQuery(hql.toString());
 		query.setParameter("data", data);
 		
-		return (Long)query.uniqueResult() > 0;
+		query.setParameter("repeteAnual", true);
+		
+		return ((BigInteger)query.uniqueResult()).compareTo(BigInteger.ZERO) > 0;
 	}
+	
+	@Override
+    public boolean isFeriado(Date data, String localidade){
+	    StringBuilder hql = new StringBuilder("select ");
+        hql.append(" count(f.ID) from FERIADO f ")
+           .append(" where (f.DATA = :data ")
+           .append(" or (day(f.DATA) = day(:data) and month(f.DATA) = month(:data) ")
+           .append(" and f.IND_REPETE_ANUALMENTE = :repeteAnual))")
+           .append(" and (f.LOCALIDADE = :localidade or f.LOCALIDADE is null)");
+        
+        Query query = this.getSession().createSQLQuery(hql.toString());
+        query.setParameter("data", data);
+        query.setParameter("localidade", localidade);
+        query.setParameter("repeteAnual", true);
+        
+        return ((BigInteger)query.uniqueResult()).compareTo(BigInteger.ZERO) > 0;
+	}
+    
+    @Override
+    public boolean isNaoOpera(Date data) {
+        
+        StringBuilder hql = new StringBuilder("select ");
+        hql.append(" count(f.ID) from FERIADO f ").append(" where (f.DATA = :data")
+                .append(" or (day(f.DATA) = day(:data) and month(f.DATA) = month(:data) and f.IND_REPETE_ANUALMENTE = :repeteAnual")
+                .append(" )) and f.IND_OPERA = :indOpera");
+        
+        Query query = this.getSession().createSQLQuery(hql.toString());
+        query.setParameter("data", data);
+        
+        query.setParameter("indOpera", false);
+        query.setParameter("repeteAnual", true);
+        
+        return ((BigInteger) query.uniqueResult()).compareTo(BigInteger.ZERO) > 0;
+    }
 }

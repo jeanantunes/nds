@@ -10,7 +10,7 @@ import br.com.abril.nds.util.export.Exportable;
 /**
  * Value Object para os produtos da matriz de recolhimento.
  * 
- * @author Discover Technology
+ * @author Discover Technology 
  */
 @Exportable
 public class ProdutoRecolhimentoVO {
@@ -39,6 +39,7 @@ public class ProdutoRecolhimentoVO {
 	@Export(label="Fornecedor", widthPercent=8f)
 	private String nomeFornecedor;
 	
+	@Export(label="Editor")
 	private String nomeEditor;
 	
 	@Export(label="Parcial")
@@ -50,13 +51,14 @@ public class ProdutoRecolhimentoVO {
 	@Export(label="Lçto")
 	private Date dataLancamento;
 	
+	@Export(label="PEB")
+	private Long peb;
+	
 	@Export(label="Rcto")
 	private Date dataRecolhimento;
 	
-	@Export(label="Sede")
 	private String encalheSedeFormatado;
 	
-	@Export(label="Atendida")
 	private String encalheAtendidaFormatado;
 	
 	@Export(label="Exemplar")
@@ -68,6 +70,15 @@ public class ProdutoRecolhimentoVO {
 	
 	private BigDecimal encalhe;
 	
+	
+	public Long getPeb() {
+		return peb;
+	}
+
+	public void setPeb(Long peb) {
+		this.peb = peb;
+	}
+
 	@Export(label="Total R$", columnType=ColumType.MOEDA)
 	private BigDecimal valorTotal;
 	
