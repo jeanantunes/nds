@@ -242,7 +242,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
                      .append(" JOIN PRODUTO_EDICAO PRODEDICAO ON(MOVIMENTOCOTA.PRODUTO_EDICAO_ID=PRODEDICAO.ID)  ")
                      .append(" JOIN TIPO_MOVIMENTO TIPOMOVIMENTO ON(MOVIMENTOCOTA.TIPO_MOVIMENTO_ID = TIPOMOVIMENTO.ID)  ")
                      .append(" WHERE MOVIMENTOCOTA.COTA_ID = COTA_.ID ")
-                     //.append(" AND MOVIMENTOCOTA.DATA <= :dataOperacao ")
                      .append(" AND (MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO IS NULL ")
                      .append(" OR MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO =:statusEstoqueFinanceiro) ")
                      .append(" AND TIPOMOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ")
@@ -649,7 +648,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         param.put("codigoProduto", filtro.getCodigoProduto());
         param.put("numeroEdicao", filtro.getNumeroEdicao());
-        param.put("status", StatusLancamento.EXPEDIDO);
+        param.put("status", Arrays.asList(StatusLancamento.EXPEDIDO, StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO));
         param.put("dataAtual", filtro.getDataOperacao());
         param.put("tipoChamadaEncalhe", TipoChamadaEncalhe.ANTECIPADA);
         
@@ -710,7 +709,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
                                 " WHERE chamadaEncalheCota.cota = cota ").append(" AND chamadaEncalhe.produtoEdicao = produtoEdicao ")
                                 .append(" AND chamadaEncalhe.tipoChamadaEncalhe=:tipoChamadaEncalhe").append(" ) ").append(
                                         " AND estoqueProdutoCota.produtoEdicao.id = produtoEdicao.id ").append(
-                                                " AND lancamento.status =:status ").append(" AND produto.codigo =:codigoProduto ").append(
+                                                " AND lancamento.status in (:status) ").append(" AND produto.codigo =:codigoProduto ").append(
                                                         " AND produtoEdicao.numeroEdicao =:numeroEdicao ").append(
                                                                 " AND lancamento.dataRecolhimentoPrevista >:dataAtual ").append(
                                                                         " AND (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) > 0 ").append(

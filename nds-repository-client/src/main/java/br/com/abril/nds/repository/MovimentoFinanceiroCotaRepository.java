@@ -232,4 +232,14 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @return boolean
 	 */
 	boolean isMovimentoFinanceiroCotaConsolidado(Long idMovimentoFinanceiroCota);
+	
+	/**
+	 * Obtém lista de movimento financeiro cota relativo ao id de consolidado.
+	 * 
+	 * @param idConsolidado
+	 * 
+	 * @return List - MovimentoFinanceiroCota
+	 */
+    public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDeConsolidado(final Long idConsolidado);
+
 }

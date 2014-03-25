@@ -150,7 +150,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(filtro.getSituacaoNfe() !=null && !filtro.getSituacaoNfe().isEmpty()) {
-			hql.append(" AND notaFiscal.notaFiscalInformacoes.statusProcessamentoInterno = :situacaoNfe ");
+			hql.append(" AND nfi.statusProcessamentoInterno = :situacaoNfe ");
 		}
 
 		if(filtro.getSerie() !=null) {
