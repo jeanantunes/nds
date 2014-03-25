@@ -1,10 +1,12 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -65,26 +67,7 @@ public class FeriadoRepositoryImpl extends
 		return criteria.list();
 	}
 	
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Feriado> obterFeriados(Date data, List<TipoFeriado> tiposFeriado, Boolean indOpera) {
-
-		Criteria criteria = super.getSession().createCriteria(Feriado.class);
-
-		if (data != null) {
-			criteria.add(Restrictions.eq("data", data));
-		}
-
-		if (tiposFeriado != null) {
-			criteria.add(Restrictions.in("tipoFeriado", tiposFeriado));
-		}
-		
-		if (indOpera != null) {
-			criteria.add(Restrictions.eq("indOpera", indOpera));
-		}
-
-		return criteria.list();
-	}
+	
 
 	
 	@Override
@@ -359,18 +342,43 @@ public class FeriadoRepositoryImpl extends
     
     @Override
     public boolean isNaoOpera(Date data) {
-        
+       return this.isOpera(data, false, null);
+    }
+    @Override
+    public boolean isNaoOpera(Date data, String localidade) {
+        return this.isOpera(data, false, localidade);
+     }
+    
+    @Override
+    public boolean isOpera(Date data){
+        return this.isOpera(data, true, null);
+    }
+    
+    @Override
+    public boolean isOpera(Date data, String localidade){
+        return this.isOpera(data, true, localidade);
+    }
+    
+    private boolean isOpera(Date data, boolean opera, String localidade){
         StringBuilder hql = new StringBuilder("select ");
         hql.append(" count(f.ID) from FERIADO f ").append(" where (f.DATA = :data")
                 .append(" or (day(f.DATA) = day(:data) and month(f.DATA) = month(:data) and f.IND_REPETE_ANUALMENTE = :repeteAnual")
-                .append(" )) and f.IND_OPERA = :indOpera");
+                .append(" )) and f.IND_OPERA = :indOpera and f.TIPO_FERIADO in (:tipoFeriado)");
+        if(StringUtils.isNotEmpty(localidade)){
+            hql.append(" and (f.LOCALIDADE = :localidade or f.LOCALIDADE is null)");
+        }
         
         Query query = this.getSession().createSQLQuery(hql.toString());
         query.setParameter("data", data);
         
-        query.setParameter("indOpera", false);
+        query.setParameter("indOpera", opera);
         query.setParameter("repeteAnual", true);
-        
+        if(StringUtils.isNotEmpty(localidade)){
+            query.setParameter("localidade", localidade);
+            query.setParameterList("tipoFeriado", Arrays.asList(TipoFeriado.MUNICIPAL.name()));
+        }else{
+            query.setParameterList("tipoFeriado", Arrays.asList(TipoFeriado.ESTADUAL.name(), TipoFeriado.FEDERAL.name()));
+        }
         return ((BigInteger) query.uniqueResult()).compareTo(BigInteger.ZERO) > 0;
     }
 }

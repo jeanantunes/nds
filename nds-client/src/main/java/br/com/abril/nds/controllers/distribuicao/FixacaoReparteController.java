@@ -3,6 +3,8 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -114,6 +116,8 @@ public class FixacaoReparteController extends BaseController {
 	@Path("/")
 	public void fixacaoReparte(){
 		result.include("classificacao",fixacaoReparteService.obterClassificacoesProduto());
+		
+//		fixacaoReparteService.verificarFixacao(new Date());
 	}
 
 
