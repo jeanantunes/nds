@@ -14,7 +14,7 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 
 public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 
@@ -25,7 +25,7 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 	 * @param statusProcessamentoInterno
 	 * @return lista de notas fiscais.
 	 */
-	public abstract List<NotaFiscal> obterListaNotasFiscaisPor(StatusProcessamentoInterno statusProcessamentoInterno);
+	public abstract List<NotaFiscal> obterListaNotasFiscaisPor(StatusProcessamento statusProcessamentoInterno);
 	
 	public Integer obterQtdeRegistroNotaFiscal(FiltroMonitorNfeDTO filtro);
 	

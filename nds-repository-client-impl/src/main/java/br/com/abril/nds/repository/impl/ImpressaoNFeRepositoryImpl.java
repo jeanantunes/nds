@@ -241,7 +241,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			q.setParameter("tipoNotaFiscal", Long.parseLong(filtro.getTipoNFe()) );
 		}
 		
-		q.setParameter("statusNFe", br.com.abril.nds.model.fiscal.nota.Status.AUTORIZADO );
+		q.setParameter("statusNFe", br.com.abril.nds.model.fiscal.nota.StatusRetornado.AUTORIZADO );
 		
 		if(filtro.getDataMovimentoInicial() != null || filtro.getDataMovimentoFinal() != null) {
 			if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() == null) {
@@ -419,7 +419,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			q.setParameter("dataEmissao", new java.sql.Date(filtro.getDataEmissao().getTime()));
 			
 			if(obrigacaoFiscal != null) {
-				q.setParameter("statusNFe", br.com.abril.nds.model.fiscal.nota.Status.AUTORIZADO );
+				q.setParameter("statusNFe", br.com.abril.nds.model.fiscal.nota.StatusRetornado.AUTORIZADO );
 			}
 			
 			if(filtro.getDataMovimentoInicial() != null || filtro.getDataMovimentoFinal() != null) {

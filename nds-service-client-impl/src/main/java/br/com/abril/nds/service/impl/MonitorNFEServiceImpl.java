@@ -30,8 +30,8 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoEmissao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.Status;
-import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
@@ -123,16 +123,16 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 				notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica() == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nota ainda não submetida ao SEFAZ");
-		} else if (!notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica().getStatus().equals(
-				Status.AUTORIZADO)) {
+		} else if (!notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica().getStatusRetornado().equals(
+				StatusRetornado.AUTORIZADO)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nota não autorizada pelo SEFAZ");
 		}
 		
 		if(indEmissaoDepec) {
 			
-			if(	StatusProcessamentoInterno.GERADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno()) ||
-				StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno()) ) {
+			if(	StatusProcessamento.GERADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamento()) ||
+				StatusProcessamento.EM_PROCESSAMENTO.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamento()) ) {
 				
 				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoEmissao(TipoEmissao.CONTINGENCIA);
 				notaFiscalRepository.alterar(notaFiscal);

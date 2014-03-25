@@ -57,8 +57,8 @@ import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.Status;
-import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -2914,8 +2914,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             final Query query = getSession().createQuery(sql.toString());
             
             query.setParameter("status", StatusAprovacao.APROVADO);
-            query.setParameter("statusNFe", Status.CANCELAMENTO_HOMOLOGADO);
-            query.setParameter("statusInterno", StatusProcessamentoInterno.NAO_GERADA);
+            query.setParameter("statusNFe", StatusRetornado.CANCELAMENTO_HOMOLOGADO);
+            query.setParameter("statusInterno", StatusProcessamento.NAO_GERADA);
             query.setParameter("idCota", idCota);
             query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
             
