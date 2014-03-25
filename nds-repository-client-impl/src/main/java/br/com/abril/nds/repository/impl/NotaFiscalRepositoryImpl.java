@@ -24,7 +24,7 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 
@@ -43,7 +43,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<NotaFiscal> obterListaNotasFiscaisPor(StatusProcessamentoInterno statusProcessamentoInterno) {
+	public List<NotaFiscal> obterListaNotasFiscaisPor(StatusProcessamento statusProcessamentoInterno) {
 
 		Criteria criteria = getSession().createCriteria(NotaFiscal.class);
 

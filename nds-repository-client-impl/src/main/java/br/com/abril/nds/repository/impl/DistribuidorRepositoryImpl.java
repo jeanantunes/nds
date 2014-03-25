@@ -234,9 +234,10 @@ public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribu
 
 	@Override
 	public Integer obterNumeroDiasNovaCobranca() {
-		
-		return (Integer)
-				this.getSession().createQuery("select numeroDiasNovaCobranca from Distribuidor").uniqueResult();
+		//alterado a pedido do negócio, track MNDS-275
+//		return (Integer)
+//				this.getSession().createQuery("select numeroDiasNovaCobranca from Distribuidor").uniqueResult();
+	    return 1;
 	}
 
 	@Override

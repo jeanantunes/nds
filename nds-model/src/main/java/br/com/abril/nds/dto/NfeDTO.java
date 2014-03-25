@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoEmissao;
-import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 
 public class NfeDTO implements Serializable {
 
@@ -31,7 +31,7 @@ public class NfeDTO implements Serializable {
 	
 	private String cpfRemetente;
 	
-	private StatusProcessamentoInterno statusNfe;
+	private StatusProcessamento statusNfe;
 	
 	private String tipoNfe;
 	
@@ -164,14 +164,14 @@ public class NfeDTO implements Serializable {
 	 *
 	 * @return String
 	 */
-	public StatusProcessamentoInterno getStatusNfe() {
+	public StatusProcessamento getStatusNfe() {
 		return statusNfe;
 	}
 	/**
 	 * Atribuí statusNfe
 	 * @param statusNfe 
 	 */
-	public void setStatusNfe(StatusProcessamentoInterno statusNfe) {
+	public void setStatusNfe(StatusProcessamento statusNfe) {
 		this.statusNfe = statusNfe;
 	}
 	/**

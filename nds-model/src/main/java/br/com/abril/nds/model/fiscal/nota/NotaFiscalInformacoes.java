@@ -113,8 +113,8 @@ public class NotaFiscalInformacoes implements Serializable {
 	 * Status de processamento interno da nota fiscal
 	 */
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS_PROCESSAMENTO_INTERNO")
-	private StatusProcessamentoInterno statusProcessamentoInterno;
+	@Column(name = "STATUS_PROCESSAMENTO")
+	private StatusProcessamento statusProcessamento;
 	
 	@OneToMany
 	@JoinTable(name = "NOTA_FISCAL_PROCESSO", 
@@ -275,16 +275,16 @@ public class NotaFiscalInformacoes implements Serializable {
 	/**
 	 * @return the statusProcessamentoInterno
 	 */
-	public StatusProcessamentoInterno getStatusProcessamentoInterno() {
-		return statusProcessamentoInterno;
+	public StatusProcessamento getStatusProcessamento() {
+		return statusProcessamento;
 	}
 
 	/**
 	 * @param statusProcessamentoInterno the statusProcessamentoInterno to set
 	 */
-	public void setStatusProcessamentoInterno(
-			StatusProcessamentoInterno statusProcessamentoInterno) {
-		this.statusProcessamentoInterno = statusProcessamentoInterno;
+	public void setStatusProcessamento(
+			StatusProcessamento statusProcessamento) {
+		this.statusProcessamento = statusProcessamento;
 	}
 
 	/**

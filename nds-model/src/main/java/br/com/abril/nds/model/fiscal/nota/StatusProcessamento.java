@@ -1,7 +1,8 @@
 package br.com.abril.nds.model.fiscal.nota;
 
-public enum StatusProcessamentoInterno {
+public enum StatusProcessamento {
 	
+	EM_PROCESSAMENTO,
 	GERADA,
 	NAO_GERADA,
 	ENVIADA,

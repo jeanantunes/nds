@@ -12,8 +12,8 @@ import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.Status;
-import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.CancelaNotaFiscalService;
 

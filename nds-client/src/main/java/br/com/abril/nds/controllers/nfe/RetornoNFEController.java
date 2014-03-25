@@ -19,7 +19,7 @@ import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.fiscal.nota.Status;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -155,7 +155,7 @@ public class RetornoNFEController extends BaseController {
 		
 		for (RetornoNFEDTO nota : listaNotasRetorno) {
 			
-			if(Status.AUTORIZADO.equals(nota.getStatus())) {
+			if(StatusRetornado.AUTORIZADO.equals(nota.getStatus())) {
 				notasAprovadas ++;
 			} else {
 				notasRejeitadas ++;

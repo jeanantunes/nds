@@ -3,7 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-import br.com.abril.nds.model.fiscal.nota.Status;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 
 /**
  * Value Object que representa os retornos dos arquivos de nota fiscal eletrônica . 
@@ -21,7 +21,7 @@ public class RetornoNFEDTO implements Serializable {
 	
 	private String chaveAcesso;
 	
-	private Status status;
+	private StatusRetornado status;
 	
 	private Long protocolo;
 	
@@ -55,7 +55,7 @@ public class RetornoNFEDTO implements Serializable {
 	/**
 	 * @return the status
 	 */
-	public Status getStatus() {
+	public StatusRetornado getStatus() {
 		return status;
 	}
 
@@ -63,7 +63,7 @@ public class RetornoNFEDTO implements Serializable {
 	 * @param status
 	 *            the status to set
 	 */
-	public void setStatus(Status status) {
+	public void setStatus(StatusRetornado status) {
 		this.status = status;
 	}
 
