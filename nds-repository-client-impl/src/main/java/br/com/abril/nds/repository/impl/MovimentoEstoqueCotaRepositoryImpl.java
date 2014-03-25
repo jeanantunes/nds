@@ -766,6 +766,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" ) ");
         sql.append(" AND (CHAMADA_ENCALHE.DATA_RECOLHIMENTO IN (SELECT DATA_ENCALHE FROM CONTROLE_FECHAMENTO_ENCALHE WHERE DATA_ENCALHE BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
         sql.append(" OR (CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO) ");
+        sql.append(" OR (CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
         sql.append(" OR (CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
         sql.append(" AND CHAMADA_ENCALHE.DATA_RECOLHIMENTO <= (SELECT DATA_OPERACAO FROM DISTRIBUIDOR) ");
         sql.append(" AND CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO IS NULL) ) ");
@@ -991,18 +992,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         subSqlIndObservacao.append(" 	and CONFERENCIA_ENCALHE_0.OBSERVACAO is not null ");
         
-        final StringBuilder subSqlDiaRecolhimento = new StringBuilder();
-        
-        subSqlDiaRecolhimento.append(" SELECT CONFERENCIA_ENCALHE_0.DIA_RECOLHIMENTO ");
-        subSqlDiaRecolhimento.append(" 	FROM CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_0 ");
-        subSqlDiaRecolhimento.append(" 	WHERE CONFERENCIA_ENCALHE_0.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
-        
-        if (filtro.getIdCota() != null) {
-            subSqlDiaRecolhimento.append(" 	and CONFERENCIA_ENCALHE_0.CHAMADA_ENCALHE_COTA_ID = CHAMADA_ENCALHE_COTA.id ");
-        }
-        
-        subSqlDiaRecolhimento.append(" 	and CONFERENCIA_ENCALHE_0.DIA_RECOLHIMENTO is not null limit 1 ");
-        
         final StringBuilder sql = new StringBuilder();
         
         if(counting) {
@@ -1042,7 +1031,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             
             sql.append(" (" + subSqlIndObservacao + ") AS indObservacaoConferenciaEncalhe, ");
             
-            sql.append(" (" + subSqlDiaRecolhimento + ") AS diaRecolhimento, ");
+            sql.append(" coalesce(CONFERENCIA_ENCALHE.DIA_RECOLHIMENTO,1) AS diaRecolhimento, ");
             
             sql.append(" cota.TIPO_COTA as tipoCota, ");
             
