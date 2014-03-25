@@ -202,7 +202,7 @@ implements MovimentoEstoqueRepository {
 		
 		sql.append("   WHERE	");
 		     
-		sql.append("   me.DATA = :data ");
+		sql.append("   me.DATA >= :data ");
 		sql.append("   AND me.STATUS = :statusAprovado	");
 		sql.append("   AND prod.FORMA_COMERCIALIZACAO = :formaComercializacao ");
 		sql.append("   AND ( ");
@@ -257,7 +257,7 @@ implements MovimentoEstoqueRepository {
 		
 		sql.append("		on produto_edicao_furo.id = fp.produto_edicao_id 	");
 		
-		sql.append("		where fp.data_lcto_distribuidor = :data	");
+		sql.append("		where fp.data_lcto_distribuidor >= :data	");
 		
 		sql.append("   ) as produtosFuradosNaData     			");
 		
@@ -266,7 +266,7 @@ implements MovimentoEstoqueRepository {
 		
 		sql.append("   WHERE	");
 		     
-		sql.append("   CE.DATA_RECOLHIMENTO = :data ");
+		sql.append("   CE.DATA_RECOLHIMENTO >= :data ");
 		
 		sql.append("   AND P.FORMA_COMERCIALIZACAO = :formaComercializacao ");
 		
