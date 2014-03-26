@@ -39,15 +39,15 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}
 
 	/* (non-Javadoc)
-	 * @see br.com.abril.nds.repository.NotaFiscalRepository#obterListaNotasFiscaisPor(br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno)
+	 * @see br.com.abril.nds.repository.NotaFiscalRepository#obterListaNotasFiscaisPor(br.com.abril.nds.model.fiscal.nota.statusProcessamento)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<NotaFiscal> obterListaNotasFiscaisPor(StatusProcessamento statusProcessamentoInterno) {
+	public List<NotaFiscal> obterListaNotasFiscaisPor(StatusProcessamento statusProcessamento) {
 
 		Criteria criteria = getSession().createCriteria(NotaFiscal.class);
 
-		criteria.add(Restrictions.eq("statusProcessamentoInterno", statusProcessamentoInterno));
+		criteria.add(Restrictions.eq("statusProcessamento", statusProcessamento));
 
 		return criteria.list();
 	}
@@ -80,7 +80,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" ident.tipoEmissao as tipoEmissao,")
 		.append(" doc.documento as cnpjRemetente,")
 		.append(" docDest.documento as cnpjDestinatario, ")
-		.append(" nfi.statusProcessamentoInterno as statusNfe,")
+		.append(" nfi.statusProcessamento as statusNfe,")
 		.append(" natOp.descricao as tipoNfe,")
 		.append(" natOp.descricao as movimentoIntegracao");
 		
@@ -112,7 +112,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN nfi.identificacaoDestinatario as identDest")
 		.append(" JOIN nfi.informacaoEletronica as infElet ")
 		.append(" JOIN ident.naturezaOperacao as natOp ")
-		.append(" JOIN natOp.processo as proc ")
+		.append(" LEFT JOIN natOp.processo as proc ")
 		.append(" JOIN identEmit.documento as doc ")
 		.append(" JOIN identDest.documento as docDest ");
 			
@@ -150,7 +150,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(filtro.getSituacaoNfe() !=null && !filtro.getSituacaoNfe().isEmpty()) {
-			hql.append(" AND nfi.statusProcessamentoInterno = :situacaoNfe ");
+			hql.append(" AND nfi.statusProcessamento = :situacaoNfe ");
 		}
 
 		if(filtro.getSerie() !=null) {
