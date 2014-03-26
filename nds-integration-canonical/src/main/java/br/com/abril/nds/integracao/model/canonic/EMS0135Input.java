@@ -75,7 +75,7 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 	/**
 	 * @return the cnpjEmissor
 	 */
-	@Field(offset = 167, length = 14)
+	@Field(offset = 165, length = 14)
 	public String getCnpjEmissor() {
 		return cnpjEmissor;
 	}
@@ -90,7 +90,7 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 	/**
 	 * @return the numeroNotaEnvio
 	 */
-	@Field(offset = 181, length = 6)
+	@Field(offset = 179, length = 6)
 	public String getNumeroNotaEnvio() {
 		return numeroNotaEnvio;
 	}

@@ -579,25 +579,6 @@ public class ProdutoController extends BaseController {
 new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 				"result").recursive().serialize();
 	}
-	
-	/**
-	 * Carrega o percentual de Desconto do Produto.
-	 * 
-	 * @param codigoTipoDesconto
-	 */
-	@Post
-	public void carregarPercentualDesconto(Integer codigoTipoDesconto) {
-	
-	    DescontoLogistica descontoLogistica = this.descontoLogisticaService.obterPorTipoDesconto(codigoTipoDesconto);
-			
-		BigDecimal porcentagem = BigDecimal.ZERO;
-
-		if (descontoLogistica != null) {
-			porcentagem = descontoLogistica.getPercentualDesconto();
-		}
-		
-		this.result.use(Results.json()).from(porcentagem, "result").recursive().serialize();
-	}
 
 	/**
 	 * Salva o produto.
@@ -605,20 +586,20 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 	 * @param produto
 	 * @param codigoEditor
 	 * @param codigoFornecedor
-	 * @param codigoTipoDesconto
+	 * @param idDesconto
 	 * @param codigoTipoProduto
 	 */
 	@Post
-	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long codigoTipoDesconto, 
+	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long idDesconto, 
 			Long codigoTipoProduto) {
 		
 		this.validarProduto(
 			produto, codigoEditor, codigoFornecedor, 
-			codigoTipoDesconto, codigoTipoProduto);
+			idDesconto, codigoTipoProduto);
 		
 		this.produtoService.salvarProduto(
 			produto, codigoEditor, codigoFornecedor, 
-			codigoTipoDesconto, codigoTipoProduto);
+			idDesconto, codigoTipoProduto);
 		
 		this.result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Produto salvo com sucesso!"), "result").recursive().serialize();
@@ -679,11 +660,11 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 	 * @param produto
 	 * @param codigoEditor
 	 * @param codigoFornecedor
-	 * @param codigoTipoDesconto
+	 * @param idDesconto
 	 * @param codigoTipoProduto
 	 */
 	private void validarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, 
-			Long codigoTipoDesconto, Long codigoTipoProduto) {
+			Long idDesconto, Long codigoTipoProduto) {
 
 		List<String> listaMensagens = new ArrayList<String>();
 		
@@ -735,7 +716,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 				produto.setPacotePadrao(produto.getPacotePadrao());
 			}
 			
-			if ((codigoTipoDesconto == null || codigoTipoDesconto.intValue() == 0) &&
+			if ((idDesconto == null || idDesconto.intValue() == 0) &&
 					(produto.getDescricaoDesconto() == null || produto.getDescricaoDesconto().trim().isEmpty())) {
                 listaMensagens.add("O preenchimento do campo [Tipo de Desconto] é obrigatório!");
 			}
@@ -907,7 +888,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 		List<DescontoLogistica> listaDescontos = descontoLogisticaService.obterTodos();
 
 		for (DescontoLogistica descontoLogistica : listaDescontos) {
-			listaBaseComboVO.add(new BaseComboVO(descontoLogistica.getId(), descontoLogistica.getDescricao()));                       
+			listaBaseComboVO.add(new BaseComboVO(descontoLogistica.getId(), descontoLogistica.getDescricao() != null ? descontoLogistica.getDescricao() : ""));                       
 		}
 
 		return listaBaseComboVO;

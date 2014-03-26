@@ -456,10 +456,6 @@ var lancamentoNovoController = $.extend(true, {
 		lancamentoNovoController.alterarReparteAtual(0);
 		
 		lancamentoNovoController.recalcularReparteAtualNotaEnvio();
-		
-		lancamentoNovoController.tratarVisualizacaoOpcaoEstoque({
-			tipoDiferenca: result.diferenca.tipoDiferenca
-		});
 	},
 	
 	renderizarlistaRateio:function(result){
@@ -1458,6 +1454,7 @@ var lancamentoNovoController = $.extend(true, {
 		$(".prodComCota", this.workspace).hide();
 		$(".lctoPorCota", this.workspace).hide();
 		$("#fieldCota", this.workspace).hide();
+		$("#checkboxLancCota", this.workspace).uncheck();
 
 		if (value == 'FALTA_DE' || value == 'SOBRA_DE') {
 			
