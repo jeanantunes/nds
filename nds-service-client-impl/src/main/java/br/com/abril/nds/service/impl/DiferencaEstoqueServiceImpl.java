@@ -513,7 +513,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                             ultimoLancamento.getDataLancamentoDistribuidor(), origem);
                 
                 } else if (diferenca.getTipoDiferenca().isFalta() && 
-                		TipoDirecionamentoDiferenca.COTA.equals(diferenca.getTipoDirecionamento())) {
+                		!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
                 	
                 	this.tratarDiferencasDirecionadasParaCota(
                             diferenca, diferenca.getTipoDiferenca(), diferenca.getResponsavel().getId(), 
@@ -1198,8 +1198,8 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
 
         final TipoDiferenca novoTipoDiferenca = 
         		tipoDiferenca.isSobra() ? TipoDiferenca.SOBRA_ENVIO_PARA_COTA :
-        			tipoDiferenca.isFalta() ? TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA : 
-        				tipoDiferenca.isAjusteReparteFaltaCota() ? TipoDiferenca.FALTA_PARA_COTA :
+        			tipoDiferenca.isFalta() ? TipoDiferenca.FALTA_PARA_COTA : 
+        				tipoDiferenca.isFaltaParaCota() ? TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA :
         					null;
 
         if (novoTipoDiferenca != null && 
