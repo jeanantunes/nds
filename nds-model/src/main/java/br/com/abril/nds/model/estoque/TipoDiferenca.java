@@ -102,8 +102,8 @@ public enum TipoDiferenca {
 	    return TIPOS_DIFERENCA_FALTA.contains(this);
 	}
 	
-	public boolean isAjusteReparteFaltaCota() {
-	    return AJUSTE_REPARTE_FALTA_COTA.equals(this);
+	public boolean isFaltaParaCota() {
+	    return FALTA_PARA_COTA.equals(this);
 	}
 	
 	/**
