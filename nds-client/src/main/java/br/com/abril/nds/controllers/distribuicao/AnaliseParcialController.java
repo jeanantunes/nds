@@ -352,7 +352,7 @@ public class AnaliseParcialController extends BaseController {
     	
     	BigDecimal reparteFisico = analiseParcialService.reparteFisicoLancamento(estudoId);
     	
-    	if(reparteLancamento.compareTo(reparteFisico) > 0){
+    	if((reparteFisico != null)&&(reparteLancamento.compareTo(reparteFisico) > 0)){
     		throw new ValidacaoException(TipoMensagem.WARNING,"Há divergência entre o reparte Previsto e o Físico!");
     	}
     	

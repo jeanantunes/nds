@@ -2,9 +2,8 @@ package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -117,7 +117,9 @@ public class FixacaoReparteController extends BaseController {
 	public void fixacaoReparte(){
 		result.include("classificacao",fixacaoReparteService.obterClassificacoesProduto());
 		
-//		fixacaoReparteService.verificarFixacao(new Date());
+//		List<BigInteger> lancamentos = fixacaoReparteService.obterListaLancamentosRangerData(); REMOVER
+		
+		fixacaoReparteService.atualizaFixacao(fixacaoReparteService.obterListaLancamentosRangerData());
 	}
 
 
