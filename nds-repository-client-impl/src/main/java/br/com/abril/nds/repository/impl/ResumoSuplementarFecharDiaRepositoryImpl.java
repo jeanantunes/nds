@@ -75,7 +75,8 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
                 GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO,
                 GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR,
                 GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE,
-                GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR));  
+                GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR,
+                GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR));  
 	
 		query.setParameterList("grupoSaidaSuplementar", Arrays.asList(
 		       GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE,
@@ -277,7 +278,8 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
                         GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.name(),
                         GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR.name(),
                         GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE.name(),
-                        GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR.name()));  
+                        GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR.name(),
+                        GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR.name()));  
         
         query.setParameterList("grupoSaidaSuplementar", Arrays.asList(
                 GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name(),

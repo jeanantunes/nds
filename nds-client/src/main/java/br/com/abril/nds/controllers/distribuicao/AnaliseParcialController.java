@@ -241,7 +241,7 @@ public class AnaliseParcialController extends BaseController {
         List<CotaQueNaoEntrouNoEstudoDTO> lista = new ArrayList<>();
 
         if (queryDTO.possuiNome()) {
-            queryDTO.setNome(PessoaUtil.removerSufixoDeTipo(queryDTO.getNome()));
+            queryDTO.setNome(PessoaUtil.removerSufixoDeTipo(queryDTO.getNome())); 
         }
 
         if (queryDTO.getEstudo() != null && queryDTO.getEstudo() > 0) {
@@ -346,9 +346,15 @@ public class AnaliseParcialController extends BaseController {
     	
     	BigDecimal reparteLancamento = analiseParcialService.obterReparteLancamentoEstudo(estudoId);
     	
-    	BigInteger reparteLancamentoEstudo = reparteLancamento.toBigInteger();
+    	BigInteger reparteLancamentoEstudo = analiseParcialService.obterReparteLancamentoEstudo(estudoId).toBigInteger();
     	
     	EstudoGerado estudoGerado = estudoService.obterEstudo(estudoId);
+    	
+    	BigDecimal reparteFisico = analiseParcialService.reparteFisicoLancamento(estudoId);
+    	
+    	if((reparteFisico != null)&&(reparteLancamento.compareTo(reparteFisico) > 0)){
+    		throw new ValidacaoException(TipoMensagem.WARNING,"Há divergência entre o reparte Previsto e o Físico!");
+    	}
     	
     	for (EstudoCotaGerado estudoCota : listEstudoCotas) {
 			if(BigIntegerUtil.isMenorQueZero(estudoCota.getReparte())){

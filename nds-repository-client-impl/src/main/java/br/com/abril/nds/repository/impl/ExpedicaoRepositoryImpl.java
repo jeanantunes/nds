@@ -422,7 +422,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 					  .append(" on fornecedor.JURIDICA_ID=pessoa.ID ");
 		}
 
-		innerQuery.append(" INNER JOIN MOVIMENTO_ESTOQUE_COTA mec ON mec.PRODUTO_EDICAO_ID = produtoEdicao.ID ")
+		innerQuery.append(" INNER JOIN MOVIMENTO_ESTOQUE_COTA mec ON mec.LANCAMENTO_ID = lancamento.ID ")
 				  .append(" INNER JOIN tipo_movimento tp ON tp.ID = mec.TIPO_MOVIMENTO_ID ")
 				  .append(" INNER JOIN COTA cota  ON mec.COTA_ID=cota.ID ")
 				  .append(" LEFT OUTER JOIN BOX box ON cota.BOX_ID=box.ID ")
