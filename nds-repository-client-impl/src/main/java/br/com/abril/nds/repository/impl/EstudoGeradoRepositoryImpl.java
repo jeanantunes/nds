@@ -105,7 +105,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("   ( ");
 		sql.append("     SELECT ");
 		
-		sql.append("       (SELECT case lc.REPARTE when 0 then case plp.NUMERO_PERIODO when 1 then ((lc.REPARTE)-lc.REPARTE_PROMOCIONAL) else estp.QTDE end else lc.REPARTE end as rprte ");
+		sql.append("       (SELECT case when estp.QTDE is null then case when plp.NUMERO_PERIODO = 1 then ((lc.REPARTE)-lc.REPARTE_PROMOCIONAL) else estp.QTDE end else estp.qtde end as rprte ");
 		sql.append("       			From estudo_gerado eg JOIN lancamento lc ON lc.ID = eg.LANCAMENTO_ID LEFT JOIN periodo_lancamento_parcial plp ON plp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ");
 		sql.append("       			LEFT JOIN estoque_produto estp ON estp.PRODUTO_EDICAO_ID = eg.PRODUTO_EDICAO_ID where eg.ID = :estudoId ) AS qtdReparteDistribuidor, ");
 		
@@ -275,6 +275,37 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		
 		sql.append(" where eg.ID = :estudoId ");
 		
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("estudoId", idEstudo);
+
+		return (BigDecimal) query.uniqueResult();
+	}
+
+	@Override
+	public BigDecimal reparteFisicoLancamento(Long idEstudo) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT ");
+		sql.append(" case when estp.QTDE is null ");
+		sql.append(" 	then ");
+		sql.append("  		case when plp.NUMERO_PERIODO = 1 ");
+		sql.append(" 			 then ");
+		sql.append(" 				((lc.REPARTE)-lc.REPARTE_PROMOCIONAL)  ");
+		sql.append("			else estp.QTDE ");
+		sql.append(" 		end ");
+		sql.append(" 	else estp.qtde ");
+		sql.append(" end ");
+		
+		sql.append(" From estudo_gerado eg ");
+		
+		sql.append(" JOIN lancamento lc ON lc.ID = eg.LANCAMENTO_ID ");
+		sql.append(" LEFT JOIN periodo_lancamento_parcial plp ON plp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		sql.append(" LEFT JOIN estoque_produto estp ON estp.PRODUTO_EDICAO_ID = eg.PRODUTO_EDICAO_ID  ");
+		
+		sql.append(" where eg.ID = :estudoId ");
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		

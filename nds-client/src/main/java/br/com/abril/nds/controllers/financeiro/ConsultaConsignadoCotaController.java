@@ -84,7 +84,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 	@Post
 	@Path("/buscarTotalGeralCota")
 	public void buscarTotalGeralCota(FiltroConsultaConsignadoCotaDTO filtro){
-		
+	    
 		if(filtro.getIdCota() != null){
 			cota = obterCota(filtro.getIdCota().intValue());
 			if(cota == null){
@@ -97,6 +97,8 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 		List<TotalConsultaConsignadoCotaDetalhado> totaisFornecedores = null;
 		
+		BigDecimal totalGeral = BigDecimal.ZERO;
+		
 		if (filtro.getIdFornecedor() == -1) {
 			
 			filtro.setIdFornecedor(null);
@@ -104,11 +106,15 @@ public class ConsultaConsignadoCotaController extends BaseController {
 			totaisFornecedores = 
 				this.consultaConsignadoCota.buscarTotalDetalhado(filtro);
 			
+			for(TotalConsultaConsignadoCotaDetalhado tt : totaisFornecedores) {
+			    totalGeral = totalGeral.add(tt.getTotal());
+			}
+			
 			mapaResultado.put("totaisFornecedores", totaisFornecedores);
+		} else {
+		    totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
 		}
 		
-		BigDecimal totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
-
 		mapaResultado.put("totalGeral", CurrencyUtil.formatarValor(totalGeral));
 
 		this.result.use(CustomJson.class).put("result", mapaResultado).serialize();
@@ -137,8 +143,12 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		html.append("<table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>");
 		List<TotalConsultaConsignadoCotaDetalhado> listaGeralDetalhado = this.consultaConsignadoCota.buscarTotalDetalhado(filtro);
 		int cont = 0;
+		
+		BigDecimal tt = BigDecimal.ZERO;
+		
 		for(TotalConsultaConsignadoCotaDetalhado total: listaGeralDetalhado){
-			html.append("<tr>");
+			tt = tt.add(total.getTotal());
+		    html.append("<tr>");
 			if(cont==0){
 				html.append("<td width='71'><strong>Total:</strong></td>");				
 			}else{
@@ -148,9 +158,10 @@ public class ConsultaConsignadoCotaController extends BaseController {
 			html.append("<td width='60' align='right'><strong>"+CurrencyUtil.formatarValor(total.getTotal())+"</strong></td>");
 			html.append("</tr>");
 			cont++;			
+			
 		}
-		BigDecimal totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
-		String totalFormatado = CurrencyUtil.formatarValor(totalGeral);
+		
+		String totalFormatado = CurrencyUtil.formatarValor(tt);
 		
 		html.append("<tr> ");
 		html.append("<td style='border-top:1px solid #000;'><strong>Total Geral:</strong></td>");
