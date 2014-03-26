@@ -104,7 +104,7 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 		this.codigoBarras = codigoBarras;
 	}
 	
-	@Field(offset = 113, length = 10)
+	@Field(offset = 113, length = 8)
 	public Long getCodigoSiscorp() {
 		return codigoSiscorp;
 	}

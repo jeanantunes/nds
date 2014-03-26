@@ -15,10 +15,5 @@ public enum TipoFeriado {
 	public String getDescricao(){
 		return this.descricao;
 	}
-	
-	@Override
-	public String toString() {
-		return this.descricao;
-	}
 
 }
