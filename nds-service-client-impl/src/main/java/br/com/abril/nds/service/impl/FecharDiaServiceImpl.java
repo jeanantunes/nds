@@ -1631,8 +1631,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Override
 	public FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
 		
-		this.processarAlteracaoDescontoLogistica();
-		
 		LOGGER.info("FECHAMENTO DIARIO - ATUALIZADO DESCONTO LOGISTICA");
 		
 		processarControleDeAprovacao();
@@ -1667,11 +1665,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 		}
-	}
-	
-	private void processarAlteracaoDescontoLogistica(){
-		
-		this.descontoLogisticaService.alterarDescontoLogistica();
 	}
 	
 	private void processarDividasNaoPagas(Usuario usuario, Date dataPagamento) {
