@@ -35,5 +35,7 @@ public interface EstudoGeradoRepository extends Repository<EstudoGerado, Long> {
 
 	Long obterUltimoAutoIncrement();
 	
-	BigDecimal reparteEstudoOriundoDoLancamento(Long idEstudo);	
+	BigDecimal reparteEstudoOriundoDoLancamento(Long idEstudo);
+	
+	BigDecimal reparteFisicoLancamento(Long idEstudo);
 }

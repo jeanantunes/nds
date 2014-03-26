@@ -32,6 +32,15 @@ public class FiltroConsultaEncalheDTO {
 	
 	private OrdenacaoColuna ordenacaoColuna;
 
+	public FiltroConsultaEncalheDTO() {
+	    
+	}
+	
+	public FiltroConsultaEncalheDTO(Date data) {
+        this.dataRecolhimentoFinal = data;
+        this.dataRecolhimentoInicial = data;        
+    }
+	
 	/**
 	 * Enum para ordenação das colunas do filtro.
 	 * 

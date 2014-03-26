@@ -1,16 +1,20 @@
 package br.com.abril.nds.repository.impl;
 
+import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -18,7 +22,10 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.integracao.StatusIntegracao;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 
@@ -165,64 +172,68 @@ implements MovimentoEstoqueRepository {
 	}
 
 	/**
-	 * Obtem valor total de Consignado ou AVista da data
-	 * @param data
-	 * @param operacaoEstoque
-	 * @param formaComercializacao
-	 * @return BigDecimal
-	 */
+     * Obtem valor total de Consignado ou AVista da data
+     * @param data
+     * @param operacaoEstoque
+     * @param formaComercializacao
+     * @return BigDecimal
+     */
 	@Override
-	public BigDecimal obterSaldoDistribuidor(Date data, OperacaoEstoque operacaoEstoque, FormaComercializacao formaComercializacao) {
-		
-		
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append("   SELECT sum(COALESCE(me.QTDE, 0)*pe.PRECO_VENDA)			");
-		sql.append("   FROM MOVIMENTO_ESTOQUE me                        	");
-		
-		sql.append("   INNER JOIN TIPO_MOVIMENTO tipoMovimento 		");
-		sql.append("   ON me.TIPO_MOVIMENTO_ID=tipoMovimento.ID    	");
-		     
-		sql.append("   INNER JOIN PRODUTO_EDICAO pe                	");
-		sql.append("   ON me.PRODUTO_EDICAO_ID=pe.ID               	");
-		     
-		sql.append("   INNER JOIN PRODUTO prod                     	");
-		sql.append("   ON pe.PRODUTO_ID=prod.ID                    	");
-		     
-		sql.append("   LEFT JOIN ( ");
-		sql.append("		select produto_edicao_furo.id as idProdutoEdicaoFuro ");
-		sql.append("		from FURO_PRODUTO fp 								");
-		
-		sql.append("		inner join produto_edicao produto_edicao_furo 		");
-		sql.append("		on produto_edicao_furo.id = fp.produto_edicao_id 	");
-		
-		sql.append("		where fp.data_lcto_distribuidor = :data	");
-		sql.append("   ) as produtosFuradosNaData     			");
-		sql.append("   ON produtosFuradosNaData.idProdutoEdicaoFuro = me.PRODUTO_EDICAO_ID	");
-		
-		sql.append("   WHERE	");
-		     
-		sql.append("   me.DATA >= :data ");
-		sql.append("   AND me.STATUS = :statusAprovado	");
-		sql.append("   AND prod.FORMA_COMERCIALIZACAO = :formaComercializacao ");
-		sql.append("   AND ( ");
-		sql.append("       tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:grupoMovimentoEnvioJornaleiro) ");
-		sql.append("   ) ");
-		sql.append("   AND produtosFuradosNaData.idProdutoEdicaoFuro is null       ");
-		sql.append("   AND tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoque        ");
-		
-		Query query = this.getSession().createSQLQuery(sql.toString());
-		
-		query.setParameter("data", data);
-		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
-		query.setParameter("formaComercializacao", formaComercializacao.name());
-		query.setParameterList("grupoMovimentoEnvioJornaleiro", this.obterListaGrupoMovimentoConsignado());
-		query.setParameter("operacaoEstoque", operacaoEstoque.name());
-		
-		Object result = query.uniqueResult();
-		
-		return (result == null) ? BigDecimal.ZERO : (BigDecimal) result;
+    public BigDecimal obterSaldoDistribuidor(Date data, OperacaoEstoque operacaoEstoque, FormaComercializacao formaComercializacao) {
+
+	    
+        Objects.requireNonNull(data, "Data para contagem dos lançamentos expedidos não deve ser nula!");
+        
+        //Sql que obtem o os produtos que foram expedidos
+        String templateHqlProdutoEdicaoExpedido = new StringBuilder("(select distinct(produtoEdicaoExpedido.id) from Expedicao expedicao ")
+           .append(" join expedicao.lancamentos lancamento join lancamento.produtoEdicao produtoEdicaoExpedido join produtoEdicaoExpedido.produto prodExpedido where " )
+           .append(" lancamento.status <> :statusFuro and lancamento.dataLancamentoDistribuidor =:data and prodExpedido.formaComercializacao=:formaComercializacao)").toString();
+       
+        // Sql que obtem as diferenças direcionadas apenas para as cotas
+        String templateHqlDiferencaRateioCota =  new StringBuilder("(select ")
+            .append(" COALESCE( sum(CASE  ")
+            .append("              WHEN diferenca.tipoDiferenca='FALTA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda  * -1) ")
+            .append("              WHEN diferenca.tipoDiferenca='PERDA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda * -1 )")
+            .append("              WHEN diferenca.tipoDiferenca='SOBRA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)  ")
+            .append("              WHEN diferenca.tipoDiferenca='GANHO_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)  ")
+            .append("              WHEN diferenca.tipoDiferenca='SOBRA_EM_DIRECIONADA_COTA' THEN ( diferenca.qtde * diferenca.produtoEdicao.precoVenda )  ")
+            .append("              ELSE 0 END),0) ")
+            .append(" from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
+            .append(" where  diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s) ")
+            .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido)
+            .append(" and diferenca.id in ( select distinct rateio.diferenca.id from RateioDiferenca rateio where rateio.dataMovimento =:data ) ").append(")").toString();
+       
+        StringBuilder hql = new StringBuilder(" select ");
+        
+        hql.append("((select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEnvioJornaleiro ")
+           .append("then (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda) else (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda * -1) end) ")
+           .append("from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data and movimentoEstoque.status = :statusAprovado ")
+           .append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro, :grupoMovimentoEstornoEnvioJornaleiro) ")
+           .append("and movimentoEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") + ")
+           .append(String.format(templateHqlDiferencaRateioCota,  "tipoDiferencaRateioCota")).append(") as totalDistribuido ");
+        
+        hql.append(" from Distribuidor ");
+        
+        Query query = getSession().createQuery(hql.toString());
+        
+        query.setMaxResults(1);
+        
+        query.setParameter("formaComercializacao", formaComercializacao);
+        query.setParameter("data", data);
+        query.setParameter("statusFuro", StatusLancamento.FURO);
+        query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
+        query.setParameter("grupoMovimentoEnvioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+        query.setParameter("grupoMovimentoEstornoEnvioJornaleiro", GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
+                      
+        query.setParameterList("tipoDiferencaRateioCota", Arrays.asList(TipoDiferenca.SOBRA_EM,
+                                                                        TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA, 
+                                                                        TipoDiferenca.GANHO_EM,
+                                                                        TipoDiferenca.FALTA_EM,
+                                                                        TipoDiferenca.PERDA_EM));
+        
+        return (BigDecimal) query.uniqueResult();
 	}
+	
 
 	/**
 	 * Obtem valor total de Consignado ou AVista da data
@@ -257,7 +268,7 @@ implements MovimentoEstoqueRepository {
 		
 		sql.append("		on produto_edicao_furo.id = fp.produto_edicao_id 	");
 		
-		sql.append("		where fp.data_lcto_distribuidor >= :data	");
+		sql.append("		where fp.data_lcto_distribuidor = :data	");
 		
 		sql.append("   ) as produtosFuradosNaData     			");
 		
@@ -266,7 +277,7 @@ implements MovimentoEstoqueRepository {
 		
 		sql.append("   WHERE	");
 		     
-		sql.append("   CE.DATA_RECOLHIMENTO >= :data ");
+		sql.append("   CE.DATA_RECOLHIMENTO = :data ");
 		
 		sql.append("   AND P.FORMA_COMERCIALIZACAO = :formaComercializacao ");
 		
