@@ -18,6 +18,7 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -547,12 +548,20 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		
 		DescontoLogistica descontoLogistica;
 		
-		if(input.getTipoDesconto()!=null){
-		 descontoLogistica = descontoLogisticaRepository.obterPorTipoDesconto(input.getTipoDesconto());
-		}else {
-			descontoLogistica = descontoLogisticaRepository.obterPorTipoDesconto(1);
+		Fornecedor fornecedor = produto.getFornecedor();
+		
+		Integer tipoDesconto = input.getTipoDesconto();
+		
+		if(tipoDesconto == null){
+		 
+		    tipoDesconto = 1;
 		}
-
+		
+		descontoLogistica =
+             descontoLogisticaRepository.obterDescontoLogisticaVigente(tipoDesconto,
+                                                                       fornecedor.getId(),
+                                                                       input.getDataMovimento());
+		
 		ndsiLoggerFactory.getLogger().logError(
 				messageAux,
 				EventoExecucaoEnum.HIERARQUIA,

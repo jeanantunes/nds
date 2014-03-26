@@ -2953,22 +2953,23 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     }
     
     @Override
-    public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(final Long idCota, final Long idProdutoEdicao, final Long idTipoMovimento) {
-        
-        
+    public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(final Long idCota, final Long idProdutoEdicao) {
+
         final StringBuilder hql = new StringBuilder();
         
-        hql.append(" select sum(movimentoEstoqueCota.qtde) ");
+        hql.append(" select sum(case when tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = :entrada then movimentoEstoqueCota.qtde ");
+        
+        hql.append(" else (movimentoEstoqueCota.qtde * -1) end) ");
         
         hql.append(" from MovimentoEstoqueCota movimentoEstoqueCota ");
+        
+        hql.append(" join movimentoEstoqueCota.tipoMovimento tipoMovimento ");
         
         hql.append(" where movimentoEstoqueCota.produtoEdicao.id = :idProdutoEdicao and ");
         
         if(idCota != null) {
-            hql.append("  movimentoEstoqueCota.cota.id = :idCota and ");
+            hql.append("  movimentoEstoqueCota.cota.id = :idCota ");
         }
-        
-        hql.append(" movimentoEstoqueCota.tipoMovimento.id = :idTipoMovimento ");
         
         final Query query = getSession().createQuery(hql.toString());
         
@@ -2977,8 +2978,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         }
         
         query.setParameter("idProdutoEdicao", idProdutoEdicao);
-        
-        query.setParameter("idTipoMovimento", idTipoMovimento);
+
+        query.setParameter("entrada", OperacaoEstoque.ENTRADA);
         
         final BigInteger sum = (BigInteger) (query.uniqueResult() == null ? BigInteger.ZERO : query.uniqueResult());
         
