@@ -475,8 +475,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		
 		List<Long> idExcluidos = new ArrayList<>();
 		
-		List<Long> edicaoAtendida = new ArrayList<>();
-		
 		if(lcmtsDosProdutosQuePossueFixacao != null && !lcmtsDosProdutosQuePossueFixacao.isEmpty()){
 			
 			List<String> codigosICD = new ArrayList<>();
@@ -500,26 +498,23 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 								if((fixacao.getEdicaoInicial()!=null && fixacao.getEdicaoInicial().intValue() > 0)&&(fixacao.getEdicaoFinal()!=null && fixacao.getEdicaoFinal().intValue() > 0)){
 									
 									BigInteger numeroEdicaoPeloLancamentoID = fixacaoReparteRepository.obterNumeroEdicaoPeloLancamentoID(verificadorLcmtXFixacao.getIdLancamento().longValue());
-									
-									if((numeroEdicaoPeloLancamentoID.intValue() >= fixacao.getEdicaoInicial()) && (numeroEdicaoPeloLancamentoID.intValue() <= fixacao.getEdicaoFinal())){
 
-										if(!edicaoAtendida.contains(numeroEdicaoPeloLancamentoID.longValue())){
-											fixacao.setEdicoesAtendidas(fixacao.getEdicoesAtendidas() != null? fixacao.getEdicoesAtendidas()+1 : 1);
-											edicaoAtendida.add(numeroEdicaoPeloLancamentoID.longValue());
-											fixacaoReparteRepository.alterar(fixacao);
-										}
-										
+									if((numeroEdicaoPeloLancamentoID.intValue() == fixacao.getEdicaoFinal().longValue()) && (!fixacao.isManterFixa())){
+										this.removerFixacaoReparte(fixacao);
 									}else{
-										if((numeroEdicaoPeloLancamentoID.intValue() == fixacao.getEdicaoFinal().longValue()) && (!fixacao.isManterFixa())){
-											this.removerFixacaoReparte(fixacao);
-										}
+
+										BigInteger qtdEdicoesAtendidas = fixacaoReparteRepository.obterQtdDeEdicoesNoRanger(verificadorLcmtXFixacao.getCodICDFixacao(), fixacao.getEdicaoInicial(), fixacao.getEdicaoFinal());
+										
+										fixacao.setEdicoesAtendidas(qtdEdicoesAtendidas.intValue());
+										fixacaoReparteRepository.alterar(fixacao);
+										
 									}
 									
 								}else{
 									
 									BigInteger qtdEdicoesPosteriores = fixacaoReparteRepository.qntdEdicoesPosterioresAolancamento(verificadorLcmtXFixacao.getCodICDFixacao(), fixacao.getDataFixa());
 									
-									if(qtdEdicoesPosteriores.intValue() <= fixacao.getQtdeEdicoes()){
+									if(qtdEdicoesPosteriores.intValue() < fixacao.getQtdeEdicoes()){
 										fixacao.setEdicoesAtendidas(qtdEdicoesPosteriores.intValue());
 										fixacaoReparteRepository.alterar(fixacao);
 									}else{
@@ -542,5 +537,5 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			}
 		}
 	}
-
+	
 }
