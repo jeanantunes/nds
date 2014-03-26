@@ -86,6 +86,7 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
         this.codDistrib = codDistrib;
     }
     
+    @Field(offset=8, length=8)
     public String getDataGeracaoArq() {
         return dataGeracaoArq;
     }
