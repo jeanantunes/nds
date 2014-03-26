@@ -103,7 +103,7 @@
 					<td><strong>Tipo de Desconto:</strong></td>
 					<td>
 						<select name="comboTipoDesconto"  id="comboTipoDesconto" class="habilitarCampoInterface" 
-						        style="width:200px; display: none;" onchange="produtoController.carregarPercentualDesconto();" >
+						        style="width:200px; display: none;" >
 						</select>
 						<input type="text" id="tipoDescontoManual" style="width:200px; display: none;" />
 					</td>
