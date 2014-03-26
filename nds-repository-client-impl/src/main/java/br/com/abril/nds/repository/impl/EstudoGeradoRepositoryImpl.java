@@ -251,39 +251,6 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 	}
 
 	@Override
-	public BigDecimal reparteEstudoOriundoDoLancamento(Long idEstudo) {
-
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" SELECT ");
-		
-		sql.append(" case lc.REPARTE ");
-		sql.append(" 	when 0 then ");
-		sql.append("  		case plp.NUMERO_PERIODO ");
-		sql.append(" 			when 1 then ");
-		sql.append(" 				((IF(lc.REPARTE is null, 0, lc.REPARTE))-IF(lc.REPARTE_PROMOCIONAL is null, 0, lc.REPARTE_PROMOCIONAL))  ");
-		sql.append("			else estp.QTDE ");
-		sql.append(" 		end ");
-		sql.append(" 	else lc.REPARTE ");
-		sql.append(" end ");
-		
-		sql.append(" From estudo_gerado eg ");
-		
-		sql.append(" JOIN lancamento lc ON lc.ID = eg.LANCAMENTO_ID ");
-		sql.append(" LEFT JOIN periodo_lancamento_parcial plp ON plp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ");
-		sql.append(" LEFT JOIN estoque_produto estp ON estp.PRODUTO_EDICAO_ID = eg.PRODUTO_EDICAO_ID  ");
-		
-		sql.append(" where eg.ID = :estudoId ");
-		
-		
-		Query query = getSession().createSQLQuery(sql.toString());
-		
-		query.setParameter("estudoId", idEstudo);
-
-		return (BigDecimal) query.uniqueResult();
-	}
-
-	@Override
 	public BigDecimal reparteFisicoOuPrevistoLancamento(Long idEstudo) {
 
 		StringBuilder sql = new StringBuilder();
