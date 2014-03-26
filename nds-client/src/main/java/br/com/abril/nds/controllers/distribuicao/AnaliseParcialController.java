@@ -241,7 +241,7 @@ public class AnaliseParcialController extends BaseController {
         List<CotaQueNaoEntrouNoEstudoDTO> lista = new ArrayList<>();
 
         if (queryDTO.possuiNome()) {
-            queryDTO.setNome(PessoaUtil.removerSufixoDeTipo(queryDTO.getNome()));
+            queryDTO.setNome(PessoaUtil.removerSufixoDeTipo(queryDTO.getNome())); 
         }
 
         if (queryDTO.getEstudo() != null && queryDTO.getEstudo() > 0) {

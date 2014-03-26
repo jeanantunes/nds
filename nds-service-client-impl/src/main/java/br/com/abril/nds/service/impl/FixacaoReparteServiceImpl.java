@@ -538,10 +538,4 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		}
 	}
 	
-	@Override
-	 	public List<BigInteger> obterListaLancamentosRangerData() {
-	 		
-	 		return fixacaoReparteRepository.obterListaLancamentosRangerData();
-	 	}
-
 }

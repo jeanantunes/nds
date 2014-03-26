@@ -51,7 +51,4 @@ public interface FixacaoReparteRepository  extends Repository<FixacaoReparte, Lo
 	
 	BigInteger obterQtdDeEdicoesNoRanger (String codigoICD, Integer edInicial, Integer edFinal);
 	
-	
-	List<BigInteger> obterListaLancamentosRangerData();
-	
 }

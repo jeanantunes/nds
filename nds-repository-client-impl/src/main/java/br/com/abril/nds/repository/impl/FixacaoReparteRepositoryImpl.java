@@ -524,19 +524,4 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		return (BigInteger) query.uniqueResult();
 	}
 	
-
-//remover
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<BigInteger> obterListaLancamentosRangerData() {
-		
-		StringBuilder sql = new StringBuilder("");
-		
-		sql.append(" select l.ID from lancamento l where l.DATA_LCTO_DISTRIBUIDOR < '2014/04/15' and l.DATA_LCTO_DISTRIBUIDOR >= '2014/04/01' ");
-		
-		Query query = getSession().createSQLQuery(sql.toString());
-		
-		return (List<BigInteger>) query.list();
-	}
-	
 }
