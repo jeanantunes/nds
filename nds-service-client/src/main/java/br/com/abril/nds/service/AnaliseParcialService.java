@@ -44,6 +44,6 @@ public interface AnaliseParcialService {
     
     BigDecimal obterReparteLancamentoEstudo (Long idEstudo);
     
-    BigDecimal reparteFisicoLancamento (Long idEstudo);
+    BigDecimal reparteFisicoOuPrevistoLancamento (Long idEstudo);
 
 }

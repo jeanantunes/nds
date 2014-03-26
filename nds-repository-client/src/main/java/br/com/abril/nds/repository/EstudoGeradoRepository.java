@@ -37,5 +37,5 @@ public interface EstudoGeradoRepository extends Repository<EstudoGerado, Long> {
 	
 	BigDecimal reparteEstudoOriundoDoLancamento(Long idEstudo);
 	
-	BigDecimal reparteFisicoLancamento(Long idEstudo);
+	BigDecimal reparteFisicoOuPrevistoLancamento(Long idEstudo);
 }

@@ -284,7 +284,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 	}
 
 	@Override
-	public BigDecimal reparteFisicoLancamento(Long idEstudo) {
+	public BigDecimal reparteFisicoOuPrevistoLancamento(Long idEstudo) {
 
 		StringBuilder sql = new StringBuilder();
 		
@@ -294,7 +294,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("  		case when plp.NUMERO_PERIODO = 1 ");
 		sql.append(" 			 then ");
 		sql.append(" 				((lc.REPARTE)-lc.REPARTE_PROMOCIONAL)  ");
-		sql.append("			else estp.QTDE ");
+		sql.append("			else lc.REPARTE ");
 		sql.append(" 		end ");
 		sql.append(" 	else estp.qtde ");
 		sql.append(" end ");
