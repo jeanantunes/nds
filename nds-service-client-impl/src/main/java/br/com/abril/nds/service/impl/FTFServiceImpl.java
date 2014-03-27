@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,14 +75,6 @@ public class FTFServiceImpl implements FTFService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma nota localizada.");
 		}
 		
-		
-		
-		List<ParametroFTFGeracao> lisParametroFTFGeracaos = this.ftfRepository.obterTodosParametrosGeracaoFTF();
-		
-		for (ParametroFTFGeracao parametroFTFGeracao : lisParametroFTFGeracaos) {
-			
-		}
-		
 		long idNaturezaOperacao = 0;
 		for(NotaFiscal nf : notas) {
 			
@@ -95,6 +88,15 @@ public class FTFServiceImpl implements FTFService {
 			idNaturezaOperacao = nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId();
 		}
 		
+		List<ParametroFTFGeracao> lisParametroFTFGeracaos = this.ftfRepository.obterTodosParametrosGeracaoFTF();
+		
+		Map<String, ParametroFTFGeracao> mapasParametrosFTF = new HashMap<String, ParametroFTFGeracao>();
+		
+		for (ParametroFTFGeracao parametroFTFGeracao : lisParametroFTFGeracaos) {
+			mapasParametrosFTF.put(parametroFTFGeracao.getCfop().getCodigo(), parametroFTFGeracao);
+		}
+		
+		
 		List<FTFBaseDTO> list = new ArrayList<FTFBaseDTO>();
 		FTFReportDTO report = new FTFReportDTO();
 		
@@ -102,7 +104,14 @@ public class FTFServiceImpl implements FTFService {
 		
 		FTFEnvTipoRegistro00 regTipo00 = ftfRepository.obterRegistroTipo00(idNaturezaOperacao);
 		
-		FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(notas.get(0).getId());
+		List<FTFEnvTipoRegistro08> registrosTipo08 = new ArrayList<>();
+		for(NotaFiscal nf : notas) {
+			
+			FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(nf.getId());			
+			validacaoBeans.addAll(regTipo08.validateBean());
+			registrosTipo08.add(regTipo08);
+		}
+		
 				
 		FTFEnvTipoRegistro09 regTipo09 = ftfRepository.obterRegistroTipo09(idNaturezaOperacao);
 		
@@ -111,7 +120,6 @@ public class FTFServiceImpl implements FTFService {
 		List<FTFEnvTipoRegistro01> listTipoRegistro01 = ftfRepository.obterResgistroTipo01(notas, idNaturezaOperacao);
 		
 		validacaoBeans.addAll(regTipo00.validateBean());
-		validacaoBeans.addAll(regTipo08.validateBean());
 		validacaoBeans.addAll(regTipo09.validateBean());
 		for(FTFEnvTipoRegistro01 ftfetr01 : listTipoRegistro01) {
 			validacaoBeans.addAll(ftfetr01.validateBean());
@@ -156,7 +164,7 @@ public class FTFServiceImpl implements FTFService {
 		regTipo00.setQtdePedidos(totalPedidos);
 		regTipo00.setQtdeRegistros(totalRegistros);
 
-		list.add(regTipo08);
+		list.addAll(registrosTipo08);
 		
 		regTipo09.setQtdePedidos(totalPedidos);
 		regTipo09.setQtdeRegistros(totalRegistros);
