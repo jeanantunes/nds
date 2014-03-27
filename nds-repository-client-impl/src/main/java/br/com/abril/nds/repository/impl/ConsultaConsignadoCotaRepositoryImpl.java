@@ -269,9 +269,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
     		
     		sql.append("                  (");
     		
-    		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) IS NULL) OR ");
+    		sql.append("                      (c.DEVOLVE_ENCALHE IS NULL) OR ");
     		
-    		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) = TRUE) ");
+    		sql.append("                      (c.DEVOLVE_ENCALHE = TRUE) ");
     		
     		sql.append("                  )");
     		

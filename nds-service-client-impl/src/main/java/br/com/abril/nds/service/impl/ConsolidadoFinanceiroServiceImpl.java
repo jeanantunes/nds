@@ -63,7 +63,7 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 	@Transactional(readOnly=true)
 	public List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro){
 		
-		List<ConsignadoCotaDTO> consigadoDTO;
+		List<ConsignadoCotaDTO> consignadoDTO;
 		
 		Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 		
@@ -72,14 +72,14 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		     (cota.getAlteracaoTipoCota()!=null && 
 		      filtro.getDataConsolidado().compareTo(cota.getAlteracaoTipoCota()) < 0))){
 			
-			consigadoDTO = consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaConsignado(filtro);
+			consignadoDTO = consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaConsignado(filtro);
 		}
 		else{
 			
-			consigadoDTO = consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaAVistaConsignado(filtro);
+			consignadoDTO = consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaAVistaConsignado(filtro);
 		}
 		
-		return consigadoDTO;
+		return consignadoDTO;
 	}
 
 	@Override

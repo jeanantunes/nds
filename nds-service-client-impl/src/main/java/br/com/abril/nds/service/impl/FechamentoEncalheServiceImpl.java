@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -924,16 +925,24 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             this.gerarNotaFiscal(dataEncalhe);
         }
         
-        // cobra cotas as demais cotas, no caso, as não ausentes e com
-        // unificação
+        // Cobra cotas as demais cotas, no caso, as não ausentes e com centralização
+        // Não gera cobrança para cotas do tipo À Vista
         final Set<String> nossoNumeroCentralizacao = new HashSet<String>();
         
         if (cobrarCotas) {
+        	
             try {
                 
-                gerarCobrancaService.gerarCobranca(null, usuario.getId(), new HashSet<String>(), nossoNumeroCentralizacao);
+                gerarCobrancaService.gerarCobranca(null, 
+                		                           usuario.getId(), 
+                		                           new HashSet<String>(), 
+                		                           nossoNumeroCentralizacao, 
+                		                           Arrays.asList(TipoCota.CONSIGNADO));
+                
             } catch (final GerarCobrancaValidacaoException e) {
+            	
                 LOGGER.error(e.getMessage(), e);
+                
                 throw new ValidacaoException(e.getValidacaoVO());
             }
         }

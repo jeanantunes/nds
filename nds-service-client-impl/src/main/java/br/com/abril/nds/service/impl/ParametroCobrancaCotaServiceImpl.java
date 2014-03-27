@@ -263,7 +263,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			}
 			
 			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
-			parametroCobrancaDTO.setDevolveEncalhe(parametroCobranca.isDevolveEncalhe()!=null?parametroCobranca.isDevolveEncalhe():true);
+			parametroCobrancaDTO.setDevolveEncalhe(cota.isDevolveEncalhe()!=null?cota.isDevolveEncalhe():true);
 			parametroCobrancaDTO.setParametroDistribuidor(parametroDistribuidor);
 			
 			politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
@@ -476,7 +476,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedor());
 			parametroCobranca.setFornecedorPadrao(fornecedor);
 			
-			parametroCobranca.setDevolveEncalhe(parametroCobrancaDTO.isDevolveEncalhe());
+			cota.setDevolveEncalhe(parametroCobrancaDTO.isDevolveEncalhe());
 			
 			if (novo) {
 				parametroCobranca.setCota(cota);
