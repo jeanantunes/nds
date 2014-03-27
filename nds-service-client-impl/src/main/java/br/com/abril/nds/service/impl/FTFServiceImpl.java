@@ -74,6 +74,8 @@ public class FTFServiceImpl implements FTFService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma nota localizada.");
 		}
 		
+		
+		
 		List<ParametroFTFGeracao> lisParametroFTFGeracaos = this.ftfRepository.obterTodosParametrosGeracaoFTF();
 		
 		for (ParametroFTFGeracao parametroFTFGeracao : lisParametroFTFGeracaos) {

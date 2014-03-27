@@ -133,7 +133,7 @@ public class TransportadorWrapper implements Serializable {
 	 */
 	public void setEndereco(NotaFiscalEndereco endereco) {
 		this.endereco = endereco;
-		this.setEnderecoXML(endereco.getLogradouro() + " "+ endereco.getNumero() + " " + endereco.getComplemento() + " " + endereco.getBairro());
+		this.setEnderecoXML(endereco != null ? endereco.getLogradouro().concat(" ").concat(endereco.getNumero()).concat(" ").concat(endereco.getComplemento()).concat(endereco.getBairro()) : null);
 	}
 
 	/**

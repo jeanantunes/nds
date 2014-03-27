@@ -36,7 +36,8 @@ public class NotaFiscalTransportadorBuilder {
 		}
 		
 		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco() == null){
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setEndereco(new NotaFiscalEndereco());
+			NotaFiscalEndereco endereco = new NotaFiscalEndereco();
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setEndereco(endereco);
 		}
 		
 		if(transportadores == null || transportadores.isEmpty()){

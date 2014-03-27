@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="NOTA_FISCAL_TELEFONE")
@@ -34,6 +35,7 @@ public class NotaFiscalTelefone implements Serializable {
 	@Column(name = "RAMAL", nullable = true)
 	private String ramal;
 
+	@XmlTransient
 	public Long getId() {
 		return id;
 	}
@@ -42,6 +44,7 @@ public class NotaFiscalTelefone implements Serializable {
 		this.id = id;
 	}
 
+	@XmlTransient
 	public String getTipoTelefone() {
 		return tipoTelefone;
 	}
@@ -50,6 +53,7 @@ public class NotaFiscalTelefone implements Serializable {
 		this.tipoTelefone = tipoTelefone;
 	}
 
+	@XmlTransient
 	public String getDDI() {
 		return DDI;
 	}
@@ -58,6 +62,7 @@ public class NotaFiscalTelefone implements Serializable {
 		DDI = dDI;
 	}
 
+	@XmlTransient
 	public String getDDD() {
 		return DDD;
 	}
@@ -66,6 +71,7 @@ public class NotaFiscalTelefone implements Serializable {
 		DDD = dDD;
 	}
 
+	@XmlTransient
 	public String getNumero() {
 		return numero;
 	}
@@ -74,6 +80,7 @@ public class NotaFiscalTelefone implements Serializable {
 		this.numero = numero;
 	}
 	
+	@XmlTransient
 	public String getRamal() {
 		return ramal;
 	}
@@ -81,11 +88,9 @@ public class NotaFiscalTelefone implements Serializable {
 	public void setRamal(String ramal) {
 		this.ramal = ramal;
 	}
-
+	
 	@Override
 	public String toString() {
-		return "NotaFiscalTelefone [id=" + id + ", tipoTelefone="
-				+ tipoTelefone + ", DDI=" + DDI + ", DDD=" + DDD + ", numero="
-				+ numero + "]";
+		return "NotaFiscalTelefone [id=" + id + ", tipoTelefone=" + tipoTelefone + ", DDI=" + DDI + ", DDD=" + DDD + ", numero=" + numero + "]";
 	}
 }
