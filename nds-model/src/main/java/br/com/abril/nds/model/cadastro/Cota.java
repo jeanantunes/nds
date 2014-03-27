@@ -105,6 +105,9 @@ public class Cota implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_COTA", columnDefinition = "VARCHAR(255)", nullable=false)
 	private TipoCota tipoCota;
+	
+	@Column(name = "DEVOLVE_ENCALHE")
+	private Boolean devolveEncalhe;
 		
 	@Embedded
 	private ParametroDistribuicaoCota parametroDistribuicao;
@@ -343,6 +346,14 @@ public class Cota implements Serializable {
 
 	public void setTipoCota(TipoCota tipoCota) {
 		this.tipoCota = tipoCota;
+	}
+	
+	public Boolean isDevolveEncalhe() {
+		return devolveEncalhe;
+	}
+
+	public void setDevolveEncalhe(Boolean devolveEncalhe) {
+		this.devolveEncalhe = devolveEncalhe;
 	}
 
 	public Fiador getFiador() {

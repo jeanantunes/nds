@@ -32,4 +32,12 @@ public interface GrupoRepository extends Repository<GrupoCota,Long> {
 	Set<Long> obterIdsCotasGrupo(Long idGrupo);
 
 	Set<String> obterMunicipiosCotasGrupo(Long idGrupo);
+
+	/**
+	 * Obtém lista de GrupoCota(Operação diferenciada)
+	 * @param idCota
+	 * @param dataOperacao
+	 * @return List<GrupoCota>
+	 */ 
+	List<GrupoCota> obterListaGrupoCotaPorCotaId(Long idCota, Date dataOperacao);
 }
