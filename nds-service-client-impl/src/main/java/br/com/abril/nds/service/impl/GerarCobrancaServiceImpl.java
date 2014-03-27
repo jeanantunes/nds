@@ -39,6 +39,7 @@ import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.financeiro.Boleto;
@@ -227,7 +228,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	            		               idUsuario, 
 	            		               nossoNumeroEnvioEmail,
 	            		               new HashSet<String>(),
-	            		               false);
+	            		               false,
+	            		               null);
 	        
 	            if (enviaEmail){
 	        
@@ -269,7 +271,36 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				               idUsuario, 
 				               setNossoNumero,
 				               setNossoNumeroCentralizacao,
-        		               false);
+        		               false,
+        		               null);
+		
+	}
+	
+	/**
+	 * Consolida Financeiro, Gera Divida e Gera Cobrança para cotas de Tipos Específicos (A_VISTA/CONSIGNADO)
+	 * 
+	 * @param idCota
+	 * @param idUsuario
+	 * @param setNossoNumeroEnvioEmail
+	 * @param setNossoNumeroCentralizacao
+	 * @param tiposCota
+	 * @throws GerarCobrancaValidacaoException
+	 */
+	@Override
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class, timeout = 500)
+	public void gerarCobranca(Long idCota, 
+			                  Long idUsuario, 
+			                  Set<String> setNossoNumero,
+			                  Set<String> setNossoNumeroCentralizacao,
+			                  List<TipoCota> tiposCota)
+		throws GerarCobrancaValidacaoException {
+		
+		this.gerarCobrancaCota(idCota, 
+				               idUsuario, 
+				               setNossoNumero,
+				               setNossoNumeroCentralizacao,
+        		               false,
+        		               tiposCota);
 		
 	}
 	
@@ -310,7 +341,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				               idUsuario, 
 				               new HashSet<String>(),
 				               new HashSet<String>(),
-        		               true);
+        		               true,
+        		               null);
 	}
 	
     /**
@@ -606,19 +638,23 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
      * Gera Cobraça para uma ou todas as cotas com pendências financeiras A
      * divida pode ser postergada caso não hava forma de cobrança compativel com
      * a pendência ou se o parametro postergarDividas == true
+     * Pode haver, se passado o parametro, o processamento financeiro e geração de 
+     * cobrança apenas para cotas de tipos especificos(A_VISTA/CONSIGNADO)
      * 
      * @param idCota
      * @param idUsuario
      * @param setNossoNumero
      * @param setNossoNumeroCentralizacao
      * @param postergarDividas
+     * @param tiposCota
      * @throws GerarCobrancaValidacaoException
      */
 	private void gerarCobrancaCota(Long idCota, 
 			                       Long idUsuario, 
 			                       Set<String> setNossoNumero,
 			                       Set<String> setNossoNumeroCentralizacao,
-			                       boolean postergarDividas) throws GerarCobrancaValidacaoException {
+			                       boolean postergarDividas,
+			                       List<TipoCota> tiposCota) throws GerarCobrancaValidacaoException {
 		
 
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -627,7 +663,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Integer numeroDiasNovaCobranca = this.distribuidorRepository.obterNumeroDiasNovaCobranca(); 
 		
-		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(idCota, dataOperacao);
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(idCota, dataOperacao, tiposCota);
 		
 		List<String> msgs = new ArrayList<String>();
 		
