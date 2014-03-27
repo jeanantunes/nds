@@ -97,7 +97,7 @@ public class ItemNotaFiscalBuilder  {
 			DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal, Map<String, TributoAliquota> tributoAliquota) {
 		
 		detalheNotaFiscal.getProdutoServico().setCodigoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo());
-		detalheNotaFiscal.getProdutoServico().setDescricaoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getDescricao());
+		detalheNotaFiscal.getProdutoServico().setDescricaoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getNome());
 		
 		if(detalheNotaFiscal.getProdutoServicoPK() == null){
 			detalheNotaFiscal.setProdutoServicoPK(new ProdutoServicoPK());

@@ -152,6 +152,7 @@ public class NotaFiscalBuilder implements Serializable {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCodigoUf(35L); //Long.parseLong(distribuidor.getEnderecoDistribuidor().getEndereco().getCodigoUf()));
 		} catch (Exception e) {
 			//FIXME: Colocar um logger
+			LOGGER.debug("Problema ao setar endereco do distribuirdor");
 		}
 		
 	}
