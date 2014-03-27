@@ -152,8 +152,14 @@ ConsolidadoFinanceiroRepository {
         .append("        and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
         .append("        and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinanceiro) ")
         .append("    and movimentos4_.QTDE != 0 ")
-        .append("        and chamadaEncalheCota.postergado = :naoPostergado ")
-        .append("group by ")
+        .append("        and chamadaEncalheCota.postergado = :naoPostergado ");
+        
+        if (filtro.getIdConsolidado()!=null){
+        	
+       	    hql.append(" and consolidad0_.id = :idConsolidado ");
+        }
+        
+        hql.append("group by ")
         .append("        produto8_.CODIGO , ")
         .append("        produto8_.NOME , ")
         .append("        produtoedi7_.NUMERO_EDICAO , ")
@@ -229,6 +235,7 @@ ConsolidadoFinanceiroRepository {
         .append("                )  ")
         .append("    and movimentos2_.QTDE != 0 ")
         .append("        and chamadaEncalheCota.postergado = :naoPostergado ")
+
         .append("group by ")
         .append("        produto6_.CODIGO , ")
         .append("        produto6_.NOME , ")
@@ -312,6 +319,11 @@ ConsolidadoFinanceiroRepository {
                 Arrays.asList(
                         GrupoMovimentoFinaceiro.ENVIO_ENCALHE.toString()
                         ));
+        
+        if (filtro.getIdConsolidado()!=null){
+        	
+	        query.setParameter("idConsolidado", filtro.getIdConsolidado());
+        }
         
         query.setParameter("naoPostergado", false);
         
@@ -628,6 +640,11 @@ ConsolidadoFinanceiroRepository {
         query.setParameter("dataConsolidado", filtro.getDataConsolidado());
         query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE.toString());
         
+        if (filtro.getIdConsolidado()!=null){
+        	
+        	query.setParameter("idConsolidado", filtro.getIdConsolidado());
+        }
+        
         return query;
     }
     
@@ -769,8 +786,14 @@ ConsolidadoFinanceiroRepository {
         .append("where ")
         .append("        cota1_.NUMERO_COTA = :numeroCota ")
         .append("        and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
-        .append("        and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
-        .append("group by ")
+        .append("        and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ");
+        
+        if (filtro.getIdConsolidado()!=null){
+        	
+        	 hql.append(" and consolidad0_.id = :idConsolidado ");
+        }
+        
+        hql.append("group by ")
         .append("        produto11_.CODIGO , ")
         .append("        produto11_.NOME , ")
         .append("        produtoedi8_.NUMERO_EDICAO , ")
@@ -996,8 +1019,14 @@ ConsolidadoFinanceiroRepository {
         .append("        cota1_.NUMERO_COTA = :numeroCota ")
         .append("        and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
         .append("        and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
-        .append("        and chamadaEncalheCota.postergado = :naoPostergado ")
-        .append(" group by ")
+        .append("        and chamadaEncalheCota.postergado = :naoPostergado ");
+        
+        if (filtro.getIdConsolidado()!=null){
+        	
+       	    hql.append(" and consolidad0_.id = :idConsolidado ");
+        }
+
+        hql.append(" group by ")
         .append("        idMovimentoEstoqueCota ")
         
         .append("union all ")
