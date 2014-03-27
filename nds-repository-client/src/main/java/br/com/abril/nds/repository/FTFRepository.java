@@ -32,6 +32,6 @@ public interface FTFRepository {
 	
 	FTFEnvTipoRegistro08 obterRegistroTipo08(long idTipoNotaFiscal);
 
-	ParametroFTFGeracao obterParametrosFTFGeracao(String codigoNaturezaOperacao, String codigoCFOP, TipoAtividade tipoAtividade);
+	ParametroFTFGeracao obterParametrosFTFGeracao(Long idNaturezaOperacao, String codigoCFOP, TipoAtividade tipoAtividade);
 	
 }
