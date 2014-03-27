@@ -457,6 +457,29 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				Integer qtdeAtual = produtoMapa.get(item.getIdProdutoEdicao()).getTotal();
 	
 				produtoMapa.get(item.getIdProdutoEdicao()).setTotal(qtdeAtual + item.getReparte());
+				
+			} else {
+				
+				ProdutoMapaCotaDTO produtoMapaCotaDTO = produtoMapa.get(item.getIdProdutoEdicao());
+				if(produtoMapaCotaDTO != null) {
+					
+					//produtoMapaCotaDTO.setTotal(produtoMapaCotaDTO.getTotal() + item.getReparte());
+					
+				} else {
+				
+					produtoMapaCotaDTO = new ProdutoMapaCotaDTO(
+								item.getNomeProduto(), item.getNumeroEdicao(), item.getCodigoBarra(), 
+								item.getSequenciaMatriz(), item.getPrecoCapa(), 0, item.getMaterialPromocional());
+				}
+	
+	
+				//colocar a lista de cotas
+	
+				produtoMapa.put(item.getIdProdutoEdicao(), produtoMapaCotaDTO);
+	
+				Integer qtdeAtual = produtoMapa.get(item.getIdProdutoEdicao()).getTotal();
+	
+				produtoMapa.get(item.getIdProdutoEdicao()).setTotal(qtdeAtual + item.getReparte());
 			}
 		}
 	
