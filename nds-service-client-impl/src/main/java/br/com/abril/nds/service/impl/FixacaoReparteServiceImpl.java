@@ -45,6 +45,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Service
 public class FixacaoReparteServiceImpl implements FixacaoReparteService {
@@ -87,6 +88,9 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	
 	@Autowired
 	private FixacaoRepartePdvRepository fixacaoRepartePdvRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Transactional
 	@Override
@@ -140,7 +144,8 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	public FixacaoReparte adicionarFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO) {
 		FixacaoReparte fixacaoReparte = getFixacaoRepartePorDTO(fixacaoReparteDTO);
 		
-		fixacaoReparte.setDataFixa(new Date());
+		
+		fixacaoReparte.setDataFixa(distribuidorService.obterDataOperacaoDistribuidor());
 		
 		if(fixacaoReparte.getId() != null) {
             String descricao = "-TODAS-";
