@@ -513,6 +513,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<ParametroFTFGeracao> obterTodosParametrosGeracaoFTF() {
 		StringBuilder hql = new StringBuilder();
 		

@@ -27,9 +27,7 @@ public class FTFBaseDTO {
 					String value = null;
 					try {
 						value = (String) c.getMethod("get"+toFirstUpperCase(field.getName())).invoke(this);
-					} catch (IllegalAccessException | IllegalArgumentException
-							| InvocationTargetException | NoSuchMethodException
-							| SecurityException e) {
+					} catch (IllegalAccessException | IllegalArgumentException| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
