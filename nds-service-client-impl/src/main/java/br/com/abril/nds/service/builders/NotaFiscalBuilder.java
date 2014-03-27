@@ -96,17 +96,21 @@ public class NotaFiscalBuilder implements Serializable {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setEndereco(new NotaFiscalEndereco());
 		}
 		
-		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone() == null){			
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setTelefone(new NotaFiscalTelefone());
-		}
-		
 		// verificar o telefone do distribuidor
 		
 		for (TelefoneDistribuidor telefone : distribuidor.getTelefones()) {
 			
 			if(telefone.getTelefone() != null) {
-				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setNumero(telefone.getTelefone().getNumero());
-				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setDDD(telefone.getTelefone().getDdd());
+				
+				NotaFiscalTelefone tel = null;
+				if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone() == null){			
+					tel = new NotaFiscalTelefone();
+				}
+				
+				tel.setNumero(telefone.getTelefone().getNumero());
+				tel.setDDD(telefone.getTelefone().getDdd());
+				
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setTelefone(tel);
 				
 				if(telefone.getTelefone().getRamal() != null) {
 					try {
