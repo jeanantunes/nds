@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import static org.apache.commons.lang.StringUtils.leftPad;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -21,6 +23,9 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.fiscal.ParametroFTFGeracao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.ftf.FTFCommons;
@@ -486,5 +491,29 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		return reg08;
 
 	}
+
+	@Override
+	public ParametroFTFGeracao obterParametrosFTFGeracao(String codigoNaturezaOperacao, String codigoCFOP, TipoAtividade tipoAtividade) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select param ")
+		   .append(" from ParametroFTFGeracao param ")
+		   .append(" where ")
+		   .append(" param.naturezaOperacao.codigo = :codigoNaturezaOperacao")
+		   .append(" param.cfop.codigo = :codigoCFOP")
+		   .append(" param.tipoAtividade = :tipoAtividade");
+		 
+		   	
+		Query query = super.getSession().createQuery(hql.toString());
+
+		query.setParameter("codigoNaturezaOperacao", codigoNaturezaOperacao);
+		query.setParameter("codigoCFOP", codigoCFOP);
+		query.setParameter("tipoAtividade", tipoAtividade);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ParametroFTFGeracao.class));
+		
+		return (ParametroFTFGeracao) query.uniqueResult();
+	}
+
 }
 

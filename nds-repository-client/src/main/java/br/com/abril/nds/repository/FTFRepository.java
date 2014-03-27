@@ -2,6 +2,8 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.fiscal.ParametroFTFGeracao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro00;
@@ -30,4 +32,6 @@ public interface FTFRepository {
 	
 	FTFEnvTipoRegistro08 obterRegistroTipo08(long idTipoNotaFiscal);
 
+	ParametroFTFGeracao obterParametrosFTFGeracao(String codigoNaturezaOperacao, String codigoCFOP, TipoAtividade tipoAtividade);
+	
 }

@@ -1069,6 +1069,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 		sql	.append(" 	and mec.TIPO_MOVIMENTO_ID in (select id from tipo_movimento where GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte, :movimentoCompraSuplementar)) ")
+		    .append("   and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
 			.append(" 	group by mec.cota_id, mec.PRODUTO_EDICAO_ID ")
 			.append(" 	having count(0) > 1 ")
 			.append(" ) rs_sup on rs_sup.id = mec.cota_id and rs_sup.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID ") // and mec.DATA_APROVACAO <> rs_sup.DATA_APROVACAO ")
@@ -1079,6 +1080,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 			
 		sql	.append(" and mec.TIPO_MOVIMENTO_ID in (select id from tipo_movimento where GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte)) ");
+		sql.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
+		
 		/*	.append(" and mec.data_aprovacao not in ( ")
 			.append(" 	select data_aprovacao ")
 			.append(" 	from chamada_encalhe ce ")
