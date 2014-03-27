@@ -605,15 +605,18 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         
         for (final ProcessamentoFinanceiroCotaDTO item : informacoesProcessamentoFinanceiroCota) {
             
-            final String debitos = CurrencyUtil.formatarValor(item.getDebitos().add(item.getValorPendenteDebito()));
+            final String debitos = CurrencyUtil.formatarValorQuatroCasas(item.getDebitos().add(item.getValorPendenteDebito()));
             
-            final String creditos = CurrencyUtil.formatarValor(item.getCreditos().add(item.getValorPendenteCredito())
+            final String creditos = CurrencyUtil.formatarValorQuatroCasas(item.getCreditos().add(item.getValorPendenteCredito())
                     .add(item.getValorEstornado()));
             
-            processamentoFinanceiroVO.add(new ProcessamentoFinanceiroCotaVO(item.getNumeroCota().toString(), item
-                    .getNomeCota(), CurrencyUtil.formatarValor(item.getValorConsignado()), CurrencyUtil
-                    .formatarValor(item.getValorAVista()), debitos, creditos, CurrencyUtil.formatarValor(item
-                            .getSaldo())));
+            processamentoFinanceiroVO.add(new ProcessamentoFinanceiroCotaVO(item.getNumeroCota().toString(), 
+            		                                                        item.getNomeCota(), 
+            		                                                        CurrencyUtil.formatarValorQuatroCasas(item.getValorConsignado()), 
+            		                                                        CurrencyUtil.formatarValorQuatroCasas(item.getValorAVista()), 
+            		                                                        debitos, 
+            		                                                        creditos, 
+            		                                                        CurrencyUtil.formatarValor(item.getSaldo())));
         }
         
         return processamentoFinanceiroVO;

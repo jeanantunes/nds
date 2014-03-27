@@ -42,8 +42,6 @@ public interface AnaliseParcialService {
     
     List<EstudoCotaGerado> obterEstudosCotaGerado(Long id);
     
-    BigDecimal obterReparteLancamentoEstudo (Long idEstudo);
-    
-    BigDecimal reparteFisicoLancamento (Long idEstudo);
+    BigDecimal reparteFisicoOuPrevistoLancamento (Long idEstudo);
 
 }

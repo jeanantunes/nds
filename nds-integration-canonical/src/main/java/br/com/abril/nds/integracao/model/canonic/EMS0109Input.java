@@ -152,7 +152,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
     /**
      * @return the dataGeracaoArquivo
      */
-    /*@Field(offset=8, length=8)*/
+    @Field(offset=8, length=8)
     public Date getDataGeracaoArquivo() {
         return dataGeracaoArquivo;
     }

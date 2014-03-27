@@ -636,8 +636,11 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	        //Consignado
 	        resumoConsignado.setSaldoAnterior(fechamentoDiarioResumoConsignadoRepository.obterSaldoConsignadoFechamentoDiarioAnterior(dataFechamento));
 	        
+	        FiltroConsultaEncalheDTO filtroEntradaConsignado = new FiltroConsultaEncalheDTO(dataFechamento);
+	        filtroEntradaConsignado.setUtilizaPrecoCapa(true);
+	        
 	        resumoConsignado.setValorEntradas(
-	            this.movimentoEstoqueCotaRepository.obterValorTotalReparteEncalheDataCotaFornecedor(new FiltroConsultaEncalheDTO(dataFechamento)).getReparte());
+	            this.movimentoEstoqueCotaRepository.obterValorTotalReparteEncalheDataCotaFornecedor(filtroEntradaConsignado).getReparte());
 
 	        resumoConsignado.setValorSaidas(
 	            this.movimentoEstoqueRepository.obterSaldoDistribuidor(
@@ -1631,8 +1634,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Override
 	public FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
 		
-		this.processarAlteracaoDescontoLogistica();
-		
 		LOGGER.info("FECHAMENTO DIARIO - ATUALIZADO DESCONTO LOGISTICA");
 		
 		processarControleDeAprovacao();
@@ -1667,11 +1668,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 		}
-	}
-	
-	private void processarAlteracaoDescontoLogistica(){
-		
-		this.descontoLogisticaService.alterarDescontoLogistica();
 	}
 	
 	private void processarDividasNaoPagas(Usuario usuario, Date dataPagamento) {

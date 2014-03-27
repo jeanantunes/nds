@@ -135,8 +135,16 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 	}
 	
+	/**
+	 * Obtem movimentos financeiros da cota ainda nao processados e não consolidados
+	 * 
+	 * @param idCota
+	 * @param dataOperacao
+	 * @param tiposCota
+	 * @return List<MovimentoFinanceiroCota> 
+	 */
 	@SuppressWarnings("unchecked")
-	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota, Date dataOperacao){
+	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota, Date dataOperacao, List<TipoCota> tiposCota){
 		
 		StringBuilder hql = new StringBuilder("select mfc ")
 	   .append(" from MovimentoFinanceiroCota mfc ")
@@ -150,6 +158,11 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			hql.append(" and cota.id = :idCota ");
 		}
 		
+        if (tiposCota !=null && !tiposCota.isEmpty()){
+			
+        	hql.append(" and cota.tipoCota in (:tiposCota) ");
+		}
+
 		hql.append(" and cota.situacaoCadastro != :inativo and cota.situacaoCadastro != :pendente ")
 		   .append(" and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
 		   .append(" group by mfc.id ")
@@ -163,11 +176,16 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			
 			query.setParameter("idCota", idCota);
 		}
-		
+			
 		query.setParameter("inativo", SituacaoCadastro.INATIVO);
 		query.setParameter("pendente", SituacaoCadastro.PENDENTE);
 		query.setParameter("dataOperacao", dataOperacao);
-		
+
+        if (tiposCota !=null && !tiposCota.isEmpty()){
+			
+        	query.setParameterList("tiposCota", tiposCota);
+		}
+
 		return query.list();
 	}
 	

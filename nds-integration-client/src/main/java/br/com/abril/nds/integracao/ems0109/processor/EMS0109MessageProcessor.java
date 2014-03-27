@@ -27,6 +27,7 @@ import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.EmailService;
 
 import com.google.common.base.Objects;
@@ -42,6 +43,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private EmailService emailService;
 
+	@Autowired
+	private DescontoLogisticaService descontoLogisticaService;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -113,21 +116,6 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		}
 		
 		return editor;
-	}
-
-	private DescontoLogistica findDescontoLogisticaByTipoDesconto(
-			Integer codigoTipoDesconto) {
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("select d from DescontoLogistica d ");
-		sql.append(" where d.tipoDesconto = :codigoTipoDesconto ");
-
-		Query query = this.getSession().createQuery(sql.toString());
-
-		query.setParameter("codigoTipoDesconto", codigoTipoDesconto);
-
-		return (DescontoLogistica) query.uniqueResult();
-
 	}
 
 	private TipoProduto findTipoProduto(Message message) {
@@ -216,11 +204,25 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
         
         Fornecedor fornecedor = this
                 .findFornecedor(Integer.parseInt(codigoDistribuidor));
-				
+
+        if (fornecedor == null) {
+        
+            ndsiLoggerFactory.getLogger().logError(
+                    message,
+                    EventoExecucaoEnum.HIERARQUIA,
+                    String.format( "Fornecedor nulo para o produto: %1$s .", input.getCodigoPublicacao() )
+                );
+            return ;
+        }
+        
 		validarTipoDesconto(message, input.getTipoDesconto(), input.getCodigoPublicacao());
 		
 		int tipoDescontoInt = Integer.parseInt( input.getTipoDesconto());
-		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto( tipoDescontoInt );
+
+		DescontoLogistica descontoLogistica =
+		        this.descontoLogisticaService.obterDescontoLogisticaVigente(tipoDescontoInt,
+		                                                                    fornecedor.getId(),
+		                                                                    input.getDataGeracaoArquivo());
 
 		produto.setTipoProduto(tipoProduto);
 		produto.setNome(input.getNomePublicacao());
@@ -265,17 +267,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		produto.setOrigem(Origem.INTERFACE);
 		
-		if (fornecedor != null) {
-
-			produto.addFornecedor(fornecedor);
-		} else {
-            ndsiLoggerFactory.getLogger().logError(
-					message,
-					EventoExecucaoEnum.HIERARQUIA,
-					String.format( "Fornecedor nulo para o produto: %1$s .", input.getCodigoPublicacao() )
-				);
-			return ;
-		}
+		produto.addFornecedor(fornecedor);
 
 		if (descontoLogistica != null) {
 
@@ -336,7 +328,12 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		
 		
 		int tipoDescontoInt = Integer.parseInt( input.getTipoDesconto());
-		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto(tipoDescontoInt);
+
+		DescontoLogistica descontoLogistica =
+		        this.descontoLogisticaService.obterDescontoLogisticaVigente(tipoDescontoInt,
+		                                                                    fornecedor.getId(),
+		                                                                    input.getDataGeracaoArquivo());
+
 		
 		produto.setOrigem(Origem.INTERFACE);
 		

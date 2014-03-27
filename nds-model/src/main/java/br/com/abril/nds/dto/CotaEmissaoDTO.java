@@ -61,6 +61,8 @@ public class CotaEmissaoDTO implements Serializable{
 	private String vlrReparteLiquido;	
 	private String vlrEncalhe;	
 	private String vlrTotalLiquido;
+	
+	private String periodoRecolhimento;
 
 	public CotaEmissaoDTO() {
 		
@@ -439,7 +441,12 @@ public class CotaEmissaoDTO implements Serializable{
 			boolean quebraTotalizacaoUltimaPagina) {
 		this.quebraTotalizacaoUltimaPagina = quebraTotalizacaoUltimaPagina;
 	}
-	
-	
-	
+
+	public String getPeriodoRecolhimento() {
+		return periodoRecolhimento;
+	}
+
+	public void setPeriodoRecolhimento(String periodoRecolhimento) {
+		this.periodoRecolhimento = periodoRecolhimento;
+	}
 }
