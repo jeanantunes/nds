@@ -512,5 +512,19 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		return (ParametroFTFGeracao) query.uniqueResult();
 	}
 
+	@Override
+	public void obterTodosParametrosGeracaoFTF() {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select param ").append(" from ParametroFTFGeracao param ");		 
+		   	
+		Query query = super.getSession().createQuery(hql.toString());
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(ParametroFTFGeracao.class));
+		
+		query.list();
+		
+	}
+
 }
 
