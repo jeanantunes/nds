@@ -26,6 +26,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -35,6 +36,7 @@ import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
+import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.NotaEnvioRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.service.ChamadaEncalheService;
@@ -83,7 +85,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	private ControleConferenciaEncalheCotaRepository controleConferenciaEncalheCotaRepository;
 	
 	@Autowired
-	private NotaEnvioRepository notaEnvioRepository;
+	private GrupoRepository grupoRepository;
 	
 	@Override
 	@Transactional
@@ -245,14 +247,10 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				}
 				
 				listaCapasPaginadas.add(paginaCapa);
-				
-				
 			}
 			
 			cota.setPaginasCapa(listaCapasPaginadas);
-			
 		}
-		
 	}
 	
 	/**
@@ -564,6 +562,23 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			}
 												
 			dto.setDataEmissao(DateUtil.formatarDataPTBR(new Date()));
+
+			String periodoRecolhimento;
+			
+			List<GrupoCota> gps = this.grupoRepository.obterListaGrupoCotaPorCotaId(cota.getId(), dataOperacaoDistribuidor);
+			
+			if (gps != null && !gps.isEmpty()){
+			
+			    periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte())?
+				                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()):
+				                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe())+" à "+DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
+			}
+			else{
+				
+				periodoRecolhimento = dto.getDataRecolhimento();
+			}
+	                         
+			dto.setPeriodoRecolhimento(periodoRecolhimento);
 			
 			dto.setProdutos( obterProdutosEmissaoCE(filtro, dto.getIdCota()) );
 			
