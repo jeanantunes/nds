@@ -75,24 +75,13 @@ public class FTFServiceImpl implements FTFService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma nota localizada.");
 		}
 		
-		long idNaturezaOperacao = 0;
-		for(NotaFiscal nf : notas) {
-			
-			if(idNaturezaOperacao == 0) {
-				idNaturezaOperacao = nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId();
-			} else {
-				if(idNaturezaOperacao != nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId()) {
-					throw new ValidacaoException(TipoMensagem.WARNING, "Lista de Notas fiscais com Naturezas de Operações diferentes.");
-				}
-			}
-			idNaturezaOperacao = nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId();
-		}
+		long idNaturezaOperacao = verificarNaturezaOperacao(notas);
 		
-		List<ParametroFTFGeracao> lisParametroFTFGeracaos = this.ftfRepository.obterTodosParametrosGeracaoFTF();
+		List<ParametroFTFGeracao> lisParametroFTFGeracao = this.ftfRepository.obterTodosParametrosGeracaoFTF();
 		
 		Map<String, ParametroFTFGeracao> mapasParametrosFTF = new HashMap<String, ParametroFTFGeracao>();
 		
-		for (ParametroFTFGeracao parametroFTFGeracao : lisParametroFTFGeracaos) {
+		for (ParametroFTFGeracao parametroFTFGeracao : lisParametroFTFGeracao) {
 			mapasParametrosFTF.put(parametroFTFGeracao.getCfop().getCodigo(), parametroFTFGeracao);
 		}
 		
@@ -210,6 +199,22 @@ public class FTFServiceImpl implements FTFService {
 		}
 		
 		return report;
+	}
+
+	private long verificarNaturezaOperacao(final List<NotaFiscal> notas) {
+		long idNaturezaOperacao = 0;
+		for(NotaFiscal nf : notas) {
+			
+			if(idNaturezaOperacao == 0) {
+				idNaturezaOperacao = nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId();
+			} else {
+				if(idNaturezaOperacao != nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId()) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Lista de Notas fiscais com Naturezas de Operações diferentes.");
+				}
+			}
+			idNaturezaOperacao = nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId();
+		}
+		return idNaturezaOperacao;
 	}
 
 	private List<FTFEnvTipoRegistro01> obterPessoasCadastradasCRP(
