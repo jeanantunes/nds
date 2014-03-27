@@ -180,7 +180,7 @@ public class InterfaceExecutor {
 				this.executarInterfaceCorreios();
 			} else if (interfaceEnum.getTipoInterfaceEnum().equals(TipoInterfaceEnum.DB)) {
 				this.executarInterfaceDB(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
-			} else {
+			} else {	
 				this.executarInterfaceArquivo(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
 			}
         } catch (Exception e) {
@@ -300,8 +300,8 @@ public class InterfaceExecutor {
 	 */
 	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, Long codigoDistribuidor, String nomeUsuario) {
 		
-		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
 		this.carregarDiretorios(interfaceEnum);
+		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
 		
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
