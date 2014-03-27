@@ -43,6 +43,12 @@
 	<div id="dialog-confirm" title="Encerrar Opera&ccedil;&atilde;o" style="display:none;">
 		<p>Confirma o encerramento da opera&ccedil;&atilde;o do dia <span id="dataConfirma"></span>:</p>
 	</div>
+	<div id="dialog-confirm-box-nao-salvo" title="Salvar box" style="display:none;">
+		<p>
+			As informa&ccedil;&otilde;es para esse box n&atilde;o foram salvas. 
+			Deseja salvar antes de continuar?
+		</p>  
+	</div>
 	</form>
 	
 	<form id="form-mensagem-consistencia-dados">
@@ -127,8 +133,8 @@
 				</td>
 				<td width="97">Box de Encalhe:</td>
 				<td width="239">
-					<select name="selectBoxEncalhe" id="selectBoxEncalhe" style="width:100px;" onchange="fechamentoEncalheController.limpaGridPesquisa()">
-					<option value="">Selecione...</option>
+					<select name="selectBoxEncalhe" id="selectBoxEncalhe" style="width:100px;" onchange="fechamentoEncalheController.modoBox.changeBox(this.value);">
+					<option value="">Todos</option>
 					<c:forEach var="box" items="${listaBoxes}">
 						<option value="${box.id}">${box.nome}</option>
 					</c:forEach>

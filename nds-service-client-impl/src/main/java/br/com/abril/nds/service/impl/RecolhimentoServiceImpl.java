@@ -575,7 +575,16 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		chamadaEncalheCota.setCota(cota);
 		chamadaEncalheCota.setQtdePrevista(qtdPrevista);
 		
-		this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+		chamadaEncalheCota = this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+		
+		if (chamadaEncalhe.getChamadaEncalheCotas() == null) {
+		    
+		    chamadaEncalhe.setChamadaEncalheCotas(new HashSet<ChamadaEncalheCota>());
+		}
+		
+		chamadaEncalhe.getChamadaEncalheCotas().add(chamadaEncalheCota);
+		
+		this.chamadaEncalheRepository.merge(chamadaEncalhe);
 	}
 	
 	private ChamadaEncalhe getChamadaEncalheMatrizRecolhimento(List<ChamadaEncalhe> chamadasEncalhe) {
