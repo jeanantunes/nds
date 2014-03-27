@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.ParametroFTFGeracao;
@@ -34,6 +35,6 @@ public interface FTFRepository {
 
 	ParametroFTFGeracao obterParametrosFTFGeracao(Long idNaturezaOperacao, String codigoCFOP, TipoAtividade tipoAtividade);
 
-	void obterTodosParametrosGeracaoFTF();
+	List<ParametroFTFGeracao> obterTodosParametrosGeracaoFTF();
 	
 }

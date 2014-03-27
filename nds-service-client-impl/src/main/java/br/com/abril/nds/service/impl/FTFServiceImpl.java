@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFParser;
+import br.com.abril.nds.model.fiscal.ParametroFTFGeracao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro00;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro01;
@@ -70,6 +72,12 @@ public class FTFServiceImpl implements FTFService {
 		
 		if(notas == null || notas.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma nota localizada.");
+		}
+		
+		List<ParametroFTFGeracao> lisParametroFTFGeracaos = this.ftfRepository.obterTodosParametrosGeracaoFTF();
+		
+		for (ParametroFTFGeracao parametroFTFGeracao : lisParametroFTFGeracaos) {
+			
 		}
 		
 		long idNaturezaOperacao = 0;

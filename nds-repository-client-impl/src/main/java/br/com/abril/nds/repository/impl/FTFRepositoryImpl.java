@@ -513,7 +513,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	}
 
 	@Override
-	public void obterTodosParametrosGeracaoFTF() {
+	public List<ParametroFTFGeracao> obterTodosParametrosGeracaoFTF() {
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("select param ").append(" from ParametroFTFGeracao param ");		 
@@ -522,8 +522,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(ParametroFTFGeracao.class));
 		
-		query.list();
-		
+		return query.list();
 	}
 
 }

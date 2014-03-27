@@ -725,7 +725,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    if(parametroCobrancaTela['parametroCobranca.qtdDividasAberto'] != parametroCobranca['parametroCobranca.qtdDividasAberto']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.sugereSuspensao'] != parametroCobranca['parametroCobranca.sugereSuspensao']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.unificaCobranca'] != parametroCobranca['parametroCobranca.unificaCobranca']){return true;}
-	    if(parametroCobrancaTela['parametroCobranca.devolveEncalhe'] != parametroCobranca['parametroCobranca.devolveEncalhe']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.valorMinimo'] != parametroCobranca['parametroCobranca.valorMinimo']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.vrDividasAberto'] != parametroCobranca['parametroCobranca.vrDividasAberto']){return true;}
 
