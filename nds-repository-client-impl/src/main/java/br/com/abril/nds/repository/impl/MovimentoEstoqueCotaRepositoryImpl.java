@@ -576,6 +576,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         final FiltroConsultaEncalheDTO f = new FiltroConsultaEncalheDTO();
         
+        boolean indUtilizaPrecoCapa = filtro.isUtilizaPrecoCapa();
+        
         BeanUtils.copyProperties(filtro, f);
         f.setPaginacao(null);
         
@@ -583,21 +585,26 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" sum( ");
         
-        
         sql.append("     case when tipoCota = 'A_VISTA' then ");
         
         sql.append("         case when alteracaoTipoCota >= dataMovimentoEstoque then ");
         
-        sql.append("             (a.precoComDesconto * a.reparte) ");
+        sql.append("             ( ");
+        sql.append(indUtilizaPrecoCapa ? "  a.precoVenda " : " a.precoComDesconto ");
+        sql.append(" * a.reparte) ");
         
         sql.append("         else 0 end ");
         
-        sql.append("     else (a.precoComDesconto * a.reparte) end ");
+        sql.append("     else ( ");
+        sql.append(indUtilizaPrecoCapa ? "  a.precoVenda " : " a.precoComDesconto ");
+        sql.append(" * a.reparte) end ");
         
         sql.append("    ) as totalReparte, ");
         
         
-        sql.append(" sum(a.precoComDesconto * a.encalhe) as totalEncalhe  ");
+        sql.append(" sum( ");
+        sql.append(indUtilizaPrecoCapa ? "  a.precoVenda " : " a.precoComDesconto ");
+        sql.append(" * a.encalhe) as totalEncalhe   ");
         
         sql.append(" from ( ");
         
