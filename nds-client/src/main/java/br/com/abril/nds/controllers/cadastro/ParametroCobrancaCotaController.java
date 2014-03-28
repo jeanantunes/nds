@@ -434,11 +434,10 @@ public class ParametroCobrancaCotaController extends BaseController {
         
         this.salvarContrato(parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
         
-        cotaService.salvarTipoCota(parametroCobranca.getIdCota(), parametroCobranca.getTipoCota());
+        cotaService.salvarTipoCota(parametroCobranca.getIdCota(), parametroCobranca.getTipoCota(), parametroCobranca.isDevolveEncalhe());
         
-        result.use(Results.json())
-.from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),
-                Constantes.PARAM_MSGS).recursive().serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),
+                						Constantes.PARAM_MSGS).recursive().serialize();
     }
     
     
@@ -581,10 +580,9 @@ public class ParametroCobrancaCotaController extends BaseController {
         
         parametroCobrancaCotaService.postarFormaCobranca(formaCobranca);
         
-        result.use(Results.json())
-.from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Cadastrada."),
-                Constantes.PARAM_MSGS)
-                .recursive().serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Cadastrada."),
+						                Constantes.PARAM_MSGS)
+						                .recursive().serialize();
     }
     
     @Post
@@ -809,7 +807,7 @@ public class ParametroCobrancaCotaController extends BaseController {
      */
     @Post
     @Path("/salvarFinanceiroEspecificoDaCota")
-    public void salvarFinanceiroEspecificoDaCota(final Long idCota, final Date inicioContrato, final Date terminoContrato, final TipoCota tipoCota) {
+    public void salvarFinanceiroEspecificoDaCota(final Long idCota, final Date inicioContrato, final Date terminoContrato, final TipoCota tipoCota, final boolean devolveEncalhe) {
         
         String msg1 = "";
         String msg2 = "";
@@ -820,7 +818,7 @@ public class ParametroCobrancaCotaController extends BaseController {
             msg1 = "Contrato";
         }
         
-        if (cotaService.salvarTipoCota(idCota, tipoCota)){
+        if (cotaService.salvarTipoCota(idCota, tipoCota, devolveEncalhe)){
             
             msg2 = "Tipo da cota";
         }
