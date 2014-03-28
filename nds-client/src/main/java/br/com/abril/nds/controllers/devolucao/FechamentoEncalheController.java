@@ -157,8 +157,7 @@ public class FechamentoEncalheController extends BaseController {
 			this.getSession().removeAttribute("gridFechamentoEncalheDTO");
 			this.result.use(Results.json()).from(
 				new ValidacaoVO(
-						TipoMensagem.WARNING, 
- "Não houve conferência de encalhe nesta data."), "mensagens")
+						TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens")
                     .recursive().serialize();
 		} else {
 			List<FechamentoFisicoLogicoDTO> listaEncalhe = 
@@ -839,11 +838,10 @@ public class FechamentoEncalheController extends BaseController {
 			if (fechamentoEncalheService.existeFechamentoEncalheDetalhado(filtro)){
 				
                 String msgPesquisaConsolidado = "Você está tentando fazer uma "
-                    +
-						"pesquisa em modo consolidado (soma de todos os boxes). " +
- "Já existem dados salvos em modo de pesquisa por box. "
-                    + "Se você continuar, os dados serão perdidos. " +
-						"Tem certeza que deseja continuar ?";
+                    + "pesquisa em modo consolidado (soma de todos os boxes). " 
+                	+ "Já existem dados salvos em modo de pesquisa por box. "
+                    + "Se você continuar, os dados serão consolidados. " 
+                	+ "Tem certeza que deseja continuar ?";
 				
 				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, msgPesquisaConsolidado), "result").recursive().serialize();
 			

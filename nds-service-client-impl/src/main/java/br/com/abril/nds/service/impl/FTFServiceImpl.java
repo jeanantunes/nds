@@ -77,14 +77,7 @@ public class FTFServiceImpl implements FTFService {
 		
 		long idNaturezaOperacao = verificarNaturezaOperacao(notas);
 		
-		List<ParametroFTFGeracao> lisParametroFTFGeracao = this.ftfRepository.obterTodosParametrosGeracaoFTF();
-		
-		Map<String, ParametroFTFGeracao> mapasParametrosFTF = new HashMap<String, ParametroFTFGeracao>();
-		
-		for (ParametroFTFGeracao parametroFTFGeracao : lisParametroFTFGeracao) {
-			mapasParametrosFTF.put(parametroFTFGeracao.getCfop().getCodigo(), parametroFTFGeracao);
-		}
-		
+		Map<String, ParametroFTFGeracao> parametrosGeracaoFTF = parametrosGeracaoFTF();
 		
 		List<FTFBaseDTO> list = new ArrayList<FTFBaseDTO>();
 		FTFReportDTO report = new FTFReportDTO();
@@ -93,14 +86,7 @@ public class FTFServiceImpl implements FTFService {
 		
 		FTFEnvTipoRegistro00 regTipo00 = ftfRepository.obterRegistroTipo00(idNaturezaOperacao);
 		
-		List<FTFEnvTipoRegistro08> registrosTipo08 = new ArrayList<>();
-		for(NotaFiscal nf : notas) {
-			
-			FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(nf.getId());			
-			validacaoBeans.addAll(regTipo08.validateBean());
-			registrosTipo08.add(regTipo08);
-		}
-		
+		List<FTFEnvTipoRegistro08> registrosTipo08 = carregarRegitrosTipo08(notas, validacaoBeans);
 				
 		FTFEnvTipoRegistro09 regTipo09 = ftfRepository.obterRegistroTipo09(idNaturezaOperacao);
 		
@@ -113,6 +99,7 @@ public class FTFServiceImpl implements FTFService {
 		for(FTFEnvTipoRegistro01 ftfetr01 : listTipoRegistro01) {
 			validacaoBeans.addAll(ftfetr01.validateBean());
 		}
+		
 		List<FTFEnvTipoRegistro01> listTipoRegistro01Cadastrados = listTipoRegistro01;// = obterPessoasCadastradasCRP(report, listTipoRegistro01);
 		
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
@@ -159,6 +146,11 @@ public class FTFServiceImpl implements FTFService {
 		regTipo09.setQtdeRegistros(totalRegistros);
 		list.add(regTipo09);
 		
+		return gerarArquivoFTF(notas, list, report, regTipo00, totalPedidos);
+	}
+
+	private FTFReportDTO gerarArquivoFTF(final List<NotaFiscal> notas, List<FTFBaseDTO> list, FTFReportDTO report, FTFEnvTipoRegistro00 regTipo00, String totalPedidos) {
+		
 		ParametroSistema pathNFEExportacao = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO_FTF);
 
 		File diretorioExportacaoNFE = new File(pathNFEExportacao.getValor());
@@ -194,11 +186,39 @@ public class FTFServiceImpl implements FTFService {
 		
 		report.setPedidosGerados(Integer.parseInt(totalPedidos));
 		
+		this.salvarNotas(notas);
+		
+		return report;
+	}
+
+	private void salvarNotas(final List<NotaFiscal> notas) {
 		for (NotaFiscal notaFiscal : notas) {
 			notaFiscalService.enviarNotaFiscal(notaFiscal.getId());
 		}
+	}
+
+	private List<FTFEnvTipoRegistro08> carregarRegitrosTipo08(final List<NotaFiscal> notas,
+			List<String> validacaoBeans) {
+		List<FTFEnvTipoRegistro08> registrosTipo08 = new ArrayList<>();
+		for(NotaFiscal nf : notas) {
+			
+			FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(nf.getId());			
+			validacaoBeans.addAll(regTipo08.validateBean());
+			registrosTipo08.add(regTipo08);
+		}
+		return registrosTipo08;
+	}
+
+	private Map<String, ParametroFTFGeracao> parametrosGeracaoFTF() {
+		List<ParametroFTFGeracao> lisParametroFTFGeracao = this.ftfRepository.obterTodosParametrosGeracaoFTF();
 		
-		return report;
+		Map<String, ParametroFTFGeracao> mapasParametrosFTF = new HashMap<String, ParametroFTFGeracao>();
+		
+		for (ParametroFTFGeracao parametroFTFGeracao : lisParametroFTFGeracao) {
+			mapasParametrosFTF.put(parametroFTFGeracao.getCfop().getCodigo(), parametroFTFGeracao);
+		}
+		
+		return mapasParametrosFTF;
 	}
 
 	private long verificarNaturezaOperacao(final List<NotaFiscal> notas) {

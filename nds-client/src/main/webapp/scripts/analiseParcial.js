@@ -1331,7 +1331,16 @@ var analiseParcialController = $.extend(true, {
 
                             var params = [];
                             var codigoProduto = $('#codigoProduto').text();
+                            
+                            if(codigoProduto == ""){
+                            	codigoProduto = $('#codigoProduto').val();
+                            }
+                            
                             var classificacao = $('#tipoClassificacaoProdutoDescricao').val();
+                            
+                            if(classificacao == ""){
+                            	classificacao = $('#tipoClassificacaoProdutoDescricao').text();
+                            }
 
                             params.push({name: 'produtoId', value: codigoProduto});
 
