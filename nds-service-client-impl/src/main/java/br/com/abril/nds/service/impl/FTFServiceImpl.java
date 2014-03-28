@@ -86,7 +86,7 @@ public class FTFServiceImpl implements FTFService {
 		
 		FTFEnvTipoRegistro00 regTipo00 = ftfRepository.obterRegistroTipo00(idNaturezaOperacao);
 		
-		List<FTFEnvTipoRegistro08> registrosTipo08 = carregarRegitrosTipo08(notas, validacaoBeans);
+		List<FTFEnvTipoRegistro08> registrosTipo08 = carregarRegitrosTipo08(notas, validacaoBeans, parametrosGeracaoFTF);
 				
 		FTFEnvTipoRegistro09 regTipo09 = ftfRepository.obterRegistroTipo09(idNaturezaOperacao);
 		
@@ -197,12 +197,14 @@ public class FTFServiceImpl implements FTFService {
 		}
 	}
 
-	private List<FTFEnvTipoRegistro08> carregarRegitrosTipo08(final List<NotaFiscal> notas,
-			List<String> validacaoBeans) {
+	private List<FTFEnvTipoRegistro08> carregarRegitrosTipo08(final List<NotaFiscal> notas, List<String> validacaoBeans, Map<String, ParametroFTFGeracao> parametrosGeracaoFTF) {
 		List<FTFEnvTipoRegistro08> registrosTipo08 = new ArrayList<>();
 		for(NotaFiscal nf : notas) {
 			
-			FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(nf.getId());			
+			FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(nf.getId());		
+			
+			populateRegTipo08(nf, parametrosGeracaoFTF, regTipo08);
+			
 			validacaoBeans.addAll(regTipo08.validateBean());
 			registrosTipo08.add(regTipo08);
 		}
@@ -330,12 +332,31 @@ public class FTFServiceImpl implements FTFService {
 		
 		return l;
 	}
-
-	
 	
 	public void atualizarRetornoFTF(final List<FTFRetTipoRegistro01> list){
 		
 		this.ftfRepository.atualizarRetornoFTF(list);
+		
+	}
+	
+	private void populateRegTipo08(NotaFiscal nf, Map<String, ParametroFTFGeracao> parametrosGeracaoFTF, FTFEnvTipoRegistro08 regTipo08) {
+		
+		// CNPJ da empresa emissora : 61438248004625		
+		// CNPJ da empresa destinatária : FTFTREELOG0046 (CRP 5826042)		
+		// Código do centro emissor : 008		
+		// Estabelecimento : TREELOG_046		
+		// Tipo de Pedido : 2 		
+		// Código solicitante = SIST_NDI		
+
+		
+		
+		ParametroFTFGeracao param = parametrosGeracaoFTF.get(nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getCfopEstado());
+			
+		regTipo08.setCodEstabelecimentoEmissor(param.getTipoPedido());
+		regTipo08.setCnpjEmpresaEmissora(param.getTipoPedido());
+		regTipo08.setTipoPedido(param.getTipoPedido());
+		regTipo08.setCodLocal(param.getCentroEmissor());
+		regTipo08.setTipoRegistro(param.getTipoPedido());
 		
 	}
 	

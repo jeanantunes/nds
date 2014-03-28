@@ -11,9 +11,9 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 	
 	@FTFfield(tamanho = 2, tipo = "char", ordem = 2)
 	private String codEstabelecimentoEmissor;
-
+	
 	@FTFfield(tamanho = 14, tipo = "char", ordem = 3)
-	private String cnpjEstabelecimentoEmissor;
+	private String cnpjEmpresaEmissora;
 
 	@FTFfield(tamanho = 11, tipo = "char", ordem = 4)
 	private String codLocal;
@@ -215,12 +215,15 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 	public void setCodEstabelecimentoEmissor(String codEstabelecimentoEmissor) {
 		this.codEstabelecimentoEmissor = codEstabelecimentoEmissor;
 	}
-
-	@Override
-	public void setCnpjEstabelecimentoEmissor(String cnpjEstabelecimentoEmissor) {
-		this.cnpjEstabelecimentoEmissor = cnpjEstabelecimentoEmissor != null ? cnpjEstabelecimentoEmissor.replaceAll("\\D+","") : null;
+	
+	public String getCnpjEmpresaEmissora() {
+		return cnpjEmpresaEmissora;
 	}
 
+	public void setCnpjEmpresaEmissora(String cnpjEmpresaEmissora) {
+		this.cnpjEmpresaEmissora = cnpjEmpresaEmissora != null ? cnpjEmpresaEmissora.replaceAll("\\D", "") : null;
+	}
+	
 	@Override
 	public void setCodLocal(String codLocal) {
 		this.codLocal = codLocal;
@@ -238,10 +241,6 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 
 	public String getCodEstabelecimentoEmissor() {
 		return codEstabelecimentoEmissor;
-	}
-
-	public String getCnpjEstabelecimentoEmissor() {
-		return cnpjEstabelecimentoEmissor;
 	}
 
 	public String getCodLocal() {

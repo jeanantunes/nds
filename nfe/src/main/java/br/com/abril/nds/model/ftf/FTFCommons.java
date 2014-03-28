@@ -6,7 +6,7 @@ public interface FTFCommons  {
 
 	public void setCodEstabelecimentoEmissor(String codEstabelecimentoEmissor);
 
-	public void setCnpjEstabelecimentoEmissor(String cnpjEstabelecimentoEmissor);
+	public void setCnpjEmpresaEmissora(String cnpjEmpresaEmissora);
 
 	public void setCodLocal(String codLocal);
 
