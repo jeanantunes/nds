@@ -35,31 +35,30 @@ public class NotaFiscalTransportadorBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setVeiculo(new br.com.abril.nds.model.fiscal.nota.Veiculo());
 		}
 		
+		NotaFiscalEndereco endereco = null;
 		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco() == null){
-			NotaFiscalEndereco endereco = new NotaFiscalEndereco();
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setEndereco(endereco);
+			endereco = new NotaFiscalEndereco();
 		}
 		
 		if(transportadores == null || transportadores.isEmpty()){
 			
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setDocumento("07348198000148");	
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setNome("Treelog");	
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setBairro("Osasco");
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setLogradouro("Kenkiti Shinomoto");
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCep("08250000");
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setNumero("158");
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoCidadeIBGE(3550308L);
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCidade("Sãp Paulo");
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoPais(30L);
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoUf(20L);
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setComplemento("XXXX");
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setPais("Brasil");
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setTipoLogradouro("Rua");
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setUf("SP");
-			
+			endereco.setBairro("Osasco");
+			endereco.setLogradouro("Kenkiti Shinomoto");
+			endereco.setCep("08250000");
+			endereco.setNumero("158");
+			endereco.setCodigoCidadeIBGE(3550308L);
+			endereco.setCidade("Sãp Paulo");
+			endereco.setCodigoPais(30L);
+			endereco.setCodigoUf(20L);
+			endereco.setComplemento("XXXX");
+			endereco.setPais("Brasil");
+			endereco.setTipoLogradouro("Rua");
+			endereco.setUf("SP");
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setEndereco(endereco);
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(1);
 		}else{
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setEndereco(new NotaFiscalEndereco());
 			for (Transportador transportador : transportadores) {
 				
 				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setDocumento(transportador.getPessoaJuridica().getCnpj());	
@@ -95,18 +94,25 @@ public class NotaFiscalTransportadorBuilder {
 		}else{
 
 			for (EnderecoTransportador enderecoTransportador : enderecoTransportadores){
+				if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco() == null){
+					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setEndereco(new NotaFiscalEndereco());
+				}
 				if(enderecoTransportador.isPrincipal()){
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setBairro(enderecoTransportador.getEndereco().getBairro());
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCep(enderecoTransportador.getEndereco().getCep());
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setNumero(enderecoTransportador.getEndereco().getNumero());
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoCidadeIBGE(Long.valueOf(enderecoTransportador.getEndereco().getCodigoCidadeIBGE()));
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCidade(enderecoTransportador.getEndereco().getCidade());
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoPais(0L);
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoUf(35L); //Long.valueOf(enderecoTransportador.getEndereco().getCodigoUf()));
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setComplemento(enderecoTransportador.getEndereco().getComplemento());
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setPais("Brasil");
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setTipoLogradouro(enderecoTransportador.getEndereco().getTipoLogradouro());
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setUf(enderecoTransportador.getEndereco().getUf());
+					
+					NotaFiscalEndereco endereco = new NotaFiscalEndereco(); 
+					
+					endereco.setBairro(enderecoTransportador.getEndereco().getBairro());
+					endereco.setCep(enderecoTransportador.getEndereco().getCep());
+					endereco.setNumero(enderecoTransportador.getEndereco().getNumero());
+					endereco.setCodigoCidadeIBGE(Long.valueOf(enderecoTransportador.getEndereco().getCodigoCidadeIBGE()));
+					endereco.setCidade(enderecoTransportador.getEndereco().getCidade());
+					endereco.setCodigoPais(0L);
+					endereco.setCodigoUf(35L); //Long.valueOf(enderecoTransportador.getEndereco().getCodigoUf()));
+					endereco.setComplemento(enderecoTransportador.getEndereco().getComplemento());
+					endereco.setPais("Brasil");
+					endereco.setTipoLogradouro(enderecoTransportador.getEndereco().getTipoLogradouro());
+					endereco.setUf(enderecoTransportador.getEndereco().getUf());
+					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setEndereco(endereco);
 					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(1);
 					break;
 				}

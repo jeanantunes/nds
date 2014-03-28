@@ -13,7 +13,7 @@ public class FTFEnvTipoRegistro04 extends FTFBaseDTO implements FTFCommons {
 	private String codEstabelecimentoEmissor;
 
 	@FTFfield(tamanho = 14, tipo = "char", ordem = 3)
-	private String cnpjEstabelecimentoEmissor;
+	private String cnpjEmpresaEmissora;
 
 	@FTFfield(tamanho = 11, tipo = "char", ordem = 4)
 	private String codLocal;
@@ -72,8 +72,8 @@ public class FTFEnvTipoRegistro04 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	@Override
-	public void setCnpjEstabelecimentoEmissor(String cnpjEstabelecimentoEmissor) {
-		this.cnpjEstabelecimentoEmissor = cnpjEstabelecimentoEmissor;
+	public void setCnpjEmpresaEmissora(String cnpjEmpresaEmissora) {
+		this.cnpjEmpresaEmissora = cnpjEmpresaEmissora;
 	}
 
 	@Override

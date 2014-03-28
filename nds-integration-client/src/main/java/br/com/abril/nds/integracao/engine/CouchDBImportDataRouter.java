@@ -20,7 +20,9 @@ import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.engine.data.CouchDBImportRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.model.canonic.EMS0110FilialInput;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
+import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
@@ -46,8 +48,17 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		final MessageProcessor messageProcessor = inputModel.getMessageProcessor();
 		Class<?> classByTipoInterfaceEnum = null;
 		if(((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getTipoInterfaceEnum() == TipoInterfaceEnum.SIMPLES ) {
-			classByTipoInterfaceEnum = ((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getClasseLinha();
+			
+			InterfaceEnum interfaceEnum  = ((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum();
+			
+			if(InterfaceEnum.EMS0110.equals(interfaceEnum)){
+				interfaceEnum = InterfaceEnum.EMS0110.getInterfaceEnum(EMS0110FilialInput.class);
+			}
+			
+			classByTipoInterfaceEnum = interfaceEnum.getClasseLinha();
+			
 		} else if (((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getTipoInterfaceEnum() == TipoInterfaceEnum.DETALHE_INLINE ) {
+			
 			classByTipoInterfaceEnum = ((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getClasseMaster();
 		}
 		
