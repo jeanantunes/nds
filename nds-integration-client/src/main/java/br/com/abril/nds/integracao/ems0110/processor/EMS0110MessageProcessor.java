@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.model.canonic.EMS0110FilialInput;
 import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
@@ -364,7 +365,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	
 	private void criarProdutoEdicaoConformeInput(Produto produto, Message message) {
 		
-		EMS0110Input input = (EMS0110Input) message.getBody();
+		EMS0110FilialInput input = (EMS0110FilialInput) message.getBody();
 
 		ProdutoEdicao edicao = new ProdutoEdicao();
 		Dimensao dimensao = new Dimensao();
@@ -483,6 +484,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		}
 		
 		edicao.setParcial(isParcial);
+		
+		edicao.setCodigoDeBarraCorporativo(input.getCodigoBarrasCorporativo());
 
 		this.getSession().persist(edicao);
 		
@@ -565,7 +568,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 	
 	private void atualizaProdutoEdicaoConformeInput(ProdutoEdicao edicao, Message message) {
-		EMS0110Input input = (EMS0110Input) message.getBody();
+		
+		EMS0110FilialInput input = (EMS0110FilialInput) message.getBody();
 
 		edicao.setOrigem(Origem.INTERFACE);
 		Produto produto = edicao.getProduto();
@@ -746,6 +750,14 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao do Peso para: " + input.getPesoUni());
+		}
+		
+		if (!Objects.equal(edicao.getCodigoDeBarraCorporativo(),input.getCodigoBarrasCorporativo())) {
+
+			edicao.setCodigoDeBarraCorporativo(input.getCodigoBarrasCorporativo());
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Atualizacao do Código de barras corporativo para : " + input.getCodigoBarrasCorporativo());
 		}
 		
 		this.getSession().merge(edicao);
