@@ -128,4 +128,9 @@ public enum InterfaceEnum {
 	public void setTipoInterfaceEnum(TipoInterfaceEnum tipoInterfaceEnum) {
 		this.tipoInterfaceEnum = tipoInterfaceEnum;
 	}
+	
+	public InterfaceEnum getInterfaceEnum(Class<? extends IntegracaoDocument> classLinha){
+		this.classeLinha = classLinha;
+		return this;
+	}
 }
