@@ -495,40 +495,58 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 	@Override
 	@Transactional
-	public MapaProdutoCotasDTO obterMapaDeImpressaoPorProdutoQuebrandoPorCota(
-			FiltroMapaAbastecimentoDTO filtro) {
+	public List<MapaProdutoCotasDTO> obterMapaDeImpressaoPorProdutoQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro) {
 	
-		List<ProdutoAbastecimentoDTO> produtosBoxRota = 
-				movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
+		List<ProdutoAbastecimentoDTO> produtosBoxCota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
 	
-		if(produtosBoxRota.size() == 0)
+		if(produtosBoxCota.size() == 0)
 			return null;
 	
-		MapaProdutoCotasDTO pcMapaDTO = new MapaProdutoCotasDTO(
-				produtosBoxRota.get(0).getCodigoProduto(),
-				produtosBoxRota.get(0).getNomeProduto(),
-				produtosBoxRota.get(0).getNumeroEdicao().longValue(),
-				produtosBoxRota.get(0).getCodigoBarra(),
-				produtosBoxRota.get(0).getPrecoCapa(),
-				new LinkedHashMap<Integer, Integer>(),
-				new LinkedHashMap<String, Integer>());
-	
-		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
-	
-			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota())){
-				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
-			}
-	
-			Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
+		
+		Map<String, MapaProdutoCotasDTO> mapProdutosCotas = new HashMap<String, MapaProdutoCotasDTO>();
+		for(ProdutoAbastecimentoDTO item : produtosBoxCota) {
+		
+			if(mapProdutosCotas.get(item.getCodigoProduto() +'-'+ item.getNumeroEdicao()) == null) {
 			
-			if (item.getReparte() != null){
-				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
+				MapaProdutoCotasDTO pcMapaDTO = new MapaProdutoCotasDTO(
+						item.getCodigoProduto(),
+						item.getNomeProduto(),
+						item.getNumeroEdicao().longValue(),
+						item.getCodigoBarra(),
+						item.getPrecoCapa(),
+						new LinkedHashMap<Integer, Integer>(),
+						new LinkedHashMap<String, Integer>());
+				
+				mapProdutosCotas.put(item.getCodigoProduto() +'-'+ item.getNumeroEdicao(), pcMapaDTO);
+				
 			}
 			
-			this.montarMapaReparteBox(pcMapaDTO, item);
 		}
 	
-		return pcMapaDTO;
+		for(Entry<String, MapaProdutoCotasDTO> entry : mapProdutosCotas.entrySet()) {
+		
+			for(ProdutoAbastecimentoDTO item : produtosBoxCota) {
+				
+				if(!entry.getValue().getCotasQtdes().containsKey(item.getCodigoCota())){
+					entry.getValue().getCotasQtdes().put(item.getCodigoCota(), 0);
+				}
+		
+				Integer qtdeAtual = entry.getValue().getCotasQtdes().get(item.getCodigoCota());
+				
+				if ((item.getCodigoProduto() +'-'+ item.getNumeroEdicao()).equals(entry.getValue().getCodigoProduto() +'-'+ item.getNumeroEdicao()) 
+						&& item.getReparte() != null) {
+					entry.getValue().getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
+				}
+				
+				this.montarMapaReparteBox(entry.getValue(), item);
+			}
+			
+		}
+		
+		List<MapaProdutoCotasDTO> listProdutosCotas = new ArrayList<MapaProdutoCotasDTO>();
+		listProdutosCotas.addAll(mapProdutosCotas.values());
+	
+		return listProdutosCotas;
 	}
 
 	private void montarMapaReparteBox(MapaProdutoCotasDTO pcMapaDTO, ProdutoAbastecimentoDTO item) {
@@ -545,17 +563,22 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			nomeBox = codigoBox + " - " + nomeBox;
 		}
 		
-		Integer reparteBox = pcMapaDTO.getBoxQtdes().get(nomeBox);
-		
-		if (reparteBox == null) {
-			reparteBox = 0;
+		if((pcMapaDTO.getCodigoProduto() +'-'+ pcMapaDTO.getNumeroEdicao()).equals((item.getCodigoProduto() +'-'+ item.getNumeroEdicao()))) {
+			
+			Integer reparteBox = pcMapaDTO.getBoxQtdes().get(nomeBox);
+			
+			if (reparteBox == null) {
+				reparteBox = 0;
+			}
+			
+			if (item.getReparte() != null){
+				reparteBox += item.getReparte();
+			}
+			
+			pcMapaDTO.getBoxQtdes().put(nomeBox, reparteBox);
+			
 		}
 		
-		if (item.getReparte() != null){
-			reparteBox += item.getReparte();
-		}
-		
-		pcMapaDTO.getBoxQtdes().put(nomeBox, reparteBox);
 	}
 	
 	@Override
