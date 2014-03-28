@@ -138,7 +138,7 @@ function imprimir(){
     <td width="458" style="border-right:1px solid #000;"><span class="titulo">Box / Roteiro / Rota</span></td>
   </tr>
   <tr>
-    <td align="center" style="border-left:1px solid #000;font-size:13px!important;border-bottom:1px solid #000;"><span class="dadosNota"><strong>${cotaEmissao.periodoRecolhimento}</strong></span></td>
+    <td align="center" style="border-left:1px solid #000;font-size:13px!important;border-bottom:1px solid #000;"><span class="dadosNota"><strong>${dataRecolhimento}</strong></span></td>
     <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataEmissao}</span></td>
     <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.nomeBox} / Roteiro: ${cotaEmissao.nomeRoteiro} / Rota: ${cotaEmissao.nomeRota}</span></td>
   </tr>
@@ -327,7 +327,7 @@ function imprimir(){
     <td width="458" style="border-right:1px solid #000;"><span class="titulo">Box / Roteiro / Rota</span></td>
   </tr>
   <tr>
-    <td align="center" style="border-left:1px solid #000;font-size:13px!important;border-bottom:1px solid #000;"><span class="dadosNota"><strong>${cotaEmissao.dataRecolhimento}</strong></span></td>
+    <td align="center" style="border-left:1px solid #000;font-size:13px!important;border-bottom:1px solid #000;"><span class="dadosNota"><strong>${dataRecolhimento}</strong></span></td>
     <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataEmissao}</span></td>
     <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.nomeBox} / Roteiro: ${cotaEmissao.nomeRoteiro} / Rota: ${cotaEmissao.nomeRota}</span></td>
   </tr>
