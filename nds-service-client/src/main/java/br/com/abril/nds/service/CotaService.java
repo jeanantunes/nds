@@ -413,7 +413,7 @@ public interface CotaService {
 	public abstract boolean isTipoDistribuicaoCotaEspecifico(Integer numeroCota,
 			TipoDistribuicaoCota tipoDistribuicaoCota);
 	
-	boolean salvarTipoCota(long idCota, TipoCota tipoCota);
+	boolean salvarTipoCota(long idCota, TipoCota tipoCota, boolean devolveEncalhe);
 
 	/**
      * Verifica se a cota teve seu tipo alterado na data informada

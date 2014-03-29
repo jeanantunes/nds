@@ -28,54 +28,54 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
     private Long edicaoProd;
     private String nomeProd;
     private String codBarra;
-    private Long pesoUni;
-    private String tipoProd;
-    private int peb;
-    private Float largura;
-    private Float comprimento;
-    private Float expessura;
-    private String codSitTributaria;
-    private String codSitFiscal;
-    private int pactPadrao;
-    private String tipoMaterialPromocional;
-    private String tipoMaterialDivulgacao;
-    private String tipoMaterialTroca;
-    private String valorValeDesconto;
-    private String valorMaterialTroca;
-    private boolean contemBrinde;
-    private String codNBM;
-    private String descBrinde;
-    private Boolean condVendeSeparado;
-    private boolean statusProd;
-    private Date dataDesativacao;
-    private String chamadaCapa;
-    private String edicao;
-    private String regimeRecolhimento;
-    private String segmentacaoClasseSocial;
-    private String segmentacaoPeriodicidade;
-    private String segmentacaoFormaFiscal;
-    private String segmentacaoSexo;
-    private String segmentacaoIdade;
-    private String segmentacaoLancamento;
-    private String segmentacaoTemaPrincipal;
-    private String segmentacaoTemaSecundario;
-    private Long codCategoria;
-    private String contextoProdReferencia;
-    private Long codFornecProdReferencia;
-    private String codProdReferencia;
-    private String tipoDesconto;
-    private Integer contextoEditor;
-    private Long codEditor;
-    private Integer contextoPublicacao;
-    private Integer codFornecPublicacao;
-    private String codColecao;
-    private String formaInclusao;
-    private String codPublicacao;
-    private String campoObscuro;
-    private String nomeComercial;
-    private String formaComercializacao;
-    private String classificacao;
-    private String segmento;
+    protected Long pesoUni;
+    protected String tipoProd;
+    protected int peb;
+    protected Float largura;
+    protected Float comprimento;
+    protected Float expessura;
+    protected String codSitTributaria;
+    protected String codSitFiscal;
+    protected int pactPadrao;
+    protected String tipoMaterialPromocional;
+    protected String tipoMaterialDivulgacao;
+    protected String tipoMaterialTroca;
+    protected String valorValeDesconto;
+    protected String valorMaterialTroca;
+    protected boolean contemBrinde;
+    protected String codNBM;
+    protected String descBrinde;
+    protected Boolean condVendeSeparado;
+    protected boolean statusProd;
+    protected Date dataDesativacao;
+    protected String chamadaCapa;
+    protected String edicao;
+    protected String regimeRecolhimento;
+    protected String segmentacaoClasseSocial;
+    protected String segmentacaoPeriodicidade;
+    protected String segmentacaoFormaFiscal;
+    protected String segmentacaoSexo;
+    protected String segmentacaoIdade;
+    protected String segmentacaoLancamento;
+    protected String segmentacaoTemaPrincipal;
+    protected String segmentacaoTemaSecundario;
+    protected Long codCategoria;
+    protected String contextoProdReferencia;
+    protected Long codFornecProdReferencia;
+    protected String codProdReferencia;
+    protected String tipoDesconto;
+    protected Integer contextoEditor;
+    protected Long codEditor;
+    protected Integer contextoPublicacao;
+    protected Integer codFornecPublicacao;
+    protected String codColecao;
+    protected String formaInclusao;
+    protected String codPublicacao;
+    protected String campoObscuro;
+    protected String nomeComercial;
+    protected String formaComercializacao;
+    protected String classificacao;
+    protected String segmento;
     
     @Field(offset = 1, length = 7)
     public String getCodDistrib() {
@@ -268,7 +268,7 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
     public String getTipoMaterialTroca() {
         return tipoMaterialTroca;
     }
-    
+    	
     public void setTipoMaterialTroca(final String tipoMaterialTroca) {
         this.tipoMaterialTroca = tipoMaterialTroca;
     }
