@@ -1341,7 +1341,11 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		} else {
 			cota.getParametroCobranca().setFatorVencimento(Integer.valueOf(""+ parametroCobranca.getFatorVencimento()));
 			cota.getParametroCobranca().setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobranca.getIdFornecedor()));
-			cota.getParametroCobranca().setValorMininoCobranca(CurrencyUtil.converterValor(parametroCobranca.getValorMinimo()));
+			
+			if (cota.getParametroCobranca().getValorMininoCobranca() == null){
+			    
+			    cota.getParametroCobranca().setValorMininoCobranca(CurrencyUtil.converterValor(parametroCobranca.getValorMinimo()));
+			}
 		}
 		
 		formaCobranca.setParametroCobrancaCota(cota.getParametroCobranca());
