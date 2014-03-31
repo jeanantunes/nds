@@ -35,7 +35,7 @@ public class ProdutoCadastroVO implements Serializable {
 	
 	private Integer pacotePadrao;
 	
-	private Long tipoDesconto;
+	private Long idDesconto;
 	
 	private String periodicidade;
 	
@@ -72,7 +72,7 @@ public class ProdutoCadastroVO implements Serializable {
 	public ProdutoCadastroVO(Long id, String codigo, String codigoICD, String nome,
 			Long codigoFornecedor, Long codigoEditor, String slogan,
 			Long codigoTipoProduto, String formaComercializacao, Integer peb,
-			Integer pacotePadrao, Long tipoDesconto, String periodicidade,
+			Integer pacotePadrao, Long idDesconto, String periodicidade,
 			String tributacaoFiscal, String classeSocial, String sexo, 
 			String faixaEtaria, String formatoProduto, 
 			String formaFisica, 
@@ -91,7 +91,7 @@ public class ProdutoCadastroVO implements Serializable {
 		this.formaComercializacao = formaComercializacao;
 		this.peb = peb;
 		this.pacotePadrao = pacotePadrao;
-		this.tipoDesconto = tipoDesconto;
+		this.idDesconto = idDesconto;
 		this.periodicidade = periodicidade;
 		this.tributacaoFiscal = tributacaoFiscal;
 		this.classeSocial = classeSocial;
@@ -116,8 +116,8 @@ public class ProdutoCadastroVO implements Serializable {
 		
 		TributacaoFiscal tributacaoFiscal = produto.getTributacaoFiscal();
 		
-		long codigoTipoDesconto = produto.getDescontoLogistica() != null ? 
-				produto.getDescontoLogistica().getTipoDesconto().longValue() : 0L;
+		long idDesconto = produto.getDescontoLogistica() != null ? 
+				produto.getDescontoLogistica().getId() : 0L;
 		ProdutoCadastroVO produtoCadastroVO = new ProdutoCadastroVO(
 			produto.getId(), 
 			produto.getCodigo(),
@@ -129,7 +129,7 @@ public class ProdutoCadastroVO implements Serializable {
 			produto.getTipoProduto().getId(), 
 			formaComercializacao != null ? formaComercializacao.name() : "", 
 			produto.getPeb(), 
-			produto.getPacotePadrao(), codigoTipoDesconto, periodicidade != null ? periodicidade.toString() : "", 
+			produto.getPacotePadrao(), idDesconto, periodicidade != null ? periodicidade.toString() : "", 
 			tributacaoFiscal != null ? tributacaoFiscal.toString() : "",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getClasseSocial()!=null?produto.getSegmentacao().getClasseSocial().name():""):"",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getSexo()!=null?produto.getSegmentacao().getSexo().name():""):"",
@@ -301,17 +301,17 @@ public class ProdutoCadastroVO implements Serializable {
 	}
 
 	/**
-	 * @return the tipoDesconto
+	 * @return the idDesconto
 	 */
-	public Long getTipoDesconto() {
-		return tipoDesconto;
+	public Long getIdDesconto() {
+		return idDesconto;
 	}
 
 	/**
-	 * @param tipoDesconto the tipoDesconto to set
+	 * @param idDesconto the idDesconto to set
 	 */
-	public void setTipoDesconto(Long tipoDesconto) {
-		this.tipoDesconto = tipoDesconto;
+	public void setIdDesconto(Long idDesconto) {
+		this.idDesconto = idDesconto;
 	}
 
 	/**

@@ -3,10 +3,14 @@ package br.com.abril.nds.service.impl;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.slf4j.Logger;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -35,6 +40,8 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.util.DateUtil;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -81,6 +88,10 @@ public class EstudoServiceImpl implements EstudoService {
 		
 	    for (EstudoCotaGerado estudoCota : estudo.getEstudoCotas()) {
 			estudoCota.setEstudo(estudo);
+	    }
+	    
+	    if(estudo.getReparteMinimo() == null){
+	    	estudo.setReparteMinimo(BigInteger.ZERO);
 	    }
 	    
 	    estudoGeradoRepository.adicionar(estudo);

@@ -2993,9 +2993,11 @@ public class CotaServiceImpl implements CotaService {
     
     @Transactional
     @Override
-    public boolean salvarTipoCota(final long idCota, final TipoCota tipoCota){
+    public boolean salvarTipoCota(final long idCota, final TipoCota tipoCota, boolean devolveEncalhe){
         
         final Cota cota = this.obterPorId(idCota);
+        
+        cota.setDevolveEncalhe(devolveEncalhe);
         
         if (!cota.getTipoCota().equals(tipoCota)){
             

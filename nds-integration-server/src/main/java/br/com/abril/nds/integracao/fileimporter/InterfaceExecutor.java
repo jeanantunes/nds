@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.model.InterfaceEnum;
+import br.com.abril.nds.integracao.model.canonic.EMS0110FilialInput;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
@@ -48,6 +49,7 @@ import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
 import br.com.abril.nds.integracao.repository.InterfaceExecucaoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoArquivoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoRepository;
+import br.com.abril.nds.integracao.repository.ParametroDistribuidorRepository;
 import br.com.abril.nds.integracao.route.RouteTemplate;
 import br.com.abril.nds.integracao.service.IcdObjectService;
 import br.com.abril.nds.model.dne.Bairro;
@@ -57,7 +59,9 @@ import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoArquivo;
+import br.com.abril.nds.model.integracao.ParametroDistribuidor;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
+import br.com.abril.nds.model.integracao.TipoDistribuidor;
 import br.com.abril.nds.model.integracao.icd.DetalheFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.MotivoSituacaoFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
@@ -101,6 +105,9 @@ public class InterfaceExecutor {
 	
 	@Autowired
 	private InterfaceExecucaoRepository interfaceExecucaoRepository;
+	
+	@Autowired
+	private ParametroDistribuidorRepository parametroDistribuidorRepository;
 	
 	@Autowired
 	private FixedFormatManager ffm;
@@ -180,7 +187,7 @@ public class InterfaceExecutor {
 				this.executarInterfaceCorreios();
 			} else if (interfaceEnum.getTipoInterfaceEnum().equals(TipoInterfaceEnum.DB)) {
 				this.executarInterfaceDB(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
-			} else {
+			} else {	
 				this.executarInterfaceArquivo(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
 			}
         } catch (Exception e) {
@@ -300,8 +307,8 @@ public class InterfaceExecutor {
 	 */
 	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, Long codigoDistribuidor, String nomeUsuario) {
 		
-		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
 		this.carregarDiretorios(interfaceEnum);
+		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
 		
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
@@ -314,6 +321,8 @@ public class InterfaceExecutor {
 			}
 			
 			CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
+			
+			interfaceEnum = this.tratarInterfaceEnumDistribuidorFilial(interfaceEnum,distribuidor);
 			
 			for (File arquivo: arquivos) {
 				
@@ -617,7 +626,32 @@ public class InterfaceExecutor {
 		in.close();
 		scanner.close();
 	}
-
+	
+	/**
+	 * Verifica se o distribuidor é uma filial, caso seja muda a classe de parse para EMS0110
+	 * 
+	 * @param interfaceEnum
+	 * @param distribuidor
+	 * @return InterfaceEnum
+	 */
+	private InterfaceEnum tratarInterfaceEnumDistribuidorFilial(InterfaceEnum interfaceEnum,String distribuidor){
+		
+		if(interfaceEnum == null){
+			return interfaceEnum;
+		}
+		
+		ParametroDistribuidor parametroDistribuidor = parametroDistribuidorRepository.findByCodigoDinapFC(distribuidor);
+		
+		boolean isDistribuidorFilial = ((parametroDistribuidor != null 
+				&& TipoDistribuidor.FILIAL.equals(parametroDistribuidor.getTipoDistribuidor())));
+			
+		if(InterfaceEnum.EMS0110.equals(interfaceEnum)
+				&& isDistribuidorFilial){
+			return InterfaceEnum.EMS0110.getInterfaceEnum(EMS0110FilialInput.class);
+		}
+		
+		return interfaceEnum;
+	}
 	                    /**
      * Recupera a lista de arquivos a serem processados.
      * 

@@ -90,7 +90,17 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
   	private boolean alterado;
   	
+  	private String nomeFantasia;
+  	
 
+
+	public String getNomeFantasia() {
+		return nomeFantasia;
+	}
+
+	public void setNomeFantasia(String nomeFantasia) {
+		this.nomeFantasia = nomeFantasia;
+	}
 
 	public String getTipoLancamento() {
 		return tipoLancamento;

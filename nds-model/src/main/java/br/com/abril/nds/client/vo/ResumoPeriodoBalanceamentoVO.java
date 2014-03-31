@@ -28,7 +28,16 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 	private boolean excedeCapacidadeDistribuidor;
 	private boolean bloquearVisualizacao;
 	private Set<Long> idsProdutoEdicao = new HashSet<>();
+	private String statusResumo;
 	
+	public String getStatusResumo() {
+		return statusResumo;
+	}
+
+	public void setStatusResumo(String statusResumo) {
+		this.statusResumo = statusResumo;
+	}
+
 	public Date getData() {
 		return data;
 	}

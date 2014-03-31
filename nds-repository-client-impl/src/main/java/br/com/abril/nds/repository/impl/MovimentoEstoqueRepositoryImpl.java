@@ -205,11 +205,15 @@ implements MovimentoEstoqueRepository {
        
         StringBuilder hql = new StringBuilder(" select ");
         
-        hql.append("((select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEnvioJornaleiro ")
+        hql.append("((select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro) ")
            .append("then (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda) else (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda * -1) end) ")
            .append("from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data and movimentoEstoque.status = :statusAprovado ")
-           .append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro, :grupoMovimentoEstornoEnvioJornaleiro) ")
-           .append("and movimentoEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") + ")
+           
+           .append(" and ( movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro) ")
+           .append(" or movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEstornoEnvioJornaleiro) ) ")
+           
+           .append(" and movimentoEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(" ) + ")
+           
            .append(String.format(templateHqlDiferencaRateioCota,  "tipoDiferencaRateioCota")).append(") as totalDistribuido ");
         
         hql.append(" from Distribuidor ");
@@ -222,9 +226,17 @@ implements MovimentoEstoqueRepository {
         query.setParameter("data", data);
         query.setParameter("statusFuro", StatusLancamento.FURO);
         query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
-        query.setParameter("grupoMovimentoEnvioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
-        query.setParameter("grupoMovimentoEstornoEnvioJornaleiro", GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
-                      
+        query.setParameterList("grupoMovimentoEnvioJornaleiro", Arrays.asList(GrupoMovimentoEstoque.ENVIO_JORNALEIRO, GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE));
+        query.setParameterList("grupoMovimentoEstornoEnvioJornaleiro", Arrays.asList(
+        		GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO, 
+        		GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE, 
+        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO,
+        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS,
+        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO,
+        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR
+        		
+        		));
+        
         query.setParameterList("tipoDiferencaRateioCota", Arrays.asList(TipoDiferenca.SOBRA_EM,
                                                                         TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA, 
                                                                         TipoDiferenca.GANHO_EM,

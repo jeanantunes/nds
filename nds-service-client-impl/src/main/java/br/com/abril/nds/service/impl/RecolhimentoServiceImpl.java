@@ -37,6 +37,7 @@ import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
@@ -537,13 +538,58 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
 					
-					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe);
+					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor());
 				}
 			}
 		}
 	}
 	
-	    /**
+	/**
+	 * Verifica se a cota devolve encalhe para a criação ou não de ChamadaEncalheCota
+	 * 
+	 * @param tipoCota
+	 * @param devolveEncalhe
+	 * @param dataLctoDistribuidor
+	 * @param dataAlteracaoTipoCota
+	 * @return boolean
+	 */
+	private boolean isDevolveEncalhe(final TipoCota tipoCota, 
+			                         Boolean devolveEncalhe, 
+			                         final Date dataLctoDistribuidor, 
+			                         final Date dataAlteracaoTipoCota){
+		
+		devolveEncalhe = (devolveEncalhe==null?true:devolveEncalhe);
+		
+		switch (tipoCota){
+		
+		    case A_VISTA:
+			    
+		    	if (!devolveEncalhe){
+		    		
+		    		return false;
+		    	}
+		    	
+                if ((dataAlteracaoTipoCota == null) || (dataLctoDistribuidor.compareTo(dataAlteracaoTipoCota) > 0 )){
+		    		
+		    		return false;
+		    	}
+		    	
+		    break;
+		
+		    case CONSIGNADO:
+                
+		    	if ((dataAlteracaoTipoCota != null) && (dataLctoDistribuidor.compareTo(dataAlteracaoTipoCota) <= 0 )){
+		    		
+		    		return false;
+		    	}
+		    	
+		    break;
+		}
+
+		return true;
+	}
+	
+	/**
      * Método que cria uma chamada de encalhe para a cota.
      * 
      * @param qtdPrevista - quantidade prevista
@@ -551,11 +597,22 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
      * @param chamadaEncalhe chamada de encalhe
      */
 	private void criarChamadaEncalheCota(BigInteger qtdPrevista,
-										 Cota cota, ChamadaEncalhe chamadaEncalhe) {
+										 Cota cota, ChamadaEncalhe chamadaEncalhe,
+										 Date dataLctoDistribuidor) {
 		
 		if(BigInteger.ZERO.compareTo(qtdPrevista)>=0) {
 			
 			return;
+		}
+		
+		boolean criarCahamadaEncalheCota = this.isDevolveEncalhe(cota.getTipoCota(), 
+				                                                 cota.isDevolveEncalhe(), 
+												                 dataLctoDistribuidor, 
+												                 cota.getAlteracaoTipoCota());
+		
+		if (!criarCahamadaEncalheCota){
+		
+		    return;
 		}
 		
 		ChamadaEncalheCota chamadaEncalheCota =
@@ -575,7 +632,16 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		chamadaEncalheCota.setCota(cota);
 		chamadaEncalheCota.setQtdePrevista(qtdPrevista);
 		
-		this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+		chamadaEncalheCota = this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+		
+		if (chamadaEncalhe.getChamadaEncalheCotas() == null) {
+		    
+		    chamadaEncalhe.setChamadaEncalheCotas(new HashSet<ChamadaEncalheCota>());
+		}
+		
+		chamadaEncalhe.getChamadaEncalheCotas().add(chamadaEncalheCota);
+		
+		this.chamadaEncalheRepository.merge(chamadaEncalhe);
 	}
 	
 	private ChamadaEncalhe getChamadaEncalheMatrizRecolhimento(List<ChamadaEncalhe> chamadasEncalhe) {

@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -241,7 +240,7 @@ public class AnaliseParcialController extends BaseController {
         List<CotaQueNaoEntrouNoEstudoDTO> lista = new ArrayList<>();
 
         if (queryDTO.possuiNome()) {
-            queryDTO.setNome(PessoaUtil.removerSufixoDeTipo(queryDTO.getNome()));
+            queryDTO.setNome(PessoaUtil.removerSufixoDeTipo(queryDTO.getNome())); 
         }
 
         if (queryDTO.getEstudo() != null && queryDTO.getEstudo() > 0) {
@@ -344,26 +343,18 @@ public class AnaliseParcialController extends BaseController {
     	
     	List<EstudoCotaGerado> listEstudoCotas = analiseParcialService.obterEstudosCotaGerado(estudoId);
     	
-    	BigDecimal reparteLancamento = analiseParcialService.obterReparteLancamentoEstudo(estudoId);
-    	
-    	BigInteger reparteLancamentoEstudo = analiseParcialService.obterReparteLancamentoEstudo(estudoId).toBigInteger();
-    	
     	EstudoGerado estudoGerado = estudoService.obterEstudo(estudoId);
     	
-    	BigDecimal reparteFisico = analiseParcialService.reparteFisicoLancamento(estudoId);
-    	
-    	if(reparteLancamento.compareTo(reparteFisico) > 0){
-    		throw new ValidacaoException(TipoMensagem.WARNING,"Há divergência entre o reparte Previsto e o Físico!");
-    	}
+    	BigDecimal reparteFisicoOuPrevisto = analiseParcialService.reparteFisicoOuPrevistoLancamento(estudoId);
     	
     	for (EstudoCotaGerado estudoCota : listEstudoCotas) {
-			if(BigIntegerUtil.isMenorQueZero(estudoCota.getReparte())){
-		    	throw new ValidacaoException(TipoMensagem.WARNING,"Há cota(s) com reparte(s) negativo(s), por favor ajustá-la(s)!");
-			}
-		}
-    	
-    	if((BigIntegerUtil.isMenorQueZero(reparteLancamentoEstudo.subtract(estudoGerado.getQtdeReparte())))){
-    		throw new ValidacaoException(TipoMensagem.WARNING, "O reparte distribuido é maior que estoque disponível!");
+    		if(BigIntegerUtil.isMenorQueZero(estudoCota.getReparte())){
+    			throw new ValidacaoException(TipoMensagem.WARNING,"Há cota(s) com reparte(s) negativo(s), por favor ajustá-la(s)!");
+    		}
+    	} 
+
+    	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getReparteDistribuir().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)){
+    		throw new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é maior que estoque disponível!");
     	}
     	
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();    		
