@@ -907,17 +907,7 @@ var fechamentoEncalheController = $.extend(true, {
 		return cotasAusentesSelecionadas;
 	},
 	
-	postergarCotas : function() {
-		
-		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
-		
-		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/dataSugestaoPostergarCota",
-				{ 'dataEncalhe' : dataEncalhe},
-				function (result) {
-						
-			        $("#dtPostergada", fechamentoEncalheController.workspace).val(result.resultado);
-				}
-		);
+	carregarDialogPostergacao : function(dataPostergada) {
 		
 		var postergarTodas = $("#checkTodasCotas").attr("checked") == "checked";
 
@@ -978,6 +968,13 @@ var fechamentoEncalheController = $.extend(true, {
 						$( this ).dialog( "close" );
 					}
 				},
+				
+				open: function() {
+					
+			        $("#dtPostergada", fechamentoEncalheController.workspace).val(dataPostergada);
+					
+				},
+				
 				beforeClose: function() {
 					
 					$("#dtPostergada", fechamentoEncalheController.workspace).val("");
@@ -986,8 +983,7 @@ var fechamentoEncalheController = $.extend(true, {
 				},
 				form: $("#dialog-postergar", this.workspace).parents("form")
 			});
-	
-			fechamentoEncalheController.carregarDataPostergacao();
+			
 			
 		} else {
 			
@@ -996,32 +992,39 @@ var fechamentoEncalheController = $.extend(true, {
 			listaMensagens.push('Selecione pelo menos uma cota para postergar!');
 			exibirMensagemDialog('WARNING', listaMensagens, 'dialogMensagemEncerrarEncalhe');
 		}
+		
 	},
-
-	carregarDataPostergacao : function() {
-
-		var dataPostergacao = $("#dtPostergada", fechamentoEncalheController.workspace).val();
+	
+	postergarCotas : function() {
+		
 		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 		
 		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/carregarDataPostergacao",
-				{ 'dataEncalhe' : dataEncalhe, 'dataPostergacao' : dataPostergacao },
+				{'dataEncalhe' : dataEncalhe},
 				function (result) {
 
 					var tipoMensagem = result.tipoMensagem;
 					var listaMensagens = result.listaMensagens;
 					
 					if (tipoMensagem && listaMensagens) {
+					
 						exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemPostergarCotas');
+				
 					} else {
-						$("#dtPostergada", fechamentoEncalheController.workspace).val(result);
+						
+						fechamentoEncalheController.carregarDialogPostergacao(result);
+						
 					}
+					
 				},
 			  	null,
 			   	true,
-			   	'dialogMensagemPostergarCotas'
-		);
-
+			   	'dialogMensagemPostergarCotas');
+		
+		
+		
 	},
+	
 	
 	veificarCobrancaGerada: function(){
 		
