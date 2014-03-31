@@ -32,7 +32,7 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.FuroProdutoService;
-import br.com.abril.nds.service.MatrizLancamentoService;
+import br.com.abril.nds.service.MatrizLancamentoNovaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -66,9 +66,6 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 
 	@Autowired
 	private ItemNotaEnvioRepository itemNovaEnvioRepository;
-	
-	@Autowired
-	private MatrizLancamentoService matrizLancamentoService;
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository; 

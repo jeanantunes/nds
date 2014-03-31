@@ -181,5 +181,7 @@ public interface LancamentoService {
 	Lancamento buscarPorId(Long id);
 	
 	void excluirLancamento(final ProdutoLancamentoVO produtoLancamento);
+	
+	List<Lancamento> obterLancamentosRedistribuicoes();
 }
  

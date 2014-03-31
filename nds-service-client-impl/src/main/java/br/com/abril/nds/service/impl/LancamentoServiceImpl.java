@@ -464,5 +464,12 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Lancamento buscarPorId(Long id) {
 		return this.lancamentoRepository.buscarPorId(id);
 	}
+	
+	@Override
+	@Transactional
+	public List<Lancamento> obterLancamentosRedistribuicoes() {
+		return this.lancamentoRepository.obterLancamentosRedistribuicoes();
+	}
+	
 
 }
