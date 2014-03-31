@@ -227,7 +227,16 @@ implements MovimentoEstoqueRepository {
         query.setParameter("statusFuro", StatusLancamento.FURO);
         query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
         query.setParameterList("grupoMovimentoEnvioJornaleiro", Arrays.asList(GrupoMovimentoEstoque.ENVIO_JORNALEIRO, GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE));
-        query.setParameterList("grupoMovimentoEstornoEnvioJornaleiro", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO, GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE));
+        query.setParameterList("grupoMovimentoEstornoEnvioJornaleiro", Arrays.asList(
+        		GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO, 
+        		GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE, 
+        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO,
+        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS,
+        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO,
+        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR
+        		
+        		));
+        
         query.setParameterList("tipoDiferencaRateioCota", Arrays.asList(TipoDiferenca.SOBRA_EM,
                                                                         TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA, 
                                                                         TipoDiferenca.GANHO_EM,

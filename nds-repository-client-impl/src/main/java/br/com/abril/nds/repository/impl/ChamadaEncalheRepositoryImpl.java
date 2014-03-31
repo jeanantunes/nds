@@ -35,6 +35,7 @@ import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -1044,7 +1045,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" select c.numero_cota as numeroCota ")
 			.append(" 	, c.id as idCota ")
 			.append(" 	, mec.PRODUTO_EDICAO_ID as idProdutoEdicao ")
-			.append(" 	, mec.DATA_APROVACAO as dataMovimento")
+			.append(" 	, mec.DATA as dataMovimento")
 			.append(" 	, nei.nota_envio_id as numeroNotaEnvio")
 			.append(" 	, mec.QTDE as reparte ")
 			.append(" from chamada_encalhe ce ")
@@ -1070,7 +1071,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		sql	.append(" 	and mec.TIPO_MOVIMENTO_ID in (select id from tipo_movimento where GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte, :movimentoCompraSuplementar)) ")
 		    .append("   and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
-			.append(" 	group by mec.cota_id, mec.PRODUTO_EDICAO_ID ")
+			.append(" 	group by mec.PRODUTO_EDICAO_ID ")
 			.append(" 	having count(0) > 1 ")
 			.append(" ) rs_sup on rs_sup.id = mec.cota_id and rs_sup.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID ") // and mec.DATA_APROVACAO <> rs_sup.DATA_APROVACAO ")
 			.append(" where 1 = 1 ");
@@ -1099,12 +1100,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" 	group by mec.cota_id, mec.PRODUTO_EDICAO_ID ")
 			.append(" 	having count(0) > 1 ")
 			.append(" ) ")*/
-		sql	.append(" group by mec.cota_id, mec.PRODUTO_EDICAO_ID, mec.DATA_APROVACAO ")
+		sql	.append(" group by mec.ID ")
 			.append(" union ")
 			.append(" select c.numero_cota as numeroCota ")
 			.append(" 	, c.id as idCota ")
 			.append(" 	, mec.PRODUTO_EDICAO_ID as idProdutoEdicao ")
-			.append(" 	, mec.DATA_APROVACAO as dataMovimento ")
+			.append(" 	, mec.DATA as dataMovimento ")
 			.append(" 	, null as numeroNotaEnvio ")
 			.append(" 	, sum(mec.QTDE) as reparte ")
 			.append(" from chamada_encalhe ce ")
@@ -1119,7 +1120,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 		sql	.append(" and mec.TIPO_MOVIMENTO_ID in (select id from tipo_movimento where GRUPO_MOVIMENTO_ESTOQUE in (:movimentoCompraSuplementar)) ")
-			.append(" group by mec.cota_id, mec.PRODUTO_EDICAO_ID, mec.DATA_APROVACAO ")
+			.append(" group by mec.PRODUTO_EDICAO_ID ")
 			/*.append(" union ")
 			.append(" select c.numero_cota as numeroCota ")
 			.append(" 	, c.id as idCota ")
@@ -1155,8 +1156,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaProdutoEmissaoCEDTO.class));
 		
-		query.setParameter("movimentoRecebimentoReparte", "RECEBIMENTO_REPARTE");
-		query.setParameter("movimentoCompraSuplementar", "COMPRA_SUPLEMENTAR");
+		query.setParameter("movimentoRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		query.setParameter("movimentoCompraSuplementar", GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name());
 		if(filtro != null && filtro.getDtRecolhimentoDe() != null && filtro.getDtRecolhimentoAte() != null) {
 			query.setParameter("recolhimentoDe", filtro.getDtRecolhimentoDe());
 			query.setParameter("recolhimentoAte", filtro.getDtRecolhimentoAte());

@@ -319,28 +319,29 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Path("carregarDataPostergacao")
-	public void carregarDataPostergacao(Date dataEncalhe, Date dataPostergacao) {
+	public void carregarDataPostergacao(Date dataEncalhe) {
 		
-		try {
+		if(dataEncalhe == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data de encalhe informada na pesquisa");
+		}
+		
+		Date dataPostergacao = chamadaAntecipadaEncalheService.obterProximaDataEncalhe(dataEncalhe);
 			
-			int quantidadeDias = 0;
+		if (dataPostergacao == null) {
+			dataPostergacao = DateUtil.adicionarDias(dataEncalhe, 1);
+		}
+		
+		dataPostergacao = 
+			this.calendarioService.adicionarDiasRetornarDiaUtil(dataPostergacao, 0);
+		
+		if (dataPostergacao != null) {
 			
-			if (dataPostergacao == null) {
-				quantidadeDias = 1;
-				dataPostergacao = dataEncalhe;
-			}
+			String dataFormatada = DateUtil.formatarData(dataPostergacao, "dd/MM/yyyy");
 			
+			this.result.use(Results.json()).from(dataFormatada, "result").recursive().serialize();
 			
-			dataPostergacao = 
-				this.calendarioService.adicionarDiasUteis(dataPostergacao, quantidadeDias);
-			
-			if (dataPostergacao != null) {
-				String dataFormatada = DateUtil.formatarData(dataPostergacao, "dd/MM/yyyy");
-				this.result.use(Results.json()).from(dataFormatada, "result").recursive().serialize();
-			}
-			
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+		} else {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data util de encalhe encontrada");
 		}
 		
 	}
@@ -387,7 +388,9 @@ public class FechamentoEncalheController extends BaseController {
 			
 			LOGGER.error("Erro ao tentar postergar!", e);
 			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar postergar!"));
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar postergar!"), "result").recursive().serialize();
+			throw new ValidacaoException();
 		}
 		
 		this.result.use(Results.json()).from(
@@ -414,22 +417,6 @@ public class FechamentoEncalheController extends BaseController {
 //		}
 //		
 //	}
-
-	@Path("/dataSugestaoPostergarCota")
-	public void carregarDataSugestaoPostergarCota(String dataEncalhe) throws ParseException {
-		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dataEncalhe);
-				
-		Date resultado = chamadaAntecipadaEncalheService.obterProximaDataEncalhe(date);
-		
-		if (resultado != null){
-
-		    this.result.use(Results.json()).from(resultado, "resultado").serialize();
-		}
-		else{
-			
-			this.result.use(Results.nothing());
-		}
-	}
 	
 	@Post
 	public void veificarCobrancaGerada(List<Long> idsCotas, boolean cobrarTodasCotas){
@@ -618,8 +605,7 @@ public class FechamentoEncalheController extends BaseController {
 			}
 		}
 	
-//		this.result.use(Results.nothing());
-		this.result.use(Results.json()).from("oi oi oi oi ", "YEAH").serialize();
+		this.result.use(Results.nothing());
 	}
 
 	@SuppressWarnings("deprecation")
