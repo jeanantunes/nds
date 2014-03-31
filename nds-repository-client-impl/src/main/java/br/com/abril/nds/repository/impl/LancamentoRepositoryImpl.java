@@ -1102,7 +1102,7 @@ public class LancamentoRepositoryImpl extends
 			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores) {
 
 		String sql = this.montarConsultaBalanceamentoLancamentoAnalitico()
-				+ " order by dataLancamentoDistribuidor ";
+				+ " order by dataLancamentoDistribuidor,nomeProduto ";
 
 		Query query = this.getQueryBalanceamentoRecolhimento(
 				periodoDistribuicao, fornecedores, sql);
@@ -1114,7 +1114,7 @@ public class LancamentoRepositoryImpl extends
 
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" select ");
+		sql.append(" select distinct ");
 		sql.append(" periodoLancamentoParcial.TIPO as parcial, ");
 		sql.append(" lancamento.STATUS as statusLancamento, ");
 		sql.append(" lancamento.ID as idLancamento, ");
@@ -1162,6 +1162,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" estudo.QTDE_REPARTE as distribuicao, ");
 
 		sql.append(" fornecedor.id as idFornecedor, ");
+		sql.append(" pessoa.NOME_FANTASIA as nomeFantasia, ");
 
 		sql.append(" produtoEdicao.peb as peb ");
 
@@ -1191,6 +1192,10 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" inner join ");
 		sql.append("     FORNECEDOR fornecedor ");
 		sql.append("         on produtoFornecedor.fornecedores_ID=fornecedor.ID ");
+		
+		sql.append(" inner join ");
+		sql.append("     PESSOA pessoa ");
+		sql.append("         on produtoFornecedor.fornecedores_ID=pessoa.ID ");
 
 		sql.append(" inner join ");
 		sql.append(" TIPO_PRODUTO tipoProduto ");
@@ -1218,25 +1223,8 @@ public class LancamentoRepositoryImpl extends
 
 		sql.append(" fornecedor.ID in (:idsFornecedores) ");
 
-		// sql.append(" ( ");
-		// sql.append(" 	select fornecedor.ID from PRODUTO_FORNECEDOR produtoFornecedor, FORNECEDOR fornecedor ");
-		// sql.append(" 		where produtoFornecedor.PRODUTO_ID = produto.ID ");
-		// sql.append(" 		and produtoFornecedor.FORNECEDORES_ID = fornecedor.ID ");
-		// sql.append(" 		and fornecedor.ID in ( :idsFornecedores ) ");
-		// sql.append(" 		limit 1 ");
-		// sql.append(" ) is not null ");
-
-		sql.append(" and ( ");
-		sql.append("     ( ");
-		sql.append(" 		lancamento.DATA_LCTO_DISTRIBUIDOR <= :periodoFinal ");
-		sql.append(" 		AND lancamento.STATUS in (:statusLancamentoDataMenorFinal) ");
-		sql.append(" 	) ");
-		sql.append(" 	OR ( ");
-		sql.append(" 		lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
-		sql.append(" 		AND lancamento.STATUS in (:statusLancamentoDataEntrePeriodo) ");
-		sql.append(" 	) ");
-		sql.append(" ) ");
-
+		sql.append(" AND lancamento.DATA_LCTO_DISTRIBUIDOR <= :periodoFinal ");
+		sql.append(" AND lancamento.STATUS in (:statusLancamentoDataMenorFinal) ");
 		return sql.toString();
 	}
 
@@ -1265,7 +1253,8 @@ public class LancamentoRepositoryImpl extends
 				.addScalar("alteradoInteface", StandardBasicTypes.BOOLEAN)
 				.addScalar("distribuicao", StandardBasicTypes.BIG_INTEGER)
 				.addScalar("idFornecedor", StandardBasicTypes.LONG)
-				.addScalar("peb", StandardBasicTypes.LONG);
+				.addScalar("peb", StandardBasicTypes.LONG)
+				.addScalar("nomeFantasia");
 					
 
 		this.aplicarParametros(query, periodoDistribuicao, fornecedores);
@@ -1282,21 +1271,18 @@ public class LancamentoRepositoryImpl extends
 		List<String> statusLancamentoDataMenorFinal = Arrays.asList(
 				StatusLancamento.PLANEJADO.name(),
 				StatusLancamento.CONFIRMADO.name(),
-				StatusLancamento.FURO.name());
-
-		List<String> statusLancamentoDataEntrePeriodo = Arrays.asList(
+				StatusLancamento.FURO.name(),
+				
 				StatusLancamento.EM_BALANCEAMENTO.name(),
 				StatusLancamento.BALANCEADO.name(),
-				StatusLancamento.EXPEDIDO.name());
+				StatusLancamento.EXPEDIDO.name()
+				);
+
 
 		query.setParameterList("statusLancamentoDataMenorFinal",
 				statusLancamentoDataMenorFinal);
 
-		query.setParameterList("statusLancamentoDataEntrePeriodo",
-				statusLancamentoDataEntrePeriodo);
-
 		query.setParameterList("idsFornecedores", fornecedores);
-		query.setParameter("periodoInicial", periodoDistribuicao.getDe());
 		query.setParameter("periodoFinal", periodoDistribuicao.getAte());
 		query.setParameter("grupoCromo", GrupoProduto.CROMO.toString());
 
@@ -2448,6 +2434,52 @@ public class LancamentoRepositoryImpl extends
 			return true;
 		}
 		//return (Boolean) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lancamento> obterLancamentosRedistribuicoes() {
+
+		StringBuilder hql = new StringBuilder();
+		List<Lancamento> lista =new ArrayList<Lancamento>();
+		List<Lancamento> listaAux =new ArrayList<Lancamento>();
+
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" where lancamento.tipoLancamento = :tipoLancamento ");
+		//hql.append(" and lancamento.status <> :statusLancamento ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("tipoLancamento", TipoLancamento.REDISTRIBUICAO);
+		//query.setParameter("statusLancamento", StatusLancamento.FECHADO);
+
+		lista = query.list();
+		//listaAux.addAll(lista);
+		
+		//
+		for(Lancamento lancamento :lista){
+		
+			hql = new StringBuilder();
+		
+			hql.append(" from Lancamento lancamento ");
+			hql.append(" where ");
+//					+ "lancamento.produtoEdicao.id = :idProdutoEdicao ");
+//			hql.append(" and lancamento.produtoEdicao.produto.id = :idProduto ");
+			hql.append(" lancamento.produtoEdicao.produto.codigo = :codigo ");
+			hql.append(" and lancamento.produtoEdicao.numeroEdicao = :edicao ");
+
+
+			query = getSession().createQuery(hql.toString());
+
+			query.setParameter("codigo", lancamento.getProdutoEdicao().getProduto().getCodigo());
+			
+			query.setParameter("edicao", lancamento.getProdutoEdicao().getNumeroEdicao());
+		
+			listaAux.addAll(query.list());
+		}
+		
+		
+		return listaAux;
 	}
 
 }
