@@ -65,8 +65,8 @@ public enum Permissao {
 	ROLE_LANCAMENTO_ALTERACAO("Lançamento",													   				null, true),	
 	ROLE_LANCAMENTO("Lançamento",														  				   	null, ROLE_LANCAMENTO_ALTERACAO, true, null),
 	
-	ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO("Bal. Matriz Lançamento",				   				Permissao.ROLE_LANCAMENTO, true), 
-	ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ("Bal. Matriz Lançamento",							   			   	Permissao.ROLE_LANCAMENTO, ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO, true, null), 
+	ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO("Matriz de Lançamento", 				   					Permissao.ROLE_LANCAMENTO, true), 
+	ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ("Matriz de Lançamento",							   			   	Permissao.ROLE_LANCAMENTO, ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO, true, null), 
 	
 	ROLE_LANCAMENTO_FURO_PRODUTO_ALTERACAO("Furo de Lançamento",							   				Permissao.ROLE_LANCAMENTO, true),
 	ROLE_LANCAMENTO_FURO_PRODUTO("Furo de Lançamento",												  	   	Permissao.ROLE_LANCAMENTO, ROLE_LANCAMENTO_FURO_PRODUTO_ALTERACAO, true, null),

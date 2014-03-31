@@ -858,6 +858,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                     datasExpectativaReparte, entry.getValue());
             
             datasExpectativaReparteOrdenadas.addAll(dadosBalanceamentoLancamento.getDatasBalanceaveis());
+            //datasExpectativaReparteOrdenadas.removeAll(dadosBalanceamentoLancamento.getDatasNaoBalanceaveis());
             
             for (final Date dataLancamentoPrevista : datasExpectativaReparteOrdenadas) {
                 
@@ -937,6 +938,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                         (TreeSet <Date>)dadosBalanceamentoLancamento.getDatasBalanceaveis(), dadosBalanceamentoLancamento,
                         idFornecedor);
             }
+            
+            if (!produtosLancamentoNaoBalanceadosTotal.isEmpty()) {
+            	System.out.println("faltam "+produtosLancamentoNaoBalanceadosTotal.size()+" produtos a balancear");
+            }
         }
         
         return matrizLancamento;
@@ -1009,6 +1014,16 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         
         datasExpectativaReparteOrdenado.addAll(datasExpectativaReparte);
         
+        /*
+        for (final Date dataDistribuicao : datasExpectativaReparte) {
+        	
+          if(!distribuidorRepository.obterDataOperacaoDistribuidor().after(dataDistribuicao)){
+          	if(!datasExpectativaReparteOrdenado.contains(dataDistribuicao)){
+          	 datasExpectativaReparteOrdenado.add(dataDistribuicao);
+          	}
+          }
+        } 
+        */       
         return datasExpectativaReparteOrdenado;
     }
     
@@ -1877,8 +1892,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         
         for (final ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
             media = media.add(produtoLancamento.getRepartePrevisto());
-            datasExpectativaReparte.add(produtoLancamento
-                    .getDataLancamentoDistribuidor());
+            
+            if(!distribuidorRepository.obterDataOperacaoDistribuidor().after(produtoLancamento.getDataLancamentoDistribuidor())){
+             datasExpectativaReparte.add(produtoLancamento.getDataLancamentoDistribuidor());
+            }
         }
         
         final Set<Date> datasExpedicaoConfirmada = lancamentoRepository

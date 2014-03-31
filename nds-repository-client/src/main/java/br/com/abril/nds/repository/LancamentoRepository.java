@@ -408,6 +408,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	boolean existeProdutoEdicaoParaDia(ProdutoLancamentoDTO produtoLancamentoDTO,Date novaData);
 	
+	List<Lancamento> obterLancamentosRedistribuicoes();
+
 	List<Lancamento> obterLancamentosEmRecolhimentoParaFechamento(Date dataBase);
 	
 }
