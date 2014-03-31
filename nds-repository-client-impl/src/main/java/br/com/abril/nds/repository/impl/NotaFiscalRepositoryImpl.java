@@ -451,6 +451,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		if(!isGroup){
 			hql.append(" GROUP BY mec.cota.numeroCota ");
+		} else {
+			hql.append(" GROUP BY mec ");
 		}
 		
 		if(!isCount && !isPagination){

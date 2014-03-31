@@ -340,16 +340,7 @@ public class FTFServiceImpl implements FTFService {
 	}
 	
 	private void populateRegTipo08(NotaFiscal nf, Map<String, ParametroFTFGeracao> parametrosGeracaoFTF, FTFEnvTipoRegistro08 regTipo08) {
-		
-		// CNPJ da empresa emissora : 61438248004625		
-		// CNPJ da empresa destinatária : FTFTREELOG0046 (CRP 5826042)		
-		// Código do centro emissor : 008		
-		// Estabelecimento : TREELOG_046		
-		// Tipo de Pedido : 2 		
-		// Código solicitante = SIST_NDI		
 
-		
-		
 		ParametroFTFGeracao param = parametrosGeracaoFTF.get(nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getCfopEstado());
 			
 		regTipo08.setCodigoCentroEmissor(param.getTipoPedido());
