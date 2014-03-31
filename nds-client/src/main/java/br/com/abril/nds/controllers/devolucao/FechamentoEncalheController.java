@@ -332,7 +332,7 @@ public class FechamentoEncalheController extends BaseController {
 			
 			
 			dataPostergacao = 
-				this.calendarioService.adicionarDiasRetornarDiaUtil(dataPostergacao, quantidadeDias);
+				this.calendarioService.adicionarDiasUteis(dataPostergacao, quantidadeDias);
 			
 			if (dataPostergacao != null) {
 				String dataFormatada = DateUtil.formatarData(dataPostergacao, "dd/MM/yyyy");
@@ -387,9 +387,7 @@ public class FechamentoEncalheController extends BaseController {
 			
 			LOGGER.error("Erro ao tentar postergar!", e);
 			
-			this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar postergar!"), "result").recursive().serialize();
-			throw new ValidacaoException();
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar postergar!"));
 		}
 		
 		this.result.use(Results.json()).from(
@@ -620,7 +618,8 @@ public class FechamentoEncalheController extends BaseController {
 			}
 		}
 	
-		this.result.use(Results.nothing());
+//		this.result.use(Results.nothing());
+		this.result.use(Results.json()).from("oi oi oi oi ", "YEAH").serialize();
 	}
 
 	@SuppressWarnings("deprecation")
