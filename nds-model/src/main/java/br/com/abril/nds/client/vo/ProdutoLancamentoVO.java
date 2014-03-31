@@ -55,6 +55,8 @@ public class ProdutoLancamentoVO  implements Serializable {
 	private String statusLancamento;
 	
 	@Export(label="Fornecedor", exhibitionOrder = 14, widthPercent = 9)
+	private String nomeFantasia;
+
 	private Long fornecedorId;
 
 	private String novaDataLancamento;
@@ -80,6 +82,14 @@ public class ProdutoLancamentoVO  implements Serializable {
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getNomeFantasia() {
+		return nomeFantasia;
+	}
+
+	public void setNomeFantasia(String nomeFantasia) {
+		this.nomeFantasia = nomeFantasia;
 	}
 
 	public String getStatusLancamento() {
