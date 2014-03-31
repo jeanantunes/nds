@@ -37,7 +37,6 @@ import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.GrupoRepository;
-import br.com.abril.nds.repository.NotaEnvioRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.CotaService;
@@ -344,8 +343,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				String descricaoQuebraRelatorioCE = cpece.getReparte() +" exes. ("+ DateUtil.formatarData(cpece.getDataMovimento(), Constantes.DAY_MONTH_PT_BR) +")"; //obterDescricaoQuebraRelatorioCE(notas);
 				
 				if(produtoEmissaoDTO.getDescricaoNotaEnvio() != null) {
-					
-					produtoEmissaoDTO.setReparte(produtoEmissaoDTO.getReparte().add(cpece.getReparte()));
 					
 					produtoEmissaoDTO.setDescricaoNotaEnvio(produtoEmissaoDTO.getDescricaoNotaEnvio() +" + "+ descricaoQuebraRelatorioCE);
 				} else {
