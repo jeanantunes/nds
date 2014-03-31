@@ -152,8 +152,14 @@ ConsolidadoFinanceiroRepository {
         .append("        and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
         .append("        and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinanceiro) ")
         .append("    and movimentos4_.QTDE != 0 ")
-        .append("        and chamadaEncalheCota.postergado = :naoPostergado ")
-        .append("group by ")
+        .append("        and chamadaEncalheCota.postergado = :naoPostergado ");
+        
+        if (filtro.getIdConsolidado()!=null){
+        	
+       	    hql.append(" and consolidad0_.id = :idConsolidado ");
+        }
+        
+        hql.append("group by ")
         .append("        produto8_.CODIGO , ")
         .append("        produto8_.NOME , ")
         .append("        produtoedi7_.NUMERO_EDICAO , ")
@@ -229,6 +235,7 @@ ConsolidadoFinanceiroRepository {
         .append("                )  ")
         .append("    and movimentos2_.QTDE != 0 ")
         .append("        and chamadaEncalheCota.postergado = :naoPostergado ")
+
         .append("group by ")
         .append("        produto6_.CODIGO , ")
         .append("        produto6_.NOME , ")
@@ -312,6 +319,11 @@ ConsolidadoFinanceiroRepository {
                 Arrays.asList(
                         GrupoMovimentoFinaceiro.ENVIO_ENCALHE.toString()
                         ));
+        
+        if (filtro.getIdConsolidado()!=null){
+        	
+	        query.setParameter("idConsolidado", filtro.getIdConsolidado());
+        }
         
         query.setParameter("naoPostergado", false);
         
@@ -628,6 +640,11 @@ ConsolidadoFinanceiroRepository {
         query.setParameter("dataConsolidado", filtro.getDataConsolidado());
         query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE.toString());
         
+        if (filtro.getIdConsolidado()!=null){
+        	
+        	query.setParameter("idConsolidado", filtro.getIdConsolidado());
+        }
+        
         return query;
     }
     
@@ -769,8 +786,14 @@ ConsolidadoFinanceiroRepository {
         .append("where ")
         .append("        cota1_.NUMERO_COTA = :numeroCota ")
         .append("        and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
-        .append("        and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
-        .append("group by ")
+        .append("        and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ");
+        
+        if (filtro.getIdConsolidado()!=null){
+        	
+        	 hql.append(" and consolidad0_.id = :idConsolidado ");
+        }
+        
+        hql.append("group by ")
         .append("        produto11_.CODIGO , ")
         .append("        produto11_.NOME , ")
         .append("        produtoedi8_.NUMERO_EDICAO , ")
@@ -934,8 +957,8 @@ ConsolidadoFinanceiroRepository {
         .append("        produtoedi8_.PRECO_VENDA as precoCapa, ")
         .append("        movimentos4_.VALOR_DESCONTO as desconto, ")
         .append("        coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as precoComDesconto, ")
-        .append("        coalesce(estudocota7_.QTDE_PREVISTA,0) as reparteSugerido, ")
-        .append("        coalesce(chamadaEncalheCota.QTDE_PREVISTA,0) as reparteFinal, ")
+        .append("        sum(coalesce(estudocota7_.QTDE_PREVISTA,0)) as reparteSugerido, ")
+        .append("        sum(coalesce(chamadaEncalheCota.QTDE_PREVISTA,0)) as reparteFinal, ")
         .append("        coalesce(estudocota7_.QTDE_PREVISTA-estudocota7_.QTDE_EFETIVA,0) as diferenca, ")
         .append("        case when diferenca10_.TIPO_DIFERENCA is null then '' else diferenca10_.TIPO_DIFERENCA end as motivoTexto, ")
         .append("        movimentos4_.QTDE as qtde, ")
@@ -996,8 +1019,14 @@ ConsolidadoFinanceiroRepository {
         .append("        cota1_.NUMERO_COTA = :numeroCota ")
         .append("        and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
         .append("        and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
-        .append("        and chamadaEncalheCota.postergado = :naoPostergado ")
-        .append(" group by ")
+        .append("        and chamadaEncalheCota.postergado = :naoPostergado ");
+        
+        if (filtro.getIdConsolidado()!=null){
+        	
+       	    hql.append(" and consolidad0_.id = :idConsolidado ");
+        }
+
+        hql.append(" group by ")
         .append("        idMovimentoEstoqueCota ")
         
         .append("union all ")
@@ -1329,12 +1358,12 @@ ConsolidadoFinanceiroRepository {
         
         .append("    (select SUM( coalesce(bc.VALOR_PAGO, 0) ) - ")
         //consolidados de cotas unificadas subtraidos do valor pago na cota unificadora
-        .append("    ((SELECT SUM(ROUND(CF.TOTAL,2)) ")
-        .append("      FROM DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ")
-        .append("      WHERE DC.DIVIDA_ID = divida.ID ")
-        .append("      AND DC.CONSOLIDADO_ID = CF.ID ")
-        .append("      AND CF.ID <> cfc.ID ")
-        .append("      AND CF.COTA_ID <> cota.ID) * (-1)) ")
+        .append("    COALESCE(((SELECT SUM(ROUND(CF.TOTAL,2)) ")
+        .append("               FROM DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ")
+        .append("               WHERE DC.DIVIDA_ID = divida.ID ")
+        .append("               AND DC.CONSOLIDADO_ID = CF.ID ")
+        .append("               AND CF.ID <> cfc.ID ")
+        .append("               AND CF.COTA_ID <> cota.ID) * (-1)),0) ")
 
         .append("     from BAIXA_COBRANCA bc ")
         .append("     inner join COBRANCA cobranca ON cobranca.ID = bc.COBRANCA_ID ")
@@ -1362,12 +1391,12 @@ ConsolidadoFinanceiroRepository {
         
         .append("              - ")
         //consolidados de cotas unificadas subtraidos do saldo da cota unificadora
-        .append("              ((SELECT SUM(ROUND(CF.TOTAL,2)) ")
-        .append("                FROM DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ")
-        .append("                WHERE DC.DIVIDA_ID = divida.ID ")
-        .append("                AND DC.CONSOLIDADO_ID = CF.ID ")
-        .append("                AND CF.ID <> cfc.ID ")
-        .append("                AND CF.COTA_ID <> cota.ID) * (-1)) ")
+        .append("              COALESCE(((SELECT SUM(ROUND(CF.TOTAL,2)) ")
+        .append("                         FROM DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ")
+        .append("                         WHERE DC.DIVIDA_ID = divida.ID ")
+        .append("                         AND DC.CONSOLIDADO_ID = CF.ID ")
+        .append("                         AND CF.ID <> cfc.ID ")
+        .append("                         AND CF.COTA_ID <> cota.ID) * (-1)),0) ")
         
         .append("          end ")
         .append("          FROM BAIXA_COBRANCA bc ")

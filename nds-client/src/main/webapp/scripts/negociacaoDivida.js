@@ -384,10 +384,13 @@ var negociacaoDividaController = $.extend(true, {
 	
 	confirmarNegociacao : function(){
 		
+		var negociacaoPorComissao = $("#negociacaoPorComissao", negociacaoDividaController.workspace).is(":checked");
+		var negociacaoAvulsa = $("#checknegociacaoAvulsa", negociacaoDividaController.workspace).is(":checked");
+
 		var params = [
               {
             	  name: "porComissao", 
-            	  value: $("#negociacaoPorComissao", negociacaoDividaController.workspace).is(":checked")
+            	  value: negociacaoPorComissao
               },
               {
             	  name: "comissaoAtualCota",
@@ -417,7 +420,7 @@ var negociacaoDividaController = $.extend(true, {
               },
               {
             	  name: "negociacaoAvulsa",
-            	  value: $("#checknegociacaoAvulsa", negociacaoDividaController.workspace).is(":checked")
+            	  value: negociacaoAvulsa
               },
               {
             	  name: "isentaEncargos",

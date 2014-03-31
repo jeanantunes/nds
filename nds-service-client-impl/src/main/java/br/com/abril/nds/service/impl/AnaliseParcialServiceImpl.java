@@ -438,7 +438,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
 	@Override
 	@Transactional
-	public BigDecimal obterReparteLancamentoEstudo(Long idEstudo) {
-		return estudoGerado.reparteEstudoOriundoDoLancamento(idEstudo);
+	public BigDecimal reparteFisicoOuPrevistoLancamento(Long idEstudo) {
+		return estudoGerado.reparteFisicoOuPrevistoLancamento(idEstudo);
 	}
 }

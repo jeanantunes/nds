@@ -105,7 +105,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("   ( ");
 		sql.append("     SELECT ");
 		
-		sql.append("       (SELECT case lc.REPARTE when 0 then case plp.NUMERO_PERIODO when 1 then ((lc.REPARTE)-lc.REPARTE_PROMOCIONAL) else estp.QTDE end else lc.REPARTE end as rprte ");
+		sql.append("       (SELECT case when estp.QTDE is null then case when plp.NUMERO_PERIODO = 1 then ((lc.REPARTE)-lc.REPARTE_PROMOCIONAL) else lc.REPARTE end else estp.qtde end as rprte ");
 		sql.append("       			From estudo_gerado eg JOIN lancamento lc ON lc.ID = eg.LANCAMENTO_ID LEFT JOIN periodo_lancamento_parcial plp ON plp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ");
 		sql.append("       			LEFT JOIN estoque_produto estp ON estp.PRODUTO_EDICAO_ID = eg.PRODUTO_EDICAO_ID where eg.ID = :estudoId ) AS qtdReparteDistribuidor, ");
 		
@@ -115,8 +115,8 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("       (SELECT count(DISTINCT estudo_cota_gerado.cota_id) FROM estudo_cota_gerado"); 
 		sql.append(" 				WHERE ESTUDO_ID = :estudoId AND reparte IS NOT NULL) AS qtdCotasRecebemReparte, ");
 		sql.append("       (SELECT COUNT(id) FROM estudo_cota_gerado WHERE classificacao IN ('CP') and estudo_id = :estudoId ) AS qtdCotasAdicionadasPelaComplementarAutomatica, ");
-		sql.append(" 	   IFNULL((SELECT MIN(reparte) FROM estudo_cota_gerado WHERE estudo_id = :estudoId ),0) AS qtdReparteMinimoEstudo, ");
-		sql.append("	   (SELECT reparte_minimo FROM estrategia JOIN estudo_gerado estudo ON estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID WHERE estudo.ID = :estudoId) AS qtdReparteMinimoSugerido, ");
+		sql.append(" 	   IFNULL((SELECT estg.reparte_minimo as repMin FROM estudo_gerado estg WHERE id = :estudoId ),0) AS qtdReparteMinimoEstudo, ");
+		sql.append("	   (SELECT estrat.reparte_minimo FROM estrategia estrat JOIN estudo_gerado estudo ON estudo.PRODUTO_EDICAO_ID = estrat.PRODUTO_EDICAO_ID WHERE estudo.ID = :estudoId) AS qtdReparteMinimoSugerido, ");
 		sql.append("	   (SELECT abrangencia FROM estrategia JOIN estudo_gerado estudo ON estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID WHERE estudo.ID = :estudoId) AS abrangenciaSugerida, ");
 		sql.append(" 	   (SELECT COUNT( DISTINCT (CASE WHEN qtde_recebida - qtde_devolvida > 0 THEN cota_id ELSE null END)) FROM estoque_produto_cota");
 		sql.append(" 		 	WHERE estoque_produto_cota.produto_edicao_id IN (SELECT produto_edicao_id FROM estudo_produto_edicao_base WHERE estudo_id = :estudoId)");
@@ -251,20 +251,19 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 	}
 
 	@Override
-	public BigDecimal reparteEstudoOriundoDoLancamento(Long idEstudo) {
+	public BigDecimal reparteFisicoOuPrevistoLancamento(Long idEstudo) {
 
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" SELECT ");
-		
-		sql.append(" case lc.REPARTE ");
-		sql.append(" 	when 0 then ");
-		sql.append("  		case plp.NUMERO_PERIODO ");
-		sql.append(" 			when 1 then ");
-		sql.append(" 				((IF(lc.REPARTE is null, 0, lc.REPARTE))-IF(lc.REPARTE_PROMOCIONAL is null, 0, lc.REPARTE_PROMOCIONAL))  ");
-		sql.append("			else estp.QTDE ");
+		sql.append(" case when estp.QTDE is null ");
+		sql.append(" 	then ");
+		sql.append("  		case when plp.NUMERO_PERIODO = 1 ");
+		sql.append(" 			 then ");
+		sql.append(" 				((lc.REPARTE)-lc.REPARTE_PROMOCIONAL)  ");
+		sql.append("			else lc.REPARTE ");
 		sql.append(" 		end ");
-		sql.append(" 	else lc.REPARTE ");
+		sql.append(" 	else estp.qtde ");
 		sql.append(" end ");
 		
 		sql.append(" From estudo_gerado eg ");
@@ -274,7 +273,6 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append(" LEFT JOIN estoque_produto estp ON estp.PRODUTO_EDICAO_ID = eg.PRODUTO_EDICAO_ID  ");
 		
 		sql.append(" where eg.ID = :estudoId ");
-		
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		

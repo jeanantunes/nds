@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -241,7 +240,7 @@ public class AnaliseParcialController extends BaseController {
         List<CotaQueNaoEntrouNoEstudoDTO> lista = new ArrayList<>();
 
         if (queryDTO.possuiNome()) {
-            queryDTO.setNome(PessoaUtil.removerSufixoDeTipo(queryDTO.getNome()));
+            queryDTO.setNome(PessoaUtil.removerSufixoDeTipo(queryDTO.getNome())); 
         }
 
         if (queryDTO.getEstudo() != null && queryDTO.getEstudo() > 0) {
@@ -344,20 +343,18 @@ public class AnaliseParcialController extends BaseController {
     	
     	List<EstudoCotaGerado> listEstudoCotas = analiseParcialService.obterEstudosCotaGerado(estudoId);
     	
-    	BigDecimal reparteLancamento = analiseParcialService.obterReparteLancamentoEstudo(estudoId);
-    	
-    	BigInteger reparteLancamentoEstudo = reparteLancamento.toBigInteger();
-    	
     	EstudoGerado estudoGerado = estudoService.obterEstudo(estudoId);
     	
-    	for (EstudoCotaGerado estudoCota : listEstudoCotas) {
-			if(BigIntegerUtil.isMenorQueZero(estudoCota.getReparte())){
-		    	throw new ValidacaoException(TipoMensagem.WARNING,"Há cota(s) com reparte(s) negativo(s), por favor ajustá-la(s)!");
-			}
-		}
+    	BigDecimal reparteFisicoOuPrevisto = analiseParcialService.reparteFisicoOuPrevistoLancamento(estudoId);
     	
-    	if((BigIntegerUtil.isMenorQueZero(reparteLancamentoEstudo.subtract(estudoGerado.getQtdeReparte())))){
-    		throw new ValidacaoException(TipoMensagem.WARNING, "O reparte distribuido é maior que estoque disponível!");
+    	for (EstudoCotaGerado estudoCota : listEstudoCotas) {
+    		if(BigIntegerUtil.isMenorQueZero(estudoCota.getReparte())){
+    			throw new ValidacaoException(TipoMensagem.WARNING,"Há cota(s) com reparte(s) negativo(s), por favor ajustá-la(s)!");
+    		}
+    	} 
+
+    	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getReparteDistribuir().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)){
+    		throw new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é maior que estoque disponível!");
     	}
     	
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();    		

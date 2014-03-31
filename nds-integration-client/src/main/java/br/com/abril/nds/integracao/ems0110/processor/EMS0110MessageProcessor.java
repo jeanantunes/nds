@@ -8,16 +8,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.model.canonic.EMS0110FilialInput;
 import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
@@ -42,8 +40,9 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
-import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.util.DateUtil;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
@@ -57,17 +56,19 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	
 	@Autowired
 	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
-	
-	@Autowired
-	private ProdutoRepository produtoRepository;
-	
+		
 	@Autowired
 	private FornecedorRepository fornecedorRepository;
 	
 	@Autowired
 	private DescontoService descontoService;
 
+	@Autowired
+	private DescontoLogisticaService descontoLogisticaService;
+	
 	private static final String ZEROS_NBM = "000000000";
+	
+	private static final String FORMATO_DATA = "yyyyMMdd";
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -103,49 +104,6 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Distribuidor nao encontrato.");
 //			throw new RuntimeException("Distribuidor nao encontrado.");
 		}
-	}
-	
-	private DescontoLogistica findDescontoLogisticaByTipoDesconto(
-			Integer codigoTipoDesconto) {
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append("SELECT id ")
-			.append("	, data_inicio_vigencia AS dataInicioVigencia")
-			.append("	, descricao ")
-			.append("	, percentual_desconto AS percentualDesconto ")
-			.append("	, percentual_prestacao_servico AS percentualPrestacaoServico")
-			.append("	, tipo_desconto AS tipoDesconto ")
-			.append("FROM desconto_logistica d ")
-			.append("WHERE d.tipo_desconto = :tipoDesconto ");
-		
-		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
-				
-		query.setParameter("tipoDesconto", codigoTipoDesconto);
-		
-		query.addScalar("id", StandardBasicTypes.LONG);
-		query.addScalar("dataInicioVigencia", StandardBasicTypes.DATE);
-		query.addScalar("percentualDesconto", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("percentualPrestacaoServico", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("tipoDesconto", StandardBasicTypes.INTEGER);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(DescontoLogistica.class));
-		
-		return (DescontoLogistica) query.uniqueResult();
-
-	}
-
-	private Fornecedor findFornecedor(Integer codigoInterface) {
-	    StringBuilder sql = new StringBuilder();
-
-        sql.append("SELECT f FROM Fornecedor f ");
-        sql.append("WHERE  f.codigoInterface = :codigoInterface ");
-
-        Query query = this.getSession().createQuery(sql.toString());
-
-        query.setParameter("codigoInterface", codigoInterface);
-
-        return (Fornecedor) query.uniqueResult();
-
 	}
 	
 	private Editor findEditorByID(Long codigoEditor) {
@@ -258,14 +216,23 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		Produto produto = new Produto();
 		
-		String codigoDistribuidor = 
-                message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
+		Fornecedor fornecedor = this.obterFornecedor(message);
 		
-		Fornecedor fornecedor = this
-                .findFornecedor(Integer.parseInt(codigoDistribuidor));
+		if (fornecedor == null) {
+
+            ndsiLoggerFactory.getLogger().logError(
+                    message,
+                    EventoExecucaoEnum.HIERARQUIA,
+                    String.format( "Fornecedor nulo para o produto:  %1$s", input.getCodProd() )
+                );
+            
+            return null;
+        }
 		
-		DescontoLogistica descontoLogistica = this
-				.findDescontoLogisticaByTipoDesconto( Integer.parseInt( input.getTipoDesconto()) );
+		DescontoLogistica descontoLogistica =
+		        this.descontoLogisticaService.obterDescontoLogisticaVigente(Integer.parseInt( input.getTipoDesconto()),
+		                                                                    fornecedor.getId(),
+		                                                                    DateUtil.parseData(input.getDataGeracaoArq(), FORMATO_DATA));
 		
 		Editor editor = this.findEditorByID(input.getCodEditor());
 
@@ -314,18 +281,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		produto.setOrigem(Origem.INTERFACE);
 		
-		if (fornecedor != null) {
-
-			produto.addFornecedor(fornecedor);
-		} else {
-			ndsiLoggerFactory.getLogger().logError(
-					message,
-					EventoExecucaoEnum.HIERARQUIA,
-					String.format( "Fornecedor nulo para o produto:  %1$s", input.getCodProd() )
-				);
-			return null;
-		}
-
+		produto.addFornecedor(fornecedor);
+		
 		if (descontoLogistica != null && descontoLogistica.getPercentualDesconto() != null) {
 
 			produto.setDescontoLogistica(descontoLogistica);
@@ -347,6 +304,14 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 				"Produto "+ produto.getCodigo() +" Inserido com Periodicidade INDEFINIDA .");	
 		return this.findProduto(message);
 	}
+
+    private Fornecedor obterFornecedor(Message message) {
+        String codigoDistribuidor = 
+                message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
+		
+		Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPorCodigo(Integer.parseInt(codigoDistribuidor));
+        return fornecedor;
+    }
 
 	private boolean verificarDistribuidor(Message message) {
 		EMS0110Input input = (EMS0110Input) message.getBody();
@@ -400,7 +365,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	
 	private void criarProdutoEdicaoConformeInput(Produto produto, Message message) {
 		
-		EMS0110Input input = (EMS0110Input) message.getBody();
+		EMS0110FilialInput input = (EMS0110FilialInput) message.getBody();
 
 		ProdutoEdicao edicao = new ProdutoEdicao();
 		Dimensao dimensao = new Dimensao();
@@ -414,7 +379,13 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			brinde.setPermiteVendaSeparada(input.getCondVendeSeparado());
 		}
 		
-		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto( Integer.parseInt( input.getTipoDesconto()) );
+		Fornecedor fornecedor = this.obterFornecedor(message);
+		
+		DescontoLogistica descontoLogistica =
+		        this.descontoLogisticaService.obterDescontoLogisticaVigente(Integer.parseInt( input.getTipoDesconto()),
+                                                                            fornecedor.getId(),
+                                                                            DateUtil.parseData(input.getDataGeracaoArq(), FORMATO_DATA));
+
 
 		if (!Objects.equal(produto.getCodigoContexto(), input.getContextoProd())) {
 
@@ -513,6 +484,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		}
 		
 		edicao.setParcial(isParcial);
+		
+		edicao.setCodigoDeBarraCorporativo(input.getCodigoBarrasCorporativo());
 
 		this.getSession().persist(edicao);
 		
@@ -595,7 +568,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 	
 	private void atualizaProdutoEdicaoConformeInput(ProdutoEdicao edicao, Message message) {
-		EMS0110Input input = (EMS0110Input) message.getBody();
+		
+		EMS0110FilialInput input = (EMS0110FilialInput) message.getBody();
 
 		edicao.setOrigem(Origem.INTERFACE);
 		Produto produto = edicao.getProduto();
@@ -776,6 +750,14 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao do Peso para: " + input.getPesoUni());
+		}
+		
+		if (!Objects.equal(edicao.getCodigoDeBarraCorporativo(),input.getCodigoBarrasCorporativo())) {
+
+			edicao.setCodigoDeBarraCorporativo(input.getCodigoBarrasCorporativo());
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Atualizacao do Código de barras corporativo para : " + input.getCodigoBarrasCorporativo());
 		}
 		
 		this.getSession().merge(edicao);

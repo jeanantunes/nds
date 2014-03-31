@@ -39,6 +39,7 @@ import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.financeiro.Boleto;
@@ -59,6 +60,7 @@ import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.financeiro.TipoNegociacao;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoDistribuidorRepository;
@@ -226,7 +228,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	            		               idUsuario, 
 	            		               nossoNumeroEnvioEmail,
 	            		               new HashSet<String>(),
-	            		               false);
+	            		               false,
+	            		               null);
 	        
 	            if (enviaEmail){
 	        
@@ -268,7 +271,36 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				               idUsuario, 
 				               setNossoNumero,
 				               setNossoNumeroCentralizacao,
-        		               false);
+        		               false,
+        		               null);
+		
+	}
+	
+	/**
+	 * Consolida Financeiro, Gera Divida e Gera Cobrança para cotas de Tipos Específicos (A_VISTA/CONSIGNADO)
+	 * 
+	 * @param idCota
+	 * @param idUsuario
+	 * @param setNossoNumeroEnvioEmail
+	 * @param setNossoNumeroCentralizacao
+	 * @param tiposCota
+	 * @throws GerarCobrancaValidacaoException
+	 */
+	@Override
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class, timeout = 500)
+	public void gerarCobranca(Long idCota, 
+			                  Long idUsuario, 
+			                  Set<String> setNossoNumero,
+			                  Set<String> setNossoNumeroCentralizacao,
+			                  List<TipoCota> tiposCota)
+		throws GerarCobrancaValidacaoException {
+		
+		this.gerarCobrancaCota(idCota, 
+				               idUsuario, 
+				               setNossoNumero,
+				               setNossoNumeroCentralizacao,
+        		               false,
+        		               tiposCota);
 		
 	}
 	
@@ -309,7 +341,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				               idUsuario, 
 				               new HashSet<String>(),
 				               new HashSet<String>(),
-        		               true);
+        		               true,
+        		               null);
 	}
 	
     /**
@@ -400,7 +433,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
      */
 	@Override
 	@Transactional
-	public Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento) {
+	public Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento, String localidade) {
 		
 		FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 		
@@ -411,7 +444,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
         // verifica se a forma de cobrança principal do distribuidor utiliza
         // dias uteis para geração da data de vencimento da cobrança
 		if(formaCobranca.isVencimentoDiaUtil()) {
-			return this.calendarioService.adicionarDiasUteis(dataConsolidado, fatorVencimento);
+			return this.calendarioService.adicionarDiasUteis(dataConsolidado, fatorVencimento, localidade);
 		}
 		
 		return DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
@@ -444,27 +477,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return dataVencimento;
 	}
 	
-	/**
-	 * Retorna o valor total do boleto com desconto.
-	 * 
-	 * @param idChamadaEncalheFornecedor
-	 * @param valorBrutoBoleto
-	 * 
-	 * @return BigDecimal
-	 */
-	private BigDecimal obterValorBoleto(Long idChamadaEncalheFornecedor, BigDecimal valorBrutoBoleto) {
-		
-		BigDecimal valorTotalDesconto = 
-				itemChamadaEncalheFornecedorRepository.obterTotalDoDescontoItensChamadaEncalheFornecedor(idChamadaEncalheFornecedor);
-		
-		if(valorTotalDesconto == null) {
-			valorTotalDesconto = BigDecimal.ZERO;
-		}
-		
-		return valorBrutoBoleto.subtract(valorTotalDesconto);
-		
-	}
-	
 	@Transactional
 	public List<BoletoDistribuidor> gerarCobrancaBoletoDistribuidor(
 			List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor, 
@@ -487,11 +499,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				boletoDistribuidorRepository.remover(boletoDistribuidor);
 			}
 			
-			chamadaEncalheFornecedor.setFornecedor( chamadaEncalheFornecedor.getItens().get(0).getProdutoEdicao().getProduto().getFornecedor() );
-			
 			Fornecedor fornecedor = chamadaEncalheFornecedor.getFornecedor();
 			
-			Banco banco = chamadaEncalheFornecedor.getFornecedor().getBanco();
+			Banco banco = fornecedor.getBanco();
 			
 			if (banco == null) {
 				
@@ -524,9 +534,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			if(TipoCobranca.BOLETO.equals(tipoCobranca)) {
 				
-				BigDecimal valorLiquidoBoleto = obterValorBoleto(chamadaEncalheFornecedor.getId(), chamadaEncalheFornecedor.getTotalVendaApurada());
-				
-				boletoDistribuidor.setValor(valorLiquidoBoleto);
+				boletoDistribuidor.setValor(chamadaEncalheFornecedor.getTotalCreditoApurado().subtract(chamadaEncalheFornecedor.getTotalMargemApurado()));
 			}
 			
 			boletoDistribuidor.setVias(1);
@@ -630,19 +638,23 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
      * Gera Cobraça para uma ou todas as cotas com pendências financeiras A
      * divida pode ser postergada caso não hava forma de cobrança compativel com
      * a pendência ou se o parametro postergarDividas == true
+     * Pode haver, se passado o parametro, o processamento financeiro e geração de 
+     * cobrança apenas para cotas de tipos especificos(A_VISTA/CONSIGNADO)
      * 
      * @param idCota
      * @param idUsuario
      * @param setNossoNumero
      * @param setNossoNumeroCentralizacao
      * @param postergarDividas
+     * @param tiposCota
      * @throws GerarCobrancaValidacaoException
      */
 	private void gerarCobrancaCota(Long idCota, 
 			                       Long idUsuario, 
 			                       Set<String> setNossoNumero,
 			                       Set<String> setNossoNumeroCentralizacao,
-			                       boolean postergarDividas) throws GerarCobrancaValidacaoException {
+			                       boolean postergarDividas,
+			                       List<TipoCota> tiposCota) throws GerarCobrancaValidacaoException {
 		
 
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -651,7 +663,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Integer numeroDiasNovaCobranca = this.distribuidorRepository.obterNumeroDiasNovaCobranca(); 
 		
-		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(idCota, dataOperacao);
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(idCota, dataOperacao, tiposCota);
 		
 		List<String> msgs = new ArrayList<String>();
 		
@@ -1000,8 +1012,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					cobrarHoje = true;
 				}
 			}
-			
-			Date dataVencimento = this.obterDataVencimentoCobrancaCota(helperPrincipal.getConsolidadoFinanceiroCota().getDataConsolidado(),fatorVencimento);
+			String localidade = helperPrincipal.getCota().getEnderecoPrincipal().getEndereco().getCidade();
+			Date dataVencimento = this.obterDataVencimentoCobrancaCota(helperPrincipal.getConsolidadoFinanceiroCota().getDataConsolidado(),fatorVencimento, localidade);
 			
 			if(!cobrarHoje) {
 
@@ -1223,8 +1235,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				cobrarHoje = true;
 			}
 		}
-
-		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(),fatorVencimento);
+		String localidade =  cota.getEnderecoPrincipal().getEndereco().getCidade();
+		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(),fatorVencimento, localidade);
 
 		if(!cobrarHoje){
 
@@ -1822,28 +1834,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				if (divida != null) {
 					
+					Negociacao negociacao = this.negociacaoRepository.obterNegociacaoPorCobranca(divida.getCobranca().getId());
+
+					if (negociacao != null && TipoNegociacao.PAGAMENTO_AVULSO.equals(negociacao.getTipoNegociacao())) {
+						
+						continue;
+					}
+
 					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
 					
-					Negociacao negociacao = this.negociacaoRepository.obterNegociacaoPorCobranca(divida.getCobranca().getId());
+					this.removerDividaCobrancaConsolidado(divida, consolidado, dataOperacao);
 					
-					if (negociacao != null) {
-					    
-						if (!negociacao.isNegociacaoAvulsa()) {
-						
-						    this.parcelaNegociacaoRepository.excluirPorNegociacao(negociacao.getId());
-						
-						    this.negociacaoRepository.remover(negociacao);
-						    
-						    this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
-						}
-					
-					} else {
-					
-						this.removerDividaCobrancaConsolidado(divida, consolidado, dataOperacao);
-					}
 				}
-
-				List<MovimentoFinanceiroCota> mfcs = consolidado.getMovimentos();
+				
+				List<MovimentoFinanceiroCota> mfcs = movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDeConsolidado(consolidado.getId());
 				
 				consolidado.setMovimentos(null);
 				

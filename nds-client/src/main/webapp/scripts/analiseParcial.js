@@ -1330,7 +1330,17 @@ var analiseParcialController = $.extend(true, {
                         if ($inputsPreenchidos.filter('[motivo="SM"]').length > 0) {
 
                             var params = [];
-                            var codigoProduto = $('#codigoProduto').val();
+                            var codigoProduto = $('#codigoProduto').text();
+                            
+                            if(codigoProduto == ""){
+                            	codigoProduto = $('#codigoProduto').val();
+                            }
+                            
+                            var classificacao = $('#tipoClassificacaoProdutoDescricao').val();
+                            
+                            if(classificacao == ""){
+                            	classificacao = $('#tipoClassificacaoProdutoDescricao').text();
+                            }
 
                             params.push({name: 'produtoId', value: codigoProduto});
 
@@ -1338,6 +1348,7 @@ var analiseParcialController = $.extend(true, {
                                 var $this = $(this);
                                 params.push({name: 'listaNovosMixProduto[' + key + '].numeroCota', value: $this.attr('numerocota')});
                                 params.push({name: 'listaNovosMixProduto[' + key + '].codigoProduto', value: codigoProduto});
+                                params.push({name: 'listaNovosMixProduto[' + key + '].classificacaoProduto', value: classificacao});
                                 params.push({name: 'listaNovosMixProduto[' + key + '].reparteMinimo', value: $this.val()});
                                 params.push({name: 'listaNovosMixProduto[' + key + '].reparteMaximo', value: $this.val()});
                             });
@@ -1347,7 +1358,7 @@ var analiseParcialController = $.extend(true, {
                         if ($inputsPreenchidos.filter('[motivo="GN"]').length > 0) {
 
                             var params = [];
-                            params.push({name: 'filtro.produtoDto.codigoProduto', value: $('#codigoProduto').val()});
+                            params.push({name: 'filtro.produtoDto.codigoProduto', value: $('#codigoProduto').text()});
                             params.push({name: 'filtro.produtoDto.idClassificacaoProduto', value: $('#tipoClassificacaoProdutoId').val()});
                             params.push({name: 'filtro.excecaoSegmento', value: true});
 

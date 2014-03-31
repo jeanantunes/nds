@@ -412,18 +412,22 @@ public class DiferencaEstoqueController extends BaseController {
         if (tipoDiferenca == null) {
             throw new ValidacaoException(TipoMensagem.WARNING,
                     "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
+
+        } else if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)) {
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "'Falta De' não é permitido para lançamentos por cota.");
         }
         
-        if(idDiferenca == null){
+        if(idDiferenca == null) {
             
             incluirLancamentoDiferencaNotaEnvio(tipoDiferenca,dataNotaEnvio,numeroCota,nomeCota,diferencasProdutos);
-        }
-        else{
+            
+        } else {
             
             editarDiferencaNotaEnvio(idDiferenca,diferencasProdutos);
         }
         
-        result.use(Results.json()).from("").serialize();
+        this.result.use(Results.json()).from("").serialize();
     }
     
     private void editarDiferencaNotaEnvio(final Long idDiferenca, final List<DiferencaVO>diferencasProdutos){
@@ -2579,11 +2583,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
             
             if(rateiosDiferenca!= null && !rateiosDiferenca.isEmpty()){
                 
-                if (TipoDirecionamentoDiferenca.NOTA.equals(diferencaVO.getTipoDirecionamento())) {
-                    
-                    diferencaVO.setQtdeEstoque(this.obterQuantidadeReparteNota(pe, rateiosDiferenca));
-                }
-                
                 final Map<String, Object> mapa = new TreeMap<String, Object>();
                 mapa.put("diferenca", diferencaVO);
                 mapa.put("idProdutoEdicao", pe.getId());
@@ -2610,32 +2609,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         }
     }
     
-    private BigInteger obterQuantidadeReparteNota(final ProdutoEdicao produtoEdicao,
-            final List<RateioCotaVO> rateiosDiferenca) {
-        
-        BigInteger quantidadeReparteNota = BigInteger.ZERO;
-        
-        Date dataEnvioNota = null;
-        Integer numeroCota = null;
-        
-        for (final RateioCotaVO rateioCotaVO : rateiosDiferenca) {
-            
-            dataEnvioNota = rateioCotaVO.getDataEnvioNota();
-            numeroCota = rateioCotaVO.getNumeroCota();
-            
-            break;
-        }
-        
-        final DetalheItemNotaFiscalDTO detalheItemNota =
-                itemNotaEnvioService.obterItemNotaEnvioLancamentoProduto(dataEnvioNota, numeroCota, produtoEdicao.getId());
-        
-        quantidadeReparteNota = detalheItemNota.getQuantidadeExemplares();
-        
-        return quantidadeReparteNota;
-    }
-    
-    
-    
     @SuppressWarnings({ "unchecked"})
     private List<RateioCotaVO> obterRateiosEdicaoDiferenca(final Long idDiferenca){
         
@@ -2651,7 +2624,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         return diferencaEstoqueService.obterRateiosCotaPorIdDiferenca(idDiferenca);
     }
     
-    @SuppressWarnings("incomplete-switch")
     private BigInteger obterReparteAtualProdutoEdicao(final DiferencaVO diferencaVO, final Long idProdutoEdicao) {
         
         if(diferencaVO.getTipoEstoque() == null){

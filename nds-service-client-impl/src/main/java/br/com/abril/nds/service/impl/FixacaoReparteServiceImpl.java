@@ -45,6 +45,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Service
 public class FixacaoReparteServiceImpl implements FixacaoReparteService {
@@ -88,6 +89,9 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Autowired
 	private FixacaoRepartePdvRepository fixacaoRepartePdvRepository;
 	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
 	@Transactional
 	@Override
 	public List<FixacaoReparteDTO> obterFixacoesRepartePorProduto(FiltroConsultaFixacaoProdutoDTO filtroConsultaFixacaoProdutoDTO) {
@@ -96,15 +100,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
         filtroConsultaFixacaoProdutoDTO.setCodigoProduto(produto.getCodigoICD());
 
         List<FixacaoReparteDTO> fixacoesPorProduto = fixacaoReparteRepository.obterFixacoesRepartePorProduto(filtroConsultaFixacaoProdutoDTO);
-        
-        for (FixacaoReparteDTO fixacao : fixacoesPorProduto) {
-        	
-        	Integer qtdEdicoes = (fixacao.getQtdeEdicoes() != null ? fixacao.getQtdeEdicoes() : 6);
-        	
-        	fixacao.setEdicoesAtendidas(fixacaoReparteRepository.historicoDeEdicoesParaCalcularEdicoesAtendidas(fixacao.getIdLancamento(), fixacao.getCodigoProduto(), 
-    																											qtdEdicoes, fixacao.getClassificacaoProdutoId()).size());
-        	
-		}
         
         return fixacoesPorProduto;
 	}
@@ -148,6 +143,9 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Transactional
 	public FixacaoReparte adicionarFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO) {
 		FixacaoReparte fixacaoReparte = getFixacaoRepartePorDTO(fixacaoReparteDTO);
+		
+		
+		fixacaoReparte.setDataFixa(distribuidorService.obterDataOperacaoDistribuidor());
 		
 		if(fixacaoReparte.getId() != null) {
             String descricao = "-TODAS-";
@@ -286,13 +284,14 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			break;
 		case BALANCEADO:
 			break;
+		case FURO:
+			break;
 
 		case EXPEDIDO:
 		case CANCELADO:
 		case ESTUDO_FECHADO:
 		case EM_BALANCEAMENTO_RECOLHIMENTO:
 		case BALANCEADO_RECOLHIMENTO:
-		case FURO:
 		case EM_RECOLHIMENTO:
 		case RECOLHIDO:
 		case FECHADO:
@@ -479,6 +478,8 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		
 		List<verificadorFixacaoDTO> lcmtsDosProdutosQuePossueFixacao = fixacaoReparteRepository.obterLcmtsDosProdutosQuePossueFixacao(lancamentosDoDia);
 		
+		List<Long> idExcluidos = new ArrayList<>();
+		
 		if(lcmtsDosProdutosQuePossueFixacao != null && !lcmtsDosProdutosQuePossueFixacao.isEmpty()){
 			
 			List<String> codigosICD = new ArrayList<>();
@@ -502,29 +503,35 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 								if((fixacao.getEdicaoInicial()!=null && fixacao.getEdicaoInicial().intValue() > 0)&&(fixacao.getEdicaoFinal()!=null && fixacao.getEdicaoFinal().intValue() > 0)){
 									
 									BigInteger numeroEdicaoPeloLancamentoID = fixacaoReparteRepository.obterNumeroEdicaoPeloLancamentoID(verificadorLcmtXFixacao.getIdLancamento().longValue());
-									
-									if((numeroEdicaoPeloLancamentoID.intValue() > fixacao.getEdicaoInicial()) && (numeroEdicaoPeloLancamentoID.intValue() < fixacao.getEdicaoFinal())){
-										fixacao.setEdicoesAtendidas(fixacao.getEdicoesAtendidas()+1);
+
+									if((numeroEdicaoPeloLancamentoID.intValue() == fixacao.getEdicaoFinal().longValue()) && (!fixacao.isManterFixa())){
+										this.removerFixacaoReparte(fixacao);
+									}else{
+
+										BigInteger qtdEdicoesAtendidas = fixacaoReparteRepository.obterQtdDeEdicoesNoRanger(verificadorLcmtXFixacao.getCodICDFixacao(), fixacao.getEdicaoInicial(), fixacao.getEdicaoFinal());
+										
+										fixacao.setEdicoesAtendidas(qtdEdicoesAtendidas.intValue());
 										fixacaoReparteRepository.alterar(fixacao);
 										
-									}else{
-										if((numeroEdicaoPeloLancamentoID.intValue() == fixacao.getEdicaoFinal().longValue()) && (!fixacao.isManterFixa())){
-											this.removerFixacaoReparte(fixacao);
-										}
 									}
 									
 								}else{
 									
 									BigInteger qtdEdicoesPosteriores = fixacaoReparteRepository.qntdEdicoesPosterioresAolancamento(verificadorLcmtXFixacao.getCodICDFixacao(), fixacao.getDataFixa());
 									
-									if(qtdEdicoesPosteriores.intValue() <= fixacao.getQtdeEdicoes()){
+									if(qtdEdicoesPosteriores.intValue() < fixacao.getQtdeEdicoes()){
 										fixacao.setEdicoesAtendidas(qtdEdicoesPosteriores.intValue());
 										fixacaoReparteRepository.alterar(fixacao);
 									}else{
-										fixacao.setEdicoesAtendidas(fixacao.getQtdeEdicoes());
-										
 										if(!fixacao.isManterFixa()){
-											this.removerFixacaoReparte(fixacao);
+	
+											if(!idExcluidos.contains(fixacao.getId())){
+												fixacaoReparteRepository.remover(fixacao);
+												idExcluidos.add(fixacao.getId());
+											}
+											
+										}else{
+											fixacao.setEdicoesAtendidas(fixacao.getQtdeEdicoes());
 										}
 									}
 								}

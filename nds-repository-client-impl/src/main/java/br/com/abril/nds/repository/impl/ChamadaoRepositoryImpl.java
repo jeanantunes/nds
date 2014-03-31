@@ -1,4 +1,5 @@
 package br.com.abril.nds.repository.impl;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -12,6 +13,7 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaoRepository;
@@ -365,15 +367,10 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		hql.append(" WHERE tipo.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovRecebimentoReparte ");
 		
-		/*
-		 * Alteração feita em conjunto com Eduardo Candido em 01/10/2013 
-		 * 
-		 * Não retornava todos os consignados da cota devido a inconsistências de base por lancamento.DATA_REC_PREVISTA e lancamento.STATUS
-		 * Passado a validar por critério MOVIMENTO_ESTOQUE_COTA.status_estoque_financeiro=1 (Movimento COBRADO=1 Não COBRADO=0)
-		 *  
-		 * hql.append("      AND lancamento.STATUS IN (:statusLancamento) ");
-		 * hql.append("      AND lancamento.DATA_REC_PREVISTA >= :dataRecolhimento ");
-		 */
+		hql.append("      AND lancamento.STATUS IN (:statusLancamento) ");
+		
+		hql.append("      AND lancamento.DATA_REC_DISTRIB >= :dataRecolhimento ");
+		
 		hql.append("      AND mec.status_estoque_financeiro = :statusEstoqueFinanceiro ");
 		
 		hql.append("      AND (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) > 0 ");
@@ -476,29 +473,21 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		/*
-		 * Alteração feita em conjunto com Eduardo Candido em 01/10/2013 
-		 * 
-		 * Parametros comentados statusLancamento e dataRecolhimento
-		 * Não retornava todos os consignados da cota devido a inconsistências de base por lancamento.DATA_REC_PREVISTA e lancamento.STATUS
-		 * Passado a validar por critério MOVIMENTO_ESTOQUE_COTA.status_estoque_financeiro=1 (Movimento COBRADO=1 Não COBRADO=0)
-		 * 
-		/*List<String> statusLancamento = new ArrayList<>();
+		List<String> statusLancamento = new ArrayList<>();
 		
 		statusLancamento.add(StatusLancamento.EXPEDIDO.name());
 		statusLancamento.add(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name());
-		statusLancamento.add(StatusLancamento.BALANCEADO_RECOLHIMENTO.name());
 		
-		query.setParameterList("statusLancamento", statusLancamento);*/
+		query.setParameterList("statusLancamento", statusLancamento);
 		
 		if (filtro == null) {
 			
 			return;
 		}
-		/*
+		
 		if (filtro.getDataChamadao() != null) {
 			query.setParameter("dataRecolhimento", filtro.getDataChamadao());
-		}*/
+		}
 		
 		if (filtro.getNumeroCota() != null) {
 			query.setParameter("numeroCota", filtro.getNumeroCota());

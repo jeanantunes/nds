@@ -10,10 +10,62 @@ var fechamentoEncalheController = $.extend(true, {
 	isAllFechamentos: true,
 	nonSelected: [],
 	fechamentosManuais: [],
+	modoBox: {
+		ativo: false,
+		alterado: false,
+		idBox: null,
+		idBoxNaoSalvo: null,
+		isBoxAlterado: function() {
+			return this.ativo && this.alterado;
+		},
+		reset: function() {
+			this.ativo = false;
+			this.alterado = false;
+			this.idBox = null;
+			this.idBoxNaoSalvo = null;
+		},
+		alterarBox: function(alterado) {
+			if (this.ativo) {
+				this.alterado = alterado;								 
+			} else {
+				this.reset();
+			}
+		},
+		checarAlteracoes: function() {
+			if (this.isBoxAlterado()) {
+				fechamentoEncalheController.exibirMensagemBoxNaoSalvo();
+			} else {
+				fechamentoEncalheController.limpaGridPesquisa();
+			}
+		},
+		changeBox: function(value) {
+
+			this.checarAlteracoes();
+			
+			if (this.isBoxAlterado()) {
+				this.idBoxNaoSalvo = this.idBox; 
+			} else {
+				this.idBoxNaoSalvo = null;
+			}
+			
+			this.idBox = value;
+			this.ativo = value && value != "";
+			this.alterarBox(false);
+
+			fechamentoEncalheController.desabilitarBotaoConfirmar(true);
+		},
+		getCurrentBoxId: function() {			
+			return this.idBoxNaoSalvo ? this.idBoxNaoSalvo : this.idBox;
+		},
+		clearBoxNaoSalvo: function() {
+			this.idBoxNaoSalvo = null;
+		}
+	},
 	
 	init : function() {
 		
 		var sizeNomeProduto = 110;
+
 		
 		if($("#permissaoColExemplDevolucao", fechamentoEncalheController.workspace).val() != "true"){
 			sizeNomeProduto = 465;
@@ -249,11 +301,13 @@ var fechamentoEncalheController = $.extend(true, {
 			$('#btAnaliticoEncalhe', fechamentoEncalheController.workspace).show();
 		}
 		
+		fechamentoEncalheController.desabilitarBotaoConfirmar(fechamentoEncalheController.modoBox.ativo);
+		
 		$.each(resultado.rows, function(index, row) {
 			
 			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
 			
-			if ( ( row.cell.diferenca == "" && valorFisico == '' ) ||  valorFisico == '' ) {
+			if ( ( row.cell.diferenca === "" && valorFisico === '' ) ||  valorFisico === '' ) {
 					row.cell.diferenca = "";
 			} else {
 				
@@ -262,9 +316,10 @@ var fechamentoEncalheController = $.extend(true, {
 			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
 			
-			row.cell.fisico = '<input class="" isEdicao="true" type="text" value="'+ (valorFisico != undefined ? valorFisico : "") +'" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + '/>';
+			row.cell.fisico = '<input tabindex="'+ index + '" class="" isEdicao="true" type="text" value="'+ (valorFisico != undefined ? valorFisico : "") +'" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + '/>';
 
-			if((row.cell.replicar == 'true' || fechamentoEncalheController.checkAllGrid) && ($.inArray(row.cell.produtoEdicao, fechamentoEncalheController.nonSelected) < 0)) {
+			if((row.cell.replicar == 'true' || (!fechamentoEncalheController.modoBox.ativo && fechamentoEncalheController.checkAllGrid)) 
+					&& ($.inArray(row.cell.produtoEdicao, fechamentoEncalheController.nonSelected) < 0)) {
 				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index +', this, ' + row.cell.produtoEdicao + ');"' + fechado+ ' checked />';
 			} else {
 				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index +', this, ' + row.cell.produtoEdicao + ');"' + fechado+ '/>';
@@ -274,8 +329,20 @@ var fechamentoEncalheController = $.extend(true, {
 				$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
 			}
 		});
-		
+
 		return resultado;
+	},
+	
+	desabilitarBotaoConfirmar: function(value) {
+		
+		if (value) {
+			
+			$("#btnEncerrarOperacaoEncalhe").hide();
+
+		} else {
+			
+			$("#btnEncerrarOperacaoEncalhe").show();
+		}
 	},
 	
 	selecionarLinha: function (idProdutoEdicao, checked) {
@@ -359,6 +426,8 @@ var fechamentoEncalheController = $.extend(true, {
 			return;
 		}
 		
+		fechamentoEncalheController.modoBox.alterarBox(true);
+		
 		if ($('#ch'+index).is(':checked') || !manual) {
 			
 			if ($(campo).val() != null || $(campo).val() != "") {
@@ -398,16 +467,19 @@ var fechamentoEncalheController = $.extend(true, {
 		var devolucao = parseInt(tabela.rows[index].cells[6].firstChild.innerHTML);
 		var diferenca = tabela.rows[index].cells[9].firstChild;
 		
-		if (campo.value == "") {
+		var value = eval($(campo).val());
+		
+		if (!value && isNaN(value)) {
 			diferenca.innerHTML = "";
 		} else {
-			diferenca.innerHTML = campo.value - devolucao ;			
+			diferenca.innerHTML = value - devolucao;			
 		}
 		
 		fechamentoEncalheController.fechamentosManuais[produtoEdicao] = campo.value;
 		
 		fechamentoEncalheController.isAllFechamentos = false;
 		
+		fechamentoEncalheController.modoBox.alterarBox(true);
 	},
 	
 	gerarArrayFisico : function() {
@@ -416,7 +488,7 @@ var fechamentoEncalheController = $.extend(true, {
 		var fisico;
 		var arr = new Array();
 		
-		for (i=0; i<tabela.rows.length; i++) {
+		for (var i=0; i<tabela.rows.length; i++) {
 			fisico = tabela.rows[i].cells[8].firstChild.firstChild.value;
 			arr.push(fisico);
 		}
@@ -424,25 +496,33 @@ var fechamentoEncalheController = $.extend(true, {
 		return arr;
 	},
 	
-	salvar : function() {
-			$.postJSON(
-				contextPath + "/devolucao/fechamentoEncalhe/salvar",
-				fechamentoEncalheController.populaParamentrosFechamentoEncalheInformados(),
-				function (result) {
+	salvar: function(callback) {
 
-					var tipoMensagem = result.tipoMensagem;
-					var listaMensagens = result.listaMensagens;
-					
-					if (tipoMensagem && listaMensagens) {
-						exibirMensagem(tipoMensagem, listaMensagens);
-					}
+		$.postJSON(
+			contextPath + "/devolucao/fechamentoEncalhe/salvar",
+			fechamentoEncalheController.populaParamentrosFechamentoEncalheInformados(),
+			function (result) {
+
+				var tipoMensagem = result.tipoMensagem;
+				var listaMensagens = result.listaMensagens;
+
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagem(tipoMensagem, listaMensagens);
+				}
+
+				if (fechamentoEncalheController.modoBox.ativo) {
+					fechamentoEncalheController.modoBox.alterado = false;
+				}
+
+				if (callback) {
+					callback();
+				} else {
 					fechamentoEncalheController.pesquisar();
-					
-				},
-			  	null,
-			   	false
-			);
-			
+				}
+			},
+		  	null,
+		   	false
+		);
 	},
 	
 	popup_encerrarEncalhe : function(isSomenteCotasSemAcao) {
@@ -827,17 +907,7 @@ var fechamentoEncalheController = $.extend(true, {
 		return cotasAusentesSelecionadas;
 	},
 	
-	postergarCotas : function() {
-		
-		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
-		
-		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/dataSugestaoPostergarCota",
-				{ 'dataEncalhe' : dataEncalhe},
-				function (result) {
-						
-			        $("#dtPostergada", fechamentoEncalheController.workspace).val(result.resultado);
-				}
-		);
+	carregarDialogPostergacao : function(dataPostergada) {
 		
 		var postergarTodas = $("#checkTodasCotas").attr("checked") == "checked";
 
@@ -898,6 +968,13 @@ var fechamentoEncalheController = $.extend(true, {
 						$( this ).dialog( "close" );
 					}
 				},
+				
+				open: function() {
+					
+			        $("#dtPostergada", fechamentoEncalheController.workspace).val(dataPostergada);
+					
+				},
+				
 				beforeClose: function() {
 					
 					$("#dtPostergada", fechamentoEncalheController.workspace).val("");
@@ -906,8 +983,7 @@ var fechamentoEncalheController = $.extend(true, {
 				},
 				form: $("#dialog-postergar", this.workspace).parents("form")
 			});
-	
-			fechamentoEncalheController.carregarDataPostergacao();
+			
 			
 		} else {
 			
@@ -916,32 +992,39 @@ var fechamentoEncalheController = $.extend(true, {
 			listaMensagens.push('Selecione pelo menos uma cota para postergar!');
 			exibirMensagemDialog('WARNING', listaMensagens, 'dialogMensagemEncerrarEncalhe');
 		}
+		
 	},
-
-	carregarDataPostergacao : function() {
-
-		var dataPostergacao = $("#dtPostergada", fechamentoEncalheController.workspace).val();
+	
+	postergarCotas : function() {
+		
 		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 		
 		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/carregarDataPostergacao",
-				{ 'dataEncalhe' : dataEncalhe, 'dataPostergacao' : dataPostergacao },
+				{'dataEncalhe' : dataEncalhe},
 				function (result) {
 
 					var tipoMensagem = result.tipoMensagem;
 					var listaMensagens = result.listaMensagens;
 					
 					if (tipoMensagem && listaMensagens) {
+					
 						exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemPostergarCotas');
+				
 					} else {
-						$("#dtPostergada", fechamentoEncalheController.workspace).val(result);
+						
+						fechamentoEncalheController.carregarDialogPostergacao(result);
+						
 					}
+					
 				},
 			  	null,
 			   	true,
-			   	'dialogMensagemPostergarCotas'
-		);
-
+			   	'dialogMensagemPostergarCotas');
+		
+		
+		
 	},
+	
 	
 	veificarCobrancaGerada: function(){
 		
@@ -1147,10 +1230,11 @@ var fechamentoEncalheController = $.extend(true, {
 		 
 		 
 		 var data = new Array();
-		 
+		 var idBox = fechamentoEncalheController.modoBox.getCurrentBoxId();
+
 		 data.push({name:"dataEncalhe", value: $('#datepickerDe', fechamentoEncalheController.workspace).val()});
 		 data.push({name:"fornecedorId", value: $('#selectFornecedor', fechamentoEncalheController.workspace).val()});
-		 data.push({name:"boxId", value: $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val()});
+		 data.push({name:"boxId", value: idBox});
 		 
 		 if (fechamentoEncalheController.nonSelected) {
 
@@ -1177,10 +1261,36 @@ var fechamentoEncalheController = $.extend(true, {
 		return data;
 	},
 
-	 limpaGridPesquisa : function() {
-		 
-		 $(".fechamentoGrid", fechamentoEncalheController.workspace).clear();
-		 $('#divFechamentoGrid', fechamentoEncalheController.workspace).css("display", "none");
+	exibirMensagemBoxNaoSalvo: function() {
+
+		$("#dialog-confirm-box-nao-salvo").dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Sim": function() {
+					fechamentoEncalheController.salvar(function() {
+						fechamentoEncalheController.limpaGridPesquisa();
+					});
+					$(this).dialog( "close" );
+				},				
+				"Não": function() {
+					$(this).dialog( "close" );
+					fechamentoEncalheController.limpaGridPesquisa();
+				}
+			},
+			form: $("#dialog-confirm-box-nao-salvo", this.workspace).parents("form")
+		});
+	},
+	
+	limpaGridPesquisa : function() {
+
+		$("#sel", fechamentoEncalheController.workspace).uncheck();
+		$(".fechamentoGrid", fechamentoEncalheController.workspace).clear();
+		$('#divFechamentoGrid', fechamentoEncalheController.workspace).css("display", "none");
+		
+		fechamentoEncalheController.modoBox.clearBoxNaoSalvo();
 	},
 	
 	salvarNoEncerrementoOperacao : function() {

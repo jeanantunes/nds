@@ -157,8 +157,7 @@ public class FechamentoEncalheController extends BaseController {
 			this.getSession().removeAttribute("gridFechamentoEncalheDTO");
 			this.result.use(Results.json()).from(
 				new ValidacaoVO(
-						TipoMensagem.WARNING, 
- "Não houve conferência de encalhe nesta data."), "mensagens")
+						TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens")
                     .recursive().serialize();
 		} else {
 			List<FechamentoFisicoLogicoDTO> listaEncalhe = 
@@ -320,28 +319,29 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Path("carregarDataPostergacao")
-	public void carregarDataPostergacao(Date dataEncalhe, Date dataPostergacao) {
+	public void carregarDataPostergacao(Date dataEncalhe) {
 		
-		try {
+		if(dataEncalhe == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data de encalhe informada na pesquisa");
+		}
+		
+		Date dataPostergacao = chamadaAntecipadaEncalheService.obterProximaDataEncalhe(dataEncalhe);
 			
-			int quantidadeDias = 0;
+		if (dataPostergacao == null) {
+			dataPostergacao = DateUtil.adicionarDias(dataEncalhe, 1);
+		}
+		
+		dataPostergacao = 
+			this.calendarioService.adicionarDiasRetornarDiaUtil(dataPostergacao, 0);
+		
+		if (dataPostergacao != null) {
 			
-			if (dataPostergacao == null) {
-				quantidadeDias = 1;
-				dataPostergacao = dataEncalhe;
-			}
+			String dataFormatada = DateUtil.formatarData(dataPostergacao, "dd/MM/yyyy");
 			
+			this.result.use(Results.json()).from(dataFormatada, "result").recursive().serialize();
 			
-			dataPostergacao = 
-				this.calendarioService.adicionarDiasRetornarDiaUtil(dataPostergacao, quantidadeDias);
-			
-			if (dataPostergacao != null) {
-				String dataFormatada = DateUtil.formatarData(dataPostergacao, "dd/MM/yyyy");
-				this.result.use(Results.json()).from(dataFormatada, "result").recursive().serialize();
-			}
-			
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+		} else {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data util de encalhe encontrada");
 		}
 		
 	}
@@ -417,22 +417,6 @@ public class FechamentoEncalheController extends BaseController {
 //		}
 //		
 //	}
-
-	@Path("/dataSugestaoPostergarCota")
-	public void carregarDataSugestaoPostergarCota(String dataEncalhe) throws ParseException {
-		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dataEncalhe);
-				
-		Date resultado = chamadaAntecipadaEncalheService.obterProximaDataEncalhe(date);
-		
-		if (resultado != null){
-
-		    this.result.use(Results.json()).from(resultado, "resultado").serialize();
-		}
-		else{
-			
-			this.result.use(Results.nothing());
-		}
-	}
 	
 	@Post
 	public void veificarCobrancaGerada(List<Long> idsCotas, boolean cobrarTodasCotas){
@@ -839,11 +823,10 @@ public class FechamentoEncalheController extends BaseController {
 			if (fechamentoEncalheService.existeFechamentoEncalheDetalhado(filtro)){
 				
                 String msgPesquisaConsolidado = "Você está tentando fazer uma "
-                    +
-						"pesquisa em modo consolidado (soma de todos os boxes). " +
- "Já existem dados salvos em modo de pesquisa por box. "
-                    + "Se você continuar, os dados serão perdidos. " +
-						"Tem certeza que deseja continuar ?";
+                    + "pesquisa em modo consolidado (soma de todos os boxes). " 
+                	+ "Já existem dados salvos em modo de pesquisa por box. "
+                    + "Se você continuar, os dados serão consolidados. " 
+                	+ "Tem certeza que deseja continuar ?";
 				
 				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, msgPesquisaConsolidado), "result").recursive().serialize();
 			

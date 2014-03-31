@@ -102,6 +102,9 @@ public class EstudoGerado implements Serializable {
     @Column(name = "DADOS_VENDA_MEDIA")
     @Type(type = "text")
     private String dadosVendaMedia;
+    
+    @Column(name = "REPARTE_MINIMO")
+    private BigInteger reparteMinimo;
 
     public BigInteger getQtdeReparte() {
 		return qtdeReparte;
@@ -269,4 +272,13 @@ public class EstudoGerado implements Serializable {
     public String getDadosVendaMedia() {
         return dadosVendaMedia;
     }
+
+	public BigInteger getReparteMinimo() {
+		return reparteMinimo;
+	}
+
+	public void setReparteMinimo(BigInteger reparteMinimo) {
+		this.reparteMinimo = reparteMinimo;
+	}
+    
 }

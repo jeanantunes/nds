@@ -210,23 +210,6 @@ var produtoController = $.extend(true, {
 		var comboFornecedores =  montarComboBox(result, true);
 		
 		$("#fornecedor", this.workspace).html(comboFornecedores);
-	},	
-	
-	carregarPercentualDesconto : function() {
-		
-		var codigoTipoDesconto = $("#comboTipoDesconto", this.workspace).val();
-
-		if (codigoTipoDesconto == '0') {
-			$("#percentualDesconto", this.workspace).val("");
-		}
-		
-		$.postJSON(contextPath + "/produto/carregarPercentualDesconto",
-					{codigoTipoDesconto:codigoTipoDesconto}, 
-					function(result) {					
-
-						$("#percentualDesconto", this.workspace).val($.formatNumber(result, {format:"###,##000.00", locale:"br"}));
-				});
-
 	},
 
 	iniciarGrid : function() {
@@ -433,7 +416,6 @@ var produtoController = $.extend(true, {
 						produtoController.habilitarDesabilitarCamposInterface(!(result.origem == "INTERFACE"));
 						
 						$("#comboFornecedoresCadastro", produtoController.workspace).val(result.codigoFornecedor).disable();
-						$("#comboTipoDesconto", produtoController.workspace).val(result.tipoDesconto);
 						$("#comboTipoProdutoCadastro", produtoController.workspace).val(result.codigoTipoProduto);
 						$("#segmentacaoClasseSocial", produtoController.workspace).val(result.classeSocial);
 						$("#segmentacaoSexo", produtoController.workspace).val(result.sexo);
@@ -459,7 +441,7 @@ var produtoController = $.extend(true, {
 						
 						if (!(result.origem == "INTERFACE")){
 							
-							produtoController.carregarComboDesconto("MANUAL",result.tipoDesconto);
+							produtoController.carregarComboDesconto("MANUAL",result.idDesconto);
 							$("#comboTipoDesconto", produtoController.workspace).hide();
 							$("#tipoDescontoManual", produtoController.workspace).show();
 							$("#tipoDescontoManual", produtoController.workspace).val(result.descricaoDescontoManual);
@@ -467,7 +449,7 @@ var produtoController = $.extend(true, {
 						}
 						else{
 							
-							produtoController.carregarComboDesconto("INTERFACE",result.tipoDesconto);
+							produtoController.carregarComboDesconto("INTERFACE",result.idDesconto);
 							$("#percentualDesconto", produtoController.workspace).attr('disabled','disabled');
 							$("#comboTipoDesconto", produtoController.workspace).show();
 							$("#tipoDescontoManual", produtoController.workspace).hide();
@@ -478,13 +460,13 @@ var produtoController = $.extend(true, {
 				);
 	},
 	
-	carregarComboDesconto : function(origemProduto, tipoDesconto){
+	carregarComboDesconto : function(origemProduto, idDesconto){
 		
 		$.postJSON(contextPath + "/produto/carregarDadosDesconto",
 					{origemProduto:origemProduto},
 					function (result) {
 						produtoController.popularCombo(result, $("#comboTipoDesconto", this.workspace));
-						$("#comboTipoDesconto", this.workspace).val(tipoDesconto);
+						$("#comboTipoDesconto", this.workspace).val(idDesconto);
 					},
 				  	null,
 				   	true
@@ -655,7 +637,7 @@ var produtoController = $.extend(true, {
 
 		produtoController.valorComboGerAuto = produtoController.formatarCampoGeracaoAutomatica("#selGeracaoAuto");
 		
-		var codigoTipoDesconto = $("#comboTipoDesconto", produtoController.workspace).val();
+		var idDesconto = $("#comboTipoDesconto", produtoController.workspace).val();
 		
 		 var params = [{name:"produto.id",value:$("#idProduto", produtoController.workspace).val()},
         			   {name:"produto.codigo",value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
@@ -675,7 +657,7 @@ var produtoController = $.extend(true, {
         			   {name:"produto.segmentacao.formaFisica",value:$("#segmentacaoFormaFisica", produtoController.workspace).val()},
         			   {name:"codigoEditor",value:$("#comboEditor", produtoController.workspace).val()},
         			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", produtoController.workspace).val()},
-        			   {name:"codigoTipoDesconto",value:codigoTipoDesconto ? codigoTipoDesconto : ''},
+        			   {name:"idDesconto",value:idDesconto ? idDesconto : ''},
         			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro", produtoController.workspace).val()},
         			   {name:"produto.desconto",value:floatValue($("#percentualDesconto", produtoController.workspace).val())},
         			   {name:"produto.isGeracaoAutomatica",value:(produtoController.formatarCampoGeracaoAutomatica("#selGeracaoAuto"))},

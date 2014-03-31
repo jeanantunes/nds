@@ -39,12 +39,14 @@ import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -106,7 +108,6 @@ import br.com.abril.nds.util.CorpoBoleto;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
-import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.NomeBanco;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.Util;
@@ -651,7 +652,8 @@ public class BoletoServiceImpl implements BoletoService {
         movimento.setTipoMovimentoFinanceiro(tipoMovimento);
         movimento.setUsuario(usuario);
         movimento.setDataOperacao(dataOperacao);
-        movimento.setValor(pagamento.getValorPagamento());
+        movimento.setValor(
+                pagamento.getValorPagamento().subtract(pagamento.getValorDesconto()).add(pagamento.getValorJuros()).add(pagamento.getValorMulta()));
         movimento.setDataCriacao(Calendar.getInstance().getTime());
         movimento.setTipoEdicao(TipoEdicao.INCLUSAO);
         movimento.setDataVencimento(DateUtil.adicionarDias(dataOperacao,1));
@@ -666,7 +668,7 @@ public class BoletoServiceImpl implements BoletoService {
         boletoAntecipado.setValorDesconto(pagamento.getValorDesconto());
         boletoAntecipado.setValorJuros(pagamento.getValorJuros());
         boletoAntecipado.setValorMulta(pagamento.getValorMulta());
-        boletoAntecipado.setValorPago(pagamento.getValorPagamento());
+        boletoAntecipado.setValorPago(movimento.getValor());
         
         boletoAntecipadoRepository.merge(boletoAntecipado);
     }
@@ -739,7 +741,7 @@ public class BoletoServiceImpl implements BoletoService {
             
             return boleto;
         }
-        
+       
         final Date dataVencimentoUtil = calendarioService.adicionarDiasUteis(boleto.getDataVencimento(), 0);
         
         dataPagamento = DateUtil.removerTimestamp(dataPagamento);
@@ -762,9 +764,10 @@ public class BoletoServiceImpl implements BoletoService {
             
             return boleto;
         }
-        
-        final BigDecimal valorBoleto = MathUtil.round(boleto.getValor(), 2);
-        final BigDecimal valorPagamento = MathUtil.round(pagamento.getValorPagamento(), 2);
+        //alterado para HALF_UP, com HALF_EVEN o valor poderia acabar errado, segundo os cálculos feitos dessa maneira
+        //a decisão de arredondar pra cima dependeria de mais cáculos e mais um dígito, levando em conta se este é par ou ímpar
+        final BigDecimal valorBoleto = boleto.getValor().setScale(2, RoundingMode.HALF_UP);
+        final BigDecimal valorPagamento = pagamento.getValorPagamento().setScale(2, RoundingMode.HALF_UP);
         
         // Boleto pago com valor correto
         if (valorPagamento.compareTo(valorBoleto) == 0) {
@@ -1188,6 +1191,11 @@ public class BoletoServiceImpl implements BoletoService {
             
             baixaCobrancaRepository.adicionar(baixaAutomatica);
             
+            if (boleto != null) {
+                
+                acumuloDividasService.quitarDividasAcumuladas(dataPagamento, boleto.getDivida(),TipoBaixaCobranca.AUTOMATICA);
+            }
+            
             return baixaAutomatica;
         }
         
@@ -1399,19 +1407,16 @@ public class BoletoServiceImpl implements BoletoService {
         final BoletoAntecipado boletoAntecipado = boletoAntecipadoRepository.buscarPorId(bbDTO.getIdBoletoAntecipado());
         
         final Banco banco = boletoAntecipado.getBanco();
-        
-        final Fornecedor fornecedor = boletoAntecipado.getFornecedor();
-        
+                
         final CorpoBoleto corpoBoleto = this.geraCorpoBoletoEmBranco(cota,
-                fornecedor,
-                bbDTO.getData(),
-                bbDTO.getDataVencimento(),
-                banco,
-                bbDTO.getValorTotalLiquido(),
-                bbDTO.getValorTotalDebitos(),
-                bbDTO.getValorTotalCreditos(),
-                bbDTO.getNossoNumero(),
-                bbDTO.getDigitoNossoNumero());
+													                 bbDTO.getData(),
+													                 bbDTO.getDataVencimento(),
+													                 banco,
+													                 bbDTO.getValorTotalLiquido(),
+													                 bbDTO.getValorTotalDebitos(),
+													                 bbDTO.getValorTotalCreditos(),
+													                 bbDTO.getNossoNumero(),
+													                 bbDTO.getDigitoNossoNumero());
         
         return corpoBoleto;
     }
@@ -1429,18 +1434,15 @@ public class BoletoServiceImpl implements BoletoService {
         
         final Banco banco = boletoAntecipado.getBanco();
         
-        final Fornecedor fornecedor = boletoAntecipado.getFornecedor();
-        
         final CorpoBoleto corpoBoleto = this.geraCorpoBoletoEmBranco(cota,
-                fornecedor,
-                boletoAntecipado.getData(),
-                boletoAntecipado.getDataVencimento(),
-                banco,
-                boletoAntecipado.getValor(),
-                boletoAntecipado.getEmissaoBoletoAntecipado().getValorDebito(),
-                boletoAntecipado.getEmissaoBoletoAntecipado().getValorCredito(),
-                boletoAntecipado.getNossoNumero(),
-                boletoAntecipado.getDigitoNossoNumero());
+													                 boletoAntecipado.getData(),
+													                 boletoAntecipado.getDataVencimento(),
+													                 banco,
+													                 boletoAntecipado.getValor(),
+													                 boletoAntecipado.getEmissaoBoletoAntecipado().getValorDebito(),
+													                 boletoAntecipado.getEmissaoBoletoAntecipado().getValorCredito(),
+													                 boletoAntecipado.getNossoNumero(),
+													                 boletoAntecipado.getDigitoNossoNumero());
         
         return corpoBoleto;
     }
@@ -1448,7 +1450,6 @@ public class BoletoServiceImpl implements BoletoService {
     /**
      * Gera Corpo de Boleto em Branco
      * @param cota
-     * @param fornecedor
      * @param dataEmissao
      * @param dataVencimento
      * @param banco
@@ -1460,53 +1461,42 @@ public class BoletoServiceImpl implements BoletoService {
      * @return CorpoBoleto
      */
     private CorpoBoleto geraCorpoBoletoEmBranco(final Cota cota,
-            final Fornecedor fornecedor,
-            final Date dataEmissao,
-            final Date  dataVencimento,
-            final Banco banco,
-            final BigDecimal valorLiquido,
-            final BigDecimal valorDebitos,
-            final BigDecimal valorCreditos,
-            final String nossoNumero,
-            final String digitoNossoNumero){
+									            final Date dataEmissao,
+									            final Date  dataVencimento,
+									            final Banco banco,
+									            final BigDecimal valorLiquido,
+									            final BigDecimal valorDebitos,
+									            final BigDecimal valorCreditos,
+									            final String nossoNumero,
+									            final String digitoNossoNumero){
         
         final Pessoa pessoaSacado = cota.getPessoa();
         
-        final Pessoa pessoaCedente = fornecedor.getJuridica();
+        final Distribuidor distribuidor = this.distribuidorRepository.obter();
         
-        Endereco enderecoSacado = null;
+        final Pessoa pessoaCedente = distribuidor.getJuridica();
         
-        final Set<EnderecoFornecedor> enderecosFornecedor = fornecedor.getEnderecos();
-        
-        for(final EnderecoFornecedor enderecoFornecedor : enderecosFornecedor){
-            
-            enderecoSacado = enderecoFornecedor.getEndereco();
-            
-            if (enderecoFornecedor.getTipoEndereco() == TipoEndereco.COBRANCA){
-                
-                break;
-            }
-        }
+        Endereco enderecoSacado = cota.getEnderecoPrincipal().getEndereco();
         
         final TipoCobranca tipoCobranca = TipoCobranca.BOLETO;
         
         final boolean aceitaPagamentoVencido = true;
         
         final CorpoBoleto corpoBoleto = this.geraCorpoBoleto(nossoNumero,
-                digitoNossoNumero,
-                valorLiquido,
-                valorDebitos,
-                valorCreditos,
-                banco,
-                dataEmissao,
-                dataVencimento,
-                pessoaCedente,
-                pessoaSacado,
-                enderecoSacado,
-                tipoCobranca,
-                cota.getNumeroCota(),
-                aceitaPagamentoVencido,
-                true);
+											                 digitoNossoNumero,
+											                 valorLiquido,
+											                 valorDebitos,
+											                 valorCreditos,
+											                 banco,
+											                 dataEmissao,
+											                 dataVencimento,
+											                 pessoaCedente,
+											                 pessoaSacado,
+											                 enderecoSacado,
+											                 tipoCobranca,
+											                 cota.getNumeroCota(),
+											                 aceitaPagamentoVencido,
+											                 true);
         
         return corpoBoleto;
     }
@@ -2172,6 +2162,35 @@ public class BoletoServiceImpl implements BoletoService {
     }
     
     /**
+     * Obtem o fator de vencimento da forma de cobrança da cota ou do distribuidor
+     * 
+     * @param fc
+     * @return Integer
+     */
+    private Integer obterFatorVencimentoFormaCobranca(FormaCobranca fc){
+    	
+    	 Integer fatorVencimento = 0;
+         
+         ParametroCobrancaCota parametroCobrancaCota = fc.getParametroCobrancaCota();
+         
+         if(parametroCobrancaCota!=null && parametroCobrancaCota.getFatorVencimento()!=null) {
+ 			
+ 			fatorVencimento = parametroCobrancaCota.getFatorVencimento();
+ 		}
+ 		else {
+ 			
+ 			PoliticaCobranca politicaCobranca = fc.getPoliticaCobranca();
+ 			
+ 			if(politicaCobranca != null && politicaCobranca.getFatorVencimento() != null){
+ 				
+ 				fatorVencimento = politicaCobranca.getFatorVencimento();
+ 			}
+ 		}
+         
+         return fatorVencimento;
+    }
+    
+    /**
      * Obtem dados de boleto em Branco utilizando dados de CE e periodo de recolhimento do filtro
      * @param ceDTO
      * @param dataRecolhimentoCEDe
@@ -2214,8 +2233,10 @@ public class BoletoServiceImpl implements BoletoService {
             
             return null;
         }
-        
-        final Date dataVencimento = gerarCobrancaService.obterDataVencimentoCobrancaCota(dataEmissao, fc.getParametroCobrancaCota().getFatorVencimento());
+
+        final Integer fatorVencimento = this.obterFatorVencimentoFormaCobranca(fc);
+
+        final Date dataVencimento = gerarCobrancaService.obterDataVencimentoCobrancaCota(dataEmissao, fatorVencimento, null);
         
         final BoletoEmBrancoDTO bbDTO = new BoletoEmBrancoDTO(ceDTO.getIdChamEncCota(),
                 fornecedor.getId(),

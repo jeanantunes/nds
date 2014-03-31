@@ -2,6 +2,7 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.SemanaUtil;
@@ -34,6 +35,8 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;
+	
+	private List<Long> fornecedores;
 	
 	/**
 	 * Construtor padrão.
@@ -228,6 +231,16 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		return SemanaUtil.getAno(anoSemana);
 	}
 	
+	public List<Long> getFornecedores() {
+		return fornecedores;
+	}
+
+
+	public void setFornecedores(List<Long> fornecedores) {
+		this.fornecedores = fornecedores;
+	}
+
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

@@ -50,9 +50,6 @@ public class ParametroCobrancaCota implements Serializable {
 	@Column(name = "UNIFICA_COBRANCA")
 	private Boolean unificaCobranca;
 	
-	@Column(name = "DEVOLVE_ENCALHE")
-	private Boolean devolveEncalhe;
-	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
 	
@@ -134,13 +131,5 @@ public class ParametroCobrancaCota implements Serializable {
 
 	public void setUnificaCobranca(Boolean unificaCobranca) {
 		this.unificaCobranca = unificaCobranca;
-	}
-
-	public Boolean isDevolveEncalhe() {
-		return devolveEncalhe;
-	}
-
-	public void setDevolveEncalhe(Boolean devolveEncalhe) {
-		this.devolveEncalhe = devolveEncalhe;
 	}
 }

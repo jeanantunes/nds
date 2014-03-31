@@ -599,7 +599,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#qtdDividasAberto", this.workspace).val(resultado.qtdDividasAberto);
 		$("#vrDividasAberto", this.workspace).val( resultado.vrDividasAberto );
 		$("#tipoCota", this.workspace).val(resultado.tipoCota);
-		$("#devolveEncalhe", this.workspace).val(resultado.devolveEncalhe?0:1);
+		$("#devolveEncalhe", this.workspace).val(resultado.devolveEncalhe?1:0);
 		
 		$("#unificaCobranca", this.workspace).val(resultado.unificaCobranca?0:1);
 
@@ -725,7 +725,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    if(parametroCobrancaTela['parametroCobranca.qtdDividasAberto'] != parametroCobranca['parametroCobranca.qtdDividasAberto']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.sugereSuspensao'] != parametroCobranca['parametroCobranca.sugereSuspensao']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.unificaCobranca'] != parametroCobranca['parametroCobranca.unificaCobranca']){return true;}
-	    if(parametroCobrancaTela['parametroCobranca.devolveEncalhe'] != parametroCobranca['parametroCobranca.devolveEncalhe']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.valorMinimo'] != parametroCobranca['parametroCobranca.valorMinimo']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.vrDividasAberto'] != parametroCobranca['parametroCobranca.vrDividasAberto']){return true;}
 
@@ -773,7 +772,7 @@ var parametroCobrancaCotaController = $.extend(true, {
         
         var tipoCota            = $("#tipoCota", this.workspace).val();
         
-        var devolveEncalhe      = $("#devolveEncalhe", this.workspace).val();
+        var devolveEncalhe      = $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
         
         var params =  {"idCota": idCota,
         		       "inicioContrato": inicioContrato,

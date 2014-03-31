@@ -60,6 +60,7 @@ import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.sessionscoped.ConferenciaEncalheSessionScopeAttr;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.PDFUtil;
@@ -661,7 +662,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		dados.put("listaDebitoCredito", this.obterTableModelDebitoCreditoCota(infoConfereciaEncalheCota.getListaDebitoCreditoCota()));
 		
-		dados.put("reparte", infoConfereciaEncalheCota.getReparte() == null ? BigDecimal.ZERO : infoConfereciaEncalheCota.getReparte());
+		dados.put("reparte", (infoConfereciaEncalheCota.getReparte() == null ? BigDecimal.ZERO : infoConfereciaEncalheCota.getReparte()).setScale(4, RoundingMode.HALF_UP));
 		
 		dados.put("indDistribuidorAceitaJuramentado", infoConfereciaEncalheCota.isDistribuidorAceitaJuramentado());
 		
@@ -1128,7 +1129,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		dados.put("conf", conf);
 		
-		dados.put("reparte", this.getInfoConferenciaSession().getReparte() == null ? BigDecimal.ZERO : this.getInfoConferenciaSession().getReparte());
+		dados.put("reparte", (this.getInfoConferenciaSession().getReparte() == null ? BigDecimal.ZERO : this.getInfoConferenciaSession().getReparte()).setScale(4, RoundingMode.HALF_UP));
 		
 		this.calcularValoresMonetarios(dados);
 		
@@ -1222,7 +1223,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		dados.put("conf", conf);
 		
-		dados.put("reparte", this.getInfoConferenciaSession().getReparte() == null ? BigDecimal.ZERO : this.getInfoConferenciaSession().getReparte());
+		dados.put("reparte", (this.getInfoConferenciaSession().getReparte() == null ? BigDecimal.ZERO : this.getInfoConferenciaSession().getReparte()).setScale(4, RoundingMode.HALF_UP));
 		
 		this.calcularValoresMonetarios(dados);
 		
@@ -2222,8 +2223,8 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		
 		if (dados != null){
 			
-			dados.put("valorEncalhe", valorEncalhe);
-			dados.put("valorVendaDia", valorVendaDia);
+			dados.put("valorEncalhe", valorEncalhe.setScale(4, RoundingMode.HALF_UP));
+			dados.put("valorVendaDia", valorVendaDia.setScale(4, RoundingMode.HALF_UP));
 			dados.put("valorDebitoCredito", valorDebitoCredito.abs());
 			dados.put("valorPagar", valorPagar.setScale(2, RoundingMode.HALF_EVEN));
 			dados.put("valorTotal", valorTotal);

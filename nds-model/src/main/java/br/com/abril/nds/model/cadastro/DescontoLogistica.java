@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -45,6 +47,10 @@ public class DescontoLogistica implements Serializable {
 	
 	@OneToMany(mappedBy="descontoLogistica")
 	private Set<Produto> produtos = new HashSet<Produto>();
+	
+	@ManyToOne
+	@JoinColumn(name = "FORNECEDOR_ID")
+	private Fornecedor fornecedor;
 	
 	/**
 	 * Construtor padrão.
@@ -140,7 +146,15 @@ public class DescontoLogistica implements Serializable {
 		this.descricao = descricao;
 	}	
 	
-	/* (non-Javadoc)
+    public Fornecedor getFornecedor() {
+        return fornecedor;
+    }
+    
+    public void setFornecedor(Fornecedor fornecedor) {
+        this.fornecedor = fornecedor;
+    }
+
+    /* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

@@ -1,8 +1,10 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO.ColunaOrdenacaoRomaneio;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -24,11 +26,29 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 	
 	private PaginacaoVO paginacao;
 	
+	private Boolean addCotaVista;
+	
+	private Boolean addOutrasCotas;
+	
+	private Date dataInicio;
+	
+	private Date dataFim;
+	
+	private TipoOperacao tipoOperacao;
+    	
 	private ColunaOrdenacaoConsultaConsignadoCota ordenacaoColuna;
 	
 	public FiltroConsultaConsignadoCotaDTO() {
 		
 	}
+	
+	public FiltroConsultaConsignadoCotaDTO(Boolean addCotaVista, Boolean addOutrasCotas, Date dataInicio, Date dataFim, TipoOperacao tipoOperacao) {
+	    this.addCotaVista = addCotaVista;
+	    this.addOutrasCotas = addOutrasCotas;
+	    this.dataInicio = dataInicio;
+	    this.dataFim = dataFim;
+	    this.tipoOperacao = tipoOperacao;
+    }
 	
 	public FiltroConsultaConsignadoCotaDTO(Long idCota) {
 		
@@ -59,6 +79,15 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 		}
 	}
 
+	
+    public TipoOperacao getTipoOperacao() {
+        return tipoOperacao;
+    }
+    
+    public void setTipoOperacao(TipoOperacao tipoOperacao) {
+        this.tipoOperacao = tipoOperacao;
+    }
+	
 	public Long getIdCota() {
 		return idCota;
 	}
@@ -108,7 +137,47 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 		this.nomeFornecedor = nomeFornecedor;
 	}
 
-	/* (non-Javadoc)
+	
+    public Boolean getAddCotaVista() {
+        return addCotaVista;
+    }
+
+    
+    public void setAddCotaVista(Boolean addCotaVista) {
+        this.addCotaVista = addCotaVista;
+    }
+
+    
+    public Boolean getAddOutrasCotas() {
+        return addOutrasCotas;
+    }
+
+    
+    public void setAddOutrasCotas(Boolean addOutrasCotas) {
+        this.addOutrasCotas = addOutrasCotas;
+    }
+
+    
+    public Date getDataInicio() {
+        return dataInicio;
+    }
+
+    
+    public void setDataInicio(Date dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    
+    public Date getDataFim() {
+        return dataFim;
+    }
+
+    
+    public void setDataFim(Date dataFim) {
+        this.dataFim = dataFim;
+    }
+
+    /* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

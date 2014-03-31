@@ -5,7 +5,11 @@ import java.io.Serializable;
 import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
+@Exportable
 public class FechamentoCEIntegracaoVO implements Serializable {
 
 	private static final long serialVersionUID = 2253692708185468228L;
@@ -13,11 +17,14 @@ public class FechamentoCEIntegracaoVO implements Serializable {
 	private TableModel<CellModelKeyValue<ItemFechamentoCEIntegracaoDTO>> listaFechamento;
 
 	private boolean semanaFechada;
-
+	
+	@Export(label = "Total Bruto R$", alignment=Alignment.RIGHT, alignWithHeader = "Sequencial")
 	private String totalBruto;
-
+	
+	@Export(label = "Total Desconto R$", alignment=Alignment.RIGHT, alignWithHeader = "Código")
 	private String totalDesconto;
-
+	
+	@Export(label = "Total Líquido R$", alignment=Alignment.RIGHT, alignWithHeader = "Produto")
 	private String totalLiquido;
 
 	public TableModel<CellModelKeyValue<ItemFechamentoCEIntegracaoDTO>> getListaFechamento() {
