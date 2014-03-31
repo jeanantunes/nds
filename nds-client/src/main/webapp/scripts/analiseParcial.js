@@ -419,7 +419,7 @@ var analiseParcialController = $.extend(true, {
         var $saldoreparte = $('#saldo_reparte');
         var $input_reparte = $(input);
         var numeroCota = $input_reparte.attr('numeroCota');
-        var reparteDigitado = $input_reparte.val();
+        var reparteDigitado = (($input_reparte.val() == "") ? 0 : $input_reparte.val());
         var reparteAtual = $input_reparte.attr('reparteAtual');
         var reparteSubtraido = parseInt(reparteDigitado, 10) - parseInt(reparteAtual, 10);
         var $legenda = $input_reparte.closest('td').next().find('div');
