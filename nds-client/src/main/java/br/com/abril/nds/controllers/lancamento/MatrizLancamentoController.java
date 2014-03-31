@@ -827,13 +827,12 @@ public class MatrizLancamentoController extends BaseController {
             		
             	}
             	//Nova implementacao
-            	
+            	if(lan.getNumeroLancamento()!=null){
             	int ordemProduto =lan.getNumeroLancamento().intValue();
             	int anterior= ordemProduto-1;
             	int posterior= ordemProduto+1;
             	
-            	Lancamento lancamentoAnterior;
-            	Lancamento lancamentoPosterior;
+
             	
             	String stNovadata = "";
         		
@@ -880,25 +879,8 @@ public class MatrizLancamentoController extends BaseController {
             		}
             		
             	}
-            	//Verificar se ja possui o produto - edicao no dia.
-            	//caso exista, nao permitir que a data seje alterada trac 184
-            	/*
-            	boolean existeProdutoEdicaoDia = lancamentoService.existeProdutoEdicaoParaDia(produtoLancamentoDTO,novaData);
-            	
-            	if(existeProdutoEdicaoDia){
-            		
-            		String stNovadata = "";
-            		
-            		if(novaData!=null){
-            			SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
-            			stNovadata = ft.format(novaData);
-            		}
-            		 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
-            				 "Já existe o produto "+produtoLancamentoDTO.getNomeProduto()+
-            				 " , edição "+produtoLancamentoDTO.getNumeroEdicao()+
-            				 " para o dia "+stNovadata));
             	}
-            	*/
+            	
                 produtoLancamentoDTO.setAlterado(true);
                 produtoLancamentoDTO.setStatus(StatusLancamento.CONFIRMADO);
                 produtoLancamentoDTO.setStatusLancamento(StatusLancamento.CONFIRMADO.name());
