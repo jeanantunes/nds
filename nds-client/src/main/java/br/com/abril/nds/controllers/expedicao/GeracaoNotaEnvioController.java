@@ -226,7 +226,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 	
-        Distribuidor distribuidor = distribuidorService.obter();
+        Distribuidor distribuidor = distribuidorService.obterParaNFe();
         
         FiltroNFeDTO filtroNfe = new FiltroNFeDTO();
     	

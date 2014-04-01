@@ -172,5 +172,7 @@ public interface DistribuidorService {
 	boolean isConferenciaCegaFechamentoEncalhe();
 	
 	Set<NaturezaOperacao> obterNaturezasOperacoesNotasEnvio();
+
+	Distribuidor obterParaNFe();
 	
 }

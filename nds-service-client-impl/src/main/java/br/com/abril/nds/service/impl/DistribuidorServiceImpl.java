@@ -79,6 +79,23 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	public Distribuidor obter() {
 		return distribuidorRepository.obter();
 	}
+	
+	@SuppressWarnings("unused")
+	@Override
+	@Transactional
+	public Distribuidor obterParaNFe() {
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		Object o = distribuidor.getNaturezasOperacoesNotasEnvio() != null ? distribuidor.getNaturezasOperacoesNotasEnvio().isEmpty() : null;
+		Object o2 = distribuidor.getRegimeTributarioTributoAliquota() != null ? distribuidor.getRegimeTributarioTributoAliquota().isEmpty() : null;
+		if(distribuidor.getTiposNotaFiscalDistribuidor() != null && !distribuidor.getTiposNotaFiscalDistribuidor().isEmpty() ) {
+			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+				if(dtnf.getNaturezaOperacao() != null) {
+					dtnf.getNaturezaOperacao().isEmpty();				
+				}
+			}
+		}
+		return distribuidor;
+	}
 
 	@Override
 	@Transactional
