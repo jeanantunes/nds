@@ -38,7 +38,8 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" tpClassProd.DESCRICAO as classificacao,")
 		.append(" prod.PACOTE_PADRAO as pctPadrao,")
 		.append(" pessoa.NOME_FANTASIA as nomeFornecedor,")
-		.append(" estoqueProdJuram.QTDE as juram,")
+//		.append(" estoqueProdJuram.QTDE as juram,")
+		.append(" sum(estoqueProdJuram.QTDE) AS juram,")
 		.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
 		.append(" estoqueProd.QTDE as estoque,")
 		.append(" lanc.REPARTE_PROMOCIONAL as promo,")
@@ -94,6 +95,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 	 		sql.append(" and forn.id in (:idFornecedores)");
 	 	}
 	 	
+	 	sql.append(" group by lanc.id ");
 	 	sql.append(" order by codigoProduto, numeroEdicao");
 	 	
 		SQLQuery query = getSession().createSQLQuery(sql.toString());

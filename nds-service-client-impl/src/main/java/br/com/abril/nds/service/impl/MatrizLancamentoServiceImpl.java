@@ -2063,8 +2063,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     
     @Override
     @Transactional
-    public void verificaDataOperacao(Date data, Long idFornecedor,
-			OperacaoDistribuidor operacaoDistribuidor){
+    public void verificaDataOperacao(Date data, Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor) {
         
         final Calendar cal = Calendar.getInstance();
         
