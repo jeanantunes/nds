@@ -1204,7 +1204,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                 isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, statusIntegracao, origem);
     }
     
-    private MovimentoEstoque tratarDiferencasDirecionadasParaCota(final Diferenca diferenca,
+    private void tratarDiferencasDirecionadasParaCota(final Diferenca diferenca,
             final TipoDiferenca tipoDiferenca,
             final Long idUsuario,
             final boolean isAprovacaoAutomatica,
@@ -1226,7 +1226,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 
                 diferencaSaidaDistribuidor.setTipoDiferenca(novoTipoDiferenca);
 
-                return this.gerarMovimentoEstoque(
+                this.gerarMovimentoEstoque(
                     diferencaSaidaDistribuidor, idUsuario, isAprovacaoAutomatica,
                     validarTransfEstoqueDiferenca, dataLancamento, origem
                 );
@@ -1236,7 +1236,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                 throw new IllegalArgumentException(e);
             }
         }
-		return null;
+
     }
     
     private GrupoMovimentoEstoque obterGrupoMovimentoEstoqueForaDoPrazo(final TipoDiferenca tipoDiferenca) {
