@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.SerializationUtils;
+
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
@@ -169,12 +171,16 @@ public class MatrizLancamentoController extends BaseController {
         
         Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
         
-        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
-                .salvarMatrizLancamento(dataLancamento,idsFornecedores,matrizLancamento, getUsuarioLogado());
+
+        for(Date dataMatriz: matrizLancamento.keySet()){
         
-        matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
+        	Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
+                .salvarMatrizLancamento(dataMatriz,idsFornecedores,matrizLancamento, getUsuarioLogado());
         
-        balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
+            matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
+        
+            balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
+        }
         
         this.removerAtributoAlteracaoSessao();
         
@@ -211,12 +217,17 @@ public class MatrizLancamentoController extends BaseController {
         
         Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
         
-        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
-                .salvarMatrizLancamentoTodosDias(dataLancamento,idsFornecedores,matrizLancamento, getUsuarioLogado());
         
-        matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
+        for(Date dataMatriz: matrizLancamento.keySet()){
+            
+        	Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
+                .salvarMatrizLancamentoTodosDias(dataMatriz,idsFornecedores,matrizLancamento, getUsuarioLogado());
         
-        balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
+            matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
+        
+            balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
+        }
+        
         
         this.removerAtributoAlteracaoSessao();
         
