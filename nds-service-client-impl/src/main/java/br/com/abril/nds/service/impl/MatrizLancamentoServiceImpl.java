@@ -2044,7 +2044,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                 
                 try {
                     
-                    this.verificaDataOperacao(data, null, null);
+                    this.verificaDataOperacao(data,null,null);
                     
                     datasDistribuicaoDoFornecedor.add(data);
                     
@@ -2295,5 +2295,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
             throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
         }
     }
+
     
 }
