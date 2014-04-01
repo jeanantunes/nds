@@ -80,6 +80,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return distribuidorRepository.obter();
 	}
 	
+	@SuppressWarnings("unused")
 	@Override
 	@Transactional
 	public Distribuidor obterParaNFe() {
