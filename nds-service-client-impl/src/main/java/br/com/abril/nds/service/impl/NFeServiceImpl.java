@@ -651,4 +651,53 @@ public class NFeServiceImpl implements NFeService {
 	public Long consultaFornecedorExemplaresSumarizadosQtd(final FiltroNFeDTO filtro) {
 		return notaFiscalService.consultaFornecedorExemplaresSumarizadosQtd(filtro);
 	}
+	
+	@Override
+	@Transactional
+	public void gerarNotasFiscaisCotasEncalhe(final List<NotaFiscal> notasFiscais, final Distribuidor distribuidor, final NaturezaOperacao naturezaOperacao, 
+			final Map<String, ParametroSistema> parametrosSistema, final List<Cota> cotas) {
+		
+		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
+		
+		final Map<String, TributoAliquota> tributoRegimeTributario = new HashMap<String, TributoAliquota>();
+		
+		for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
+			tributoRegimeTributario.put(tributo.getNomeTributo(), tributo);
+		}
+		
+		for (final Cota cota : cotas) {
+			
+			final NotaFiscal notaFiscal = new NotaFiscal();
+			naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
+			naturezaOperacaoRepository.merge(naturezaOperacao);
+			
+			final Usuario usuario = this.usuarioService.getUsuarioLogado();
+			
+			notaFiscal.setUsuario(usuario);
+			
+			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor);
+			
+			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
+			
+			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota, parametrosSistema);
+			
+			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
+			
+			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
+			
+			// obter os movimentos de cada cota
+			FiltroNFeDTO filtro = new FiltroNFeDTO();
+			filtro.setIdCota(cota.getId());
+			final List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro);
+			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoRegimeTributario);
+			}
+			
+			//FIXME: Ajustar o valor do campo para valores parametrizados
+			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
+			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal, cota);
+			notasFiscais.add(notaFiscal);
+		}
+	}
 }

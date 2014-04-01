@@ -161,6 +161,84 @@ public class NotaFiscalBuilder implements Serializable {
 		
 	}
 
+	public static void popularDadosDistribuidor(NotaFiscal notaFiscal, Distribuidor distribuidor) {
+		
+		if(notaFiscal.getNotaFiscalInformacoes() == null) {
+			notaFiscal.setNotaFiscalInformacoes(new NotaFiscalInformacoes());
+		}
+		
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente() == null) {
+			notaFiscal.getNotaFiscalInformacoes().setIdentificacaoEmitente(new IdentificacaoEmitente());
+		}
+		
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco() == null) {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setEndereco(new NotaFiscalEndereco());
+		}
+		
+		// verificar o telefone do distribuidor
+		
+		for (TelefoneDistribuidor telefone : distribuidor.getTelefones()) {
+			
+			if(telefone.getTelefone() != null) {
+				
+				NotaFiscalTelefone tel = null;
+				if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone() == null){			
+					tel = new NotaFiscalTelefone();
+				}
+				
+				tel.setNumero(telefone.getTelefone().getNumero());
+				tel.setDDD(telefone.getTelefone().getDdd());
+				
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setTelefone(tel);
+				
+				if(telefone.getTelefone().getRamal() != null) {
+					try {
+						notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setRamal(telefone.getTelefone().getRamal());
+					} catch (Exception e) {
+						LOGGER.error(new StringBuilder("Erro ao fazer parse do ramal.").append(telefone.getTelefone().getDdd()).append(" ").append(telefone.getTelefone().getNumero()).toString());
+					}
+				}
+				
+				break;
+			}
+		}
+		
+		// Dados do Distribuidor
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setNome(distribuidor.getJuridica().getRazaoSocial());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setNomeFantasia(distribuidor.getJuridica().getNomeFantasia());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setInscricaoMunicipal(distribuidor.getJuridica().getInscricaoMunicipal());
+		
+		//FIXME: Obter o valor cnae
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setCnae("4789099");
+		
+		//FIXME: Obter o valor crt
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setRegimeTributario(RegimeTributario.REGIME_NORMAL);
+		
+		CNPJEmitente cnpj = new CNPJEmitente();
+		cnpj.setDocumento(distribuidor.getJuridica().getCnpj().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setDocumento(cnpj);
+		
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setLogradouro(distribuidor.getEnderecoDistribuidor().getEndereco().getLogradouro());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setNumero(distribuidor.getEnderecoDistribuidor().getEndereco().getNumero());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setBairro(distribuidor.getEnderecoDistribuidor().getEndereco().getBairro());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCidade(distribuidor.getEnderecoDistribuidor().getEndereco().getCidade());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setUf(distribuidor.getEnderecoDistribuidor().getEndereco().getUf());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCep(distribuidor.getEnderecoDistribuidor().getEndereco().getCep().replaceAll("-", ""));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCodigoPais(1058L);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCodigoCidadeIBGE(3550308L);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setPais("Brasil");
+		
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone();
+		try {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCodigoCidadeIBGE(3550308L); //distribuidor.getEnderecoDistribuidor().getEndereco().getCodigoCidadeIBGE().longValue());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCodigoUf(35L); //Long.parseLong(distribuidor.getEnderecoDistribuidor().getEndereco().getCodigoUf()));
+		} catch (Exception e) {
+			//FIXME: Colocar um logger
+			LOGGER.debug("Problema ao setar endereco do distribuirdor");
+		}
+		
+	}
 
 	public static void montarHeaderNotaFiscal(NotaFiscal notaFiscal, Cota cota, Map<String, ParametroSistema> parametrosSistema) {
 		

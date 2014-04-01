@@ -131,6 +131,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	private boolean notaImpressa;
 	
 	@Column(name = "INFORMACOES_ADICIONAIS")
+	@XmlElement(name="infAdic")
 	private	String informacoesAdicionais;
 	
 	/**

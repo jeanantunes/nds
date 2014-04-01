@@ -13,7 +13,9 @@ import br.com.abril.nds.dto.fechamentoencalhe.GridFechamentoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -72,9 +74,9 @@ public interface FechamentoEncalheService {
 	Integer buscarTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
 	
 	Date buscarUtimoDiaDaSemanaRecolhimento();
-	
-	void gerarNotaFiscal(Date dataEncalhe);
 
+	void gerarNotaFiscal(Date dataEncalhe, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao);
+	
 	List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao);
 	
 	int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro);

@@ -12,10 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Tributacao;
-import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.cadastro.Tributacao.TributacaoTipoOperacao;
+import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
@@ -41,8 +40,7 @@ public class ItemNotaFiscalBuilder  {
 
 	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, MovimentoEstoqueCota movimentoEstoqueCota, Map<String, TributoAliquota> tributoAliquota) {
 
-		ProdutoServico produtoServico = new ProdutoServico();
-		DetalheNotaFiscal detalheNotaFiscal = new DetalheNotaFiscal(produtoServico);
+		DetalheNotaFiscal detalheNotaFiscal = null;
 		
 		if(notaFiscal == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Objeto nulo.");
@@ -96,14 +94,10 @@ public class ItemNotaFiscalBuilder  {
 	private static void montarItem(MovimentoEstoqueCota movimentoEstoqueCota,
 			DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal, Map<String, TributoAliquota> tributoAliquota) {
 		
-		detalheNotaFiscal.getProdutoServico().setCodigoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo());
-		detalheNotaFiscal.getProdutoServico().setDescricaoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getNome());
+		ProdutoServico produtoServico = new ProdutoServico();
 		
-		if(detalheNotaFiscal.getProdutoServicoPK() == null){
-			detalheNotaFiscal.setProdutoServicoPK(new ProdutoServicoPK());
-			detalheNotaFiscal.getProdutoServicoPK().setSequencia(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size()+1);
-			detalheNotaFiscal.getProdutoServicoPK().setNotaFiscal(notaFiscal);
-		}
+		produtoServico.setCodigoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo());
+		produtoServico.setDescricaoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getNome());
 		
 		Long codigoBarras = null;
 		try {
@@ -113,32 +107,37 @@ public class ItemNotaFiscalBuilder  {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido: "+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo() +" / "+ movimentoEstoqueCota.getProdutoEdicao().getNumeroEdicao());
 		}
 		
-		detalheNotaFiscal.getProdutoServico().setCodigoBarras(codigoBarras);
-		detalheNotaFiscal.getProdutoServico().setNcm(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
-		detalheNotaFiscal.getProdutoServico().setQuantidade(movimentoEstoqueCota.getQtde());
-		detalheNotaFiscal.getProdutoServico().setUnidade(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
+		produtoServico.setCodigoBarras(codigoBarras);
+		produtoServico.setNcm(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
+		produtoServico.setQuantidade(movimentoEstoqueCota.getQtde());
+		produtoServico.setUnidade(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 		
 		BigDecimal valorTotalBruto = CurrencyUtil.arredondarValorParaDuasCasas(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde())));
-		detalheNotaFiscal.getProdutoServico().setValorTotalBruto(valorTotalBruto);
+		produtoServico.setValorTotalBruto(valorTotalBruto);
 		
 		BigDecimal valorUnitario = CurrencyUtil.arredondarValorParaQuatroCasas(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
-		detalheNotaFiscal.getProdutoServico().setValorUnitario(valorUnitario);
+		produtoServico.setValorUnitario(valorUnitario);
 		
-		//detalheNotaFiscal.getProdutoServico().setValorDesconto(BigDecimal.ZERO);
+		//produtoServico.setValorDesconto(BigDecimal.ZERO);
 		
 		//FIXME: Ajustar os produtos para sinalizarem a inclusao do frete na nf
-		detalheNotaFiscal.getProdutoServico().setValorFreteCompoeValorNF(false);
-		if(detalheNotaFiscal.getProdutoServico().isValorFreteCompoeValorNF()) {
+		produtoServico.setValorFreteCompoeValorNF(false);
+		if(produtoServico.isValorFreteCompoeValorNF()) {
 			//FIXME: Ajustar os produtos para trazer os valores, se necessario
-			detalheNotaFiscal.getProdutoServico().setValorFrete(BigDecimal.ZERO);
-			detalheNotaFiscal.getProdutoServico().setValorSeguro(BigDecimal.ZERO);
-			detalheNotaFiscal.getProdutoServico().setValorOutros(BigDecimal.ZERO);
+			produtoServico.setValorFrete(BigDecimal.ZERO);
+			produtoServico.setValorSeguro(BigDecimal.ZERO);
+			produtoServico.setValorOutros(BigDecimal.ZERO);
 		}
 		
-		detalheNotaFiscal.getProdutoServico().setProdutoEdicao(new ProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao().getId()));
-		if(detalheNotaFiscal.getImpostos() == null) {
-			detalheNotaFiscal.setImpostos(new Impostos());
+		if(produtoServico.getProdutoEdicao() == null) {			
+			produtoServico.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
 		}
+		
+		
+		detalheNotaFiscal = new DetalheNotaFiscal();
+		detalheNotaFiscal.setImpostos(new Impostos());
+		
+		detalheNotaFiscal.setProdutoServico(produtoServico);
 		
 		Map<String, Tributacao> tributacaoProduto = new HashMap<String, Tributacao>();
 		TipoOperacao to = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getTipoOperacao();
@@ -150,8 +149,8 @@ public class ItemNotaFiscalBuilder  {
 		
 		Tributacao icmsProduto = tributacaoProduto.get("ICMS");
 		if(icmsProduto != null) {
-			detalheNotaFiscal.getProdutoServico().setCst(icmsProduto.getCstA().toString() + icmsProduto.getCst().toString());
-			detalheNotaFiscal.getProdutoServico().setValorAliquotaICMS(CurrencyUtil.arredondarValorParaDuasCasas(icmsProduto.getValorAliquota()));
+			produtoServico.setCst(icmsProduto.getCstA().toString() + icmsProduto.getCst().toString());
+			produtoServico.setValorAliquotaICMS(CurrencyUtil.arredondarValorParaDuasCasas(icmsProduto.getValorAliquota()));
 			Class<?> clazz;
 			ICMS icms = null;
 			try {
@@ -177,9 +176,9 @@ public class ItemNotaFiscalBuilder  {
 			detalheNotaFiscal.getImpostos().setIcms(icms);
 		} else {
 			StringBuilder sb = new StringBuilder().append("ICMS não encontrado para o Produto: ")
-					.append(detalheNotaFiscal.getProdutoServico().getCodigoProduto())
+					.append(produtoServico.getCodigoProduto())
 					.append(" / ")
-					.append(detalheNotaFiscal.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
+					.append(produtoServico.getProdutoEdicao().getNumeroEdicao());
 			
 			LOGGER.error(sb.toString() );
 			throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
@@ -188,7 +187,7 @@ public class ItemNotaFiscalBuilder  {
 		Tributacao ipiProduto = tributacaoProduto.get("IPI");	
 		
 		if(ipiProduto != null) {
-			detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
+			produtoServico.setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
 			
 			IPI ipi = new IPI();
 			
@@ -206,9 +205,9 @@ public class ItemNotaFiscalBuilder  {
 			detalheNotaFiscal.getImpostos().setIpi(ipi);
 		} else {
 			StringBuilder sb = new StringBuilder().append("IPI não encontrado para o Produto: ")
-					.append(detalheNotaFiscal.getProdutoServico().getCodigoProduto())
+					.append(produtoServico.getCodigoProduto())
 					.append(" / ")
-					.append(detalheNotaFiscal.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
+					.append(produtoServico.getProdutoEdicao().getNumeroEdicao());
 			
 			LOGGER.error(sb.toString() );
 			throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
@@ -241,7 +240,7 @@ public class ItemNotaFiscalBuilder  {
 					pis.setPercentualAliquota(tributoPis.getValor());
 				}
 			}
-			pis.setValor(detalheNotaFiscal.getProdutoServico().getValorTotalBruto().multiply(tributoPis.getValor().divide(BigDecimal.valueOf(100))));
+			pis.setValor(produtoServico.getValorTotalBruto().multiply(tributoPis.getValor().divide(BigDecimal.valueOf(100))));
 			
 			// FIXME Ajustar CST
 			pisWrapper.setPis(pis);
@@ -250,9 +249,9 @@ public class ItemNotaFiscalBuilder  {
 			
 		} else {
 			StringBuilder sb = new StringBuilder().append("PIS não encontrado para o Produto: ")
-					.append(detalheNotaFiscal.getProdutoServico().getCodigoProduto())
+					.append(produtoServico.getCodigoProduto())
 					.append(" / ")
-					.append(detalheNotaFiscal.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
+					.append(produtoServico.getProdutoEdicao().getNumeroEdicao());
 			
 			LOGGER.error(sb.toString() );
 			throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
@@ -277,7 +276,7 @@ public class ItemNotaFiscalBuilder  {
 					cofins.setPercentualAliquota(tributoCofins.getValor());
 				}
 			}
-			cofins.setValor(detalheNotaFiscal.getProdutoServico().getValorTotalBruto().multiply(tributoCofins.getValor().divide(BigDecimal.valueOf(100))));
+			cofins.setValor(produtoServico.getValorTotalBruto().multiply(tributoCofins.getValor().divide(BigDecimal.valueOf(100))));
 			
 			cofinsWrapper.setCofins(cofins);
 			
@@ -285,16 +284,16 @@ public class ItemNotaFiscalBuilder  {
 			
 		} else {
 			StringBuilder sb = new StringBuilder().append("COFINS não encontrado para o Produto: ")
-					.append(detalheNotaFiscal.getProdutoServico().getCodigoProduto())
+					.append(produtoServico.getCodigoProduto())
 					.append(" / ")
-					.append(detalheNotaFiscal.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
+					.append(produtoServico.getProdutoEdicao().getNumeroEdicao());
 			
 			LOGGER.error(sb.toString() );
 			throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
 		}
 		
 		//FIXME: Ajustar o codigo Excessao do ipi
-		//detalheNotaFiscal.getProdutoServico().setExtipi(0L);
+		//produtoServico.setExtipi(0L);
 		String cfop = "";
 		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getPais()
 				.equals(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getPais())) {
@@ -311,16 +310,23 @@ public class ItemNotaFiscalBuilder  {
 			cfop = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getCfopExterior();
 		}
 		
-		detalheNotaFiscal.getProdutoServico().setCfop(Integer.valueOf(cfop));
+		produtoServico.setCfop(Integer.valueOf(cfop));
 		
 		movimentoEstoqueCota.setNotaFiscalEmitida(true);
 		
-		List<OrigemItemNotaFiscal> origemItens = detalheNotaFiscal.getProdutoServico().getOrigemItemNotaFiscal() != null ? detalheNotaFiscal.getProdutoServico().getOrigemItemNotaFiscal() : new ArrayList<OrigemItemNotaFiscal>();
+		List<OrigemItemNotaFiscal> origemItens = produtoServico.getOrigemItemNotaFiscal() != null ? produtoServico.getOrigemItemNotaFiscal() : new ArrayList<OrigemItemNotaFiscal>();
 		
 		OrigemItemNotaFiscal oinf = new OrigemItemNotaFiscalMovimentoEstoqueCota();
 		((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).setMovimentoEstoqueCota(movimentoEstoqueCota);
 		origemItens.add(oinf);
-		detalheNotaFiscal.getProdutoServico().setOrigemItemNotaFiscal(origemItens);
+		produtoServico.setOrigemItemNotaFiscal(origemItens);
+		
+		if(detalheNotaFiscal.getProdutoServicoPK() == null){
+			detalheNotaFiscal.setProdutoServicoPK(new ProdutoServicoPK());
+			detalheNotaFiscal.getProdutoServicoPK().setSequencia(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size()+1);
+			detalheNotaFiscal.getProdutoServicoPK().setNotaFiscal(notaFiscal);
+		}
+		
 	}
 	
 }

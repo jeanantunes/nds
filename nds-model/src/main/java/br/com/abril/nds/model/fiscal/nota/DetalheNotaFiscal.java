@@ -45,14 +45,14 @@ public class DetalheNotaFiscal implements Serializable {
 	@XmlElement(name="imposto")
 	private Impostos impostos;
 	
+	@Transient
+	@XmlElement(name="infAdProd")
+	private String infAdProd;
+	
 	public DetalheNotaFiscal() {
 		super();
 	}
 	
-	public DetalheNotaFiscal(ProdutoServico produtoServico) {
-		this.produtoServico = produtoServico;
-	}
-
 	/**
 	 * Getters e Setters 
 	 */
@@ -83,8 +83,11 @@ public class DetalheNotaFiscal implements Serializable {
 	public ProdutoServico getProdutoServico() {
 		return produtoServico;
 	}
+	
 	public void setProdutoServico(ProdutoServico produtoServico) {
 		this.produtoServico = produtoServico;
+
+		this.infAdProd = produtoServico.getProdutoEdicao() != null ? "Edição " + produtoServico.getProdutoEdicao().getNumeroEdicao().toString() : "";
 	}
 
 	public Impostos getImpostos() {
@@ -93,6 +96,8 @@ public class DetalheNotaFiscal implements Serializable {
 
 	public void setImpostos(Impostos impostos) {
 		this.impostos = impostos;
+		
+		
 	}
 
 	@Override
