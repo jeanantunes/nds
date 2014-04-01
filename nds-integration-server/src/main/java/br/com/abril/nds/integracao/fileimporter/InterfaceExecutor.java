@@ -270,11 +270,7 @@ public class InterfaceExecutor {
 	public void carregarDiretorios(InterfaceEnum interfaceEnum) {
 		
 		String parametroDir = "INBOUND_DIR";
-		
-		if(interfaceEnum.getCodigoInterface() == InterfaceEnum.EMS0140.getCodigoInterface()) {
-			parametroDir += "_NOTA_VAREJO";
-		}
-		
+	
 		this.diretorio = parametroSistemaRepository.getParametro(parametroDir);
 		
 		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
@@ -328,7 +324,7 @@ public class InterfaceExecutor {
 				
 				try {
 					
-					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, logExecucao.getDataInicio(), nomeUsuario);
+					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, logExecucao.getDataInicio(), nomeUsuario, Long.valueOf(distribuidor));
 					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.SUCESSO, null);
 					arquivo.delete();
 					
@@ -560,7 +556,8 @@ public class InterfaceExecutor {
 	/**
 	 * Processa o arquivo, lendo suas linhas e gravando no CouchDB.
 	 */
-	private void trataArquivo(CouchDbClient couchDbClient, File arquivo, InterfaceEnum interfaceEnum, Date dataInicio, String nomeUsuario) throws Exception {
+	@SuppressWarnings("unchecked")
+	private void trataArquivo(CouchDbClient couchDbClient, File arquivo, InterfaceEnum interfaceEnum, Date dataInicio, String nomeUsuario,Long codigoDistribuidor) throws Exception {
 
 		FileReader in = new FileReader(arquivo);
 		Scanner scanner = new Scanner(in);
@@ -576,12 +573,6 @@ public class InterfaceExecutor {
 			if (StringUtils.isEmpty(linha) ||  ((int) linha.charAt(0)  == 26) ) {
 				continue;
 			} 
-
-            // TODO: verificar tamanho correto das linhas nos arquivos: difere
-            // da definição
-//			if (linha.length() != interfaceEnum.getTamanhoLinha().intValue()) {
-//				throw new ValidacaoException(TAMANHO_LINHA);
-//			}
 			
 			if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.SIMPLES ) {
 				IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
@@ -591,8 +582,9 @@ public class InterfaceExecutor {
 				doc.setLinhaArquivo(linhaArquivo);
 				doc.setDataHoraExtracao(dataInicio);
 				doc.setNomeUsuarioExtracao(nomeUsuario);
-	
+					
 				couchDbClient.save(doc);
+				
 			} else if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.DETALHE_INLINE) {
 
 				IntegracaoDocumentDetail docD = (IntegracaoDocumentDetail) this.ffm.load(interfaceEnum.getClasseDetail(), linha);
@@ -612,8 +604,6 @@ public class InterfaceExecutor {
 					docM.setDataHoraExtracao(dataInicio);
 					docM.setNomeUsuarioExtracao(nomeUsuario);
 					docM.addItem(docD);				
-		
-					
 				}
 			}
 			
@@ -665,11 +655,6 @@ public class InterfaceExecutor {
 		
 		String pattern = interfaceExecucao.getMascaraArquivo();
 		String dirPath = diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator;
-		
-		if (interfaceExecucao.getId() == InterfaceEnum.EMS0140.getCodigoInterface()) {
-			pattern = String.format("%s_"+pattern, codigoDistribuidor);
-			dirPath = diretorio;
-		} 
 		
 		File dir = new File(dirPath);
 		

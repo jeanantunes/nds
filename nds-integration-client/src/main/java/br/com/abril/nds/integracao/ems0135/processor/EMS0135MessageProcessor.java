@@ -20,6 +20,7 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0135InputItem;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -231,7 +232,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 produtoEdicao.setNumeroEdicao(inputItem.getEdicao());
                 
                 if(inputItem.getDesconto()!=null) {
-                    produtoEdicao.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()*100));
+                    produtoEdicao.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
                 }
                 
                 produtoEdicao.setPacotePadrao(10);
@@ -355,7 +356,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         
         for (ItemNotaFiscalEntrada item : nfEntrada.getItens()) {
             
-            BigDecimal valorDesconto = item.getPreco().multiply(item.getDesconto());
+            BigDecimal valorDesconto = item.getPreco().multiply(item.getDesconto().divide(new BigDecimal(100)));
             
             BigDecimal valorLiquidoItem = item.getPreco().subtract(valorDesconto);
             
