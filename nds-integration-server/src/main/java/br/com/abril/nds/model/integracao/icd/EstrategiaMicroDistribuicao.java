@@ -82,8 +82,8 @@ public class EstrategiaMicroDistribuicao {
 	@Column(name = "DAT_ALT")
 	private Date datAlt;
 	
-	@Column(name = "NUM_ESTRATEGIA_LACTO")
-	private Long numEstrategiaLancto;
+	//@Column(name = "NUM_ESTRATEGIA_LACTO")
+	//private Long numEstrategiaLancto;
 	
 	@Column(name = "COD_ESTRATEGIA_ADABAS")
 	private Long codEstrategiaAdabas;
@@ -292,7 +292,7 @@ public class EstrategiaMicroDistribuicao {
 	public void setDatAlt(Date datAlt) {
 		this.datAlt = datAlt;
 	}
-
+/*
 	public Long getNumEstrategiaLancto() {
 		return numEstrategiaLancto;
 	}
@@ -300,7 +300,7 @@ public class EstrategiaMicroDistribuicao {
 	public void setNumEstrategiaLancto(Long numEstrategiaLancto) {
 		this.numEstrategiaLancto = numEstrategiaLancto;
 	}
-
+*/
 	public Long getCodEstrategiaAdabas() {
 		return codEstrategiaAdabas;
 	}

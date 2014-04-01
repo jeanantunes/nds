@@ -4,8 +4,10 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
@@ -181,5 +183,7 @@ public interface LancamentoService {
 	Lancamento buscarPorId(Long id);
 	
 	void excluirLancamento(final ProdutoLancamentoVO produtoLancamento);
+	
+	LinkedList<Lancamento> obterLancamentosRedistribuicoes();
 }
  

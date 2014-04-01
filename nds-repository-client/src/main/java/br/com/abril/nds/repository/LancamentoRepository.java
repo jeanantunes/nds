@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
@@ -408,6 +410,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	boolean existeProdutoEdicaoParaDia(ProdutoLancamentoDTO produtoLancamentoDTO,Date novaData);
 	
+	LinkedList<Lancamento> obterLancamentosRedistribuicoes();
+
 	List<Lancamento> obterLancamentosEmRecolhimentoParaFechamento(Date dataBase);
 	
 }

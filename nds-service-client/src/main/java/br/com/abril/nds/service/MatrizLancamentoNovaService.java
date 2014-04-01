@@ -11,7 +11,7 @@ import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.ConfirmacaoVO;
 
-public interface MatrizLancamentoService {
+public interface MatrizLancamentoNovaService {
     
 	    /**
      * Obtém a matriz de balanceamento de lançamento e todas as informações
@@ -60,7 +60,6 @@ public interface MatrizLancamentoService {
     
     void voltarConfiguracaoInicial(Date dataLancamento, BalanceamentoLancamentoDTO balanceamentoLancamento, Usuario usuario);
     
-    void verificaDataOperacao(final Date data,Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor);
     
     boolean isProdutoConfirmado(ProdutoLancamentoDTO produtoLancamento);
     
@@ -69,8 +68,13 @@ public interface MatrizLancamentoService {
     Map<Date, List<ProdutoLancamentoDTO>> salvarMatrizLancamento(Date dataSalvar, List<Long> idsFornecedores,
             Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento, Usuario usuario);
     
+    Map<Date, List<ProdutoLancamentoDTO>> salvarMatrizLancamentoTodosDias(Date dataSalvar, List<Long> idsFornecedores,
+            Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento, Usuario usuario);
+    
     void validarDiaSemanaDistribuicaoFornecedores(Date dataDistribuicao);
     
     void reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario);
+
+	void verificaDataOperacao(Date data, Long idFornecedor,OperacaoDistribuidor operacaoDistribuidor);
     
 }

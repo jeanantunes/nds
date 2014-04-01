@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -464,5 +465,12 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Lancamento buscarPorId(Long id) {
 		return this.lancamentoRepository.buscarPorId(id);
 	}
+	
+	@Override
+	@Transactional
+	public LinkedList<Lancamento> obterLancamentosRedistribuicoes() {
+		return this.lancamentoRepository.obterLancamentosRedistribuicoes();
+	}
+	
 
 }

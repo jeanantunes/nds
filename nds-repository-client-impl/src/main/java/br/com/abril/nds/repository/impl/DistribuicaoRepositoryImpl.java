@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
@@ -70,13 +71,14 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" where prod.ATIVO = true")
 		.append(" and prodEdic.ATIVO = true")
 		
+		/*
 		.append(" and case when (select distinct count(*) from lancamento l where l.status in('BALANCEADO','EM_BALANCEAMENTO') and l.DATA_LCTO_DISTRIBUIDOR = lanc.DATA_LCTO_DISTRIBUIDOR) =0 then  ")
 	    .append(" lanc.status in ('PLANEJADO', 'CONFIRMADO',  'FURO') ")
 	    .append(" else ")
 	    .append(" lanc.status in ('BALANCEADO', 'EM_BALANCEAMENTO') ")
 	    .append(" end ")
-	    
-		//.append(" and lanc.status in ('BALANCEADO', 'PLANEJADO', 'CONFIRMADO', 'EM_BALANCEAMENTO', 'FURO')")
+	    */
+		.append(" and lanc.status in ('BALANCEADO', 'PLANEJADO', 'CONFIRMADO', 'EM_BALANCEAMENTO', 'FURO')")
 		.append(" and forn.SITUACAO_CADASTRO = 'ATIVO'")
 		.append(" and lanc.EXPEDICAO_ID is null")
 		.append(" and (lanc.PERIODO_LANCAMENTO_PARCIAL_ID is null or lanc.PERIODO_LANCAMENTO_PARCIAL_ID = plp.id) ");
