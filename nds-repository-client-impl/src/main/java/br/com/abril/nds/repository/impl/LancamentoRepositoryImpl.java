@@ -2496,7 +2496,7 @@ public class LancamentoRepositoryImpl extends
 		
 			hql = new StringBuilder();
 		
-			hql.append(" from Lancamento lancamento ");
+			hql.append(" from Lancamento lancamento");
 			hql.append(" where ");
 //					+ "lancamento.produtoEdicao.id = :idProdutoEdicao ");
 //			hql.append(" and lancamento.produtoEdicao.produto.id = :idProduto ");
@@ -2504,7 +2504,7 @@ public class LancamentoRepositoryImpl extends
 			hql.append(" and lancamento.produtoEdicao.numeroEdicao = :edicao ");
 			hql.append(" order by lancamento.produtoEdicao.produto.codigo , ");
 			hql.append("lancamento.produtoEdicao.numeroEdicao, ");
-			hql.append("lancamento.periodoLancamentoParcial, ");
+			hql.append("lancamento.periodoLancamentoParcial.numeroPeriodo, ");
 			hql.append("lancamento.numeroLancamento ");
 
 

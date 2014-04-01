@@ -416,7 +416,7 @@ public class ProdutoServiceImpl implements ProdutoService {
                 produto.addFornecedor(fornecedor);
         }else{
                 
-            if (!fornecedor.getId().equals(produto.getId())){
+            if (!fornecedor.getId().equals(produto.getFornecedor().getId())){
                     
                 throw new ValidacaoException(TipoMensagem.WARNING, "O [Produto] já possui movimentações e o campo [Fornecedor] não pode ser alterado.");
             }

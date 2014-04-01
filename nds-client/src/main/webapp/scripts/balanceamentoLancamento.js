@@ -148,6 +148,13 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		var rows='<tr>';
 		$.each(data.listaResumoPeriodoBalanceamento, function(index, resumo){
+			
+			  if(!resumo.qtdeTitulos){ resumo.qtdeTitulos =0;}
+			  if(!resumo.qtdeExemplaresFormatada){ resumo.qtdeExemplaresFormatada =0;}
+			  if(!resumo.qtdeTitulosParciais){ resumo.qtdeTitulosParciais =0;}
+			  if(!resumo.pesoTotalFormatado){ resumo.pesoTotalFormatado =0;}
+			  if(!resumo.valorTotalFormatado){ resumo.valorTotalFormatado =0;}
+
 			  rows+='<td>';
 			  rows+='<div class="box_resumo">';
 			  rows+= '<label id="labelData'+resumo.dataFormatada.replace(/\//g, "")+'" class="labelDataLancamento">'+ resumo.dataFormatada;
@@ -163,7 +170,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			  rows+= '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar Produtos" />';
 			  rows+= '</a></label>';
 			  rows+='<span class="span_1">Qtde. Títulos:</span>';	 
-			  rows+='<span class="span_2">'+ resumo.qtdeTitulos +'</span>';
+			  rows+='<span class="span_2">'+ resumo.qtdeTitulos  +'</span>';
 			  
 			  if (resumo.excedeCapacidadeDistribuidor) {
 				  
