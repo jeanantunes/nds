@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -467,7 +468,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
 	@Transactional
-	public List<Lancamento> obterLancamentosRedistribuicoes() {
+	public LinkedList<Lancamento> obterLancamentosRedistribuicoes() {
 		return this.lancamentoRepository.obterLancamentosRedistribuicoes();
 	}
 	

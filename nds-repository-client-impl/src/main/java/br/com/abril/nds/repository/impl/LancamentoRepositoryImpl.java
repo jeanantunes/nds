@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -2472,11 +2473,11 @@ public class LancamentoRepositoryImpl extends
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Lancamento> obterLancamentosRedistribuicoes() {
+	public LinkedList<Lancamento> obterLancamentosRedistribuicoes() {
 
 		StringBuilder hql = new StringBuilder();
 		List<Lancamento> lista =new ArrayList<Lancamento>();
-		List<Lancamento> listaAux =new ArrayList<Lancamento>();
+		LinkedList<Lancamento> listaAux =new LinkedList<Lancamento>();
 
 		hql.append(" from Lancamento lancamento ");
 		hql.append(" where lancamento.tipoLancamento = :tipoLancamento ");
@@ -2495,12 +2496,16 @@ public class LancamentoRepositoryImpl extends
 		
 			hql = new StringBuilder();
 		
-			hql.append(" from Lancamento lancamento ");
+			hql.append(" from Lancamento lancamento");
 			hql.append(" where ");
 //					+ "lancamento.produtoEdicao.id = :idProdutoEdicao ");
 //			hql.append(" and lancamento.produtoEdicao.produto.id = :idProduto ");
 			hql.append(" lancamento.produtoEdicao.produto.codigo = :codigo ");
 			hql.append(" and lancamento.produtoEdicao.numeroEdicao = :edicao ");
+			hql.append(" order by lancamento.produtoEdicao.produto.codigo , ");
+			hql.append("lancamento.produtoEdicao.numeroEdicao, ");
+			hql.append("lancamento.periodoLancamentoParcial.numeroPeriodo, ");
+			hql.append("lancamento.numeroLancamento ");
 
 
 			query = getSession().createQuery(hql.toString());

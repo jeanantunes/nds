@@ -4,13 +4,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.util.Intervalo;
 
 public interface NFeService {
@@ -48,5 +53,7 @@ public interface NFeService {
 
 	public abstract Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro);
 
+	public void gerarNotasFiscaisCotasEncalhe(final List<NotaFiscal> notasFiscais, final Distribuidor distribuidor, final NaturezaOperacao naturezaOperacao, 
+			final Map<String, ParametroSistema> parametrosSistema, final List<Cota> cotas);
 	
 }

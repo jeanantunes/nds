@@ -21,7 +21,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -276,9 +276,17 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ObrigacaoFiscal obrigacaoFiscal() {
+	public boolean obrigacaoFiscal(NaturezaOperacao naturezaOperacao, Distribuidor distribuidor) {
 		
-		return null; //this.distribuidorRepository.obrigacaoFiscal();
+		for(DistribuidorTipoNotaFiscal dtnf :  distribuidor.getTiposNotaFiscalDistribuidor()) {
+			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+					return false;
+				}
+		
+			}
+		}	
+		return true;
 	}
 
 	@Override

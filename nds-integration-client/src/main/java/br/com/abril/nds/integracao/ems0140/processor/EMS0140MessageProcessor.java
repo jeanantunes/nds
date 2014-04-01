@@ -40,7 +40,6 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
-import br.com.abril.nds.util.DateUtil;
 
 import com.google.common.base.Strings;
 

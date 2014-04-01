@@ -94,7 +94,7 @@ public class NaturezaOperacaoServiceImpl implements NaturezaOperacaoService {
 	@Transactional
 	public List<ItemDTO<Long, String>> carregarComboNaturezasOperacoes(TipoOperacao tipoOperacao) {
 
-		if(this.distribuidorRepository.obrigacaoFiscal() == null) {
+		if(!this.distribuidorRepository.obrigacaoFiscal()) {
 			return null;
 		}
 

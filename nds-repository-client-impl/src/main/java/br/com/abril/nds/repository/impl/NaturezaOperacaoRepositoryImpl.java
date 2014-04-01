@@ -3,13 +3,13 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroNaturezaOperacaoDTO;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -291,6 +291,24 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		
 		return (br.com.abril.nds.model.fiscal.NaturezaOperacao) query.uniqueResult();
 		
+	}
+
+	@Override
+	public NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoOperacao tipoOperacao) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select nat from NaturezaOperacao nat ")
+		   .append(" where nat.tipoAtividade = :tipoAtividade ")
+		   .append(" and nat.tipoDestinatario = :tipoDestinatario ")
+		   .append(" and nat.tipoOperacao = : tipoOperacao ");
+		
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("tipoAtividade", tipoAtividade);
+		query.setParameter("tipoDestinatario", tipoDestinatario);
+		query.setParameter("tipoOperacao", tipoOperacao);
+		
+		return (NaturezaOperacao) query.uniqueResult();
 	}
 
 }
