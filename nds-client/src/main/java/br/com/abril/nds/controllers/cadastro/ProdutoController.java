@@ -750,6 +750,10 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 			if (produto.getTipoSegmentoProduto().getId() == null) {
                 listaMensagens.add("O preenchimento do campo [Tipo Segmento] é obrigatório!");
 			}
+			
+			if (codigoEditor == null || codigoEditor.intValue() == 0) {
+                listaMensagens.add("O preenchimento do campo [Editor] é obrigatório!");
+            }
 		}
 		
 		if (listaMensagens != null && !listaMensagens.isEmpty()) {
