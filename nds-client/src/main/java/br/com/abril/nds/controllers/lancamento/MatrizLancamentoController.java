@@ -833,6 +833,7 @@ public class MatrizLancamentoController extends BaseController {
             	Lancamento lancamento =null;
             	Lancamento lancamentoAnterior=null;
             	Lancamento lancamentoPosterior=null;
+            	
 
             	for(int i =0;i<lancamentosParciaisRebistribuicao.size();i++){
             		
@@ -850,6 +851,10 @@ public class MatrizLancamentoController extends BaseController {
                     	  lancamentosParciaisRebistribuicao.get(i+1).getProdutoEdicao().getId()){
 
                     	  lancamentoPosterior = lancamentosParciaisRebistribuicao.get(i+1);
+            			}
+            			
+            			if(lancamentoAnterior!=null ||lancamentoPosterior!=null){
+            				break;
             			}
             		}
             	}
