@@ -19,6 +19,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
@@ -77,6 +78,23 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional
 	public Distribuidor obter() {
 		return distribuidorRepository.obter();
+	}
+	
+	@SuppressWarnings("unused")
+	@Override
+	@Transactional
+	public Distribuidor obterParaNFe() {
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		Object o = distribuidor.getNaturezasOperacoesNotasEnvio() != null ? distribuidor.getNaturezasOperacoesNotasEnvio().isEmpty() : null;
+		Object o2 = distribuidor.getRegimeTributarioTributoAliquota() != null ? distribuidor.getRegimeTributarioTributoAliquota().isEmpty() : null;
+		if(distribuidor.getTiposNotaFiscalDistribuidor() != null && !distribuidor.getTiposNotaFiscalDistribuidor().isEmpty() ) {
+			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+				if(dtnf.getNaturezaOperacao() != null) {
+					dtnf.getNaturezaOperacao().isEmpty();				
+				}
+			}
+		}
+		return distribuidor;
 	}
 
 	@Override

@@ -49,9 +49,8 @@ public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribu
 	public Distribuidor obter() {
 		String hql = "from Distribuidor";
 		Query query = getSession().createQuery(hql);
-		@SuppressWarnings("unchecked")
-		List<Distribuidor> distribuidores = query.list();
-		return distribuidores.isEmpty() ? null : distribuidores.get(0);
+		 
+		return (Distribuidor) query.uniqueResult();
 	}
 
 	@Override
