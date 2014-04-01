@@ -2044,7 +2044,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                 
                 try {
                     
-                    this.verificaDataOperacao(data);
+                    this.verificaDataOperacao(data,null,null);
                     
                     datasDistribuicaoDoFornecedor.add(data);
                     
@@ -2063,7 +2063,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     
     @Override
     @Transactional
-    public void verificaDataOperacao(final Date data) {
+    public void verificaDataOperacao(Date data, Long idFornecedor,
+			OperacaoDistribuidor operacaoDistribuidor){
         
         final Calendar cal = Calendar.getInstance();
         
@@ -2295,5 +2296,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
             throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
         }
     }
+
     
 }
