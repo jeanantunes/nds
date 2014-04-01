@@ -89,8 +89,6 @@ public class InterfaceExecutor {
 
     private static String NAO_HA_IMAGENS = "Não há imagens a serem processados";
 
-	//private static Logger LOGGER = LoggerFactory.getLogger(InterfaceExecutor.class);
-	
 	@Autowired
 	private IcdObjectService icdObjectService;
 
@@ -324,7 +322,7 @@ public class InterfaceExecutor {
 				
 				try {
 					
-					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, logExecucao.getDataInicio(), nomeUsuario, Long.valueOf(distribuidor));
+					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, logExecucao.getDataInicio(), nomeUsuario);
 					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.SUCESSO, null);
 					arquivo.delete();
 					
@@ -557,7 +555,7 @@ public class InterfaceExecutor {
 	 * Processa o arquivo, lendo suas linhas e gravando no CouchDB.
 	 */
 	@SuppressWarnings("unchecked")
-	private void trataArquivo(CouchDbClient couchDbClient, File arquivo, InterfaceEnum interfaceEnum, Date dataInicio, String nomeUsuario,Long codigoDistribuidor) throws Exception {
+	private void trataArquivo(CouchDbClient couchDbClient, File arquivo, InterfaceEnum interfaceEnum, Date dataInicio, String nomeUsuario) throws Exception {
 
 		FileReader in = new FileReader(arquivo);
 		Scanner scanner = new Scanner(in);
