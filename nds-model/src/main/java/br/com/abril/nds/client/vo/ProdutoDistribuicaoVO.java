@@ -45,7 +45,7 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	private String nomeFornecedor;
 	
 	@Export(label="Juram.", exhibitionOrder = 8)
-	private Integer juram;
+	private BigDecimal juram;
 	
 	@Export(label="Suplem..", exhibitionOrder = 9)
 	private BigDecimal suplem;
@@ -182,11 +182,11 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		this.pctPadrao = pctPadrao;
 	}
 
-	public Integer getJuram() {
+	public BigDecimal getJuram() {
 		return juram;
 	}
 
-	public void setJuram(Integer juram) {
+	public void setJuram(BigDecimal juram) {
 		this.juram = juram;
 	}
 

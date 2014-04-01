@@ -141,19 +141,34 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			hql.append(" and movEstCotaLancDif.id = movimentoEstoque.id ");
 		}*/
 
-		if(filtro.getCodigoBox() == null ) {
+//		if(filtro.getCodigoBox() == null ) {
+//			
+//			hql.append(" and roteiro.descricaoRoteiro <> 'Especial' ");
+//			
+//		} else if(filtro.getCodigoBox() != null && filtro.getCodigoBox() != -1) {
+//			
+//			hql.append(" and box.codigo = :codigoBox ");
+//			hql.append(" and roteiro.descricaoRoteiro <> 'Especial' ");
+//			
+//		} else {
+//			
+//			hql.append(" and roteiro.descricaoRoteiro = 'Especial' ");
+//			
+//		}
+		
+		if(filtro.getCodigoBox() == null) {
 			
-			hql.append(" and roteiro.descricaoRoteiro <> 'Especial' ");
-			
-		} else if(filtro.getCodigoBox() != null && filtro.getCodigoBox() != -1) {
-			
-			hql.append(" and box.codigo = :codigoBox ");
-			hql.append(" and roteiro.descricaoRoteiro <> 'Especial' ");
+			hql.append(" and roteiro.tipoRoteiro <> 'ESPECIAL' ");
 			
 		} else {
 			
-			hql.append(" and roteiro.descricaoRoteiro = 'Especial' ");
-			
+			if(filtro.getCodigoBox() == 0){
+				hql.append(" and roteiro.tipoRoteiro = 'ESPECIAL' ");
+			}else{
+				hql.append(" and box.codigo = :codigoBox ");
+				hql.append(" and roteiro.tipoRoteiro <> 'ESPECIAL' ");
+			}
+
 		}
 			
 		
@@ -265,7 +280,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			"statusLancamento", 
 				new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
 		
-		if(filtro.getCodigoBox() != null && filtro.getCodigoBox() != -1) {
+		if(filtro.getCodigoBox() != null && filtro.getCodigoBox() > 0) {
 			
 			query.setParameter("codigoBox", filtro.getCodigoBox());
 		}
@@ -378,8 +393,8 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(", notaEnvio.destinatario.nome as nome ");
 		hql.append(", cota.id as idCota ");
 		hql.append(", notaEnvio.numero as numeroNotaEnvio ");
-		hql.append(", case when roteiro.descricaoRoteiro <> 'Especial' then box.id else -1L end as idBox ");
-		hql.append(", case when roteiro.descricaoRoteiro <> 'Especial' then box.nome else 'Especial' end as nomeBox ");
+		hql.append(", case when roteiro.tipoRoteiro <> 'ESPECIAL' then box.id else -1L end as idBox ");
+		hql.append(", case when roteiro.tipoRoteiro <> 'ESPECIAL' then box.nome else 'ESPECIAL' end as nomeBox ");
 		hql.append(", roteiro.id as idRoteiro ");
 		hql.append(", roteiro.descricaoRoteiro as nomeRoteiro ");
 		hql.append(", rota.id as idRota ");

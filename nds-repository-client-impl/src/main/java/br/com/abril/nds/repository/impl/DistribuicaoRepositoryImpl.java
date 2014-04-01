@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
