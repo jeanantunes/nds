@@ -383,7 +383,7 @@ public class NFeServiceImpl implements NFeService {
 		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
 		
 		if(distribuidor.isPossuiRegimeEspecialDispensaInterna()){
-			if(new Date().getTime() < distribuidor.getDataLimiteVigenciaRegimeEspecial().getTime()){
+			if(new Date().getTime() > distribuidor.getDataLimiteVigenciaRegimeEspecial().getTime()){
 				throw new ValidacaoException(TipoMensagem.WARNING, "A data limite de vigincia do regime especial expirou!" );
 			}
 		}
@@ -405,7 +405,7 @@ public class NFeServiceImpl implements NFeService {
 					
 				} else {
 					//
-					boolean notaGerada = false;
+					boolean notasGeradas = false;
 					List<Cota> cotasContribuinteEmitente = new ArrayList<Cota>();
 					for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
@@ -421,22 +421,26 @@ public class NFeServiceImpl implements NFeService {
 									throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
 								} else {
 									this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasContribuinteEmitente);
+									notasGeradas = true;
+									break;
 								}
 								
 							}
 							
 							if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS)) {			
 								this.gerarNotaFiscalUnificada(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
+								notasGeradas = true;
+								break;
 							} else {
 								this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotas);
+								notasGeradas = true;
+								break;
 							}
 							
-							notaGerada = true;
-							break;
 						}
 					}
 					
-					if(!notaGerada) {
+					if(!notasGeradas) {
 						throw new ValidacaoException(TipoMensagem.ERROR, "Natureza de Operação não está configurada adequadamente para o Regime Especial.");
 					}
 				}
