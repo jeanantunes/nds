@@ -404,7 +404,6 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	this.enviarDataDeLancamentoUnico = function(index) {
 		
-		
 		var data = [];
 		
 		data.push({name: 'produtoLancamento.id', 					   value: T.lancamentosPaginacao[index].id});
@@ -417,12 +416,22 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
 				data,
-				function() {
+				function(retorno) {
+					
 					
 					T.atualizarResumoBalanceamento();
 					T.checkUncheckLancamentos();
-					
 					T.lancamentosPaginacao[index].novaDataOriginal = T.lancamentosPaginacao[index].novaDataLancamento;
+					
+					if (retorno.info) {
+
+						   exibirMensagem(
+								   "WARNING", 
+								   retorno.info
+						   );
+					}
+					
+                  
 				},
 				function() {
 					
