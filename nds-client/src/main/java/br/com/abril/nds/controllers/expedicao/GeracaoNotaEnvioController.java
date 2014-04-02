@@ -290,7 +290,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	
 		byte[] notasGeradas = null;
 		try {
-			notasGeradas = nfeService.obterNEsPDF(notasEnvio, false, filtro.getIntervaloMovimento());
+			notasGeradas = nfeService.obterNEsPDF(notasEnvio, true, filtro.getIntervaloMovimento());
 		} catch(Exception e) {
 			LOGGER.error("Erro ao gerar Nota de Envio.", e);
 			if(e != null && e.getLocalizedMessage() != null) {

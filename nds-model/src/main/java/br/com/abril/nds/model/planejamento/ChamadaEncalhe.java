@@ -164,7 +164,6 @@ public class ChamadaEncalhe implements Serializable {
 		int result = 1;
 		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
 		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
-		result = prime * result + ((this.getChamadaEncalheCotas() == null) ? 0 : this.getChamadaEncalheCotas().hashCode());
 		result = prime * result + ((this.getLancamentos() == null) ? 0 : this.getLancamentos().hashCode());
 		result = prime * result + ((this.getSequencia() == null) ? 0 : this.getSequencia().hashCode());
 		return result;
