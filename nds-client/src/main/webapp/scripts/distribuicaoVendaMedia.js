@@ -677,8 +677,13 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		    //usado para exibir as variaveis do estudo
             
 			myWindow = window.open('', '_blank');
-            myWindow.document.write(result.list[0]);
-            myWindow.focus();
+			
+			if(myWindow && myWindow.document) {
+				myWindow.document.write(result.list[0]);
+				myWindow.focus();
+			} else {
+				exibirMensagem("WARNING", ["Ajuste as configurações de popup no browser."]);
+			}
             
             var isLiberado = result.list[2];
             	

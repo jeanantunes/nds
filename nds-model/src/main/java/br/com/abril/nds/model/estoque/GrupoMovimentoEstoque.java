@@ -140,9 +140,14 @@ public enum GrupoMovimentoEstoque  {
 	FALTA_EM_COTA(OperacaoEstoque.SAIDA, Dominio.COTA, TipoEstoque.LANCAMENTO),
 	
 	/**
+	 * Falta em pacote direcionada para cota
+	 */
+	FALTA_EM_DIRECIONADA_PARA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.COTA),
+	
+	/**
 	 * Contra-partida dos movimentos de falta, quando direcionados para cota.
 	 */
-	FALTA_PARA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
+	FALTA_EM_DIRECIONADA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
 	
 	/**
 	 * Contra-partida dos movimentos de falta, quando direcionados para cota.

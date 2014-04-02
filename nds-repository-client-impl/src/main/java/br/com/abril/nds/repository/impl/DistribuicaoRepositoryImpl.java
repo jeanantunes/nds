@@ -38,19 +38,16 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" tpClassProd.DESCRICAO as classificacao,")
 		.append(" prod.PACOTE_PADRAO as pctPadrao,")
 		.append(" pessoa.NOME_FANTASIA as nomeFornecedor,")
-//		.append(" estoqueProdJuram.QTDE as juram,")
 		.append(" sum(estoqueProdJuram.QTDE) AS juram,")
 		.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
 		.append(" estoqueProd.QTDE as estoque,")
 		.append(" lanc.REPARTE_PROMOCIONAL as promo,")
-		//.append(" lanc.DATA_LCTO_PREVISTA as dataLanctoSemFormatacao,")
 		.append(" lanc.DATA_LCTO_DISTRIBUIDOR as dataLanctoSemFormatacao,")
 		.append(" case estudo.liberado when 1 then 'LIBERADO'")
 		.append(" else ''")
 		.append(" end as liberado,")
 		.append(" estudo.ID as idEstudo,")
 		.append(" estudo.data_lancamento as dataLancamentoEstudo,")
-		//.append(" lanc.REPARTE as reparte,")
 		.append("case lanc.REPARTE when 0 then case plp.NUMERO_PERIODO when 1 then (select reparte from lancamento where id = lanc.id) - lanc.REPARTE_PROMOCIONAL else estoqueProd.QTDE end else lanc.REPARTE end as reparte,") 
 		.append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib,")
 		.append(" lanc.REPARTE as lancto,")
@@ -95,7 +92,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 	 		sql.append(" and forn.id in (:idFornecedores)");
 	 	}
 	 	
-	 	sql.append(" group by lanc.id ");
+	 	sql.append(" group by lanc.id, estudo.ID ");
 	 	sql.append(" order by codigoProduto, numeroEdicao");
 	 	
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
