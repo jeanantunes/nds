@@ -297,10 +297,10 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 	public NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoOperacao tipoOperacao) {
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select nat from NaturezaOperacao nat ")
+		sql.append(" from NaturezaOperacao nat ")
 		   .append(" where nat.tipoAtividade = :tipoAtividade ")
 		   .append(" and nat.tipoDestinatario = :tipoDestinatario ")
-		   .append(" and nat.tipoOperacao = : tipoOperacao ");
+		   .append(" and nat.tipoOperacao = :tipoOperacao ");
 		
 		
 		Query query = getSession().createQuery(sql.toString());
