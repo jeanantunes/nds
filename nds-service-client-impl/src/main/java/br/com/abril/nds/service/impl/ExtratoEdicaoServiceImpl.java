@@ -144,7 +144,9 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		String novaDescricao = itemExtratoEdicao.getDescMovimento();
 		
 		if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())
-				&& !diferenca.getTipoDiferenca().isAlteracaoReparte()) {
+				&& !diferenca.getTipoDiferenca().isAlteracaoReparte()
+				&& !(diferenca.getTipoDiferenca().equals(TipoDiferenca.FALTA_EM_DIRECIONADA_COTA) 
+						|| diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA))) {
 			
 			novaDescricao = novaDescricao + " COTA";
 		}

@@ -82,7 +82,7 @@ public interface MapaAbastecimentoService {
 	 * @param filtro
 	 * @return
 	 */
-	MapaProdutoCotasDTO obterMapaDeImpressaoPorProdutoQuebrandoPorCota(
+	List<MapaProdutoCotasDTO> obterMapaDeImpressaoPorProdutoQuebrandoPorCota(
 			FiltroMapaAbastecimentoDTO filtro);
 	
 	/**

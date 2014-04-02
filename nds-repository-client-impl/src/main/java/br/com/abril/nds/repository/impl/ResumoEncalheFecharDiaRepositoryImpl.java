@@ -2,11 +2,9 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.hibernate.Query;
@@ -24,7 +22,6 @@ import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ResumoEncalheFecharDiaRepository;
-import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
@@ -320,7 +317,8 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         															TipoDiferenca.GANHO_DE.name(), 
         															TipoDiferenca.GANHO_EM.name()));
         
-        query.setParameterList("tipoDiferencaFaltas", Arrays.asList(TipoDiferenca.FALTA_DE.name(), 
+        query.setParameterList("tipoDiferencaFaltas", Arrays.asList(TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.name(),
+        															TipoDiferenca.FALTA_DE.name(), 
         															TipoDiferenca.FALTA_EM.name(), 
         															TipoDiferenca.PERDA_DE.name(), 
         															TipoDiferenca.PERDA_EM.name()));

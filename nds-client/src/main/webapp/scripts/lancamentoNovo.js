@@ -201,6 +201,10 @@ var lancamentoNovoController = $.extend(true, {
 					
 					$("#tipoDiferenca", lancamentoNovoController.workspace).val('SOBRA_EM');
 					
+				} else if (diferenca.tipoDiferenca == 'FALTA_EM_DIRECIONADA_COTA') {
+					
+					$("#tipoDiferenca", lancamentoNovoController.workspace).val('FALTA_EM');
+					
 				} else {
 				
 					$("#tipoDiferenca", lancamentoNovoController.workspace).val(diferenca.tipoDiferenca);
@@ -445,6 +449,10 @@ var lancamentoNovoController = $.extend(true, {
 			$("#nomeCotaNota", lancamentoNovoController.workspace).val(rateio.nomeCota);
 			$("#rateioIDInputHiddenNota", lancamentoNovoController.workspace).val(rateio.idRateio);
 			
+			if(result.diferenca.tipoDirecionamento == 'NOTA' && !result.diferenca.qtdeEstoque) {
+				result.diferenca.qtdeEstoque = rateio.reparteCota;
+			}
+			
 			$(".viewNotaEnvio", lancamentoNovoController.workspace).attr("disabled", "disabled");
 			$("#incluirNovosProduto", lancamentoNovoController.workspace).hide();
 			$("#divDataNotaEnvio",lancamentoNovoController.workspace).find("img").hide();
@@ -550,9 +558,20 @@ var lancamentoNovoController = $.extend(true, {
 		if ($(".prodComCota", lancamentoNovoController.workspace).css("display") == "block"){
 			
 			$(".prodComCota", lancamentoNovoController.workspace).hide();
+			
+			$('#paraCota', lancamentoNovoController.workspace).prop('checked', false);
+			$('#paraCota', lancamentoNovoController.workspace).prop('disabled', false);
+			$('#paraEstoque', lancamentoNovoController.workspace).prop('checked', true);
+			$('#paraEstoque', lancamentoNovoController.workspace).prop('disabled', false);
+			
 		} else {
 			
 			$(".prodComCota", lancamentoNovoController.workspace).show();
+			
+			$('#paraCota', lancamentoNovoController.workspace).prop('checked', true);
+			$('#paraCota', lancamentoNovoController.workspace).prop('disabled', true);
+			$('#paraEstoque', lancamentoNovoController.workspace).prop('checked', false);
+			$('#paraEstoque', lancamentoNovoController.workspace).prop('disabled', true);
 			
 			$("#ui-dialog-title-dialogNovasDiferencas", lancamentoNovoController.workspace).text("Lançamento Faltas e Sobras - Cota");
 		}
@@ -811,10 +830,13 @@ var lancamentoNovoController = $.extend(true, {
 		if (direcionadoParaEstoque
 				|| (params && params.direcionadoParaEstoque)
 				|| tipoDiferenca == 'FALTA_DE'
-				|| tipoDiferenca == 'FALTA_EM'
 				|| lancamentoNovoController.isTipoDiferencaAlteracaoReparte(tipoDiferenca)) {
 			
 			data.push({name: "tipoDiferenca", value: tipoDiferenca});
+		
+		} else if (tipoDiferenca == 'FALTA_EM') {
+			
+			data.push({name: "tipoDiferenca", value: 'FALTA_EM_DIRECIONADA_COTA'});
 			
 		} else if (tipoDiferenca == 'SOBRA_DE') {
 			
@@ -854,6 +876,14 @@ var lancamentoNovoController = $.extend(true, {
 	cadastrarDiferencaNotaEnvio:function(isBotaoIncluirNovo){
 		
 		var tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
+		
+		if ($("#checkboxLancCota").is(':checked')) {	
+			if(tipoDiferenca == 'FALTA_EM') {
+				tipoDiferenca = 'FALTA_EM_DIRECIONADA_COTA';
+			} else if (tipoDiferenca == 'SOBRA_EM') {
+				tipoDiferenca = 'SOBRA_EM_DIRECIONADA_COTA';
+			}
+		}
 		
 		var dataNotaEnvio = $("#dateNotaEnvio", lancamentoNovoController.workspace).val();
 		
@@ -1417,7 +1447,8 @@ var lancamentoNovoController = $.extend(true, {
 			valorReparteAtual = valorReparte + valorDiferencaProduto;
 			
 		} else if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "FALTA_DE"
-			|| $("#tipoDiferenca", lancamentoNovoController.workspace).val() == "FALTA_EM") {
+				|| $("#tipoDiferenca", lancamentoNovoController.workspace).val() == "FALTA_EM"
+				|| $("#tipoDiferenca", lancamentoNovoController.workspace).val() == "FALTA_EM_DIRECIONADA_COTA") {
 			
 			valorReparteAtual = valorReparte - valorDiferencaProduto;
 
@@ -1465,6 +1496,11 @@ var lancamentoNovoController = $.extend(true, {
 			$("#checkboxLancCota", this.workspace).disable();	
 			$("#paraEstoque", this.workspace).check();
 			
+			$('#paraCota', lancamentoNovoController.workspace).prop('checked', false);
+			$('#paraCota', lancamentoNovoController.workspace).prop('disabled', false);
+			$('#paraEstoque', lancamentoNovoController.workspace).prop('checked', true);
+			$('#paraEstoque', lancamentoNovoController.workspace).prop('disabled', false);
+			
 		} else if (lancamentoNovoController.isTipoDiferencaAlteracaoReparte(value)) {
 			
 			$(".alteracaoReparte", this.workspace).show();
@@ -1473,13 +1509,18 @@ var lancamentoNovoController = $.extend(true, {
 			
 			lancamentoNovoController.buscarEstoquesAlteracaoReparte();
 			
+			$('#paraCota', lancamentoNovoController.workspace).prop('checked', false);
+			$('#paraCota', lancamentoNovoController.workspace).prop('disabled', false);
+			$('#paraEstoque', lancamentoNovoController.workspace).prop('checked', true);
+			$('#paraEstoque', lancamentoNovoController.workspace).prop('disabled', false);
+			
 		} else {			
 		
 			$(".view-cota", this.workspace).show();
 			$(".view-estouque", this.workspace).show();
 			$(".prodSemCota", this.workspace).show();
 			$(".lctoPorCota", this.workspace).show();
-
+			
 			if (direcionamento && direcionamento === 'COTA') {
 				$("#paraCota", this.workspace).check();
 				$("#fieldCota", lancamentoNovoController.workspace).show();
