@@ -1421,7 +1421,7 @@ var COTA_CPF = $.extend(true, {
         $("#nacionalidade", this.workspace).val(result.nacionalidade);
         $("#natural", this.workspace).val(result.natural);
         $("#emailNFCPF", this.workspace).val(result.emailNF);
-        $("#emiteNFECPF", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
+        $("#emiteNFE", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
         $("#contribuinteICMS", this.workspace).attr("checked", (result.contribuinteICMS == true)?"checked":null);
         $("#classificacaoSelecionadaCPF", this.workspace).val(result.classificacaoSelecionada);
         $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoDistribuicaoCota);

@@ -159,7 +159,7 @@ public class NFeServiceImpl implements NFeService {
     
     @Override
     @Transactional
-    public byte[] obterNEsPDF(final List<NotaEnvio> listaNfeImpressaoNE, final boolean isNECA, final Intervalo<Date> intervaloLancamento) {
+    public byte[] obterNEsPDF(final List<NotaEnvio> listaNfeImpressaoNE, final boolean dispensaEmissaoNFe, final Intervalo<Date> intervaloLancamento) {
         
         final List<NfeImpressaoWrapper> listaNEWrapper = new ArrayList<NfeImpressaoWrapper>();
         
@@ -180,7 +180,7 @@ public class NFeServiceImpl implements NFeService {
         
         try {
             
-            return gerarDocumentoIreportNE(listaNEWrapper, false);
+            return gerarDocumentoIreportNE(listaNEWrapper, dispensaEmissaoNFe, false);
             
         } catch(final Exception e) {
             LOGGER.error("Falha na geração dos arquivos NE!" + e.getMessage(), e);
@@ -241,7 +241,7 @@ public class NFeServiceImpl implements NFeService {
 		return urlDanfe;
 	}
 
-	private byte[] gerarDocumentoIreportNE(final List<NfeImpressaoWrapper> list, final boolean indEmissaoDepec) throws JRException, URISyntaxException {
+	private byte[] gerarDocumentoIreportNE(final List<NfeImpressaoWrapper> list, boolean dispensaEmissaoNFe, final boolean indEmissaoDepec) throws JRException, URISyntaxException {
 
 		final JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 
@@ -254,15 +254,18 @@ public class NFeServiceImpl implements NFeService {
 		switch (nenecaDANFE) {
 			case MODELO_1:
 				
-				path.concat("/ne_modelo1_wrapper.jasper");
+				path = path.concat("ne_modelo1_wrapper.jasper");
 				break;
 	
 			case MODELO_2:
-				path.concat("/ne_modelo2_wrapper.jasper");
+				path = path.concat("ne_modelo2_wrapper.jasper");
 				break;	
 				
 			case DANFE:
-				path.concat("/danfeWrapper.jasper");
+				if(dispensaEmissaoNFe) {
+					throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do documento da NE. O Tipo de documento deve ser Nota de Envio.");
+				}
+				path = path.concat("danfeWrapper.jasper");
 				break;	
 			default:
 				throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do documento da NE");
