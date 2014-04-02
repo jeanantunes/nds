@@ -141,6 +141,8 @@ var lancamentoController = $.extend(true, {
 	
 	pesquisar : function(confirmado) { 
 		
+		$('#selecionarTodosID', lancamentoController.workspace).uncheck();
+		
 		$.postJSON(
 			contextPath + "/estoque/diferenca/lancamento/limparSessao", 
 			{confirmado:confirmado},

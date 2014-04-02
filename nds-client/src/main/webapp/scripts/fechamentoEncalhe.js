@@ -1258,7 +1258,7 @@ var fechamentoEncalheController = $.extend(true, {
 		 });
 		 */
 		 
-		return data;
+		return JSON.stringify(data);
 	},
 
 	exibirMensagemBoxNaoSalvo: function() {

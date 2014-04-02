@@ -1852,7 +1852,7 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
                 
                 try {
                     
-                    this.verificaDataOperacao(data);
+                    this.verificaDataOperacao(data,null,null);
                     
                     datasDistribuicaoDoFornecedor.add(data);
                     
@@ -1869,10 +1869,10 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
         return datasDistribuicaoComOperacao;
     }
     
-    @Override
     @Transactional
-    public void verificaDataOperacao(final Date data) {
+    public String verificaDataOperacao( Date data,Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor) {
         
+    	String msg ="";
         final Calendar cal = Calendar.getInstance();
         
         cal.setTime(data);
@@ -1900,6 +1900,17 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
                     TipoMensagem.WARNING,
                     "A data de lançamento deve ser uma data em que o distribuidor realiza operação! (Feriado Municipal sem oeperação)");
         }
+        
+        if(idFornecedor!=null && operacaoDistribuidor!=null){
+          if (!calendarioService.isDiaOperante(data, idFornecedor, operacaoDistribuidor)) {
+            
+        	msg= "A data de lançamento ("+data+") deve ser uma data em que o distribuidor realiza operação!"+"("+operacaoDistribuidor+")";
+            //throw new ValidacaoException(
+                    //TipoMensagem.WARNING,
+                    //"A data de lançamento ("+data+") deve ser uma data em que o distribuidor realiza operação!"+"("+operacaoDistribuidor+")");
+          }
+        }
+        return msg;
     }
     
     @Override

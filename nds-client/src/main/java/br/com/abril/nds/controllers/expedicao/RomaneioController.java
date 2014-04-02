@@ -162,12 +162,14 @@ public class RomaneioController extends BaseController {
 		
 		filtro.setNomesProduto(nomesProduto);
 		
+		filtro.setIsImpressao(true);
+		
 		List<RomaneioDTO> listaRomaneios = this.romaneioService.buscarRomaneio(filtro, true);
 		
-		FileExporter.to("romaneio", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,
-				listaRomaneios, RomaneioDTO.class, this.httpResponse);
+		FileExporter.to("romaneio", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listaRomaneios, RomaneioDTO.class, this.httpResponse);
 		
 		result.nothing();
+		
 	}
 	
 	@Get

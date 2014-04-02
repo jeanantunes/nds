@@ -117,7 +117,7 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	 */
 	public BigDecimal getPrecoComDesconto() {
 		
-		this.setPrecoComDesconto(this.precoVenda.subtract(this.desconto!=null?(this.desconto.multiply(this.precoVenda)):BigDecimal.ZERO));
+		this.setPrecoComDesconto(this.precoVenda.subtract(this.desconto!=null?(this.desconto.divide(new BigDecimal(100)).multiply(this.precoVenda)):BigDecimal.ZERO));
 		
 		return precoComDesconto;
 	}

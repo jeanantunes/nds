@@ -154,11 +154,10 @@ public class DebitoCreditoCotaController extends BaseController{
 	@Path("/obterRoteirosBox")
 	public void obterRoteirosBox(Long idBox){
 		listaRoteiros.clear();
-		if (idBox!=null){
-			List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiroDeBox(idBox);
-			for(Roteiro item:roteiros){
-				listaRoteiros.add(new ItemDTO<Long,String>(item.getId(), item.getDescricaoRoteiro()));
-			}
+		
+		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiroDeBox(idBox);
+		for(Roteiro item:roteiros){
+			listaRoteiros.add(new ItemDTO<Long,String>(item.getId(), item.getDescricaoRoteiro()));
 		}
 		result.use(Results.json()).from(listaRoteiros, "result").recursive().serialize();
 	}
@@ -216,50 +215,44 @@ public class DebitoCreditoCotaController extends BaseController{
 			                                   Date dataPeriodoInicial,
 			                                   Date dataPeriodoFinal){
     	
-    	if ((idBox==null || idBox==0) && (idRoteiro==null || idRoteiro==0) && (idRota==null || idRota==0)){
-    		carregarNovosMovimentos();
-    	}
-    	else{
+		if (grupoMovimento == GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO){
     		
-    		if (grupoMovimento == GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO){
-        		
-    			if (percentual == null) {
-    				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Percentual].");
-    			}
-    			
-    			if (baseCalculo == null) {
-    				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar a [Base de Cálculo].");
-    			}
-    			
-    			if (dataPeriodoInicial == null) {
-    				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Período para Cálculo].");
-    			}
-    			
-    			if (dataPeriodoFinal == null) {
-    				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Período para Cálculo].");
-    			}
-    			
-    			if (DateUtil.isDataInicialMaiorDataFinal(dataPeriodoInicial, dataPeriodoFinal)) {
-    				throw new ValidacaoException(TipoMensagem.WARNING, "A [Data Final] deve susceder a [Data Inicial].");
-    			}
-        	}
+			if (percentual == null) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Percentual].");
+			}
+			
+			if (baseCalculo == null) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar a [Base de Cálculo].");
+			}
+			
+			if (dataPeriodoInicial == null) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Período para Cálculo].");
+			}
+			
+			if (dataPeriodoFinal == null) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Período para Cálculo].");
+			}
+			
+			if (DateUtil.isDataInicialMaiorDataFinal(dataPeriodoInicial, dataPeriodoFinal)) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "A [Data Final] deve susceder a [Data Inicial].");
+			}
+    	}
 
-    		List<DebitoCreditoDTO> listaDebitoCredito = this.debitoCreditoCotaService.obterDadosLancamentoPorBoxRoteiroRota(idBox, idRoteiro, idRota, percentual, baseCalculo, dataPeriodoInicial, dataPeriodoFinal);
-            
-    		if (listaDebitoCredito==null || listaDebitoCredito.size()<=0){
-    			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma informação encontrada para os filtros escolhidos.");
-    		}
-    		
-    		int qtd = this.debitoCreditoCotaService.obterQuantidadeCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
-            
-    		TableModel<CellModelKeyValue<DebitoCreditoDTO>> tableModel =
-    				new TableModel<CellModelKeyValue<DebitoCreditoDTO>>();
-    		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDebitoCredito));
-    		tableModel.setTotal(qtd);
-    		tableModel.setPage(1);
-    		
-    		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-    	}
+		List<DebitoCreditoDTO> listaDebitoCredito = this.debitoCreditoCotaService.obterDadosLancamentoPorBoxRoteiroRota(idBox, idRoteiro, idRota, percentual, baseCalculo, dataPeriodoInicial, dataPeriodoFinal);
+        
+		if (listaDebitoCredito==null || listaDebitoCredito.size()<=0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma informação encontrada para os filtros escolhidos.");
+		}
+		
+		int qtd = this.debitoCreditoCotaService.obterQuantidadeCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
+        
+		TableModel<CellModelKeyValue<DebitoCreditoDTO>> tableModel =
+				new TableModel<CellModelKeyValue<DebitoCreditoDTO>>();
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDebitoCredito));
+		tableModel.setTotal(qtd);
+		tableModel.setPage(1);
+		
+		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
     }
     
     /**

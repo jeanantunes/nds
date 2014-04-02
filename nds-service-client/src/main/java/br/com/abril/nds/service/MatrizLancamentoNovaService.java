@@ -7,6 +7,7 @@ import java.util.Map;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.ConfirmacaoVO;
 
@@ -59,7 +60,6 @@ public interface MatrizLancamentoNovaService {
     
     void voltarConfiguracaoInicial(Date dataLancamento, BalanceamentoLancamentoDTO balanceamentoLancamento, Usuario usuario);
     
-    void verificaDataOperacao(Date data);
     
     boolean isProdutoConfirmado(ProdutoLancamentoDTO produtoLancamento);
     
@@ -74,5 +74,7 @@ public interface MatrizLancamentoNovaService {
     void validarDiaSemanaDistribuicaoFornecedores(Date dataDistribuicao);
     
     void reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario);
+
+	String verificaDataOperacao(Date data, Long idFornecedor,OperacaoDistribuidor operacaoDistribuidor);
     
 }

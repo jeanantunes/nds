@@ -367,8 +367,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             for (final CotaFaturamentoDTO item : cotasFaturamento) {
                 if (baseCalculo == BaseCalculo.FATURAMENTO_BRUTO) {
                     res.put(item.getIdCota(), item.getFaturamentoBruto());
-                }
-                if (baseCalculo == BaseCalculo.FATURAMENTO_LIQUIDO) {
+                } else {
                     res.put(item.getIdCota(), item.getFaturamentoLiquido());
                 }
             }
