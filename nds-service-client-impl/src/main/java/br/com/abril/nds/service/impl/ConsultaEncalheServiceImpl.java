@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -133,15 +134,15 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		info.setListaDebitoCreditoCota(carregaDebitoCreditoCotaVO(listaDebitoCreditoCotaDTO));
 		
-		info.setValorVendaDia(valorVendaDia);
+		info.setValorVendaDia(valorVendaDia.setScale(2, RoundingMode.HALF_UP));
 		
-		info.setValorDebitoCredito(valorDebitoCredito);
+		info.setValorDebitoCredito(valorDebitoCredito.setScale(2, RoundingMode.HALF_UP));
 		
-		info.setValorPagar(valorPagar);
+		info.setValorPagar(valorPagar.setScale(2, RoundingMode.HALF_UP));
 		
-		info.setValorReparte(valorTotalReparte);
+		info.setValorReparte(valorTotalReparte.setScale(2, RoundingMode.HALF_UP));
 		
-		info.setValorEncalhe(valorTotalEncalhe);
+		info.setValorEncalhe(valorTotalEncalhe.setScale(2, RoundingMode.HALF_UP));
 		
 		return info;
 	}
