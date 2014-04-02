@@ -592,9 +592,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 			page: result.listaDebitoCredito.page, total: result.listaDebitoCredito.total, rows: ConferenciaEncalheCont.formatarDadosDebitoCredito(result.listaDebitoCredito.rows)
 		});
 		
-		$("#totalReparte", ConferenciaEncalheCont.workspace).text(parseFloat(result.reparte).toFixed(2));
-		$("#totalEncalhe", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorEncalhe).toFixed(2));
-		$("#valorVendaDia", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorVendaDia).toFixed(2));
+		$("#totalReparte", ConferenciaEncalheCont.workspace).text(parseFloat(result.reparte).toFixed(4));
+		$("#totalEncalhe", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorEncalhe).toFixed(4));
+		$("#valorVendaDia", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorVendaDia).toFixed(4));
 		$("#totalOutrosValores", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 		$("#valorAPagar", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 		
@@ -704,9 +704,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				$("#valorTotalConferencia_" + index, ConferenciaEncalheCont.workspace).text(parseFloat(result.conf.valorTotal).toFixed(4));
 				
-				$("#totalReparte", ConferenciaEncalheCont.workspace).text(parseFloat(result.reparte).toFixed(2));
-				$("#totalEncalhe", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorEncalhe).toFixed(2));
-				$("#valorVendaDia", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorVendaDia).toFixed(2));
+				$("#totalReparte", ConferenciaEncalheCont.workspace).text(parseFloat(result.reparte).toFixed(4));
+				$("#totalEncalhe", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorEncalhe).toFixed(4));
+				$("#valorVendaDia", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorVendaDia).toFixed(4));
 				$("#totalOutrosValores", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 				$("#valorAPagar", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 				
