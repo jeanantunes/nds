@@ -288,6 +288,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		query.setParameterList("grupoMovimentoEstoque", (new GrupoMovimentoEstoque[]{ 
 				GrupoMovimentoEstoque.SOBRA_EM
 				, GrupoMovimentoEstoque.SOBRA_DE
+				, GrupoMovimentoEstoque.FALTA_EM_DIRECIONADA_PARA_COTA
 				, GrupoMovimentoEstoque.FALTA_EM
 				, GrupoMovimentoEstoque.FALTA_DE
 				, GrupoMovimentoEstoque.SOBRA_DE_DIRECIONADA_PARA_COTA
