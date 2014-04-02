@@ -220,7 +220,8 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		GrupoMovimentoEstoque gme = ((TipoMovimentoEstoque)(me).getTipoMovimento()).getGrupoMovimentoEstoque();
 		
-		if ( gme.equals( GrupoMovimentoEstoque.FALTA_EM ) ) {
+		if ( gme.equals( GrupoMovimentoEstoque.FALTA_EM ) 
+				|| gme.equals( GrupoMovimentoEstoque.FALTA_EM_DIRECIONADA_PARA_COTA ) ) {
 			item.setTipoAcerto( 3 );
 		} else if ( gme.equals( GrupoMovimentoEstoque.FALTA_DE ) ) {			
 			item.setTipoAcerto( 4 );
