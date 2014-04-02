@@ -26,12 +26,10 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro, 
-			boolean limitar) {
+	public List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro, boolean limitar) {
 		
 		Query query = this.createQueryBuscarRomaneio(filtro, true);
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				RomaneioDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(RomaneioDTO.class));
 		
 		// Realiza a paginação:
 		if (limitar) {
@@ -59,8 +57,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	 * 
 	 * @return
 	 */
-	private Query createQueryBuscarRomaneio(FiltroRomaneioDTO filtro, 
-			boolean ordenarConsulta) {
+	private Query createQueryBuscarRomaneio(FiltroRomaneioDTO filtro, boolean ordenarConsulta) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -97,7 +94,8 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(getSqlFromEWhereRomaneio(filtro));
 		
 		if (ordenarConsulta) {
-			hql.append(getOrderBy(filtro, false));
+			
+			hql.append(getOrderBy(filtro, filtro.getIsImpressao()));
 		}
 		
 		Query query =  getSession().createQuery(hql.toString());
@@ -230,7 +228,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				hql.insert(0, ", ");
 			}
 			
-			hql.insert(0, " box.codigo asc, rotaPDV.ordem "); //roteiro.ordem asc, roteiro.descricaoRoteiro asc, rota.ordem asc, rota.descricaoRota asc, cota.numeroCota "); , rotaPDV.ordem 
+			hql.insert(0, " box.codigo asc, rota.ordem, rotaPDV.ordem "); //roteiro.ordem asc, roteiro.descricaoRoteiro asc, rota.ordem asc, rota.descricaoRota asc, cota.numeroCota "); , rotaPDV.ordem 
 		}
 		
 		if (hql.length() > 0) {
@@ -328,13 +326,11 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RomaneioDTO> buscarRomaneiosParaExportacao(
-			FiltroRomaneioDTO filtro) {
+	public List<RomaneioDTO> buscarRomaneiosParaExportacao(FiltroRomaneioDTO filtro) {
 		
 		Query query = this.createQueryBuscarRomaneioParaExportacao(filtro);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				RomaneioDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(RomaneioDTO.class));
 		
 		return query.list();
 	}
@@ -348,8 +344,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	 * 
 	 * @return
 	 */
-	private Query createQueryBuscarRomaneioParaExportacao(
-			FiltroRomaneioDTO filtro) {
+	private Query createQueryBuscarRomaneioParaExportacao(FiltroRomaneioDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
