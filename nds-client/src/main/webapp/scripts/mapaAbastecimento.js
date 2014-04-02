@@ -497,8 +497,8 @@
 			T.displayEntregador(false);
 			break;
 		case 'PRODUTO':
-			T.bloquearCampos('box','rota','roteiro', 'codigoCota','nomeCota','quebraPorCota');
-			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
+			T.bloquearCampos('edicao', 'box','rota','roteiro', 'codigoCota','nomeCota','quebraPorCota');
+			T.desbloquearCampos('codigoProduto','nomeProduto');
 			T.displayEntregador(false);
 			T.desbloquearLinkProdutos();
 			break;
