@@ -75,6 +75,6 @@ public interface MatrizLancamentoNovaService {
     
     void reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario);
 
-	void verificaDataOperacao(Date data, Long idFornecedor,OperacaoDistribuidor operacaoDistribuidor);
+	String verificaDataOperacao(Date data, Long idFornecedor,OperacaoDistribuidor operacaoDistribuidor);
     
 }
