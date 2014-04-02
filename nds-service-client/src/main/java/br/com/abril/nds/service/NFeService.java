@@ -22,7 +22,7 @@ public interface NFeService {
 
 	public byte[] obterDanfesPDF(List<NotaFiscal> listaNfeImpressaoDanfe, boolean indEmissaoDepec);
 	
-	public byte[] obterNEsPDF(List<NotaEnvio> listaNfeImpressaoNE, boolean isNECA, Intervalo<Date> intervalo);
+	public byte[] obterNEsPDF(List<NotaEnvio> listaNfeImpressaoNE, boolean isNECA, Intervalo<Date> intervalo) throws Exception;
 	
 	public NotaFiscal obterNotaFiscalPorId(NotaFiscal notaFiscal);
 	

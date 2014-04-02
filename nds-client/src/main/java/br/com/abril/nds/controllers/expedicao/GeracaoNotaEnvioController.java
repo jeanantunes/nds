@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,9 +22,11 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFe;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
@@ -30,14 +34,20 @@ import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
+import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
@@ -95,6 +105,12 @@ public class GeracaoNotaEnvioController extends BaseController {
     @Autowired
     private HttpServletResponse httpResponse;
 
+    @Autowired
+    private ParametroSistemaRepository parametroSistemaRepository;
+
+    @Autowired
+    protected CotaService cotaService;
+    
     private static final String FILTRO_CONSULTA_NOTA_ENVIO = "filtroConsultaNotaEnvio";
 
     private static final String COTAS_ID = "cotasId";
@@ -251,6 +267,9 @@ public class GeracaoNotaEnvioController extends BaseController {
     	filtroNfe.setListIdFornecedor(filtro.getIdFornecedores());
         
     	byte[] notasGeradas = null;
+    	List<NotaFiscal> notas = new ArrayList<NotaFiscal>();
+    	
+    	Map<String, ParametroSistema> parametrosSistema = parametroSistemaRepository.buscarParametroSistemaGeralMap();
     	
         if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
         	
@@ -260,18 +279,29 @@ public class GeracaoNotaEnvioController extends BaseController {
 				LOGGER.error("Erro ao gerar NF-e's.", e);
 			}
         } else {
-        	
+            List<Cota> cotasContribuinteEmitente = new ArrayList<Cota>();
         	for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 				if(dtnf.getNaturezaOperacao().contains(natOp)) {
-					if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
-						
-						return gerarNotasEnvioREDispensaEmissao(filtro);
-						
-					} else {
-						
-						nfeService.gerarNotaFiscal(filtroNfe);
-						
-					}
+				    
+				    if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+				        // obter as cotas que estão na tela pelo id das cotas
+			            List<Cota> cotas = this.cotaService.obterConjuntoCota(filtroNfe);
+			            for (Cota cota : cotas) {
+			                if(cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() || cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica()){
+			                    cotasContribuinteEmitente.add(cota);
+			                }
+			            }
+			            
+			            cotas.removeAll(cotasContribuinteEmitente);
+			            
+			            if(!cotasContribuinteEmitente.isEmpty()){
+			                this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, natOp, parametrosSistema, cotasContribuinteEmitente);
+			            }
+
+			            gerarNotasEnvioREDispensaEmissao(filtro);
+			            
+			        }
+				    
 				}
         	}
         }
@@ -298,7 +328,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 			} else if(e != null && e.getMessage() != null) {
 				throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 			} else {
-				throw e;
+			    throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 			}
 		}
 		return notasGeradas;

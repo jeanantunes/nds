@@ -134,28 +134,44 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		Map<Long,BigDecimal> cotasFaturamentos = null;
 		
-		Long indice=0l;
-		for (Cota itemCota:cotas){
+		if( (percentual != null) && (baseCalculo != null) && (dataPeriodoInicial != null) && (dataPeriodoFinal!=null) ){
+		    
+		    cotasFaturamentos = this.movimentoFinanceiroCotaService.obterFaturamentoCotasPeriodo(
+                    cotas, baseCalculo, dataPeriodoInicial, dataPeriodoFinal);
+		}
+		
+		for (int index = 0 ; index < cotas.size() ; index++){
 
+		    Cota itemCota = cotas.get(index);
+		    
 			percFat = null;
 			
-			indice++;
-
-			if((percentual!=null)&&( baseCalculo!=null)&&( dataPeriodoInicial!=null)&&(dataPeriodoFinal!=null)){
-				
-				cotasFaturamentos = this.movimentoFinanceiroCotaService.obterFaturamentoCotasPeriodo(cotas, baseCalculo, dataPeriodoInicial, dataPeriodoFinal);
-				
-				if (cotasFaturamentos!=null && cotasFaturamentos.get(itemCota.getId())!=null){
+			if (cotasFaturamentos != null){
+			
+			    BigDecimal fat = cotasFaturamentos.get(itemCota.getId());
+			    
+				if (fat != null){
 					
-					if(cotasFaturamentos.get(itemCota.getId()).doubleValue() > 0 ){
-				        percFat = ((cotasFaturamentos.get(itemCota.getId()).divide(percTotal)).multiply(percentual));
+					if(fat.compareTo(BigDecimal.ZERO) > 0 ){
+				        percFat = fat.divide(percTotal).multiply(percentual);
 					}
 					
 				}
 			}
 			
-			listaDC.add(new DebitoCreditoDTO(indice,null,null,itemCota.getNumeroCota(),itemCota.getPessoa().getNome(),null,null,(percFat!=null?CurrencyUtil.formatarValor(percFat.doubleValue()):null),null));	
+			listaDC.add(
+			        new DebitoCreditoDTO(
+			                Long.valueOf(index),
+			                null,
+			                null,
+			                itemCota.getNumeroCota(),
+			                itemCota.getPessoa().getNome(),
+			                null,
+			                null,
+			                (percFat!=null?CurrencyUtil.formatarValor(percFat.doubleValue()):null),
+			                null));	
 		}
+		
 		return listaDC;
 	}
 

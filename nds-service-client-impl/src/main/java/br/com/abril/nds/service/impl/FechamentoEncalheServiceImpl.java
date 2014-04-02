@@ -55,8 +55,6 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalheBoxPK;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
-import br.com.abril.nds.model.fiscal.TipoDestinatario;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -930,24 +928,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         this.processarMovimentosProdutosJuramentados(dataEncalhe, usuario, distribuidorRepository
                 .obterDataOperacaoDistribuidor());
-        
-        
-        Distribuidor distribuidor = distribuidorRepository.obter();
-        Map<String, ParametroSistema> parametrosSistema = parametroSistemaRepository.buscarParametroSistemaGeralMap();
-        final NaturezaOperacao naturezaOperacao = naturezaOperacaoRepository.obterNaturezaOperacao(distribuidor.getTipoAtividade(), TipoDestinatario.FORNECEDOR, TipoOperacao.SAIDA);
-        
-        if(distribuidorService.obrigacaoFiscal(naturezaOperacao, distribuidor)){
-        	this.gerarNotaFiscal(dataEncalhe, distribuidor, naturezaOperacao);
-        }
-        
-        /*
-        if (ObrigacaoFiscal.COTA_TOTAL.equals(distribuidorRepository.obrigacaoFiscal())
-                || ObrigacaoFiscal.COTA_NFE_VENDA.equals(distribuidorRepository.obrigacaoFiscal())) {
-        	
-        	//FIXME: Ajustar a geracao no momento do Fechamento do Encalhe
-            this.gerarNotaFiscal(dataEncalhe);
-        }
-        */
         
         // Cobra cotas as demais cotas, no caso, as não ausentes e com centralização
         // Não gera cobrança para cotas do tipo À Vista

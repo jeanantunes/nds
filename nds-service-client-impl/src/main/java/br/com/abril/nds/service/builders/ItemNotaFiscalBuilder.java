@@ -40,7 +40,7 @@ public class ItemNotaFiscalBuilder  {
 
 	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, MovimentoEstoqueCota movimentoEstoqueCota, Map<String, TributoAliquota> tributoAliquota) {
 
-		DetalheNotaFiscal detalheNotaFiscal = null;
+		final DetalheNotaFiscal detalheNotaFiscal = new DetalheNotaFiscal();
 		
 		if(notaFiscal == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Objeto nulo.");
@@ -134,7 +134,6 @@ public class ItemNotaFiscalBuilder  {
 		}
 		
 		
-		detalheNotaFiscal = new DetalheNotaFiscal();
 		detalheNotaFiscal.setImpostos(new Impostos());
 		
 		detalheNotaFiscal.setProdutoServico(produtoServico);
@@ -327,6 +326,7 @@ public class ItemNotaFiscalBuilder  {
 			detalheNotaFiscal.getProdutoServicoPK().setNotaFiscal(notaFiscal);
 		}
 		
+		System.out.println(detalheNotaFiscal);
 	}
 	
 }

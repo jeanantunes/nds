@@ -31,7 +31,12 @@ public class NaturezaOperacaoBuilder {
 			cfop = naturezaOperacao.getCfopExterior();
 		}
 		
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDescricaoNaturezaOperacao(naturezaOperacao.getDescricao().substring(0, 58));
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getDescricaoNaturezaOperacao().length() > 57 ){
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDescricaoNaturezaOperacao(naturezaOperacao.getDescricao().substring(0, 58));
+		}else{
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDescricaoNaturezaOperacao(naturezaOperacao.getDescricao());
+		}
+		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNumeroDocumentoFiscal(naturezaOperacao.getNotaFiscalNumeroNF());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoNF(StringUtils.leftPad(naturezaOperacao.getNotaFiscalNumeroNF().toString(), 8, '0'));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setSerie(naturezaOperacao.getNotaFiscalSerie());

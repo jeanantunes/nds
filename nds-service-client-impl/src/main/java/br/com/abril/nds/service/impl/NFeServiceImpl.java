@@ -159,7 +159,7 @@ public class NFeServiceImpl implements NFeService {
     
     @Override
     @Transactional
-    public byte[] obterNEsPDF(final List<NotaEnvio> listaNfeImpressaoNE, final boolean dispensaEmissaoNFe, final Intervalo<Date> intervaloLancamento) {
+    public byte[] obterNEsPDF(final List<NotaEnvio> listaNfeImpressaoNE, final boolean dispensaEmissaoNFe, final Intervalo<Date> intervaloLancamento) throws Exception {
         
         final List<NfeImpressaoWrapper> listaNEWrapper = new ArrayList<NfeImpressaoWrapper>();
         
@@ -241,7 +241,7 @@ public class NFeServiceImpl implements NFeService {
 		return urlDanfe;
 	}
 
-	private byte[] gerarDocumentoIreportNE(final List<NfeImpressaoWrapper> list, boolean dispensaEmissaoNFe, final boolean indEmissaoDepec) throws JRException, URISyntaxException {
+	private byte[] gerarDocumentoIreportNE(final List<NfeImpressaoWrapper> list, boolean dispensaEmissaoNFe, final boolean indEmissaoDepec) throws Exception, URISyntaxException {
 
 		final JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 

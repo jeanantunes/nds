@@ -53,6 +53,7 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFe;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -3442,4 +3443,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         return (TipoDistribuicaoCota) query.uniqueResult();
     }
+
+	@Override
+	public List<Cota> obterConjuntoCota(FiltroNFe filtro) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
