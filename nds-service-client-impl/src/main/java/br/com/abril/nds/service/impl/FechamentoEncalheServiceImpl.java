@@ -41,9 +41,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
-import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
-import br.com.abril.nds.model.cadastro.Processo;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
@@ -56,12 +54,11 @@ import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalheBoxPK;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
-import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -83,6 +80,7 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProcessoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
@@ -97,6 +95,7 @@ import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParciaisService;
@@ -200,7 +199,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Autowired
 	private ProcessoRepository processoRepository;
+	
+	@Autowired
+	private NFeService nFeService;
     
+	@Autowired
+	private ParametroSistemaRepository parametroSistemaRepository;
+	
     @Override
     @Transactional
     public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(final FiltroFechamentoEncalheDTO filtro,
@@ -895,8 +900,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         // TODO: Refatorar a parte de fechamento de encalhe para melhor
         // desempenho
-        final List<FechamentoFisicoLogicoDTO> listaEncalhe = this.buscarFechamentoEncalhe(filtroSessao, null, null,
-                null, null);
+        final List<FechamentoFisicoLogicoDTO> listaEncalhe = this.buscarFechamentoEncalhe(filtroSessao, null, null, null, null);
+        
         for (final FechamentoFisicoLogicoDTO itemSessao : listaEncalheSessao) {
             for (final FechamentoFisicoLogicoDTO itemFechamento : listaEncalhe) {
                 if (itemSessao.getCodigo().equals(itemFechamento.getCodigo())
@@ -926,12 +931,23 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         this.processarMovimentosProdutosJuramentados(dataEncalhe, usuario, distribuidorRepository
                 .obterDataOperacaoDistribuidor());
         
+        
+        Distribuidor distribuidor = distribuidorRepository.obter();
+        Map<String, ParametroSistema> parametrosSistema = parametroSistemaRepository.buscarParametroSistemaGeralMap();
+        final NaturezaOperacao naturezaOperacao = naturezaOperacaoRepository.obterNaturezaOperacao(distribuidor.getTipoAtividade(), TipoDestinatario.FORNECEDOR, TipoOperacao.SAIDA);
+        
+        if(distribuidorService.obrigacaoFiscal(naturezaOperacao, distribuidor)){
+        	this.gerarNotaFiscal(dataEncalhe, distribuidor, naturezaOperacao);
+        }
+        
+        /*
         if (ObrigacaoFiscal.COTA_TOTAL.equals(distribuidorRepository.obrigacaoFiscal())
                 || ObrigacaoFiscal.COTA_NFE_VENDA.equals(distribuidorRepository.obrigacaoFiscal())) {
         	
         	//FIXME: Ajustar a geracao no momento do Fechamento do Encalhe
             this.gerarNotaFiscal(dataEncalhe);
         }
+        */
         
         // Cobra cotas as demais cotas, no caso, as não ausentes e com centralização
         // Não gera cobrança para cotas do tipo À Vista
@@ -1014,55 +1030,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void gerarNotaFiscal(final Date dataEncalhe) {
+    public void gerarNotaFiscal(final Date dataEncalhe, final Distribuidor distribuidor, final NaturezaOperacao naturezaOperacao) {
         
-        final List<NaturezaOperacao> listaTipoNotaFiscal = naturezaOperacaoRepository.obterTiposNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
-        final ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = distribuidorRepository.parametrosRecolhimentoDistribuidor();
+    	List<NotaFiscal> notasFiscais = new ArrayList<>();
+    	
+    	Map<String, ParametroSistema> parametrosSistema = parametroSistemaRepository.buscarParametroSistemaGeralMap();
+    	
         final List<Cota> cotas = fechamentoEncalheRepository.buscarCotaFechamentoChamadaEncalhe(dataEncalhe);
-        for (final Cota cota : cotas) {
-            
-            try {
-                
-                final NaturezaOperacao tipoNotaFiscal = obterTipoNotaFiscal(listaTipoNotaFiscal, cota);
-                
-                if (tipoNotaFiscal != null) {
-                    
-                    final List<ItemNotaFiscalSaida> listItemNotaFiscal = notaFiscalService.obterItensNotaFiscalPor(
-                            parametrosRecolhimentoDistribuidor, cota, null, null, null, tipoNotaFiscal);
-                    
-                    if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) {
-                        continue;
-                    }
-                    
-                    final List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = notaFiscalService
-                            .obterNotasReferenciadas(listItemNotaFiscal);
-                    
-                    final InformacaoTransporte transporte = notaFiscalService.obterTransporte(cota.getId());
-                    
-                    final Processo processo = this.processoRepository.buscarPeloNome("DEVOLUCAO_AO_FORNECEDOR");
-                    
-                    final Set<Processo> processos = new HashSet<Processo>();
-                    processos.add(processo);
-                    
-                    //FIXME: Ajustar a geracao de nota de fechamento de encalhe
-                    /*
-                    final Long idNotaFiscal = notaFiscalService.
-                            .emitiNotaFiscal(tipoNotaFiscal.getId(), dataEncalhe, cota, listItemNotaFiscal, transporte,
-                                    null, listaNotasFiscaisReferenciadas, processos, null);
-                    
-                    final NotaFiscal notaFiscal = notaFiscalRepository.buscarPorId(idNotaFiscal);
-                    
-                    produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
-                    */
-                }
-                
-            } catch (final ValidacaoException e) {
-                throw e;
-            } catch (final Exception exception) {
-                LOGGER.error(exception.getLocalizedMessage(), exception);
-                continue;
-            }
-        }
+        
+        this.nFeService.gerarNotasFiscaisCotasEncalhe(notasFiscais, distribuidor, naturezaOperacao, parametrosSistema, cotas);
+        
     }
     
     private NaturezaOperacao obterTipoNotaFiscal(final List<NaturezaOperacao> listaNaturezasOperacao, final Cota cota) {

@@ -1662,11 +1662,19 @@ var ConferenciaEncalhe = $.extend(true, {
 				"Não" : function() {
 					
 					window.event.preventDefault();
-					
+					alert("xitão chegou !!!!!");
 					$("#dialog-alert", ConferenciaEncalhe.workspace).dialog("close");
+					
+					$("#qtdeExemplar", ConferenciaEncalhe.workspace).attr('disabled', 'disabled');
+					$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).attr('disabled', 'disabled');
+					$("#sm", ConferenciaEncalhe.workspace).attr('disabled', 'disabled');
+					$("#codProduto", ConferenciaEncalhe.workspace).attr('disabled', 'disabled');
+					
 					$("#vlrCE", ConferenciaEncalhe.workspace).focus();
 					$("#qtdCE", ConferenciaEncalhe.workspace).focus();
+					$(this).parent('div').find('button:contains("Sim")').focus();
 					
+					exibirMensagem('WARNING', ['Favor inserir as notas ']);
 				}
 			}, open : function(){
 				

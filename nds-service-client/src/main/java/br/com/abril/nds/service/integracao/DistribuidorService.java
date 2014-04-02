@@ -69,7 +69,7 @@ public interface DistribuidorService {
 
 	Integer qtdDiasLimiteParaReprogLancamento();
 
-	ObrigacaoFiscal obrigacaoFiscal();
+	boolean obrigacaoFiscal(NaturezaOperacao naturezaOperacao, Distribuidor distribuidor);
 
 	TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE();
 

@@ -304,7 +304,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	//Torna reaproveitavel a parte de filtro da query
 		private Query montarFiltroConsultaNotaEnvioParaImpressao(FiltroImpressaoNFEDTO filtro, StringBuilder sql, PaginacaoVO paginacao) {
 			
-			ObrigacaoFiscal obrigacaoFiscal = this.distribuidorRepository.obrigacaoFiscal();
+			boolean obrigacaoFiscal = this.distribuidorRepository.obrigacaoFiscal();
 			
 			if(filtro == null) {
 				throw new ValidacaoException(TipoMensagem.ERROR, "O filtro não pode ser nulo ou estar vazio.");
@@ -418,7 +418,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			
 			q.setParameter("dataEmissao", new java.sql.Date(filtro.getDataEmissao().getTime()));
 			
-			if(obrigacaoFiscal != null) {
+			if(obrigacaoFiscal) {
 				q.setParameter("statusNFe", br.com.abril.nds.model.fiscal.nota.StatusRetornado.AUTORIZADO );
 			}
 			

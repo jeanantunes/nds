@@ -107,7 +107,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	public List<NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
 		List<NotasCotasImpressaoNfeDTO> cotas = null;
-		if(this.distribuidorRepository.obrigacaoFiscal() == null) {
+		if(!this.distribuidorRepository.obrigacaoFiscal()) {
 			cotas = impressaoNFeRepository.buscarCotasParaImpressaoNotaEnvio(filtro);
 		} else {
 			cotas = impressaoNFeRepository.buscarCotasParaImpressaoNFe(filtro);
@@ -119,7 +119,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	@Transactional
 	public Integer buscarNFeParaImpressaoTotalQtd(FiltroImpressaoNFEDTO filtro) {
 		
-		if(this.distribuidorRepository.obrigacaoFiscal() == null) {
+		if(!this.distribuidorRepository.obrigacaoFiscal()) {
 			return impressaoNFeRepository.buscarCotasParaImpressaoNotaEnvioQtd(filtro);
 		} else {
 			return impressaoNFeRepository.buscarCotasParaImpressaoNFeQtd(filtro);

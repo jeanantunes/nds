@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -111,6 +112,10 @@ public class NotaFiscalEndereco implements Serializable {
 	@XmlElement(name="xPais")
 	private String pais;
 
+	@Transient
+	@XmlElement(name="fone")
+	private String foneXML;
+	
 	public Long getId() {
 		return id;
 	}

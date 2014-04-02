@@ -15,7 +15,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -332,8 +331,7 @@ public class Distribuidor {
 	@Column(name = "PARAR_ACUM_DIVIDAS", nullable = false)
 	private boolean pararAcumuloDividas;
 	
-	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("id")
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL)
 	private Set<DistribuidorTipoNotaFiscal> tiposNotaFiscalDistribuidor = new HashSet<DistribuidorTipoNotaFiscal>();
 	
 	@OneToMany
