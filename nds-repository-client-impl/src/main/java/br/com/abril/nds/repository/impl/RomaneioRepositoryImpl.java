@@ -112,11 +112,6 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		hql.append(" from Cota cota, Lancamento lancamento, NotaEnvio notaEnvio ");
 		
-		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
-			
-			hql.append(", LancamentoDiferenca lancDif ");
-		}*/
-		
 		hql.append(" JOIN cota.box as box ");
 		hql.append(" JOIN cota.pdvs as pdv ");
 		hql.append(" JOIN pdv.rotas as rotaPDV ");
@@ -125,36 +120,11 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" JOIN notaEnvio.listaItemNotaEnvio as itemNota ");
 		hql.append(" JOIN notaEnvio.destinatario.endereco as endereco ");		
 		
-		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
-			
-			hql.append(" JOIN lancDif.movimentoEstoqueCota as movEstCotaLancDif ");
-		}*/
-		
 		hql.append(" where cota.numeroCota = notaEnvio.destinatario.numeroCota ");
 		hql.append(" and lancamento.produtoEdicao.id = itemNota.produtoEdicao.id ");
 		hql.append(" and cota.situacaoCadastro != :situacaoInativo ");
 		hql.append(" and pdv.caracteristicas.pontoPrincipal = :pontoPrincipal ");
 		hql.append(" and lancamento.status in (:statusLancamento) ");
-		
-		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
-			
-			hql.append(" and movEstCotaLancDif.id = movimentoEstoque.id ");
-		}*/
-
-//		if(filtro.getCodigoBox() == null ) {
-//			
-//			hql.append(" and roteiro.descricaoRoteiro <> 'Especial' ");
-//			
-//		} else if(filtro.getCodigoBox() != null && filtro.getCodigoBox() != -1) {
-//			
-//			hql.append(" and box.codigo = :codigoBox ");
-//			hql.append(" and roteiro.descricaoRoteiro <> 'Especial' ");
-//			
-//		} else {
-//			
-//			hql.append(" and roteiro.descricaoRoteiro = 'Especial' ");
-//			
-//		}
 		
 		if(filtro.getCodigoBox() == null) {
 			
