@@ -480,6 +480,10 @@ public class MatrizLancamentoController extends BaseController {
     public void reprogramarLancamentosSelecionados(final List<ProdutoLancamentoVO> produtosLancamento,
             final String novaDataFormatada) {
         
+    	List<String> listaMensagens = new ArrayList<String>();
+    	
+    	ValidacaoVO validacao =  null;
+    	 
         this.verificarExecucaoInterfaces();
         
         this.validarDadosReprogramar(novaDataFormatada);
@@ -492,11 +496,22 @@ public class MatrizLancamentoController extends BaseController {
         
         this.validarListaParaReprogramacao(produtosLancamento);
         
-        this.validarDataReprogramacao(produtosLancamento, novaData);
+        listaMensagens = this.validarDataReprogramacao(produtosLancamento, novaData);
         
         this.atualizarMapaLancamento(produtosLancamento, novaData);
         
-        result.use(Results.json()).from(Results.nothing()).serialize();
+        if(!listaMensagens.isEmpty()){
+            
+        	  
+        	 validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
+        
+            //throw new ValidacaoException(validacao);
+            
+        	 result.use(Results.json()).from(listaMensagens,"info").recursive().serialize();
+        	 
+        }else{
+         result.use(Results.json()).withoutRoot().from(Results.nothing()).recursive().serialize();
+        }
     }
     
     private void removerProdutosAgrupados(final List<ProdutoLancamentoDTO> produtosLancamento) {
@@ -522,6 +537,9 @@ public class MatrizLancamentoController extends BaseController {
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void reprogramarLancamentoUnico(final ProdutoLancamentoVO produtoLancamento) {
         
+    	List<String> listaMensagens = new ArrayList<String>();
+    	ValidacaoVO validacao = null;
+    	
         this.verificarExecucaoInterfaces();
         if (produtoLancamento != null) {
             final String novaDataFormatada = produtoLancamento.getNovaDataLancamento();
@@ -540,12 +558,21 @@ public class MatrizLancamentoController extends BaseController {
             
             this.validarListaParaReprogramacao(produtosLancamento);
             
-            this.validarDataReprogramacao(produtosLancamento, novaData);
+            listaMensagens.addAll(this.validarDataReprogramacao(produtosLancamento, novaData));
             
             this.atualizarMapaLancamento(produtosLancamento, novaData);
         }
         
-        result.use(Results.json()).from(Results.nothing()).serialize();
+        if(!listaMensagens.isEmpty()){
+        
+        	validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
+        
+            //throw new ValidacaoException(validacao);
+        	result.use(Results.json()).from(listaMensagens,"info").recursive().serialize();
+        }else{
+        
+            result.use(Results.json()).withoutRoot().from(Results.nothing()).recursive().serialize();
+        }
     }
     
     /**
@@ -624,7 +651,7 @@ public class MatrizLancamentoController extends BaseController {
      * @param produtosLancamento - lista de produtos de lançamento
      * @param novaData - nova data de recolhimento
      */
-    private void validarDataReprogramacao(final List<ProdutoLancamentoVO> produtosLancamento, final Date novaData) {
+    private List<String> validarDataReprogramacao(final List<ProdutoLancamentoVO> produtosLancamento, final Date novaData) {
         
         //matrizLancamentoService.verificaDataOperacao(novaData);
         
@@ -633,12 +660,17 @@ public class MatrizLancamentoController extends BaseController {
         final List<String> listaMensagens = new ArrayList<String>();
         
         String produtos = "";
+        String msg;
         
         final Integer qtdDiasLimiteParaReprogLancamento = distribuidorService.qtdDiasLimiteParaReprogLancamento();
         
         for (final ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
             
-        	matrizLancamentoService.verificaDataOperacao(novaData,produtoLancamento.getFornecedorId(),OperacaoDistribuidor.DISTRIBUICAO);
+        	msg = matrizLancamentoService.verificaDataOperacao(novaData,produtoLancamento.getFornecedorId(),OperacaoDistribuidor.DISTRIBUICAO);
+        	
+        	if(!msg.equals("")){
+        	 listaMensagens.add(msg);
+        	}
         	
         	final String dataRecolhimentoPrevistaFormatada = produtoLancamento.getDataRecolhimentoPrevista();
             
@@ -679,6 +711,8 @@ public class MatrizLancamentoController extends BaseController {
             
             throw new ValidacaoException(validacao);
         }
+        
+        return listaMensagens;
     }
     
     /**
@@ -825,20 +859,12 @@ public class MatrizLancamentoController extends BaseController {
             
             produtosLancamentoDTO.remove(produtoLancamentoDTO);
             
-            
-            //if (produtosLancamentoDTO.isEmpty()) {
-                
-                //matrizLancamento.remove(produtoLancamentoDTO.getNovaDataLancamento());
-                
-            //} else {
-            	
-            	//if (produtoLancamentoDTO.getOrdemPeriodicidadeProduto()) {
+
             	String stNovadata = "";
         		
             	if(novaData!=null){
             	 SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
             	 stNovadata = ft.format(novaData);
-            	 //novaData = ft.parse(stNovadata);
             	}
             	
             	Lancamento lancamento =null;
@@ -878,7 +904,7 @@ public class MatrizLancamentoController extends BaseController {
             	  ){
             		
             		//No caso de parciais, a data de lançamento de uma parcial não pode inferior ao recolhimento da parcial anterior, se existir.
-            		if(!novaData.after(lancamentoAnterior.getDataRecolhimentoDistribuidor())){
+            		if(novaData.before(lancamentoAnterior.getDataRecolhimentoDistribuidor())){
             			
             			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
                   				 "O produto parcial "+produtoLancamentoDTO.getNomeProduto()+

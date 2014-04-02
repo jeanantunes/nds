@@ -303,11 +303,9 @@ public class DiferencaEstoqueController extends BaseController {
         final Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
         
         final FiltroLancamentoDiferencaEstoqueDTO filtro =
-                this.carregarFiltroPesquisaLancamentos(
-                        dataMovimento, tipoDiferenca, sortorder, sortname, page, rp);
+                this.carregarFiltroPesquisaLancamentos(dataMovimento, tipoDiferenca, sortorder, sortname, page, rp);
         
-        final List<Diferenca> listaLancamentoDiferencas =
-                diferencaEstoqueService.obterDiferencasLancamento(filtro);
+        final List<Diferenca> listaLancamentoDiferencas = diferencaEstoqueService.obterDiferencasLancamento(filtro);
         
         if (listaLancamentoDiferencas == null || listaLancamentoDiferencas.isEmpty()) {
             
@@ -333,42 +331,38 @@ public class DiferencaEstoqueController extends BaseController {
         
         final Boolean modoEdicaoNovaDiferenca = (Boolean) httpSession.getAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE);
         
-        if(modoEdicaoNovaDiferenca!= null && modoEdicaoNovaDiferenca){
+        if(modoEdicaoNovaDiferenca!= null && modoEdicaoNovaDiferenca) {
             
             final Set<Diferenca> listaNovasDiferencas = (Set<Diferenca>)
                     httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
             
-            if (listaNovasDiferencas != null
-                    && !listaNovasDiferencas.isEmpty()) {
+            if (listaNovasDiferencas != null && !listaNovasDiferencas.isEmpty()) {
                 
                 final FiltroLancamentoDiferencaEstoqueDTO filtro =
-                        this.carregarFiltroPesquisaLancamentos(
-                                dataMovimento, null, sortorder, sortname, page, rp);
+                        this.carregarFiltroPesquisaLancamentos(dataMovimento, null, sortorder, sortname, page, rp);
                 
                 processarDiferencasLancamentoNovos(listaNovasDiferencas, filtro);
                 
-            }else{
+            } else {
                 
                 renderizarGridVazio();
             }
             
-        }else{
+        } else {
             
             final List<Diferenca> listaDiferencas = (List<Diferenca>)
                     httpSession.getAttribute(LISTA_DIFERENCAS_SESSION_ATTRIBUTE);
             
-            if (listaDiferencas != null
-                    && !listaDiferencas.isEmpty()) {
+            if (listaDiferencas != null && !listaDiferencas.isEmpty()) {
                 
                 final FiltroLancamentoDiferencaEstoqueDTO filtro =
-                        this.carregarFiltroPesquisaLancamentos(
-                                dataMovimento, tipoDiferenca, sortorder, sortname, page, rp);
+                        this.carregarFiltroPesquisaLancamentos(dataMovimento, tipoDiferenca, sortorder, sortname, page, rp);
                 
                 final Long qtdeTotalRegistros = diferencaEstoqueService.obterTotalDiferencasLancamento(filtro);
                 
                 processarDiferencasLancamento(listaDiferencas, filtro, qtdeTotalRegistros.intValue());
-            }
-            else{
+            
+            } else {
                 
                 renderizarGridVazio();
             }
@@ -420,7 +414,7 @@ public class DiferencaEstoqueController extends BaseController {
         
         if(idDiferenca == null) {
             
-            incluirLancamentoDiferencaNotaEnvio(tipoDiferenca,dataNotaEnvio,numeroCota,nomeCota,diferencasProdutos);
+            incluirLancamentoDiferencaNotaEnvio(tipoDiferenca, dataNotaEnvio, numeroCota, nomeCota, diferencasProdutos);
             
         } else {
             
@@ -473,7 +467,7 @@ public class DiferencaEstoqueController extends BaseController {
         
         this.validarLancamentoPorCota(numeroCota, dataNotaEnvio, diferencasProdutos);
         
-        for(final DiferencaVO diferenca : diferencasProdutos){
+        for(final DiferencaVO diferenca : diferencasProdutos) {
             
             incluirDiferencaNotaEnvio(diferenca, tipoDiferenca);
             
@@ -1606,8 +1600,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
             
             if (filtroSessao.getIdFornecedor() != null) {
                 
-                final Fornecedor fornecedor =
-                        fornecedorService.obterFornecedorPorId(filtroSessao.getIdFornecedor());
+                final Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(filtroSessao.getIdFornecedor());
                 
                 if (fornecedor != null) {
                     
@@ -1627,8 +1620,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
      * @param filtro - filtro da pesquisa
      */
     private void processarDiferencasLancamento(final List<Diferenca> listaDiferencas,
-            final FiltroLancamentoDiferencaEstoqueDTO filtro,
-            final Integer qtdeTotalRegistros) {
+            final FiltroLancamentoDiferencaEstoqueDTO filtro, final Integer qtdeTotalRegistros) {
         
         final List<DiferencaVO> listaLancamentosDiferenca = new LinkedList<DiferencaVO>();
         
@@ -1662,19 +1654,16 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
             lancamentoDiferenca.setAutomatica(diferenca.isAutomatica());
             lancamentoDiferenca.setDataLancamento(DateUtil.formatarDataPTBR(diferenca.getDataMovimento()));
             
-            lancamentoDiferenca.setValorTotalDiferenca(
-                    CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
+            lancamentoDiferenca.setValorTotalDiferenca(CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
             
             listaLancamentosDiferenca.add(lancamentoDiferenca);
             
-            qtdeTotalDiferencas =
-                    qtdeTotalDiferencas.add(diferenca.getQtde());
+            qtdeTotalDiferencas = qtdeTotalDiferencas.add(diferenca.getQtde());
             
             valorTotalDiferencas = valorTotalDiferencas.add(diferenca.getValorTotalDiferenca());
         }
         
-        final TableModel<CellModelKeyValue<DiferencaVO>> tableModel =
-                new TableModel<CellModelKeyValue<DiferencaVO>>();
+        final TableModel<CellModelKeyValue<DiferencaVO>> tableModel = new TableModel<CellModelKeyValue<DiferencaVO>>();
         
         tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaLancamentosDiferenca));
         
@@ -1682,14 +1671,11 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         
         tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
         
-        final String valorTotalDiferencasFormatado =
-                CurrencyUtil.formatarValorComSimbolo(valorTotalDiferencas);
+        final String valorTotalDiferencasFormatado = CurrencyUtil.formatarValorComSimbolo(valorTotalDiferencas);
         
-        final ResultadoDiferencaVO resultadoLancamentoDiferenca =
-                new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
+        final ResultadoDiferencaVO resultadoLancamentoDiferenca = new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
         
-        httpSession.setAttribute(
-                LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE, listaLancamentosDiferenca);
+        httpSession.setAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE, listaLancamentosDiferenca);
         
         result.use(Results.json()).from(resultadoLancamentoDiferenca, "result").recursive().serialize();
     }
@@ -1888,9 +1874,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                     && diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota().get(0) != null
                     && diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota().get(0).getStatusIntegracao() != null) {
                 
-                consultaDiferencaVO.setStatusIntegracao(
-                        diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota().get(0).getStatusIntegracao().getDescricao()
-                        );
+                consultaDiferencaVO.setStatusIntegracao(diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota().get(0).getStatusIntegracao().getDescricao());
             }
             
             consultaDiferencaVO.setMotivoAprovacao(diferenca.getLancamentoDiferenca().getStatus().toString());
@@ -2572,8 +2556,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         final ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(diferencaVO.getCodigoProduto(), diferencaVO.getNumeroEdicao());
         
         final BigInteger qtdeEstoqueAtual =
-                atualizarQuantidadeEstoqueComNovasDiferencas(
-                        obterReparteAtualProdutoEdicao(diferencaVO,pe.getId()), diferencaVO.getTipoEstoque());
+                atualizarQuantidadeEstoqueComNovasDiferencas(obterReparteAtualProdutoEdicao(diferencaVO,pe.getId()), diferencaVO.getTipoEstoque());
         
         diferencaVO.setQtdeEstoqueAtual(qtdeEstoqueAtual);
         
@@ -2581,7 +2564,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
             
             final List<RateioCotaVO> rateiosDiferenca = this.obterRateiosEdicaoDiferenca(idDiferenca);
             
-            if(rateiosDiferenca!= null && !rateiosDiferenca.isEmpty()){
+            if(rateiosDiferenca!= null && !rateiosDiferenca.isEmpty()) {
                 
                 final Map<String, Object> mapa = new TreeMap<String, Object>();
                 mapa.put("diferenca", diferencaVO);
@@ -2924,7 +2907,8 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
     private BigInteger calcularQuantidadesFaltasSobras(BigInteger quantidadeEstoque, final DiferencaVO diferenca) {
         
         if (diferenca.getTipoDiferenca().equals(TipoDiferenca.FALTA_EM)
-                || diferenca.getTipoDiferenca().equals(TipoDiferenca.FALTA_DE)) {
+                || diferenca.getTipoDiferenca().equals(TipoDiferenca.FALTA_DE)
+                || diferenca.getTipoDiferenca().equals(TipoDiferenca.FALTA_EM_DIRECIONADA_COTA)) {
             
             quantidadeEstoque =
                     quantidadeEstoque.subtract(diferenca.getQuantidade());
@@ -2947,8 +2931,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         
         this.validarDadosBuscaProdutosNota(dateNotaEnvio, numeroCota);
         
-        final List<DetalheItemNotaFiscalDTO> itensNotaEnvio =
-                itemNotaEnvioService.obterItensNotaEnvioLancamentoProduto(dateNotaEnvio, numeroCota);
+        final List<DetalheItemNotaFiscalDTO> itensNotaEnvio = itemNotaEnvioService.obterItensNotaEnvioLancamentoProduto(dateNotaEnvio, numeroCota);
         
         final List<DiferencaVO> prods = new ArrayList<DiferencaVO>();
         
