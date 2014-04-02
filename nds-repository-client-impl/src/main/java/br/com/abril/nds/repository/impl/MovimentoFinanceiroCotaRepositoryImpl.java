@@ -38,6 +38,7 @@ import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
@@ -45,6 +46,7 @@ import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
@@ -727,35 +729,45 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
         
 	    hql.append(" COALESCE(sum( ");
 	    
-	    hql.append("              (COALESCE(epc.qtdeRecebida,0) - COALESCE(epc.qtdeDevolvida,0)) * ");
+	    hql.append("              case when mec.tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = :grupoEntrada then mec.qtde else (mec.qtde * -1) end ");
 	    
-	    hql.append("              (COALESCE(epc.produtoEdicao.precoVenda,0)) ");
+	    hql.append("              * (COALESCE(valApl.precoVenda,0)) ");
 	    
 	    hql.append("         ),0 ) as faturamentoBruto,");
 	    
 	    hql.append(" COALESCE(sum( ");
 	    
-	    hql.append("              (COALESCE(epc.qtdeRecebida, 0) - COALESCE(epc.qtdeDevolvida, 0)) * ");
+	    hql.append("              case when mec.tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = :grupoEntrada then mec.qtde else (mec.qtde * -1) end ");
 	    
-	    hql.append("              (COALESCE(epc.produtoEdicao.precoVenda, 0) - ");
-	    
-	    hql.append("               COALESCE((mec.valoresAplicados.valorDesconto), 0)) ");
+	    hql.append("              * (COALESCE(valApl.precoComDesconto, valApl.precoVenda, 0)) ");
 	    
 	    hql.append("         ),0 ) as faturamentoLiquido ");
 	    
-		hql.append(" from Cota c, MovimentoEstoqueCota mec, EstoqueProdutoCota epc");
+		hql.append(" from MovimentoEstoqueCota mec ");
 		
-		hql.append(" left join mec.produtoEdicao.produto.fornecedores fornecedor ");
+		hql.append(" join mec.valoresAplicados valApl ");
 		
-		hql.append(" where epc = mec.estoqueProdutoCota  ");
+		hql.append(" join mec.cota c ");
 		
-		hql.append(" and mec.cota = c ");
+		hql.append(" join mec.estoqueProdutoCota epc ");
 		
-		hql.append(" and mec.status = :status  ");
+		hql.append(" join epc.produtoEdicao produtoEdicao ");
+		
+		hql.append(" join produtoEdicao.produto produto ");
+		
+		hql.append(" join produtoEdicao.lancamentos lanc ");
+		
+		hql.append(" left join produto.fornecedores fornecedor ");
+		
+		hql.append(" where mec.status = :status  ");
+		
+		hql.append(" and lanc.status in (:statusLancamento) ");
 	    
-		hql.append(" and ( mec.data >= :dataInicial and mec.data <= :dataFinal )  ");
+		hql.append(" and ( lanc.dataRecolhimentoDistribuidor between :dataInicial and :dataFinal )  ");
 	    
 		hql.append(" and c in (:cotas) ");
+		
+		hql.append(" group by c.id ");
 	    
 		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(CotaFaturamentoDTO.class));
 		
@@ -766,6 +778,13 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		query.setParameter("dataInicial", dataInicial);
 		
 		query.setParameter("dataFinal", dataFinal);
+		
+		query.setParameterList("statusLancamento", Arrays.asList(
+                StatusLancamento.EM_RECOLHIMENTO, 
+                StatusLancamento.RECOLHIDO, 
+                StatusLancamento.FECHADO));
+		
+		query.setParameter("grupoEntrada", OperacaoEstoque.ENTRADA);
 		
 		return query.list();
 	}
@@ -1929,6 +1948,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 	
 	
+    @SuppressWarnings("unchecked")
     public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDeConsolidado(final Long idConsolidado){
     	
     	StringBuilder hql = new StringBuilder("")
