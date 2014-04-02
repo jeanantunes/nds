@@ -252,6 +252,20 @@ balanceamentoLancamento.inicializar();
 
 		    </fieldset>
 		</div>
+		<div id="dialog-confirm-dados-alterados" title="Balanceamento" style="display:none;">
+		    
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialog-confirmar-dados-alterados" name="messageDialog"/>
+			</jsp:include>
+			
+		    <fieldset style="width:250px!important;">
+
+		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableConfirmaBalanceamentoDadosAlterados">
+		        </table>
+
+		    </fieldset>
+		    
+		</div>
 		</form>
 		
 		<form id="form-reabrir-matriz">
