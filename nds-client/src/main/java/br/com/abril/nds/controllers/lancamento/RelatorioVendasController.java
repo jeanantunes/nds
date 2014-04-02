@@ -134,13 +134,14 @@ public class RelatorioVendasController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
 		}
 
-		if(this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE) == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma pesquisa realizada.");
-		}
-		
 		switch (tipoRelatorio) {
 		case DISTRIBUIDOR:
-			exportarDistribuidor(fileType, TipoConsultaCurvaABC.DISTRIBUIDOR);
+			
+		    if(this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE) == null) {
+	            throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma pesquisa realizada.");
+	        }
+		    
+		    exportarDistribuidor(fileType, TipoConsultaCurvaABC.DISTRIBUIDOR);
 			break;
 		case EDITOR:
 			exportarEditor(fileType);

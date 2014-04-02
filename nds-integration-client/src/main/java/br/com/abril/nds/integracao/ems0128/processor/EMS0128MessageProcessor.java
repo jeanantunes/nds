@@ -77,12 +77,24 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 				
 					List<EMS0128InputItem> itemsRemove = new ArrayList<EMS0128InputItem>();
 					for (EMS0128InputItem eitem : doc.getItems()) {
+						
 						MovimentoEstoque movimento = this.recuperaMovimento(eitem.getIdMovimento());
-											
-						movimento.setMotivo(eitem.getDescricaoMotivo());					
-						movimento.setNumeroDocumentoAcerto(eitem.getNumeroDocumentoAcerto());
-						movimento.setDataEmicaoDocumentoAcerto(eitem.getDataEmicaoDocumentoAcerto());
-						movimento.setCodigoOrigemMotivo(eitem.getCodigoOrigemMotivo());
+							
+						if(eitem.getDescricaoMotivo() != null) {
+							movimento.setMotivo(eitem.getDescricaoMotivo());
+						}
+						
+						if(eitem.getNumeroDocumentoAcerto() != null) {
+							movimento.setNumeroDocumentoAcerto(eitem.getNumeroDocumentoAcerto());
+						}
+						
+						if(eitem.getDataEmissaoDocumentoAcerto() != null) {
+							movimento.setDataEmicaoDocumentoAcerto(eitem.getDataEmissaoDocumentoAcerto());
+						}
+						
+						if(eitem.getCodigoOrigemMotivo() != null) {
+							movimento.setCodigoOrigemMotivo(eitem.getCodigoOrigemMotivo());
+						}
 						
 						LancamentoDiferenca lancamentoDiferenca = recuperarLancamentoDiferenca(movimento.getId());
 						
@@ -220,7 +232,8 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		GrupoMovimentoEstoque gme = ((TipoMovimentoEstoque)(me).getTipoMovimento()).getGrupoMovimentoEstoque();
 		
-		if ( gme.equals( GrupoMovimentoEstoque.FALTA_EM ) ) {
+		if ( gme.equals( GrupoMovimentoEstoque.FALTA_EM ) 
+				|| gme.equals( GrupoMovimentoEstoque.FALTA_EM_DIRECIONADA_PARA_COTA ) ) {
 			item.setTipoAcerto( 3 );
 		} else if ( gme.equals( GrupoMovimentoEstoque.FALTA_DE ) ) {			
 			item.setTipoAcerto( 4 );
