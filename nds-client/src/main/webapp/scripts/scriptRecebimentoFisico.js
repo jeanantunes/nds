@@ -773,9 +773,11 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	validarDescontosRecebimentoFisico: function() {
 		
+		var params = recebimentoFisicoController.getParametrosConfirmacao();
+		
 		$.postJSON(
 			this.path + 'validarDescontosRecebimentoFisico', 
-			recebimentoFisicoController.getParametrosConfirmacao(), 
+			params, 
 			function(result) {
 
 				if (result.mensagens) {
@@ -826,9 +828,11 @@ var recebimentoFisicoController = $.extend(true, {
      */
 	confirmarRecebimentoFisico: function() {
 		
+		var params = recebimentoFisicoController.getParametrosConfirmacao();
+		
 		$.postJSON(
 			this.path + 'confirmarRecebimentoFisico', 
-			recebimentoFisicoController.getParametrosConfirmacao(), 
+			params, 
 			function(result) {
 
 				$(".grids", recebimentoFisicoController.workspace).hide();
@@ -849,9 +853,7 @@ var recebimentoFisicoController = $.extend(true, {
 				return;
 			}
 			
-			return 
-				serializeArrayToPost(
-					'itensRecebimento', recebimentoFisicoController.obterListaValores());
+			return serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores());
 		}
 	},
 	
