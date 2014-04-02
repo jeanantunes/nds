@@ -93,15 +93,12 @@ public class RomaneioServiceImpl implements RomaneioService {
 	
 	@Transactional
 	@Override
-	public byte[] gerarRelatorio(FiltroRomaneioDTO filtro, String limitar, 
-			FileType fileType) throws URISyntaxException, JRException {
+	public byte[] gerarRelatorio(FiltroRomaneioDTO filtro, String limitar, FileType fileType) throws URISyntaxException, JRException {
 		
 		if (filtro != null) {
 			
-			List<RomaneioDTO> lstRomaneioDTO = 
-					romaneioRepository.buscarRomaneiosParaExportacao(filtro);
-			List<RomaneioModelo01DTO> lstRelatorio = 
-					new ArrayList<RomaneioModelo01DTO>();
+			List<RomaneioDTO> lstRomaneioDTO = romaneioRepository.buscarRomaneiosParaExportacao(filtro);
+			List<RomaneioModelo01DTO> lstRelatorio = new ArrayList<RomaneioModelo01DTO>();
 			
 			// Formata os romaneios para o relatório:
 			if (lstRomaneioDTO != null && !lstRomaneioDTO.isEmpty()){
