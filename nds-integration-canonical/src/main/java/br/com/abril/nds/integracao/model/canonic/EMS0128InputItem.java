@@ -25,7 +25,7 @@ public class EMS0128InputItem extends IntegracaoDocumentDetail implements Serial
 	private BigDecimal percentualDesconto;
 	private String situacaoAcerto;
 	private Long numeroDocumentoAcerto;
-	private Date dataEmicaoDocumentoAcerto;
+	private Date dataEmissaoDocumentoAcerto;
 	private String descricaoMotivo;
 	private String codigoOrigemMotivo;
 	private Long idMovimento;
@@ -142,13 +142,13 @@ public class EMS0128InputItem extends IntegracaoDocumentDetail implements Serial
 	 * @return the dataEmicaoDocumentoAcerto
 	 */
 	public Date getDataEmissaoDocumentoAcerto() {
-		return dataEmicaoDocumentoAcerto;
+		return dataEmissaoDocumentoAcerto;
 	}
 	/**
-	 * @param dataEmicaoDocumentoAcerto the dataEmicaoDocumentoAcerto to set
+	 * @param dataEmissaoDocumentoAcerto the dataEmicaoDocumentoAcerto to set
 	 */
-	public void setDataEmicaoDocumentoAcerto(Date dataEmicaoDocumentoAcerto) {
-		this.dataEmicaoDocumentoAcerto = dataEmicaoDocumentoAcerto;
+	public void setDataEmissaoDocumentoAcerto(Date dataEmissaoDocumentoAcerto) {
+		this.dataEmissaoDocumentoAcerto = dataEmissaoDocumentoAcerto;
 	}
 	/**
 	 * @return the descricaoMotivo
