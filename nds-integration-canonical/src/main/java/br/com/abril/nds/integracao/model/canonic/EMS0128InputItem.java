@@ -141,7 +141,7 @@ public class EMS0128InputItem extends IntegracaoDocumentDetail implements Serial
 	/**
 	 * @return the dataEmicaoDocumentoAcerto
 	 */
-	public Date getDataEmicaoDocumentoAcerto() {
+	public Date getDataEmissaoDocumentoAcerto() {
 		return dataEmicaoDocumentoAcerto;
 	}
 	/**
