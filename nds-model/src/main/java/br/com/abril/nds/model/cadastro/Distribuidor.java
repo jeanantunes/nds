@@ -29,6 +29,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.Validate;
+import org.springframework.core.annotation.Order;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
@@ -332,6 +333,7 @@ public class Distribuidor {
 	private boolean pararAcumuloDividas;
 	
 	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL)
+	@OrderBy("id")
 	private Set<DistribuidorTipoNotaFiscal> tiposNotaFiscalDistribuidor = new HashSet<DistribuidorTipoNotaFiscal>();
 	
 	@OneToMany
