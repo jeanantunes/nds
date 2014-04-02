@@ -825,20 +825,12 @@ public class MatrizLancamentoController extends BaseController {
             
             produtosLancamentoDTO.remove(produtoLancamentoDTO);
             
-            
-            //if (produtosLancamentoDTO.isEmpty()) {
-                
-                //matrizLancamento.remove(produtoLancamentoDTO.getNovaDataLancamento());
-                
-            //} else {
-            	
-            	//if (produtoLancamentoDTO.getOrdemPeriodicidadeProduto()) {
+
             	String stNovadata = "";
         		
             	if(novaData!=null){
             	 SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
             	 stNovadata = ft.format(novaData);
-            	 //novaData = ft.parse(stNovadata);
             	}
             	
             	Lancamento lancamento =null;
@@ -878,7 +870,7 @@ public class MatrizLancamentoController extends BaseController {
             	  ){
             		
             		//No caso de parciais, a data de lançamento de uma parcial não pode inferior ao recolhimento da parcial anterior, se existir.
-            		if(!novaData.after(lancamentoAnterior.getDataRecolhimentoDistribuidor())){
+            		if(novaData.before(lancamentoAnterior.getDataRecolhimentoDistribuidor())){
             			
             			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
                   				 "O produto parcial "+produtoLancamentoDTO.getNomeProduto()+
