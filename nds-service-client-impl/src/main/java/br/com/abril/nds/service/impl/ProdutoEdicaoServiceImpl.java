@@ -1523,29 +1523,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         switch (produtoEdicao.getOrigem()) {
         
-        case MANUAL:
-            
-            porcentagemDesconto =
-            (produtoEdicao.getDesconto() != null)
-            ? produtoEdicao.getDesconto()
-                    : produtoEdicao.getProduto().getDesconto();
-            
-            if	((porcentagemDesconto == null
-                    || BigInteger.ZERO.equals(porcentagemDesconto.unscaledValue()))
-                    && (Origem.INTERFACE.equals(produtoEdicao.getProduto().getOrigem()))) {
-                
-                final DescontoLogistica descontoLogistica =
-                        produtoEdicao.getProduto().getDescontoLogistica();
-                
-                if (descontoLogistica != null) {
-                    
-                    porcentagemDesconto =
-                            produtoEdicao.getProduto().getDescontoLogistica().getPercentualDesconto();
-                }
-            }
-            
-            break;
-            
         case INTERFACE:
             
             final DescontoLogistica descontoLogistica =
@@ -1561,6 +1538,24 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             break;
             
         default:
+            
+            porcentagemDesconto =
+            (produtoEdicao.getDesconto() != null)
+            ? produtoEdicao.getDesconto()
+                    : produtoEdicao.getProduto().getDesconto();
+            
+            if  ((porcentagemDesconto == null
+                    || BigInteger.ZERO.equals(porcentagemDesconto.unscaledValue()))
+                    && (Origem.INTERFACE.equals(produtoEdicao.getProduto().getOrigem()))) {
+                
+                final DescontoLogistica descontoLog =
+                        produtoEdicao.getProduto().getDescontoLogistica();
+                
+                if (descontoLog != null) {
+                    
+                    porcentagemDesconto = descontoLog.getPercentualDesconto();
+                }
+            }
             
             break;
         }

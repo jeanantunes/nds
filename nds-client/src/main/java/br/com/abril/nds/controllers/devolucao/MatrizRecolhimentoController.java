@@ -1311,17 +1311,31 @@ public class MatrizRecolhimentoController extends BaseController {
         
         List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
         
-        for (ConfirmacaoVO confirmacao : confirmacoes) {
+        Intervalo<Date> periodoRecolhimento = this.recolhimentoService.getPeriodoRecolhimento(numeroSemana);
+        
+        if (DateUtil.validarDataEntrePeriodo(novaData, periodoRecolhimento.getDe(), periodoRecolhimento.getAte())) {
             
-            if (DateUtil.parseDataPTBR(confirmacao.getMensagem()).equals(novaData)) {
+            for (ConfirmacaoVO confirmacao : confirmacoes) {
                 
-                if (confirmacao.isConfirmado()) {
+                if (DateUtil.parseDataPTBR(confirmacao.getMensagem()).equals(novaData)) {
                     
-                    throw new ValidacaoException(TipoMensagem.WARNING,
-                            "O recolhimento não pode ser reprogramado para uma data já confirmada!");
+                    if (confirmacao.isConfirmado()) {
+                        
+                        throw new ValidacaoException(TipoMensagem.WARNING,
+                                "O recolhimento não pode ser reprogramado para uma data já confirmada!");
+                    }
                 }
+            }    
+            
+        } else {
+            
+            if (this.recolhimentoService.existeRecolhimentoBalanceado(novaData)) {
+                
+                throw new ValidacaoException(TipoMensagem.WARNING, 
+                        "O recolhimento não pode ser reprogramado para uma data já confirmada!");
             }
         }
+        
     }
     
     /**

@@ -24,12 +24,11 @@ import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
@@ -163,11 +162,21 @@ public class LancamentoServiceImpl implements LancamentoService {
 
 	@Override
 	@Transactional
-	public boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, 
-									  TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,
-									  TipoMovimentoEstoque tipoMovimentoJuramentado) {
+	public String confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, 
+									 TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,
+									 TipoMovimentoEstoque tipoMovimentoJuramentado) {
 		
 		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
+		
+		if (TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())) {
+            
+		    String msgRetorno = this.tratarRedistribuicao(lancamento);
+            
+            if (msgRetorno != null) {
+                
+                return msgRetorno;
+            }
+        }
 		
 		Expedicao expedicao = new Expedicao();
 		expedicao.setDataExpedicao(dataOperacao);
@@ -177,7 +186,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		expedicao.setId(idExpedicao);
 		
 		lancamentoRepository.alterarLancamento(idLancamento, dataOperacao, StatusLancamento.EXPEDIDO, expedicao);
-				
+		
 //		HistoricoLancamento historico = new HistoricoLancamento();
 //		historico.setDataEdicao(dataOperacao);
 //		historico.setLancamento(new Lancamento(idLancamento));
@@ -194,11 +203,29 @@ public class LancamentoServiceImpl implements LancamentoService {
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento.getDataPrevista(), lancamento.getDataDistribuidor(), 
 				lancamento.getIdProduto(), lancamento.getIdProdutoEdicao(), idLancamento, idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota, tipoMovimentoJuramentado);
 		
-				
-		
-		return true;
+		return null;
 	}
 
+	private String tratarRedistribuicao(LancamentoDTO lancamento) {
+	    
+	    Long idProdutoEdicao = lancamento.getIdProdutoEdicao();
+        Integer numeroPeriodo = lancamento.getNumeroPeriodo();
+	    
+        Lancamento lancamentoOriginal =
+            this.lancamentoRepository.obterLancamentoOriginalDaRedistribuicao(idProdutoEdicao, numeroPeriodo);
+        
+        if (lancamentoOriginal.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)
+                || lancamentoOriginal.getStatus().equals(StatusLancamento.EM_RECOLHIMENTO)
+                || lancamentoOriginal.getStatus().equals(StatusLancamento.RECOLHIDO)) {
+         
+            return "Produto: " + lancamentoOriginal.getProdutoEdicao().getProduto().getNome()
+                + " - Edição: " + lancamentoOriginal.getProdutoEdicao().getNumeroEdicao()
+                + " - Data Recolhimento: " + DateUtil.formatarDataPTBR(lancamentoOriginal.getDataRecolhimentoDistribuidor());
+        }
+        
+        return null;
+	}
+	
 	@Override
 	@Transactional
 	public Lancamento obterPorId(Long idLancamento) {
@@ -472,5 +499,24 @@ public class LancamentoServiceImpl implements LancamentoService {
 		return this.lancamentoRepository.obterLancamentosRedistribuicoes();
 	}
 	
+	@Override
+    @Transactional
+    public void atualizarRedistribuicoes(Lancamento lancamento, Date dataRecolhimento) {
+        
+        Long idProdutoEdicao = lancamento.getProdutoEdicao().getId();
+        
+        Integer numeroPeriodo = (lancamento.getPeriodoLancamentoParcial() != null)
+                                    ? lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo() : null;
+        
+        List<Lancamento> redistribuicoes =
+            this.lancamentoRepository.obterRedistribuicoes(idProdutoEdicao, numeroPeriodo);
+        
+        for (Lancamento redistribuicao : redistribuicoes) {
+            
+            redistribuicao.setDataRecolhimentoDistribuidor(dataRecolhimento);
+            
+            this.lancamentoRepository.merge(redistribuicao);
+        }
+    }
 
 }

@@ -58,6 +58,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -121,6 +122,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private LancamentoService lancamentoService;
 	
 	/**
 	 * {@inheritDoc}
@@ -411,6 +415,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				this.lancamentoRepository.merge(lancamento);
 				
+				this.lancamentoService.atualizarRedistribuicoes(lancamento, novaData);
+				
 				this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
 												   		lancamento, novaData);
 				
@@ -432,7 +438,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 	
-	    /**
+	/**
      * Monta a matriz de recolhimento com os recolhimentos confirmados.
      * 
      * @param matrizConfirmada - matriz de recolhimento confirmada
@@ -1588,6 +1594,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			  this.chamadaEncalheRepository.remover(chamadaEncalhe);
 			}
 		}
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public boolean existeRecolhimentoBalanceado(Date dataRecolhimento) {
+	    
+	    return this.lancamentoRepository.existeRecolhimentoBalanceado(dataRecolhimento);
 	}
 	
 }

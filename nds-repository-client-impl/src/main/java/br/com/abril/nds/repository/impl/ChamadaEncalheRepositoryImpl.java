@@ -1061,7 +1061,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" 	from chamada_encalhe ce ")
 			.append(" 	inner join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ")
 			.append(" 	inner join cota c on c.id = cec.COTA_ID ")
-			.append(" 	inner join movimento_estoque_cota mec on mec.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID and mec.COTA_ID = cec.COTA_ID ")
+			
+			.append("    inner join chamada_encalhe_lancamento cel on ce.id = cel.chamada_encalhe_id ")
+	        .append("    inner join lancamento l on l.id = cel.lancamento_id ")
+            .append("    INNER JOIN movimento_estoque_cota mec ON mec.lancamento_id = l.ID ")
+			
+			.append(" 	and mec.COTA_ID = cec.COTA_ID ")
 			.append(" 	inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ")
 			.append(" 	where 1 = 1 ");
 		
