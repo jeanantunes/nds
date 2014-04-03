@@ -777,9 +777,15 @@ var parametrosDistribuidorController = $.extend(true, {
 	
 	desabilitarItens : function() {
 
+
 		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [8] );
 		$("#chamadaoDiasSuspensao", this.workspace).disable();
 		$("#chamadaoValorConsignado", this.workspace).disable();
+
+//		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [7] );
+//		$("#chamadaoDiasSuspensao", this.workspace).disable();
+//		$("#chamadaoValorConsignado", this.workspace).disable();
+
 		
 		//$("#utilizaDesconto", this.workspace).disable();
 		//$("#percentualDesconto", this.workspace).disable();
