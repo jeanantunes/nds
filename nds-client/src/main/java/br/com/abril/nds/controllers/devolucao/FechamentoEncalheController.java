@@ -854,12 +854,11 @@ public class FechamentoEncalheController extends BaseController {
 	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento,
 											 List<FechamentoFisicoLogicoDTO> listaNaoReplicados, boolean isAllFechamentos, 
 											 String dataEncalhe, Long fornecedorId, Long boxId) {
-		
-		if (isAllFechamentos || (listaNaoReplicados != null && !listaNaoReplicados.isEmpty())) {
 
-			listaFechamento = this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0);
-		}
-		
+		listaFechamento = 
+				this.mergeItensFechamento(
+						this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0), listaFechamento);
+
 		if (listaFechamento !=null && !listaFechamento.isEmpty()) {
 			
 			gravaFechamentoEncalhe(listaFechamento, listaNaoReplicados, isAllFechamentos, dataEncalhe, fornecedorId, boxId);
