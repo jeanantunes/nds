@@ -24,6 +24,7 @@ import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFe;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
@@ -439,5 +440,5 @@ public interface CotaService {
 	
 	Long obterIdPorNumeroCota(Integer numeroCota);
 	
-	List<Cota> obterConjuntoCota(FiltroNFe filtro);
+	List<Cota> obterConjuntoCota(FiltroNFeDTO filtro);
 }

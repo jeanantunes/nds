@@ -24,7 +24,7 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
-import br.com.abril.nds.dto.filtro.FiltroNFe;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -418,5 +418,5 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
     Cota obterPorNumerDaCota(Integer numeroCota, SituacaoCadastro situacao);
     
-    List<Cota> obterConjuntoCota(FiltroNFe filtro);
+    List<Cota> obterConjuntoCota(FiltroNFeDTO filtro);
 }

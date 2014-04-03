@@ -55,5 +55,10 @@ public interface NFeService {
 
 	public void gerarNotasFiscaisCotasEncalhe(final List<NotaFiscal> notasFiscais, final Distribuidor distribuidor, final NaturezaOperacao naturezaOperacao, 
 			final Map<String, ParametroSistema> parametrosSistema, final List<Cota> cotas);
+
+	void gerarNotasFiscaisCotas(FiltroNFeDTO filtro,
+			List<NotaFiscal> notasFiscais, Distribuidor distribuidor,
+			NaturezaOperacao naturezaOperacao,
+			Map<String, ParametroSistema> parametrosSistema, List<Cota> cotas);
 	
 }

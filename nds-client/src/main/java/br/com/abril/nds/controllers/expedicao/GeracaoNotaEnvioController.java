@@ -22,7 +22,6 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
-import br.com.abril.nds.dto.filtro.FiltroNFe;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -37,7 +36,6 @@ import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -47,7 +45,6 @@ import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
-import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
@@ -110,6 +107,9 @@ public class GeracaoNotaEnvioController extends BaseController {
 
     @Autowired
     protected CotaService cotaService;
+    
+    @Autowired
+    private NFeService nfeFeService;
     
     private static final String FILTRO_CONSULTA_NOTA_ENVIO = "filtroConsultaNotaEnvio";
 
@@ -295,7 +295,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 			            cotas.removeAll(cotasContribuinteEmitente);
 			            
 			            if(!cotasContribuinteEmitente.isEmpty()){
-			                this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, natOp, parametrosSistema, cotasContribuinteEmitente);
+			               this.nfeFeService.gerarNotasFiscaisCotas(filtroNfe, notas, distribuidor, natOp, parametrosSistema, cotasContribuinteEmitente);
 			            }
 
 			            gerarNotasEnvioREDispensaEmissao(filtro);
