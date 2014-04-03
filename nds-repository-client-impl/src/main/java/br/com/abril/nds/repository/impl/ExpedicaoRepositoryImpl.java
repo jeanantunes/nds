@@ -97,11 +97,11 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		sql.append(" FROM (");
 
 		sql.append("     SELECT SUM(innerQuery.qntReparte) + COALESCE( ")
-															.append(this.getQntDiferencaResumoLancamento()).append(", 0) - ")
+															.append(this.getQntDiferencaResumoLancamento()).append(", 0) + ")
 															.append(this.getQntCotaAusente(false)).append(" as qntReparte, ");
 		
 		sql.append("            innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + COALESCE( ")
-															.append(this.getQntDiferencaResumoLancamento()).append(", 0) - ")
+															.append(this.getQntDiferencaResumoLancamento()).append(", 0) + ")
 															.append(this.getQntCotaAusente(false)).append(" ) AS totalValorFaturado ");
 		sql.append("     FROM ");
 			
