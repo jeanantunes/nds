@@ -420,8 +420,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 					
 					if (retorno.info) {
 
-						  T.popup_confirm_dados_alterados(retorno.info);
+						  T.popup_confirm_dados_alterados(retorno.info,T.lancamentosPaginacao[index].novaDataLancamento);
 						  
+					}else{
+						T.reprogramarLancamentosSelecionadosSalvar(T.lancamentosPaginacao[index].novaDataLancamento);
 					}
 					
 					
@@ -549,6 +551,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 					
 					if (retorno.info) {
 					  T.popup_confirm_dados_alterados(retorno.info,novaDataDeLancamento);
+					}else{
+					  T.reprogramarLancamentosSelecionadosSalvar(novaDataDeLancamento);
 					}
 					
 					T.atualizarResumoBalanceamento();
