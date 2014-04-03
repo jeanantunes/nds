@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -17,8 +18,8 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
-import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
 
@@ -293,7 +294,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	public StringBuilder obterFromWhereObterCurvaABC(FiltroCurvaABCDTO filtro, AgrupamentoCurvaABC agrupamento) {
 		
 		StringBuilder sql = new StringBuilder();
@@ -426,7 +426,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append("	WHERE	");
 		
-		sql.append("	lancamento.status IN ( 'EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO') 	   ");
+		sql.append("	lancamento.status IN (:statusLancamento) 	   ");
 		
 		sql.append(this.getFiltroCurvaABC(filtro, null));
 		
@@ -463,6 +463,11 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			
 			query.setParameter("dataDe",  filtro.getDataDe());
 			query.setParameter("dataAte", filtro.getDataAte());
+			query.setParameterList("statusLancamento", 
+			        Arrays.asList(
+			                StatusLancamento.EM_RECOLHIMENTO.name(), 
+			                StatusLancamento.RECOLHIDO.name(), 
+			                StatusLancamento.FECHADO.name()));
 		}
 		
 		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {

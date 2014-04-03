@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.DadosBalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
@@ -1852,7 +1853,7 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
                 
                 try {
                     
-                    this.verificaDataOperacao(data,null,null);
+                    this.verificaDataOperacao(data,null,null,null);
                     
                     datasDistribuicaoDoFornecedor.add(data);
                     
@@ -1870,8 +1871,9 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
     }
     
     @Transactional
-    public void verificaDataOperacao( Date data,Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor) {
+    public String verificaDataOperacao( Date data,Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor,ProdutoLancamentoVO produtoLancamento) {
         
+    	String msg ="";
         final Calendar cal = Calendar.getInstance();
         
         cal.setTime(data);
@@ -1900,14 +1902,17 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
                     "A data de lançamento deve ser uma data em que o distribuidor realiza operação! (Feriado Municipal sem oeperação)");
         }
         
-        if(idFornecedor!=null && operacaoDistribuidor!=null){
+        if(idFornecedor!=null && operacaoDistribuidor!=null && produtoLancamento!=null){
           if (!calendarioService.isDiaOperante(data, idFornecedor, operacaoDistribuidor)) {
             
-            throw new ValidacaoException(
-                    TipoMensagem.WARNING,
-                    "A data de lançamento ("+data+") deve ser uma data em que o distribuidor realiza operação!"+"("+operacaoDistribuidor+")");
+        	msg= "Produto: "+produtoLancamento.getNomeProduto()+ " : "+data+ " ("+operacaoDistribuidor+")";
+        			
+            //throw new ValidacaoException(
+                    //TipoMensagem.WARNING,
+                    //"A data de lançamento ("+data+") deve ser uma data em que o distribuidor realiza operação!"+"("+operacaoDistribuidor+")");
           }
         }
+        return msg;
     }
     
     @Override

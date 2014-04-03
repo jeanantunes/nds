@@ -77,11 +77,12 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 				
 					List<EMS0128InputItem> itemsRemove = new ArrayList<EMS0128InputItem>();
 					for (EMS0128InputItem eitem : doc.getItems()) {
+						
 						MovimentoEstoque movimento = this.recuperaMovimento(eitem.getIdMovimento());
-											
-						movimento.setMotivo(eitem.getDescricaoMotivo());					
+							
+						movimento.setMotivo(eitem.getDescricaoMotivo());
 						movimento.setNumeroDocumentoAcerto(eitem.getNumeroDocumentoAcerto());
-						movimento.setDataEmicaoDocumentoAcerto(eitem.getDataEmicaoDocumentoAcerto());
+						movimento.setDataEmicaoDocumentoAcerto(eitem.getDataEmissaoDocumentoAcerto());
 						movimento.setCodigoOrigemMotivo(eitem.getCodigoOrigemMotivo());
 						
 						LancamentoDiferenca lancamentoDiferenca = recuperarLancamentoDiferenca(movimento.getId());
@@ -91,8 +92,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						if (StatusIntegracao.REJEITADO.equals(statusIntegracao)
 								|| StatusIntegracao.DESPREZADO.equals(statusIntegracao)) {
 							
-							TipoDiferenca tipoDiferenca =
-								lancamentoDiferenca.getDiferenca().getTipoDiferenca();
+							TipoDiferenca tipoDiferenca = lancamentoDiferenca.getDiferenca().getTipoDiferenca();
 							
 							StatusAprovacao statusAprovacao;
 							
@@ -111,14 +111,13 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 								
 							getSession().merge(lancamentoDiferenca);
 							
-							this.criarAtualizacaoEstoqueGFS(
-								movimento, lancamentoDiferenca.getDiferenca());
+							this.criarAtualizacaoEstoqueGFS(movimento, lancamentoDiferenca.getDiferenca());
 							
 							itemsRemove.add(eitem);
+							
 						} else if (StatusIntegracao.LIBERADO.equals(statusIntegracao)) {
 							
-							this.criarAtualizacaoEstoqueGFS(
-								movimento, lancamentoDiferenca.getDiferenca());
+							this.criarAtualizacaoEstoqueGFS(movimento, lancamentoDiferenca.getDiferenca());
 							
 							itemsRemove.add(eitem);
 						}
@@ -175,7 +174,6 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 	
-	
 	private AtualizacaoEstoqueGFS recuperarAtualizacaoEstoqueGFS(MovimentoEstoque movimentoEstoque, Diferenca diferenca){
 		
 		StringBuilder sql = new StringBuilder();
@@ -207,7 +205,6 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		return (LancamentoDiferenca) query.uniqueResult();
 	}
 
-
 	@Override
 	public void processMessage(Message message) {
 		
@@ -220,7 +217,8 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		GrupoMovimentoEstoque gme = ((TipoMovimentoEstoque)(me).getTipoMovimento()).getGrupoMovimentoEstoque();
 		
-		if ( gme.equals( GrupoMovimentoEstoque.FALTA_EM ) ) {
+		if ( gme.equals( GrupoMovimentoEstoque.FALTA_EM ) 
+				|| gme.equals( GrupoMovimentoEstoque.FALTA_EM_DIRECIONADA_PARA_COTA ) ) {
 			item.setTipoAcerto( 3 );
 		} else if ( gme.equals( GrupoMovimentoEstoque.FALTA_DE ) ) {			
 			item.setTipoAcerto( 4 );
@@ -251,7 +249,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	@SuppressWarnings("unchecked")
 	public void posProcess(Object tempVar) {
-		// TODO Auto-generated method stub
+
 		if (!input.getItem().isEmpty()) {
 			CouchDbClient cdbc = this.getCouchDBClient(input.getCodigoDistribuidor());
 			input.setTipoDocumento("EMS0128");
@@ -288,6 +286,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		query.setParameterList("grupoMovimentoEstoque", (new GrupoMovimentoEstoque[]{ 
 				GrupoMovimentoEstoque.SOBRA_EM
 				, GrupoMovimentoEstoque.SOBRA_DE
+				, GrupoMovimentoEstoque.FALTA_EM_DIRECIONADA_PARA_COTA
 				, GrupoMovimentoEstoque.FALTA_EM
 				, GrupoMovimentoEstoque.FALTA_DE
 				, GrupoMovimentoEstoque.SOBRA_DE_DIRECIONADA_PARA_COTA

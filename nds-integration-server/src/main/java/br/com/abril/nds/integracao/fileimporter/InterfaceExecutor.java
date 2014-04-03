@@ -89,8 +89,6 @@ public class InterfaceExecutor {
 
     private static String NAO_HA_IMAGENS = "Não há imagens a serem processados";
 
-	//private static Logger LOGGER = LoggerFactory.getLogger(InterfaceExecutor.class);
-	
 	@Autowired
 	private IcdObjectService icdObjectService;
 
@@ -237,7 +235,7 @@ public class InterfaceExecutor {
 									if (item.getDfsPK().getNumeroSequencia().equals(eitem.getNumSequenciaDetalhe())) {
 										eitem.setSituacaoAcerto(item.getCodigoAcerto());
 										eitem.setNumeroDocumentoAcerto(item.getNumeroDocumentoAcerto());
-										eitem.setDataEmicaoDocumentoAcerto(item.getDataEmissaoDocumentoAcerto());
+										eitem.setDataEmissaoDocumentoAcerto(item.getDataEmissaoDocumentoAcerto());
 										
 										MotivoSituacaoFaltaSobra motivo = icdObjectService.recuperaMotivoPorDetalhe(item.getDfsPK());
 										
@@ -270,11 +268,7 @@ public class InterfaceExecutor {
 	public void carregarDiretorios(InterfaceEnum interfaceEnum) {
 		
 		String parametroDir = "INBOUND_DIR";
-		
-		if(interfaceEnum.getCodigoInterface() == InterfaceEnum.EMS0140.getCodigoInterface()) {
-			parametroDir += "_NOTA_VAREJO";
-		}
-		
+	
 		this.diretorio = parametroSistemaRepository.getParametro(parametroDir);
 		
 		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
@@ -560,6 +554,7 @@ public class InterfaceExecutor {
 	/**
 	 * Processa o arquivo, lendo suas linhas e gravando no CouchDB.
 	 */
+	@SuppressWarnings("unchecked")
 	private void trataArquivo(CouchDbClient couchDbClient, File arquivo, InterfaceEnum interfaceEnum, Date dataInicio, String nomeUsuario) throws Exception {
 
 		FileReader in = new FileReader(arquivo);
@@ -576,12 +571,6 @@ public class InterfaceExecutor {
 			if (StringUtils.isEmpty(linha) ||  ((int) linha.charAt(0)  == 26) ) {
 				continue;
 			} 
-
-            // TODO: verificar tamanho correto das linhas nos arquivos: difere
-            // da definição
-//			if (linha.length() != interfaceEnum.getTamanhoLinha().intValue()) {
-//				throw new ValidacaoException(TAMANHO_LINHA);
-//			}
 			
 			if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.SIMPLES ) {
 				IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
@@ -591,8 +580,9 @@ public class InterfaceExecutor {
 				doc.setLinhaArquivo(linhaArquivo);
 				doc.setDataHoraExtracao(dataInicio);
 				doc.setNomeUsuarioExtracao(nomeUsuario);
-	
+					
 				couchDbClient.save(doc);
+				
 			} else if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.DETALHE_INLINE) {
 
 				IntegracaoDocumentDetail docD = (IntegracaoDocumentDetail) this.ffm.load(interfaceEnum.getClasseDetail(), linha);
@@ -612,8 +602,6 @@ public class InterfaceExecutor {
 					docM.setDataHoraExtracao(dataInicio);
 					docM.setNomeUsuarioExtracao(nomeUsuario);
 					docM.addItem(docD);				
-		
-					
 				}
 			}
 			
@@ -640,11 +628,19 @@ public class InterfaceExecutor {
 			return interfaceEnum;
 		}
 		
-		ParametroDistribuidor parametroDistribuidor = parametroDistribuidorRepository.findByCodigoDinapFC(distribuidor);
+		if(distribuidor == null || distribuidor.isEmpty()){
+			return interfaceEnum;
+		}
+		
+		ParametroDistribuidor parametroDistribuidor = parametroDistribuidorRepository.findByCodigoDinapFC(Long.parseLong(distribuidor));
+		
+		if(parametroDistribuidor == null){
+			LOGGER.warn("PARAMETRO DO DISTRIBUIDOR: Parâmetro do distribuidor não foi encontrado para o código [ " + Long.parseLong(distribuidor) +"]" );
+		}
 		
 		boolean isDistribuidorFilial = ((parametroDistribuidor != null 
 				&& TipoDistribuidor.FILIAL.equals(parametroDistribuidor.getTipoDistribuidor())));
-			
+		
 		if(InterfaceEnum.EMS0110.equals(interfaceEnum)
 				&& isDistribuidorFilial){
 			return InterfaceEnum.EMS0110.getInterfaceEnum(EMS0110FilialInput.class);
@@ -665,11 +661,6 @@ public class InterfaceExecutor {
 		
 		String pattern = interfaceExecucao.getMascaraArquivo();
 		String dirPath = diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator;
-		
-		if (interfaceExecucao.getId() == InterfaceEnum.EMS0140.getCodigoInterface()) {
-			pattern = String.format("%s_"+pattern, codigoDistribuidor);
-			dirPath = diretorio;
-		} 
 		
 		File dir = new File(dirPath);
 		

@@ -148,6 +148,13 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		var rows='<tr>';
 		$.each(data.listaResumoPeriodoBalanceamento, function(index, resumo){
+			
+			  if(!resumo.qtdeTitulos){ resumo.qtdeTitulos =0;}
+			  if(!resumo.qtdeExemplaresFormatada){ resumo.qtdeExemplaresFormatada =0;}
+			  if(!resumo.qtdeTitulosParciais){ resumo.qtdeTitulosParciais =0;}
+			  if(!resumo.pesoTotalFormatado){ resumo.pesoTotalFormatado =0;}
+			  if(!resumo.valorTotalFormatado){ resumo.valorTotalFormatado =0;}
+
 			  rows+='<td>';
 			  rows+='<div class="box_resumo">';
 			  rows+= '<label id="labelData'+resumo.dataFormatada.replace(/\//g, "")+'" class="labelDataLancamento">'+ resumo.dataFormatada;
@@ -163,7 +170,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			  rows+= '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar Produtos" />';
 			  rows+= '</a></label>';
 			  rows+='<span class="span_1">Qtde. Títulos:</span>';	 
-			  rows+='<span class="span_2">'+ resumo.qtdeTitulos +'</span>';
+			  rows+='<span class="span_2">'+ resumo.qtdeTitulos  +'</span>';
 			  
 			  if (resumo.excedeCapacidadeDistribuidor) {
 				  
@@ -397,7 +404,6 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	this.enviarDataDeLancamentoUnico = function(index) {
 		
-		
 		var data = [];
 		
 		data.push({name: 'produtoLancamento.id', 					   value: T.lancamentosPaginacao[index].id});
@@ -410,12 +416,21 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
 				data,
-				function() {
+				function(retorno) {
+					
+					if (retorno.info) {
+
+						  T.popup_confirm_dados_alterados(retorno.info);
+						  
+					}
+					
 					
 					T.atualizarResumoBalanceamento();
 					T.checkUncheckLancamentos();
-					
 					T.lancamentosPaginacao[index].novaDataOriginal = T.lancamentosPaginacao[index].novaDataLancamento;
+					
+				
+                  
 				},
 				function() {
 					
@@ -456,7 +471,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 						    	text: "Confirmar",
 						    	click: function() {
 						    		
-						    		T.reprogramarLancamentosSelecionados();
+						    		T.reprogramarLancamentosSelecionados(novaDataDeLancamento);
 						    		$(this).dialog("close");
 						    	}
 						    },
@@ -477,14 +492,41 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				}
 				else
 				{
-					T.reprogramarLancamentosSelecionados();
+					T.reprogramarLancamentosSelecionados(novaDataDeLancamento);
 				}
 				
 			}
 		);	
 	},
-	
-	this.reprogramarLancamentosSelecionados = function() {
+	this.reprogramarLancamentosSelecionadosSalvar = function(novaDataFormatada) {
+		
+       var data = [];
+		
+		data.push({name: 'novaDataFormatada', value: novaDataFormatada});
+			
+		$.each(T.selecionados, function(index, lancamentoSelecionado) {
+			
+			data.push({name: 'produtosLancamento[' + index + '].id', 			   		   value: lancamentoSelecionado.id});
+			data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   		   value: lancamentoSelecionado.nomeProduto});
+			data.push({name: 'produtosLancamento[' + index + '].numeroEdicao', 	   		   value: lancamentoSelecionado.numeroEdicao});
+			data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoPrevista', value: lancamentoSelecionado.dataRecolhimentoPrevista});
+			data.push({name: 'produtosLancamento[' + index + '].fornecedorId'			 , value: lancamentoSelecionado.fornecedorId});
+			
+		});
+		
+		$.postJSON(
+				pathTela + "/matrizLancamento/reprogramarLancamentosSelecionadosSalvar",
+				data,
+				function(){
+					T.atualizarResumoBalanceamento();
+				}
+			);
+		
+		$("#dialogReprogramarBalanceamento", _workspace).dialog("close");
+	},
+
+		
+	this.reprogramarLancamentosSelecionados = function(novaDataDeLancamento) {
 
 		var data = [];
 		
@@ -503,10 +545,16 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentosSelecionados",
 				data,
-				function(){
+				function(retorno){
+					
+					if (retorno.info) {
+					  T.popup_confirm_dados_alterados(retorno.info,novaDataDeLancamento);
+					}
+					
 					T.atualizarResumoBalanceamento();
 				}
 			);
+		
 		
 		$("#dialogReprogramarBalanceamento", _workspace).dialog("close");
 	},
@@ -639,6 +687,58 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			"dialog-confirmar"
 		);
 	},
+	
+	
+	/**
+	 * Exibe popup de confirmação de balanceamento
+	 */
+	this.popup_confirm_dados_alterados = function(info,novaDataFormatada) {
+		
+		//data.push({name: 'novaDataFormatada', value: $("#novaDataLancamento", _workspace).val()});
+		var textoX ="Os lancamentos serão transferidos para um dia que o fornecedor não Opera:\n\r";
+		
+		for(i=0;i<info.length;i++){
+		 textoX= textoX+info[i]+"";
+		}
+		 
+		textoX =textoX+"\n\r Deseja Continuar ?";
+		
+        $( "#dialog-confirm-dados-alterados", _workspace ).text(textoX);
+		
+		$( "#dialog-confirm-dados-alterados", _workspace ).dialog({
+			id: "#dialog-confirm-dados-alterados",
+	    	text: info,
+			resizable: false,
+			height:'auto',
+			width:490,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "dialogConfirmarBtnConfirmar",
+			    	text: "Confirmar",
+			    	click: function() {
+					
+			    		T.reprogramarLancamentosSelecionadosSalvar(novaDataFormatada);
+			    		$(this).dialog("close");
+			    		
+			    	}
+			    },
+			    {
+			    	id: "dialogConfirmarBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
+				}
+			],
+			form: $("#dialog-confirm-dados-alterados", this.workspace).parents("form"),
+			beforeClose: function() {
+				clearMessageDialogTimeout("dialog-confirm-dados-alterados");
+		    }
+		});
+	},
+	
 	
 	/**
 	 * Exibe popup de confirmação de balanceamento
@@ -1222,7 +1322,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			    	id: "dialogReprogramarBtnConfirmar",
 			    	text: "Confirmar",
 			    	click: function() {
-					
+	
 			    		balanceamentoLancamento.verificaSeDataEstaConfirmada($('#novaDataLancamento').val());
 			    	}
 			    },

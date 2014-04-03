@@ -585,7 +585,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" sum( ");
         
-        sql.append("     case when tipoCota = 'A_VISTA' then ");
+        sql.append("     case when tipoCota = 'A_VISTA' AND diaRecolhimento = 1 then ");
         
         sql.append("         case when alteracaoTipoCota >= dataMovimentoEstoque then ");
         
@@ -595,9 +595,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append("         else 0 end ");
         
-        sql.append("     else ( ");
+        sql.append("     when diaRecolhimento = 1 then ( ");
         sql.append(indUtilizaPrecoCapa ? "  a.precoVenda " : " a.precoComDesconto ");
-        sql.append(" * a.reparte) end ");
+        sql.append(" * a.reparte) else 0 end ");
         
         sql.append("    ) as totalReparte, ");
         

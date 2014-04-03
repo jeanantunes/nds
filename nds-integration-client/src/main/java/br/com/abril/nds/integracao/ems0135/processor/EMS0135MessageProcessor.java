@@ -231,7 +231,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 produtoEdicao.setNumeroEdicao(inputItem.getEdicao());
                 
                 if(inputItem.getDesconto()!=null) {
-                    produtoEdicao.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()*100));
+                    produtoEdicao.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
                 }
                 
                 produtoEdicao.setPacotePadrao(10);
@@ -355,7 +355,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         
         for (ItemNotaFiscalEntrada item : nfEntrada.getItens()) {
             
-            BigDecimal valorDesconto = item.getPreco().multiply(item.getDesconto());
+            BigDecimal valorDesconto = item.getPreco().multiply(item.getDesconto().divide(new BigDecimal(100)));
             
             BigDecimal valorLiquidoItem = item.getPreco().subtract(valorDesconto);
             
