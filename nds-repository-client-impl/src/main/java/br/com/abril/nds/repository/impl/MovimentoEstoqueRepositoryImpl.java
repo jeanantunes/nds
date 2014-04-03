@@ -193,6 +193,7 @@ implements MovimentoEstoqueRepository {
         String templateHqlDiferencaRateioCota =  new StringBuilder("(select ")
             .append(" COALESCE( sum(CASE  ")
             .append("              WHEN diferenca.tipoDiferenca='FALTA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda  * -1) ")
+            .append("              WHEN diferenca.tipoDiferenca='FALTA_EM_DIRECIONADA_COTA' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda  * -1) ")
             .append("              WHEN diferenca.tipoDiferenca='PERDA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda * -1 )")
             .append("              WHEN diferenca.tipoDiferenca='SOBRA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)  ")
             .append("              WHEN diferenca.tipoDiferenca='GANHO_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)  ")
@@ -233,12 +234,12 @@ implements MovimentoEstoqueRepository {
         		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO,
         		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS,
         		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO,
-        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR
-        		
+        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR        		
         		));
         
         query.setParameterList("tipoDiferencaRateioCota", Arrays.asList(TipoDiferenca.SOBRA_EM,
-                                                                        TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA, 
+                                                                        TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA,
+                                                                        TipoDiferenca.FALTA_EM_DIRECIONADA_COTA,
                                                                         TipoDiferenca.GANHO_EM,
                                                                         TipoDiferenca.FALTA_EM,
                                                                         TipoDiferenca.PERDA_EM));

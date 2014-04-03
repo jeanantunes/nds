@@ -62,8 +62,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			classByTipoInterfaceEnum = ((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getClasseMaster();
 		}
 		
-		String codigoDistribuidor =
-			((CouchDBImportRouteTemplate) inputModel).getCodigoDistribuidor();
+		String codigoDistribuidor = ((CouchDBImportRouteTemplate) inputModel).getCodigoDistribuidor();
 		
 		CouchDbClient couchDbClient = this.getCouchDBClient(codigoDistribuidor);
 		
@@ -74,9 +73,11 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		view.includeDocs(true);
 		ViewResult<String, Void, ?> result = null;
 		
-		try{
+		try {
+			
 			result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
-		}catch(org.lightcouch.NoDocumentException e){
+			
+		} catch(org.lightcouch.NoDocumentException e){
 			//Nao ha informacoes a serem processadas
             ndsiLoggerFactory.getLogger().setStatusProcesso(StatusExecucaoEnum.VAZIO);
 			return;
@@ -110,11 +111,11 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 				
 				try {
 					
-					 TransactionTemplate template = new TransactionTemplate(transactionManager);
+					TransactionTemplate template = new TransactionTemplate(transactionManager);
                       
-                     template.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
-                     template.setPropagationBehavior(TransactionDefinition.PROPAGATION_SUPPORTS);
-                     template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+					template.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
+					template.setPropagationBehavior(TransactionDefinition.PROPAGATION_SUPPORTS);
+					template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 					
 					template.execute(new TransactionCallback<Void>() {
 						@Override
@@ -129,8 +130,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 						}
 					});
 				} catch(Exception e) {
-                    ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA,
-                            e.getMessage());
+                    ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
 
 				}
 				
@@ -149,9 +149,9 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			view.limit(couchDbProperties.getBachSize());
 			view.includeDocs(true);
 			
-			try{
+			try {
 				result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
-			}catch(org.lightcouch.NoDocumentException e){
+			} catch(org.lightcouch.NoDocumentException e) {
 				//Nao ha mais informacoes a serem processadas
 				break;
 			}
