@@ -7,22 +7,22 @@ var fechamentoEncalheController = $.extend(true, {
 	arrayCotasAusentesSession: [],
 	checkMarcarTodosCotasAusentes : false,
 	checkAllGrid: false,
-	isAllFechamentos: true,
+	isAllFechamentos: false,
 	nonSelected: [],
 	fechamentosManuais: [],
 	modoBox: {
 		ativo: false,
 		alterado: false,
-		idBox: null,
-		idBoxNaoSalvo: null,
+		idBox: '',
+		idBoxNaoSalvo: '',
 		isBoxAlterado: function() {
 			return this.ativo && this.alterado;
 		},
 		reset: function() {
 			this.ativo = false;
 			this.alterado = false;
-			this.idBox = null;
-			this.idBoxNaoSalvo = null;
+			this.idBox = '';
+			this.idBoxNaoSalvo = '';
 		},
 		alterarBox: function(alterado) {
 			if (this.ativo) {
@@ -45,7 +45,7 @@ var fechamentoEncalheController = $.extend(true, {
 			if (this.isBoxAlterado()) {
 				this.idBoxNaoSalvo = this.idBox; 
 			} else {
-				this.idBoxNaoSalvo = null;
+				this.idBoxNaoSalvo = '';
 			}
 			
 			this.idBox = value;
@@ -58,7 +58,7 @@ var fechamentoEncalheController = $.extend(true, {
 			return this.idBoxNaoSalvo ? this.idBoxNaoSalvo : this.idBox;
 		},
 		clearBoxNaoSalvo: function() {
-			this.idBoxNaoSalvo = null;
+			this.idBoxNaoSalvo = '';
 		}
 	},
 	
@@ -519,6 +519,8 @@ var fechamentoEncalheController = $.extend(true, {
 				} else {
 					fechamentoEncalheController.pesquisar();
 				}
+				
+				fechamentoEncalheController.isAllFechamentos = false;
 			},
 		  	null,
 		   	false
@@ -1230,11 +1232,13 @@ var fechamentoEncalheController = $.extend(true, {
 		 
 		 
 		 var data = new Array();
+
 		 var idBox = fechamentoEncalheController.modoBox.getCurrentBoxId();
+
+		 data.push({name:"boxId", value: idBox});
 
 		 data.push({name:"dataEncalhe", value: $('#datepickerDe', fechamentoEncalheController.workspace).val()});
 		 data.push({name:"fornecedorId", value: $('#selectFornecedor', fechamentoEncalheController.workspace).val()});
-		 data.push({name:"boxId", value: idBox});
 		 
 		 if (fechamentoEncalheController.nonSelected) {
 
@@ -1258,7 +1262,7 @@ var fechamentoEncalheController = $.extend(true, {
 		 });
 		 */
 		 
-		return JSON.stringify(data);
+		return data;
 	},
 
 	exibirMensagemBoxNaoSalvo: function() {
@@ -1310,8 +1314,9 @@ var fechamentoEncalheController = $.extend(true, {
 				} else {
 					
 					fechamentoEncalheController.verificarEncerrarOperacaoEncalhe();
-					
 				}
+				
+				fechamentoEncalheController.isAllFechamentos = false;
 			},
 		  	null,
 		   	false
