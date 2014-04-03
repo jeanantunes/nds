@@ -478,7 +478,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				.append("			 ELSE innerQuery.qntReparte END ) + ").append(this.getQntCotaAusente(false))
 				.append("  AS qntReparte, 						    ")
 				.append(" COALESCE( "+ this.getQntDiferencaResumoLancamento() +", 0) AS qntDiferenca,")
-				.append(" sum(innerQuery.valorFaturado) - ").append(this.getQntCotaAusente(true)).append(" AS valorFaturado,")
+				.append(" sum(innerQuery.valorFaturado) + ").append(this.getQntCotaAusente(true)).append(" AS valorFaturado,")
 				.append(" innerQuery.codigoProduto AS codigoProduto, 			 ")
 				.append(" innerQuery.nomeProduto AS nomeProduto, 				 ")
 				.append(" innerQuery.numeroEdicao AS numeroEdicao, 				 ")
