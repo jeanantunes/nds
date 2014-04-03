@@ -21,10 +21,10 @@ public class ParametroDistribuidor {
 	private Long id;
 	
 	@Column(name = "CODIGO_DINAP", nullable = false)
-	private String codigoDinap;
+	private Long codigoDinap;
 	
 	@Column(name = "CODIGO_FC", nullable = false)
-	private String codigoFC;
+	private Long codigoFC;
 	
 	@Column(name = "NOME_FANTASIA", nullable = false)
 	private String nomeFantasia;
@@ -53,22 +53,22 @@ public class ParametroDistribuidor {
 	}
 
 
-	public String getCodigoDinap() {
+	public Long getCodigoDinap() {
 		return codigoDinap;
 	}
 
 
-	public void setCodigoDinap(String codigoDinap) {
+	public void setCodigoDinap(Long codigoDinap) {
 		this.codigoDinap = codigoDinap;
 	}
 
 
-	public String getCodigoFC() {
+	public Long getCodigoFC() {
 		return codigoFC;
 	}
 
 
-	public void setCodigoFC(String codigoFC) {
+	public void setCodigoFC(Long codigoFC) {
 		this.codigoFC = codigoFC;
 	}
 
