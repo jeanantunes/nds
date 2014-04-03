@@ -183,7 +183,7 @@ public class RegiaoController extends BaseController {
 		
 		setFaturamentoCota(listaCotasRegiaoDTO);
 
-		removeRegiosInconsistentes(listaCotasRegiaoDTO, filtro);
+//		removeRegiosInconsistentes(listaCotasRegiaoDTO, filtro);
 		
 		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegiaoCotaDTO>>();
 
@@ -211,25 +211,25 @@ public class RegiaoController extends BaseController {
 		
 	}
 	
-	private void removeRegiosInconsistentes(List<RegiaoCotaDTO> listaCotasRegiaoDTO, FiltroCotasRegiaoDTO filtro) {
-		
-		List<Integer> cotasCadas =  this.regiaoService.buscarNumeroCotasPorIdRegiao(filtro.getId());
-		
-		List<RegiaoCotaDTO> listaCotasRegiaoDTOToRemove = new ArrayList<RegiaoCotaDTO>();
-		
-		for (Integer cota:cotasCadas) {
-			
-			for (RegiaoCotaDTO regiaoCotaDTO:listaCotasRegiaoDTO) {
-				
-                if (regiaoCotaDTO.getCotaId() != null && regiaoCotaDTO.getCotaId() == cota.longValue()) {
-					
-					listaCotasRegiaoDTOToRemove.add(regiaoCotaDTO);
-				}
-			}
-		}
-		
-		listaCotasRegiaoDTO.removeAll(listaCotasRegiaoDTOToRemove);
-	}
+//	private void removeRegiosInconsistentes(List<RegiaoCotaDTO> listaCotasRegiaoDTO, FiltroCotasRegiaoDTO filtro) {
+//		
+//		List<Integer> cotasCadas =  this.regiaoService.buscarNumeroCotasPorIdRegiao(filtro.getId());
+//		
+//		List<RegiaoCotaDTO> listaCotasRegiaoDTOToRemove = new ArrayList<RegiaoCotaDTO>();
+//		
+//		for (Integer cota:cotasCadas) {
+//			
+//			for (RegiaoCotaDTO regiaoCotaDTO:listaCotasRegiaoDTO) {
+//				
+//                if (regiaoCotaDTO.getCotaId() != null && regiaoCotaDTO.getCotaId() == cota.longValue()) {
+//					
+//					listaCotasRegiaoDTOToRemove.add(regiaoCotaDTO);
+//				}
+//			}
+//		}
+//		
+//		listaCotasRegiaoDTO.removeAll(listaCotasRegiaoDTOToRemove);
+//	}
 
 	@Post
 	@Path("/carregarRegiao")
