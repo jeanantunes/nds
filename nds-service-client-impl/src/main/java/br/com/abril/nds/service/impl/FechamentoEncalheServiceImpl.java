@@ -455,13 +455,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 
                 qtd = fechamentoNaoReplicado.getFisico();
                 
-            } else if (filtro.isCheckAll()) {
-                
+            } else if (filtro.isCheckAll() || Boolean.valueOf(fechamento.getReplicar())) {
+
                 qtd = fechamento.getExemplaresDevolucao().longValue();
-                
+
             } else {
                 
-                qtd = 0l;
+                qtd = fechamento.getFisico() != null ? fechamento.getFisico() : 0l;
             }
             
             final FechamentoEncalhePK id = new FechamentoEncalhePK();
