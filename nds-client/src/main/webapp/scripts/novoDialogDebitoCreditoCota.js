@@ -482,7 +482,7 @@ var novoDialogDebitoCreditoCotaController = $.extend(true, {
 		
 		$("#grupoMovimentoHidden", novoDialogDebitoCreditoCotaController.workspace).val(result);
 		
-		if (result=='DEBITO_SOBRE_FATURAMENTO'){
+		if (result=='DEBITO_SOBRE_FATURAMENTO' || result=='CREDITO_SOBRE_FATURAMENTO'){
 			$('#tabelaFaturamento', novoDialogDebitoCreditoCotaController.workspace).show();
 			$("#novoValor", novoDialogDebitoCreditoCotaController.workspace).val('');
 			$('#tituloNovoValor', novoDialogDebitoCreditoCotaController.workspace).hide();

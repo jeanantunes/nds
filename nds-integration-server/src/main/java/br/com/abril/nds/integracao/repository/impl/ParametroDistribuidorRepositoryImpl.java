@@ -19,7 +19,7 @@ public class ParametroDistribuidorRepositoryImpl extends AbstractRepositoryModel
 	}
 
 	@Override
-	public ParametroDistribuidor findByCodigoDinapFC(String codigo) {
+	public ParametroDistribuidor findByCodigoDinapFC(Long codigo) {
 		try {
 			
 			Query query  = getSession().createQuery("select o from ParametroDistribuidor o where o.codigoDinap =:codigo or o.codigoFC =:codigo ");

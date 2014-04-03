@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -168,7 +169,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 			                itemCota.getPessoa().getNome(),
 			                null,
 			                null,
-			                (percFat!=null?CurrencyUtil.formatarValor(percFat.doubleValue()):null),
+			                (percFat!=null?CurrencyUtil.formatarValor(percFat.setScale(2, RoundingMode.HALF_UP)):null),
 			                null));	
 		}
 		

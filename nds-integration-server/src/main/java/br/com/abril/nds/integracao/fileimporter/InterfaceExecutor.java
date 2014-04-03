@@ -624,29 +624,27 @@ public class InterfaceExecutor {
 	 */
 	private InterfaceEnum tratarInterfaceEnumDistribuidorFilial(InterfaceEnum interfaceEnum,String distribuidor){
 		
-		LOGGER.warn("********tratarInterfaceEnumDistribuidorFilial**********");
-		
 		if(interfaceEnum == null){
 			return interfaceEnum;
 		}
 		
-		LOGGER.warn("********INICIO CONSULTA**********" + distribuidor);
+		if(distribuidor == null || distribuidor.isEmpty()){
+			return interfaceEnum;
+		}
 		
-		ParametroDistribuidor parametroDistribuidor = parametroDistribuidorRepository.findByCodigoDinapFC(distribuidor);
+		ParametroDistribuidor parametroDistribuidor = parametroDistribuidorRepository.findByCodigoDinapFC(Long.parseLong(distribuidor));
 		
-		LOGGER.warn("********Resultado CONSULTA**********" + parametroDistribuidor);
+		if(parametroDistribuidor == null){
+			LOGGER.warn("PARAMETRO DO DISTRIBUIDOR: Parâmetro do distribuidor não foi encontrado para o código [ " + Long.parseLong(distribuidor) +"]" );
+		}
 		
 		boolean isDistribuidorFilial = ((parametroDistribuidor != null 
 				&& TipoDistribuidor.FILIAL.equals(parametroDistribuidor.getTipoDistribuidor())));
-		
-		LOGGER.warn("********isDistribuidorFilial **********" + isDistribuidorFilial);
 		
 		if(InterfaceEnum.EMS0110.equals(interfaceEnum)
 				&& isDistribuidorFilial){
 			return InterfaceEnum.EMS0110.getInterfaceEnum(EMS0110FilialInput.class);
 		}
-		
-		LOGGER.warn("********RETORNO **********" + interfaceEnum.getClasseLinha());
 		
 		return interfaceEnum;
 	}

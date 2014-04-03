@@ -96,7 +96,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 							
 							StatusAprovacao statusAprovacao;
 							
-							if (tipoDiferenca.isFalta()) {
+							if (tipoDiferenca.isFalta() || tipoDiferenca.isFaltaParaCota()) {
 								
 								statusAprovacao = StatusAprovacao.PERDA;
 								
