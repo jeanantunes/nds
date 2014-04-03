@@ -9,7 +9,6 @@ import java.util.TreeSet;
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
-import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
@@ -100,5 +99,7 @@ public interface RecolhimentoService {
 														   List<Long> listaIdsFornecedores);
 
 	public void validarLancamentoParaReabertura(List<Date> datasConfirmadas);
-
+	
+	public boolean existeRecolhimentoBalanceado(Date dataRecolhimento);
+	
 }
