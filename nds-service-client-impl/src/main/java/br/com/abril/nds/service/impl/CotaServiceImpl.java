@@ -52,7 +52,7 @@ import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.TitularidadeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroNFe;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -2188,7 +2188,7 @@ public class CotaServiceImpl implements CotaService {
     
     @Override
     @Transactional
-    public List<Cota> obterConjuntoCota(FiltroNFe filtro) {
+    public List<Cota> obterConjuntoCota(FiltroNFeDTO filtro) {
         return cotaRepository.obterConjuntoCota(filtro);
     }
     

@@ -97,6 +97,7 @@ import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParciaisService;
+import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -113,6 +114,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private CotaRepository cotaRepository;
+    
+    @Autowired
+    private TipoMovimentoService tipoMovimentoService;
     
     @Autowired
     private GerarCobrancaService gerarCobrancaService;
@@ -962,6 +966,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             return;
         }
         
+        tratarTransferenciaEstoqueDeRecolhimentoParaLancamento(item, usuario, encalheFisico);
+        
         final Lancamento lancamentoParcial = lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item
                 .getChamadaEncalheId());
         
@@ -969,9 +975,29 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             
             parciaisService.atualizarReparteDoProximoLancamentoPeriodo(lancamentoParcial, usuario, BigInteger
                     .valueOf(encalheFisico));
+            
         }
     }
-    
+
+    @Transactional
+    private void tratarTransferenciaEstoqueDeRecolhimentoParaLancamento(FechamentoFisicoLogicoDTO item,
+            Usuario usuario, Long encalheFisico) {
+
+        TipoMovimentoEstoque tipoMovimentoSaidaRecolhimento =
+                tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO);
+        
+        TipoMovimentoEstoque tipoMovimentoEntradaLancamento =
+                tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO);
+       
+        
+        movimentoEstoqueService.gerarMovimentoEstoque(item.getProdutoEdicao(), 
+                usuario.getId(), BigInteger.valueOf(encalheFisico), tipoMovimentoSaidaRecolhimento);
+        
+        movimentoEstoqueService.gerarMovimentoEstoque(item.getProdutoEdicao(), 
+                usuario.getId(), BigInteger.valueOf(encalheFisico), tipoMovimentoEntradaLancamento);
+        
+    }
+
     private void gerarMovimentoFaltasSobras(final FechamentoFisicoLogicoDTO item, final Usuario usuarioLogado) {
         
         BigInteger qntDiferenca = BigInteger.ZERO;

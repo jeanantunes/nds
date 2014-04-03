@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -75,6 +76,6 @@ public interface MatrizLancamentoNovaService {
     
     void reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario);
 
-	String verificaDataOperacao(Date data, Long idFornecedor,OperacaoDistribuidor operacaoDistribuidor);
+	String verificaDataOperacao(Date data, Long idFornecedor,OperacaoDistribuidor operacaoDistribuidor,ProdutoLancamentoVO produtoLancamento );
     
 }

@@ -16,7 +16,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
@@ -415,7 +414,7 @@ public class NFeServiceImpl implements NFeService {
 							if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
 								
 								for (Cota cota : cotas) {
-									if(cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() || cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica()){
+									if((cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() != null && cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) || cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica()){
 										cotasContribuinteEmitente.add(cota);
 									}
 								}
@@ -539,7 +538,10 @@ public class NFeServiceImpl implements NFeService {
 		return distribuidorRepository.obter();
 	}
 	
-	private void gerarNotasFiscaisCotas(final FiltroNFeDTO filtro,
+
+	@Override
+	@Transactional
+	public void gerarNotasFiscaisCotas(final FiltroNFeDTO filtro,
 			final List<NotaFiscal> notasFiscais, final Distribuidor distribuidor, final NaturezaOperacao naturezaOperacao, 
 			final Map<String, ParametroSistema> parametrosSistema, final List<Cota> cotas) {
 		

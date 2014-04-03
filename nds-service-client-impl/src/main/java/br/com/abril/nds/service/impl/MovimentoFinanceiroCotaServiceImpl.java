@@ -893,6 +893,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         		GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR,
                 GrupoMovimentoEstoque.COMPRA_ENCALHE,
                 GrupoMovimentoEstoque.RECEBIMENTO_REPARTE,
+                GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE,
                 GrupoMovimentoEstoque.SOBRA_EM_COTA,
                 GrupoMovimentoEstoque.FALTA_EM_COTA));
     	
