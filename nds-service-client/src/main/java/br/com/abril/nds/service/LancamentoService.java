@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
@@ -46,9 +45,9 @@ public interface LancamentoService {
      * @param tipoMovimentoCota
      * @param tipoMovimento
      * @param dataOperacao
-     * @return boolean
+     * @return String
      */
-	boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,TipoMovimentoEstoque tipoMovimentoJuramentado);
+	String confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,TipoMovimentoEstoque tipoMovimentoJuramentado);
 	
 	Lancamento obterPorId(Long idLancamento);
 	
@@ -185,5 +184,8 @@ public interface LancamentoService {
 	void excluirLancamento(final ProdutoLancamentoVO produtoLancamento);
 	
 	LinkedList<Lancamento> obterLancamentosRedistribuicoes();
+
+	void atualizarRedistribuicoes(Lancamento lancamento, Date dataRecolhimento);
+	
 }
  

@@ -1698,10 +1698,13 @@ public class LancamentoRepositoryImpl extends
 				+ " produto.id as idProduto, "
 				+ " lancamento.dataLancamentoPrevista as dataPrevista, "
 				+ " lancamento.dataLancamentoDistribuidor as dataDistribuidor, "
-				+ " lancamento.reparte as reparte "
+				+ " lancamento.reparte as reparte, "
+				+ " lancamento.tipoLancamento as tipoLancamento, "
+				+ " periodoLancamentoParcial.numeroPeriodo as numeroPeriodo "
 				+ " from Lancamento lancamento "
 				+ " join lancamento.produtoEdicao produtoEdicao "
 				+ " join produtoEdicao.produto produto "
+				+ " left join lancamento.periodoLancamentoParcial periodoLancamentoParcial "
 				+ " where lancamento.id = :idLancamento ";
 
 		Query query = super.getSession().createQuery(hql);
@@ -1867,7 +1870,7 @@ public class LancamentoRepositoryImpl extends
 
 		hql.append(" select lancamento ")
 				.append(" from Lancamento lancamento ")
-				.append(" where lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ")
+				.append(" where lancamento.dataRecolhimentoDistribuidor <= :dataRecolhimentoDistribuidor ")
 				.append(" and lancamento.status = :statusLancamentoBalanceamento ");
 
 		Query query = getSession().createQuery(hql.toString());
@@ -2519,4 +2522,63 @@ public class LancamentoRepositoryImpl extends
 		return listaAux;
 	}
 
+	@SuppressWarnings("unchecked")
+    public List<Lancamento> obterRedistribuicoes(Long idProdutoEdicao, Integer numeroPeriodo) {
+        
+        StringBuilder hql = new StringBuilder();
+
+        hql.append(" select lancamento ");
+        hql.append(" from Lancamento lancamento ");
+        hql.append(" join lancamento.produtoEdicao produtoEdicao ");
+        hql.append(" left join lancamento.periodoLancamentoParcial periodoLancamentoParcial "); 
+        hql.append(" where produtoEdicao.id = :idProdutoEdicao ");
+        hql.append(" and lancamento.tipoLancamento = :tipoLancamento ");
+        
+        if (numeroPeriodo != null) {
+            
+            hql.append(" and periodoLancamentoParcial.numeroPeriodo = :numeroPeriodo ");
+        }
+        
+        Query query = getSession().createQuery(hql.toString());
+
+        query.setParameter("idProdutoEdicao", idProdutoEdicao);
+        query.setParameter("tipoLancamento", TipoLancamento.REDISTRIBUICAO);
+        
+        if (numeroPeriodo != null) {
+            
+            query.setParameter("numeroPeriodo", numeroPeriodo);
+        }
+        
+        return  query.list();
+    }
+	
+    public Lancamento obterLancamentoOriginalDaRedistribuicao(Long idProdutoEdicao, Integer numeroPeriodo) {
+        
+        StringBuilder hql = new StringBuilder();
+
+        hql.append(" select lancamento ");
+        hql.append(" from Lancamento lancamento ");
+        hql.append(" join lancamento.produtoEdicao produtoEdicao ");
+        hql.append(" left join lancamento.periodoLancamentoParcial periodoLancamentoParcial "); 
+        hql.append(" where produtoEdicao.id = :idProdutoEdicao ");
+        hql.append(" and lancamento.tipoLancamento = :tipoLancamento ");
+        
+        if (numeroPeriodo != null) {
+            
+            hql.append(" and periodoLancamentoParcial.numeroPeriodo = :numeroPeriodo ");
+        }
+        
+        Query query = getSession().createQuery(hql.toString());
+
+        query.setParameter("idProdutoEdicao", idProdutoEdicao);
+        query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO);
+        
+        if (numeroPeriodo != null) {
+            
+            query.setParameter("numeroPeriodo", numeroPeriodo);
+        }
+        
+        return  (Lancamento) query.uniqueResult();
+    }
+	
 }

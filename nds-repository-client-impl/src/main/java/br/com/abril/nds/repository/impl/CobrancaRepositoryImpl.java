@@ -264,9 +264,10 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		hql.append(" c.NOSSO_NUMERO as nossoNumero ");
 		hql.append(" FROM cobranca c ");
 		hql.append(" LEFT JOIN BAIXA_COBRANCA bc on (c.ID = bc.COBRANCA_ID and bc.STATUS_APROVACAO is null) ");
-		hql.append(" LEFT JOIN DIVIDA d on d.ID = (c.DIVIDA_ID and d.STATUS != :statusPendenteInadimplencia) ");
+		hql.append(" LEFT JOIN DIVIDA d on (d.ID = c.DIVIDA_ID) ");
 		hql.append(" INNER JOIN COTA ct on ct.ID = c.COTA_ID ");
 		hql.append(" INNER JOIN PESSOA p on p.ID = ct.PESSOA_ID ");
+		hql.append(" LEFT JOIN ACUMULO_DIVIDA acd on (acd.DIVIDA_ID = d.ID) ");
 		hql.append(" WHERE ct.NUMERO_COTA = :ncota ");
 		hql.append(" AND c.DT_PAGAMENTO IS NULL ");
 		
@@ -279,7 +280,9 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		}
 		
 		if (filtro.isAcumulaDivida()){
-		    hql.append(" AND ( (d.ACUMULADA = :acumulada) OR (d.DATA = :data) )");
+		    hql.append(" AND ( (acd.ID is not null) OR (d.DATA = :data) )");
+		} else {
+		    hql.append(" AND ( acd.ID is null )");
 		}
 
 		hql.append(" UNION ALL ");
@@ -303,7 +306,6 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		Query query = super.getSession().createSQLQuery(consulta);
 
 		query.setParameter("ncota", filtro.getNumeroCota());
-		query.setParameter("statusPendenteInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA.name());
 		query.setParameter("quitada", StatusDivida.QUITADA.name());
 
 		if (filtro.getDataVencimento()!=null){
@@ -315,7 +317,6 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		}
 		
 		if (filtro.isAcumulaDivida()){
-			query.setParameter("acumulada", filtro.isAcumulaDivida());
 			query.setParameter("data", filtro.getDataVencimento());
 		}
 

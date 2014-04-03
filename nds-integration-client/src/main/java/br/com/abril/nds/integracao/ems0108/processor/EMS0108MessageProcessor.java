@@ -31,6 +31,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DescontoLogisticaRepository;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -48,9 +49,10 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
+	private LancamentoService lancamentoService;
+	
+	@Autowired
 	private ParciaisService parciaisService;
-
-	private final static String DATA_ZEROS = "00000000";
 
 	private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 	
@@ -163,7 +165,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 								EventoExecucaoEnum.ERRO_INFRA,
                                         String.format(
                                                 "Registro não será atualizado pois já está em processo de recolhimento. Data de recolhimento: %1$s Produto: %2$s Edicao: %3$s.",
-                                                input.getDataLancamentoRecolhimentoProduto(), input
+                                                dataLancamentoRecolhimentoProduto, input
                                                         .getCodigoPublicacao(), input.getEdicaoRecolhimento()
                                                         .toString()));
 						return;
@@ -182,16 +184,11 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 								);
 							return ;
 						} else {
-							if (input.getDataLancamentoRecolhimentoProduto() != null && input.getDataLancamentoRecolhimentoProduto().isEmpty() && !DATA_ZEROS.equals(input.getDataLancamentoRecolhimentoProduto())) {
-								try {
-									lancamento.setDataRecolhimentoDistribuidor(DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
-								} catch (ParseException e) {
-									ndsiLoggerFactory.getLogger().logError(
-											message,
-											EventoExecucaoEnum.ERRO_INFRA,
-											String.format( "Erro ao converter data %1$s Produto %2$s Edicao %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
-									return;
-								}
+							if (dataLancamentoRecolhimentoProduto != null) {
+								
+								lancamento.setDataRecolhimentoDistribuidor(dataLancamentoRecolhimentoProduto);
+								
+								this.lancamentoService.atualizarRedistribuicoes(lancamento, dataLancamentoRecolhimentoProduto);
 							}
 							
 							this.getSession().merge(lancamento);
