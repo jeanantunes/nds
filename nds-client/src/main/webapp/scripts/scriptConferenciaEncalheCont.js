@@ -206,8 +206,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
 								
 								ConferenciaEncalheCont.carregarListaConferencia(data);
-								
-								ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalheCont.popup_alert);
+								ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalhe.popup_notaFiscal);
 								
 								ConferenciaEncalheCont.numeroCotaEditavel(true);
 							},
@@ -240,7 +239,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					ConferenciaEncalheCont.carregarListaConferencia(data);
 					
 					$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
-					ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalheCont.popup_alert);
+					ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalheCont.popup_notaFiscal);
 					
 					ConferenciaEncalheCont.numeroCotaEditavel(true);
 				}
@@ -1296,7 +1295,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#dialog-alert", ConferenciaEncalheCont.workspace).show();
 	},
 	
-	popup_notaFiscal: function () {
+	popup_notaFiscal : function () {
 		
 		ConferenciaEncalheCont.modalAberta = true;
 		$(".message-dialog-encalhe > div", ConferenciaEncalheCont.workspace).hide();
@@ -1348,6 +1347,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 					);
 				},
 				"Cancelar" : function() {
+					
+					ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
+					
+					$("#numeroCota", ConferenciaEncalhe.workspace).focus();
+					
 					$(this).dialog("close");
 					$("#vlrCE", ConferenciaEncalheCont.workspace).focus();
 					$("#qtdCE", ConferenciaEncalheCont.workspace).focus();
@@ -1355,6 +1359,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 			}, close : function(){
 				
 				ConferenciaEncalheCont.modalAberta = false;
+				
+				ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
+				
+				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 			},
 			form: $("#dialog-notaFiscal", this.workspace).parents("form")			
 		});

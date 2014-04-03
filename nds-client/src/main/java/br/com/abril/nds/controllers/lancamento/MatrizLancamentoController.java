@@ -488,12 +488,15 @@ public class MatrizLancamentoController extends BaseController {
     	//final Date novaData = DateUtil.parseDataPTBR((String)session.getAttribute(DATA_ATUAL_SELECIONADA));
     	//final Date novaData = DateUtil.parseDataPTBR((String)session.getAttribute(DATA_ATUAL_SELECIONADA));
     	
+    	Date novaData =null;
     	
     	if(produtosLancamento==null){
     	 produtosLancamento = (List <ProdutoLancamentoVO>)session.getAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO);
     	}
-    	
-    	Date novaData = DateUtil.parseDataPTBR((String)produtosLancamento.get(0).getNovaDataLancamento());
+    
+    	if(produtosLancamento!=null && produtosLancamento.get(0).getNovaDataLancamento()!=null){
+     		novaData= DateUtil.parseDataPTBR((String)produtosLancamento.get(0).getNovaDataLancamento());
+     	 }
     	
     	if(novaData==null){
     		novaData =DateUtil.parseDataPTBR(novaDataFormatada);
@@ -534,6 +537,10 @@ public class MatrizLancamentoController extends BaseController {
         
         //this.atualizarMapaLancamento(produtosLancamento, novaData);
         
+        session.setAttribute(DATA_ATUAL_SELECIONADA, novaDataFormatada);
+   	    session.setAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO, produtosLancamento);
+   	 
+        
         if(!listaMensagens.isEmpty()){
             
         	  
@@ -541,8 +548,7 @@ public class MatrizLancamentoController extends BaseController {
         
             //throw new ValidacaoException(validacao);
             
-        	 session.setAttribute(DATA_ATUAL_SELECIONADA, novaDataFormatada);
-        	 session.setAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO, produtosLancamento);
+        	 
         	 
         	 result.use(Results.json()).from(listaMensagens,"info").recursive().serialize();
         	 
@@ -599,12 +605,14 @@ public class MatrizLancamentoController extends BaseController {
             //this.atualizarMapaLancamento(produtosLancamento, novaData);
         }
         
+        session.setAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO, produtosLancamento);
+        
         if(!listaMensagens.isEmpty()){
         
         	validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
         
             //throw new ValidacaoException(validacao);
-        	session.setAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO, produtosLancamento);
+        	
         	
         	result.use(Results.json()).from(listaMensagens,"info").recursive().serialize();
         }else{
