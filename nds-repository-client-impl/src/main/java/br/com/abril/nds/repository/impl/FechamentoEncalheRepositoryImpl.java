@@ -1374,6 +1374,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         hql.append("where produtoEdicao.id in (:produtosEdicoesId) ");
         
+        hql.append(" and controleConferenciaEncalhe.data = :dataEncalhe ");
+        
         if (filtro.getBoxId() != null) {
             hql.append("  and conferenciaEncalhe.controleConferenciaEncalheCota.box.id = :boxId ");
         }
@@ -1381,6 +1383,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         final Query query = this.getSession().createQuery(hql.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));
         query.setParameterList("produtosEdicoesId", listaDeIdsProdutosEdicoes);
+        query.setParameter("dataEncalhe", filtro.getDataEncalhe());
         
         if (filtro.getBoxId() != null) {
             query.setLong("boxId", filtro.getBoxId());

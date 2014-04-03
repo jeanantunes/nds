@@ -77,6 +77,27 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		return (ChamadaEncalhe) query.uniqueResult();
 	}
 
+	public List<Long> obterIdsProdutoEdicaoNaMatrizRecolhimento(
+			Date dataEncalhe, 
+			List<Long> idsProdutoEdicao) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select chamadaEncalhe.produtoEdicao.id from ChamadaEncalhe chamadaEncalhe 	");
+		hql.append(" where chamadaEncalhe.dataRecolhimento = :dataEncalhe 			");
+		hql.append(" and chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe 	");
+		hql.append(" and chamadaEncalhe.produtoEdicao.id in (:idsProdutoEdicao) 	");
+		hql.append(" group by chamadaEncalhe.produtoEdicao.id ");
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		query.setParameterList("idsProdutoEdicao", idsProdutoEdicao);
+		query.setParameter("dataEncalhe", dataEncalhe);
+
+		return (List<Long>) query.list();
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ChamadaEncalhe> obterChamadasEncalhePor(Date dataOperacao, Long cotaID) {
