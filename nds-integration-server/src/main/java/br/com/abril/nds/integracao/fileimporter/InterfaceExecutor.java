@@ -235,7 +235,7 @@ public class InterfaceExecutor {
 									if (item.getDfsPK().getNumeroSequencia().equals(eitem.getNumSequenciaDetalhe())) {
 										eitem.setSituacaoAcerto(item.getCodigoAcerto());
 										eitem.setNumeroDocumentoAcerto(item.getNumeroDocumentoAcerto());
-										eitem.setDataEmicaoDocumentoAcerto(item.getDataEmissaoDocumentoAcerto());
+										eitem.setDataEmissaoDocumentoAcerto(item.getDataEmissaoDocumentoAcerto());
 										
 										MotivoSituacaoFaltaSobra motivo = icdObjectService.recuperaMotivoPorDetalhe(item.getDfsPK());
 										
@@ -628,11 +628,19 @@ public class InterfaceExecutor {
 			return interfaceEnum;
 		}
 		
-		ParametroDistribuidor parametroDistribuidor = parametroDistribuidorRepository.findByCodigoDinapFC(distribuidor);
+		if(distribuidor == null || distribuidor.isEmpty()){
+			return interfaceEnum;
+		}
+		
+		ParametroDistribuidor parametroDistribuidor = parametroDistribuidorRepository.findByCodigoDinapFC(Long.parseLong(distribuidor));
+		
+		if(parametroDistribuidor == null){
+			LOGGER.warn("PARAMETRO DO DISTRIBUIDOR: Parâmetro do distribuidor não foi encontrado para o código [ " + Long.parseLong(distribuidor) +"]" );
+		}
 		
 		boolean isDistribuidorFilial = ((parametroDistribuidor != null 
 				&& TipoDistribuidor.FILIAL.equals(parametroDistribuidor.getTipoDistribuidor())));
-			
+		
 		if(InterfaceEnum.EMS0110.equals(interfaceEnum)
 				&& isDistribuidorFilial){
 			return InterfaceEnum.EMS0110.getInterfaceEnum(EMS0110FilialInput.class);

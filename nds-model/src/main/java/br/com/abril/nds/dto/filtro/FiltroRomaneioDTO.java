@@ -34,6 +34,8 @@ public class FiltroRomaneioDTO implements Serializable {
 	
 	private ColunaOrdenacaoRomaneio ordenacaoColuna;
 	
+	private Boolean isImpressao = false;
+	
 	public enum ColunaOrdenacaoRomaneio {
 
 		COTA("cota");
@@ -186,6 +188,14 @@ public class FiltroRomaneioDTO implements Serializable {
 
 	public void setNomesProduto(String nomesProduto) {
 		this.nomesProduto = nomesProduto;
+	}
+
+	public Boolean getIsImpressao() {
+		return isImpressao;
+	}
+
+	public void setIsImpressao(Boolean isImpressao) {
+		this.isImpressao = isImpressao;
 	}
 	
 }

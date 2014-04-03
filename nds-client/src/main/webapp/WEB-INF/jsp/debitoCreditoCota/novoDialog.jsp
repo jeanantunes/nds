@@ -21,9 +21,10 @@
 
 		
 		<div name="tabelaFaturamento" id="tabelaFaturamento" >
-		    <div style="width:181px; float:left; line-height:26px;">Percentual(%): <input type="text" maxlength="3" style="width:50px; text-align:right; float:right;" name="novoPercentual" id="novoPercentual2" /></div>
+		    <div style="width:181px; float:left; line-height:26px;">Percentual(%):
+		    <input type="text" maxlength="3" style="width:50px; text-align:right; float:right;" name="novoPercentual" id="novoPercentual" /></div>
 		    <div style="width:256px; float:left; line-height:26px; margin-left:10px;">
-		    Base de Cálculo: <select name="debitoCredito.baseCalculo.id2" id="debitoCredito.baseCalculo.id" style="width:150px; float:right;">
+		    Base de Cálculo: <select name="debitoCredito.baseCalculo.id2" id="novoBaseCalculo" style="width:150px; float:right;">
 		    <option selected="selected"></option>
 		    <c:forEach items="${basesCalculo}" var="base">
 		    	<option value="${base}">${base.value}</option>
@@ -38,7 +39,8 @@
 		</div>
 		
 		<div style="width:235px; line-height:26px; float:left;">Box: <select name="debitoCredito.box.id" id="novoBox" onchange="novoDialogDebitoCreditoCotaController.carregarRoteiros(this.value,0);novoDialogDebitoCreditoCotaController.carregarRotas(0,0);" style="width:110px; float:right;">
-		            <option value="0" selected="selected"></option>
+		            <option value="" selected="selected">Todos</option>
+		            <option value="-1">Especial</option>
 		            <c:forEach items="${boxes}" var="box">
 		              <option value="${box.id}">${box.nome}</option>
 		            </c:forEach>

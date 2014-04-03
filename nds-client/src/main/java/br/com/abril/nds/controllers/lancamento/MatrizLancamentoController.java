@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.SerializationUtils;
 
 
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
@@ -104,6 +105,8 @@ public class MatrizLancamentoController extends BaseController {
     private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
     
     private static final String DATA_ATUAL_SELECIONADA = "dataAtualSelecionada";
+    
+    private static final String ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO = "lancamentosAlterados";
     
     @Path("/")
     public void index() {
@@ -475,6 +478,37 @@ public class MatrizLancamentoController extends BaseController {
         result.use(Results.json()).from(retornoDataConfirmada).serialize();
     }
     
+    
+    @SuppressWarnings("unchecked")
+	@Post
+    @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
+    public void reprogramarLancamentosSelecionadosSalvar( List<ProdutoLancamentoVO> produtosLancamento,
+            final String novaDataFormatada) {
+    	
+    	//final Date novaData = DateUtil.parseDataPTBR((String)session.getAttribute(DATA_ATUAL_SELECIONADA));
+    	//final Date novaData = DateUtil.parseDataPTBR((String)session.getAttribute(DATA_ATUAL_SELECIONADA));
+    	
+    	
+    	if(produtosLancamento==null){
+    	 produtosLancamento = (List <ProdutoLancamentoVO>)session.getAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO);
+    	}
+    	
+    	Date novaData = DateUtil.parseDataPTBR((String)produtosLancamento.get(0).getNovaDataLancamento());
+    	
+    	if(novaData==null){
+    		novaData =DateUtil.parseDataPTBR(novaDataFormatada);
+    	}
+    	
+    	if(novaData==null){
+    		novaData =DateUtil.parseDataPTBR((String)session.getAttribute(DATA_ATUAL_SELECIONADA));
+    	}
+    	
+    	this.atualizarMapaLancamento(produtosLancamento, novaData);
+    	
+    	session.setAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO, null);
+    	result.use(Results.json()).withoutRoot().from(Results.nothing()).recursive().serialize();
+    	
+    }
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void reprogramarLancamentosSelecionados(final List<ProdutoLancamentoVO> produtosLancamento,
@@ -498,7 +532,7 @@ public class MatrizLancamentoController extends BaseController {
         
         listaMensagens = this.validarDataReprogramacao(produtosLancamento, novaData);
         
-        this.atualizarMapaLancamento(produtosLancamento, novaData);
+        //this.atualizarMapaLancamento(produtosLancamento, novaData);
         
         if(!listaMensagens.isEmpty()){
             
@@ -507,6 +541,9 @@ public class MatrizLancamentoController extends BaseController {
         
             //throw new ValidacaoException(validacao);
             
+        	 session.setAttribute(DATA_ATUAL_SELECIONADA, novaDataFormatada);
+        	 session.setAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO, produtosLancamento);
+        	 
         	 result.use(Results.json()).from(listaMensagens,"info").recursive().serialize();
         	 
         }else{
@@ -538,6 +575,7 @@ public class MatrizLancamentoController extends BaseController {
     public void reprogramarLancamentoUnico(final ProdutoLancamentoVO produtoLancamento) {
         
     	List<String> listaMensagens = new ArrayList<String>();
+    	List<ProdutoLancamentoVO> produtosLancamento = new ArrayList<ProdutoLancamentoVO>();
     	ValidacaoVO validacao = null;
     	
         this.verificarExecucaoInterfaces();
@@ -552,15 +590,13 @@ public class MatrizLancamentoController extends BaseController {
             
             this.validarDatasConfirmacao(novaData);
             
-            final List<ProdutoLancamentoVO> produtosLancamento = new ArrayList<ProdutoLancamentoVO>();
-            
             produtosLancamento.add(produtoLancamento);
             
             this.validarListaParaReprogramacao(produtosLancamento);
             
             listaMensagens.addAll(this.validarDataReprogramacao(produtosLancamento, novaData));
             
-            this.atualizarMapaLancamento(produtosLancamento, novaData);
+            //this.atualizarMapaLancamento(produtosLancamento, novaData);
         }
         
         if(!listaMensagens.isEmpty()){
@@ -568,6 +604,8 @@ public class MatrizLancamentoController extends BaseController {
         	validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
         
             //throw new ValidacaoException(validacao);
+        	session.setAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO, produtosLancamento);
+        	
         	result.use(Results.json()).from(listaMensagens,"info").recursive().serialize();
         }else{
         
@@ -666,7 +704,7 @@ public class MatrizLancamentoController extends BaseController {
         
         for (final ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
             
-        	msg = matrizLancamentoService.verificaDataOperacao(novaData,produtoLancamento.getFornecedorId(),OperacaoDistribuidor.DISTRIBUICAO);
+        	msg = matrizLancamentoService.verificaDataOperacao(novaData,produtoLancamento.getFornecedorId(),OperacaoDistribuidor.DISTRIBUICAO,produtoLancamento);
         	
         	if(!msg.equals("")){
         	 listaMensagens.add(msg);
