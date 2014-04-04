@@ -56,18 +56,25 @@ public class AjusteReparte extends ProcessoAbstrato {
     			if(somatorio.compareTo(indice) < 0){
     				
 	    			BigInteger ajusteReparte = BigInteger.ZERO;
+	    			
+	    			BigInteger vendaMedia = cota.getVendaMediaMaisN().add(cota.getVendaMedia().toBigInteger());
 				
-			    	if (cota.getVendaMediaMaisN().compareTo(estudo.getPacotePadrao()) > 0) {
-			    		ajusteReparte = cota.getVendaMediaMaisN();
+			    	if (vendaMedia.compareTo(estudo.getPacotePadrao()) > 0) {
+			    		
+			    		BigDecimal verificador = new BigDecimal(vendaMedia).divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP);
+			    		
+			    		ajusteReparte = BigInteger.valueOf(verificador.intValue()).multiply(estudo.getPacotePadrao());
+			    		
 					} else {
 					    ajusteReparte = estudo.getPacotePadrao();
 					}
 				
-			    	cota.setReparteCalculado(new BigDecimal(ajusteReparte).add(cota.getVendaMedia()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
+			    	cota.setReparteCalculado(ajusteReparte, estudo);
 			    	cota.setClassificacao(ClassificacaoCota.Ajuste);
 			    	cotasComReparteJaCalculado.add(cota);
 			    }
     		}
+    		
 	}
 	
 	estudo.setCotasComReparteJaCalculado(new LinkedList<>(cotasComReparteJaCalculado));
