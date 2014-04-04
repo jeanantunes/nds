@@ -523,18 +523,17 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 						continue;
 					}
 					
-					ChamadaEncalhe chamadaEncalhe =
-						this.getChamadaEncalheMatrizRecolhimento(chamadasEncalhe);
-					
+					ChamadaEncalhe chamadaEncalhe = this.getChamadaEncalheMatrizRecolhimento(chamadasEncalhe);
+
 					if (chamadaEncalhe == null) {
 						
-						chamadaEncalhe =
-							this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
+						chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
 					}
-					
+
 					Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
 					
 					if(lancamentos == null || lancamentos.isEmpty()) {
+						
 						lancamentos = new HashSet<Lancamento>();
 					}
 					
@@ -543,7 +542,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					chamadaEncalhe.setLancamentos(lancamentos);
 					
 					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
-					
+
 					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor());
 				}
 			}
@@ -570,9 +569,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		    case A_VISTA:
 			    
-		    	if (!devolveEncalhe){
+		    	if (devolveEncalhe){
 		    		
-		    		return false;
+		    		return true;
 		    	}
 		    	
                 if ((dataAlteracaoTipoCota == null) || (dataLctoDistribuidor.compareTo(dataAlteracaoTipoCota) > 0 )){
@@ -586,7 +585,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
                 
 		    	if ((dataAlteracaoTipoCota != null) && (dataLctoDistribuidor.compareTo(dataAlteracaoTipoCota) <= 0 )){
 		    		
-		    		return false;
+		    		if (!devolveEncalhe){
+			    		
+			    		return false;
+			    	}
 		    	}
 		    	
 		    break;
