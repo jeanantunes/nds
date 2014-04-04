@@ -59,7 +59,7 @@
     
                             <td width="185">Acumula D&iacute;vida:</td>
                             <td width="270"><select name="acumulaDivida"
-                                id="acumulaDivida" style="width: 80px;">
+                                id="acumulaDivida" style="width: 80px;" onchange="parametroCobrancaController.isAcumulaDivida = this.value">
                                     <option value="S">Sim</option>
                                     <option value="N">N&atilde;o</option>
                             </select></td>
@@ -176,7 +176,7 @@
     					<tr>
     						<td>Principal</td>
     						<td align="left">
-                            	<input type="checkbox" name="principal" id="principal" />
+                            	<input type="checkbox" name="principal" id="principal" onclick="parametroCobrancaController.exibirAcumuloDivida(this.checked)"/>
                             </td>
                             <td>Impress&atilde;o:</td>
                             <td>
