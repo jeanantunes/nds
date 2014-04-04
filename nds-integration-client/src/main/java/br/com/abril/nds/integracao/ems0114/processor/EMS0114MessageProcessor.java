@@ -23,6 +23,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
 
 @Component
@@ -39,6 +40,9 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 
 	@Autowired
 	private ParciaisService parciaisService;
+	
+	@Autowired
+	private LancamentoService lancamentoService;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -141,6 +145,8 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			lancamento.setDataRecolhimentoDistribuidor(dtRecolhimentoArquivo);
 			lancamento.setAlteradoInteface(true);
 			this.getSession().merge(lancamento);
+			
+			this.lancamentoService.atualizarRedistribuicoes(lancamento, dtRecolhimentoArquivo);
 			
 			this.tratarParciais(lancamento, message, codigoProduto, edicao);
 		}

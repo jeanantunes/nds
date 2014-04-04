@@ -27,6 +27,8 @@ public class LancamentoDTO implements Serializable {
 	
 	private TipoLancamento tipoLancamento;
 	
+	private Integer numeroPeriodo;
+	
 	public TipoLancamento getTipoLancamento() {
 		return tipoLancamento;
 	}
@@ -95,5 +97,15 @@ public class LancamentoDTO implements Serializable {
 	public void setStatusLancamento(StatusLancamento statusLancamento) {
 		this.statusLancamento = statusLancamento;
 	}
+
+    
+    public Integer getNumeroPeriodo() {
+        return numeroPeriodo;
+    }
+
+    
+    public void setNumeroPeriodo(Integer numeroPeriodo) {
+        this.numeroPeriodo = numeroPeriodo;
+    }
 	
 }

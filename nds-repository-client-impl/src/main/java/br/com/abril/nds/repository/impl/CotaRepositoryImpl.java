@@ -429,7 +429,25 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
            .append("                                                               AND COBRANCA_.STATUS_COBRANCA = :statusCobrancaNaoPago)")
            .append("	   ) ")
-           .append(") ")
+           .append("           OR  ")
+           .append("           	COTA_.ID in ")
+           .append("           	(select ")
+           .append("           		dv.COTA_ID ")
+           .append("         	 from negociacao ng ")
+           .append("         join parcela_negociacao pn ")
+           .append("         	on pn.NEGOCIACAO_ID = ng.ID ")
+           .append("         join movimento_financeiro_cota mfc ")
+           .append("    	     ON  mfc.ID = pn.MOVIMENTO_FINANCEIRO_ID ")
+           .append("         join divida dv ")
+           .append("        	 ON dv.cota_id = mfc.cota_id ")
+           .append("         join cobranca cb ")
+           .append("         	on cb.DIVIDA_ID = dv.ID ")
+           .append("         where ")
+           .append("         dv.STATUS in ('EM_ABERTO', 'PENDENTE_INADIMPLENCIA') ")
+           .append("         	and cb.DT_VENCIMENTO < :dataOperacao ")
+           .append("         group by dv.id) ")
+           
+           .append(" ) ")
            .append("  group by cota_.ID ");
     }
     
