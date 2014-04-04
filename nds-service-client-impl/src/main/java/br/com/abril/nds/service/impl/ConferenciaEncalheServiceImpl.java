@@ -1774,25 +1774,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 		
 		try {
-			
-			
-            // se a cota for unificadora ou unificada não pode gerar cobrança
-            // nesse ponto
-			final boolean cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificada(
-					cota.getNumeroCota()),
-					
-					cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificadora(
-							cota.getNumeroCota());
-			
-			
-			
-			if (!cotaUnificadora && !cotaUnificada){
-				
-				nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
-				
-			}
-			
-		
+			nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
 		} catch(final GerarCobrancaValidacaoException e) {
 			
 			documentoConferenciaEncalhe.setMsgsGeracaoCobranca(e.getValidacaoVO());			

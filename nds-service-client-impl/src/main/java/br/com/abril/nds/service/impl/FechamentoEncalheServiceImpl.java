@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,8 @@ import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
@@ -85,6 +88,7 @@ import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.BoletoEmailService;
 import br.com.abril.nds.service.BoletoService;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstudoCotaService;
@@ -207,7 +211,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
 	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
-	
+    
+    @Autowired
+    private CalendarioService calendarioService;
+    
     @Override
     @Transactional
     public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(final FiltroFechamentoEncalheDTO filtro,
@@ -840,30 +847,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         if (lancamentoParcial == null) {
             return;
         }
-        
-        final Lancamento proximoLancamentoPeriodo = parciaisService.getProximoLancamentoPeriodo(lancamentoParcial);
+
+        final Lancamento proximoLancamentoPeriodo = this.getNovoLancamentoJuramentado(lancamentoParcial);
         
         if (proximoLancamentoPeriodo == null) {
             return;
         }
         
-        Estudo estudo = proximoLancamentoPeriodo.getEstudo();
-        
-        if (estudo == null) {
-            
-            final EstudoGerado estudoGerado = estudoService.criarEstudo(proximoLancamentoPeriodo.getProdutoEdicao(),
-                    item.getQtde(), proximoLancamentoPeriodo.getDataLancamentoDistribuidor(), proximoLancamentoPeriodo.getId());
-            
-            estudo = estudoService.liberar(estudoGerado.getId());
-            
-        } else {
-            
-            final BigInteger reparteEstudo = estudo.getQtdeReparte().add(item.getQtde());
-            estudo.setQtdeReparte(reparteEstudo);
-            
-            estudo = estudoRepository.merge(estudo);
-        }
-        
+        final EstudoGerado estudoGerado = estudoService.criarEstudo(proximoLancamentoPeriodo.getProdutoEdicao(),
+                item.getQtde(), proximoLancamentoPeriodo.getDataLancamentoDistribuidor(), proximoLancamentoPeriodo.getId());
+
+        Estudo estudo = estudoService.liberar(estudoGerado.getId());
+
         EstudoCota ec = estudoCotaService.criarEstudoCotaJuramentado(proximoLancamentoPeriodo.getProdutoEdicao(), estudo, item
                 .getQtde(), new Cota(item.getIdCota()));
         
@@ -874,6 +869,61 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         this.movimentoEstoqueService.gerarMovimentoCota(proximoLancamentoPeriodo.getDataCriacao(), 
                 item.getIdProdutoEdicao(), item.getIdCota(), usuarioId, item.getQtde(), tipoMovimentoEstoque, 
                 dataOperacao, dataOperacao, proximoLancamentoPeriodo.getId(), ec.getId());
+    }
+    
+    private Lancamento getNovoLancamentoJuramentado(final Lancamento lancamentoParcial) {
+    	
+    	final Lancamento proximoLancamentoParcial = parciaisService.getProximoLancamentoPeriodo(lancamentoParcial);
+    	
+    	Date dataNovoLancamento = this.getDataNovoLancamentoJuramentado(lancamentoParcial, proximoLancamentoParcial);
+    	
+    	if (proximoLancamentoParcial == null) { 
+    		return null;
+    	} else if (dataNovoLancamento == null) {
+    		return proximoLancamentoParcial;
+    	}
+
+    	final Lancamento primeiroLancamentoPeriodo = proximoLancamentoParcial.getPeriodoLancamentoParcial().getPrimeiroLancamento();
+
+        primeiroLancamentoPeriodo.setTipoLancamento(TipoLancamento.REDISTRIBUICAO);
+
+        this.lancamentoRepository.merge(primeiroLancamentoPeriodo);
+
+        try {
+
+        	Lancamento novoLancamento = (Lancamento) BeanUtils.cloneBean(primeiroLancamentoPeriodo);
+
+        	novoLancamento.setDataLancamentoPrevista(dataNovoLancamento);
+        	novoLancamento.setDataLancamentoDistribuidor(dataNovoLancamento);
+        	novoLancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+        	novoLancamento.setStatus(StatusLancamento.EXPEDIDO);
+        	novoLancamento.setEstudo(null);
+
+        	return this.lancamentoRepository.merge(novoLancamento);        			
+		
+        } catch (Exception e) {
+
+        	throw new IllegalArgumentException(e);
+		}
+    }
+    
+    private Date getDataNovoLancamentoJuramentado(final Lancamento lancamentoParcial, final Lancamento proximoLancamentoParcial) {
+    	
+    	if (proximoLancamentoParcial == null) {
+    		return null;
+    	}
+    	
+    	final Lancamento primeiroLancamentoPeriodo = proximoLancamentoParcial.getPeriodoLancamentoParcial().getPrimeiroLancamento();
+
+        final Date dataNovoLancamento = this.calendarioService.obterProximaDataDiaUtil(
+    		lancamentoParcial.getDataRecolhimentoDistribuidor()
+    	);
+
+        if (dataNovoLancamento.compareTo(primeiroLancamentoPeriodo.getDataLancamentoDistribuidor()) == 0) {
+        	return null;
+        }
+        
+        return dataNovoLancamento;
     }
     
     @Override

@@ -41,11 +41,10 @@ public class EncalheMaximo extends ProcessoAbstrato {
 	    		if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) > 0) {
 	    			// percentualVenda = ((1 - (VENDA / REPDISTRIB)) * 100)
 	    			percentualVenda = (BigDecimal.ONE.subtract(estudo.getSomatoriaVendaMedia().divide(new BigDecimal(estudo.getReparteDistribuir()), 2, BigDecimal.ROUND_HALF_UP))).multiply(BigDecimal.valueOf(100));
-	    			//percentualVenda = percentualVenda.multiply(BigDecimal.valueOf(100));
 	    			
 	    		}
 	    		
-	    		if ((percentualVenda != null)) {
+	    		if (percentualVenda != null) {
 					if ((cota.getPercentualEncalheMaximo().compareTo(BigDecimal.ZERO) > 0) && (cota.getPercentualEncalheMaximo().compareTo(percentualVenda) < 0)) {
 					    
 						// VENDA_MEDIA / ((100 - PERCENTUAL_ENCALHE_COTA) / 100)
@@ -53,9 +52,26 @@ public class EncalheMaximo extends ProcessoAbstrato {
 					    
 						BigDecimal percentual = BigDecimal.valueOf(100).subtract(cota.getPercentualEncalheMaximo()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
 					    
-						cota.setReparteCalculado(cota.getVendaMedia().divide(percentual, 0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
-						cota.setClassificacao(ClassificacaoCota.Ajuste);
-						cotasComRepJaCalculado.add(cota);
+						BigDecimal repartePreCalculado = cota.getVendaMedia().divide(percentual, 0, BigDecimal.ROUND_HALF_UP);
+						
+						BigInteger reparte;
+						
+						if(estudo.getPacotePadrao() != null){
+			    			
+						    	if (repartePreCalculado.toBigInteger().compareTo(estudo.getPacotePadrao()) > 0) {
+						    		
+						    		BigDecimal verificador = repartePreCalculado.divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP);
+						    		
+						    		reparte = BigInteger.valueOf(verificador.intValue()).multiply(estudo.getPacotePadrao());
+						    		
+								} else {
+									reparte = estudo.getPacotePadrao();
+								}
+						    	
+					    	cota.setReparteCalculado(reparte, estudo);
+					    	cota.setClassificacao(ClassificacaoCota.Ajuste);
+					    	cotasComRepJaCalculado.add(cota);
+		    			}
 					}
 			    }
     		}

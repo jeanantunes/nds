@@ -323,6 +323,7 @@ public class EstudoAlgoritmoService {
             
             medias.executar(cota);
         }
+        
         bonificacoes.executar(estudo);
         
         jornaleirosNovos.executar(estudo);
