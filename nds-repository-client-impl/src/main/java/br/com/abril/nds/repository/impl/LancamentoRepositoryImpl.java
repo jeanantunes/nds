@@ -2439,8 +2439,7 @@ public class LancamentoRepositoryImpl extends
 		return  query.list();
 		
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public boolean existeProdutoEdicaoParaDia(ProdutoLancamentoDTO produtoLancamentoDTO,Date novaData){
 		
 		StringBuilder hql = new StringBuilder();
