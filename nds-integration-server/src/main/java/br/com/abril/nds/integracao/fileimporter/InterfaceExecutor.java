@@ -322,7 +322,7 @@ public class InterfaceExecutor {
 				
 				try {
 					
-					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, logExecucao.getDataInicio(), nomeUsuario);
+					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, logExecucao.getDataInicio(), nomeUsuario,interfaceExecucao);
 					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.SUCESSO, null);
 					arquivo.delete();
 					
@@ -554,16 +554,23 @@ public class InterfaceExecutor {
 	/**
 	 * Processa o arquivo, lendo suas linhas e gravando no CouchDB.
 	 */
-	@SuppressWarnings("unchecked")
-	private void trataArquivo(CouchDbClient couchDbClient, File arquivo, InterfaceEnum interfaceEnum, Date dataInicio, String nomeUsuario) throws Exception {
+	@SuppressWarnings({ "unchecked", "static-access" })
+	private void trataArquivo(CouchDbClient couchDbClient, 
+			File arquivo, 
+			InterfaceEnum interfaceEnum, 
+			Date dataInicio, 
+			String nomeUsuario,
+			InterfaceExecucao interfaceExecucao) throws Exception {
 
 		FileReader in = new FileReader(arquivo);
 		Scanner scanner = new Scanner(in);
 		int linhaArquivo = 0;
 		IntegracaoDocumentMaster<?> docM = null;
 		
+		
+		
 		while (scanner.hasNextLine()) {
-
+			
 			String linha = scanner.nextLine();
 			linhaArquivo++;
 			
@@ -572,40 +579,49 @@ public class InterfaceExecutor {
 				continue;
 			} 
 			
-			if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.SIMPLES ) {
-				IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
+			try{
 				
-				doc.setTipoDocumento(interfaceEnum.name());
-				doc.setNomeArquivo(arquivo.getName());
-				doc.setLinhaArquivo(linhaArquivo);
-				doc.setDataHoraExtracao(dataInicio);
-				doc.setNomeUsuarioExtracao(nomeUsuario);
+				if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.SIMPLES ) {
+					IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
 					
-				couchDbClient.save(doc);
-				
-			} else if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.DETALHE_INLINE) {
+					doc.setTipoDocumento(interfaceEnum.name());
+					doc.setNomeArquivo(arquivo.getName());
+					doc.setLinhaArquivo(linhaArquivo);
+					doc.setDataHoraExtracao(dataInicio);
+					doc.setNomeUsuarioExtracao(nomeUsuario);
+						
+					couchDbClient.save(doc);
+					
+				} else if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.DETALHE_INLINE) {
 
-				IntegracaoDocumentDetail docD = (IntegracaoDocumentDetail) this.ffm.load(interfaceEnum.getClasseDetail(), linha);
-				
-				if (((IntegracaoDocumentMaster<?>) this.ffm.load(interfaceEnum.getClasseMaster(), linha)).sameObject(docM)) {
-					docM.addItem(docD);				
-				} else {
-					if (docM != null) {
-						couchDbClient.save(docM);							
+					IntegracaoDocumentDetail docD = (IntegracaoDocumentDetail) this.ffm.load(interfaceEnum.getClasseDetail(), linha);
+					
+					if (((IntegracaoDocumentMaster<?>) this.ffm.load(interfaceEnum.getClasseMaster(), linha)).sameObject(docM)) {
+						docM.addItem(docD);				
+					} else {
+						if (docM != null) {
+							couchDbClient.save(docM);							
+						}
+						
+						docM = (IntegracaoDocumentMaster<IntegracaoDocumentDetail>) this.ffm.load(interfaceEnum.getClasseMaster(), linha);
+						
+						docM.setTipoDocumento(interfaceEnum.name());
+						docM.setNomeArquivo(arquivo.getName());
+						docM.setLinhaArquivo(linhaArquivo);
+						docM.setDataHoraExtracao(dataInicio);
+						docM.setNomeUsuarioExtracao(nomeUsuario);
+						docM.addItem(docD);				
 					}
-					
-					docM = (IntegracaoDocumentMaster<IntegracaoDocumentDetail>) this.ffm.load(interfaceEnum.getClasseMaster(), linha);
-					
-					docM.setTipoDocumento(interfaceEnum.name());
-					docM.setNomeArquivo(arquivo.getName());
-					docM.setLinhaArquivo(linhaArquivo);
-					docM.setDataHoraExtracao(dataInicio);
-					docM.setNomeUsuarioExtracao(nomeUsuario);
-					docM.addItem(docD);				
 				}
+				
+			}catch(IllegalArgumentException | com.ancientprogramming.fixedformat4j.format.ParseException pe){
+				
+				String mensagemErro = "ERRO: Ocorreu um erro na leitura do arquivo %s na linha número %d, porém o arquivo foi processado!";
+				
+				mensagemErro = mensagemErro.format(mensagemErro,arquivo.getName(),linhaArquivo);
+				
+				LOGGER.error(mensagemErro,pe);
 			}
-			
-			
 		}
 		if (docM != null) {
 			couchDbClient.save(docM);							
@@ -614,7 +630,7 @@ public class InterfaceExecutor {
 		in.close();
 		scanner.close();
 	}
-	
+
 	/**
 	 * Verifica se o distribuidor é uma filial, caso seja muda a classe de parse para EMS0110
 	 * 

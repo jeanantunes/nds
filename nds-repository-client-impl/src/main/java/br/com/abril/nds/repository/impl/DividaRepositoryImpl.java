@@ -583,7 +583,6 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
             boolean pesquisaVencidosNaoPagos = false;
             
             if (filtro.getStatusDivida().contains(StatusDivida.EM_ABERTO)
-                    || filtro.getStatusDivida().contains(StatusDivida.PENDENTE)
                     || filtro.getStatusDivida().contains(StatusDivida.PENDENTE_INADIMPLENCIA)
                     || filtro.getStatusDivida().contains(StatusDivida.POSTERGADA)) {
                 

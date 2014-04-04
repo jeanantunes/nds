@@ -414,4 +414,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	List<Lancamento> obterLancamentosEmRecolhimentoParaFechamento(Date dataBase);
 	
+	List<Lancamento> obterRedistribuicoes(Long idProdutoEdicao, Integer numeroPeriodo);
+	
+	Lancamento obterLancamentoOriginalDaRedistribuicao(Long idProdutoEdicao, Integer numeroPeriodo);
+	
 }

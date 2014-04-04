@@ -5,6 +5,8 @@ var parametroCobrancaController = $.extend(true,
 	{
 		
 		idsFornecedoresDisponiveis : [],
+		
+		isAcumulaDivida:null,
 	
 		init : function() {
 			parametroCobrancaController.formatarCampos();
@@ -240,11 +242,23 @@ var parametroCobrancaController = $.extend(true,
 					   true,
 					   "idModal");
 		},
-	
 		
+		exibirAcumuloDivida:function(value){
+				
+			$("#acumulaDivida", parametroCobrancaController.workspace).prop("disabled", !value);
+			
+			if(!value && parametroCobrancaController.isAcumulaDivida!= null){
+				
+				$("#acumulaDivida", parametroCobrancaController.workspace).val((parametroCobrancaController.isAcumulaDivida == "S")?"N":"S");
+				parametroCobrancaController.isAcumulaDivida = null;
+			}
+		},
+	
 		popup : function() {
 			
 			parametroCobrancaController.preparaCadastroParametro();
+			
+			parametroCobrancaController.isAcumulaDivida = null;
 			
 			$("#unificadaCota", parametroCobrancaController.workspace).val("N");
 			
@@ -286,6 +300,8 @@ var parametroCobrancaController = $.extend(true,
 		popup_alterar : function(idPolitica) {
 			
 			parametroCobrancaController.obterParametro(idPolitica);
+			
+			parametroCobrancaController.isAcumulaDivida = null;
 			
 			$( "#dialog-novo", this.workspace).dialog({
 				resizable: false,
@@ -543,6 +559,8 @@ var parametroCobrancaController = $.extend(true,
 				centsSeparator: ',',
 			    thousandsSeparator: '.'
 			});
+			
+			parametroCobrancaController.exibirAcumuloDivida(resultado.principal);
 		},	
 		
 		

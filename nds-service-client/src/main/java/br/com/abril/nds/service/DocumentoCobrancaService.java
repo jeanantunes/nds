@@ -16,6 +16,8 @@ public interface DocumentoCobrancaService {
 	 */
 	byte[] gerarDocumentoCobranca(String nossoNumero);
 	
+	byte[] gerarDocumentoCobranca(String nossoNumero, boolean incrementarVias);
+	
 	/**
 	 * BOLETO
 	 * 
