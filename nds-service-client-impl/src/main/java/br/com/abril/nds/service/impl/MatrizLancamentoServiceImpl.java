@@ -1875,7 +1875,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                         filtro.getIdsFornecedores());
         
         final List<ProdutoLancamentoDTO> produtosLancamento = lancamentoRepository
-                .obterBalanceamentoLancamento(periodoDistribuicao,
+                .obterBalanceamentoLancamento(dataLancamento,periodoDistribuicao,
                         filtro.getIdsFornecedores());
         
         BigInteger media = BigInteger.ZERO;
