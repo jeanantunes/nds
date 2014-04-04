@@ -87,18 +87,30 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final StringBuilder hql = new StringBuilder("")
         
         .append("  from MovimentoEstoqueCota mec ")
+
+        .append("  join mec.cota c1 ")
         
         .append("  join mec.produtoEdicao pe ")
         
-        .append("  join pe.produto produto ")
+        .append("  join mec.lancamento l ")
         
-        .append("  join mec.cota c1 ")
+        .append("  join l.produtoEdicao peLanc ")
+         
+        .append("  join l.chamadaEncalhe ce ")
+        
+        .append("  join ce.chamadaEncalheCotas cec ")
+        
+        .append("  join cec.cota c1Cec ")
+        
+        .append("  join pe.produto produto ")
         
         .append("  join mec.tipoMovimento tipoMovimento ")
         
+        .append("  left join mec.movimentoEstoqueCotaFuro mecF ")
+        
         .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro)) ")
         
-        .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota >= mec.data)")
+        .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota >= mec.data) ")
         
         .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
         
@@ -106,24 +118,32 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         .append("  and c1.id = ").append(paramIdCota)
         
+        .append("  and c1.id = c1Cec.id ")
+        
+        .append("  and pe.id = peLanc.id ")
+        
         .append("  and mec.data <= :data")
+        
+        .append("  and mecF is null ")
         
         .append("  and ( ")
         
         .append("            ((produto.formaComercializacao = :formaComercializacaoProduto) OR ")
         
-        .append("             (pe.id in (")
+        .append("             ( l.id in (")
         
-        .append("                           select pe.id ")
+        .append("                           select l.id ")
         
-        .append("                           from ChamadaEncalhe c ")
+        .append("                           from Lancamento lcto ")
+        
+        .append("                           join lcto.produtoEdicao proed ")
+        
+        .append("                           join lcto.chamadaEncalhe c ")
         
         .append("                           join c.chamadaEncalheCotas cc ")
         
         .append("                           join cc.cota cota ")
-        
-        .append("                           join c.produtoEdicao pe ")
-        
+          
         .append("                           left join cc.conferenciasEncalhe conferencia ")
         
         .append("                           left join conferencia.controleConferenciaEncalheCota as controleConferencia with controleConferencia.status = :statusOperacaoConferencia ")
@@ -132,7 +152,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         .append("                           and cota.id = c1.id ")
         
+        .append("                           and proed.id = pe.id ")
+        
         .append("                           and controleConferencia is null ")
+        
+        .append("                           group by cota.numeroCota, proed.id ")
         
         .append("                       ) ")
         
@@ -141,11 +165,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         .append("            ) ")
         
         .append("      ) ");
-        
+
         return hql.toString();
     }
     
-	                                                    /**
+	/**
      * FROM: À Vista da cota sem chamada de encalhe e produtos diferentes de
      * conta firme
      * 
@@ -167,6 +191,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         .append("  join mec.tipoMovimento tipoMovimento ")
         
+        .append("  left join mec.movimentoEstoqueCotaFuro mecF ")
+        
         .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
         
         .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
@@ -177,7 +203,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         .append("  and mec.data <= :data")
         
-        .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < mec.data)");
+        .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < mec.data)")
+        
+        .append("  and mecF is null ");
         
         return hql.toString();
     }
@@ -282,7 +310,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	                                                    /**
+	/**
      * Obtém movimentos de estoque da cota que ainda não geraram movimento
      * financeiro Considera movimentos de estoque provenientes dos fluxos de
      * Expedição - movimentos à vista
@@ -317,7 +345,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	                                                    /**
+	/**
      * Obtém movimentos de estoque da cota que ainda não geraram movimento
      * financeiro Considera movimentos de estoque provenientes dos fluxos de
      * Expedição - movimentos à vista ou consignados com conferencia prevista no
@@ -355,7 +383,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	                                                    /**
+	/**
      * Obtém movimentos de estoque da cota que ainda não geraram movimento
      * financeiro Considera movimentos de estoque provenientes dos fluxos de
      * Expedição e Conferência de Encalhe ou com Produtos Conta Firme
@@ -387,15 +415,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(") pe_conta_firme_ou_cota_encalhe_na_data ");
         
         sql.append("inner join movimento_estoque_cota mec on ( ");
-        sql.append(" 	mec.STATUS = :statusAprovacao and ");
-        sql.append("	pe_conta_firme_ou_cota_encalhe_na_data.produto_edicao_id = mec.produto_edicao_id and ");
-        sql.append("	mec.cota_id = :idCota and ");
-        sql.append("	( ");
-        sql.append("		mec.STATUS_ESTOQUE_FINANCEIRO is null or mec.STATUS_ESTOQUE_FINANCEIRO = :statusFinanceiro ");
-        sql.append("	) and ");
-        sql.append("    mec.TIPO_MOVIMENTO_ID in (:idTiposMovimentoEstoque) ");
-
-        sql.append(") group by mec.ID ");
+        sql.append(" 	                                      mec.STATUS = :statusAprovacao and ");
+        sql.append("	                                      pe_conta_firme_ou_cota_encalhe_na_data.produto_edicao_id = mec.produto_edicao_id and ");
+        sql.append("	                                      mec.cota_id = :idCota and ");
+        sql.append("	                                      ( mec.STATUS_ESTOQUE_FINANCEIRO is null or mec.STATUS_ESTOQUE_FINANCEIRO = :statusFinanceiro ) and ");
+        sql.append("                                          mec.TIPO_MOVIMENTO_ID in (:idTiposMovimentoEstoque) and ");
+        
+        sql.append(" 	                                      mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
+        
+        sql.append("                                         ) group by mec.ID ");
         
         final Query query = getSession().createSQLQuery(sql.toString()).addEntity(MovimentoEstoqueCota.class);
         
@@ -413,7 +441,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	                                                    /**
+	/**
      * Obtém movimentos de estoque da cota que forão estornados Considera
      * movimentos de estoque provenientes dos fluxos de Venda de Encalhe e
      * Suplementar
