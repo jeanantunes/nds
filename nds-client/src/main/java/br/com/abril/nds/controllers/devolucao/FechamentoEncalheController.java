@@ -42,10 +42,10 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
+import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -53,6 +53,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -106,7 +107,7 @@ public class FechamentoEncalheController extends BaseController {
 	private GerarCobrancaService gerarCobrancaService;
 	
 	@Autowired
-	protected BoletoService boletoService;
+	private DocumentoCobrancaService documentoCobrancaService;
 	
 	@Autowired
 	protected HttpSession session;
@@ -1034,7 +1035,14 @@ public class FechamentoEncalheController extends BaseController {
 			return;
 		}
 		
-		byte[] dados = this.boletoService.gerarImpressaoBoletos(setNossoNumero);
+		List<byte[]> docs = new ArrayList<byte[]>();
+		
+		for (String nossoNumero : setNossoNumero){
+		    
+		    docs.add(this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero, false));
+		}
+		
+		byte[] dados = PDFUtil.mergePDFs(docs);
 		
 		this.response.setContentType("application/pdf");
 		this.response.setHeader("Content-Disposition", "attachment; filename=boletosCotasUnificadas_" +
