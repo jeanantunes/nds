@@ -161,6 +161,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 				setTimeout(function() {
 					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
 				}, 1000);
+				
+				ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
 			}
 			
 		}));
@@ -1360,7 +1362,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				ConferenciaEncalheCont.modalAberta = false;
 				
-				ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
+				// ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
 				
 				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 			},

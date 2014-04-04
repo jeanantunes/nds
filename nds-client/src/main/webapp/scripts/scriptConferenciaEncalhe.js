@@ -1740,7 +1740,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				ConferenciaEncalhe.modalAberta = false;
 				
-				ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
+				// ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
 				
 				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 				
