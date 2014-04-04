@@ -514,6 +514,13 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     @Transactional
     public byte[] gerarDocumentoCobranca(final String nossoNumero) {
         
+        return this.gerarDocumentoCobranca(nossoNumero, true);
+    }
+    
+    @Override
+    @Transactional
+    public byte[] gerarDocumentoCobranca(String nossoNumero, boolean incrementarVias){
+        
         final Cobranca cobranca = cobrancaRepository.obterCobrancaPorNossoNumero(nossoNumero);
         
         byte[] retorno = null;
@@ -545,16 +552,17 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             throw new ValidacaoException(TipoMensagem.ERROR, msg);
         }
         
-        final Integer vias = (cobranca.getVias() == null) ? 1 : (cobranca.getVias()+1);
-        
-        cobranca.setVias(vias);
-        
-        cobrancaRepository.merge(cobranca);
+        if (incrementarVias){
+            
+            final Integer vias = (cobranca.getVias() == null) ? 1 : (cobranca.getVias()+1);
+            
+            cobranca.setVias(vias);
+            
+            cobrancaRepository.merge(cobranca);
+        }
         
         return retorno;
     }
-    
-    
     
     /**
      * SLIP
