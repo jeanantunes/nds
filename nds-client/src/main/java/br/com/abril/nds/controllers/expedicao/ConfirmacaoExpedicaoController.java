@@ -233,9 +233,19 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		        Arrays.sort(lista); 
 		        selecionados = Longs.asList(lista);
 				
+		        String retorno = null;
+		        List<String> listaRetorno = new ArrayList<>();
+		        
 				for(int i=0; i<selecionados.size(); i++) {
-					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota,tipoMovimentoJuramentado);
-					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));	
+					retorno = lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota,tipoMovimentoJuramentado);
+					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));
+					
+					this.tratarMensagemRetorno(retorno, listaRetorno);
+				}
+				
+				if (!listaRetorno.isEmpty()) {
+				    
+				    throw new ValidacaoException(TipoMensagem.WARNING, listaRetorno);
 				}
 				
 				mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
@@ -276,6 +286,21 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			
 			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 		}
+
+        private void tratarMensagemRetorno(String retorno, List<String> listaRetorno) {
+            
+            if (retorno != null) {
+                
+                if (listaRetorno.isEmpty()) {
+                    
+                    listaRetorno.add("Redistribuição não pode ser expedida, "
+                            + "pois o lançamento já se encontra em processo de recolhimento. "
+                            + "Caso necessário reabra a matriz de recolhimento!");
+                }
+                
+                listaRetorno.add(retorno);
+            }
+        }
 		
 		private Object getMsgProcessamento(Integer atual, Integer total) {
 			
