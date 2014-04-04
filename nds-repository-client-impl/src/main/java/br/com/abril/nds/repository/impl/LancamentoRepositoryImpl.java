@@ -1107,14 +1107,14 @@ public class LancamentoRepositoryImpl extends
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(
+	public List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Date dataLancamento,
 			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores) {
 
 		String sql = this.montarConsultaBalanceamentoLancamentoAnalitico()
 				+ " order by dataLancamentoDistribuidor,nomeProduto ";
 
 		Query query = this.getQueryBalanceamentoRecolhimento(
-				periodoDistribuicao, fornecedores, sql);
+				 dataLancamento,periodoDistribuicao, fornecedores, sql);
 
 		return query.list();
 	}
@@ -1233,12 +1233,18 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" fornecedor.ID in (:idsFornecedores) ");
 
 		sql.append(" AND lancamento.DATA_LCTO_DISTRIBUIDOR <= :periodoFinal ");
-		sql.append(" AND lancamento.STATUS in (:statusLancamentoDataMenorFinal) ");
+		sql.append(" AND (lancamento.STATUS in (:statusLancamentoDataMenorFinal) ");
+		sql.append(" OR (lancamento.STATUS in (:statusLancamentoDataMenorFinalExpedido)  ");
+		sql.append(" and  lancamento.DATA_LCTO_DISTRIBUIDOR in ( ");
+		sql.append(" select lb.DATA_LCTO_DISTRIBUIDOR ");
+		sql.append(" from lancamento lb where lb.status in (:statusLancamentoDataMenorFinalExpedido) ");
+		sql.append(" and lb.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal))) ");
+		
 		return sql.toString();
 	}
 
 	private Query getQueryBalanceamentoRecolhimento(
-			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores,
+			Date dataPesquisada,Intervalo<Date> periodoDistribuicao, List<Long> fornecedores,
 			String sql) {
 
 		Query query = getSession().createSQLQuery(sql)
@@ -1268,7 +1274,7 @@ public class LancamentoRepositoryImpl extends
 				.addScalar("nomeFantasia");
 					
 
-		this.aplicarParametros(query, periodoDistribuicao, fornecedores);
+		this.aplicarParametros(query,dataPesquisada, periodoDistribuicao, fornecedores);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ProdutoLancamentoDTO.class));
@@ -1276,7 +1282,7 @@ public class LancamentoRepositoryImpl extends
 		return query;
 	}
 
-	private void aplicarParametros(Query query,
+	private void aplicarParametros(Query query,Date dataPesquisada,
 			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores) {
 
 		List<String> statusLancamentoDataMenorFinal = Arrays.asList(
@@ -1285,16 +1291,26 @@ public class LancamentoRepositoryImpl extends
 				StatusLancamento.FURO.name(),
 				
 				StatusLancamento.EM_BALANCEAMENTO.name(),
-				StatusLancamento.BALANCEADO.name(),
+				StatusLancamento.BALANCEADO.name()//,
+				//StatusLancamento.EXPEDIDO.name()
+				);
+		
+		List<String> statusLancamentoDataMenorFinalExpedido = Arrays.asList(
 				StatusLancamento.EXPEDIDO.name()
 				);
 
+		
 
 		query.setParameterList("statusLancamentoDataMenorFinal",
 				statusLancamentoDataMenorFinal);
+		
+		query.setParameterList("statusLancamentoDataMenorFinalExpedido",
+				statusLancamentoDataMenorFinalExpedido);
 
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoFinal", periodoDistribuicao.getAte());
+		query.setParameter("periodoInicial", periodoDistribuicao.getDe());
+		//query.setParameter("dataPesquisada", dataPesquisada);
 		query.setParameter("grupoCromo", GrupoProduto.CROMO.toString());
 
 	}
@@ -2441,8 +2457,7 @@ public class LancamentoRepositoryImpl extends
 		return  query.list();
 		
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public boolean existeProdutoEdicaoParaDia(ProdutoLancamentoDTO produtoLancamentoDTO,Date novaData){
 		
 		StringBuilder hql = new StringBuilder();
