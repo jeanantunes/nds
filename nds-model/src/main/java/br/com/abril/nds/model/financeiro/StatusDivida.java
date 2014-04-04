@@ -6,7 +6,6 @@ public enum StatusDivida {
 	QUITADA("Quitada"),
 	NEGOCIADA("Negociada"),
 	POSTERGADA("Postergada"),
-	PENDENTE("Pendente"),
 	PENDENTE_INADIMPLENCIA("Pendente por inadimplência"),
 	BOLETO_ANTECIPADO_EM_ABERTO("Boleto em branco");
 

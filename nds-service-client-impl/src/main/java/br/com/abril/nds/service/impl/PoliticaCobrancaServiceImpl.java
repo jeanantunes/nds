@@ -415,7 +415,6 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         }
         politica.setPrincipal(parametroCobrancaDTO.isPrincipal());
         //politica.setCobradoPeloBackoffice(parametroCobrancaDTO.isCobradoPeloBackoffice());
-        politica.setAcumulaDivida(parametroCobrancaDTO.isAcumulaDivida());
         politica.setFormaEmissao(parametroCobrancaDTO.getFormaEmissao());
         politica.setUnificaCobranca(parametroCobrancaDTO.isUnificada());
         
@@ -423,6 +422,11 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         politica.setDistribuidor(distribuidorRepository.obter());
         politica.setFatorVencimento(Integer.valueOf(parametroCobrancaDTO.getFatorVencimento().toString()));
         politica.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedorPadrao()));
+        
+        if(parametroCobrancaDTO.isPrincipal()){
+        	 politica.setAcumulaDivida(parametroCobrancaDTO.isAcumulaDivida());
+        	 this.atualizarAcumuloDeDividas(parametroCobrancaDTO.isAcumulaDivida());
+        }
         
         formaCobranca.setDiasDoMes(parametroCobrancaDTO.getDiasDoMes());
         formaCobranca.setTipoFormaCobranca(parametroCobrancaDTO.getTipoFormaCobranca());
@@ -565,7 +569,18 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         }
     }
     
-    @Override
+    private void atualizarAcumuloDeDividas(boolean acumulaDivida) {
+    	
+    	List<PoliticaCobranca> politicasCobranca = politicaCobrancaRepository.buscarTodos();
+		
+    	for(PoliticaCobranca item : politicasCobranca){
+    		item.setAcumulaDivida(acumulaDivida);
+    		politicaCobrancaRepository.merge(item);
+    	}
+	}
+
+
+	@Override
     @Transactional
     public void dasativarPoliticaCobranca(final Long idPolitica) {
         

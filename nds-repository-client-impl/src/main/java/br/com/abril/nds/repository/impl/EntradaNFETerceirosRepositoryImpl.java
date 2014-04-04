@@ -197,7 +197,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		
 		hql.append(" SELECT cota.numeroCota as numeroCota, ");
 		hql.append("        coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nome, ");		
-		hql.append("        conferenciasEncalhe.data as dataEncalhe, ");		
+		hql.append("        controleConferenciaEncalheCota.dataOperacao as dataEncalhe, ");		
 		hql.append("        CASE WHEN ");
 		hql.append("        ( ");
 		hql.append("             SELECT COUNT(notaFiscalEntradaCota) ");
