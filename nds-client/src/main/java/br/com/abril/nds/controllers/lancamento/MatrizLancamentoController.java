@@ -174,7 +174,13 @@ public class MatrizLancamentoController extends BaseController {
         
         Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
         
-
+        Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
+                .salvarMatrizLancamento(dataLancamento,idsFornecedores,matrizLancamento, getUsuarioLogado());
+        
+            matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
+        
+            balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
+        /*
         for(Date dataMatriz: matrizLancamento.keySet()){
         
         	Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
@@ -184,6 +190,7 @@ public class MatrizLancamentoController extends BaseController {
         
             balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
         }
+        */
         
         this.removerAtributoAlteracaoSessao();
         
