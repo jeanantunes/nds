@@ -295,7 +295,7 @@ var romaneiosController = $.extend(true, {
 		
 		comboNameComponent.empty();
 
-		comboNameComponent.append(new Option('Selecione...', '', true, true));
+		comboNameComponent.append(new Option('Todos', '', true, true));
 		
 	    $.each(content, function(index, row) {
 		    	

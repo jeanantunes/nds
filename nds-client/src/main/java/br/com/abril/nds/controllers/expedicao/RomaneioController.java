@@ -23,11 +23,9 @@ import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
-import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -248,16 +246,8 @@ public class RomaneioController extends BaseController {
 	}
 
 	private void carregarComboBox() {
-		List<Box> boxs = boxService.buscarPorTipo(TipoBox.LANCAMENTO);
 		
-			List<ItemDTO<Integer, String>> lista =
-				new ArrayList<ItemDTO<Integer,String>>();
-		
-		for (Box box : boxs) {
-			
-			lista.add(
-				new ItemDTO<Integer, String>(box.getCodigo(), box.getNome()));
-		}
+		List<ItemDTO<Long, String>> lista = this.roteirizacaoService.getComboTodosBoxes();
 		
 		result.include("listaBox", lista);
 	}
