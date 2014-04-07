@@ -63,7 +63,6 @@
 										<c:forEach var="box" items="${listaBox}">
 											<option value="${box.key}">${box.value}</option>
 										</c:forEach>
-										<option value="-1" >Especial</option>
 									</select>
 								</td>
 	                		<td width="49" align="right">Roteiro:</td>

@@ -34,6 +34,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
@@ -513,6 +514,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("diaRecolhimento", diaRecolhimento);
         
+        query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO);
         
         final BigInteger qtde = (BigInteger) query.uniqueResult();
         
@@ -616,6 +618,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             
             sql.append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ");
         }
+        
+        sql.append("     and cota.TIPO_COTA = :tipoCotaConsignado ");
         
         sql.append("	group by                                      ");
         sql.append("        cota.ID                                   ");
@@ -731,6 +735,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             
             sql.append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ");
         }
+        
+        sql.append("	and cota.TIPO_COTA = :tipoCotaConsignado " );
         
         sql.append("	group by                                      ");
         sql.append("        cota.ID                                   ");
@@ -866,6 +872,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("		            on ( chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID and     ");
         sql.append("						 chamadaEncalhe.DATA_RECOLHIMENTO = :dataEncalhe )                 ");
         sql.append("		)                                                                                  ");
+        
+        sql.append("    and cota.TIPO_COTA = :tipoCotaConsignado ");
+        
         sql.append("	group by    ");
         
         sql.append("    cota.ID, indMFCNaoConsolidado ");
@@ -932,6 +941,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
         
         query.setParameter("diaRecolhimento", diaRecolhimento);
+        
+        query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaAusenteEncalheDTO.class));
         
@@ -1455,6 +1466,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
         
         query.setParameter("diaRecolhimento", diaRecolhimento);
+        
+        query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO);
         
         final BigInteger qtde = (BigInteger) query.uniqueResult();
         

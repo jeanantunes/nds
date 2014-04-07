@@ -366,7 +366,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setParameter("dataOperacao", dataOperacao);
         query.setParameter("ativo", SituacaoCadastro.ATIVO.name());
         query.setParameterList("statusDividaEmAbertoPendente", new String[] { StatusDivida.EM_ABERTO.name(),
-                StatusDivida.PENDENTE_INADIMPLENCIA.name(), StatusDivida.PENDENTE.name() });
+                StatusDivida.PENDENTE_INADIMPLENCIA.name()});
         query.setParameter("statusCobrancaNaoPago", StatusCobranca.NAO_PAGO.name());
     }
     
