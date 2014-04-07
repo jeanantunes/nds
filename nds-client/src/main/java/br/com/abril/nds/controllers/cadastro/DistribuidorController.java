@@ -48,7 +48,7 @@ public class DistribuidorController extends BaseController {
     @Path("/obterNumeroSemana")
     public void obterNumeroSemana(final Date data) {
         
-        final DiaSemana diaSemana = distribuidorService.inicioSemana();
+        final DiaSemana diaSemana = distribuidorService.inicioSemanaRecolhimento();
         
         if (diaSemana == null) {
             
@@ -65,7 +65,7 @@ public class DistribuidorController extends BaseController {
     @Path("/obterDataDaSemana")
     public void obterDataDaSemanaNoAno(final Integer numeroSemana, final Integer anoBase) {
         
-        final DiaSemana diaSemana = distribuidorService.inicioSemana();
+        final DiaSemana diaSemana = distribuidorService.inicioSemanaRecolhimento();
         
         if (diaSemana == null) {
             

@@ -779,7 +779,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 
 	private Intervalo<Date> obterPeriodoDataRecolhimento(String anoSemana) {
 		
-		Integer inicioSemana = this.distribuidorService.inicioSemana().getCodigoDiaSemana();
+		Integer inicioSemana = this.distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana();
 		
 		Integer anoBase = SemanaUtil.getAno(anoSemana);
 		

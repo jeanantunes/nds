@@ -833,7 +833,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	public Intervalo<Date> getPeriodoRecolhimento(Integer anoNumeroSemana) {
 		
 		int codigoInicioSemana = 
-				this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+				this.distribuidorRepository.buscarInicioSemanaRecolhimento().getCodigoDiaSemana();
 		
 		Integer anoBase = SemanaUtil.getAno(anoNumeroSemana);
 		

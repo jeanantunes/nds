@@ -5,7 +5,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
@@ -15,11 +17,13 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0135InputItem;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -38,6 +42,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -57,6 +62,9 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
     
     @Autowired
     private ProdutoRepository produtoRepository;
+    
+    @Autowired
+	private FornecedorRepository fornecedorRepository;
     
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
@@ -209,6 +217,12 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                     
                     TipoProduto tipoProduto = this.tipoProdutoRepository.buscarPorId(1L);
                     
+                    Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+                    Fornecedor fornecedor = obterFornecedor(message);
+                    if(fornecedor != null) {
+                    	fornecedores.add(fornecedor);
+                    }
+                    
                     produto = new Produto();
                     
                     produto.setCodigo(inputItem.getCodigoProduto());
@@ -221,6 +235,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                     produto.setPeb(35);
                     produto.setPeso(100L);
                     produto.setIsGeracaoAutomatica(false);
+                    produto.setFornecedores(fornecedores);
+                    if(inputItem.getDesconto() != null) {
+                        produto.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
+                    }
                     
                     this.getSession().persist(produto);
                 }
@@ -229,7 +247,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 produtoEdicao.setProduto(produto);
                 produtoEdicao.setNumeroEdicao(inputItem.getEdicao());
                 
-                if(inputItem.getDesconto()!=null) {
+                if(inputItem.getDesconto() != null) {
                     produtoEdicao.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
                 }
                 
@@ -499,6 +517,14 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         criteria.add(Restrictions.eq("codigo", "5102"));
         
         return (CFOP) criteria.uniqueResult();
+    }
+    
+    private Fornecedor obterFornecedor(Message message) {
+        String codigoDistribuidor = 
+                message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
+		
+		Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPorCodigo(Integer.parseInt(codigoDistribuidor));
+        return fornecedor;
     }
     
     @Override

@@ -1080,7 +1080,7 @@ var analiseParcialController = $.extend(true, {
     	if ($('#status_estudo').text() == 'Liberado') {
             analiseParcialController.exibirMsg('WARNING', ['Estudo já está libearado.']);
             return false;
-        }else if ($('#saldo_reparte').text() != 0) {
+        }else if ($('#saldo_reparte').html() != 0) {
             analiseParcialController.exibirMsg('WARNING', ['Não é possível liberar estudo com saldo de reparte.']);
             return false;
     	}else{

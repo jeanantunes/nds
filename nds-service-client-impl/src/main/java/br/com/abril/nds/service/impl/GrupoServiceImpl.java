@@ -230,7 +230,7 @@ public class GrupoServiceImpl implements GrupoService {
      */
     @Override
     public Date getDataInicioProximaSemanaSemCE() {
-        final int diaInicioSemana = this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+        final int diaInicioSemana = this.distribuidorRepository.buscarInicioSemanaRecolhimento().getCodigoDiaSemana();
         
         final Date maxDataRecolhimento = this.chamadaEncalheRepository.obterMaxDataRecolhimento(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
         

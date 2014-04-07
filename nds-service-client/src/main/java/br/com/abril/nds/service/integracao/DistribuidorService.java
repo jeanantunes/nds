@@ -51,7 +51,9 @@ public interface DistribuidorService {
 
 	Boolean utilizaProcuracaoEntregadores();
 
-	DiaSemana inicioSemana();
+	DiaSemana inicioSemanaRecolhimento();
+	
+	DiaSemana inicioSemanaLancamento();
 
 	Boolean utilizaSugestaoIncrementoCodigo();
 
