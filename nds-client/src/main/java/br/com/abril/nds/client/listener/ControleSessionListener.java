@@ -43,18 +43,19 @@ public class ControleSessionListener implements HttpSessionListener {
 	 * @param session
 	 */
 	private void removerTravaConferenciaCotaUsuario(ServletContext context, HttpSession session) {
-
-		String sessionID = session.getId();
+		
+		String loginUsuarioLogado = 
+			SecurityContextHolder.getContext().getAuthentication().getName() + session.getId();
 		
 		@SuppressWarnings("unchecked")
 		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
 		
 		@SuppressWarnings("unchecked")
-		Map<String, String> mapaSessionIDNomeUsuario = 
-			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
+		Map<String, String> mapaLoginNomeUsuario = 
+			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 
 		
-		ConferenciaEncalheController.removerTravaConferenciaCotaUsuario(session.getServletContext(), sessionID, mapaCotaConferidaUsuario, mapaSessionIDNomeUsuario);
+		ConferenciaEncalheController.removerTravaConferenciaCotaUsuario(session.getServletContext(), loginUsuarioLogado, mapaCotaConferidaUsuario, mapaLoginNomeUsuario);
 		
 	}
 

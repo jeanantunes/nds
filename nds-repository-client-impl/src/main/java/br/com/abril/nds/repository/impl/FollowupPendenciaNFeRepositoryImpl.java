@@ -66,7 +66,7 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" LEFT JOIN pessoa.telefones as telefone");
 		
 		
-		hql.append(" where 1=1 ");
+		hql.append(" where tipo.tipoOperacao = 'ENTRADA' ");
 		
 		hql.append(" and ((conf.qtdeInformada * conf.precoCapaInformado) -  (conf.qtde * conf.precoCapaInformado)) != 0 ");
 		

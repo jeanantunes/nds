@@ -24,6 +24,10 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 														 Date dataRecolhimento,
 														 TipoChamadaEncalhe tipoChamadaEncalhe);
 	
+	public List<Long> obterIdsProdutoEdicaoNaMatrizRecolhimento(
+			Date dataEncalhe, 
+			List<Long> idsProdutoEdicao);
+	
 	List<ChamadaEncalhe> obterChamadasEncalhePor(Date dataOperacao, Long idCota);
 		
 	ChamadaEncalhe obterPorNumeroEdicaoEMaiorDataRecolhimento(ProdutoEdicao produtoEdicao,TipoChamadaEncalhe tipoChamadaEncalhe);

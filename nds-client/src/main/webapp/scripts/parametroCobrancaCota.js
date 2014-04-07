@@ -764,6 +764,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 	
 	salvarFinanceiroEspecificoDaCota : function(){
 		
+		var params = parametroCobrancaCotaController.buildParametroCobrancaDto();
+		
 		var idCota              = $("#_idCota", this.workspace).val();
 		
 		var inicioContrato 		= $("#parametroCobrancaDateInicio", this.workspace).val();

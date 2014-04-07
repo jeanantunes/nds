@@ -211,9 +211,16 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public DiaSemana inicioSemana() {
+	public DiaSemana inicioSemanaRecolhimento() {
 		
-		return this.distribuidorRepository.buscarInicioSemana();
+		return this.distribuidorRepository.buscarInicioSemanaRecolhimento();
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public DiaSemana inicioSemanaLancamento() {
+		
+		return this.distribuidorRepository.buscarInicioSemanaLancamento();
 	}
 
 	@Override

@@ -43,5 +43,4 @@ public interface NaturezaOperacaoRepository extends Repository<NaturezaOperacao,
 	NaturezaOperacao obterNaturezaOperacao(Long idNaturezaOperacao);
 	
 	NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoOperacao tipoOperacao);
-
 }

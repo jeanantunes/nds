@@ -407,7 +407,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	
 	try {
 		produto.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento));
-		} catch (ParseException e) {
+		} catch (Exception e) {
             throw new Exception("Data de lançamento em formato incorreto.");
 		}
 	

@@ -1942,7 +1942,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
      */
     private Intervalo<Date> getPeriodoDistribuicao(final Date dataLancamento) {
         
-        final int codigoDiaSemana = distribuidorRepository.buscarInicioSemana()
+        final int codigoDiaSemana = distribuidorRepository.buscarInicioSemanaRecolhimento()
                 .getCodigoDiaSemana();
         
         final Date dataInicialSemana = SemanaUtil.obterDataInicioSemana(

@@ -310,5 +310,4 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		
 		return (NaturezaOperacao) query.uniqueResult();
 	}
-
 }

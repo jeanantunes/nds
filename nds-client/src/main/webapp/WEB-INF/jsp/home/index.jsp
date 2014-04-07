@@ -129,6 +129,11 @@
 											try {
 												validation = JSON.parse(xhr.responseText);
 												exibirMensagem(validation.mensagens.tipoMensagem, validation.mensagens.listaMensagens);
+												
+												var index = $("#workspace").tabs('option', 'selected');
+												
+												$("#workspace").tabs("remove", index);
+												
 												return;
 											} catch(error) { /*not a JSON*/ }
 											

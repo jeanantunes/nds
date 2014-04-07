@@ -229,7 +229,7 @@ public class MatrizRecolhimentoController extends BaseController {
         
         if (anoNumeroSemana == null && dataPesquisa != null) {
             
-            return SemanaUtil.obterAnoNumeroSemana(dataPesquisa, this.distribuidorService.inicioSemana()
+            return SemanaUtil.obterAnoNumeroSemana(dataPesquisa, this.distribuidorService.inicioSemanaRecolhimento()
                     .getCodigoDiaSemana());
         }
         
@@ -242,7 +242,7 @@ public class MatrizRecolhimentoController extends BaseController {
             
             int anoBase = SemanaUtil.getAno(anoNumeroSemana);
             
-            return SemanaUtil.obterDataDaSemanaNoAno(anoNumeroSemana, this.distribuidorService.inicioSemana()
+            return SemanaUtil.obterDataDaSemanaNoAno(anoNumeroSemana, this.distribuidorService.inicioSemanaRecolhimento()
                     .getCodigoDiaSemana(), anoBase);
         }
         

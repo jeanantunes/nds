@@ -180,10 +180,17 @@ public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribu
 	}
 
 	@Override
-	public DiaSemana buscarInicioSemana() {
+	public DiaSemana buscarInicioSemanaRecolhimento() {
 		
 		return (DiaSemana) 
-				this.getSession().createQuery("select inicioSemana from Distribuidor").uniqueResult();
+				this.getSession().createQuery("select inicioSemanaRecolhimento from Distribuidor").uniqueResult();
+	}
+	
+	@Override
+	public DiaSemana buscarInicioSemanaLancamento() {
+		
+		return (DiaSemana) 
+				this.getSession().createQuery("select inicioSemanaLancamento from Distribuidor").uniqueResult();
 	}
 
 	@Override
