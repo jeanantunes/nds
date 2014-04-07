@@ -110,7 +110,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 			return ret;
 		}
 		
-		Integer diaInicioSemana = this.distribuidorService.inicioSemana().getCodigoDiaSemana();
+		Integer diaInicioSemana = this.distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana();
 		
 		for (Date d : datas){
 			

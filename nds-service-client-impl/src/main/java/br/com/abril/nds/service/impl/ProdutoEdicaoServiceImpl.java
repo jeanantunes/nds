@@ -1304,7 +1304,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             dto.setRepartePrevisto(uLancamento.getReparte());
             dto.setRepartePromocional(uLancamento.getRepartePromocional());
             
-            final int semanaRecolhimento = SemanaUtil.obterNumeroSemana(uLancamento.getDataRecolhimentoDistribuidor(), distribuidorService.inicioSemana().getCodigoDiaSemana());
+            final int semanaRecolhimento = SemanaUtil.obterNumeroSemana(uLancamento.getDataRecolhimentoDistribuidor(), distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana());
             
             dto.setSemanaRecolhimento(semanaRecolhimento);
         }
