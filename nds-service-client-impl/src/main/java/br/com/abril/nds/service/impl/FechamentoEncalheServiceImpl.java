@@ -979,6 +979,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             }
         }
         
+        this.processarMovimentosProdutosJuramentados(dataEncalhe, usuario, distribuidorRepository
+                .obterDataOperacaoDistribuidor());
+        
         if (!listaEncalhe.isEmpty()) {
             
             for (final FechamentoFisicoLogicoDTO item : listaEncalhe) {
@@ -988,9 +991,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 this.tratarAtualizacaoProximoLancamentoParcial(item, usuario, item.getFisico());
             }
         }
-        
-        this.processarMovimentosProdutosJuramentados(dataEncalhe, usuario, distribuidorRepository
-                .obterDataOperacaoDistribuidor());
+
         
         if (ObrigacaoFiscal.COTA_TOTAL.equals(distribuidorRepository.obrigacaoFiscal())
                 || ObrigacaoFiscal.COTA_NFE_VENDA.equals(distribuidorRepository.obrigacaoFiscal())) {
@@ -1026,11 +1027,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             final Long encalheFisico) {
         
         if (!item.isParcial()) {
-            
             return;
         }
         
-        tratarTransferenciaEstoqueDeRecolhimentoParaLancamento(item, usuario, encalheFisico);
+        movimentoEstoqueService.transferirEstoqueProdutoEdicaoParcialParaLancamento(item.getProdutoEdicao(), usuario);
         
         final Lancamento lancamentoParcial = lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item
                 .getChamadaEncalheId());
@@ -1043,24 +1043,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         }
     }
 
-    @Transactional
-    private void tratarTransferenciaEstoqueDeRecolhimentoParaLancamento(FechamentoFisicoLogicoDTO item,
-            Usuario usuario, Long encalheFisico) {
-
-        TipoMovimentoEstoque tipoMovimentoSaidaRecolhimento =
-                tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO);
-        
-        TipoMovimentoEstoque tipoMovimentoEntradaLancamento =
-                tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO);
-       
-        
-        movimentoEstoqueService.gerarMovimentoEstoque(item.getProdutoEdicao(), 
-                usuario.getId(), BigInteger.valueOf(encalheFisico), tipoMovimentoSaidaRecolhimento);
-        
-        movimentoEstoqueService.gerarMovimentoEstoque(item.getProdutoEdicao(), 
-                usuario.getId(), BigInteger.valueOf(encalheFisico), tipoMovimentoEntradaLancamento);
-        
-    }
+   
 
     private void gerarMovimentoFaltasSobras(final FechamentoFisicoLogicoDTO item, final Usuario usuarioLogado) {
         
