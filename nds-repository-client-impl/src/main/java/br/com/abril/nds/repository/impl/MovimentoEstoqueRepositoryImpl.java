@@ -82,7 +82,7 @@ implements MovimentoEstoqueRepository {
 		}
 
 		if(statusAprovacao != null) {
-			hql.append(" and m.status = :statusAprovacao  ");
+			hql.append(" and m.status != :statusAprovacao  ");
 		}
 		
 		hql.append(" group by produtoEdicao.id, m.data, tipoMovimento.id, dif.tipoDiferenca ");		
