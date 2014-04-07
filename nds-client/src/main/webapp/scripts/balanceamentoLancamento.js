@@ -845,6 +845,19 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		});	
 	},
 	
+	this.atualizarResumoBalanceamentoSalvar = function () {
+		
+		$.postJSON( pathTela + "/matrizLancamento/atualizarResumoBalanceamento",
+				   null,
+				   function(result) {
+						T.popularResumoPeriodo(result);
+						
+						T.carregarGrid(null, false);
+						setTimeout(T.salvarMatriz(),200);
+				   }
+		);
+	},
+	
 	this.atualizarResumoBalanceamento = function () {
 		
 		$.postJSON( pathTela + "/matrizLancamento/atualizarResumoBalanceamento",
@@ -1377,7 +1390,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			       }
         	   }
 			   
-			   T.atualizarResumoBalanceamento();
+			   T.atualizarResumoBalanceamentoSalvar();
             }
 		);
 	},
