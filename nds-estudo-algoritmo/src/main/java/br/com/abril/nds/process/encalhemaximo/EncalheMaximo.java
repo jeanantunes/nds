@@ -56,7 +56,7 @@ public class EncalheMaximo extends ProcessoAbstrato {
 						
 						BigInteger reparte;
 						
-						if(estudo.getPacotePadrao() != null){
+						if(estudo.getPacotePadrao() != null && estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0){
 			    			
 						    	if (repartePreCalculado.toBigInteger().compareTo(estudo.getPacotePadrao()) > 0) {
 						    		
