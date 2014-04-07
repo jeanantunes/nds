@@ -298,6 +298,9 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 			hql.append(" and fornecedor in (:fornecedor) ");
 		}
 		
+		
+		hql.append(" group by cota.id ");
+		
 		return hql.toString();
 	}
 	
