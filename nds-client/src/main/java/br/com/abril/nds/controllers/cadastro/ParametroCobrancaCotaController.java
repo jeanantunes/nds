@@ -432,7 +432,7 @@ public class ParametroCobrancaCotaController extends BaseController {
             parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
         }
         
-        this.salvarContrato(parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
+        this.salvarContrato(parametroCobranca.getIdCota(), parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
         
         cotaService.salvarTipoCota(parametroCobranca.getIdCota(), parametroCobranca.getTipoCota(), parametroCobranca.isDevolveEncalhe());
         
@@ -719,19 +719,19 @@ public class ParametroCobrancaCotaController extends BaseController {
         return arquivo;
     }
     
-    private boolean salvarContrato(final Date inicioContrato, final Date terminoContrato){
+    private boolean salvarContrato(Long idCota, final Date inicioContrato, final Date terminoContrato){
+    	
+    	parametroCobrancaCotaService.salvarContrato(idCota, session.getAttribute(CONTRATO_UPLOADED) != null, inicioContrato, terminoContrato);
         
         if (session.getAttribute(CONTRATO_UPLOADED) != null) {
             
             final ContratoVO contrato = (ContratoVO) session.getAttribute(CONTRATO_UPLOADED);
+            
             if(contrato != null) {
+            	
                 contrato.setDataInicio(inicioContrato);
                 contrato.setDataTermino(terminoContrato);
-                parametroCobrancaCotaService.salvarContrato(contrato.getIdCota(), contrato.isRecebido(), contrato
-                        .getDataInicio(), contrato.getDataTermino());
-                
-                
-                
+
                 final File file = contrato.getTempFile();
                 
                 if (file != null) {
@@ -807,13 +807,17 @@ public class ParametroCobrancaCotaController extends BaseController {
      */
     @Post
     @Path("/salvarFinanceiroEspecificoDaCota")
-    public void salvarFinanceiroEspecificoDaCota(final Long idCota, final Date inicioContrato, final Date terminoContrato, final TipoCota tipoCota, final boolean devolveEncalhe) {
+    public void salvarFinanceiroEspecificoDaCota(final Long idCota, 
+    		                                     final Date inicioContrato, 
+    		                                     final Date terminoContrato, 
+    		                                     final TipoCota tipoCota, 
+    		                                     final boolean devolveEncalhe) {
         
         String msg1 = "";
         String msg2 = "";
         String msg = "";
         
-        if (this.salvarContrato(inicioContrato, terminoContrato)){
+        if (this.salvarContrato(idCota, inicioContrato, terminoContrato)){
             
             msg1 = "Contrato";
         }
