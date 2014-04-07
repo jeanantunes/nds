@@ -610,7 +610,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly=true)
 	public Date obterDataPrimeiroDiaEncalheOperacaoDiferenciada(final Integer numeroCota, final Date dataRecolhimentoCE) {
 		
-		final DiaSemana inicioSemana = distribuidorService.inicioSemana();
+		final DiaSemana inicioSemana = distribuidorService.inicioSemanaRecolhimento();
 		
 		final List<DiaSemanaRecolhimento> diasSemanaRecolhimentoOperacaoDiferenciada = 
 				obterListaDiaSemanaRecolhimentoOperacaoDiferenciada(

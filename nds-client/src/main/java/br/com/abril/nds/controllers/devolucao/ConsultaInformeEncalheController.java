@@ -74,7 +74,7 @@ public class ConsultaInformeEncalheController extends BaseController {
     
     
     public ConsultaInformeEncalheController(final DistribuidorService distribuidorService) {
-        inicioDaSemana = distribuidorService.inicioSemana();
+        inicioDaSemana = distribuidorService.inicioSemanaRecolhimento();
     }
     
     @Path("/")
@@ -139,7 +139,7 @@ public class ConsultaInformeEncalheController extends BaseController {
         
         final Date dataInicioSemana =
                 SemanaUtil.obterDataDaSemanaNoAno(
-                        semana, distribuidorService.inicioSemana().getCodigoDiaSemana(), cal.get(Calendar.YEAR));
+                        semana, distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana(), cal.get(Calendar.YEAR));
         
         final Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
         

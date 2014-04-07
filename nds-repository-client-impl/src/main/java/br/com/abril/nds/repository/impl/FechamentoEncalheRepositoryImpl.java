@@ -514,7 +514,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("diaRecolhimento", diaRecolhimento);
         
-        query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO);
+        //query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO);
         
         final BigInteger qtde = (BigInteger) query.uniqueResult();
         
@@ -619,7 +619,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             sql.append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ");
         }
         
-        sql.append("     and cota.TIPO_COTA = :tipoCotaConsignado ");
+        //sql.append("     and cota.TIPO_COTA = :tipoCotaConsignado ");
         
         sql.append("	group by                                      ");
         sql.append("        cota.ID                                   ");
@@ -736,7 +736,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             sql.append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ");
         }
         
-        sql.append("	and cota.TIPO_COTA = :tipoCotaConsignado " );
+        //sql.append("	and cota.TIPO_COTA = :tipoCotaConsignado " );
         
         sql.append("	group by                                      ");
         sql.append("        cota.ID                                   ");
@@ -873,7 +873,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("						 chamadaEncalhe.DATA_RECOLHIMENTO = :dataEncalhe )                 ");
         sql.append("		)                                                                                  ");
         
-        sql.append("    and cota.TIPO_COTA = :tipoCotaConsignado ");
+        //sql.append("    and cota.TIPO_COTA = :tipoCotaConsignado ");
         
         sql.append("	group by    ");
         
@@ -942,7 +942,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("diaRecolhimento", diaRecolhimento);
         
-        query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
+        //query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaAusenteEncalheDTO.class));
         
@@ -1467,7 +1467,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("diaRecolhimento", diaRecolhimento);
         
-        query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO);
+        //query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO);
         
         final BigInteger qtde = (BigInteger) query.uniqueResult();
         

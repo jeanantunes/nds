@@ -1535,7 +1535,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     @Transactional(readOnly = true)
     public Date buscarUtimoDiaDaSemanaRecolhimento() {
         
-        final int codigoInicioSemana = distribuidorService.inicioSemana().getCodigoDiaSemana();
+        final int codigoInicioSemana = distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana();
         
         final Date dataInicioSemana = SemanaUtil.obterDataInicioSemana(codigoInicioSemana, new Date());
         
