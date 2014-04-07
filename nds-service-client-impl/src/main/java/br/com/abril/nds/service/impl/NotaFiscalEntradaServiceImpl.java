@@ -28,6 +28,8 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.CFOPRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
@@ -132,8 +134,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		}
 		
 		//FIXME: Ajustar a funcionalidade de NF-e de Terceiros 
-		//NaturezaOperacao tipoNotaFiscal = this.tipoNotaFiscalRepository.obterNaturezaOperacao(grupoNotaFiscal, tipoAtividade, isContribuinte);
-		NaturezaOperacao tipoNotaFiscal = null;
+		NaturezaOperacao tipoNotaFiscal = this.naturezaOperacaoService.obterNaturezaOperacao(tipoAtividade, TipoDestinatario.FORNECEDOR, TipoOperacao.ENTRADA);
 
 		if (tipoNotaFiscal == null) {
 			

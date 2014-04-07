@@ -515,6 +515,148 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         return movimentoEstoque;
     }
     
+    
+    @Transactional
+    public void transferirEstoqueProdutoEdicaoParcialParaLancamento(
+    		Long idProdutoEdicao,
+            Usuario usuario) {
+    	
+    	EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoquePorProduto(idProdutoEdicao);
+    	
+    	BigInteger qtdeRecolhimento 	= (estoqueProduto.getQtdeDevolucaoEncalhe() == null) ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+    	BigInteger qtdeSuplementar 		= (estoqueProduto.getQtdeSuplementar() == null) ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
+    	BigInteger qtdeLancamento		= (estoqueProduto.getQtde() == null) ? BigInteger.ZERO : estoqueProduto.getQtde();
+    	
+    	qtdeLancamento = qtdeLancamento.add(qtdeRecolhimento).add(qtdeSuplementar);
+    	
+    	estoqueProduto.setQtdeDevolucaoEncalhe(BigInteger.ZERO);
+    	estoqueProduto.setQtdeSuplementar(BigInteger.ZERO);
+    	estoqueProduto.setQtde(qtdeLancamento);
+    	
+    	TipoMovimentoEstoque tipoMovimentoSaidaRecolhimento = 
+    			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO);
+
+    	TipoMovimentoEstoque tipoMovimentoSaidaSuplementar = 
+    			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
+    	
+        TipoMovimentoEstoque tipoMovimentoEntradaLancamento =
+        		tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO);
+        
+        
+        ParametroMovimentoEstoque parametroMovimentoEstoque = new ParametroMovimentoEstoque();
+		parametroMovimentoEstoque.dataOperacao 				= distribuidorService.obterDataOperacaoDistribuidor();
+		parametroMovimentoEstoque.idProdutoEdicao 			= idProdutoEdicao;
+		parametroMovimentoEstoque.idUsuario 				= usuario.getId(); 			
+		
+		
+		parametroMovimentoEstoque.tipoMovimentoEstoque 		= tipoMovimentoSaidaRecolhimento;
+		parametroMovimentoEstoque.quantidade 				= qtdeRecolhimento; 	
+        MovimentoEstoque movEstoqSaidaRecolhimento 	= criarNovoObjetoMovimentoEstoque(parametroMovimentoEstoque);
+        movimentoEstoqueRepository.adicionar(movEstoqSaidaRecolhimento);
+
+		parametroMovimentoEstoque.tipoMovimentoEstoque 		= tipoMovimentoSaidaSuplementar;
+		parametroMovimentoEstoque.quantidade 				= qtdeSuplementar; 	
+        MovimentoEstoque movEstoqSaidaSuplementar 	= criarNovoObjetoMovimentoEstoque(parametroMovimentoEstoque);
+        movimentoEstoqueRepository.adicionar(movEstoqSaidaSuplementar);
+
+		parametroMovimentoEstoque.tipoMovimentoEstoque 		= tipoMovimentoEntradaLancamento;
+		parametroMovimentoEstoque.quantidade 				= qtdeSuplementar.add(qtdeRecolhimento); 	
+        MovimentoEstoque movEstoqEntradaLancamento 	= criarNovoObjetoMovimentoEstoque(parametroMovimentoEstoque);
+        movimentoEstoqueRepository.adicionar(movEstoqEntradaLancamento);
+        
+    }
+    
+    
+    class ParametroMovimentoEstoque {
+    	
+    	public Date dataOperacao; 
+		public Long idItemRecebimentoFisico;
+		public Long idProdutoEdicao;
+		public TipoMovimentoEstoque tipoMovimentoEstoque;
+		public Long idUsuario;
+		public BigInteger quantidade;
+		public Origem origem;
+		public boolean isMovimentoDiferencaAutomatica;
+		public boolean enfileiraAlteracaoEstoqueProduto;
+		public StatusIntegracao statusIntegracao;
+    	
+    }
+    
+    /**
+     * Retorna um novo objeto do tipo {@code MovimentoEstoque}
+     * populado com os atributos informados.
+     * 
+     * @param parametroMovimentoEstoque
+     * 
+     * @return MovimentoEstoque
+     */
+    private MovimentoEstoque criarNovoObjetoMovimentoEstoque(ParametroMovimentoEstoque parametroMovimentoEstoque) {
+        
+		Date dataOperacao 				= parametroMovimentoEstoque.dataOperacao;
+		Long idItemRecebimentoFisico 	= parametroMovimentoEstoque.idItemRecebimentoFisico;
+		Long idProdutoEdicao 			= parametroMovimentoEstoque.idProdutoEdicao;
+		TipoMovimentoEstoque tipoMovimentoEstoque = parametroMovimentoEstoque.tipoMovimentoEstoque;
+		Long idUsuario 			= parametroMovimentoEstoque.idUsuario;
+		BigInteger quantidade 	= parametroMovimentoEstoque.quantidade;
+		Origem origem 			= parametroMovimentoEstoque.origem;
+		boolean isMovimentoDiferencaAutomatica 		= parametroMovimentoEstoque.isMovimentoDiferencaAutomatica;
+		StatusIntegracao statusIntegracao 			= parametroMovimentoEstoque.statusIntegracao;		
+    	
+          MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
+          
+          if (dataOperacao == null) {
+              dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+          }
+          
+          if (idItemRecebimentoFisico != null) {
+              
+              final ItemRecebimentoFisico itemRecebimentoFisico = itemRecebimentoFisicoRepository.buscarPorId(idItemRecebimentoFisico);
+              
+              if (itemRecebimentoFisico != null) {
+                  movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
+              }
+              
+          }
+          
+          movimentoEstoque.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));
+          
+          movimentoEstoque.setData(dataOperacao);
+          
+          if (tipoMovimentoEstoque != null) {
+              if (tipoMovimentoEstoque.getGrupoMovimentoEstoque() != null
+                      && tipoMovimentoEstoque.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.RECEBIMENTO_FISICO)) {
+                  movimentoEstoque.setDataCriacao(new Date());
+              } else {
+                  movimentoEstoque.setDataCriacao(dataOperacao);
+              }
+              movimentoEstoque.setAprovadoAutomaticamente(tipoMovimentoEstoque.isAprovacaoAutomatica());
+
+              movimentoEstoque.setUsuario(new Usuario(idUsuario));
+              movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
+              movimentoEstoque.setQtde(quantidade);
+              movimentoEstoque.setOrigem(origem);
+              
+              
+              if (tipoMovimentoEstoque.isAprovacaoAutomatica() || isMovimentoDiferencaAutomatica) {
+                  
+                  movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
+                  movimentoEstoque.setAprovador(new Usuario(idUsuario));
+                  movimentoEstoque.setDataAprovacao(distribuidorService.obterDataOperacaoDistribuidor());
+                  
+                  
+              }
+          }
+          
+          if (statusIntegracao != null) {
+              movimentoEstoque.setStatusIntegracao(statusIntegracao);
+          }
+          
+          return movimentoEstoque;
+    	
+    }
+    
+    
+    
     private MovimentoEstoque criarMovimentoEstoque(final Long idItemRecebimentoFisico, final Long idProdutoEdicao, final Long idUsuario,
             final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque,
             final Origem origem, Date dataOperacao, final boolean isImportacao,
@@ -525,73 +667,39 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         this.validarDominioGrupoMovimentoEstoque(tipoMovimentoEstoque, Dominio.DISTRIBUIDOR);
         
-        MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
+        ParametroMovimentoEstoque parametroMovimentoEstoque = new ParametroMovimentoEstoque();
         
-        if (dataOperacao == null) {
-            
-            dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-        }
+		parametroMovimentoEstoque.dataOperacao 				= dataOperacao;
+		parametroMovimentoEstoque.idItemRecebimentoFisico 	= idItemRecebimentoFisico;
+		parametroMovimentoEstoque.idProdutoEdicao 			= idProdutoEdicao;
+		parametroMovimentoEstoque.tipoMovimentoEstoque 		= tipoMovimentoEstoque;
+		parametroMovimentoEstoque.idUsuario 				= idUsuario; 			
+		parametroMovimentoEstoque.quantidade 				= quantidade; 	
+		parametroMovimentoEstoque.origem 					= origem;		
+		parametroMovimentoEstoque.isMovimentoDiferencaAutomatica 	= isMovimentoDiferencaAutomatica;
+		parametroMovimentoEstoque.statusIntegracao 					= statusIntegracao;
         
-        if (idItemRecebimentoFisico != null) {
-            
-            final ItemRecebimentoFisico itemRecebimentoFisico = itemRecebimentoFisicoRepository.buscarPorId(idItemRecebimentoFisico);
-            
-            if (itemRecebimentoFisico != null) {
-                movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
-            }
-            
-        }
+        MovimentoEstoque movimentoEstoque = criarNovoObjetoMovimentoEstoque(parametroMovimentoEstoque);
         
-        movimentoEstoque.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));
-        
-        movimentoEstoque.setData(dataOperacao);
-        
-        if (tipoMovimentoEstoque != null) {
-            if (tipoMovimentoEstoque.getGrupoMovimentoEstoque() != null
-                    && tipoMovimentoEstoque.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.RECEBIMENTO_FISICO)) {
-                movimentoEstoque.setDataCriacao(new Date());
+        if (tipoMovimentoEstoque != null && (tipoMovimentoEstoque.isAprovacaoAutomatica() || isMovimentoDiferencaAutomatica)) {
+                
+            if(enfileiraAlteracaoEstoqueProduto) {
+            	
+            	enfileirarAlteracaoEncalheEstoqueProduto(
+            			cota, 
+            			movimentoEstoque.getProdutoEdicao(), 
+            			tipoMovimentoEstoque.getGrupoMovimentoEstoque(), 
+            			OperacaoEstoque.ENTRADA, 
+            			quantidade);
+            	
             } else {
-                movimentoEstoque.setDataCriacao(dataOperacao);
-            }
-            movimentoEstoque.setAprovadoAutomaticamente(tipoMovimentoEstoque.isAprovacaoAutomatica());
-
-            movimentoEstoque.setUsuario(new Usuario(idUsuario));
-            movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
-            movimentoEstoque.setQtde(quantidade);
-            movimentoEstoque.setOrigem(origem);
-            
-            
-            if (tipoMovimentoEstoque.isAprovacaoAutomatica() || isMovimentoDiferencaAutomatica) {
                 
-                movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
-                movimentoEstoque.setAprovador(new Usuario(idUsuario));
-                movimentoEstoque.setDataAprovacao(distribuidorService.obterDataOperacaoDistribuidor());
+            	final Long idEstoque = atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, isImportacao, validarTransfEstoqueDiferenca);
                 
-                
-                if(enfileiraAlteracaoEstoqueProduto) {
-                	
-                	enfileirarAlteracaoEncalheEstoqueProduto(
-                			cota, 
-                			movimentoEstoque.getProdutoEdicao(), 
-                			tipoMovimentoEstoque.getGrupoMovimentoEstoque(), 
-                			OperacaoEstoque.ENTRADA, 
-                			quantidade);
-                	
-                } else {
-                    
-                	final Long idEstoque = atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, isImportacao, validarTransfEstoqueDiferenca);
-                    
-                	movimentoEstoque.setEstoqueProduto(new EstoqueProduto(idEstoque));
-                    
-                }
-                
-                
+            	movimentoEstoque.setEstoqueProduto(new EstoqueProduto(idEstoque));
                 
             }
-        }
-        if (statusIntegracao != null) {
-            
-            movimentoEstoque.setStatusIntegracao(statusIntegracao);
+                
         }
         
         movimentoEstoque = movimentoEstoqueRepository.merge(movimentoEstoque);

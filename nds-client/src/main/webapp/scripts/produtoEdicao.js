@@ -206,7 +206,9 @@ var produtoEdicaoController =$.extend(true,  {
 			this.value = this.value.toUpperCase();
 		});
 		
-			
+		$('#produtoEdicaoController-nomeComercialProduto').keyup(function(){
+			this.value = this.value.toUpperCase();
+		});
 			
 		$(".bonificacoesGrid",this.workspace).flexigrid({
 			dataType : 'xml',
