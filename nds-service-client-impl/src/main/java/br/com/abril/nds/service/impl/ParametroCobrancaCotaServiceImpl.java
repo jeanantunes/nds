@@ -1055,8 +1055,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		ContratoCota contrato = cota.getContratoCota();
 		
-		if(contrato == null) 
-			contrato = new ContratoCota();
+		contrato = (contrato == null)?new ContratoCota():contrato;
 		
 		Calendar c1 = Calendar.getInstance();
 		Calendar c2 = Calendar.getInstance();
@@ -1067,16 +1066,19 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		int prazoEmMeses = (c2.get(Calendar.YEAR) - c1.get(Calendar.YEAR)) * 12;     
         prazoEmMeses = prazoEmMeses + ((12 - (c1.get(Calendar.MONTH)) + (c2.get(Calendar.MONTH)-12)));     
         		
-		contrato.setAvisoPrevioRescisao(Integer.parseInt(contratoDTO.getAvisoPrevio()));
+		contrato.setAvisoPrevioRescisao(contratoDTO.getAvisoPrevio()!=null?Integer.parseInt(contratoDTO.getAvisoPrevio()):0);
 		contrato.setDataInicio(contratoDTO.getInicio());
 		contrato.setDataTermino(contratoDTO.getTermino());
 		contrato.setExigeDocumentacaoSuspencao(cota.isSugereSuspensao());
 		contrato.setCota(cota);
 		contrato.setPrazo(prazoEmMeses);
 		contrato.setRecebido(isRecebido);
-		
+
 		this.contratoService.salvarContrato(contrato);
 		
+		cota.setPossuiContrato(true);
+		
+		this.cotaRepository.merge(cota);
 	}
 
 	@Transactional

@@ -514,7 +514,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("diaRecolhimento", diaRecolhimento);
         
-        query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO);
+        query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
         
         final BigInteger qtde = (BigInteger) query.uniqueResult();
         
@@ -557,12 +557,19 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             sql.append("		co_un.COTA_UNIFICADA_ID = cota.ID > 0) as unificacao ");
         }
         
-        
         sql.append("	from                                                                ");
         sql.append("        Cota cota                                                       ");
         sql.append("	inner join                                                          ");
         sql.append("        CHAMADA_ENCALHE_COTA chamadaEncalheCota                         ");
         sql.append("            on chamadaEncalheCota.COTA_ID=cota.ID                       ");
+        
+        sql.append("            and ( "); 
+        sql.append("                  (cota.TIPO_COTA <> :tipoCotaAVista) or "); 
+        sql.append("                  (cota.ALTERACAO_TIPO_COTA is not null and "); 
+        sql.append("                   cota.ALTERACAO_TIPO_COTA = (select DATA_OPERACAO from DISTRIBUIDOR)"); 
+        sql.append("                  ) "); 
+        sql.append("                ) ");
+        				
         sql.append("	inner join                                                          ");
         sql.append("        CHAMADA_ENCALHE chamadaEncalhe                                  ");
         sql.append("            on chamadaEncalheCota.CHAMADA_ENCALHE_ID=chamadaEncalhe.ID  ");
@@ -619,8 +626,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             sql.append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ");
         }
         
-        sql.append("     and cota.TIPO_COTA = :tipoCotaConsignado ");
-        
         sql.append("	group by                                      ");
         sql.append("        cota.ID                                   ");
         
@@ -667,6 +672,14 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("	inner join                                                          ");
         sql.append("        CHAMADA_ENCALHE_COTA chamadaEncalheCota                         ");
         sql.append("            on chamadaEncalheCota.COTA_ID=cota.ID                       ");
+        
+        sql.append("            and ( "); 
+        sql.append("                  (cota.TIPO_COTA <> :tipoCotaAVista) or "); 
+        sql.append("                  (cota.ALTERACAO_TIPO_COTA is not null and "); 
+        sql.append("                   cota.ALTERACAO_TIPO_COTA = (select DATA_OPERACAO from DISTRIBUIDOR)"); 
+        sql.append("                  ) "); 
+        sql.append("                ) ");
+        
         sql.append("	inner join                                                          ");
         sql.append("        CHAMADA_ENCALHE chamadaEncalhe                                  ");
         sql.append("            on chamadaEncalheCota.CHAMADA_ENCALHE_ID=chamadaEncalhe.ID  ");
@@ -736,8 +749,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             sql.append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ");
         }
         
-        sql.append("	and cota.TIPO_COTA = :tipoCotaConsignado " );
-        
         sql.append("	group by                                      ");
         sql.append("        cota.ID                                   ");
         
@@ -804,6 +815,14 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("	inner join                                              ");
         sql.append("        PESSOA pessoa                                       ");
         sql.append("            on cota.PESSOA_ID=pessoa.ID                     ");
+        
+        sql.append("            and ( "); 
+        sql.append("                  (cota.TIPO_COTA <> :tipoCotaAVista) or "); 
+        sql.append("                  (cota.ALTERACAO_TIPO_COTA is not null and "); 
+        sql.append("                   cota.ALTERACAO_TIPO_COTA = (select DATA_OPERACAO from DISTRIBUIDOR)"); 
+        sql.append("                  ) "); 
+        sql.append("                ) ");
+        
         sql.append("	inner join                                              ");
         sql.append("        BOX box                                             ");
         sql.append("            on cota.BOX_ID=box.ID                           ");
@@ -873,8 +892,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("						 chamadaEncalhe.DATA_RECOLHIMENTO = :dataEncalhe )                 ");
         sql.append("		)                                                                                  ");
         
-        sql.append("    and cota.TIPO_COTA = :tipoCotaConsignado ");
-        
         sql.append("	group by    ");
         
         sql.append("    cota.ID, indMFCNaoConsolidado ");
@@ -942,7 +959,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("diaRecolhimento", diaRecolhimento);
         
-        query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
+        query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaAusenteEncalheDTO.class));
         
@@ -1385,6 +1402,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         hql.append("where produtoEdicao.id in (:produtosEdicoesId) ");
         
+        hql.append(" and controleConferenciaEncalhe.data = :dataEncalhe ");
+        
         if (filtro.getBoxId() != null) {
             hql.append("  and conferenciaEncalhe.controleConferenciaEncalheCota.box.id = :boxId ");
         }
@@ -1392,6 +1411,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         final Query query = this.getSession().createQuery(hql.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));
         query.setParameterList("produtosEdicoesId", listaDeIdsProdutosEdicoes);
+        query.setParameter("dataEncalhe", filtro.getDataEncalhe());
         
         if (filtro.getBoxId() != null) {
             query.setLong("boxId", filtro.getBoxId());
@@ -1464,7 +1484,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("diaRecolhimento", diaRecolhimento);
         
-        query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO);
+        query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
         
         final BigInteger qtde = (BigInteger) query.uniqueResult();
         
