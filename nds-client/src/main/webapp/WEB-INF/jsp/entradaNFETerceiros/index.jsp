@@ -40,6 +40,9 @@ fieldset label {
 
 <body>
 	<form id="form-dadosNotaFiscal">
+	<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+
+
 		<div id="dialog-dadosNotaFiscal" title="Dados da Nota Fiscal">
 			<fieldset>
 				<legend>Nota Fiscal</legend>
