@@ -135,11 +135,18 @@ public class Distribuidor {
 	private int numeroReprogramacoesLancamento = 3;
 	
 	/**
-	 * Dia de inicio da semana do distribuidor
+	 * Dia de inicio da semana do distribuidor Lancamento.
 	 */
 	@Enumerated(EnumType.STRING)
-	@Column(name = "INICIO_SEMANA", nullable = false)
-	private DiaSemana inicioSemana = DiaSemana.QUARTA_FEIRA;
+	@Column(name = "INICIO_SEMANA_LANCAMENTO", nullable = false)
+	private DiaSemana inicioSemanaLancamento = DiaSemana.SEGUNDA_FEIRA;
+	
+	/**
+	 * Dia de inicio da semana do distribuidor Recolhimento.
+	 */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "INICIO_SEMANA_RECOLHIMENTO", nullable = false)
+	private DiaSemana inicioSemanaRecolhimento = DiaSemana.QUARTA_FEIRA;
 	
 	/**
 	 * Flag indicando se o distribuidor executa recolhimento de
@@ -421,12 +428,20 @@ public class Distribuidor {
 		this.numeroReprogramacoesLancamento = numeroReprogramacoesLancamento;
 	}
 	
-	public DiaSemana getInicioSemana() {
-		return inicioSemana;
+	public DiaSemana getInicioSemanaRecolhimento() {
+		return inicioSemanaRecolhimento;
 	}
 	
-	public void setInicioSemana(DiaSemana inicioSemana) {
-		this.inicioSemana = inicioSemana;
+	public void setInicioSemanaRecolhimento(DiaSemana inicioSemanaRecolhimento) {
+		this.inicioSemanaRecolhimento = inicioSemanaRecolhimento;
+	}
+	
+	public DiaSemana getInicioSemanaLancamento() {
+		return inicioSemanaLancamento;
+	}
+	
+	public void setInicioSemanaLancamento(DiaSemana inicioSemanaLancamento) {
+		this.inicioSemanaLancamento = inicioSemanaLancamento;
 	}
 	
 	public boolean isExecutaRecolhimentoParcial() {

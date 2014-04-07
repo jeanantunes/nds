@@ -283,7 +283,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 }
             }
             
-            final int inicioDiaSemana = distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+            final int inicioDiaSemana = distribuidorRepository.buscarInicioSemanaRecolhimento().getCodigoDiaSemana();
             
             final Date dataInicioSemana = SemanaUtil.obterDataInicioSemana(inicioDiaSemana, dataAtual);
             
@@ -1447,7 +1447,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     @Transactional(readOnly = true)
     public Date buscarUtimoDiaDaSemanaRecolhimento() {
         
-        final int codigoInicioSemana = distribuidorService.inicioSemana().getCodigoDiaSemana();
+        final int codigoInicioSemana = distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana();
         
         final Date dataInicioSemana = SemanaUtil.obterDataInicioSemana(codigoInicioSemana, new Date());
         

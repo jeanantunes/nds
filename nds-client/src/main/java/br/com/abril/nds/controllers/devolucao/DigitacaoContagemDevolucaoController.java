@@ -183,7 +183,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		try {
 		
-			Integer inicioSemana = this.distribuidorService.inicioSemana().getCodigoDiaSemana();
+			Integer inicioSemana = this.distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana();
 			
 			Integer anoBase = SemanaUtil.getAno(anoSemanaConferenciaEncalhe);
 			
