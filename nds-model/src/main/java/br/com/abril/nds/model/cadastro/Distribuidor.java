@@ -1369,7 +1369,7 @@ public class Distribuidor {
 				+ capacidadeDistribuicao + ", capacidadeRecolhimento="
 				+ capacidadeRecolhimento + ", numeroReprogramacoesLancamento="
 				+ numeroReprogramacoesLancamento + ", inicioSemana="
-				+ inicioSemana + ", executaRecolhimentoParcial="
+				+ inicioSemanaRecolhimento + ", executaRecolhimentoParcial="
 				+ executaRecolhimentoParcial + ", preenchimentoAutomaticoPDV="
 				+ preenchimentoAutomaticoPDV + ", fatorRelancamentoParcial="
 				+ fatorRelancamentoParcial + ", valorConsignadoSuspensaoCotas="
