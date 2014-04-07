@@ -51,7 +51,7 @@ public class AjusteReparte extends ProcessoAbstrato {
     	
     	for (CotaEstudo cota : estudo.getCotas()) {
 		    
-    		if ((cota.getVendaMediaMaisN() != null) && (estudo.getPacotePadrao() != null) && (cota.getVendaMediaMaisN().compareTo(BigInteger.ZERO) > 0)) {
+    		if ((cota.getVendaMediaMaisN() != null) && (estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0) && (estudo.getPacotePadrao() != null) && (cota.getVendaMediaMaisN().compareTo(BigInteger.ZERO) > 0)) {
     			
     			if(somatorio.compareTo(indice) < 0){
     				
