@@ -1,4 +1,4 @@
-package br.com.abril.nds.ftf;
+package br.com.abril.ftf;
 
 import java.io.File;
 import java.io.FileFilter;
