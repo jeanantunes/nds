@@ -60,7 +60,6 @@ import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.sessionscoped.ConferenciaEncalheSessionScopeAttr;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.PDFUtil;
@@ -163,7 +162,16 @@ public class ConferenciaEncalheController extends BaseController {
 	private BoxService boxService;
 	
 	@Path("/")
+	@SuppressWarnings("unchecked")
 	public void index() {
+
+		final ServletContext context = this.session.getServletContext();
+		
+		final Map<Integer, String> mapaCotaConferidaUsuario = 
+			(LinkedHashMap<Integer, String>) 
+				context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+		
+		validarUsuarioConferindoCota(this.getIdentificacaoUnicaUsuarioLogado(), mapaCotaConferidaUsuario);
 		
 		this.result.include(
 				"dataOperacao", 
@@ -253,7 +261,7 @@ public class ConferenciaEncalheController extends BaseController {
 	private void atribuirTravaConferenciaCotaUsuario(final Integer numeroCota) {
 		
 		
-			final String userSessionID = this.session.getId();
+			final String loginUsuarioLogado = this.getIdentificacaoUnicaUsuarioLogado();
 			
 			verificarTravaConferenciaCotaUsuario(numeroCota);
 	
@@ -264,8 +272,8 @@ public class ConferenciaEncalheController extends BaseController {
 				(LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
 	
 			@SuppressWarnings("unchecked")
-			Map<String, String> mapaSessionIDNomeUsuario = 
-				(LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
+			Map<String, String> mapaLoginNomeUsuario = 
+				(LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 	
 			
 			if(mapaCotaConferidaUsuario == null) {
@@ -274,14 +282,13 @@ public class ConferenciaEncalheController extends BaseController {
 			}
 			
 	
-			if(mapaSessionIDNomeUsuario == null) {
-				mapaSessionIDNomeUsuario = new LinkedHashMap<>();
-				context.setAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO, mapaSessionIDNomeUsuario);
+			if(mapaLoginNomeUsuario == null) {
+				mapaLoginNomeUsuario = new LinkedHashMap<>();
+				context.setAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO, mapaLoginNomeUsuario);
 			}
 	
-			
-			mapaSessionIDNomeUsuario.put(userSessionID, getIdentificacaoUsuarioLogado());
-			mapaCotaConferidaUsuario.put(numeroCota, userSessionID);
+			mapaLoginNomeUsuario.put(loginUsuarioLogado, getIdentificacaoUsuarioLogado());
+			mapaCotaConferidaUsuario.put(numeroCota, loginUsuarioLogado);
 	}
 	
 	            /**
@@ -291,7 +298,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	public void removerTravaConferenciaEncalheCotaUsuario() {
 		
-		final String userSessionID = session.getId();
+		final String loginUsuarioLogado = this.getIdentificacaoUnicaUsuarioLogado();
 		
 		@SuppressWarnings("unchecked")
 		final
@@ -299,19 +306,19 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		@SuppressWarnings("unchecked")
 		final
-		Map<String, String> mapaSessionIDNomeUsuario = 
-			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
+		Map<String, String> mapaLoginNomeUsuario = 
+			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 		
-		removerTravaConferenciaCotaUsuario(session.getServletContext(), userSessionID, mapaCotaConferidaUsuario, mapaSessionIDNomeUsuario);
+		removerTravaConferenciaCotaUsuario(session.getServletContext(), loginUsuarioLogado, mapaCotaConferidaUsuario, mapaLoginNomeUsuario);
 		
 		this.result.nothing();
 	}
 
-	public static void removerTravaConferenciaCotaUsuario(final ServletContext context, final String userSessionID, final Map<Integer, String> mapaCotaConferidaUsuario, final Map<String, String> mapaSessionIDNomeUsuario) {
+	public static void removerTravaConferenciaCotaUsuario(final ServletContext context, final String userSessionID, final Map<Integer, String> mapaCotaConferidaUsuario, final Map<String, String> mapaLoginNomeUsuario) {
 		
 			
-			if(mapaSessionIDNomeUsuario != null) {
-				mapaSessionIDNomeUsuario.remove(userSessionID);
+			if(mapaLoginNomeUsuario != null) {
+				mapaLoginNomeUsuario.remove(userSessionID);
 			}
 			
 			if(mapaCotaConferidaUsuario == null || mapaCotaConferidaUsuario.isEmpty()) {
@@ -330,7 +337,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private void verificarTravaConferenciaCotaUsuario(final Integer numeroCota) {
 		
-		final String userSessionID = this.session.getId();
+		final String loginUsuarioLogado = this.getIdentificacaoUsuarioLogado();
 		
 		final ServletContext context = this.session.getServletContext();
 		
@@ -340,12 +347,14 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		@SuppressWarnings("unchecked")
 		final
-		Map<String, String> mapaSessionIDNomeUsuario = (LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
+		Map<String, String> mapaLoginNomeUsuario = (LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 		
 			
 		if(mapaCotaConferidaUsuario==null || mapaCotaConferidaUsuario.isEmpty()) {
 			return;
 		} 
+		
+		validarUsuarioConferindoCota(loginUsuarioLogado, mapaCotaConferidaUsuario);
 		
 		if(!mapaCotaConferidaUsuario.containsKey(numeroCota)) {
 			return;
@@ -353,14 +362,14 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		final String donoDoLockCotaConferida = mapaCotaConferidaUsuario.get(numeroCota);
 		
-		if(userSessionID.equals(donoDoLockCotaConferida)) {
+		if(loginUsuarioLogado.equals(donoDoLockCotaConferida)) {
 			return;
 		}
 		
         String nomeUsuario = "Não identificado";
 		
-		if(mapaSessionIDNomeUsuario != null && mapaSessionIDNomeUsuario.get(donoDoLockCotaConferida) != null) {
-			nomeUsuario = mapaSessionIDNomeUsuario.get(donoDoLockCotaConferida);
+		if(mapaLoginNomeUsuario != null && mapaLoginNomeUsuario.get(donoDoLockCotaConferida) != null) {
+			nomeUsuario = mapaLoginNomeUsuario.get(donoDoLockCotaConferida);
 		}
 		
 		throw new ValidacaoException(TipoMensagem.WARNING, 
@@ -368,6 +377,24 @@ public class ConferenciaEncalheController extends BaseController {
                     + " a mesma esta sendo conferida pelo(a) usuário(a) [ " + nomeUsuario + " ] ");
 	
 		
+	}
+	
+	/**
+	 * Se o usuário (session id) ja estiver conferindo alguma cota,
+	 * não sera permitido que este inicie uma nova conferência.
+	 * 
+	 * @param login
+	 * @param mapaCotaConferidaUsuario
+	 */
+	private void validarUsuarioConferindoCota(final String login,
+											  Map<Integer, String> mapaCotaConferidaUsuario) {
+		
+		if (mapaCotaConferidaUsuario != null 
+				&& mapaCotaConferidaUsuario.containsValue(login)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, 
+				"Não possível executar mais de uma conferência de encalhe ao mesmo tempo!");
+		}
 	}
 	
 	private String getIdentificacaoUsuarioLogado() {
@@ -387,7 +414,21 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 		
         return "Não Identificado";
+	}
+	
+	private String getIdentificacaoUnicaUsuarioLogado() {
 		
+		final Usuario usuario = getUsuarioLogado();
+		
+		final String sessionID = this.session.getId();
+		
+		if (usuario.getLogin() != null 
+				&& !usuario.getLogin().isEmpty()) {
+			
+			return usuario.getLogin() + sessionID;
+		}
+		
+        return "Não Identificado";
 	}
 	
 	class StatusConferenciaEncalheCota {
@@ -573,6 +614,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Map<Long, DataCEConferivelDTO> obterFromSessionMapaDatasEncalheConferiveis() {
 		
 		return (Map<Long, DataCEConferivelDTO>) session.getAttribute(DATAS_ENCALHE_CONFERIVEIS);
@@ -1268,6 +1310,20 @@ public class ConferenciaEncalheController extends BaseController {
                     "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
 			
 		}
+		
+		
+		final String loginUsuarioLogado = this.getIdentificacaoUnicaUsuarioLogado();
+		
+		@SuppressWarnings("unchecked")
+		final
+		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+		
+		@SuppressWarnings("unchecked")
+		final
+		Map<String, String> mapaLoginNomeUsuario = 
+			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
+		
+		removerTravaConferenciaCotaUsuario(this.session.getServletContext(), loginUsuarioLogado, mapaCotaConferidaUsuario, mapaLoginNomeUsuario);
 		
 		limparDadosSessao();
 	}
@@ -2068,20 +2124,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		this.session.removeAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
 		this.session.removeAttribute(CONFERENCIA_ENCALHE_COTA_STATUS);
 		
-		final String userSessionID = session.getId();
-		
-		@SuppressWarnings("unchecked")
-		final
-		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
-		
-		@SuppressWarnings("unchecked")
-		final
-		Map<String, String> mapaSessionIDNomeUsuario = 
-			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
-
-		
-		removerTravaConferenciaCotaUsuario(this.session.getServletContext(), userSessionID, mapaCotaConferidaUsuario, mapaSessionIDNomeUsuario);
-		
 		indicarStatusConferenciaEncalheCotaSalvo();
 	}
 	
@@ -2095,7 +2137,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		this.session.removeAttribute(HORA_INICIO_CONFERENCIA);
 		this.session.removeAttribute(CONFERENCIA_ENCALHE_COTA_STATUS);
 		
-		final String userSessionID = session.getId();
+		final String loginUsuarioLogado = this.getIdentificacaoUnicaUsuarioLogado();
 		
 		@SuppressWarnings("unchecked")
 		final
@@ -2103,11 +2145,11 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		
 		@SuppressWarnings("unchecked")
 		final
-		Map<String, String> mapaSessionIDNomeUsuario = 
-			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
+		Map<String, String> mapaLoginNomeUsuario = 
+			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 
 		
-		removerTravaConferenciaCotaUsuario(this.session.getServletContext(), userSessionID, mapaCotaConferidaUsuario, mapaSessionIDNomeUsuario);
+		removerTravaConferenciaCotaUsuario(this.session.getServletContext(), loginUsuarioLogado, mapaCotaConferidaUsuario, mapaLoginNomeUsuario);
 		
 		indicarStatusConferenciaEncalheCotaSalvo();
 		
