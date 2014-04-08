@@ -684,7 +684,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			       }
         	   }
 			   
-			   T.atualizarResumoBalanceamento();
+			   T.atualizarResumoBalanceamentoSalvar();
             },
 			null,
 			true,
