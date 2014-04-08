@@ -946,7 +946,7 @@ ConsolidadoFinanceiroRepository {
         
         final StringBuilder hql = new StringBuilder("select ");
         
-        hql.append(" consignados.*, sum(qtde) * preco as total from ( ")
+        hql.append(" consignados.*, reparteFinal * preco as total from ( ")
         .append("        select ")
         .append("        produtoedi8_.ID as idProdutoEdicao, ")
         .append("		 movimentos4_.ID as idMovimentoEstoqueCota, ")
