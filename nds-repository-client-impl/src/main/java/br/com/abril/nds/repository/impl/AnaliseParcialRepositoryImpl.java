@@ -602,7 +602,16 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
 
         sql.append(" where 1 = 1 ").append(where);
-        sql.append(" order by rks.qtde desc");
+        sql.append(" order by ");
+        
+        if(queryDTO.getPaginacao() != null && queryDTO.getPaginacao().getOrdenacao() != null) {
+        
+        	sql.append(queryDTO.getPaginacao().getOrderByClause());
+        
+        } else {
+        	
+        	sql.append(" numeroCota ");
+        }
 
         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("numeroCota", StandardBasicTypes.LONG)

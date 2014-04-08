@@ -664,8 +664,8 @@ var analiseParcialController = $.extend(true, {
         //carrega % de venda
         $('#baseEstudoGridParcial tr').each(function(){
             var $tr = $(this);
-            var totalReparte = $tr.find('td[abbr^="reparte"]:not([abbr="reparteSugerido"]) div').map(function(){return $(this).text()*1}).toArray().reduce(function(a,b){return a+b;});
-            var totalVenda = $tr.find('td[abbr^="venda"] div').map(function(){return $(this).text()*1}).toArray().reduce(function(a,b){return a+b;});
+            var totalReparte = $tr.find('td[abbr^="reparte"]:not([abbr="reparteSugerido"]) div').map(function(){return $(this).text()*1;}).toArray().reduce(function(a,b){return a+b;});
+            var totalVenda = $tr.find('td[abbr^="venda"] div').map(function(){return $(this).text()*1;}).toArray().reduce(function(a,b){return a+b;});
             var perc = Math.round((totalVenda / totalReparte) * 10000) / 100;
             perc = isNaN(perc)?0:perc;
             $tr.find('td[abbr="cota"]').attr('percentualVenda', perc);
@@ -1062,14 +1062,14 @@ var analiseParcialController = $.extend(true, {
             dataType : 'json',
             colModel : [{display: 'Cota',         name: 'numeroCota',      width: 40,  sortable: true, align: 'left'},
                         {display: 'Nome',         name: 'nomeCota',        width: 160, sortable: true, align: 'left'},
-                        {display: 'Sigla Motivo', name: 'motivo',          width: 10,  sortable: true, hide: true},
-                        {display: 'Motivo',       name: 'descricaoMotivo', width: 160, sortable: true, align: 'left'},
-                        {display: 'Qtde',         name: 'quantidade',      width: 60,  sortable: true, align: 'center'}],
+                        {display: 'Sigla Motivo', name: 'siglaMotivo',     width: 10,  sortable: true, hide: true},
+                        {display: 'Motivo',       name: 'motivo', 		   width: 160, sortable: true, align: 'left'},
+                        {display: 'Qtde',         name: 'quantidade',      width: 60,  sortable: false, align: 'center'}],
             width : 490,
             height : 200,
             autoload: false,
-            sortorder:'desc',
-            sortname:'cota'
+            sortorder:'asc',
+            sortname:'numeroCota'
         });
 
 //        analiseParcialController.cotasQueNaoEntraramNoEstudo();
@@ -1150,9 +1150,9 @@ var analiseParcialController = $.extend(true, {
                 value.cell.quantidade = '';
             }
 
-            var isReadOnly = (value.cell.motivo === 'CL' || value.cell.motivo === 'FN') ? 'readonly' : '';
+            var isReadOnly = (value.cell.siglaMotivo === 'CL' || value.cell.siglaMotivo === 'FN') ? 'readonly' : '';
 
-            value.cell.quantidade = '<input type="text" motivo="' + value.cell.motivo + '" style="width: 50px;" value="'+
+            value.cell.quantidade = '<input type="text" motivo="' + value.cell.siglaMotivo + '" style="width: 50px;" value="'+
             value.cell.quantidade +'" onchange="analiseParcialController.validaMotivoCotaReparte(this);" ' +
             ' numeroCota="'+ value.cell.numeroCota +'" ' + isReadOnly + ' />';
         });
@@ -1164,47 +1164,38 @@ var analiseParcialController = $.extend(true, {
         $input.data('valid', false);
 
         if ($input.val() !== '' && !isNaN($input.val())) {
+        	
+        	var message = '';
+        	
             switch ($input.attr('motivo')) {
                 case 'SM': //Publicação não está no MIX da cota
-                    analiseParcialController.popupConfirmaSenha($input, 'Deseja incluir pulicação no mix?');
+                    message = 'Deseja incluir pulicação no mix?';
                     break;
                 case 'GN': //Cota não recebe esse Segmento
-                    analiseParcialController.popupConfirmaSenha($input, 'Deseja incluir publicaçao na lista de publicações recebida pela cota?');
+                    message = 'Deseja incluir publicação na lista de publicações recebida pela cota?';
                     break;
                 case 'SS': //Cota Suspensa
-                    analiseParcialController.popupConfirmaSenha($input, 'Cota suspensa, continuar mesmo assim?');
+                    message = 'Cota suspensa, continuar mesmo assim?';
                     break;
                 default:
                     analiseParcialController.atualizaQuantidadeTotal($input);
+                	return;
             }
+
+            usuarioController.supervisor.verificarRoleSupervisao({
+            	optionalDialogMessage: message,
+            	callbacks: {
+    				usuarioSupervisorCallback: function() { 
+    					analiseParcialController.atualizaQuantidadeTotal($input); 
+    				}
+    			}
+            });
+            
         } else if ($input.val() === '') {
             analiseParcialController.atualizaQuantidadeTotal($input);
         } else {
             $input.val('');
-}
-    },
-
-    popupConfirmaSenha : function($input, msg) {
-        var $dialog = $('#dialog-confirmacao-senha');
-        $dialog.find('#msg-confirma').text(msg);
-        $dialog.dialog({
-            escondeHeader: false,
-            buttons: {
-                "Confirmar": function() {
-                    if($(this).find('input').val() == 'D68') { //FIXME - validar senha no server...
-                        $(this).dialog("close");
-                        analiseParcialController.atualizaQuantidadeTotal($input);
-                    } else {
-                        analiseParcialController.exibirMsg('WARNING', ['Senha invalida!']);
-                    }
-                },
-                "Cancelar": function() {
-                    $(this).dialog("close");
-                    $input.val('');
-                    $input.data('valid', false);
-                }
-            }
-        });
+        }
     },
 
     atualizaQuantidadeTotal : function($input) {
@@ -1316,7 +1307,7 @@ var analiseParcialController = $.extend(true, {
             modal : true,
             buttons : {
                 "Confirmar" : function() {
-                    var $inputsPreenchidos = $("#cotasNaoSelec tr td input").filter(function(){return this.value > 0});
+                    var $inputsPreenchidos = $("#cotasNaoSelec tr td input").filter(function(){return this.value > 0;});
 
                     var isValid = true;
                     $inputsPreenchidos.each(function () {

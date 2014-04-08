@@ -6,6 +6,7 @@
 <!-- DataTables -->
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/scripts/jquery.dataTables.js"></script>
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/scripts/analiseParcial-dataTable.js"></script>
+<script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/scripts/usuario/usuario.js"></script>
 
 <script language="javascript" type="text/javascript">
 
@@ -667,17 +668,7 @@ table.dadosTab { margin-left: 370px;}
 
     <div id="previewImagemCapa" title="Capa" style="display: none;"><img src="" alt="Imagem Capa" width="180" height="250"/></div>
 
-    <div id="dialog-confirmacao-senha" title="Confirmação" style="display: none;">
-        <p>
-            <span id="msg-confirma"></span>
-            <br><br>
-            <span>Esta ação requer confirmação com senha.</span>
-            <br><br>
-            <input type="password" width="80" maxlength="10" id="password"/>
-        </p>
-    </div>
-
-	<script type="text/javascript">
+    <script type="text/javascript">
 		 $(function(){
 			analiseParcialController.init('${estudo.id}', '${faixaDe}', '${faixaAte}', '${tipoExibicao}');
 		 });

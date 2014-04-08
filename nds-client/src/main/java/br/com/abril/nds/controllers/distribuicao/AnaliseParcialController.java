@@ -45,6 +45,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -235,9 +236,11 @@ public class AnaliseParcialController extends BaseController {
     }
     
     @Path("/cotasQueNaoEntraramNoEstudo/filtrar")
-    public void filtrar(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
+    public void filtrar(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO, String sortname, String sortorder) {
 
         List<CotaQueNaoEntrouNoEstudoDTO> lista = new ArrayList<>();
+
+        queryDTO.setPaginacao(new PaginacaoVO(sortname, sortorder));
 
         if (queryDTO.possuiNome()) {
             queryDTO.setNome(PessoaUtil.removerSufixoDeTipo(queryDTO.getNome())); 
