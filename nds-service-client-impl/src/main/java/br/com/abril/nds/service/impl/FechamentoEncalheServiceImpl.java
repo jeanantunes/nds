@@ -1446,7 +1446,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 
             } else {
             	
-                fechamentoEncalhe.setQuantidade(fechamentoEncalhe.getQuantidade() + encalheBox.getQuantidade());
+                fechamentoEncalhe.setQuantidade(
+                	(fechamentoEncalhe.getQuantidade() == null ? 0l : fechamentoEncalhe.getQuantidade()) + 
+                	(encalheBox.getQuantidade() == null ? 0l : encalheBox.getQuantidade())
+                );
                 
             }
             

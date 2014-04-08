@@ -82,7 +82,7 @@ implements MovimentoEstoqueRepository {
 		}
 
 		if(statusAprovacao != null) {
-			hql.append(" and m.status = :statusAprovacao  ");
+			hql.append(" and m.status != :statusAprovacao  ");
 		}
 		
 		hql.append(" group by produtoEdicao.id, m.data, tipoMovimento.id, dif.tipoDiferenca ");		
@@ -227,7 +227,7 @@ implements MovimentoEstoqueRepository {
         query.setParameter("data", data);
         query.setParameter("statusFuro", StatusLancamento.FURO);
         query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
-        query.setParameterList("grupoMovimentoEnvioJornaleiro", Arrays.asList(GrupoMovimentoEstoque.ENVIO_JORNALEIRO, GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE));
+        query.setParameterList("grupoMovimentoEnvioJornaleiro", Arrays.asList(GrupoMovimentoEstoque.ENVIO_JORNALEIRO, GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE,GrupoMovimentoEstoque.VENDA_ENCALHE,GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR));
         query.setParameterList("grupoMovimentoEstornoEnvioJornaleiro", Arrays.asList(
         		GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO, 
         		GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE, 

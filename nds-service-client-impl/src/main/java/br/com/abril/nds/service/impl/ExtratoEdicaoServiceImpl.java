@@ -75,7 +75,7 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		
 		filtroExtratoEdicao.setCodigoProduto(Util.padLeft(filtroExtratoEdicao.getCodigoProduto(), "0", 8));
 		
-		List<ExtratoEdicaoDTO> listaExtratoEdicao = movimentoEstoqueRepository.obterListaExtratoEdicao(filtroExtratoEdicao, StatusAprovacao.APROVADO);
+		List<ExtratoEdicaoDTO> listaExtratoEdicao = movimentoEstoqueRepository.obterListaExtratoEdicao(filtroExtratoEdicao, StatusAprovacao.PENDENTE);
 		
 		if (listaExtratoEdicao.isEmpty()){
 			
@@ -327,14 +327,18 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		int indiceParaUtilizacao = 0;
 		
 		for (int indice = 0; indice < listaExtratoEdicao.size(); indice++) {
-			
-			if (atualizacaoEstoqueGFS.getDataAtualizacao()
-					.compareTo(listaExtratoEdicao.get(indice).getDataMovimento()) >= 0) {
-				
+
+			Long idMovimentoAtualizacao = atualizacaoEstoqueGFS.getMovimentoEstoque().getId();
+
+			ExtratoEdicaoDTO extratoEdicao = listaExtratoEdicao.get(indice);
+
+			if (idMovimentoAtualizacao.equals(extratoEdicao.getIdMovimento()) &&
+					atualizacaoEstoqueGFS.getDataAtualizacao().compareTo(extratoEdicao.getDataMovimento()) >= 0) {
+
 				indiceParaUtilizacao = indice;
 			}
 		}
-		
+
 		return indiceParaUtilizacao;
 	}
 	

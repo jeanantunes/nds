@@ -2496,7 +2496,8 @@ public class LancamentoRepositoryImpl extends
 		LinkedList<Lancamento> listaAux =new LinkedList<Lancamento>();
 
 		hql.append(" from Lancamento lancamento ");
-		hql.append(" where lancamento.tipoLancamento = :tipoLancamento ");
+		hql.append(" where (lancamento.tipoLancamento = :tipoLancamento ");
+		hql.append(" or lancamento.periodoLancamentoParcial is not null )");
 		//hql.append(" and lancamento.status <> :statusLancamento ");
 
 		Query query = getSession().createQuery(hql.toString());
