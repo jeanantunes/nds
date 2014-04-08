@@ -262,8 +262,7 @@ public class RecebimentoFisicoController extends BaseController {
         
         final Long idNotaFiscal = notaFiscal.getId();
         
-        List<RecebimentoFisicoDTO> itensRecebimentoFisico =
-                recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
+        List<RecebimentoFisicoDTO> itensRecebimentoFisico = recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
         
         if(itensRecebimentoFisico == null) {
             itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();

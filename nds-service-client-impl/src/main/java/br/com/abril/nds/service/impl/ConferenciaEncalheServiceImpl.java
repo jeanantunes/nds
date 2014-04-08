@@ -587,7 +587,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				throw new ValidacaoException(
 						TipoMensagem.WARNING, 
-                        " Não é possível realiza a conferência do produto edição parcial ["
+                        " Não é possível realizar a conferência do produto edição parcial ["
                             + nomeProdutoEdicao
                             + "]. "
                             + " Data de operação excedendo ou fora do primeiro dia de recolhimento de operação diferenciada. ");
@@ -919,12 +919,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(indOperacaoDiferenciada) {
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-                    " Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao + "]. <br>"
+                    " Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao + "]. <br>"
                         + " Data de operação excedendo ou fora dos dias de recolhimento de operação diferenciada. ");
 		} else {
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-                    " Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao + "]. <br>"
+                    " Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao + "]. <br>"
                         + " Data de operação excedendo ou fora dos dias de recolhimento possíveis. ");
 		}
 
