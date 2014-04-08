@@ -1054,7 +1054,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
                 sql.append("	( ( "+ subSqlEncalhe +" ) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valor, ");
             }
             
-            sql.append(" SUM(COALESCE(MEC_REPARTE.qtde, 0)) as reparte, ");
+            sql.append(" SUM(COALESCE(if(tm.OPERACAO_ESTOQUE = 'SAIDA',MEC_REPARTE.qtde*-1,MEC_REPARTE.qtde),0)) as reparte, ");
             
             sql.append("( ( ").append(subSqlEncalhe).append(" ) - ( ").append(subSqlVendaProduto).append(") ) as encalhe, ");
             

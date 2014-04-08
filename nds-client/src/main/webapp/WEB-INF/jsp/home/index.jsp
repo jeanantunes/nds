@@ -501,6 +501,7 @@
 			</div>
 		</div>
 		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
+		<jsp:include page="/WEB-INF/jsp/commons/usuario.jsp" />
 		<div id="changes" title="Changelog"><div style="padding: 10px">${changes}</div></div>
 		
 		<div id="workspace">

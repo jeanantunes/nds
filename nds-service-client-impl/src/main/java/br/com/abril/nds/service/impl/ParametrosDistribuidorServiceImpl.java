@@ -464,6 +464,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
             }
 				
         parametrosDistribuidor.setListPercentualExcedente(listPercentualExcedenteVO);
+        
+        parametrosDistribuidor.setPararAcumuloDividas(distribuidor.isPararAcumuloDividas());
                 
 		return parametrosDistribuidor;
 	}

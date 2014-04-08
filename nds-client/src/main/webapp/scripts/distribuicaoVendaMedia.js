@@ -694,23 +694,13 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
             if(typeof(matrizDistribuicao)=="object"){
             		matrizDistribuicao.carregarGrid();
             }
-            
-            $("#codigoPesquisaBases").remove();
-    		$("#produtoPesquisaBases").remove();
-    		$("#produtoPesquisaBases").remove();
-    		$("#edicaoProdCadastradosGrid").remove();
-            
+
 			exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
 		});
 	};
 	
 	this.cancelar = function(){
-		
-		$("#codigoPesquisaBases").remove();
-		$("#produtoPesquisaBases").remove();
-		$("#produtoPesquisaBases").remove();
-		$("#edicaoProdCadastradosGrid").remove();
-		
+
 		$(".ui-tabs-selected").find("span").click();
 		$("a[href='"+pathTela+"/matrizDistribuicao']").click();
 	};

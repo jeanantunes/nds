@@ -595,8 +595,7 @@ public class FecharDiaController extends BaseController {
     @Post
     public void obterResumoConsignado() {
         
-        final ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado =
-                fecharDiaService.obterResumoConsignado(dataOperacao);
+        final ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = fecharDiaService.obterResumoConsignado(dataOperacao);
         
         result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioConsignado).serialize();
     }
