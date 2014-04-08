@@ -180,26 +180,26 @@ public class AnaliseParcialController extends BaseController {
     public void init(Long id, String sortname, String sortorder, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
                      Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao) {
 
-        AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
-        queryDTO.setSortName(sortname);
-        queryDTO.setSortOrder(sortorder);
-        queryDTO.setFilterSortName(filterSortName);
-        queryDTO.setFilterSortFrom(filterSortFrom);
-        queryDTO.setFilterSortTo(filterSortTo);
-        queryDTO.setElemento(elemento);
-        queryDTO.setEdicoesBase(getEdicoesBase(edicoesBase));
-        queryDTO.setEstudoId(id);
-        queryDTO.setFaixaDe(faixaDe);
-        queryDTO.setFaixaAte(faixaAte);
-        queryDTO.setModoAnalise(session.getAttribute("modoAnalise").toString());
-        queryDTO.setCodigoProduto(codigoProduto);
-        queryDTO.setNumeroEdicao(numeroEdicao);
-        queryDTO.setNumeroCotaStr(numeroCotaStr);
-        queryDTO.setEstudoOrigem(estudoOrigem);
-        queryDTO.setDataLancamentoEdicao(DateUtil.parseDataPTBR(dataLancamentoEdicao));
+        AnaliseParcialQueryDTO filtroQueryDTO = new AnaliseParcialQueryDTO();
+        filtroQueryDTO.setSortName(sortname);
+        filtroQueryDTO.setSortOrder(sortorder);
+        filtroQueryDTO.setFilterSortName(filterSortName);
+        filtroQueryDTO.setFilterSortFrom(filterSortFrom);
+        filtroQueryDTO.setFilterSortTo(filterSortTo);
+        filtroQueryDTO.setElemento(elemento);
+        filtroQueryDTO.setEdicoesBase(getEdicoesBase(edicoesBase));
+        filtroQueryDTO.setEstudoId(id);
+        filtroQueryDTO.setFaixaDe(faixaDe);
+        filtroQueryDTO.setFaixaAte(faixaAte);
+        filtroQueryDTO.setModoAnalise(session.getAttribute("modoAnalise").toString());
+        filtroQueryDTO.setCodigoProduto(codigoProduto);
+        filtroQueryDTO.setNumeroEdicao(numeroEdicao);
+        filtroQueryDTO.setNumeroCotaStr(numeroCotaStr);
+        filtroQueryDTO.setEstudoOrigem(estudoOrigem);
+        filtroQueryDTO.setDataLancamentoEdicao(DateUtil.parseDataPTBR(dataLancamentoEdicao));
         
 
-        List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
+        List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);
 
         TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);
         table.setPage(1);
