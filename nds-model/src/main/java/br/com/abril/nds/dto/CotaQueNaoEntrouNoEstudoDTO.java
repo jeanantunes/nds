@@ -9,7 +9,7 @@ public class CotaQueNaoEntrouNoEstudoDTO implements Serializable {
 	private Long numeroCota;
 	private String nomeCota;
 	private String motivo;
-	private String descricaoMotivo;
+	private String siglaMotivo;
 	private BigInteger quantidade;
 	
 	public Long getNumeroCota() {
@@ -30,18 +30,16 @@ public class CotaQueNaoEntrouNoEstudoDTO implements Serializable {
 	public void setMotivo(String motivo) {
 	    this.motivo = motivo;
 	}
+	public String getSiglaMotivo() {
+		return siglaMotivo;
+	}
+	public void setSiglaMotivo(String siglaMotivo) {
+		this.siglaMotivo = siglaMotivo;
+	}
 	public BigInteger getQuantidade() {
 	    return quantidade;
 	}
 	public void setQuantidade(BigInteger quantidade) {
 	    this.quantidade = quantidade;
 	}
-
-    public String getDescricaoMotivo() {
-        return descricaoMotivo;
-    }
-
-    public void setDescricaoMotivo(String descricaoMotivo) {
-        this.descricaoMotivo = descricaoMotivo;
-    }
 }

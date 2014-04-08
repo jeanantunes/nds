@@ -1439,6 +1439,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         subquery.append(" and vp.tipoVenda = :tipoVenda ");
         subquery.append(" and vp.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
         subquery.append(" and produtoEdicao.id in (:produtosEdicoesId)");
+        subquery.append(" group by produtoEdicao.id ");
         
         final Query query = this.getSession().createQuery(subquery.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));

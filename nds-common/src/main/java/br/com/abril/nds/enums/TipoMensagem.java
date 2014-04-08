@@ -8,6 +8,7 @@ package br.com.abril.nds.enums;
  */
 public enum TipoMensagem {
 	
+	NONE("none"),
 	WARNING("warning"),
 	ERROR("error"),
 	SUCCESS("success");
