@@ -74,6 +74,8 @@ public class ParciaisServiceImpl implements ParciaisService{
 	@Autowired
 	private UsuarioService usuarioService;
 	
+	private long PEB_MINIMA_PRODUTO_EDICAO = 7;
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -246,13 +248,18 @@ public class ParciaisServiceImpl implements ParciaisService{
 	
 	private Integer getPebProduto(ProdutoEdicao produtoEdicao, Integer qntPeriodos){
 		
-		if(produtoEdicao == null){
+		if(produtoEdicao == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Produto Edição não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado!");
 		}
 		
-		if(qntPeriodos == null || qntPeriodos <= 1){
+		if(qntPeriodos == null || qntPeriodos <= 1) {
 			return produtoEdicao.getPeb();
+		}
+		
+		if(((produtoEdicao.getPeb() / qntPeriodos)) < PEB_MINIMA_PRODUTO_EDICAO) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Produto Edição não pode ter PEB menor que %s dias!", PEB_MINIMA_PRODUTO_EDICAO));
 		}
 		
 		return ((produtoEdicao.getPeb() / qntPeriodos));
@@ -645,31 +652,33 @@ public class ParciaisServiceImpl implements ParciaisService{
 	@Transactional
 	public void excluirPeriodo(Long idLancamento) {
 		
-		if(idLancamento == null) 
+		if(idLancamento == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id do Lancamento não deve ser nulo.");
+		}
 			
 		Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);		
 		
-		if(lancamento == null)
+		if(lancamento == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Lancamento não deve ser nulo.");
+		}
 		
-		validarStatusLancamentoPeriodo(lancamento,"Lancamento já foi expedido, não pode ser excluido.");
+		validarStatusLancamentoPeriodo(lancamento, "Lancamento já foi expedido, não pode ser excluido.");
 
 		PeriodoLancamentoParcial periodo = periodoLancamentoParcialRepository.obterPeriodoPorIdLancamento(idLancamento);
 		
-		if ( periodo.getLancamentoParcial()!= null 
+		if (periodo.getLancamentoParcial()!= null 
 				&&  periodo.getLancamentoParcial().getPeriodos()!= null 
 				&& periodo.getLancamentoParcial().getPeriodos().size() == 1 ){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Para excluir todos os lançamentos parciais deve ser alterado o 'Regime Recolhimento' no cadastro de edição");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Para excluir todos os lançamentos parciais deve ser alterado o 'Regime Recolhimento' no cadastro de edição");
 		}
 		
 		PeriodoLancamentoParcial periodoAnterior = 
-				periodoLancamentoParcialRepository.obterPeriodoPorNumero(periodo.getNumeroPeriodo()-1,periodo.getLancamentoParcial().getId());
+				periodoLancamentoParcialRepository.obterPeriodoPorNumero(periodo.getNumeroPeriodo()-1, periodo.getLancamentoParcial().getId());
 		
 		if(TipoLancamentoParcial.FINAL.equals(periodo.getTipo())){
 			
-			if(periodoAnterior!= null){
+			if(periodoAnterior != null){
 				
 				Lancamento lancamentoPeriodo = periodoAnterior.getLancamentoPeriodoParcial();
 				
@@ -679,20 +688,33 @@ public class ParciaisServiceImpl implements ParciaisService{
 			}
 		}
 
-		this.atualizarRecolhimentosPeriodoAnterior(periodoAnterior, periodo.getUltimoLancamento().getDataRecolhimentoDistribuidor());
+		//this.atualizarRecolhimentosPeriodoAnterior(periodoAnterior, periodo.getUltimoLancamento().getDataRecolhimentoDistribuidor());
 
-		periodoLancamentoParcialRepository.merge(periodoAnterior);
-
-		periodoLancamentoParcialRepository.remover(periodo);
+		Lancamento l = periodo.getLancamentos().get(0);
+		for(HistoricoLancamento hl : l.getHistoricos()) {
+			hl.setLancamento(null);
+			historicoLancamentoRepository.remover(hl);
+			historicoLancamentoRepository.flush();
+		}
+		l.setPeriodoLancamentoParcial(null);
 		
+		lancamentoRepository.removerPorId(l.getId());
+		
+		periodo.setLancamentos(null);
+		
+		periodoLancamentoParcialRepository.alterar(periodo);
+				
 		List<Lancamento> redistribuicoes = periodoLancamentoParcialRepository.obterRedistribuicoes(periodo.getId());
 		
-		if(!redistribuicoes.isEmpty()){
-			for(Lancamento item : redistribuicoes){
+		if(!redistribuicoes.isEmpty()) {
+			for(Lancamento item : redistribuicoes) {
 				excluirRedistribuicaoParcial(item.getId());
 			}
-			
 		}
+		
+		periodoLancamentoParcialRepository.merge(periodoAnterior);
+		
+		periodoLancamentoParcialRepository.remover(periodo);
 	}
 
 	private void atualizarRecolhimentosPeriodoAnterior(PeriodoLancamentoParcial periodoAnterior, Date dataRecolhimento) {
