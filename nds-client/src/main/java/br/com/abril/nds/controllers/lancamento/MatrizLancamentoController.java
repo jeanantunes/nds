@@ -1392,6 +1392,8 @@ public class MatrizLancamentoController extends BaseController {
         
         for (final Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : balanceamentoBalanceamento.getMatrizLancamento()
                 .entrySet()) {
+        	
+        	statusResumo= StatusLancamento.BALANCEADO.name();
             
             final Date dataRecolhimento = entry.getKey();
             

@@ -684,7 +684,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			       }
         	   }
 			   
-			   T.atualizarResumoBalanceamento();
+			   T.atualizarResumoBalanceamentoSalvar();
             },
 			null,
 			true,
@@ -843,6 +843,19 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			],
 			form: $("#dialog-confirm", this.workspace).parents("form")
 		});	
+	},
+	
+	this.atualizarResumoBalanceamentoSalvar = function () {
+		
+		$.postJSON( pathTela + "/matrizLancamento/atualizarResumoBalanceamento",
+				   null,
+				   function(result) {
+						T.popularResumoPeriodo(result);
+						
+						T.carregarGrid(null, false);
+						setTimeout(T.salvarMatriz(),200);
+				   }
+		);
 	},
 	
 	this.atualizarResumoBalanceamento = function () {
@@ -1377,7 +1390,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			       }
         	   }
 			   
-			   T.atualizarResumoBalanceamento();
+			   T.atualizarResumoBalanceamentoSalvar();
             }
 		);
 	},

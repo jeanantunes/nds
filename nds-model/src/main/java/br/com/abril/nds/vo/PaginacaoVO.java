@@ -250,4 +250,8 @@ public class PaginacaoVO implements Serializable {
 		this.qtdResultadosTotal = qtdResultadosTotal;
 	}
 	
+	public String getOrderByClause() {
+		return this.sortColumn + " " + this.sortOrder;
+	}
+	
 }

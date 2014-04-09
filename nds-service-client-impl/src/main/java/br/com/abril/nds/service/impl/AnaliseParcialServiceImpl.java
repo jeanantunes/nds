@@ -167,6 +167,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCota(), idsProdutoEdicao);
                     edicoesComVenda.addAll(buscaHistoricoDeVendas);
                 		
+                    /*
                     if(queryDTO.getEstudoOrigem()!=null && queryDTO.getEstudoOrigem().compareTo(0l) ==1) {
                         AnaliseParcialDTO buscarReparteDoEstudo = analiseParcialRepository.buscarReparteDoEstudo(queryDTO.getEstudoOrigem(), item.getCota());
 
@@ -181,6 +182,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                             }
                         }
                     }
+                    */
                 		
                     for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
                         for (EdicoesProdutosDTO ed : edicoesComVenda) {
@@ -291,7 +293,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
         List<CotaQueNaoEntrouNoEstudoDTO> cotaQueNaoEntrouNoEstudoDTOList = analiseParcialRepository.buscarCotasQueNaoEntraramNoEstudo(queryDTO);
         for (CotaQueNaoEntrouNoEstudoDTO cotaQueNaoEntrouNoEstudoDTO : cotaQueNaoEntrouNoEstudoDTOList) {
-            cotaQueNaoEntrouNoEstudoDTO.setDescricaoMotivo(traduzClassificacaoCota(cotaQueNaoEntrouNoEstudoDTO.getMotivo()));
+            cotaQueNaoEntrouNoEstudoDTO.setSiglaMotivo(cotaQueNaoEntrouNoEstudoDTO.getMotivo());
+            cotaQueNaoEntrouNoEstudoDTO.setMotivo(traduzClassificacaoCota(cotaQueNaoEntrouNoEstudoDTO.getMotivo()));
         }
         return cotaQueNaoEntrouNoEstudoDTOList;
     }

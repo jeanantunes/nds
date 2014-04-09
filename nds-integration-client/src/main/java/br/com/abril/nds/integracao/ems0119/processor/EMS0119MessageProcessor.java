@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
 public class EMS0119MessageProcessor extends AbstractRepository implements
@@ -24,7 +25,11 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 
+	private String codigoDinap;
 
 	public EMS0119MessageProcessor() {
 
@@ -32,7 +37,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
+		codigoDinap =distribuidorService.codigoDistribuidorDinap();
 	}
 
 	@Override
@@ -195,8 +200,9 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				produto.setEditor(ed);	
 			}
 			
-			Fornecedor fornecedor = this
-					.findFornecedor(Integer.valueOf( input.getCodigoFornecedorPublic()));
+			//Fornecedor fornecedor = this.findFornecedor(Integer.valueOf( input.getCodigoFornecedorPublic()));
+			Fornecedor fornecedor = this.findFornecedor(Integer.valueOf(codigoDinap));
+			
 			if (fornecedor != null) {
 
 				produto.addFornecedor(fornecedor);

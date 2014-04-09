@@ -894,8 +894,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                 GrupoMovimentoEstoque.COMPRA_ENCALHE,
                 GrupoMovimentoEstoque.RECEBIMENTO_REPARTE,
                 GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE,
-                GrupoMovimentoEstoque.SOBRA_EM_COTA,
-                GrupoMovimentoEstoque.FALTA_EM_COTA));
+                GrupoMovimentoEstoque.SOBRA_EM_COTA));
     	
         final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte = movimentoEstoqueCotaRepository
                 .obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(idCota, dataOperacao, idTiposMovimentoEstoque);
@@ -942,7 +941,10 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     private Map<Long, List<MovimentoEstoqueCota>> obterMovimentosEstoqueEstorno(final Long idCota) {
         
     	final List<Long> idTiposMovimentoEstorno = tipoMovimentoEstoqueRepository.buscarIdTiposMovimentoEstoque(
-    			Arrays.asList(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE, GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR));
+    			Arrays.asList(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE, 
+	    					  GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR, 
+	    					  GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA,
+	    					  GrupoMovimentoEstoque.FALTA_EM_COTA));
     	
         final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno = movimentoEstoqueCotaRepository
                 .obterMovimentosEstornados(idCota, idTiposMovimentoEstorno);

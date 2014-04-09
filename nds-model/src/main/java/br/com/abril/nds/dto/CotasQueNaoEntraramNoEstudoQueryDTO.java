@@ -1,5 +1,7 @@
 package br.com.abril.nds.dto;
 
+import br.com.abril.nds.vo.PaginacaoVO;
+
 public class CotasQueNaoEntraramNoEstudoQueryDTO {
 
     private Long estudo;
@@ -8,6 +10,8 @@ public class CotasQueNaoEntraramNoEstudoQueryDTO {
     private String motivo;
     private String elemento;
     private Long tipoSegmentoProduto;
+    
+    private PaginacaoVO paginacao;
 
     public Long getEstudo() {
 	return estudo;
@@ -114,4 +118,18 @@ public class CotasQueNaoEntraramNoEstudoQueryDTO {
     public void setTipoSegmentoProduto(Long tipoSegmentoProduto) {
         this.tipoSegmentoProduto = tipoSegmentoProduto;
     }
+
+	/**
+	 * @return the paginacao
+	 */
+	public PaginacaoVO getPaginacao() {
+		return paginacao;
+	}
+
+	/**
+	 * @param paginacao the paginacao to set
+	 */
+	public void setPaginacao(PaginacaoVO paginacao) {
+		this.paginacao = paginacao;
+	}
 }
