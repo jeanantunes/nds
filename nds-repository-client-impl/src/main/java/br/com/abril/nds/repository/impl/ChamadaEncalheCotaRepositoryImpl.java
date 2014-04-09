@@ -192,10 +192,10 @@ public class ChamadaEncalheCotaRepositoryImpl extends
         	sqlValor.append(subSelePrecoComDesconto).append(", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		} else if (DESCONTO.equals(valor)){
 			
-			sqlValor.append("  MEC.PRECO_VENDA - ").append(subSelePrecoComDesconto).append(", 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			sqlValor.append("  MEC_SUB.PRECO_VENDA - ").append(subSelePrecoComDesconto).append(", 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		} else {
 			
-			sqlValor.append(" MEC.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			sqlValor.append(" MEC_SUB.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		}
 	
 		sql.append(" SELECT ");

@@ -68,10 +68,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
-	/*
-	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
-	@Cascade(value = {CascadeType.ALL})
-	private List<DetalheNotaFiscal> listaProdutoServicos;*/
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "LANCAMENTO_ID")
