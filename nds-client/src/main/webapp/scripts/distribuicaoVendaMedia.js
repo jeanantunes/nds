@@ -701,8 +701,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	
 	this.cancelar = function(){
 
-		$(".ui-tabs-selected").find("span").click();
-		$("a[href='"+pathTela+"/matrizDistribuicao']").click();
+		$(".ui-tabs-selected").find("span[class*='ui-icon-close']").click();
+		selectTabTitle('Matriz Distribuição');
 	};
 	
 	this.redirectToTelaAnalise = function(){
