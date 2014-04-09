@@ -1,3 +1,8 @@
+//Sobrescrita da funcao toFixed para arredondamento no Chrome
+Number.prototype.toFixed = function(places) {
+  return +(Math.round(this + "e+" + places)  + "e-" + places);
+};
+
 var messageTimeout;
 var messageDialogTimeout;
 
