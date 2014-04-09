@@ -63,6 +63,8 @@ public class ProdutoLancamentoDTO implements Serializable {
 	private Date dataLancamentoDistribuidor;
 	
 	private Date dataRecolhimentoPrevista;
+	
+	private Date dataRecolhimentoDistribuidor;
 
 	private BigDecimal valorTotal;
 
@@ -92,7 +94,14 @@ public class ProdutoLancamentoDTO implements Serializable {
   	
   	private String nomeFantasia;
   	
+  	
+	public Date getDataRecolhimentoDistribuidor() {
+		return dataRecolhimentoDistribuidor;
+	}
 
+	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+	}
 
 	public String getNomeFantasia() {
 		return nomeFantasia;

@@ -427,9 +427,7 @@ public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribu
 	@Override
 	public TipoContabilizacaoCE tipoContabilizacaoCE() {
 		
-		return (TipoContabilizacaoCE)
-				this.getSession().
-				createQuery("select tipoContabilizacaoCE from Distribuidor").uniqueResult();
+		return (TipoContabilizacaoCE) this.getSession().createQuery("select tipoContabilizacaoCE from Distribuidor").uniqueResult();
 	}
 
 	@Override

@@ -68,10 +68,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
-	/*
-	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
-	@Cascade(value = {CascadeType.ALL})
-	private List<DetalheNotaFiscal> listaProdutoServicos;*/
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "LANCAMENTO_ID")
@@ -94,7 +90,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		@JoinColumn(name="NOTA_ENVIO_ITEM_SEQUENCIA", referencedColumnName="SEQUENCIA")
 	})
 	private ItemNotaEnvio itemNotaEnvio;
-	
 	
 	public Object clone() {
 
@@ -263,5 +258,4 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	public void setItemNotaEnvio(ItemNotaEnvio itemNotaEnvio) {
 		this.itemNotaEnvio = itemNotaEnvio;
 	}
-
 }

@@ -627,8 +627,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
       //      new FiltroConsultaConsignadoCotaDTO(false, true, null, null, null)));
 	
 	private ResumoFechamentoDiarioConsignadoDTO obterResumoConsignadoComFechamentoNaoProcessado(Date dataFechamento) {
-	    ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = 
-	            new ResumoFechamentoDiarioConsignadoDTO();
+	    
+		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = new ResumoFechamentoDiarioConsignadoDTO();
 
 	        ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
 	            resumoFechamentoDiarioConsignado.new ResumoConsignado();
@@ -646,9 +646,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	            this.movimentoEstoqueRepository.obterSaldoDistribuidor(
 	                dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONSIGNADO));
 
-	        if (resumoConsignado.getSaldoAnterior()==null){resumoConsignado.setSaldoAnterior(BigDecimal.ZERO);}
-	        if (resumoConsignado.getValorEntradas()==null){resumoConsignado.setValorEntradas(BigDecimal.ZERO);}
-	        if (resumoConsignado.getValorSaidas()==null){resumoConsignado.setValorSaidas(BigDecimal.ZERO);}
+	        if (resumoConsignado.getSaldoAnterior() == null) {resumoConsignado.setSaldoAnterior(BigDecimal.ZERO);}
+	        if (resumoConsignado.getValorEntradas() == null) {resumoConsignado.setValorEntradas(BigDecimal.ZERO);}
+	        if (resumoConsignado.getValorSaidas() == null) {resumoConsignado.setValorSaidas(BigDecimal.ZERO);}
 	        
 	        resumoConsignado.setSaldoAtual(
 	                resumoConsignado.getSaldoAnterior().subtract(
@@ -685,16 +685,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	private ResumoFechamentoDiarioConsignadoDTO obterResumoConsignadoComFechamentoProcessado(Date dataFechamento){
 		
-		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = 
-				new ResumoFechamentoDiarioConsignadoDTO();
+		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = new ResumoFechamentoDiarioConsignadoDTO();
 			
-		ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
-			resumoFechamentoDiarioConsignado.new ResumoConsignado();
+		ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = resumoFechamentoDiarioConsignado.new ResumoConsignado();
 
 		//Consignado
-		
-		FechamentoDiarioResumoConsignado resumoConsignadoDia = 
-				fechamentoDiarioResumoConsignadoRepository.obterResumoConsignado(dataFechamento);
+		FechamentoDiarioResumoConsignado resumoConsignadoDia = fechamentoDiarioResumoConsignadoRepository.obterResumoConsignado(dataFechamento);
 		
 		resumoConsignado.setSaldoAnterior(resumoConsignadoDia.getSaldoAnterior());
 		
@@ -706,13 +702,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
 		
-		ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = 
-			resumoFechamentoDiarioConsignado.new ResumoAVista();
+		ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = resumoFechamentoDiarioConsignado.new ResumoAVista();
 		
 		//A Vista
-		
-		FechamentoDiarioResumoAvista resumoAvistaDia = 
-				fechamentoDiarioResumoAvistaRepository.obterResumoConsignado(dataFechamento);
+		FechamentoDiarioResumoAvista resumoAvistaDia = fechamentoDiarioResumoAvistaRepository.obterResumoConsignado(dataFechamento);
 		
 		resumoAVista.setSaldoAnterior(resumoAvistaDia.getSaldoAnterior());
 

@@ -432,7 +432,9 @@ public class ParametroCobrancaCotaController extends BaseController {
             parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
         }
         
-        this.salvarContrato(parametroCobranca.getIdCota(), parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
+        if(parametroCobranca.isContrato()){
+        	this.salvarContrato(parametroCobranca.getIdCota(), parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
+        }
         
         cotaService.salvarTipoCota(parametroCobranca.getIdCota(), parametroCobranca.getTipoCota(), parametroCobranca.isDevolveEncalhe());
         
@@ -811,13 +813,14 @@ public class ParametroCobrancaCotaController extends BaseController {
     		                                     final Date inicioContrato, 
     		                                     final Date terminoContrato, 
     		                                     final TipoCota tipoCota, 
+    		                                     final boolean possuiContrato,
     		                                     final boolean devolveEncalhe) {
         
         String msg1 = "";
         String msg2 = "";
         String msg = "";
         
-        if (this.salvarContrato(idCota, inicioContrato, terminoContrato)){
+        if ((possuiContrato) && (this.salvarContrato(idCota, inicioContrato, terminoContrato))){
             
             msg1 = "Contrato";
         }

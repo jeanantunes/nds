@@ -384,6 +384,10 @@ public class NFeServiceImpl implements NFeService {
 		List<NotaFiscal> notas = new ArrayList<NotaFiscal>();
 		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
 		
+		if(distribuidor.getDataLimiteVigenciaRegimeEspecial() == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Favor informar a data limite de vigincia do regime especial!" );
+		}
+		
 		if(distribuidor.isPossuiRegimeEspecialDispensaInterna()){
 			if(new Date().getTime() > distribuidor.getDataLimiteVigenciaRegimeEspecial().getTime()){
 				throw new ValidacaoException(TipoMensagem.WARNING, "A data limite de vigincia do regime especial expirou!" );

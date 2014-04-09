@@ -291,4 +291,6 @@ public interface ConferenciaEncalheService {
 
 	BigDecimal obterValorTotalReparte(Integer numeroCota, Date dataOperacao);
 	
+	Cota validarCotaParaInicioConferenciaEncalhe(final Integer numeroCota);
+	
 }

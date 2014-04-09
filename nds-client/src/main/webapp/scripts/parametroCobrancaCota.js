@@ -776,10 +776,13 @@ var parametroCobrancaCotaController = $.extend(true, {
         
         var devolveEncalhe      = $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
         
+        var isContrato 			= $("#contrato", this.workspace).is(":checked");
+        
         var params =  {"idCota": idCota,
         		       "inicioContrato": inicioContrato,
 				       "terminoContrato": terminoContrato,
 				       "tipoCota": tipoCota,
+				       "possuiContrato": isContrato,
 				       "devolveEncalhe": devolveEncalhe};
         
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/salvarFinanceiroEspecificoDaCota",
@@ -1313,7 +1316,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		params = parametroCobrancaCotaController.buildFormaCobrancaDTO();
 		
 		
-		if (parametroCobrancaCotaController.financeiro.parametroDistribuidor){
+		if ((parametroCobrancaCotaController.financeiro.resultFormaCobranca != null) && (parametroCobrancaCotaController.financeiro.parametroDistribuidor)){
 			
 			parametroCobrancaCotaController.financeiro.formaCobrancaAlterada = 
 	     	   (parametroCobrancaCotaController.isAlterFormaCobranca(params)||

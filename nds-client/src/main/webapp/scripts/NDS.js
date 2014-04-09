@@ -490,7 +490,7 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 				listaMensagens = json.listaMensagens;
 			}
 			
-			if (tipoMensagem && listaMensagens) {
+			if ((tipoMensagem && listaMensagens) || tipoMensagem === "NONE"){
 				
 				if (tipoMensagem == "SUCCESS") {
 					
@@ -514,6 +514,13 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 						
 						sucessCallBackFunction(json.result);
 					}
+					
+				} else if(tipoMensagem === "NONE") {
+					
+					if (errorCallBackFunction) {
+						errorCallBackFunction(json);
+					}
+					
 				} else {
 					
 					if (url.indexOf("devolucao/conferenciaEncalhe") > 0){
