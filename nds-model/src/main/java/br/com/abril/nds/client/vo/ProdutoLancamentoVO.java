@@ -32,6 +32,9 @@ public class ProdutoLancamentoVO  implements Serializable {
 	
 	@Export(label="Recolhimento", exhibitionOrder = 6, widthPercent = 9)
 	private String dataRecolhimentoPrevista;
+
+	@Export(label="RecolhimentoDistribuidor", exhibitionOrder = 6, widthPercent = 9)
+	private String dataRecolhimentoDistribuidor;
 	
 	@Export(label="Total R$", exhibitionOrder = 7, widthPercent = 8)
 	private String valorTotal;
@@ -191,6 +194,14 @@ public class ProdutoLancamentoVO  implements Serializable {
 		this.descricaoLancamento = descricaoLancamento;
 	}
 
+	public String getDataRecolhimentoDistribuidor() {
+		return dataRecolhimentoDistribuidor;
+	}
+
+	public void setDataRecolhimentoDistribuidor(String dataRecolhimentoDistribuidor) {
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+	}
+	
 	/**
 	 * @return the dataRecolhimentoPrevista
 	 */

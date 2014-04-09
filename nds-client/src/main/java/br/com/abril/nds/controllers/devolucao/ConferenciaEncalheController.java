@@ -2216,7 +2216,7 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("valorEncalhe", valorEncalhe.setScale(4, RoundingMode.HALF_UP));
 			dados.put("valorVendaDia", valorVendaDia.setScale(4, RoundingMode.HALF_UP));
 			dados.put("valorDebitoCredito", valorDebitoCredito.abs());
-			dados.put("valorPagar", valorPagar.setScale(2, RoundingMode.HALF_EVEN));
+			dados.put("valorPagar", valorPagar.setScale(2, RoundingMode.HALF_UP));
 			dados.put("valorTotal", valorTotal);
 			dados.put("valorPagarAtualizado", valorPagarAtualizado);
 			dados.put("idconf", info.getIdControleConferenciaEncalheCota());

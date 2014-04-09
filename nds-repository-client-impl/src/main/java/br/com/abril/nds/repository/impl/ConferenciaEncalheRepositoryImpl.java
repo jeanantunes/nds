@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -387,7 +388,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append("	MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
 		
 		hql.append("	inner join TIPO_MOVIMENTO TIPO_MOV ON ");
-		hql.append("	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND  TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
+		hql.append("	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND  TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE IN (:grupoMovimentoEstoque )");
 		
 
 		hql.append("	WHERE   ");
@@ -401,7 +402,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append("					WHERE   MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID ");
 		hql.append("					AND     MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
 		hql.append("					AND 	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID ");
-		hql.append("					AND     TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque) ");
+		hql.append("					AND     TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE IN( :grupoMovimentoEstoque)) ");
 		
 		if(listaIdProdutoEdicao!=null && !listaIdProdutoEdicao.isEmpty()) {
 			
@@ -409,7 +410,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 			
 		}
 		
-		hql.append("  	ORDER BY codigoSM ");
+		hql.append("  	GROUP BY PROD_EDICAO.ID ORDER BY codigoSM ");
 		
 		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		
@@ -442,7 +443,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		query.setParameter("dataRecolhimento", dataRecolhimento);
 		query.setParameter("indFechado", indFechado);
 		query.setParameter("indPostergado", indPostergado);
-		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		query.setParameterList("grupoMovimentoEstoque", this.grupoMovimentoEstoqueCota());
 		query.setParameter("grupoProdutoCromo", GrupoProduto.CROMO.toString());
 		
 		
@@ -453,6 +454,16 @@ public class ConferenciaEncalheRepositoryImpl extends
 		}
 		
 		return query.list();
+	}
+	
+	private List<String> grupoMovimentoEstoqueCota(){
+		
+		return Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(),
+				GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA.name(),
+				GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
+				GrupoMovimentoEstoque.FALTA_EM_COTA.name(),
+				GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
+				GrupoMovimentoEstoque.SOBRA_EM_COTA.name());
 	}
 
 	@SuppressWarnings("unchecked")

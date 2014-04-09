@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -84,9 +85,19 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			query.setParameter("postergado", postergado);
 		}
 		
-		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		query.setParameterList("grupoMovimentoEstoque",this.grupoMovimentoEstoqueCota());
 		
 		return (BigDecimal) query.uniqueResult();
+	}
+	
+	private List<String> grupoMovimentoEstoqueCota(){
+		
+		return Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(),
+				GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA.name(),
+				GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
+				GrupoMovimentoEstoque.FALTA_EM_COTA.name(),
+				GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
+				GrupoMovimentoEstoque.SOBRA_EM_COTA.name());
 	}
 	
 	@Override
@@ -147,28 +158,53 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		StringBuilder sql = new StringBuilder();
 		
+		StringBuilder subSelePrecoComDesconto = new StringBuilder();
+		
+		subSelePrecoComDesconto.append(" (SELECT ");
+		subSelePrecoComDesconto.append("		 MEC_SUB.PRECO_COM_DESCONTO ");    
+		subSelePrecoComDesconto.append("	FROM ");
+		subSelePrecoComDesconto.append("		MOVIMENTO_ESTOQUE_COTA MEC_SUB, ");
+		subSelePrecoComDesconto.append("		TIPO_MOVIMENTO TIPO_MOV ");
+		subSelePrecoComDesconto.append(" WHERE ");
+		subSelePrecoComDesconto.append("		MEC_SUB.COTA_ID = CH_ENCALHE_COTA.COTA_ID ");   
+		subSelePrecoComDesconto.append("		AND     MEC_SUB.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");   
+		subSelePrecoComDesconto.append("		AND  MEC_SUB.TIPO_MOVIMENTO_ID = TIPO_MOV.ID    ");
+		subSelePrecoComDesconto.append("		AND     TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE IN( :grupoMovimentoEstoque ) ");
+		subSelePrecoComDesconto.append("	order by MEC_SUB.DATA desc limit 1) ");
+		
+		StringBuilder subSelectDataMovimento = new StringBuilder();
+		
+		subSelectDataMovimento.append(" (SELECT ");
+		subSelectDataMovimento.append("		 MAX(MEC_SUB.DATA) ");    
+		subSelectDataMovimento.append("	FROM ");
+		subSelectDataMovimento.append("		MOVIMENTO_ESTOQUE_COTA MEC_SUB, ");
+		subSelectDataMovimento.append("		TIPO_MOVIMENTO TIPO_MOV ");
+		subSelectDataMovimento.append(" WHERE ");
+		subSelectDataMovimento.append("		MEC_SUB.COTA_ID = CH_ENCALHE_COTA.COTA_ID ");   
+		subSelectDataMovimento.append("		AND     MEC_SUB.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");   
+		subSelectDataMovimento.append("		AND  MEC_SUB.TIPO_MOVIMENTO_ID = TIPO_MOV.ID    ");
+		subSelectDataMovimento.append("		AND     TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE IN( :grupoMovimentoEstoque ) )");
 		
 		StringBuilder sqlValor = new StringBuilder();
 		
         if (REPARTE_COM_DESCONTO.equals(valor)){
 			
-        	sqlValor.append("               MEC.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+        	sqlValor.append(subSelePrecoComDesconto).append(", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		} else if (DESCONTO.equals(valor)){
 			
-			sqlValor.append("               MEC.PRECO_VENDA - MEC.PRECO_COM_DESCONTO, 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			sqlValor.append("  MEC.PRECO_VENDA - ").append(subSelePrecoComDesconto).append(", 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		} else {
 			
-			sqlValor.append("               MEC.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			sqlValor.append(" MEC.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		}
-		
-		
+	
 		sql.append(" SELECT ");
 		
 		sql.append(" SUM( ");
 		
 		sql.append("     ( ");
 		
-		sql.append("      CASE WHEN COTA.TIPO_COTA = 'A_VISTA' THEN CASE WHEN COTA.ALTERACAO_TIPO_COTA >= MEC.DATA THEN ");
+		sql.append("      CASE WHEN COTA.TIPO_COTA = 'A_VISTA' THEN CASE WHEN COTA.ALTERACAO_TIPO_COTA >= ").append(subSelectDataMovimento).append(" THEN ");
 		
         sql.append("         ( COALESCE( " +sqlValor+ " ) ");
 		
@@ -194,24 +230,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sql.append("	inner join PRODUTO as PROD ON 							");
 		sql.append("	(PROD_EDICAO.PRODUTO_ID = PROD.ID)						");
 		
-		sql.append("	inner join MOVIMENTO_ESTOQUE_COTA MEC ON 				");
-		sql.append("	MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
-		
-		sql.append("	INNER JOIN TIPO_MOVIMENTO TIPO_MOV ON ");
-		sql.append("	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND  TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
-		
 		sql.append("	WHERE   ");
 		
 		sql.append("	COTA.NUMERO_COTA = :numeroCota  ");
 		
 		sql.append("	AND CH_ENCALHE.DATA_RECOLHIMENTO = :dataOperacao	");
-		
-		sql.append("	AND MEC.DATA = (SELECT 	MAX(MEC.DATA)				");
-		sql.append("	FROM    MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV ");
-		sql.append("	WHERE   MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID		");
-		sql.append("	AND     MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID		");
-		sql.append("	AND 	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID			");
-		sql.append("	AND     TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque) ");
 		
 		if(conferido!=null) {
 			sql.append(" AND	CH_ENCALHE_COTA.FECHADO = :conferido		");

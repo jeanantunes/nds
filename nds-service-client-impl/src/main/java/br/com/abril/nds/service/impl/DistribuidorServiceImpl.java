@@ -466,8 +466,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional(readOnly = true)
 	public List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(final Date dataRecolhimento, final Long ...idsFornecedor) {
 		
-		final ParametrosRecolhimentoDistribuidor parametroRecolhimento = 
-				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
+		final ParametrosRecolhimentoDistribuidor parametroRecolhimento = this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
 		
 		final List<Integer> diasSemanaDistribuidorOpera = 
 				this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(OperacaoDistribuidor.RECOLHIMENTO,idsFornecedor);
