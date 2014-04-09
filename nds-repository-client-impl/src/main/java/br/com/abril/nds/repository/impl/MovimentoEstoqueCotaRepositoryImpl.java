@@ -3262,7 +3262,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         hql.append(" and mec.produtoEdicao.id = :idProdutoEdicao ");
         
-        hql.append(" and mec.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+        hql.append(" and mec.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEstoque) ");
         
         hql.append(" and mec.data <= :dataOperacao   ");
         
@@ -3274,7 +3274,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         query.setParameter("idProdutoEdicao", idProdutoEdicao);
         
-        query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+        query.setParameterList("grupoMovimentoEstoque", 
+    		Arrays.asList(
+    			GrupoMovimentoEstoque.RECEBIMENTO_REPARTE,
+    			GrupoMovimentoEstoque.SOBRA_DE_COTA,
+    			GrupoMovimentoEstoque.SOBRA_EM_COTA,
+    			GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE,
+    			GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE,
+    			GrupoMovimentoEstoque.COMPRA_ENCALHE,
+    			GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR
+    		)
+    	);
         
         query.setParameter("dataOperacao", dataOperacao);
         
