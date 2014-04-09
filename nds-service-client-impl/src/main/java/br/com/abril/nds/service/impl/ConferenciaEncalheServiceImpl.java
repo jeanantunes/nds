@@ -1175,7 +1175,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 		}
 				
-		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
+		final Cota cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 				
 		this.debitoCreditoCotaService.carregarDadosDebitoCreditoDaCota(infoConfereciaEncalheCota, cota, dataOperacao);
 		
@@ -2044,9 +2044,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				notaFiscalEntradaCota, 
 				listaConferenciaEncalhe);
 		
-		final List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
-		notaFiscalEntradaCotas.add(notaFiscalEntradaCota);
-		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
+	//	final List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
+	//	notaFiscalEntradaCotas.add(notaFiscalEntradaCota);
+	//	controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
 		
 		
 		final ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
@@ -3284,4 +3284,48 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras);
 	}
+	
+    /**
+	* Valida informações basicas antes de iniciar o recolhimento:
+	* 
+	* - Se a cota existe.
+	* 
+	* - Se o box de recolhimento foi informado.
+	* 
+	* - Se ainda não foi realizado o fechamento de encalhe na data de operação.
+	* 
+	* - Se a cota foi tratada como cota ausente na funcionalidade de fechamento
+	* de encalhe.
+	* 
+	* @param numeroCota
+	*/
+	@Override
+	@Transactional
+	public Cota validarCotaParaInicioConferenciaEncalhe(final Integer numeroCota) {
+	
+		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
+		
+		if (cota == null) {
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada!");
+		}
+	
+		try {
+			
+			this.validarFechamentoEncalheRealizado();
+		
+		} catch(final FechamentoEncalheRealizadoException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+		
+		}
+		
+		final boolean hasCotaAusenteFechamentoEncalhe = this.hasCotaAusenteFechamentoEncalhe(numeroCota);
+		
+		if (hasCotaAusenteFechamentoEncalhe) {
+		    throw new ValidacaoException(TipoMensagem.WARNING,
+		            "Cota já inserida no processo de cota ausente. Por favor, verificar.");
+		}
+		
+		return cota;
+	}
+	
 }

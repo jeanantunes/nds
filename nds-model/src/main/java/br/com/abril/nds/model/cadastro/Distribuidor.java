@@ -29,7 +29,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.Validate;
-import org.springframework.core.annotation.Order;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;

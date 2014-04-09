@@ -95,7 +95,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	})
 	private ItemNotaEnvio itemNotaEnvio;
 	
-	
 	public Object clone() {
 
 		MovimentoEstoqueCota mec = new MovimentoEstoqueCota();
@@ -263,5 +262,4 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	public void setItemNotaEnvio(ItemNotaEnvio itemNotaEnvio) {
 		this.itemNotaEnvio = itemNotaEnvio;
 	}
-
 }

@@ -56,7 +56,6 @@ import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
-import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.sessionscoped.ConferenciaEncalheSessionScopeAttr;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -167,15 +166,11 @@ public class ConferenciaEncalheController extends BaseController {
 
 		final ServletContext context = this.session.getServletContext();
 		
-		final Map<Integer, String> mapaCotaConferidaUsuario = 
-			(LinkedHashMap<Integer, String>) 
-				context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+		final Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
 		
 		validarUsuarioConferindoCota(this.getIdentificacaoUnicaUsuarioLogado(), mapaCotaConferidaUsuario);
 		
-		this.result.include(
-				"dataOperacao", 
-				DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
+		this.result.include("dataOperacao", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 		
 		final TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
 		
@@ -232,8 +227,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private void carregarComboBoxEncalhe() {
 		
-		final List<Box> boxes = 
-				this.conferenciaEncalheService.obterListaBoxEncalhe(this.getUsuarioLogado().getId());
+		final List<Box> boxes = this.conferenciaEncalheService.obterListaBoxEncalhe(this.getUsuarioLogado().getId());
 		
 		this.result.include("boxes", boxes);
 	}
@@ -515,61 +509,8 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.result.use(CustomMapJson.class).put(IND_COTA_EMITE_NFE, emiteNfe).serialize();
 	}
-	
-	            /**
-     * Valida informações basicas antes de iniciar o recolhimento:
-     * 
-     * - Se a cota existe.
-     * 
-     * - Se o box de recolhimento foi informado.
-     * 
-     * - Se ainda não foi realizado o fechamento de encalhe na data de operação.
-     * 
-     * - Se a cota foi tratada como cota ausente na funcionalidade de fechamento
-     * de encalhe.
-     * 
-     * @param numeroCota
-     */
-	private void validarCotaParaInicioConferenciaEncalhe(final Integer numeroCota) {
-		
-		final Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
-		
-		if (cota == null) {
-            throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada!");
-		}
-		
-		
-		if (conferenciaEncalheSessionScopeAttr.getIdBoxLogado() == null){
-            throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
-		}
-		
-		try {
-			
-			this.conferenciaEncalheService.validarFechamentoEncalheRealizado();
-		
-		} catch(final FechamentoEncalheRealizadoException e) {
-			
-			LOGGER.error("Erro Fechamento de Encalhe: " + e.getMessage(), e);
-			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
-		
-		}
-		
-		final boolean hasCotaAusenteFechamentoEncalhe = this.conferenciaEncalheService.hasCotaAusenteFechamentoEncalhe(numeroCota);
-		
-		if (hasCotaAusenteFechamentoEncalhe) {
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Cota já inserida no processo de cota ausente. Por favor, verificar.");
-		}
-		
-		
-		this.session.setAttribute(NUMERO_COTA, numeroCota);
-		this.session.setAttribute(COTA, cota);
-		this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
-		
-		
-	}
-	
-	            /**
+	 
+     /**
      * Ponto de inicio de uma conferência de encalhe.
      * 
      * Realiza validações antes do inicio da operação de encalhe da cota.
@@ -581,7 +522,11 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		limparDadosSessao();
 
-		validarCotaParaInicioConferenciaEncalhe(numeroCota);
+		final Cota cota = this.conferenciaEncalheService.validarCotaParaInicioConferenciaEncalhe(numeroCota);
+		
+		if (conferenciaEncalheSessionScopeAttr.getIdBoxLogado() == null){
+	        throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
+	    }
 		
 		atribuirTravaConferenciaCotaUsuario(numeroCota);
 		
@@ -602,15 +547,18 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			} else {
 				
-				this.result.use(CustomMapJson.class)
-				.put("IND_COTA_RECOLHE_NA_DATA", "N")
-.put("msg",
+				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg",
                         "Cota não possui recolhimento planejado para a data de operação atual.")
                         .serialize();
 			
 			}
 			
 		}
+		
+		this.session.setAttribute(NUMERO_COTA, numeroCota);
+        this.session.setAttribute(COTA, cota);
+        this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
+        
 		
 	}
 	
@@ -709,7 +657,7 @@ public class ConferenciaEncalheController extends BaseController {
 		dados.put("indDistribuidorAceitaJuramentado", infoConfereciaEncalheCota.isDistribuidorAceitaJuramentado());
 		
 		this.calcularValoresMonetarios(dados);
-		
+		dados.put("notaFiscal", session.getAttribute(NOTA_FISCAL_CONFERENCIA));
 		final Cota cota = infoConfereciaEncalheCota.getCota();
 		this.session.setAttribute(COTA, cota);
 		
@@ -1302,10 +1250,8 @@ public class ConferenciaEncalheController extends BaseController {
                     "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados. ");
 			
 		} catch (final ConferenciaEncalheFinalizadaException e) {
-            LOGGER.error(
-"Conferência não pode ser salvar, finalize a operação para não perder os dados: "
-                + e.getMessage(),
-                    e);
+            LOGGER.error("Conferência não pode ser salvar, finalize a operação para não perder os dados: "
+                + e.getMessage(), e);
             throw new ValidacaoException(TipoMensagem.WARNING,
                     "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
 			
@@ -1364,7 +1310,8 @@ public class ConferenciaEncalheController extends BaseController {
 			notaFiscal.setDataEmissao( DateUtil.parseDataPTBR((String) dadosNotaFiscal.get("dataEmissao")));
 			notaFiscal.setChaveAcesso((String) dadosNotaFiscal.get("chaveAcesso"));
 			notaFiscal.setValorProdutos((BigDecimal) dadosNotaFiscal.get("valorProdutos"));
-			
+			notaFiscal.setControleConferenciaEncalheCota(controleConfEncalheCota);
+			notaFiscal.setCota(info.getCota());
 		}
 		
 		final List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
@@ -1384,8 +1331,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.salvarConferenciaCota(controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
 		
-		this.result.use(Results.json()).from(
-new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                 "result").recursive()
                 .serialize();
 	}
@@ -1663,27 +1609,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 			controleConfEncalheCota.setCota(info.getCota());
 			controleConfEncalheCota.setId(info.getIdControleConferenciaEncalheCota());
 			
-			@SuppressWarnings({ "unchecked", "rawtypes" })
-			final
-			Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
-			
-			NotaFiscalEntradaCota notaFiscal = null;
-			
-			if(dadosNotaFiscal!=null) {
-				
-				notaFiscal = new NotaFiscalEntradaCota();
-				
-				notaFiscal.setNumero((Long) dadosNotaFiscal.get("numero"));
-				notaFiscal.setSerie((String) dadosNotaFiscal.get("serie"));
-				notaFiscal.setDataEmissao( DateUtil.parseDataPTBR((String) dadosNotaFiscal.get("dataEmissao")));
-				notaFiscal.setChaveAcesso((String) dadosNotaFiscal.get("chaveAcesso"));
-				notaFiscal.setValorProdutos((BigDecimal) dadosNotaFiscal.get("valorProdutos"));
-				
-			}
-
-			final List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
-			notaFiscalEntradaCotas.add(notaFiscal);
-			controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
+	        this.carregarNotasFiscais(controleConfEncalheCota, info);
 			
 			if (controleConfEncalheCota.getDataOperacao()==null){
 			    
@@ -1761,6 +1687,30 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                     .recursive().serialize();
 		}
 	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+    private void carregarNotasFiscais(final ControleConferenciaEncalheCota controleConfEncalheCota, final InfoConferenciaEncalheCota info) {
+        final Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
+        
+        final List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
+        NotaFiscalEntradaCota notaFiscal = null;
+        
+        if(dadosNotaFiscal!=null) {
+            
+            notaFiscal = new NotaFiscalEntradaCota();
+            
+            notaFiscal.setNumero((Long) dadosNotaFiscal.get("numero"));
+            notaFiscal.setSerie((String) dadosNotaFiscal.get("serie"));
+            notaFiscal.setDataEmissao( DateUtil.parseDataPTBR((String) dadosNotaFiscal.get("dataEmissao")));
+            notaFiscal.setChaveAcesso((String) dadosNotaFiscal.get("chaveAcesso"));
+            notaFiscal.setValorProdutos((BigDecimal) dadosNotaFiscal.get("valorProdutos"));
+            notaFiscal.setControleConferenciaEncalheCota(controleConfEncalheCota);
+            notaFiscal.setCota(info.getCota());
+        }
+
+        notaFiscalEntradaCotas.add(notaFiscal);
+        controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
+    }
 	
 	@Post
 	public void pesquisarProdutoPorCodigoNome(final String codigoNomeProduto){
@@ -1935,8 +1885,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	public void verificarValorTotalNotaFiscal(final boolean indConferenciaContingencia) throws Exception {
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		final
-		Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
+		final Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
 		
 		final Map<String, Object> dadosMonetarios = new HashMap<String, Object>();
 		
@@ -1951,8 +1900,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 			final Map<String, Object> dadosResposta = new HashMap<String, Object>();
 			
 			dadosResposta.put("tipoMensagem", TipoMensagem.WARNING);
-			dadosResposta.put("listaMensagens",
-							  new String[]{"Valor total do encalhe difere do valor da nota informada."});
+			dadosResposta.put("listaMensagens", new String[]{"Valor total do encalhe difere do valor da nota informada."});
 			
 			this.result.use(CustomMapJson.class).put("result", dadosResposta).serialize();
 			
@@ -2271,7 +2219,10 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 			dados.put("valorPagar", valorPagar.setScale(2, RoundingMode.HALF_EVEN));
 			dados.put("valorTotal", valorTotal);
 			dados.put("valorPagarAtualizado", valorPagarAtualizado);
+			dados.put("idconf", info.getIdControleConferenciaEncalheCota());
 		}
+		
+		dados.put("notaFiscal", session.getAttribute(NOTA_FISCAL_CONFERENCIA));
 	}
 	
 	            /**

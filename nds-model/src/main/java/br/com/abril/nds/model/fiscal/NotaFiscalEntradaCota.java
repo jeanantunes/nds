@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.fiscal;
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -17,8 +18,8 @@ public class NotaFiscalEntradaCota extends NotaFiscalEntrada {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@ManyToOne
-	@JoinColumn(name = "CONTROLE_CONFERENCIA_ENCALHE_COTA_ID", referencedColumnName="ID", insertable = false, updatable = false)
+	@ManyToOne(optional = false, cascade=CascadeType.ALL)
+	@JoinColumn(name = "CONTROLE_CONFERENCIA_ENCALHE_COTA_ID", referencedColumnName="ID", insertable = true, updatable = true)
 	private ControleConferenciaEncalheCota controleConferenciaEncalheCota;
 	
 	public Cota getCota() {
