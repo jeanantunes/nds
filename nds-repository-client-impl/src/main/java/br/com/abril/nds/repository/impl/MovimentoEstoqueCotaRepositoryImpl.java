@@ -775,8 +775,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         if (filtro.getIdCota() == null) {
             
-            sql.append(" LEFT JOIN DESCONTO_LOGISTICA ON ");
-            sql.append(" (DESCONTO_LOGISTICA.ID = PRODUTO_EDICAO.DESCONTO_LOGISTICA_ID OR DESCONTO_LOGISTICA.ID = PRODUTO.DESCONTO_LOGISTICA_ID ) ");
+            sql.append(" LEFT JOIN DESCONTO_LOGISTICA ON (CASE WHEN PRODUTO_EDICAO.DESCONTO_LOGISTICA_ID is not null THEN (DESCONTO_LOGISTICA.ID = PRODUTO_EDICAO.DESCONTO_LOGISTICA_ID) ");
+            sql.append(" ELSE DESCONTO_LOGISTICA.ID = PRODUTO.DESCONTO_LOGISTICA_ID END) ");
+            
             sql.append(" LEFT JOIN DESCONTO ON ");
             sql.append(" (DESCONTO.ID = PRODUTO_EDICAO.DESCONTO_LOGISTICA_ID OR DESCONTO.ID = PRODUTO.DESCONTO_LOGISTICA_ID ) ");
         }
@@ -1054,7 +1055,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
                 sql.append("	( ( "+ subSqlEncalhe +" ) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valor, ");
             }
             
-            sql.append(" SUM(COALESCE(if(tm.OPERACAO_ESTOQUE = 'SAIDA',MEC_REPARTE.qtde*-1,MEC_REPARTE.qtde),0)) as reparte, ");
+            sql.append(" SUM(COALESCE(if(tm.OPERACAO_ESTOQUE = 'SAIDA', MEC_REPARTE.qtde*-1, MEC_REPARTE.qtde),0)) as reparte, ");
             
             sql.append("( ( ").append(subSqlEncalhe).append(" ) - ( ").append(subSqlVendaProduto).append(") ) as encalhe, ");
             
