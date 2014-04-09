@@ -32,7 +32,7 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	
 	private String recolhimento;
 	
-	private boolean suplementar;
+	private boolean matrizRecolhimento;
 	
 	private Date dataRecolhimento;
 	
@@ -336,12 +336,12 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 		return true;
 	}
 
-	public boolean isSuplementar() {
-		return suplementar;
+	public boolean isMatrizRecolhimento() {
+		return matrizRecolhimento;
 	}
 
-	public void setSuplementar(boolean suplementar) {
-		this.suplementar = suplementar;
+	public void setMatrizRecolhimento(boolean matrizRecolhimento) {
+		this.matrizRecolhimento = matrizRecolhimento;
 	}
 
 	/**
