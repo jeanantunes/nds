@@ -144,8 +144,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         final Query query = getSession().createSQLQuery(queryString);
         
         query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-        query.setParameter("origemInterface", Origem.INTERFACE.toString());
-        query.setParameter("tipoChamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO);
+        query.setParameter("origemInterface", Origem.INTERFACE.name());
+        query.setParameter("tipoChamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO.name());
+        query.setParameter("tipoChamadaEncalheMatrizRecolhimento", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
         
         if (filtro.getFornecedorId() != null) {
             
@@ -183,7 +184,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         ((SQLQuery) query).addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
         ((SQLQuery) query).addScalar("tipo", StandardBasicTypes.STRING);
         ((SQLQuery) query).addScalar("recolhimento", StandardBasicTypes.STRING);
-        ((SQLQuery) query).addScalar("suplementar", StandardBasicTypes.BOOLEAN);
+        ((SQLQuery) query).addScalar("matrizRecolhimento", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("chamadao", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("parcial", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("chamadaEncalheId", StandardBasicTypes.LONG);
@@ -212,17 +213,17 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,");
         query.append("			 dlp.ID as produtoDescontoLogisticaId,");
         
-        query.append("			 CASE WHEN ((SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
-        query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
-        query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
-        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID ) > 1 ");
-        query.append("			  AND 			");
-        query.append("			  (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
+        query.append("			 CASE WHEN (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
         query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
         query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
         query.append("			  AND chEn.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalheChamadao ");
-        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID ");
-        query.append("			  HAVING COUNT(chEn.PRODUTO_EDICAO_ID) > 1) IS NULL) then true else false end as chamadao, ");
+        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID > 0) then true else false end as chamadao, ");
+
+        query.append("			 CASE WHEN (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
+        query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+        query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
+        query.append("			  AND chEn.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalheMatrizRecolhimento ");
+        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID > 0) then true else false end as matrizRecolhimento, ");
         
         query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
         query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
@@ -232,8 +233,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
         query.append("			 case when pe.PARCIAL = true  then 'P' else 'N' end as tipo,");
-        query.append("			 case when plp.TIPO is not null then plp.TIPO else null end as recolhimento,");
-        query.append("			 case when ce.TIPO_CHAMADA_ENCALHE = 'MATRIZ_RECOLHIMENTO' then false else true end as suplementar");
+        query.append("			 case when plp.TIPO is not null then plp.TIPO else null end as recolhimento ");
+        
         query.append("	from chamada_encalhe_cota cec");
         query.append("	inner join chamada_encalhe ce on (ce.ID = cec.CHAMADA_ENCALHE_ID)");
         query.append("	inner join produto_edicao pe on (pe.ID = ce.PRODUTO_EDICAO_ID)");
@@ -265,18 +266,18 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         query.append("			 pe.ORIGEM as origem, ");
         query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,");
         query.append("			 dlp.ID as produtoDescontoLogisticaId,");
-        
-        query.append("			 CASE WHEN ((SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
-        query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
-        query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
-        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID) > 1 ");
-        query.append("			  AND 			");
-        query.append("			  (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
+
+        query.append("			 CASE WHEN (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
         query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
         query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
         query.append("			  AND chEn.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalheChamadao ");
-        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID ");
-        query.append("			  HAVING COUNT(chEn.PRODUTO_EDICAO_ID) > 1) IS NULL) then true else false end as chamadao, ");
+        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID > 0) then true else false end as chamadao, ");
+        
+        query.append("			 CASE WHEN (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
+        query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+        query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
+        query.append("			  AND chEn.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalheMatrizRecolhimento ");
+        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID > 0) then true else false end as matrizRecolhimento, ");
         
         query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
         query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
@@ -286,8 +287,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
         query.append("			 case when  pe.PARCIAL = true  then 'P' else 'N' end as tipo,");
-        query.append("			 case when plp.TIPO is not null then plp.TIPO else null end as recolhimento,");
-        query.append("			 case when ce.TIPO_CHAMADA_ENCALHE = 'MATRIZ_RECOLHIMENTO' then false else true end as suplementar");
+        query.append("			 case when plp.TIPO is not null then plp.TIPO else null end as recolhimento ");
+        
         query.append("	from chamada_encalhe_cota cec");
         query.append("	inner join chamada_encalhe ce on (ce.ID = cec.CHAMADA_ENCALHE_ID)");
         query.append("	inner join conferencia_encalhe confenc on (confenc.CHAMADA_ENCALHE_COTA_ID = cec.ID)");
@@ -398,8 +399,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         final Query query =  getSession().createSQLQuery(this.getQueryFechamentoEncalhe(filtro, true));
         
         query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-        query.setParameter("origemInterface", Origem.INTERFACE.toString());
-        query.setParameter("tipoChamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO);
+        query.setParameter("origemInterface", Origem.INTERFACE.name());
+        query.setParameter("tipoChamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO.name());
+        query.setParameter("tipoChamadaEncalheMatrizRecolhimento", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
         
         if (filtro.getFornecedorId() != null) {
             
