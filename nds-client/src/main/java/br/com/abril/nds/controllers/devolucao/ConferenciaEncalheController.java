@@ -389,11 +389,9 @@ public class ConferenciaEncalheController extends BaseController {
 	private void validarUsuarioConferindoCota(final String login,
 											  Map<Integer, String> mapaCotaConferidaUsuario) {
 		
-		if (mapaCotaConferidaUsuario != null 
-				&& mapaCotaConferidaUsuario.containsValue(login)) {
+		if (mapaCotaConferidaUsuario != null && mapaCotaConferidaUsuario.containsValue(login)) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, 
-				"Não possível executar mais de uma conferência de encalhe ao mesmo tempo!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não possível executar mais de uma conferência de encalhe ao mesmo tempo!");
 		}
 	}
 	
@@ -401,15 +399,15 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		final Usuario usuario = getUsuarioLogado();
 		
-		if(usuario==null) {
+		if(usuario == null) {
             return "Não Identificado";
 		}
 		
-		if(usuario.getNome()!=null && !usuario.getNome().isEmpty()) {
+		if(usuario.getNome() != null && !usuario.getNome().isEmpty()) {
 			return usuario.getNome();
 		}
 		
-		if(usuario.getLogin()!=null && !usuario.getLogin().isEmpty()) {
+		if(usuario.getLogin() != null && !usuario.getLogin().isEmpty()) {
 			return usuario.getLogin();
 		}
 		
@@ -422,8 +420,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		final String sessionID = this.session.getId();
 		
-		if (usuario.getLogin() != null 
-				&& !usuario.getLogin().isEmpty()) {
+		if (usuario.getLogin() != null && !usuario.getLogin().isEmpty()) {
 			
 			return usuario.getLogin() + sessionID;
 		}
