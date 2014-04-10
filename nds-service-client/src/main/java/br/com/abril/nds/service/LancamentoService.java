@@ -16,6 +16,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -186,6 +187,8 @@ public interface LancamentoService {
 	LinkedList<Lancamento> obterLancamentosRedistribuicoes();
 
 	void atualizarRedistribuicoes(Lancamento lancamento, Date dataRecolhimento);
+	
+	void reajustarNumerosLancamento(PeriodoLancamentoParcial periodo);
 	
 }
  

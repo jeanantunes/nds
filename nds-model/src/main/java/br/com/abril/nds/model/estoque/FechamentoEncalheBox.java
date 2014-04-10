@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -19,7 +20,7 @@ public class FechamentoEncalheBox implements Serializable {
 	private FechamentoEncalheBoxPK fechamentoEncalheBoxPK;
 	
 	@Column(name="QUANTIDADE", nullable=true)
-	private Long quantidade;
+	private BigInteger quantidade;
 
 
 	public FechamentoEncalheBoxPK getFechamentoEncalheBoxPK() {
@@ -31,11 +32,11 @@ public class FechamentoEncalheBox implements Serializable {
 		this.fechamentoEncalheBoxPK = fechamentoEncalheBoxPK;
 	}
 
-	public Long getQuantidade() {
+	public BigInteger getQuantidade() {
 		return quantidade;
 	}
 
-	public void setQuantidade(Long quantidade) {
+	public void setQuantidade(BigInteger quantidade) {
 		this.quantidade = quantidade;
 	}
 }

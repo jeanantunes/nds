@@ -1393,7 +1393,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         hql.append("produtoEdicao.id as produtoEdicao, ");
         hql.append("conferenciaEncalhe.movimentoEstoqueCota.qtde as exemplaresDevolucao, ");
         
-        hql.append("controleConferenciaEncalhe.data as dataRecolhimento ");
+        hql.append("controleConferenciaEncalhe.data as dataRecolhimento, ");
+        
+        hql.append("conferenciaEncalhe.juramentada as juramentada ");
         
         hql.append("from ConferenciaEncalhe as conferenciaEncalhe ");
         hql.append("join conferenciaEncalhe.produtoEdicao as produtoEdicao ");
