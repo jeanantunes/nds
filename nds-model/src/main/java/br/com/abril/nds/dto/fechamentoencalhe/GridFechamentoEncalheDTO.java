@@ -1,5 +1,7 @@
 package br.com.abril.nds.dto.fechamentoencalhe;
 
+import java.math.BigInteger;
+
 
 public class GridFechamentoEncalheDTO {
 	
@@ -9,7 +11,7 @@ public class GridFechamentoEncalheDTO {
 	
 	private Long produtoEdicao;
 	
-	private Long fisico;
+	private BigInteger fisico;
 
 	public boolean isCheckbox() {
 		return checkbox;
@@ -27,11 +29,11 @@ public class GridFechamentoEncalheDTO {
 		this.codigo = codigo;
 	}
 
-	public Long getFisico() {
+	public BigInteger getFisico() {
 		return fisico;
 	}
 
-	public void setFisico(Long fisico) {
+	public void setFisico(BigInteger fisico) {
 		this.fisico = fisico;
 	}
 

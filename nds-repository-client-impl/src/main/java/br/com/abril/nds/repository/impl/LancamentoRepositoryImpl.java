@@ -2597,4 +2597,23 @@ public class LancamentoRepositoryImpl extends
         return  (Lancamento) query.uniqueResult();
     }
 	
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Lancamento> obterLancamentosDoPeriodoParcial(Long idPeriodo) {
+        
+        StringBuilder hql = new StringBuilder();
+        
+        hql.append(" select lancamento  ");
+        hql.append(" from PeriodoLancamentoParcial periodoLancamentoParcial ");
+        hql.append(" join periodoLancamentoParcial.lancamentos lancamento ");
+        hql.append(" where periodoLancamentoParcial.id = :idPeriodo ");
+        hql.append(" order by lancamento.dataLancamentoDistribuidor ");
+        
+        Query query = getSession().createQuery(hql.toString());
+        
+        query.setParameter("idPeriodo", idPeriodo);
+        
+        return query.list();
+    }
+    
 }
