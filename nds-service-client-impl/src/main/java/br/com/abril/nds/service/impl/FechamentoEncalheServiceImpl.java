@@ -214,22 +214,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private CalendarioService calendarioService;
-    
-    /**
-     * Retorna lista de idProdutoEdicao de produtosEdicao
-     * que estão na matriz recolhimento da data informada
-     * e que também fazem parte da lista de id produto edicao 
-     * do parâmetro.
-     *  
-     * @param dataEncalhe
-     * @param idProdutoEdicao
-     * 
-     * @return List - Long
-     */
-    private List<Long> obterListaIdProdutoEdicaoMatrizRecolhimento(Date dataEncalhe, List<Long> idsProdutoEdicao) {
-    	return chamadaEncalheRepository.obterIdsProdutoEdicaoNaMatrizRecolhimento(dataEncalhe, idsProdutoEdicao);
-    
-	}
 
     
     @Override
@@ -273,7 +257,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				listaMovimentoEstoqueCota,
 				listaDeIdsProdutoEdicao);
         
-        carregarQtdFisicoNaListaEncalheFisicoLogico(filtro, fechado, listaEncalhe, listaDeIdsProdutoEdicao);
+        carregarQtdFisicoNaListaEncalheFisicoLogico(filtro, fechado, listaEncalhe);
         
         if (sort == null) {
         	listaEncalhe = this.retornarListaOrdenada(listaEncalhe, "sequencia", sortorder);
@@ -292,20 +276,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	 * @param filtro
 	 * @param fechado
 	 * @param listaEncalhe
-	 * @param listaDeIdsProdutoEdicao
 	 */
 	private void carregarQtdFisicoNaListaEncalheFisicoLogico(
 			final FiltroFechamentoEncalheDTO filtro, final Boolean fechado,
-			List<FechamentoFisicoLogicoDTO> listaEncalhe,
-			List<Long> listaDeIdsProdutoEdicao
+			List<FechamentoFisicoLogicoDTO> listaEncalhe
 			) {
-		
-		List<Long> idsProdutoEdicaoMatrizRecolhimento = 
-        		obterListaIdProdutoEdicaoMatrizRecolhimento(filtro.getDataEncalhe(), listaDeIdsProdutoEdicao);
-		
-		if(idsProdutoEdicaoMatrizRecolhimento == null) {
-			idsProdutoEdicaoMatrizRecolhimento = new ArrayList<>();
-		}
 		
 		if (filtro.getBoxId() == null) {
         	
@@ -314,7 +289,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             
             for (final FechamentoFisicoLogicoDTO encalhe : listaEncalhe) {
                 
-                this.setarInfoComumFechamentoFisicoLogicoDTO(encalhe, fechado, idsProdutoEdicaoMatrizRecolhimento);
+                this.setarInfoComumFechamentoFisicoLogicoDTO(encalhe, fechado);
                 
                 for (final FechamentoEncalhe fechamento : listaFechamento) {
                     if (encalhe.getProdutoEdicao().equals(
@@ -333,7 +308,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             
             for (final FechamentoFisicoLogicoDTO encalhe : listaEncalhe) {
                 
-                this.setarInfoComumFechamentoFisicoLogicoDTO(encalhe, fechado, idsProdutoEdicaoMatrizRecolhimento);
+                this.setarInfoComumFechamentoFisicoLogicoDTO(encalhe, fechado);
                 
                 for (final FechamentoEncalheBox fechamento : listaFechamentoBox) {
                     
@@ -484,8 +459,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     private void setarInfoComumFechamentoFisicoLogicoDTO(
     		final FechamentoFisicoLogicoDTO encalhe,
-            final boolean fechado,
-            List<Long> listaIdProdutoEdicaoNaMatrizRecolhimento) {
+            final boolean fechado) {
         
         if (encalhe.getExemplaresDevolucao() == null) {
             encalhe.setExemplaresDevolucao(BigInteger.valueOf(0));
@@ -494,23 +468,65 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 .getPrecoCapaDesconto()));
         encalhe.setFechado(fechado);
         
-        if ( !listaIdProdutoEdicaoNaMatrizRecolhimento.contains(encalhe.getProdutoEdicao()) &&
-        	 ( encalhe.isSuplementar() || encalhe.isChamadao() )) {
-            
-            encalhe.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
-            
-        } else if ("P".equals(encalhe.getTipo())
-                && (encalhe.getRecolhimento() != null && TipoLancamentoParcial.PARCIAL.name().equals(
-                        encalhe.getRecolhimento()))) {
-            
-            encalhe.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
-            
-        } else {
-            
-            encalhe.setEstoque(TipoEstoque.DEVOLUCAO_ENCALHE.getDescricao());
-            
-        }
+        carregarDescricaoEstoque(encalhe);
+       
     }
+    
+    
+    private void carregarDescricaoEstoque(FechamentoFisicoLogicoDTO encalhe) {
+    	
+    	if(encalhe.getFechado()) {
+    		
+    		if("P".equals(encalhe.getTipo())) {
+    			
+                encalhe.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
+                
+    		} else if(encalhe.isMatrizRecolhimento()) {
+    			
+    			encalhe.setEstoque(TipoEstoque.DEVOLUCAO_ENCALHE.getDescricaoAbreviada());
+    			
+    		} else {
+    			
+    			encalhe.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
+    		}
+    		
+    	} else {
+    		
+            if ( encalhe.isChamadao() && !encalhe.isMatrizRecolhimento()) {
+        		
+            	encalhe.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
+            
+            } else if (isEstoqueLancamento(encalhe)) {
+            	
+            	encalhe.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
+            
+            } else {
+            
+            	encalhe.setEstoque(TipoEstoque.DEVOLUCAO_ENCALHE.getDescricaoAbreviada());
+            
+            }
+    		
+    	}
+    	
+    }
+    
+    /**
+     * Retorna true se o produto edição for parcial e seu 
+     * tipo de lancamento for PARCIAL, ja nesse cenário este
+     * se encontra no estoque de LANCAMENTO.
+     * 
+     * @param encalhe
+     * @return boolean
+     * 
+     */
+    private boolean isEstoqueLancamento(FechamentoFisicoLogicoDTO encalhe) {
+    	
+    	return "P".equals(encalhe.getTipo()) && 
+    			encalhe.getRecolhimento() != null && 
+    			TipoLancamentoParcial.PARCIAL.name().equals(encalhe.getRecolhimento());
+    	
+    }
+    
     
     @Override
     @Transactional
@@ -1002,6 +1018,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         return conferenciaEncalheRepository.obterListaCotaConferenciaNaoFinalizada(dataOperacao);
     }
     
+    
+    
     @Override
     @Transactional
     public Set<String> encerrarOperacaoEncalhe(final Date dataEncalhe, final Usuario usuario,
@@ -1049,7 +1067,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 
                 gerarMovimentoFaltasSobras(item, usuario);
                 
-                this.tratarAtualizacaoProximoLancamentoParcial(item, usuario, item.getFisico());
+                if (item.isParcial()) {
+                	
+                	this.tratarEncalheProdutoEdicaoParcial(item, usuario, item.getFisico());
+                	
+                } else if(item.isChamadao() && item.isMatrizRecolhimento()){
+                	 
+                	movimentoEstoqueService.transferirEstoqueProdutoChamadaoParaRecolhimento(item.getProdutoEdicao(), usuario);
+                	
+                }
+                
             }
         }
 
@@ -1079,13 +1106,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         return nossoNumeroCentralizacao;
     }
     
-    private void tratarAtualizacaoProximoLancamentoParcial(final FechamentoFisicoLogicoDTO item, final Usuario usuario,
+    private void tratarEncalheProdutoEdicaoParcial(final FechamentoFisicoLogicoDTO item, final Usuario usuario,
             final Long encalheFisico) {
         
-        if (!item.isParcial()) {
-            return;
-        }
-        
+       
         movimentoEstoqueService.transferirEstoqueProdutoEdicaoParcialParaLancamento(item.getProdutoEdicao(), usuario);
         
         final Lancamento lancamentoParcial = lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item

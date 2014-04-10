@@ -1051,9 +1051,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Override
     public BigDecimal obterValorTotalReparte(final Integer numeroCota, final Date dataOperacao) {
 		
-		BigDecimal reparte =
-			chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(
-				numeroCota, dataOperacao, false, false);
+		BigDecimal reparte = chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(numeroCota, dataOperacao, false, false);
 		
 		if (reparte == null) {
 			

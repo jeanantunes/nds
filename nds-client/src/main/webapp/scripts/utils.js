@@ -1,3 +1,29 @@
+//Sobrescrita da funcao toFixed para arredondamento no Chrome
+Number.prototype.round = function(digits) {
+    digits = Math.floor(digits);
+    if (isNaN(digits) || digits === 0) {
+        return Math.round(this);
+    }
+    if (digits < 0 || digits > 16) {
+        throw 'RangeError: Number.round() digits argument must be between 0 and 16';
+    }
+    var multiplicator = Math.pow(10, digits);
+    return Math.round(this * multiplicator) / multiplicator;
+}
+
+Number.prototype.toFixed = function(digits) {
+    digits = Math.floor(digits);
+    if (isNaN(digits) || digits === 0) {
+        return Math.round(this).toString();
+    }
+    var parts = this.round(digits).toString().split('.');
+    var fraction = parts.length === 1 ? '' : parts[1];
+    if (digits > fraction.length) {
+        fraction += new Array(digits - fraction.length + 1).join('0');
+    }
+    return parts[0] + '.' + fraction;
+}
+
 var messageTimeout;
 var messageDialogTimeout;
 
@@ -416,7 +442,7 @@ function priceToFloat(field) {
 	return parseFloat(field).toFixed(4);
 }
 
-function floatToPrice(field) {
+function floatToPrice(field, decimalPlaces) {
 	
 	var price = String(field);
 
@@ -431,7 +457,7 @@ function floatToPrice(field) {
     var part = price.split(".");
     return part[0].split("").reverse().reduce(function(acc, price, i, orig) {
         return  price + (i && !(i % 3) ? "." : "") + acc;
-    }, "") + "," + (part[1]+"0").substr(0, 2);
+    }, "") + "," + (part[1]+"0000").substr(0, (decimalPlaces ? decimalPlaces : 2));
     
 }
 

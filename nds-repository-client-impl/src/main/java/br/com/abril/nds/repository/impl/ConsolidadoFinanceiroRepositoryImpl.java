@@ -1379,7 +1379,7 @@ ConsolidadoFinanceiroRepository {
         .append(" ,2) as valorPago, ")
 
         //total
-        .append(" ROUND(cfc.TOTAL,2) as total, ")
+        .append(" ROUND(cfc.TOTAL, 2) as total, ")
         
         //CALCULO DO SALDO = total - valorPago
         .append(" ROUND(")
@@ -1387,7 +1387,7 @@ ConsolidadoFinanceiroRepository {
         .append("          SELECT CASE WHEN bc.status = :naoPagoPostergado THEN 0 ")
         .append("          else ") 
         
-        .append("              round(cfc.TOTAL, 2) + SUM(coalesce(bc.VALOR_PAGO,0)) - SUM(coalesce(bc.VALOR_JUROS, 0) + coalesce(bc.VALOR_MULTA, 0) - coalesce(bc.VALOR_DESCONTO,0)) ") 
+        .append("              round(cfc.TOTAL, 2) + SUM(coalesce(bc.VALOR_PAGO, 0)) - SUM(coalesce(bc.VALOR_JUROS, 0) + coalesce(bc.VALOR_MULTA, 0) - coalesce(bc.VALOR_DESCONTO,0)) ") 
         
         .append("              - ")
         //consolidados de cotas unificadas subtraidos do saldo da cota unificadora
@@ -1686,7 +1686,7 @@ ConsolidadoFinanceiroRepository {
         .append("),0)")
         .append(") ")
         .append(" - ")
-        .append("coalesce((select sum(m.VALOR) * -1 ")
+        .append("coalesce((select sum(m.VALOR) ")
         .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
         .append(" inner join COTA on COTA.ID = m.COTA_ID")
         .append(" where COTA.NUMERO_COTA = :numeroCota ")
@@ -1749,7 +1749,7 @@ ConsolidadoFinanceiroRepository {
         .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
         .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
         .append(") and m.DATA = mfc.DATA ")
-        .append("),0)),2) as total, ")
+        .append("),0)), 2) as total, ")
         
         //saldo
         .append(" 0 as saldo, ")

@@ -244,12 +244,11 @@ public abstract class CurrencyUtil {
 	 * @return
 	 */
 	public static BigDecimal arredondarValorParaDuasCasas(final BigDecimal valor) {
-		
 		BigDecimal valorArredondado = valor.setScale(2, RoundingMode.HALF_EVEN);
-		
+
 		return valorArredondado;
 	}
-	
+
 	/**
 	 * Metodo padrao para arredondamentos com 4 casas
 	 * 
