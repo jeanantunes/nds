@@ -562,10 +562,14 @@ public class CobrancaServiceImpl implements CobrancaService {
 		detalhe.setData(cobranca.getDataEmissao()!=null?DateUtil.formatarData(cobranca.getDataEmissao(),"dd/MM/yyyy"):"");
 		detalhe.setValor(cobranca.getValor()!=null?CurrencyUtil.formatarValor(cobranca.getValor()):"");
 		detalhe.setTipo("Dívida");
-		detalhe.setObservacao(this.baixaCobrancaRepository.obterDescricaoBaixaPorCobranca(idCobranca));
+		
+		String descBaixa = this.baixaCobrancaRepository.obterDescricaoBaixaPorCobranca(idCobranca);
+		
+		detalhe.setObservacao(descBaixa == null ? "" : descBaixa);
 		detalhes.add(detalhe);
 		
-		List<MovimentoFinanceiroCota> movimentos = this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceirosPorCobranca(idCobranca);
+		List<MovimentoFinanceiroCota> movimentos = 
+		        this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceirosPorCobranca(idCobranca);
         
 		for(MovimentoFinanceiroCota item:movimentos){
 			
