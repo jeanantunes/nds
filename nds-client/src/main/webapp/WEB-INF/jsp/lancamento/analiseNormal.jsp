@@ -415,7 +415,7 @@ function definicaoReparte(){
 					<span id="filtroPercVenda" style="display:none;"> % Venda</span>
 					de:<input name="filterSortFrom" type="text" style="width:60px;"/>
               		até:<input name="filterSortTo" type="text" style="width:60px;"/>
-					<a href="#" id="newSearchByFilterOrder"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" border="0" /></a>
+					<a href="javascript:void(0)" id="newSearchByFilterOrder"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" border="0" /></a>
 				</span>
 			</td>
             <td width="35" align="center"><a href="javascript:;" onclick="mostraDados();"><img src="${pageContext.request.contextPath}/images/ico_boletos.gif" title="Exibir Detalhes" width="19" height="15" border="0" /></a></td>
@@ -512,7 +512,7 @@ function definicaoReparte(){
     				Voltar
     			</a>
     		</span>
-           <span class="bt_novos"><a href="#" id="botao_mudar_base" ><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" alt="Mudar Base de Visualização" hspace="5" border="0" />Mudar Base de Visualização</a></span>
+           <span class="bt_novos"><a href="javascript:void(0)" id="botao_mudar_base" ><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" alt="Mudar Base de Visualização" hspace="5" border="0" />Mudar Base de Visualização</a></span>
 			<span class="bt_novos">
 				<a href="javascript:;" onclick="popup_cotas_estudo();">
 					<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" alt="Cotas que não entraram no Estudo" hspace="5" border="0" />

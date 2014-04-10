@@ -71,7 +71,7 @@
 					
 					<div id="${param.tela}wrapperBtnAdicionarTelefoneDesabilitado" style="display: none">
 					  	<span class="bt_novos" style="opacity:0.4">
-					  		<a href="#" onclick="javascript:;" rel="tipsy" title="Incluir Novo Telefone"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/></a>
+					  		<a href="javascript:void(0)" onclick="javascript:void(0)" rel="tipsy" title="Incluir Novo Telefone"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/></a>
 					  	</span>
 				  	</div>
 				

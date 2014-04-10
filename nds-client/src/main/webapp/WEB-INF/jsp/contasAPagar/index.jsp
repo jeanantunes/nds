@@ -41,7 +41,7 @@
 	            	
 	            	<!-- Exibe check group com lista de distribuidores -->  
 	            	
-	            	<div id="contasAPagar_filtroFornecedor" style="display:none;"><a href="#" id="selFornecedor">Clique e Selecione o Fornecedor</a>
+	            	<div id="contasAPagar_filtroFornecedor" style="display:none;"><a href="javascript:void(0)" id="selFornecedor">Clique e Selecione o Fornecedor</a>
 	              		<div class="menu_fornecedor" style="display:none;">
 	                	 	<span class="bt_sellAll">
 	                	 		<input type="checkbox" id="contasAPagarCheckSelecionarTodos" name="Todos1" onclick="contasAPagarController.checkAll(this);" style="float:left;"/><label for="sel">Selecionar Todos</label>
