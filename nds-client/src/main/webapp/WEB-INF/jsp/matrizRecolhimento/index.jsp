@@ -194,7 +194,7 @@
 				<tr>
 					<td width="76">Fornecedor:</td>
 					<td colspan="3">
-						<a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
+						<a href="javascript:void(0)" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 						<div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
 								<input type="checkbox" checked="checked" id="checkBoxSelecionarTodosFornecedores" name="checkBoxSelecionarTodosFornecedores" onclick="checkAll(this, 'checkGroupFornecedores');" style="float:left;"/>
