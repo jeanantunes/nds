@@ -7,7 +7,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +23,8 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.SerializationUtils;
+
+
 
 
 
@@ -497,11 +501,15 @@ public class MatrizLancamentoController extends BaseController {
     	
     	Date novaData =null;
     	
+    	if(session.getAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO)!=null){
+    		produtosLancamento = (List <ProdutoLancamentoVO>)session.getAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO);
+    	}
+    	
     	if(produtosLancamento==null){
     	 produtosLancamento = (List <ProdutoLancamentoVO>)session.getAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO);
     	}
     
-    	if(produtosLancamento!=null && produtosLancamento.get(0).getNovaDataLancamento()!=null){
+    	if(produtosLancamento!=null && !produtosLancamento.isEmpty() && produtosLancamento.get(0).getNovaDataLancamento()!=null){
      		novaData= DateUtil.parseDataPTBR((String)produtosLancamento.get(0).getNovaDataLancamento());
      	 }
     	
@@ -513,20 +521,62 @@ public class MatrizLancamentoController extends BaseController {
     		novaData =DateUtil.parseDataPTBR((String)session.getAttribute(DATA_ATUAL_SELECIONADA));
     	}
     	
-    	this.atualizarMapaLancamento(produtosLancamento, novaData);
+    	if(produtosLancamento!=null && !produtosLancamento.isEmpty()){
+    	 this.atualizarMapaLancamento(produtosLancamento, novaData);
+    	}
     	
     	session.setAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO, null);
     	result.use(Results.json()).withoutRoot().from(Results.nothing()).recursive().serialize();
     	
     }
+    
+    private List<String> validarPeb(Date novadata,List<ProdutoLancamentoVO> produtosLancamento){
+    	
+    	/*
+    	 *  Há uma regra nas parciais que não está sendo respeitada matriz. 
+    	 *  A PEB não pode ser menor que 7 dias, ou seja, se fizermos uma postergação 
+    	 *  do lançamento de qualquer parcial, o limite será data de recolhimento – 7. P.ex.
+    	 *  
+		 *  Parcial 1 – Lacto 01/04/2014 e recolhimento 01/05/2014, 
+		 *  o lançto poderá ser postergado somente até o dia 24/04/2014 (ou seja 01/05/2014 – 7 dias).
+    	 */
+    	List<String> listaMensagens = new ArrayList<String>();
+    	List<ProdutoLancamentoVO> produtosLancamentoAux = new ArrayList<ProdutoLancamentoVO>();
+    	produtosLancamentoAux.addAll(produtosLancamento);
+    	
+    	for(ProdutoLancamentoVO produtoLancamento :produtosLancamento){
+    	
+    	 if(produtoLancamento!=null && produtoLancamento.getDataRecolhimentoDistribuidor()!=null && novadata!=null){
+    		if (!novadata.before(DateUtil.subtrairDias(DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimentoDistribuidor()),7))) {
+    			
+    			if(listaMensagens.isEmpty()){
+    				listaMensagens.add("PEB não pode ser menor que 7 dias. A(s) publicação(ções) abaixo não foi/foram alterada(s):");
+    			}
+    			listaMensagens.add("Produto: "+produtoLancamento.getNomeProduto()+" Edição: "+produtoLancamento.getNumeroEdicao());
+    			produtosLancamentoAux.remove(produtoLancamento);
+    			//throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "PEB não pode ser menor que 7 dias. A(s) publicação(ções) abaixo não foi/foram alterada(s): "));
+    		}
+    	 }
+        }
+ 
+    	produtosLancamento.clear();
+    	produtosLancamento.addAll(produtosLancamentoAux);
+    	return listaMensagens;
+    }
+    
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
-    public void reprogramarLancamentosSelecionados(final List<ProdutoLancamentoVO> produtosLancamento,
+    public void reprogramarLancamentosSelecionados( List<ProdutoLancamentoVO> produtosLancamento,
             final String novaDataFormatada) {
         
     	List<String> listaMensagens = new ArrayList<String>();
+    	List<String> listaMensagensAux = new ArrayList<String>();
     	
     	ValidacaoVO validacao =  null;
+    	
+        final Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
+        
+        listaMensagensAux = this.validarPeb(novaData,produtosLancamento);
     	 
         this.verificarExecucaoInterfaces();
         
@@ -534,33 +584,43 @@ public class MatrizLancamentoController extends BaseController {
         
         adicionarAtributoAlteracaoSessao();
         
-        final Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
-        
         this.validarDatasConfirmacao(novaData);
         
         this.validarListaParaReprogramacao(produtosLancamento);
         
-        listaMensagens = this.validarDataReprogramacao(produtosLancamento, novaData);
+        if(!produtosLancamento.isEmpty()){
+         listaMensagens = this.validarDataReprogramacao(produtosLancamento, novaData);
+        }
         
         //this.atualizarMapaLancamento(produtosLancamento, novaData);
         
         session.setAttribute(DATA_ATUAL_SELECIONADA, novaDataFormatada);
    	    session.setAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO, produtosLancamento);
    	 
-        
-        if(!listaMensagens.isEmpty()){
-            
-        	  
-        	 validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
-        
-            //throw new ValidacaoException(validacao);
-            
-        	 
-        	 
-        	 result.use(Results.json()).from(listaMensagens,"info").recursive().serialize();
-        	 
-        }else{
+        if(listaMensagensAux.isEmpty() && listaMensagens.isEmpty()){
          result.use(Results.json()).withoutRoot().from(Results.nothing()).recursive().serialize();
+        
+        }else if(!listaMensagensAux.isEmpty() && !listaMensagens.isEmpty()){
+        	
+        	validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagensAux);
+        	
+        	if(produtosLancamento.isEmpty()){
+           	 throw new ValidacaoException(validacao);
+           	}else{
+           	 List<List> listaComposta = new ArrayList<List>();
+           	 listaComposta.add(0, listaMensagensAux);
+           	 listaComposta.add(1, listaMensagens);
+           	 result.use(Results.json()).from(listaComposta,"composto").recursive().serialize();
+           	}
+        }else if(listaMensagensAux.isEmpty() && !listaMensagens.isEmpty()){
+        
+        	//validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
+        	result.use(Results.json()).from(listaMensagens,"info").recursive().serialize();
+        	
+        }else{
+        
+        	result.use(Results.json()).from(listaMensagensAux,"msg").recursive().serialize(); 
+        	 
         }
     }
     
@@ -588,6 +648,7 @@ public class MatrizLancamentoController extends BaseController {
     public void reprogramarLancamentoUnico(final ProdutoLancamentoVO produtoLancamento) {
         
     	List<String> listaMensagens = new ArrayList<String>();
+    	List<String> listaMensagensAux = new ArrayList<String>();
     	List<ProdutoLancamentoVO> produtosLancamento = new ArrayList<ProdutoLancamentoVO>();
     	ValidacaoVO validacao = null;
     	
@@ -602,26 +663,35 @@ public class MatrizLancamentoController extends BaseController {
             final Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
             
             this.validarDatasConfirmacao(novaData);
-            
+
             produtosLancamento.add(produtoLancamento);
             
             this.validarListaParaReprogramacao(produtosLancamento);
             
-            listaMensagens.addAll(this.validarDataReprogramacao(produtosLancamento, novaData));
+            listaMensagensAux = validarPeb(novaData,produtosLancamento);
             
+            if(!produtosLancamento.isEmpty()){
+             listaMensagens.addAll(this.validarDataReprogramacao(produtosLancamento, novaData));
+            }
             //this.atualizarMapaLancamento(produtosLancamento, novaData);
         }
         
         session.setAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO, produtosLancamento);
         
-        if(!listaMensagens.isEmpty()){
-        
-        	validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
-        
-            //throw new ValidacaoException(validacao);
+        if(!listaMensagensAux.isEmpty()){
         	
+        	validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagensAux);
+        	
+        	if(produtosLancamento.isEmpty()){
+           	 throw new ValidacaoException(validacao);
+           	}else{
+           	 result.use(Results.json()).from(validacao,"msg").recursive().serialize();
+           	}
+        }
+        if(!listaMensagens.isEmpty()){
         	
         	result.use(Results.json()).from(listaMensagens,"info").recursive().serialize();
+ 
         }else{
         
             result.use(Results.json()).withoutRoot().from(Results.nothing()).recursive().serialize();
@@ -1161,6 +1231,9 @@ public class MatrizLancamentoController extends BaseController {
         
         produtoBalanceamentoVO.setDataRecolhimentoPrevista(DateUtil.formatarDataPTBR(produtoLancamentoDTO
                 .getDataRecolhimentoPrevista()));
+        
+        produtoBalanceamentoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR(produtoLancamentoDTO
+                .getDataRecolhimentoDistribuidor()));
         
         produtoBalanceamentoVO.setId(produtoLancamentoDTO.getIdLancamento());
         
