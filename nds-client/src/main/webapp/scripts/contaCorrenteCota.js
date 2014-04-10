@@ -233,7 +233,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				value.cell.saldo = (value.cell.saldo != null && formatMoneyValue(value.cell.saldo, 2) != 0)?
                                    (formatMoneyValue(value.cell.saldo * -1, 2)) : '0.00'; 
                
-                if(value.cell.statusDivida && value.cell.statusDivida == "NEGOCIADA") {	
+                if(value.cell.statusDivida && (value.cell.statusDivida == "NEGOCIADA" || value.cell.statusDivida == "POSTERGADA")) {	
                 	
                 	value.cell.cobrado = '<img src="'+ contextPath +'/images/hammer.png" alt="Dívida Negociada"/>';
                 	

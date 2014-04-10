@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.financeiro.TipoNegociacao;
@@ -46,4 +47,6 @@ public interface NegociacaoDividaService {
 	Integer obterQuantidadeParcelasConformeValorMinimo(FiltroCalculaParcelas filtro);
 	
 	void abaterNegociacaoPorComissao(Long idCota, BigDecimal valorTotalReparte, BigDecimal valorTotalEncalhe, Usuario usuario);
+
+    void verificarAtivacaoCotaAposPgtoParcela(Cobranca cobranca, Usuario usuario);
 }

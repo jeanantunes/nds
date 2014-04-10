@@ -346,17 +346,28 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
      * @param dividaAcumulada
      */
 	@Override
-	public Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada) {
+	public Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada, boolean apneasBoletoPagavel) {
 		
 		Criteria criteria = super.getSession().createCriteria(Boleto.class);
 		
 		criteria.add(Restrictions.eq("nossoNumero", nossoNumero));
 		
-		if (dividaAcumulada != null) {
+		if (dividaAcumulada != null || apneasBoletoPagavel) {
 			
 			criteria.createAlias("divida", "divida");
 			
 			criteria.add(Restrictions.eq("divida.acumulada", dividaAcumulada));
+		}
+		
+		if (apneasBoletoPagavel){
+		    
+		    criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
+		    criteria.add(Restrictions.isNull("dataPagamento"));
+		    criteria.add(Restrictions.in("divida.status", 
+		            Arrays.asList(
+		                    StatusDivida.EM_ABERTO, 
+		                    StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO, 
+		                    StatusDivida.PENDENTE_INADIMPLENCIA)));
 		}
 		
 		criteria.setMaxResults(1);
