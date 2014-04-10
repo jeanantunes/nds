@@ -1131,6 +1131,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamentoDistribuidor, ");
 		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as novaDataLancamento, ");
 		sql.append(" lancamento.DATA_REC_PREVISTA as dataRecolhimentoPrevista, ");
+		sql.append(" lancamento.DATA_REC_DISTRIB as dataRecolhimentoDistribuidor, ");
 		sql.append(" lancamento.ALTERADO_INTERFACE as alteradoInteface, ");
 		sql.append(" lancamento.TIPO_LANCAMENTO as tipoLancamento, ");
 
@@ -1256,6 +1257,7 @@ public class LancamentoRepositoryImpl extends
 				.addScalar("dataLancamentoDistribuidor")
 				.addScalar("novaDataLancamento")
 				.addScalar("dataRecolhimentoPrevista")
+				.addScalar("dataRecolhimentoDistribuidor")
 				.addScalar("repartePrevisto", StandardBasicTypes.BIG_INTEGER)
 				.addScalar("reparteFisico", StandardBasicTypes.BIG_INTEGER)
 				.addScalar("valorTotal")
