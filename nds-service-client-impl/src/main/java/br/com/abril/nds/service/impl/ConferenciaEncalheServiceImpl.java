@@ -69,7 +69,6 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
@@ -2032,6 +2031,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		removerItensConferenciaEncallhe(cota, listaIdConferenciaEncalheParaExclusao);
 		
+		/*
 		final NotaFiscalEntradaCota notaFiscalEntradaCota = atualizarCabecalhoNotaFiscalEntradaCota(
 				controleConfEncalheCota.getId(),
 				controleConfEncalheCota.getNotaFiscalEntradaCotaPricipal(), 
@@ -2043,6 +2043,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				dataOperacao,
 				notaFiscalEntradaCota, 
 				listaConferenciaEncalhe);
+		*/
 		
 	//	final List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
 	//	notaFiscalEntradaCotas.add(notaFiscalEntradaCota);
@@ -2408,11 +2409,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
                 throw new IllegalStateException("Nota Fiscal Saida não parametrizada no sistema");
 			}
 			
-			final NaturezaOperacao tipoNF = tipoNotaFiscalRepository.obterNaturezaOperacao(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
+			// final NaturezaOperacao tipoNF = tipoNotaFiscalRepository.obterNaturezaOperacao(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
 
-			if(tipoNF == null) {
-                throw new IllegalStateException("TipoNotaFiscal não parametrizada");
-			}
+			//if(tipoNF == null) {
+              //  throw new IllegalStateException("TipoNotaFiscal não parametrizada");
+			//}
 			
 	 		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 			
@@ -2420,7 +2421,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			notaFiscalEntradaCota.setCfop(cfop);
 			notaFiscalEntradaCota.setStatusEmissao(statusNF);
-			notaFiscalEntradaCota.setTipoNotaFiscal(tipoNF);
+			// notaFiscalEntradaCota.setTipoNotaFiscal(tipoNF);
 			notaFiscalEntradaCota.setDataEmissao(dataCriacao);
 			notaFiscalEntradaCota.setDataExpedicao(dataCriacao);
 			notaFiscalEntradaCota.setCota(cota);

@@ -33,14 +33,20 @@ import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
+import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -51,6 +57,7 @@ import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
@@ -159,6 +166,9 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
 	private BoxService boxService;
+	
+	@Autowired
+	private NaturezaOperacaoService naturezaOperacaoService;
 	
 	@Path("/")
 	@SuppressWarnings("unchecked")
@@ -1229,6 +1239,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 * @param listaConferenciaEncalheCotaToSave
 	 * @param indConferenciaContingencia
 	 */
+    @SuppressWarnings("unchecked")
 	private void salvarConferenciaCota(final ControleConferenciaEncalheCota controleConfEncalheCota,
 			                           final List<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave,
 			                           final boolean indConferenciaContingencia){
@@ -1250,23 +1261,17 @@ public class ConferenciaEncalheController extends BaseController {
                     "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados. ");
 			
 		} catch (final ConferenciaEncalheFinalizadaException e) {
-            LOGGER.error("Conferência não pode ser salvar, finalize a operação para não perder os dados: "
-                + e.getMessage(), e);
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
+            LOGGER.error("Conferência não pode ser salvar, finalize a operação para não perder os dados: " + e.getMessage(), e);
+            throw new ValidacaoException(TipoMensagem.WARNING, "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
 			
 		}
 		
 		
 		final String loginUsuarioLogado = this.getIdentificacaoUnicaUsuarioLogado();
 		
-		@SuppressWarnings("unchecked")
-		final
-		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+		final Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
 		
-		@SuppressWarnings("unchecked")
-		final
-		Map<String, String> mapaLoginNomeUsuario = 
+		final Map<String, String> mapaLoginNomeUsuario = 
 			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 		
 		removerTravaConferenciaCotaUsuario(this.session.getServletContext(), loginUsuarioLogado, mapaCotaConferidaUsuario, mapaLoginNomeUsuario);
@@ -1692,6 +1697,12 @@ public class ConferenciaEncalheController extends BaseController {
     private void carregarNotasFiscais(final ControleConferenciaEncalheCota controleConfEncalheCota, final InfoConferenciaEncalheCota info) {
         final Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
         
+        
+        TipoAtividade tipoAtividade = this.distribuidorService.tipoAtividade();
+        
+        //FIXME: Ajustar a funcionalidade de NF-e de Terceiros 
+        NaturezaOperacao tipoNotaFiscal = this.naturezaOperacaoService.obterNaturezaOperacao(tipoAtividade, TipoDestinatario.FORNECEDOR, TipoOperacao.ENTRADA);
+        
         final List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
         NotaFiscalEntradaCota notaFiscal = null;
         
@@ -1706,6 +1717,11 @@ public class ConferenciaEncalheController extends BaseController {
             notaFiscal.setValorProdutos((BigDecimal) dadosNotaFiscal.get("valorProdutos"));
             notaFiscal.setControleConferenciaEncalheCota(controleConfEncalheCota);
             notaFiscal.setCota(info.getCota());
+            notaFiscal.setDataExpedicao( DateUtil.parseDataPTBR((String) dadosNotaFiscal.get("dataEmissao")));
+            notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
+            notaFiscal.setOrigem(Origem.MANUAL);
+            notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+            notaFiscal.setValorInformado((BigDecimal) dadosNotaFiscal.get("valorProdutos"));
         }
 
         notaFiscalEntradaCotas.add(notaFiscal);

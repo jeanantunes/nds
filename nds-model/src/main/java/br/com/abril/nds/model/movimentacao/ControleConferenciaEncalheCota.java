@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -69,7 +70,7 @@ public class ControleConferenciaEncalheCota {
 	@JoinColumn(name = "CTRL_CONF_ENCALHE_ID")
 	private ControleConferenciaEncalhe controleConferenciaEncalhe;
 
-	@OneToMany(mappedBy = "controleConferenciaEncalheCota")
+	@OneToMany(fetch=FetchType.LAZY, mappedBy = "controleConferenciaEncalheCota", cascade=CascadeType.ALL)
 	private List<NotaFiscalEntradaCota> notaFiscalEntradaCota = new ArrayList<NotaFiscalEntradaCota>();
 	
 	@OneToMany(mappedBy = "controleConferenciaEncalheCota")

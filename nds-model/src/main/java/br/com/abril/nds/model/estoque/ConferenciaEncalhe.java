@@ -57,7 +57,7 @@ public class ConferenciaEncalhe implements Serializable {
 	@JoinColumn(name = "CHAMADA_ENCALHE_COTA_ID")
 	private ChamadaEncalheCota chamadaEncalheCota;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "CONTROLE_CONFERENCIA_ENCALHE_COTA_ID")
 	private ControleConferenciaEncalheCota controleConferenciaEncalheCota;
 
