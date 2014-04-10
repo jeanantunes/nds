@@ -661,10 +661,10 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" from MovimentoFinanceiroCota mfc ");
-
-		hql.append(" where mfc.baixaCobranca.status = :status ");
-		
-		hql.append(" and mfc.baixaCobranca.cobranca.id = :idCobranca ");
+		hql.append(" join mfc.baixaCobranca baixaCobranca ");
+		hql.append(" join baixaCobranca.cobranca cobranca ");
+		hql.append(" where baixaCobranca.status = :status ");
+		hql.append(" and cobranca.id = :idCobranca ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		

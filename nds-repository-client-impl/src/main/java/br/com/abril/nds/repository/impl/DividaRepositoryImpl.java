@@ -189,6 +189,11 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
             param.put("roteiro", filtro.getIdRoteiro());
         }
         
+        param.put("statusDivida", Arrays.asList(
+                        StatusDivida.EM_ABERTO, 
+                        StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO, 
+                        StatusDivida.PENDENTE_INADIMPLENCIA));
+        
         return param;
     }
     
@@ -238,7 +243,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
            .append(" AND cobranca.statusCobranca=:statusCobranca ")
            .append(" AND pdv.caracteristicas.pontoPrincipal = true ")
            .append(" AND divida.status != :pendenteAcumulada ")
-           .append(" AND roteiro.tipoRoteiro != :tipoRoteiroEspecial ");
+           .append(" AND roteiro.tipoRoteiro != :tipoRoteiroEspecial ")
+           .append(" AND cobranca.dataPagamento is null ")
+           .append(" AND divida.status in (:statusDivida) ");
         
         if (filtro.getNumeroCota() != null) {
             hql.append(" AND cota.numeroCota =:numeroCota ");
