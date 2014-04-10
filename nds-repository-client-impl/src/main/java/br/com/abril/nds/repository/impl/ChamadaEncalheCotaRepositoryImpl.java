@@ -69,9 +69,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			Date dataOperacao,
 			Boolean conferido, Boolean postergado) {
 
-		Query query = 
-				this.getSession().createSQLQuery(
-						this.getSqlValor(conferido, postergado, REPARTE_COM_DESCONTO));
+		Query query = this.getSession().createSQLQuery(this.getSqlValor(conferido, postergado, REPARTE_COM_DESCONTO));
 
 		query.setParameter("dataOperacao", dataOperacao);
 		
@@ -85,7 +83,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			query.setParameter("postergado", postergado);
 		}
 		
-		query.setParameterList("grupoMovimentoEstoque",this.grupoMovimentoEstoqueCota());
+		query.setParameterList("grupoMovimentoEstoque", this.grupoMovimentoEstoqueCota());
 		
 		return (BigDecimal) query.uniqueResult();
 	}
@@ -106,19 +104,17 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			Date dataOperacao,
 			Boolean conferido, Boolean postergado) {
 
-		Query query = 
-				this.getSession().createSQLQuery(
-						this.getSqlValor(conferido, postergado, DESCONTO));
+		Query query = this.getSession().createSQLQuery(this.getSqlValor(conferido, postergado, DESCONTO));
 
 		query.setParameter("dataOperacao", dataOperacao);
 		
 		query.setParameter("numeroCota", numeroCota);
 		
-		if(conferido!=null) {
+		if(conferido != null) {
 			query.setParameter("conferido", conferido);
 		}
 		
-		if(postergado!=null) {
+		if(postergado != null) {
 			query.setParameter("postergado", postergado);
 		}
 		
@@ -192,10 +188,10 @@ public class ChamadaEncalheCotaRepositoryImpl extends
         	sqlValor.append(subSelePrecoComDesconto).append(", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		} else if (DESCONTO.equals(valor)){
 			
-			sqlValor.append("  MEC.PRECO_VENDA - ").append(subSelePrecoComDesconto).append(", 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			sqlValor.append("  MEC_SUB.PRECO_VENDA - ").append(subSelePrecoComDesconto).append(", 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		} else {
 			
-			sqlValor.append(" MEC.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			sqlValor.append(" MEC_SUB.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		}
 	
 		sql.append(" SELECT ");

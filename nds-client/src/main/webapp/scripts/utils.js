@@ -1,7 +1,11 @@
 //Sobrescrita da funcao toFixed para arredondamento no Chrome
+/*
 Number.prototype.toFixed = function(places) {
-  return +(Math.round(this + "e+" + places)  + "e-" + places);
+	var value = +(Math.round(this + "e+" + places) + "e-" + places)+'0000';
+	
+	return value.substr(0, value.indexOf('.', 0)) +'.'+ value.substr(value.indexOf('.', 0) + 1, places ? places : 2);
 };
+*/
 
 var messageTimeout;
 var messageDialogTimeout;
@@ -421,7 +425,7 @@ function priceToFloat(field) {
 	return parseFloat(field).toFixed(4);
 }
 
-function floatToPrice(field) {
+function floatToPrice(field, decimalPlaces) {
 	
 	var price = String(field);
 
@@ -436,7 +440,7 @@ function floatToPrice(field) {
     var part = price.split(".");
     return part[0].split("").reverse().reduce(function(acc, price, i, orig) {
         return  price + (i && !(i % 3) ? "." : "") + acc;
-    }, "") + "," + (part[1]+"0").substr(0, 2);
+    }, "") + "," + (part[1]+"0000").substr(0, (decimalPlaces ? decimalPlaces : 2));
     
 }
 

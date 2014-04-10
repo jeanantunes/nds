@@ -1343,51 +1343,45 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				case VENDA_TOTAL:
 				case NEGOCIACAO_COMISSAO:
 					
-					vlMovFinanDebitoCredito = 
-						this.adicionarValor(vlMovFinanDebitoCredito, movimentoFinanceiroCota);
+					vlMovFinanDebitoCredito = this.adicionarValor(vlMovFinanDebitoCredito, movimentoFinanceiroCota);
 					
 					break;
 					
 				case COMPRA_ENCALHE_SUPLEMENTAR:
 					
-					vlMovFinanVendaEncalhe = 
-						this.adicionarValor(vlMovFinanVendaEncalhe, movimentoFinanceiroCota);
+					vlMovFinanVendaEncalhe = this.adicionarValor(vlMovFinanVendaEncalhe, movimentoFinanceiroCota);
 					
 					break;
 					
 				case RECEBIMENTO_REPARTE:
 					
-					vlMovConsignado = 
-						this.adicionarValor(vlMovConsignado, movimentoFinanceiroCota);
+					vlMovConsignado = this.adicionarValor(vlMovConsignado, movimentoFinanceiroCota);
 					
 					break;
 					
 				case JUROS:
 				case MULTA:
 					
-					vlMovFinanEncargos = 
-						this.adicionarValor(vlMovFinanEncargos, movimentoFinanceiroCota);
+					vlMovFinanEncargos = this.adicionarValor(vlMovFinanEncargos, movimentoFinanceiroCota);
 					
 					break;
 					
 				case ENVIO_ENCALHE:
 
-					vlMovFinanEncalhe = 
-						this.adicionarValor(vlMovFinanEncalhe, movimentoFinanceiroCota);
+					vlMovFinanEncalhe = this.adicionarValor(vlMovFinanEncalhe, movimentoFinanceiroCota);
 					
 					break;
 					
 				case POSTERGADO_DEBITO:
 				case POSTERGADO_CREDITO:
 					
-					vlMovPostergado = 
-							this.adicionarValor(vlMovPostergado, movimentoFinanceiroCota);
+					vlMovPostergado = this.adicionarValor(vlMovPostergado, movimentoFinanceiroCota);
 					
 					break;
 					
 				case PENDENTE:
-					vlMovPendente =
-						this.adicionarValor(vlMovPendente, movimentoFinanceiroCota);
+					
+					vlMovPendente = this.adicionarValor(vlMovPendente, movimentoFinanceiroCota);
 					
 					break;
 			}
