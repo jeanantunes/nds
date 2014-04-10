@@ -27,6 +27,8 @@ public interface MovimentoEstoqueService {
 
     void transferirEstoqueProdutoEdicaoParcialParaLancamento(Long idProdutoEdicao, Usuario usuario);
 	
+    void transferirEstoqueProdutoChamadaoParaRecolhimento(Long idProdutoEdicao, Usuario usuario);
+    
 	void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista, Date dataDistribuidor, Long idProduto,Long idProdutoEdicao, Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,TipoMovimentoEstoque tipoMovimentoJuramentado);
 	
 	MovimentoEstoque gerarMovimentoEstoque(Long idItemRecebimentoFisico, Long idProdutoEdicao,Long idUsuario,BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
