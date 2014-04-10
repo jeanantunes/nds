@@ -410,7 +410,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 			
 		}
 		
-		hql.append("  	GROUP BY PROD_EDICAO.ID ORDER BY codigoSM ");
+		hql.append("  	ORDER BY codigoSM ");
 		
 		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		
