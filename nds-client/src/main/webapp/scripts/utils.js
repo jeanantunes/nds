@@ -1,11 +1,28 @@
 //Sobrescrita da funcao toFixed para arredondamento no Chrome
-/*
-Number.prototype.toFixed = function(places) {
-	var value = +(Math.round(this + "e+" + places) + "e-" + places)+'0000';
-	
-	return value.substr(0, value.indexOf('.', 0)) +'.'+ value.substr(value.indexOf('.', 0) + 1, places ? places : 2);
-};
-*/
+Number.prototype.round = function(digits) {
+    digits = Math.floor(digits);
+    if (isNaN(digits) || digits === 0) {
+        return Math.round(this);
+    }
+    if (digits < 0 || digits > 16) {
+        throw 'RangeError: Number.round() digits argument must be between 0 and 16';
+    }
+    var multiplicator = Math.pow(10, digits);
+    return Math.round(this * multiplicator) / multiplicator;
+}
+
+Number.prototype.toFixed = function(digits) {
+    digits = Math.floor(digits);
+    if (isNaN(digits) || digits === 0) {
+        return Math.round(this).toString();
+    }
+    var parts = this.round(digits).toString().split('.');
+    var fraction = parts.length === 1 ? '' : parts[1];
+    if (digits > fraction.length) {
+        fraction += new Array(digits - fraction.length + 1).join('0');
+    }
+    return parts[0] + '.' + fraction;
+}
 
 var messageTimeout;
 var messageDialogTimeout;
