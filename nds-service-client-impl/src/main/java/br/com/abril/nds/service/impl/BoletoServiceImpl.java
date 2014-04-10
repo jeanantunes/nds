@@ -98,6 +98,7 @@ import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.UsuarioService;
@@ -202,7 +203,8 @@ public class BoletoServiceImpl implements BoletoService {
     @Autowired
     private ParametroCobrancaCotaService paramtroCobrancaCotaService;
     
-    
+    @Autowired
+    private NegociacaoDividaService negociacaoDividaService;
 	                                        /**
      * Método responsável por obter boletos por numero da cota
      * 
@@ -225,7 +227,7 @@ public class BoletoServiceImpl implements BoletoService {
     @Transactional(readOnly=true)
     public Boleto obterBoletoPorNossoNumero(final String nossoNumero, final Boolean dividaAcumulada) {
         
-        return boletoRepository.obterPorNossoNumero(nossoNumero, dividaAcumulada);
+        return boletoRepository.obterPorNossoNumero(nossoNumero, dividaAcumulada,true);
     }
     
 	                                        /**
@@ -696,7 +698,7 @@ public class BoletoServiceImpl implements BoletoService {
             validarDadosEntradaBaixaManual(pagamento);
         }
         
-        final Boleto boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero(), null);
+        final Boleto boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero(), null, false);
         
         // Boleto não encontrado na base
         if (boleto == null) {
@@ -779,8 +781,6 @@ public class BoletoServiceImpl implements BoletoService {
             baixarBoletoValorCorreto(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
                     dataOperacao, boleto, resumoBaixaBoletos, banco, dataPagamento);
             
-            return boleto;
-            
         } else if (valorPagamento.compareTo(valorBoleto) == 1) {
             
             if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
@@ -795,8 +795,6 @@ public class BoletoServiceImpl implements BoletoService {
                 throw new ValidacaoException(TipoMensagem.WARNING, "Boleto com valor divergente!");
             }
             
-            return boleto;
-            
         } else {
             
             if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
@@ -810,9 +808,12 @@ public class BoletoServiceImpl implements BoletoService {
                 
                 throw new ValidacaoException(TipoMensagem.WARNING, "Boleto com valor divergente!");
             }
-            
-            return boleto;
         }
+        
+        //ativar cota caso cobrança seja de uma parcela de divida negociada e a mesma ativar a cota ao paga-la
+        this.negociacaoDividaService.verificarAtivacaoCotaAposPgtoParcela(boleto, usuario);
+        
+        return boleto;
     }
     
     private void baixarBoletoNaoEncontrado(final TipoBaixaCobranca tipoBaixaCobranca, final PagamentoDTO pagamento,
@@ -1757,7 +1758,7 @@ public class BoletoServiceImpl implements BoletoService {
             
             byte[] anexo = null;
             
-            final Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
+            final Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null, false);
             
             Cota cota = null;
             
@@ -1825,7 +1826,7 @@ public class BoletoServiceImpl implements BoletoService {
     @Transactional
     public byte[] gerarImpressaoBoleto(final String nossoNumero) throws IOException, ValidationException {
         
-        final Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
+        final Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null,false);
         
         if (boleto == null){
             
@@ -1866,7 +1867,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         for(final String nossoNumero  : nossoNumeros){
             
-            boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
+            boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null,false);
             
             if(boleto!= null){
                 corpos.add(this.gerarCorpoBoletoCota(boleto, pessoaCedente, aceitaPagamentoVencido));
@@ -1978,7 +1979,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         CobrancaVO cobrancaVO = null;
         
-        final Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
+        final Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null,true);
         if (boleto!=null){
             cobrancaVO = cobrancaService.obterDadosCobranca(boleto.getId(), dataPagamento);
         }

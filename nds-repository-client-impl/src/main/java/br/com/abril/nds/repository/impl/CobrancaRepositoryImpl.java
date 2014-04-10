@@ -284,6 +284,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		} else {
 		    hql.append(" AND ( acd.ID is null )");
 		}
+		
+		hql.append(" and d.STATUS != :statusPostergada ");
 
 		hql.append(" UNION ALL ");
 		
@@ -319,6 +321,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		if (filtro.isAcumulaDivida()){
 			query.setParameter("data", filtro.getDataVencimento());
 		}
+		
+		query.setParameter("statusPostergada", StatusDivida.POSTERGADA.name());
 
 		return query;
 	}

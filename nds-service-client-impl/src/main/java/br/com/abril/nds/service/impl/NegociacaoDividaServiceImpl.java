@@ -44,6 +44,7 @@ import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
@@ -83,6 +84,7 @@ import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -154,6 +156,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     
     @Autowired
     private ConcentracaoCobrancaCotaRepository concentracaoCobrancaCotaRepository;
+    
+    @Autowired
+    private SituacaoCotaService situacaoCotaService;
     
     @Override
     @Transactional(readOnly = true)
@@ -309,19 +314,19 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 		cota.getParametroCobranca().getFornecedorPadrao() : 
                 			formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor().getPoliticaCobranca().getFornecedorPadrao();
                         
-                        if (fornecedor == null) {
-                            
-                            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-                            "A [Cota] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !"));
-                        }
-                        
-                        parcelaNegociacao.getMovimentoFinanceiroCota().setFornecedor(fornecedor);
+                if (fornecedor == null) {
+                    
+                    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+                    "A [Cota] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !"));
+                }
+                
+                parcelaNegociacao.getMovimentoFinanceiroCota().setFornecedor(fornecedor);
 
-                        totalNegociacao = totalNegociacao
-                        					.add(parcelaNegociacao.getMovimentoFinanceiroCota().getValor())
-                        					.add(parcelaNegociacao.getEncargos());
+                totalNegociacao = totalNegociacao
+                					.add(parcelaNegociacao.getMovimentoFinanceiroCota().getValor())
+                					.add(parcelaNegociacao.getEncargos());
 
-                        movimentoFinanceiroCotaRepository.adicionar(parcelaNegociacao.getMovimentoFinanceiroCota());
+                movimentoFinanceiroCotaRepository.adicionar(parcelaNegociacao.getMovimentoFinanceiroCota());
             }
             
             // Caso essa seja uma negociação avulsa as parcelas não devem entrar TODO
@@ -1313,4 +1318,33 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     	return valorVenda.multiply(comissao).divide(BigDecimalUtil.CEM.subtract(comissao));
     }
     
+    @Transactional
+    @Override
+    public void verificarAtivacaoCotaAposPgtoParcela(Cobranca cobranca, Usuario usuario){
+        
+        if (this.negociacaoDividaRepository.verificarAtivacaoCotaAposPgtoParcela(cobranca.getId())){
+            
+            HistoricoSituacaoCota novoHistoricoSituacaoCota = new HistoricoSituacaoCota();
+            
+            novoHistoricoSituacaoCota.setCota(cobranca.getCota());
+            
+            Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
+            
+            novoHistoricoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
+            
+            novoHistoricoSituacaoCota.setResponsavel(usuario);
+            
+            novoHistoricoSituacaoCota.setSituacaoAnterior(
+                novoHistoricoSituacaoCota.getCota().getSituacaoCadastro());
+            
+            novoHistoricoSituacaoCota.setDataInicioValidade(dataOperacaoDistribuidor);
+            
+            novoHistoricoSituacaoCota.setNovaSituacao(SituacaoCadastro.ATIVO);
+            
+            novoHistoricoSituacaoCota.setDescricao("Pagamento Boleto - Negociação");
+            
+            this.situacaoCotaService.atualizarSituacaoCota(
+                novoHistoricoSituacaoCota, dataOperacaoDistribuidor);
+        }
+    }
 }

@@ -6,13 +6,9 @@ import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
-import org.hibernate.metamodel.ValidationException;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -28,7 +24,6 @@ import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO.OrdenacaoColunasStatusCota;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -38,19 +33,10 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.CotaBaseRepository;
-import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
-import br.com.abril.nds.repository.MixCotaProdutoRepository;
-import br.com.abril.nds.service.ConsultaConsignadoCotaService;
-import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
-import br.com.abril.nds.service.EnderecoService;
-import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.SituacaoCotaService;
-import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -83,43 +69,16 @@ public class ManutencaoStatusCotaController extends BaseController {
 	private Result result;
 	
 	@Autowired
-	private HttpSession httpSession;
-	
-	@Autowired
 	private SituacaoCotaService situacaoCotaService;
 	
 	@Autowired
 	private CotaService cotaService;
 	
 	@Autowired
-	private CotaGarantiaService cotaGarantiaService;
-	
-	@Autowired
-	private RoteirizacaoService roteirizacaoService;
-	
-	@Autowired
 	private DividaService dividaService;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
-	
-	@Autowired
-	private EnderecoService enderecoService;
-	
-	@Autowired
-	private TelefoneService telefoneService;
-	
-	@Autowired
-	private ConsultaConsignadoCotaService consignadoCotaService;
-	
-	@Autowired
-	private CotaBaseRepository cotaBaseRepository;
-	
-	@Autowired
-	private MixCotaProdutoRepository mixCotaProdutoRepository;
-	
-	@Autowired
-	private HistoricoSituacaoCotaRepository historicoSituacaoCotaRepository;
 	
 	@Autowired
 	private SchedulerFactoryBean schedulerFactoryBean;
@@ -184,10 +143,15 @@ public class ManutencaoStatusCotaController extends BaseController {
 	@Rules(Permissao.ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA_ALTERACAO)
 	public void confirmarNovo(HistoricoSituacaoCota novoHistoricoSituacaoCota) throws SchedulerException {
 		
-		this.validarAlteracaoStatus(novoHistoricoSituacaoCota);
-		
-		this.validarInativacaoCota(novoHistoricoSituacaoCota.getNovaSituacao(), novoHistoricoSituacaoCota.getCota().getNumeroCota());
-		
+	    if (novoHistoricoSituacaoCota == null ||
+	            novoHistoricoSituacaoCota.getCota().getNumeroCota() == null){
+	        
+	        throw new ValidacaoException(TipoMensagem.ERROR, "Parâmetros inválidos.");
+	    }
+	    
+	    novoHistoricoSituacaoCota.setCota(
+	            this.cotaService.obterPorNumeroDaCota(novoHistoricoSituacaoCota.getCota().getNumeroCota()));
+	    
 		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		novoHistoricoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
@@ -202,9 +166,8 @@ public class ManutencaoStatusCotaController extends BaseController {
 			novoHistoricoSituacaoCota.setDataInicioValidade(dataOperacaoDistribuidor);
 		}
 
-		Long idCota = novoHistoricoSituacaoCota.getCota().getId();
-		
-		novoHistoricoSituacaoCota.setCota(new Cota(idCota));
+		novoHistoricoSituacaoCota.setCota(
+		        this.cotaService.obterPorId(novoHistoricoSituacaoCota.getCota().getId()));
 		
 		this.situacaoCotaService.atualizarSituacaoCota(
 			novoHistoricoSituacaoCota, dataOperacaoDistribuidor);
@@ -428,182 +391,6 @@ public class ManutencaoStatusCotaController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Informe um período válido!");
 		}
 	}
-	
-	/*
-	 * Valida a alteração no status da cota ser inserida no histórico.
-	 * 
-	 * @param novoHistoricoSituacaoCota - nova histórico da situação da cota
-	 */
-	private void validarAlteracaoStatus(HistoricoSituacaoCota novoHistoricoSituacaoCota) {
-		
-		if (novoHistoricoSituacaoCota == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha as informações do Status da Cota");
-		}
-		
-		Cota cota = this.cotaService.obterPorNumeroDaCota(novoHistoricoSituacaoCota.getCota().getNumeroCota());
-			
-		if (cota == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente!");
-		}
-		
-		if(SituacaoCadastro.INATIVO.equals(cota.getSituacaoCadastro())){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível ativar uma cota com status Inativa!");
-		
-		}
-		
-		List<String> listaMensagens = new ArrayList<String>();
-		
-		if (novoHistoricoSituacaoCota.getNovaSituacao() == null) {
-			
-			listaMensagens.add("O preenchimento do campo [Status] é obrigatório!");
-		}
-		
-		if (novoHistoricoSituacaoCota.getCota() == null
-				|| novoHistoricoSituacaoCota.getCota().getNumeroCota() == null) {
-			
-			listaMensagens.add("Informações da cota inválidas!");
-			
-		} else {
-			
-			String defaultMessage = "Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos: ";
-			
-			boolean indLeastOneNecessaryMsg = false;
-			
-			if (novoHistoricoSituacaoCota.getNovaSituacao()==SituacaoCadastro.ATIVO){
-				
-				List<String> msgs = new ArrayList<String>();
-				
-				Long qtde = this.enderecoService.obterQtdEnderecoAssociadoCota(cota.getId());
-				
-			    if (qtde == null || qtde == 0){
-			    	msgs.add(indLeastOneNecessaryMsg ? "Um [Endereço] cadastrado!" : defaultMessage + " Um [Endereço] cadastrado!");
-			    	indLeastOneNecessaryMsg = true;
-			    }
-			    
-			    qtde = this.telefoneService.obterQtdTelefoneAssociadoCota(cota.getId());
-			    if (qtde == null || qtde == 0){
-			    	msgs.add(indLeastOneNecessaryMsg ? "Um [Telefone] cadastrado!" : defaultMessage + " Um [Telefone] cadastrado!");
-			    	indLeastOneNecessaryMsg = true;
-			    }
-			    
-				if (this.distribuidorService.utilizaGarantiaPdv()){
-					
-					qtde = this.cotaGarantiaService.getQtdCotaGarantiaByCota(cota.getId());
-					
-					if (qtde == null || qtde == 0){
-						msgs.add(indLeastOneNecessaryMsg ? "Uma [Garantia] cadastrada!" : defaultMessage + " Uma [Garantia] cadastrada!");
-						indLeastOneNecessaryMsg = true;
-					}
-				}
-				
-				qtde = this.roteirizacaoService.obterQtdRotasPorCota(cota.getNumeroCota());
-				
-				if (qtde == null || qtde == 0){
-					msgs.add(indLeastOneNecessaryMsg ? "Uma [Roteirização] cadastrada!" : defaultMessage + " Uma [Roteirização] cadastrada!");
-					indLeastOneNecessaryMsg = true;
-				}
-				
-				//segundo César, situação PENDENTE == cota nova
-				if (cota.getSituacaoCadastro() == SituacaoCadastro.PENDENTE){
-					
-					if (cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.CONVENCIONAL){
-						
-						if (!this.cotaBaseRepository.cotaTemCotaBase(cota.getId())){
-							
-							msgs.add(
-								"É obrigatório o cadastro de Cota Base para mudança de status para Ativo de cotas novas.");
-						}
-						
-					} else {
-						
-						if (!this.mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(null, cota.getId())){
-							
-							msgs.add(
-								"É obrigatório o cadastro de Mix para mudança de status para Ativo de cotas novas.");
-						}
-					}
-				} else if (cota.getSituacaoCadastro() == SituacaoCadastro.SUSPENSO &&
-					cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.CONVENCIONAL){
-					
-					HistoricoSituacaoCota ultimoHistorico = 
-						this.historicoSituacaoCotaRepository.obterUltimoHistorico(
-							cota.getNumeroCota(), SituacaoCadastro.SUSPENSO);
-					
-					long diasSuspensao = DateUtil.obterDiferencaDias(ultimoHistorico.getDataInicioValidade(), 
-							Calendar.getInstance().getTime());
-					
-					if (diasSuspensao >= 90 && !this.cotaBaseRepository.cotaTemCotaBase(cota.getId())){
-						
-						msgs.add(
-							"Cota suspensa por mais de 90 dias, cadastro de Cota Base obrigatório para mudança de status para Ativo");
-					}
-				}
-				
-				if (!msgs.isEmpty()){
-					
-					throw new ValidacaoException(TipoMensagem.WARNING,msgs);
-				}
-			}
-	
-			novoHistoricoSituacaoCota.setCota(cota);
-		}
-		
-		if (novoHistoricoSituacaoCota.getDataInicioValidade() != null
-				|| novoHistoricoSituacaoCota.getDataFimValidade() != null) {
-			
-			if (novoHistoricoSituacaoCota.getDataInicioValidade() == null) {
-				
-				listaMensagens.add("Informe a data inicial do período!");
-				
-			} else {
-			
-				if (DateUtil.isDataInicialMaiorDataFinal(
-						novoHistoricoSituacaoCota.getDataInicioValidade(), novoHistoricoSituacaoCota.getDataFimValidade())) {
-					
-					listaMensagens.add("Informe um período válido!");
-				}
-				
-				Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-				
-				if (novoHistoricoSituacaoCota.getDataInicioValidade().compareTo(dataOperacao) < 0) {
-					
-					listaMensagens.add("A data inicial do período deve ser igual ou maior que a data de operação!");
-				}
-			}
-		}
-		
-		if (!listaMensagens.isEmpty()) {
-			
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
-			
-			throw new ValidacaoException(validacao);
-		}
-	}
-
-	private void validarInativacaoCota(SituacaoCadastro situacaoCadastro, Integer numeroCota) {
-		
-		if (!SituacaoCadastro.INATIVO.equals(situacaoCadastro)) {
-			
-			return;
-		}
-		
-		validarDividasAbertoCota(numeroCota);
-		
-		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
-
-		FiltroConsultaConsignadoCotaDTO filtro = new FiltroConsultaConsignadoCotaDTO();
-		filtro.setIdCota(cota.getId());
-		
-		BigDecimal totalConsignado = this.consignadoCotaService.buscarTotalGeralDaCota(filtro);
-		
-		if (totalConsignado != null && totalConsignado.compareTo(BigDecimal.ZERO) > 0) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "A cota ["+cota.getPessoa().getNome()+"] possui um total de "+ CurrencyUtil.formatarValorComSimbolo(totalConsignado.floatValue()) +" em consignado e não pode ser inativada!");
-		}
-	}
 
 	/**
 	 * Verifica se a cota possui dividas em aberto
@@ -623,17 +410,6 @@ public class ManutencaoStatusCotaController extends BaseController {
 		}	
 
 		result.use(Results.json()).from(validacao!=null?validacao:"", "result").recursive().serialize();
-	}	
-	
-	public void validarDividasAbertoCota(Integer numeroCota){
-        Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
-        BigDecimal totalDividas = this.dividaService.obterTotalDividasAbertoCota(cota.getId());
-        
-        if (totalDividas!=null){
-            if (totalDividas.floatValue() > 0f){
-                throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"AVISO: A cota ["+cota.getPessoa().getNome()+"] possui um total de "+ CurrencyUtil.formatarValorComSimbolo(totalDividas.floatValue()) +" de dívidas em aberto !"));
-            }
-        }   
 	}
 
 }
