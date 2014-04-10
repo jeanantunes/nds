@@ -20,15 +20,12 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.financeiro.BaixaCobranca;
-import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
-import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -277,24 +274,12 @@ public class DividaServiceImpl implements DividaService {
 			Date backupDataVencimento = cobranca.getDataVencimento();
 			
 			cobranca.getDivida().setStatus(StatusDivida.POSTERGADA);
-			cobranca.setDataPagamento(dataAtual);
-			cobranca.setDataVencimento(dataPostergacao);
-
-			BaixaCobranca baixaCobranca = new BaixaManual();
-			baixaCobranca.setStatus(StatusBaixa.NAO_PAGO_POSTERGADO);
-			baixaCobranca.setDataBaixa(dataAtual);
-			baixaCobranca.setDataPagamento(dataAtual);
-			baixaCobranca.setValorPago(cobranca.getValor());
-			baixaCobranca.setCobranca(cobranca);
-			
-			baixaCobranca = this.baixaCobrancaRepository.merge(baixaCobranca);
 			
 			Cobranca cobrancaAtualizada = this.cobrancaRepository.merge(cobranca);
 			
 			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
 			movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(false);
 			movimentoFinanceiroCotaDTO.setCota(cobrancaAtualizada.getCota());
-			movimentoFinanceiroCotaDTO.setBaixaCobranca(baixaCobranca);
 			movimentoFinanceiroCotaDTO.setDataCriacao(dataAtual);
 			movimentoFinanceiroCotaDTO.setDataVencimento(dataPostergacao);
 			movimentoFinanceiroCotaDTO.setValor(cobrancaAtualizada.getValor());
@@ -303,13 +288,18 @@ public class DividaServiceImpl implements DividaService {
 			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 			movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(postergadoNegociacao);
 			movimentoFinanceiroCotaDTO.setLancamentoManual(true);
+			movimentoFinanceiroCotaDTO.setObservacao("Dívda postergada na Baixa Financeira");
 			
 			
-			Fornecedor fornecedor = cobranca.getFornecedor()!=null?cobranca.getFornecedor():cobranca.getCota().getParametroCobranca()!=null?cobranca.getCota().getParametroCobranca().getFornecedorPadrao():null;
+			Fornecedor fornecedor = cobranca.getFornecedor() != null ?
+			        cobranca.getFornecedor() : cobranca.getCota().getParametroCobranca() != null ?
+			                cobranca.getCota().getParametroCobranca().getFornecedorPadrao() : null;
 			
 			if (fornecedor == null){
 				
-				throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota "+cobranca.getCota().getNumeroCota()+"] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !");
+				throw new ValidacaoException(
+				        TipoMensagem.WARNING, 
+				        "A [Cota "+cobranca.getCota().getNumeroCota()+"] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !");
 			}
 			
 			movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
@@ -326,6 +316,7 @@ public class DividaServiceImpl implements DividaService {
 					
 				movimentoFinanceiroCotaDTO.setValor(juros);
 				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoJuros);
+				movimentoFinanceiroCotaDTO.setObservacao("Juros de dívda postergada na Baixa Financeira");
 				
 				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 				
@@ -336,9 +327,8 @@ public class DividaServiceImpl implements DividaService {
 				
 				movimentoFinanceiroCotaDTO.setValor(multa);
 				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoMulta);
+				movimentoFinanceiroCotaDTO.setObservacao("Multa de dívda postergada na Baixa Financeira");
 				
-				movimentoFinanceiroCotaDTO.setFornecedor(cobrancaAtualizada.getCota().getParametroCobranca()!=null?cobrancaAtualizada.getCota().getParametroCobranca().getFornecedorPadrao():null);
-
 				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 				
 			}

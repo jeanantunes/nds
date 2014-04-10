@@ -35,5 +35,7 @@ public interface BaixaCobrancaRepository extends Repository<BaixaCobranca,Long> 
 	public BaixaCobranca obterUltimaBaixaCobranca(Long idCobranca);
 	
 	List<BaixaManual> obterBaixasManual(List<Long> idsCobranca);
+
+    public String obterDescricaoBaixaPorCobranca(Long idCobranca);
 	
 }
