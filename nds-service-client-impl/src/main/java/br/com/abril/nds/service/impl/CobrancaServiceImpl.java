@@ -57,6 +57,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -103,6 +104,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 	@Autowired
 	private BoletoService boletoService;
+	
+	@Autowired
+	private NegociacaoDividaService negociacaoDividaService;
 	
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
@@ -281,6 +285,11 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		if ((cob!=null)&&(cob.getStatusCobranca()==StatusCobranca.NAO_PAGO)){
 			
+		    if (cob.getDataPagamento() != null){
+		        
+		        return null;
+		    }
+		    
 			cobranca = new CobrancaVO();
 			
 			cobranca.setNossoNumero(cob.getNossoNumero());	
@@ -551,12 +560,16 @@ public class CobrancaServiceImpl implements CobrancaService {
 		Cobranca cobranca = this.cobrancaRepository.buscarPorId(idCobranca);
 		detalhe = new DetalhesDividaVO();
 		detalhe.setData(cobranca.getDataEmissao()!=null?DateUtil.formatarData(cobranca.getDataEmissao(),"dd/MM/yyyy"):"");
-		detalhe.setObservacao("");
-		detalhe.setValor(cobranca.getValor()!=null?CurrencyUtil.formatarValor(cobranca.getValor().multiply(new BigDecimal(-1))):"");
+		detalhe.setValor(cobranca.getValor()!=null?CurrencyUtil.formatarValor(cobranca.getValor()):"");
 		detalhe.setTipo("Dívida");
+		
+		String descBaixa = this.baixaCobrancaRepository.obterDescricaoBaixaPorCobranca(idCobranca);
+		
+		detalhe.setObservacao(descBaixa == null ? "" : descBaixa);
 		detalhes.add(detalhe);
 		
-		List<MovimentoFinanceiroCota> movimentos = this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceirosPorCobranca(idCobranca);
+		List<MovimentoFinanceiroCota> movimentos = 
+		        this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceirosPorCobranca(idCobranca);
         
 		for(MovimentoFinanceiroCota item:movimentos){
 			
@@ -572,25 +585,25 @@ public class CobrancaServiceImpl implements CobrancaService {
 			BaixaManual baixaManual = (BaixaManual) item.getBaixaCobranca();
 			if (baixaManual!=null){
 				
-				if (baixaManual.getValorJuros().floatValue() > 0){
+				if (baixaManual.getValorJuros().compareTo(BigDecimal.ZERO) > 0){
 					detalhe = new DetalhesDividaVO();
 					detalhe.setData(item.getData()!=null?DateUtil.formatarData(item.getData(),"dd/MM/yyyy"):"");
 					detalhe.setObservacao(item.getObservacao()!=null?item.getObservacao():"");
-					detalhe.setValor(baixaManual.getValorJuros()!=null?CurrencyUtil.formatarValor(baixaManual.getValorJuros().multiply(new BigDecimal(-1))):"");
+					detalhe.setValor(baixaManual.getValorJuros()!=null?CurrencyUtil.formatarValor(baixaManual.getValorJuros()):"");
 					detalhe.setTipo("Juros");
 					detalhes.add(detalhe);
 				}
 				
-				if (baixaManual.getValorMulta().floatValue() > 0){
+				if (baixaManual.getValorMulta().compareTo(BigDecimal.ZERO) > 0){
 					detalhe = new DetalhesDividaVO();
 					detalhe.setData(item.getData()!=null?DateUtil.formatarData(item.getData(),"dd/MM/yyyy"):"");
 					detalhe.setObservacao(item.getObservacao()!=null?item.getObservacao():"");
-					detalhe.setValor(baixaManual.getValorMulta()!=null?CurrencyUtil.formatarValor(baixaManual.getValorMulta().multiply(new BigDecimal(-1))):"");
+					detalhe.setValor(baixaManual.getValorMulta()!=null?CurrencyUtil.formatarValor(baixaManual.getValorMulta()):"");
 					detalhe.setTipo("Multa");
 					detalhes.add(detalhe);
 			    }
 				
-			    if (baixaManual.getValorDesconto().floatValue() > 0){
+			    if (baixaManual.getValorDesconto().compareTo(BigDecimal.ZERO) > 0){
 					detalhe = new DetalhesDividaVO();
 					detalhe.setData(item.getData()!=null?DateUtil.formatarData(item.getData(),"dd/MM/yyyy"):"");
 					detalhe.setObservacao(item.getObservacao()!=null?item.getObservacao():"");
@@ -645,6 +658,10 @@ public class CobrancaServiceImpl implements CobrancaService {
 		StatusAprovacao statusAprovacao = StatusAprovacao.APROVADO;
 		if (manterPendente){
 			statusAprovacao = StatusAprovacao.PENDENTE;
+			
+			pagamento.setObservacoes(
+			        (pagamento.getObservacoes() == null || pagamento.getObservacoes().isEmpty() ? "" : pagamento.getObservacoes() + " - ") + 
+                    "Divida baixada com pendência. Aguardando Confirmação.");
 		}
 		
 		BigDecimal valorPagamentoCobranca = pagamento.getValorPagamento();
@@ -705,6 +722,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 		    	break;
 		    	
 		    }
+			
+			//ativar cota caso cobrança seja de uma parcela de divida negociada e a mesma ativar a cota ao paga-la
+			this.negociacaoDividaService.verificarAtivacaoCotaAposPgtoParcela(itemCobranca, pagamento.getUsuario());
 		}
 		
 		

@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
@@ -14,6 +16,7 @@ import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
 import br.com.abril.nds.dto.filtro.FiltroFollowupNegociacaoDTO;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -488,4 +491,74 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+
+    @Override
+    public boolean verificarAtivacaoCotaAposPgtoParcela(Long idCobranca) {
+        
+        SQLQuery query = this.getSession().createSQLQuery(
+                " select "+
+                "    case when parcelaneg7_.ID = i.idParcelaAtivar then true else false end as ativa "+
+                " from "+
+                "    COBRANCA cobranca0_  "+
+                " inner join "+
+                "    COTA cota1_  "+
+                "        on cobranca0_.COTA_ID=cota1_.ID  "+
+                " inner join "+
+                "    DIVIDA divida2_  "+
+                "        on cobranca0_.DIVIDA_ID=divida2_.ID  "+
+                " inner join "+
+                "    DIVIDA_CONSOLIDADO consolidad3_  "+
+                "        on divida2_.ID=consolidad3_.DIVIDA_ID  "+
+                " inner join "+
+                "    CONSOLIDADO_FINANCEIRO_COTA consolidad4_  "+
+                "        on consolidad3_.CONSOLIDADO_ID=consolidad4_.ID  "+
+                " inner join "+
+                "    CONSOLIDADO_MVTO_FINANCEIRO_COTA movimentos5_  "+
+                "        on consolidad4_.ID=movimentos5_.CONSOLIDADO_FINANCEIRO_ID  "+
+                " inner join "+
+                "    MOVIMENTO_FINANCEIRO_COTA movimentof6_  "+
+                "        on movimentos5_.MVTO_FINANCEIRO_COTA_ID=movimentof6_.ID  "+
+                " inner join "+
+                "    PARCELA_NEGOCIACAO parcelaneg7_  "+
+                "        on movimentof6_.ID=parcelaneg7_.MOVIMENTO_FINANCEIRO_ID  "+
+                " inner join "+
+                "    NEGOCIACAO negociacao8_  "+
+                "        on parcelaneg7_.NEGOCIACAO_ID=negociacao8_.ID  "+
+                " join "+
+                "   ( "+
+                "   select  "+
+                "       n.id as idNeg "+
+                "       , count(pn2.ID) as parcelaAtv "+
+                "       , pn.id as idParcelaAtivar "+
+                "   from  "+
+                "       parcela_negociacao pn "+
+                "   join  "+
+                "       negociacao n on n.id = pn.NEGOCIACAO_ID "+
+                "   join  "+
+                "       parcela_negociacao pn2 on pn2.NEGOCIACAO_ID = n.id and pn2.DATA_VENCIMENTO <= pn.DATA_VENCIMENTO "+
+                "   group by  "+
+                "       pn.id "+
+                "   order by  "+
+                "       pn.DATA_VENCIMENTO) i on i.idNeg = negociacao8_.id "+
+                " where "+
+                "    ( "+
+                "        negociacao8_.ATIVAR_PAGAMENTO_APOS_PARCELA is not null "+
+                "    )  "+
+                "    and cobranca0_.ID= :idCobranca  "+
+                "    and cota1_.SITUACAO_CADASTRO<> :ativo "+
+                "    and i.parcelaAtv = negociacao8_.ATIVAR_PAGAMENTO_APOS_PARCELA");
+        
+        query.setParameter("idCobranca", idCobranca);
+        query.setParameter("ativo", SituacaoCadastro.ATIVO.name());
+        
+        query.addScalar("ativa", StandardBasicTypes.BOOLEAN);
+        
+        final Object ret = query.uniqueResult();
+        
+        if (ret == null){
+            return false;
+        }
+        
+        return (boolean) ret;
+    }
 }

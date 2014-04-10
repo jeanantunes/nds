@@ -399,7 +399,7 @@
 					    </td>
 					    <td width="100" id="valorDividas" ></td>
 					    
-					    <td class="dataPagamentoManual" width="100">Data Pagamento:</td>
+					    <td class="dataPagamentoManual" width="100"><strong>Data Pagamento:</strong></td>
 			            <td class="dataPagamentoManual">
 							<input onchange="baixaFinanceiraController.atualizarDadosCobrancaManual();" name="dtPagamentoManual" type="text" id="dtPagamentoManual" style="width:80px; text-align:right;" />
 						</td>

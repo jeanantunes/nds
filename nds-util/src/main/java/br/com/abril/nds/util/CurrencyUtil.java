@@ -1,6 +1,7 @@
 package br.com.abril.nds.util;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -235,4 +236,31 @@ public abstract class CurrencyUtil {
 
 		return totalFormatadoComVirgula.substring(0, indexOf);
 	}
+	
+	/**
+	 * Metodo padrao para arredondamentos com 2 casas
+	 * 
+	 * @param valor
+	 * @return
+	 */
+	public static BigDecimal arredondarValorParaDuasCasas(final BigDecimal valor) {
+
+		BigDecimal valorArredondado = valor.setScale(2, RoundingMode.HALF_EVEN);
+
+		return valorArredondado;
+	}
+
+	/**
+	 * Metodo padrao para arredondamentos com 4 casas
+	 * 
+	 * @param valor
+	 * @return
+	 */
+	public static BigDecimal arredondarValorParaQuatroCasas(final BigDecimal valor) {
+
+		BigDecimal valorArredondado = valor.setScale(4, RoundingMode.HALF_EVEN);
+
+		return valorArredondado;
+	}
+	
 }

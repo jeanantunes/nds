@@ -30,4 +30,6 @@ public interface NegociacaoDividaRepository extends Repository<Negociacao, Long>
 	Negociacao obterNegociacaoPorMovFinanceiroId(Long movFinanId);
 
 	BigDecimal obterValorPagoDividaNegociadaComissao(Long negociacaoId);
+
+    boolean verificarAtivacaoCotaAposPgtoParcela(Long idCobranca);
 }

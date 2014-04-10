@@ -9,7 +9,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.type.BooleanType;
