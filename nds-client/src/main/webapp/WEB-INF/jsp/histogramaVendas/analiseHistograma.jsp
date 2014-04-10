@@ -77,7 +77,7 @@
       <tr>
         <td width="426" rowspan="5" valign="top">
           <span class="bt_novos" title="Gerar Arquivo">
-          	<a id="a1" href="#" data-href="${pageContext.request.contextPath}/distribuicao/histogramaVendas/exportar">
+          	<a id="a1" href="javascript:void(0)" data-href="${pageContext.request.contextPath}/distribuicao/histogramaVendas/exportar">
           	<img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
           </span>
           <span class="bt_novos"><a href="javascript:;" isEdicao="true" id="alterarFaixaReparte" ><img src="images/ico_editar.gif" alt="Alterar Faixar" hspace="5" border="0" />Alterar Faixa</a></span><!-- <span class="bt_novos"><a href="javascript:;"><img src="../images/ico_negociar.png" alt="Reabrir" hspace="5" border="0" />Reabrir</a></span>-->
