@@ -611,7 +611,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		if(listaDebitoCredito){
 			
 			$.each(listaDebitoCredito, function(index, value){
-				value.cell.valor = parseFloat(value.cell.valor).toFixed(2);
+				
+				value.cell.valor = floatToPrice(parseFloat(value.cell.valor).toFixed(4), 4);
 				
 				var strDataArr;
 				if(value.cell.dataLancamento.indexOf('-') > -1) {
