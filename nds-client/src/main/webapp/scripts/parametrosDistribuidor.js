@@ -489,6 +489,14 @@ var parametrosDistribuidorController = $.extend(true, {
 			//form: $("#dialog-confirm", this.workspace).parents("form")
 		});
 		
+		$("#dataLimiteVigenciaRegimeEspecial", this.workspac ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$("#dataLimiteVigenciaRegimeEspecial", this.workspace).mask("99/99/9999");
+		
 		$('#informacoesComplementaresContrato', this.workspace).wysiwyg();
 		$('#informacoesComplementaresContrato', this.workspace).wysiwyg({controls:"font-family,italic,|,undo,redo"});
 		

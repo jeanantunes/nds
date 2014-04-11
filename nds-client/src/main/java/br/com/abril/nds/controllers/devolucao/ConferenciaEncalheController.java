@@ -2089,6 +2089,7 @@ public class ConferenciaEncalheController extends BaseController {
 		indicarStatusConferenciaEncalheCotaSalvo();
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void limparDadosSessaoConferenciaEncalheCotaFinalizada() {
 		
 
@@ -2101,15 +2102,9 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		final String loginUsuarioLogado = this.getIdentificacaoUnicaUsuarioLogado();
 		
-		@SuppressWarnings("unchecked")
-		final
-		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+		final Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
 		
-		@SuppressWarnings("unchecked")
-		final
-		Map<String, String> mapaLoginNomeUsuario = 
-			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
-
+		final Map<String, String> mapaLoginNomeUsuario = (LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 		
 		removerTravaConferenciaCotaUsuario(this.session.getServletContext(), loginUsuarioLogado, mapaCotaConferidaUsuario, mapaLoginNomeUsuario);
 		

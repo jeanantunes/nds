@@ -1010,9 +1010,17 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 			distribuidor.setPossuiRegimeEspecialDispensaInterna(true);
 			
-			distribuidor.setNumeroDispositivoLegal(parametrosDistribuidor.getNumeroDispositivoLegal());
+			if(parametrosDistribuidor.getNumeroDispositivoLegal() == null){
+				throw new ValidacaoException(TipoMensagem.WARNING ,"O campo número do dispositivo legal não pode ser vazio!");
+			} else {
+				distribuidor.setNumeroDispositivoLegal(parametrosDistribuidor.getNumeroDispositivoLegal());
+			}
 			
-			distribuidor.setDataLimiteVigenciaRegimeEspecial(parametrosDistribuidor.getDataLimiteVigenciaRegimeEspecial());
+			if(parametrosDistribuidor.getDataLimiteVigenciaRegimeEspecial() == null){
+				throw new ValidacaoException(TipoMensagem.WARNING ,"O campo data de término da vigência não pode ser vazio!");
+			} else {				
+				distribuidor.setDataLimiteVigenciaRegimeEspecial(parametrosDistribuidor.getDataLimiteVigenciaRegimeEspecial());
+			}
 			
 			Map<String, Long> tiposNotasFiscaisMap = new HashMap<String, Long>();
 			for(TiposNotasFiscaisParametrosVO tnfp : parametrosDistribuidor.getTiposNotasFiscais()) {
