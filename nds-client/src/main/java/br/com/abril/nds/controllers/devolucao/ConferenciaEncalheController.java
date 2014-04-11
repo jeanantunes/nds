@@ -1088,6 +1088,7 @@ public class ConferenciaEncalheController extends BaseController {
 				final Long qtdExemplares = (conf.getQtdExemplar()!=null) ? conf.getQtdExemplar().longValue() : 0L;
 				final Boolean juramentada = conf.getJuramentada();
 				
+				//TODO refatorar para enviar string
 				atualizarItemConferenciaEncalhe(idConferencia, qtdExemplares, juramentada, null, indConferenciaContingencia);
 				
 			}
@@ -1098,9 +1099,10 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
+	//TODO refatorar para receber string
 	private ConferenciaEncalheDTO atualizarItemConferenciaEncalhe(
 			final Long idConferencia, 
-			Long qtdExemplares, 
+			String qtdExemplares, 
 			final Boolean juramentada, 
 			final BigDecimal valorCapa, 
 			final boolean indConferenciaContingencia) {
@@ -1160,7 +1162,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
-	public void atualizarValores(final Long idConferencia, final Long qtdExemplares, final Boolean juramentada, final BigDecimal valorCapa, final boolean indConferenciaContingencia){
+	public void atualizarValores(final Long idConferencia, String qtdExemplares, final Boolean juramentada, final BigDecimal valorCapa, final boolean indConferenciaContingencia){
 		
 		final ConferenciaEncalheDTO conf = atualizarItemConferenciaEncalhe(idConferencia, qtdExemplares, juramentada, valorCapa, indConferenciaContingencia);
 		
@@ -2284,8 +2286,9 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	private BigInteger processarQtdeExemplar(final Long idProdutoEdicao,
 			final ConferenciaEncalheDTO conferenciaEncalheDTO, String quantidade, final boolean indConferenciaContingencia) {
 
-		if(quantidade.contains("e")) {
-			quantidade = quantidade.replace("e", "");
+		if(quantidade.contains(Constants.ENVELOPE_DE_CROMO)) {
+			quantidade = quantidade.replace(Constants.ENVELOPE_DE_CROMO, "");
+			conferenciaEncalheDTO.setParcialCalculado(true);
 		}
 		
 		BigInteger qtd = BigInteger.ZERO;
@@ -2359,7 +2362,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		
 		conferenciaEncalheDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
 
-		conferenciaEncalheDTO.setContagemPacote(this.conferenciaEncalheService.isLancamentoParcial(produtoEdicao.getId()));
+		conferenciaEncalheDTO.setContagemPacote(this.conferenciaEncalheService.isContagemPacote(produtoEdicao.getId()));
 		
 		if (produtoEdicao.getTipoChamadaEncalhe() != null) {
 			
