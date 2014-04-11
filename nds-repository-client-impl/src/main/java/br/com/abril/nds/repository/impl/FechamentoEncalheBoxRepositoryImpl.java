@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -76,7 +77,7 @@ public class FechamentoEncalheBoxRepositoryImpl extends AbstractRepositoryModel<
 				fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().setProdutoEdicao(new ProdutoEdicao());
 				fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().getProdutoEdicao().setId(rs.getLong("PRODUTO_EDICAO_ID"));
 				
-				fechamento.setQuantidade(rs.getLong("QUANTIDADE"));
+				fechamento.setQuantidade(BigInteger.valueOf(rs.getLong("QUANTIDADE")));
 				
 				return fechamento;
 			}

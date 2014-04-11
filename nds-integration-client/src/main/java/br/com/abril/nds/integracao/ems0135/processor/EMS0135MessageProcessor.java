@@ -23,6 +23,7 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0135InputItem;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -240,7 +241,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                     if(inputItem.getDesconto() != null) {
                         produto.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
                     }
-                    
+                    produto.setFormaComercializacao(FormaComercializacao.CONSIGNADO);
+
                     this.getSession().persist(produto);
                 }
                 
