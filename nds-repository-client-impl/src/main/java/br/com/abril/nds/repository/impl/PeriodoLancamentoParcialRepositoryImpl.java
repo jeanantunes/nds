@@ -22,6 +22,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -611,4 +612,31 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 
 		return sql.toString();
 	}
+	
+	@Override
+	public Lancamento obterPrimeiroLancamentoNaoJuramentado(Integer numeroPeriodo, Long idLancamentoParcial) {
+        
+        StringBuilder hql = new StringBuilder();
+        
+        hql.append(" select lancamento from Lancamento lancamento ");
+        hql.append(" left join lancamento.estudo as estudo ");
+        hql.append(" left join estudo.estudoCotas as estudoCota ");
+        hql.append(" join lancamento.periodoLancamentoParcial as periodoLancamentoParcial ");
+        hql.append(" join periodoLancamentoParcial.lancamentoParcial as lancamentoParcial ");
+        hql.append(" where (estudoCota.tipoEstudo is null or estudoCota.tipoEstudo <> :tipoEstudo) ");
+        hql.append(" and periodoLancamentoParcial.numeroPeriodo = :numeroPeriodo ");
+        hql.append(" and lancamentoParcial.id = :idLancamentoParcial ");
+        hql.append(" order by lancamento.dataLancamentoDistribuidor ");
+        
+        Query query = getSession().createQuery(hql.toString());
+        
+        query.setParameter("numeroPeriodo", numeroPeriodo);
+        query.setParameter("idLancamentoParcial", idLancamentoParcial);
+        query.setParameter("tipoEstudo", TipoEstudoCota.JURAMENTADO);
+        
+        query.setMaxResults(1);
+        
+        return (Lancamento) query.uniqueResult();
+    }
+	
 }

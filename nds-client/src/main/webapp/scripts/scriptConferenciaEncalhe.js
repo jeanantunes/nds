@@ -1650,7 +1650,7 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 						    if (result.valorProdutos){
 							    
-						    	$("#valorNotaFiscal", ConferenciaEncalhe.workspace).val(parseFloat(result.valorProdutos).toFixed(2));
+						    	$("#valorNotaFiscal", ConferenciaEncalhe.workspace).val(result.valorProdutos);
 								
 						    }
 							
@@ -2232,7 +2232,7 @@ function confirmarPopup_notaFiscal(){
 		        {name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalhe.workspace).val()},
 		        {name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalhe.workspace).val()},
 		        {name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalhe.workspace).val()},
-		        {name : "notaFiscal.valorProdutos", value : priceToFloat($("#valorNotaFiscal", ConferenciaEncalhe.workspace).val())},
+		        {name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal", ConferenciaEncalhe.workspace).val()},
 		        {name : "notaFiscal.chaveAcesso", value : $("#chaveAcessoNFE", ConferenciaEncalhe.workspace).val()}
 		        ];
 		
@@ -2242,7 +2242,7 @@ function confirmarPopup_notaFiscal(){
 		        {name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalhe.workspace).val()},
 		        {name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalhe.workspace).val()},
 		        {name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalhe.workspace).val()},
-		        {name : "notaFiscal.valorProdutos", value : priceToFloat($("#valorNotaFiscal", ConferenciaEncalhe.workspace).val())}
+		        {name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal", ConferenciaEncalhe.workspace).val()}
 		        ];
 		
 	}

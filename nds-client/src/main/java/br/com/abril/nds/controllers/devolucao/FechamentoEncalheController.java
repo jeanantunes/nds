@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -985,7 +986,7 @@ public class FechamentoEncalheController extends BaseController {
 					linha.setCodigo(codigo);
 					linha.setProdutoEdicao(Long.parseLong(produtoEdicao));
 					if(fisico != null){
-						linha.setFisico(Long.parseLong(fisico));	
+						linha.setFisico(new BigInteger(fisico));	
 					}
 					linha.setReplicar(String.valueOf(checkbox));
 					
@@ -1001,7 +1002,7 @@ public class FechamentoEncalheController extends BaseController {
 			FechamentoFisicoLogicoDTO gridFechamentoEncalheDTO = new FechamentoFisicoLogicoDTO();
 			
 			if(fisico != null) {
-				gridFechamentoEncalheDTO.setFisico(Long.parseLong(fisico));	
+				gridFechamentoEncalheDTO.setFisico(new BigInteger(fisico));	
 			}
 			
 			gridFechamentoEncalheDTO.setCodigo(codigo);

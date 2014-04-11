@@ -207,14 +207,15 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	this.processarLinha = function(i,row) {
 		
 		T.lancamentosPaginacao.push({
-			id:							row.cell.id, 
-			numeroEdicao:				row.cell.numeroEdicao,
-			nomeProduto:	    		row.cell.nomeProduto,
-			dataRecolhimentoPrevista:	row.cell.dataRecolhimentoPrevista,
-			novaDataLancamento:			row.cell.novaDataLancamento,
-			novaDataOriginal:			row.cell.novaDataLancamento,
-			statusLancamento:			row.cell.statusLancamento,
-			fornecedorId:				row.cell.fornecedorId
+			id:								row.cell.id, 
+			numeroEdicao:					row.cell.numeroEdicao,
+			nomeProduto:	    			row.cell.nomeProduto,
+			dataRecolhimentoPrevista:		row.cell.dataRecolhimentoPrevista,
+			dataRecolhimentoDistribuidor:	row.cell.dataRecolhimentoDistribuidor,
+			novaDataLancamento:				row.cell.novaDataLancamento,
+			novaDataOriginal:				row.cell.novaDataLancamento,
+			statusLancamento:				row.cell.statusLancamento,
+			fornecedorId:					row.cell.fornecedorId
 		});
 		
 		var colunaProduto = balanceamento.getColunaProduto(row.cell.idProdutoEdicao,
@@ -405,13 +406,14 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	this.enviarDataDeLancamentoUnico = function(index) {
 		
 		var data = [];
-		
-		data.push({name: 'produtoLancamento.id', 					   value: T.lancamentosPaginacao[index].id});
-		data.push({name: 'produtoLancamento.novaDataLancamento', 	   value: T.lancamentosPaginacao[index].novaDataLancamento});
-		data.push({name: 'produtoLancamento.nomeProduto', 			   value: T.lancamentosPaginacao[index].nomeProduto});
-		data.push({name: 'produtoLancamento.numeroEdicao', 	           value: T.lancamentosPaginacao[index].numeroEdicao});
-		data.push({name: 'produtoLancamento.dataRecolhimentoPrevista', value: T.lancamentosPaginacao[index].dataRecolhimentoPrevista});
-		data.push({name: 'produtoLancamento.fornecedorId', 			   value: T.lancamentosPaginacao[index].fornecedorId});
+
+		data.push({name: 'produtoLancamento.id', 					   		value: T.lancamentosPaginacao[index].id});
+		data.push({name: 'produtoLancamento.novaDataLancamento', 	   		value: T.lancamentosPaginacao[index].novaDataLancamento});
+		data.push({name: 'produtoLancamento.nomeProduto', 			   		value: T.lancamentosPaginacao[index].nomeProduto});
+		data.push({name: 'produtoLancamento.numeroEdicao', 	           		value: T.lancamentosPaginacao[index].numeroEdicao});
+		data.push({name: 'produtoLancamento.dataRecolhimentoPrevista', 		value: T.lancamentosPaginacao[index].dataRecolhimentoPrevista});
+		data.push({name: 'produtoLancamento.dataRecolhimentoDistribuidor', 	value: T.lancamentosPaginacao[index].dataRecolhimentoDistribuidor});
+		data.push({name: 'produtoLancamento.fornecedorId', 			   		value: T.lancamentosPaginacao[index].fornecedorId});
 		
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
@@ -508,11 +510,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			
 		$.each(T.selecionados, function(index, lancamentoSelecionado) {
 			
-			data.push({name: 'produtosLancamento[' + index + '].id', 			   		   value: lancamentoSelecionado.id});
-			data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   		   value: lancamentoSelecionado.nomeProduto});
-			data.push({name: 'produtosLancamento[' + index + '].numeroEdicao', 	   		   value: lancamentoSelecionado.numeroEdicao});
-			data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoPrevista', value: lancamentoSelecionado.dataRecolhimentoPrevista});
-			data.push({name: 'produtosLancamento[' + index + '].fornecedorId'			 , value: lancamentoSelecionado.fornecedorId});
+			data.push({name: 'produtosLancamento[' + index + '].id', 			   		   		value: lancamentoSelecionado.id});
+			data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   		   		value: lancamentoSelecionado.nomeProduto});
+			data.push({name: 'produtosLancamento[' + index + '].numeroEdicao', 	   		   		value: lancamentoSelecionado.numeroEdicao});
+			data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoPrevista', 		value: lancamentoSelecionado.dataRecolhimentoPrevista});
+			data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoDistribuidor', 	value: lancamentoSelecionado.dataRecolhimentoDistribuidor});
+			data.push({name: 'produtosLancamento[' + index + '].fornecedorId'			 , 		value: lancamentoSelecionado.fornecedorId});
 			
 		});
 		
@@ -536,11 +539,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			
 		$.each(T.selecionados, function(index, lancamentoSelecionado) {
 			
-			data.push({name: 'produtosLancamento[' + index + '].id', 			   		   value: lancamentoSelecionado.id});
-			data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   		   value: lancamentoSelecionado.nomeProduto});
-			data.push({name: 'produtosLancamento[' + index + '].numeroEdicao', 	   		   value: lancamentoSelecionado.numeroEdicao});
-			data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoPrevista', value: lancamentoSelecionado.dataRecolhimentoPrevista});
-			data.push({name: 'produtosLancamento[' + index + '].fornecedorId'			 , value: lancamentoSelecionado.fornecedorId});
+			data.push({name: 'produtosLancamento[' + index + '].id', 			   		   		value: lancamentoSelecionado.id});
+			data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   		   		value: lancamentoSelecionado.nomeProduto});
+			data.push({name: 'produtosLancamento[' + index + '].numeroEdicao', 	   		   		value: lancamentoSelecionado.numeroEdicao});
+			data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoPrevista', 		value: lancamentoSelecionado.dataRecolhimentoPrevista});
+			data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoDistribuidor',	value: lancamentoSelecionado.dataRecolhimentoDistribuidor});
+			data.push({name: 'produtosLancamento[' + index + '].fornecedorId'			 , 		value: lancamentoSelecionado.fornecedorId});
 			
 		});
 		
@@ -551,8 +555,24 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 					
 					if (retorno.info) {
 					  T.popup_confirm_dados_alterados(retorno.info,novaDataDeLancamento);
+					} else if (retorno.msg) {
+
+						exibirMensagem("WARNING", retorno.msg);
+						T.reprogramarLancamentosSelecionadosSalvar(novaDataDeLancamento);
+						
+					} else if (retorno.composto) {
+
+						exibirMensagem("WARNING", retorno.composto[0]);
+						T.popup_confirm_dados_alterados(retorno.composto[1],novaDataDeLancamento);
+						
+
+					} else if (retorno.info) {
+						
+						T.popup_confirm_dados_alterados(retorno.composto[1],novaDataDeLancamento);
+					
 					}else{
-					  T.reprogramarLancamentosSelecionadosSalvar(novaDataDeLancamento);
+					
+						T.reprogramarLancamentosSelecionadosSalvar(novaDataDeLancamento);
 					}
 					
 					T.atualizarResumoBalanceamento();
@@ -699,13 +719,15 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	this.popup_confirm_dados_alterados = function(info,novaDataFormatada) {
 		
 		//data.push({name: 'novaDataFormatada', value: $("#novaDataLancamento", _workspace).val()});
-		var textoX ="Os lancamentos serão transferidos para um dia que o fornecedor não Opera:\n\r";
+		var textoX ="Os lancamentos serão transferidos para um dia que o fornecedor não Opera:"+"\n"+"\n";
+		textoX =textoX+"\n";
 		
 		for(i=0;i<info.length;i++){
-		 textoX= textoX+info[i]+"";
+		 textoX= textoX+info[i]+"\n";
 		}
 		 
-		textoX =textoX+"\n\r Deseja Continuar ?";
+		textoX =textoX+"\n";
+		textoX =textoX+"\n"+" Deseja Continuar ?";
 		
         $( "#dialog-confirm-dados-alterados", _workspace ).text(textoX);
 		

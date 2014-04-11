@@ -27,6 +27,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
@@ -518,5 +519,27 @@ public class LancamentoServiceImpl implements LancamentoService {
             this.lancamentoRepository.merge(redistribuicao);
         }
     }
+	
+	@Override
+    @Transactional
+    public void reajustarNumerosLancamento(PeriodoLancamentoParcial periodo) {
+        
+        List<Lancamento> lancamentos = 
+            this.lancamentoRepository.obterLancamentosDoPeriodoParcial(periodo.getId());
+        
+        if(!lancamentos.isEmpty()){
+        
+            int numeroLancamento = 1;
+            
+            for(Lancamento item : lancamentos) {
+                
+                item.setNumeroLancamento(numeroLancamento++);
+                
+                lancamentoRepository.merge(item);
+            }
+        }
+        
+    }
+
 
 }

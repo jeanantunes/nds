@@ -66,6 +66,7 @@ import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.sessionscoped.ConferenciaEncalheSessionScopeAttr;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.PDFUtil;
@@ -1711,14 +1712,14 @@ public class ConferenciaEncalheController extends BaseController {
             notaFiscal.setSerie((String) dadosNotaFiscal.get("serie"));
             notaFiscal.setDataEmissao( DateUtil.parseDataPTBR((String) dadosNotaFiscal.get("dataEmissao")));
             notaFiscal.setChaveAcesso((String) dadosNotaFiscal.get("chaveAcesso"));
-            notaFiscal.setValorProdutos((BigDecimal) dadosNotaFiscal.get("valorProdutos"));
+            notaFiscal.setValorProdutos(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
             notaFiscal.setControleConferenciaEncalheCota(controleConfEncalheCota);
             notaFiscal.setCota(info.getCota());
             notaFiscal.setDataExpedicao( DateUtil.parseDataPTBR((String) dadosNotaFiscal.get("dataEmissao")));
             notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
             notaFiscal.setOrigem(Origem.MANUAL);
             notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
-            notaFiscal.setValorInformado((BigDecimal) dadosNotaFiscal.get("valorProdutos"));
+            notaFiscal.setValorInformado(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
         }
 
         notaFiscalEntradaCotas.add(notaFiscal);
@@ -1856,11 +1857,13 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		final Map<String, Object> dadosNotaFiscal = new HashMap<String, Object>();
 		
+		BigDecimal valorProdutos = CurrencyUtil.arredondarValorParaDuasCasas(notaFiscal.getValorProdutos());
+		
 		dadosNotaFiscal.put("numero", notaFiscal.getNumero());
 		dadosNotaFiscal.put("serie", 	notaFiscal.getSerie());
 		dadosNotaFiscal.put("dataEmissao", DateUtil.formatarDataPTBR(notaFiscal.getDataEmissao()));
 		dadosNotaFiscal.put("chaveAcesso", notaFiscal.getChaveAcesso());
-		dadosNotaFiscal.put("valorProdutos", notaFiscal.getValorProdutos());
+		dadosNotaFiscal.put("valorProdutos", valorProdutos);
 		
 		this.session.setAttribute(NOTA_FISCAL_CONFERENCIA, dadosNotaFiscal);
 		
@@ -1876,7 +1879,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if(dadosNotaFiscal!=null) {
 
-			this.result.use(CustomJson.class).from(dadosNotaFiscal).serialize();
+			this.result.use(CustomJson.class).from(dadosNotaFiscal);
 			
 		} else {
 
@@ -1904,11 +1907,9 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.calcularValoresMonetarios(dadosMonetarios);
 		
-		final BigDecimal valorEncalhe = ((BigDecimal)dadosMonetarios.get("valorEncalhe"));
+		final BigDecimal valorEncalhe = CurrencyUtil.arredondarValorParaDuasCasas(((BigDecimal)dadosMonetarios.get("valorEncalhe")));
 		
-		if (	dadosNotaFiscal != null && 
-				dadosNotaFiscal.get("valorProdutos") != null && 
-				((BigDecimal)dadosNotaFiscal.get("valorProdutos")).compareTo(valorEncalhe) != 0){
+		if (dadosNotaFiscal != null && dadosNotaFiscal.get("valorProdutos") != null && ((BigDecimal)dadosNotaFiscal.get("valorProdutos")).compareTo(valorEncalhe) != 0){
 			
 			final Map<String, Object> dadosResposta = new HashMap<String, Object>();
 			
@@ -2172,16 +2173,16 @@ public class ConferenciaEncalheController extends BaseController {
 			
 				for (final ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
 					
-					final BigDecimal precoCapa = conferenciaEncalheDTO.getPrecoCapa() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoCapa();
+					final BigDecimal precoCapa = CurrencyUtil.arredondarValorParaDuasCasas(conferenciaEncalheDTO.getPrecoCapa() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoCapa());
 					
-					final BigDecimal desconto = conferenciaEncalheDTO.getDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getDesconto();
+					final BigDecimal desconto =  CurrencyUtil.arredondarValorParaDuasCasas(conferenciaEncalheDTO.getDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getDesconto());
 					
-					final BigDecimal precoComDesconto = conferenciaEncalheDTO.getPrecoComDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoComDesconto();
+					final BigDecimal precoComDesconto =  CurrencyUtil.arredondarValorParaDuasCasas(conferenciaEncalheDTO.getPrecoComDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoComDesconto());
 					
 					
 					final BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar());
 					
-					valorTotal = valorTotal.add( conferenciaEncalheDTO.getValorTotal() != null ? conferenciaEncalheDTO.getValorTotal() :  BigDecimal.ZERO );
+					valorTotal = valorTotal.add( CurrencyUtil.arredondarValorParaQuatroCasas(conferenciaEncalheDTO.getValorTotal() != null ? conferenciaEncalheDTO.getValorTotal() :  BigDecimal.ZERO ));
 					
 					valorEncalhe = valorEncalhe.add(precoComDesconto.multiply(qtdExemplar));
 					
@@ -2229,9 +2230,9 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("valorEncalhe", valorEncalhe.setScale(4, RoundingMode.HALF_UP));
 			dados.put("valorVendaDia", valorVendaDia.setScale(4, RoundingMode.HALF_UP));
 			dados.put("valorDebitoCredito", valorDebitoCredito.abs());
-			dados.put("valorPagar", valorPagar.setScale(2, RoundingMode.HALF_UP));
-			dados.put("valorTotal", valorTotal);
-			dados.put("valorPagarAtualizado", valorPagarAtualizado);
+			dados.put("valorPagar",  CurrencyUtil.arredondarValorParaDuasCasas(valorPagar.setScale(2, RoundingMode.HALF_UP)));
+			dados.put("valorTotal",  valorTotal.setScale(4, RoundingMode.HALF_UP));
+			dados.put("valorPagarAtualizado",  CurrencyUtil.arredondarValorParaQuatroCasas(valorPagarAtualizado));
 			dados.put("idconf", info.getIdControleConferenciaEncalheCota());
 		}
 		

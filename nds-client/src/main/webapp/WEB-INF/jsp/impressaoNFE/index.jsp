@@ -175,6 +175,7 @@
 	
 	<div class="linha_separa_fields">&nbsp;</div>
 
+<<<<<<< HEAD
 	<div id="msgBoxDataMovimentoInvalida" title="Data de Movimento inválida.">
 	    <p>É necessário informar uma Data de Movimento válida.</p>
 	</div>
@@ -184,6 +185,32 @@
 		<fieldset style="width: 400px !important;">
 			<legend>Pesquisar Produto</legend>
 			<table width="380" border="0" cellspacing="1" cellpadding="1">
+=======
+					</select></td>
+				</tr>
+				<tr>
+					<td>Cota de:</td>
+					<td><input type="text" name="idCotaInicial" id="idCotaInicial" style="width: 80px;" /> &nbsp;Até&nbsp; <input
+						type="text" name="idCotaFinal" id="idCotaFinal" style="width: 80px;" /></td>
+					<td>Intervalo Box:</td>
+					<td><input type="text" name="idBoxInicial" id="idBoxInicial" style="width: 76px;" /> &nbsp;Até &nbsp; <input
+						type="text" name="idBoxFinal" id="idBoxFinal" style="width: 76px;" /></td>
+					<td>Fornecedor:</td>
+					<td><a href="javascript:void(0)" id="selFornecedor">Clique e Selecione o Fornecedor</a>
+						<div id="menuFornecedores" class="menu_fornecedor" style="display: none;">
+							<span class="bt_sellAll"> <input type="checkbox" name="selecionarTodosFornecedores"
+								id="selecionarTodosFornecedores" onclick="impressaoNfeController.checkTodosFornecedores();" style="float: left;" />
+								<label for="sel">Selecionar Todos</label>
+							</span> <br clear="all" />
+							<c:forEach items="${fornecedores}" var="fornecedor">
+								<input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}" name="idsFornecedores"
+									onclick="verifyCheck($('#checkBoxSelecionarTodosFornecedores'));" type="checkbox" />
+								<label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.razaoSocial}</label>
+								<br clear="all" />
+							</c:forEach>
+						</div></td>
+				</tr>
+>>>>>>> DGBti/master
 				<tr>
 					<td width="36">Código:</td>
 					<td width="88"><input type="text" id="dialog-pesqProdutos-codigoProduto" name="dialog-pesqProdutos-codigoProduto" style="width: 80px;" /></td>
@@ -210,6 +237,49 @@
 			<table class="produtosAdicionadosPesqGrid"></table>
 		</fieldset>
 		
+<<<<<<< HEAD
+=======
+		<div class="linha_separa_fields">&nbsp;</div>
+
+		<div id="msgBoxDataMovimentoInvalida" title="Data de Movimento inválida.">
+		    <p>É necessário informar uma Data de Movimento válida.</p>
+		</div>
+		
+		<div id="form-pesqProdutos">
+		<div id="dialog-pesqProdutos" title="Pesquisar Produtos" style="display: none;">
+			<fieldset style="width: 400px !important;">
+				<legend>Pesquisar Produto</legend>
+				<table width="380" border="0" cellspacing="1" cellpadding="1">
+					<tr>
+						<td width="36">Código:</td>
+						<td width="88"><input type="text" id="dialog-pesqProdutos-codigoProduto" name="dialog-pesqProdutos-codigoProduto" style="width: 80px;" /></td>
+						<td width="45">Produto:</td>
+						<td width="180"><input type="text" id="dialog-pesqProdutos-nomeProduto" name="dialog-pesqProdutos-nomeProduto"  style="width: 180px;" /></td>
+						<td width="15"><span class="classPesquisar"> <a href="javascript:void(0)" onclick="impressaoNfeController.filtrarProdutos($('#dialog-pesqProdutos-codigoProduto', this.workspace).val(), $('#dialog-pesqProdutos-nomeProduto', this.workspace).val());"> </a>
+						</span></td>
+					</tr>
+				</table>
+			</fieldset>
+
+			<fieldset style="width: 400px !important; margin-top: 5px;">
+				<legend>Produtos Cadastrados</legend>
+				<table class="produtosPesqGrid"></table>
+				<table width="175" border="0" align="right" cellpadding="0" cellspacing="0">
+				    <tr>
+				        <td width="140" align="right"><label for="selTodos">Selecionar Todos</label></td>
+				        <td width="65" align="left" valign="top"><span class="bt_sellAll"><input type="checkbox" id="selecionarTodosProdutosCheck" name="selecionarTodosProdutosCheck" onclick="impressaoNfeController.checkTodosProdutos(this.checked);"/></span></td>
+				    </tr>
+				</table>
+			</fieldset>
+			<fieldset style="width: 400px !important; margin-top: 5px;">
+			<legend>Produtos Filtrados</legend>
+				<table class="produtosAdicionadosPesqGrid"></table>
+			</fieldset>
+			
+		</div>
+		</div>
+
+>>>>>>> DGBti/master
 	</div>
 	</div>
 </div>

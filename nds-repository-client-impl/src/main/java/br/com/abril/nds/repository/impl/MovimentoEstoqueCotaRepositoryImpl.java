@@ -3501,6 +3501,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" and tipoMovimento.grupoMovimentoEstoque not in (:gruposMovimentoReparte) ");
         
+        sql.append(" and mec.statusEstoqueFinanceiro != :processado " );
+        
         sql.append(" group by mec.cota.id ");
         
         final Query query = this.getSession().createQuery(sql.toString());
@@ -3508,6 +3510,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameter("idLancamento", idLancamento);
         
         query.setParameter("idProdutoEdicao", idProdutoEdicao);
+        
+        query.setParameter("processado", StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
         
         query.setParameterList(
                 "gruposMovimentoReparte",
