@@ -930,8 +930,21 @@ var produtoEdicaoController =$.extend(true,  {
 		
 		if (result.rows && result.rows.length > 1) {
 
-			$("#produtoEdicaoController-repartePrevisto", produtoEdicaoController.workspace).attr("disabled", "disabled");
-			$("#produtoEdicaoController-repartePromocional", produtoEdicaoController.workspace).attr("disabled", "disabled");
+			var bloquearCamposReparte = false;
+			$.each(result.rows, function(k, v){
+				if(v.cell.numeroLancamento == $('#produtoEdicaoController-numeroLancamento').val()) {
+					bloquearCamposReparte = true;
+				}
+			});
+			
+			if(bloquearCamposReparte) {
+				$("#produtoEdicaoController-repartePrevisto", produtoEdicaoController.workspace).attr("disabled", "disabled");
+				$("#produtoEdicaoController-repartePromocional", produtoEdicaoController.workspace).attr("disabled", "disabled");
+			} else {
+				$("#produtoEdicaoController-repartePrevisto", produtoEdicaoController.workspace).removeAttr("disabled");
+				$("#produtoEdicaoController-repartePromocional", produtoEdicaoController.workspace).removeAttr("disabled");
+			}
+			
 		}
 		
 		$.each(result.rows, function(index, row) {
