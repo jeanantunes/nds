@@ -72,28 +72,5 @@ public class EstoqueProdutoCotaJuramentadoRepositoryImpl extends AbstractReposit
 		
 		return (BigInteger) criteria.uniqueResult();
 	}
-
-	@Override
-	public BigInteger buscarQtdeEstoquePorProdutoEdicaoNaData(Long idProdutoEdicao, Date data) {
-		
-		if (idProdutoEdicao == null || data == null) {
-			
-			throw new IllegalArgumentException("Informe os parâmetros corretamente!");
-		}
-		
-		StringBuilder hql = new StringBuilder("")
-			.append(" select sum(epcj.qtde) as epcj ")
-			.append(" from EstoqueProdutoCotaJuramentado epcj ")
-			.append(" where epcj.produtoEdicao.id = :idProdutoEdicao ")
-			.append(" and epcj.data = :data ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("idProdutoEdicao", idProdutoEdicao);
-		query.setParameter("data", data);
-		query.setMaxResults(1);
-		
-		return (BigInteger) query.uniqueResult();
-		
-	}
 	
 }
