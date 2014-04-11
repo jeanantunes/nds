@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
-import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.model.cadastro.Editor;
 
 /**
@@ -20,4 +18,8 @@ public interface EditorService {
 	public Editor obterEditorPorId(Long idEditor);
 
 	public List<Editor> obterEditoresDesc();
+
+    public Editor obterEditorPorFornecedor(Long idFornecedor);
+
+    public Long criarEditorFornecedor(Long codigoFornecedor);
 }

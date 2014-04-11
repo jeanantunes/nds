@@ -14,4 +14,6 @@ public interface EditorRepository extends Repository<Editor, Long> {
 	public Editor obterPorCodigo(Long codigo);
 
 	public List<Editor> obterEditoresDesc();
+
+    public Editor obterEditorPorFornecedor(Long idFornecedor);
 }

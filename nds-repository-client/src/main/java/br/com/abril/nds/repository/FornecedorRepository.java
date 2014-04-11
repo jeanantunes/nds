@@ -163,4 +163,7 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	public abstract ItemDTO<Long, String> obterNome(Long id);
 	
 	List<Fornecedor> obterFornecedoresUnificados();
+
+    Fornecedor obterFornecedorPorCodigoJoinJuridica(Integer codigo);
+
 }
