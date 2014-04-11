@@ -207,94 +207,84 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
             listaMensagens.add("O preenchimento do campo [Status] é obrigatório!");
         }
         
-        if (novoHistoricoSituacaoCota.getCota() == null
-                || novoHistoricoSituacaoCota.getCota().getNumeroCota() == null) {
-            
-            listaMensagens.add("Informações da cota inválidas!");
-            
-        } else {
+        if (novoHistoricoSituacaoCota.getNovaSituacao()==SituacaoCadastro.ATIVO){
             
             String defaultMessage = "Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos: ";
             
             boolean indLeastOneNecessaryMsg = false;
             
-            if (novoHistoricoSituacaoCota.getNovaSituacao()==SituacaoCadastro.ATIVO){
+            List<String> msgs = new ArrayList<String>();
+            
+            Long qtde = this.enderecoService.obterQtdEnderecoAssociadoCota(cota.getId());
+            
+            if (qtde == null || qtde == 0){
+                msgs.add(indLeastOneNecessaryMsg ? "Um [Endereço] cadastrado!" : defaultMessage + " Um [Endereço] cadastrado!");
+                indLeastOneNecessaryMsg = true;
+            }
+            
+            qtde = this.telefoneService.obterQtdTelefoneAssociadoCota(cota.getId());
+            if (qtde == null || qtde == 0){
+                msgs.add(indLeastOneNecessaryMsg ? "Um [Telefone] cadastrado!" : defaultMessage + " Um [Telefone] cadastrado!");
+                indLeastOneNecessaryMsg = true;
+            }
+            
+            if (this.distribuidorService.utilizaGarantiaPdv()){
                 
-                List<String> msgs = new ArrayList<String>();
-                
-                Long qtde = this.enderecoService.obterQtdEnderecoAssociadoCota(cota.getId());
-                
-                if (qtde == null || qtde == 0){
-                    msgs.add(indLeastOneNecessaryMsg ? "Um [Endereço] cadastrado!" : defaultMessage + " Um [Endereço] cadastrado!");
-                    indLeastOneNecessaryMsg = true;
-                }
-                
-                qtde = this.telefoneService.obterQtdTelefoneAssociadoCota(cota.getId());
-                if (qtde == null || qtde == 0){
-                    msgs.add(indLeastOneNecessaryMsg ? "Um [Telefone] cadastrado!" : defaultMessage + " Um [Telefone] cadastrado!");
-                    indLeastOneNecessaryMsg = true;
-                }
-                
-                if (this.distribuidorService.utilizaGarantiaPdv()){
-                    
-                    qtde = this.cotaGarantiaService.getQtdCotaGarantiaByCota(cota.getId());
-                    
-                    if (qtde == null || qtde == 0){
-                        msgs.add(indLeastOneNecessaryMsg ? "Uma [Garantia] cadastrada!" : defaultMessage + " Uma [Garantia] cadastrada!");
-                        indLeastOneNecessaryMsg = true;
-                    }
-                }
-                
-                qtde = this.roteirizacaoService.obterQtdRotasPorCota(cota.getNumeroCota());
+                qtde = this.cotaGarantiaService.getQtdCotaGarantiaByCota(cota.getId());
                 
                 if (qtde == null || qtde == 0){
-                    msgs.add(indLeastOneNecessaryMsg ? "Uma [Roteirização] cadastrada!" : defaultMessage + " Uma [Roteirização] cadastrada!");
+                    msgs.add(indLeastOneNecessaryMsg ? "Uma [Garantia] cadastrada!" : defaultMessage + " Uma [Garantia] cadastrada!");
                     indLeastOneNecessaryMsg = true;
-                }
-                
-                //segundo César, situação PENDENTE == cota nova
-                if (cota.getSituacaoCadastro() == SituacaoCadastro.PENDENTE){
-                    
-                    if (cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.CONVENCIONAL){
-                        
-                        if (!this.cotaBaseRepository.cotaTemCotaBase(cota.getId())){
-                            
-                            msgs.add(
-                                "É obrigatório o cadastro de Cota Base para mudança de status para Ativo de cotas novas.");
-                        }
-                        
-                    } else {
-                        
-                        if (!this.mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(null, cota.getId())){
-                            
-                            msgs.add(
-                                "É obrigatório o cadastro de Mix para mudança de status para Ativo de cotas novas.");
-                        }
-                    }
-                } else if (cota.getSituacaoCadastro() == SituacaoCadastro.SUSPENSO &&
-                    cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.CONVENCIONAL){
-                    
-                    HistoricoSituacaoCota ultimoHistorico = 
-                        this.historicoSituacaoCotaRepository.obterUltimoHistorico(
-                            cota.getNumeroCota(), SituacaoCadastro.SUSPENSO);
-                    
-                    long diasSuspensao = DateUtil.obterDiferencaDias(ultimoHistorico.getDataInicioValidade(), 
-                            Calendar.getInstance().getTime());
-                    
-                    if (diasSuspensao >= 90 && !this.cotaBaseRepository.cotaTemCotaBase(cota.getId())){
-                        
-                        msgs.add(
-                            "Cota suspensa por mais de 90 dias, cadastro de Cota Base obrigatório para mudança de status para Ativo");
-                    }
-                }
-                
-                if (!msgs.isEmpty()){
-                    
-                    throw new ValidacaoException(TipoMensagem.WARNING,msgs);
                 }
             }
-    
-            novoHistoricoSituacaoCota.setCota(cota);
+            
+            qtde = this.roteirizacaoService.obterQtdRotasPorCota(cota.getNumeroCota());
+            
+            if (qtde == null || qtde == 0){
+                msgs.add(indLeastOneNecessaryMsg ? "Uma [Roteirização] cadastrada!" : defaultMessage + " Uma [Roteirização] cadastrada!");
+                indLeastOneNecessaryMsg = true;
+            }
+            
+            //segundo César, situação PENDENTE == cota nova
+            if (cota.getSituacaoCadastro() == SituacaoCadastro.PENDENTE){
+                
+                if (cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.CONVENCIONAL){
+                    
+                    if (!this.cotaBaseRepository.cotaTemCotaBase(cota.getId())){
+                        
+                        msgs.add(
+                            "É obrigatório o cadastro de Cota Base para mudança de status para Ativo de cotas novas.");
+                    }
+                    
+                } else {
+                    
+                    if (!this.mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(null, cota.getId())){
+                        
+                        msgs.add(
+                            "É obrigatório o cadastro de Mix para mudança de status para Ativo de cotas novas.");
+                    }
+                }
+            } else if (cota.getSituacaoCadastro() == SituacaoCadastro.SUSPENSO &&
+                cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.CONVENCIONAL){
+                
+                HistoricoSituacaoCota ultimoHistorico = 
+                    this.historicoSituacaoCotaRepository.obterUltimoHistorico(
+                        cota.getNumeroCota(), SituacaoCadastro.SUSPENSO);
+                
+                long diasSuspensao = DateUtil.obterDiferencaDias(ultimoHistorico.getDataInicioValidade(), 
+                        Calendar.getInstance().getTime());
+                
+                if (diasSuspensao >= 90 && !this.cotaBaseRepository.cotaTemCotaBase(cota.getId())){
+                    
+                    msgs.add(
+                        "Cota suspensa por mais de 90 dias, cadastro de Cota Base obrigatório para mudança de status para Ativo");
+                }
+            }
+            
+            if (!msgs.isEmpty()){
+                
+                throw new ValidacaoException(TipoMensagem.WARNING,msgs);
+            }
         }
         
         if (novoHistoricoSituacaoCota.getDataInicioValidade() != null
