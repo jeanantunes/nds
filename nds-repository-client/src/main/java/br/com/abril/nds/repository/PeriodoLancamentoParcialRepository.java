@@ -122,5 +122,8 @@ public interface PeriodoLancamentoParcialRepository extends
 	 * @return PeriodoLancamentoParcial
 	 */
 	PeriodoLancamentoParcial obterPeriodoPosterior(Date dataRecolhimento, Long idProdutoEdicao);
+	
+	Lancamento obterPrimeiroLancamentoNaoJuramentado(Integer numeroPeriodo, Long idLancamentoParcial);
+	
 }
 

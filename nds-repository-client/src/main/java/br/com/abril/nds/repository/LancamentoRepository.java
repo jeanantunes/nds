@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
@@ -417,5 +416,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	List<Lancamento> obterRedistribuicoes(Long idProdutoEdicao, Integer numeroPeriodo);
 	
 	Lancamento obterLancamentoOriginalDaRedistribuicao(Long idProdutoEdicao, Integer numeroPeriodo);
+	
+	List<Lancamento> obterLancamentosDoPeriodoParcial(Long idPeriodo);
 	
 }

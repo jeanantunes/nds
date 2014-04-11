@@ -168,6 +168,20 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		subSelePrecoComDesconto.append("		AND     TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE IN( :grupoMovimentoEstoque ) ");
 		subSelePrecoComDesconto.append("	order by MEC_SUB.DATA desc limit 1) ");
 		
+		StringBuilder subSelePrecoVendaMovimento = new StringBuilder();
+		
+		subSelePrecoVendaMovimento.append(" (SELECT ");
+		subSelePrecoVendaMovimento.append("		 MEC_SUB.PRECO_VENDA ");    
+		subSelePrecoVendaMovimento.append("	FROM ");
+		subSelePrecoVendaMovimento.append("		MOVIMENTO_ESTOQUE_COTA MEC_SUB, ");
+		subSelePrecoVendaMovimento.append("		TIPO_MOVIMENTO TIPO_MOV ");
+		subSelePrecoVendaMovimento.append(" WHERE ");
+		subSelePrecoVendaMovimento.append("		MEC_SUB.COTA_ID = CH_ENCALHE_COTA.COTA_ID ");   
+		subSelePrecoVendaMovimento.append("		AND     MEC_SUB.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");   
+		subSelePrecoVendaMovimento.append("		AND  MEC_SUB.TIPO_MOVIMENTO_ID = TIPO_MOV.ID    ");
+		subSelePrecoVendaMovimento.append("		AND     TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE IN( :grupoMovimentoEstoque ) ");
+		subSelePrecoVendaMovimento.append("	order by MEC_SUB.DATA desc limit 1) ");
+		
 		StringBuilder subSelectDataMovimento = new StringBuilder();
 		
 		subSelectDataMovimento.append(" (SELECT ");
@@ -185,13 +199,15 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
         if (REPARTE_COM_DESCONTO.equals(valor)){
 			
-        	sqlValor.append(subSelePrecoComDesconto).append(", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+        	sqlValor.append(" COALESCE (").append(subSelePrecoComDesconto).append(", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+        	
 		} else if (DESCONTO.equals(valor)){
 			
-			sqlValor.append("  MEC_SUB.PRECO_VENDA - ").append(subSelePrecoComDesconto).append(", 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			sqlValor.append(" COALESCE (").append(subSelePrecoVendaMovimento).append(" - ").append(subSelePrecoComDesconto).append(", 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			
 		} else {
 			
-			sqlValor.append(" MEC_SUB.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			sqlValor.append(" COALESCE (").append(subSelePrecoVendaMovimento).append(", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		}
 	
 		sql.append(" SELECT ");
@@ -202,11 +218,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		sql.append("      CASE WHEN COTA.TIPO_COTA = 'A_VISTA' THEN CASE WHEN COTA.ALTERACAO_TIPO_COTA >= ").append(subSelectDataMovimento).append(" THEN ");
 		
-        sql.append("         ( COALESCE( " +sqlValor+ " ) ");
+        sql.append("         ( " +sqlValor+ " ) ");
 		
 		sql.append("      ELSE 0 END ELSE ");
 		
-		sql.append("         ( COALESCE( " +sqlValor+ " ) ");
+		sql.append("         ( " +sqlValor+ " ) ");
 		
 		sql.append("      END ");
 		

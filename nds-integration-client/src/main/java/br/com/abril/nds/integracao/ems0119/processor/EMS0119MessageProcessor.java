@@ -10,6 +10,7 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.integracao.model.canonic.EMS0119Input;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -55,7 +56,16 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 
 		Produto produto = (Produto) query.uniqueResult();
 		if (null != produto) {
-
+			
+			if (produto.getFormaComercializacao()==null) {
+				produto.setFormaComercializacao(FormaComercializacao.CONSIGNADO);
+				ndsiLoggerFactory.getLogger().logInfo(
+						message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Atualizacao do Forma de Comercialização para: "
+								+ FormaComercializacao.CONSIGNADO.name());
+			}
+			
 			if (!produto.getNome()
 					.equals(input.getNomeDaPublicacao())) {
 				produto.setNome(input.getNomeDaPublicacao());
@@ -175,6 +185,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 			//Default data
 			produto.setPeso(0l);
 			produto.setOrigem(Origem.MANUAL);
+			produto.setFormaComercializacao(FormaComercializacao.CONSIGNADO);
 
 			
 			TipoProduto tp =  this.getTipoProduto(input.getTipoDePublicacao());
