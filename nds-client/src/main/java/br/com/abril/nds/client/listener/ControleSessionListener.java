@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import br.com.abril.nds.client.util.Constants;
@@ -20,8 +21,6 @@ public class ControleSessionListener implements HttpSessionListener {
 	@Override
 	public void sessionCreated(HttpSessionEvent sessionEvent) {
 		
-//		sessionEvent.getSession().setAttribute("X9 LISTENER", 
-//				SecurityContextHolder.getContext().getAuthentication().getName());
 	}
 
 	@Override
@@ -32,7 +31,6 @@ public class ControleSessionListener implements HttpSessionListener {
 		ServletContext context = session.getServletContext();
 		
 		removerTravaConferenciaCotaUsuario(context, session);
-
 	}
 	
 	/**
@@ -42,21 +40,29 @@ public class ControleSessionListener implements HttpSessionListener {
 	 * @param context
 	 * @param session
 	 */
+	@SuppressWarnings("unchecked")
 	private void removerTravaConferenciaCotaUsuario(ServletContext context, HttpSession session) {
 		
-		String loginUsuarioLogado = 
-			SecurityContextHolder.getContext().getAuthentication().getName() + session.getId();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		
-		@SuppressWarnings("unchecked")
-		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+		if (authentication == null) {
+			
+			return;
+		}
 		
-		@SuppressWarnings("unchecked")
+		String autenticacaoUsuarioLogado = authentication.getName() + session.getId();
+		
+		Map<Integer, String> mapaCotaConferidaUsuario = 
+			(LinkedHashMap<Integer, String>) context.getAttribute(
+				Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+		
 		Map<String, String> mapaLoginNomeUsuario = 
-			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
-
+			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(
+				Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 		
-		ConferenciaEncalheController.removerTravaConferenciaCotaUsuario(session.getServletContext(), loginUsuarioLogado, mapaCotaConferidaUsuario, mapaLoginNomeUsuario);
-		
+		ConferenciaEncalheController.removerTravaConferenciaCotaUsuario(
+			session.getServletContext(), autenticacaoUsuarioLogado, 
+				mapaCotaConferidaUsuario, mapaLoginNomeUsuario);
 	}
 
 }
