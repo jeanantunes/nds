@@ -98,6 +98,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
+	private List<ItemDTO<Long, String>> listaFornecedoresCombo = null;
 	
 	@Path("/")
 	public void index(){
@@ -116,14 +117,11 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
      * Método responsável por carregar o combo de fornecedores.
      */
 	private void carregarComboFornecedores() {
-		
+	    listaFornecedoresCombo = new ArrayList<ItemDTO<Long,String>>();
 		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresNaoUnificados();
 		
-		List<ItemDTO<Long, String>> listaFornecedoresCombo = new ArrayList<ItemDTO<Long,String>>();
-		
 		for (Fornecedor fornecedor : listaFornecedor) {
-			listaFornecedoresCombo.add(
-				new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
+			listaFornecedoresCombo.add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
 		}
 		
 		result.include("listaFornecedores",listaFornecedoresCombo );
@@ -133,6 +131,10 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	@Path("/pesquisar")
 	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, String semanaConferenciaEncalhe, 
 			Long idDestinatario, String sortorder, String sortname, int page, int rp){
+
+		if(listaFornecedoresCombo == null || listaFornecedoresCombo.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe fornecedor terceiro cadastrado!");
+		}
 		
 		Intervalo<Date> periodo = null;
 
@@ -712,5 +714,5 @@ this.getNDSFileHeader(), filtro,
 		
 		
 		result.use(FlexiGridJson.class).from(edicoesFechadasVOs).total(quantidade.intValue()).page(page).serialize();
-	}
+	}		
 }

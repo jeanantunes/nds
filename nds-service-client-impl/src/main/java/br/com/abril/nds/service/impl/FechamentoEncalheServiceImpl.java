@@ -64,6 +64,7 @@ import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
@@ -83,6 +84,7 @@ import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProcessoRepository;
+import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -95,6 +97,7 @@ import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NFeService;
@@ -202,6 +205,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private CotaUnificacaoRepository cotaUnificacaoRepository;
+    
+    @Autowired
+    private LancamentoService lancamentoService;
 
 	@Autowired
 	private ProcessoRepository processoRepository;
@@ -214,7 +220,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private CalendarioService calendarioService;
-
+    
+    @Autowired
+    private PeriodoLancamentoParcialRepository periodoLancamentoParcialRepository;
     
     @Override
     @Transactional
@@ -366,8 +374,23 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                     	encalhe.setExemplaresDevolucao(BigInteger.valueOf(0));
                     }
                     
+                    if (encalhe.getExemplaresDevolucaoJuramentado() == null) {
+                        encalhe.setExemplaresDevolucaoJuramentado(BigInteger.valueOf(0));
+                    }
+                    
+                    if (encalhe.getExemplaresVendaEncalhe() == null) {
+                        encalhe.setExemplaresVendaEncalhe(BigInteger.valueOf(0));
+                    }
+                    
                     encalhe.setExemplaresDevolucao(encalhe.getExemplaresDevolucao().add(
                             movimentoEstoqueCota.getExemplaresDevolucao()));
+                    
+                    if (movimentoEstoqueCota.isJuramentada()) {
+                        encalhe.setExemplaresDevolucaoJuramentado(encalhe.getExemplaresDevolucaoJuramentado().add(
+                                movimentoEstoqueCota.getExemplaresDevolucao()));
+                    }
+                    
+                    //TODO: calcular venda de encalhe
                 }
             }
             
@@ -443,17 +466,20 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         return fechamentoEncalheRepository.buscarQuantidadeConferenciaEncalheNovo(filtro);
     }
     
-    private Long calcularDiferenca(final FechamentoFisicoLogicoDTO conferencia) {
+    private BigInteger calcularDiferenca(final FechamentoFisicoLogicoDTO conferencia) {
         
         if (conferencia.getFisico() == null) {
-            conferencia.setFisico(0L);
+            conferencia.setFisico(BigInteger.ZERO);
         }
         
         if (conferencia.getExemplaresDevolucao() == null) {
             conferencia.setExemplaresDevolucao(BigInteger.ZERO);
         }
         
-        return conferencia.getFisico().longValue() - conferencia.getExemplaresDevolucao().longValue();
+        BigInteger qtdeDevolucaoFisico =
+            conferencia.getExemplaresDevolucao().subtract(conferencia.getExemplaresDevolucaoJuramentado()).subtract(conferencia.getExemplaresVendaEncalhe());
+        
+        return conferencia.getFisico().subtract(qtdeDevolucaoFisico);
         
     }
     
@@ -535,7 +561,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             final List<FechamentoFisicoLogicoDTO> listaNaoReplicados) {
         
         FechamentoFisicoLogicoDTO fechamento;
-        Long qtd;
+        BigInteger qtd = null;
         
         for (int i = 0; i < listaFechamento.size(); i++) {
             
@@ -550,11 +576,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 
             } else if (filtro.isCheckAll() || Boolean.valueOf(fechamento.getReplicar())) {
 
-                qtd = fechamento.getExemplaresDevolucao().longValue();
+                qtd = fechamento.getExemplaresDevolucao().subtract(
+                        fechamento.getExemplaresDevolucaoJuramentado()).subtract(fechamento.getExemplaresVendaEncalhe());
 
             } else {
                 
-                qtd = fechamento.getFisico() != null ? fechamento.getFisico() : 0l;
+                qtd = fechamento.getFisico() != null ? fechamento.getFisico() : BigInteger.ZERO;
             }
             
             final FechamentoEncalhePK id = new FechamentoEncalhePK();
@@ -918,6 +945,15 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             this.processarEstudoCotaLancamentoParcial(item, usuario.getId(), dataOperacao);
         }
         
+        for (final MovimentoEstoqueCotaGenericoDTO item : listaMovimentoEstoqueCota) {
+        
+            final Lancamento lancamentoParcial =
+                lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item.getIdChamadaEncalhe());
+            
+            final Lancamento proximoLancamentoParcial = parciaisService.getProximoLancamentoPeriodo(lancamentoParcial);
+            
+            this.lancamentoService.reajustarNumerosLancamento(proximoLancamentoParcial.getPeriodoLancamentoParcial());
+        }
     }
     
     /*
@@ -940,10 +976,19 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             return;
         }
         
-        final EstudoGerado estudoGerado = estudoService.criarEstudo(proximoLancamentoPeriodo.getProdutoEdicao(),
-                item.getQtde(), proximoLancamentoPeriodo.getDataLancamentoDistribuidor(), proximoLancamentoPeriodo.getId());
+        Estudo estudo = null;
+        
+        if (proximoLancamentoPeriodo.getEstudo() == null) {
+            
+            final EstudoGerado estudoGerado = estudoService.criarEstudo(proximoLancamentoPeriodo.getProdutoEdicao(),
+                    item.getQtde(), proximoLancamentoPeriodo.getDataLancamentoDistribuidor(), proximoLancamentoPeriodo.getId());
 
-        Estudo estudo = estudoService.liberar(estudoGerado.getId());
+            estudo = estudoService.liberar(estudoGerado.getId());
+            
+        } else {
+            
+            estudo = this.estudoService.atualizarEstudo(proximoLancamentoPeriodo.getEstudo().getId(), item.getQtde());
+        }
 
         EstudoCota ec = estudoCotaService.criarEstudoCotaJuramentado(proximoLancamentoPeriodo.getProdutoEdicao(), estudo, item
                 .getQtde(), new Cota(item.getIdCota()));
@@ -963,30 +1008,44 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     	
     	Date dataNovoLancamento = this.getDataNovoLancamentoJuramentado(lancamentoParcial, proximoLancamentoParcial);
     	
-    	if (proximoLancamentoParcial == null) { 
+    	if (proximoLancamentoParcial == null) {
     		return null;
     	} else if (dataNovoLancamento == null) {
     		return proximoLancamentoParcial;
     	}
 
-    	final Lancamento primeiroLancamentoPeriodo = proximoLancamentoParcial.getPeriodoLancamentoParcial().getPrimeiroLancamento();
+    	proximoLancamentoParcial.setTipoLancamento(TipoLancamento.REDISTRIBUICAO);
 
-        primeiroLancamentoPeriodo.setTipoLancamento(TipoLancamento.REDISTRIBUICAO);
-
-        this.lancamentoRepository.merge(primeiroLancamentoPeriodo);
+        this.lancamentoRepository.merge(proximoLancamentoParcial);
 
         try {
 
-        	Lancamento novoLancamento = (Lancamento) BeanUtils.cloneBean(primeiroLancamentoPeriodo);
+        	Lancamento novoLancamento = (Lancamento) BeanUtils.cloneBean(proximoLancamentoParcial);
 
+        	novoLancamento.setReparte(BigInteger.ZERO);
+        	novoLancamento.setRepartePromocional(BigInteger.ZERO);
         	novoLancamento.setDataLancamentoPrevista(dataNovoLancamento);
         	novoLancamento.setDataLancamentoDistribuidor(dataNovoLancamento);
         	novoLancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
         	novoLancamento.setStatus(StatusLancamento.EXPEDIDO);
+        	novoLancamento.setNumeroLancamento(null);
         	novoLancamento.setEstudo(null);
+        	novoLancamento.setChamadaEncalhe(null);
+        	novoLancamento.setHistoricos(null);
+        	novoLancamento.setMovimentoEstoqueCotas(null);
+        	novoLancamento.setRecebimentos(null);
 
-        	return this.lancamentoRepository.merge(novoLancamento);        			
-		
+        	Long id = this.lancamentoRepository.adicionar(novoLancamento);
+        	
+        	novoLancamento = this.lancamentoRepository.buscarPorId(id);
+        	
+        	PeriodoLancamentoParcial periodo = proximoLancamentoParcial.getPeriodoLancamentoParcial();
+            periodo.getLancamentos().add(novoLancamento);
+        	
+            this.periodoLancamentoParcialRepository.merge(periodo);
+            
+        	return novoLancamento;
+        	
         } catch (Exception e) {
 
         	throw new IllegalArgumentException(e);
@@ -999,13 +1058,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     		return null;
     	}
     	
-    	final Lancamento primeiroLancamentoPeriodo = proximoLancamentoParcial.getPeriodoLancamentoParcial().getPrimeiroLancamento();
-
-        final Date dataNovoLancamento = this.calendarioService.obterProximaDataDiaUtil(
-    		lancamentoParcial.getDataRecolhimentoDistribuidor()
+        final Date dataNovoLancamento = this.calendarioService.adicionarDiasUteis(
+    		lancamentoParcial.getDataRecolhimentoDistribuidor(), 1
     	);
 
-        if (dataNovoLancamento.compareTo(primeiroLancamentoPeriodo.getDataLancamentoDistribuidor()) == 0) {
+        if (dataNovoLancamento.compareTo(proximoLancamentoParcial.getDataLancamentoDistribuidor()) == 0) {
         	return null;
         }
         
@@ -1048,12 +1105,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                         && itemSessao.getEdicao().equals(itemFechamento.getEdicao())) {
                     
                     if (itemSessao.getFisico() == null) {
-                        itemSessao.setFisico(itemFechamento.getExemplaresDevolucao().longValue());
+                        itemSessao.setFisico(itemFechamento.getExemplaresDevolucao());
                     }
                     
                     itemFechamento.setFisico(itemSessao.getFisico());
-                    itemFechamento.setDiferenca(itemSessao.getFisico().longValue()
-                            - itemFechamento.getExemplaresDevolucao().longValue());
+                    
+                    BigInteger qtdeDevolucaoFisico =
+                        itemSessao.getExemplaresDevolucao().subtract(itemSessao.getExemplaresDevolucaoJuramentado()).subtract(itemSessao.getExemplaresVendaEncalhe());
+                    
+                    itemFechamento.setDiferenca(
+                        itemSessao.getFisico().subtract(qtdeDevolucaoFisico));
                 }
             }
         }
@@ -1105,9 +1166,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         return nossoNumeroCentralizacao;
     }
-    
+
     private void tratarEncalheProdutoEdicaoParcial(final FechamentoFisicoLogicoDTO item, final Usuario usuario,
-            final Long encalheFisico) {
+            final BigInteger encalheFisico) {
         
        
         movimentoEstoqueService.transferirEstoqueProdutoEdicaoParcialParaLancamento(item.getProdutoEdicao(), usuario);
@@ -1117,9 +1178,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         if (lancamentoParcial != null) {
             
-            parciaisService.atualizarReparteDoProximoLancamentoPeriodo(lancamentoParcial, usuario, BigInteger
-                    .valueOf(encalheFisico));
-            
+            parciaisService.atualizarReparteDoProximoLancamentoPeriodo(
+                lancamentoParcial, usuario, encalheFisico);
         }
     }
 
@@ -1315,7 +1375,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             final List<FechamentoFisicoLogicoDTO> listaNaoReplicados) {
         
         FechamentoFisicoLogicoDTO fechamento;
-        Long qtd;
+        BigInteger qtd = null;
         
         for (int i = 0; i < listaFechamento.size(); i++) {
             
@@ -1330,11 +1390,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 
             } else if (filtro.isCheckAll()) {
                 
-                qtd = fechamento.getExemplaresDevolucao().longValue();
+                qtd = fechamento.getExemplaresDevolucao();
                 
             } else {
                 
-                qtd = fechamento.getFisico() == null ? 0l : fechamento.getFisico();
+                qtd = fechamento.getFisico() == null ? BigInteger.ZERO : fechamento.getFisico();
             }
             
             final FechamentoEncalhePK id = new FechamentoEncalhePK();
@@ -1437,8 +1497,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             } else {
             	
                 fechamentoEncalhe.setQuantidade(
-                	(fechamentoEncalhe.getQuantidade() == null ? 0l : fechamentoEncalhe.getQuantidade()) + 
-                	(encalheBox.getQuantidade() == null ? 0l : encalheBox.getQuantidade())
+                	(fechamentoEncalhe.getQuantidade() == null ? BigInteger.ZERO : fechamentoEncalhe.getQuantidade()).add( 
+                	(encalheBox.getQuantidade() == null ? BigInteger.ZERO : encalheBox.getQuantidade()))
                 );
                 
             }

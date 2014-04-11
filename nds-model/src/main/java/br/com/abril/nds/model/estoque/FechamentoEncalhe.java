@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class FechamentoEncalhe implements Serializable {
 	private FechamentoEncalhePK fechamentoEncalhePK;
 	
 	@Column(name="QUANTIDADE", nullable=true)
-	private Long quantidade;
+	private BigInteger quantidade;
 		
 	
 	@OneToMany
@@ -55,11 +56,11 @@ public class FechamentoEncalhe implements Serializable {
 		this.fechamentoEncalhePK = fechamentoEncalhePK;
 	}
 
-	public Long getQuantidade() {
+	public BigInteger getQuantidade() {
 		return quantidade;
 	}
 
-	public void setQuantidade(Long quantidade) {
+	public void setQuantidade(BigInteger quantidade) {
 		this.quantidade = quantidade;
 	}
 

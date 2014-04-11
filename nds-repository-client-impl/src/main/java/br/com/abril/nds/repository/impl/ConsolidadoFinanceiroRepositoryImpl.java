@@ -1018,6 +1018,7 @@ ConsolidadoFinanceiroRepository {
         .append(" where ")
         .append("        cota1_.NUMERO_COTA = :numeroCota ")
         .append("        and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
+        .append("        and chamadaEncalhe.DATA_RECOLHIMENTO = consolidad0_.DT_CONSOLIDADO ")
         .append("        and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
         .append("        and chamadaEncalheCota.postergado = :naoPostergado ");
         
@@ -1111,7 +1112,8 @@ ConsolidadoFinanceiroRepository {
         .append("                                MOVIMENTO_FINANCEIRO_COTA movimentof15_  ")
         .append("                                        on movimentos14_.MVTO_FINANCEIRO_COTA_ID=movimentof15_.ID ")
         .append("                        ) ")
-        .append("                )  ")
+        .append("                )  ")        
+        .append("        and chamadaEncalhe.DATA_RECOLHIMENTO = :dataConsolidado ")
         .append("group by ")
         .append("        idMovimentoEstoqueCota ");
         

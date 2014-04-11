@@ -25,6 +25,8 @@ public interface EstudoService {
 	void gravarEstudo(EstudoGerado estudo);
 	
 	EstudoGerado criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,Date dataLancamento,Long lancamentoId);
+	
+	Estudo atualizarEstudo(Long estudoId, BigInteger reparteAtualizar);
 
 	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId);
 	

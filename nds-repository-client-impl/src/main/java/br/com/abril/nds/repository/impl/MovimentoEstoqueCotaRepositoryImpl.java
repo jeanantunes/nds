@@ -1490,7 +1490,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append("  	desconto_logistica desconto_logistica_prod  ");
         sql.append("  	on ( PROD.DESCONTO_LOGISTICA_ID = desconto_logistica_prod.id ) ");
         
-        sql.append(" INNER JOIN PRODUTO_FORNECEDOR PROD_FORNEC ON (	");
+        sql.append(" LEFT JOIN PRODUTO_FORNECEDOR PROD_FORNEC ON (	");
         sql.append(" 	PROD.ID = PROD_FORNEC.PRODUTO_ID 			");
         sql.append(" ) ");
         
@@ -1506,8 +1506,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" WHERE (EP.QTDE != 0 ");
         sql.append(" OR EP.QTDE_SUPLEMENTAR != 0 ");
         sql.append(" OR EP.QTDE_DEVOLUCAO_ENCALHE != 0) ");
-           
-        sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
+        
+        if(filtro.getIdFornecedor() != null){
+        	sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
+        }
         
         sql.append(" GROUP BY PROD_EDICAO.ID ");
         
@@ -1613,7 +1615,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE.name());
         }
        
-        query.setParameterList("idFornecedor", filtro.getFornecedores());
+        if(filtro.getIdFornecedor() != null){
+        	query.setParameterList("idFornecedor", filtro.getFornecedores());
+        }
         
         return query;
         
@@ -1704,9 +1708,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         .append("	where ");
         
-        if( filtro.getIdFornecedor() != null ) {
-            sql.append(" PROD_FORNEC.FORNECEDORES_ID = :idFornecedor AND ");
-        }
+        sql.append(" PROD_FORNEC.FORNECEDORES_ID = :idFornecedor AND ");
         
         sql.append(" ITEM_CH_ENC_FORNECEDOR.DATA_RECOLHIMENTO BETWEEN :dataInicial AND :dataFinal ")
         
@@ -1720,9 +1722,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
         
-        if(filtro.getIdFornecedor() != null) {
-            query.setParameter("idFornecedor", filtro.getIdFornecedor());
-        }
+        query.setParameter("idFornecedor", filtro.getIdFornecedor());
         
         final BigDecimal valor = (BigDecimal) query.uniqueResult();
         
@@ -3501,6 +3501,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" and tipoMovimento.grupoMovimentoEstoque not in (:gruposMovimentoReparte) ");
         
+        sql.append(" and mec.statusEstoqueFinanceiro != :processado " );
+        
         sql.append(" group by mec.cota.id ");
         
         final Query query = this.getSession().createQuery(sql.toString());
@@ -3508,6 +3510,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameter("idLancamento", idLancamento);
         
         query.setParameter("idProdutoEdicao", idProdutoEdicao);
+        
+        query.setParameter("processado", StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
         
         query.setParameterList(
                 "gruposMovimentoReparte",

@@ -517,17 +517,17 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 					List<ChamadaEncalhe> chamadasEncalhe =
 						this.chamadaEncalheRepository.obterChamadasEncalhe(
-							produtoEdicao, null, dataRecolhimento);
+							produtoEdicao, null, false);
 					
-					if (this.existeChamadaEncalheAntecipadaChamadao(chamadasEncalhe, cota.getId())) {
-						continue;
-					}
+					this.removerChamadaEncalheCotaAntecipadaChamadao(cota, chamadasEncalhe);
 					
-					ChamadaEncalhe chamadaEncalhe = this.getChamadaEncalheMatrizRecolhimento(chamadasEncalhe);
+					ChamadaEncalhe chamadaEncalhe =
+				        this.getChamadaEncalheMatrizRecolhimento(chamadasEncalhe, dataRecolhimento);
 
 					if (chamadaEncalhe == null) {
 						
-						chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
+						
+					    chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
 					}
 
 					Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
@@ -548,6 +548,16 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 		}
 	}
+
+    private void removerChamadaEncalheCotaAntecipadaChamadao(Cota cota, List<ChamadaEncalhe> chamadasEncalhe) {
+        
+        ChamadaEncalheCota chamadaEncalheCota =
+            this.getChamadaEncalheCotaAntecipadaChamadao(chamadasEncalhe, cota.getId());
+        
+        if (chamadaEncalheCota != null) {
+        	this.chamadaEncalheCotaRepository.remover(chamadaEncalheCota);
+        }
+    }
 	
 	/**
 	 * Verifica se a cota devolve encalhe para a criação ou não de ChamadaEncalheCota
@@ -652,13 +662,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		this.chamadaEncalheRepository.merge(chamadaEncalhe);
 	}
 	
-	private ChamadaEncalhe getChamadaEncalheMatrizRecolhimento(List<ChamadaEncalhe> chamadasEncalhe) {
+	private ChamadaEncalhe getChamadaEncalheMatrizRecolhimento(List<ChamadaEncalhe> chamadasEncalhe,
+	                                                           Date dataRecolhimento) {
 		
 		for (ChamadaEncalhe chamadaEncalhe : chamadasEncalhe) {
 			
 			TipoChamadaEncalhe tipoChamadaEncalhe = chamadaEncalhe.getTipoChamadaEncalhe();
 			
-			if (tipoChamadaEncalhe.equals(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)) {
+			if (tipoChamadaEncalhe.equals(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)
+			        && chamadaEncalhe.getDataRecolhimento().equals(dataRecolhimento)) {
 				
 				return chamadaEncalhe;
 			}
@@ -667,7 +679,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return null;
 	}
 	
-	private boolean existeChamadaEncalheAntecipadaChamadao(List<ChamadaEncalhe> chamadasEncalhe, Long idCota) {
+	private ChamadaEncalheCota getChamadaEncalheCotaAntecipadaChamadao(List<ChamadaEncalhe> chamadasEncalhe, Long idCota) {
 		
 		for (ChamadaEncalhe chamadaEncalhe : chamadasEncalhe) {
 			
@@ -679,13 +691,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					if (idCota.equals(chamadaEncalheCota.getCota().getId())) {
 						
-						return true;
+						return chamadaEncalheCota;
 					}
 				}
 			}
 		}
 		
-		return false;
+		return null;
 	}
 	
 	private ChamadaEncalheCota getChamadaEncalheCota(ChamadaEncalhe chamadaEncalhe, Long idCota) {

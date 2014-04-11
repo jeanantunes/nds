@@ -167,10 +167,10 @@
 				href="javascript:;" onclick="dividirEstudo.acaoVoltar('Matriz Distribuição');"><img
 					src="${pageContext.request.contextPath}/images/seta_voltar.gif"
 					alt="Voltar" hspace="5" border="0" />Voltar</a></span> <span class="bt_novos">
-				<a href="#" onclick="dividirEstudo.cancelar();"><img
+				<a href="javascript:void(0)" onclick="dividirEstudo.cancelar();"><img
 					src="${pageContext.request.contextPath}/images/ico_excluir.gif"
 					alt="Cancelar" hspace="5" border="0" />Cancelar</a>
-			</span> <span class="bt_novos"><a href="#"
+			</span> <span class="bt_novos"><a href="javascript:void(0)"
 				onclick="dividirEstudo.confirmar();"><img
 					src="${pageContext.request.contextPath}/images/ico_check.gif"
 					alt="Confirmar" hspace="5" border="0" />Confirmar</a></span> <span

@@ -64,7 +64,6 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 		return (Date) criteria.uniqueResult();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Long countBuscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtro) {
 		
@@ -120,7 +119,9 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 		hql.append(" coalesce(pessoa.nome, pessoa.razaoSocial) as nome, ");
 		hql.append(" cast(cobranca.dataEmissao as string) as dataEmissao, ");
 		hql.append(" cast(cobranca.dataVencimento as string) as dataVencimento, ");
-		hql.append(" cast(cobranca.valor as string) as valor ");
+		hql.append(" cast(cobranca.valor as string) as valor, ");
+		hql.append(" cobranca.nossoNumero as nossoNumero, ");
+		hql.append(" cota.numeroCota as numeroCota ");
 				
 		this.whereFromBuscarCobrancasBaixadas(hql, param, filtro);
 	
@@ -181,5 +182,15 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 		
 		return criteria.list();
 	}
-	
+
+    @Override
+    public String obterDescricaoBaixaPorCobranca(Long idCobranca) {
+        
+        Query query = this.getSession().createQuery(
+                "select b.observacao from BaixaCobranca b join b.cobranca c where c.id = :idCobranca");
+        
+        query.setParameter("idCobranca", idCobranca);
+        
+        return (String) query.uniqueResult();
+    }
 }

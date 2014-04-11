@@ -39,6 +39,7 @@ import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.DateUtil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -259,8 +260,23 @@ public class EstudoServiceImpl implements EstudoService {
 	}
 	
 	@Transactional
+    public Estudo atualizarEstudo(Long estudoId, BigInteger reparteAtualizar) {
+        
+	    Estudo estudo = this.estudoRepository.buscarPorId(estudoId);
+	    
+	    estudo.setQtdeReparte(
+            BigIntegerUtil.soma(estudo.getQtdeReparte(), reparteAtualizar));
+	    
+	    estudo.setReparteDistribuir(
+            BigIntegerUtil.soma(estudo.getReparteDistribuir(), reparteAtualizar));
+	    
+        return this.estudoRepository.merge(estudo);
+    }
+	
+	@Transactional
 	public Estudo liberar(Long idEstudoGerado) {
 		
+	    
 		EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(idEstudoGerado);
 		
 		Lancamento lancamento = 

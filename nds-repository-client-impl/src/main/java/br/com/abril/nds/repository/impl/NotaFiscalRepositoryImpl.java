@@ -405,8 +405,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" WHERE mec.data BETWEEN :dataInicial AND :dataFinal ")
 		.append(" AND mec.movimentoEstoqueCotaEstorno is null ")
 		.append(" AND mec.movimentoEstoqueCotaFuro is null ")
-		.append(" AND mec.notaFiscalEmitida = false ")
-		.append(" AND (cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS = true OR cota.parametrosCotaNotaFiscalEletronica.emiteNotaFiscalEletronica = true)");
+		.append(" AND mec.notaFiscalEmitida = false ");
 		
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null) {

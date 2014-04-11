@@ -1905,7 +1905,7 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
         if(idFornecedor!=null && operacaoDistribuidor!=null && produtoLancamento!=null){
           if (!calendarioService.isDiaOperante(data, idFornecedor, operacaoDistribuidor)) {
             
-        	msg= "Produto: "+produtoLancamento.getNomeProduto()+ " : "+data+ " ("+operacaoDistribuidor+")";
+        	msg= "Produto: "+produtoLancamento.getNomeProduto()+" da edição "+produtoLancamento.getNumeroEdicao()+ " no dia "+DateUtil.formatarDataPTBR(data)+" ("+operacaoDistribuidor+")"+"\n";
         			
             //throw new ValidacaoException(
                     //TipoMensagem.WARNING,

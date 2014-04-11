@@ -180,7 +180,7 @@ balanceamentoLancamento.inicializar();
 		   	      <tr>
 		   	        <td width="68">Fornecedor:&nbsp;</td>
 		   	        <td width="228">
-		            <a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
+		            <a href="javascript:void(0)" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 		              <div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
 
