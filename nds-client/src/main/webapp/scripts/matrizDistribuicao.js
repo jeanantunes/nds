@@ -1672,8 +1672,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.confirmarUmaEdicaoBase = function(edicoesBase) {
 		
-		// passar a lista de edições para estudo!
-		
 		var msg = "O(s) seguinte(s) produto(s) tem apenas 1 edição base, confirma a geração de estudo? </br>";
 			
 	   $.each(edicoesBase, function(index, edicaoBase) {
@@ -1710,23 +1708,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
              	    	    }
              	    	
              	    });
-             	    
-             	   $.each(T.lancamentos, function(index, lancamento) {
-           	       
-             		   if (lancamento.selecionado) {
-           	           
-	           	        	postData.push({name : "produtoDistribuicaoVOs["+index+"].idLancamento", value : lancamento.idLancamento});
-	           	            postData.push({name : "produtoDistribuicaoVOs["+index+"].codigoProduto", value : lancamento.codigoProduto});
-	           	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].numeroEdicao",  value : lancamento.edicao});
-	           	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].repDistrib", 	 value : lancamento.repDistrib});
-           	    	    
-           	    	    if (lancamento.idCopia != null) {
-           	    	    	
-           	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].lancamento", value : lancamento.idLancamento});
-           	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].idCopia", 	  value : lancamento.idCopia});
-           	    	    }
-           	        }
-           	    });
              	    
              	   T.postGeracaoEstudoAutomatico(postData, true);
              	    
