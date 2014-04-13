@@ -1666,44 +1666,13 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	        	
 	        	return;
 	        }
-	        /*
-	        $('#confirmar_variaveis').dialog({
-	            escondeHeader: false,
-	            resizable: false,
-	            height:'auto',
-	            width:600,
-	            modal: true,
-	            buttons: [{
-	                id: "btnConfirmarVariaveis",
-	                text: "Confirmar",
-	                click: function() {
-	                	
-	                	if (T.estudo.estudo[0].length > 0) {
-	                		
-	                		$.each(T.estudo.estudo[0], function(index, htmlEstudo) {
-	                			
-	                			myWindow = window.open('', '_blank');
-	     	                    myWindow.document.write(htmlEstudo);
-	     	                    myWindow.focus();
-	                		});
-	                	}
-	                   
-	                    $(this).dialog("close");
-	                }
-	            },
-	            {id: "btnCancelarVariaveis",
-	                text: "Cancelar",
-	                click: function() {
-	                    $(this).dialog("close");
-	                }
-	            }]
-	        });
-            */
 	    }
 	    );
 	},
 	
 	this.confirmarUmaEdicaoBase = function(edicoesBase) {
+		
+		// passar a lista de edições para estudo!
 		
 		var msg = "O(s) seguinte(s) produto(s) tem apenas 1 edição base, confirma a geração de estudo? </br>";
 			
@@ -1729,17 +1698,35 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
                 	var postData = [];
              	    
              	    $.each(edicoesBase, function(index, edicaoBase) {
-             	           
+             	    	
              	            postData.push({name : "produtoDistribuicaoVOs["+index+"].codigoProduto", value : edicaoBase.codigoProduto});
-             	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].numeroEdicao",  value : edicaoBase.edicao});
+             	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].numeroEdicao",  value : edicaoBase.numeroEdicao});
              	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].repDistrib", 	 value : edicaoBase.repDistrib});
+             	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].lancamento", value : edicaoBase.idLancamento});
              	    	    
              	    	    if (edicaoBase.idCopia != null) {
              	    	    	
-             	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].lancamento", value : edicaoBase.idLancamento});
              	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].idCopia", 	  value : edicaoBase.idCopia});
              	    	    }
+             	    	
              	    });
+             	    
+             	   $.each(T.lancamentos, function(index, lancamento) {
+           	       
+             		   if (lancamento.selecionado) {
+           	           
+	           	        	postData.push({name : "produtoDistribuicaoVOs["+index+"].idLancamento", value : lancamento.idLancamento});
+	           	            postData.push({name : "produtoDistribuicaoVOs["+index+"].codigoProduto", value : lancamento.codigoProduto});
+	           	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].numeroEdicao",  value : lancamento.edicao});
+	           	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].repDistrib", 	 value : lancamento.repDistrib});
+           	    	    
+           	    	    if (lancamento.idCopia != null) {
+           	    	    	
+           	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].lancamento", value : lancamento.idLancamento});
+           	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].idCopia", 	  value : lancamento.idCopia});
+           	    	    }
+           	        }
+           	    });
              	    
              	   T.postGeracaoEstudoAutomatico(postData, true);
              	    
