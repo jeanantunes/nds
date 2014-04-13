@@ -3,6 +3,8 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Editor;
@@ -51,4 +53,25 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		
 		return query.list();
 	}
+
+    @Override
+    public Editor obterEditorPorFornecedor(Long idFornecedor) {
+       
+        String sql = "Select e.ID as id, e.NOME_CONTATO as nomeContato  from PESSOA p " +
+        		" join FORNECEDOR f on (f.JURIDICA_ID=p.ID) " +
+        		" join EDITOR e on (e.JURIDICA_ID=p.ID) " +
+        		" where f.ID = :idFornecedor";
+        
+        final Query query = getSession().createSQLQuery(sql.toString())
+                .addScalar("id",StandardBasicTypes.LONG)
+                .addScalar("nomeContato",StandardBasicTypes.STRING);
+        
+        query.setParameter("idFornecedor", idFornecedor);
+        
+        query.setMaxResults(1);
+        
+        query.setResultTransformer(Transformers.aliasToBean(Editor.class));
+        
+        return (Editor) query.uniqueResult();
+    }
 }
