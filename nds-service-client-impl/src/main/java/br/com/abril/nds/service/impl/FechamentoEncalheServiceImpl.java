@@ -42,6 +42,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
@@ -80,9 +81,9 @@ import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
+import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
@@ -106,7 +107,6 @@ import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParciaisService;
-import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -123,9 +123,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private CotaRepository cotaRepository;
-    
-    @Autowired
-    private TipoMovimentoService tipoMovimentoService;
     
     @Autowired
     private GerarCobrancaService gerarCobrancaService;
@@ -191,7 +188,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     private EstudoService estudoService;
     
     @Autowired
-    private EstudoRepository estudoRepository;
+    GrupoRepository grupoRepository;
     
     @Autowired
     private EstudoCotaService estudoCotaService;
@@ -668,10 +665,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             
         }
         
-        if (cotaAusenteEncalheDTO.isOperacaoDiferenciada()) {
-            cotaAusenteEncalheDTO.setAcao((cotaAusenteEncalheDTO.getAcao() == null || cotaAusenteEncalheDTO.getAcao()
-                    .trim().isEmpty()) ? "Operação Diferenciada" : cotaAusenteEncalheDTO.getAcao()
-                + " / Operação Diferenciada");
+        Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+        
+        List<GrupoCota> gps = this.grupoRepository.obterListaGrupoCotaPorCotaId(cotaAusenteEncalheDTO.getIdCota(), dataOperacao);
+		
+		if (gps != null && !gps.isEmpty()){
+			
+            cotaAusenteEncalheDTO.setAcao((cotaAusenteEncalheDTO.getAcao() == null || cotaAusenteEncalheDTO.getAcao().trim().isEmpty()) ? 
+            		                       "Operação Diferenciada" : cotaAusenteEncalheDTO.getAcao() + " / Operação Diferenciada");
         }
         
     }
