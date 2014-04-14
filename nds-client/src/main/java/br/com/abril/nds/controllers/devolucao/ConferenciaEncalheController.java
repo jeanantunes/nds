@@ -600,8 +600,7 @@ public class ConferenciaEncalheController extends BaseController {
 			} else {
 				
 				this.result.use(CustomMapJson.class)
-				.put("IND_COTA_RECOLHE_NA_DATA", "N")
-.put("msg",
+				.put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg",
                         "Cota não possui recolhimento planejado para a data de operação atual.")
                         .serialize();
 			

@@ -1276,7 +1276,7 @@ var baixaFinanceiraController = $.extend(true, {
 		var juros = formatMoneyValue($("#jurosDividas", baixaFinanceiraController.workspace).val()); 
 		var multa = formatMoneyValue($("#multaDividas", baixaFinanceiraController.workspace).val()); 
 
-		var param = {vlDivida : valorDividas , vlMulta : multa , vlJuros :juros, vlDesconto: desconto , vlPago: valorPago };
+		var param = {vlDividaStr : valorDividas , vlMultaStr : multa , vlJurosStr :juros, vlDescontoStr: desconto , vlPagoStr: valorPago };
 		
 		$.postJSON(contextPath + "/financeiro/baixa/calcularSaldoDivida",param,
 		function(result) {
