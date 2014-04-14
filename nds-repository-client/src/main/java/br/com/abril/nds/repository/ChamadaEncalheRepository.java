@@ -56,7 +56,7 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 
     Long countObterBandeirasNoIntervalo(Intervalo<Date> intervalo, TipoChamadaEncalhe tipoChamadaEncalhe, Long fornecedor);
 	
-	List<ChamadaEncalhe> obterChamadasEncalhe(ProdutoEdicao produtoEdicao, TipoChamadaEncalhe tipoChamadaEncalhe, Date dataRecolhimento);
+	List<ChamadaEncalhe> obterChamadasEncalhe(ProdutoEdicao produtoEdicao, TipoChamadaEncalhe tipoChamadaEncalhe, Boolean fechado);
 
 	Integer obterMaiorSequenciaPorDia(Date dataRecolhimento);
 

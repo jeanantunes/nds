@@ -600,7 +600,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		}
 		
 	}
-
+	
 	private void validarPeriodoLancamento( Date dataLancamento,
 										Date dataRecolhimento,
 										PeriodoLancamentoParcial periodoAnterior,
@@ -945,7 +945,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 	public void atualizarReparteDoProximoLancamentoPeriodo(Lancamento lancamento, Usuario usuario, BigInteger reparte) {
 		
 		Lancamento proximoLancamento =
-			this.getProximoLancamentoPeriodo(lancamento);
+			this.getPrimeiroLancamentoNaoJuramentado(lancamento);
 
 		if (proximoLancamento != null) {
 
@@ -976,5 +976,20 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		return proximoPeriodoLancamentoParcial.getLancamentoPeriodoParcial();
 	}
+	
+	@Transactional
+    public Lancamento getPrimeiroLancamentoNaoJuramentado(Lancamento lancamento) {
+        
+        PeriodoLancamentoParcial periodoLancamentoParcial =
+            lancamento.getPeriodoLancamentoParcial();
+        
+        Integer proximoNumeroPeriodo = periodoLancamentoParcial.getNumeroPeriodo() + 1;
+        
+        Lancamento primeiroLancamentoNaoJuramentado =
+            this.periodoLancamentoParcialRepository.obterPrimeiroLancamentoNaoJuramentado(
+                proximoNumeroPeriodo, periodoLancamentoParcial.getLancamentoParcial().getId());
+        
+        return primeiroLancamentoNaoJuramentado;
+    }
 
 }

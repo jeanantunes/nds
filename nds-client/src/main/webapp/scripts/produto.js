@@ -793,10 +793,18 @@ var produtoController = $.extend(true, {
                
                $("#codigoProdutoCadastro", _this.workspace).val("");
                $("#codigoProdutoCadastro", _this.workspace).mask("?99999999");
+               
+               $('#comboEditor').find('option[value="-1"]').remove();
              } else {
                
                $("#codigoProdutoCadastro", _this.workspace).val(result[1]);
                $("#codigoProdutoCadastro", _this.workspace).mask("?9999999999");
+               
+               if(result[2] === false) {
+	               var texto = result[3];
+	               $('#comboEditor', _this.workspace).prepend( $('<option></option>').val(-1).html(texto) );
+	               $('#comboEditor', _this.workspace).val($("#comboEditor option:first").val());
+               }
              }
            });
 	       

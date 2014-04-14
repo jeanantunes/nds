@@ -361,7 +361,7 @@ public class ProdutoController extends BaseController {
 	 * @param produtos
 	 * @return List<ItemAutoComplete>
 	 */
-	private List<ItemAutoComplete> getAutocompleteCodigoProduto(List<Produto> produtos){
+	public List<ItemAutoComplete> getAutocompleteCodigoProduto(List<Produto> produtos){
 		
 		List<ItemAutoComplete> listaCotasAutoComplete = new ArrayList<ItemAutoComplete>();
 		
@@ -597,6 +597,9 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 			produto, codigoEditor, codigoFornecedor, 
 			idDesconto, codigoTipoProduto);
 		
+		if(codigoEditor == -1L)
+            codigoEditor = editorService.criarEditorFornecedor(codigoFornecedor);
+        
 		this.produtoService.salvarProduto(
 			produto, codigoEditor, codigoFornecedor, 
 			idDesconto, codigoTipoProduto);
@@ -802,21 +805,30 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 	public void obterCodigoDisponivel(Long idFornecedor){
 	    
 		Origem origem = fornecedorService.obterOrigemCadastroFornecedor(idFornecedor);
-		
-		Object[] dados = new Object[2];
+				
+		Object[] dados = new Object[4];
 		     
 		if (Origem.INTERFACE.equals(origem)) {
 
 			dados[0] = true;
 			dados[1] = "";
-
+			dados[2] = "";
+			dados[3] = "";
+			
 			result.use(Results.json()).from(dados, "result").serialize();
 
 			return;
 		}
-
+		
+		Editor editor = editorService.obterEditorPorFornecedor(idFornecedor);
+		boolean possuiEditor = (null != editor);
+		
+		Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(idFornecedor);
+		
 		dados[0] = false;
 		dados[1] = this.produtoService.obterCodigoDisponivel();
+		dados[2] = possuiEditor;
+		dados[3] = fornecedor.getJuridica().getRazaoSocial();
 
 		result.use(Results.json()).from(dados, "result").serialize();
 	}

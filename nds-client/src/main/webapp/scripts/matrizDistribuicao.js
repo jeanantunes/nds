@@ -1666,39 +1666,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	        	
 	        	return;
 	        }
-	        /*
-	        $('#confirmar_variaveis').dialog({
-	            escondeHeader: false,
-	            resizable: false,
-	            height:'auto',
-	            width:600,
-	            modal: true,
-	            buttons: [{
-	                id: "btnConfirmarVariaveis",
-	                text: "Confirmar",
-	                click: function() {
-	                	
-	                	if (T.estudo.estudo[0].length > 0) {
-	                		
-	                		$.each(T.estudo.estudo[0], function(index, htmlEstudo) {
-	                			
-	                			myWindow = window.open('', '_blank');
-	     	                    myWindow.document.write(htmlEstudo);
-	     	                    myWindow.focus();
-	                		});
-	                	}
-	                   
-	                    $(this).dialog("close");
-	                }
-	            },
-	            {id: "btnCancelarVariaveis",
-	                text: "Cancelar",
-	                click: function() {
-	                    $(this).dialog("close");
-	                }
-	            }]
-	        });
-            */
 	    }
 	    );
 	},
@@ -1729,16 +1696,17 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
                 	var postData = [];
              	    
              	    $.each(edicoesBase, function(index, edicaoBase) {
-             	           
+             	    	
              	            postData.push({name : "produtoDistribuicaoVOs["+index+"].codigoProduto", value : edicaoBase.codigoProduto});
-             	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].numeroEdicao",  value : edicaoBase.edicao});
+             	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].numeroEdicao",  value : edicaoBase.numeroEdicao});
              	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].repDistrib", 	 value : edicaoBase.repDistrib});
+             	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].lancamento", value : edicaoBase.idLancamento});
              	    	    
              	    	    if (edicaoBase.idCopia != null) {
              	    	    	
-             	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].lancamento", value : edicaoBase.idLancamento});
              	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].idCopia", 	  value : edicaoBase.idCopia});
              	    	    }
+             	    	
              	    });
              	    
              	   T.postGeracaoEstudoAutomatico(postData, true);
