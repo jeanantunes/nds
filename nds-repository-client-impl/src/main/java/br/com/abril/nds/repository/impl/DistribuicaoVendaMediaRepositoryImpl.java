@@ -110,7 +110,13 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("       plp.numero_periodo periodo, ");
 		sql.append("       (case when plp.id is null then 0 else 1 end) parcial, ");
 		sql.append("       l.data_lcto_prevista dataLancamento, ");
-		sql.append("       round(sum(epc.qtde_recebida), 0) reparte, ");
+		
+		sql.append("       round((select sum(me.QTDE) ");
+		sql.append("       				from movimento_estoque me ");
+		sql.append("       					join produto_edicao ped ON me.PRODUTO_EDICAO_ID = ped.ID ");
+		sql.append("       					join tipo_movimento tmov ON me.TIPO_MOVIMENTO_ID = tmov.ID ");
+		sql.append("      				where ped.ID = pe.id and tmov.GRUPO_MOVIMENTO_ESTOQUE = 'RECEBIMENTO_FISICO'), 0) reparte, ");
+		
 		sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then ");
 		sql.append("           round((sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)), 0) ");
 		sql.append("       else 0 end) venda, ");
@@ -126,7 +132,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("  join produto p on p.id = pe.produto_id ");
 		sql.append("  left join estoque_produto_cota epc on epc.produto_edicao_id = pe.id ");
 		sql.append("  left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
-		sql.append(" where l.status in ('EXPEDIDO', 'EM_BALANCEAMENTO_RECOLHIMENTO', 'BALANCEADO_RECOLHIMENTO', 'EXCLUIDO_RECOLHIMENTO', 'FECHADO', 'RECOLHIDO') ");
+		sql.append(" where l.status in ('EXPEDIDO', 'EM_BALANCEAMENTO_RECOLHIMENTO', 'EM_RECOLHIMENTO', 'BALANCEADO_RECOLHIMENTO', 'EXCLUIDO_RECOLHIMENTO', 'FECHADO', 'RECOLHIDO') ");
 		
 		if (filtro.getEdicao() != null) {
 		    sql.append("   and pe.numero_edicao = :numero_edicao ");
@@ -146,6 +152,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(ordenarConsulta(filtro));
 		
 		Query query = getSession().createSQLQuery(sql.toString());
+		
 		if (filtro.getEdicao()  != null) {
 		    query.setLong("numero_edicao", filtro.getEdicao());
 		}

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.AtualizacaoEstoqueGFS;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -280,6 +281,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		sql.append("	and me.statusIntegracao = :statusIntegracao ");
 		sql.append("	and me.status = :status ");
 		sql.append("	and lancamentoDiferenca.status in (:statusLancamentoDiferenca) ");
+		sql.append("	and pr.origem in (:origemProduto) ");
 		
 		Query query = getSession().createQuery(sql.toString());
 
@@ -292,6 +294,8 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 				, GrupoMovimentoEstoque.SOBRA_DE_DIRECIONADA_PARA_COTA
 				, GrupoMovimentoEstoque.SOBRA_EM_DIRECIONADA_PARA_COTA
 		}) );
+		
+		query.setParameterList("origemProduto", (new Origem[]{ Origem.INTERFACE, Origem.PRODUTO_SEM_CADASTRO }) );
 		
 		query.setParameter("statusIntegracao", StatusIntegracao.NAO_INTEGRADO);
 		query.setParameter("status", StatusAprovacao.APROVADO);
