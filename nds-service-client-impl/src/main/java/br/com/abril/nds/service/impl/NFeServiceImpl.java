@@ -384,11 +384,11 @@ public class NFeServiceImpl implements NFeService {
 		List<NotaFiscal> notas = new ArrayList<NotaFiscal>();
 		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
 		
-		if(distribuidor.getDataLimiteVigenciaRegimeEspecial() == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Favor informar a data limite de vigincia do regime especial!" );
-		}
-		
 		if(distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+			if(distribuidor.getDataLimiteVigenciaRegimeEspecial() == null){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Favor informar a data limite de vigincia do regime especial!" );
+			}
+		
 			if(new Date().getTime() > distribuidor.getDataLimiteVigenciaRegimeEspecial().getTime()){
 				throw new ValidacaoException(TipoMensagem.WARNING, "A data limite de vigincia do regime especial expirou!" );
 			}
@@ -648,13 +648,12 @@ public class NFeServiceImpl implements NFeService {
 		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
 		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
 		
-		List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplareSumarizado(filtro);
-		
 		List<CotaExemplaresDTO> cotasContribuinteEmitente = new ArrayList<CotaExemplaresDTO>();
 		
 		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
 			return notaFiscalService.consultaCotaExemplareSumarizado(filtro);
 		} else {
+			List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplareSumarizado(filtro);
 
 			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 				if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
