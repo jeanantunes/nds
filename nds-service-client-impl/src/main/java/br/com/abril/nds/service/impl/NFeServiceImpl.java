@@ -644,7 +644,33 @@ public class NFeServiceImpl implements NFeService {
 	@Override
 	@Transactional
 	public List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(final FiltroNFeDTO filtro) {
-		return notaFiscalService.consultaCotaExemplareSumarizado(filtro);
+		
+		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
+		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
+		
+		List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplareSumarizado(filtro);
+		
+		List<CotaExemplaresDTO> cotasContribuinteEmitente = new ArrayList<CotaExemplaresDTO>();
+		
+		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+			return notaFiscalService.consultaCotaExemplareSumarizado(filtro);
+		} else {
+
+			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+				if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+					if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+						
+						for (CotaExemplaresDTO cota : cotas) {
+							if((cota.isContribuinteICMS() != null && cota.isContribuinteICMS()) || (cota.isEmiteNotaFiscalEletronica() != null && cota.isEmiteNotaFiscalEletronica() )){
+								cotasContribuinteEmitente.add(cota);
+							}
+						}
+			
+					}
+				}
+			}	
+		}
+		return cotasContribuinteEmitente;
 	}
 
 	@Override

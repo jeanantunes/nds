@@ -324,7 +324,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" SUM(mec.qtde) as exemplares, ");
 		hql.append(" SUM(mec.valoresAplicados.precoVenda * mec.qtde) as total, "); 
 		hql.append(" SUM(mec.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto, "); 	
-		hql.append(" mec.cota.situacaoCadastro as situacaoCadastro ");
+		hql.append(" mec.cota.situacaoCadastro as situacaoCadastro, ");
+		hql.append(" cota.parametrosCotaNotaFiscalEletronica.emiteNotaFiscalEletronica as emiteNotaFiscalEletronica, ");
+		hql.append(" cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS as contribuinteICMS ");
 		
 		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, false, false, false), filtro);
 				
