@@ -43,6 +43,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
@@ -75,16 +76,16 @@ import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
+import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
-import br.com.abril.nds.repository.ProcessoRepository;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
+import br.com.abril.nds.repository.ProcessoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -104,7 +105,6 @@ import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParciaisService;
-import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -121,9 +121,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private CotaRepository cotaRepository;
-    
-    @Autowired
-    private TipoMovimentoService tipoMovimentoService;
     
     @Autowired
     private GerarCobrancaService gerarCobrancaService;
@@ -189,7 +186,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     private EstudoService estudoService;
     
     @Autowired
-    private EstudoRepository estudoRepository;
+    GrupoRepository grupoRepository;
     
     @Autowired
     private EstudoCotaService estudoCotaService;
@@ -467,20 +464,26 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     }
     
     private BigInteger calcularDiferenca(final FechamentoFisicoLogicoDTO conferencia) {
-        
+
         if (conferencia.getFisico() == null) {
-            conferencia.setFisico(BigInteger.ZERO);
-        }
-        
-        if (conferencia.getExemplaresDevolucao() == null) {
-            conferencia.setExemplaresDevolucao(BigInteger.ZERO);
-        }
-        
-        BigInteger qtdeDevolucaoFisico =
-            conferencia.getExemplaresDevolucao().subtract(conferencia.getExemplaresDevolucaoJuramentado()).subtract(conferencia.getExemplaresVendaEncalhe());
-        
-        return conferencia.getFisico().subtract(qtdeDevolucaoFisico);
-        
+        	
+    	    conferencia.setFisico(BigInteger.ZERO);
+    	}
+
+    	if (conferencia.getExemplaresDevolucao() == null) {
+    	    
+    		conferencia.setExemplaresDevolucao(BigInteger.ZERO);
+    	}
+
+    	BigInteger exemplaresDevolucao = (conferencia.getExemplaresDevolucao() == null) ? BigInteger.ZERO : conferencia.getExemplaresDevolucao();
+    	BigInteger exemplaresDevolucaoJuramentado = (conferencia.getExemplaresDevolucaoJuramentado() == null) ? BigInteger.ZERO : conferencia.getExemplaresDevolucaoJuramentado();
+    	BigInteger exemplaresVendasEncalhe = (conferencia.getExemplaresVendaEncalhe() == null) ? BigInteger.ZERO : conferencia.getExemplaresVendaEncalhe();
+
+    	BigInteger qtdeDevolucaoFisico = exemplaresDevolucao.subtract(exemplaresDevolucaoJuramentado).subtract(exemplaresVendasEncalhe);
+
+    	BigInteger qtdeFisico = (conferencia.getFisico() == null) ? BigInteger.ZERO : conferencia.getFisico();
+
+    	return qtdeFisico.subtract(qtdeDevolucaoFisico);  
     }
     
     private void setarInfoComumFechamentoFisicoLogicoDTO(
@@ -675,10 +678,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             
         }
         
-        if (cotaAusenteEncalheDTO.isOperacaoDiferenciada()) {
-            cotaAusenteEncalheDTO.setAcao((cotaAusenteEncalheDTO.getAcao() == null || cotaAusenteEncalheDTO.getAcao()
-                    .trim().isEmpty()) ? "Operação Diferenciada" : cotaAusenteEncalheDTO.getAcao()
-                + " / Operação Diferenciada");
+        Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+        
+        List<GrupoCota> gps = this.grupoRepository.obterListaGrupoCotaPorCotaId(cotaAusenteEncalheDTO.getIdCota(), dataOperacao);
+		
+		if (gps != null && !gps.isEmpty()){
+			
+            cotaAusenteEncalheDTO.setAcao((cotaAusenteEncalheDTO.getAcao() == null || cotaAusenteEncalheDTO.getAcao().trim().isEmpty()) ? 
+            		                       "Operação Diferenciada" : cotaAusenteEncalheDTO.getAcao() + " / Operação Diferenciada");
         }
         
     }
@@ -1110,11 +1117,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                     
                     itemFechamento.setFisico(itemSessao.getFisico());
                     
+                    BigInteger exemplaresDevolucao = (itemSessao.getExemplaresDevolucao() == null) ? BigInteger.ZERO : itemSessao.getExemplaresDevolucao();
+                    BigInteger exemplaresDevolucaoJuramentado = (itemSessao.getExemplaresDevolucaoJuramentado() == null) ? BigInteger.ZERO : itemSessao.getExemplaresDevolucaoJuramentado();
+                    BigInteger exemplaresVendasEncalhe = (itemSessao.getExemplaresVendaEncalhe() == null) ? BigInteger.ZERO : itemSessao.getExemplaresVendaEncalhe();
+
                     BigInteger qtdeDevolucaoFisico =
-                        itemSessao.getExemplaresDevolucao().subtract(itemSessao.getExemplaresDevolucaoJuramentado()).subtract(itemSessao.getExemplaresVendaEncalhe());
-                    
-                    itemFechamento.setDiferenca(
-                        itemSessao.getFisico().subtract(qtdeDevolucaoFisico));
+                    exemplaresDevolucao.subtract(exemplaresDevolucaoJuramentado).subtract(exemplaresVendasEncalhe);
+
+                    BigInteger qtdeFisico = (itemSessao.getFisico() == null) ? BigInteger.ZERO : itemSessao.getFisico();
+
+                    itemFechamento.setDiferenca(qtdeFisico.subtract(qtdeDevolucaoFisico));
                 }
             }
         }

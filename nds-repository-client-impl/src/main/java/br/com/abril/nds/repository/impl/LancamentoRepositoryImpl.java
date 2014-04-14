@@ -1205,7 +1205,7 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" inner join ");
 		sql.append("     PESSOA pessoa ");
-		sql.append("         on produtoFornecedor.fornecedores_ID=pessoa.ID ");
+		sql.append("         on fornecedor.juridica_id=pessoa.ID ");
 
 		sql.append(" inner join ");
 		sql.append(" TIPO_PRODUTO tipoProduto ");
