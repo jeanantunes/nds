@@ -180,28 +180,6 @@ public class ConsultaBoletosController extends BaseController {
 		
 		DecimalFormat formatoMoeda = new DecimalFormat("#,###,##0.00");
 		
-		
-		
-		
-//		///
-//		List<DividaGeradaVO> listaDividasGeradasVO = getListaDividaGeradaVO(listaDividasGeradas);
-//
-//		TableModel<CellModelKeyValue<DividaGeradaVO>> tableModel = new TableModel<CellModelKeyValue<DividaGeradaVO>>();
-//
-//		tableModel.setRows(CellModelKeyValue
-//				.toCellModelKeyValue(listaDividasGeradasVO));
-//
-//		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-//
-//		tableModel.setTotal((totalRegistros == null) ? 0 : totalRegistros
-//				.intValue());
-//
-//		result.use(Results.json()).withoutRoot().from(tableModel).recursive()
-//				.serialize();
-//		
-//		/////
-		
-		
 		for (BoletoCotaDTO boletoDTO : boletosDTO){
 			
 			String statusBoleto = "";
@@ -212,9 +190,23 @@ public class ConsultaBoletosController extends BaseController {
 			}
 			else{
 				
-				statusBoleto = ((boletoDTO.getStatusDivida() != null && StatusDivida.PENDENTE_INADIMPLENCIA.equals(boletoDTO.getStatusDivida())) ?  
-		                        StatusDivida.PENDENTE_INADIMPLENCIA.getDescricao() : 
-                                (boletoDTO.getStatusCobranca()!=null?boletoDTO.getStatusCobranca().toString():""));
+			    if (boletoDTO.getStatusDivida() != null && 
+			            (boletoDTO.getStatusDivida().equals(StatusDivida.PENDENTE_INADIMPLENCIA) || 
+			                    boletoDTO.getStatusDivida().equals(StatusDivida.POSTERGADA) ||
+			                    boletoDTO.getStatusDivida().equals(StatusDivida.NEGOCIADA))){
+			        
+			        statusBoleto = boletoDTO.getStatusDivida().getDescricao();
+			    } else if (boletoDTO.getStatusCobranca() != null){
+			        
+			        statusBoleto = boletoDTO.getStatusCobranca().toString();
+			    } else {
+			        
+			        statusBoleto = "";
+			    }
+			    
+//				statusBoleto = ((boletoDTO.getStatusDivida() != null && StatusDivida.PENDENTE_INADIMPLENCIA.equals(boletoDTO.getStatusDivida())) ?  
+//		                        StatusDivida.PENDENTE_INADIMPLENCIA.getDescricao() : 
+//                                (boletoDTO.getStatusCobranca()!=null?boletoDTO.getStatusCobranca().toString():""));
 			}    
 			
 			listaModelo.add(new CellModel(1,
@@ -317,7 +309,7 @@ public class ConsultaBoletosController extends BaseController {
 			
 	    }else{
 	    	
-	    	throw new ValidacaoException(TipoMensagem.WARNING, "O boleto "+nossoNumero+" já está pago.");
+	    	throw new ValidacaoException(TipoMensagem.WARNING, "O boleto "+nossoNumero+" já está pago ou postergado.");
 	    }
 	}
 	
@@ -389,6 +381,11 @@ public class ConsultaBoletosController extends BaseController {
 			
 			BoletoAntecipado boletoantecipado = this.boletoService.obterBoletoEmBrancoPorNossoNumero(nossoNumero);
 			
+			if (boletoantecipado == null){
+			    
+			    return false;
+			}
+			
 			return (boletoantecipado.getStatus()!=StatusDivida.QUITADA);
 		}
 		
@@ -402,7 +399,6 @@ public class ConsultaBoletosController extends BaseController {
 	 * 
 	 * @throws IOException Exceção de E/S
 	 */
-	@SuppressWarnings("deprecation")
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroConsultaBoletosCotaDTO filtro = this.obterFiltroExportacao();

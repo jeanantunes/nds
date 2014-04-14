@@ -140,20 +140,24 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	@SuppressWarnings("unchecked")
 	public List<ChamadaEncalhe> obterChamadasEncalhe(ProdutoEdicao produtoEdicao,
 				 									 TipoChamadaEncalhe tipoChamadaEncalhe,
-				 									 Date dataRecolhimento) {
+				 									 Boolean fechado) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select chamadaEncalhe from ChamadaEncalhe chamadaEncalhe ");
+		hql.append(" select chamadaEncalhe ");
+		hql.append(" from ChamadaEncalhe chamadaEncalhe ");
+		hql.append(" join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCota ");
 		hql.append(" where chamadaEncalhe.produtoEdicao = :produtoEdicao ");
 		
 		if (tipoChamadaEncalhe != null ) {
 			hql.append(" and chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ");
 		}
 		
-		if (dataRecolhimento != null ) {
-			hql.append(" and chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
+		if (fechado != null ) {
+			hql.append(" and chamadaEncalheCota.fechado = :fechado ");
 		}
+		
+		hql.append(" group by chamadaEncalhe.id");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
@@ -163,8 +167,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
 		}
 		
-		if (dataRecolhimento != null ) {
-			query.setParameter("dataRecolhimento", dataRecolhimento);
+		if (fechado != null ) {
+			query.setParameter("fechado", fechado);
 		}
 		
 		return  query.list();

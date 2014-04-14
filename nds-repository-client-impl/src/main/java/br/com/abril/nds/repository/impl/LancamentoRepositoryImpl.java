@@ -1131,6 +1131,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamentoDistribuidor, ");
 		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as novaDataLancamento, ");
 		sql.append(" lancamento.DATA_REC_PREVISTA as dataRecolhimentoPrevista, ");
+		sql.append(" lancamento.DATA_REC_DISTRIB as dataRecolhimentoDistribuidor, ");
 		sql.append(" lancamento.ALTERADO_INTERFACE as alteradoInteface, ");
 		sql.append(" lancamento.TIPO_LANCAMENTO as tipoLancamento, ");
 
@@ -1256,6 +1257,7 @@ public class LancamentoRepositoryImpl extends
 				.addScalar("dataLancamentoDistribuidor")
 				.addScalar("novaDataLancamento")
 				.addScalar("dataRecolhimentoPrevista")
+				.addScalar("dataRecolhimentoDistribuidor")
 				.addScalar("repartePrevisto", StandardBasicTypes.BIG_INTEGER)
 				.addScalar("reparteFisico", StandardBasicTypes.BIG_INTEGER)
 				.addScalar("valorTotal")
@@ -2597,4 +2599,23 @@ public class LancamentoRepositoryImpl extends
         return  (Lancamento) query.uniqueResult();
     }
 	
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Lancamento> obterLancamentosDoPeriodoParcial(Long idPeriodo) {
+        
+        StringBuilder hql = new StringBuilder();
+        
+        hql.append(" select lancamento  ");
+        hql.append(" from PeriodoLancamentoParcial periodoLancamentoParcial ");
+        hql.append(" join periodoLancamentoParcial.lancamentos lancamento ");
+        hql.append(" where periodoLancamentoParcial.id = :idPeriodo ");
+        hql.append(" order by lancamento.dataLancamentoDistribuidor ");
+        
+        Query query = getSession().createQuery(hql.toString());
+        
+        query.setParameter("idPeriodo", idPeriodo);
+        
+        return query.list();
+    }
+    
 }

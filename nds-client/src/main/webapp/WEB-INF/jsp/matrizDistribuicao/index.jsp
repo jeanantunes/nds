@@ -132,7 +132,7 @@ var lancamentosSelecionados = [];
 							</span>
 							
 							<span class="bt_novos" id="spanGerarEstudoAutomatico">
-								<a id="linkGerarEstudoAutomatico" href="#" onclick="" rel="tipsy" title="Gera&ccedil;&atilde;o Autom&aacute;tica">
+								<a id="linkGerarEstudoAutomatico" href="javascript:void(0)" onclick="" rel="tipsy" title="Gera&ccedil;&atilde;o Autom&aacute;tica">
 									<img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />
 								</a>
 							</span>
@@ -164,7 +164,7 @@ var lancamentosSelecionados = [];
 		   	      <tr>
 		   	        <td width="68">Fornecedor:&nbsp;</td>
 		   	        <td width="228">
-		            <a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
+		            <a href="javascript:void(0)" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 		              <div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
 

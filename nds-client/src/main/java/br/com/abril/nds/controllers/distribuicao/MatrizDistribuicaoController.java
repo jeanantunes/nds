@@ -676,7 +676,7 @@ public class MatrizDistribuicaoController extends BaseController {
                 msgErro.addAll(e.getValidacao().getListaMensagens());
             } catch (Exception e) {
                 LOGGER.error("Erro na geração automatica do estudo.", e);
-                msgErro.add("Erro na geração do estudo:" + produtoDistribuicaoVO.getNumeroEdicao());
+                msgErro.add("Erro na geração do estudo, produto - " + produtoDistribuicaoVO.getCodigoProduto() + ", edição - " + produtoDistribuicaoVO.getNumeroEdicao());
             }
         }
 

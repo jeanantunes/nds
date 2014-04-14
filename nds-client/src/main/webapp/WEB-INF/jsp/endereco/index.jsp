@@ -62,7 +62,7 @@
 						
 						<div id="${param.telaEndereco}wrapperBtnPesquisaCepDesabilitado" style="display: none">
 							<span class="classPesquisar" style="opacity:0.4" title="Pesquisar Cep.">
-								<a href="#" onclick="javascript:;">&nbsp;</a>
+								<a href="javascript:void(0)" onclick="javascript:;">&nbsp;</a>
 							</span>
 				  		</div>
 						
@@ -175,7 +175,7 @@
 	
 				    <div id="${param.telaEndereco}wrapperBtnIncluirNovoEnderecoDesabilitado" style="display: none">
 					  	<span class="bt_add" style="opacity:0.4">
-					  		<a href="#" onclick="javascript:;" rel="tipsy" title="Incluir Novo Endereço"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a>
+					  		<a href="javascript:void(0)" onclick="javascript:;" rel="tipsy" title="Incluir Novo Endereço"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a>
 					  	</span>
 				  	</div>
 	
