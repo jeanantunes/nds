@@ -443,6 +443,24 @@ public class FornecedorRepositoryImpl extends
 		return (Fornecedor) criteria.uniqueResult();
 	}
 	
+	/**
+     * Obtem Fornecedor por codigo
+     * @param codigo
+     * @return Fornecedor
+     */
+    @Override
+    public Fornecedor obterFornecedorPorCodigoJoinJuridica(final Integer codigo) {
+        final Criteria criteria = getSession().createCriteria(Fornecedor.class);
+        
+        criteria.createAlias("juridica", "juridica");
+        
+        criteria.add(Restrictions.eq("codigoInterface", codigo));
+                
+        criteria.setMaxResults(1);
+
+        return (Fornecedor) criteria.uniqueResult();
+    }
+	
 	@Override
 	public Integer obterMinCodigoInterfaceDisponivel() {
 		
