@@ -550,14 +550,11 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota)) {
 				
-				this.result.use(CustomMapJson.class)
-				.put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
+				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
 			
 			} else {
-				
-				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg",
-                        "Cota não possui recolhimento planejado para a data de operação atual.")
-                        .serialize();
+				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N")
+				    .put("msg", "Cota não possui recolhimento planejado para a data de operação atual.").serialize();
 			
 			}
 			

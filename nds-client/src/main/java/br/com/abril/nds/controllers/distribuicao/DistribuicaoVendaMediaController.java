@@ -418,6 +418,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	response.add(htmlEstudo);
 	response.add(estudo.getId());
 	response.add(estudo.isLiberado() == null ? false : true);
+	
+	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, null);
+	session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, null);
+	
 	result.use(Results.json()).from(response).recursive().serialize();
 
 	removeItensDuplicadosMatrizDistribuicao();
