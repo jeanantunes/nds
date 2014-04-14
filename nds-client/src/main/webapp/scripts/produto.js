@@ -659,7 +659,7 @@ var produtoController = $.extend(true, {
         			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", produtoController.workspace).val()},
         			   {name:"idDesconto",value:idDesconto ? idDesconto : ''},
         			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro", produtoController.workspace).val()},
-        			   {name:"produto.desconto",value:floatValue($("#percentualDesconto", produtoController.workspace).val())},
+        			   {name:"produto.desconto",value:$("#percentualDesconto", produtoController.workspace).val()},
         			   {name:"produto.isGeracaoAutomatica",value:(produtoController.formatarCampoGeracaoAutomatica("#selGeracaoAuto"))},
 
         			   {name:"produto.tipoSegmentoProduto.id",value:$("#comboTipoSegmento", produtoController.workspace).val()},
