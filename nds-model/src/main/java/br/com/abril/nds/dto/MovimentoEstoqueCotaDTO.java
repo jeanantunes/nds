@@ -76,6 +76,7 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	
 	private BigDecimal valorDesconto;
 	
+	private String formaComercializacao;
 	
 	public MovimentoEstoqueCotaDTO() {
 	}
@@ -337,5 +338,12 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	public void setValorDesconto(BigDecimal valorDesconto) {
 		this.valorDesconto = valorDesconto;
 	}
-	
+
+	public String getFormaComercializacao() {
+		return formaComercializacao;
+	}
+
+	public void setFormaComercializacao(String formaComercializacao) {
+		this.formaComercializacao = formaComercializacao;
+	}
 }

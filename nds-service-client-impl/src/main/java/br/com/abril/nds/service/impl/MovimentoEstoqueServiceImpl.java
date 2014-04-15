@@ -24,7 +24,9 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -224,9 +226,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                     produtoEdicao.getProduto().getFornecedor().getId(), idProdutoEdicao, idProduto);
             
             final MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
-                    dataPrevista, idProdutoEdicao, estudoCota.getIdCota(),
+                    dataPrevista, produtoEdicao, estudoCota.getIdCota(),
                     idUsuario, estudoCota.getQtdeEfetiva(), tipoMovimentoCota,
-                    dataDistribuidor, dataOperacao, idLancamento, estudoCota.getId(), descontos, false);
+                    dataDistribuidor, dataOperacao, idLancamento, estudoCota.getId(), descontos, 
+                    false, estudoCota.isDevolveEncalhe(), estudoCota.getTipoCota());
             
             if(TipoEstudoCota.NORMAL.equals(estudoCota.getTipoEstudo())){
                 
@@ -1659,9 +1662,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     
     @Override
     @Transactional
-    public MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(final Date dataLancamento, final Long idProdutoEdicao, final Long idCota,
+    public MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(final Date dataLancamento, final ProdutoEdicao produtoEdicao, final Long idCota,
             final Long idUsuario, final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque,
-            final Date dataMovimento, Date dataOperacao, Long idLancamento, final Long idEstudoCota, final Map<String, DescontoDTO> descontos, final boolean isMovimentoDiferencaAutomatico) {
+            final Date dataMovimento, Date dataOperacao, Long idLancamento, final Long idEstudoCota, final Map<String, DescontoDTO> descontos, 
+            final boolean isMovimentoDiferencaAutomatico, final boolean isDevolveEncalhe, final TipoCota tipoCota) {
         
         this.validarDominioGrupoMovimentoEstoque(tipoMovimentoEstoque, Dominio.COTA);
         
@@ -1673,6 +1677,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         final MovimentoEstoqueCotaDTO movimentoEstoqueCota = new MovimentoEstoqueCotaDTO();
         
         movimentoEstoqueCota.setTipoMovimentoId(tipoMovimentoEstoque.getId());
+        
         movimentoEstoqueCota.setIdCota(idCota);
         
         movimentoEstoqueCota.setData(dataMovimento==null? dataOperacao : dataMovimento);
@@ -1680,22 +1685,27 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         movimentoEstoqueCota.setDataLancamentoOriginal(dataMovimento);
         
         movimentoEstoqueCota.setDataCriacao(dataOperacao);
-        movimentoEstoqueCota.setIdProdEd(idProdutoEdicao);
+        movimentoEstoqueCota.setIdProdEd(produtoEdicao.getId());
         movimentoEstoqueCota.setQtde(quantidade);
         movimentoEstoqueCota.setUsuarioId(idUsuario);
         movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
         
+        if(produtoEdicao.getProduto().getFormaComercializacao().equals(FormaComercializacao.CONTA_FIRME) || (tipoCota.equals(TipoCota.A_VISTA) && !isDevolveEncalhe)){        	
+        	movimentoEstoqueCota.setFormaComercializacao(FormaComercializacao.CONTA_FIRME.name());
+        } else {
+    		movimentoEstoqueCota.setFormaComercializacao(FormaComercializacao.CONSIGNADO.name());
+    	}
+        
         if (idEstudoCota != null) {
-            
             movimentoEstoqueCota.setEstudoCotaId(idEstudoCota);
         }
         
-        if (dataLancamento != null && idProdutoEdicao != null) {
+        if (dataLancamento != null && produtoEdicao.getId() != null) {
             
             if (idLancamento==null) {
                 
                 idLancamento = lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
-                        new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
+                        new ProdutoEdicao(produtoEdicao.getId()), null, dataLancamento);
             }
             
             
@@ -1705,7 +1715,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 movimentoEstoqueCota.setLancamentoId(lancamento.getId());
                 
-                final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+                // FIXME Provisorio ate validação do Evaldo !
+                // final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
                 
 				                                                /**
                  * A busca dos descontos é feita diretamente no Map, por chave,
@@ -1744,7 +1755,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             // Necessario para gerar o id do estoque da cota utilizado na transacao
             final MovimentoEstoqueCota mec = new MovimentoEstoqueCota();
             mec.setCota(new Cota(idCota));
-            mec.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));
+            mec.setProdutoEdicao(new ProdutoEdicao(produtoEdicao.getId()));
             mec.setStatus(StatusAprovacao.APROVADO);
             mec.setQtde(quantidade);
             final Long idEstoqueCota = this.atualizarEstoqueProdutoCota(tipoMovimentoEstoque, mec);
