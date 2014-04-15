@@ -588,7 +588,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
                 sel: true,
                 todasAsCotas: true,
                 checkBox: true
-            }
+            };
 
             data.push({name: "distribuicaoVendaMedia.bonificacoesVO", value: JSON.stringify(T.bonificacaoSelecionados, function(k,v){if(doNotStringify.hasOwnProperty(k))return undefined; return v;}) });
 
@@ -661,10 +661,10 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			codProduto = $('#codigoProduto').text();
 		}
 		
-		numEdicao = $('#numeroEdicao').val()
+		var numEdicao = $('#numeroEdicao').val();
 		
 		if(numEdicao == ""){
-			var numEdicao = $('#numeroEdicao').html()
+			numEdicao = $('#numeroEdicao').html();
 		}
 		
 		data.push({name : "codigoProduto", value : codProduto});

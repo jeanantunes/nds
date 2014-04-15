@@ -17,6 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
@@ -90,6 +91,10 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		@JoinColumn(name="NOTA_ENVIO_ITEM_SEQUENCIA", referencedColumnName="SEQUENCIA")
 	})
 	private ItemNotaEnvio itemNotaEnvio;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "FORMA_COMERCIALIZACAO")
+	private FormaComercializacao formaComercializacao;
 	
 	public Object clone() {
 
@@ -257,5 +262,13 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 
 	public void setItemNotaEnvio(ItemNotaEnvio itemNotaEnvio) {
 		this.itemNotaEnvio = itemNotaEnvio;
+	}
+
+	public FormaComercializacao getFormaComercializacao() {
+		return formaComercializacao;
+	}
+
+	public void setFormaComercializacao(FormaComercializacao formaComercializacao) {
+		this.formaComercializacao = formaComercializacao;
 	}
 }

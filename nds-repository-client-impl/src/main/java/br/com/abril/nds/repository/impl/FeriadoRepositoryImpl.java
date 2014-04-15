@@ -330,7 +330,7 @@ public class FeriadoRepositoryImpl extends
            .append(" where (f.DATA = :data ")
            .append(" or (day(f.DATA) = day(:data) and month(f.DATA) = month(:data) ")
            .append(" and f.IND_REPETE_ANUALMENTE = :repeteAnual))")
-           .append(" and (f.LOCALIDADE = :localidade or f.LOCALIDADE is null)");
+           .append(" and (upper(f.LOCALIDADE) = upper(:localidade) or f.LOCALIDADE is null)");
         
         Query query = this.getSession().createSQLQuery(hql.toString());
         query.setParameter("data", data);

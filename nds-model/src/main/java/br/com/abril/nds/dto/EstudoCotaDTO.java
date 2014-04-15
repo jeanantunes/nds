@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigInteger;
 
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 
 public class EstudoCotaDTO implements Serializable {
@@ -12,8 +13,9 @@ public class EstudoCotaDTO implements Serializable {
 	private Long id;
 	private BigInteger qtdeEfetiva;
 	private Long idCota;
-	
 	private TipoEstudoCota tipoEstudo;
+	private Boolean devolveEncalhe;
+	private TipoCota tipoCota;
 
 	public Long getId() {
 		return id;
@@ -50,8 +52,20 @@ public class EstudoCotaDTO implements Serializable {
 	public void setTipoEstudo(TipoEstudoCota tipoEstudo) {
 		this.tipoEstudo = tipoEstudo;
 	}
-	
-	
-	
-	
+
+	public Boolean isDevolveEncalhe() {
+		return devolveEncalhe;
+	}
+
+	public void setDevolveEncalhe(Boolean devolveEncalhe) {
+		this.devolveEncalhe = devolveEncalhe;
+	}
+
+	public TipoCota getTipoCota() {
+		return tipoCota;
+	}
+
+	public void setTipoCota(TipoCota tipoCota) {
+		this.tipoCota = tipoCota;
+	}
 }
