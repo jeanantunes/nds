@@ -80,8 +80,11 @@ public class CalendarioServiceImpl implements CalendarioService {
     @Override
     @Transactional(readOnly = true)
     public Date adicionarDiasUteis(final Date data, final int numDias, String localidade){
-        final Calendar cal = Calendar.getInstance();
+        
+    	final Calendar cal = Calendar.getInstance();
         cal.setTime(data);
+        
+        String localidadeDistribuidor = distribuidorRepository.obter().getEnderecoDistribuidor().getEndereco().getCidade();
         
         if (numDias == 0) {
             
@@ -98,7 +101,7 @@ public class CalendarioServiceImpl implements CalendarioService {
                 
                 cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
                 
-                while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal, localidade)) {
+                while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal, localidade) || isFeriado(cal, localidadeDistribuidor)) {
                     cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
                 }
             }
@@ -204,9 +207,9 @@ public class CalendarioServiceImpl implements CalendarioService {
     protected boolean isFeriado(final Calendar cal, String localidade) {
         
         if (cal != null) {
-            if(localidade == null){
+            if(localidade == null) {
                 return feriadoRepository.isFeriado(cal.getTime());
-            }else{
+            } else {
                 return feriadoRepository.isFeriado(cal.getTime(), localidade);
             }
         }

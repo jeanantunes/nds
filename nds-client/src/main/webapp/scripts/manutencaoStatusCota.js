@@ -276,6 +276,9 @@ obterColunasGridPesquisaSemCota:function(){
 					$(this).dialog("close");
 				}
 			},
+			beforeClose: function() {
+				$(".manutencaoStatusCotaGrid", manutencaoStatusCotaController.workspace).flexReload();
+		    },
 			form: $("#dialog-novo", manutencaoStatusCotaController.workspace).parents("form")
 		});
 	},

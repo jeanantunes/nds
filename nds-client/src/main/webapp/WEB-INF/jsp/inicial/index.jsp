@@ -28,7 +28,7 @@ $(function() {
 		<div class="box_home saudacao">
 		   	<img src="${pageContext.request.contextPath}/images/logo_sistema.png" alt="Novo Distrib" class="logoHome" />
 		
-		    <h1>Bom Dia Treelog, seja bem-vindo ao NOVO DISTRIB</h1>
+		    <h1>Seja bem-vindo ao NOVO DISTRIB</h1>
 		    
 			<div class="linha_separa_fields">&nbsp;</div>
 			<br clear="all">
@@ -64,12 +64,12 @@ $(function() {
 		    <br clear="all" />
 		    <img src="${pageContext.request.contextPath}/images/ico_email.gif" border="0" align="left" style="margin-right:10px;" />
 		    <h3>E-mail</h3>
-		    <p>E-mail: <a href="mailto:contatos@dgb.com.br">contatos@dgb.com.br</a></p>
+		    <p>E-mail: <a href="mailto:Treelog-SAD@abril.com.br">Treelog-SAD@abril.com.br</a></p>
 		    
 		    <br clear="all" />
 		    <img src="${pageContext.request.contextPath}/images/ico_telefone.gif" border="0" align="left" style="margin-right:10px;" />
 		    <h3>Telefone:</h3>
-		    <p>11 - 8765-6543 / 11 - 5678-9988</p>
+		    <p>11 - 3789 - 3192 / 3193 / 3194 / 3195</p>
 		    
 		    <br clear="all" />
 		    <img src="${pageContext.request.contextPath}/images/ico_site.gif" border="0" align="left" style="margin-right:10px;" />
