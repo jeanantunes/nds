@@ -291,14 +291,14 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			if (null != dtLancamentoDistribuidor && !	dtLancamentoDistribuidor.equals(dtLancamentoNovo) && isStatusAlteracaoDataLancamento) {
 				
-				if(dtLancamentoNovo.before(distribuidorService.obterDataOperacaoDistribuidor())){
+				//if(dtLancamentoNovo.before(distribuidorService.obterDataOperacaoDistribuidor())){
 				
 					try {
 					 dtLancamentoNovo = getDiaMatrizAberta(dtLancamentoNovo, lancamento.getDataRecolhimentoDistribuidor(),message,codigoProduto,edicao);
 				    } catch (Exception e) {
 					  return;
 				    }
-				}
+				//}
 				// Alterado por solicitacao da trac 185
 				
 				this.ndsiLoggerFactory.getLogger().logInfo(message,

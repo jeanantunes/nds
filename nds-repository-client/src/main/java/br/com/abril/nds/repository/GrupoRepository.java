@@ -40,4 +40,12 @@ public interface GrupoRepository extends Repository<GrupoCota,Long> {
 	 * @return List<GrupoCota>
 	 */ 
 	List<GrupoCota> obterListaGrupoCotaPorCotaId(Long idCota, Date dataOperacao);
+
+	/**
+	 * Obtém lista de GrupoCota(Operação diferenciada)
+	 * @param numeroCota
+	 * @param dataOperacao
+	 * @return List<GrupoCota>
+	 */ 
+	List<GrupoCota> obterListaGrupoCotaPorNumeroCota(Integer numeroCota, Date dataOperacao);
 }

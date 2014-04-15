@@ -294,7 +294,7 @@ $(function(){
 					    <td valign="top">&nbsp;</td>
 					    <td valign="top">
 		
-					        <select name="tipoCobrancaParametroCobrancaCota" id="tipoCobrancaParametroCobrancaCota" style="width:150px;" onchange="parametroCobrancaCotaController.obterParametrosDistribuidor(this.value);">
+					        <select name="tipoCobrancaParametroCobrancaCota" id="tipoCobrancaParametroCobrancaCota" class="formaCobrancaValueChangeListener" style="width:150px;" onchange="parametroCobrancaCotaController.obterParametrosDistribuidor(this.value);">
 		                        <option value="">Selecione</option>
 		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
 				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
@@ -372,7 +372,7 @@ $(function(){
 							        
 					             <tr>
 					                 <td width="12%">
-					                     <input type="checkbox" name="PCC-PS" id="PCC-PS" />
+					                     <input type="checkbox" name="PCC-PS" id="PCC-PS" class="formaCobrancaValueChangeListener" />
 					                 </td>    
 					                 <td width="88%">
 					                     <label for="PS">Segunda-feira</label>
@@ -381,7 +381,7 @@ $(function(){
 							            
 							     <tr>
 					                 <td>           
-							             <input type="checkbox" name="PCC-PT" id="PCC-PT" />
+							             <input type="checkbox" name="PCC-PT" id="PCC-PT" class="formaCobrancaValueChangeListener" />
 							         </td>    
 					                 <td>    
 							             <label for="PT">Terça-feira</label>
@@ -390,7 +390,7 @@ $(function(){
 					             
 					             <tr>
 					                 <td>            
-							             <input type="checkbox" name="PCC-PQ" id="PCC-PQ" />
+							             <input type="checkbox" name="PCC-PQ" id="PCC-PQ" class="formaCobrancaValueChangeListener" />
 							         </td>    
 					                 <td>      
 							             <label for="PQ">Quarta-feira</label>
@@ -399,7 +399,7 @@ $(function(){
 							                          
 							      <tr>
 					                 <td>          
-							             <input type="checkbox" name="PCC-PQu" id="PCC-PQu" />
+							             <input type="checkbox" name="PCC-PQu" id="PCC-PQu" class="formaCobrancaValueChangeListener" />
 							          </td>    
 					                  <td>  
 							             <label for="PQu">Quinta-feira</label>
@@ -408,7 +408,7 @@ $(function(){
 							                  
 							      <tr>
 					                 <td>          
-							             <input type="checkbox" name="PCC-PSex" id="PCC-PSex" />
+							             <input type="checkbox" name="PCC-PSex" id="PCC-PSex" class="formaCobrancaValueChangeListener" />
 							         </td>    
 					                 <td>      
 							             <label for="PSex">Sexta-feira</label>
@@ -417,7 +417,7 @@ $(function(){
 							               
 							      <tr>
 					                 <td>    
-							             <input type="checkbox" name="PCC-PSab" id="PCC-PSab" />
+							             <input type="checkbox" name="PCC-PSab" id="PCC-PSab" class="formaCobrancaValueChangeListener" />
 							             </td>    
 					                 <td>  
 							             <label for="PSab">Sábado</label>
@@ -426,7 +426,7 @@ $(function(){
 							                   
 							      <tr>
 					                  <td>
-							             <input type="checkbox" name="PCC-PDom" id="PCC-PDom" />
+							             <input type="checkbox" name="PCC-PDom" id="PCC-PDom" class="formaCobrancaValueChangeListener" />
 							             </td>    
 					                 <td>  
 							             <label for="PDom">Domingo</label>
@@ -467,8 +467,8 @@ $(function(){
 
 						<tr>
 							<td width="57">Nome:</td>
-							<td width="346"><select name="banco" id="banco"
-								style="width: 150px;">
+							<td width="346">
+								<select name="banco" id="banco" style="width: 150px;" class="formaCobrancaValueChangeListener">
 									<option value=""></option>
 									<c:forEach varStatus="counter" var="banco"
 										items="${listaBancos}">
