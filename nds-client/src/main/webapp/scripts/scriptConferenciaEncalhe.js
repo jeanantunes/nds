@@ -802,7 +802,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					innerTable += inputExemplares + "</td>";
 					
-					innerTable += "<td nowrap='nowrap'>" + value.codigoDeBarras + "</td>";
+					innerTable += "<td nowrap='nowrap'>" + (value.codigoDeBarras ? value.codigoDeBarras : '') + "</td>";
 					
 					if(typeof value.codigoSM == 'undefined' || value.codigoSM == null) {
 						value.codigoSM = '';

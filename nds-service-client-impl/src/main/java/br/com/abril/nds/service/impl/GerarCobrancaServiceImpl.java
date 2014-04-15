@@ -1236,7 +1236,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			}
 		}
 		String localidade =  cota.getEnderecoPrincipal().getEndereco().getCidade();
-		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(),fatorVencimento, localidade);
+		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento, localidade);
 
 		if(!cobrarHoje){
 

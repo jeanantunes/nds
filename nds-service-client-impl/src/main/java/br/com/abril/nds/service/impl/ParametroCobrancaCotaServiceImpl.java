@@ -1277,8 +1277,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				
 				formaCobranca.setFornecedores(null);
 				
-				this.formaCobrancaRepository.merge(formaCobranca);
-				
 				this.formaCobrancaRepository.remover(formaCobranca);
 			}
 			
