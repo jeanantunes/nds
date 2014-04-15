@@ -671,7 +671,9 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		data.push({name : "numeroEdicao", value : numEdicao});
 		data.push({name : "idLancamento", value : $('#idLancamento').val()});
 		data.push({name : "dataLancamento", value: $('#dataLancamento').html()});
-        //TODO adicionar numero periodo caso o idLancamento nao seja o suficiente
+        //TODO adicionar numero periodo caso o idLancamento nao s
+
+		T.produtoEdicaoBases = null;
 		
 		$.postJSON(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(result) {
 		    //usado para exibir as variaveis do estudo
