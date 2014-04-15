@@ -1106,7 +1106,11 @@ var lancamentoNovoController = $.extend(true, {
 	
 	paraEstoque : function(param){
 				
-		if (param){
+		$("#dialogNovasDiferencas input[type='text']", this.workspace).each(function() {
+			$(this).val('');
+		});
+		
+		if(param) {
 			
 			lancamentoNovoController.limparCotas();
 			$("#fieldCota", lancamentoNovoController.workspace).hide();
@@ -1199,7 +1203,23 @@ var lancamentoNovoController = $.extend(true, {
 							 	{name: "idProdutoEdicao", value: idProdutoEdicao},
 							 	{name: "numeroCota", value: numeroCota ? numeroCota : ''}
 							],
-							function(result) {
+							function(result, numeroCota) {
+								
+								var ocorrenciasCota = 0;
+								$.each($('input[name="cotaInput"]'), function(k, v) {
+									if($(v).val() == cota.numero) {
+										ocorrenciasCota++;
+									}
+								});
+								
+								if(ocorrenciasCota > 1) {
+									
+									$("#cotaInput" + index, lancamentoNovoController.workspace).val('');
+									$("#nomeInput" + index, lancamentoNovoController.workspace).val('');
+									
+									exibirMensagem('WARNING', ["Já existe essa Cota na lista."]);
+									return;
+								}
 								
 								if($("#cotaInput" + index, lancamentoNovoController.workspace).val() == ''){
 									$("#cotaInput" + index, lancamentoNovoController.workspace).focus();
@@ -1217,7 +1237,7 @@ var lancamentoNovoController = $.extend(true, {
 		);
 	},
 		
-	buscarPrecoProdutoEdicao : function(){
+	buscarPrecoProdutoEdicao : function() {
 		
 		$("#idProdutoEdicao", lancamentoNovoController.workspace).val(null);
 		
@@ -1265,8 +1285,10 @@ var lancamentoNovoController = $.extend(true, {
 		$('#nomeInput1', lancamentoNovoController.workspace).val('');
 		$('#diferencaInput1', lancamentoNovoController.workspace).val('');
 		$('#reparteText1', lancamentoNovoController.workspace).text('');
+		$('#reparteAtualText1', lancamentoNovoController.workspace).text('');
 		$('#cotaInputAlteracaoReparte', lancamentoNovoController.workspace).val('');
 		$('#nomeInputAlteracaoReparte', lancamentoNovoController.workspace).val('');
+		
 	},
 	
 	limparProduto : function() {
