@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
@@ -91,6 +92,10 @@ public class NaturezaOperacao implements Serializable {
 	
 	@Column(name = "NOTA_FISCAL_SERIE", length=60)
 	private Long notaFiscalSerie;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "FORMA_COMERCIALIZACAO", nullable = false)
+	private FormaComercializacao formaComercializacao;
 	
 	public Long getId() {
 		return id;
@@ -201,6 +206,14 @@ public class NaturezaOperacao implements Serializable {
 	public void setNotaFiscalSerie(Long notaFiscalSerie) {
 		this.notaFiscalSerie = notaFiscalSerie;
 	}
+	
+	public FormaComercializacao getFormaComercializacao() {
+		return formaComercializacao;
+	}
+
+	public void setFormaComercializacao(FormaComercializacao formaComercializacao) {
+		this.formaComercializacao = formaComercializacao;
+	}
 
 	@Override
 	public int hashCode() {
@@ -226,5 +239,4 @@ public class NaturezaOperacao implements Serializable {
 			return false;
 		return true;
 	}
-	
 }
