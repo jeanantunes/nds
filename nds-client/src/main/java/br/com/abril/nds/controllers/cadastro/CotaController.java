@@ -1347,8 +1347,11 @@ public class CotaController extends BaseController {
      */
 	@Post
 	public void carregarDistribuicaoCota(Long idCota, ModoTela modoTela, Long idHistorico) throws FileNotFoundException, IOException {
-	    DistribuicaoDTO dto = null;
-	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	    
+		DistribuicaoDTO dto = null;
+	    
+		if (ModoTela.CADASTRO_COTA == modoTela) {
+			
 		    dto = cotaService.obterDadosDistribuicaoCota(idCota);
 		    
 		    dto.setTiposEntrega(this.gerarTiposEntrega());
@@ -1356,8 +1359,11 @@ public class CotaController extends BaseController {
 		    dto.setBasesCalculo(this.gerarBasesCalculo());
 		    
 		    this.tratarDocumentoTipoEntrega(dto);
+		    
 		} else {
+			
 		    dto = cotaService.obterDistribuicaoHistoricoTitularidade(idCota, idHistorico);
+		    
 		}
 				
 		this.result.use(Results.json()).from(dto, "result").recursive().serialize();
