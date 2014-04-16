@@ -449,4 +449,17 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		return ((Long)query.uniqueResult()) > 0;
 	}
+
+	@Override
+	public Produto obterProdutoPorICDBaseadoNoPrimeiroBarra(String codigo_icd) {
+		
+		String hql = "from Produto pd where pd.codigoICD = :cod_icd order by pd.codigo asc limit 1";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("cod_icd", codigo_icd);
+		
+		return (Produto) query.uniqueResult();
+		
+	}
 }
