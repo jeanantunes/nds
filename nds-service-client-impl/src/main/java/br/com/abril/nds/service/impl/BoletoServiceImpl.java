@@ -994,7 +994,7 @@ public class BoletoServiceImpl implements BoletoService {
         gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO, boleto, dataOperacao,
                 nomeArquivo, pagamento, usuario, banco, dataPagamento);
         
-        efetivarBaixaCobranca(boleto, dataOperacao);
+        efetivarBaixaCobranca(boleto, dataPagamento);
     }
     
     private void baixarBoletoValorAcima(final TipoBaixaCobranca tipoBaixaCobranca, final PagamentoDTO pagamento,
