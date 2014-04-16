@@ -73,7 +73,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 				   + " estudoCota.qtdeEfetiva as qtdeEfetiva, "
 				   + " cota.id as idCota, "
 				   + " estudoCota.tipoEstudo as tipoEstudo, "
-				   + " cota.devolveEncalhe as devolveEncalhe, "
+				   + " CASE WHEN cota.devolveEncalhe is not null THEN cota.devolveEncalhe ELSE false END as devolveEncalhe, "
 				   + " cota.tipoCota as tipoCota "
 				   + " from EstudoCota estudoCota "
 				   + " join estudoCota.estudo estudo "
