@@ -280,5 +280,4 @@ public class EstudoGerado implements Serializable {
 	public void setReparteMinimo(BigInteger reparteMinimo) {
 		this.reparteMinimo = reparteMinimo;
 	}
-    
 }

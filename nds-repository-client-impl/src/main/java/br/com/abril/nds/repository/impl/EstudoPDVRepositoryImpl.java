@@ -1,5 +1,8 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
+
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -32,5 +35,20 @@ public class EstudoPDVRepositoryImpl extends AbstractRepositoryModel<EstudoPDV, 
                 .add(Restrictions.eq("cota", cota))
                 .add(Restrictions.eq("pdv", pdv))
                 .uniqueResult();
+    }
+    
+    public BigInteger obterTotalReparte(EstudoGerado estudo, Cota cota){
+    	
+    	StringBuilder hql  = new StringBuilder();
+    	
+    	hql.append(" select sum(estudoPDV.reparte) from EstudoPDV estudoPDV ")
+    		.append(" where estudoPDV.cota = :cota and estudoPDV.estudo =:estudo ");
+    	
+    	Query query = getSession().createQuery(hql.toString());
+    	
+    	query.setParameter("estudo", estudo);
+    	query.setParameter("cota", cota);
+    	
+    	return (BigInteger) query.uniqueResult();
     }
 }
