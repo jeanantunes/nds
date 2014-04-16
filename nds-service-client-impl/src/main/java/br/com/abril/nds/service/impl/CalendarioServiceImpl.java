@@ -90,7 +90,7 @@ public class CalendarioServiceImpl implements CalendarioService {
             
             // Verifica se o dia informado é util.
             // Caso não seja, incrementa até encontrar o primeiro dia útil.
-            while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal, localidade)) {
+            while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal, localidadeDistribuidor)) {
                 cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
             }
             
@@ -101,7 +101,7 @@ public class CalendarioServiceImpl implements CalendarioService {
                 
                 cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
                 
-                while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal, localidade) || isFeriado(cal, localidadeDistribuidor)) {
+                while (DateUtil.isSabadoDomingo(cal) || (localidade != null && isFeriado(cal, localidade)) || isFeriado(cal, localidadeDistribuidor)) {
                     cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
                 }
             }
