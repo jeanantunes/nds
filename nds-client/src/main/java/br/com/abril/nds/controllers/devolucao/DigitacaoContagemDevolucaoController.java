@@ -27,11 +27,13 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -97,6 +99,9 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 	
 	
 	@Path("/")
@@ -283,7 +288,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 				.obterInfoContagemDevolucaoCega(filtro, isPerfilUsuarioEncarregado());
 
 		FileExporter.to("digitacao-contagem-devolucao", fileType).inHTTPResponse(
-this.getNDSFileHeader(), filtro,
+                this.getNDSFileHeader(), filtro,
                 listConferenciaCega,
 				ContagemDevolucaoConferenciaCegaDTO.class, this.httpResponse);
 		
@@ -532,10 +537,10 @@ this.getNDSFileHeader(), filtro,
 		for(DigitacaoContagemDevolucaoVO vo: listaContagemDevolucaoVOs){
 			
 			contagemDevolucaoDTO = new ContagemDevolucaoDTO();
-			
+
 			contagemDevolucaoDTO.setCodigoProduto(vo.getCodigoProduto());
 			contagemDevolucaoDTO.setNumeroEdicao(Long.parseLong(vo.getNumeroEdicao()));
-			contagemDevolucaoDTO.setQtdNota(new BigInteger(vo.getQtdNota()));
+			contagemDevolucaoDTO.setQtdNota(vo.getQtdNota()!=null?new BigInteger(vo.getQtdNota()):null);
 			contagemDevolucaoDTO.setDataMovimento( 
 					( vo.getDataRecolhimentoDistribuidor() == null ) 
 					? distribuidorService.obterDataOperacaoDistribuidor() 
@@ -543,6 +548,10 @@ this.getNDSFileHeader(), filtro,
 			contagemDevolucaoDTO.setDiferenca(StringUtil.isEmpty(vo.getDiferenca()) ? null : new BigInteger(vo.getDiferenca()));
 			contagemDevolucaoDTO.setPrecoVenda(vo.getPrecoVenda() == null || vo.getPrecoVenda().isEmpty() ? null : CurrencyUtil.getBigDecimal(vo.getPrecoVenda()));
 			contagemDevolucaoDTO.setTotalComDesconto(vo.getValorTotalComDesconto() == null || vo.getValorTotalComDesconto().isEmpty() ? null : CurrencyUtil.getBigDecimal(vo.getValorTotalComDesconto()));
+			
+            ProdutoEdicao pe = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(vo.getCodigoProduto(), vo.getNumeroEdicao());
+			contagemDevolucaoDTO.setIdProdutoEdicao(pe.getId());
+			
 			listaResultadosDto.add(contagemDevolucaoDTO);
 		}
 		

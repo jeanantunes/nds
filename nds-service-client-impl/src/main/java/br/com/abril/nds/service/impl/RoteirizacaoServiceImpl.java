@@ -1567,10 +1567,10 @@ new ValidacaoVO(TipoMensagem.WARNING,
 		
 		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
 		
-		if ((codigoBoxDe != null && codigoBoxDe > 0)||(codigoBoxAte != null && codigoBoxAte > 0)){
+		if ((codigoBoxDe != null )||(codigoBoxAte != null )){
 		
 			List<Box> boxes = this.boxService.obterBoxPorIntervaloCodigo(codigoBoxDe, codigoBoxAte);
-			
+				
 			for (Box box : boxes){
 			
 				List<Roteiro> roteiros = this.buscarRoteiroDeBox(box.getId());
