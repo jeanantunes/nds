@@ -1241,8 +1241,12 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	}
 	
 	@Transactional(readOnly = true)
-	public List<BigDecimal> comboValoresMinimos(){
-		return this.parametroCobrancaCotaRepository.comboValoresMinimos();
+	public List<BigDecimal> comboValoresMinimos() {
+		List<BigDecimal> valoresMinimos = new ArrayList<>();
+		for(BigDecimal valorMinimo : this.parametroCobrancaCotaRepository.comboValoresMinimos()) {
+			valoresMinimos.add(CurrencyUtil.arredondarValorParaDuasCasas(valorMinimo));
+		}
+		return valoresMinimos;
 	}
 
 	/**
