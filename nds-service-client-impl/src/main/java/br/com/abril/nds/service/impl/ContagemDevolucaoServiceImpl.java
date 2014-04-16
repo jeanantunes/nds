@@ -952,7 +952,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		List<RegistroEdicoesFechadasVO> listaRegistroEdicoesFechadasVO =
 				edicoesFechadasService.obterResultadoEdicoesFechadas(filtro.getDataInicial(), 
 						filtro.getDataFinal(), filtro.getIdFornecedor(), null, null, filtro.getPaginacao().getPaginaAtual(), 
-						filtro.getPaginacao().getQtdResultadosPorPagina());
+						filtro.getPaginacao().getQtdResultadosPorPagina()); 
 		
 		
 		for (RegistroEdicoesFechadasVO registroEdicoesFechadas : listaRegistroEdicoesFechadasVO) {
