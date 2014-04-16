@@ -26,7 +26,7 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	
 	private Long idFornecedor;
 	
-	@Export(label="Fornecedor", alignment=Export.Alignment.LEFT, exhibitionOrder=1, widthPercent=40)
+	@Export(label="Fornecedor", alignment=Export.Alignment.LEFT, exhibitionOrder=1, widthPercent=30)
 	private String nomeFornecedor;
 	
 	private Integer semanaCE;
@@ -99,15 +99,33 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		}
 		
 	}
+	
+	public Date getDataInicial(){
+		
+		if(periodo==null) {
+			return null;
+		}
+		return periodo.getDe();
+		
+	}
+
+	public Date getDataFinal(){
+		
+		if(periodo==null) {
+			return null;
+		}
+		return periodo.getAte();
+		
+	}
 
 	@Export(label="Data Inicial", alignment=Export.Alignment.LEFT, exhibitionOrder=0, widthPercent=5)
-	public String getDataInicial(){
+	public String getPeriodoString(){
 		
 		if(periodo==null) {
 			return null;
 		}
 		return  DateUtil.formatarDataPTBR(periodo.getDe())+
-				"                 Data Final:"+
+				"               Data Final:             "+
 		        DateUtil.formatarDataPTBR(periodo.getAte());
 		
 	}
