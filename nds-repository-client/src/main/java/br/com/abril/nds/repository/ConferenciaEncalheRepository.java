@@ -115,5 +115,5 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	
 	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras);
 	
-	boolean isLancamentoParcial(Long idProdutoEdicao);
+	boolean isCromoParcialNaoFinal(Long idProdutoEdicao);
 }

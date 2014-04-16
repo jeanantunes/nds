@@ -456,9 +456,11 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				var dataRecolhimentoDistribuidor = $(colunaDataRecolhimento, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="idDataRecolhimentoDist"]').val();
 				
+				
 				if (!$.trim(qtdNota)) {
 
-					return true;
+					// return true;
+					qtdNota = null;
 				}
 
 				var digitacaoContagemDevolucao = {codigoProduto:codigoProduto,

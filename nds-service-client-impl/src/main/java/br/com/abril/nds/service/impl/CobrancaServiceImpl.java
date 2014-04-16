@@ -1156,11 +1156,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		Date dataVencimento = null;
 		
-		FormaCobranca frmCobranca = formaCobrancaService.obterFormaCobrancaPrincipalCota(idCota);
-		
-		if(frmCobranca == null ) {
-			frmCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
-		} 
+		FormaCobranca frmCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 		
 		if(frmCobranca != null && frmCobranca.isVencimentoDiaUtil()) {
 			dataVencimento = this.calendarioService.adicionarDiasUteis(dataOperacao, 1);
