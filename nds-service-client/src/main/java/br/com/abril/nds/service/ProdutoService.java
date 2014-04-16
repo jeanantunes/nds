@@ -123,4 +123,5 @@ public interface ProdutoService {
     
     Long obterIdFornecedorUnificadorPorCodigoProduto(String codigoProduto);
 	
+    Produto obterProdutoPorICDBaseadoNoPrimeiroBarra (String codigoICD);
 }

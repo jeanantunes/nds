@@ -470,5 +470,10 @@ public class ProdutoServiceImpl implements ProdutoService {
 		
         return fornecedor.getId();
 	}
+
+	@Override
+	public Produto obterProdutoPorICDBaseadoNoPrimeiroBarra(String codigoICD) {
+		return produtoRepository.obterProdutoPorICDBaseadoNoPrimeiroBarra(codigoICD);
+	}
     
 }

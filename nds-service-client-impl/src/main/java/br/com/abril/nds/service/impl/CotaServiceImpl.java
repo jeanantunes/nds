@@ -670,20 +670,34 @@ public class CotaServiceImpl implements CotaService {
                 if(telefoneDTO!= null && telefoneDTO.getId()!= null){
                     telefoneCota = cotaRepository.obterTelefonePorTelefoneCota(telefoneDTO.getId(), cota.getId());
                     
-                    if(telefoneCota == null){
-                        telefoneCota = new TelefoneCota();
-                        telefoneCota.setCota(cota);
-                    }
-                    final Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
-                    telefoneCota.setPrincipal(dto.isPrincipal());
-                    telefoneCota.setTelefone(telefone);
-                    telefoneCota.setTipoTelefone(dto.getTipoTelefone());
+                    telefoneCota = popularTelefone(cota, pessoa, dto, telefoneCota, telefoneDTO);
                     
                     telefoneCotaRepository.merge(telefoneCota);
+                }else{
+                	
+                	telefoneCota = popularTelefone(cota, pessoa, dto, telefoneCota, telefoneDTO);
+                	
+                	telefoneCotaRepository.adicionar(telefoneCota);
                 }
             }
         }
     }
+
+	private TelefoneCota popularTelefone(final Cota cota, final Pessoa pessoa, final TelefoneAssociacaoDTO dto, TelefoneCota telefoneCota, final TelefoneDTO telefoneDTO) {
+		
+		if(telefoneCota == null){
+		    telefoneCota = new TelefoneCota();
+		    telefoneCota.setCota(cota);
+		}
+		
+		final Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
+
+		telefoneCota.setPrincipal(dto.isPrincipal());
+		telefoneCota.setTelefone(telefone);
+		telefoneCota.setTipoTelefone(dto.getTipoTelefone());
+		
+		return telefoneCota;
+	}
     
     /**
      * TELEFONE

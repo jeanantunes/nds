@@ -166,8 +166,8 @@ public class ManutencaoStatusCotaController extends BaseController {
 			novoHistoricoSituacaoCota.setDataInicioValidade(dataOperacaoDistribuidor);
 		}
 
-		novoHistoricoSituacaoCota.setCota(
-		        this.cotaService.obterPorId(novoHistoricoSituacaoCota.getCota().getId()));
+		//novoHistoricoSituacaoCota.setCota(
+		        //this.cotaService.obterPorId(novoHistoricoSituacaoCota.getCota().getId()));
 		
 		this.situacaoCotaService.atualizarSituacaoCota(
 			novoHistoricoSituacaoCota, dataOperacaoDistribuidor);
