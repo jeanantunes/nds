@@ -437,4 +437,6 @@ public interface CotaService {
 			                   List<SituacaoCadastro> situacoesCadastro);
 	
 	Long obterIdPorNumeroCota(Integer numeroCota);
+	
+	String obterEmailCota(Integer numeroCota);
 }
