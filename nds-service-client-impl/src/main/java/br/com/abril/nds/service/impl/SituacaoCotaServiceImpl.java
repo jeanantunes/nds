@@ -29,6 +29,7 @@ import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.service.ConsultaConsignadoCotaService;
 import br.com.abril.nds.service.CotaGarantiaService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.RoteirizacaoService;
@@ -80,6 +81,9 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
 	@Autowired
 	private DividaService dividaService;
 	
+	@Autowired
+	private CotaService cotaService;
+	
 	@Autowired 
 	private ConsultaConsignadoCotaService consultaConsignadoCotaService;
 
@@ -128,7 +132,7 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
 		
 	    this.validarAlteracaoStatusCota(historicoSituacaoCota, dataDeOperacao);
 		
-		Cota cota = historicoSituacaoCota.getCota();
+		Cota cota = cotaService.obterPorId(historicoSituacaoCota.getCota().getId());
 		
 		if (DateUtil.obterDiferencaDias(
 				dataDeOperacao, historicoSituacaoCota.getDataInicioValidade()) == 0) {
