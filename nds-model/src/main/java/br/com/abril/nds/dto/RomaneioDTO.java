@@ -67,6 +67,8 @@ public class RomaneioDTO implements Serializable {
 	
 	private String cep;
 	
+	private Long idPDV;
+	
 	public RomaneioDTO() {}
 	
 	public Integer getNumeroCota() {
@@ -263,5 +265,15 @@ public class RomaneioDTO implements Serializable {
 	public void setCep(String cep) {
 		this.cep = Util.adicionarMascaraCEP(cep);
 	}
+
+	public Long getIdPDV() {
+		return idPDV;
+	}
+
+	public void setIdPDV(Long idPDV) {
+		this.idPDV = idPDV;
+	}
+	
+	
 	
 }
