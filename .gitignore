@@ -27,7 +27,6 @@ nds-client/src/main/webapp/temp/
 integracao.sh
 nds-client/src/main/java/br/com/abril/nds/testeLocal/
 nds-client/src/main/webapp/images/tmp/
-
 nds-integration-server/src/test/resources/prophecies.properties
 nds-integration-server/src/main/resources/prophecies.properties
 nds-integration-server/src/main/resources/ndsi-database.properties
@@ -36,3 +35,4 @@ nds-integration-client/src/main/resources/prophecies.properties
 nds-integration-client/src/main/resources/ndsi-database.properties
 nds-integration-client/src/main/resources/couchdb.properties
 *.classpath
+

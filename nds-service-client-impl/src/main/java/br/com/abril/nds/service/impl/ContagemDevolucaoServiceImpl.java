@@ -368,11 +368,43 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 	}
 	
+	/**
+	 * Remove Conferencia Encalhe Parcial(Contagem Devolucao Fornecedor) do produto edição na Data
+	 * 
+	 * @param codigoProduto
+	 * @param numeroEdicao
+	 * @param dataOperacao
+	 */
+	private void removerContagemDevolucaoProdutoEdicaoData(String codigoProduto, Long numeroEdicao, Date dataOperacao ){
+		
+		List<ConferenciaEncalheParcial> listaCeParc = this.conferenciaEncalheParcialRepository.obterListaConferenciaEncalhe(false, 
+																											                false, 
+																											                StatusAprovacao.PENDENTE, 
+																											                dataOperacao, 
+																											                null,
+																											                codigoProduto, 
+																											                numeroEdicao);
+		
+		for (ConferenciaEncalheParcial item : listaCeParc){
+		
+		    conferenciaEncalheParcialRepository.remover(item);
+		}
+	}
 	
 	private void inserirCorrecaoContagemDevolucao(ContagemDevolucaoDTO contagem, Date dataAtual, Usuario usuario, Date dataOperacao) {
 		
 		String codigoProduto = contagem.getCodigoProduto();
+		
 		Long numeroEdicao = contagem.getNumeroEdicao();
+		
+		boolean qtdeNaoInformada = (contagem.getQtdNota() == null);
+		
+		if (qtdeNaoInformada){
+			
+			this.removerContagemDevolucaoProdutoEdicaoData(codigoProduto, numeroEdicao, dataOperacao);
+			
+			return;
+		}	
 		
 		BigInteger qtdTotalConferenciaEncalheParcialOld = conferenciaEncalheParcialRepository.obterQtdTotalEncalheParcial(
 				StatusAprovacao.PENDENTE,
@@ -380,13 +412,13 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 				codigoProduto, 
 				numeroEdicao);
 		
+		BigInteger correcao = null;
+		
 		BigInteger qtdTotalConferenciaEncalheParcialNew = contagem.getQtdNota();
 		
 		if( qtdTotalConferenciaEncalheParcialNew == null ) {
 			return;
 		}
-		
-		BigInteger correcao = null;
 		
 		if( qtdTotalConferenciaEncalheParcialOld != null ) {
 			
@@ -578,7 +610,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 									produtoEdicao, 
 									calculoQdeDiferenca, 
 									TipoDiferenca.GANHO_EM, 
-									tipoMovimentoPerda.getGrupoMovimentoEstoque().getTipoEstoque(), 
+									tipoMovimentoSobraEmReparte.getGrupoMovimentoEstoque().getTipoEstoque(), 
 									StatusAprovacao.GANHO);
 			
 		} else if(calculoQdeDiferenca.compareTo(BigInteger.ZERO) > 0) {
@@ -807,6 +839,11 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		for ( ContagemDevolucaoDTO contagem : listaContagemDevolucao ) {
 			
+			if (contagem.getQtdNota()==null){
+				
+				continue;
+			}
+			
 			movimentoEstoqueService.gerarMovimentoEstoque(contagem.getIdProdutoEdicao(),idUsuario,contagem.getQtdNota(),tipoMovimentoDevolucaoEncalhe);
 		}
 	}
@@ -915,7 +952,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		List<RegistroEdicoesFechadasVO> listaRegistroEdicoesFechadasVO =
 				edicoesFechadasService.obterResultadoEdicoesFechadas(filtro.getDataInicial(), 
 						filtro.getDataFinal(), filtro.getIdFornecedor(), null, null, filtro.getPaginacao().getPaginaAtual(), 
-						filtro.getPaginacao().getQtdResultadosPorPagina());
+						filtro.getPaginacao().getQtdResultadosPorPagina()); 
 		
 		
 		for (RegistroEdicoesFechadasVO registroEdicoesFechadas : listaRegistroEdicoesFechadasVO) {
