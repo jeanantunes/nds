@@ -788,7 +788,17 @@ public class BaixaFinanceiraController extends BaseController {
 	
 	@Post
 	@Path("calcularSaldoDivida")
-	public void calacularSaldo(BigDecimal vlDivida, BigDecimal vlMulta, BigDecimal vlJuros, BigDecimal vlDesconto, BigDecimal vlPago){
+	public void calacularSaldo(String vlDividaStr, 
+			                   String vlMultaStr, 
+			                   String vlJurosStr, 
+			                   String vlDescontoStr, 
+			                   String vlPagoStr){
+		
+		BigDecimal vlDivida =  BigDecimal.valueOf(Float.parseFloat(vlDividaStr));
+        BigDecimal vlMulta =  BigDecimal.valueOf(Float.parseFloat(vlMultaStr));
+        BigDecimal vlJuros =  BigDecimal.valueOf(Float.parseFloat(vlJurosStr));
+        BigDecimal vlDesconto =  BigDecimal.valueOf(Float.parseFloat(vlDescontoStr));
+        BigDecimal vlPago = BigDecimal.valueOf(Float.parseFloat(vlPagoStr));
 		
 		vlDivida = vlDivida.setScale(2, RoundingMode.HALF_EVEN);
 		

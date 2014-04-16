@@ -120,15 +120,6 @@ public interface ConferenciaEncalheService {
 	 */
 	public void validarFechamentoEncalheRealizado() throws FechamentoEncalheRealizadoException;
 	
-	/**
-	 * Valida se o produto edicao em questão é relalivo a lancamento parcial.
-	 * 
-	 * @param codigo
-	 * @param numeroEdicao
-	 * 
-	 * @return boolean
-	 */
-	public boolean isLancamentoParcialProdutoEdicao(String codigo, Long numeroEdicao);
 
 	/**
 	 * Verifica se a cota cota possui reparte a recolher na data em questão.
@@ -281,7 +272,17 @@ public interface ConferenciaEncalheService {
 	
 	boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota);
 	
-	boolean isLancamentoParcial(Long idProdutoEdicao);
+	/**
+	 * Caso o produto seja do grupo CROMO 
+	 * e esteja com com lançamento parcial NÃO FINAL
+	 * então retornará true (indicando que este possui
+	 * contagem por pacote).
+	 * 
+	 * 
+	 * @param idProdutoEdicao
+	 * @return boolean
+	 */
+	boolean isContagemPacote(Long idProdutoEdicao);
 	
 	void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao, boolean indOperacaoDiferenciada);
 
@@ -290,5 +291,15 @@ public interface ConferenciaEncalheService {
 	BigDecimal obterValorTotalReparteSemDesconto(Integer numeroCota,Date dataOperacao);
 
 	BigDecimal obterValorTotalReparte(Integer numeroCota, Date dataOperacao);
+
+
+	/**
+	 * Obtém datas de recolhimento da semana da data de operação diferenciada
+	 * 
+	 * @param numeroCota
+	 * @param data
+	 * @return List<Date>
+	 */
+	List<Date> obterDatasRecolhimentoOperacaoDiferenciada(Integer numeroCota,Date data);
 	
 }
