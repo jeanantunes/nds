@@ -1077,25 +1077,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return idsFornecedor;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.service.ConferenciaEncalheService#isLancamentoParcialProdutoEdicao(java.lang.String, java.lang.Long)
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public boolean isLancamentoParcialProdutoEdicao(final String codigo, final Long numeroEdicao) {
-		
-		final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, numeroEdicao);
-		
-		return produtoEdicao.isParcial();
-		
-	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public boolean isLancamentoParcial(final Long idProdutoEdicao) {
+	public boolean isContagemPacote(final Long idProdutoEdicao) {
 		
-		return this.conferenciaEncalheRepository.isLancamentoParcial(idProdutoEdicao);
+		return this.conferenciaEncalheRepository.isCromoParcialNaoFinal(idProdutoEdicao);
 	}
 	
 	    /**
@@ -1318,8 +1305,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		// impl Erik Scaranello
 		BigDecimal valorDebitoCreditoFinalizado = new BigDecimal(0);
-		for(final DebitoCreditoCotaDTO debitoCredito : infoConfereciaEncalheCota.getListaDebitoCreditoCota())
-		{
+		for(final DebitoCreditoCotaDTO debitoCredito : infoConfereciaEncalheCota.getListaDebitoCreditoCota()) {
 			valorDebitoCreditoFinalizado = valorDebitoCreditoFinalizado.add(debitoCredito.getValor());
 		}
 		
