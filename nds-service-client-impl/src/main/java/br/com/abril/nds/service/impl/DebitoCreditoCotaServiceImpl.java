@@ -299,7 +299,42 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		listaDebitoCredito.add(debitoCredito);
 		
 	}
-	
+    
+    @Transactional(readOnly = true)
+    public List<DebitoCreditoCotaDTO> obterListaResumoCobranca(Cota cota, Date dataOperacao) {
+    
+    	List<DebitoCreditoCotaDTO> listaResumoCobranca = new ArrayList<DebitoCreditoCotaDTO>();
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacao = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacaoComissao = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO);
+		
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
+		
+		this.validar_adicionar_tiposMovimentosFinanceirosIgnorados(
+				tipoMovimentoFinanceiroEnvioEncalhe,
+				tipoMovimentoFinanceiroRecebimentoReparte,
+				tipoMovimentoFinanceiroNegociacao,
+				tipoMovimentoFinanceiroNegociacaoComissao,
+				tiposMovimentoFinanceiroIgnorados);
+		
+
+		//DEBITOS E CREDITOS DA COTA NA DATA DE OPERACAO
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaNaoConsolidado = 
+				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(cota.getNumeroCota(), 
+													dataOperacao, 
+													tiposMovimentoFinanceiroIgnorados);
+
+		listaResumoCobranca.addAll(listaDebitoCreditoCotaNaoConsolidado);
+		
+		return listaResumoCobranca;
+    	
+    }
+    
 	/**
 	 * Obtem lista de Débitos e Créditos quem não pertencem à reparte ou encalhe
 	 * @param cota
