@@ -73,7 +73,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		StringBuilder sql = new StringBuilder("");
 		
 		sql.append("    SELECT ");
-		sql.append("        SUM(MFC.VALOR  + PN.ENCARGOS ) AS valor, ");
+		sql.append("        SUM(MFC.VALOR) AS valor, ");
 		sql.append("        PN.DATA_VENCIMENTO AS dataVencimento, ");
 		sql.append("        MFC.DATA as dataLancamento ");
 		sql.append("    FROM ");

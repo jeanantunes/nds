@@ -312,23 +312,13 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
-		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
-		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacao = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
-		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacaoComissao = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO);
-		
-		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
-		
-		this.validar_adicionar_tiposMovimentosFinanceirosIgnorados(
-				tipoMovimentoFinanceiroEnvioEncalhe,
-				tipoMovimentoFinanceiroRecebimentoReparte,
-				tipoMovimentoFinanceiroNegociacao,
-				tipoMovimentoFinanceiroNegociacaoComissao,
-				tiposMovimentoFinanceiroIgnorados);
-		
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = 
+		        this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
+		                Arrays.asList(
+		                        GrupoMovimentoFinaceiro.ENVIO_ENCALHE,
+		                        GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
+		                        GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,
+		                        GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO));
 
 		//DEBITOS E CREDITOS DA COTA NA DATA DE OPERACAO
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaNaoConsolidado = 
@@ -363,27 +353,6 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		}
 		
 		return listaDebitoCreditoCompleta;
-	}
-
-
-	private void validar_adicionar_tiposMovimentosFinanceirosIgnorados(
-			TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe,
-			TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte,
-			TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacao,
-			TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacaoComissao,
-			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados) {
-		
-		if(tipoMovimentoFinanceiroEnvioEncalhe != null)
-			tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
-
-		if (tipoMovimentoFinanceiroRecebimentoReparte != null)
-			tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
-		
-		if(tipoMovimentoFinanceiroNegociacao != null)
-			tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroNegociacao);
-
-		if(tipoMovimentoFinanceiroNegociacaoComissao != null)
-			tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroNegociacaoComissao);
 	}
 	
 	/**

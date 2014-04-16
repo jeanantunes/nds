@@ -416,4 +416,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
     TipoDistribuicaoCota obterTipoDistribuicao(Long idCota);
 
     Cota obterPorNumerDaCota(Integer numeroCota, SituacaoCadastro situacao);
+
+    String obterEmailCota(Integer numeroCota);
 }
