@@ -538,21 +538,16 @@ var alteracaoCotaController = $.extend(true, {
 	salvarAlteracao : function() {
 		
 		var  dataForm = $("#alteracaoForm :input[value][value!=''][value!='-1']", this.workspace).serializeArray();
-		if(dataForm[0] && dataForm[0].value){
-			dataForm[0].value = floatValue(dataForm[0].value);
-		}
-		
 		
 		$("#idListaFornecedorAssociado option", this.workspace).each(function (index) {
-			 dataForm.push({name: 'filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados['+index+']', 
+			 dataForm.push({name: 'filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados['+ index +']', 
 				 			value:$(this, this.workspace).val() } );
 		});
 		
 		dataForm =  dataForm.concat(this.listListaLinhaSelecao);
 		
-		
 		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao",
-				dataForm,  
+				dataForm,
 			   	function () {
 					$("#dialog-novo", this.workspace).dialog( "close" );
 					alteracaoCotaController.carregarValorMinimo();

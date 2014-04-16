@@ -269,17 +269,17 @@ public class AlteracaoCotaController extends BaseController {
         }
         
         if (cota.getParametroDistribuicao().getRepartePorPontoVenda() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRepartePontoVenda(
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setRepartePontoVenda(
                     cota.getParametroDistribuicao().getRepartePorPontoVenda());
         }
         
         if (cota.getParametroDistribuicao().getSolicitaNumAtras() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsSolicitacaoNumAtrasoInternet(
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setSolicitacaoNumAtrasoInternet(
                     cota.getParametroDistribuicao().getSolicitaNumAtras());
         }
         
         if (cota.getParametroDistribuicao().getRecebeRecolheParciais() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRecebeRecolheProdutosParciais(
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setRecebeRecolheProdutosParciais(
                     cota.getParametroDistribuicao().getRecebeRecolheParciais());
         }
         
