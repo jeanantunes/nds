@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.export.Export;
@@ -25,7 +26,7 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	
 	private Long idFornecedor;
 	
-	@Export(label="Fornecedor")
+	@Export(label="Fornecedor", alignment=Export.Alignment.LEFT, exhibitionOrder=1, widthPercent=40)
 	private String nomeFornecedor;
 	
 	private Integer semanaCE;
@@ -98,28 +99,19 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		}
 		
 	}
-	
-	@Export(label="Data Inicial")
-	public Date getDataInicial(){
+
+	@Export(label="Data Inicial", alignment=Export.Alignment.LEFT, exhibitionOrder=0, widthPercent=5)
+	public String getDataInicial(){
 		
 		if(periodo==null) {
 			return null;
 		}
-		return periodo.getDe();
+		return  DateUtil.formatarDataPTBR(periodo.getDe())+
+				"                 Data Final:"+
+		        DateUtil.formatarDataPTBR(periodo.getAte());
 		
 	}
 
-	@Export(label="Data Final")
-	public Date getDataFinal(){
-		
-		if(periodo==null) {
-			return null;
-		}
-		return periodo.getAte();
-		
-	}
-
-	
 	/**
 	 * @return the idFornecedor
 	 */
