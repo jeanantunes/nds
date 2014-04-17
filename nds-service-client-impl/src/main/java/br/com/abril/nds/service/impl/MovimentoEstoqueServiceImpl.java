@@ -1129,7 +1129,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             // Caso seja importação, deve inserir mesmo se o estoque ficar
             // negativo - Definido em conjunto com Cesar Pop Punk
-            if (!isImportacao && !TipoEstoque.DEVOLUCAO_FORNECEDOR.equals(tipoEstoque)) {
+            if (!isImportacao && !TipoEstoque.DEVOLUCAO_FORNECEDOR.equals(tipoEstoque) && !TipoEstoque.DEVOLUCAO_ENCALHE.equals(tipoEstoque)) {
                 this.validarAlteracaoEstoqueProdutoDistribuidor(
                         novaQuantidade, tipoEstoque, estoqueProduto.getProdutoEdicao(),
                         validarTransfEstoqueDiferenca);
