@@ -49,6 +49,7 @@ import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.integracao.ParametroSistema;
@@ -410,45 +411,8 @@ public class NFeServiceImpl implements NFeService {
 					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotas);
 					
 				} else {
-					//
-					boolean notasGeradas = false;
-					List<Cota> cotasContribuinteEmitente = new ArrayList<Cota>();
-					for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
-						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
-							if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
-								
-								for (Cota cota : cotas) {
-									if((cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() != null && cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) || cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica()){
-										cotasContribuinteEmitente.add(cota);
-									}
-								}
-								
-								if(cotasContribuinteEmitente.isEmpty()){
-									throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
-								} else {
-									this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasContribuinteEmitente);
-									notasGeradas = true;
-									break;
-								}
-								
-							}
-							
-							if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS)) {			
-								this.gerarNotaFiscalUnificada(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
-								notasGeradas = true;
-								break;
-							} else {
-								this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotas);
-								notasGeradas = true;
-								break;
-							}
-							
-						}
-					}
 					
-					if(!notasGeradas) {
-						throw new ValidacaoException(TipoMensagem.ERROR, "Natureza de Operação não está configurada adequadamente para o Regime Especial.");
-					}
+					this.gerarNotasConsolidadas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotas);
 				}
 				
 				break;
@@ -462,8 +426,9 @@ public class NFeServiceImpl implements NFeService {
 				
 		}
 		
-		if(notas == null || notas.isEmpty())
+		if(notas == null || notas.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota fiscal.");
+		}
 		
 		for (NotaFiscal notaFiscal : notas) {
 			notaFiscalRepository.adicionar(notaFiscal);
@@ -482,6 +447,49 @@ public class NFeServiceImpl implements NFeService {
 		}
 		
 		return notas;
+	}
+
+	private void gerarNotasConsolidadas(FiltroNFeDTO filtro, List<NotaFiscal> notas,
+			Distribuidor distribuidor, NaturezaOperacao naturezaOperacao,
+			Map<String, ParametroSistema> parametrosSistema, List<Cota> cotas) {
+		boolean notasGeradas = false;
+		List<Cota> cotasContribuinteEmitente = new ArrayList<Cota>();
+		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+					
+					for (Cota cota : cotas) {
+						if((cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() != null && cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) || cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica()){
+							cotasContribuinteEmitente.add(cota);
+						}
+					}
+					
+					if(cotasContribuinteEmitente.isEmpty()){
+						throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
+					} else {
+						this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasContribuinteEmitente);
+						notasGeradas = true;
+						break;
+					}
+					
+				}
+				
+				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS)) {			
+					this.gerarNotaFiscalUnificada(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
+					notasGeradas = true;
+					break;
+				} else {
+					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotas);
+					notasGeradas = true;
+					break;
+				}
+				
+			}
+		}
+		
+		if(!notasGeradas) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Natureza de Operação não está configurada adequadamente para o Regime Especial.");
+		}
 	}
 		
 	private void validarFiltroNFe(final FiltroNFeDTO filtro) {
@@ -584,6 +592,17 @@ public class NFeServiceImpl implements NFeService {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoRegimeTributario);
 			}
 			
+			if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > 400){
+				List<List<DetalheNotaFiscal>> listaItens = new ArrayList<>();
+				
+				int tamanho = (int) notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() / 400;
+				
+				for (int i = 401; i % 400 != 0 && notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > i; i++) {
+					listaItens.subList(tamanho, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size());
+					listaItens.add(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal());
+				}
+			}
+			
 			//FIXME: Ajustar o valor do campo para valores parametrizados
 			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
@@ -647,27 +666,28 @@ public class NFeServiceImpl implements NFeService {
 		
 		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
 		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
-		
-		List<CotaExemplaresDTO> cotasContribuinteEmitente = new ArrayList<CotaExemplaresDTO>();
-		
 		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
 			return notaFiscalService.consultaCotaExemplareSumarizado(filtro);
 		} else {
-			List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplareSumarizado(filtro);
+			return this.listaRegimeEspecial(filtro, naturezaOperacao, distribuidor);	
+		}
+	}
 
-			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
-				if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
-					if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
-						
-						for (CotaExemplaresDTO cota : cotas) {
-							if((cota.isContribuinteICMS() != null && cota.isContribuinteICMS()) || (cota.isEmiteNotaFiscalEletronica() != null && cota.isEmiteNotaFiscalEletronica() )){
-								cotasContribuinteEmitente.add(cota);
-							}
+	private List<CotaExemplaresDTO> listaRegimeEspecial(final FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao, Distribuidor distribuidor) {
+		List<CotaExemplaresDTO> cotasContribuinteEmitente = new ArrayList<CotaExemplaresDTO>();
+		
+		List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplareSumarizado(filtro);
+		
+		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+					for (CotaExemplaresDTO cota : cotas) {
+						if((cota.isContribuinteICMS() != null && cota.isContribuinteICMS()) || (cota.isEmiteNotaFiscalEletronica() != null && cota.isEmiteNotaFiscalEletronica() )){
+							cotasContribuinteEmitente.add(cota);
 						}
-			
 					}
 				}
-			}	
+			}
 		}
 		return cotasContribuinteEmitente;
 	}

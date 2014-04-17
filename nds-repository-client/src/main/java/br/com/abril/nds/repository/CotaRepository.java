@@ -419,4 +419,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
     Cota obterPorNumerDaCota(Integer numeroCota, SituacaoCadastro situacao);
     
     List<Cota> obterConjuntoCota(FiltroNFeDTO filtro);
+
+    String obterEmailCota(Integer numeroCota);
 }

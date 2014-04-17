@@ -169,18 +169,24 @@
 							
 							<br /> 
 							
-							<input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.isRepartePontoVenda" id="idModalIsRepartePontoVenda"  />
-							<label for="repPtoVnda">Reparte por	Ponto de Venda</label> 
+							<input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.repartePontoVenda" id="idModalIsRepartePontoVenda" />
+							<label for="repPtoVnda">Entrega de Reparte de Venda</label> 
 							
 							<br clear="all" /> 
 							
-							<input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.isSolicitacaoNumAtrasoInternet" id="idModalIsSolicitacaoNumAtrasoInternet"  />
-							<label for="solNumAtrs">Solicita&ccedil;&atilde;o Num. Atrasados - Internet</label> 
+							<input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.solicitacaoNumAtrasoInternet" id="idModalIsSolicitacaoNumAtrasoInternet" />
+							<label for="solNumAtrs">Solicitação N&ordm;. Atrasados - Internet</label> 
 							
 							<br	clear="all" /> 
 							
-							<input type="checkbox"name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.isRecebeRecolheProdutosParciais" id="idModalIsRecebeRecolheProdutosParciais"  />
+							<input type="checkbox"name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.recebeRecolheProdutosParciais" id="idModalIsRecebeRecolheProdutosParciais" />
 							<label for="recebeRecolhe">Recebe / Recolhe produtos parciais</label>
+							
+							<br	clear="all" /> 
+
+							<input type="checkbox"name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.recebeComplementar" id="idModalIsRecebeComplementar" />
+							<label for="recebeComplementar">Cota Recebe Complementar</label>
+							
 						</td>
 						<td width="12" style="width: 10px;">&nbsp;</td>
 						<td width="334" valign="top">

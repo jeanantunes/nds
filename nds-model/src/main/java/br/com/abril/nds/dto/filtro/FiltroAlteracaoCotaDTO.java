@@ -15,18 +15,29 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 	private static final long serialVersionUID = -9068411972805292601L;
 	
 	private Long idCota;
+	
 	private Integer numeroCota; 
+	
 	private String nomeCota; 
+	
 	private Long idFornecedor;
+	
 	private String idBairro;
+	
 	private String idMunicipio; 
+	
 	private DescricaoTipoEntrega descricaoTipoEntrega; 
+	
 	private TipoDesconto tipoDesconto;
+	
 	private BigDecimal idVrMinimo;
+	
 	private Integer idVencimento;
 	
 	private FiltroModalFornecedor filtroModalFornecedor = new FiltroModalFornecedor();
+	
 	private FiltroModalFinanceiro filtroModalFinanceiro = new FiltroModalFinanceiro();
+	
 	private FiltroModalDistribuicao filtroModalDistribuicao = new FiltroModalDistribuicao();
 	
 	private List<Long> listaLinhaSelecao = new ArrayList<Long>(); 

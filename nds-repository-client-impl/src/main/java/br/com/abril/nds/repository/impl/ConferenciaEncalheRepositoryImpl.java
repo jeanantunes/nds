@@ -296,10 +296,9 @@ public class ConferenciaEncalheRepositoryImpl extends
 		sql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		sql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		sql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
-		sql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
 		sql.append(" WHERE lanc.PRODUTO_EDICAO_ID = :idProdutoEdicao ");
 		sql.append(" AND plp.TIPO = :tipoLancamento "); 
-		sql.append(" AND tp.GRUPO_PRODUTO = :grupoProdutoCromo ");
+		sql.append(" AND pe.GRUPO_PRODUTO = :grupoProdutoCromo ");
 		sql.append(" AND lanc.status in (:statusEmRecolhimento)  ");
 		sql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID ");
 
@@ -338,9 +337,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
-		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
 		hql.append(" WHERE lanc.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
-		hql.append(" AND tp.GRUPO_PRODUTO = :grupoProdutoCromo ");
+		hql.append(" AND pe.GRUPO_PRODUTO = :grupoProdutoCromo ");
 		hql.append(" AND plp.TIPO = 'FINAL' ");
 		hql.append(" AND lanc.status IN (:statusEmRecolhimento)  ");
 		hql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID) IS NULL THEN "); 
@@ -350,9 +348,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
-		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
 		hql.append(" WHERE lanc.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
-		hql.append(" AND tp.GRUPO_PRODUTO = :grupoProdutoCromo ");
+		hql.append(" AND pe.GRUPO_PRODUTO = :grupoProdutoCromo ");
 		hql.append(" AND plp.TIPO = 'PARCIAL' ");
 		hql.append(" AND lanc.status IN (:statusEmRecolhimento)  ");
 		hql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID) IS NOT NULL THEN true ");
@@ -557,9 +554,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
-		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
 		hql.append(" WHERE lanc.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
-		hql.append(" AND tp.GRUPO_PRODUTO = :grupoProdutoCromo ");
+		hql.append(" AND pe.GRUPO_PRODUTO = :grupoProdutoCromo ");
 		hql.append(" AND plp.TIPO = 'FINAL' ");
 		hql.append(" AND lanc.status IN (:statusEmRecolhimento)  ");
 		
@@ -570,9 +566,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
-		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
 		hql.append(" WHERE lanc.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
-		hql.append(" AND tp.GRUPO_PRODUTO = :grupoProdutoCromo ");
+		hql.append(" AND pe.GRUPO_PRODUTO = :grupoProdutoCromo ");
 		hql.append(" AND plp.TIPO = 'PARCIAL' ");
 		hql.append(" AND lanc.status IN (:statusEmRecolhimento)  ");
 

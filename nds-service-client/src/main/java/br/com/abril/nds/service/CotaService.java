@@ -441,4 +441,6 @@ public interface CotaService {
 	Long obterIdPorNumeroCota(Integer numeroCota);
 	
 	List<Cota> obterConjuntoCota(FiltroNFeDTO filtro);
+	
+	String obterEmailCota(Integer numeroCota);
 }

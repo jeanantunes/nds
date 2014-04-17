@@ -329,6 +329,5 @@ public class EstudoGerado implements Serializable {
 			return false;
 		return true;
 	}
-
 }
 

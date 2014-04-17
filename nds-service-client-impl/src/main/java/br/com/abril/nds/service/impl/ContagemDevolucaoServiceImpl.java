@@ -876,13 +876,18 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		List<ContagemDevolucaoDTO> listaAgrupadaContagemDevolucao = new ArrayList<ContagemDevolucaoDTO>();
 		
 		for(ContagemDevolucaoDTO contagemDevolucaoAprovada : listaContagemDevolucaoAprovada) {
+			
+			if(contagemDevolucaoAprovada.getDiferenca() == null){
+				
+				continue;
+			}
 
 			List<ContagemDevolucaoDTO> contagemAgrupada = conferenciaEncalheParcialRepository.
 					obterListaContagemDevolucao(
 					null, 
 					false, 
 					StatusAprovacao.APROVADO, 
-					null,
+					contagemDevolucaoAprovada.getIdProdutoEdicao(),
 					contagemDevolucaoAprovada.getCodigoProduto(), 
 					contagemDevolucaoAprovada.getNumeroEdicao(),
 					null);

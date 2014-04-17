@@ -10,14 +10,24 @@ import br.com.abril.nds.util.export.Exportable;
 @Exportable
 public class FiltroModalDistribuicao implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5105701443356674581L;
 	
 	private String nmAssitPromoComercial;
+	
 	private String nmGerenteComercial;
+	
 	private String observacao;
 
-	private boolean isRepartePontoVenda; 
-	private boolean isSolicitacaoNumAtrasoInternet;
-	private boolean isRecebeRecolheProdutosParciais;
+	private boolean repartePontoVenda; 
+	
+	private boolean solicitacaoNumAtrasoInternet;
+	
+	private boolean recebeRecolheProdutosParciais;
+	
+	private boolean recebeComplementar;
 
 	private DescricaoTipoEntrega descricaoTipoEntrega; 
 	
@@ -72,32 +82,37 @@ public class FiltroModalDistribuicao implements Serializable{
 		this.observacao = observacao;
 	}
 
-	public boolean getIsRepartePontoVenda() {
-		return isRepartePontoVenda;
+	public boolean isRepartePontoVenda() {
+		return repartePontoVenda;
 	}
 
-	public void setIsRepartePontoVenda(boolean isRepartePontoVenda) {
-		this.isRepartePontoVenda = isRepartePontoVenda;
+	public void setRepartePontoVenda(boolean isRepartePontoVenda) {
+		this.repartePontoVenda = isRepartePontoVenda;
 	}
 
-	public boolean getIsSolicitacaoNumAtrasoInternet() {
-		return isSolicitacaoNumAtrasoInternet;
+	public boolean isSolicitacaoNumAtrasoInternet() {
+		return solicitacaoNumAtrasoInternet;
 	}
 
-	public void setIsSolicitacaoNumAtrasoInternet(
-			boolean isSolicitacaoNumAtrasoInternet) {
-		this.isSolicitacaoNumAtrasoInternet = isSolicitacaoNumAtrasoInternet;
+	public void setSolicitacaoNumAtrasoInternet(boolean solicitacaoNumAtrasoInternet) {
+		this.solicitacaoNumAtrasoInternet = solicitacaoNumAtrasoInternet;
 	}
 
-	public boolean getIsRecebeRecolheProdutosParciais() {
-		return isRecebeRecolheProdutosParciais;
+	public boolean isRecebeRecolheProdutosParciais() {
+		return recebeRecolheProdutosParciais;
 	}
 
-	public void setIsRecebeRecolheProdutosParciais(
-			boolean isRecebeRecolheProdutosParciais) {
-		this.isRecebeRecolheProdutosParciais = isRecebeRecolheProdutosParciais;
+	public void setRecebeRecolheProdutosParciais(boolean isRecebeRecolheProdutosParciais) {
+		this.recebeRecolheProdutosParciais = isRecebeRecolheProdutosParciais;
 	}
 
+	public boolean isRecebeComplementar() {
+		return recebeComplementar;
+	}
+
+	public void setRecebeComplementar(boolean recebeComplementar) {
+		this.recebeComplementar = recebeComplementar;
+	}
 
 	public FiltroCheckDistribEmisDoc getFiltroCheckDistribEmisDoc() {
 		return filtroCheckDistribEmisDoc;

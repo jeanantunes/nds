@@ -981,8 +981,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 break;
                 
             case DEVOLUCAO_ENCALHE:
+            	
+            	
+                final BigInteger qtdeEstoqueProdutoEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
                 
-                final BigInteger qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+                final BigInteger qtdeEstoqueProdutoSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
+                
+                final BigInteger qtdeEstoqueProduto = estoqueProduto.getQtde() == null ? BigInteger.ZERO : estoqueProduto.getQtde();
+                
+                final BigInteger qtdeEstoqueProdutoTotal = qtdeEstoqueProdutoEncalhe.add(qtdeEstoqueProdutoSuplementar).add(qtdeEstoqueProduto);
+                
                
                 BigInteger qntMovimento = movimentoEstoque.getQtde();
                 
@@ -992,8 +1000,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 							movimentoEstoque, estoqueProduto, qntMovimento);		
                 }
                 
-                novaQuantidade = isOperacaoEntrada ? qtdeEncalhe.add(qntMovimento) :
-                    qtdeEncalhe.subtract(qntMovimento);
+                novaQuantidade = isOperacaoEntrada ? qtdeEstoqueProdutoTotal.add(qntMovimento) :
+                	qtdeEstoqueProdutoTotal.subtract(qntMovimento);
                 
                 estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
                 
@@ -1124,7 +1132,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             // Caso seja importação, deve inserir mesmo se o estoque ficar
             // negativo - Definido em conjunto com Cesar Pop Punk
-            if (!isImportacao && !TipoEstoque.DEVOLUCAO_FORNECEDOR.equals(tipoEstoque)) {
+            if (!isImportacao && !TipoEstoque.DEVOLUCAO_FORNECEDOR.equals(tipoEstoque) && !TipoEstoque.DEVOLUCAO_ENCALHE.equals(tipoEstoque)) {
                 this.validarAlteracaoEstoqueProdutoDistribuidor(
                         novaQuantidade, tipoEstoque, estoqueProduto.getProdutoEdicao(),
                         validarTransfEstoqueDiferenca);

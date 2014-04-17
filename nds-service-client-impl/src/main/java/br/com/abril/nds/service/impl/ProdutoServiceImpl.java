@@ -126,11 +126,12 @@ public class ProdutoServiceImpl implements ProdutoService {
         }
         if (produto == null) {
             produto = produtoRepository.obterProdutoPorCodigoICD(codigoProduto);
-        } if (produto == null) {
-            produto = produtoRepository.obterProdutoPorCodigoICDLike(codigoProduto);
-        } if ((produto == null) && (codigoProduto.length() <=8)) {
-            produto = produtoRepository.obterProdutoPorCodigoProdinLike(codigoProduto);
-        }
+        } 
+
+        if (produto == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Código do produto não encontrado.");
+		}
+        
         return produto;
 	}
 	

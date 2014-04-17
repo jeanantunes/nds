@@ -577,6 +577,20 @@ public class Cota implements Serializable {
 		return null;
 	}
 	
+	public List<PDV> getPDVSecundarios(){
+		
+		List<PDV> pdvs = new ArrayList<>();
+		
+		for(PDV item : this.getPdvs()){
+			
+			if(!item.getCaracteristicas().isPontoPrincipal()){
+				
+				pdvs.add(item);
+			}
+		}
+		return pdvs;
+	}
+	
 	public EnderecoCota getEnderecoPorTipoEndereco(TipoEndereco tipoEndereco){
 		for(EnderecoCota item : this.getEnderecos()){
 			if(item.getTipoEndereco() == tipoEndereco){
