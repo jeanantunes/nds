@@ -440,9 +440,7 @@ public interface CotaService {
 	
 	Long obterIdPorNumeroCota(Integer numeroCota);
 	
-<<<<<<< HEAD
 	List<Cota> obterConjuntoCota(FiltroNFeDTO filtro);
-=======
+	
 	String obterEmailCota(Integer numeroCota);
->>>>>>> DGBti/master
 }

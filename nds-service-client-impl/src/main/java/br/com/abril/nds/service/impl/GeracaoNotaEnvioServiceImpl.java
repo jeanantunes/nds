@@ -46,12 +46,9 @@ import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-<<<<<<< HEAD
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-=======
 import br.com.abril.nds.model.planejamento.Estudo;
->>>>>>> DGBti/master
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;

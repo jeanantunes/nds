@@ -3053,8 +3053,6 @@ public class CotaServiceImpl implements CotaService {
         return cotaRepository.obterIdPorNumeroCota(numeroCota);
     }
 
-<<<<<<< HEAD
-=======
     @Override
     @Transactional(readOnly=true)
     public String obterEmailCota(Integer numeroCota) {
@@ -3066,5 +3064,4 @@ public class CotaServiceImpl implements CotaService {
         
         return this.cotaRepository.obterEmailCota(numeroCota);
     }
->>>>>>> DGBti/master
 }

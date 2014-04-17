@@ -417,11 +417,8 @@ public interface CotaRepository extends Repository<Cota, Long> {
     TipoDistribuicaoCota obterTipoDistribuicao(Long idCota);
 
     Cota obterPorNumerDaCota(Integer numeroCota, SituacaoCadastro situacao);
-<<<<<<< HEAD
     
     List<Cota> obterConjuntoCota(FiltroNFeDTO filtro);
-=======
 
     String obterEmailCota(Integer numeroCota);
->>>>>>> DGBti/master
 }
