@@ -11,8 +11,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Type;
-
 @Embeddable
 public class ParametroDistribuicaoCota implements Serializable {
 

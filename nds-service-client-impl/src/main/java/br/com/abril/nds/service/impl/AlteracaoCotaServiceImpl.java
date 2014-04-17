@@ -18,6 +18,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.repository.AlteracaoCotaRepository;
 import br.com.abril.nds.service.AlteracaoCotaService;
 import br.com.abril.nds.service.CotaService;
@@ -73,8 +74,7 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 	@Transactional
 	public void salvarAlteracoes(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
 
-		boolean isCotasSelecionadas = filtroAlteracaoCotaDTO
-				.getListaLinhaSelecao().size() > 1;
+		boolean isCotasSelecionadas = filtroAlteracaoCotaDTO.getListaLinhaSelecao().size() > 1;
 
 		for (Long idCota : filtroAlteracaoCotaDTO.getListaLinhaSelecao()) {
 
@@ -82,8 +82,7 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 			Cota cota = cotaService.obterPorId(idCota);
 
 			// ****FORNECEDORES****//
-			atribuirValoresFornecedor(filtroAlteracaoCotaDTO, cota,
-					isCotasSelecionadas);
+			atribuirValoresFornecedor(filtroAlteracaoCotaDTO, cota, isCotasSelecionadas);
 
 			// ****FINANCEIRO****//
 			atribuirValoresFinanceiro(filtroAlteracaoCotaDTO, cota);
@@ -95,13 +94,12 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 			atribuirValoresTipoEntregaDistribuicao(filtroAlteracaoCotaDTO, cota);
 
 			// --Emissao Documentos
-			atribuirValoresEmissaoDocumentosDistribuicao(
-					filtroAlteracaoCotaDTO, cota);
+			atribuirValoresEmissaoDocumentosDistribuicao(filtroAlteracaoCotaDTO, cota);
 
 			cotaService.alterarCota(cota);
 
-			parametroCobrancaCotaService.alterarParametro(cota
-					.getParametroCobranca());
+			parametroCobrancaCotaService.alterarParametro(cota.getParametroCobranca());
+			
 		}
 
 	}
@@ -165,22 +163,13 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 			// Suspensao = true -> Cria Politica de Suspensao
 			if (cota.isSugereSuspensao()) {
 				PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
-				if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro()
-						.getQtdDividaEmAberto() != null) {
-					politicaSuspensao
-							.setNumeroAcumuloDivida(filtroAlteracaoCotaDTO
-									.getFiltroModalFinanceiro()
-									.getQtdDividaEmAberto());
+				if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getQtdDividaEmAberto() != null) {
+					politicaSuspensao.setNumeroAcumuloDivida(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getQtdDividaEmAberto());
 				}
-				if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro()
-						.getVrDividaEmAberto() != null) {
-					politicaSuspensao.setValor(CurrencyUtil
-							.converterValor(filtroAlteracaoCotaDTO
-									.getFiltroModalFinanceiro()
-									.getVrDividaEmAberto()));
+				if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrDividaEmAberto() != null) {
+					politicaSuspensao.setValor(CurrencyUtil.converterValor(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrDividaEmAberto()));
 				}
-				cota.getParametroCobranca().setPoliticaSuspensao(
-						politicaSuspensao);
+				cota.getParametroCobranca().setPoliticaSuspensao(politicaSuspensao);
 			}
 
 		} catch (NumberFormatException e) {
@@ -195,59 +184,41 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 	 * @param filtroAlteracaoCotaDTO
 	 * @param cota
 	 */
-	private void atribuirValoresDistribuicao(
-			FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota) {
+	private void atribuirValoresDistribuicao(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota) {
 
 		if (cota.getParametroDistribuicao() == null) {
 			cota.setParametroDistribuicao(new ParametroDistribuicaoCota());
 		}
 
-		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-				.getNmAssitPromoComercial() != null
-				&& !filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-						.getNmAssitPromoComercial().isEmpty()) {
-			cota.getParametroDistribuicao().setAssistenteComercial(
-					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-							.getNmAssitPromoComercial());
+		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getNmAssitPromoComercial() != null
+				&& !filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getNmAssitPromoComercial().isEmpty()) {
+			cota.getParametroDistribuicao().setAssistenteComercial(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getNmAssitPromoComercial());
 		}
 
-		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-				.getNmGerenteComercial() != null
-				&& !filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-						.getNmGerenteComercial().isEmpty()) {
-			cota.getParametroDistribuicao().setGerenteComercial(
-					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-							.getNmGerenteComercial());
+		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getNmGerenteComercial() != null
+				&& !filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getNmGerenteComercial().isEmpty()) {
+			cota.getParametroDistribuicao().setGerenteComercial(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getNmGerenteComercial());
 		}
 
 		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getObservacao() != null
-				&& !filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-						.getObservacao().isEmpty()) {
-			cota.getParametroDistribuicao().setObservacao(
-					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-							.getObservacao());
+				&& !filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getObservacao().isEmpty()) {
+			cota.getParametroDistribuicao().setObservacao(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getObservacao());
 		}
 
-		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-				.getIsRepartePontoVenda()) {
-			cota.getParametroDistribuicao().setRepartePorPontoVenda(
-					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-							.getIsRepartePontoVenda());
+		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isRepartePontoVenda()) {
+			cota.getParametroDistribuicao().setRepartePorPontoVenda(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isRepartePontoVenda());
 		}
 
-		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-				.getIsSolicitacaoNumAtrasoInternet()) {
-			cota.getParametroDistribuicao().setSolicitaNumAtras(
-					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-							.getIsSolicitacaoNumAtrasoInternet());
+		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isSolicitacaoNumAtrasoInternet()) {
+			cota.getParametroDistribuicao().setSolicitaNumAtras(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isSolicitacaoNumAtrasoInternet());
 		}
 
-		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-				.getIsRecebeRecolheProdutosParciais()) {
-			cota.getParametroDistribuicao().setRecebeRecolheParciais(
-					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao()
-							.getIsRecebeRecolheProdutosParciais());
-
+		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isRecebeRecolheProdutosParciais()) {
+			cota.getParametroDistribuicao().setRecebeRecolheParciais(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isRecebeRecolheProdutosParciais());
+		}
+		
+		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isRecebeComplementar() && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL)) {
+			cota.getParametroDistribuicao().setRecebeComplementar(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isRecebeComplementar());
 		}
 	}
 

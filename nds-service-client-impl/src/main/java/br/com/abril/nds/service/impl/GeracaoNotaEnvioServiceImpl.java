@@ -46,15 +46,21 @@ import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+<<<<<<< HEAD
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+=======
+import br.com.abril.nds.model.planejamento.Estudo;
+>>>>>>> DGBti/master
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.CotaAusenteRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -66,6 +72,7 @@ import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.util.Intervalo;
 
@@ -125,6 +132,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     
     @Autowired
     private FuroProdutoRepository furoProdutoRepository;
+    
+    @Autowired
+    private EstudoService estudoService;
+    
+    @Autowired
+    private EstudoGeradoRepository estudoGeradoRepository;
     
     // Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
     // O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -777,7 +790,20 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
             
             notasEnvio.add(notaEnvio);
             
+            this.processarEstudoPDV(cota, listaItemNotaEnvio);
         }
+    }
+    
+    private void processarEstudoPDV(final Cota cota, final List<ItemNotaEnvio> itensNotaEnvio){
+    	
+    	for(ItemNotaEnvio item : itensNotaEnvio){
+    		
+    		Estudo estudo = item.getEstudoCota().getEstudo();
+    		
+    		EstudoGerado estudoGerado = estudoGeradoRepository.buscarPorId(estudo.getId());
+    		
+    	    estudoService.gerarEstudoPDV(estudoGerado, cota, item.getReparte());
+    	}
     }
         
     /* Retorna uma lista com os movimentos estoque cota filtrados, onde os

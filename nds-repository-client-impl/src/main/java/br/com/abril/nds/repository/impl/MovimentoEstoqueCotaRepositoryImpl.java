@@ -1520,13 +1520,21 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" WHERE (EP.QTDE != 0 ");
         sql.append(" OR EP.QTDE_SUPLEMENTAR != 0 ");
         sql.append(" OR EP.QTDE_DEVOLUCAO_ENCALHE != 0) ");
+<<<<<<< HEAD
         
         if(filtro.getIdFornecedor() != null){
         	sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
         }
         
+=======
+           
+        sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
+
+>>>>>>> DGBti/master
         sql.append(" GROUP BY PROD_EDICAO.ID ");
-        
+
+        sql.append(" HAVING ("+qtdDevolucaoSubQuery+" > 0) ");
+
         if (indBuscaQtd){
             sql.append(") as temp ");
         }

@@ -3462,6 +3462,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         return (TipoDistribuicaoCota) query.uniqueResult();
     }
 
+<<<<<<< HEAD
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Cota> obterConjuntoCota(FiltroNFeDTO filtro) {
@@ -3548,4 +3549,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         return query.list();
 	}
+=======
+    @Override
+    public String obterEmailCota(Integer numeroCota) {
+        
+        Query query = this.getSession().createQuery(
+                "select c.pessoa.email from Cota c where c.numeroCota = :numeroCota ");
+        
+        query.setParameter("numeroCota", numeroCota);
+        
+        return (String) query.uniqueResult();
+    }
+>>>>>>> DGBti/master
 }
