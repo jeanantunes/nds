@@ -1274,8 +1274,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         				tipoDiferenca.isFaltaParaCota() ? TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA :
         					null;
 
-        if (novoTipoDiferenca != null && 
-        		!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
+        if (novoTipoDiferenca != null && !TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
 
             try {
 
