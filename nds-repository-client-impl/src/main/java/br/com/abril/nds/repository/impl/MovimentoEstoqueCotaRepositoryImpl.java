@@ -1522,9 +1522,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" OR EP.QTDE_DEVOLUCAO_ENCALHE != 0) ");
            
         sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
-        
+
         sql.append(" GROUP BY PROD_EDICAO.ID ");
-        
+
+        sql.append(" HAVING ("+qtdDevolucaoSubQuery+" > 0) ");
+
         if (indBuscaQtd){
             sql.append(") as temp ");
         }
