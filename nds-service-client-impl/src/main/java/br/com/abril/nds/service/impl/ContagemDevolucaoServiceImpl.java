@@ -1045,13 +1045,13 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		for ( ContagemDevolucaoDTO item : listaAgrupadaContagemDevolucao ) {
 			
-			estoqueProdutoService.processarTransferencaiEntreEstoques(
+			estoqueProdutoService.processarTransferenciaEntreEstoques(
 					item.getIdProdutoEdicao(),
 					TipoEstoque.LANCAMENTO, 
 					TipoEstoque.DEVOLUCAO_ENCALHE, 
 					usuario.getId());
 			
-			estoqueProdutoService.processarTransferencaiEntreEstoques(
+			estoqueProdutoService.processarTransferenciaEntreEstoques(
 					item.getIdProdutoEdicao(),
 					TipoEstoque.SUPLEMENTAR, 
 					TipoEstoque.DEVOLUCAO_ENCALHE, 

@@ -388,13 +388,13 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 
 	private void efetuarTransferenciaEstoqueProduto(ProdutoEdicao produtoEdicao, Usuario usuario) {
 		
-		estoqueProdutoService.processarTransferencaiEntreEstoques(
+		estoqueProdutoService.processarTransferenciaEntreEstoques(
 				produtoEdicao.getId(),
 				TipoEstoque.LANCAMENTO, 
 				TipoEstoque.DEVOLUCAO_ENCALHE, 
 				usuario.getId());
 		
-		estoqueProdutoService.processarTransferencaiEntreEstoques(
+		estoqueProdutoService.processarTransferenciaEntreEstoques(
 				produtoEdicao.getId(),
 				TipoEstoque.SUPLEMENTAR, 
 				TipoEstoque.DEVOLUCAO_ENCALHE, 
