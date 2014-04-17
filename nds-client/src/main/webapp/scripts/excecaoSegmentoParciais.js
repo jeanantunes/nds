@@ -807,147 +807,161 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	
 	inserirExcecaoDeProdutos : function inserirExcecaoDeProdutos(){
 		
-		var params = excecaoSegmentoParciaisController.Util.getFiltroByForm('filtroPrincipalCota'),
+		if($(".excessaoBGrid tr").length == 0){
+			exibirMensagem('WARNING', ["Não há produtos para inserção."]);
+		}else{
+			
+			var params = excecaoSegmentoParciaisController.Util.getFiltroByForm('filtroPrincipalCota'),
 			grids = excecaoSegmentoParciaisController.Grids;
-		
-		$( "#dialog-incluirExcecao" ).dialog({
-			resizable: false,
-			height:170,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-
+			
+			$( "#dialog-incluirExcecao" ).dialog({
+				resizable: false,
+				height:170,
+				width:380,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
+						
 						params.push({
 							name : "listaIdProduto",
 							value : $("#2005_codigoProduto").val()
 						});
-					
-					params.push({
-						name : "filtro.excecaoSegmento",
-						value : $('#tipoExcecaoSegmento').is(':checked')
-					});
-					
-					params.push({
-						name : "filtro.produtoDto.idClassificacaoProduto",
-						value : $('#comboClassificacaoProdNRec').val()
-					});
-					
-					// jQuery.post( url [, data ] [, success(data, textStatus, jqXHR) ] [, dataType ] )
-					$.postJSON(
-						excecaoSegmentoParciaisController.Url.inserirExcecaoDeProdutos,
-						params,
-						function(result){
-							 tipoMensagem = result.tipoMensagem;
-					         listaMensagens = result.listaMensagens;
-					         
-					         if (tipoMensagem && listaMensagens) {
-					        	 exibirMensagem(tipoMensagem, listaMensagens);
-					         }
-							
-					         params = excecaoSegmentoParciaisController.Util.getFiltroByForm("filtroPrincipalCota");
-					         
-					         params.push({
-									name : "filtro.excecaoSegmento",
-									value : $('#tipoExcecaoSegmento').is(':checked')
-					         });
-					         
-					         params.push({
-					        	 name : "filtro.reload",
-					        	 value : true
-					         });
-					         
-					         $('.excessaoBGrid').find('[id^=row]').remove();
-					         
-					         grids.ProdutosRecebidosGrid.reload({
-					        	 params : params
-					         });
-					         
-					         $("#nomeCotaFiltroPrincipal", excecaoSegmentoParciaisController.workspace).focus();
-					         
-					         excecaoSegmentoParciaisController.tempArray = null;
-						}
-					);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
+						
+						params.push({
+							name : "filtro.excecaoSegmento",
+							value : $('#tipoExcecaoSegmento').is(':checked')
+						});
+						
+						params.push({
+							name : "filtro.produtoDto.idClassificacaoProduto",
+							value : $('#comboClassificacaoProdNRec').val()
+						});
+						
+						// jQuery.post( url [, data ] [, success(data, textStatus, jqXHR) ] [, dataType ] )
+						$.postJSON(
+								excecaoSegmentoParciaisController.Url.inserirExcecaoDeProdutos,
+								params,
+								function(result){
+									tipoMensagem = result.tipoMensagem;
+									listaMensagens = result.listaMensagens;
+									
+									if (tipoMensagem && listaMensagens) {
+										exibirMensagem(tipoMensagem, listaMensagens);
+									}
+									
+									params = excecaoSegmentoParciaisController.Util.getFiltroByForm("filtroPrincipalCota");
+									
+									params.push({
+										name : "filtro.excecaoSegmento",
+										value : $('#tipoExcecaoSegmento').is(':checked')
+									});
+									
+									params.push({
+										name : "filtro.reload",
+										value : true
+									});
+									
+									$('.excessaoBGrid').find('[id^=row]').remove();
+									
+									grids.ProdutosRecebidosGrid.reload({
+										params : params
+									});
+									
+									$("#nomeCotaFiltroPrincipal", excecaoSegmentoParciaisController.workspace).focus();
+									
+									excecaoSegmentoParciaisController.tempArray = null;
+									
+									$("#2005_codigoProduto").val('');
+									$("#2005_nomeProduto").val('');
+									
+								}
+						);
+						
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
 				}
-			}
-		});
+			});
+		}
 		
 	},
 	
 	inserirCotaNaExcecao : function inserirCotaNaExcecao(){
 		
-		var params = excecaoSegmentoParciaisController.Util.getFiltroByForm('filtroPrincipalProduto'),
+		if($(".excessaoGrid tr").length == 0){
+			exibirMensagem('WARNING', ["Não há cotas para inserção."]);
+		}else{
+			
+			var params = excecaoSegmentoParciaisController.Util.getFiltroByForm('filtroPrincipalProduto'),
 			grids = excecaoSegmentoParciaisController.Grids;
-		
-		console.log(grids);
-		
-		$( "#dialog-incluirCotaNaExcecao" ).dialog({
-			resizable: false,
-			height:170,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-
-					$("input[type=checkbox][name='cotaNaoRecebeExcecao']:checked").each(function(){	
-						params.push({
-							name : "listaNumeroCota",
-							value : this.value
+			
+			$( "#dialog-incluirCotaNaExcecao" ).dialog({
+				resizable: false,
+				height:170,
+				width:380,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
+						
+						$("input[type=checkbox][name='cotaNaoRecebeExcecao']:checked").each(function(){	
+							params.push({
+								name : "listaNumeroCota",
+								value : this.value
+							});
 						});
-					});
-					
-					params.push({
-						name : "filtro.excecaoSegmento",
-						value : $('#tipoExcecaoSegmento').is(':checked')
-					});
-								
-					// jQuery.post( url [, data ] [, success(data, textStatus, jqXHR) ] [, dataType ] )
-					$.postJSON(
-						excecaoSegmentoParciaisController.Url.inserirCotaNaExcecao,
-						params,
-						function(result){
-							 tipoMensagem = result.tipoMensagem;
-					         listaMensagens = result.listaMensagens;
-					         
-					         if (tipoMensagem && listaMensagens) {
-					        	 exibirMensagem(tipoMensagem, listaMensagens);
-					         }
-							
-					         params = excecaoSegmentoParciaisController.Util.getFiltroByForm("filtroPrincipalProduto");
-					         
-					         params.push({
-									name : "filtro.excecaoSegmento",
-									value : $('#tipoExcecaoSegmento').is(':checked')
-					         });
-					         
-					         params.push({
-					        	 name : "filtro.reload",
-					        	 value : true
-					         });
-					         
-					         $('.excessaoGrid').find('[id^=row]').remove();
-					         
-					         excecaoSegmentoParciaisController.porExcecao();
-					         
-					         excecaoSegmentoParciaisController.tempArrayCota = null;
-					         
-						}
-					);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
+						
+						params.push({
+							name : "filtro.excecaoSegmento",
+							value : $('#tipoExcecaoSegmento').is(':checked')
+						});
+						
+						// jQuery.post( url [, data ] [, success(data, textStatus, jqXHR) ] [, dataType ] )
+						$.postJSON(
+								excecaoSegmentoParciaisController.Url.inserirCotaNaExcecao,
+								params,
+								function(result){
+									tipoMensagem = result.tipoMensagem;
+									listaMensagens = result.listaMensagens;
+									
+									if (tipoMensagem && listaMensagens) {
+										exibirMensagem(tipoMensagem, listaMensagens);
+									}
+									
+									params = excecaoSegmentoParciaisController.Util.getFiltroByForm("filtroPrincipalProduto");
+									
+									params.push({
+										name : "filtro.excecaoSegmento",
+										value : $('#tipoExcecaoSegmento').is(':checked')
+									});
+									
+									params.push({
+										name : "filtro.reload",
+										value : true
+									});
+									
+									$('.excessaoGrid').find('[id^=row]').remove();
+									
+									excecaoSegmentoParciaisController.porExcecao();
+									
+									excecaoSegmentoParciaisController.tempArrayCota = null;
+									
+									$("#cotasQueNaoRecebemNumeroCota").val('');
+									$("#cotasQueNaoRecebemNomeCota").val('');					         
+									
+								}
+						);
+						
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
 				}
-			}
-		});
-		
-	},
+			});
+		}
+ 	},
 	
 	porCota : function (){
 		$('.porCota').show();
