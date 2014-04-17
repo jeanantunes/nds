@@ -435,6 +435,14 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		}
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
+		
+		Set<Lancamento> lancamentos = produtoEdicao.getLancamentos();
+		
+		for (Lancamento item : lancamentos){
+			
+			item.setStatus(StatusLancamento.FECHADO);
+		}
+		
 		contagem.setIdProdutoEdicao(produtoEdicao.getId());
 		
 		ConferenciaEncalheParcial conferenciaEncalheParcial = new ConferenciaEncalheParcial();
