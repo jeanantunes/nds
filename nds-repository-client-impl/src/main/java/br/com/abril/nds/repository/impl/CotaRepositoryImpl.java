@@ -3460,4 +3460,15 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         return (TipoDistribuicaoCota) query.uniqueResult();
     }
+
+    @Override
+    public String obterEmailCota(Integer numeroCota) {
+        
+        Query query = this.getSession().createQuery(
+                "select c.pessoa.email from Cota c where c.numeroCota = :numeroCota ");
+        
+        query.setParameter("numeroCota", numeroCota);
+        
+        return (String) query.uniqueResult();
+    }
 }
