@@ -373,7 +373,7 @@ fieldset {
 										<td width="90"><input
 											style="width: 70px; text-align: right;"
 											id="produtoEdicaoController-dataRecolhimentoReal"
-											disabled="disabled" name="precoPrevisto.dataRecolhimentoReal"
+											name="produtoEdicaoDTO.dataRecolhimentoReal"
 											type="text"></td>
 										<td width="170" align="right">Semana de Recolhimento:</td>
 										<td width="180"><input style="width: 70px; float: left;"
