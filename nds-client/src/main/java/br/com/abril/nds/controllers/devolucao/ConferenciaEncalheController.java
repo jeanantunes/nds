@@ -1225,72 +1225,126 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	public boolean verificarPermissaoSupervisorProduto(final String qtdExemplares,
+											 final String usuario, 
+											 final String senha, 
+											 final Long produtoEdicaoId){
+		if (produtoEdicaoId != null) {
+			 
+			 final ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarPorID(produtoEdicaoId);
+			 
+			 if(produtoEdicao == null){
+				 throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edição não encontrado.");
+			 }
+			 
+			 final ConferenciaEncalheDTO dto = new ConferenciaEncalheDTO();
+			 dto.setIdProdutoEdicao(produtoEdicaoId);
+			 dto.setPacotePadrao(produtoEdicao.getPacotePadrao());
+			 
+		 	 BigInteger qtdeEncalhe =  this.obterQuantidadeEncalhe(qtdExemplares,dto);
+		 	
+		     if (this.validarExcedeReparte(qtdeEncalhe, dto, false)) {
+		         
+		         this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.",
+		                 "result").serialize();
+		         
+		         return true;
+		     }
+		 }
+		
+		return false;
+	}
+	
+	@Post
 	public void verificarPermissaoSupervisor(final Long idConferencia, final String qtdExemplares, 
 			final String usuario, final String senha, final boolean indConferenciaContingencia,
-			final Long produtoEdicaoId){
-		
-        if (usuarioService.isNotSupervisor()) {
+			final Long produtoEdicaoId, final boolean indPesquisaProduto){
+	
+		if (usuarioService.isNotSupervisor()) {
+			
+			boolean isVendaNegativaProduto = false; 
+			
             if (usuario != null) {
                 
-                final boolean permitir = this.usuarioService.verificarUsuarioSupervisor(usuario, senha);
+                this.validarAutenticidadeSupervisor(usuario, senha);
                 
-                if (permitir) {
-                    
-                    this.result.use(Results.json()).from("").serialize();
-                    return;
-                }
-                
-                throw new ValidacaoException(TipoMensagem.WARNING, "Usuário/senha inválido(s)");
             } else {
                 
-                final List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
-                
-                for (final ConferenciaEncalheDTO dto : listaConferencia) {
+            	if(indPesquisaProduto){
+        			
+        			isVendaNegativaProduto = this.verificarPermissaoSupervisorProduto(qtdExemplares, usuario, senha, produtoEdicaoId);
+        		}
+            	else{
+            		
+            		final List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
                     
-                    if (produtoEdicaoId != null) {
+                    for (final ConferenciaEncalheDTO dto : listaConferencia) {
                         
-                        if (produtoEdicaoId.equals(dto.getIdProdutoEdicao())) {
+                        if (produtoEdicaoId != null) {
                             
-                        	BigInteger qtdeEncalhe = null;
-                        	
-                        	if(isQuantidadeEncalheAlterada(obterQuantidadeEncalheDaString(qtdExemplares), dto.getQtdExemplar())) {
-                        		qtdeEncalhe = processarQtdeExemplar(dto.getIdProdutoEdicao(), dto.getPacotePadrao(), qtdExemplares);
-                        	} else {
-                        		qtdeEncalhe = obterQuantidadeEncalheDaString(qtdExemplares);
-                        	}
-                        	
-                            if (this.validarExcedeReparte(qtdeEncalhe, dto, indConferenciaContingencia)) {
+                            if (produtoEdicaoId.equals(dto.getIdProdutoEdicao())) {
                                 
-                                this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.",
-                                        "result").serialize();
-                                return;
+                            	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdExemplares,indConferenciaContingencia, dto);
                             }
-                        }
-                    } else {
-                        
-                        if (idConferencia.equals(dto.getIdConferenciaEncalhe())) {
+                        } else {
                             
-                        	BigInteger qtdeEncalhe = null;
-                        	
-                        	if(isQuantidadeEncalheAlterada(obterQuantidadeEncalheDaString(qtdExemplares), dto.getQtdExemplar())) {
-                        		qtdeEncalhe = processarQtdeExemplar(dto.getIdProdutoEdicao(), dto.getPacotePadrao(), qtdExemplares);
-                        	} else {
-                        		qtdeEncalhe = obterQuantidadeEncalheDaString(qtdExemplares);
-                        	}
-                        	
-                            if (this.validarExcedeReparte(qtdeEncalhe, dto, indConferenciaContingencia)) {
+                            if (idConferencia.equals(dto.getIdConferenciaEncalhe())) {
                                 
-                                this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.",
-                                        "result").serialize();
-                                return;
+                            	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdExemplares,indConferenciaContingencia, dto);
                             }
                         }
                     }
-                }
+            	}
             }
-        }
+        
+            if(!isVendaNegativaProduto){
+
+                this.result.use(Results.json()).from("", "result").serialize();
+            }
+		}
+	}
+
+	private boolean validarVendaNegativaProduto(final String qtdExemplares,
+										 final boolean indConferenciaContingencia,
+										 final ConferenciaEncalheDTO dto) {
 		
-		this.result.use(Results.json()).from("", "result").serialize();
+		BigInteger qtdeEncalhe = this.obterQuantidadeEncalhe(qtdExemplares,dto);
+		
+		if (this.validarExcedeReparte(qtdeEncalhe, dto, indConferenciaContingencia)) {
+		    
+		    this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.",
+		            "result").serialize();
+		    
+		    return true;
+		}
+		
+		return false;
+	}
+
+	private BigInteger obterQuantidadeEncalhe(final String qtdExemplares,final ConferenciaEncalheDTO dto) {
+		
+		BigInteger qtdeEncalhe;
+		
+		if(isQuantidadeEncalheAlterada(this.obterQuantidadeEncalheDaString(qtdExemplares), dto.getQtdExemplar())) {
+			
+			qtdeEncalhe = processarQtdeExemplar(dto.getIdProdutoEdicao(), dto.getPacotePadrao(), qtdExemplares);
+		} 
+		else {
+			
+			qtdeEncalhe = obterQuantidadeEncalheDaString(qtdExemplares);
+		}
+		
+		return qtdeEncalhe;
+	}
+
+	private void validarAutenticidadeSupervisor(final String usuario,final String senha) {
+		
+		final boolean permitir = this.usuarioService.verificarUsuarioSupervisor(usuario, senha);
+		
+		if (!permitir) {
+		
+			throw new ValidacaoException(TipoMensagem.WARNING, "Usuário/senha inválido(s)");
+		}
 	}
 
 	@Post

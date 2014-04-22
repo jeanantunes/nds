@@ -1236,14 +1236,16 @@ var ConferenciaEncalhe = $.extend(true, {
 			data = [
 	            {name: "idConferencia", value: $("#idConferenciaEncalheHidden_" + index, ConferenciaEncalhe.workspace).val()},
 	            {name: "qtdExemplares", value: $("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val()},
-	            {name: 'indConferenciaContingencia', value: false}
+	            {name: 'indConferenciaContingencia', value: false},
+	            {name: 'indPesquisaProduto', value: false}
 			];
 		} else {
 			
 			data = [
 	            {name: "qtdExemplares", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()},
 	            {name: "produtoEdicaoId", value: $("#idProdutoEdicaoHidden", ConferenciaEncalhe.workspace).val()},
-	            {name: 'indConferenciaContingencia', value: false}
+	            {name: 'indConferenciaContingencia', value: false},
+	            {name: 'indPesquisaProduto', value: true}
 			];
 		}
 		
@@ -1316,10 +1318,10 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	autenticarSupervisor : function(index){
-		var paramUsuario = {
-			usuario:$("#inputUsuarioSup", ConferenciaEncalhe.workspace).val(),
-			senha:$("#inputSenha", ConferenciaEncalhe.workspace).val()
-		};
+		var paramUsuario = [
+			{name:"usuario", value:$("#inputUsuarioSup", ConferenciaEncalhe.workspace).val()},
+			{name:"senha",value:$("#inputSenha", ConferenciaEncalhe.workspace).val()}
+		];
 		
 		if (paramUsuario.usuario == '' || paramUsuario.senha == ''){
 			
