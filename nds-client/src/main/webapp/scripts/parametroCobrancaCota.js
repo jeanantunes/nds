@@ -28,7 +28,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 			colModel : [  {
 				display : 'Fornecedores',
 				name : 'fornecedor',
-				width : 170,
+				width : 270,
 				sortable : true,
 				align : 'left'
 			},{
@@ -60,7 +60,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 				name : 'unificacao',
 				width : 100,
 				sortable : false,
-				align : 'center'
+				align : 'center',
+				hide: true
 			}, {
 				display : 'Ação',
 				name : 'acao',
