@@ -152,7 +152,7 @@ public interface NotaFiscalService {
 	public abstract void exportarNotasFiscais(Long... idNotaFiscals)
 			throws FileNotFoundException, IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException;
 
-	List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroNFeDTO filtro);
+	List<CotaExemplaresDTO> consultaCotaExemplareSumarizados(FiltroNFeDTO filtro);
 
 	Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro);
 

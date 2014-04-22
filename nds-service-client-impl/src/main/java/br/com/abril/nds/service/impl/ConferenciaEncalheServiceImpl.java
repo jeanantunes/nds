@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,6 +80,7 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -135,6 +138,8 @@ import br.com.abril.nds.util.MathUtil;
 
 @Service
 public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConferenciaEncalheServiceImpl.class);
 	
 	@Autowired
 	private BoxRepository boxRepository;
@@ -2328,14 +2333,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if (conferenciaEncalheDTO.getDataRecolhimento() != null) {
 			
 			chamadaEncalheCota = obterChamadaEncalheCotaParaConfEncalhe(
-				numeroCota, conferenciaEncalheDTO.getDataRecolhimento(), 
-					conferenciaEncalheDTO.getIdProdutoEdicao());
+				numeroCota, conferenciaEncalheDTO.getDataRecolhimento(), conferenciaEncalheDTO.getIdProdutoEdicao());
 		}
 		
 		MovimentoEstoqueCota movimentoEstoqueCota = null;
 		
 		MovimentoEstoque movimentoEstoque = null;
-			
+		
 		movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
 					controleConferenciaEncalheCota, 
 					conferenciaEncalheDTO, 
@@ -2344,8 +2348,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					dataCriacao, 
 					mapaTipoMovimentoEstoque, 
 					usuario);
-		 
-		 movimentoEstoque = criarNovoRegistroMovimentoEstoque(
+		
+		movimentoEstoque = criarNovoRegistroMovimentoEstoque(
 				 	cota,
 					controleConferenciaEncalheCota, 
 					conferenciaEncalheDTO, 
@@ -2364,6 +2368,30 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				movimentoEstoqueCota,
 				movimentoEstoque,
 				chamadaEncalheCota);
+		
+		
+		if(chamadaEncalheCota != null 
+				&& chamadaEncalheCota.getChamadaEncalhe() != null 
+				&& (chamadaEncalheCota.getChamadaEncalhe().getLancamentos() != null && !chamadaEncalheCota.getChamadaEncalhe().getLancamentos().isEmpty())){
+			
+			if(chamadaEncalheCota.getChamadaEncalhe().getLancamentos().size() > 1){
+				
+				LOGGER.error("Carregou mais de um lançamento...");
+				
+			} else {
+				
+				for(Lancamento lancamento : chamadaEncalheCota.getChamadaEncalhe().getLancamentos()){
+					movimentoEstoqueCota.setLancamento(lancamento);					
+					break;
+				}
+				this.atualizarMovimentoEstoqueCota(movimentoEstoqueCota, conferenciaEncalheDTO);
+			}
+		} else {
+			/*
+			 * FIXME Verificar se existe a possibilidade de interromper o processo não ira criar insumo para gerar nota de venda
+			 */
+			LOGGER.error("Atenção não foi passivel recuperar lancamento!!!");
+		}
 		
 	}
 	
@@ -2387,21 +2415,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if (juramentada) {
 			
-			return mapaTipoMovimentoEstoque.get(
-				GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO);
+			return mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO);
 		}
 		
 		if (isDataRecolhimentoDistribuidorMenorIgualDataConferenciaEncalhe(
 				dataRecolhimentoDistribuidor, dataConferenciaEncalhe)
 				&& TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.equals(tipoChamadaEncalhe)) {
 			
-			return mapaTipoMovimentoEstoque.get(
-				GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+			return mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
 			
 		} else {
 			
-			return mapaTipoMovimentoEstoque.get(
-				GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
+			return mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
 			
 		}
 	}
@@ -2460,7 +2485,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	    /**
+	    
+	/**
      * Atualiza os dados da notaFiscalEntradaCota relacionada com uma operação
      * de conferência de encalhe.
      * 
@@ -2839,13 +2865,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final Long idCota = controleConferenciaEncalheCota.getCota().getId();
 		
-		final ProdutoEdicao produtoEdicao = 
-				this.produtoEdicaoRepository.buscarPorId(conferenciaEncalheDTO.getIdProdutoEdicao());
+		final ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(conferenciaEncalheDTO.getIdProdutoEdicao());
 		
 		final TipoMovimentoEstoque tipoMovimentoEstoqueCota = mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 	
-		MovimentoEstoqueCota movimentoEstoqueCota = 
-				movimentoEstoqueService.gerarMovimentoCota(
+		MovimentoEstoqueCota movimentoEstoqueCota = movimentoEstoqueService.gerarMovimentoCota(
 						null, 
 						produtoEdicao.getId(), 
 						idCota, 

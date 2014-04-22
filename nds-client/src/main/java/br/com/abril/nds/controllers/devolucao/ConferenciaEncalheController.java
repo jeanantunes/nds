@@ -1950,7 +1950,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
-	            /**
+    /**
      * Verifica se o valor total da nota fiscal informada é igual ao valor de
      * encalhe conferido na operação.
      * 

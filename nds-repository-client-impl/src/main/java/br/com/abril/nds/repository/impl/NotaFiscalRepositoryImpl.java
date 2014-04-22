@@ -118,47 +118,46 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			
 		hql.append(" WHERE 1=1 ");
 		
-		if(filtro.getDataInicial() !=null) {
-			
+		if(filtro.getDataInicial() != null) {
 			hql.append(" AND ident.dataEmissao >= :dataInicial ");
 		}
 
-		if(filtro.getDataFinal() !=null) {
+		if(filtro.getDataFinal() != null) {
 			hql.append(" AND ident.dataEmissao <= :dataFinal ");
 		}
 
 		if(filtro.getNumeroDocumento() != null){
-			if(filtro.getDocumentoPessoa() !=null && !filtro.getDocumentoPessoa().isEmpty()) {
+			if(filtro.getDocumentoPessoa() != null && !filtro.getDocumentoPessoa().isEmpty()) {
 				hql.append(" AND doc.documento = :documento");
 			}
 		}
 
-		if(filtro.getTipoNfe() !=null && !filtro.getTipoNfe().isEmpty()) {
+		if(filtro.getTipoNfe() != null && !filtro.getTipoNfe().isEmpty()) {
 			hql.append(" AND proc.nome = :tipoEmissaoNfe");		
 		}
 
-		if(filtro.getNumeroNotaInicial() !=null) {
+		if(filtro.getNumeroNotaInicial() != null) {
 			hql.append(" AND ident.numeroDocumentoFiscal >= :numeroInicial ");
 		}
 
-		if(filtro.getNumeroNotaFinal() !=null) {
+		if(filtro.getNumeroNotaFinal() != null) {
 			hql.append(" AND ident.numeroDocumentoFiscal <= :numeroFinal ");
 		}
 
-		if(filtro.getChaveAcesso() !=null && !filtro.getChaveAcesso().isEmpty()) {
+		if(filtro.getChaveAcesso() != null && !filtro.getChaveAcesso().isEmpty()) {
 			hql.append(" AND infElet.chaveAcesso = :chaveAcesso ");
 		}
 
-		if(filtro.getSituacaoNfe() !=null && !filtro.getSituacaoNfe().isEmpty()) {
+		if(filtro.getSituacaoNfe() != null && !filtro.getSituacaoNfe().isEmpty()) {
 			hql.append(" AND nfi.statusProcessamento = :situacaoNfe ");
 		}
 
-		if(filtro.getSerie() !=null) {
+		if(filtro.getSerie() != null) {
 			hql.append(" AND ident.serie = :serie ");
 		}
 		
 		if(!isCount && !isPagination){
-			if(filtro.getPaginacao()!=null && filtro.getPaginacao().getSortOrder() != null && filtro.getPaginacao().getSortColumn() != null) {
+			if(filtro.getPaginacao() !=null && filtro.getPaginacao().getSortOrder() != null && filtro.getPaginacao().getSortColumn() != null) {
 				hql.append(" ORDER BY  ").append(filtro.getPaginacao().getSortColumn()).append(" ").append(filtro.getPaginacao().getSortOrder());
 			}
 		}
@@ -418,7 +417,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			hql.append(" AND mec.tipoMovimento.id in (SELECT tm.id ");
 			hql.append("FROM NaturezaOperacao no ");
 			hql.append("JOIN no.tipoMovimento tm ");
-			hql.append("WHERE no.id in(:tipoNota)) ");
+			hql.append("WHERE no.id in(:idNaturezaOperacao)) ");
 		}
 		
 		// Data Emissão:	...		
@@ -484,7 +483,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		// tipo da nota fiscal		
 		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao().longValue() > 0) {
-			query.setParameter("tipoNota", filtro.getIdNaturezaOperacao());
+			query.setParameter("idNaturezaOperacao", filtro.getIdNaturezaOperacao());
 		}
 		
 		// forncedor id		
