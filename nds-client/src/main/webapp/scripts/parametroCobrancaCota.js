@@ -28,7 +28,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 			colModel : [  {
 				display : 'Fornecedores',
 				name : 'fornecedor',
-				width : 170,
+				width : 270,
 				sortable : true,
 				align : 'left'
 			},{
@@ -60,7 +60,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 				name : 'unificacao',
 				width : 100,
 				sortable : false,
-				align : 'center'
+				align : 'center',
+				hide: true
 			}, {
 				display : 'Ação',
 				name : 'acao',
@@ -451,7 +452,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 			$('#divComboBanco', this.workspace).show();
 			$('#divDadosBancarios', this.workspace).hide();
 	    }
-		else if ((op=='CHEQUE')||(op=='TRANSFERENCIA_BANCARIA')){
+		else if (op=='TRANSFERENCIA_BANCARIA'){
 			$('#divComboBanco', this.workspace).show();
 			$('#divDadosBancarios', this.workspace).show();
 		}    
@@ -602,7 +603,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#tipoCota", this.workspace).val(resultado.tipoCota);
 		$("#devolveEncalhe", this.workspace).val(resultado.devolveEncalhe?0:1);
 		
-		$("#unificaCobranca", this.workspace).val(resultado.unificaCobranca?0:1);
+		//$("#unificaCobranca", this.workspace).val(resultado.unificaCobranca?0:1);
 
         if (resultado.inicioContrato) {
             $("#parametroCobrancaDateInicio", this.workspace).val(resultado.inicioContrato.$);
@@ -663,7 +664,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var tipoCota = $("#tipoCota", this.workspace).val();
 		var devolveEncalhe = $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
 		var fornecedorPadrao = $("#fornecedorPadrao", this.workspace).val();
-		var unificaCobranca = $("#unificaCobranca", this.workspace).val() == 0 ? 1 : 0;
+		//var unificaCobranca = $("#unificaCobranca", this.workspace).val() == 0 ? 1 : 0;
 		
 		var params = {"parametroCobranca.idParametroCobranca": idParametroCobranca,
 				"parametroCobranca.idCota": idCota,
@@ -678,8 +679,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 				"parametroCobranca.vrDividasAberto": vrDividasAberto,
 				"parametroCobranca.tipoCota": tipoCota,
 				"parametroCobranca.devolveEncalhe": devolveEncalhe,
-				"parametroCobranca.idFornecedor": fornecedorPadrao,
-				"parametroCobranca.unificaCobranca": unificaCobranca};
+				"parametroCobranca.idFornecedor": fornecedorPadrao};
+				//"parametroCobranca.unificaCobranca": unificaCobranca};
 		
 		return params;
 	},
@@ -725,7 +726,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    if(parametroCobrancaTela['parametroCobranca.numCota'] != parametroCobranca['parametroCobranca.numCota']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.qtdDividasAberto'] != parametroCobranca['parametroCobranca.qtdDividasAberto']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.sugereSuspensao'] != parametroCobranca['parametroCobranca.sugereSuspensao']){return true;}
-	    if(parametroCobrancaTela['parametroCobranca.unificaCobranca'] != parametroCobranca['parametroCobranca.unificaCobranca']){return true;}
+	    //if(parametroCobrancaTela['parametroCobranca.unificaCobranca'] != parametroCobranca['parametroCobranca.unificaCobranca']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.valorMinimo'] != parametroCobranca['parametroCobranca.valorMinimo']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.vrDividasAberto'] != parametroCobranca['parametroCobranca.vrDividasAberto']){return true;}
 
@@ -1200,7 +1201,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var tipoCota 			= $("#tipoCota", this.workspace).val();
 		var devolveEncalhe		= $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
 		var fornecedorPadrao 	= $("#fornecedorPadrao", this.workspace).val();
-		var unificaCobranca 	= $("#unificaCobranca", this.workspace).val() == 0 ? 1 : 0;
+		//var unificaCobranca 	= $("#unificaCobranca", this.workspace).val() == 0 ? 1 : 0;
 		var sugereSuspensao 	= $("#sugereSuspensao", this.workspace).val();
 		var contrato			= $("#contrato", this.workspace).val();
 		var inicioContrato 		= $("#parametroCobrancaDateInicio", this.workspace).val();
@@ -1292,7 +1293,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 						 "parametroCobranca.tipoCota": tipoCota,
 						 "parametroCobranca.devolveEncalhe": devolveEncalhe,
 						 "parametroCobranca.idFornecedor": fornecedorPadrao,
-						 "parametroCobranca.unificaCobranca": unificaCobranca,
+						 //"parametroCobranca.unificaCobranca": unificaCobranca,
 						 "parametroCobranca.sugereSuspensao": sugereSuspensao,   
 						 "parametroCobranca.qtdDividasAberto": qtdDividasAberto,  
 						 "parametroCobranca.vrDividasAberto": vrDividasAberto,

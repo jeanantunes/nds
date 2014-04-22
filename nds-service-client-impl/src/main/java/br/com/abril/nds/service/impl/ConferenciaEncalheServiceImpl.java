@@ -30,6 +30,7 @@ import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
+import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
@@ -2258,6 +2259,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		} else {
 			
+			ChamadaEncalheCota chamadaEncalheCota = null;
+			
+			if (conferenciaEncalheDTO.getDataRecolhimento() != null) {
+				
+				chamadaEncalheCota = obterChamadaEncalheCotaParaConfEncalhe(
+					numeroCota, conferenciaEncalheDTO.getDataRecolhimento(), 
+						conferenciaEncalheDTO.getIdProdutoEdicao());
+			}
+			
 			movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
 					controleConferenciaEncalheCota, 
 					conferenciaEncalheDTO, 
@@ -2265,7 +2275,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					dataRecolhimentoReferencia, 
 					dataCriacao, 
 					mapaTipoMovimentoEstoque, 
-					usuario);
+					usuario,
+					chamadaEncalheCota);
 		}
 			
 		if (movimentoEstoque != null) {
@@ -2347,7 +2358,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					dataRecolhimentoReferencia, 
 					dataCriacao, 
 					mapaTipoMovimentoEstoque, 
-					usuario);
+					usuario, 
+					chamadaEncalheCota);
 		
 		movimentoEstoque = criarNovoRegistroMovimentoEstoque(
 				 	cota,
@@ -2368,34 +2380,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				movimentoEstoqueCota,
 				movimentoEstoque,
 				chamadaEncalheCota);
-		
-		
-		if(chamadaEncalheCota != null 
-				&& chamadaEncalheCota.getChamadaEncalhe() != null 
-				&& (chamadaEncalheCota.getChamadaEncalhe().getLancamentos() != null && !chamadaEncalheCota.getChamadaEncalhe().getLancamentos().isEmpty())){
-			
-			if(chamadaEncalheCota.getChamadaEncalhe().getLancamentos().size() > 1){
-				
-				LOGGER.error("Carregou mais de um lançamento...");
-				
-			} else {
-				
-				for(Lancamento lancamento : chamadaEncalheCota.getChamadaEncalhe().getLancamentos()){
-					movimentoEstoqueCota.setLancamento(lancamento);					
-					break;
-				}
-				this.atualizarMovimentoEstoqueCota(movimentoEstoqueCota, conferenciaEncalheDTO);
-			}
-		} else {
-			/*
-			 * FIXME Verificar se existe a possibilidade de interromper o processo não ira criar insumo para gerar nota de venda
-			 */
-			LOGGER.error("Atenção não foi passivel recuperar lancamento!!!");
-		}
-		
 	}
 	
-	    /**
+	/**
      * Obtém o tipo de movimento de estoque do distribuidor.
      * 
      * @param juramentada
@@ -2861,22 +2848,28 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final Date dataRecolhimentoReferencia,
 			final Date dataCriacao,
 			final Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque,
-			final Usuario usuario) {
+			final Usuario usuario,
+			final ChamadaEncalheCota chamadaEncalheCota) {
 		
 		final Long idCota = controleConferenciaEncalheCota.getCota().getId();
 		
 		final ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(conferenciaEncalheDTO.getIdProdutoEdicao());
 		
 		final TipoMovimentoEstoque tipoMovimentoEstoqueCota = mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.ENVIO_ENCALHE);
-	
+		
+		LancamentoDTO lancamentoDTO = this.obtemLancamentoDTO(conferenciaEncalheDTO, chamadaEncalheCota);
+		
 		MovimentoEstoqueCota movimentoEstoqueCota = movimentoEstoqueService.gerarMovimentoCota(
-						null, 
+						lancamentoDTO.getDataDistribuidor(), 
 						produtoEdicao.getId(), 
 						idCota, 
 						usuario.getId(), 
 						conferenciaEncalheDTO.getQtdExemplar(), 
 						tipoMovimentoEstoqueCota,
-						this.distribuidorService.obterDataOperacaoDistribuidor());
+						this.distribuidorService.obterDataOperacaoDistribuidor(),
+						this.distribuidorService.obterDataOperacaoDistribuidor(),
+						lancamentoDTO.getId(), 
+						null);
 		
 		if(conferenciaEncalheDTO.getJuramentada()!= null && conferenciaEncalheDTO.getJuramentada() ){
 			
@@ -3465,6 +3458,41 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		return cota;
+	}
+
+	/**
+     * recuperar o lancamento para setar no movimento estoque cota.
+     * @return MovimentoEstoqueCota
+     */
+	private LancamentoDTO obtemLancamentoDTO(final ConferenciaEncalheDTO conferenciaEncalheDTO, ChamadaEncalheCota chamadaEncalheCota) {
+		
+		LancamentoDTO lancamentoDTO = new LancamentoDTO();
+		
+		if(chamadaEncalheCota != null 
+				&& chamadaEncalheCota.getChamadaEncalhe() != null 
+				&& (chamadaEncalheCota.getChamadaEncalhe().getLancamentos() != null && !chamadaEncalheCota.getChamadaEncalhe().getLancamentos().isEmpty())){
+			
+			if(chamadaEncalheCota.getChamadaEncalhe().getLancamentos().size() > 1){
+				
+				LOGGER.error("Carregou mais de um lançamento...");
+				
+			} else {
+				
+				for(Lancamento lancamento : chamadaEncalheCota.getChamadaEncalhe().getLancamentos()){
+					lancamentoDTO.setId(lancamento.getId());
+					lancamentoDTO.setDataDistribuidor(lancamento.getDataLancamentoDistribuidor());
+					break;
+				}
+				
+			}
+		} else {
+			/*
+			 * FIXME Verificar se existe a possibilidade de interromper o processo não ira criar insumo para gerar nota de venda
+			 */
+			LOGGER.error("Atenção não foi passivel recuperar lancamento!!!");
+		}
+		
+		return lancamentoDTO;
 	}
 	
 }
