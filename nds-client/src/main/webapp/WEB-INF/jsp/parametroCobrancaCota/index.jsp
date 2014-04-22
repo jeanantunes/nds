@@ -207,7 +207,7 @@ $(function(){
 						<option value="1">Não</option>
 				</select></td>
 			</tr>
-			<tr>
+			<!-- tr>
 				<td>Unifica Cobrança?</td>
 				<td><select name="unificaCobranca" id="unificaCobranca">
 						<option value="0">Sim</option>
@@ -215,7 +215,7 @@ $(function(){
 				</select></td>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
-			</tr>
+			</tr -->
 			
 			<tr>
 			    <td>Fornecedor Padrão:</td>
