@@ -1453,6 +1453,18 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             sql.append(" PROD_EDICAO.NUMERO_EDICAO as numeroEdicao, 	");
             sql.append(" PROD_EDICAO.PRECO_VENDA as precoVenda, 		");
             
+            sql.append(" case when PROD_EDICAO.origem ='MANUAL' then ");
+            sql.append(" case when PROD_EDICAO.desconto is not null then PROD_EDICAO.desconto  ");
+            sql.append(" else PROD.desconto end  ");
+            sql.append(" else (  ");
+            sql.append(" case when desconto_logistica_pe.ID is not null then  ");			  		
+            sql.append(" desconto_logistica_pe.PERCENTUAL_DESCONTO   ");          	  
+            sql.append(" else	 ");											 		 	 		
+            sql.append(" case when desconto_logistica_prod.ID is not null then ");		 
+            sql.append(" desconto_logistica_prod.PERCENTUAL_DESCONTO   ");    	         
+            sql.append(" else 0 end         	   end) end as desconto,  "); 
+            
+            /*
             sql.append(" (case when desconto_logistica_pe.ID is not null then 			");
             sql.append("  		desconto_logistica_pe.PERCENTUAL_DESCONTO            	");
             sql.append("  else												 		 	");
@@ -1460,6 +1472,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             sql.append(" 			 desconto_logistica_prod.PERCENTUAL_DESCONTO      	");
             sql.append("         else 0 end         	");
             sql.append("   end) as desconto,           	");
+            */
+            
             sql.append(" CE.DATA_RECOLHIMENTO as dataMovimento ");
         }
         
@@ -1508,9 +1522,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" OR EP.QTDE_DEVOLUCAO_ENCALHE != 0) ");
            
         sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
-        
+
         sql.append(" GROUP BY PROD_EDICAO.ID ");
-        
+
+        sql.append(" HAVING ("+qtdDevolucaoSubQuery+" > 0) ");
+
         if (indBuscaQtd){
             sql.append(") as temp ");
         }

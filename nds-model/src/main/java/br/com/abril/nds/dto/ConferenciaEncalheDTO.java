@@ -40,6 +40,14 @@ public class ConferenciaEncalheDTO implements Serializable {
 	 * Quantidade apontada na conferência de encalhe
 	 */	
 	private BigInteger qtdExemplar;
+	
+	/**
+	 * Também equivale a quantidade apontada na conferência de encalhe, porém 
+	 * é um campo do tipo {@code String} devido a possibilidade do usuário digitar
+	 * a quantidade acompanhada do sufixo "e" no recolhimento de produtos do
+	 * tipo cromo, para assim "forçar" a contabilização deste por envelopes.
+	 */
+	private String qtdExemplarDaGrid;
 
 	/**
 	 *  Quantidade informada. Refere-se a qtde do item da nota fiscal de entrada da cota.
@@ -330,6 +338,14 @@ public class ConferenciaEncalheDTO implements Serializable {
 	 */
 	public void setParcialCalculado(boolean parcialCalculado) {
 		this.parcialCalculado = parcialCalculado;
+	}
+
+	public String getQtdExemplarDaGrid() {
+		return qtdExemplarDaGrid;
+	}
+
+	public void setQtdExemplarDaGrid(String qtdExemplarDaGrid) {
+		this.qtdExemplarDaGrid = qtdExemplarDaGrid;
 	}
 
 	@Override

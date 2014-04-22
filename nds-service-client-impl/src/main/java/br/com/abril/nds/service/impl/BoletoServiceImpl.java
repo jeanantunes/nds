@@ -609,7 +609,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         final Integer numeroMaximoAcumuloCota = acumuloDividasService.obterNumeroMaximoAcumuloCota(divida.getCota().getId()).intValue();
         
-        if (numeroMaximoAcumuloCota >= numeroMaximoAcumulosDistribuidor) {
+        if (numeroMaximoAcumuloCota >= (numeroMaximoAcumulosDistribuidor !=null ? numeroMaximoAcumulosDistribuidor: 0)) {
             
             throw new IllegalArgumentException("Acumulo excedeu o limite do distribuidor.");
         }
@@ -994,7 +994,7 @@ public class BoletoServiceImpl implements BoletoService {
         gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO, boleto, dataOperacao,
                 nomeArquivo, pagamento, usuario, banco, dataPagamento);
         
-        efetivarBaixaCobranca(boleto, dataOperacao);
+        efetivarBaixaCobranca(boleto, dataPagamento);
     }
     
     private void baixarBoletoValorAcima(final TipoBaixaCobranca tipoBaixaCobranca, final PagamentoDTO pagamento,
@@ -2241,7 +2241,9 @@ public class BoletoServiceImpl implements BoletoService {
 
         final Integer fatorVencimento = this.obterFatorVencimentoFormaCobranca(fc);
 
-        final Date dataVencimento = gerarCobrancaService.obterDataVencimentoCobrancaCota(dataEmissao, fatorVencimento, null);
+        final Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+        
+        final Date dataVencimento = gerarCobrancaService.obterDataVencimentoCobrancaCota(dataOperacao, fatorVencimento, null);
         
         final BoletoEmBrancoDTO bbDTO = new BoletoEmBrancoDTO(ceDTO.getIdChamEncCota(),
                 fornecedor.getId(),

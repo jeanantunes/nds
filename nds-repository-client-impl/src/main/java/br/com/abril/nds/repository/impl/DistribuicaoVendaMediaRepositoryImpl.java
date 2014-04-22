@@ -102,6 +102,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     public List<ProdutoEdicaoVendaMediaDTO> pesquisar(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, boolean usarICD) {
 
 		StringBuilder sql = new StringBuilder();
+		
 		sql.append("select pe.id, ");
 		sql.append("       pe.numero_edicao numeroEdicao, ");
 		sql.append("       p.id idProduto, ");
@@ -117,9 +118,22 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("       					join tipo_movimento tmov ON me.TIPO_MOVIMENTO_ID = tmov.ID ");
 		sql.append("      				where ped.ID = pe.id and tmov.GRUPO_MOVIMENTO_ESTOQUE = 'RECEBIMENTO_FISICO'), 0) reparte, ");
 		
-		sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then ");
-		sql.append("           round((sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)), 0) ");
-		sql.append("       else 0 end) venda, ");
+		sql.append(" (CASE   ");
+		sql.append("  	WHEN l.status = 'FECHADO' or l.status = 'RECOLHIDO' ");
+		sql.append("  THEN ");
+		sql.append("  	  round((SELECT sum(estqProdCota.qtde_recebida - estqProdCota.qtde_devolvida) ");
+		sql.append("          FROM ESTOQUE_PRODUTO_COTA estqProdCota ");
+		sql.append("               LEFT OUTER JOIN PRODUTO_EDICAO prodEdicao ON estqProdCota.PRODUTO_EDICAO_ID = prodEdicao.ID ");
+		sql.append("               LEFT OUTER JOIN PRODUTO pdto ON prodEdicao.PRODUTO_ID = pdto.ID ");
+		sql.append("          WHERE pdto.codigo = p.CODIGO AND prodEdicao.NUMERO_EDICAO = pe.NUMERO_EDICAO),0) ");
+		sql.append("  ELSE ");
+		sql.append("      round((SELECT sum(estqProdCota.qtde_recebida) ");
+		sql.append("          FROM ESTOQUE_PRODUTO_COTA estqProdCota ");
+		sql.append("               LEFT OUTER JOIN PRODUTO_EDICAO prodEdicao ON estqProdCota.PRODUTO_EDICAO_ID = prodEdicao.ID ");
+		sql.append("               LEFT OUTER JOIN PRODUTO pdto ON prodEdicao.PRODUTO_ID = pdto.ID ");
+		sql.append("          WHERE pdto.codigo = p.CODIGO AND prodEdicao.NUMERO_EDICAO = pe.NUMERO_EDICAO),0) ");
+		sql.append("  END) venda, ");
+		
 		sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then ");
 		sql.append("           round(sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)) / sum(epc.qtde_recebida) * 100 ");
 		sql.append("       else 0 end) percentualVenda, ");

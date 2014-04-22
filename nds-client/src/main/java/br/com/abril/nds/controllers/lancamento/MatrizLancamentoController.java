@@ -576,6 +576,8 @@ public class MatrizLancamentoController extends BaseController {
     	
         final Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
         
+        this.validarListaParaReprogramacao(produtosLancamento);
+        
         listaMensagensAux = this.validarPeb(novaData,produtosLancamento);
     	 
         this.verificarExecucaoInterfaces();
@@ -585,8 +587,6 @@ public class MatrizLancamentoController extends BaseController {
         adicionarAtributoAlteracaoSessao();
         
         this.validarDatasConfirmacao(novaData);
-        
-        this.validarListaParaReprogramacao(produtosLancamento);
         
         if(!produtosLancamento.isEmpty()){
          listaMensagens = this.validarDataReprogramacao(produtosLancamento, novaData);

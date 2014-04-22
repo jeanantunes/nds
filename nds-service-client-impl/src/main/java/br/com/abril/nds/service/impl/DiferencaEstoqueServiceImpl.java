@@ -292,8 +292,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         final boolean isAprovacaoMovimentoDiferencaAutomatico = distribuidorService.utilizaControleAprovacaoFaltaSobra();
         
-        final Origem origem = (mapaRateioCotas != null && !mapaRateioCotas.isEmpty()) ? Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_COTA
-                : null;
+        final Origem origem = (mapaRateioCotas != null && !mapaRateioCotas.isEmpty()) ? Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_COTA : null;
         
         this.confirmarLancamentosDiferenca(new ArrayList<>(listaNovasDiferencas), null, !isAprovacaoMovimentoDiferencaAutomatico, origem);
     }
@@ -532,23 +531,71 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                                 ultimoLancamento.getDataLancamentoDistribuidor(), origem);
             }
             
-            if (statusAprovacao == null) {
-                
-                statusAprovacao = obterStatusLancamento(diferenca);
+            if(!diferenca.getProdutoEdicao().getProduto().getOrigem().equals(Origem.MANUAL)) {
+	            if (statusAprovacao == null) {
+	                
+	                statusAprovacao = obterStatusLancamento(diferenca);
+	            }
+            } else {
+            	
+            	
+            	if (diferenca.getTipoDiferenca().isAlteracaoReparte()) {
+                    
+                    statusAprovacao = StatusAprovacao.APROVADO;
+                    
+            	} else if (diferenca.getTipoDiferenca().isFalta() || diferenca.getTipoDiferenca().isFaltaParaCota()) {
+            	
+            		statusAprovacao = StatusAprovacao.PERDA;
+            				
+            	} else {
+                    
+                    statusAprovacao = StatusAprovacao.GANHO;
+                }
+            	
             }
             
             if(listaMovimentosEstoqueCota != null && !listaMovimentosEstoqueCota.isEmpty()) {
 	            for(MovimentoEstoqueCota mec : listaMovimentosEstoqueCota) {
+	            	
+	            	if(!mec.getProdutoEdicao().getProduto().getOrigem().equals(Origem.MANUAL)) {
+	            	
+		        		if (!diferenca.getTipoDiferenca().isAlteracaoReparte() && this.foraDoPrazoDoGFS(diferenca)) {
+		                    
+		        			if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
+		        				mec.setStatusIntegracao(StatusIntegracao.ENCALHE);
+		                    } else {
+		                    	mec.setStatusIntegracao(StatusIntegracao.FORA_DO_PRAZO);
+		                    }
+		                    
+		                }
+	            	} else {
 	            		
-	        		if (!diferenca.getTipoDiferenca().isAlteracaoReparte() && this.foraDoPrazoDoGFS(diferenca)) {
-	                    
-	        			if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
-	        				mec.setStatusIntegracao(StatusIntegracao.ENCALHE);
+	            		mec.setStatusIntegracao(StatusIntegracao.NAO_INTEGRAR);
+	            		
+	            		final boolean utilizaControleAprovacao = parametrosDistribuidorService.getParametrosDistribuidor().getUtilizaControleAprovacao();
+	            		
+	            		if(utilizaControleAprovacao) {
+	            			
+	            			statusAprovacao = StatusAprovacao.PENDENTE;
+	            			
 	                    } else {
-	                    	mec.setStatusIntegracao(StatusIntegracao.FORA_DO_PRAZO);
+	                    	
+	                    	if (diferenca.getTipoDiferenca().isAlteracaoReparte()) {
+	                            
+	                            statusAprovacao = StatusAprovacao.APROVADO;
+	                            
+	                    	} else if (diferenca.getTipoDiferenca().isFalta() || diferenca.getTipoDiferenca().isFaltaParaCota()) {
+	                    	
+	                    		statusAprovacao = StatusAprovacao.PERDA;
+	                    				
+	                    	} else {
+	                            
+	                            statusAprovacao = StatusAprovacao.GANHO;
+	                        }
+	                    	
 	                    }
-	                    
-	                }             		
+	            		
+	            	}
 	            }
             }
             
@@ -1170,26 +1217,36 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 
         StatusIntegracao statusIntegracao = null;
         
-        if (tipoDiferenca.isAlteracaoReparte()) {
-            
-            statusIntegracao = StatusIntegracao.NAO_INTEGRAR;
-        }
-        
-        if (!tipoDiferenca.isAlteracaoReparte() && this.foraDoPrazoDoGFS(diferenca)) {
-            
-            if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
-                statusIntegracao = StatusIntegracao.ENCALHE;
-            } else {
-                statusIntegracao = StatusIntegracao.FORA_DO_PRAZO;
+        if(!diferenca.getProdutoEdicao().getProduto().getOrigem().equals(Origem.MANUAL)) {
+        	
+        	if (tipoDiferenca.isAlteracaoReparte()) {
+                
+                statusIntegracao = StatusIntegracao.NAO_INTEGRAR;
             }
             
-            grupoMovimentoEstoque = obterGrupoMovimentoEstoqueForaDoPrazo(tipoDiferenca);
+            if (!tipoDiferenca.isAlteracaoReparte() && this.foraDoPrazoDoGFS(diferenca)) {
+                
+                if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
+                    statusIntegracao = StatusIntegracao.ENCALHE;
+                } else {
+                    statusIntegracao = StatusIntegracao.FORA_DO_PRAZO;
+                }
+                
+                grupoMovimentoEstoque = obterGrupoMovimentoEstoqueForaDoPrazo(tipoDiferenca);
+                
+            } else {
+                
+                grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
+                
+            }
             
-        } else {
-            
-            grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
-            
-        }
+    	} else {
+    		
+    		statusIntegracao = StatusIntegracao.NAO_INTEGRAR;
+    		
+    		grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
+    		
+    	}
         
         final TipoMovimentoEstoque tipoMovimentoEstoque = tipoMovimentoRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
         
@@ -1217,8 +1274,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         				tipoDiferenca.isFaltaParaCota() ? TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA :
         					null;
 
-        if (novoTipoDiferenca != null && 
-        		!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
+        if (novoTipoDiferenca != null && !TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
 
             try {
 

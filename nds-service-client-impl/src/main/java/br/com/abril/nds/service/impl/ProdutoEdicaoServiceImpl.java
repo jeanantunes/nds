@@ -852,6 +852,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
         lancamento.setDataRecolhimentoPrevista(dto.getDataRecolhimentoPrevisto());
         
+        if(dto.getDataRecolhimentoDistribuidor()!=null){
+            lancamento.setDataRecolhimentoDistribuidor(dto.getDataRecolhimentoDistribuidor());
+        }
+        
         final BigInteger repartePromocional = dto.getRepartePromocional() == null ? BigInteger.ZERO : dto.getRepartePromocional();
         
         if (lancamento.getId() == null || dto.getRepartePrevisto() != null) {

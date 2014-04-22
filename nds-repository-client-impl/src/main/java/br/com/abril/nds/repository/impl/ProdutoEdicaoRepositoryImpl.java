@@ -679,12 +679,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		final StringBuilder hql = new StringBuilder("select distinct l.produtoEdicao ");
 		hql.append(" from Lancamento l ")
 		   .append(" where l.dataLancamentoDistribuidor = :data ")
-		   .append(" and l.status= '" + StatusLancamento.EXPEDIDO.toString() + "'");
+		   .append(" and l.status IN (:status) ")
+		   .append(" order by l.produtoEdicao.produto.nome ");
 
 		final Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", data);
-		query.setMaxResults(6);
-
+		query.setParameterList("status",Arrays.asList(StatusLancamento.EXPEDIDO, StatusLancamento.BALANCEADO));
 		return query.list();
 	}
 	
@@ -841,14 +841,21 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				" 	produtoedi1_.NUMERO_EDICAO as numeroEdicao, " +
 				" 	produto5_.PERIODICIDADE as periodicidade, " +
 				
-				"	(CASE                                                                                                    " +
-				"	        WHEN lancamento2_.status = 'FECHADO' OR lancamento2_.status = 'RECOLHIDO'                        " +
-				"	        THEN                                                                                             " +
-				"	            round((sum(estoqueProdutoCota.qtde_recebida) - sum(estoqueProdutoCota.qtde_devolvida)), 0)   " +
-				"	        ELSE                                                                                             " +
-				"	            0                                                                                            " +
-				"	      END)                                                                                               " +
-				"	        venda,																							 " +
+				" (CASE   " +
+				"  	WHEN lancamento2_.status = 'FECHADO' OR lancamento2_.status = 'RECOLHIDO' " +
+				"  THEN " +
+				"  	  (SELECT sum(estqProdCota.qtde_recebida - estqProdCota.qtde_devolvida) " +
+				"          FROM ESTOQUE_PRODUTO_COTA estqProdCota " +
+				"               LEFT OUTER JOIN PRODUTO_EDICAO prodEdicao ON estqProdCota.PRODUTO_EDICAO_ID = prodEdicao.ID " +
+				"               LEFT OUTER JOIN PRODUTO pdto ON prodEdicao.PRODUTO_ID = pdto.ID " +
+				"          WHERE pdto.codigo = produto5_.CODIGO AND prodEdicao.NUMERO_EDICAO = produtoedi1_.NUMERO_EDICAO) " +
+				"  ELSE " +
+				"      (SELECT sum(estqProdCota.qtde_recebida) " +
+				"          FROM ESTOQUE_PRODUTO_COTA estqProdCota " +
+				"               LEFT OUTER JOIN PRODUTO_EDICAO prodEdicao ON estqProdCota.PRODUTO_EDICAO_ID = prodEdicao.ID " +
+				"               LEFT OUTER JOIN PRODUTO pdto ON prodEdicao.PRODUTO_ID = pdto.ID " +
+				"          WHERE pdto.codigo = produto5_.CODIGO AND prodEdicao.NUMERO_EDICAO = produtoedi1_.NUMERO_EDICAO) " +
+				"  END) venda, " +
 				
 				" 	lancamento2_.DATA_REC_DISTRIB as dataRecolhimento, " +
 				" 	lancamento2_.DATA_LCTO_DISTRIBUIDOR as dataLancamento, " +
@@ -1289,9 +1296,17 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" (CASE   ");
 		hql.append("  	WHEN lancamento.status = 'FECHADO' OR lancamento.status = 'RECOLHIDO' ");
 		hql.append("  THEN ");
-		hql.append("  	round((sum(estoqueProduto.qtdeRecebida) - sum(estoqueProduto.qtdeDevolvida)), 0) ");
+		hql.append("  	  round((SELECT sum(estqProdCota.qtdeRecebida - estqProdCota.qtdeDevolvida) ");
+		hql.append("          FROM EstoqueProdutoCota estqProdCota ");
+		hql.append("               JOIN estqProdCota.produtoEdicao as prodEdicao ");
+		hql.append("               JOIN prodEdicao.produto as pdto ");
+		hql.append("          WHERE pdto.codigo = produto.codigo AND prodEdicao.numeroEdicao = produtoEdicao.numeroEdicao),0) ");
 		hql.append("  ELSE ");
-		hql.append("  	0 ");
+		hql.append("      round((SELECT sum(estqProdCota.qtdeRecebida) ");
+		hql.append("          FROM EstoqueProdutoCota estqProdCota ");
+		hql.append("              JOIN estqProdCota.produtoEdicao as prodEdicao ");
+		hql.append("              JOIN prodEdicao.produto as pdto ");
+		hql.append("          WHERE pdto.codigo = produto.codigo AND prodEdicao.numeroEdicao = produtoEdicao.numeroEdicao),0) ");
 		hql.append("  END) as qtdeVendas, ");
 		
 		hql.append(" lancamento.status as situacaoLancamento, ");
@@ -1454,43 +1469,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		return (ProdutoEdicaoDTO) query.uniqueResult();
 	}
-
-	/*@Override
-	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorProduto(Produto produto) {
-		String queryString = "SELECT "
-				+ 	"produtoEdicao "
-				+ "FROM "
-				+ 	"ProdutoEdicao produtoEdicao "
-				+ "WHERE "
-				+ 	"produtoEdicao.id NOT IN (SELECT "
-				+         "produtoEdicao.id "
-				+         "FROM "
-				+             "DescontoProdutoEdicao descontoProdutoEdicao "
-				+         "JOIN descontoProdutoEdicao.produtoEdicao produtoEdicao "
-				+         "JOIN produtoEdicao.produto produto "
-				+         "JOIN descontoProdutoEdicao.cota cota "
-				+         "WHERE "
-				+             "produto.id = " + produto.getId() + " "
-				+                 "AND cota.id IN (SELECT cota.id FROM Produto produto JOIN produto.fornecedores fornecedor JOIN fornecedor.cotas cota WHERE produto.id = " + produto.getId() + ") "
-				+                 "AND descontoProdutoEdicao.tipoDesconto = ('ESPECIFICO'))"
-				+ 	"AND produtoEdicao.id NOT IN (SELECT "
-				+             "produtoEdicao.id "
-					+         "FROM "
-					+             "DescontoProdutoEdicao descontoProdutoEdicao "
-					+         "JOIN descontoProdutoEdicao.produtoEdicao produtoEdicao "
-				+         "JOIN descontoProdutoEdicao.cota cota "
-				+         "JOIN descontoProdutoEdicao.fornecedor fornecedor "
-				+         "WHERE "
-				+             "produto.id = " + produto.getId() + " "
-				+                 "AND fornecedor.id IN (SELECT fornecedor.id FROM Produto produto JOIN produto.fornecedor fornecedor WHERE produto.id = " + produto.getId() + ") "
-				+                 "AND descontoProdutoEdicao.tipoDesconto = ('GERAL'))";
-
-			//queryString += whereString;
-			
-			Query query = this.getSession().createQuery(queryString);
-			
-			return new HashSet<ProdutoEdicao>(query.list());
-	}*/
 
 	@Override
 	public ProdutoEdicao obterProdutoEdicaoPorIdLancamento(final Long idLancamento) {

@@ -98,6 +98,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 		if (filtro != null) {
 			
 			List<RomaneioDTO> lstRomaneioDTO = romaneioRepository.buscarRomaneiosParaExportacao(filtro);
+			
 			List<RomaneioModelo01DTO> lstRelatorio = new ArrayList<RomaneioModelo01DTO>();
 			
 			// Formata os romaneios para o relatório:

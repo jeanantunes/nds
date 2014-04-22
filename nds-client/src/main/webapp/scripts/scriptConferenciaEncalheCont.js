@@ -528,7 +528,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					//innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
 					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoComDesconto).toFixed(4) + "</td>";
 					
-					var valorExemplares = value.isContagemPacote ? parseInt(value.qtdExemplar) / value.pacotePadrao : parseInt(value.qtdExemplar);
+					var valorExemplares = parseInt(value.qtdExemplar);
 					
 					valorExemplares = isNaN(valorExemplares) ? 0 : valorExemplares;
 					
@@ -643,7 +643,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			data.push({
 				
 				idConferenciaEncalhe: valorIdConferenciaEncalhe,
-				qtdExemplar: valorQtdExemplares,
+				qtdExemplarDaGrid: valorQtdExemplares,
 	            juramentada: valorJuramentado
 			
 			});
@@ -702,7 +702,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/atualizarValores", 
 			data, 
 			function(result){
-				
+			
+			    $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(result.conf.qtdExemplar);
+			
 				$("#valorTotalConferencia_" + index, ConferenciaEncalheCont.workspace).text(parseFloat(result.conf.valorTotal).toFixed(4));
 				
 				$("#totalReparte", ConferenciaEncalheCont.workspace).text(parseFloat(result.reparte).toFixed(4));

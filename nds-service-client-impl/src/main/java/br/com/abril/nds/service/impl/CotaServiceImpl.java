@@ -670,20 +670,34 @@ public class CotaServiceImpl implements CotaService {
                 if(telefoneDTO!= null && telefoneDTO.getId()!= null){
                     telefoneCota = cotaRepository.obterTelefonePorTelefoneCota(telefoneDTO.getId(), cota.getId());
                     
-                    if(telefoneCota == null){
-                        telefoneCota = new TelefoneCota();
-                        telefoneCota.setCota(cota);
-                    }
-                    final Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
-                    telefoneCota.setPrincipal(dto.isPrincipal());
-                    telefoneCota.setTelefone(telefone);
-                    telefoneCota.setTipoTelefone(dto.getTipoTelefone());
+                    telefoneCota = popularTelefone(cota, pessoa, dto, telefoneCota, telefoneDTO);
                     
                     telefoneCotaRepository.merge(telefoneCota);
+                }else{
+                	
+                	telefoneCota = popularTelefone(cota, pessoa, dto, telefoneCota, telefoneDTO);
+                	
+                	telefoneCotaRepository.adicionar(telefoneCota);
                 }
             }
         }
     }
+
+	private TelefoneCota popularTelefone(final Cota cota, final Pessoa pessoa, final TelefoneAssociacaoDTO dto, TelefoneCota telefoneCota, final TelefoneDTO telefoneDTO) {
+		
+		if(telefoneCota == null){
+		    telefoneCota = new TelefoneCota();
+		    telefoneCota.setCota(cota);
+		}
+		
+		final Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
+
+		telefoneCota.setPrincipal(dto.isPrincipal());
+		telefoneCota.setTelefone(telefone);
+		telefoneCota.setTipoTelefone(dto.getTipoTelefone());
+		
+		return telefoneCota;
+	}
     
     /**
      * TELEFONE
@@ -935,7 +949,7 @@ public class CotaServiceImpl implements CotaService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
         }
         
-        final ParametroDistribuicaoCota parametro = cota.getParametroDistribuicao();
+        final ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
         
         final boolean qtdePDVAutomatico = distribuidorService.preenchimentoAutomaticoPDV();
         
@@ -952,68 +966,64 @@ public class CotaServiceImpl implements CotaService {
             dto.setQtdeAutomatica(true);
         }
         
-        if (parametro == null) {
+        if (parametroDistribuicaoCota == null) {
             return this.setDistribuicaoDefault(dto);
             
-        } else if ((parametro.getSlipImpresso() == null || !parametro.getSlipImpresso())
-                && (parametro.getSlipEmail() == null || !parametro.getSlipEmail())
-                && (parametro.getBoletoImpresso() == null || !parametro.getBoletoImpresso())
-                && (parametro.getBoletoEmail() == null || !parametro.getBoletoEmail())
-                && (parametro.getBoletoSlipImpresso() == null || !parametro.getBoletoSlipImpresso())
-                && (parametro.getBoletoSlipEmail() == null || !parametro.getBoletoSlipEmail())
-                && (parametro.getReciboImpresso() == null || !parametro.getReciboImpresso())
-                && (parametro.getReciboEmail() == null || !parametro.getReciboEmail())
-                && (parametro.getChamadaEncalheImpresso() == null || !parametro.getChamadaEncalheImpresso())
-                && (parametro.getChamadaEncalheEmail() == null || !parametro.getChamadaEncalheEmail())
-                && (parametro.getNotaEnvioImpresso() == null || !parametro.getNotaEnvioImpresso())
-                && (parametro.getNotaEnvioEmail() == null || !parametro.getNotaEnvioEmail()))
+        } else if ((parametroDistribuicaoCota.getSlipImpresso() == null || !parametroDistribuicaoCota.getSlipImpresso())
+                && (parametroDistribuicaoCota.getSlipEmail() == null || !parametroDistribuicaoCota.getSlipEmail())
+                && (parametroDistribuicaoCota.getBoletoImpresso() == null || !parametroDistribuicaoCota.getBoletoImpresso())
+                && (parametroDistribuicaoCota.getBoletoEmail() == null || !parametroDistribuicaoCota.getBoletoEmail())
+                && (parametroDistribuicaoCota.getBoletoSlipImpresso() == null || !parametroDistribuicaoCota.getBoletoSlipImpresso())
+                && (parametroDistribuicaoCota.getBoletoSlipEmail() == null || !parametroDistribuicaoCota.getBoletoSlipEmail())
+                && (parametroDistribuicaoCota.getReciboImpresso() == null || !parametroDistribuicaoCota.getReciboImpresso())
+                && (parametroDistribuicaoCota.getReciboEmail() == null || !parametroDistribuicaoCota.getReciboEmail())
+                && (parametroDistribuicaoCota.getChamadaEncalheImpresso() == null || !parametroDistribuicaoCota.getChamadaEncalheImpresso())
+                && (parametroDistribuicaoCota.getChamadaEncalheEmail() == null || !parametroDistribuicaoCota.getChamadaEncalheEmail())
+                && (parametroDistribuicaoCota.getNotaEnvioImpresso() == null || !parametroDistribuicaoCota.getNotaEnvioImpresso())
+                && (parametroDistribuicaoCota.getNotaEnvioEmail() == null || !parametroDistribuicaoCota.getNotaEnvioEmail()))
         {
             
             dto = this.setDistribuicaoDefault(dto);
             
         } else {
-            dto.setNeImpresso(parametro.getNotaEnvioImpresso());
-            dto.setNeEmail(parametro.getNotaEnvioEmail());
-            dto.setCeImpresso(parametro.getChamadaEncalheImpresso());
-            dto.setCeEmail(parametro.getChamadaEncalheEmail());
-            dto.setSlipImpresso(parametro.getSlipImpresso());
-            dto.setSlipEmail(parametro.getSlipEmail());
-            dto.setBoletoImpresso(parametro.getBoletoImpresso());
-            dto.setBoletoEmail(parametro.getBoletoEmail());
-            dto.setBoletoSlipImpresso(parametro.getBoletoSlipImpresso());
-            dto.setBoletoSlipEmail(parametro.getBoletoSlipEmail());
-            dto.setReciboImpresso(parametro.getReciboImpresso());
-            dto.setReciboEmail(parametro.getReciboEmail());
+            dto.setNeImpresso(parametroDistribuicaoCota.getNotaEnvioImpresso());
+            dto.setNeEmail(parametroDistribuicaoCota.getNotaEnvioEmail());
+            dto.setCeImpresso(parametroDistribuicaoCota.getChamadaEncalheImpresso());
+            dto.setCeEmail(parametroDistribuicaoCota.getChamadaEncalheEmail());
+            dto.setSlipImpresso(parametroDistribuicaoCota.getSlipImpresso());
+            dto.setSlipEmail(parametroDistribuicaoCota.getSlipEmail());
+            dto.setBoletoImpresso(parametroDistribuicaoCota.getBoletoImpresso());
+            dto.setBoletoEmail(parametroDistribuicaoCota.getBoletoEmail());
+            dto.setBoletoSlipImpresso(parametroDistribuicaoCota.getBoletoSlipImpresso());
+            dto.setBoletoSlipEmail(parametroDistribuicaoCota.getBoletoSlipEmail());
+            dto.setReciboImpresso(parametroDistribuicaoCota.getReciboImpresso());
+            dto.setReciboEmail(parametroDistribuicaoCota.getReciboEmail());
         }
-        
-        
-        
-        
         
         if(!qtdePDVAutomatico) {
-            dto.setQtdePDV(parametro.getQtdePDV());
+            dto.setQtdePDV(parametroDistribuicaoCota.getQtdePDV());
         }
         
-        dto.setAssistComercial(parametro.getAssistenteComercial());
-        dto.setGerenteComercial(parametro.getGerenteComercial());
+        dto.setAssistComercial(parametroDistribuicaoCota.getAssistenteComercial());
+        dto.setGerenteComercial(parametroDistribuicaoCota.getGerenteComercial());
         
-        dto.setDescricaoTipoEntrega(parametro.getDescricaoTipoEntrega());
+        dto.setDescricaoTipoEntrega(parametroDistribuicaoCota.getDescricaoTipoEntrega());
         
-        dto.setObservacao(parametro.getObservacao());
-        dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
-        dto.setSolNumAtras(parametro.getSolicitaNumAtras());
-        dto.setRecebeRecolhe(parametro.getRecebeRecolheParciais());
-        dto.setUtilizaTermoAdesao(parametro.getUtilizaTermoAdesao());
-        dto.setTermoAdesaoRecebido(parametro.getTermoAdesaoRecebido());
-        dto.setUtilizaProcuracao(parametro.getUtilizaProcuracao());
-        dto.setProcuracaoRecebida(parametro.getProcuracaoRecebida());
-        dto.setTaxaFixa(MathUtil.round(parametro.getTaxaFixa(), 2));
-        dto.setPercentualFaturamento(MathUtil.round(parametro.getPercentualFaturamento(), 2));
-        dto.setBaseCalculo(parametro.getBaseCalculo());
-        dto.setInicioPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getInicioPeriodoCarencia()));
-        dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getFimPeriodoCarencia()));
+        dto.setObservacao(parametroDistribuicaoCota.getObservacao());
+        dto.setRepPorPontoVenda(parametroDistribuicaoCota.getRepartePorPontoVenda());
+        dto.setSolNumAtras(parametroDistribuicaoCota.getSolicitaNumAtras());
+        dto.setRecebeRecolhe(parametroDistribuicaoCota.getRecebeRecolheParciais());
+        dto.setUtilizaTermoAdesao(parametroDistribuicaoCota.getUtilizaTermoAdesao());
+        dto.setTermoAdesaoRecebido(parametroDistribuicaoCota.getTermoAdesaoRecebido());
+        dto.setUtilizaProcuracao(parametroDistribuicaoCota.getUtilizaProcuracao());
+        dto.setProcuracaoRecebida(parametroDistribuicaoCota.getProcuracaoRecebida());
+        dto.setTaxaFixa(MathUtil.round(parametroDistribuicaoCota.getTaxaFixa(), 2));
+        dto.setPercentualFaturamento(MathUtil.round(parametroDistribuicaoCota.getPercentualFaturamento(), 2));
+        dto.setBaseCalculo(parametroDistribuicaoCota.getBaseCalculo());
+        dto.setInicioPeriodoCarencia(DateUtil.formatarDataPTBR(parametroDistribuicaoCota.getInicioPeriodoCarencia()));
+        dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametroDistribuicaoCota.getFimPeriodoCarencia()));
         dto.setTipoDistribuicaoCota(cotaRepository.obterTipoDistribuicao(idCota).name());
-        dto.setRecebeComplementar(parametro.getRecebeComplementar());
+        dto.setRecebeComplementar(parametroDistribuicaoCota.getRecebeComplementar());
         
         return dto;
     }
@@ -3035,5 +3045,17 @@ public class CotaServiceImpl implements CotaService {
     public Long obterIdPorNumeroCota(final Integer numeroCota) {
         
         return cotaRepository.obterIdPorNumeroCota(numeroCota);
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public String obterEmailCota(Integer numeroCota) {
+        
+        if (numeroCota == null){
+            
+            throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota é obritatório.");
+        }
+        
+        return this.cotaRepository.obterEmailCota(numeroCota);
     }
 }

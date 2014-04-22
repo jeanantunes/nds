@@ -141,14 +141,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 					inputExemplarNota = '<input isEdicao="true" id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota '
 						+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+
 						'" onchange="digitacaoContagemDevolucaoController.limparCheck(\''+id+'\')"/>';
-					
-					var checked = (
-							(digitacaoContagemDevolucaoController.replicar.all && 
-							digitacaoContagemDevolucaoController.replicar.list.indexOf(id) < 0) ||
-							
-							(!digitacaoContagemDevolucaoController.replicar.all && 
-							digitacaoContagemDevolucaoController.replicar.list.indexOf(id) >= 0)
-							) ? 'checked':'';
+
+					var checked = '';
 					
 					var inputCheckReplicarValor = '<input isEdicao="true" type="checkbox" id="ch'+id+
 						'" class="chBoxReplicar" name="checkgroup" ' + checked + ' data-id="'+id
@@ -456,9 +450,11 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				var dataRecolhimentoDistribuidor = $(colunaDataRecolhimento, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="idDataRecolhimentoDist"]').val();
 				
+				
 				if (!$.trim(qtdNota)) {
 
-					return true;
+					// return true;
+					qtdNota = null;
 				}
 
 				var digitacaoContagemDevolucao = {codigoProduto:codigoProduto,

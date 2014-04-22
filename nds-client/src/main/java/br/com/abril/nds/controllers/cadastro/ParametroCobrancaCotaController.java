@@ -620,7 +620,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         }
     }
     
-	                                                        /**
+    /**
      * Método responsável por desativar Forma de Cobranca
      * 
      * @param idFormaCobranca
@@ -629,9 +629,9 @@ public class ParametroCobrancaCotaController extends BaseController {
     @Path("/excluirFormaCobranca")
     public void excluirFormaCobranca(final Long idFormaCobranca){
         
-        this.parametroCobrancaCotaService.excluirFormaCobranca(idFormaCobranca);	
-    	
 		this.parametroCobrancaCotaService.excluirParametroCobrancaCota(idFormaCobranca);
+		
+		this.parametroCobrancaCotaService.excluirFormaCobranca(idFormaCobranca);
         
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Excluida."),
                                                         Constantes.PARAM_MSGS).recursive().serialize();

@@ -39,6 +39,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -633,6 +634,133 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	
+	
+	
+	
+	
+	/**
+	 * Identifica a posição do dia na semana, considerando o inicio da semana do distribuidor
+	 * 
+	 * @param inicioSemanaDistribuidor
+	 * @param diaSemana
+	 * @return int
+	 */
+	private int getNumeroDiaSemana(DiaSemana inicioSemanaDistribuidor, DiaSemana diaSemana){
+		
+		int numeroDiaSemana = 0;
+		
+		for (DiaSemana ds : DiaSemana.values()){
+		
+			boolean iniciaContagem = false;
+			
+			if (!iniciaContagem && ds.equals(inicioSemanaDistribuidor)){
+				
+				iniciaContagem = true;
+			}
+			
+			if (iniciaContagem){
+				
+				numeroDiaSemana++;
+			}
+			
+			if (ds.equals(diaSemana)){
+				
+				return numeroDiaSemana;
+			}
+		}
+		
+		return numeroDiaSemana;
+	}
+	
+	/**
+	 * Verifica se cota tem operação diferenciada
+	 * 
+	 * @param numeroCota
+	 * @param dataOperacao
+	 * @return boolean
+	 */
+	private boolean isOperacaoDiferenciada(Integer numeroCota, Date dataOperacao){
+	    
+		List<GrupoCota> gps = this.grupoRepository.obterListaGrupoCotaPorNumeroCota(numeroCota, dataOperacao);
+	
+	    return (gps != null && !gps.isEmpty());
+	}
+	
+	/**
+	 * Obtém todos os dias da semana da data de operação, considerando o primeiro dia da semana do distribuidor
+	 * 
+	 * @param inicioSemana
+	 * @param dataOperacao
+	 * @return List<Date>
+	 */
+	private List<Date> obterTodosDiasSemanaDataOperacao(DiaSemana inicioSemana, Date dataOperacao){
+		
+		return null;
+	}
+	
+	/**
+	 * Obtém datas de recolhimento da semana da data de operação diferenciada
+	 * 
+	 * @param numeroCota
+	 * @param data
+	 * @return List<Date>
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<Date> obterDatasRecolhimentoOperacaoDiferenciada(final Integer numeroCota, 
+			                                                     final Date data) {
+
+		boolean isOperacaoDiferenciada = this.isOperacaoDiferenciada(numeroCota, data);
+
+		final DiaSemana inicioSemana = distribuidorService.inicioSemanaRecolhimento();
+		
+		final List<DiaSemanaRecolhimento> diasSemanaRecolhimentoOperacaoDiferenciada = 
+				obterListaDiaSemanaRecolhimentoOperacaoDiferenciada(numeroCota, 
+																	data, 
+																	inicioSemana.getCodigoDiaSemana());
+													
+		identificarPrimeiroDiaRecolhimentoOperacaoDiferenciada(diasSemanaRecolhimentoOperacaoDiferenciada);
+
+		Date primeiraDataRecolhimento = null;
+		
+		Date ultimaDataRecolhimento = null;
+		
+		boolean isRecolhimentoHoje = false;
+		
+		DiaSemana diaSemanaPrimeiroDiaRecolhimento = null;
+		
+		List<Date> datasRecolhimento = new ArrayList<Date>();
+		
+		ultimaDataRecolhimento = diasSemanaRecolhimentoOperacaoDiferenciada.get(diasSemanaRecolhimentoOperacaoDiferenciada.size()-1).data;
+		
+		for(final DiaSemanaRecolhimento dia : diasSemanaRecolhimentoOperacaoDiferenciada) {
+
+			datasRecolhimento.add(dia.data);
+			
+			if(dia.indPrimeiroDiaRecolhimento && primeiraDataRecolhimento == null){
+				
+				primeiraDataRecolhimento = dia.data;
+				
+				diaSemanaPrimeiroDiaRecolhimento = dia.diaSemana;
+			}
+			
+			diasSemanaRecolhimentoOperacaoDiferenciada.indexOf(dia) ;
+			
+			isRecolhimentoHoje = isRecolhimentoHoje==false?(data.equals(dia.data)):isRecolhimentoHoje;
+		}
+		
+		if (!isRecolhimentoHoje){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A cota["+numeroCota+"] possui operação diferenciada e não permite recolhimento na data atual.");
+		}
+
+		return datasRecolhimento;
+	}
+	
+	
+	
+	
+	
 	/**
 	 * Identifica o primeiro qual o primeiro dia de recolhimento na semana 
 	 * da cota de operacao diferenciada.
@@ -697,7 +825,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final Date dataRecolhimentoCE, 
 			final Integer primeiroDiaDaSemanaDistribuidor) {
 		
-		List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota, dataRecolhimentoCE);
+		final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota, dataOperacao);
 		
 		final List<DiaSemanaRecolhimento> listaDiaSemanaRecolhimento = new ArrayList<>();
 
@@ -947,25 +1077,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return idsFornecedor;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.service.ConferenciaEncalheService#isLancamentoParcialProdutoEdicao(java.lang.String, java.lang.Long)
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public boolean isLancamentoParcialProdutoEdicao(final String codigo, final Long numeroEdicao) {
-		
-		final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, numeroEdicao);
-		
-		return produtoEdicao.isParcial();
-		
-	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public boolean isLancamentoParcial(final Long idProdutoEdicao) {
+	public boolean isContagemPacote(final Long idProdutoEdicao) {
 		
-		return this.conferenciaEncalheRepository.isLancamentoParcial(idProdutoEdicao);
+		return this.conferenciaEncalheRepository.isCromoParcialNaoFinal(idProdutoEdicao);
 	}
 	
 	    /**
@@ -1188,8 +1305,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		// impl Erik Scaranello
 		BigDecimal valorDebitoCreditoFinalizado = new BigDecimal(0);
-		for(final DebitoCreditoCotaDTO debitoCredito : infoConfereciaEncalheCota.getListaDebitoCreditoCota())
-		{
+		for(final DebitoCreditoCotaDTO debitoCredito : infoConfereciaEncalheCota.getListaDebitoCreditoCota()) {
 			valorDebitoCreditoFinalizado = valorDebitoCreditoFinalizado.add(debitoCredito.getValor());
 		}
 		

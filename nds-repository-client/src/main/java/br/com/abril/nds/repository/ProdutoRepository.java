@@ -90,4 +90,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	String obterUltimoCodigoProdutoRegional();
 	
 	boolean existeProdutoRegional(String codigo);
+	
+	Produto obterProdutoPorICDBaseadoNoPrimeiroBarra(String codigo_icd);
+	
 }

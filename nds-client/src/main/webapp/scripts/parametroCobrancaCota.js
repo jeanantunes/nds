@@ -140,17 +140,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 	//PRÉ CARREGAMENTO DA PAGINA
 	carregaFinanceiro : function(idCota) {
 		
-		
-		parametroCobrancaCotaController.financeiro.formaCobrancaAlterada = false;
+		//parametroCobrancaCotaController.financeiro.formaCobrancaAlterada = false;
 		
 		parametroCobrancaCotaController.financeiro.resultParametroCobranca = null;
     	
 		parametroCobrancaCotaController.financeiro.resultFormaCobranca = null;
     	
 		parametroCobrancaCotaController.financeiro.parametroDistribuidor = false;
-    	
-		parametroCobrancaCotaController.financeiro.formaCobrancaAlterada = false;
-
     	
 		parametroCobrancaCotaController.financeiro.fornecedoresUnificacao = null;
      
@@ -187,6 +183,11 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    $("#parametroCobrancaDateInicio", this.workspace).val(formatDateToString(new Date()));
 	    
 	    parametroCobrancaCotaController.carregarComboTipoCobranca("");   
+	    
+	    $('.formaCobrancaValueChangeListener').change(function() {
+			parametroCobrancaCotaController.financeiro.formaCobrancaAlterada = true;
+		});
+	    
 	},
 	
 	montarTrRadioBox : function(result,name,nameItemIdent) {
@@ -196,7 +197,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$.each(result, function(index, row) {
 
 			options += "<tr> <td width='23'>";
-			options += "<input id='" + nameItemIdent + row.key.$ +"' value='" + row.key.$ + "' name='"+name+"' type='checkbox' />";
+			options += "<input class=\"formaCobrancaValueChangeListener\" id='" + nameItemIdent + row.key.$ +"' value='" + row.key.$ + "' name='"+name+"' type='checkbox' />";
 			options += "</td> <td width='138'>";	
 			options += "<label for='" + nameItemIdent + row.key.$ +"' >"+ row.value.$ +"</label>";
 		    options += "</td>";
@@ -687,7 +688,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
     	var formaCobranca = parametroCobrancaCotaController.financeiro.resultFormaCobranca;
     	
-    	if(formaCobrancaTela['formaCobranca.agencia'] != formaCobranca['formaCobranca.agencia']){return true;}
+    	if(formaCobrancaTela['formaCobranca.agencia'] != formaCobranca['formaCobranca.agencia']) {return true;}
     	if(formaCobrancaTela['formaCobranca.agenciaDigito'] != formaCobranca['formaCobranca.agenciaDigito']){return true;}
     	if(formaCobrancaTela['formaCobranca.conta'] != formaCobranca['formaCobranca.conta']){return true;}
     	if(formaCobrancaTela['formaCobranca.contaDigito'] != formaCobranca['formaCobranca.contaDigito']){return true;}
@@ -753,8 +754,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 	
 	isAlter : function(parametroCobrancaTela) {
 		
-		if (parametroCobrancaCotaController.isAlterParametroCobranca(parametroCobrancaTela)|| 
-			parametroCobrancaCotaController.financeiro.formaCobrancaAlterada){
+		if (parametroCobrancaCotaController.isAlterParametroCobranca(parametroCobrancaTela)
+				|| parametroCobrancaCotaController.financeiro.formaCobrancaAlterada) {
 			
 			return true;
 		}
@@ -1318,9 +1319,9 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		if ((parametroCobrancaCotaController.financeiro.resultFormaCobranca != null) && (parametroCobrancaCotaController.financeiro.parametroDistribuidor)){
 			
-			parametroCobrancaCotaController.financeiro.formaCobrancaAlterada = 
-	     	   (parametroCobrancaCotaController.isAlterFormaCobranca(params)||
-	     	    parametroCobrancaCotaController.isAlterFornecedoresUnificacao(parametroCobrancaCotaController.obterFornecedoresMarcados()) );
+			parametroCobrancaCotaController.financeiro.formaCobrancaAlterada = parametroCobrancaCotaController.financeiro.formaCobrancaAlterada
+				|| (parametroCobrancaCotaController.isAlterFormaCobranca(params)
+	     			   || parametroCobrancaCotaController.isAlterFornecedoresUnificacao(parametroCobrancaCotaController.obterFornecedoresMarcados()) );
 			
 			if (!parametroCobrancaCotaController.financeiro.formaCobrancaAlterada){
 

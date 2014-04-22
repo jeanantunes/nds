@@ -905,6 +905,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		var params = "fileType=" + fyleType + 
 			"&idConsolidado=" + contaCorrenteCotaController.idConsolidadoDebitoCredito + 
 			"&data=" + contaCorrenteCotaController.dataDebitoCredito + 
+			"&numeroCota=" + $("#cotaHidden", contaCorrenteCotaController.workspace).val() + 
 			"&sortname=" + $(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).flexGetSortName() +
 			"&sortorder=" + $(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).getSortOrder();
 		

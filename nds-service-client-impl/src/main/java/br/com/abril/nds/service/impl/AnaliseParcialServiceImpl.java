@@ -38,7 +38,6 @@ import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
-import br.com.abril.nds.model.planejamento.EstudoPDV;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
@@ -317,26 +316,23 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 
         Map<Long, PDV> pdvMap = new HashMap<>();
+        
         for (PDV pdv : cota.getPdvs()) {
+        	
             pdvMap.put(pdv.getId(), pdv);
         }
 
         for (PdvDTO pdvDTO : reparteMap) {
-            PDV pdv = pdvMap.get(pdvDTO.getId());
-            EstudoPDV estudoPDV = estudoPDVRepository.buscarPorEstudoCotaPDV(estudo, cota, pdv);
-
-            if (estudoPDV == null) {
-                estudoPDV = new EstudoPDV();
-            estudoPDV.setEstudo(estudo);
-            estudoPDV.setCota(cota);
-                estudoPDV.setPdv(pdv);
-            }
-
-            estudoPDV.setReparte(BigInteger.valueOf(pdvDTO.getReparte()));
-            estudoPDVRepository.merge(estudoPDV);
+            
+        	PDV pdv = pdvMap.get(pdvDTO.getId());
+        	
+        	if(pdvDTO.getReparte()!= null){
+        		
+        		estudoService.gerarEstudoPDV(estudo, cota, pdv, BigInteger.valueOf(pdvDTO.getReparte()));
+        	}
         }
 
-        if (legenda.equalsIgnoreCase("FX")) {
+        if ("FX".equalsIgnoreCase(legenda)) {
             List<RepartePDVDTO> repartePDVDTOs = new ArrayList<>();
             for (PdvDTO pdvDTO : reparteMap) {
                 RepartePDVDTO repartePDVDTO = new RepartePDVDTO();
@@ -349,7 +345,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             repartePdvService.salvarRepartesPDV(repartePDVDTOs, produto.getCodigo(),fixacaoReparte.getId(),manterFixa);
     }
 
-        if (legenda.equalsIgnoreCase("MX")) {
+        if ("MX".equalsIgnoreCase(legenda)) {
             List<RepartePDVDTO> repartePDVDTOs = new ArrayList<>();
             for (PdvDTO pdvDTO : reparteMap) {
                 RepartePDVDTO repartePDVDTO = new RepartePDVDTO();
@@ -362,7 +358,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             repartePdvService.salvarRepartesPDVMix(repartePDVDTOs, produto.getCodigo(), mixCotaProduto.getId());
         }
     }
-
+    
     @Override
     @Transactional
     public CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto) {

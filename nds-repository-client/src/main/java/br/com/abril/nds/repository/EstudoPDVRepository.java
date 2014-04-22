@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigInteger;
+
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
@@ -14,4 +16,6 @@ import br.com.abril.nds.model.planejamento.EstudoPDV;
  */
 public interface EstudoPDVRepository extends Repository<EstudoPDV, Long> {
     EstudoPDV buscarPorEstudoCotaPDV(EstudoGerado estudo, Cota cota, PDV pdv);
+    
+    BigInteger obterTotalReparte(EstudoGerado estudo, Cota cota);
 }
