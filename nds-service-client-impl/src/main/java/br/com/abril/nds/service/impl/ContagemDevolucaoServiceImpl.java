@@ -623,7 +623,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			this.processarDiferenca(movimentoEstoque, 
 									usuario, 
 									produtoEdicao, 
-									calculoQdeDiferenca, 
+									calculoQdeDiferenca.abs(), 
 									TipoDiferenca.GANHO_EM, 
 									tipoMovimentoSobraEmReparte.getGrupoMovimentoEstoque().getTipoEstoque(), 
 									StatusAprovacao.GANHO);
@@ -1077,6 +1077,15 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
     	this.gerarNotasFiscaisPorFornecedor(listaContagemDevolucao, usuario, true);
     	
+    	fecharLancamentos(listaContagemDevolucao, usuario);
+		
+	}
+
+	@Override
+    @Transactional
+	public void fecharLancamentos(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) throws FileNotFoundException, IOException {
+	
+    	
 		Set<Long> idsProdutoEdicao = new TreeSet<>();
         
         for (ContagemDevolucaoDTO dto : listaContagemDevolucao) {
@@ -1100,6 +1109,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
         }
 	}
 
+	
     @Override
     @Transactional(readOnly = true)
     public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro, boolean perfilEncarregado){
