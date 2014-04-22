@@ -366,7 +366,7 @@ public class CNAB {
 		cnab.indiceNumeroRegistroFim = 400;
 		
 		cnab.indiceNumeroAgenciaInicio = 26;
-		cnab.indiceNumeroAgenciaFim = 31;
+		cnab.indiceNumeroAgenciaFim = 30;
 		
 		cnab.indiceNumeroContaInicio = 33;
 		cnab.indiceNumeroContaFim = 44;
