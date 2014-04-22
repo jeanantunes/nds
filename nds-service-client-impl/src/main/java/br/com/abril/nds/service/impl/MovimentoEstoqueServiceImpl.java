@@ -1248,8 +1248,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     @Override
     @Transactional
     public MovimentoEstoqueCota gerarMovimentoCota(final Date dataLancamento,
-            final Long idProdutoEdicao, final Long idCota, final Long idUsuario,
-            final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque, final Date dataOperacao) {
+            final Long idProdutoEdicao, 
+            final Long idCota, 
+            final Long idUsuario,
+            final BigInteger quantidade, 
+            final TipoMovimentoEstoque tipoMovimentoEstoque, 
+            final Date dataOperacao) {
         
         return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, null, dataOperacao, null, null, false);
         
@@ -1257,25 +1261,32 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     
     @Override
     @Transactional
-    public MovimentoEstoqueCota gerarMovimentoCotaDiferenca(final Date dataLancamento,final Long idProdutoEdicao,
+    public MovimentoEstoqueCota gerarMovimentoCotaDiferenca(final Date dataLancamento, 
+    		final Long idProdutoEdicao, 
             final Long idCota, final Long idUsuario,
-            final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque,
+            final BigInteger quantidade, 
+            final TipoMovimentoEstoque tipoMovimentoEstoque,
             final Long idEstudoCota,
             final boolean isMovimentoDiferencaAutomatico) {
         
-        return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota,
-                idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico);
+        return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico);
     }
     
     
     @Override
     @Transactional
-    public MovimentoEstoqueCota gerarMovimentoCota(final Date dataLancamento, final Long idProdutoEdicao, final Long idCota,
-            final Long idUsuario, final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque,
-            final Date dataMovimento, final Date dataOperacao, final Long idLancamento, final Long idEstudoCota){
+    public MovimentoEstoqueCota gerarMovimentoCota(final Date dataLancamento, 
+    		final Long idProdutoEdicao, 
+    		final Long idCota,
+            final Long idUsuario, 
+            final BigInteger quantidade, 
+            final TipoMovimentoEstoque tipoMovimentoEstoque,
+            final Date dataMovimento, 
+            final Date dataOperacao, 
+            final Long idLancamento, 
+            final Long idEstudoCota){
         
-        return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade,
-                tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota, false);
+        return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota, false);
     }
     
     private MovimentoEstoqueCota criarMovimentoCota(final Date dataLancamento, final Long idProdutoEdicao, final Long idCota,
