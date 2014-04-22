@@ -684,7 +684,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		final Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", data);
-		query.setParameterList("statsu",Arrays.asList(StatusLancamento.EXPEDIDO, StatusLancamento.BALANCEADO));
+		query.setParameterList("status",Arrays.asList(StatusLancamento.EXPEDIDO, StatusLancamento.BALANCEADO));
 		return query.list();
 	}
 	
