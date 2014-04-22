@@ -46,6 +46,7 @@ import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.PessoaCRPWSService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.StringUtil;
+import br.com.abril.nds.util.Util;
 
 @Service
 public class FTFServiceImpl implements FTFService {
@@ -244,7 +245,7 @@ public class FTFServiceImpl implements FTFService {
 		List<FTFEnvTipoRegistro01> listTipoRegistro01Cadastrados = new ArrayList<>();
 		
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01) {
-			String cpfCnpjDestinatario = ftfEnvTipoRegistro01.getCpfCnpjDestinatario();
+			String cpfCnpjDestinatario = Util.removerMascaraCnpj(ftfEnvTipoRegistro01.getCpfCnpjDestinatario());
 			
 			if(!verificarPessoaWs(cpfCnpjDestinatario)){
 				report.getNaoCadastradosCRP().add(ftfEnvTipoRegistro01);

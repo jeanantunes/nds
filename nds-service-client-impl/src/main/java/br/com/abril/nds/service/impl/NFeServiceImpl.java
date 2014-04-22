@@ -471,7 +471,6 @@ public class NFeServiceImpl implements NFeService {
 						notasGeradas = true;
 						break;
 					}
-					
 				}
 				
 				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS)) {			
@@ -667,7 +666,7 @@ public class NFeServiceImpl implements NFeService {
 		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
 		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
 		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
-			return notaFiscalService.consultaCotaExemplareSumarizado(filtro);
+			return notaFiscalService.consultaCotaExemplareSumarizados(filtro);
 		} else {
 			return this.listaRegimeEspecial(filtro, naturezaOperacao, distribuidor);	
 		}
@@ -676,7 +675,7 @@ public class NFeServiceImpl implements NFeService {
 	private List<CotaExemplaresDTO> listaRegimeEspecial(final FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao, Distribuidor distribuidor) {
 		List<CotaExemplaresDTO> cotasContribuinteEmitente = new ArrayList<CotaExemplaresDTO>();
 		
-		List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplareSumarizado(filtro);
+		List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplareSumarizados(filtro);
 		
 		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
