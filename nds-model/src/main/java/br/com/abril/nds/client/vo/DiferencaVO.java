@@ -420,6 +420,9 @@ public class DiferencaVO implements Serializable {
 		
 		result = prime * result
 				+ ((tipoDirecionamento == null) ? 0 : tipoDirecionamento.hashCode());
+		
+		result = prime * result
+				+ ((tipoDiferenca == null) ? 0 : tipoDiferenca.hashCode());
 
 		return result;
 	}
@@ -471,6 +474,12 @@ public class DiferencaVO implements Serializable {
 		} else if (!tipoEstoque.equals(other.tipoEstoque))
 			return false;
 		
+		if (tipoDiferenca == null) {
+			if (other.tipoDiferenca != null)
+				return false;
+		} else if (!tipoDiferenca.equals(other.tipoDiferenca))
+			return false;
+
 		return true;
 	}
 

@@ -48,6 +48,7 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -438,6 +439,14 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		}
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
+		
+		Set<Lancamento> lancamentos = produtoEdicao.getLancamentos();
+		
+		for (Lancamento item : lancamentos){
+			
+			item.setStatus(StatusLancamento.FECHADO);
+		}
+		
 		contagem.setIdProdutoEdicao(produtoEdicao.getId());
 		
 		ConferenciaEncalheParcial conferenciaEncalheParcial = new ConferenciaEncalheParcial();
@@ -596,9 +605,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		if( calculoQdeDiferenca.compareTo(BigInteger.ZERO) < 0 ) {
 			
 			//TIPO MOVIMENTO SOBRA_EM_ENCALHE (criar tipo de movimento de estoque)
-			if(tipoMovimentoSobraEmReparte == null){
-				tipoMovimentoSobraEmReparte = 
-						tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_EM_DEVOLUCAO);
+			if(tipoMovimentoSobraEmReparte == null) {
+				tipoMovimentoSobraEmReparte = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_EM_DEVOLUCAO);
 			}
 			
 			MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(
@@ -607,6 +615,13 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 					tipoMovimentoSobraEmReparte);
 			
 			ProdutoEdicao produtoEdicao  = produtoEdicaoRepository.buscarPorId(contagem.getIdProdutoEdicao());
+			
+			if(produtoEdicao != null) {
+				if(produtoEdicao.getProduto().getOrigem().equals(Origem.MANUAL)) {
+					movimentoEstoque.setStatusIntegracao(StatusIntegracao.NAO_INTEGRAR);
+					movimentoEstoque.setOrigem(Origem.MANUAL);
+				}
+			}
 			
 			this.processarDiferenca(movimentoEstoque, 
 									usuario, 
@@ -631,6 +646,13 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 					tipoMovimentoPerda,Origem.TRANSFERENCIA_PERDA_EM_DEVOLUCAO_ENCALHE_FORNECEDOR);
 			
 			ProdutoEdicao produtoEdicao  = produtoEdicaoRepository.buscarPorId(contagem.getIdProdutoEdicao());
+			
+			if(produtoEdicao != null) {
+				if(produtoEdicao.getProduto().getOrigem().equals(Origem.MANUAL)) {
+					movimentoEstoque.setStatusIntegracao(StatusIntegracao.NAO_INTEGRAR);
+					movimentoEstoque.setOrigem(Origem.MANUAL);
+				}
+			}
 			
 			this.processarDiferenca(movimentoEstoque, 
 									usuario, 
@@ -1032,13 +1054,13 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		for ( ContagemDevolucaoDTO item : listaAgrupadaContagemDevolucao ) {
 			
-			estoqueProdutoService.processarTransferencaiEntreEstoques(
+			estoqueProdutoService.processarTransferenciaEntreEstoques(
 					item.getIdProdutoEdicao(),
 					TipoEstoque.LANCAMENTO, 
 					TipoEstoque.DEVOLUCAO_ENCALHE, 
 					usuario.getId());
 			
-			estoqueProdutoService.processarTransferencaiEntreEstoques(
+			estoqueProdutoService.processarTransferenciaEntreEstoques(
 					item.getIdProdutoEdicao(),
 					TipoEstoque.SUPLEMENTAR, 
 					TipoEstoque.DEVOLUCAO_ENCALHE, 
