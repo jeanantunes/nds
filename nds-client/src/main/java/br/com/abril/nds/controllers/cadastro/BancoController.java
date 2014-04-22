@@ -130,13 +130,17 @@ public class BancoController extends BaseController {
         }
         
         for (final Banco banco : bancos) {
-            listaModelo.add(new CellModel(1, banco.getId() != null ? banco.getId().toString() : "", banco
-                    .getNumeroBanco() != null ? banco.getNumeroBanco() : "", banco.getNome() != null ? banco.getNome()
-                            : "", banco.getAgencia() != null ? banco.getAgencia().toString() + "-" + banco.getDvAgencia() : "",
-                                    banco.getConta() != null ? banco.getConta().toString() + "-" + banco.getDvConta() : "", banco
-                                            .getCodigoCedente() != null ? banco.getCodigoCedente().toString() : "",
-                                                    banco.getApelido() != null ? banco.getApelido().toString() : "",
-                                                            banco.getCarteira() != null ? banco.getCarteira() : "", banco.isAtivo() ? "Ativo" : "Desativado",
+            listaModelo.add(new CellModel(
+                    1, 
+                    banco.getId() != null ? banco.getId().toString() : "", 
+                    banco.getNumeroBanco() != null ? banco.getNumeroBanco() : "", 
+                    banco.getNome() != null ? banco.getNome() : "", 
+                    banco.getAgencia() != null ? banco.getAgencia().toString() + "-" + banco.getDvAgencia() : "",
+                    banco.getConta() != null ? banco.getConta().toString() + (banco.getDvConta() != null ? "-" + banco.getDvConta() : "") : "", 
+                    banco.getCodigoCedente() != null ? banco.getCodigoCedente().toString() : "",
+                    banco.getApelido() != null ? banco.getApelido().toString() : "",
+                    banco.getCarteira() != null ? banco.getCarteira() : "", 
+                    banco.isAtivo() ? "Ativo" : "Desativado",
                     ""));
         }
         
@@ -359,10 +363,6 @@ public class BancoController extends BaseController {
         
         if (StringUtils.isBlank(conta)) {
             errorMsgs.add("Preencha o campo conta.");
-        }
-        
-        if (StringUtils.isBlank(digito)) {
-            errorMsgs.add("Preencha o campo dígito da conta do banco.");
         }
         
         if (StringUtils.isBlank(apelido)) {

@@ -156,7 +156,7 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 		hql.append(" from Banco banco ");		
 		hql.append(" where banco.numeroBanco = :numeroBanco ");
 		hql.append(" and banco.agencia = :numeroAgencia ");
-		hql.append(" and concat(conta, dvConta) = :numeroConta ");
+		hql.append(" and concat(banco.conta, coalesce(banco.dvConta, '')) = :numeroConta ");
 		
         Query query = super.getSession().createQuery(hql.toString());
         
