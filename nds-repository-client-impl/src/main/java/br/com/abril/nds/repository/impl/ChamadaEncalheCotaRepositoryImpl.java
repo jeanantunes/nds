@@ -87,7 +87,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		return (BigDecimal) query.uniqueResult();
 	}
-	//TODO
+
 	private List<String> grupoMovimentoEstoqueCota(){
 		
 		return Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(),
