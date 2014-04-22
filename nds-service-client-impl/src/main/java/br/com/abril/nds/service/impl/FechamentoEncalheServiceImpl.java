@@ -565,6 +565,15 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             
             final FechamentoFisicoLogicoDTO fechamentoNaoReplicado = this.selecionarFechamentoPorProdutoEdicao(
                     listaNaoReplicados, fechamento.getProdutoEdicao());
+
+            final BigInteger exemplaresDevolucao = fechamento.getExemplaresDevolucao() == null ?
+            		BigInteger.ZERO : fechamento.getExemplaresDevolucao();
+            
+            final BigInteger exemplaresDevolucaoJuramentado = fechamento.getExemplaresDevolucaoJuramentado() == null ? 
+            		BigInteger.ZERO : fechamento.getExemplaresDevolucaoJuramentado();
+
+            final BigInteger exemplaresVendaEncalhe = fechamento.getExemplaresVendaEncalhe() == null ? 
+            		BigInteger.ZERO : fechamento.getExemplaresVendaEncalhe();
             
             if (fechamentoNaoReplicado != null) {
                 
@@ -572,8 +581,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 
             } else if (filtro.isCheckAll() || Boolean.valueOf(fechamento.getReplicar())) {
 
-                qtd = fechamento.getExemplaresDevolucao().subtract(
-                        fechamento.getExemplaresDevolucaoJuramentado()).subtract(fechamento.getExemplaresVendaEncalhe());
+                qtd = exemplaresDevolucao.subtract(exemplaresDevolucaoJuramentado).subtract(exemplaresVendaEncalhe);
 
             } else {
                 
