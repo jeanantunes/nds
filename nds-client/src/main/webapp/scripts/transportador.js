@@ -1,5 +1,7 @@
 var transportadorController = $.extend(true, {
 	fecharModalCadastroTransp : false,
+	
+	idParametroCobrancaTransportador:null,
 
 	init : function () {
 			$("#tabs", transportadorController.workspace).tabs();
@@ -443,14 +445,20 @@ var transportadorController = $.extend(true, {
 					return true;
 				});
 			});
+			
+			transportadorController.idParametroCobrancaTransportador = null;
 	},
 	
-	popup_novo_transportador : function() {
+	popup_novo_transportador : function(isEdicao) {
 		
 		if(!verificarPermissaoAcesso(transportadorController.workspace))
 			return;
 		
 		fecharModalCadastroTransp = false;
+		
+		if(isEdicao == undefined || !isEdicao){
+			transportadorController.idParametroCobrancaTransportador = null;
+		}
 		
 		$('#tabs', transportadorController.workspace).tabs('select', 0);
 		
@@ -479,10 +487,11 @@ var transportadorController = $.extend(true, {
 						
 						if ($("#modalidadeCobranca", transportadorController.workspace).val() == "TAXA_FIXA"){
 							
-							valorCobranca = transportadorController.preparaValor($("#valorTaxaFixa", transportadorController.workspace).val());
+							valorCobranca = $("#valorTaxaFixa", transportadorController.workspace).val();
+							
 						} else {
 							
-							valorCobranca = transportadorController.preparaValor($("#valorPercentualFaturamento", transportadorController.workspace).val());
+							valorCobranca = $("#valorPercentualFaturamento", transportadorController.workspace).val();
 						}
 						
 						var data = [{name:"transportador.pessoaJuridica.razaoSocial", value:$("#razaoSocial", transportadorController.workspace).val()},
@@ -499,7 +508,12 @@ var transportadorController = $.extend(true, {
 										value: $("#modalidadeCobranca", transportadorController.workspace).val()},
 									{name: "transportador.parametroCobrancaTransportador.valor", value: valorCobranca},
 									{name: "transportador.parametroCobrancaTransportador.porEntrega", 
-										value: $("#checkPorEntrega").is(':checked')}
+										value: $("#checkPorEntrega").is(':checked')},
+									{name: "transportador.parametroCobrancaTransportador.id", 
+										value: transportadorController.idParametroCobrancaTransportador}
+
+										
+										
 						];
 						
 						$.each($("[name=diaSemanaCob]:checked", transportadorController.workspace), 
@@ -562,6 +576,8 @@ var transportadorController = $.extend(true, {
 		$("#inputQuinzenalDiaInicio", transportadorController.workspace).val("");
 		$("#inputQuinzenalDiaFim", transportadorController.workspace).val("");
 		$("#inputCobrancaMensal", transportadorController.workspace).val("");
+		$("#valorPercentualFaturamento", transportadorController.workspace).val("");
+		
 	},
 	
 	cancelarCadastro : function(){
@@ -966,13 +982,13 @@ var transportadorController = $.extend(true, {
 						$(".transpTaxaFixa", this.workspace).show();
 						$(".transpPercentual", this.workspace).hide();
 						$("#valorTaxaFixa", 
-								transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
+								transportadorController.workspace).val(result[7]);
 					}
 					if (result[6] == 'PERCENTUAL') {
 						$(".transpTaxaFixa", this.workspace).hide();
 						$(".transpPercentual", this.workspace).show();
 						$("#valorPercentualFaturamento", 
-								transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
+								transportadorController.workspace).val(result[7]);
 					}
 					
 					if (result[8] == "true"){
@@ -994,7 +1010,7 @@ var transportadorController = $.extend(true, {
 						$("#inputCobrancaMensal").val(result[10]);
 					} else if (result[9] == "SEMANAL"){
 						
-						for (var i = 11 ; i < 18 ; i++){
+						for (var i = 12 ; i < 18 ; i++){
 							
 							if (result[i]){
 								switch (result[i]){
@@ -1030,8 +1046,10 @@ var transportadorController = $.extend(true, {
 						}
 					}
 				}
-			
-				transportadorController.popup_novo_transportador();
+				
+				transportadorController.idParametroCobrancaTransportador = result[11];
+				
+				transportadorController.popup_novo_transportador(true);
 			}
 		);
 	},
