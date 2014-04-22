@@ -87,7 +87,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		return (BigDecimal) query.uniqueResult();
 	}
-	
+	//TODO
 	private List<String> grupoMovimentoEstoqueCota(){
 		
 		return Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(),
@@ -95,7 +95,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 				GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
 				GrupoMovimentoEstoque.FALTA_EM_COTA.name(),
 				GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
-				GrupoMovimentoEstoque.SOBRA_EM_COTA.name());
+				GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+				GrupoMovimentoEstoque.COMPRA_ENCALHE.name(),
+				GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name(),
+				GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE.name(),
+				GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR.name());
 	}
 	
 	@Override
