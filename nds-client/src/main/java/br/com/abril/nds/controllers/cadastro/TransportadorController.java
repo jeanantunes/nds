@@ -568,6 +568,7 @@ public class TransportadorController extends BaseController {
 				dados.add(String.valueOf(param.isPorEntrega()));
 				dados.add(param.getPeriodicidadeCobranca().toString());
 				dados.add(param.getDiaCobranca() != null ? param.getDiaCobranca().toString() : "");
+				dados.add(param.getId().toString());
 				
 				if (param.getDiasSemanaCobranca() != null){
 					
