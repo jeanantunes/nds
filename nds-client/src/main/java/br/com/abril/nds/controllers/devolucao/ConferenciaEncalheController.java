@@ -1301,9 +1301,11 @@ public class ConferenciaEncalheController extends BaseController {
 
                 this.result.use(Results.json()).from("", "result").serialize();
             }
+
+		} else {
+			
+			this.result.nothing();
 		}
-		
-		this.result.nothing();
 	}
 
 	private boolean validarVendaNegativaProduto(final String qtdExemplares,
