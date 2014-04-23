@@ -538,8 +538,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(id);
 
 		if (notaFiscal != null) {
-			notaFiscal.getNotaFiscalInformacoes().setStatusProcessamento(
-					StatusProcessamento.EM_PROCESSAMENTO);
+			notaFiscal.getNotaFiscalInformacoes().setStatusProcessamento(StatusProcessamento.EM_PROCESSAMENTO);
 			this.notaFiscalRepository.merge(notaFiscal);
 		}
 	}

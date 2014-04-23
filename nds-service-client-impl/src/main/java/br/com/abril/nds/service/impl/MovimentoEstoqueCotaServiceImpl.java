@@ -196,9 +196,14 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 
 			mapaEstornoEnvioCota = new HashMap<ProdutoEdicao, TransferenciaReparteSuplementarDTO>();
 
-			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota =
-					this.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, idCota, tipoNotaFiscal, 
-							listaGrupoMovimentoEstoque, periodo, listaIdFornecedores, listaIdProduto);
+			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.obterMovimentoEstoqueCotaPor(
+					parametrosRecolhimentoDistribuidor, 
+					idCota, 
+					tipoNotaFiscal, 
+					listaGrupoMovimentoEstoque, 
+					periodo, 
+					listaIdFornecedores, 
+					listaIdProduto);
 
 			for (MovimentoEstoqueCota movimentoEstoqueCota : listaMovimentoEstoqueCota) {
 
