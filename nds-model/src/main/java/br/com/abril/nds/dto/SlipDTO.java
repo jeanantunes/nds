@@ -44,6 +44,8 @@ public class SlipDTO {
 	
 	private List<DebitoCreditoCotaDTO> listaComposicaoCobrancaDTO;
 	
+	private List<DebitoCreditoCotaDTO> listaResumoCobrancaDTO;
+	
 	private BigDecimal valorTotalDesconto;
 	
 	private BigDecimal valorTotalSemDesconto;
@@ -360,5 +362,15 @@ public class SlipDTO {
 	public void setValorLiquidoDevido(BigDecimal valorLiquidoDevido) {
 		this.valorLiquidoDevido = valorLiquidoDevido;
 	}
+
+	public List<DebitoCreditoCotaDTO> getListaResumoCobrancaDTO() {
+		return listaResumoCobrancaDTO;
+	}
+
+	public void setListaResumoCobrancaDTO(
+			List<DebitoCreditoCotaDTO> listaResumoCobrancaDTO) {
+		this.listaResumoCobrancaDTO = listaResumoCobrancaDTO;
+	}
+	
 	
 }
