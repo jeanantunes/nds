@@ -24,17 +24,21 @@ import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.EstudoPDV;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
+import br.com.abril.nds.repository.EstudoPDVRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.EstudoService;
@@ -74,6 +78,9 @@ public class EstudoServiceImpl implements EstudoService {
     
     @Autowired
     private LancamentoService lancamentoService;
+    
+    @Autowired
+    private EstudoPDVRepository estudoPDVRepository;
 
 	@Transactional(readOnly = true)
 	@Override
@@ -328,7 +335,7 @@ public class EstudoServiceImpl implements EstudoService {
 		lancamento.setEstudo(estudo);
 		
 		this.lancamentoRepository.alterar(lancamento);
-			
+		
 		return estudo;
 	}
 	
@@ -346,6 +353,129 @@ public class EstudoServiceImpl implements EstudoService {
         campos.put("DADOS_VENDA_MEDIA", valueAsString);
         estudoRepository.alterarPorId(estudoId, campos);
         estudoGeradoRepository.alterarPorId(estudoId, campos);
+    }
+    
+    @Override
+    @Transactional
+    public void gerarEstudoPDV(final EstudoGerado estudo, final Cota cota, final BigInteger reparte) {
+		
+    	PDV pdvPrincipal = cota.getPDVPrincipal();
+    	
+    	List<PDV> pdvsSecundarios = cota.getPDVSecundarios();
+    	
+    	EstudoPDV estudoPDVPrincipal = this.gerarEstudoPDV(estudo, cota, pdvPrincipal);
+    	
+    	final boolean naoNecessitaReprocessamento = 
+    		estudoPDVPrincipal.getId() == null || (pdvsSecundarios == null || pdvsSecundarios.isEmpty());
+    	
+    	if (naoNecessitaReprocessamento) {
+    		
+    		estudoPDVPrincipal.setReparte(reparte);
+    		
+    		estudoPDVRepository.merge(estudoPDVPrincipal);
+    		
+    		return;
+    	}
+    	
+    	this.reprocessarEstudosPDV(estudo, cota, reparte, pdvsSecundarios,estudoPDVPrincipal);
+	}
+
+	private void reprocessarEstudosPDV(final EstudoGerado estudo,
+			final Cota cota, final BigInteger reparte,
+			List<PDV> pdvsSecundarios, EstudoPDV estudoPDVPrincipal) {
+		
+		BigInteger quantidadeTotalRepartePdvs = estudoPDVRepository.obterTotalReparte(estudo, cota);
+    	
+		BigInteger diferenca = reparte.subtract(quantidadeTotalRepartePdvs);
+		
+		final boolean naoHaDiferenca = diferenca.compareTo(BigInteger.ZERO) == 0;
+		
+		if (naoHaDiferenca) {
+			
+			return;
+		}
+		
+		final boolean haDiferencaPositiva = diferenca.compareTo(BigInteger.ZERO) > 0;
+		
+		if (haDiferencaPositiva) {
+			
+			estudoPDVPrincipal.setReparte(estudoPDVPrincipal.getReparte().add(diferenca));
+    		
+    		estudoPDVRepository.merge(estudoPDVPrincipal);
+    		
+    		return;
+    		
+		} else {
+			
+			this.processarDiferencaNegativaEstudosPDV(estudo, cota, pdvsSecundarios,
+					estudoPDVPrincipal, diferenca);
+		}
+	}
+
+	private void processarDiferencaNegativaEstudosPDV(final EstudoGerado estudo,
+			final Cota cota, List<PDV> pdvsSecundarios,
+			EstudoPDV estudoPDVPrincipal, BigInteger diferenca) {
+		
+		diferenca = diferenca.abs();
+		
+		for(PDV pdvSecundario : pdvsSecundarios){
+			
+			EstudoPDV estudoPDVSecundario = 
+				estudoPDVRepository.buscarPorEstudoCotaPDV(estudo, cota, pdvSecundario);
+			
+			while (diferenca.longValue() > 0) {
+				
+				if (!estudoPDVSecundario.getReparte().equals(BigInteger.ZERO)) {
+					
+					estudoPDVSecundario.setReparte(estudoPDVSecundario.getReparte().subtract(BigInteger.ONE));
+					
+				} else {
+					
+					break;
+				}
+				
+				diferenca = diferenca.subtract(BigInteger.ONE);
+			}
+			
+			estudoPDVRepository.merge(estudoPDVSecundario);
+		}
+		
+		final boolean aindaHaDiferenca = diferenca.compareTo(BigInteger.ZERO) > 0;
+		
+		if (aindaHaDiferenca) {
+			
+			estudoPDVPrincipal.setReparte(estudoPDVPrincipal.getReparte().subtract(diferenca));
+			
+			estudoPDVRepository.merge(estudoPDVPrincipal);
+		}
+	}
+    
+    @Override
+    @Transactional
+    public EstudoPDV gerarEstudoPDV(final EstudoGerado estudo, final Cota cota,final PDV pdv, final BigInteger reparte) {
+		
+    	EstudoPDV estudoPDV = this.gerarEstudoPDV(estudo, cota,pdv);
+    	
+    	estudoPDV.setReparte(reparte);
+		
+		return this.estudoPDVRepository.merge(estudoPDV);
+	}
+    
+    private EstudoPDV gerarEstudoPDV(final EstudoGerado estudo, final Cota cota, final PDV pdv) {
+    	
+    	EstudoPDV estudoPDV = estudoPDVRepository.buscarPorEstudoCotaPDV(estudo, cota, pdv);
+
+		if (estudoPDV == null) {
+			
+		    estudoPDV = new EstudoPDV();
+		    
+		    estudoPDV.setEstudo(estudo);
+		    estudoPDV.setCota(cota);
+		    estudoPDV.setPdv(pdv);
+		    estudoPDV.setReparte(BigInteger.ZERO);
+		}
+		
+		return estudoPDV;
     }
 
 }

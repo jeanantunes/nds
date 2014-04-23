@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class ContasAPagarEncalheDTO implements Serializable {
 
@@ -9,10 +10,10 @@ public class ContasAPagarEncalheDTO implements Serializable {
 	
 	public String codigo;
 	public String produto;
-	public Integer edicao;
+	public Long edicao;
 	public BigDecimal precoCapa;
 	public BigDecimal precoComDesconto;
-	public Integer encalhe;
+	public BigInteger encalhe;
 	public String fornecedor;
 	public BigDecimal valor;
 	
@@ -28,10 +29,10 @@ public class ContasAPagarEncalheDTO implements Serializable {
 	public void setProduto(String produto) {
 		this.produto = produto;
 	}
-	public Integer getEdicao() {
+	public Long getEdicao() {
 		return edicao;
 	}
-	public void setEdicao(Integer edicao) {
+	public void setEdicao(Long edicao) {
 		this.edicao = edicao;
 	}
 	public BigDecimal getPrecoCapa() {
@@ -46,10 +47,10 @@ public class ContasAPagarEncalheDTO implements Serializable {
 	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
 		this.precoComDesconto = precoComDesconto;
 	}
-	public Integer getEncalhe() {
+	public BigInteger getEncalhe() {
 		return encalhe;
 	}
-	public void setEncalhe(Integer encalhe) {
+	public void setEncalhe(BigInteger encalhe) {
 		this.encalhe = encalhe;
 	}
 	public String getFornecedor() {

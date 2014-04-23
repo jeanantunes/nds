@@ -20,5 +20,5 @@ public interface RomaneioRepository extends Repository<Box, Long> {
 	 * @return
 	 */
 	List<RomaneioDTO> buscarRomaneiosParaExportacao(FiltroRomaneioDTO filtro);
-
+	
 }

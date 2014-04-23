@@ -105,7 +105,7 @@ public class CotaSuspensaoDTO implements Serializable{
 	}
 
 	public void setVlrConsignado(BigDecimal vlrConsignado) {
-		setDoubleConsignado(vlrConsignado.doubleValue()); 
+		setDoubleConsignado(vlrConsignado == null ? 0 : vlrConsignado.doubleValue()); 
 		this.vlrConsignado = CurrencyUtil.formatarValor(vlrConsignado);
 	}
 

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -1471,4 +1472,88 @@ public class RoteirizacaoController extends BaseController {
         
         result.use(Results.json()).from(validacao, "result").recursive().serialize();
     }
+	
+	@Post("/recarregarListaRotas")
+	public void recarregarListaRotas(Long roteiro,Long idBox) {
+
+		List<Rota> rotas = null;
+
+		if (roteiro != null) {
+
+			rotas = roteirizacaoService.buscarRotasPorRoteiro(roteiro);
+		} 
+		else if (idBox!= null) {
+
+			rotas = roteirizacaoService.buscarRotaDeBox(idBox);
+		}
+		else{
+			
+			rotas = roteirizacaoService.buscarRotas();
+		}
+
+		result.use(Results.json()).from(getRotas(rotas), "result").recursive()
+				.serialize();
+	}
+	
+	@Post("/recarregarRoteiroRota")
+	public void recarregarRoteiroRota(Long idBox) {
+
+		List<Roteiro> roteirosBox = null;
+
+		List<Rota> rotas = null;
+
+		if (idBox != null) {
+
+			roteirosBox = roteirizacaoService.buscarRoteiroDeBox(idBox);
+			rotas = roteirizacaoService.buscarRotaDeBox(idBox);
+		} else {
+
+			roteirosBox = roteirizacaoService.buscarRoteiros();
+			rotas = roteirizacaoService.buscarRotas();
+		}
+
+		Map<String, Object> mapa = new TreeMap<String, Object>();
+		mapa.put("rotas", getRotas(rotas));
+		mapa.put("roteiros", getRoteiros(roteirosBox));
+
+		result.use(CustomJson.class).from(mapa).serialize();
+	}
+	
+	/**
+	 * Retorna uma lista de roteiros no formato ItemDTO
+	 * 
+	 * @param roteiros
+	 *            - lista de roteiros
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	private List<ItemDTO<Long, String>> getRoteiros(List<Roteiro> roteiros) {
+
+		List<ItemDTO<Long, String>> listaRoteiros = new ArrayList<ItemDTO<Long, String>>();
+
+		for (Roteiro roteiro : roteiros) {
+
+			listaRoteiros.add(new ItemDTO<Long, String>(roteiro.getId(),
+					roteiro.getDescricaoRoteiro()));
+		}
+		return listaRoteiros;
+	}
+	
+	/**
+	 * Retorna uma lista de Rota no formato ItemDTO
+	 * 
+	 * @param rotas
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	private List<ItemDTO<Long, String>> getRotas(List<Rota> rotas) {
+
+		List<ItemDTO<Long, String>> listaRotas = new ArrayList<ItemDTO<Long, String>>();
+
+		for (Rota rota : rotas) {
+
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(), rota
+					.getDescricaoRota()));
+		}
+
+		return listaRotas;
+	}
 }

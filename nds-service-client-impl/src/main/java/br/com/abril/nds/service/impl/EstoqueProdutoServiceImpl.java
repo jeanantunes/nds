@@ -131,7 +131,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	}
 	
 	@Transactional
-	public void processarTransferencaiEntreEstoques(
+	public void processarTransferenciaEntreEstoques(
 			final Long idProdutoEdicao, 
 			final TipoEstoque estoqueSaida, 
 			final TipoEstoque estoqueEntrada,

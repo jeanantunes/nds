@@ -3046,4 +3046,16 @@ public class CotaServiceImpl implements CotaService {
         
         return cotaRepository.obterIdPorNumeroCota(numeroCota);
     }
+
+    @Override
+    @Transactional(readOnly=true)
+    public String obterEmailCota(Integer numeroCota) {
+        
+        if (numeroCota == null){
+            
+            throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota é obritatório.");
+        }
+        
+        return this.cotaRepository.obterEmailCota(numeroCota);
+    }
 }

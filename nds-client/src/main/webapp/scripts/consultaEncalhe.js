@@ -361,21 +361,22 @@ var ConsultaEncalhe = $.extend(true, {
 		var colModel = [{
 			display : 'Data',
 			name : 'dataLancamento',
-			width : 100,
+			width : 60,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Tipo de Lançamento',
 			name : 'tipoLancamento',
-			width : 140,
+			width : 130,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Observações',
 			name : 'observacoes',
-			width : 140,
+			width : 190,
 			sortable : true,
-			align : 'left'
+			align : 'left',
+			colResize: true
 		}, {
 			display : 'Valor R$',
 			name : 'valor',

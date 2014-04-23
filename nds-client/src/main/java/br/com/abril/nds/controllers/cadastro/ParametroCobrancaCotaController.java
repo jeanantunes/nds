@@ -552,6 +552,9 @@ public class ParametroCobrancaCotaController extends BaseController {
     @Path("/postarFormaCobranca")
     public void postarFormaCobranca(FormaCobrancaDTO formaCobranca, final String tipoFormaCobranca, final List<Long> listaIdsFornecedores, final ParametroCobrancaCotaDTO parametroCobranca){
         
+        if(tipoFormaCobranca == null)
+            throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de Pagamento não selecionado.");
+        
         if ((tipoFormaCobranca!=null)&&(!"".equals(tipoFormaCobranca))){
             formaCobranca.setTipoFormaCobranca(TipoFormaCobranca.valueOf(tipoFormaCobranca));
         }
@@ -1034,8 +1037,7 @@ public class ParametroCobrancaCotaController extends BaseController {
             }
         }
         
-        if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
-                (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
+        if (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA){
             
             if (StringUtils.isEmpty(formaCobranca.getNomeBanco())) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
@@ -1091,7 +1093,7 @@ public class ParametroCobrancaCotaController extends BaseController {
                         formaCobranca.isSabado())){
                     
                     throw new ValidacaoException(TipoMensagem.WARNING,
-                            "Esta forma de cobrança já está configurada para a Cota.");
+                            "Os fornecedores já possuem uma forma de pagamento cadastrada para este dia.");
                 }
             }
             
@@ -1107,7 +1109,7 @@ public class ParametroCobrancaCotaController extends BaseController {
                                 formaCobranca.getSegundoDiaQuinzenal()))){
                     
                     throw new ValidacaoException(TipoMensagem.WARNING,
-                            "Esta forma de cobrança já está configurada para a Cota.");
+                            "Os fornecedores já possuem uma forma de pagamento cadastrada para este dia.");
                 }
             }
         }

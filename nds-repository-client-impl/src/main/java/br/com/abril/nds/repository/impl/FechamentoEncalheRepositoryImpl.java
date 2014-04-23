@@ -1525,6 +1525,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         Boolean conferenciaEncalhe = (Boolean) result[1];
         Boolean fechamentoEncalhe = (Boolean) result[2];
         
-        return !(chamadaEncalhe && conferenciaEncalhe && !fechamentoEncalhe);
+        return !chamadaEncalhe || (conferenciaEncalhe && fechamentoEncalhe);
     }
 }
