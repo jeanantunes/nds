@@ -1,35 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip_pdf_subreport_resumo_cobranca" pageWidth="496" pageHeight="802" columnWidth="496" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6f786b87-78b8-469b-98e1-bc55240bac75">
-	<property name="ireport.zoom" value="1.2100000000000004"/>
-	<property name="ireport.x" value="0"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip_pdf_subreport_resumo_cobranca" pageWidth="496" pageHeight="802" columnWidth="496" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="6f786b87-78b8-469b-98e1-bc55240bac75">
+	<property name="ireport.zoom" value="1.7715610000000015"/>
+	<property name="ireport.x" value="101"/>
 	<property name="ireport.y" value="0"/>
-	<field name="descricaoCobranca" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
 	<field name="valor" class="java.math.BigDecimal"/>
+	<field name="observacoes" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<columnHeader>
 		<band height="23">
 			<staticText>
-				<reportElement uuid="caf984e1-9e48-4884-bb70-f2375474ca7b" mode="Opaque" x="0" y="0" width="496" height="23" backcolor="#E3E3E3"/>
+				<reportElement uuid="3658d954-fed0-4d66-87fe-6cf90b13f67f" mode="Opaque" x="0" y="0" width="496" height="23" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="3" leftPadding="3" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
 				<textElement>
-					<font size="10" isBold="true" isItalic="false"/>
+					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Resumo da Cobrança]]></text>
+				<text><![CDATA[RESUMO COBRANÇA]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="28" splitType="Stretch">
 			<textField>
-				<reportElement uuid="7ddfc1e7-636a-4dce-9156-86b8205ce87d" mode="Opaque" x="0" y="0" width="334" height="28" backcolor="#F0F0F0"/>
+				<reportElement uuid="3714d962-6b94-4d5c-ba9f-1ba8a6808138" mode="Opaque" x="0" y="0" width="208" height="28" backcolor="#F0F0F0"/>
 				<textElement/>
-				<textFieldExpression><![CDATA[$F{observacoes} == null ? "" : $F{observacoes}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{observacoes} == null ? "" : $F{observacoes})]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement uuid="3714d962-6b94-4d5c-ba9f-1ba8a6808138" mode="Opaque" x="334" y="0" width="162" height="28" backcolor="#F0F0F0"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{valor} == null ? "" : $F{valor}]]></textFieldExpression>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement uuid="3714d962-6b94-4d5c-ba9f-1ba8a6808138" mode="Opaque" x="208" y="0" width="288" height="28" backcolor="#F0F0F0"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[($F{valor} == null ? "" : $F{valor})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
