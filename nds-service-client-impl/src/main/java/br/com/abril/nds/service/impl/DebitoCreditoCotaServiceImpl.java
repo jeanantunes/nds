@@ -327,7 +327,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaNaoConsolidado = 
 				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(cota.getNumeroCota(), 
 													dataOperacao, 
-													tiposMovimentoFinanceiroIgnorados);
+													tiposMovimentoFinanceiroIgnorados, true);
 
 		listaResumoCobranca.addAll(listaDebitoCreditoCotaNaoConsolidado);
 		
@@ -369,7 +369,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaNaoConsolidado = 
 				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(cota.getNumeroCota(), 
 													dataOperacao, 
-													tiposMovimentoFinanceiroIgnorados);
+													tiposMovimentoFinanceiroIgnorados, false);
 
 		listaDebitoCreditoCompleta.addAll(listaDebitoCreditoCotaNaoConsolidado);
 		

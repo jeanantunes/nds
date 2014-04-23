@@ -60,13 +60,12 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @param numeroCota
 	 * @param dataOperacao
 	 * @param tiposMovimentoFinanceiroIgnorados
+	 * @param incluiMFCCriadoNaDataOperacao
 	 * 
 	 * @return List - DebitoCreditoCotaDTO
 	 */
-	List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(
-			Integer numeroCota, 
-			Date dataOperacao, 
-			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(Integer numeroCota, Date dataOperacao, 
+			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados, boolean incluiMFCCriadoNaDataOperacao);
 	
 	/**
 	 * Obtém movimentos financeiros de uma cota por operação
