@@ -15,6 +15,7 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
@@ -200,7 +201,7 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public Date obterDataOperacaoDistribuidor() {
 		
-		return (Date) this.getSession().createQuery("select dataOperacao from Distribuidor").uniqueResult();
+		return (Date) this.getSession().createQuery("select dataOperacao from Distribuidor").setCacheable(true).uniqueResult();
 	}
 	
 	@Override
@@ -631,5 +632,12 @@ public class DistribuidorRepositoryImpl extends
 		   .append(" join d.parametrosRecolhimentoDistribuidor p ");
 		
 		return (boolean) this.getSession().createQuery(hql.toString()).uniqueResult();
+	}
+
+	@Override
+	@Transactional
+	public void alterar(Distribuidor entity) {
+		super.alterar(entity);
+		super.getSession().getSessionFactory().getCache().evictQueryRegions();
 	}
 }
