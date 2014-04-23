@@ -144,23 +144,15 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         final Long idProdutoEdicao = lancamento.getProdutoEdicao().getId();
         
-        final TipoMovimentoEstoque tipoMovimento =
-                tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-                        GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
+        final TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
         
-        final TipoMovimentoEstoque tipoMovimentoCota =
-                tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-                        GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
+        final TipoMovimentoEstoque tipoMovimentoCota = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
         
-        final TipoMovimentoEstoque tipoMovimentoEstCotaAusente =
-                tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-                        GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
+        final TipoMovimentoEstoque tipoMovimentoEstCotaAusente = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
         
         BigInteger total = BigInteger.ZERO;
         
-        final List<MovimentoEstoqueCota> listaMovimentoEstoqueCotas =
-                lancamentoRepository.buscarMovimentosEstoqueCotaParaFuro(
-                        lancamento, tipoMovimentoCota);
+        final List<MovimentoEstoqueCota> listaMovimentoEstoqueCotas = lancamentoRepository.buscarMovimentosEstoqueCotaParaFuro(lancamento, tipoMovimentoCota);
         
         MovimentoEstoqueCota movimento = null;
         
@@ -168,10 +160,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             movimento = (MovimentoEstoqueCota) movimentoEstoqueCota.clone();
             
-            movimento =
-                    gerarMovimentoCota(
-                            null, idProdutoEdicao, movimento.getCota().getId(), idUsuario,
-                            movimento.getQtde(), tipoMovimentoCota,lancamento.getDataLancamentoDistribuidor(), null, lancamento.getId(), null);
+            movimento = gerarMovimentoCota(
+            		null, 
+            		idProdutoEdicao, 
+            		movimento.getCota().getId(), 
+            		idUsuario,
+                    movimento.getQtde(), 
+                    tipoMovimentoCota,lancamento.getDataLancamentoDistribuidor(), 
+                    null, 
+                    lancamento.getId(), 
+                    null);
             
             if (movimentoEstoqueCota.getTipoMovimento() != tipoMovimentoEstCotaAusente){
                 

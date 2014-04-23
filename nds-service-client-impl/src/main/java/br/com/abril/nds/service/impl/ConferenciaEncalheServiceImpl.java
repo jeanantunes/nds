@@ -2173,18 +2173,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				obterControleConferenciaEncalheCotaAtualizado(controleConfEncalheCota, statusOperacao, usuario);
 		
-		final Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque = 
-				obterMapaTipoMovimentoEstoque();
+		final Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque = obterMapaTipoMovimentoEstoque();
 
 		for(final ConferenciaEncalheDTO conferenciaEncalheDTO : listaConferenciaEncalhe) {
-			
 
-			validarQtdeEncalheExcedeQtdeReparte(
-					conferenciaEncalheDTO,
-					controleConferenciaEncalheCota.getCota(), 
-					dataOperacao, indConferenciaContingencia);
-				
-			
+			validarQtdeEncalheExcedeQtdeReparte(conferenciaEncalheDTO, controleConferenciaEncalheCota.getCota(), dataOperacao, indConferenciaContingencia);
 			
 			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
 

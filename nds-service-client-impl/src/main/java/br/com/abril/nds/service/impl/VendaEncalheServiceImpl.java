@@ -1157,19 +1157,17 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 		
-		BigDecimal percentualDesconto = 
-				descontoService.obterValorDescontoPorCotaProdutoEdicao(null,vendaProduto.getCota().getId(), produtoEdicao);
+		BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null,vendaProduto.getCota().getId(), produtoEdicao);
 		
-		BigDecimal valorDesconto = 
-				MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+		
 		BigDecimal preco = precoVenda.subtract(valorDesconto).setScale(4,BigDecimal.ROUND_HALF_EVEN);
 
 		BigDecimal valorVendaNovo = preco.multiply(new BigDecimal(qntNovaProduto));
 
 		if (qntAtualProduto.compareTo(qntNovaProduto) != 0) {
 
-			MovimentoEstoque movimento = 
-						processarAtualizcaoMovimentoEstoqueDistribuidor(qntAtualProduto, qntNovaProduto, 
+			MovimentoEstoque movimento = processarAtualizcaoMovimentoEstoqueDistribuidor(qntAtualProduto, qntNovaProduto, 
 																		vendaProduto.getProdutoEdicao().getId(), 
 																		usuario.getId(),
 																		vendaProduto.getTipoVenda());
@@ -1185,7 +1183,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				
 			}else {
 
-				processarAtualizacaoMovimentoEstoqueCota(qntAtualProduto,qntNovaProduto, vendaProduto.getProdutoEdicao().getId(), 
+				processarAtualizacaoMovimentoEstoqueCota(qntAtualProduto, qntNovaProduto, vendaProduto.getProdutoEdicao().getId(), 
 														usuario.getId(), vendaProduto.getCota().getId(), vendaProduto.getTipoVenda(),
 														this.distribuidorService.obterDataOperacaoDistribuidor());
 
@@ -1202,8 +1200,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 		vendaProduto = vendaProdutoRepository.merge(vendaProduto);
 
-		byte[] relatorio = 
-				gerarArquivoSlipVenda(vendaProduto.getTipoVenda(),obterDadosSlipVenda(vendaProduto));
+		byte[] relatorio = gerarArquivoSlipVenda(vendaProduto.getTipoVenda(),obterDadosSlipVenda(vendaProduto));
 
 		if (relatorio == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,"Erro no processamento da Venda de Encalhe.");
@@ -1345,17 +1342,17 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		// Se a quantidade de produto nova informada for maior que a quantidade
 		// atual, gera movimento de venda de encalhe
 		
-		GrupoMovimentoEstoque grupoMovimentoEstrnoCompra = null;
+		GrupoMovimentoEstoque grupoMovimentoEstornoCompra = null;
 		GrupoMovimentoEstoque grupoMovimentoCompra= null;
 		
 		if(TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVenda)){
 			
-			grupoMovimentoEstrnoCompra = GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR;
+			grupoMovimentoEstornoCompra = GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR;
 			grupoMovimentoCompra = GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR;
 		}
 		else{
 			
-			grupoMovimentoEstrnoCompra = GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE;
+			grupoMovimentoEstornoCompra = GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE;
 			grupoMovimentoCompra = GrupoMovimentoEstoque.COMPRA_ENCALHE;
 		}
 		
@@ -1363,8 +1360,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 			quantidadeProdutoAlterada = qntProdutoNovo.subtract(qntProdutoAtual);
 			
-			tipoMovimento = 
-					tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoCompra);
+			tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoCompra);
 		}
 
 		// Se a quantidade de produto nova informada for menor que a quantidade
@@ -1373,18 +1369,14 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 			quantidadeProdutoAlterada = qntProdutoAtual.subtract(qntProdutoNovo);
 			
-			tipoMovimento = 
-					tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstrnoCompra);
+			tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstornoCompra);
 		}
 
 		if (tipoMovimento == null) {
-			throw new ValidacaoException(
-					TipoMensagem.ERROR,
-					"Não foi encontrado tipo de movimento de estoque para compra e estorno de encalhe suplementar!");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi encontrado tipo de movimento de estoque para compra e estorno de encalhe suplementar!");
 		}
 
-		movimentoEstoqueService.gerarMovimentoCota(null, idProdutoEdicao,idCota, idUsuario, quantidadeProdutoAlterada, 
-				tipoMovimento, dataOperacao);
+		movimentoEstoqueService.gerarMovimentoCota(null, idProdutoEdicao,idCota, idUsuario, quantidadeProdutoAlterada, tipoMovimento, dataOperacao);
 	}
 
 	@Override

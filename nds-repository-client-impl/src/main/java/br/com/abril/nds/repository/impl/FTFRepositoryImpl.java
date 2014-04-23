@@ -331,9 +331,12 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		reg09.setTipoPedido("99");
 
 		setCommonsParameters(reg09);
-
+		
 		reg09.setNumeroDocOrigem("99999999");
-
+		
+		// código do estabelecimento, de acordo com o sistema GFF - obrigatório
+		reg09.setCodLocal("99999");
+		
 		return reg09;
 	}
 
