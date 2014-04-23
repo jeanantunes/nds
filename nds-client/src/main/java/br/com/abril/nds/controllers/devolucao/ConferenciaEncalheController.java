@@ -1260,52 +1260,49 @@ public class ConferenciaEncalheController extends BaseController {
 			final String usuario, final String senha, final boolean indConferenciaContingencia,
 			final Long produtoEdicaoId, final boolean indPesquisaProduto){
 	
-		if (usuarioService.isNotSupervisor()) {
-			
-			boolean isVendaNegativaProduto = false; 
-			
-            if (usuario != null) {
+		boolean isVendaNegativaProduto = false; 
+		
+        if (usuario != null) {
+            
+            this.validarAutenticidadeSupervisor(usuario, senha);
+            
+        } else {
+            
+        	if(indPesquisaProduto){
+    			
+    			isVendaNegativaProduto = this.verificarPermissaoSupervisorProduto(qtdExemplares, usuario, senha, produtoEdicaoId);
+    		}
+        	else{
+        		
+        		final List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
                 
-                this.validarAutenticidadeSupervisor(usuario, senha);
-                
-            } else {
-                
-            	if(indPesquisaProduto){
-        			
-        			isVendaNegativaProduto = this.verificarPermissaoSupervisorProduto(qtdExemplares, usuario, senha, produtoEdicaoId);
-        		}
-            	else{
-            		
-            		final List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
+                for (final ConferenciaEncalheDTO dto : listaConferencia) {
                     
-                    for (final ConferenciaEncalheDTO dto : listaConferencia) {
+                    if (produtoEdicaoId != null) {
                         
-                        if (produtoEdicaoId != null) {
+                        if (produtoEdicaoId.equals(dto.getIdProdutoEdicao())) {
                             
-                            if (produtoEdicaoId.equals(dto.getIdProdutoEdicao())) {
-                                
-                            	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdExemplares,indConferenciaContingencia, dto);
-                            }
-                        } else {
+                        	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdExemplares,indConferenciaContingencia, dto);
+                        }
+                    } else {
+                        
+                        if (idConferencia.equals(dto.getIdConferenciaEncalhe())) {
                             
-                            if (idConferencia.equals(dto.getIdConferenciaEncalhe())) {
-                                
-                            	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdExemplares,indConferenciaContingencia, dto);
-                            }
+                        	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdExemplares,indConferenciaContingencia, dto);
                         }
                     }
-            	}
-            }
-        
-            if(!isVendaNegativaProduto){
+                    
+                    if (isVendaNegativaProduto){
+                        break;
+                    }
+                }
+        	}
+        }
+    
+        if(!isVendaNegativaProduto){
 
-                this.result.use(Results.json()).from("", "result").serialize();
-            }
-
-		} else {
-			
-			this.result.use(Results.json()).from("", "result").serialize();
-		}
+            this.result.use(Results.json()).from("", "result").serialize();
+        }
 	}
 
 	private boolean validarVendaNegativaProduto(final String qtdExemplares,
@@ -1316,8 +1313,21 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (this.validarExcedeReparte(qtdeEncalhe, dto, indConferenciaContingencia)) {
 		    
-		    this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.",
-		            "result").serialize();
+		    Object[] ret = new Object[2];
+		    
+		    boolean superVisor = usuarioService.isSupervisor();
+		    
+		    ret[0] = superVisor;
+		    
+		    if (superVisor){
+		        
+		        ret[1] = "Venda negativa no encalhe.";
+		    } else {
+		        
+		        ret[1] = "Venda negativa no encalhe, permissão requerida.";
+		    }
+		    
+		    this.result.use(Results.json()).from(ret, "result").serialize();
 		    
 		    return true;
 		}
@@ -1347,7 +1357,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (!permitir) {
 		
-			throw new ValidacaoException(TipoMensagem.WARNING, "Usuário/senha inválido(s)");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Usuário/senha inválido(s) ou usuário não é supervisor");
 		}
 	}
 

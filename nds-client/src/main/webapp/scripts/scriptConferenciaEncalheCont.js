@@ -746,34 +746,42 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					ConferenciaEncalheCont.resetValue = true;
 					
-					$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result);
-					
-					$("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog({
-						resizable: false,
-						height:'auto',
-						width:400,
-						modal: true,
-						buttons: {
-							"Ok": function() {
-								
-								ConferenciaEncalheCont.resetValue = false;
-								ConferenciaEncalheCont.autenticarSupervisor(index);
-								
+					if (result[0]){
+						
+						exibirMensagem('WARNING', [result[1]]);
+						ConferenciaEncalheCont.resetValue = false;
+						ConferenciaEncalheCont.atualizarValores(index);
+					} else {
+						
+						$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result[1]);
+						
+						$("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog({
+							resizable: false,
+							height:'auto',
+							width:400,
+							modal: true,
+							buttons: {
+								"Ok": function() {
+									
+									ConferenciaEncalheCont.resetValue = false;
+									ConferenciaEncalheCont.autenticarSupervisor(index);
+									
+								},
+								"Cancelar": function() {
+									$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
+									$(this).dialog("close");
+								}
 							},
-							"Cancelar": function() {
-								$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
-								$(this).dialog("close");
-							}
-						},
-						form: $("#dialog-autenticar-supervisor", this.workspace).parents("form"),
-						close: function(){
-							
-							if (ConferenciaEncalheCont.resetValue){
+							form: $("#dialog-autenticar-supervisor", this.workspace).parents("form"),
+							close: function(){
 								
-								$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
+								if (ConferenciaEncalheCont.resetValue){
+									
+									$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
+								}
 							}
-						}
-					});
+						});
+					}
 					
 				} else {
 					
