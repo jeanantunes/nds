@@ -41,9 +41,12 @@ import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TableModel;
@@ -94,6 +97,9 @@ public class NegociacaoDividaController extends BaseController {
 	
 	@Autowired
 	private FormaCobrancaService formaCobrancaService;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	public NegociacaoDividaController(Result result) {
 		super();
@@ -301,7 +307,43 @@ public class NegociacaoDividaController extends BaseController {
 		
 		this.session.setAttribute(ID_ULTIMA_NEGOCIACAO, idNegociacao);
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Negociação efetuada."), "result").recursive().serialize();
+		final String emailCota = this.cotaService.obterEmailCota(filtro.getNumeroCota());
+		
+		if (recebeCobrancaPorEmail && emailCota != null){
+		
+    		try{
+    		    
+    		    final List<byte[]> dados = new ArrayList<byte[]>();
+    		    
+    		    if (valorDividaComissao != null){
+    		    
+        		    dados.add(this.negociacaoDividaService.imprimirNegociacao(idNegociacao, valorDividaComissao.toString()));
+    		    }
+    		    
+    		    if (negociacaoAvulsa && parcelas != null && !parcelas.isEmpty()){
+    		        
+    		        dados.addAll(this.negociacaoDividaService.gerarBoletosNegociacao(idNegociacao));
+    		    }
+    		    
+    		    final byte[] arquivo = PDFUtil.mergePDFs(dados);
+    		    
+    		    final AnexoEmail anexoEmail = new AnexoEmail("negociacao_divida", arquivo, TipoAnexo.PDF);
+    		    
+    		    this.emailService.enviar("Negociação de Dívida", 
+    		            "Segue em anexo documentos pertinentes.", new String[]{emailCota}, anexoEmail);
+    		    
+    		} catch(Exception e){
+    		    
+    		    this.result.use(Results.json()).from(new ValidacaoVO(
+    	                TipoMensagem.WARNING, "Negociação efetuada, erro ao enviar e-mail: " + e.getMessage()), 
+    	                "result").recursive().serialize();
+    		    
+    		    return;
+    		}
+		}
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(
+		        TipoMensagem.SUCCESS, "Negociação efetuada."), "result").recursive().serialize();
 	}
 
 	@Post

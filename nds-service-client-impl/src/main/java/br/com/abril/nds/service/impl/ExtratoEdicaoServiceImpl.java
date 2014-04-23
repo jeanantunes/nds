@@ -160,7 +160,7 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 				&& (!StatusIntegracao.NAO_INTEGRAR.equals(statusIntegracao) 
 						&& !StatusIntegracao.ENCALHE.equals(statusIntegracao)
 						&& !StatusIntegracao.FORA_DO_PRAZO.equals(statusIntegracao))) {
-		    
+
 			novaDescricao = novaDescricao + " (Pendente de Aprovação no GFS)";
 		}
 

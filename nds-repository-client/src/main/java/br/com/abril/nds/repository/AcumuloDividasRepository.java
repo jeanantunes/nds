@@ -1,9 +1,11 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.model.financeiro.AcumuloDivida;
+import br.com.abril.nds.model.financeiro.Cobranca;
 
 /**
  * Repositório de dados referentes ao acumulo de dívidas.
@@ -48,5 +50,7 @@ public interface AcumuloDividasRepository extends Repository<AcumuloDivida, Long
 	 * @return Número de acúmulos da dívida 
 	 */
 	BigInteger obterNumeroDeAcumulosDivida(Long idConsolidadoFinanceiroCota);
+
+    List<AcumuloDivida> buscarDividasPendentesIndimplencia(Date dataCriacao, Cobranca cobranca);
 	
 }

@@ -186,129 +186,29 @@ var romaneiosController = $.extend(true, {
 		}
 	},
 	
-	/**
-	 * Recarregar combos por Box
-	 */
-    changeBox : function(){
+	recarregarComboRotas:function(idRoteiro){
 		
-    	var codigoBox = $("#codigoBox").val();
-    	
-    	var idRoteiro = $("#idRoteiro").val();
-    	
-    	var idRota = $("#idRota").val();
-    	
-    	var params = [{
-			            name : "codigoBoxDe",
-			            value : codigoBox	
-					  }];
-    	
-    	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorBox', params, 
-			function(result) {
-    		
-    		    var listaRota = result[0];
-    		    
-    		    var listaRoteiro = result[1];
-    		    
-    		    var listaBox = result[2];
-    		
-    		    romaneiosController.recarregarCombo($("#idRota", romaneiosController.workspace), listaRota, idRota);
- 		    
-    		    romaneiosController.recarregarCombo($("#idRoteiro", romaneiosController.workspace), listaRoteiro, idRoteiro); 
-    		    
-    		    romaneiosController.recarregarCombo($("#codigoBox", romaneiosController.workspace), listaBox, codigoBox);
-    	    }    
-		);
-	},
-	
-	/**
-	 * Recarregar combos por Rota
-	 */
-    changeRota : function(){
-    	
-        var codigoBox = $("#codigoBox").val();
-    	
-        var idRoteiro = $("#idRoteiro").val();
-        
-    	var idRota = $("#idRota").val();
-    	
-    	var params = [{
-			            name : "idRota",
-			            value : idRota	
-					  }];
-	    
-    	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorRota', params, 
-			function(result) {
-    		
-    		    var listaRoteiro = result[0];
-    		 
-    		    var listaBox = result[1];
-    		    
-    		    var listaRota = result[2];
-
-    		    romaneiosController.recarregarCombo($("#codigoBox", romaneiosController.workspace), listaBox, codigoBox);
- 		    
-    		    romaneiosController.recarregarCombo($("#idRoteiro", romaneiosController.workspace), listaRoteiro, idRoteiro); 
-    		    
-    		    romaneiosController.recarregarCombo($("#idRota", romaneiosController.workspace), listaRota, idRota);
-    	    }    
-		);
-	},
-	
-	/**
-	 * Recarregar combos por Roteiro
-	 */
-    changeRoteiro : function(){
-    	
-        var codigoBox = $("#codigoBox").val();
-    	
-        var idRoteiro = $("#idRoteiro").val();
-        
-    	var idRota = $("#idRota").val();
-    	
-     	var params = [{
-			            name : "idRoteiro",
-			            value : idRoteiro	
-					  }];
-     	
-     	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorRoteiro', params, 
-			function(result) {
-    		
-    		    var listaRota = result[0];
-    		 
-    		    var listaBox = result[1];
-    		    
-    		    var listaRoteiro = result[2];
- 		    
-    		    romaneiosController.recarregarCombo($("#idRota", romaneiosController.workspace), listaRota, idRota);  
-    		    
-    		    romaneiosController.recarregarCombo($("#codigoBox", romaneiosController.workspace), listaBox, codigoBox);
-     		    
-    		    romaneiosController.recarregarCombo($("#idRoteiro", romaneiosController.workspace), listaRoteiro, idRoteiro); 
-    	    }    
-		);
-	},
-	
-	/**
-	 * Recarregar combo
-	 */
-	recarregarCombo : function (comboNameComponent, content, valSelected){
-		
-		comboNameComponent.empty();
-
-		comboNameComponent.append(new Option('Todos', '', true, true));
-		
-	    $.each(content, function(index, row) {
-		    	
-	    	comboNameComponent.append(new Option(row.value.$, row.key.$, true, true));
+		$.postJSON(contextPath + "/cadastro/roteirizacao/recarregarListaRotas",
+				[{name:"roteiro",value:idRoteiro},
+				 {name:"idBox",value:$("#codigoBox", romaneiosController.workspace).val()}], function(result){
+			
+			var comboRotas =  montarComboBox(result, true);
+			
+			$("#idRota", romaneiosController.workspace).html(comboRotas);	
 		});
-
-	    if (valSelected) {
-	    	
-	        $(comboNameComponent).val(valSelected);
-	    } else {
-	    	
-	        $(comboNameComponent).val('');
-	    }
+	},
+	
+	recarregarComboRoteiroRotas:function(idBox){
+		
+		$.postJSON(contextPath + "/cadastro/roteirizacao/recarregarRoteiroRota",
+				[{name:"idBox",value:idBox}], function(result){
+			
+			var comboRotas =  montarComboBoxCustomJson(result.rotas, true);
+			var comboRoteiros = montarComboBoxCustomJson(result.roteiros, true);
+			
+			$("#idRota", romaneiosController.workspace).html(comboRotas);
+			$("#idRoteiro", romaneiosController.workspace).html(comboRoteiros);
+		});
 	},
 	
 	mostrarBotoes : function() {

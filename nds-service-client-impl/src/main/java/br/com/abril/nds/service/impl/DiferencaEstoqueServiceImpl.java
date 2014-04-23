@@ -538,11 +538,16 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	            }
             } else {
             	
-            	if (diferenca.getTipoDiferenca().isFalta()) {
+            	
+            	if (diferenca.getTipoDiferenca().isAlteracaoReparte()) {
                     
-                    statusAprovacao = StatusAprovacao.PERDA;
+                    statusAprovacao = StatusAprovacao.APROVADO;
                     
-                } else {
+            	} else if (diferenca.getTipoDiferenca().isFalta() || diferenca.getTipoDiferenca().isFaltaParaCota()) {
+            	
+            		statusAprovacao = StatusAprovacao.PERDA;
+            				
+            	} else {
                     
                     statusAprovacao = StatusAprovacao.GANHO;
                 }
@@ -575,14 +580,18 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	            			
 	                    } else {
 	                    	
-	                    	if (diferenca.getTipoDiferenca().isFalta()) {
-		                        
-		                        statusAprovacao = StatusAprovacao.PERDA;
-		                        
-		                    } else {
-		                        
-		                        statusAprovacao = StatusAprovacao.GANHO;
-		                    }
+	                    	if (diferenca.getTipoDiferenca().isAlteracaoReparte()) {
+	                            
+	                            statusAprovacao = StatusAprovacao.APROVADO;
+	                            
+	                    	} else if (diferenca.getTipoDiferenca().isFalta() || diferenca.getTipoDiferenca().isFaltaParaCota()) {
+	                    	
+	                    		statusAprovacao = StatusAprovacao.PERDA;
+	                    				
+	                    	} else {
+	                            
+	                            statusAprovacao = StatusAprovacao.GANHO;
+	                        }
 	                    	
 	                    }
 	            		
@@ -1237,19 +1246,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
     		
     		grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
     		
-    		if (diferenca.getTipoDiferenca().isFalta()) {
-                
-    			if(diferenca.getLancamentoDiferenca() != null) {
-    				diferenca.getLancamentoDiferenca().setStatus(StatusAprovacao.PERDA);
-    			}
-                
-            } else {
-                
-            	if(diferenca.getLancamentoDiferenca() != null) {
-    				diferenca.getLancamentoDiferenca().setStatus(StatusAprovacao.GANHO);
-    			}
-
-            }
     	}
         
         final TipoMovimentoEstoque tipoMovimentoEstoque = tipoMovimentoRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
@@ -1278,8 +1274,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         				tipoDiferenca.isFaltaParaCota() ? TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA :
         					null;
 
-        if (novoTipoDiferenca != null && 
-        		!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
+        if (novoTipoDiferenca != null && !TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
 
             try {
 

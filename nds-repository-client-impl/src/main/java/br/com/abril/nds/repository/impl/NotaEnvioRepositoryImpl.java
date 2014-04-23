@@ -176,4 +176,5 @@ public class NotaEnvioRepositoryImpl  extends AbstractRepositoryModel<NotaEnvio,
 		
 		return query.list();
 	}
+	
 }

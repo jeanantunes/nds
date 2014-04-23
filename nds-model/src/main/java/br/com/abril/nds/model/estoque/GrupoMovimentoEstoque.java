@@ -122,7 +122,7 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Sobra em pacote direcionada para cota
 	 */
-	SOBRA_EM_DIRECIONADA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.COTA),
+	SOBRA_EM_DIRECIONADA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 	
 	/**
 	 * Sobra em direcionada para estoque de devolução de encalhe
@@ -142,7 +142,7 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Falta em pacote direcionada para cota
 	 */
-	FALTA_EM_DIRECIONADA_PARA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.COTA),
+	FALTA_EM_DIRECIONADA_PARA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 	
 	/**
 	 * Contra-partida dos movimentos de falta, quando direcionados para cota.

@@ -807,7 +807,8 @@ var produtoEdicaoController =$.extend(true,  {
 								anoSemanaRecolhimento = ano + result.semanaRecolhimento;
 								$('#produtoEdicaoController-semanaRecolhimento').val(anoSemanaRecolhimento);
 							}
-							$('#produtoEdicaoController-dataRecolhimentoReal').val(result.dataRecolhimentoReal == undefined ? '' : result.dataRecolhimentoReal.$);								
+							$('#produtoEdicaoController-dataRecolhimentoReal').val(result.dataRecolhimentoReal == undefined ? '' : result.dataRecolhimentoReal.$);
+							$('#produtoEdicaoController-dataRecolhimentoDistribuidor').val(result.dataRecolhimentoDistribuidor == undefined ? '' : result.dataRecolhimentoDistribuidor.$);
 							$('#produtoEdicaoController-dataRecolhimentoPrevisto').val(result.dataRecolhimentoPrevisto == undefined ? '' : result.dataRecolhimentoPrevisto.$);
 							$("#produtoEdicaoController-peb").val(result.peb);		
 							$("#produtoEdicaoController-descricaoProduto").val(result.caracteristicaProduto);
@@ -879,6 +880,7 @@ var produtoEdicaoController =$.extend(true,  {
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-numeroEdicao", bloquear);
 		
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-dataRecolhimentoPrevisto", bloquear);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-dataRecolhimentoReal", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-peb", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-descricaoProduto", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-codigoProdutoEdicao", bloquear);

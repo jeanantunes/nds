@@ -203,10 +203,10 @@ function PesquisaCota(workspace) {
 						}
 					}
 					else if(result.numero){
-						
+
 						pesquisaCota.pesquisaRealizada = true;
 						
-						$(idCampoNumeroCota, pesquisaCota.workspace).val(pesquisaCota.numeroCotaSelecionada);
+						$(idCampoNumeroCota, pesquisaCota.workspace).val(result.numero);
 						
 						//metodo validateResult pode ser sobrescrito por outro arquivo *.js para tratar negocialmente a cota pesquisada
 						if(checkValidateResult && pesquisaCota.validateResult){
@@ -228,8 +228,8 @@ function PesquisaCota(workspace) {
 				isFromModal
 			);
 		} else {
-			
-			if (errorCallBack) {
+
+			if (errorCallBack && typeof(errorCallBack) === 'function') {
 				errorCallBack();
 			}
 		}
