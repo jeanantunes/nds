@@ -900,6 +900,10 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 					contagemDevolucaoAprovada.getCodigoProduto(), 
 					contagemDevolucaoAprovada.getNumeroEdicao(),
 					null);
+			
+			for (ContagemDevolucaoDTO item : contagemAgrupada) {
+				item.setQtdNota(contagemDevolucaoAprovada.getQtdNota());
+			}
 
 			if(contagemAgrupada == null || contagemAgrupada.isEmpty()) {
 				continue;
