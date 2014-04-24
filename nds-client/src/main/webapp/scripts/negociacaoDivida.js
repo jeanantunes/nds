@@ -101,21 +101,6 @@ var negociacaoDividaController = $.extend(true, {
 		return result;
 	},
 	
-	utilizarAlterado : function() {
-		
-		var perc = priceToFloat( $('#comissaoUtilizar').val());
-		var atual = priceToFloat( $('#comissaoAtualCota').val());
-		
-		if (parseFloat(perc) >= parseFloat(atual)){
-			perc = atual - 1;
-			$('#comissaoUtilizar').val(replaceAll(perc.toFixed(2), ".", ","));
-		}
-		
-		var vlrFinal = atual - perc;
-		
-		$('#comissaoComSaldo').val(replaceAll(vlrFinal.toFixed(2), ".", ","));
-	},
-	
 	montaColunaDetalhesAcao : function(data) {
 		
 		if (data.mensagens) {
@@ -324,25 +309,21 @@ var negociacaoDividaController = $.extend(true, {
 		$.postJSON(contextPath + '/financeiro/negociacaoDivida/buscarComissaoCota',
 			null, 
 			function(result) {
-			
+
 				if (isNaN(result[0])){
 					
-					$("#comissaoAtualCota",negociacaoDividaController.workspace).val("");
 					$("#negociacaoPorComissao",negociacaoDividaController.workspace).attr("disabled", true);
 					$("#negociacaoPorComissao-tr",negociacaoDividaController.workspace).hide();
 					
 				} else {
 					
-					$("#comissaoAtualCota",negociacaoDividaController.workspace).val(floatToPrice(result[1]));
 					$("#comissaoUtilizar",negociacaoDividaController.workspace).val(floatToPrice(result[0]));
 					
 					$("#negociacaoPorComissao",negociacaoDividaController.workspace).attr("disabled", false);
 					$("#negociacaoPorComissao-tr",negociacaoDividaController.workspace).show();
-					
-					negociacaoDividaController.utilizarAlterado();
 				}
 				
-				$("#selectPagamento", negociacaoDividaController.workspace).val(result[2]);
+				$("#selectPagamento", negociacaoDividaController.workspace).val(result[1]);
 				
 				$('#formaPgto_numEnomeCota',negociacaoDividaController.workspace).html('<strong>Cota:</strong> ' + $('#negociacaoDivida_numCota',negociacaoDividaController.workspace).val() +' - <strong>Nome: </strong>'+ $('#negociacaoDivida_nomeCota').html()+' - <strong>Status: </strong>'+ $('#negociacaoDivida_statusCota').html());
 				$('#dividaSelecionada',negociacaoDividaController.workspace).html($('#totalSelecionado',negociacaoDividaController.workspace).html());
@@ -391,10 +372,6 @@ var negociacaoDividaController = $.extend(true, {
               {
             	  name: "porComissao", 
             	  value: negociacaoPorComissao
-              },
-              {
-            	  name: "comissaoAtualCota",
-            	  value: $("#comissaoAtualCota", negociacaoDividaController.workspace).val()
               },
               {
             	  name: "comissaoUtilizar",
@@ -450,7 +427,9 @@ var negociacaoDividaController = $.extend(true, {
 		
 		if (tipoPgto == 'BOLETO' || 
 				tipoPgto == 'BOLETO_EM_BRANCO' || 
-				tipoPgto == 'DEPOSITO' || 
+				tipoPgto == 'DEPOSITO' ||
+				tipoPgto == 'DINHEIRO' ||
+				tipoPgto == 'OUTROS' ||  
 				tipoPgto == 'TRANSFERENCIA_BANCARIA'){
 			
 			$.each($("[name='vencimentoParcela']", negociacaoDividaController.workspace), function(index, value){
