@@ -15,6 +15,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 
 /**
  * Associação de Rota com PDV
@@ -109,6 +110,18 @@ public class RotaPDV implements Serializable {
      */
     public void setOrdem(Integer ordem) {
         this.ordem = ordem;
+    }
+    
+    public boolean isTipoRoteiroEspecial(){
+    	
+    	if(getRota().getRoteiro()!= null){
+    		
+    		final TipoRoteiro tipoRoteiro = getRota().getRoteiro().getTipoRoteiro();
+    		
+    		return  (tipoRoteiro!= null && TipoRoteiro.ESPECIAL.equals(tipoRoteiro));
+    	}
+    	
+    	return false;
     }
 
 }
