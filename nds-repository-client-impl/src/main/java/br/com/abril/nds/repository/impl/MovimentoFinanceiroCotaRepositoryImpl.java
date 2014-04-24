@@ -68,9 +68,10 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota, Date dataOperacao) {
+	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(
+	        final Integer numeroCota, final Date dataOperacao, final Long idFornecedor) {
 		
-		StringBuilder sql = new StringBuilder("");
+		final StringBuilder sql = new StringBuilder("");
 		
 		sql.append("    SELECT ");
 		sql.append("        SUM(MFC.VALOR) AS valor, ");
@@ -108,23 +109,34 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		sql.append("        N.NEGOCIACAO_AVULSA = false  ");
 		sql.append("        AND       COTA.NUMERO_COTA = :numeroCota  ");
 		sql.append("        AND    CFC.ID IS NULL AND MFC.DATA = :dataOperacao ");
+		
+		if (idFornecedor != null){
+		    
+		    sql.append(" AND MFC.FORNECEDOR_ID = :idFornecedor ");
+		}
+		
 		sql.append("    GROUP BY ");
 		sql.append("        PN.ID, ");
 		sql.append("        MFC.ID ");
 			
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		final Map<String, Object> parameters = new HashMap<String, Object>();
+		final NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
 		parameters.put("numeroCota", numeroCota);
 		
 		parameters.put("dataOperacao", dataOperacao);
+		
+		if (idFornecedor != null){
+		    
+		    parameters.put("idFornecedor", idFornecedor);
+		}
 		
 		@SuppressWarnings("rawtypes")
 		RowMapper cotaRowMapper = new RowMapper() {
 
 			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
 
-				DebitoCreditoCotaDTO dto = new DebitoCreditoCotaDTO();
+				final DebitoCreditoCotaDTO dto = new DebitoCreditoCotaDTO();
 				
 				dto.setValor(rs.getBigDecimal("valor"));
 				dto.setDataVencimento(rs.getDate("dataVencimento"));
@@ -195,10 +207,10 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(Integer numeroCota, Date dataOperacao, 
-			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(final Integer numeroCota, final Date dataOperacao, 
+			final List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados, final Long idFornecedor){
 		
-		StringBuilder sql = new StringBuilder();
+		final StringBuilder sql = new StringBuilder();
 		
 		sql.append("select ");
 		sql.append("	tipomovime1_.OPERACAO_FINANCEIRA as tipoLancamento, ");
@@ -247,10 +259,16 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		sql.append("				and cota7_.NUMERO_COTA = :numeroCota ");
 		sql.append("		) ");
 		sql.append("	)  ");
+		
+		if (idFornecedor != null){
+		    
+		    sql.append(" and movimentof0_.FORNECEDOR_ID = :idFornecedor ");
+		}
+		
 		sql.append(" order by ");
 		sql.append("	movimentof0_.DATA ");
 		
-		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		final SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
 		query.setParameter("numeroCota", numeroCota);
@@ -261,6 +279,11 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			
 			query.setParameterList("tiposMovimentoFinanceiroIgnorados", getListaTiposMovimentoFinanceiroIgnorados(tiposMovimentoFinanceiroIgnorados));
 		}
+		
+		if (idFornecedor != null){
+            
+            query.setParameter("idFornecedor", idFornecedor);
+        }
 		
 		query.addScalar("tipoLancamento", StandardBasicTypes.STRING);
 		query.addScalar("descricao", StandardBasicTypes.STRING);
