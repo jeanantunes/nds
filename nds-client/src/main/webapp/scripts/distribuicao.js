@@ -9,8 +9,8 @@ function Distribuicao(tela) {
 
     this.inicializar = function() {
 		
-    	  D.verificarTipoConvencional();
-		
+		D.verificarTipoConvencional();
+		  
 	},                        
     
 	this.verificarTipoConvencional = function(idCota) {
@@ -115,7 +115,7 @@ function Distribuicao(tela) {
 			data.push({name:'distribuicao.utilizaTermoAdesao',		value: D.get("utilizaTermoAdesao")});
 			data.push({name:'distribuicao.termoAdesaoRecebido',		value: D.get("termoAdesaoRecebido")});
 			data.push({name:'distribuicao.percentualFaturamento',	value: D.get("percentualFaturamentoEntregaBanca")});
-			data.push({name:'distribuicao.taxaFixa',				value: floatValue(D.get("taxaFixaEntregaBanca"))});
+			data.push({name:'distribuicao.taxaFixa',				value: D.get("taxaFixaEntregaBanca")});
 			data.push({name:'distribuicao.inicioPeriodoCarencia',	value: D.get("inicioPeriodoCarenciaEntregaBanca")});
 			data.push({name:'distribuicao.fimPeriodoCarencia',		value: D.get("fimPeriodoCarenciaEntregaBanca")});
 			data.push({name:'distribuicao.baseCalculo',	            value: D.get("baseCalculo")});
@@ -185,17 +185,11 @@ function Distribuicao(tela) {
 			
 			D.set('utilizaTermoAdesao',					dto.utilizaTermoAdesao);
 			D.set('termoAdesaoRecebido',				dto.termoAdesaoRecebido);
-			D.set('percentualFaturamentoEntregaBanca',	dto.percentualFaturamento);
-			D.set('taxaFixaEntregaBanca',				dto.taxaFixa);
+			D.set('percentualFaturamentoEntregaBanca',	dto.percentualFaturamento ? floatToPrice(dto.percentualFaturamento) : '');
+			D.set('taxaFixaEntregaBanca',				dto.taxaFixa ? floatToPrice(dto.taxaFixa) : '');
 			D.set('inicioPeriodoCarenciaEntregaBanca',	dto.inicioPeriodoCarencia);
 			D.set('fimPeriodoCarenciaEntregaBanca',		dto.fimPeriodoCarencia);
 			D.set('baseCalculo',			            dto.baseCalculo);
-			
-			D.$('taxaFixaEntregaBanca').priceFormat({
-		        allowNegative : false,
-		        centsSeparator : ',',
-		        thousandsSeparator : '.'
-		    });
 			
 			D.setNomeTermoAdesao(dto.nomeTermoAdesao);
 			
@@ -643,6 +637,18 @@ function Distribuicao(tela) {
 		D.$("numCota").numeric();
 		D.$("qtdePDV").numeric();
 		
+		$("input[id$='percentualFaturamentoEntregaBanca']", this.workspace).maskMoney({
+			thousands: '.', 
+			decimal: ',', 
+			precision: 2
+		});
+		
+		$("input[id$='taxaFixaEntregaBanca']", this.workspace).maskMoney({
+			thousands: '.', 
+			decimal: ',', 
+			precision: 2
+		});
+		
 		$("input[name='inicioPeriodoCarencia']").datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -660,11 +666,6 @@ function Distribuicao(tela) {
 		});
 		
 		$("input[name='fimPeriodoCarencia']").mask("99/99/9999");
-		
-		D.$("taxaFixaEntregaBanca").maskMoney({decimal:",", thousands:"."});
-		
-		
-		$("input[name='percentualFaturamento']").mask("99.99");
 		
 		var options = {
 			success: D.tratarRetornoUpload
