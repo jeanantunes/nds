@@ -227,7 +227,7 @@ public class NegociacaoDividaController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA_ALTERACAO)
-	public void confirmarNegociacao(boolean porComissao, BigDecimal comissaoAtualCota, BigDecimal comissaoUtilizar, 
+	public void confirmarNegociacao(boolean porComissao, BigDecimal comissaoUtilizar, 
 			TipoCobranca tipoCobranca, TipoFormaCobranca tipoFormaCobranca, List<DiaSemana> diasSemana,
 			Integer diaInicio, Integer diaFim, boolean negociacaoAvulsa, boolean isentaEncargos,
 			Integer ativarAposPagar, List<ParcelaNegociacao> parcelas, List<Long> idsCobrancas, Long idBanco,
@@ -300,7 +300,6 @@ public class NegociacaoDividaController extends BaseController {
 				negociacaoAvulsa, 
 				ativarAposPagar, 
 				comissaoUtilizar, 
-				comissaoAtualCota,
 				isentaEncargos,
 				formaCobranca,
 				idBanco);
@@ -355,18 +354,13 @@ public class NegociacaoDividaController extends BaseController {
 				((FiltroConsultaNegociacaoDivida)this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA))
 				.getNumeroCota();
 		
-		BigDecimal comissaoCota = this.descontoService.obterComissaoCota(numeroCota);
-		
 		if (comissao == null || BigDecimal.ZERO.compareTo(comissao) == 0) {
 			
 			this.result.use(Results.json()).from("", "result").serialize();
 		} else {
 			
-			comissaoCota = comissaoCota == null ? BigDecimal.ZERO : comissaoCota;
-			
 			List<Object> valoresDesconto = new ArrayList<Object>();
 			valoresDesconto.add(comissao);
-			valoresDesconto.add(comissaoCota.setScale(2, RoundingMode.HALF_EVEN));
 			
 			//forma cobrança 'default' da cota
 			FormaCobranca formaDefault = 

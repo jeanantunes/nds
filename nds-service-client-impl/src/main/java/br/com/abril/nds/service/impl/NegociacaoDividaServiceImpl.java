@@ -224,8 +224,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     public Long criarNegociacao(final Integer numeroCota, final List<ParcelaNegociacao> parcelas, final TipoNegociacao tipoNegociacao,
             final BigDecimal valorDividaParaComissao, final List<Long> idsCobrancasOriginarias,
             final Usuario usuarioResponsavel, final boolean negociacaoAvulsa, final Integer ativarCotaAposParcela,
-            final BigDecimal comissaoParaSaldoDivida, final BigDecimal comissaoOriginalCota,
-            final boolean isentaEncargos, final FormaCobranca formaCobranca,
+            final BigDecimal comissaoParaSaldoDivida, final boolean isentaEncargos, final FormaCobranca formaCobranca,
             final Long idBanco) {
         
         // lista para mensagens de validação
@@ -482,8 +481,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         negociacao.setTipoNegociacao(tipoNegociacao);
         negociacao.setComissaoParaSaldoDivida(comissaoParaSaldoDivida == null ? BigDecimal.ZERO
                 : comissaoParaSaldoDivida);
-        negociacao.setComissaoOriginalCota(comissaoOriginalCota == null ? BigDecimal.ZERO
-        		: comissaoOriginalCota);
         negociacao.setIsentaEncargos(isentaEncargos);
         negociacao.setNegociacaoAvulsa(negociacaoAvulsa);
         negociacao.setFormaCobranca(formaCobranca);
@@ -854,17 +851,19 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         
         String path = diretorioReports.toURI().getPath();
         
-        if (impressaoNegociacaoDTO.getParcelasCheques().isEmpty()) {
+        if (TipoNegociacao.COMISSAO.equals(negociacao.getTipoNegociacao())) {
             
             path += "/negociacao_divida_comissao.jasper";
-        } else if (impressaoNegociacaoDTO.getParcelasCheques().get(0).getNumeroCheque() == null) {
-            
-            path += "/negociacao_divida_boleto.jasper";
-            
+
+        } else if (TipoCobranca.CHEQUE.equals(negociacao.getFormaCobranca().getTipoCobranca())) {
+
+        	path += "/negociacao_divida_cheque.jasper";
+
         } else {
-            
-            path += "/negociacao_divida_cheque.jasper";
+
+        	path += "/negociacao_divida_boleto.jasper";
         }
+
         InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
         
         if (inputStream == null) {
@@ -881,6 +880,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         parameters.put("LOGO_DISTRIBUIDOR", inputStream);
         
         parameters.put("COTA_ATIVA", SituacaoCadastro.ATIVO.equals(cota.getSituacaoCadastro()));
+        
+        parameters.put("TIPO_COBRANCA", negociacao.getFormaCobranca().getTipoCobranca().getDescricao());
         
         return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
     }
@@ -1289,24 +1290,16 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     if (valorTotalReparte.compareTo(BigDecimal.ZERO) <= 0) {
                         break;
                     }
-
-                	final BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
-                    final BigDecimal comissaoCota = negociacao.getComissaoOriginalCota();
-                    final BigDecimal novaComissao = comissaoCota.subtract(comissao);
-
-                    final BigDecimal valorComissaoCota = 
-                    		this.calcularValorParaComissao(valorTotalReparte, valorTotalEncalhe, comissaoCota);
-
-                    final BigDecimal valorNovaComissao = 
-                    		this.calcularValorParaComissao(valorTotalReparte, valorTotalEncalhe, novaComissao);
-
-                    final BigDecimal valorDescontar = valorComissaoCota.subtract(valorNovaComissao);
                     
-                    valorTotalReparte = valorTotalReparte.subtract(valorDescontar);
-
-                    final BigDecimal valorRestanteNegociacao = 
-                    		negociacao.getValorDividaPagaComissao().subtract(valorDescontar);
+                    final BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
+                    final BigDecimal valorVenda = valorTotalReparte.subtract(valorTotalEncalhe);
                     
+                    final BigDecimal valorComissao = valorVenda.multiply(comissao.divide(BigDecimalUtil.CEM));                 
+
+                    final BigDecimal valorVendaComComissao = valorVenda.subtract(valorComissao);
+                    
+                    final BigDecimal valorRestanteNegociacao = negociacao.getValorDividaPagaComissao().subtract(valorVendaComComissao);
+
                     // se o valor resultante não quita a negociação
                     if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0) {
                         
@@ -1334,7 +1327,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     
                     if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0) {
                         
-                        movDTO.setValor(valorDescontar);
+                        movDTO.setValor(valorComissao);
                     } else {
                         
                         movDTO.setValor(valorRestanteNegociacao);
@@ -1357,20 +1350,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             }
         }
     }
-    
-    private BigDecimal calcularValorParaComissao(BigDecimal reparte, BigDecimal encalhe, BigDecimal comissao) {
 
-        final BigDecimal valorReparte = 
-        		reparte.subtract(reparte.multiply(comissao.divide(BigDecimalUtil.CEM)));
-        
-        final BigDecimal valorEncalhe = 
-        		encalhe.subtract(encalhe.multiply(comissao.divide(BigDecimalUtil.CEM)));
-        
-        final BigDecimal valorVenda = valorReparte.subtract(valorEncalhe);
-
-    	return valorVenda.multiply(comissao).divide(BigDecimalUtil.CEM.subtract(comissao));
-    }
-    
     @Transactional
     @Override
     public void verificarAtivacaoCotaAposPgtoParcela(Cobranca cobranca, Usuario usuario){
