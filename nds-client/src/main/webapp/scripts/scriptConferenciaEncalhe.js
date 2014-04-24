@@ -1257,51 +1257,59 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					ConferenciaEncalhe.resetValue = true;
 					
-					$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result);
-					
-					$("#dialog-autenticar-supervisor", ConferenciaEncalhe.workspace).dialog({
-						resizable: false,
-						height:'auto',
-						width:400,
-						modal: true,
-						buttons: {
-							"Ok": function() {
-								
-								ConferenciaEncalhe.resetValue = false;
-								ConferenciaEncalhe.autenticarSupervisor(index);
-								
+					if (result[0]){
+						
+						exibirMensagem('WARNING', [result[1]]);
+						ConferenciaEncalhe.resetValue = false;
+						ConferenciaEncalhe.atualizarValores(index);
+					} else {
+						
+						$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result[1]);
+						
+						$("#dialog-autenticar-supervisor", ConferenciaEncalhe.workspace).dialog({
+							resizable: false,
+							height:'auto',
+							width:400,
+							modal: true,
+							buttons: {
+								"Ok": function() {
+									
+									ConferenciaEncalhe.resetValue = false;
+									ConferenciaEncalhe.autenticarSupervisor(index);
+									
+								},
+								"Cancelar": function() {
+									
+									if (index || index == 0){
+										
+										$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val(ConferenciaEncalhe.valorAnteriorInput);
+									} else {
+										
+										ConferenciaEncalhe.limparDadosProduto(true);
+									}
+									
+									$(this).dialog("close");
+								}
 							},
-							"Cancelar": function() {
+							form: $("#dialog-autenticar-supervisor", this.workspace).parents("form"),
+							close: function(){
 								
-								if (index || index == 0){
-									
-									$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val(ConferenciaEncalhe.valorAnteriorInput);
-								} else {
-									
-									ConferenciaEncalhe.limparDadosProduto(true);
+								if (ConferenciaEncalhe.resetValue){
+									if (index || index == 0){
+										
+										$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val(ConferenciaEncalhe.valorAnteriorInput);
+									} else {
+										
+										ConferenciaEncalhe.limparDadosProduto(true);
+									}
 								}
+							},
+							open: function(){
 								
-								$(this).dialog("close");
+								focusSelectRefField($("#inputUsuarioSup", ConferenciaEncalhe.workspace));
 							}
-						},
-						form: $("#dialog-autenticar-supervisor", this.workspace).parents("form"),
-						close: function(){
-							
-							if (ConferenciaEncalhe.resetValue){
-								if (index || index == 0){
-									
-									$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val(ConferenciaEncalhe.valorAnteriorInput);
-								} else {
-									
-									ConferenciaEncalhe.limparDadosProduto(true);
-								}
-							}
-						},
-						open: function(){
-							
-							focusSelectRefField($("#inputUsuarioSup", ConferenciaEncalhe.workspace));
-						}
-					});
+						});
+					}
 					
 				} else {
 					
