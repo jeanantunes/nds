@@ -855,7 +855,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             
             path += "/negociacao_divida_comissao.jasper";
 
-        } else if (TipoCobranca.CHEQUE.equals(negociacao.getTipoNegociacao())) {
+        } else if (TipoCobranca.CHEQUE.equals(negociacao.getFormaCobranca().getTipoCobranca())) {
 
         	path += "/negociacao_divida_cheque.jasper";
 
@@ -1300,23 +1300,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     
                     final BigDecimal valorRestanteNegociacao = negociacao.getValorDividaPagaComissao().subtract(valorVendaComComissao);
 
-//                	final BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
-//                    final BigDecimal comissaoCota = negociacao.getComissaoOriginalCota();
-//                    final BigDecimal novaComissao = comissaoCota.subtract(comissao);
-//
-//                    final BigDecimal valorComissaoCota = 
-//                    		this.calcularValorParaComissao(valorTotalReparte, valorTotalEncalhe, comissaoCota);
-//
-//                    final BigDecimal valorNovaComissao = 
-//                    		this.calcularValorParaComissao(valorTotalReparte, valorTotalEncalhe, novaComissao);
-//
-//                    final BigDecimal valorDescontar = valorComissaoCota.subtract(valorNovaComissao);
-//                    
-//                    valorTotalReparte = valorTotalReparte.subtract(valorDescontar);
-//
-//                    final BigDecimal valorRestanteNegociacao = 
-//                    		negociacao.getValorDividaPagaComissao().subtract(valorDescontar);
-//                    
                     // se o valor resultante não quita a negociação
                     if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0) {
                         
@@ -1367,20 +1350,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             }
         }
     }
-    
-    private BigDecimal calcularValorParaComissao(BigDecimal reparte, BigDecimal encalhe, BigDecimal comissao) {
 
-        final BigDecimal valorReparte = 
-        		reparte.subtract(reparte.multiply(comissao.divide(BigDecimalUtil.CEM)));
-        
-        final BigDecimal valorEncalhe = 
-        		encalhe.subtract(encalhe.multiply(comissao.divide(BigDecimalUtil.CEM)));
-        
-        final BigDecimal valorVenda = valorReparte.subtract(valorEncalhe);
-
-    	return valorVenda.multiply(comissao).divide(BigDecimalUtil.CEM.subtract(comissao));
-    }
-    
     @Transactional
     @Override
     public void verificarAtivacaoCotaAposPgtoParcela(Cobranca cobranca, Usuario usuario){
