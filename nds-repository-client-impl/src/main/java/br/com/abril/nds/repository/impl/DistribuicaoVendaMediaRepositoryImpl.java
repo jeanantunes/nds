@@ -103,7 +103,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("select pe.id, ");
+		sql.append("	select pe.id, ");
 		sql.append("       pe.numero_edicao numeroEdicao, ");
 		sql.append("       p.id idProduto, ");
 		sql.append("       p.codigo codigoProduto, ");
@@ -112,26 +112,20 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("       (case when plp.id is null then 0 else 1 end) parcial, ");
 		sql.append("       l.data_lcto_prevista dataLancamento, ");
 		
-		sql.append("       round((select sum(me.QTDE) ");
-		sql.append("       				from movimento_estoque me ");
-		sql.append("       					join produto_edicao ped ON me.PRODUTO_EDICAO_ID = ped.ID ");
-		sql.append("       					join tipo_movimento tmov ON me.TIPO_MOVIMENTO_ID = tmov.ID ");
-		sql.append("      				where ped.ID = pe.id and tmov.GRUPO_MOVIMENTO_ESTOQUE = 'RECEBIMENTO_FISICO'), 0) reparte, ");
+		sql.append("	round((SELECT sum(estqProdCota.qtde_recebida) ");
+		sql.append("                  FROM ESTOQUE_PRODUTO_COTA estqProdCota ");
+		sql.append("                  WHERE estqProdCota.PRODUTO_EDICAO_ID = pe.ID),0)	AS reparte,");
 		
 		sql.append(" (CASE   ");
 		sql.append("  	WHEN l.status = 'FECHADO' or l.status = 'RECOLHIDO' ");
 		sql.append("  THEN ");
 		sql.append("  	  round((SELECT sum(estqProdCota.qtde_recebida - estqProdCota.qtde_devolvida) ");
 		sql.append("          FROM ESTOQUE_PRODUTO_COTA estqProdCota ");
-		sql.append("               LEFT OUTER JOIN PRODUTO_EDICAO prodEdicao ON estqProdCota.PRODUTO_EDICAO_ID = prodEdicao.ID ");
-		sql.append("               LEFT OUTER JOIN PRODUTO pdto ON prodEdicao.PRODUTO_ID = pdto.ID ");
-		sql.append("          WHERE pdto.codigo = p.CODIGO AND prodEdicao.NUMERO_EDICAO = pe.NUMERO_EDICAO),0) ");
+		sql.append("               WHERE estqProdCota.PRODUTO_EDICAO_ID = pe.ID),0) ");
 		sql.append("  ELSE ");
 		sql.append("      round((SELECT sum(estqProdCota.qtde_recebida) ");
 		sql.append("          FROM ESTOQUE_PRODUTO_COTA estqProdCota ");
-		sql.append("               LEFT OUTER JOIN PRODUTO_EDICAO prodEdicao ON estqProdCota.PRODUTO_EDICAO_ID = prodEdicao.ID ");
-		sql.append("               LEFT OUTER JOIN PRODUTO pdto ON prodEdicao.PRODUTO_ID = pdto.ID ");
-		sql.append("          WHERE pdto.codigo = p.CODIGO AND prodEdicao.NUMERO_EDICAO = pe.NUMERO_EDICAO),0) ");
+		sql.append("          WHERE estqProdCota.PRODUTO_EDICAO_ID = pe.ID),0) ");
 		sql.append("  END) venda, ");
 		
 		sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then ");
@@ -140,12 +134,15 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("       l.status status, ");
         sql.append("       tcp.id idClassificacao, ");
         sql.append("       coalesce(tcp.descricao, '') classificacao ");
+        
 		sql.append("  from lancamento l ");
+		
 		sql.append("  join produto_edicao pe on pe.id = l.produto_edicao_id ");
-		sql.append("  left join periodo_lancamento_parcial plp on plp.lancamento_parcial_id = l.id ");
+		sql.append("  left join periodo_lancamento_parcial plp on plp.id = l.periodo_lancamento_parcial_id ");
 		sql.append("  join produto p on p.id = pe.produto_id ");
 		sql.append("  left join estoque_produto_cota epc on epc.produto_edicao_id = pe.id ");
 		sql.append("  left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
+	
 		sql.append(" where l.status in ('EXPEDIDO', 'EM_BALANCEAMENTO_RECOLHIMENTO', 'EM_RECOLHIMENTO', 'BALANCEADO_RECOLHIMENTO', 'EXCLUIDO_RECOLHIMENTO', 'FECHADO', 'RECOLHIDO') ");
 		
 		if (filtro.getEdicao() != null) {
