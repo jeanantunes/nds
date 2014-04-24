@@ -57,8 +57,6 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 	private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 	
-	private LancamentoDataHelper lancamentoDataHelper =  new LancamentoDataHelper();
-	
 	Message messageAux = new  Message();
 	
 	private EMS0108MessageProcessor() {
@@ -390,7 +388,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		lancamento.setDataRecolhimentoPrevista(cal.getTime());	
 		
 		try{
-		 lancamento.setDataLancamentoDistribuidor(lancamentoDataHelper.getDataLancamentoDistribuidorHelper(lancamento));
+		 lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(input.getDataMovimento(), produtoEdicaoLancamento.getProduto().getFornecedor().getId()));
 		} catch (Exception e) {
 		}
 
