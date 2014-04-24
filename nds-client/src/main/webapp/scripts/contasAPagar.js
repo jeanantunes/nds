@@ -11,13 +11,13 @@ var contasAPagarController = $.extend(true, {
 		$("#produto", this.workspace).autocomplete({source: ''});
 		$("#edicao", this.workspace).numeric();
 		
-		$("#contasAPagar_Filtro_De").datepicker({
+		$("#contasAPagar_Filtro_De", this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly: true
 		});
 		
-		$("#contasAPagar_Filtro_Ate").datepicker({
+		$("#contasAPagar_Filtro_Ate", this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly: true
@@ -31,7 +31,7 @@ var contasAPagarController = $.extend(true, {
 		this.initGridEncalhe();
 		this.initGridFaltasSobras();
 		
-		$('#contasAPagar_areaBts').hide();
+		$('#contasAPagar_areaBts', this.workspace).hide();
 	},
 	
 	
@@ -71,7 +71,7 @@ var contasAPagarController = $.extend(true, {
 	
 	checkAll : function (check) {
 		
-		$(".contasApagarCheck").each(function(index, element) {
+		$(".contasApagarCheck", this.workspace).each(function(index, element) {
 			element.checked = check.checked;
 		});
 	},
@@ -111,11 +111,11 @@ var contasAPagarController = $.extend(true, {
 	
 		var params = $("#contasAPagarForm", this.workspace).serializeObject();
 		
-		if ($("#contasAPagarRadioDistribuidor").get(0).checked) {
+		if ($("#contasAPagarRadioDistribuidor", this.workspace).get(0).checked) {
 			this.pesquisarPorFornecedor(params);	
 		} 
 		
-		else if ($("#contasAPagarRadioProduto").get(0).checked) {
+		else if ($("#contasAPagarRadioProduto", this.workspace).get(0).checked) {
 			
 			this.pesquisarPorProduto(params);
 		}
@@ -127,7 +127,7 @@ var contasAPagarController = $.extend(true, {
 		var url = contasAPagarController.path + 'pesquisarPorProduto.json';
 		params = serializeArrayToPost('filtro.produtoEdicaoIDs', contasAPagarController.obterSelecaoColunaCheckProdutoEdicao(), params);
 		
-		$("#contasAPagar_porProdutosGrid").flexOptions({
+		$("#contasAPagar_porProdutosGrid", this.workspace).flexOptions({
 			url : url,
 			params: serializeParamsToFlexiGridPost(params),
 			preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
@@ -141,17 +141,20 @@ var contasAPagarController = $.extend(true, {
 			params,
 			function(result) {
 				
-				$("#contasAPagar_gridProdutoTotalPagto").html(result.totalPagto);
-				$("#contasAPagar_gridProdutoTotalDesconto").html(result.totalDesconto);
-				$("#contasAPagar_gridProdutoValorLiquido").html(result.valorLiquido);
-				$("#contasAPagar_porProdutosGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
+				$("#contasAPagar_gridProdutoTotalPagto", contasAPagarController.workspace).html(result.totalPagto);
+				$("#contasAPagar_gridProdutoTotalDesconto", contasAPagarController.workspace).html(result.totalDesconto);
+				$("#contasAPagar_gridProdutoValorLiquido", contasAPagarController.workspace).html(result.valorLiquido);
+				$("#contasAPagar_porProdutosGrid", contasAPagarController.workspace).flexAddData(
+						{rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
 				$('#contasAPagar_gridProduto').show();
 				$('#contasAPagar_areaBts').show();
+				
+				$(".pesquisaContasPagar", contasAPagarController.workspace).show();
 			},
 			function(result) {
 				
-				$('#contasAPagar_gridProduto').hide();
-				$('#contasAPagar_areaBts').hide();
+				$('#contasAPagar_gridProduto', contasAPagarController.workspace).hide();
+				$('#contasAPagar_areaBts', contasAPagarController.workspace).hide();
 			},
 			true
 		);
@@ -165,7 +168,7 @@ var contasAPagarController = $.extend(true, {
 		params['filtro.primeiraCarga'] = true;
 		var url = contasAPagarController.path + 'pesquisarPorFornecedor.json'; 
 		
-		$(".porDistrFornecedorGrid").flexOptions({
+		$(".porDistrFornecedorGrid", this.workspace).flexOptions({
 			url : url,
 			params: serializeParamsToFlexiGridPost(params),
 			preProcess : contasAPagarController.insereLinksContasAPagarPorDistribuidores,
@@ -177,17 +180,20 @@ var contasAPagarController = $.extend(true, {
 			params,
 			function(result) {
 				
-				$("#contasAPagar_gridFornecedorTotalBruto").html(result.totalBruto);
-				$("#contasAPagar_gridFornecedorTotalDesconto").html(result.totalDesconto);
-				$("#contasAPagar_gridFornecedorSaldo").html(result.saldo);
-				$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
-				$('#contasAPagar_gridDistrib').show();
-				$('#contasAPagar_areaBts').show();
+				$("#contasAPagar_gridFornecedorTotalBruto", contasAPagarController.workspace).html(result.totalBruto);
+				$("#contasAPagar_gridFornecedorTotalDesconto", contasAPagarController.workspace).html(result.totalDesconto);
+				$("#contasAPagar_gridFornecedorSaldo", contasAPagarController.workspace).html(result.saldo);
+				$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexAddData(
+						{rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
+				$('#contasAPagar_gridDistrib', contasAPagarController.workspace).show();
+				$('#contasAPagar_areaBts', contasAPagarController.workspace).show();
+				
+				$(".pesquisaContasPagar", contasAPagarController.workspace).show();
 			},
 			function(result) {
 				
-				$('#contasAPagar_gridDistrib').hide();
-				$('#contasAPagar_areaBts').hide();
+				$('#contasAPagar_gridDistrib', contasAPagarController.workspace).hide();
+				$('#contasAPagar_areaBts', contasAPagarController.workspace).hide();
 			},
 			true
 		);
@@ -198,17 +204,17 @@ var contasAPagarController = $.extend(true, {
 	
 	pesquisarProdutoEdicao : function(){
 		
-		var params = $("#contasAPagarPesquisaProdutoEdicaoForm").serialize();
+		var params = $("#contasAPagarPesquisaProdutoEdicaoForm", this.workspace).serialize();
 		
-		$(".contasAPagarListaProdutosGrid").flexOptions({
+		$(".contasAPagarListaProdutosGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisarProduto.json?' + params, 
 			preProcess : contasAPagarController.montaColunaCheckProdutoEdicao,
 			newp : 1
 		});
 
-		$(".contasAPagarListaProdutosGrid").flexReload();
+		$(".contasAPagarListaProdutosGrid", this.workspace).flexReload();
 		
-		$('#contasAPagar_areaBts').show();
+		$('#contasAPagar_areaBts', this.workspace).show();
 	},
 	
 	
@@ -221,7 +227,7 @@ var contasAPagarController = $.extend(true, {
 		
 		var produtoEdicaoIDs = new Array();
 
-		$("input[type=checkbox][name='checkProdutoContasAPagar']:checked").each(function(i,element) {			
+		$("input[type=checkbox][name='checkProdutoContasAPagar']:checked", this.workspace).each(function(i,element) {			
 			produtoEdicaoIDs.push(element.value);
 		});
 		
@@ -245,7 +251,8 @@ var contasAPagarController = $.extend(true, {
 				value.cell.editor = "nenhum";
 			}
 			
-			var checkbox = '<input type="checkbox" value="'+ value.cell.produtoEdicaoID + '" name="checkProdutoContasAPagar" class="contasApagarCheck"  style="float:left;"/>';
+			var checkbox = '<input type="checkbox" value="'+ value.cell.produtoEdicaoID + 
+				'" name="checkProdutoContasAPagar" class="contasApagarCheck"  style="float:left;"/>';
 			value.cell.sel = checkbox;
 		});
 		 
@@ -331,7 +338,7 @@ var contasAPagarController = $.extend(true, {
 	
 	popup_pesq_produto : function () {
 		
-		$( "#dialog-pesq-produto-contasAPagar" ).dialog({
+		$( "#dialog-pesq-produto-contasAPagar", this.workspace).dialog({
 			resizable: false,
 			height:'auto',
 			width:600,
@@ -348,25 +355,25 @@ var contasAPagarController = $.extend(true, {
 	popup_detalhes : function (produtoEdicaoId, codigo, produto, edicao, fornecedor, dataLcto, dataFinal) {
 		
 		// popula cabecalho
-		$("#contasAPagar_popupTipo_codigo").html(codigo);
-		$("#contasAPagar_popupTipo_produto").html(produto);
-		$("#contasAPagar_popupTipo_edicao").html(edicao);
-		$("#contasAPagar_popupTipo_fornecedor").html(fornecedor);
-		$("#contasAPagar_popupTipo_dataLcto").html(dataLcto);
-		$("#contasAPagar_popupTipo_dataFinal").html(dataFinal);
+		$("#contasAPagar_popupTipo_codigo", this.workspace).html(codigo);
+		$("#contasAPagar_popupTipo_produto", this.workspace).html(produto);
+		$("#contasAPagar_popupTipo_edicao", this.workspace).html(edicao);
+		$("#contasAPagar_popupTipo_fornecedor", this.workspace).html(fornecedor);
+		$("#contasAPagar_popupTipo_dataLcto", this.workspace).html(dataLcto);
+		$("#contasAPagar_popupTipo_dataFinal", this.workspace).html(dataFinal);
 	
 		// preenche grid
-		var params = $("#contasAPagarPesquisaProdutoEdicaoForm").serialize();
+		var params = $("#contasAPagarPesquisaProdutoEdicaoForm", this.workspace).serialize();
 		
-		$(".contasAPagar_parciaispopGrid").flexOptions({
+		$(".contasAPagar_parciaispopGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisarParcial.json?' + params, 
 			newp : 1
 		});
 
-		$(".contasAPagar_parciaispopGrid").flexReload();
+		$(".contasAPagar_parciaispopGrid", this.workspace).flexReload();
 		
 		// abre popup
-		$("#dialog-contasAPagar-tipo").dialog({
+		$("#dialog-contasAPagar-tipo", this.workspace).dialog({
 			resizable: false,
 			height:500,
 			width:950,
@@ -383,94 +390,96 @@ var contasAPagarController = $.extend(true, {
 	
 	popup_consignado : function(data) {
 		
-		$("#contasAPagar_dataDetalhe").val(data);
-		this.pesquisarConsignado();
+		if (data){
+			$("#contasAPagar_dataDetalhe", this.workspace).val(data);
+		}
 		
-		$("#contasAPagar_legend_popupConsignado").html(data);
-	
-		$("#dialog-contasAPagar-consignado").dialog({
-			resizable: false,
-			height:480,
-			width:940,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					$(".grids").show();
-				},
-			}
-		});
-	},
-	
-	
-	pesquisarConsignado : function () {
-	
-		var params = $("#contasAPagarForm").serializeArray();
+		var params = $("#contasAPagarForm", this.workspace).serializeArray();
 		
-		params.push({name: 'filtro.produtoConsignado', value: $("#produtoConsignado").val()});
-		params.push({name: 'filtro.edicaoConsignado',  value: $("#edicaoConsignado").val()});
+		params.push({name: 'filtro.produtoConsignado', value: $("#produtoConsignado", this.workspace).val()});
+		params.push({name: 'filtro.edicaoConsignado',  value: $("#edicaoConsignado", this.workspace).val()});
 		
 		$.postJSON(
 			contasAPagarController.path + 'pesquisarConsignado.json',
 			params,
 			function(result) {
-				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupConsignado").get(0), result.totalDistrib);
-				$(".contasAPagar-consignadoGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
-			},
-			null,
-			true
+				contasAPagarController.montaTabelaTotaisDistribuidores(
+						$("#contasAPagar_table_popupConsignado", contasAPagarController.workspace).get(0), result.totalDistrib);
+				$(".contasAPagar-consignadoGrid", contasAPagarController.workspace).flexAddData(
+						{rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+				
+				if (data){
+					$("#contasAPagar_legend_popupConsignado", contasAPagarController.workspace).html(data);
+				}
+				
+				$("#dialog-contasAPagar-consignado", contasAPagarController.workspace).dialog({
+					resizable: false,
+					height:480,
+					width:940,
+					modal: true,
+					buttons: {
+						"Fechar": function() {
+							$( this ).dialog( "close" );
+						},
+					},
+					form: $("#form-contasAPagar-consignado", contasAPagarController.workspace)
+				});
+			}
 		);
 	},
-	
 
 	popup_encalhe : function(data) {
 		
-		$("#contasAPagar_dataDetalhe").val(data);
-		var params = $("#contasAPagarForm").serialize();
+		$("#contasAPagar_dataDetalhe", this.workspace).val(data);
+		var params = $("#contasAPagarForm", this.workspace).serialize();
 		
 		$.postJSON(
 			this.path + "pesquisarEncalhe.json?" + params,
 			null,
 			function(result) {
-				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupEncalhe").get(0), result.totalDistrib);
-				$(".contasAPagar_encalheGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+				contasAPagarController.montaTabelaTotaisDistribuidores(
+						$("#contasAPagar_table_popupEncalhe", contasAPagarController.workspace).get(0), result.totalDistrib);
+				$(".contasAPagar_encalheGrid", contasAPagarController.workspace).flexAddData(
+						{rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+				
+				$("#contasAPagar_legend_popupEncalhe", contasAPagarController.workspace).html(data);
+				
+				$("#contasAPagar_popupEncalhe", contasAPagarController.workspace).dialog({
+					resizable: false,
+					height:460,
+					width:860,
+					modal: true,
+					buttons: {
+						"Fechar": function() {
+							$( this ).dialog( "close" );
+						}
+					},
+					form: $("#form-contasAPagar_popupEncalhe", contasAPagarController.workspace)
+				});
 			}
 		);
-		
-		$("#contasAPagar_legend_popupEncalhe").html(data);
-		
-		$("#contasAPagar_popupEncalhe").dialog({
-			resizable: false,
-			height:460,
-			width:860,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					$(".grids").show();
-				}
-			}
-		});
 	},
 	
 	
 	popup_faltasSobras : function(data) {
 		
-		$("#contasAPagar_dataDetalhe").val(data);
-		var params = $("#contasAPagarForm").serialize();
+		$("#contasAPagar_dataDetalhe", this.workspace).val(data);
+		var params = $("#contasAPagarForm", this.workspace).serialize();
 		
 		$.postJSON(
 			this.path + "pesquisarFaltasSobras.json?" + params,
 			null,
 			function(result) {
-				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupFaltasSobras").get(0), result.totalDistrib);
-				$(".contasAPagar_faltasSobrasGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+				contasAPagarController.montaTabelaTotaisDistribuidores(
+						$("#contasAPagar_table_popupFaltasSobras", contasAPagarController.workspace).get(0), result.totalDistrib);
+				$(".contasAPagar_faltasSobrasGrid", contasAPagarController.workspace).flexAddData(
+						{rows: toFlexiGridObject(result.grid), page : 1, total : 1});
 			}
 		);
 		
-		$("#contasAPagar_legend_popupFaltasSobras").html(data);
+		$("#contasAPagar_legend_popupFaltasSobras", this.workspace).html(data);
 	
-		$("#contasAPagar_popupFaltasSobras").dialog({
+		$("#contasAPagar_popupFaltasSobras", this.workspace).dialog({
 			resizable: false,
 			height:460,
 			width:860,
@@ -478,7 +487,7 @@ var contasAPagarController = $.extend(true, {
 			buttons: {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
-					$(".grids").show();
+					$(".grids", contasAPagarController.workspace).show();
 				}
 			}
 		});
@@ -491,7 +500,7 @@ var contasAPagarController = $.extend(true, {
 	 * *************************
 	 * */
 	initcontasAPagarListaProdutosGrid : function(){
-		$(".contasAPagarListaProdutosGrid").flexigrid({
+		$(".contasAPagarListaProdutosGrid", contasAPagarController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -546,7 +555,7 @@ var contasAPagarController = $.extend(true, {
 	
 	initGridPesquisarPorFornecedor : function(){
 	
-		$(".porDistrFornecedorGrid").flexigrid({
+		$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Data',
@@ -611,7 +620,7 @@ var contasAPagarController = $.extend(true, {
 	
 	initGridPesquisarPorProduto : function(){
 		
-		$("#contasAPagar_porProdutosGrid").flexigrid({
+		$("#contasAPagar_porProdutosGrid", contasAPagarController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Rclt',
@@ -701,7 +710,7 @@ var contasAPagarController = $.extend(true, {
 	
 	initGridParciais : function () {
 		
-		$(".contasAPagar_parciaispopGrid").flexigrid({
+		$(".contasAPagar_parciaispopGrid", contasAPagarController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Lcto',
@@ -789,7 +798,7 @@ var contasAPagarController = $.extend(true, {
 	
 
 	initGridConsignado : function() {
-		$(".contasAPagar-consignadoGrid").flexigrid({
+		$(".contasAPagar-consignadoGrid", contasAPagarController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -879,7 +888,7 @@ var contasAPagarController = $.extend(true, {
 	
 	
 	initGridEncalhe : function() {
-		$(".contasAPagar_encalheGrid").flexigrid({
+		$(".contasAPagar_encalheGrid", contasAPagarController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -939,7 +948,7 @@ var contasAPagarController = $.extend(true, {
 	
 	
 	initGridFaltasSobras : function () {
-		$(".contasAPagar_faltasSobrasGrid").flexigrid({
+		$(".contasAPagar_faltasSobrasGrid", contasAPagarController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -1004,3 +1013,5 @@ var contasAPagarController = $.extend(true, {
 	},
 	
 }, BaseController);
+
+//@ sourceURL=contasAPagar.js

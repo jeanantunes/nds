@@ -1687,6 +1687,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 		
+		LOGGER.info("Data de Operação após alteração no distribuidor: " + dataOperacao);
+		
 		this.processarLancamentosEmRecolhimento(dataOperacao, usuario);
 		
 		this.processarLancamentosVencidos(dataOperacao, usuario);
@@ -1700,6 +1702,13 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosBalanceadosPorDataRecolhimentoDistrib(dataOperacao);
 		
 		for (Lancamento lancamento : lancamentos) {
+			
+			ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
+			
+			LOGGER.info(String.format("Lançamento alterado para \"EM_RECOLHIMENTO\": %s, Cod.: %s, Ed.: %s", 
+					produtoEdicao.getNomeComercial(), 
+					produtoEdicao.getProduto().getCodigo(), 
+					produtoEdicao.getNumeroEdicao()));
 			
 			lancamento.setStatus(StatusLancamento.EM_RECOLHIMENTO);
 			lancamento.setUsuario(usuario);

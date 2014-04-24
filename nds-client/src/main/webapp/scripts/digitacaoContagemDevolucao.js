@@ -453,8 +453,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				if (!$.trim(qtdNota)) {
 
-					// return true;
-					qtdNota = null;
+					return true;
 				}
 
 				var digitacaoContagemDevolucao = {codigoProduto:codigoProduto,

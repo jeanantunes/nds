@@ -1280,10 +1280,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                         break;
                     }
 
-                	if (!TipoNegociacao.COMISSAO.equals(negociacao.getTipoNegociacao())) {
-                		continue;
-                	}
-
                 	final BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
                     final BigDecimal comissaoCota = negociacao.getComissaoOriginalCota();
                     final BigDecimal novaComissao = comissaoCota.subtract(comissao);
