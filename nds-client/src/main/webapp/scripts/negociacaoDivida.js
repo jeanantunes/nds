@@ -570,7 +570,7 @@ var negociacaoDividaController = $.extend(true, {
 					tabela.rows[i].cells[j].style.textAlign = "center";
 				}
 				
-				coluna1.innerHTML = '<td><input value="'+row.dataVencimento+'" type="text" name="vencimentoCheque" id="vencimentoCheque'+i+'"style="width:100px;"/></td>';
+				coluna1.innerHTML = '<td><input class="dtVencDinam" value="'+row.dataVencimento+'" type="text" name="vencimentoCheque" id="vencimentoCheque'+i+'"style="width:100px;"/></td>';
 				coluna2.innerHTML = '<td><input value="'+row.parcela+'" type="text" name="valorCheque" id="valor'+i+'" style="width:100px; text-align:right;" onchange="negociacaoDividaController.recalcularTotalCheque()"/></td>';
 				coluna3.innerHTML = '<td><input value="'+i+'" type="text" name="numCheque" id="numCheque'+i+'"  style="width:100px;"/></td>';
 				coluna4.innerHTML = '<td align="center"><a onclick="negociacaoDividaController.excluirCheque('+i+')" href="javascript:;"><img src="'+contextPath+'/images/ico_excluir.gif" border="0" align="Excluir Linha" /></a></td>';
@@ -590,6 +590,7 @@ var negociacaoDividaController = $.extend(true, {
 			colunaParcela.style.textAlign = "RIGHT";
 			colunaParcela.innerHTML = '<div id="totalCheque"> ' + 'R$ '+ floatToPrice(totalParcela.toFixed(2)) +'</div>';
 			
+			$(".dtVencDinam", negociacaoDividaController.workspace).mask("99/99/9999");
 		}
 	},
 	
@@ -649,7 +650,7 @@ var negociacaoDividaController = $.extend(true, {
 				}
 
 				coluna1.innerHTML = result[i-1].numParcela+'&ordf;';
-				coluna2.innerHTML = '<input type="text" name="vencimentoParcela" id="vencimentoParcela'+i+'" style="width: 70px;" value="'+result[i-1].dataVencimento+'" onchange="negociacaoDividaController.recalcularParcelas('+(i-1)+',this,true)"/>';
+				coluna2.innerHTML = '<input type="text" class="dtVencDinam" name="vencimentoParcela" id="vencimentoParcela'+i+'" style="width: 70px;" value="'+result[i-1].dataVencimento+'" onchange="negociacaoDividaController.recalcularParcelas('+(i-1)+',this,true)"/>';
 				coluna3.innerHTML = '<input type="text" name="valorParcela" id="parcela'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcela+'" onchange="negociacaoDividaController.recalcularParcelas('+(i-1)+',this, false)" />';
 				coluna4.innerHTML = '<input type="text" name="encargoParcela" id="encargos'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].encargos+'" disabled="disabled"/>';
 				coluna5.innerHTML = '<input type="text" name="parcTotal" id="parcTotal'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcTotal+'"/ disabled="disabled">';
@@ -681,6 +682,7 @@ var negociacaoDividaController = $.extend(true, {
 			colunaParcTotal.innerHTML = 'R$ ' + totalParcTotal;
 			this.totalParcelas = totalParcTotal;
 			
+			$(".dtVencDinam", negociacaoDividaController.workspace).mask("99/99/9999");
 		}
 	},
 	

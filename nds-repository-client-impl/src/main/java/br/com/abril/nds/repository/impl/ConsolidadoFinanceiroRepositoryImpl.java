@@ -1993,4 +1993,39 @@ ConsolidadoFinanceiroRepository {
         
         return (Date) query.uniqueResult();
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<DebitoCreditoCotaDTO> obterConsolidadosDataOperacaoSlip(Long idCota, Date dataOperacao) {
+        
+        final String hql = "select " +
+        		" ABS(con.TOTAL) as valor, " +
+                " concat('Cobrança ', " +
+                " CASE WHEN d.STATUS in (:statusNegociada) THEN 'negociada' " +
+                "      WHEN d.STATUS = :statusInadimplencia THEN 'acumulada' " +
+                "      WHEN cob.ID IS NOT NULL THEN " +
+                "               concat('efetuada', ' - venc. ', " +
+                "               (SELECT EXTRACT(DAY FROM cob.DT_VENCIMENTO)), '/', (SELECT EXTRACT(MONTH FROM cob.DT_VENCIMENTO)), '/', (SELECT EXTRACT(YEAR FROM cob.DT_VENCIMENTO))) " +
+                "      ELSE 'postergada' "+
+                " END " +
+                " ) as observacoes" +
+                " from CONSOLIDADO_FINANCEIRO_COTA con "+
+                " join COTA c ON (c.ID = con.COTA_ID) " +
+                " left join DIVIDA_CONSOLIDADO dc ON (dc.CONSOLIDADO_ID = con.ID) " +
+                " left join DIVIDA d ON (d.ID = dc.DIVIDA_ID) "+
+                " left join COBRANCA cob ON (cob.DIVIDA_ID = d.ID) " +
+        		" where con.DT_CONSOLIDADO = :dataOperacao " +
+        		" and c.ID = :idCota ";
+        
+        final SQLQuery query = this.getSession().createSQLQuery(hql.toString());
+        query.setParameter("idCota", idCota);
+        query.setParameter("dataOperacao", dataOperacao);
+        query.setParameterList("statusNegociada", 
+                Arrays.asList(StatusDivida.NEGOCIADA, StatusDivida.POSTERGADA));
+        query.setParameter("statusInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA);
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+        
+        return query.list();
+    }
 }
