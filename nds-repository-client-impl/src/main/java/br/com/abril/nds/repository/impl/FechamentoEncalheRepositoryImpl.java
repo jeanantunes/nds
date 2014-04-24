@@ -1505,10 +1505,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
                 + " WHERE DATA_RECOLHIMENTO = :dataOperacao) > 0 "
                 + " as chamadaEncalhe, "
                    
-                + " (SELECT count(*) FROM CONTROLE_CONFERENCIA_ENCALHE_COTA "
-                + " WHERE DATA_OPERACAO = :dataOperacao AND status='CONCLUIDO')  > 0 "
-                + " as conferenciaEncalhe, "
-
                 + " (SELECT count(* )FROM CONTROLE_FECHAMENTO_ENCALHE "
                 + " WHERE data_encalhe = :dataOperacao)  > 0 "
                 + " as fechamentoEncalhe ";
@@ -1516,15 +1512,13 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         final SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setParameter("dataOperacao", data);
         query.addScalar("chamadaEncalhe", StandardBasicTypes.BOOLEAN);
-        query.addScalar("conferenciaEncalhe", StandardBasicTypes.BOOLEAN);
         query.addScalar("fechamentoEncalhe", StandardBasicTypes.BOOLEAN);
         
         Object[] result = (Object[]) query.uniqueResult();
         
         Boolean chamadaEncalhe = (Boolean) result[0];
-        Boolean conferenciaEncalhe = (Boolean) result[1];
-        Boolean fechamentoEncalhe = (Boolean) result[2];
+        Boolean fechamentoEncalhe = (Boolean) result[1];
         
-        return !chamadaEncalhe || (conferenciaEncalhe && fechamentoEncalhe);
+        return !chamadaEncalhe || fechamentoEncalhe;
     }
 }
