@@ -99,7 +99,10 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 				
 				if(controleConfEncalheCota != null) {
 					
-					List<DebitoCreditoCotaDTO> listDebCred = conferenciaEncalheService.obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(controleConfEncalheCota);
+					List<DebitoCreditoCotaDTO> listDebCred = 
+					        conferenciaEncalheService.obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
+					                controleConfEncalheCota,
+					                filtro.getIdFornecedor());
 				
 					if(listDebCred!= null && !listDebCred.isEmpty()) {
 						listaDebitoCreditoCotaDTO.addAll(listDebCred);
