@@ -268,33 +268,8 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
     @Transactional(readOnly = true)
     public List<DebitoCreditoCotaDTO> obterListaResumoCobranca(Cota cota, Date dataOperacao) {
     
-    	List<DebitoCreditoCotaDTO> listaResumoCobranca = new ArrayList<DebitoCreditoCotaDTO>();
-		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
-		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
-		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacao = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
-		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacaoComissao = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO);
-		
-		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
-		
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroNegociacao);
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroNegociacaoComissao);
-
-		//DEBITOS E CREDITOS DA COTA NA DATA DE OPERACAO
-		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaNaoConsolidado = 
-				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(cota.getNumeroCota(), 
-													dataOperacao, 
-													tiposMovimentoFinanceiroIgnorados, true);
-
-		listaResumoCobranca.addAll(listaDebitoCreditoCotaNaoConsolidado);
-		
-		return listaResumoCobranca;
-    	
+    	return this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacaoSlip(
+    	        cota.getId(), dataOperacao);
     }
     
 	/**
@@ -321,7 +296,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaNaoConsolidado = 
 				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(cota.getNumeroCota(), 
 													dataOperacao, 
-													tiposMovimentoFinanceiroIgnorados, false);
+													tiposMovimentoFinanceiroIgnorados);
 
 		listaDebitoCreditoCompleta.addAll(listaDebitoCreditoCotaNaoConsolidado);
 		
