@@ -1236,14 +1236,16 @@ var ConferenciaEncalhe = $.extend(true, {
 			data = [
 	            {name: "idConferencia", value: $("#idConferenciaEncalheHidden_" + index, ConferenciaEncalhe.workspace).val()},
 	            {name: "qtdExemplares", value: $("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val()},
-	            {name: 'indConferenciaContingencia', value: false}
+	            {name: 'indConferenciaContingencia', value: false},
+	            {name: 'indPesquisaProduto', value: false}
 			];
 		} else {
 			
 			data = [
 	            {name: "qtdExemplares", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()},
 	            {name: "produtoEdicaoId", value: $("#idProdutoEdicaoHidden", ConferenciaEncalhe.workspace).val()},
-	            {name: 'indConferenciaContingencia', value: false}
+	            {name: 'indConferenciaContingencia', value: false},
+	            {name: 'indPesquisaProduto', value: true}
 			];
 		}
 		
@@ -1255,51 +1257,59 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					ConferenciaEncalhe.resetValue = true;
 					
-					$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result);
-					
-					$("#dialog-autenticar-supervisor", ConferenciaEncalhe.workspace).dialog({
-						resizable: false,
-						height:'auto',
-						width:400,
-						modal: true,
-						buttons: {
-							"Ok": function() {
-								
-								ConferenciaEncalhe.resetValue = false;
-								ConferenciaEncalhe.autenticarSupervisor(index);
-								
+					if (result[0]){
+						
+						exibirMensagem('WARNING', [result[1]]);
+						ConferenciaEncalhe.resetValue = false;
+						ConferenciaEncalhe.atualizarValores(index);
+					} else {
+						
+						$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result[1]);
+						
+						$("#dialog-autenticar-supervisor", ConferenciaEncalhe.workspace).dialog({
+							resizable: false,
+							height:'auto',
+							width:400,
+							modal: true,
+							buttons: {
+								"Ok": function() {
+									
+									ConferenciaEncalhe.resetValue = false;
+									ConferenciaEncalhe.autenticarSupervisor(index);
+									
+								},
+								"Cancelar": function() {
+									
+									if (index || index == 0){
+										
+										$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val(ConferenciaEncalhe.valorAnteriorInput);
+									} else {
+										
+										ConferenciaEncalhe.limparDadosProduto(true);
+									}
+									
+									$(this).dialog("close");
+								}
 							},
-							"Cancelar": function() {
+							form: $("#dialog-autenticar-supervisor", this.workspace).parents("form"),
+							close: function(){
 								
-								if (index || index == 0){
-									
-									$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val(ConferenciaEncalhe.valorAnteriorInput);
-								} else {
-									
-									ConferenciaEncalhe.limparDadosProduto(true);
+								if (ConferenciaEncalhe.resetValue){
+									if (index || index == 0){
+										
+										$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val(ConferenciaEncalhe.valorAnteriorInput);
+									} else {
+										
+										ConferenciaEncalhe.limparDadosProduto(true);
+									}
 								}
+							},
+							open: function(){
 								
-								$(this).dialog("close");
+								focusSelectRefField($("#inputUsuarioSup", ConferenciaEncalhe.workspace));
 							}
-						},
-						form: $("#dialog-autenticar-supervisor", this.workspace).parents("form"),
-						close: function(){
-							
-							if (ConferenciaEncalhe.resetValue){
-								if (index || index == 0){
-									
-									$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val(ConferenciaEncalhe.valorAnteriorInput);
-								} else {
-									
-									ConferenciaEncalhe.limparDadosProduto(true);
-								}
-							}
-						},
-						open: function(){
-							
-							focusSelectRefField($("#inputUsuarioSup", ConferenciaEncalhe.workspace));
-						}
-					});
+						});
+					}
 					
 				} else {
 					
@@ -1316,10 +1326,10 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	autenticarSupervisor : function(index){
-		var paramUsuario = {
-			usuario:$("#inputUsuarioSup", ConferenciaEncalhe.workspace).val(),
-			senha:$("#inputSenha", ConferenciaEncalhe.workspace).val()
-		};
+		var paramUsuario = [
+			{name:"usuario", value:$("#inputUsuarioSup", ConferenciaEncalhe.workspace).val()},
+			{name:"senha",value:$("#inputSenha", ConferenciaEncalhe.workspace).val()}
+		];
 		
 		if (paramUsuario.usuario == '' || paramUsuario.senha == ''){
 			

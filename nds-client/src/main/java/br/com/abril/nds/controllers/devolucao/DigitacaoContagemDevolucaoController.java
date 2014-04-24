@@ -473,7 +473,9 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		contagemDevolucaoService.efetuarDevolucaoFinal(listaContagemDevolucaoDTO, getUsuarioLogado());
 		
-        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+		contagemDevolucaoService.fecharLancamentos(listaContagemDevolucaoDTO, getUsuarioLogado());
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
 		
 	}

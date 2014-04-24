@@ -14,6 +14,19 @@ import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 
 public interface DebitoCreditoCotaService {
 
+	/**
+	 * Obtém uma lista de valores financeiros relativos a cota 
+	 * cuja data de criação dos mesmos equivale a data informada 
+	 * por parâmetro contanto que não tenham entrado no calculo 
+	 * da cobrança da cota na data em questão.
+	 * 
+	 * @param cota
+	 * @param dataOperacao
+	 * 
+	 * @return List - DebitoCreditoDTO
+	 */
+	List<DebitoCreditoCotaDTO> obterListaResumoCobranca(Cota cota, Date dataOperacao);
+	
 	MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroCotaDTO(DebitoCreditoDTO debitoCreditoDTO);
 	
 	/**

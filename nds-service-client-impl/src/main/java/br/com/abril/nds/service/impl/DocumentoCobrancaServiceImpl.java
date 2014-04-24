@@ -866,10 +866,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         final List<DebitoCreditoCotaDTO> listaComposicaoCobranca =
                 debitoCreditoCotaService.obterListaDebitoCreditoCotaDTO(controleConferenciaEncalheCota.getCota(), dataOperacao);
-        
         slipDTO.setListaComposicaoCobrancaDTO(listaComposicaoCobranca);
-        
         parametersSlip.put("LISTA_COMPOSICAO_COBRANCA",listaComposicaoCobranca);
+        
+        final List<DebitoCreditoCotaDTO> listaResumoCobranca = 
+        		debitoCreditoCotaService.obterListaResumoCobranca(controleConferenciaEncalheCota.getCota(), dataOperacao);
+        slipDTO.setListaResumoCobrancaDTO(listaResumoCobranca);
+        parametersSlip.put("LISTA_RESUMO_COBRANCA",listaResumoCobranca);
+      
         
         BigDecimal totalComposicao = BigDecimal.ZERO;
         

@@ -1524,7 +1524,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         if(filtro.getIdFornecedor() != null){
         	sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
         }
-
+           
         sql.append(" GROUP BY PROD_EDICAO.ID ");
 
         sql.append(" HAVING ("+qtdDevolucaoSubQuery+" > 0) ");

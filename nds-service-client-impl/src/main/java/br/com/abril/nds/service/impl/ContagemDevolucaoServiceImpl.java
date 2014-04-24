@@ -177,10 +177,14 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		if(filtroPesquisa.getIdFornecedor() == null){
 			
 			filtroPesquisa.setFornecedores(this.obterIdsFornecedoresNaoUnificados());
-		}
-		else{
+		
+		} else{
 			
 			filtroPesquisa.setFornecedores(Lists.newArrayList(filtroPesquisa.getIdFornecedor()));
+		}
+		
+		if (filtroPesquisa.getFornecedores() == null || filtroPesquisa.getFornecedores().isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro foi encontrado.");
 		}
 	}
 	
@@ -434,18 +438,10 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			
 		} else {
 			
-			correcao = qtdTotalConferenciaEncalheParcialNew;
-			
+			correcao = qtdTotalConferenciaEncalheParcialNew;			
 		}
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
-		
-		Set<Lancamento> lancamentos = produtoEdicao.getLancamentos();
-		
-		for (Lancamento item : lancamentos){
-			
-			item.setStatus(StatusLancamento.FECHADO);
-		}
 		
 		contagem.setIdProdutoEdicao(produtoEdicao.getId());
 		
@@ -626,7 +622,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			this.processarDiferenca(movimentoEstoque, 
 									usuario, 
 									produtoEdicao, 
-									calculoQdeDiferenca, 
+									calculoQdeDiferenca.abs(), 
 									TipoDiferenca.GANHO_EM, 
 									tipoMovimentoSobraEmReparte.getGrupoMovimentoEstoque().getTipoEstoque(), 
 									StatusAprovacao.GANHO);
@@ -913,6 +909,10 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 					contagemDevolucaoAprovada.getCodigoProduto(), 
 					contagemDevolucaoAprovada.getNumeroEdicao(),
 					null);
+			
+			for (ContagemDevolucaoDTO item : contagemAgrupada) {
+				item.setQtdNota(contagemDevolucaoAprovada.getQtdNota());
+			}
 
 			if(contagemAgrupada == null || contagemAgrupada.isEmpty()) {
 				continue;
@@ -1040,6 +1040,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	@Transactional
 	public void efetuarDevolucaoFinal(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario){
 		
+		this.validarItensContagemDevolucao(listaContagemDevolucao);
+		
 		this.confirmarValoresContagemDevolucao(listaContagemDevolucao, usuario);
 		
 		List<ContagemDevolucaoDTO> listaAgrupadaContagemDevolucao = 
@@ -1080,12 +1082,45 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		}
 	}
 	
+	private void validarItensContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao) {
+		
+		Set<Long> idsProdutoEdicao = new HashSet<Long>();
+		
+		for (ContagemDevolucaoDTO contagemDevolucao : listaContagemDevolucao) {
+			
+			idsProdutoEdicao.add(contagemDevolucao.getIdProdutoEdicao());
+		}
+		
+		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosRecolhidosPorEdicoes(idsProdutoEdicao);
+		
+		for (Lancamento lancamento : lancamentos) {
+			
+			if (StatusLancamento.EM_RECOLHIMENTO.equals(lancamento.getStatus())) {
+
+				String nomeProduto = lancamento.getProdutoEdicao().getNomeComercial();
+				String codigoProduto = lancamento.getProdutoEdicao().getProduto().getCodigo();
+
+				Long edicaoProduto = lancamento.getProdutoEdicao().getNumeroEdicao();
+
+				throw new ValidacaoException(TipoMensagem.WARNING, 
+						String.format("Lançamento do produto %s [Cod.: %s, Ed.: %s encontra-se em recolhimento.", nomeProduto, codigoProduto, edicaoProduto));
+			}
+		}		
+	}
+	
 	@Override
     @Transactional
 	public void gerarNotasFiscaisPorFornecedorFecharLancamentos(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) throws FileNotFoundException, IOException {
 		
     	this.gerarNotasFiscaisPorFornecedor(listaContagemDevolucao, usuario, true);
     	
+    	fecharLancamentos(listaContagemDevolucao, usuario);		
+	}
+
+	@Override
+    @Transactional
+	public void fecharLancamentos(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) throws FileNotFoundException, IOException {
+
 		Set<Long> idsProdutoEdicao = new TreeSet<>();
         
         for (ContagemDevolucaoDTO dto : listaContagemDevolucao) {
@@ -1109,6 +1144,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
         }
 	}
 
+	
     @Override
     @Transactional(readOnly = true)
     public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro, boolean perfilEncarregado){
