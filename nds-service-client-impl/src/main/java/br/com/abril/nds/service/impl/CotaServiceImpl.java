@@ -998,6 +998,7 @@ public class CotaServiceImpl implements CotaService {
             dto.setBoletoSlipEmail(parametroDistribuicaoCota.getBoletoSlipEmail());
             dto.setReciboImpresso(parametroDistribuicaoCota.getReciboImpresso());
             dto.setReciboEmail(parametroDistribuicaoCota.getReciboEmail());
+            dto.setBaseCalculo(parametroDistribuicaoCota.getBaseCalculo());
         }
         
         if(!qtdePDVAutomatico) {
@@ -1134,9 +1135,7 @@ public class CotaServiceImpl implements CotaService {
             
         }
         
-        
-        if(
-                
+        if(              
                 parametrosDistribuidorConferenciaCota.getBoletoEmail().equals(dto.getBoletoEmail()) &&
                 parametrosDistribuidorConferenciaCota.getBoletoImpresso().equals(dto.getBoletoImpresso()) &&
                 
@@ -1183,16 +1182,13 @@ public class CotaServiceImpl implements CotaService {
             parametros.setNotaEnvioEmail(dto.getNeEmail());
         }
         
-        
         cota.setParametroDistribuicao(parametros);
         
         cotaRepository.merge(cota);
         
-        this.atualizaTermoAdesao(
-                cota.getNumeroCota().toString(), DescricaoTipoEntrega.ENTREGA_EM_BANCA);
+        this.atualizaTermoAdesao(cota.getNumeroCota().toString(), DescricaoTipoEntrega.ENTREGA_EM_BANCA);
         
-        this.atualizaTermoAdesao(
-                cota.getNumeroCota().toString(), DescricaoTipoEntrega.ENTREGADOR);
+        this.atualizaTermoAdesao(cota.getNumeroCota().toString(), DescricaoTipoEntrega.ENTREGADOR);
     }
     
     
@@ -1215,10 +1211,8 @@ public class CotaServiceImpl implements CotaService {
         cotaDTO.setNumeroCota(cota.getNumeroCota());
         cotaDTO.setClassificacaoSelecionada(cota.getClassificacaoEspectativaFaturamento());
         cotaDTO.setDataInclusao(cota.getInicioAtividade());
-        cotaDTO.setEmailNF(cota.getParametrosCotaNotaFiscalEletronica()!= null
-                ?cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica():"");
-        cotaDTO.setEmiteNFE(cota.getParametrosCotaNotaFiscalEletronica()!= null
-                ?cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica():false);
+        cotaDTO.setEmailNF(cota.getParametrosCotaNotaFiscalEletronica() != null ? cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() : "");
+        cotaDTO.setEmiteNFE(cota.getParametrosCotaNotaFiscalEletronica() != null ? cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() : false);
         cotaDTO.setStatus(cota.getSituacaoCadastro());
         
         if (cota.getTipoDistribuicaoCota() != null) {
@@ -1232,9 +1226,7 @@ public class CotaServiceImpl implements CotaService {
         processarTitularidadeCota(cota, cotaDTO);
         
         cotaDTO.setCotasBases(atribuirCotaBase(cota.getNumeroCota()));
-        cotaDTO.setRecebeComplementar(
-                cota.getParametroDistribuicao() == null ? false :
-                    cota.getParametroDistribuicao().getRecebeComplementar());
+        cotaDTO.setRecebeComplementar(cota.getParametroDistribuicao() == null ? false : cota.getParametroDistribuicao().getRecebeComplementar());
         
         return cotaDTO;
     }
@@ -2420,7 +2412,7 @@ public class CotaServiceImpl implements CotaService {
                 enderecoCotaRepository.obterEnderecoPorTipoEndereco(
                         cota.getId(), TipoEndereco.LOCAL_ENTREGA);
         
-        if (enderecoCota != null){
+        if (enderecoCota != null) {
             
             final String numeroEndereco = enderecoCota.getEndereco().getNumero()!= null?enderecoCota.getEndereco().getNumero():"";
             
@@ -2428,18 +2420,19 @@ public class CotaServiceImpl implements CotaService {
             dto.setBairroEntrega(enderecoCota.getEndereco().getBairro());
             dto.setCEPEntrega(Util.adicionarMascaraCEP(enderecoCota.getEndereco().getCep()));
             dto.setCidadeEntrega(enderecoCota.getEndereco().getCidade());
+            
         } else {
             
             final PDV pdv = pdvRepository.obterPDVPrincipal(cota.getId());
             
-            if (pdv != null){
+            if (pdv != null) {
                 
                 dto.setReferenciaEndereco(pdv.getPontoReferencia());
                 dto.setHorariosFuncionamento(pdv.getPeriodos()!=null?pdv.getPeriodos().size()>0?pdv.getPeriodos():null:null);
                 
                 final Endereco enderecoPDV = enderecoPDVRepository.buscarEnderecoPrincipal(pdv.getId());
                 
-                if (enderecoPDV != null){
+                if (enderecoPDV != null) {
                     
                     final String numeroEndereco =  enderecoPDV.getNumero()!=null ? enderecoPDV.getNumero():"";
                     
@@ -2452,11 +2445,10 @@ public class CotaServiceImpl implements CotaService {
         }
         
         final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("SUBREPORT_DIR",
-                Thread.currentThread().getContextClassLoader().getResource("/reports/").toURI().getPath());
+        parameters.put("SUBREPORT_DIR", Thread.currentThread().getContextClassLoader().getResource("/reports/").toURI().getPath());
         
         final String informacoesComplementares = distribuidorRepository.obterInformacoesComplementaresTermoAdesao();
-        parameters.put("infoComp", informacoesComplementares!=null?informacoesComplementares:"");
+        parameters.put("infoComp", informacoesComplementares != null ? informacoesComplementares : "");
         parameters.put("LOGO",JasperUtil.getImagemRelatorio(parametrosDistribuidorService.getLogotipoDistribuidor()));
         
         final List<TermoAdesaoDTO> listaDTO = new ArrayList<TermoAdesaoDTO>();
@@ -2464,8 +2456,7 @@ public class CotaServiceImpl implements CotaService {
         
         final JRDataSource jrDataSource = new JRBeanCollectionDataSource(listaDTO);
         
-        final URL url =
-                Thread.currentThread().getContextClassLoader().getResource("/reports/termo_adesao.jasper");
+        final URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/termo_adesao.jasper");
         
         final String path = url.toURI().getPath();
         

@@ -13,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.integracao.data.helper.LancamentoDataHelper;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.integracao.model.canonic.EMS0136Input;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -46,6 +48,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private ParciaisService parciaisService;
 	
+	@Autowired
+	private LancamentoService lancamentoService;
+
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {}
 
@@ -450,8 +455,15 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataLancamentoPrevista(dataLancamento);
 		lancamento.setDataLancamentoDistribuidor(dataLancamento);
-		lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+		//lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 		lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
+		
+		try {
+			//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
+			lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId()));
+		} catch (Exception e) {
+		}
+		
 		lancamento.setProdutoEdicao(produtoEdicao);
 		lancamento.setDataStatus(new Date());
 		lancamento.setReparte(BigInteger.ZERO);

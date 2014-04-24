@@ -99,5 +99,7 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 	
 	List<Integer> obterNumerosCotaOrdenadosRoteirizacao();
 	
+	boolean existeRotaParaCota(Integer numeroCota);
+	
 }
 

@@ -920,8 +920,14 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         int qtdParcelasModificadas = 0;
         for (final CalculaParcelasVO calculaParcelasVO : parcelas) {
             if (calculaParcelasVO.isModificada()) {
-                valorParcelasModificadas = valorParcelasModificadas.add(CurrencyUtil.converterValor(calculaParcelasVO
-                        .getParcela()));
+                
+                if (calculaParcelasVO.getParcela() == null){
+                    
+                    throw new ValidacaoException(TipoMensagem.WARNING, "Valor de parcela inválido");
+                }
+                
+                valorParcelasModificadas = valorParcelasModificadas.add(
+                        CurrencyUtil.converterValor(calculaParcelasVO.getParcela()));
                 qtdParcelasModificadas++;
             }
             
@@ -956,6 +962,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             valorTotal = valorTotal.add(valorParcela);
             
             Date dataVencimento = DateUtil.parseDataPTBR(calculaParcelasVO.getDataVencimento());
+            
+            if (dataVencimento == null){
+                throw new ValidacaoException(TipoMensagem.WARNING, "Campo data inválido.");
+            }
             
             if (formaCobranca.isVencimentoDiaUtil()) {
                 dataVencimento = calendarioService.adicionarDiasUteis(dataVencimento, 0);

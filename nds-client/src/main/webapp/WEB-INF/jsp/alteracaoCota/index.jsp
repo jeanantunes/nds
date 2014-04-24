@@ -1,6 +1,9 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 
 <head>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.maskmoney.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/alteracaoCota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/utils.js"></script>
@@ -8,13 +11,13 @@
 	<script	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.iframe-transport.js"	type="text/javascript"></script>
 	<script	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.fileupload.js"	type="text/javascript"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
+	<%-- <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script> --%>
 	
 	<script type="text/javascript">
 
 		var pesquisaCotaAlteracaoCota = new PesquisaCota(alteracaoCotaController.workspace);
 		
-		$(function(){
+		$(function() {
 			alteracaoCotaController.init(pesquisaCotaAlteracaoCota);
 		});
 		
@@ -149,10 +152,10 @@
 
 
 			<div id="tabs-4">
-				<table width="798" border="0" cellspacing="1" cellpadding="1">
+				<table width="840" border="0" cellspacing="1" cellpadding="1">
 					<tr>
-						<td width="442" valign="top">
-							<table width="442" cellpadding="2" cellspacing="2" style="text-align: left;">
+						<td width="370" valign="top">
+							<table width="370" cellpadding="2" cellspacing="2" style="text-align: left;">
 								<tr>
 									<td width="157">Assist./Promotor Comercial:</td>
 									<td width="269"><input type="text" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.nmAssitPromoComercial" id="idModalNmAssitPromoComercial" style="width: 220px" /></td>
@@ -189,7 +192,7 @@
 							
 						</td>
 						<td width="12" style="width: 10px;">&nbsp;</td>
-						<td width="334" valign="top">
+						<td width="390" valign="top">
 							<table width="299" cellpadding="2" cellspacing="2"
 								style="text-align: left;">
 								<tr>
@@ -206,7 +209,9 @@
 							</table>
 
 							<div id="entregaBancaPj" style="display: none;">
-								<table width="399" border="0" cellspacing="1" cellpadding="1">
+							
+								<div class="divImpressaoTermoAdesao">
+									<table width="399" border="0" cellspacing="1" cellpadding="1">
 									<tr>
 										<td width="115">Termo Ades&atilde;o:</td>
 										<td width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.termoAdesao" id="termoAdesao"  onclick="alteracaoCotaController.mostrarEsconderDivUtilizaArquivoTermo()"/></td>
@@ -220,6 +225,8 @@
 										
 									</tr>
 							      	</table>
+							     </div>
+							     
 									<div id="termoArquivoRecebido">
 									<table width="399" border="0" cellspacing="1" cellpadding="1">
 									<tr>
@@ -250,10 +257,12 @@
 									</div>	
 									
 									</div>
-								<table width="399" border="0" cellspacing="1" cellpadding="1">	
+								<table width="420" border="0" cellspacing="1" cellpadding="1">	
 									<tr>
 										<td>Percentual Faturamento:</td>
-										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregaBanca"   id="percentualFaturamentoEntregaBanca" 	style="width: 70px; text-align: right;" /></td>
+										<td><input type="text" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregaBanca"   id="percentualFaturamentoEntregaBanca" 	style="width: 70px; text-align: right;" /></td>
+										<td>Base de Cálculo:</td>
+										<td><select id="basesCalculoEntregaBanca" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.baseCalculo"></select></td>
 									</tr>
 									<tr>
 										<td>Taxa Fixa R$</td>
@@ -261,7 +270,7 @@
 									</tr>
 									<tr>
 										<td>Per&iacute;odo Car&ecirc;ncia:</td>
-										<td colspan="2"><table width="100%" border="0"
+										<td colspan="3"><table width="100%" border="0"
 												cellspacing="0" cellpadding="0">
 												<tr>
 													<td width="27%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntregaBanca" type="text" id="carenciaInicioEntregaBanca" style="width: 70px" /></td>
@@ -318,7 +327,7 @@
 									</div>	
 									
 									</div>
-								<table width="399" border="0" cellspacing="1" cellpadding="1">	
+								<table width="420" border="0" cellspacing="1" cellpadding="1">	
 									<tr>
 										<td>Percentual Faturamento:</td>
 										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregador"   id="percentualFaturamentoEntregador" 	style="width: 70px; text-align: right;" /></td>
@@ -329,7 +338,7 @@
 									</tr>
 									<tr>
 										<td>Per&iacute;odo Car&ecirc;ncia:</td>
-										<td colspan="2"><table width="100%" border="0"
+										<td colspan="3"><table width="100%" border="0"
 												cellspacing="0" cellpadding="0">
 												<tr>
 													<td width="27%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntragador" type="text" id="carenciaInicioEntregador" style="width: 70px" /></td>
@@ -524,9 +533,4 @@
     </fieldset>
 </form>
 
-	<script type="text/javascript">
-		$(function(){
-			alteracaoCotaController.init();
-		});
-	</script>
 </body>

@@ -190,5 +190,7 @@ public interface LancamentoService {
 	
 	void reajustarNumerosLancamento(PeriodoLancamentoParcial periodo);
 	
+	Date obterDataLancamentoValido(Date dataLancamento,Long idFornecedor);
+	
 }
  

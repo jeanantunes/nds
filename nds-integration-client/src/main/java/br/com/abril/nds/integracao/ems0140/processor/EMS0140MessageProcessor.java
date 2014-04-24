@@ -15,6 +15,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.integracao.data.helper.LancamentoDataHelper;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0140Input;
@@ -40,6 +41,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
+import br.com.abril.nds.service.LancamentoService;
 
 import com.google.common.base.Strings;
 
@@ -54,6 +56,9 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
     
     @Autowired
     private ProdutoRepository produtoRepository;
+    
+    @Autowired
+    private LancamentoService lancamentoService;
     
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
@@ -233,7 +238,7 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
         
         return (ProdutoEdicao) criteria.uniqueResult();
     }
-    
+
     private NotaFiscalEntradaFornecedor populaItemNotaFiscalEntrada(NotaFiscalEntradaFornecedor nfEntrada,
             EMS0140Input input, Message message) {
         
@@ -298,9 +303,16 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                 lancamento.setNumeroLancamento(numeroLancamentoNovo);
                 lancamento.setDataCriacao(dataAtual);
                 lancamento.setDataLancamentoPrevista(dataLancamento);
-                lancamento.setDataLancamentoDistribuidor(dataLancamento);
+                //lancamento.setDataLancamentoDistribuidor(dataLancamento);
                 lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
                 lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+                
+    			try {
+    				//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
+    				lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId()));
+    			} catch (Exception e) {
+    			}
+    			
                 lancamento.setProdutoEdicao(produtoEdicao);
                 lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
                 lancamento.setDataStatus(dataAtual);

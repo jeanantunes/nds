@@ -200,7 +200,9 @@ public class Rota implements Serializable {
                 
             	PDV pdv = rotaPDV.getPdv();
             	
-            	if (pdv.getCaracteristicas().isPontoPrincipal()) {
+            	final boolean tipoDeRoteiroNaoEspecial = !rotaPDV.isTipoRoteiroEspecial();
+            	
+            	if (pdv.getCaracteristicas().isPontoPrincipal() && tipoDeRoteiroNaoEspecial) {
             	
             		pdv.getCota().setBox(null);
             	}

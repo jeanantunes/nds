@@ -5,9 +5,6 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
@@ -18,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
+import br.com.abril.nds.integracao.data.helper.LancamentoDataHelper;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0111Input;
@@ -42,11 +40,6 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 @Component
 public class EMS0111MessageProcessor extends AbstractRepository implements
 		MessageProcessor {
-
-	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	private Set<Date> datasBalanceaveis = new TreeSet<Date>();
-	private Set<Date> datasNaoBalanceaveis = new TreeSet<Date>();
-	private HashMap<String, Set<Date>> datas = new HashMap<String, Set<Date>>();
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -63,14 +56,12 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
 	
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		distribuidorService.bloqueiaProcessosLancamentosEstudos();
-		
-		//Recupera datas Abertas para matriz
-		datas = lancamentoService.obterDiasMatrizLancamentoAbertos();
-		datasBalanceaveis = datas.get("diasBalanceaveis");
-		datasNaoBalanceaveis = datas.get("diasNaoBalanceaveis");
+
 	}
 
 	@Override
@@ -177,15 +168,16 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			lancamento.setDataCriacao(new Date());// confirmado
 			
-			try {
-				lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
-			} catch (Exception e) {
-				return;
-			}
-			
 			lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
 			
 			lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
+			
+			try {
+				//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
+				lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(input.getDataLancamento(), produtoEdicao.getProduto().getFornecedor().getId()));
+			} catch (Exception e) {
+				return;
+			}
 			
 			lancamento.setExpedicao(null);// default
 			
@@ -293,8 +285,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				
 				//if(dtLancamentoNovo.before(distribuidorService.obterDataOperacaoDistribuidor())){
 				
-					try {
-					 dtLancamentoNovo = getDiaMatrizAberta(dtLancamentoNovo, lancamento.getDataRecolhimentoDistribuidor(),message,codigoProduto,edicao);
+					try { 
+					 //dtLancamentoNovo = getDiaMatrizAberta(dtLancamentoNovo, lancamento.getDataRecolhimentoDistribuidor(),message,codigoProduto,edicao);
+					 dtLancamentoNovo = lancamentoService.obterDataLancamentoValido(input.getDataLancamento(), produtoEdicao.getProduto().getFornecedor().getId());
 				    } catch (Exception e) {
 					  return;
 				    }
@@ -437,6 +430,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
 	}
 	
+	/*
 	private Date getDiaMatrizAberta(Date dataLctoDistibuidor,Date dataRecDistibuidor,Message message, String codigoProduto, Long edicao) throws Exception{
 		
 		
@@ -496,5 +490,6 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		}
 		
 	}
+	*/
 	
 }
