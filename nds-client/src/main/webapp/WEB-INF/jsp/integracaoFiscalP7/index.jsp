@@ -93,7 +93,12 @@ function submitForm(f){
 						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Arquivo
 					</a>
-				</span>  
+				</span>
+				<span class="bt_arq" id="gerarAquivoP7XLS">
+				<a href="${pageContext.request.contextPath}/financeiro/integracaoFiscalP7/exportarXLS?fileType=XLS" rel="tipsy" title="Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				</a>
+			</span>  
             </td>
 		</tr>
             

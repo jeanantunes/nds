@@ -72,7 +72,10 @@ public class IntegracaoFiscalServiceImpl implements IntegracaoFiscalService {
 		return p7dto;
 	}
 
-	
+	@Override
+	public List<ExtratoEdicaoArquivoP7DTO> inventarioP7(Date time) {
+		return integracaoFiscalRepository.inventarioP7(time);
+	}
 
 }
 

@@ -1,16 +1,25 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.ExtratoEdicaoArquivoP7DTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaIntegracaoFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.IntegracaoFiscalService;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -31,6 +40,9 @@ public class IntegracaoFiscalP7Controller extends BaseController{
 	
 	@Autowired
 	private Result result;
+	
+	@Autowired
+	private HttpServletResponse httpResponse;
 	
 	private FiltroConsultaIntegracaoFiscal filtro;
 
@@ -66,6 +78,24 @@ public class IntegracaoFiscalP7Controller extends BaseController{
         File gerarArquivoP7 = integracaoFiscalService.gerarArquivoP7(c.getTime());
         
         return new FileDownload(gerarArquivoP7, contentType, filename);
+	}
+	
+	@Get
+	public void exportarXLS(FileType fileType) throws IOException {
+		
+		String mes = "03";
+		String ano = "2014";
+		String mesAno = "03/2014";
+		
+		Calendar c = GregorianCalendar.getInstance();
+		c.set(Calendar.MONTH, Integer.parseInt(mes));
+		c.set(Calendar.YEAR, Integer.parseInt(ano));
+
+        List<ExtratoEdicaoArquivoP7DTO> p7dto = integracaoFiscalService.inventarioP7(c.getTime());
+		
+        FileExporter.to("Integração Fiscal P7", fileType).inHTTPResponse(this.getNDSFileHeader(), mesAno, p7dto, ExtratoEdicaoArquivoP7DTO.class, this.httpResponse);
+
+		result.nothing();
 	}
 	
 }
