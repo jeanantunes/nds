@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -36,6 +38,19 @@ public class DebitoCreditoCotaDTO implements Serializable {
 	private String tipoMovimento;
 	
 	private String descricao;
+	
+	public DebitoCreditoCotaDTO(){}
+	
+	public DebitoCreditoCotaDTO(final BigDecimal valor, final String observacoes, final OperacaoFinaceira tipoLancamento, 
+	        final GrupoMovimentoFinaceiro tipoMovimento, final Date dataLancamento, final Date dataVencimento){
+	    
+	    this.valor = valor;
+	    this.observacoes = (observacoes == null ? tipoMovimento.getDescricao() : observacoes) + 
+	            " (" + DateUtil.formatarDataPTBR(dataVencimento) + ")";
+	    this.tipoLancamento = tipoLancamento;
+	    this.tipoMovimento = tipoMovimento.toString();
+	    this.dataLancamento = dataLancamento;
+	}
 	
 	public Date getDataLancamento() {
 		return dataLancamento;

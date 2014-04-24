@@ -220,6 +220,10 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isRecebeComplementar() && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL)) {
 			cota.getParametroDistribuicao().setRecebeComplementar(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isRecebeComplementar());
 		}
+		
+		if (filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getBaseCalculo() != null) {
+			cota.getParametroDistribuicao().setBaseCalculo(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getBaseCalculo());
+		}
 	}
 
 	/**

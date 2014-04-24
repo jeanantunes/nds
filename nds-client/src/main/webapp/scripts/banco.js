@@ -396,7 +396,7 @@ var bancoController = $.extend(true, {
 			$("#alterAgencia", this.workspace).val(resultado.agencia);
 			$("#alterDigitoAgencia", this.workspace).val(resultado.digitoAgencia);
 			$("#alterConta", this.workspace).val(resultado.conta);
-			$("#alterDigito", this.workspace).val(resultado.digito);
+			$("#alterDigito", this.workspace).val(resultado.digito ? resultado.digito : '');
 			$("#alterApelido", this.workspace).val(resultado.apelido);
 			$("#alterCarteira", this.workspace).val(resultado.carteira);
 			$("#alterJuros", this.workspace).val(resultado.juros);

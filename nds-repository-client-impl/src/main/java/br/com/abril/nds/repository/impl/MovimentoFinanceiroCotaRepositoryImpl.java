@@ -75,7 +75,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		sql.append("    SELECT ");
 		sql.append("        SUM(MFC.VALOR) AS valor, ");
 		sql.append("        PN.DATA_VENCIMENTO AS dataVencimento, ");
-		sql.append("        MFC.DATA as dataLancamento ");
+		sql.append("        MFC.DATA as dataLancamento, ");
+		sql.append("        MFC.OBSERVACAO as observacoes ");
 		sql.append("    FROM ");
 		sql.append("        PARCELA_NEGOCIACAO PN");
 		sql.append("    INNER JOIN ");
@@ -128,6 +129,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 				dto.setValor(rs.getBigDecimal("valor"));
 				dto.setDataVencimento(rs.getDate("dataVencimento"));
 				dto.setDataLancamento(rs.getDate("dataLancamento"));
+				dto.setTipoLancamentoEnum(OperacaoFinaceira.DEBITO);
+				dto.setObservacoes(rs.getString("observacoes"));
 				
 				return dto;
 			}
@@ -193,7 +196,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	
 	@SuppressWarnings("unchecked")
 	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(Integer numeroCota, Date dataOperacao, 
-			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
+			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados, boolean incluiMFCCriadoNaDataOperacao){
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -211,7 +214,18 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		sql.append(" where ");
 		sql.append("	movimentof0_.TIPO_MOVIMENTO_ID=tipomovime1_.ID  ");
 		sql.append("	and movimentof0_.COTA_ID=cota3_.ID  ");
-		sql.append("	and movimentof0_.DATA = :dataOperacao  ");
+		
+		if(incluiMFCCriadoNaDataOperacao) {
+			
+			sql.append("	and ( movimentof0_.DATA = :dataOperacao  or movimentof0_.DATA_CRIACAO = :dataOperacao ) ");
+			
+		} else {
+			
+			sql.append("	and movimentof0_.DATA = :dataOperacao  ");
+			
+		}
+		
+		
 		sql.append("	and movimentof0_.STATUS = :statusAprovado  ");
 		sql.append("	and cota3_.NUMERO_COTA = :numeroCota  ");
 		
