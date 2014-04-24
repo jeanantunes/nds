@@ -330,9 +330,7 @@
 								<table width="420" border="0" cellspacing="1" cellpadding="1">	
 									<tr>
 										<td>Percentual Faturamento:</td>
-										<td><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregador"   id="percentualFaturamentoEntregador" 	style="width: 70px; text-align: right;" /></td>
-										<td>Base de Cálculo:</td>
-										<td><select id="basesCalculoEntregador" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.baseCalculo"></select></td>
+										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregador"   id="percentualFaturamentoEntregador" 	style="width: 70px; text-align: right;" /></td>
 									</tr>
 									<tr>
 										<td>Taxa Fixa R$</td>

@@ -620,11 +620,6 @@ var alteracaoCotaController = $.extend(true, {
 			$('#entregadorPj', this.workspace).show();
 			$('#entregaBancaPj', this.workspace).hide();
 			
-			var combo = montarComboBox(alteracaoCotaController.itensBasesCalculo, false);
-			
-			$("#basesCalculoEntregador").html(combo);
-			$("#basesCalculoEntregador").sortOptions();
-			
 		}
 		
 	},
