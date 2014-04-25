@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO.ModoTela;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -138,8 +139,12 @@ public interface ProdutoEdicaoService {
 	 * @param codigoProduto
 	 * @param contentType
 	 * @param imgInputStream
+	 * @param istrac29
+	 * @param modoTela
 	 */
-	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream,boolean istrac29);
+	public void salvarProdutoEdicao(
+	        ProdutoEdicaoDTO dto, String codigoProduto, String contentType, 
+	        InputStream imgInputStream,boolean istrac29, ModoTela modoTela);
 	
 	/**
 	 * Exclui uma Edição da base de dados.<br>
