@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
@@ -28,6 +27,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		StringBuilder sql = new StringBuilder();
 		
 	 sql.append(" select ")
+	 
 		.append(" lanc.id as idLancamento,")
 		.append(" prod.CODIGO as codigoProduto,") 
 		.append(" prod.NOME as nomeProduto,")
@@ -41,31 +41,38 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" sum(estoqueProdJuram.QTDE) AS juram,")
 		.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
 		.append(" estoqueProd.QTDE as estoque,")
-		.append(" lanc.REPARTE_PROMOCIONAL as promo,")
-		.append(" lanc.DATA_LCTO_DISTRIBUIDOR as dataLanctoSemFormatacao,")
-		.append(" case estudo.liberado when 1 then 'LIBERADO'")
-		.append(" else ''")
-		.append(" end as liberado,")
-		.append(" estudo.ID as idEstudo,")
+        
+		.append(" (SELECT sum(lc.REPARTE_PROMOCIONAL) FROM lancamento lc join periodo_lancamento_parcial plcp on plcp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ")
+        .append(" 		WHERE lc.PRODUTO_EDICAO_ID = prodEdic.id and plcp.NUMERO_PERIODO = plp.NUMERO_PERIODO) AS promo, ")
+
+        .append(" lanc.DATA_LCTO_DISTRIBUIDOR as dataLanctoSemFormatacao,")
+		
+        .append(" case estudo.liberado when 1 then 'LIBERADO' else '' end as liberado, ")
+		
+        .append(" estudo.ID as idEstudo,")
 		.append(" estudo.data_lancamento as dataLancamentoEstudo,")
 		
-		.append("	CASE estoqueProd.QTDE WHEN 0                                                                                                                         ")
-		.append("      THEN                                                                                                                                              ")
-		.append("         CASE plp.NUMERO_PERIODO                                                                                                                        ")
-		.append("            WHEN 1                                                                                                                                      ")
-		.append("            THEN                                                                                                                                        ")
-		.append("               ((SELECT reparte FROM lancamento WHERE id = lanc.id) - ifnull(lanc.REPARTE_PROMOCIONAL, 0))                                              ")
-		.append("            ELSE                                                                                                                                        ")
-		.append("                lanc.REPARTE      ")
-		.append("         END                                                                                                                                            ")
-		.append("      ELSE                                                                                                                                              ")
-		.append("      	estoqueProd.QTDE                                                                                                                                 ")
-		.append("     END AS reparte,                                                                                                                                               ")
+		.append("  CASE WHEN estoqueProd.QTDE IS NULL OR estoqueProd.QTDE=0 THEN        																					  ") 
+        .append("       CASE WHEN plp.NUMERO_PERIODO=1 THEN                     																					  ") 
+        .append("       	((SELECT reparte FROM lancamento WHERE id = lanc.id) - ifnull(lanc.REPARTE_PROMOCIONAL, 0))       								      ") 
+        .append("       WHEN plp.numero_periodo>1 THEN       																									  ") 
+        .append("           (SELECT sum(lc.REPARTE) FROM lancamento lc WHERE lc.PRODUTO_EDICAO_ID = prodEdic.id AND lc.PERIODO_LANCAMENTO_PARCIAL_ID = plp.ID)      ") 
+        .append("       ELSE          																															  ")   
+        .append("           (SELECT sum(lc.REPARTE) FROM lancamento lc WHERE lc.PRODUTO_EDICAO_ID = prodEdic.id)          										  ") 
+        .append("       END          																																  ") 
+        .append("   ELSE        																																	  ") 
+        .append("      estoqueProd.QTDE		  																														  ")
+        .append("   END AS reparte,		  																															  ")
 		
 		.append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib,")
-		.append(" lanc.REPARTE as lancto,")
+
+		.append(" (SELECT sum(lc.reparte) FROM lancamento lc join periodo_lancamento_parcial plcp on plcp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ")
+		.append(" 		WHERE lc.PRODUTO_EDICAO_ID = prodEdic.id and plcp.NUMERO_PERIODO = plp.NUMERO_PERIODO) AS lancto, ")
+		
 		.append(" floor(estudo.QTDE_REPARTE) as repDistrib")
+
 		.append(" from produto prod")
+		
 		.append(" join produto_edicao prodEdic on prodEdic.PRODUTO_ID = prod.ID")
 		.append(" left join estoque_produto estoqueProd on estoqueProd.PRODUTO_EDICAO_ID = prodEdic.ID ")
 		.append(" left join estoque_produto_cota_juramentado estoqueProdJuram on estoqueProdJuram.PRODUTO_EDICAO_ID = prodEdic.ID ")
@@ -78,17 +85,10 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" join fornecedor forn on forn.ID = prodForn.fornecedores_ID")
 		.append(" join pessoa ON pessoa.ID = forn.JURIDICA_ID")
 		.append(" left join PERIODO_LANCAMENTO_PARCIAL plp ON plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID ")
-		.append(" left join LANCAMENTO_PARCIAL lancamento_parcial ON plp.LANCAMENTO_PARCIAL_ID = lancamento_parcial.ID")
+		
 		.append(" where prod.ATIVO = true")
 		.append(" and prodEdic.ATIVO = true")
 		
-		/*
-		.append(" and case when (select distinct count(*) from lancamento l where l.status in('BALANCEADO','EM_BALANCEAMENTO') and l.DATA_LCTO_DISTRIBUIDOR = lanc.DATA_LCTO_DISTRIBUIDOR) =0 then  ")
-	    .append(" lanc.status in ('PLANEJADO', 'CONFIRMADO',  'FURO') ")
-	    .append(" else ")
-	    .append(" lanc.status in ('BALANCEADO', 'EM_BALANCEAMENTO') ")
-	    .append(" end ")
-	    */
 		.append(" and lanc.status in ('BALANCEADO', 'PLANEJADO', 'CONFIRMADO', 'EM_BALANCEAMENTO', 'FURO')")
 		.append(" and forn.SITUACAO_CADASTRO = 'ATIVO'")
 		.append(" and lanc.EXPEDICAO_ID is null")

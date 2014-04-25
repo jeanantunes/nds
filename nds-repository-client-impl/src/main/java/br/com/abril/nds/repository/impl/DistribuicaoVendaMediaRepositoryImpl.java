@@ -112,22 +112,86 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("       (case when plp.id is null then 0 else 1 end) parcial, ");
 		sql.append("       l.data_lcto_prevista dataLancamento, ");
 		
-		sql.append("	round((SELECT sum(estqProdCota.qtde_recebida) ");
-		sql.append("                  FROM ESTOQUE_PRODUTO_COTA estqProdCota ");
-		sql.append("                  WHERE estqProdCota.PRODUTO_EDICAO_ID = pe.ID),0)	AS reparte,");
+		sql.append(" CASE WHEN estqProd.QTDE IS NULL OR estqProd.QTDE=0 THEN                                                                                   ");
+		sql.append("    CASE WHEN plp.NUMERO_PERIODO=1 THEN                                                                                                    ");
+		sql.append("          ((SELECT reparte FROM lancamento WHERE id = l.id) - ifnull(l.REPARTE_PROMOCIONAL, 0))                                            ");
+		sql.append("       WHEN plp.numero_periodo>1 THEN                                                                                                      ");
+		sql.append("          (SELECT sum(lc.REPARTE) FROM lancamento lc WHERE lc.PRODUTO_EDICAO_ID = pe.id AND lc.PERIODO_LANCAMENTO_PARCIAL_ID = plp.ID)     ");
+		sql.append("       ELSE                                                                                                                                ");
+		sql.append("          (SELECT sum(lc.REPARTE) FROM lancamento lc WHERE lc.PRODUTO_EDICAO_ID = pe.id)                                                   ");
+		sql.append("    END                                                                                                                                    ");
+		sql.append(" ELSE                                                                                                                                      ");
+		sql.append("   estqProd.QTDE                                                                                                                           ");
+		sql.append(" END AS reparte, 																														   ");
 		
-		sql.append(" (CASE   ");
-		sql.append("  	WHEN l.status = 'FECHADO' or l.status = 'RECOLHIDO' ");
-		sql.append("  THEN ");
-		sql.append("  	  round((SELECT sum(estqProdCota.qtde_recebida - estqProdCota.qtde_devolvida) ");
-		sql.append("          FROM ESTOQUE_PRODUTO_COTA estqProdCota ");
-		sql.append("               WHERE estqProdCota.PRODUTO_EDICAO_ID = pe.ID),0) ");
-		sql.append("  ELSE ");
-		sql.append("      round((SELECT sum(estqProdCota.qtde_recebida) ");
-		sql.append("          FROM ESTOQUE_PRODUTO_COTA estqProdCota ");
-		sql.append("          WHERE estqProdCota.PRODUTO_EDICAO_ID = pe.ID),0) ");
-		sql.append("  END) venda, ");
 		
+		
+//		sql.append(" (CASE   ");
+//		sql.append("  	WHEN l.status = 'FECHADO' or l.status = 'RECOLHIDO' ");
+//		sql.append("  THEN ");
+//		sql.append("  	  round((SELECT sum(estqProdCota.qtde_recebida - estqProdCota.qtde_devolvida) ");
+//		sql.append("          FROM ESTOQUE_PRODUTO_COTA estqProdCota ");
+//		sql.append("               WHERE estqProdCota.PRODUTO_EDICAO_ID = pe.ID),0) ");
+//		sql.append("  ELSE ");
+//		sql.append("      round((SELECT sum(estqProdCota.qtde_recebida) ");
+//		sql.append("          FROM ESTOQUE_PRODUTO_COTA estqProdCota ");
+//		sql.append("          WHERE estqProdCota.PRODUTO_EDICAO_ID = pe.ID),0) ");
+//		sql.append("  END) venda, ");
+		
+		sql.append("   (CASE WHEN (pe.PARCIAL=true)                                                                                   ");
+		sql.append("   THEN                                                                                                           ");
+		sql.append("         (SELECT coalesce(sum(CASE tipomovime11_.OPERACAO_ESTOQUE                                                 ");
+		sql.append("           WHEN 'ENTRADA' THEN movimentoe10_.QTDE                                                                 ");
+		sql.append("           ELSE movimentoe10_.QTDE * -1 END),0)                                                                   ");
+		sql.append("                                                                                                                  ");
+		sql.append("         FROM MOVIMENTO_ESTOQUE_COTA movimentoe10_                                                                ");
+		sql.append("                                                                                                                  ");
+		sql.append("           INNER JOIN TIPO_MOVIMENTO tipomovime11_                                                                ");
+		sql.append("               ON movimentoe10_.TIPO_MOVIMENTO_ID = tipomovime11_.ID                                              ");
+		sql.append("           INNER JOIN LANCAMENTO lancamento12_                                                                    ");
+		sql.append("               ON movimentoe10_.LANCAMENTO_ID = lancamento12_.ID                                                  ");
+		sql.append("           INNER JOIN PERIODO_LANCAMENTO_PARCIAL periodolan13_                                                    ");
+		sql.append("               ON lancamento12_.PERIODO_LANCAMENTO_PARCIAL_ID = periodolan13_.ID                                  ");
+		sql.append("           INNER JOIN PRODUTO_EDICAO produtoedi14_                                                                ");
+		sql.append("               ON lancamento12_.PRODUTO_EDICAO_ID = produtoedi14_.ID                                              ");
+		sql.append("           LEFT OUTER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe15_                                                   ");
+		sql.append("               ON movimentoe10_.MOVIMENTO_ESTOQUE_COTA_FURO_ID = movimentoe15_.ID                                 ");
+		sql.append("                                                                                                                  ");
+		sql.append("         WHERE produtoedi14_.ID = pe.ID                                                                           ");
+		sql.append("           AND periodolan13_.ID = plp.ID                                                                          ");
+		sql.append("           AND lancamento12_.DATA_LCTO_DISTRIBUIDOR >= l.DATA_LCTO_DISTRIBUIDOR                                   ");
+		sql.append("           AND lancamento12_.DATA_REC_DISTRIB <= l.DATA_REC_DISTRIB                                               ");
+		sql.append("           AND (tipomovime11_.GRUPO_MOVIMENTO_ESTOQUE IN                                                          ");
+		sql.append("                   ('ENVIO_JORNALEIRO', 'FALTA_DE', 'FALTA_EM', 'SOBRA_DE', 'SOBRA_EM',                           ");
+		sql.append("                     'ESTORNO_COMPRA_ENCALHE', 'ESTORNO_COMPRA_SUPLEMENTAR', 'ESTORNO_ENVIO_REPARTE',             ");
+		sql.append("                     'ESTORNO_REPARTE_COTA_AUSENTE', 'ESTORNO_VENDA_ENCALHE', 'ESTORNO_VENDA_ENCALHE_SUPLEMENTAR',");
+		sql.append("                     'COMPRA_ENCALHE', 'COMPRA_SUPLEMENTAR', 'RECEBIMENTO_REPARTE', 'REPARTE_COTA_AUSENTE',       ");
+		sql.append("                     'VENDA_ENCALHE', 'VENDA_ENCALHE_SUPLEMENTAR'))                                               ");
+		sql.append("           AND (lancamento12_.TIPO_LANCAMENTO IN ('LANCAMENTO'))                                                  ");
+		sql.append("           AND (movimentoe15_.ID IS NULL))                                                                        ");
+		sql.append("   ELSE                                                                                                           ");
+		sql.append("       CASE                                                                                                       ");
+		sql.append("             WHEN l.status = 'FECHADO' OR l.status = 'RECOLHIDO'                                                  ");
+		sql.append("             THEN                                                                                                 ");
+		sql.append("                 round(                                                                                           ");
+		sql.append("                   (SELECT sum(estqProdCota.qtde_recebida - estqProdCota.qtde_devolvida)                          ");
+		sql.append("                       FROM ESTOQUE_PRODUTO_COTA estqProdCota                                                     ");
+		sql.append("                       join lancamento lc on lc.PRODUTO_EDICAO_ID = estqProdCota.PRODUTO_EDICAO_ID                ");
+		sql.append("                       left join periodo_lancamento_parcial plct on plct.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID    ");
+		sql.append("                     WHERE estqProdCota.PRODUTO_EDICAO_ID = pe.ID and plct.NUMERO_PERIODO = plp.numero_periodo),  ");
+		sql.append("                   0)                                                                                             ");
+		sql.append("             ELSE                                                                                                 ");
+		sql.append("                 round(                                                                                           ");
+		sql.append("                   (SELECT sum(estqProdCota.qtde_recebida)                                                        ");
+		sql.append("                       FROM ESTOQUE_PRODUTO_COTA estqProdCota                                                     ");
+		sql.append("                       join lancamento lc on lc.PRODUTO_EDICAO_ID = estqProdCota.PRODUTO_EDICAO_ID                ");
+		sql.append("                       left join periodo_lancamento_parcial plct on plct.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID    ");
+		sql.append("                     WHERE estqProdCota.PRODUTO_EDICAO_ID = pe.ID and plct.NUMERO_PERIODO = plp.numero_periodo),  ");
+		sql.append("                   0)                                                                                             ");
+		sql.append("         END                                                                                                      ");
+		sql.append("   END                                                                                                            ");
+		sql.append("   		) venda,                                                                                                   ");
+ 
 		sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then ");
 		sql.append("           round(sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)) / sum(epc.qtde_recebida) * 100 ");
 		sql.append("       else 0 end) percentualVenda, ");
@@ -142,7 +206,8 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("  join produto p on p.id = pe.produto_id ");
 		sql.append("  left join estoque_produto_cota epc on epc.produto_edicao_id = pe.id ");
 		sql.append("  left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
-	
+		sql.append("  LEFT JOIN estoque_produto estqProd ON estqProd.PRODUTO_EDICAO_ID = pe.ID ");
+
 		sql.append(" where l.status in ('EXPEDIDO', 'EM_BALANCEAMENTO_RECOLHIMENTO', 'EM_RECOLHIMENTO', 'BALANCEADO_RECOLHIMENTO', 'EXCLUIDO_RECOLHIMENTO', 'FECHADO', 'RECOLHIDO') ");
 		
 		if (filtro.getEdicao() != null) {
