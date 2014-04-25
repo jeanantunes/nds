@@ -139,7 +139,6 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 				" and ne.valorDividaPagaComissao is not null "+
 				" and ne.valorDividaPagaComissao > 0 "+
 				" and ne.tipoNegociacao = :tipoComissao "+
-				" group by ne.id "+
 				" order by ne.dataCriacao ";
 		
 		Query query = this.getSession().createQuery(hql.toString());
