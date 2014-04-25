@@ -851,6 +851,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         
         String path = diretorioReports.toURI().getPath();
         
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+
         if (TipoNegociacao.COMISSAO.equals(negociacao.getTipoNegociacao())) {
             
             path += "/negociacao_divida_comissao.jasper";
@@ -862,6 +864,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         } else {
 
         	path += "/negociacao_divida_boleto.jasper";
+        	
+            parameters.put("TIPO_COBRANCA", negociacao.getFormaCobranca().getTipoCobranca().getDescricao());
         }
 
         InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
@@ -870,7 +874,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             inputStream = new ByteArrayInputStream(new byte[0]);
         }
         
-        final Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("TOTAL_PARCELAS", CurrencyUtil.formatarValor(totalParcelas.setScale(2, RoundingMode.HALF_EVEN)));
         parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
         
@@ -880,8 +883,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         parameters.put("LOGO_DISTRIBUIDOR", inputStream);
         
         parameters.put("COTA_ATIVA", SituacaoCadastro.ATIVO.equals(cota.getSituacaoCadastro()));
-        
-        parameters.put("TIPO_COBRANCA", negociacao.getFormaCobranca().getTipoCobranca().getDescricao());
         
         return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
     }
