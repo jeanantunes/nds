@@ -195,7 +195,11 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		
 		hql.append(" SELECT cota.numeroCota as numeroCota, ");
 		hql.append("        coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nome, ");		
-		hql.append("        controleConferenciaEncalheCota.dataOperacao as dataEncalhe, ");		
+		hql.append("        controleConferenciaEncalheCota.dataOperacao as dataEncalhe, ");
+		hql.append("        notaFiscalEntradaCotas.serie as serie, ");
+		hql.append("        notaFiscalEntradaCotas.chaveAcesso as chaveAcesso, ");
+		hql.append("        notaFiscalEntradaCotas.numero as numeroNfe, ");
+		hql.append("        notaFiscalEntradaCotas.id as idNotaFiscalEntrada, ");
 		hql.append("        CASE WHEN ");
 		hql.append("        ( ");
 		hql.append("             SELECT COUNT(notaFiscalEntradaCota) ");
@@ -248,12 +252,13 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		StringBuilder hql = new StringBuilder();
 	
 		hql.append(" from ControleConferenciaEncalheCota as controleConferenciaEncalheCota ");
+		hql.append(" LEFT JOIN controleConferenciaEncalheCota.notaFiscalEntradaCota as notaFiscalEntradaCotas ");
 		hql.append(" LEFT JOIN controleConferenciaEncalheCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN controleConferenciaEncalheCota.conferenciasEncalhe as conferenciasEncalhe");
-		hql.append("  LEFT JOIN conferenciasEncalhe.produtoEdicao as produtoEdicao");
-		hql.append("  LEFT JOIN produtoEdicao.produto as produto");
-		hql.append("  LEFT JOIN produto.fornecedores as fornecedor");
+		hql.append(" LEFT JOIN conferenciasEncalhe.produtoEdicao as produtoEdicao");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto");
+		hql.append(" LEFT JOIN produto.fornecedores as fornecedor");
 		
 		hql.append(" where ( ");
 		hql.append("            SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");
