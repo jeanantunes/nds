@@ -128,9 +128,8 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		return (Negociacao) query.uniqueResult();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<Negociacao> obterNegociacaoPorComissaoCota(Long idCota){
+	public Negociacao obterNegociacaoPorComissaoCota(Long idCota){
 		
 		final String hql = "select ne from Negociacao ne " +
 				" join ne.cobrancasOriginarias co "+
@@ -147,7 +146,9 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		query.setParameter("idCota", idCota);
 		query.setParameter("tipoComissao", TipoNegociacao.COMISSAO);
 		
-		return query.list();
+		query.setMaxResults(1);
+
+		return (Negociacao) query.uniqueResult();
 	}
 	
 	public Long obterQuantidadeNegociacaoFollowup(FiltroFollowupNegociacaoDTO filtro){
