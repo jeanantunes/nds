@@ -12,6 +12,7 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.integracao.data.helper.LancamentoDataHelper;
 import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
@@ -364,9 +365,11 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		lancamento.setProdutoEdicao(produtoEdicaoLancamento);
 		lancamento.setDataCriacao(new Date());
 		
-		/*lancamento.setDataLancamentoDistribuidor(DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
-		lancamento.setDataLancamentoPrevista(DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));*/
-		lancamento.setDataLancamentoDistribuidor(input.getDataMovimento());
+		
+		//lancamento.setDataLancamentoDistribuidor(DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
+		//lancamento.setDataLancamentoPrevista(DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
+		
+		//lancamento.setDataLancamentoDistribuidor(input.getDataMovimento());
 		lancamento.setDataLancamentoPrevista(input.getDataMovimento());
 		lancamento.setAlteradoInteface(true);
 		lancamento.setStatus(StatusLancamento.CONFIRMADO);
@@ -382,7 +385,12 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		cal.add(Calendar.DATE, peb); 		
 		//cal.add(Calendar.DATE, produtoEdicaoLancamento.getProduto().getPeb()); 		
 		lancamento.setDataRecolhimentoDistribuidor(cal.getTime());
-		lancamento.setDataRecolhimentoPrevista(cal.getTime());		
+		lancamento.setDataRecolhimentoPrevista(cal.getTime());	
+		
+		try{
+		 lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(input.getDataMovimento(), produtoEdicaoLancamento.getProduto().getFornecedor().getId()));
+		} catch (Exception e) {
+		}
 
 		//defaults
 		lancamento.setDataStatus(new Date());	

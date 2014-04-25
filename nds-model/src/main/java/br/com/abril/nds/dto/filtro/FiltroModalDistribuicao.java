@@ -3,7 +3,10 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -45,8 +48,6 @@ public class FiltroModalDistribuicao implements Serializable{
 	
 	private Date  carenciaFimEntregaBanca;
 	
-	
-	
 	private boolean procuracao;
 	
 	private boolean procuracaoRecebida;
@@ -57,6 +58,9 @@ public class FiltroModalDistribuicao implements Serializable{
 	
 	private Date carenciaFimEntregador;
 	
+	private BaseCalculo baseCalculo;
+	
+	private List<ItemDTO<BaseCalculo,String>> basesCalculo;
 
 	public String getNmAssitPromoComercial() {
 		return nmAssitPromoComercial;
@@ -226,6 +230,20 @@ public class FiltroModalDistribuicao implements Serializable{
 		this.carenciaFimEntregaBanca = carenciaFimEntregaBanca;
 	}
 
+	public BaseCalculo getBaseCalculo() {
+		return baseCalculo;
+	}
 
-	
+	public void setBaseCalculo(BaseCalculo baseCalculo) {
+		this.baseCalculo = baseCalculo;
+	}
+
+	public List<ItemDTO<BaseCalculo,String>> getBasesCalculo() {
+		return basesCalculo;
+	}
+
+	public void setBasesCalculo(List<ItemDTO<BaseCalculo,String>> basesCalculo) {
+		this.basesCalculo = basesCalculo;
+	}
+
 }

@@ -1449,16 +1449,13 @@ public class CotaController extends BaseController {
 		
 		if (DescricaoTipoEntrega.ENTREGA_EM_BANCA.equals(distribuicao.getDescricaoTipoEntrega())) {
 			
-			this.validarPercentualTaxa(
-				distribuicao.getPercentualFaturamento(), distribuicao.getTaxaFixa());
+			this.validarPercentualTaxa(distribuicao.getPercentualFaturamento(), distribuicao.getTaxaFixa());
 			
-			this.validarPeriodoCarencia(
-				distribuicao.getInicioPeriodoCarencia(), distribuicao.getFimPeriodoCarencia());
+			this.validarPeriodoCarencia(distribuicao.getInicioPeriodoCarencia(), distribuicao.getFimPeriodoCarencia());
 			
 		} else if (DescricaoTipoEntrega.ENTREGADOR.equals(distribuicao.getDescricaoTipoEntrega())) {
 			
-			this.validarPeriodoCarencia(
-				distribuicao.getInicioPeriodoCarencia(), distribuicao.getFimPeriodoCarencia());
+			this.validarPeriodoCarencia(distribuicao.getInicioPeriodoCarencia(), distribuicao.getFimPeriodoCarencia());
 		}
 	}
 
@@ -1470,11 +1467,9 @@ public class CotaController extends BaseController {
 	 */
 	private void validarPercentualTaxa(BigDecimal percentualFaturamento, BigDecimal taxaFixa) {
 		
-		if ((percentualFaturamento == null && taxaFixa == null)
-				|| (percentualFaturamento != null && taxaFixa != null)) {
+		if (!(percentualFaturamento == null ^ taxaFixa == null)) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"O Percentual de Faturamento ou a Taxa Fixa devem ser preenchidos!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um dos campos \"Percentual de Faturamento\" ou \"Taxa Fixa\" deve ser preenchido!");
 		}
 	}
 
