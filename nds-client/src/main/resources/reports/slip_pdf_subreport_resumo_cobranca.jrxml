@@ -12,7 +12,7 @@
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<columnHeader>
+	<title>
 		<band height="42">
 			<staticText>
 				<reportElement uuid="3658d954-fed0-4d66-87fe-6cf90b13f67f" mode="Opaque" x="0" y="19" width="496" height="23" isPrintWhenDetailOverflows="true"/>
@@ -52,7 +52,7 @@
 				<textFieldExpression><![CDATA[new BigDecimal($P{VALOR_TOTAL_PAGAR}.toString())]]></textFieldExpression>
 			</textField>
 		</band>
-	</columnHeader>
+	</title>
 	<detail>
 		<band height="28" splitType="Stretch">
 			<textField>
