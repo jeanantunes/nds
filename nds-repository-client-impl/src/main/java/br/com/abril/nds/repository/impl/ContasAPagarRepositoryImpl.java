@@ -862,7 +862,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append("select ")
-		   .append("    produto2.codigo, ")
+		   .append("    produto2.codigo as codigo, ")
 		   .append("    produto2.nomeComercial as produto, ")
 		   .append("    produtoEdicao.numeroEdicao as edicao, ")
 		   .append(" 	produtoEdicao.precoVenda as precoCapa, ")
@@ -906,6 +906,9 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarEncalheDTO.class));
+		
 		query.setParameter("data", filtro.getDataDetalhe());
 		
 		if (filtro.getProduto() != null && !filtro.getProduto().isEmpty()){

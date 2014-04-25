@@ -28,6 +28,8 @@ public interface ContagemDevolucaoService {
 			boolean checkAll, List<ProdutoEdicaoFechadaVO> listaEdicoesFechadas, FiltroDigitacaoContagemDevolucaoDTO filtro);
 	
 	void gerarNotasFiscaisPorFornecedorFecharLancamentos(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) throws FileNotFoundException, IOException;
+	
+	void fecharLancamentos(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) throws FileNotFoundException, IOException;
 
 	List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro,

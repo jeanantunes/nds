@@ -1105,7 +1105,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 							
 							Cota cota = pdv.getCota();
 							
-							if(cota != null) {
+							final boolean tipoDeRoteiroNaoEspecial = !rotaPDV.isTipoRoteiroEspecial();
+							
+							if(cota != null && tipoDeRoteiroNaoEspecial) {
 								
 								cota.setBox(null);
 								

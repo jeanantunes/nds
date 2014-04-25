@@ -429,7 +429,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     @Override
     @Transactional
-    public void salvarProdutoEdicao(final ProdutoEdicaoDTO dto, final String codigoProduto, final String contentType, final InputStream imgInputStream, final boolean istrac29) {
+    public void salvarProdutoEdicao(
+            final ProdutoEdicaoDTO dto, final String codigoProduto, final String contentType, 
+            final InputStream imgInputStream, final boolean istrac29, final ModoTela modoTela) {
         
         ProdutoEdicao produtoEdicao = null;
         
@@ -444,7 +446,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
         }
         
-        if (produtoEdicaoRepository.isNumeroEdicaoCadastrada(produtoEdicao.getProduto().getId(),
+        if (!ModoTela.EDICAO.equals(modoTela) && produtoEdicaoRepository.isNumeroEdicaoCadastrada(produtoEdicao.getProduto().getId(),
                 dto.getNumeroEdicao(), produtoEdicao.getId())) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Número da edição ja cadastra. Escolha outro número.");
         }

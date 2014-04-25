@@ -7,6 +7,7 @@ import java.util.List;
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
@@ -54,4 +55,9 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	 * Método que obtem os movimentos de Envio ao Jornaleiro (Consignado) para conta corrente da Cota do tipo À Vista
 	 */
 	List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaAVistaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro);
+
+    List<DebitoCreditoCotaDTO> buscarMovFinanPorCotaEData(
+            Long idCota, Date data, Long idFornecedor);
+
+    List<DebitoCreditoCotaDTO> obterConsolidadosDataOperacaoSlip(Long idCota, Date dataOperacao);
 }

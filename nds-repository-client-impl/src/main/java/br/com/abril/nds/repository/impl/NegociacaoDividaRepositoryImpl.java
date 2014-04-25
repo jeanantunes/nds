@@ -19,6 +19,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.financeiro.TipoNegociacao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
 
@@ -127,23 +128,27 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		return (Negociacao) query.uniqueResult();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<Negociacao> obterNegociacaoPorComissaoCota(Long idCota){
+	public Negociacao obterNegociacaoPorComissaoCota(Long idCota){
 		
-		StringBuilder hql = new StringBuilder("select ne from Negociacao ne ");
-		hql.append(" join ne.cobrancasOriginarias co ")
-		   .append(" join co.cota cota ")
-		   .append(" where cota.id = :idCota ")
-		   .append(" and ne.comissaoParaSaldoDivida is not null ")
-		   .append(" and ne.valorDividaPagaComissao is not null ")
-		   .append(" and ne.valorDividaPagaComissao > 0 ")
-		   .append(" order by ne.dataCriacao ");
+		final String hql = "select ne from Negociacao ne " +
+				" join ne.cobrancasOriginarias co "+
+				" join co.cota cota "+
+				" where cota.id = :idCota "+
+				" and ne.comissaoParaSaldoDivida is not null "+
+				" and ne.valorDividaPagaComissao is not null "+
+				" and ne.valorDividaPagaComissao > 0 "+
+				" and ne.tipoNegociacao = :tipoComissao "+
+				" group by ne.id "+
+				" order by ne.dataCriacao ";
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idCota", idCota);
+		query.setParameter("tipoComissao", TipoNegociacao.COMISSAO);
 		
-		return query.list();
+		query.setMaxResults(1);
+
+		return (Negociacao) query.uniqueResult();
 	}
 	
 	public Long obterQuantidadeNegociacaoFollowup(FiltroFollowupNegociacaoDTO filtro){

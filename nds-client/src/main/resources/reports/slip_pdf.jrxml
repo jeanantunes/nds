@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip_pdf" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="591" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" whenResourceMissingType="Empty" uuid="a28e778e-1e14-484a-90d1-0799fff7d59c">
-	<property name="ireport.zoom" value="1.366026910730144"/>
+	<property name="ireport.zoom" value="1.3660269107301448"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="154"/>
+	<property name="ireport.y" value="158"/>
 	<style name="zebrado" mode="Opaque" backcolor="#F0F0F0">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($V{COLUMN_COUNT}.intValue() % 2) == 0)]]></conditionExpression>
@@ -23,7 +23,7 @@
 	<parameter name="NOME_COTA" class="java.lang.String"/>
 	<parameter name="DEV_ENCALHE" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:\\Henrique\\Relatorios iReport\\"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LISTA_COMPOSICAO_COBRANCA" class="java.util.List"/>
 	<parameter name="LOGOTIPO" class="java.awt.Image"/>
@@ -31,6 +31,7 @@
 	<parameter name="VALOR_TOTAL_SEM_DESCONTO" class="java.math.BigDecimal"/>
 	<parameter name="VALOR_TOTAL_DESCONTO" class="java.math.BigDecimal"/>
 	<parameter name="VALOR_LIQUIDO_DEVIDO" class="java.math.BigDecimal"/>
+	<parameter name="LISTA_RESUMO_COBRANCA" class="java.util.List"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -366,7 +367,7 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="199">
+		<band height="198" splitType="Stretch">
 			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement uuid="397f5a76-0bc0-476f-b72b-56f51f031e00" mode="Opaque" x="293" y="100" width="254" height="20" backcolor="#F0F0F0"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
@@ -427,7 +428,10 @@
 			</textField>
 			<elementGroup>
 				<subreport>
-					<reportElement uuid="ef404239-9c91-448a-903d-9b9e5a48cffa" positionType="Float" stretchType="RelativeToBandHeight" mode="Opaque" x="50" y="170" width="497" height="28" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+					<reportElement uuid="ef404239-9c91-448a-903d-9b9e5a48cffa" stretchType="RelativeToBandHeight" mode="Opaque" x="50" y="170" width="497" height="28" backcolor="#FFFFFF"/>
+					<subreportParameter name="LISTA_RESUMO_COBRANCA">
+						<subreportParameterExpression><![CDATA[$P{LISTA_RESUMO_COBRANCA}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="VALOR_TOTAL_DESCONTO">
 						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_DESCONTO}.toString()]]></subreportParameterExpression>
 					</subreportParameter>
@@ -438,7 +442,7 @@
 						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_SEM_DESCONTO}.toString()]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{LISTA_COMPOSICAO_COBRANCA})]]></dataSourceExpression>
-					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "slip_subreport_pdf.jasper"]]></subreportExpression>
+					<subreportExpression><![CDATA["slip_subreport_pdf.jasper"]]></subreportExpression>
 				</subreport>
 			</elementGroup>
 			<elementGroup/>

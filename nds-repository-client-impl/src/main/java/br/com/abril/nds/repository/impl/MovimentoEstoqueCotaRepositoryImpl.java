@@ -1083,20 +1083,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             sql.append(" MEC_REPARTE.DATA as dataMovimentoEstoque ");
             
         }
-        
-        
-        
+
         sql.append(getFromWhereConsultaEncalhe(filtro));
         
         return sql;
     }
     
     
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<ConsultaEncalheDetalheDTO> obterListaConsultaEncalheDetalhe(final FiltroConsultaEncalheDetalheDTO filtro) {
-        
-        final StringBuilder sql = new StringBuilder();
+    private String montarSqlEncalheDetalhe(final FiltroConsultaEncalheDetalheDTO filtro){
+    	
+    	final StringBuilder sql = new StringBuilder();
         
         sql.append("	select distinct	");
         
@@ -1104,7 +1100,60 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append("	coalesce(PESSOA.NOME,PESSOA.RAZAO_SOCIAL) as nomeCota,    ");
         sql.append(" 	CONFERENCIA_ENCALHE.OBSERVACAO			  as observacao  ");
         
-        sql.append("	from	");
+        montarSqlFromDetalhesEncalhe(sql);
+        
+        sql.append("	where CONFERENCIA_ENCALHE.OBSERVACAO IS NOT NULL	");
+        
+        montarParametrosDetalhesEncalhe(filtro, sql);
+        
+        return sql.toString();
+    }
+    
+    private String montarSqlEncalheDetalheJuramentado(final FiltroConsultaEncalheDetalheDTO filtro){
+    	
+    	final StringBuilder sql = new StringBuilder();
+        
+        sql.append("	select distinct	");
+        
+        sql.append("	COTA.NUMERO_COTA						  as numeroCota,  ");
+        sql.append("	coalesce(PESSOA.NOME,PESSOA.RAZAO_SOCIAL) as nomeCota,    ");
+        sql.append(" 	concat(format(CONFERENCIA_ENCALHE.QTDE,0),' exes. Juramentado') as observacao  ");
+        
+        montarSqlFromDetalhesEncalhe(sql);
+        
+        sql.append("	where CONFERENCIA_ENCALHE.JURAMENTADA = true	");
+        
+        montarParametrosDetalhesEncalhe(filtro, sql);
+        
+        return sql.toString();
+    }
+
+	private void montarParametrosDetalhesEncalhe(
+			final FiltroConsultaEncalheDetalheDTO filtro,
+			final StringBuilder sql) {
+		
+		if(filtro.getDataMovimento() != null) {
+            sql.append("	AND MOVIMENTO_ESTOQUE_COTA.DATA = :dataMovimento ");
+        }
+        
+        if(filtro.getDataRecolhimento() != null) {
+            sql.append("	AND CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento ");
+        }
+        
+        if(filtro.getNumeroCota()!=null) {
+            sql.append(" AND COTA.NUMERO_COTA = :numeroCota  ");
+        }
+        
+        if(filtro.getIdFornecedor() != null) {
+            sql.append(" AND PRODUTO_FORNECEDOR.FORNECEDORES_ID = :idFornecedor ");
+        }
+        
+        sql.append(" AND PRODUTO_EDICAO.ID = :idProdutoEdicao ");
+	}
+
+	private void montarSqlFromDetalhesEncalhe(final StringBuilder sql) {
+		
+		sql.append("	from	");
         
         sql.append("	MOVIMENTO_ESTOQUE_COTA inner join CONFERENCIA_ENCALHE on ");
         sql.append("	( CONFERENCIA_ENCALHE.MOVIMENTO_ESTOQUE_COTA_ID = MOVIMENTO_ESTOQUE_COTA.ID	) ");
@@ -1129,26 +1178,19 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append("	inner join PESSOA on                   	");
         sql.append("	( PESSOA.ID = COTA.PESSOA_ID )	");
+	}
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ConsultaEncalheDetalheDTO> obterListaConsultaEncalheDetalhe(final FiltroConsultaEncalheDetalheDTO filtro) {
+     	
+    	final StringBuilder sql = new StringBuilder();
         
-        sql.append("	where CONFERENCIA_ENCALHE.OBSERVACAO IS NOT NULL	");
+    	sql.append(this.montarSqlEncalheDetalhe(filtro));
         
-        if(filtro.getDataMovimento() != null) {
-            sql.append("	AND MOVIMENTO_ESTOQUE_COTA.DATA = :dataMovimento ");
-        }
+        sql.append(" union ");
         
-        if(filtro.getDataRecolhimento() != null) {
-            sql.append("	AND CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento ");
-        }
-        
-        if(filtro.getNumeroCota()!=null) {
-            sql.append(" AND COTA.NUMERO_COTA = :numeroCota  ");
-        }
-        
-        if(filtro.getIdFornecedor() != null) {
-            sql.append(" AND PRODUTO_FORNECEDOR.FORNECEDORES_ID = :idFornecedor ");
-        }
-        
-        sql.append(" AND PRODUTO_EDICAO.ID = :idProdutoEdicao ");
+        sql.append(this.montarSqlEncalheDetalheJuramentado(filtro));
         
         final PaginacaoVO paginacao = filtro.getPaginacao();
         
@@ -1170,7 +1212,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
                 orderByColumn = " observacao ";
                 break;
             default:
-                break;
+            	 orderByColumn = " numeroCota ";
+            	break;
             }
             
             sql.append(orderByColumn);
@@ -1182,6 +1225,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             }
             
         }
+        else{
+        
+        	  sql.append(" order by observacao,nomeCota,numeroCota ");
+        }
         
         final SQLQuery sqlquery = getSession().createSQLQuery(sql.toString())
                 
@@ -1191,23 +1238,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sqlquery.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEncalheDetalheDTO.class));
         
-        if(filtro.getNumeroCota()!=null) {
-            sqlquery.setParameter("numeroCota", filtro.getNumeroCota());
-        }
-        
-        if(filtro.getIdFornecedor() != null) {
-            sqlquery.setParameter("idFornecedor", filtro.getIdFornecedor());
-        }
-        
-        sqlquery.setParameter("idProdutoEdicao", filtro.getIdProdutoEdicao());
-        
-        if(filtro.getDataMovimento() != null) {
-            sqlquery.setParameter("dataMovimento", filtro.getDataMovimento());
-        }
-        
-        if(filtro.getDataRecolhimento() != null) {
-            sqlquery.setParameter("dataRecolhimento", filtro.getDataRecolhimento());
-        }
+        this.atribuirValoresAosParametrosEncalheDetalhe(filtro, sqlquery);
         
         if(filtro.getPaginacao()!=null) {
             
@@ -1230,64 +1261,31 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         final StringBuilder sql = new StringBuilder();
         
-        sql.append("	select count(1) from ( ");
-        sql.append("	select distinct	");
+        sql.append(" select count(1) from ( ");
         
-        sql.append("	COTA.NUMERO_COTA				as numeroCota,  ");
-        sql.append("	PESSOA.RAZAO_SOCIAL				as nomeCota,    ");
-        sql.append(" 	CONFERENCIA_ENCALHE.OBSERVACAO	as observacao  ");
+        sql.append(this.montarSqlEncalheDetalhe(filtro));
         
-        sql.append("	from	");
+        sql.append(" union ");
         
-        sql.append("	MOVIMENTO_ESTOQUE_COTA inner join CONFERENCIA_ENCALHE on ");
-        sql.append("	( CONFERENCIA_ENCALHE.MOVIMENTO_ESTOQUE_COTA_ID = MOVIMENTO_ESTOQUE_COTA.ID	) ");
-        
-        sql.append("	inner join ESTOQUE_PRODUTO_COTA on                                         ");
-        sql.append("	( MOVIMENTO_ESTOQUE_COTA.ESTOQUE_PROD_COTA_ID = ESTOQUE_PRODUTO_COTA.ID )  ");
-        
-        sql.append("	inner join COTA on                                         ");
-        sql.append("	( MOVIMENTO_ESTOQUE_COTA.COTA_ID = COTA.ID )  ");
-        
-        sql.append("	inner join CHAMADA_ENCALHE_COTA on ");
-        sql.append("	( CHAMADA_ENCALHE_COTA.ID = CONFERENCIA_ENCALHE.CHAMADA_ENCALHE_COTA_ID ) ");
-        
-        sql.append("	inner join CHAMADA_ENCALHE on ");
-        sql.append("	( CHAMADA_ENCALHE.ID = CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_ID ) ");
-        
-        sql.append("	inner join PRODUTO_EDICAO on ");
-        sql.append("	( PRODUTO_EDICAO.ID = MOVIMENTO_ESTOQUE_COTA.PRODUTO_EDICAO_ID ) ");
-        
-        sql.append("	inner join PRODUTO_FORNECEDOR on ");
-        sql.append("	( PRODUTO_FORNECEDOR.PRODUTO_ID = PRODUTO_EDICAO.PRODUTO_ID ) ");
-        
-        sql.append("	inner join PESSOA on                   	");
-        sql.append("	( PESSOA.ID = COTA.PESSOA_ID )	");
-        
-        sql.append("	where 1=1 ");
-        
-        if(filtro.getDataMovimento() != null) {
-            sql.append(" AND MOVIMENTO_ESTOQUE_COTA.DATA = :dataMovimento ");
-        }
-        
-        if(filtro.getDataRecolhimento() != null) {
-            sql.append(" AND CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento ");
-        }
-        
-        if(filtro.getNumeroCota()!=null) {
-            sql.append(" AND COTA.NUMERO_COTA = :numeroCota  ");
-        }
-        
-        if(filtro.getIdFornecedor() != null) {
-            sql.append(" AND PRODUTO_FORNECEDOR.FORNECEDORES_ID = :idFornecedor ");
-        }
-        
-        sql.append(" AND PRODUTO_EDICAO.ID = :idProdutoEdicao ");
+        sql.append(this.montarSqlEncalheDetalheJuramentado(filtro));
         
         sql.append(" ) as consultaEncalheDetalhe ");
         
         final SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
         
-        if(filtro.getNumeroCota() != null) {
+        this.atribuirValoresAosParametrosEncalheDetalhe(filtro, sqlquery);
+        
+        final BigInteger qtde = (BigInteger) sqlquery.uniqueResult();
+        
+        return qtde == null ? 0 : qtde.intValue();
+        
+    }
+
+	private void atribuirValoresAosParametrosEncalheDetalhe(
+			final FiltroConsultaEncalheDetalheDTO filtro,
+			final SQLQuery sqlquery) {
+		
+		if(filtro.getNumeroCota() != null) {
             sqlquery.setParameter("numeroCota", filtro.getNumeroCota());
         }
         
@@ -1304,12 +1302,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         if(filtro.getDataRecolhimento() != null) {
             sqlquery.setParameter("dataRecolhimento", filtro.getDataRecolhimento());
         }
-        
-        final BigInteger qtde = (BigInteger) sqlquery.uniqueResult();
-        
-        return qtde == null ? 0 : qtde.intValue();
-        
-    }
+	}
     
     @Override
     public ConsultaEncalheRodapeDTO obterValoresTotais(final FiltroConsultaEncalheDTO filtro) {
@@ -1521,7 +1514,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" OR EP.QTDE_SUPLEMENTAR != 0 ");
         sql.append(" OR EP.QTDE_DEVOLUCAO_ENCALHE != 0) ");
            
-        sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
+       	sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
 
         sql.append(" GROUP BY PROD_EDICAO.ID ");
 
@@ -1629,8 +1622,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE.name());
         }
        
-        query.setParameterList("idFornecedor", filtro.getFornecedores());
-        
+       	query.setParameterList("idFornecedor", filtro.getFornecedores());
+
         return query;
         
     }

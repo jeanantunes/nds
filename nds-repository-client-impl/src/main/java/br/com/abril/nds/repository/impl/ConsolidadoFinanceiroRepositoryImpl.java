@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
@@ -1241,6 +1242,48 @@ ConsolidadoFinanceiroRepository {
     
     @SuppressWarnings("unchecked")
     @Override
+    public List<DebitoCreditoCotaDTO> buscarMovFinanPorCotaEData(
+            final Long idCota, final Date data, final Long idFornecedor) {
+        
+        final StringBuilder hql = new StringBuilder("select new ");
+        hql.append(DebitoCreditoCotaDTO.class.getCanonicalName())
+           .append(" (movs.valor as valor, ")
+           .append(" movs.observacao as observacoes, ")
+           .append(" tpMov.operacaoFinaceira as tipoLancamento, ")
+           .append(" tpMov.grupoMovimentoFinaceiro as tipoMovimento, ")
+           .append(" movs.data as dataLancamento, " )
+           .append(" movs.dataCriacao as dataVencimento) ")
+           .append(" from ConsolidadoFinanceiroCota c ")
+           .append(" join c.movimentos movs ")
+           .append(" join movs.fornecedor fornecedor ")
+           .append(" join movs.tipoMovimento tpMov ")
+           .append(" join c.cota cota ")
+           .append(" where c.dataConsolidado = :data ")
+           .append(" and cota.id = :idCota ")
+           .append(" and tpMov.grupoMovimentoFinaceiro not in (:grupoIgnorar) ");
+        
+        if (idFornecedor != null){
+            
+            hql.append(" and fornecedor.id = :idFornecedor ");
+        }
+        
+        final Query query = this.getSession().createQuery(hql.toString());
+        query.setParameter("data", data);
+        query.setParameter("idCota", idCota);
+        query.setParameterList("grupoIgnorar", 
+                Arrays.asList(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
+                GrupoMovimentoFinaceiro.ENVIO_ENCALHE));
+        
+        if (idFornecedor != null){
+            
+            query.setParameter("idFornecedor", idFornecedor);
+        }
+        
+        return query.list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
     public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(final Long idCota, Date dataOperacao) {
         
         final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c ");
@@ -1961,5 +2004,40 @@ ConsolidadoFinanceiroRepository {
         query.setParameter("cotaConsolidado", consolidadoFinanceiroCota.getCota());
         
         return (Date) query.uniqueResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<DebitoCreditoCotaDTO> obterConsolidadosDataOperacaoSlip(Long idCota, Date dataOperacao) {
+        
+        final String hql = "select " +
+        		" ABS(con.TOTAL) as valor, " +
+                " concat('Cobrança ', " +
+                " CASE WHEN d.STATUS in (:statusNegociada) THEN 'negociada' " +
+                "      WHEN d.STATUS = :statusInadimplencia THEN 'acumulada' " +
+                "      WHEN cob.ID IS NOT NULL THEN " +
+                "               concat('efetuada', ' - venc. ', " +
+                "               (SELECT EXTRACT(DAY FROM cob.DT_VENCIMENTO)), '/', (SELECT EXTRACT(MONTH FROM cob.DT_VENCIMENTO)), '/', (SELECT EXTRACT(YEAR FROM cob.DT_VENCIMENTO))) " +
+                "      ELSE 'postergada' "+
+                " END " +
+                " ) as observacoes" +
+                " from CONSOLIDADO_FINANCEIRO_COTA con "+
+                " join COTA c ON (c.ID = con.COTA_ID) " +
+                " left join DIVIDA_CONSOLIDADO dc ON (dc.CONSOLIDADO_ID = con.ID) " +
+                " left join DIVIDA d ON (d.ID = dc.DIVIDA_ID) "+
+                " left join COBRANCA cob ON (cob.DIVIDA_ID = d.ID) " +
+        		" where con.DT_CONSOLIDADO = :dataOperacao " +
+        		" and c.ID = :idCota ";
+        
+        final SQLQuery query = this.getSession().createSQLQuery(hql.toString());
+        query.setParameter("idCota", idCota);
+        query.setParameter("dataOperacao", dataOperacao);
+        query.setParameterList("statusNegociada", 
+                Arrays.asList(StatusDivida.NEGOCIADA, StatusDivida.POSTERGADA));
+        query.setParameter("statusInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA);
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+        
+        return query.list();
     }
 }
