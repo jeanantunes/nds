@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
+import br.com.abril.nds.integracao.data.helper.LancamentoDataHelper;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
@@ -46,6 +47,7 @@ import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 
@@ -67,6 +69,9 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
     @Autowired
 	private FornecedorRepository fornecedorRepository;
     
+    @Autowired
+	private LancamentoService lancamentoService;
+       
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
         tempVar.set(new ArrayList<NotaFiscalEntradaFornecedor>());
@@ -275,9 +280,15 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 lancamento.setDataCriacao(dataAtual);
                 lancamento.setNumeroLancamento(numeroLancamentoNovo);
                 lancamento.setDataLancamentoPrevista(dataLancamento);
-                lancamento.setDataLancamentoDistribuidor(dataLancamento);
+                //lancamento.setDataLancamentoDistribuidor(dataLancamento);
                 lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
                 lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+                
+                try {
+    				//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
+                	lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId()));
+    			} catch (Exception e) {
+    			}
                 lancamento.setProdutoEdicao(produtoEdicao);
                 lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
                 lancamento.setDataStatus(dataAtual);

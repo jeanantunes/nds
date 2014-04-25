@@ -1,5 +1,4 @@
 package br.com.abril.nds.model.fiscal;
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;

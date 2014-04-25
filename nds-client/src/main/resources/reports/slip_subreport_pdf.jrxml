@@ -44,38 +44,17 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="70">
-			<textField pattern="" isBlankWhenNull="true">
-				<reportElement uuid="1207be38-8114-4320-9966-e4831edb38a6" positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="0" y="51" width="204" height="19" isPrintWhenDetailOverflows="true" backcolor="#E3E3E3"/>
-				<box rightPadding="3">
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["VALOR TOTAL A PAGAR"]]></textFieldExpression>
-			</textField>
+		<band height="50">
 			<elementGroup>
 				<subreport>
 					<reportElement uuid="81979e0e-ab93-44d2-b076-1b44ea37ca62" stretchType="RelativeToBandHeight" x="0" y="0" width="496" height="50" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="VALOR_TOTAL_PAGAR">
+						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_PAGAR}]]></subreportParameterExpression>
+					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{LISTA_RESUMO_COBRANCA})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["slip_pdf_subreport_resumo_cobranca.jasper"]]></subreportExpression>
 				</subreport>
 			</elementGroup>
-			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement uuid="a92bd3e0-5dd8-4731-849a-a17836cd635b" positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="204" y="51" width="292" height="19" isPrintWhenDetailOverflows="true" backcolor="#E3E3E3"/>
-				<box rightPadding="3">
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[new BigDecimal($P{VALOR_TOTAL_PAGAR}.toString())]]></textFieldExpression>
-			</textField>
 		</band>
 	</summary>
 </jasperReport>

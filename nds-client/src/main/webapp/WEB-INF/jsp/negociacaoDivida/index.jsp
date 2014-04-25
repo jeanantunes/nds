@@ -134,27 +134,13 @@
 				<div class="comissaoAtual">
 					<table width="100%" border="0" cellspacing="0" cellpadding="2">
 						<tr>
-							<td width="6%">Atual:</td>
-							<td width="12%"><input name="" type="text" id="comissaoAtualCota"
-								style="width: 80px;" readonly="readonly" /></td>
-							<td width="5%">%</td>
 							<td width="7%">Utilizar:</td>
 							<td width="13%"><input name="" type="text" id="comissaoUtilizar"
-								style="width: 80px;" onblur="negociacaoDividaController.utilizarAlterado()" /></td>
+								style="width: 80px;" /></td>
 							<td width="57%" colspan="3">% para pagamento da
 								d&iacute;vida</td>
 						</tr>
 					</table>
-					<table width="100%" border="0" cellspacing="0" cellpadding="2">
-						<tr>
-							<td colspan="6" nowrap="nowrap">Comiss&atilde;o da Cota
-								enquanto houver saldo de d&iacute;vida:</td>
-							<td width="85"><input id="comissaoComSaldo" type="text"
-								style="width: 80px;" readonly="readonly" /></td>
-							<td width="358">%</td>
-						</tr>
-					</table>
-
 				</div>
 				
 				

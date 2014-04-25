@@ -36,8 +36,7 @@ public class EntradaNFETerceirosServiceImpl implements
 
 	@Override
 	@Transactional
-	public Integer buscarTodasNFNotas(
-			FiltroEntradaNFETerceiros filtro) {
+	public Integer buscarTodasNFNotas(FiltroEntradaNFETerceiros filtro) {
 		return this.entradaNFETerceirosRepository.buscarTotalNotas(filtro);
 	}
 
@@ -49,8 +48,7 @@ public class EntradaNFETerceirosServiceImpl implements
 
 	@Override
 	@Transactional
-	public List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(
-			Long idConferenciaCota, String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults) {		
+	public List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(Long idConferenciaCota, String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults) {		
 		List<ItemNotaFiscalPendenteDTO> listaRetorno =  this.entradaNFETerceirosRepository.buscarItensPorNota(idConferenciaCota, orderBy, ordenacao, firstResult, maxResults);
 		
 		for(ItemNotaFiscalPendenteDTO dto: listaRetorno){
@@ -63,8 +61,7 @@ public class EntradaNFETerceirosServiceImpl implements
 
 	@Override
 	@Transactional
-	public Integer buscarTodasItensPorNota(
-			Long idConferenciaCota) {		
+	public Integer buscarTodasItensPorNota(Long idConferenciaCota) {		
 		return this.entradaNFETerceirosRepository.buscarTodasItensPorNota(idConferenciaCota);
 	}
 

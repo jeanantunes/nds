@@ -2620,4 +2620,39 @@ public class LancamentoRepositoryImpl extends
         return query.list();
     }
     
+
+    public List<Date> obterDatasLancamentoValido(Long idFornecedor) {
+
+    	StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" select dt from ( ");
+    	hql.append(" select ADDDATE((select data_operacao from distribuidor),n-1) dt, DATE_FORMAT(ADDDATE((select data_operacao from distribuidor),n-1),'%w')+1 sm from ( ");
+    	hql.append(" SELECT a.N + b.N * 10 + c.N * 100 + 1 n ");
+    	hql.append(" FROM  ");
+    	hql.append(" (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a ");
+    	hql.append(" ,(SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b ");
+    	hql.append(" ,(SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) c ");
+    	hql.append(" ORDER BY n) a ) b ");
+    	hql.append(" where b.dt not in (select distinct data from feriado where tipo_feriado = 'FEDERAL' and ind_opera = 0) ");
+    	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'ESTATUAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.uf) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
+    	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'MUNICIPAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.cidade) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
+    	hql.append(" and b.dt not in (select dtd from ( ");
+    	hql.append(" select max(data_lcto_distribuidor) dtd , max(case when status in('CONFIRMADO','PLANEJADO') then 1 else 0 end ) st ");
+    	hql.append(" from lancamento ");
+    	hql.append(" where status in('BALANCEADO','CONFIRMADO','EM_BALANCEAMENTO','PLANEJADO') ");
+    	hql.append(" group by data_lcto_distribuidor ) a ");
+    	hql.append(" where st = 0) ");
+    	hql.append(" and b.sm    in (select dia_semana  ");
+    	hql.append(" from distribuicao_fornecedor  ");
+    	hql.append(" where operacao_distribuidor = 'DISTRIBUICAO'  ");
+    	hql.append(" and fornecedor_id = :idFornecedor)  ");
+    	hql.append(" order by dt  ");
+    	
+        Query query = getSession().createQuery(hql.toString());
+        
+        query.setParameter("idFornecedor", idFornecedor);
+
+    	return query.list();
+    
+    }
 }

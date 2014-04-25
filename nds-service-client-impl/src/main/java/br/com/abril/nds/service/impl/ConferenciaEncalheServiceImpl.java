@@ -3359,9 +3359,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
      */
 	@Override
 	@Transactional(readOnly=true)
-	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(final ControleConferenciaEncalheCota controleConferenciaEncalheCota){
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
+	        final ControleConferenciaEncalheCota controleConferenciaEncalheCota,
+	        final Long idFornecedor){
 		
-		return this.debitoCreditoCotaService.obterListaDebitoCreditoCotaDTO(controleConferenciaEncalheCota.getCota(), controleConferenciaEncalheCota.getDataOperacao());
+		return this.debitoCreditoCotaService.obterListaDebitoCreditoCotaDTO(
+		        controleConferenciaEncalheCota.getCota(), controleConferenciaEncalheCota.getDataOperacao(),
+		        idFornecedor);
 	}
 	
 	protected String obterSlipReportPath() throws URISyntaxException {

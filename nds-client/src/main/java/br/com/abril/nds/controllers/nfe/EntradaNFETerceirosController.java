@@ -262,10 +262,8 @@ public class EntradaNFETerceirosController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 			
 		}
-		final List<ItemNotaFiscalPendenteDTO> listItemNota = this.entradaNFETerceirosService.buscarItensPorNota  (
-						idControleConferencia, sortname,
-						Ordenacao.valueOf(sortorder.toUpperCase()), page
-								* rp - rp, rp);
+		
+		final List<ItemNotaFiscalPendenteDTO> listItemNota = this.entradaNFETerceirosService.buscarItensPorNota(idControleConferencia, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page * rp - rp, rp);
 		
 		result.use(FlexiGridJson.class).from(listItemNota).page(page).total(total).serialize();
 		
