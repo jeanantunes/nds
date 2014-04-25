@@ -865,7 +865,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         }
         
         final List<DebitoCreditoCotaDTO> listaComposicaoCobranca =
-                debitoCreditoCotaService.obterListaDebitoCreditoCotaDTO(controleConferenciaEncalheCota.getCota(), dataOperacao);
+                debitoCreditoCotaService.obterListaDebitoCreditoCotaDTO(controleConferenciaEncalheCota.getCota(), dataOperacao, null);
         slipDTO.setListaComposicaoCobrancaDTO(listaComposicaoCobranca);
         parametersSlip.put("LISTA_COMPOSICAO_COBRANCA",listaComposicaoCobranca);
         

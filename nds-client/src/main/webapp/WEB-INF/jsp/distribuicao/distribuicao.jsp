@@ -10,7 +10,6 @@
 	$(function() {
 		${param.tela} = new Distribuicao('${param.tela}');
 	});
-	
 		
 	</script>
 	

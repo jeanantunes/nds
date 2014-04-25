@@ -59,10 +59,12 @@ public interface ConferenciaEncalheService {
 	 * relacionada com uma operação de encalhe.
 	 * 
 	 * @param controleConferenciaEncalheCota
+	 * @param idFornecedor
 	 * 
 	 * @return List - ComposicaoCobrancaSlipDTO
 	 */
-	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(ControleConferenciaEncalheCota controleConferenciaEncalheCota);
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
+	        ControleConferenciaEncalheCota controleConferenciaEncalheCota, Long idFornecedor);
 	
 	
 	/**

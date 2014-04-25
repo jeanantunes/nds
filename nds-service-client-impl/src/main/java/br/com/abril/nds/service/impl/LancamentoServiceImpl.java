@@ -83,6 +83,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Value("${data_cabalistica}")
     private String dataCabalistica;
+	
+	LinkedList<Date> dinap = new LinkedList();
+	LinkedList<Date> fc = new LinkedList();
     
     private static final List<StatusLancamento> STATUS_LANCAMENTOS_REMOVIVEL = Arrays.asList(
             StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO,
@@ -540,6 +543,66 @@ public class LancamentoServiceImpl implements LancamentoService {
         }
         
     }
+	
+	public Date obterDataLancamentoValido(Date dataLancamento,Long idFornecedor){
+		
+	
+		if(idFornecedor==1){	
+		 
+		 if(dinap.isEmpty()){
+		  dinap.addAll(lancamentoRepository.obterDatasLancamentoValido(new Long(1)));
+		 }
+		 
+		 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinap);
+		 
+		}else{
+		
+		 if(fc.isEmpty()){
+		  fc.addAll(lancamentoRepository.obterDatasLancamentoValido(new Long(2)));
+		 }
+		 
+		 dataLancamento = this.obterDataLancamentoValida(dataLancamento, fc);
+		 
+		}
+		
+		return dataLancamento;
+	}
+	
+	private Date obterDataLancamentoValida(Date dataLancamento,LinkedList<Date> listaDatas){
+		
+		Date anterior;
+		Date posterior;
+		long qtAnterior;
+		long qtPosterior;
+		  
+		if(listaDatas.contains(dataLancamento)){
+		  return dataLancamento;
+		}else if(dataLancamento.before(listaDatas.getFirst())){
+		  return listaDatas.getFirst();
+		}else{
+			
+		  for(int i =0;i<listaDatas.size();i++){
+			  if( dataLancamento.after(listaDatas.get(i-1)) 
+			   && dataLancamento.before(listaDatas.get(i+1))){
+				  
+				  anterior   = listaDatas.get(i-1);
+				  posterior  = listaDatas.get(i+1);
+				  
+				  qtAnterior = dataLancamento.getTime() - anterior.getTime();
+				  qtPosterior = posterior.getTime() - dataLancamento.getTime();
+				  
+				  if(qtAnterior<qtPosterior){
+					  return anterior;  
+				  }else{
+					  return posterior;
+				  }
+				  
+			  }
+		  }
+		  return dataLancamento;
+		}
+		
+	}
 
 
 }
