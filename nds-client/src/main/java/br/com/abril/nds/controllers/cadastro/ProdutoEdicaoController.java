@@ -324,7 +324,9 @@ public class ProdutoEdicaoController extends BaseController {
 				imgInputStream = imagemCapa.getFile();
 			}
 			
-			produtoEdicaoService.salvarProdutoEdicao(produtoEdicaoDTO, produtoEdicaoDTO.getCodigoProduto(), contentType, imgInputStream,istrac29);
+			produtoEdicaoService.salvarProdutoEdicao(
+			        produtoEdicaoDTO, produtoEdicaoDTO.getCodigoProduto(), 
+			        contentType, imgInputStream,istrac29, modoTela);
 			
             vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
 			
@@ -431,7 +433,9 @@ public class ProdutoEdicaoController extends BaseController {
 				String contentType = null;
 				InputStream imgInputStream = null;
 				
-				produtoEdicaoService.salvarProdutoEdicao(prodEdicao, prodEdicao.getCodigoProduto(), contentType, imgInputStream,false);
+				produtoEdicaoService.salvarProdutoEdicao(
+				        prodEdicao, prodEdicao.getCodigoProduto(), contentType, imgInputStream,false,
+				        null);
 				
 			} 
 			catch (Exception e) {
