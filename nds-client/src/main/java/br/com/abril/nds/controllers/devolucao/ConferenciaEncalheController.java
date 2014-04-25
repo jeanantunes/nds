@@ -1778,7 +1778,9 @@ public class ConferenciaEncalheController extends BaseController {
             notaFiscal.setOrigem(Origem.MANUAL);
             notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
             notaFiscal.setValorInformado(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
-                        
+            notaFiscal.setValorBruto(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
+            notaFiscal.setValorDesconto(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
+            
             for(final ConferenciaEncalheDTO conferenciaEncalhe : this.getListaConferenciaEncalheFromSession()) {
 
                 final ProdutoEdicao produtoEdicao = new ProdutoEdicao();
@@ -1791,6 +1793,7 @@ public class ConferenciaEncalheController extends BaseController {
                 itemNotaFiscalEntrada.setDataRecolhimento(conferenciaEncalhe.getDataRecolhimento());
                 itemNotaFiscalEntrada.setDataLancamento(conferenciaEncalhe.getDataConferencia());
                 itemNotaFiscalEntrada.setNotaFiscal(notaFiscal);
+                itemNotaFiscalEntrada.setDesconto(conferenciaEncalhe.getPrecoComDesconto());
                 itens.add(itemNotaFiscalEntrada);
                 
             }
