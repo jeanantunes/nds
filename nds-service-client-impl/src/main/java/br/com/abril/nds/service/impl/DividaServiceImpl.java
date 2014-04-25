@@ -399,9 +399,7 @@ public class DividaServiceImpl implements DividaService {
 			valorOriginal = BigDecimal.ZERO;
 		}
 		
-		BigDecimal valorPago = 
-			this.negociacaoRepository.obterValorPagoDividaNegociadaComissao(
-				negociacao.getId());
+		BigDecimal valorPago = valorOriginal.subtract(negociacao.getValorDividaPagaComissao());
 		
 		valorPago = valorPago == null ? BigDecimal.ZERO : valorPago;
 		
