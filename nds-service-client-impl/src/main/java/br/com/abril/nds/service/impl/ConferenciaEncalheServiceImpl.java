@@ -1958,9 +1958,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		for (final ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
 			
 			valorTotalReparteOperacaoConferenciaEncalhe = 
-					valorTotalReparteOperacaoConferenciaEncalhe.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getQtdReparte())));
+					valorTotalReparteOperacaoConferenciaEncalhe.add(dto.getPrecoComDesconto().multiply(new BigDecimal(dto.getQtdReparte())));
 			valorTotalEncalheOperacaoConferenciaEncalhe = 
-					valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getQtdExemplar())));
+					valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getPrecoComDesconto().multiply(new BigDecimal(dto.getQtdExemplar())));
 		}
 		
 		this.negociacaoDividaService.abaterNegociacaoPorComissao(
