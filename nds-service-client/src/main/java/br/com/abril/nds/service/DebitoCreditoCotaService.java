@@ -80,10 +80,11 @@ public interface DebitoCreditoCotaService {
 	 * Obtem lista de Débitos e Créditos quem não pertencem à reparte ou encalhe
 	 * @param cota
 	 * @param dataOperacao
+	 * @param idFornecedor
 	 * @return List<DebitoCreditoCotaDTO>
 	 */
 	List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(Cota cota,
-			Date dataOperacao);
+			Date dataOperacao, Long idFornecedor);
 
 	/**
 	 * Obtem Outros Valores

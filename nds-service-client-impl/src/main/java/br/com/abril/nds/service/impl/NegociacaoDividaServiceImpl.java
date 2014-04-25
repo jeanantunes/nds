@@ -224,8 +224,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     public Long criarNegociacao(final Integer numeroCota, final List<ParcelaNegociacao> parcelas, final TipoNegociacao tipoNegociacao,
             final BigDecimal valorDividaParaComissao, final List<Long> idsCobrancasOriginarias,
             final Usuario usuarioResponsavel, final boolean negociacaoAvulsa, final Integer ativarCotaAposParcela,
-            final BigDecimal comissaoParaSaldoDivida, final BigDecimal comissaoOriginalCota,
-            final boolean isentaEncargos, final FormaCobranca formaCobranca,
+            final BigDecimal comissaoParaSaldoDivida, final boolean isentaEncargos, final FormaCobranca formaCobranca,
             final Long idBanco) {
         
         // lista para mensagens de validação
@@ -482,8 +481,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         negociacao.setTipoNegociacao(tipoNegociacao);
         negociacao.setComissaoParaSaldoDivida(comissaoParaSaldoDivida == null ? BigDecimal.ZERO
                 : comissaoParaSaldoDivida);
-        negociacao.setComissaoOriginalCota(comissaoOriginalCota == null ? BigDecimal.ZERO
-        		: comissaoOriginalCota);
         negociacao.setIsentaEncargos(isentaEncargos);
         negociacao.setNegociacaoAvulsa(negociacaoAvulsa);
         negociacao.setFormaCobranca(formaCobranca);
@@ -854,24 +851,29 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         
         String path = diretorioReports.toURI().getPath();
         
-        if (impressaoNegociacaoDTO.getParcelasCheques().isEmpty()) {
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+
+        if (TipoNegociacao.COMISSAO.equals(negociacao.getTipoNegociacao())) {
             
             path += "/negociacao_divida_comissao.jasper";
-        } else if (impressaoNegociacaoDTO.getParcelasCheques().get(0).getNumeroCheque() == null) {
-            
-            path += "/negociacao_divida_boleto.jasper";
-            
+
+        } else if (TipoCobranca.CHEQUE.equals(negociacao.getFormaCobranca().getTipoCobranca())) {
+
+        	path += "/negociacao_divida_cheque.jasper";
+
         } else {
-            
-            path += "/negociacao_divida_cheque.jasper";
+
+        	path += "/negociacao_divida_boleto.jasper";
+        	
+            parameters.put("TIPO_COBRANCA", negociacao.getFormaCobranca().getTipoCobranca().getDescricao());
         }
+
         InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
         
         if (inputStream == null) {
             inputStream = new ByteArrayInputStream(new byte[0]);
         }
         
-        final Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("TOTAL_PARCELAS", CurrencyUtil.formatarValor(totalParcelas.setScale(2, RoundingMode.HALF_EVEN)));
         parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
         
@@ -919,8 +921,14 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         int qtdParcelasModificadas = 0;
         for (final CalculaParcelasVO calculaParcelasVO : parcelas) {
             if (calculaParcelasVO.isModificada()) {
-                valorParcelasModificadas = valorParcelasModificadas.add(CurrencyUtil.converterValor(calculaParcelasVO
-                        .getParcela()));
+                
+                if (calculaParcelasVO.getParcela() == null){
+                    
+                    throw new ValidacaoException(TipoMensagem.WARNING, "Valor de parcela inválido");
+                }
+                
+                valorParcelasModificadas = valorParcelasModificadas.add(
+                        CurrencyUtil.converterValor(calculaParcelasVO.getParcela()));
                 qtdParcelasModificadas++;
             }
             
@@ -955,6 +963,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             valorTotal = valorTotal.add(valorParcela);
             
             Date dataVencimento = DateUtil.parseDataPTBR(calculaParcelasVO.getDataVencimento());
+            
+            if (dataVencimento == null){
+                throw new ValidacaoException(TipoMensagem.WARNING, "Campo data inválido.");
+            }
             
             if (formaCobranca.isVencimentoDiaUtil()) {
                 dataVencimento = calendarioService.adicionarDiasUteis(dataVencimento, 0);
@@ -1279,24 +1291,16 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     if (valorTotalReparte.compareTo(BigDecimal.ZERO) <= 0) {
                         break;
                     }
-
-                	final BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
-                    final BigDecimal comissaoCota = negociacao.getComissaoOriginalCota();
-                    final BigDecimal novaComissao = comissaoCota.subtract(comissao);
-
-                    final BigDecimal valorComissaoCota = 
-                    		this.calcularValorParaComissao(valorTotalReparte, valorTotalEncalhe, comissaoCota);
-
-                    final BigDecimal valorNovaComissao = 
-                    		this.calcularValorParaComissao(valorTotalReparte, valorTotalEncalhe, novaComissao);
-
-                    final BigDecimal valorDescontar = valorComissaoCota.subtract(valorNovaComissao);
                     
-                    valorTotalReparte = valorTotalReparte.subtract(valorDescontar);
-
-                    final BigDecimal valorRestanteNegociacao = 
-                    		negociacao.getValorDividaPagaComissao().subtract(valorDescontar);
+                    final BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
+                    final BigDecimal valorVenda = valorTotalReparte.subtract(valorTotalEncalhe);
                     
+                    final BigDecimal valorComissao = valorVenda.multiply(comissao.divide(BigDecimalUtil.CEM));                 
+
+                    final BigDecimal valorVendaComComissao = valorVenda.subtract(valorComissao);
+                    
+                    final BigDecimal valorRestanteNegociacao = negociacao.getValorDividaPagaComissao().subtract(valorVendaComComissao);
+
                     // se o valor resultante não quita a negociação
                     if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0) {
                         
@@ -1324,7 +1328,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     
                     if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0) {
                         
-                        movDTO.setValor(valorDescontar);
+                        movDTO.setValor(valorComissao);
                     } else {
                         
                         movDTO.setValor(valorRestanteNegociacao);
@@ -1347,20 +1351,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             }
         }
     }
-    
-    private BigDecimal calcularValorParaComissao(BigDecimal reparte, BigDecimal encalhe, BigDecimal comissao) {
 
-        final BigDecimal valorReparte = 
-        		reparte.subtract(reparte.multiply(comissao.divide(BigDecimalUtil.CEM)));
-        
-        final BigDecimal valorEncalhe = 
-        		encalhe.subtract(encalhe.multiply(comissao.divide(BigDecimalUtil.CEM)));
-        
-        final BigDecimal valorVenda = valorReparte.subtract(valorEncalhe);
-
-    	return valorVenda.multiply(comissao).divide(BigDecimalUtil.CEM.subtract(comissao));
-    }
-    
     @Transactional
     @Override
     public void verificarAtivacaoCotaAposPgtoParcela(Cobranca cobranca, Usuario usuario){

@@ -122,20 +122,17 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private static final String IND_COTA_EMITE_NFE = "IND_COTA_EMITE_NFE";
 	
-	            /*
-     * Conferência de encalhe da cota que foi iniciada porém ainda não foi
-     * salva.
+	/*
+     * Conferência de encalhe da cota que foi iniciada porém ainda não foi salva.
      */
 	private static final String CONF_ENC_COTA_STATUS_INICIADA_NAO_SALVA = "INICIADA_NAO_SALVA";
 	
-	
-	            /*
+	/*
      * Conferência de encalhe da cota que foi iniciada e já foi salva.
      */
 	private static final String CONF_ENC_COTA_STATUS_INICIADA_SALVA = "INICIADA_SALVA";
 	
-	
-	            /*
+	/*
      * Nenhuma conferência de encalhe da cota iniciada em aberto.
      */
 	private static final String CONF_ENC_COTA_STATUS_NAO_INICIADA = "NAO_INICIADA";
@@ -220,8 +217,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	public void carregarComboBoxEncalheContingencia() {
 		
-		final List<Box> boxes = 
-				this.conferenciaEncalheService.obterListaBoxEncalhe(this.getUsuarioLogado().getId());
+		final List<Box> boxes = this.conferenciaEncalheService.obterListaBoxEncalhe(this.getUsuarioLogado().getId());
 		
 		if( boxes!=null ) {
 
@@ -265,55 +261,45 @@ public class ConferenciaEncalheController extends BaseController {
 	
 
 	
+	@SuppressWarnings("unchecked")
 	private void atribuirTravaConferenciaCotaUsuario(final Integer numeroCota) {
 		
+		final String loginUsuarioLogado = this.getIdentificacaoUnicaUsuarioLogado();
+			
+		verificarTravaConferenciaCotaUsuario(numeroCota);
+	
+		final ServletContext context = this.session.getServletContext();
+	
+		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+	
+		Map<String, String> mapaLoginNomeUsuario = (LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 		
-			final String loginUsuarioLogado = this.getIdentificacaoUnicaUsuarioLogado();
-			
-			verificarTravaConferenciaCotaUsuario(numeroCota);
-	
-			final ServletContext context = this.session.getServletContext();
-	
-			@SuppressWarnings("unchecked")
-			Map<Integer, String> mapaCotaConferidaUsuario = 
-				(LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
-	
-			@SuppressWarnings("unchecked")
-			Map<String, String> mapaLoginNomeUsuario = 
-				(LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
-	
-			
-			if(mapaCotaConferidaUsuario == null) {
-				mapaCotaConferidaUsuario = new LinkedHashMap<>();
-				context.setAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO, mapaCotaConferidaUsuario);
-			}
-			
-	
-			if(mapaLoginNomeUsuario == null) {
-				mapaLoginNomeUsuario = new LinkedHashMap<>();
-				context.setAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO, mapaLoginNomeUsuario);
-			}
-	
-			mapaLoginNomeUsuario.put(loginUsuarioLogado, getIdentificacaoUsuarioLogado());
-			mapaCotaConferidaUsuario.put(numeroCota, loginUsuarioLogado);
+		if(mapaCotaConferidaUsuario == null) {
+			mapaCotaConferidaUsuario = new LinkedHashMap<>();
+			context.setAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO, mapaCotaConferidaUsuario);
+		}
+
+		if(mapaLoginNomeUsuario == null) {
+			mapaLoginNomeUsuario = new LinkedHashMap<>();
+			context.setAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO, mapaLoginNomeUsuario);
+		}
+
+		mapaLoginNomeUsuario.put(loginUsuarioLogado, getIdentificacaoUsuarioLogado());
+		mapaCotaConferidaUsuario.put(numeroCota, loginUsuarioLogado);
 	}
 	
-	            /**
-     * Realiza a remoção da trava da session do usuario com conferencia de
-     * encalhe
+	/**
+     * Realiza a remoção da trava da session do usuario com conferencia de encalhe
      */
 	@Post
+	@SuppressWarnings("unchecked")
 	public void removerTravaConferenciaEncalheCotaUsuario() {
 		
 		final String loginUsuarioLogado = this.getIdentificacaoUnicaUsuarioLogado();
 		
-		@SuppressWarnings("unchecked")
-		final
-		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+		final  Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
 		
-		@SuppressWarnings("unchecked")
-		final
-		Map<String, String> mapaLoginNomeUsuario = 
+		final Map<String, String> mapaLoginNomeUsuario = 
 			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 		
 		removerTravaConferenciaCotaUsuario(session.getServletContext(), loginUsuarioLogado, mapaCotaConferidaUsuario, mapaLoginNomeUsuario);
@@ -322,24 +308,22 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 
 	public static void removerTravaConferenciaCotaUsuario(final ServletContext context, final String userSessionID, final Map<Integer, String> mapaCotaConferidaUsuario, final Map<String, String> mapaLoginNomeUsuario) {
+			
+		if(mapaLoginNomeUsuario != null) {
+			mapaLoginNomeUsuario.remove(userSessionID);
+		}
 		
-			
-			if(mapaLoginNomeUsuario != null) {
-				mapaLoginNomeUsuario.remove(userSessionID);
-			}
-			
-			if(mapaCotaConferidaUsuario == null || mapaCotaConferidaUsuario.isEmpty()) {
-				return;
-			}
-			
-			final Set<Integer> cotasEmConferencia = new HashSet<>(mapaCotaConferidaUsuario.keySet()) ;
+		if(mapaCotaConferidaUsuario == null || mapaCotaConferidaUsuario.isEmpty()) {
+			return;
+		}
+		
+		final Set<Integer> cotasEmConferencia = new HashSet<>(mapaCotaConferidaUsuario.keySet()) ;
 
-			for(final Integer numeroCota : cotasEmConferencia) {
-				if( mapaCotaConferidaUsuario.get(numeroCota).equals(userSessionID) ) {
-					mapaCotaConferidaUsuario.remove(numeroCota);
-				}
+		for(final Integer numeroCota : cotasEmConferencia) {
+			if( mapaCotaConferidaUsuario.get(numeroCota).equals(userSessionID) ) {
+				mapaCotaConferidaUsuario.remove(numeroCota);
 			}
-		
+		}
 	}
 	
 	private void verificarTravaConferenciaCotaUsuario(final Integer numeroCota) {
@@ -349,13 +333,10 @@ public class ConferenciaEncalheController extends BaseController {
 		final ServletContext context = this.session.getServletContext();
 		
 		@SuppressWarnings("unchecked")
-		final
-		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+		final Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
 		
 		@SuppressWarnings("unchecked")
-		final
-		Map<String, String> mapaLoginNomeUsuario = (LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
-		
+		final Map<String, String> mapaLoginNomeUsuario = (LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 			
 		if(mapaCotaConferidaUsuario==null || mapaCotaConferidaUsuario.isEmpty()) {
 			return;
@@ -380,10 +361,7 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 		
 		throw new ValidacaoException(TipoMensagem.WARNING, 
-                " Não é possível iniciar a conferência de encalhe para esta cota, "
-                    + " a mesma esta sendo conferida pelo(a) usuário(a) [ " + nomeUsuario + " ] ");
-	
-		
+             " Não é possível iniciar a conferência de encalhe para esta cota, a mesma esta sendo conferida pelo(a) usuário(a) [ " + nomeUsuario + " ] ");
 	}
 	
 	/**
@@ -393,11 +371,8 @@ public class ConferenciaEncalheController extends BaseController {
 	 * @param login
 	 * @param mapaCotaConferidaUsuario
 	 */
-	private void validarUsuarioConferindoCota(final String login,
-											  Map<Integer, String> mapaCotaConferidaUsuario) {
-		
+	private void validarUsuarioConferindoCota(final String login, Map<Integer, String> mapaCotaConferidaUsuario) {
 		if (mapaCotaConferidaUsuario != null && mapaCotaConferidaUsuario.containsValue(login)) {
-			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não possível executar mais de uma conferência de encalhe ao mesmo tempo!");
 		}
 	}
@@ -470,9 +445,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	            /**
      * Verifica se o usuario esta iniciando (ou reiniciando) a conferência de
-     * uma cota sem ter salvo (ou finalizado) os dados de uma conferência em
-     * andamento.
-     * 
+     * uma cota sem ter salvo (ou finalizado) os dados de uma conferência em andamento.
      * @param numeroCota
      */
 	public void verificarConferenciaEncalheCotaStatus(final Integer numeroCota) {
@@ -488,27 +461,18 @@ public class ConferenciaEncalheController extends BaseController {
 		resultado.put(CONFERENCIA_ENCALHE_COTA_STATUS, conferenciaEncalheCotaStatus);
 		
 		this.result.use(CustomJson.class).from(resultado).serialize();
-		
 	}
 	
 	private String obterStatusConferenciaEncalheCota() {
 		
 		final StatusConferenciaEncalheCota statusConferenciaEncalheCota = obterStatusConferenciaEncalheCotaFromSession();
 		
-		if( statusConferenciaEncalheCota.getNumeroCota() != null && 
-			!statusConferenciaEncalheCota.isIndConferenciaEncalheCotaSalva() ) {
-			
+		if( statusConferenciaEncalheCota.getNumeroCota() != null && !statusConferenciaEncalheCota.isIndConferenciaEncalheCotaSalva() ) {
 			return CONF_ENC_COTA_STATUS_INICIADA_NAO_SALVA;
-			
-		} else if( statusConferenciaEncalheCota.getNumeroCota() != null && 
-				statusConferenciaEncalheCota.isIndConferenciaEncalheCotaSalva() ){
-			
+		} else if( statusConferenciaEncalheCota.getNumeroCota() != null && statusConferenciaEncalheCota.isIndConferenciaEncalheCotaSalva() ){
 			return CONF_ENC_COTA_STATUS_INICIADA_SALVA;
-			
 		} else {
-			
 			return CONF_ENC_COTA_STATUS_NAO_INICIADA;
-			
 		}
 		
 	}
@@ -522,9 +486,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 
      /**
      * Ponto de inicio de uma conferência de encalhe.
-     * 
      * Realiza validações antes do inicio da operação de encalhe da cota.
-     * 
      * @param numeroCota
      */
 	@Post
@@ -544,22 +506,17 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if(this.conferenciaEncalheService.verificarCotaComConferenciaEncalheFinalizada(numeroCota)) {
 
-			this.result.use(CustomMapJson.class)
-			.put("IND_COTA_RECOLHE_NA_DATA", "S")
-			.put("IND_REABERTURA", "S").serialize();
+			this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").put("IND_REABERTURA", "S").serialize();
 
 		} else {
 			
 			if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota)) {
-				
 				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
-			
 			} else {
-				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N")
+				this.result.use(CustomMapJson.class)
+				    .put("IND_COTA_RECOLHE_NA_DATA", "N")
 				    .put("msg", "Cota não possui recolhimento planejado para a data de operação atual.").serialize();
-			
 			}
-			
 		}
 		
 		this.session.setAttribute(NUMERO_COTA, numeroCota);
@@ -577,13 +534,11 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	private void carregarMapaDatasEncalheConferiveis(final Integer numeroCota) {
-		
 		session.setAttribute(DATAS_ENCALHE_CONFERIVEIS, conferenciaEncalheService.obterDatasChamadaEncalheConferiveis(numeroCota));
-		
 	}
 	
 	
-	            /**
+	/**
      * Cria em session flag para indicar que os registros de conferencia de
      * encalhe da cota que estão em session ainda não foram alterados pelo
      * usuario.
@@ -593,7 +548,7 @@ public class ConferenciaEncalheController extends BaseController {
 		statusConferenciaEncalhe.setIndConferenciaEncalheCotaSalva(true);
 	}
 	
-	            /**
+	/**
      * Cria em session flag para indicar que os registros de conferencia de
      * encalhe da cota que estão em session já foram alterados pelo usuario.
      */
@@ -602,10 +557,8 @@ public class ConferenciaEncalheController extends BaseController {
 		statusConferenciaEncalhe.setIndConferenciaEncalheCotaSalva(false);
 	}
 	
-	        /**
-     * Obtém no banco de dados as informações da conferencia de encalhe da cota
-     * em questão e setta em session.
-     * 
+	/**
+     * Obtém no banco de dados as informações da conferencia de encalhe da cota em questão e setta em session.
      * @param numeroCota
      * @param indConferenciaContingencia
      */
@@ -618,37 +571,28 @@ public class ConferenciaEncalheController extends BaseController {
 		this.setListaConferenciaEncalheToSession(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
 		
 		indicarStatusConferenciaEncalheCotaSalvo();
-		
 	}
 	
 	@Post
 	public void carregarListaConferencia(Integer numeroCota, final boolean indObtemDadosFromBD,  final boolean indConferenciaContingencia){
 		
-		if (numeroCota == null) {
-			
-			numeroCota = this.getNumeroCotaFromSession();
+	    final Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
+	    if (numeroCota == null) {
+			numeroCota = this.getNumeroCotaFromSession();
 		} else {
-			
 			this.session.setAttribute(NUMERO_COTA, numeroCota);
-			
 		}
 		
-		final Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
-		
 		if (horaInicio == null){
-			
 			this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
 		}
 		
 		InfoConferenciaEncalheCota infoConfereciaEncalheCota = this.getInfoConferenciaSession();
 		
 		if (infoConfereciaEncalheCota == null || indObtemDadosFromBD){
-			
 			recarregarInfoConferenciaEncalheCotaEmSession(numeroCota, indConferenciaContingencia);
-			
 			infoConfereciaEncalheCota = this.getInfoConferenciaSession();
-		
 		}
 		
 		carregarValorInformadoInicial(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
@@ -669,12 +613,7 @@ public class ConferenciaEncalheController extends BaseController {
 		this.session.setAttribute(COTA, cota);
 		
 		if (cota != null){
-			
-			dados.put("razaoSocial", 
-				cota.getPessoa() instanceof PessoaFisica ? 
-						((PessoaFisica)cota.getPessoa()).getNome() : 
-							((PessoaJuridica)cota.getPessoa()).getRazaoSocial());
-			
+			dados.put("razaoSocial", cota.getPessoa() instanceof PessoaFisica ? ((PessoaFisica)cota.getPessoa()).getNome() : ((PessoaJuridica)cota.getPessoa()).getRazaoSocial());
 			dados.put("situacao", cota.getSituacaoCadastro().toString());
 		}
 		
@@ -702,8 +641,7 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("notaFiscal", "");
 			
 		}
-		
-		
+
 		this.calcularTotais(dados);
 		
 		result.use(CustomJson.class).from(dados).serialize();
@@ -743,12 +681,10 @@ public class ConferenciaEncalheController extends BaseController {
 				for (final ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
 					
 					if (conferenciaEncalheDTO.getQtdInformada() != null){
-					
 						qtdInformada = qtdInformada.add(conferenciaEncalheDTO.getQtdInformada());
 					}
 					
 					if (conferenciaEncalheDTO.getQtdExemplar() != null){
-					
 						qtdRecebida = qtdRecebida.add(conferenciaEncalheDTO.getQtdExemplar());
 					}
 				}
@@ -756,7 +692,6 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 		
 		dados.put("qtdInformada", qtdInformada);
-		
 		dados.put("qtdRecebida", qtdRecebida);
 	}
 	
@@ -772,7 +707,6 @@ public class ConferenciaEncalheController extends BaseController {
 				this.conferenciaEncalheService.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarra); 
 
 		if (listaProdutos == null || listaProdutos.isEmpty()) {
-			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
 		}
 
@@ -918,8 +852,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 		} catch(final EncalheRecolhimentoParcialException e) {
             LOGGER.error("Não existe chamada de encalhe deste produto para essa cota: " + e.getMessage(), e);
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Não existe chamada de encalhe para produto parcial na data operação.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
 		}
 		
 		if (produtoEdicao == null){
@@ -984,10 +917,7 @@ public class ConferenciaEncalheController extends BaseController {
 		ProdutoEdicaoDTO produtoEdicao = null;
 		
 		try {
-			
-			produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(
-					this.getNumeroCotaFromSession(), 
-					idProdutoEdicao);
+			produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(this.getNumeroCotaFromSession(), idProdutoEdicao);
 		} catch (final EncalheRecolhimentoParcialException e) {
             LOGGER.error("Não existe chamada de encalhe para produto parcial na data operação: " + e.getMessage(), e);
             throw new ValidacaoException(TipoMensagem.WARNING,
@@ -1204,8 +1134,7 @@ public class ConferenciaEncalheController extends BaseController {
 		 	
 		     if (this.validarExcedeReparte(qtdeEncalhe, dto, false)) {
 		         
-		         this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.",
-		                 "result").serialize();
+		         this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.", "result").serialize();
 		         
 		         return true;
 		     }

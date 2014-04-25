@@ -241,7 +241,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		}
 		
 		if(!Strings.isNullOrEmpty(input.getCodigoICD())) {
-		    produto.setCodigoICD(input.getCodigoICD());
+			
+		    produto.setCodigoICD(new Integer(input.getCodigoICD()).toString());
 		}
 		
 		produto.setSlogan(input.getSlogan());
@@ -454,10 +455,10 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		
 		if (!Strings.isNullOrEmpty(input.getCodigoICD()) 
 		        && !Objects.equal(produto.getCodigoICD(), input.getCodigoICD())) {
-		    produto.setCodigoICD(input.getCodigoICD());
+		    produto.setCodigoICD(new Integer(input.getCodigoICD()).toString());
 		    this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Atualizacao do CodigoICD para: " + input.getCodigoICD());
+                    "Atualizacao do CodigoICD para: " + new Integer(input.getCodigoICD()).toString());
 		}
 		
 		TipoSegmentoProduto tipoSegmentoProduto = produto.getTipoSegmentoProduto();
