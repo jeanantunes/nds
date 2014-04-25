@@ -126,11 +126,13 @@ public interface ConferenciaEncalheService {
 	/**
 	 * Verifica se a cota cota possui reparte a recolher na data em questão.
 	 * 
+	 * @param datas
+	 * 
 	 * @param numeroCota
 	 * 
 	 * @return boolean
 	 */
-	public boolean isCotaComReparteARecolherNaDataOperacao(Integer numeroCota);
+	public boolean isCotaComReparteARecolherNaDataOperacao(Integer numeroCota, List<Date> datas);
 	
 	
 	/**
@@ -292,16 +294,6 @@ public interface ConferenciaEncalheService {
 
 	BigDecimal obterValorTotalReparteSemDesconto(Integer numeroCota,Date dataOperacao);
 
-	BigDecimal obterValorTotalReparte(Integer numeroCota, Date dataOperacao);
-
-
-	/**
-	 * Obtém datas de recolhimento da semana da data de operação diferenciada
-	 * 
-	 * @param numeroCota
-	 * @param data
-	 * @return List<Date>
-	 */
-	List<Date> obterDatasRecolhimentoOperacaoDiferenciada(Integer numeroCota,Date data);
+	BigDecimal obterValorTotalReparte(Integer numeroCota, List<Date> datas);
 	
 }

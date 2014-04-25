@@ -101,6 +101,7 @@ import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -129,6 +130,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private DistribuidorService distribuidorService;
+    
+    @Autowired
+    private GrupoService grupoService;
     
     @Autowired
     private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
@@ -828,18 +832,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     public void realizarCobrancaCota(final Date dataOperacao, final Usuario usuario, final Long idCota,
             final ValidacaoVO validacaoVO) {
         
-        final Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
-        
         final Set<String> nossoNumeroEnvioEmail = new HashSet<String>();
         
         final Cota cota = cotaRepository.buscarCotaPorID(idCota);
         
         if (cota == null) {
             throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
-        }
+        } 
         
         BigDecimal reparte = chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(cota.getNumeroCota(),
-                dataOperacao, false, false);
+                Arrays.asList(dataOperacao), false, false);
         
         reparte = reparte != null ? reparte : BigDecimal.ZERO;
         
@@ -849,8 +851,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         // CONSIGNADA ATÉ FECHAMENTO DO DIA
         final boolean isAlteracaoTipoCotaNaDataAtual = cotaService.isCotaAlteradaNaData(cota, dataOperacao);
         
-        this.gerarMovimentosFinanceiros(cota, dataOperacao, dataOperacaoDistribuidor, usuario,
-                isAlteracaoTipoCotaNaDataAtual);
+        this.gerarMovimentosFinanceiros(cota, dataOperacao, usuario, isAlteracaoTipoCotaNaDataAtual);
         
         if (!cotaUnificacaoRepository.verificarCotaUnificada(cota.getNumeroCota())
                 && !cotaUnificacaoRepository.verificarCotaUnificadora(cota.getNumeroCota())) {
@@ -860,7 +861,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 try {
                     
                     final boolean existeBoletoAntecipado = boletoService.existeBoletoAntecipadoCotaDataRecolhimento(
-                            cota.getId(), dataOperacaoDistribuidor);
+                            cota.getId(), dataOperacao);
                     
                     if (existeBoletoAntecipado) {
                         
@@ -892,25 +893,30 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         }
     }
     
-    private void gerarMovimentosFinanceiros(final Cota cota, final Date dataOperacao,
-            final Date dataOperacaoDistribuidor, final Usuario usuario, final boolean isAlteracaoTipoCotaNaDataAtual) {
+    private void gerarMovimentosFinanceiros(final Cota cota, 
+    		                                final Date dataOperacao,
+    		                                final Usuario usuario, 
+    		                                final boolean isAlteracaoTipoCotaNaDataAtual) {
         
         if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual) {
             
             // CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE
             // REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE
             // SEJAM RECRIADOS
-            gerarCobrancaService.cancelarDividaCobranca(null, cota.getId(), dataOperacaoDistribuidor, true);
+            gerarCobrancaService.cancelarDividaCobranca(null, cota.getId(), dataOperacao, true);
         } else if (cota.getTipoCota().equals(TipoCota.A_VISTA)) {
             
             // EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
-            movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(cota
-                    .getNumeroCota(), dataOperacaoDistribuidor);
+            movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(cota.getNumeroCota(), 
+            		                                                                                  dataOperacao);
         }
+        
+        final List<Date> datasRecolhimento = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(cota.getNumeroCota(), 
+                																						  dataOperacao);
         
         // CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE
         // E ENVIO_ENCALHE)
-        movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, dataOperacaoDistribuidor, usuario, null);
+        movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, datasRecolhimento, usuario, null);
     }
     
     @Override

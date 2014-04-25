@@ -389,12 +389,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
      * Expedição e Conferência de Encalhe ou com Produtos Conta Firme
      * 
      * @param idCota
-     * @param dataControleConferencia
+     * @param datas
      * @return List<MovimentoEstoqueCota>
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(final Long idCota, final Date dataControleConferencia, List<Long> idTiposMovimentoEstoque) {
+    public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(final Long idCota, final List<Date> datas, List<Long> idTiposMovimentoEstoque) {
         
         final StringBuilder sql = new StringBuilder();
         
@@ -410,7 +410,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append("	where ");
         
-        sql.append("	p.FORMA_COMERCIALIZACAO = :formaComercializacaoProduto or ( cec.COTA_ID = :idCota and ce.DATA_RECOLHIMENTO = :dataControleConferencia )        ");
+        sql.append("	p.FORMA_COMERCIALIZACAO = :formaComercializacaoProduto or ( cec.COTA_ID = :idCota and ce.DATA_RECOLHIMENTO IN (:datas) )        ");
         
         sql.append(") pe_conta_firme_ou_cota_encalhe_na_data ");
         
@@ -432,7 +432,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameter("statusFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
         query.setParameter("statusAprovacao", StatusAprovacao.APROVADO.name());
         query.setParameter("idCota", idCota);
-        query.setParameter("dataControleConferencia", dataControleConferencia);
+        query.setParameterList("datas", datas);
         query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME.name());
         
         
@@ -451,7 +451,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<MovimentoEstoqueCota> obterMovimentosEstornadosPorChamadaEncalhe(final Long idCota, final List<Long> idsTipoMovimentoEstorno, Date dataRecolhimento) {
+    public List<MovimentoEstoqueCota> obterMovimentosEstornadosPorChamadaEncalhe(final Long idCota, final List<Long> idsTipoMovimentoEstorno, List<Date> datas) {
         
         final StringBuilder sql = new StringBuilder();
         
@@ -462,17 +462,23 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" inner join chamada_encalhe ce on ce.id = cec.chamada_encalhe_id and ce.produto_edicao_id = mec.produto_edicao_id ");
         sql.append(" where mec.TIPO_MOVIMENTO_ID in (:idsTipoMovimentoEstorno) ");
         sql.append(" and mec.cota_id = :idCota ");
-        if(dataRecolhimento != null) {
-        	sql.append(" and ce.data_recolhimento = :dataRecolhimento ");
+        
+        if(datas != null && !datas.isEmpty()) {
+        	
+        	sql.append(" and ce.data_recolhimento IN (:datas) ");
         }
+        
         sql.append(" group by mec.id ");
         
         final Query query = getSession().createSQLQuery(sql.toString()).addEntity(MovimentoEstoqueCota.class);
         
         query.setParameterList("idsTipoMovimentoEstorno", idsTipoMovimentoEstorno);
-        if(dataRecolhimento != null) {
-        	query.setParameter("dataRecolhimento", dataRecolhimento);
+        
+        if(datas != null && !datas.isEmpty()) {
+        	
+        	query.setParameterList("datas", datas);
         }
+        
         query.setParameter("idCota", idCota);
         
         return query.list();

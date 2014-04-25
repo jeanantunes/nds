@@ -124,7 +124,7 @@ public interface MovimentoFinanceiroCotaService {
 	 * @param idControleConferenciaEncalheCota
 	 */
 	void gerarMovimentoFinanceiroCota(Cota cota,
-									  Date dataOperacao,
+									  List<Date> datas,
 									  Usuario usuario,
 									  Long idControleConferenciaEncalheCota);
 	
