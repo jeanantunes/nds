@@ -109,6 +109,7 @@ import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.SemanaUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
@@ -386,8 +387,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                         encalhe.setExemplaresDevolucaoJuramentado(encalhe.getExemplaresDevolucaoJuramentado().add(
                                 movimentoEstoqueCota.getExemplaresDevolucao()));
                     }
-                    
-                    //TODO: calcular venda de encalhe
                 }
             }
             
@@ -398,11 +397,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                     if (encalhe.getProdutoEdicao().equals(movimentoEstoqueCotaVendaProduto.getProdutoEdicao())
                             && movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null) {
                         
-                        final BigInteger exemplaresDevolucaoConferencia = (encalhe.getExemplaresDevolucao() == null) ? BigInteger.ZERO
-                                : encalhe.getExemplaresDevolucao();
+                        final BigInteger exemplaresDevolucaoConferencia = Util.nvl(encalhe.getExemplaresDevolucao(), BigInteger.ZERO);
                         
                         encalhe.setExemplaresDevolucao(exemplaresDevolucaoConferencia
                                 .subtract(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao()));
+                        
+                        encalhe.setExemplaresVendaEncalhe(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao());
                     }
                 }
             }

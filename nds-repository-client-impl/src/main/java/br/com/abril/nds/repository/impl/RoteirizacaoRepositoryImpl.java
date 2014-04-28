@@ -239,7 +239,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		switch (filtro.getOrdenacaoColuna()) {
 			
 			case BOX:
-				hql.append(" order by nomeBox ");
+				hql.append(" order by box.codigo ");
 				break;
 				
 			case NOME_COTA:

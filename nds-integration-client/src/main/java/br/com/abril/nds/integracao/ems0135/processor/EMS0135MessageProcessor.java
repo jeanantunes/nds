@@ -275,20 +275,21 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 int numeroLancamentoNovo = 1;
                 
                 dataLancamento = dataLancamento == null ? dataAtual : dataLancamento;
+                
+                try {
+    				//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
+                	dataLancamento =lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId());
+    			} catch (Exception e) {
+    			}
                 Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, produto.getPeb());
                 Lancamento lancamento = new Lancamento();
                 lancamento.setDataCriacao(dataAtual);
                 lancamento.setNumeroLancamento(numeroLancamentoNovo);
                 lancamento.setDataLancamentoPrevista(dataLancamento);
-                //lancamento.setDataLancamentoDistribuidor(dataLancamento);
+                lancamento.setDataLancamentoDistribuidor(dataLancamento);
                 lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
                 lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
                 
-                try {
-    				//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
-                	lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId()));
-    			} catch (Exception e) {
-    			}
                 lancamento.setProdutoEdicao(produtoEdicao);
                 lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
                 lancamento.setDataStatus(dataAtual);

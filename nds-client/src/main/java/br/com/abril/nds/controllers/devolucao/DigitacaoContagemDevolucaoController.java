@@ -443,8 +443,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO_ALTERACAO)
 	public void confirmar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) throws IOException {
 		
-		if (listaDigitacaoContagemDevolucao == null 
-				|| listaDigitacaoContagemDevolucao.isEmpty()) {
+		if (listaDigitacaoContagemDevolucao == null || listaDigitacaoContagemDevolucao.isEmpty()) {
 			
             throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
 		}
