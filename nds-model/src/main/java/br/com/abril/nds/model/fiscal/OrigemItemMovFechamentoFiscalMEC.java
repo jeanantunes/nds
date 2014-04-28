@@ -15,7 +15,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 @Entity
 @DiscriminatorValue(value = "MOVIMENTO_ESTOQUE_COTA")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OrigemItemFechamentoFiscalMEC extends OrigemItemMovFechamentoFiscal {
+public class OrigemItemMovFechamentoFiscalMEC extends OrigemItemMovFechamentoFiscal {
 
 	private static final long serialVersionUID = -1646731362475540050L;
 	
@@ -25,7 +25,7 @@ public class OrigemItemFechamentoFiscalMEC extends OrigemItemMovFechamentoFiscal
 	
 	@XmlTransient
 	@OneToOne(cascade=CascadeType.ALL)
-	@JoinColumn(name="MOVIMENTO_ESTOQUE_COTA_ID")
+	@JoinColumn(name="MOVIMENTO_ESTOQUE_ID")
 	private MovimentoEstoqueCota movimentoEstoqueCota;
 	
 	public MovimentoEstoqueCota getMovimentoEstoqueCota() {

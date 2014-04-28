@@ -706,8 +706,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                     
                     if (negociacao != null && (negociacao.getParcelas() == null || negociacao.getParcelas().isEmpty())) {
                         
-                        negociacao.setValorDividaPagaComissao(negociacao.getValorDividaPagaComissao().add(
-                                mfc.getValor()));
+                        negociacao.setValorDividaPagaComissao(negociacao.getValorDividaPagaComissao().add(mfc.getValor()));
                         
                         final List<MovimentoFinanceiroCota> mfcsNegociacao = negociacao.getMovimentosFinanceiroCota();
                         
