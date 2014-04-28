@@ -333,6 +333,14 @@ var fechamentoEncalheController = $.extend(true, {
 			if (fechado != '') {
 				$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
 			}
+			
+			if(!row.cell.exemplaresJuramentadoFormatado){
+				row.cell.exemplaresJuramentadoFormatado = "0";
+			}
+			
+			if(!row.cell.exemplaresVendaEncalheFormatado){
+				row.cell.exemplaresVendaEncalheFormatado = "0";
+			}
 		});
 
 		return resultado;
