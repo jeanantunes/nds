@@ -29,6 +29,7 @@ import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO.ModoTela;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
@@ -1661,6 +1662,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	public List<ProdutoEdicao> obterProdutosEdicaoPorId(final Set<Long> idsProdutoEdicao) {
     	
     	return this.produtoEdicaoRepository.obterProdutosEdicaoPorId(idsProdutoEdicao);
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public List<ItemDTO<String, String>> obterProdutosBalanceados(Date dataLancamento) {
+        
+        return this.produtoEdicaoRepository.obterProdutosBalanceados(dataLancamento);
     }
     
 }
