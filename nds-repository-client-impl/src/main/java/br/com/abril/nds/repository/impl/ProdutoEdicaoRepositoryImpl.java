@@ -33,6 +33,7 @@ import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
@@ -826,7 +827,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		String queryStringProdutoEdicao = 
 				" SELECT " +
 				" 	numeroEdicao as edicao, " +
-				" 	periodicidade as periodo, " +
+//				" 	periodicidade as periodo, " +
 				" 	venda as venda, " +
 				" 	dataRecolhimento as dtRecolhimento, " +
 				" 	dataLancamento as dtLancamento, " +
@@ -844,28 +845,22 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				" (CASE   " +
 				"  	WHEN lancamento2_.status = 'FECHADO' OR lancamento2_.status = 'RECOLHIDO' " +
 				"  THEN " +
-				"  	  (SELECT sum(estqProdCota.qtde_recebida - estqProdCota.qtde_devolvida) " +
+				"  	  round((SELECT sum(estqProdCota.qtde_recebida - estqProdCota.qtde_devolvida) " +
 				"          FROM ESTOQUE_PRODUTO_COTA estqProdCota " +
-				"               LEFT OUTER JOIN PRODUTO_EDICAO prodEdicao ON estqProdCota.PRODUTO_EDICAO_ID = prodEdicao.ID " +
-				"               LEFT OUTER JOIN PRODUTO pdto ON prodEdicao.PRODUTO_ID = pdto.ID " +
-				"          WHERE pdto.codigo = produto5_.CODIGO AND prodEdicao.NUMERO_EDICAO = produtoedi1_.NUMERO_EDICAO) " +
+				"          WHERE estqProdCota.produto_edicao_id = produtoedi1_.ID),0) " +
 				"  ELSE " +
-				"      (SELECT sum(estqProdCota.qtde_recebida) " +
+				"      round((SELECT sum(estqProdCota.qtde_recebida) " +
 				"          FROM ESTOQUE_PRODUTO_COTA estqProdCota " +
-				"               LEFT OUTER JOIN PRODUTO_EDICAO prodEdicao ON estqProdCota.PRODUTO_EDICAO_ID = prodEdicao.ID " +
-				"               LEFT OUTER JOIN PRODUTO pdto ON prodEdicao.PRODUTO_ID = pdto.ID " +
-				"          WHERE pdto.codigo = produto5_.CODIGO AND prodEdicao.NUMERO_EDICAO = produtoedi1_.NUMERO_EDICAO) " +
+				"          WHERE estqProdCota.produto_edicao_id = produtoedi1_.ID),0) " +
 				"  END) venda, " +
 				
 				" 	lancamento2_.DATA_REC_DISTRIB as dataRecolhimento, " +
 				" 	lancamento2_.DATA_LCTO_DISTRIBUIDOR as dataLancamento, " +
 				" 	estoqueProdutoCota.QTDE_RECEBIDA, " +
 				
-				" 	round((select sum(me.QTDE) " +
-		        " 			from movimento_estoque me                                    " +
-		        " 			join produto_edicao pe ON me.PRODUTO_EDICAO_ID = pe.ID       " +
-		        " 			join tipo_movimento tmov ON me.TIPO_MOVIMENTO_ID = tmov.ID   " +
-		        " 			where pe.ID = produtoedi1_.id and tmov.GRUPO_MOVIMENTO_ESTOQUE = 'RECEBIMENTO_FISICO'), 0) as reparte, " +
+				"   round((SELECT sum(estqProdCota.qtde_recebida) " +
+				"   FROM ESTOQUE_PRODUTO_COTA estqProdCota " +
+				"   WHERE estqProdCota.produto_edicao_id = produtoedi1_.ID),0) as reparte, " +
 
 		        " 	produto5_.NOME as nomeProduto, " +
 				" 	produto5_.CODIGO as codigoProduto, " +				
@@ -1287,26 +1282,20 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" produto.periodicidade as periodicidade, ");
 		hql.append(" lancamento.dataLancamentoPrevista as dataLancamento, ");
 		
-		hql.append(" (select sum(me.qtde) ");
-		hql.append("  from MovimentoEstoque me ");
-		hql.append(" 	join me.produtoEdicao pe  ");
-		hql.append(" 	join me.tipoMovimento tmov ");
-		hql.append("  where pe.id = produtoEdicao.id and tmov.grupoMovimentoEstoque = 'RECEBIMENTO_FISICO' ) as repartePrevisto, ");
+		hql.append("      round((SELECT sum(estqProdCota.qtdeRecebida) ");
+		hql.append("          FROM EstoqueProdutoCota estqProdCota ");
+		hql.append("          WHERE estqProdCota.produtoEdicao = produtoEdicao.id),0) as repartePrevisto, ");
 		
 		hql.append(" (CASE   ");
 		hql.append("  	WHEN lancamento.status = 'FECHADO' OR lancamento.status = 'RECOLHIDO' ");
 		hql.append("  THEN ");
 		hql.append("  	  round((SELECT sum(estqProdCota.qtdeRecebida - estqProdCota.qtdeDevolvida) ");
 		hql.append("          FROM EstoqueProdutoCota estqProdCota ");
-		hql.append("               JOIN estqProdCota.produtoEdicao as prodEdicao ");
-		hql.append("               JOIN prodEdicao.produto as pdto ");
-		hql.append("          WHERE pdto.codigo = produto.codigo AND prodEdicao.numeroEdicao = produtoEdicao.numeroEdicao),0) ");
+		hql.append("          WHERE estqProdCota.produtoEdicao = produtoEdicao.id),0) ");
 		hql.append("  ELSE ");
 		hql.append("      round((SELECT sum(estqProdCota.qtdeRecebida) ");
 		hql.append("          FROM EstoqueProdutoCota estqProdCota ");
-		hql.append("              JOIN estqProdCota.produtoEdicao as prodEdicao ");
-		hql.append("              JOIN prodEdicao.produto as pdto ");
-		hql.append("          WHERE pdto.codigo = produto.codigo AND prodEdicao.numeroEdicao = produtoEdicao.numeroEdicao),0) ");
+		hql.append("          WHERE estqProdCota.produtoEdicao = produtoEdicao.id),0) ");
 		hql.append("  END) as qtdeVendas, ");
 		
 		hql.append(" lancamento.status as situacaoLancamento, ");
@@ -1942,4 +1931,30 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		return ((BigInteger) query.uniqueResult()).compareTo(BigInteger.ZERO) > 0;
 	}
+
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ItemDTO<String, String>> obterProdutosBalanceados(Date dataLancamento) {
+        
+        String hql = " select "
+                + " new "
+                + ItemDTO.class.getCanonicalName()
+                + " (produto.codigo, concat(produto.codigo, ' - ', produto.nome, ' - ', produtoEdicao.numeroEdicao)) "
+                + " from Lancamento lancamento "
+                + " join lancamento.produtoEdicao produtoEdicao "
+                + " join produtoEdicao.produto produto "
+                + " where lancamento.status in (:status) "
+                + " and lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor "
+                + " group by produtoEdicao.id "
+                + " order by produto.nome ";
+        
+        Query query = super.getSession().createQuery(hql);
+    
+        query.setParameterList("status", Arrays.asList(StatusLancamento.BALANCEADO,StatusLancamento.EXPEDIDO));
+        
+        query.setParameter("dataLancamentoDistribuidor", dataLancamento);
+        
+        return query.list();
+    }
 }

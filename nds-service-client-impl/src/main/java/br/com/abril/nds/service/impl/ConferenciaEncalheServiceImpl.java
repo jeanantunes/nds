@@ -1958,9 +1958,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		for (final ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
 			
 			valorTotalReparteOperacaoConferenciaEncalhe = 
-					valorTotalReparteOperacaoConferenciaEncalhe.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getQtdReparte())));
+					valorTotalReparteOperacaoConferenciaEncalhe.add(dto.getPrecoComDesconto().multiply(new BigDecimal(dto.getQtdReparte())));
 			valorTotalEncalheOperacaoConferenciaEncalhe = 
-					valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getQtdExemplar())));
+					valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getPrecoComDesconto().multiply(new BigDecimal(dto.getQtdExemplar())));
 		}
 		
 		this.negociacaoDividaService.abaterNegociacaoPorComissao(
@@ -3353,9 +3353,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
      */
 	@Override
 	@Transactional(readOnly=true)
-	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(final ControleConferenciaEncalheCota controleConferenciaEncalheCota){
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
+	        final ControleConferenciaEncalheCota controleConferenciaEncalheCota,
+	        final Long idFornecedor){
 		
-		return this.debitoCreditoCotaService.obterListaDebitoCreditoCotaDTO(controleConferenciaEncalheCota.getCota(), controleConferenciaEncalheCota.getDataOperacao());
+		return this.debitoCreditoCotaService.obterListaDebitoCreditoCotaDTO(
+		        controleConferenciaEncalheCota.getCota(), controleConferenciaEncalheCota.getDataOperacao(),
+		        idFornecedor);
 	}
 	
 	protected String obterSlipReportPath() throws URISyntaxException {

@@ -23,10 +23,14 @@ var produtoController = $.extend(true, {
 			produtoController.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#comboGeracaoAutomatica', false);
 		});
 		
-		$('#nomeProduto', produtoController.workspace).focus(function (){
-			produtoController.atualizaICD();
+		$('#nomeProduto', produtoController.workspace).bind({
+			keyup: function(){
+				this.value = this.value.toUpperCase();
+			},
+			focus: function(){
+				produtoController.atualizaICD();
+			}
 		});
-		
 		
 		$("#produto",produtoController.workspace).autocomplete({
 			source:function(param ,callback) {

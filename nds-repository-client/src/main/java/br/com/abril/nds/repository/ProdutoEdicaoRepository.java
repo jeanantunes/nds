@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
@@ -373,4 +374,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 	public boolean cotaTemProduto(String codigoProduto, Integer numeroEdicao,
 			Integer numeroCota);
+
+    public List<ItemDTO<String, String>> obterProdutosBalanceados(Date dataLancamento);
 }

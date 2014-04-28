@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip_pdf" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="591" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" whenResourceMissingType="Empty" uuid="a28e778e-1e14-484a-90d1-0799fff7d59c">
 	<property name="ireport.zoom" value="1.3660269107301448"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="279"/>
+	<property name="ireport.y" value="158"/>
 	<style name="zebrado" mode="Opaque" backcolor="#F0F0F0">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($V{COLUMN_COUNT}.intValue() % 2) == 0)]]></conditionExpression>
@@ -367,7 +367,7 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="287" splitType="Stretch">
+		<band height="198" splitType="Stretch">
 			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement uuid="397f5a76-0bc0-476f-b72b-56f51f031e00" mode="Opaque" x="293" y="100" width="254" height="20" backcolor="#F0F0F0"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>

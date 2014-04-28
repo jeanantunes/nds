@@ -224,8 +224,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     public Long criarNegociacao(final Integer numeroCota, final List<ParcelaNegociacao> parcelas, final TipoNegociacao tipoNegociacao,
             final BigDecimal valorDividaParaComissao, final List<Long> idsCobrancasOriginarias,
             final Usuario usuarioResponsavel, final boolean negociacaoAvulsa, final Integer ativarCotaAposParcela,
-            final BigDecimal comissaoParaSaldoDivida, final BigDecimal comissaoOriginalCota,
-            final boolean isentaEncargos, final FormaCobranca formaCobranca,
+            final BigDecimal comissaoParaSaldoDivida, final boolean isentaEncargos, final FormaCobranca formaCobranca,
             final Long idBanco) {
         
         // lista para mensagens de validação
@@ -482,8 +481,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         negociacao.setTipoNegociacao(tipoNegociacao);
         negociacao.setComissaoParaSaldoDivida(comissaoParaSaldoDivida == null ? BigDecimal.ZERO
                 : comissaoParaSaldoDivida);
-        negociacao.setComissaoOriginalCota(comissaoOriginalCota == null ? BigDecimal.ZERO
-        		: comissaoOriginalCota);
         negociacao.setIsentaEncargos(isentaEncargos);
         negociacao.setNegociacaoAvulsa(negociacaoAvulsa);
         negociacao.setFormaCobranca(formaCobranca);
@@ -854,24 +851,29 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         
         String path = diretorioReports.toURI().getPath();
         
-        if (impressaoNegociacaoDTO.getParcelasCheques().isEmpty()) {
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+
+        if (TipoNegociacao.COMISSAO.equals(negociacao.getTipoNegociacao())) {
             
             path += "/negociacao_divida_comissao.jasper";
-        } else if (impressaoNegociacaoDTO.getParcelasCheques().get(0).getNumeroCheque() == null) {
-            
-            path += "/negociacao_divida_boleto.jasper";
-            
+
+        } else if (TipoCobranca.CHEQUE.equals(negociacao.getFormaCobranca().getTipoCobranca())) {
+
+        	path += "/negociacao_divida_cheque.jasper";
+
         } else {
-            
-            path += "/negociacao_divida_cheque.jasper";
+
+        	path += "/negociacao_divida_boleto.jasper";
+        	
+            parameters.put("TIPO_COBRANCA", negociacao.getFormaCobranca().getTipoCobranca().getDescricao());
         }
+
         InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
         
         if (inputStream == null) {
             inputStream = new ByteArrayInputStream(new byte[0]);
         }
         
-        final Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("TOTAL_PARCELAS", CurrencyUtil.formatarValor(totalParcelas.setScale(2, RoundingMode.HALF_EVEN)));
         parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
         
@@ -1270,107 +1272,90 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         // verifica se existe valor para abater das negociações
         if (valorTotalReparte != null && valorTotalReparte.compareTo(BigDecimal.ZERO) > 0) {
             
+        	valorTotalEncalhe = valorTotalEncalhe == null ? BigDecimal.ZERO : valorTotalEncalhe;
+        	
             // busca negociações por comissão ainda não quitadas
-            final List<Negociacao> negociacoes = negociacaoDividaRepository.obterNegociacaoPorComissaoCota(idCota);
+            final Negociacao negociacao = negociacaoDividaRepository.obterNegociacaoPorComissaoCota(idCota);
             
-            if (negociacoes != null && !negociacoes.isEmpty()) {
-                
-                final Cota cota = cotaRepository.buscarPorId(idCota);
-                
-                final TipoMovimentoFinanceiro tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository
-                        .buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO);
-                
-                final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-                
-                for (final Negociacao negociacao : negociacoes) {
+            if (negociacao != null) {           	
                 	
-                    // caso todo o valor da conferencia tenha sido usado para
-                    // quitação das negociações
-                    if (valorTotalReparte.compareTo(BigDecimal.ZERO) <= 0) {
-                        break;
-                    }
-
-                	final BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
-                    final BigDecimal comissaoCota = negociacao.getComissaoOriginalCota();
-                    final BigDecimal novaComissao = comissaoCota.subtract(comissao);
-
-                    final BigDecimal valorComissaoCota = 
-                    		this.calcularValorParaComissao(valorTotalReparte, valorTotalEncalhe, comissaoCota);
-
-                    final BigDecimal valorNovaComissao = 
-                    		this.calcularValorParaComissao(valorTotalReparte, valorTotalEncalhe, novaComissao);
-
-                    final BigDecimal valorDescontar = valorComissaoCota.subtract(valorNovaComissao);
-                    
-                    valorTotalReparte = valorTotalReparte.subtract(valorDescontar);
-
-                    final BigDecimal valorRestanteNegociacao = 
-                    		negociacao.getValorDividaPagaComissao().subtract(valorDescontar);
-                    
-                    // se o valor resultante não quita a negociação
-                    if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0) {
-                        
-                        negociacao.setValorDividaPagaComissao(valorRestanteNegociacao);
-                    } else {
-                        
-                        negociacao.setValorDividaPagaComissao(BigDecimal.ZERO);
-                        
-                        // gera crédito para cota caso a comissão gere sobra na
-                        // quitação
-                        valorTotalReparte = valorTotalReparte.add(valorRestanteNegociacao.negate());
-                    }
-                    
-                    final MovimentoFinanceiroCotaDTO movDTO = new MovimentoFinanceiroCotaDTO();
-                    movDTO.setAprovacaoAutomatica(true);
-                    movDTO.setCota(cota);
-                    movDTO.setDataAprovacao(dataOperacao);
-                    movDTO.setDataCriacao(dataOperacao);
-                    movDTO.setDataOperacao(dataOperacao);
-                    movDTO.setDataVencimento(movDTO.getDataAprovacao());
-                    movDTO.setObservacao("Negociação por comissão");
-                    movDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
-                    movDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
-                    movDTO.setUsuario(usuario);
-                    
-                    if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0) {
-                        
-                        movDTO.setValor(valorDescontar);
-                    } else {
-                        
-                        movDTO.setValor(valorRestanteNegociacao);
-                    }
-                    
-                    final MovimentoFinanceiroCota m = movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(
-                            movDTO, null);
-                    
-                    movimentoFinanceiroCotaRepository.adicionar(m);
-                    
-                    if (negociacao.getMovimentosFinanceiroCota() == null) {
-                        
-                        negociacao.setMovimentosFinanceiroCota(new ArrayList<MovimentoFinanceiroCota>());
-                    }
-                    
-                    negociacao.getMovimentosFinanceiroCota().add(m);
-                    
-                    negociacaoDividaRepository.alterar(negociacao);
+                // caso todo o valor da conferencia tenha sido usado para quitação das negociações
+                if (valorTotalReparte.compareTo(BigDecimal.ZERO) <= 0) {
+                    return;
                 }
+                
+                final BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
+                final BigDecimal valorVenda = valorTotalReparte.subtract(valorTotalEncalhe);
+                
+                final BigDecimal valorComissao = valorVenda.multiply(comissao.divide(BigDecimalUtil.CEM));                 
+
+                final BigDecimal valorRestanteNegociacao = negociacao.getValorDividaPagaComissao().subtract(valorComissao);
+
+                BigDecimal valorMovimentoNegociacao = BigDecimal.ZERO;
+                
+                if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0) {
+
+                	valorMovimentoNegociacao = valorComissao;
+
+                	negociacao.setValorDividaPagaComissao(valorRestanteNegociacao);
+
+                } else {
+
+                    // gera crédito para cota caso a comissão gere sobra na quitação
+                    final MovimentoFinanceiroCota movimentoFinanceiro = 
+                    		this.criarMovimentoFinanceiroPorGrupo(idCota, valorRestanteNegociacao.negate(), usuario, GrupoMovimentoFinaceiro.CREDITO);
+
+                    this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiro);
+
+                	valorMovimentoNegociacao = negociacao.getValorDividaPagaComissao();
+                	
+                    negociacao.setValorDividaPagaComissao(BigDecimal.ZERO);
+                }
+
+                final MovimentoFinanceiroCota movimentoFinanceiro = 
+                		this.criarMovimentoFinanceiroPorGrupo(idCota, valorMovimentoNegociacao, usuario, GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO);
+                
+                movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiro);
+                
+                if (negociacao.getMovimentosFinanceiroCota() == null) {
+                    
+                    negociacao.setMovimentosFinanceiroCota(new ArrayList<MovimentoFinanceiroCota>());
+                }
+                
+                negociacao.getMovimentosFinanceiroCota().add(movimentoFinanceiro);
+                
+                negociacaoDividaRepository.alterar(negociacao);
             }
         }
     }
     
-    private BigDecimal calcularValorParaComissao(BigDecimal reparte, BigDecimal encalhe, BigDecimal comissao) {
-
-        final BigDecimal valorReparte = 
-        		reparte.subtract(reparte.multiply(comissao.divide(BigDecimalUtil.CEM)));
+    private MovimentoFinanceiroCota criarMovimentoFinanceiroPorGrupo(Long idCota, BigDecimal valor, Usuario usuario, GrupoMovimentoFinaceiro grupoMovimentoFinaceiro) {
+    	
+        final Cota cota = cotaRepository.buscarPorId(idCota);
         
-        final BigDecimal valorEncalhe = 
-        		encalhe.subtract(encalhe.multiply(comissao.divide(BigDecimalUtil.CEM)));
+        final TipoMovimentoFinanceiro tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository
+                .buscarTipoMovimentoFinanceiro(grupoMovimentoFinaceiro);
         
-        final BigDecimal valorVenda = valorReparte.subtract(valorEncalhe);
-
-    	return valorVenda.multiply(comissao).divide(BigDecimalUtil.CEM.subtract(comissao));
+    	final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+    	
+    	String observacao = GrupoMovimentoFinaceiro.CREDITO.equals(grupoMovimentoFinaceiro) ? "Acerto de negociação por comissão" : "Negociação por comissão";
+        
+    	final MovimentoFinanceiroCotaDTO movDTO = new MovimentoFinanceiroCotaDTO();
+        movDTO.setAprovacaoAutomatica(true);
+        movDTO.setCota(cota);
+        movDTO.setDataAprovacao(dataOperacao);
+        movDTO.setDataCriacao(dataOperacao);
+        movDTO.setDataOperacao(dataOperacao);
+        movDTO.setDataVencimento(movDTO.getDataAprovacao());
+        movDTO.setObservacao(observacao);
+        movDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+        movDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+        movDTO.setUsuario(usuario);
+        movDTO.setValor(valor);
+        
+        return movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(movDTO, null);
     }
-    
+
     @Transactional
     @Override
     public void verificarAtivacaoCotaAposPgtoParcela(Cobranca cobranca, Usuario usuario){
