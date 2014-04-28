@@ -183,40 +183,40 @@ fieldset label {
 						</select>
 					</td>
 					<td width="50">Cota:</td>
-					<td width="180"><input type="text" id="numeroCota"
-						name="filtro.cota.numeroCota"
-						style="width: 80px; float: left; margin-right: 5px;"
-						onchange="entradaNFETerceirosController.pesquisarCota();" /></td>
+					<td width="180">
+						<input type="text" id="numeroCota" name="filtro.cota.numeroCota" style="width: 80px; float: left; margin-right: 5px;" onchange="entradaNFETerceirosController.pesquisarCota();" />
+					</td>
 					<td colspan="3">Nome: <span id="nomeCota"></span></td>
 				</tr>
 				<tr>
 					<td>Per&iacute;odo:</td>
 					<td>
-						
-						<input name="filtro.dataInicial" type="text" id="dataInicial"
-						style="width: 70px; " /> 
+						<input name="filtro.dataInicial" type="text" id="dataInicial" style="width: 70px; " /> 
 						At&eacute;: 
-						<input name="filtro.dataFinal"
-						type="text" id="dataFinal" style="width: 70px;" />
+						<input name="filtro.dataFinal" type="text" id="dataFinal" style="width: 70px;" />
 					</td>
 					<td width="34">Status:</td>
-					<td width="165"><select name="filtro.statusNotaFiscalEntrada" id="situacaoNfe"
-						style="width: 160px;" onchange="mostra_status(this.value); entradaNFETerceirosController.pesquisarEncalhe();">
+					<td width="165">
+						<select name="filtro.statusNotaFiscalEntrada" id="situacaoNfe" style="width: 160px;" onchange="mostra_status(this.value); entradaNFETerceirosController.pesquisarEncalhe();">
 							<option value="" selected="selected"></option>
 							<c:forEach items="${comboStatusNota}" var="comboStatusNota">
 								<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>
 							</c:forEach>
 					</select>
 					<td width="76">Tipo de Nota:</td>
-					<td width="211"><select id="select2"
-						style="width: 130px;">
+					<td width="211">
+						<select name="filtro.tipoNota" id="tipoNota" style="width: 130px;">
 							<option value=""selected="selected">Selecione...</option>
 							<option value="1">Todas</option>
 							<option value="2">Entrada</option>
 							<option value="3">Complementar</option>
-					</select></td>
-					<td width="131"><span class="bt_pesquisar"><a
-							href="javascript:;" onclick="entradaNFETerceirosController.pesquisarEncalhe();"></a></span></td>
+						</select>
+					</td>
+					<td width="131">
+						<span class="bt_pesquisar">
+							<a href="javascript:;" onclick="entradaNFETerceirosController.pesquisarEncalhe();" />
+						</span>
+					</td>
 				</tr>
 			</table>
 		</fieldset>
@@ -226,8 +226,6 @@ fieldset label {
 	<fieldset class="fieldGrid">
 		<legend>NF-e</legend>
 		<div class="grids" style="display: none;">
-
-
 			<div id="notaRecebida" style="display: none;">
 				<table class="notaRecebidaGrid"></table>
 			</div>
@@ -236,7 +234,6 @@ fieldset label {
 				<table class="encalheNfeGrid"></table>
 			</div>
 		</div>
-
 	</fieldset>
 </body>
 </html>

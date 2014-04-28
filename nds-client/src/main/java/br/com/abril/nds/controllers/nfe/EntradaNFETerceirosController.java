@@ -196,7 +196,6 @@ public class EntradaNFETerceirosController extends BaseController {
 	
 	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> efetuarConsultaNotasPendentes(final FiltroEntradaNFETerceiros filtro) {
 
-
 		List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, true);
 
 		Integer tamanhoListaNotasPendentes = this.entradaNFETerceirosService.buscarTodasNFNotas(filtro);
