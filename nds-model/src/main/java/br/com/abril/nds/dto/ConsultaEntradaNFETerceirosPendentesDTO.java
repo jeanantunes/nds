@@ -37,6 +37,8 @@ public class ConsultaEntradaNFETerceirosPendentesDTO implements Serializable {
 	@Export(label = "Status", alignment=Alignment.LEFT, exhibitionOrder = 8)
 	private String status;
 	
+	private Long idNotaFiscalEntrada;
+	
 	private Long numeroNfe;
 	
 	private String serie;
@@ -182,5 +184,12 @@ public class ConsultaEntradaNFETerceirosPendentesDTO implements Serializable {
 	public void setTipoNotaFiscal(String tipoNotaFiscal) {
 		this.tipoNotaFiscal = tipoNotaFiscal;
 	}
-	
+
+	public Long getIdNotaFiscalEntrada() {
+		return idNotaFiscalEntrada;
+	}
+
+	public void setIdNotaFiscalEntrada(Long idNotaFiscalEntrada) {
+		this.idNotaFiscalEntrada = idNotaFiscalEntrada;
+	}
 }

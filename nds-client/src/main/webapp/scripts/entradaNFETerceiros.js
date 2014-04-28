@@ -131,13 +131,13 @@ var entradaNFETerceirosController = $.extend(true, {
 									 '\');" style="cursor:pointer">' +
 								   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_lancamento.png" hspace="5" border="0px" />' +
 								   '</a>';
-				var linkCadastro = '<a isEdicao="true" href="javascript:;" onclick="entradaNFETerceirosController.popup_dadosNotaFiscal('+row.cell.numeroNfe+','
-					   																		+row.cell.dataEncalhe+','
-					   																		+row.cell.chaveAcesso+','
-					   																		+row.cell.serie+','
-					   																		+row.cell.valorNota+','
-					   																		+row.cell.idControleConferenciaEncalheCota+','
-					   																		+row.cell.idNotaFiscalEntrada+');" style="cursor:pointer">' +
+				var linkCadastro = '<a isEdicao="true" href="javascript:;" onclick="entradaNFETerceirosController.popup_dadosNotaFiscal(\''+row.cell.numeroNfe +'\',\''
+					   																		+ row.cell.dataEncalhe +'\',\''
+					   																		+ row.cell.chaveAcesso +'\',\''
+					   																		+ row.cell.serie +'\',\''
+					   																		+ row.cell.valorNota +'\',\''
+					   																		+ row.cell.idControleConferenciaEncalheCota +'\',\''
+					   																		+ row.cell.idNotaFiscalEntrada +'\');" style="cursor:pointer">' +
 							   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_cadastros.png" hspace="5" border="0px" />' +
 		                         '</a>';
 
