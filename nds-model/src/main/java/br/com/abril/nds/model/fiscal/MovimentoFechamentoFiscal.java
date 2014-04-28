@@ -8,8 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "MOVIMENTO_FECHAMENTO_FISCAL")
 public class MovimentoFechamentoFiscal implements Serializable {
 	
 	/**

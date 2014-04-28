@@ -9,7 +9,7 @@ Number.prototype.round = function(digits) {
     }
     var multiplicator = Math.pow(10, digits);
     return Math.round(this * multiplicator) / multiplicator;
-}
+};
 
 Number.prototype.toFixed = function(digits) {
     digits = Math.floor(digits);
@@ -22,7 +22,7 @@ Number.prototype.toFixed = function(digits) {
         fraction += new Array(digits - fraction.length + 1).join('0');
     }
     return parts[0] + '.' + fraction;
-}
+};
 
 var messageTimeout;
 var messageDialogTimeout;
