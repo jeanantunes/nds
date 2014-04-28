@@ -969,7 +969,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					                                              helperPrincipal.getFornecedor(), 
 					                                              dataOperacao);
 
-			if (formaCobranca == null){
+			if (formaCobranca == null) {
+				
+				if(	valorTotalMovimentos == null || 
+					valorTotalMovimentos.compareTo(BigDecimal.ZERO) == 0){
+					
+					return;
+					
+				}
 				
 				MovimentoFinanceiroCota movimentoFinanceiroCota = this.gerarPostergado(cotaUnificadora,
 						                                                               helperPrincipal.getQtdDiasNovaCobranca(), 

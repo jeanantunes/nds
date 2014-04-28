@@ -516,6 +516,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         return movimentoEstoque;
     }
     
+    //FIXME: Refatorar nome para ser relacionado a transferencia de suplementar para recolhimento
     @Transactional
     public void transferirEstoqueProdutoChamadaoParaRecolhimento(Long idProdutoEdicao,
             Usuario usuario) {
@@ -992,10 +993,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                
                 BigInteger qntMovimento = movimentoEstoque.getQtde();
                 
-                if(movimentoEstoque.getOrigem()!= null){
+                if(movimentoEstoque.getOrigem() != null || qtdeEstoqueProdutoSuplementar.longValue() > 0) {
                 	
-                	qntMovimento = this.efetuarOperacaoDeTransferenciaEstoque(
+                	if(qtdeEstoqueProdutoSuplementar.longValue() > 0) {
+                		//FIXME: Refatorar nome para ser relacionado a transferencia de suplementar para recolhimento
+                		transferirEstoqueProdutoChamadaoParaRecolhimento(estoqueProduto.getProdutoEdicao().getId(), movimentoEstoque.getUsuario());
+                	} else {
+                	
+                		qntMovimento = this.efetuarOperacaoDeTransferenciaEstoque(
 							movimentoEstoque, estoqueProduto, qntMovimento);		
+                	}
                 }
                 
                 novaQuantidade = isOperacaoEntrada ? qtdeEstoqueProdutoTotal.add(qntMovimento) :

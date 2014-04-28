@@ -701,13 +701,11 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                 if (tmf.equals(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO)
                         || tmf.equals(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO)) {
                     
-                    final Negociacao negociacao = negociacaoDividaRepository.obterNegociacaoPorMovFinanceiroId(mfc
-                            .getId());
+                    final Negociacao negociacao = negociacaoDividaRepository.obterNegociacaoPorMovFinanceiroId(mfc.getId());
                     
                     if (negociacao != null && (negociacao.getParcelas() == null || negociacao.getParcelas().isEmpty())) {
                         
-                        negociacao.setValorDividaPagaComissao(negociacao.getValorDividaPagaComissao().add(
-                                mfc.getValor()));
+                        negociacao.setValorDividaPagaComissao(negociacao.getValorDividaPagaComissao().add(mfc.getValor()));
                         
                         final List<MovimentoFinanceiroCota> mfcsNegociacao = negociacao.getMovimentosFinanceiroCota();
                         

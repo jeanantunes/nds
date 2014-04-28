@@ -871,7 +871,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 				continue;
 			}
 			
-			movimentoEstoqueService.gerarMovimentoEstoque(contagem.getIdProdutoEdicao(),idUsuario,contagem.getQtdNota(),tipoMovimentoDevolucaoEncalhe);
+			movimentoEstoqueService.gerarMovimentoEstoque(contagem.getIdProdutoEdicao(), idUsuario, contagem.getQtdNota(), tipoMovimentoDevolucaoEncalhe);
 		}
 	}
 	
