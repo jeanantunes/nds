@@ -2,6 +2,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/jquery.multiselect.css" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/utils.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/entradaNFETerceiros.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
@@ -41,8 +42,6 @@ fieldset label {
 <body>
 	<form id="form-dadosNotaFiscal">
 	<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
-
-
 		<div id="dialog-dadosNotaFiscal" title="Dados da Nota Fiscal">
 			<fieldset>
 				<legend>Nota Fiscal</legend>
@@ -71,9 +70,7 @@ fieldset label {
 			<fieldset>
 				<legend>Produtos Nota Fiscal</legend>
 				<table class="pesquisarProdutosNotaGrid"></table>
-
 			</fieldset>
-
 		</div>
 	</form>
 	<form id="form-nfe">
@@ -83,70 +80,65 @@ fieldset label {
 				<table width="280" border="0" cellspacing="1" cellpadding="0">
 					<tr>
 						<td width="84">Cota:</td>
-						<td width="193"><input type="text" id="cotaCadastroNota"
-							name="cotaCadastroNota"
-							style="width: 80px; float: left; margin-right: 5px;" /> <span
-							class="classPesquisar"><a href="javascript:;"
-								onclick="entradaNFETerceirosController.pesquisarCotaCadastroNota();">&nbsp;</a></span></td>
+						<td width="193">
+							<input type="text" id="cotaCadastroNota" name="cotaCadastroNota" style="width: 80px; float: left; margin-right: 5px;" /> 
+							<span class="classPesquisar">
+								<a href="javascript:;" onclick="entradaNFETerceirosController.pesquisarCotaCadastroNota();">&nbsp;</a>
+							</span>
+						</td>
 					</tr>
 					<tr>
 						<td>Nome:</td>
-						<td><input type="text" name="nomeCotaCadastroNota"
-							id="nomeCotaCadastroNota" /></td>
+						<td>
+							<input type="text" name="nomeCotaCadastroNota" id="nomeCotaCadastroNota" />
+						</td>
 					</tr>
 					<tr>
 						<td>NF-e:</td>
-						<td><input type="text" name="numeroNotaCadastroNota"
-							id="numeroNotaCadastroNota" /></td>
+						<td>
+							<input type="text" name="numeroNotaCadastroNota" id="numeroNotaCadastroNota" />
+						</td>
 					</tr>
 					<tr>
 						<td>Série:</td>
-						<td><input type="text" name="serieNotaCadastroNota"
-							id="serieNotaCadastroNota" /></td>
+						<td>
+							<input type="text" name="serieNotaCadastroNota" id="serieNotaCadastroNota" />
+						</td>
 					</tr>
 					<tr>
 						<td>Chave-Acesso:</td>
-						<td><input type="text" name="chaveAcessoCadastroNota"
-							id="chaveAcessoCadastroNota" /></td>
+						<td>
+							<input type="text" name="chaveAcessoCadastroNota" id="chaveAcessoCadastroNota" />
+						</td>
 					</tr>
 					<tr>
 						<td>Valor Nota R$:</td>
-						<td><input type="text" name="valorNotaCadastroNota"
-							id="valorNotaCadastroNota" /></td>
+						<td>
+							<input type="text" name="valorNotaCadastroNota" id="valorNotaCadastroNota" />
+						</td>
 					</tr>
 				</table>
 			</fieldset>
-
-
 		</div>
 	</form>
 
-
 	<form id="form-confirmar-cancelamento">
-		<div id="dialog-confirmar-cancelamento" title="Cancelamento de NF-e"
-			style="display: none;">
+		<div id="dialog-confirmar-cancelamento" title="Cancelamento de NF-e" style="display: none;">
 			<p>Confirma o cancelamento da NF-e?</p>
-
-
 		</div>
 	</form>
 
 	<form id="form-confirm">
 		<div id="dialog-confirm" title="Aprovar Solicitação">
 			<p>Você esta Aprovando uma Solicitação, tem certeza?</p>
-
-
 		</div>
 	</form>
 
 	<form id="form-rejeitar">
 		<div id="dialog-rejeitar" title="Rejeitar Solicitação">
 			<p>Tem certeza que deseja Rejeitar esta Solicitação?</p>
-
-
 		</div>
 	</form>
-
 
 	<form id="form-novo">
 		<div id="dialog-novo" title="Geração arquivos Nf-e">
@@ -157,22 +149,19 @@ fieldset label {
 	<div class="areaBts">
 		<div class="area">
 
-			<span class="bt_novos" id="btnRegistrarNFe" style="display:none"><a href="javascript:;"
-				onclick="entradaNFETerceirosController.popup_nfe('0','0');"
-				rel="tipsy" title="Registrar NF-e"> <img border="0" hspace="5"
-					src="${pageContext.request.contextPath}/images/ico_add_novo.gif"></a>
-			</span> 
-			<span class="bt_arq"> <a
-				href="${pageContext.request.contextPath}/nfe/entradaNFETerceiros/exportar?fileType=XLS"
-				rel="tipsy" title="Gerar Arquivo"> <img
-					src="${pageContext.request.contextPath}/images/ico_excel.png"
-					hspace="5" border="0" />
+			<span class="bt_novos" id="btnRegistrarNFe" style="display:none">
+			<a href="javascript:;" onclick="entradaNFETerceirosController.popup_nfe('0','0');" rel="tipsy" title="Registrar NF-e">
+				<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_add_novo.gif">
 			</a>
-			</span> <span class="bt_arq"> <a
-				href="${pageContext.request.contextPath}/nfe/entradaNFETerceiros/exportar?fileType=PDF"
-				rel="tipsy" title="Imprimir"> <img
-					src="${pageContext.request.contextPath}/images/ico_impressora.gif"
-					alt="Imprimir" hspace="5" border="0" />
+			</span> 
+			<span class="bt_arq"> 
+			<a href="${pageContext.request.contextPath}/nfe/entradaNFETerceiros/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+				 <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+			</a>
+			</span>
+			<span class="bt_arq"> 
+			<a href="${pageContext.request.contextPath}/nfe/entradaNFETerceiros/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 			</a>
 			</span>
 		</div>

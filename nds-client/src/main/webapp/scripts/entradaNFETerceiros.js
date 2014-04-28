@@ -143,7 +143,18 @@ var entradaNFETerceirosController = $.extend(true, {
 
 			   row.cell.acao = linkLancamento + linkCadastro;
 			});
-		
+			
+			$.each(resultado.rows, function(index, row) {
+
+				var valorNota = floatToPrice(row.cell.valorNota);
+				var valorReal = floatToPrice(row.cell.valorReal);
+				var diferenca = floatToPrice(row.cell.diferenca);
+				
+				row.cell.valorNota = valorNota;
+				row.cell.valorReal = valorReal;
+				row.cell.diferenca = diferenca;
+			});
+			
 		}
 		
 		$(".grids", this.workspace).show();

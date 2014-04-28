@@ -105,7 +105,7 @@ public class ConsultaEntradaNFETerceirosPendentesDTO implements Serializable {
 	}
 	
 	public void setValorNota(BigDecimal valorNota) {
-		this.valorNota = valorNota;
+		this.valorNota = CurrencyUtil.arredondarValorParaDuasCasas(valorNota);
 		if(valorNota != null){
 			valorNotaFormatado = CurrencyUtil.formatarValor(valorNota);
 		}
@@ -121,7 +121,7 @@ public class ConsultaEntradaNFETerceirosPendentesDTO implements Serializable {
 	}
 
 	public void setValorReal(BigDecimal valorReal) {
-		this.valorReal = valorReal;
+		this.valorReal = CurrencyUtil.arredondarValorParaQuatroCasas(valorReal);
 		if(valorReal != null){
 			valorRealFormatado = CurrencyUtil.formatarValor(valorReal);
 		}
@@ -137,7 +137,7 @@ public class ConsultaEntradaNFETerceirosPendentesDTO implements Serializable {
 	}
 
 	public void setDiferenca(BigDecimal diferenca) {
-		this.diferenca = diferenca;
+		this.diferenca = CurrencyUtil.arredondarValorParaDuasCasas(diferenca);
 		if(diferenca != null){
 			diferencaFormatado = CurrencyUtil.formatarValor(diferenca);
 		}
@@ -166,8 +166,7 @@ public class ConsultaEntradaNFETerceirosPendentesDTO implements Serializable {
 	/**
 	 * @param idControleConferenciaEncalheCota the idControleConferenciaEncalheCota to set
 	 */
-	public void setIdControleConferenciaEncalheCota(
-			Long idControleConferenciaEncalheCota) {
+	public void setIdControleConferenciaEncalheCota(Long idControleConferenciaEncalheCota) {
 		this.idControleConferenciaEncalheCota = idControleConferenciaEncalheCota;
 	}
 

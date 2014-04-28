@@ -449,6 +449,16 @@ var followUpSistemaController = $.extend(true, {
 		if(resultado.rows.length == 0){
 			$('#botoesArquivoPendencia').hide();
 		}
+		
+		$.each(resultado.rows, function(index, row) {						
+			
+			if(row.cell.numeroTelefone = "undefined"){
+				console.log("ai chegou!!!");
+				row.cell.numeroTelefone = " - ";
+			}
+			
+		});
+		
    		return resultado;
 	},
 	
