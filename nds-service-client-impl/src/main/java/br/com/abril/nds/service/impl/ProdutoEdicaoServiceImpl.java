@@ -1421,7 +1421,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         BigInteger cotasEsmagadas = BigInteger.ZERO;
         BigDecimal vendaEsmagadas = BigDecimal.ZERO;
         BigDecimal qtdeCotasSemVenda = BigDecimal.ZERO;
+        
         final StringBuilder strCotas = new StringBuilder();
+        
         for (int i = 0; i < newFaixasVenda.length; i++) {
             final String[] faixa = newFaixasVenda[i].split("-");
             final AnaliseHistogramaDTO obj =
