@@ -53,6 +53,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -102,6 +103,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     
     @Autowired
     private DistribuidorService distribuidorService;
+    
+    @Autowired
+    private CalendarioService calendarioService;
     
     @Autowired
     private NegociacaoDividaRepository negociacaoDividaRepository;
@@ -1247,9 +1251,14 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     @Transactional
     @Override
     public void gerarMovimentoFinanceiroCota(final Cota cota, final List<Date> datas, final Usuario usuario,
-            final Long idControleConferenciaEncalheCota) {
+            final Long idControleConferenciaEncalheCota, Integer diasPostergacao) {
     	
         Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+        
+        if (diasPostergacao!=null){
+        	
+        	dataOperacao = this.calendarioService.adicionarDiasUteis(dataOperacao, diasPostergacao);
+        }
         
         // MOVIMENTOS DA CONFERENCIA DE ENCALHE AGRUPADOS POR FORNECEDOR
         Map<Long, List<MovimentoEstoqueCota>> movimentosEncalheAgrupadosPorFornecedor = null;

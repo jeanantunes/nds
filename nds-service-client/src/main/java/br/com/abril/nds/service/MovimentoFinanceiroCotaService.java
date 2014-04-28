@@ -126,7 +126,8 @@ public interface MovimentoFinanceiroCotaService {
 	void gerarMovimentoFinanceiroCota(Cota cota,
 									  List<Date> datas,
 									  Usuario usuario,
-									  Long idControleConferenciaEncalheCota);
+									  Long idControleConferenciaEncalheCota,
+									  Integer diasPostergacao);
 	
 	/**
 	 * Obtem Quantidade de Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas

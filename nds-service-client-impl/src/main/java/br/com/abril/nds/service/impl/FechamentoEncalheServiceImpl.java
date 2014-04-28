@@ -916,7 +916,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         // CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE
         // E ENVIO_ENCALHE)
-        movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, datasRecolhimento, usuario, null);
+        movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, datasRecolhimento, usuario, null, null); 
     }
     
     @Override

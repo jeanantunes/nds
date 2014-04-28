@@ -1261,7 +1261,15 @@ var ConferenciaEncalhe = $.extend(true, {
 						
 						exibirMensagem('WARNING', [result[1]]);
 						ConferenciaEncalhe.resetValue = false;
-						ConferenciaEncalhe.atualizarValores(index);
+						
+						if (index || index == 0){
+							
+							ConferenciaEncalhe.atualizarValores(index);
+						} else {
+							
+							ConferenciaEncalhe.adicionarProdutoConferido();
+						}
+						
 					} else {
 						
 						$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result[1]);

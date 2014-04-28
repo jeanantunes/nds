@@ -110,6 +110,7 @@ import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.BoletoService;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
@@ -238,6 +239,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private GrupoService grupoService;
+
+	@Autowired
+	private CalendarioService calendarioService;
 	
 	@Autowired
 	private DebitoCreditoCotaService debitoCreditoCotaService;
@@ -1860,8 +1864,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 							controleConferenciaEncalheCota.getId());
 			
 			if(StatusOperacao.CONCLUIDO.equals(statusAtualOperacaoConfEnc)) {
-				
-				
+								
 				removerAssociacoesCobrancaConferenciaEncalheCota(controleConferenciaEncalheCota.getId());
 			}
 		}	
@@ -1889,7 +1892,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
 					                                                         datasRecolhimento,
 																			 controleConferenciaEncalheCota.getUsuario(),
-																			 controleConferenciaEncalheCota.getId());
+																			 controleConferenciaEncalheCota.getId(),
+																			 null);
 		
 			final boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(controleConferenciaEncalheCota.getCota().getId(), 
 					                                                                                              controleConferenciaEncalheCota.getDataOperacao());
@@ -1929,12 +1933,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			    this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(controleConferenciaEncalheCota.getCota().getNumeroCota(), 
 			    		                                                                                       controleConferenciaEncalheCota.getDataOperacao());
 			}
-			
-			//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA COTA A VISTA COM CONSIGNADO PENDENTE
+
+			//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE PARA O PROXIMO DIA UTIL (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA COTA A VISTA COM CONSIGNADO PENDENTE
 			this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
 					                                                         datasRecolhimento,
 																			 controleConferenciaEncalheCota.getUsuario(),
-																			 controleConferenciaEncalheCota.getId());
+																			 controleConferenciaEncalheCota.getId(),
+																			 1);
 		}
 		
 		return nossoNumeroCollection;
