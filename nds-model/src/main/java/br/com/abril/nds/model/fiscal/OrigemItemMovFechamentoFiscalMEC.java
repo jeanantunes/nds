@@ -28,6 +28,10 @@ public class OrigemItemMovFechamentoFiscalMEC extends OrigemItemMovFechamentoFis
 	@JoinColumn(name="MOVIMENTO_ESTOQUE_ID")
 	private MovimentoEstoqueCota movimentoEstoqueCota;
 	
+	public OrigemItemMovFechamentoFiscalMEC(MovimentoEstoqueCota mec) {
+		this.movimentoEstoqueCota = mec;
+	}
+	
 	public MovimentoEstoqueCota getMovimentoEstoqueCota() {
 		return movimentoEstoqueCota;
 	}

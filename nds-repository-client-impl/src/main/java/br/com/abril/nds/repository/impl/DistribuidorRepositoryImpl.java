@@ -190,8 +190,7 @@ public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribu
 	@Override
 	public DiaSemana buscarInicioSemanaLancamento() {
 		
-		return (DiaSemana) 
-				this.getSession().createQuery("select inicioSemanaLancamento from Distribuidor").uniqueResult();
+		return (DiaSemana) this.getSession().createQuery("select inicioSemanaLancamento from Distribuidor").uniqueResult();
 	}
 
 	@Override
@@ -203,17 +202,13 @@ public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribu
 	@Override
 	public BigDecimal obterDescontoCotaNegociacao(){
 		
-		return (BigDecimal) 
-				this.getSession().createQuery(
-						"select descontoCotaNegociacao from Distribuidor").uniqueResult();
+		return (BigDecimal) this.getSession().createQuery("select descontoCotaNegociacao from Distribuidor").uniqueResult();
 	}
 	
 	@Override
 	public boolean utilizaGarantiaPdv(){
 		
-		Boolean utilizaGarantiaPdv = 
-				(Boolean) this.getSession().createQuery(
-						"select utilizaGarantiaPdv from Distribuidor").uniqueResult();
+		Boolean utilizaGarantiaPdv = (Boolean) this.getSession().createQuery("select utilizaGarantiaPdv from Distribuidor").uniqueResult();
 		
 		return utilizaGarantiaPdv == null ? false : utilizaGarantiaPdv;
 	}
@@ -221,9 +216,7 @@ public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribu
 	@Override
 	public boolean aceitaJuramentado(){
 		
-		Boolean aceitaJuramentado =
-				(Boolean) this.getSession().createQuery(
-						"select aceitaJuramentado from Distribuidor").uniqueResult();
+		Boolean aceitaJuramentado = (Boolean) this.getSession().createQuery("select aceitaJuramentado from Distribuidor").uniqueResult();
 		
 		return aceitaJuramentado == null ? false : aceitaJuramentado;
 	}
@@ -231,9 +224,7 @@ public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribu
 	@Override
 	public int qtdDiasEncalheAtrasadoAceitavel(){
 		
-		Integer qtd = (Integer)
-				this.getSession().createQuery(
-						"select qtdDiasEncalheAtrasadoAceitavel from Distribuidor").uniqueResult();
+		Integer qtd = (Integer) this.getSession().createQuery("select qtdDiasEncalheAtrasadoAceitavel from Distribuidor").uniqueResult();
 		
 		return qtd == null ? 0 : qtd;
 	}

@@ -1,26 +1,89 @@
 package br.com.abril.nds.model.fiscal;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-@Entity
+@MappedSuperclass
 @Table(name = "MOVIMENTO_FECHAMENTO_FISCAL")
-public class MovimentoFechamentoFiscal implements Serializable {
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+@DiscriminatorColumn(name="TIPO_DESTINATARIO", discriminatorType=DiscriminatorType.STRING)
+public abstract class MovimentoFechamentoFiscal implements Serializable {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Column(name = "NOTA_FISCAL_EMITIDA")
-	private boolean notaFiscalEmitida;
+	@Column(name = "NOTA_FISCAL_VENDA_EMITIDA")
+	private boolean notaFiscalVendaEmitida;
 	
-	@OneToMany
+	@Column(name = "NOTA_FISCAL_DEVOLUCAO_SIMBOLICA_EMITIDA")
+	private boolean notaFiscalDevolucaoSimbolicaEmitida;
+	
+	@Column(name = "QTDE")
+	private BigInteger qtde;
+	
+	@Column(name = "TIPO_DESTINATARIO")
+	private TipoDestinatario tipoDestinatario;
+	
+	@OneToMany(cascade=CascadeType.ALL, mappedBy="movimentoFechamentoFiscal")
+	/*@JoinTable(name = "MOVIMENTO_FECHAMENTO_FISCAL_MFF_ORIGEM_ITEM", 
+		joinColumns = {@JoinColumn(name = "MOVIMENTO_FECHAMENTO_FISCAL_ID")}, 
+		inverseJoinColumns = {@JoinColumn(name = "ORIGEM_MOVIMENTO_FECHAMENTO_FISCAL_ID")}
+	)*/
 	private List<OrigemItemMovFechamentoFiscal> origemMovimentoFechamentoFiscal;
+
+	public boolean isNotaFiscalVendaEmitida() {
+		return notaFiscalVendaEmitida;
+	}
+
+	public void setNotaFiscalVendaEmitida(boolean notaFiscalVendaEmitida) {
+		this.notaFiscalVendaEmitida = notaFiscalVendaEmitida;
+	}
+
+	public boolean isNotaFiscalDevolucaoSimbolicaEmitida() {
+		return notaFiscalDevolucaoSimbolicaEmitida;
+	}
+
+	public void setNotaFiscalDevolucaoSimbolicaEmitida(
+			boolean notaFiscalDevolucaoSimbolicaEmitida) {
+		this.notaFiscalDevolucaoSimbolicaEmitida = notaFiscalDevolucaoSimbolicaEmitida;
+	}
+
+	public BigInteger getQtde() {
+		return qtde;
+	}
+
+	public void setQtde(BigInteger qtde) {
+		this.qtde = qtde;
+	}
+
+	public TipoDestinatario getTipoDestinatario() {
+		return tipoDestinatario;
+	}
+
+	public void setTipoDestinatario(TipoDestinatario tipoDestinatario) {
+		this.tipoDestinatario = tipoDestinatario;
+	}
+
+	public List<OrigemItemMovFechamentoFiscal> getOrigemMovimentoFechamentoFiscal() {
+		return origemMovimentoFechamentoFiscal;
+	}
+
+	public void setOrigemMovimentoFechamentoFiscal(
+			List<OrigemItemMovFechamentoFiscal> origemMovimentoFechamentoFiscal) {
+		this.origemMovimentoFechamentoFiscal = origemMovimentoFechamentoFiscal;
+	}
 	
 }
