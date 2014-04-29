@@ -3,6 +3,8 @@ var negociacaoDividaController = $.extend(true, {
 	path : contextPath + '/financeiro/negociacaoDivida/',
 	
 	situacaoCota: null,
+	
+	tipoCobrancaDefaultCota: null,
 
 	init : function() {
 		negociacaoDividaController.initGridNegociacao();
@@ -15,7 +17,11 @@ var negociacaoDividaController = $.extend(true, {
 			centsSeparator: ',',
 		    thousandsSeparator: '.'
 		});
-		
+
+		$("#checknegociacaoAvulsa").change(function() {
+			negociacaoDividaController.atualizarTiposPagamento($(this).is(":checked"));
+		});
+
 		$('#diaInputQuinzenal1', negociacaoDividaController.workspace).numeric();
 		
 		$('#diaInputQuinzenal2', negociacaoDividaController.workspace).numeric();
@@ -23,7 +29,41 @@ var negociacaoDividaController = $.extend(true, {
 		$('#mensalDia', negociacaoDividaController.workspace).numeric();
 		
 		$("#negociacaoDivida_numCota", negociacaoDividaController.workspace).numeric();
-		this.situacaoCota = null;
+		this.situacaoCota = null;		
+	},
+	
+	atualizarTiposPagamento: function(isNegociacaoAvulsa) {
+		
+		var numeroCota = $("#negociacaoDivida_numCota").val();
+
+		var params = {
+			numeroCota: numeroCota,
+			isNegociacaoAvulsa: isNegociacaoAvulsa
+		};
+		
+		$.postJSON(
+			contextPath + '/financeiro/negociacaoDivida/atualizarTiposCobrancaNegociacao',
+			params,
+			function(result) {
+
+				if (result) {
+					
+					$("#selectPagamento").empty();
+					
+					$.each(result, function(index, value) {
+						
+						var selected = value[0] === negociacaoDividaController.tipoCobrancaDefaultCota ? 'selected' : ''; 
+						
+						$("#selectPagamento").append("<option value='" + value[0] + "'" + selected + ">" + value[1] + " </option>");
+					});
+					
+					var optSelected = $("#selectPagamento option:selected");
+					
+					negociacaoDividaController.opcaoFormasPagto(optSelected.val()); 
+					negociacaoDividaController.calcularParcelas();
+				}
+			} 
+		);
 	},
 
 	pesquisarCota : function(numeroCota) {
@@ -37,6 +77,7 @@ var negociacaoDividaController = $.extend(true, {
 						$('#negociacaoDivida_statusCota').html(result.status);
 						$('#negociacaoDivida_nomeCota').html(result.nome);
 						self.situacaoCota =  result.situacaoCadastro;
+						negociacaoDividaController.atualizarTiposPagamento();
 					},
 					function() {
 						$('#negociacaoDivida_statusCota').html('');
@@ -58,6 +99,8 @@ var negociacaoDividaController = $.extend(true, {
 		$("#negociacaoCheckAll", negociacaoDividaController.workspace).uncheck();
 		$("#totalSelecionado", negociacaoDividaController.workspace).html('0,00');
 		$('#negociacaoDivida_numEnomeCota').html($('#negociacaoDivida_numCota').val() +' - '+ $('#negociacaoDivida_nomeCota').html());
+		
+		negociacaoDividaController.tipoCobrancaDefaultCota = null;
 		
 		var params = $("#negociacaoDividaForm", this.workspace).serialize();
 	
@@ -322,9 +365,11 @@ var negociacaoDividaController = $.extend(true, {
 					$("#negociacaoPorComissao",negociacaoDividaController.workspace).attr("disabled", false);
 					$("#negociacaoPorComissao-tr",negociacaoDividaController.workspace).show();
 				}
-				
+
+				negociacaoDividaController.tipoCobrancaDefaultCota = result[1];
+
 				$("#selectPagamento", negociacaoDividaController.workspace).val(result[1]);
-				
+
 				$('#formaPgto_numEnomeCota',negociacaoDividaController.workspace).html('<strong>Cota:</strong> ' + $('#negociacaoDivida_numCota',negociacaoDividaController.workspace).val() +' - <strong>Nome: </strong>'+ $('#negociacaoDivida_nomeCota').html()+' - <strong>Status: </strong>'+ $('#negociacaoDivida_statusCota').html());
 				$('#dividaSelecionada',negociacaoDividaController.workspace).html($('#totalSelecionado',negociacaoDividaController.workspace).html());
 				$('#valorSelecionado',negociacaoDividaController.workspace).val(priceToFloat($('#totalSelecionado',negociacaoDividaController.workspace).html()));
@@ -488,7 +533,7 @@ var negociacaoDividaController = $.extend(true, {
 		
 		$.postJSON(contextPath + '/financeiro/negociacaoDivida/confirmarNegociacao',
 			params, 
-			function(result) {//TODO
+			function(result) {
 			
 	            if (result.tipoMensagem && result.listaMensagens) {
 	                

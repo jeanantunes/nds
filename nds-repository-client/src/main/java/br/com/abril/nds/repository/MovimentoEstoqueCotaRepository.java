@@ -414,22 +414,22 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
 	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe ou com Produtos Conta Firme
 	 * @param idCota
-	 * @param dataControleConferencia
+	 * @param datas
 	 * @param idTiposMovimentoEstoque
 	 * 
 	 * @return List<MovimentoEstoqueCota>
 	 */
-	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(final Long idCota, final Date dataControleConferencia, final List<Long> idTiposMovimentoEstoque);
+	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(final Long idCota, final List<Date> datas, final List<Long> idTiposMovimentoEstoque);
 	
 	/**
 	 * Obtém movimentos de estoque da cota que forão estornados
 	 * Considera movimentos de estoque provenientes dos fluxos de Venda de Encalhe e Suplementar
 	 * @param idCota
 	 * @param idsTipoMovimentoEstorno
-	 * @param dataRecolhimento TODO
+	 * @param datas TODO
 	 * @return List<MovimentoEstoqueCota>
 	 */
-    public List<MovimentoEstoqueCota> obterMovimentosEstornadosPorChamadaEncalhe(final Long idCota, final List<Long> idsTipoMovimentoEstorno, Date dataRecolhimento);
+    public List<MovimentoEstoqueCota> obterMovimentosEstornadosPorChamadaEncalhe(final Long idCota, final List<Long> idsTipoMovimentoEstorno, List<Date> datas);
 
 	public List<MovimentoEstoqueCota> obterPorLancamento(Long idLancamento);
 

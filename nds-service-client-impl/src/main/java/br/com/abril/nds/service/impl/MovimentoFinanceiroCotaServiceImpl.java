@@ -53,6 +53,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -102,6 +103,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     
     @Autowired
     private DistribuidorService distribuidorService;
+    
+    @Autowired
+    private CalendarioService calendarioService;
     
     @Autowired
     private NegociacaoDividaRepository negociacaoDividaRepository;
@@ -880,11 +884,11 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
      * financeiro com Chamada Encalhe Agrupados por fornecedor
      * 
      * @param idCota
-     * @param dataOperacao
+     * @param datas
      * @return Map<Long,List<MovimentoEstoqueCota>>
      */
     private Map<Long, List<MovimentoEstoqueCota>> obterMovimentosEstoqueReparteComChamadaEncalheOuProdutoContaFirme(
-            final Long idCota, final Date dataOperacao) {
+            final Long idCota, final List<Date> datas) {
         
     	
     	List<Long> idTiposMovimentoEstoque = tipoMovimentoEstoqueRepository.buscarIdTiposMovimentoEstoque(Arrays.asList(
@@ -895,7 +899,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                 GrupoMovimentoEstoque.SOBRA_EM_COTA));
     	
         final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte = movimentoEstoqueCotaRepository
-                .obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(idCota, dataOperacao, idTiposMovimentoEstoque);
+                .obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(idCota, datas, idTiposMovimentoEstoque);
         
         StringBuilder idMovs = new StringBuilder();
         
@@ -934,10 +938,10 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
      * 
      * @param idCota
      * @param dataOperacao TODO
-     * @param dataOperacao
+     * @param datas
      * @return Map<Long,List<MovimentoEstoqueCota>>
      */
-    private Map<Long, List<MovimentoEstoqueCota>> obterMovimentosEstoqueEstorno(final Long idCota, Date dataOperacao) {
+    private Map<Long, List<MovimentoEstoqueCota>> obterMovimentosEstoqueEstorno(final Long idCota, List<Date> datas) {
         
     	final List<Long> idTiposMovimentoEstorno = tipoMovimentoEstoqueRepository.buscarIdTiposMovimentoEstoque(
     			Arrays.asList(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE, 
@@ -946,7 +950,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 	    					  GrupoMovimentoEstoque.FALTA_EM_COTA));
     	
         final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno = movimentoEstoqueCotaRepository
-                .obterMovimentosEstornadosPorChamadaEncalhe(idCota, idTiposMovimentoEstorno, dataOperacao);
+                .obterMovimentosEstornadosPorChamadaEncalhe(idCota, idTiposMovimentoEstorno, datas);
         
         final Map<Long, List<MovimentoEstoqueCota>> movimentosEstornoAgrupadosPorFornecedor = this
                 .agrupaMovimentosEstoqueCotaPorFornecedor(movimentosEstoqueCotaOperacaoEstorno);
@@ -1081,11 +1085,14 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
      * @param movimentosEstoqueCotaOperacaoConferenciaEncalhe
      * @param movimentosEstoqueCotaOperacaoEstorno
      */
-    private void gerarMovimentoFinanceiroCotaRecolhimentoPorFornecedor(final Cota cota, final Fornecedor fornecedor,
-            final Long idControleConferenciaEncalheCota, final Date dataOperacao, final Usuario usuario,
-            final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte,
-            final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoConferenciaEncalhe,
-            final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno) {
+    private void gerarMovimentoFinanceiroCotaRecolhimentoPorFornecedor(final Cota cota, 
+    		                                                           final Fornecedor fornecedor,
+														               final Long idControleConferenciaEncalheCota, 
+														               final Date dataOperacao, 
+														               final Usuario usuario,
+														               final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte,
+														               final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoConferenciaEncalhe,
+														               final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno) {
         
         final TipoCota tipoCota = cota != null ? cota.getTipoCota() : null;
         
@@ -1096,8 +1103,12 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         // GERA MOVIMENTO FINANCEIRO DOS MOVIMENTOS DE ESTOQUE DE
         // REPARTE(DEBITO) PARA COTA DO TIPO CONSIGNADO E A_VISTA
         
-        this.gerarMovimentoFinanceiroCotaReparte(cota, fornecedor, movimentosEstoqueCotaOperacaoEnvioReparte,
-                movimentosEstoqueCotaOperacaoEstorno, dataOperacao, usuario);
+        this.gerarMovimentoFinanceiroCotaReparte(cota, 
+        										 fornecedor, 
+        										 movimentosEstoqueCotaOperacaoEnvioReparte,
+        										 movimentosEstoqueCotaOperacaoEstorno, 
+        										 dataOperacao, 
+        										 usuario);
         
         // COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO
         // CONSIGNADA ATÉ FECHAMENTO DO DIA
@@ -1127,9 +1138,14 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                 tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository
                         .buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
                 
-                this.gerarMovimentoFinanceiro(cota, fornecedor, movimentosEstoqueCotaOperacaoConferenciaEncalhe,
-                        movimentosEstoqueCotaOperacaoEstorno, tipoMovimentoFinanceiro,
-                        valorTotalEncalheOperacaoConferenciaEncalhe, dataOperacao, usuario);
+                this.gerarMovimentoFinanceiro(cota, 
+                							  fornecedor, 
+                							  movimentosEstoqueCotaOperacaoConferenciaEncalhe,
+                							  movimentosEstoqueCotaOperacaoEstorno, 
+                							  tipoMovimentoFinanceiro,
+                							  valorTotalEncalheOperacaoConferenciaEncalhe, 
+                							  dataOperacao, 
+                							  usuario);
             }
         } else if (tipoCota.equals(TipoCota.A_VISTA)) {
             
@@ -1148,8 +1164,14 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository
                     .buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
             
-            this.gerarMovimentoFinanceiro(cota, fornecedor, movimentosEstoqueCotaOperacaoConferenciaEncalhe, null,
-                    tipoMovimentoFinanceiro, valorTotalEncalheOperacaoConferenciaEncalhe, dataOperacao, usuario);
+            this.gerarMovimentoFinanceiro(cota, 
+            		                      fornecedor, 
+            		                      movimentosEstoqueCotaOperacaoConferenciaEncalhe, 
+            		                      null,
+            		                      tipoMovimentoFinanceiro, 
+            		                      valorTotalEncalheOperacaoConferenciaEncalhe, 
+            		                      dataOperacao, 
+            		                      usuario);
             
         }
     }
@@ -1202,7 +1224,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         // MOVIMENTOS ESTORNADOS QUE ENTRAM COMO CREDITO À COTA AGUPADOS POR
         // FORNECEDOR
         final Map<Long, List<MovimentoEstoqueCota>> movimentosEstornoAgrupadosPorFornecedor = this
-                .obterMovimentosEstoqueEstorno(cota.getId(), dataOperacao);
+                .obterMovimentosEstoqueEstorno(cota.getId(), Arrays.asList(dataOperacao));
         
         // TODOS OS FORNECEDORES ENVOLVIDOS
         final Set<Long> fornecedoresId = new HashSet<Long>();
@@ -1228,8 +1250,15 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
      */
     @Transactional
     @Override
-    public void gerarMovimentoFinanceiroCota(final Cota cota, final Date dataOperacao, final Usuario usuario,
-            final Long idControleConferenciaEncalheCota) {
+    public void gerarMovimentoFinanceiroCota(final Cota cota, final List<Date> datas, final Usuario usuario,
+            final Long idControleConferenciaEncalheCota, Integer diasPostergacao) {
+    	
+        Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+        
+        if (diasPostergacao!=null){
+        	
+        	dataOperacao = this.calendarioService.adicionarDiasUteis(dataOperacao, diasPostergacao);
+        }
         
         // MOVIMENTOS DA CONFERENCIA DE ENCALHE AGRUPADOS POR FORNECEDOR
         Map<Long, List<MovimentoEstoqueCota>> movimentosEncalheAgrupadosPorFornecedor = null;
@@ -1246,12 +1275,12 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         // MOVIMENTOS DE ENVIO DE REPARTE À COTA QUE AINDA NÃO GERARAM
         // FINANCEIRO AGUPADOS POR FORNECEDOR
         final Map<Long, List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = this
-                .obterMovimentosEstoqueReparteComChamadaEncalheOuProdutoContaFirme(cota.getId(), dataOperacao);
+                .obterMovimentosEstoqueReparteComChamadaEncalheOuProdutoContaFirme(cota.getId(), datas);
         
         // MOVIMENTOS ESTORNADOS QUE ENTRAM COMO CREDITO À COTA AGUPADOS POR
         // FORNECEDOR
         final Map<Long, List<MovimentoEstoqueCota>> movimentosEstornoAgrupadosPorFornecedor = this
-                .obterMovimentosEstoqueEstorno(cota.getId(), dataOperacao);
+                .obterMovimentosEstoqueEstorno(cota.getId(), datas);
         
         // TODOS OS FORNECEDORES ENVOLVIDOS
         final Set<Long> fornecedoresId = new HashSet<Long>();
@@ -1263,10 +1292,14 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             
             final Fornecedor fornecedor = fornecedorRepository.buscarPorId(fornecedorId);
             
-            this.gerarMovimentoFinanceiroCotaRecolhimentoPorFornecedor(cota, fornecedor,
-                    idControleConferenciaEncalheCota, dataOperacao, usuario, movimentosReparteAgrupadosPorFornecedor
-                    .get(fornecedorId), movimentosEncalheAgrupadosPorFornecedor.get(fornecedorId),
-                    movimentosEstornoAgrupadosPorFornecedor.get(fornecedorId));
+            this.gerarMovimentoFinanceiroCotaRecolhimentoPorFornecedor(cota, 
+            		                                                   fornecedor,
+                                                                       idControleConferenciaEncalheCota, 
+                                                                       dataOperacao, 
+                                                                       usuario, 
+                                                                       movimentosReparteAgrupadosPorFornecedor.get(fornecedorId), 
+                                                                       movimentosEncalheAgrupadosPorFornecedor.get(fornecedorId),
+                                                                       movimentosEstornoAgrupadosPorFornecedor.get(fornecedorId));
         }
     }
 }

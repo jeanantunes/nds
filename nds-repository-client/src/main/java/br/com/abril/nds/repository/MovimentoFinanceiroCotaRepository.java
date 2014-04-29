@@ -30,14 +30,14 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * 
 	 * 
 	 * @param numeroCota
-	 * @param dataOperacao
+	 * @param datas
 	 * @param tiposCota
 	 * @param idFornecedor
 	 * 
 	 * @return List - DebitoCreditoCotaDTO
 	 */
 	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(
-	        Integer numeroCota, Date dataOperacao, Long idFornecedor);
+	        Integer numeroCota, List<Date> datas, Long idFornecedor);
 	
 	/**
 	 * Obtem movimentos financeiros da cota ainda nao processados e não consolidados
@@ -60,12 +60,12 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * Obtém os débitos e crédito relativos a uma cota para determinada data de operação.
 	 * 
 	 * @param numeroCota
-	 * @param dataOperacao
+	 * @param datas
 	 * @param tiposMovimentoFinanceiroIgnorados
 	 * 
 	 * @return List - DebitoCreditoCotaDTO
 	 */
-	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(Integer numeroCota, Date dataOperacao, 
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(Integer numeroCota, List<Date> datas, 
 			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados, Long idFornecedor);
 	
 	/**

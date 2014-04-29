@@ -312,7 +312,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	@SuppressWarnings("unchecked")
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTOContingencia(
 			Integer numeroCota,
-			Date dataRecolhimento,
+			List<Date> datasRecolhimento,
 			boolean indFechado,
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao) {
@@ -404,7 +404,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append("	WHERE   ");
 		
 		hql.append("	COTA.NUMERO_COTA = :numeroCota AND ");
-		hql.append("	CH_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento AND ");
+		hql.append("	CH_ENCALHE.DATA_RECOLHIMENTO IN (:datasRecolhimento) AND ");
 		hql.append("	CH_ENCALHE_COTA.FECHADO = :indFechado AND	");
 		hql.append("	CH_ENCALHE_COTA.POSTERGADO = :indPostergado 	");
 		hql.append("	AND MEC.DATA = (SELECT 	MAX(MEC.DATA) ");
@@ -450,7 +450,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("desconto");
 
 		query.setParameter("numeroCota", numeroCota);
-		query.setParameter("dataRecolhimento", dataRecolhimento);
+		query.setParameterList("datasRecolhimento", datasRecolhimento);
 		query.setParameter("indFechado", indFechado);
 		query.setParameter("indPostergado", indPostergado);
 		query.setParameterList("grupoMovimentoEstoque", this.grupoMovimentoEstoqueCota());

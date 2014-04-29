@@ -79,23 +79,23 @@ public interface DebitoCreditoCotaService {
 	/**
 	 * Obtem lista de Débitos e Créditos quem não pertencem à reparte ou encalhe
 	 * @param cota
-	 * @param dataOperacao
+	 * @param datas
 	 * @param idFornecedor
 	 * @return List<DebitoCreditoCotaDTO>
 	 */
 	List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(Cota cota,
-			Date dataOperacao, Long idFornecedor);
+			List<Date> datas, Long idFornecedor);
 
 	/**
 	 * Obtem Outros Valores
 	 * 
 	 * @param infoConfereciaEncalheCota
 	 * @param cota
-	 * @param dataOperacao
+	 * @param datas
 	 */
 	void carregarDadosDebitoCreditoDaCota(
 			InfoConferenciaEncalheCota infoConfereciaEncalheCota, Cota cota,
-			Date dataOperacao);
+			List<Date> datas);
 
 	/**
 	 * Verifica se o Movimento Financeiro pode ser Editado
