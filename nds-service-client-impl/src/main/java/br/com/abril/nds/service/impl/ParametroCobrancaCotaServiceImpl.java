@@ -745,6 +745,10 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		}    
     }	
 
+	public List<TipoCobranca> obterTiposCobrancaCota(Integer numeroCota) {
+		
+		return this.formaCobrancaRepository.obterTiposCobrancaCota(numeroCota);
+	}
 	
 	
    /**

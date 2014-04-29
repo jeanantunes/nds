@@ -290,6 +290,23 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         return query.list();
 	}
 	
+	/**
+	 * Obtém lista de forma de cobranca da Cota
+	 * @param Cota
+	 * @return {@link List<FormaCobranca>}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoCobranca> obterTiposCobrancaCota(Integer numeroCota) {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select f.tipoCobranca from FormaCobranca f ");		
+		hql.append(" where f.parametroCobrancaCota.cota.numeroCota = :numeroCota ");
+		hql.append(" and f.ativa = true ");
+        Query query = super.getSession().createQuery(hql.toString());
+        query.setParameter("numeroCota", numeroCota);
+        return query.list();
+	}
+	
 	
 	/**
 	 * Obtém quantidade de forma de cobranca da Cota
