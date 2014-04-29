@@ -155,9 +155,7 @@ public class NegociacaoDividaController extends BaseController {
 
 			tiposCobranca = this.parametroCobrancaCotaService.obterFormaCobrancaCotaDefault(numeroCota);
 		}
-		
-		tiposCobranca.remove(TipoCobranca.BOLETO_EM_BRANCO);
-		
+
 		return tiposCobranca;
 	}
 	

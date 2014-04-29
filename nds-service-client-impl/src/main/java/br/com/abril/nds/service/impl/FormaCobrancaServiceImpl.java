@@ -576,6 +576,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public List<FormaCobrancaDefaultVO> obterFormaCobrancaDefault() {
 		
 		return this.formaCobrancaRepository.obterFormaCobrancaDefault();

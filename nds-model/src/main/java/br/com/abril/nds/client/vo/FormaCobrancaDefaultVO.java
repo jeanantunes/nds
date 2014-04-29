@@ -39,7 +39,12 @@ public class FormaCobrancaDefaultVO {
 	}
 
 	public void setTipoCobranca(TipoCobranca tipoCobranca) {
-		this.tipoCobranca = tipoCobranca;
-		this.descricaoTipoCobranca = tipoCobranca.getDescricao();
+
+		if (!TipoCobranca.BOLETO_EM_BRANCO.equals(tipoCobranca)) {
+			this.tipoCobranca = tipoCobranca;
+			this.descricaoTipoCobranca = tipoCobranca.getDescricao();
+		} else {
+			this.tipoCobranca = null;
+		}
 	}
 }
