@@ -1522,7 +1522,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		valor.setValorLancamento(visaoEstoqueDTO.getValor());
 		
 		filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.toString());
-		visaoEstoqueDTO = visaoEstoqueRepository.obterVisaoEstoqueJuramentado(filtro);
+		visaoEstoqueDTO = visaoEstoqueRepository.obterVisaoEstoque(filtro);
 		
 		exemplar.setQuantidadeJuramentado(visaoEstoqueDTO.getExemplares().intValue());
 		produto.setQuantidadeJuramentado(visaoEstoqueDTO.getProdutos().intValue());

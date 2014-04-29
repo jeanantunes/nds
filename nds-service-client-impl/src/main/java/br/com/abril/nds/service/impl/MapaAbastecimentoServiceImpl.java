@@ -27,8 +27,8 @@ import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.MapaAbastecimentoService;
 import br.com.abril.nds.util.Intervalo;
@@ -43,10 +43,11 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	@Autowired
 	private CotaRepository cotaRepository;
 	
-	@Autowired EstoqueProdutoCotaJuramentadoRepository cotaJuramentadoRepository;
-	
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private MovimentoEstoqueRepository movimentoEstoqueRepository;
 	
 	@Override
 	@Transactional
@@ -432,17 +433,6 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		for (ProdutoAbastecimentoDTO item : produtosCota) {
 	
 			if (!produtoMapa.containsKey(item.getIdProdutoEdicao())) {
-				
-				BigInteger somaEstoqueJuramentado =
-						this.cotaJuramentadoRepository.buscarSomaEstoqueJuramentadoPorProdutoData(
-								item.getIdProdutoEdicao(), filtro.getDataDate());
-	
-				if (somaEstoqueJuramentado != null) {
-	
-					BigInteger newReparte = BigInteger.valueOf(item.getReparte());
-	
-					item.setReparte(newReparte.subtract(somaEstoqueJuramentado));
-				}
 	
 				ProdutoMapaCotaDTO produtoMapaCotaDTO =
 						new ProdutoMapaCotaDTO(
@@ -667,28 +657,13 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		this.cotaService.verificarCotasSemRoteirizacao(intervaloCotas, intervaloDataLancamento, null);
 		
-		List<ProdutoAbastecimentoDTO> mapaRetorno = new ArrayList<ProdutoAbastecimentoDTO>();
-	
+
+		//TODO: testar lista retorno (uma foi excluida)
+		
 		List<ProdutoAbastecimentoDTO> mapaCota =
 			this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
 		
-		for (ProdutoAbastecimentoDTO produto : mapaCota) {
-		
-			BigInteger somaEstoqueJuramentado =
-					this.cotaJuramentadoRepository.buscarSomaEstoqueJuramentadoPorProdutoData(
-							produto.getIdProdutoEdicao(), filtro.getDataDate());
-		
-			if (somaEstoqueJuramentado != null) {
-				
-				BigInteger newReparte = BigInteger.valueOf(produto.getReparte().longValue());
-		
-				produto.setReparte(newReparte.subtract(somaEstoqueJuramentado));
-			}
-		
-			mapaRetorno.add(produto);
-		}
-		
-		return mapaRetorno;
+		return mapaCota;
 	}
 	
 	/**

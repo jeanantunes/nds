@@ -297,7 +297,7 @@ public class NFeServiceImpl implements NFeService {
 		
 		return dataRecolhimento;
 	}
-
+	
 	/**
 	 * 
 	 * Geracao NF-e Service
@@ -312,8 +312,8 @@ public class NFeServiceImpl implements NFeService {
 			final String sortname, final String sortorder, final Integer resultsPage, final Integer page, final SituacaoCadastro situacaoCadastro) {
 		
 		if (TRAVA_GERACAO_NFe.get("NFesSendoGeradas") != null) {
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Notas de envio sendo geradas por outro usuário, tente novamente mais tarde.");
+
+            throw new ValidacaoException(TipoMensagem.WARNING, "Notas de envio sendo geradas por outro usuário, tente novamente mais tarde.");
         }
         
         TRAVA_GERACAO_NFe.put("NFesSendoGeradas", true);
@@ -372,7 +372,6 @@ public class NFeServiceImpl implements NFeService {
         return listaCotaExemplares;
         
 	}
-
 	
 	@Override
 	@Transactional(rollbackFor=Throwable.class)

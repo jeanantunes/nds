@@ -41,6 +41,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
@@ -520,8 +521,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota, datas)) {
 				
-				this.result.use(CustomMapJson.class) 
-				.put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
+				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
 			
 			} else {
 				this.result.use(CustomMapJson.class)
@@ -585,7 +585,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void carregarListaConferencia(Integer numeroCota, final boolean indObtemDadosFromBD,  final boolean indConferenciaContingencia){
+	public void carregarListaConferencia(Integer numeroCota, final boolean indObtemDadosFromBD, final boolean indConferenciaContingencia){
 		
 	    final Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
@@ -619,13 +619,15 @@ public class ConferenciaEncalheController extends BaseController {
 		dados.put("indDistribuidorAceitaJuramentado", infoConfereciaEncalheCota.isDistribuidorAceitaJuramentado());
 		
 		this.calcularValoresMonetarios(dados);
-		dados.put("notaFiscal", session.getAttribute(NOTA_FISCAL_CONFERENCIA));
+		
 		final Cota cota = infoConfereciaEncalheCota.getCota();
 		this.session.setAttribute(COTA, cota);
 		
 		if (cota != null){
 			dados.put("razaoSocial", cota.getPessoa() instanceof PessoaFisica ? ((PessoaFisica)cota.getPessoa()).getNome() : ((PessoaJuridica)cota.getPessoa()).getRazaoSocial());
 			dados.put("situacao", cota.getSituacaoCadastro().toString());
+			
+			dados.put("cotaAVista", TipoCota.A_VISTA.equals(cota.getTipoCota()));
 		}
 		
 		if(infoConfereciaEncalheCota.getNotaFiscalEntradaCota()!=null) {
@@ -643,7 +645,7 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("notaFiscal", dadosNotaFiscal);
 
 			
-		} else if( session.getAttribute(NOTA_FISCAL_CONFERENCIA) != null ){
+		} else if(session.getAttribute(NOTA_FISCAL_CONFERENCIA) != null ){
 			
 			dados.put("notaFiscal", session.getAttribute(NOTA_FISCAL_CONFERENCIA));
 			
@@ -1727,8 +1729,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			controleConfEncalheCota.setBox(boxEncalhe);
 			
-			final List<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = 
-					obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
+			final List<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
 			
 			limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 			
@@ -1778,8 +1779,8 @@ public class ConferenciaEncalheController extends BaseController {
 
 			dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
 			
-			limparDadosSessaoConferenciaEncalheCotaFinalizada();
 			limparDadosSessao();
+			limparDadosSessaoConferenciaEncalheCotaFinalizada();
 			this.result.use(CustomMapJson.class).put("result", dados).serialize();
 			
 		} else {
@@ -2208,8 +2209,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@SuppressWarnings("unchecked")
 	private void limparDadosSessaoConferenciaEncalheCotaFinalizada() {
 		
-
-		this.session.removeAttribute(NUMERO_COTA);
+	    this.session.removeAttribute(NUMERO_COTA);
 		this.session.removeAttribute(INFO_CONFERENCIA);
 		this.session.removeAttribute(NOTA_FISCAL_CONFERENCIA);
 		this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
@@ -2290,16 +2290,13 @@ public class ConferenciaEncalheController extends BaseController {
 					
 					final BigDecimal precoComDesconto =  CurrencyUtil.arredondarValorParaDuasCasas(conferenciaEncalheDTO.getPrecoComDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoComDesconto());
 					
-					
 					final BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar());
 					
 					valorTotal = valorTotal.add( CurrencyUtil.arredondarValorParaQuatroCasas(conferenciaEncalheDTO.getValorTotal() != null ? conferenciaEncalheDTO.getValorTotal() :  BigDecimal.ZERO ));
 					
 					valorEncalhe = valorEncalhe.add(precoComDesconto.multiply(qtdExemplar));
 					
-					valorEncalheAtualizado = valorEncalheAtualizado.add(precoCapa.subtract(desconto).multiply(
-						new BigDecimal(conferenciaEncalheDTO.getQtdInformada()))
-					);
+					valorEncalheAtualizado = valorEncalheAtualizado.add(precoCapa.subtract(desconto).multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada())));
 				}
 			}
 			
@@ -2439,7 +2436,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		conferenciaEncalheDTO.setDataConferencia(dataOperacao);
 		
-		conferenciaEncalheDTO.setParcial(produtoEdicao.isParcial());
+		conferenciaEncalheDTO.setParcialNaoFinal(this.conferenciaEncalheService.isParcialNaoFinal(produtoEdicao.getId()));
 		
 		if (quantidade != null){
 			conferenciaEncalheDTO.setQtdExemplar(quantidade);

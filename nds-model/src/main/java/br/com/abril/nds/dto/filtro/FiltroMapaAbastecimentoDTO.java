@@ -19,8 +19,7 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private Long roteiro;
 	private List<String> codigosProduto;
 	private String nomeProduto;
-	private Integer codigoCota;
-	private Long edicaoProduto; 
+	private Integer codigoCota; 
 	private String nomeCota;
 	private boolean quebraPorCota;
 	private boolean useSM;
@@ -32,6 +31,8 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private PaginacaoVO paginacao;
 	
 	private PaginacaoVO paginacaoDetalhes;
+	
+	private List<Long> numerosEdicao;
 		
 	public enum TipoConsulta {
 		
@@ -309,14 +310,6 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		this.paginacaoDetalhes = paginacaoDetalhes;
 	}
 
-	public Long getEdicaoProduto() {
-		return edicaoProduto;
-	}
-
-	public void setEdicaoProduto(Long edicaoProduto) {
-		this.edicaoProduto = edicaoProduto;
-	}
-
 	public boolean getUseSM() {
 		return useSM;
 	}
@@ -382,6 +375,16 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	public void setProdutoEspecifico(boolean produtoEspecifico) {
 		this.produtoEspecifico = produtoEspecifico;
 	}
+
+    
+    public List<Long> getNumerosEdicao() {
+        return numerosEdicao;
+    }
+
+    
+    public void setNumerosEdicao(List<Long> numerosEdicao) {
+        this.numerosEdicao = numerosEdicao;
+    }
 	
 	
 }

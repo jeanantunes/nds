@@ -288,6 +288,8 @@ public interface ConferenciaEncalheService {
 	 */
 	boolean isContagemPacote(Long idProdutoEdicao);
 	
+	boolean isParcialNaoFinal(final Long idProdutoEdicao);
+	
 	void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao, boolean indOperacaoDiferenciada);
 
 	BigDecimal obterValorTotalDesconto(Integer numeroCota, Date dataOperacao);

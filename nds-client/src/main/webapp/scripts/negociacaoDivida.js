@@ -19,7 +19,7 @@ var negociacaoDividaController = $.extend(true, {
 		});
 
 		$("#checknegociacaoAvulsa").change(function() {
-			negociacaoDividaController.atualizarTiposPagamento($(this).is(":checked"));
+			negociacaoDividaController.atualizarFormaCobranca($(this).is(":checked"));
 		});
 
 		$('#diaInputQuinzenal1', negociacaoDividaController.workspace).numeric();
@@ -32,7 +32,7 @@ var negociacaoDividaController = $.extend(true, {
 		this.situacaoCota = null;		
 	},
 	
-	atualizarTiposPagamento: function(isNegociacaoAvulsa) {
+	atualizarFormaCobranca: function(isNegociacaoAvulsa) {
 		
 		var numeroCota = $("#negociacaoDivida_numCota").val();
 
@@ -42,30 +42,65 @@ var negociacaoDividaController = $.extend(true, {
 		};
 		
 		$.postJSON(
-			contextPath + '/financeiro/negociacaoDivida/atualizarTiposCobrancaNegociacao',
+			contextPath + '/financeiro/negociacaoDivida/atualizarFormaCobranca',
 			params,
 			function(result) {
 
-				if (result) {
-					
+				if (result && result.length > 0) {
+
 					$("#selectPagamento").empty();
+					$("#selectBancosBoleto").empty();
 					
 					$.each(result, function(index, value) {
 						
-						var selected = value[0] === negociacaoDividaController.tipoCobrancaDefaultCota ? 'selected' : ''; 
-						
-						$("#selectPagamento").append("<option value='" + value[0] + "'" + selected + ">" + value[1] + " </option>");
+						negociacaoDividaController.appendTipoPagamentoOption(value);
+
+						negociacaoDividaController.appendBancoOption(value);
 					});
-					
+
 					var optSelected = $("#selectPagamento option:selected");
-					
-					negociacaoDividaController.opcaoFormasPagto(optSelected.val()); 
-					negociacaoDividaController.calcularParcelas();
+
+					if (optSelected) {
+						
+						negociacaoDividaController.opcaoFormasPagto(optSelected.val()); 
+						negociacaoDividaController.calcularParcelas();
+					}
 				}
 			} 
 		);
 	},
+ 
+	appendTipoPagamentoOption: function(value) {
+		
+		var selected = value.tipoCobranca === negociacaoDividaController.tipoCobrancaDefaultCota ? 'selected' : '';
 
+		var optionExists = $("#selectPagamento").filter(function() {
+			return $(this).attr('value') === value.tipoCobranca;
+		}).length;
+
+		if (!optionExists && value.tipoCobranca) {
+
+			$("#selectPagamento").append("<option value='" 
+										+ value.tipoCobranca + "'" 
+										+ selected + ">" 
+										+ value.descricaoTipoCobranca 
+										+ " </option>");
+		}
+	},
+
+	appendBancoOption: function(value) {
+		
+		var optionExists = $("#selectBancosBoleto").filter(function() {
+			return $(this).attr('value') === value.idBanco;
+		}).length;
+		
+		if (!optionExists) {
+			
+			$("#selectBancosBoleto").append("<option value='" + value.idBanco + "'>" + value.nomeBanco + "</option>");
+		}
+	},
+	
+	
 	pesquisarCota : function(numeroCota) {
 		var self =  this;
 		if (numeroCota || numeroCota != ''){
@@ -77,7 +112,7 @@ var negociacaoDividaController = $.extend(true, {
 						$('#negociacaoDivida_statusCota').html(result.status);
 						$('#negociacaoDivida_nomeCota').html(result.nome);
 						self.situacaoCota =  result.situacaoCadastro;
-						negociacaoDividaController.atualizarTiposPagamento();
+						negociacaoDividaController.atualizarFormaCobranca();
 					},
 					function() {
 						$('#negociacaoDivida_statusCota').html('');
