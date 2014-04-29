@@ -451,4 +451,11 @@ public class EntregadorServiceImpl implements EntregadorService {
 		
 		return entregadorRepository.obterEntregadorPorNome(nomeEntregador, qtdMaxResult);
 	}
+
+    @Override
+    @Transactional(readOnly=true)
+    public List<Entregador> obterTodos() {
+        
+        return this.entregadorRepository.buscarTodos();
+    }
 }
