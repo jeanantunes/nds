@@ -119,9 +119,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		}
 		
 		
-		if (input.getRepartePrevisto().equals(0L)) {
-			return;
-		}
+		//Douglas teve preguica de apagar e acha importante caso der erro manter o codigo comentado
+		//if (input.getRepartePrevisto().equals(0L)) {
+		//	return;
+		//}
 		
 		/**
 		 * Modificado devido ser incoerente a realizar busca por um campo e persistir outro junto com a o Eduardo "PunkRock" Castro em 05/12
