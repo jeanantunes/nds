@@ -53,6 +53,7 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalheBox;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -68,6 +69,7 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
@@ -81,6 +83,7 @@ import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.GrupoRepository;
@@ -101,6 +104,7 @@ import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -130,6 +134,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private DistribuidorService distribuidorService;
+    
+    @Autowired
+    private GrupoService grupoService;
     
     @Autowired
     private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
@@ -214,6 +221,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private PeriodoLancamentoParcialRepository periodoLancamentoParcialRepository;
+    
+    @Autowired
+    private EstudoGeradoRepository estudoGeradoRepository;
     
     @Override
     @Transactional
@@ -828,18 +838,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     public void realizarCobrancaCota(final Date dataOperacao, final Usuario usuario, final Long idCota,
             final ValidacaoVO validacaoVO) {
         
-        final Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
-        
         final Set<String> nossoNumeroEnvioEmail = new HashSet<String>();
         
         final Cota cota = cotaRepository.buscarCotaPorID(idCota);
         
         if (cota == null) {
             throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
-        }
+        } 
         
         BigDecimal reparte = chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(cota.getNumeroCota(),
-                dataOperacao, false, false);
+                Arrays.asList(dataOperacao), false, false);
         
         reparte = reparte != null ? reparte : BigDecimal.ZERO;
         
@@ -849,8 +857,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         // CONSIGNADA ATÉ FECHAMENTO DO DIA
         final boolean isAlteracaoTipoCotaNaDataAtual = cotaService.isCotaAlteradaNaData(cota, dataOperacao);
         
-        this.gerarMovimentosFinanceiros(cota, dataOperacao, dataOperacaoDistribuidor, usuario,
-                isAlteracaoTipoCotaNaDataAtual);
+        this.gerarMovimentosFinanceiros(cota, dataOperacao, usuario, isAlteracaoTipoCotaNaDataAtual);
         
         if (!cotaUnificacaoRepository.verificarCotaUnificada(cota.getNumeroCota())
                 && !cotaUnificacaoRepository.verificarCotaUnificadora(cota.getNumeroCota())) {
@@ -860,7 +867,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 try {
                     
                     final boolean existeBoletoAntecipado = boletoService.existeBoletoAntecipadoCotaDataRecolhimento(
-                            cota.getId(), dataOperacaoDistribuidor);
+                            cota.getId(), dataOperacao);
                     
                     if (existeBoletoAntecipado) {
                         
@@ -892,25 +899,30 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         }
     }
     
-    private void gerarMovimentosFinanceiros(final Cota cota, final Date dataOperacao,
-            final Date dataOperacaoDistribuidor, final Usuario usuario, final boolean isAlteracaoTipoCotaNaDataAtual) {
+    private void gerarMovimentosFinanceiros(final Cota cota, 
+    		                                final Date dataOperacao,
+    		                                final Usuario usuario, 
+    		                                final boolean isAlteracaoTipoCotaNaDataAtual) {
         
         if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual) {
             
             // CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE
             // REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE
             // SEJAM RECRIADOS
-            gerarCobrancaService.cancelarDividaCobranca(null, cota.getId(), dataOperacaoDistribuidor, true);
+            gerarCobrancaService.cancelarDividaCobranca(null, cota.getId(), dataOperacao, true);
         } else if (cota.getTipoCota().equals(TipoCota.A_VISTA)) {
             
             // EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
-            movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(cota
-                    .getNumeroCota(), dataOperacaoDistribuidor);
+            movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(cota.getNumeroCota(), 
+            		                                                                                  dataOperacao);
         }
+        
+        final List<Date> datasRecolhimento = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(cota.getNumeroCota(), 
+                																						  dataOperacao);
         
         // CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE
         // E ENVIO_ENCALHE)
-        movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, dataOperacaoDistribuidor, usuario, null);
+        movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, datasRecolhimento, usuario, null, null); 
     }
     
     @Override
@@ -945,10 +957,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         for (final MovimentoEstoqueCotaGenericoDTO item : listaMovimentoEstoqueCota) {
             
-            movimentoEstoqueService.gerarMovimentoEstoque(null, item.getIdProdutoEdicao(), usuario.getId(), item
-                    .getQtde(), tipoMovEstoqueEnvioJornaleiroJuramentado);
+            Date dataProximoLancamento = 
+                this.processarEstudoCotaLancamentoParcial(item, usuario.getId(), dataOperacao);
             
-            this.processarEstudoCotaLancamentoParcial(item, usuario.getId(), dataOperacao);
+            movimentoEstoqueService.gerarMovimentoEstoque(item.getIdProdutoEdicao(), usuario.getId(), item
+                    .getQtde(), tipoMovEstoqueEnvioJornaleiroJuramentado, dataProximoLancamento, false);
         }
         
         for (final MovimentoEstoqueCotaGenericoDTO item : listaMovimentoEstoqueCota) {
@@ -966,46 +979,65 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
      * Cria estudo e estudo cota para os proximos lançamentos parciais
      * juramentado
      */
-    private void processarEstudoCotaLancamentoParcial(final MovimentoEstoqueCotaGenericoDTO item, final Long usuarioId,
+    private Date processarEstudoCotaLancamentoParcial(final MovimentoEstoqueCotaGenericoDTO item, final Long usuarioId,
             final Date dataOperacao) {
         
         final Lancamento lancamentoParcial = lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item
                 .getIdChamadaEncalhe());
         
         if (lancamentoParcial == null) {
-            return;
+            return null;
         }
 
         final Lancamento proximoLancamentoPeriodo = this.getNovoLancamentoJuramentado(lancamentoParcial);
         
         if (proximoLancamentoPeriodo == null) {
-            return;
+            return null;
         }
         
         Estudo estudo = null;
         
+        Date dataProximoLancamento = proximoLancamentoPeriodo.getDataLancamentoDistribuidor();
+        
+        EstudoGerado estudoGerado = null;
+        
         if (proximoLancamentoPeriodo.getEstudo() == null) {
             
-            final EstudoGerado estudoGerado = estudoService.criarEstudo(proximoLancamentoPeriodo.getProdutoEdicao(),
-                    item.getQtde(), proximoLancamentoPeriodo.getDataLancamentoDistribuidor(), proximoLancamentoPeriodo.getId());
-
+            estudoGerado = estudoService.criarEstudo(proximoLancamentoPeriodo.getProdutoEdicao(),
+                    item.getQtde(), dataProximoLancamento, proximoLancamentoPeriodo.getId());
+            
             estudo = estudoService.liberar(estudoGerado.getId());
             
         } else {
             
+            estudoGerado = this.estudoGeradoRepository.buscarPorId(proximoLancamentoPeriodo.getEstudo().getId());
+            
             estudo = this.estudoService.atualizarEstudo(proximoLancamentoPeriodo.getEstudo().getId(), item.getQtde());
         }
 
-        EstudoCota ec = estudoCotaService.criarEstudoCotaJuramentado(proximoLancamentoPeriodo.getProdutoEdicao(), estudo, item
-                .getQtde(), new Cota(item.getIdCota()));
+        EstudoCotaGerado estudoCotaGerado =
+            estudoCotaService.criarEstudoCotaJuramentado(
+                proximoLancamentoPeriodo.getProdutoEdicao(), estudoGerado, item.getQtde(), new Cota(item.getIdCota()));
+        
+        EstudoCota estudoCota = estudoCotaService.liberar(estudoCotaGerado.getId(), estudo);
         
         TipoMovimentoEstoque tipoMovimentoEstoque = 
                 this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
                         GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO);
         
-        this.movimentoEstoqueService.gerarMovimentoCota(proximoLancamentoPeriodo.getDataCriacao(), 
+        MovimentoEstoqueCota movimentoEstoqueCotaJuramentado =
+                this.movimentoEstoqueCotaRepository.buscarPorId(item.getMovimentoEstoqueCotaId());
+        
+        MovimentoEstoqueCota movimentoEstoqueCota = 
+            this.movimentoEstoqueService.gerarMovimentoCota(proximoLancamentoPeriodo.getDataCriacao(), 
                 item.getIdProdutoEdicao(), item.getIdCota(), usuarioId, item.getQtde(), tipoMovimentoEstoque, 
-                dataOperacao, dataOperacao, proximoLancamentoPeriodo.getId(), ec.getId());
+                dataProximoLancamento, dataOperacao, proximoLancamentoPeriodo.getId(), estudoCota.getId());
+        
+        movimentoEstoqueCotaJuramentado.setMovimentoEstoqueCotaJuramentado(movimentoEstoqueCota);
+        
+        this.movimentoEstoqueCotaRepository.merge(movimentoEstoqueCotaJuramentado);
+        
+        return dataProximoLancamento;
     }
     
     private Lancamento getNovoLancamentoJuramentado(final Lancamento lancamentoParcial) {

@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
 import br.com.abril.nds.client.vo.ContratoVO;
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
@@ -745,6 +746,11 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		}    
     }	
 
+	@Override
+	public List<FormaCobrancaDefaultVO> obterFormaCobrancaCotaDefault(Integer numeroCota) {
+		
+		return this.formaCobrancaRepository.obterFormaCobrancaCotaDefault(numeroCota);
+	}
 	
 	
    /**

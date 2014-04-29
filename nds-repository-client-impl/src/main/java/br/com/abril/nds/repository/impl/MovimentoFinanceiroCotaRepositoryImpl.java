@@ -69,7 +69,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	
 	@SuppressWarnings("unchecked")
 	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(
-	        final Integer numeroCota, final Date dataOperacao, final Long idFornecedor) {
+	        final Integer numeroCota, final List<Date> datas, final Long idFornecedor) {
 		
 		final StringBuilder sql = new StringBuilder("");
 		
@@ -108,7 +108,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		sql.append("    WHERE ");
 		sql.append("        N.NEGOCIACAO_AVULSA = false  ");
 		sql.append("        AND       COTA.NUMERO_COTA = :numeroCota  ");
-		sql.append("        AND    CFC.ID IS NULL AND MFC.DATA = :dataOperacao ");
+		sql.append("        AND    CFC.ID IS NULL AND MFC.DATA IN (:datas) ");
 		
 		if (idFornecedor != null){
 		    
@@ -124,7 +124,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 		parameters.put("numeroCota", numeroCota);
 		
-		parameters.put("dataOperacao", dataOperacao);
+		parameters.put("datas", datas);
 		
 		if (idFornecedor != null){
 		    
@@ -149,7 +149,6 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		};
 
 		return (List<DebitoCreditoCotaDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
-		
 	}
 	
 	/**
@@ -207,7 +206,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(final Integer numeroCota, final Date dataOperacao, 
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(final Integer numeroCota, final List<Date> datas, 
 			final List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados, final Long idFornecedor){
 		
 		final StringBuilder sql = new StringBuilder();
@@ -226,8 +225,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		sql.append(" where ");
 		sql.append("	movimentof0_.TIPO_MOVIMENTO_ID=tipomovime1_.ID  ");
 		sql.append("	and movimentof0_.COTA_ID=cota3_.ID  ");
-		sql.append("    and movimentof0_.DATA = :dataOperacao  ");
-		
+		sql.append("	and movimentof0_.DATA IN (:datas)  ");
 		sql.append("	and movimentof0_.STATUS = :statusAprovado  ");
 		sql.append("	and cota3_.NUMERO_COTA = :numeroCota  ");
 		
@@ -272,7 +270,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
 		query.setParameter("numeroCota", numeroCota);
-		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameterList("datas", datas);
 		
 		if(tiposMovimentoFinanceiroIgnorados!=null && 
 				!tiposMovimentoFinanceiroIgnorados.isEmpty()) {
