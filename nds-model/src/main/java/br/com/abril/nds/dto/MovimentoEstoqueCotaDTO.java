@@ -54,8 +54,6 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	
 	private Long estoqueProdutoEdicaoCotaId;
 	
-	private Long estoqueProdutoCotaJuramentadoId;
-	
 	private Long estudoCotaId;
 	
 	private Long notaEnvioItemNotaEnvioId;
@@ -247,15 +245,6 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 
 	public void setEstoqueProdutoEdicaoCotaId(Long estoqueProdutoEdicaoCotaId) {
 		this.estoqueProdutoEdicaoCotaId = estoqueProdutoEdicaoCotaId;
-	}
-
-	public Long getEstoqueProdutoCotaJuramentadoId() {
-		return estoqueProdutoCotaJuramentadoId;
-	}
-
-	public void setEstoqueProdutoCotaJuramentadoId(
-			Long estoqueProdutoCotaJuramentadoId) {
-		this.estoqueProdutoCotaJuramentadoId = estoqueProdutoCotaJuramentadoId;
 	}
 
 	public Long getEstudoCotaId() {

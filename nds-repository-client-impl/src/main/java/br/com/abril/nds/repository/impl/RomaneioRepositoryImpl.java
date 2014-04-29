@@ -134,7 +134,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" and enderecoPDV_.PRINCIPAL = :pontoPrincipal ");
 		hql.append(" and lancamento_.PRODUTO_EDICAO_ID=itemNotaEnvio_.PRODUTO_EDICAO_ID "); 
 		hql.append(" and cota_.SITUACAO_CADASTRO <> :situacaoInativo ");
-		hql.append(" and lancamento_.STATUS in (:statusLancamento) ");
+		hql.append(" and lancamento_.STATUS not in (:statusLancamento) ");
 		
 		if(filtro.getIdBox() == null) {
 			
@@ -252,7 +252,10 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		query.setParameter("pontoPrincipal", true);
 	
 		query.setParameterList(
-			"statusLancamento",Arrays.asList(StatusLancamento.BALANCEADO.name(), StatusLancamento.EXPEDIDO.name()));
+			"statusLancamento",Arrays.asList(StatusLancamento.PLANEJADO.name(), 
+					StatusLancamento.CONFIRMADO.name(),
+					StatusLancamento.FURO.name(),
+					StatusLancamento.CANCELADO.name()));
 		
 		if(filtro.getIdBox() != null && filtro.getIdBox() > 0) {
 			

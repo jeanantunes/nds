@@ -66,12 +66,12 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 	@Override
 	public BigDecimal obterReparteDaChamaEncalheCota(
 			Integer numeroCota, 
-			Date dataOperacao,
+			List<Date> datas,
 			Boolean conferido, Boolean postergado) {
 
 		Query query = this.getSession().createSQLQuery(this.getSqlValor(conferido, postergado, REPARTE_COM_DESCONTO));
 
-		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameterList("datas", datas);
 		
 		query.setParameter("numeroCota", numeroCota);
 		
@@ -110,7 +110,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		Query query = this.getSession().createSQLQuery(this.getSqlValor(conferido, postergado, DESCONTO));
 
-		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameterList("datas", Arrays.asList(dataOperacao));
 		
 		query.setParameter("numeroCota", numeroCota);
 		
@@ -137,7 +137,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 				this.getSession().createSQLQuery(
 						this.getSqlValor(conferido, postergado, REPARTE_SEM_DESCONTO));
 
-		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameterList("datas", Arrays.asList(dataOperacao));
 		
 		query.setParameter("numeroCota", numeroCota);
 		
@@ -250,7 +250,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		sql.append("	COTA.NUMERO_COTA = :numeroCota  ");
 		
-		sql.append("	AND CH_ENCALHE.DATA_RECOLHIMENTO = :dataOperacao	");
+		sql.append("	AND CH_ENCALHE.DATA_RECOLHIMENTO IN (:datas)	");
 		
 		if(conferido!=null) {
 			sql.append(" AND	CH_ENCALHE_COTA.FECHADO = :conferido		");
