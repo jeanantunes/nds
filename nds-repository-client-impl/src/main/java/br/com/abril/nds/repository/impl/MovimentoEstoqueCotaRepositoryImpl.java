@@ -2054,10 +2054,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             param.put("codigosProduto", filtro.getCodigosProduto());
         }
         
-        if(filtro.getEdicaoProduto() != null) {
+        if(filtro.getNumerosEdicao() != null && !filtro.getNumerosEdicao().isEmpty()) {
             
-            hql.append(" and produtoEdicao.NUMERO_EDICAO = :numeroEdicao ");
-            param.put("numeroEdicao", filtro.getEdicaoProduto());
+            hql.append(" and produtoEdicao.NUMERO_EDICAO in (:numeroEdicao) ");
+            param.put("numeroEdicao", filtro.getNumerosEdicao());
         }
         
         if(filtro.getCodigoCota() != null ) {
