@@ -40,6 +40,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoCota;
@@ -117,6 +118,7 @@ import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.BoletoService;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
@@ -252,6 +254,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private BoletoService boletoService;
+	
+	@Autowired
+	private CalendarioService calendarioService;
 	
 	@Autowired
 	private DebitoCreditoCotaService debitoCreditoCotaService;
@@ -416,19 +421,22 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional
 	public boolean isCotaEmiteNfe(final Integer numeroCota) {
 
+		Distribuidor distribuidor =  distribuidorService.obter();
 		
-		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-
-		if (cota == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
+		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+			return true;
+		}else{ 
+			final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
+			
+			if (cota == null) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
+			}
+			
+			return (cota.getParametrosCotaNotaFiscalEletronica() != null && 
+					cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() != null) ? 
+					cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() != null || 
+					cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() !=null  : false;
 		}
-
-		final boolean indEmiteNfe = (cota.getParametrosCotaNotaFiscalEletronica() != null && 
-				cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() != null) ? 
-				cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() : false;
-
-		return indEmiteNfe;
-
 	}	
 	
 	/*
@@ -1999,8 +2007,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 							controleConferenciaEncalheCota.getId());
 			
 			if(StatusOperacao.CONCLUIDO.equals(statusAtualOperacaoConfEnc)) {
-				
-				
+								
 				removerAssociacoesCobrancaConferenciaEncalheCota(controleConferenciaEncalheCota.getId());
 			}
 		}	
@@ -2065,10 +2072,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			    this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(controleConferenciaEncalheCota.getCota().getNumeroCota(), 
 			    		                                                                                       controleConferenciaEncalheCota.getDataOperacao());
 			}
+
+			//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE PARA O PROXIMO DIA UTIL (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA COTA A VISTA COM CONSIGNADO PENDENTE
+			Date dataMovimentoFinanceiroPostergado = this.calendarioService.adicionarDiasUteis(controleConferenciaEncalheCota.getDataOperacao(),1);
 			
-			//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA COTA A VISTA COM CONSIGNADO PENDENTE
 			this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
-																			 controleConferenciaEncalheCota.getDataOperacao(),
+					                                                         dataMovimentoFinanceiroPostergado,
 																			 controleConferenciaEncalheCota.getUsuario(),
 																			 controleConferenciaEncalheCota.getId());
 		}

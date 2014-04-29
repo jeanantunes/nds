@@ -774,8 +774,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		if (modeloConferenciaEncalhe){
 		
-			$.each(modeloConferenciaEncalhe, 
-				function(index, value) {
+			$.each(modeloConferenciaEncalhe, function(index, value) {
 					
 					var parcial =  value.parcial;
 				
@@ -1051,18 +1050,15 @@ var ConferenciaEncalhe = $.extend(true, {
 							if(conteudo.tipoMensagem == 'SUCCESS') {
 								
 								$("#dialog-dadosNotaFiscal", ConferenciaEncalhe.workspace).dialog("close");
-
 								
 								if(conteudo.indGeraDocumentoConfEncalheCota == true) {
 									ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(conteudo.tipos_documento_impressao_encalhe);
 								}
 								
 								ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
-								
 							}
 
 							exibirMensagem(conteudo.tipoMensagem, conteudo.listaMensagens);
-							
 						}, 
 
 						function(conteudo) {
@@ -1088,8 +1084,8 @@ var ConferenciaEncalhe = $.extend(true, {
 			},
 			form: $("#dialog-dadosNotaFiscal", this.workspace).parents("form"),
 			close : function(){
-				
 				ConferenciaEncalhe.modalAberta = false;
+				ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
 				focusSelectRefField($("#numeroCota", ConferenciaEncalhe.workspace));
 			}
 		});
@@ -1141,14 +1137,10 @@ var ConferenciaEncalhe = $.extend(true, {
 	            juramentada: valorJuramentado
 			
 			});
-			
-			
 		});
 		
-		var param = serializeArrayToPost('listaConferenciaEncalhe', 
-				data);
+		var param = serializeArrayToPost('listaConferenciaEncalhe', data);
 
-		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/atualizarValoresGridInteira", 
 				param, 
 				function(result){
@@ -1165,7 +1157,6 @@ var ConferenciaEncalhe = $.extend(true, {
 								
 					ConferenciaEncalhe.carregarListaConferencia(data);				
 				}
-			
 		);
 		
 		
@@ -1760,7 +1751,9 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				ConferenciaEncalhe.modalAberta = false;
 				
-				// ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
+				ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
+				
+				ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
 				
 				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 				

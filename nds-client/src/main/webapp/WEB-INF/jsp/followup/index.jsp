@@ -5,7 +5,7 @@
 </head>
 
 <body>
-
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 
 	<div class="areaBts">
 		<div class="area">
@@ -215,11 +215,11 @@
       </fieldset>
       </div>
       <div class="linha_separa_fields">&nbsp;</div>
-
-<script>
-	$(function(){
-		followUpSistemaController.init();
-	});
-</script>
+	
+	<script>
+		$(function(){
+			followUpSistemaController.init();
+		});
+	</script>
 </body>
 </html>
