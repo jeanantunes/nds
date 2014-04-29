@@ -196,7 +196,6 @@ public class EntradaNFETerceirosController extends BaseController {
 	
 	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> efetuarConsultaNotasPendentes(final FiltroEntradaNFETerceiros filtro) {
 
-
 		List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, true);
 
 		Integer tamanhoListaNotasPendentes = this.entradaNFETerceirosService.buscarTodasNFNotas(filtro);
@@ -206,41 +205,6 @@ public class EntradaNFETerceirosController extends BaseController {
 		if(listaNotasPendentes.size() == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
-		
-		/*List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = new ArrayList<ConsultaEntradaNFETerceirosPendentesDTO>();
-		
-		ConsultaEntradaNFETerceirosPendentesDTO nota1 = new ConsultaEntradaNFETerceirosPendentesDTO();
-		nota1.setChaveAcesso("1234");
-		nota1.setDataEncalhe(new Date());
-		nota1.setDiferenca(new BigDecimal(444));
-//		nota1.setIdNotaFiscalEntrada(Long.valueOf(15));
-		nota1.setNome("Victor Montanher");
-		nota1.setNumeroCota(Integer.valueOf(1234));
-		nota1.setNumeroNfe(Long.valueOf(778899));
-		nota1.setSerie("4356");
-		nota1.setStatus("APROVADO");
-		nota1.setTipoNotaFiscal("Entrada");
-		nota1.setValorNota(new BigDecimal(999));
-		nota1.setValorReal(new BigDecimal(999));
-		
-		ConsultaEntradaNFETerceirosPendentesDTO nota2 = new ConsultaEntradaNFETerceirosPendentesDTO();
-		nota2.setChaveAcesso("9876");
-		nota2.setDataEncalhe(new Date());
-		nota2.setDiferenca(new BigDecimal(444));
-//		nota2.setIdNotaFiscalEntrada(Long.valueOf(15));
-		nota2.setNome("Victor Henrique Montanher");
-		nota2.setNumeroCota(Integer.valueOf(1234));
-		nota2.setNumeroNfe(Long.valueOf(778899));
-		nota2.setSerie("4356");
-		nota2.setStatus("APROVADO");
-		nota2.setTipoNotaFiscal("Complementar");
-		nota2.setValorNota(new BigDecimal(999));
-		nota2.setValorReal(new BigDecimal(999));
-		
-		listaNotasPendentes.add(nota1);
-		listaNotasPendentes.add(nota2);
-		
-		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>>();*/
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasPendentes));
 		

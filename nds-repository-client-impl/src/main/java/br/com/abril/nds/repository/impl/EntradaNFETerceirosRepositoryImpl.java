@@ -280,7 +280,6 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 			hql.append("               LEFT JOIN notaFiscalEntradaCota.tipoNotaFiscal as tipoNotaFiscal ");
 			hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota  ");
 			hql.append("               AND tipoNotaFiscal.tipoOperacao = :tipoOperacaoEntrada");
-			hql.append("               AND tipoNotaFiscal.grupoNotaFiscal = :complementar ");
 			if(FiltroEntradaNFETerceiros.TipoNota.COMPLEMENTAR.equals(filtro.getTipoNota())) {
 				hql.append("        ) > 0");
 			} else {
