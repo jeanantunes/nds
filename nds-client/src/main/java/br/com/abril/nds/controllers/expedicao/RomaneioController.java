@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -252,6 +254,14 @@ public class RomaneioController extends BaseController {
 		List<ItemDTO<Long, String>> boxes = new ArrayList<ItemDTO<Long, String>>();
 
 		List<Box> listaBoxes = boxService.buscarTodos(TipoBox.LANCAMENTO);
+		
+		Collections.sort(listaBoxes, new Comparator<Box>() {
+		    @Override
+		    public int compare(Box lhs, Box rhs) {
+		       
+		        return lhs.getCodigo().compareTo(rhs.getCodigo());
+		    }
+		});
 		
 		boxes.add(new ItemDTO<Long, String>(0L, "Especial"));
 		

@@ -1267,28 +1267,58 @@ public class ConferenciaEncalheController extends BaseController {
             this.validarAutenticidadeSupervisor(usuario, senha);
             
         } else {
+    		
+            final List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
             
-        	if(indPesquisaProduto){
-    			
-    			isVendaNegativaProduto = this.verificarPermissaoSupervisorProduto(qtdExemplares, usuario, senha, produtoEdicaoId);
-    		}
-        	else{
-        		
-        		final List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
+            final boolean supervisor = usuarioService.isSupervisor();
+            
+            if (listaConferencia == null || listaConferencia.isEmpty()){
                 
+                ProdutoEdicaoDTO pDto = null;
+                
+                try {
+                    
+                     pDto = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(
+                            this.getNumeroCotaFromSession(), 
+                            produtoEdicaoId);
+                } catch (final EncalheRecolhimentoParcialException e) {
+                    LOGGER.error("Não existe chamada de encalhe para produto parcial na data operação: " + e.getMessage(), e);
+                    throw new ValidacaoException(TipoMensagem.WARNING,
+                            "Não existe chamada de encalhe para produto parcial na data operação.");
+                }
+                
+                final ConferenciaEncalheDTO dto = 
+                        this.criarConferenciaEncalhe(pDto, new BigInteger(qtdExemplares), false, indConferenciaContingencia);
+                
+                isVendaNegativaProduto = this.validarVendaNegativaProduto(
+                        qtdExemplares,indConferenciaContingencia, dto, supervisor);
+                
+            } else {
+            
                 for (final ConferenciaEncalheDTO dto : listaConferencia) {
+                    
+                    String qtdJaInformada = null;
+                    
+                    if (indPesquisaProduto){
+                        
+                        qtdJaInformada = dto.getQtdInformada() == null ? this.obterQuantidadeEncalheDaString(qtdExemplares).toString() : 
+                            dto.getQtdInformada().add(this.obterQuantidadeEncalheDaString(qtdExemplares)).toString();
+                    } else {
+                        
+                        qtdJaInformada = qtdExemplares;
+                    }
                     
                     if (produtoEdicaoId != null) {
                         
                         if (produtoEdicaoId.equals(dto.getIdProdutoEdicao())) {
                             
-                        	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdExemplares,indConferenciaContingencia, dto);
+                        	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdJaInformada,indConferenciaContingencia, dto, supervisor);
                         }
                     } else {
                         
                         if (idConferencia.equals(dto.getIdConferenciaEncalhe())) {
                             
-                        	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdExemplares,indConferenciaContingencia, dto);
+                        	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdJaInformada,indConferenciaContingencia, dto, supervisor);
                         }
                     }
                     
@@ -1296,7 +1326,7 @@ public class ConferenciaEncalheController extends BaseController {
                         break;
                     }
                 }
-        	}
+            }
         }
     
         if(!isVendaNegativaProduto){
@@ -1307,7 +1337,8 @@ public class ConferenciaEncalheController extends BaseController {
 
 	private boolean validarVendaNegativaProduto(final String qtdExemplares,
 										 final boolean indConferenciaContingencia,
-										 final ConferenciaEncalheDTO dto) {
+										 final ConferenciaEncalheDTO dto,
+										 boolean supervisor) {
 		
 		BigInteger qtdeEncalhe = this.obterQuantidadeEncalhe(qtdExemplares,dto);
 		
@@ -1315,11 +1346,9 @@ public class ConferenciaEncalheController extends BaseController {
 		    
 		    Object[] ret = new Object[2];
 		    
-		    boolean superVisor = usuarioService.isSupervisor();
+		    ret[0] = supervisor;
 		    
-		    ret[0] = superVisor;
-		    
-		    if (superVisor){
+		    if (supervisor){
 		        
 		        ret[1] = "Venda negativa no encalhe.";
 		    } else {

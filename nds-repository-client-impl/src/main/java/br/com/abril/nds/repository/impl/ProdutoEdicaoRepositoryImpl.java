@@ -33,6 +33,7 @@ import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
@@ -1930,4 +1931,30 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		return ((BigInteger) query.uniqueResult()).compareTo(BigInteger.ZERO) > 0;
 	}
+
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ItemDTO<String, String>> obterProdutosBalanceados(Date dataLancamento) {
+        
+        String hql = " select "
+                + " new "
+                + ItemDTO.class.getCanonicalName()
+                + " (produto.codigo, concat(produto.codigo, ' - ', produto.nome, ' - ', produtoEdicao.numeroEdicao)) "
+                + " from Lancamento lancamento "
+                + " join lancamento.produtoEdicao produtoEdicao "
+                + " join produtoEdicao.produto produto "
+                + " where lancamento.status in (:status) "
+                + " and lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor "
+                + " group by produtoEdicao.id "
+                + " order by produto.nome ";
+        
+        Query query = super.getSession().createQuery(hql);
+    
+        query.setParameterList("status", Arrays.asList(StatusLancamento.BALANCEADO,StatusLancamento.EXPEDIDO));
+        
+        query.setParameter("dataLancamentoDistribuidor", dataLancamento);
+        
+        return query.list();
+    }
 }
