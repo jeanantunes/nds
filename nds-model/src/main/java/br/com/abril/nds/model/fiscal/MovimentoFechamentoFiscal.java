@@ -8,14 +8,15 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
-@MappedSuperclass
-@Table(name = "MOVIMENTO_FECHAMENTO_FISCAL")
+@Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @DiscriminatorColumn(name="TIPO_DESTINATARIO", discriminatorType=DiscriminatorType.STRING)
 public abstract class MovimentoFechamentoFiscal implements Serializable {
@@ -23,13 +24,20 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 6222933915307416834L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.TABLE)
+	private Long id;
 	
 	@Column(name = "NOTA_FISCAL_VENDA_EMITIDA")
 	private boolean notaFiscalVendaEmitida;
 	
 	@Column(name = "NOTA_FISCAL_DEVOLUCAO_SIMBOLICA_EMITIDA")
 	private boolean notaFiscalDevolucaoSimbolicaEmitida;
+	
+	@Column(name = "NOTA_FISCAL_LIBERADA_EMISSAO")
+	private boolean notaFiscalLiberadaEmissao;
 	
 	@Column(name = "QTDE")
 	private BigInteger qtde;
@@ -44,12 +52,28 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 	)*/
 	private List<OrigemItemMovFechamentoFiscal> origemMovimentoFechamentoFiscal;
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
 	public boolean isNotaFiscalVendaEmitida() {
 		return notaFiscalVendaEmitida;
 	}
 
 	public void setNotaFiscalVendaEmitida(boolean notaFiscalVendaEmitida) {
 		this.notaFiscalVendaEmitida = notaFiscalVendaEmitida;
+	}
+
+	public boolean isNotaFiscalLiberadaEmissao() {
+		return notaFiscalLiberadaEmissao;
+	}
+
+	public void setNotaFiscalLiberadaEmissao(boolean notaFiscalLiberadaEmissao) {
+		this.notaFiscalLiberadaEmissao = notaFiscalLiberadaEmissao;
 	}
 
 	public boolean isNotaFiscalDevolucaoSimbolicaEmitida() {

@@ -2,7 +2,7 @@ package br.com.abril.nds.model.fiscal;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -24,7 +26,8 @@ public abstract class OrigemItemMovFechamentoFiscal implements Serializable {
 	@GeneratedValue
 	private Long id;
 
-	@Column(name="MOVIMENTO_FECHAMENTO_FISCAL_ID")
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name="MOVIMENTO_FECHAMENTO_FISCAL_ID")
 	private MovimentoFechamentoFiscal movimentoFechamentoFiscal;
 
 	public Long getId() {

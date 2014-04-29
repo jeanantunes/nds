@@ -27,9 +27,14 @@ public class OrigemItemMovFechamentoFiscalMEC extends OrigemItemMovFechamentoFis
 	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="MOVIMENTO_ESTOQUE_ID")
 	private MovimentoEstoqueCota movimentoEstoqueCota;
+
+	public OrigemItemMovFechamentoFiscalMEC() {
+		super();
+	}
 	
-	public OrigemItemMovFechamentoFiscalMEC(MovimentoEstoqueCota mec) {
+	public OrigemItemMovFechamentoFiscalMEC(MovimentoFechamentoFiscal mff, MovimentoEstoqueCota mec) {
 		this.movimentoEstoqueCota = mec;
+		super.setMovimentoFechamentoFiscal(mff);
 	}
 	
 	public MovimentoEstoqueCota getMovimentoEstoqueCota() {

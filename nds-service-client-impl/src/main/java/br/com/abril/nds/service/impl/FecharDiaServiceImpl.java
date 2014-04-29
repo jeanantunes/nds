@@ -62,7 +62,6 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
 import br.com.abril.nds.model.estoque.LancamentoDiferenca;
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
@@ -88,13 +87,11 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsolidadoDivida
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
-import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscal;
-import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalMEC;
-import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -1742,23 +1739,13 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			this.lancamentoRepository.merge(lancamento);
 			
-			//TODO: Gerar os movimentos de ajustes fiscais para os movimentos de estoque da cota
-			List<MovimentoFechamentoFiscal> listaMFFCota = new ArrayList<>();
-    		for(MovimentoEstoqueCota mec : lancamento.getMovimentoEstoqueCotas()) {
-    			
-    			List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
-    			MovimentoFechamentoFiscalCota mff = new MovimentoFechamentoFiscalCota();
-    			listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mec));
-    			mff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
-    			mff.setQtde(mec.getQtde());
-        		mff.setTipoDestinatario(TipoDestinatario.COTA);
-        		mff.setCota(mec.getCota());
-    			listaMFFCota.add(mff);
-    		}
-    		
-    		//for(MovimentoFechamentoFiscal mffCota: listaMFFCota) {
-    			movimentoFechamentoFiscalRepository.adicionar(listaMFFCota.get(0));
-    		//}
+			for(ChamadaEncalhe ce : lancamento.getChamadaEncalhe()) {
+				for(ChamadaEncalheCota cec : ce.getChamadaEncalheCotas()) {
+					MovimentoFechamentoFiscalCota movimentoFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCota(cec);
+					movimentoFechamentoFiscalCota.setNotaFiscalLiberadaEmissao(true);
+				}
+				
+			}
 			
 		}
 	}
