@@ -57,7 +57,7 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaAVistaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro);
 
     List<DebitoCreditoCotaDTO> buscarMovFinanPorCotaEData(
-            Long idCota, Date data, Long idFornecedor);
+            Long idCota, List<Date> datas, Long idFornecedor);
 
     List<DebitoCreditoCotaDTO> obterConsolidadosDataOperacaoSlip(Long idCota, Date dataOperacao);
 }

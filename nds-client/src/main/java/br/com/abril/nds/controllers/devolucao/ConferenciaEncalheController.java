@@ -50,6 +50,7 @@ import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.UsuarioService;
@@ -160,6 +161,9 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
 	private BoxService boxService;
+	
+	@Autowired
+	private GrupoService grupoService;
 	
 	@Path("/")
 	@SuppressWarnings("unchecked")
@@ -592,9 +596,13 @@ public class ConferenciaEncalheController extends BaseController {
 
 		} else {
 			
-			if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota)) {
+			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+			
+			List<Date> datas = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(numeroCota, dataOperacao);
+			
+			if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota, datas)) {
 				
-				this.result.use(CustomMapJson.class)
+				this.result.use(CustomMapJson.class) 
 				.put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
 			
 			} else {

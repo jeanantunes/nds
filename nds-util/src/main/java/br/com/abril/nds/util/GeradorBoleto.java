@@ -206,7 +206,7 @@ public class GeradorBoleto {
 		
 		if(!list.isEmpty()){
 			
-			byte[] byteArrayPdf = BoletoViewer.groupInOnePDF(list);
+			byte[] byteArrayPdf = BoletoViewer.groupInOnePdfWithTemplate(list, getClass().getResource("/boletoTemplate/BoletoNDS.pdf"));
 			
 		    return byteArrayPdf;
 		}
