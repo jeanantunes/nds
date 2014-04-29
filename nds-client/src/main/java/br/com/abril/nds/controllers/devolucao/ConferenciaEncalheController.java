@@ -39,6 +39,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -717,6 +718,8 @@ public class ConferenciaEncalheController extends BaseController {
 							((PessoaJuridica)cota.getPessoa()).getRazaoSocial());
 			
 			dados.put("situacao", cota.getSituacaoCadastro().toString());
+			
+			dados.put("cotaAVista", TipoCota.A_VISTA.equals(cota.getTipoCota()));
 		}
 		
 		if(infoConfereciaEncalheCota.getNotaFiscalEntradaCota()!=null) {
@@ -2520,7 +2523,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		
 		conferenciaEncalheDTO.setDataConferencia(dataOperacao);
 		
-		conferenciaEncalheDTO.setParcial(produtoEdicao.isParcial());
+		conferenciaEncalheDTO.setParcialNaoFinal(this.conferenciaEncalheService.isParcialNaoFinal(produtoEdicao.getId()));
 		
 		if (quantidade != null){
 			conferenciaEncalheDTO.setQtdExemplar(quantidade);

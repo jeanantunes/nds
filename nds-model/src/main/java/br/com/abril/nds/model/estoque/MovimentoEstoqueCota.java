@@ -49,10 +49,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@JoinColumn(name = "ESTOQUE_PROD_COTA_ID")
 	private EstoqueProdutoCota estoqueProdutoCota;
 	
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "ESTOQUE_PROD_COTA_JURAMENTADO_ID")
-	private EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado;
-	
 	@OneToOne(optional = true)
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_FURO_ID")
 	MovimentoEstoqueCota movimentoEstoqueCotaFuro;
@@ -93,6 +89,10 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		@JoinColumn(name="NOTA_ENVIO_ITEM_SEQUENCIA", referencedColumnName="SEQUENCIA")
 	})
 	private ItemNotaEnvio itemNotaEnvio;
+
+	@OneToOne(optional = true)
+    @JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_JURAMENTADO_ID")
+    MovimentoEstoqueCota movimentoEstoqueCotaJuramentado;
 	
 	public Object clone() {
 
@@ -105,7 +105,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		mec.setDataCriacao(this.getDataCriacao());
 		mec.setDataIntegracao(this.getDataIntegracao());
 		mec.setEstoqueProdutoCota(this.getEstoqueProdutoCota());
-		mec.setEstoqueProdutoCotaJuramentado(this.getEstoqueProdutoCotaJuramentado());
 		mec.setLancamento(this.getLancamento());
 		mec.setListaProdutoServicos(this.getListaProdutoServicos());
 		mec.setMotivo(this.getMotivo());
@@ -194,15 +193,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.lancamento = lancamento;
 	}
 
-	public EstoqueProdutoCotaJuramentado getEstoqueProdutoCotaJuramentado() {
-		return estoqueProdutoCotaJuramentado;
-	}
-
-	public void setEstoqueProdutoCotaJuramentado(
-			EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado) {
-		this.estoqueProdutoCotaJuramentado = estoqueProdutoCotaJuramentado;
-	}
-
 	public ValoresAplicados getValoresAplicados() {
 		return valoresAplicados;
 	}
@@ -244,5 +234,13 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	public void setItemNotaEnvio(ItemNotaEnvio itemNotaEnvio) {
 		this.itemNotaEnvio = itemNotaEnvio;
 	}
+    
+    public MovimentoEstoqueCota getMovimentoEstoqueCotaJuramentado() {
+        return movimentoEstoqueCotaJuramentado;
+    }
+
+    public void setMovimentoEstoqueCotaJuramentado(MovimentoEstoqueCota movimentoEstoqueCotaJuramentado) {
+        this.movimentoEstoqueCotaJuramentado = movimentoEstoqueCotaJuramentado;
+    }
 	
 }

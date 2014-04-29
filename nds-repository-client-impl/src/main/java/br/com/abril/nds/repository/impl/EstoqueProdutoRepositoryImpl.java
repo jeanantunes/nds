@@ -1,25 +1,24 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
-import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -135,12 +134,9 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 			.append("	, coalesce(ep.qtde_danificado, 0) as qtdeDanificado ")
 			.append("	, coalesce(ep.qtde_devolucao_encalhe, 0) as qtdeDevolucaoEncalhe ")
 			.append("	, coalesce(ep.qtde_suplementar, 0) as qtdeSuplementar ")
-			.append("	, coalesce(rs1.qtde_juramentado, 0) as qtdeJuramentado ")
+			.append("	, coalesce(ep.qtde_juramentado, 0) as qtdeJuramentado ")
 			.append("	, ep.produto_edicao_id as produtoEdicaoId ")
-			.append("from ESTOQUE_PRODUTO ep ")
-			.append("left outer join (select produto_edicao_id, sum(qtde) as qtde_juramentado ")
-			.append("					from estoque_produto_cota_juramentado ")
-			.append("					group by produto_edicao_id) rs1 on ep.PRODUTO_EDICAO_ID=rs1.PRODUTO_EDICAO_ID ");
+			.append("from ESTOQUE_PRODUTO ep ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		
