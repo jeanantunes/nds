@@ -1940,7 +1940,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         String hql = " select "
                 + " new "
                 + ItemDTO.class.getCanonicalName()
-                + " (produto.codigo, concat(produto.codigo, ' - ', produto.nome, ' - ', produtoEdicao.numeroEdicao)) "
+                + " (concat(produto.codigo, '_', produtoEdicao.numeroEdicao), concat(produto.codigo, ' - ', produto.nome, ' - ', produtoEdicao.numeroEdicao)) "
                 + " from Lancamento lancamento "
                 + " join lancamento.produtoEdicao produtoEdicao "
                 + " join produtoEdicao.produto produto "

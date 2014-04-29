@@ -274,6 +274,16 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 				) 
 		);
 		
+		if (input.getSegmento() == null || input.getSegmento().trim().equals("")) {
+			
+			ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.HIERARQUIA,
+					String.format( "Produto sem Segmento: ", input.getCodProd(), input.getEdicaoProd() )
+				);
+			
+		}
+
 		produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
 		
 		String codigoSituacaoTributaria = input.getCodSitTributaria();

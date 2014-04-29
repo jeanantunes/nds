@@ -49,6 +49,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		if (!StringUtil.isEmpty(nomeBox)) {
 		    criteria.add(Restrictions.ilike("nome", nomeBox, MatchMode.START));
 		}
+		criteria.addOrder(Order.asc("codigo"));
 		
 		criteria.setCacheable(true);
 		

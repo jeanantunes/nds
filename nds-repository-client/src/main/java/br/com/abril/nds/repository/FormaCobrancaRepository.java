@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -22,6 +23,8 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	FormaCobranca obterPorTipoEBanco(TipoCobranca tipo, Banco banco);
 	
 	List<Banco> obterBancosPorTipoDeCobranca(TipoCobranca tipo);
+	
+	List<FormaCobrancaDefaultVO> obterFormaCobrancaDefault();
 
 	List<FormaCobranca> obterFormasCobrancaCota(Cota cota);
 	
@@ -33,6 +36,8 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	
 	List<FormaCobranca> obterPorDistribuidor(Long idDistribuidor, Long idFormaCobranca);
 
+	List<FormaCobrancaDefaultVO> obterFormaCobrancaCotaDefault(Integer numeroCota);
+	
 	/**
 	 * Obtem FormaCobranca da Cota
 	 * @param idCota

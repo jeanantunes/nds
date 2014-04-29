@@ -41,6 +41,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
@@ -58,6 +59,7 @@ import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -169,6 +171,8 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
 	private NaturezaOperacaoService naturezaOperacaoService;
+
+	private GrupoService grupoService;
 	
 	@Path("/")
 	@SuppressWarnings("unchecked")
@@ -510,8 +514,14 @@ public class ConferenciaEncalheController extends BaseController {
 
 		} else {
 			
-			if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota)) {
+			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+			
+			List<Date> datas = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(numeroCota, dataOperacao);
+			
+			if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota, datas)) {
+				
 				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
+			
 			} else {
 				this.result.use(CustomMapJson.class)
 				    .put("IND_COTA_RECOLHE_NA_DATA", "N")
@@ -615,6 +625,8 @@ public class ConferenciaEncalheController extends BaseController {
 		if (cota != null){
 			dados.put("razaoSocial", cota.getPessoa() instanceof PessoaFisica ? ((PessoaFisica)cota.getPessoa()).getNome() : ((PessoaJuridica)cota.getPessoa()).getRazaoSocial());
 			dados.put("situacao", cota.getSituacaoCadastro().toString());
+			
+			dados.put("cotaAVista", TipoCota.A_VISTA.equals(cota.getTipoCota()));
 		}
 		
 		if(infoConfereciaEncalheCota.getNotaFiscalEntradaCota()!=null) {
@@ -2423,7 +2435,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		conferenciaEncalheDTO.setDataConferencia(dataOperacao);
 		
-		conferenciaEncalheDTO.setParcial(produtoEdicao.isParcial());
+		conferenciaEncalheDTO.setParcialNaoFinal(this.conferenciaEncalheService.isParcialNaoFinal(produtoEdicao.getId()));
 		
 		if (quantidade != null){
 			conferenciaEncalheDTO.setQtdExemplar(quantidade);

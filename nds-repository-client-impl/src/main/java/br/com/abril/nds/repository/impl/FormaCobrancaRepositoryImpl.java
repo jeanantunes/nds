@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -273,6 +275,27 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		return (FormaCobranca) query.uniqueResult();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<FormaCobrancaDefaultVO> obterFormaCobrancaDefault() {
+
+		StringBuilder hql = new StringBuilder();
+
+        hql.append(" select banco.id as idBanco, banco.nome as nomeBanco, f.tipoCobranca as tipoCobranca ");
+        hql.append(" from FormaCobranca f ");	
+		hql.append(" join f.politicaCobranca p ");
+		hql.append(" join f.banco banco ");		
+		hql.append(" where p.ativo = :indAtivo ");
+		hql.append(" and p.principal = :principal ");
+
+		Query query = super.getSession().createQuery(hql.toString());
+        query.setParameter("indAtivo", true);
+        query.setParameter("principal", true);
+
+        query.setResultTransformer(Transformers.aliasToBean(FormaCobrancaDefaultVO.class));        
+
+        return query.list();
+	}
+	
 	/**
 	 * Obtém lista de forma de cobranca da Cota
 	 * @param Cota
@@ -288,6 +311,34 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         Query query = super.getSession().createQuery(hql.toString());
         query.setParameter("pCota", cota);
         return query.list();
+	}
+	
+	/**
+	 * Obtém lista de forma de cobranca da Cota
+	 * @param Cota
+	 * @return {@link List<FormaCobranca>}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FormaCobrancaDefaultVO> obterFormaCobrancaCotaDefault(Integer numeroCota) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select banco.id as idBanco, banco.nome as nomeBanco, formaCobranca.tipoCobranca as tipoCobranca ");
+		sql.append(" from FormaCobranca formaCobranca ");
+		sql.append(" inner join formaCobranca.parametroCobrancaCota parametroCobrancaCota ");
+		sql.append(" inner join parametroCobrancaCota.fornecedorPadrao fornecedorPadrao ");
+		sql.append(" inner join formaCobranca.fornecedores fornecedor ");
+		sql.append(" inner join formaCobranca.banco banco ");
+		sql.append(" where parametroCobrancaCota.cota.numeroCota = :numeroCota ");
+		sql.append(" and fornecedor.id = fornecedorPadrao.id ");
+
+		Query query = this.getSession().createQuery(sql.toString());
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.setResultTransformer(Transformers.aliasToBean(FormaCobrancaDefaultVO.class));
+		
+		return query.list();
 	}
 	
 	

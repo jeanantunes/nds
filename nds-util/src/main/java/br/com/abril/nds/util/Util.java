@@ -223,10 +223,10 @@ public abstract class Util {
             
         case BANCO_BRADESCO:
             return Util.padLeft(idDivida.toString(), "0", 11);
-            
+
         case BANCO_DO_BRASIL:
-            return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
-            
+            return codSacado + Util.padLeft(idDivida.toString(), "0", 7);
+
         case BANCO_DO_ESTADO_DO_ESPIRITO_SANTO:
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
             

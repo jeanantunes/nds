@@ -480,6 +480,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		var totalExemplaresFooter = 0;
 		
+		var cotaAVista = result.cotaAVista;
+		
 		ConferenciaEncalheCont.indDistribuidorAceitaJuramentado = result.indDistribuidorAceitaJuramentado;
 		
 		$("._dadosConfEncalhe", ConferenciaEncalheCont.workspace).remove();
@@ -489,7 +491,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			$.each(modeloConferenciaEncalhe, 
 				function(index, value) {
 				
-					var parcial = value.parcial;
+					var parcialNaoFinal =  value.parcialNaoFinal;
 				
 					var _class;
 					
@@ -553,7 +555,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					if (ConferenciaEncalheCont.indDistribuidorAceitaJuramentado == true) {
 
-						if(parcial == true) {
+						if(parcialNaoFinal == true && !cotaAVista) {
 							
 							inputCheckBoxJuramentada = '<input isEdicao="true" type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
 							+ ' onchange="ConferenciaEncalheCont.valorAnteriorInput = this.defaultValue;ConferenciaEncalheCont.verificarPermissaoSuperVisor('+ index +');" id="checkGroupJuramentada_' + index + '"/>';

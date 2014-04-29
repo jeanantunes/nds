@@ -122,11 +122,11 @@
               
               <div class="entregador" style="display:none">
               
-<input id="entregador"  type="text" style="width:112px;"
-	   onkeyup="pesquisaEntregadorMapaAbastecimento.autoCompletarPorNome('#entregador');" 
-		 	   onblur="pesquisaEntregadorMapaAbastecimento.pesquisarPorNomeEntregador('#idEntregador', '#entregador');" />
 
-<input id="idEntregador"  type="hidden" />
+
+<select id="idEntregador" style="width:120px;">
+	<option selected="selected" value="">Selecione...</option>
+</select>
 		 	   
 	   	
 	   		   </div>
@@ -169,27 +169,14 @@
               <td>&nbsp;</td>
             </tr>
             <tr>
-              <td width="103">Código:</td>
-              <td>
-			  
-			  
-<!-- Código Produto -->              
-<input id="codigoProduto" disabled="disabled" type="text" style="width:80px; float:left; margin-right:5px;"
-	   onchange="MA.pesquisarPorCodigoProduto('#codigoProduto', '#nomeProduto', null , false);" />
-	
-			  </td>
-              <td width="81">Produto:</td>              
-              <td width="155">
+              <td >Produto:</td>              
+              <td >
               	<a id="linkProdutos" href="javascript:;" onclick="MA.carregarProdutos();">Selecione Produto:</a>
 			  </td>
-              <td width="43">Edição:</td>
-              <td colspan="3">
-			  
-<!-- EdiçãoProduto -->              
-<input id="edicao" disabled="disabled" type="text" style="width:112px; float:left; margin-right:5px;"/>
-
-			  
-			  </td>
+			  <td></td>
+              <td></td>
+              <td></td>
+              <td colspan="3"></td>
               <td width="104">&nbsp;</td>
             </tr>
             <tr>
@@ -277,9 +264,7 @@
 			
 			<div id="gridProdutoEspecifico" style="display:none;">
 				<span>
-					<strong>Código:</strong>  <span id="codigoProdutoHeader">  </span> - 
-					<strong>Produto:</strong> <span id="nomeProdutoHeader">  </span> - 
-					<strong>Edição:</strong>  <span id="edicaoProdutoHeader">  </span>
+					<strong>Produto:</strong> <span id="nomeProdutoHeader">  </span>
 				</span>
 				<table class="mapaAbastecimentoProdEspGrid"></table>
 

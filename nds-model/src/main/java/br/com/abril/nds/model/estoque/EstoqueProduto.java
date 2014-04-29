@@ -58,6 +58,9 @@ public class EstoqueProduto implements Serializable {
 	@Column(name = "QTDE_GANHO")
 	private BigInteger qtdeGanho;
 	
+	@Column(name = "QTDE_JURAMENTADO")
+    private BigInteger qtdeJuramentado;
+	
 	@OneToMany(mappedBy = "estoqueProduto")
 	private List<MovimentoEstoque> movimentos = new ArrayList<MovimentoEstoque>();
 	
@@ -172,7 +175,15 @@ public class EstoqueProduto implements Serializable {
 		this.qtdeGanho = qtdeGanho;
 	}
 
-	@Override
+	public BigInteger getQtdeJuramentado() {
+        return qtdeJuramentado;
+    }
+
+    public void setQtdeJuramentado(BigInteger qtdeJuramentado) {
+        this.qtdeJuramentado = qtdeJuramentado;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -202,4 +213,5 @@ public class EstoqueProduto implements Serializable {
 			return false;
 		return true;
 	}
+    
 }
