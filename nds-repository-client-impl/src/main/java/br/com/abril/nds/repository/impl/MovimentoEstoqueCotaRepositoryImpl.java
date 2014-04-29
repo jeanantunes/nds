@@ -61,6 +61,7 @@ import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -254,7 +255,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" produtoEdicao.id as idProdutoEdicao,	");
         hql.append(" cota.id as idCota,						");
         hql.append(" sum(conferenciaEncalhe.qtde) as qtde,	");
-        hql.append(" chamadaEncalhe.id as idChamadaEncalhe ");
+        hql.append(" chamadaEncalhe.id as idChamadaEncalhe, ");
+        hql.append(" movimentoEstoqueCota.id as movimentoEstoqueCotaId ");
         
         hql.append(" from ConferenciaEncalhe conferenciaEncalhe	");
         
@@ -263,6 +265,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" inner join conferenciaEncalhe.chamadaEncalheCota chamadaEncalheCota ");
         hql.append(" inner join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
         hql.append(" inner join controlConfEncalheCota.cota cota ");
+        hql.append(" inner join conferenciaEncalhe.movimentoEstoqueCota movimentoEstoqueCota ");
         
         hql.append(" where ");
         
@@ -2028,6 +2031,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         hql.append(" where lancamento.STATUS in (:status) ");
         
+        hql.append(" and estudoCota.TIPO_ESTUDO = :tipoEstudo ");
+        param.put("tipoEstudo", TipoEstudoCota.NORMAL.name());
+        
         if(filtro.getDataDate() != null) {
             // Criado pelo Eduardo Punk Rock - Comentado para realizar a busca
             // através da data de lançamento do distribuidor e não a data de
@@ -3445,14 +3451,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
                 .append("into MOVIMENTO_ESTOQUE_COTA ")
                 .append("(APROVADO_AUTOMATICAMENTE, APROVADOR_ID, DATA_APROVACAO, MOTIVO, STATUS, DATA, DATA_CRIACAO, ")
                 .append("DATA_INTEGRACAO, STATUS_INTEGRACAO, TIPO_MOVIMENTO_ID, USUARIO_ID, PRODUTO_EDICAO_ID, ")
-                .append("QTDE, COTA_ID, DATA_LANCAMENTO_ORIGINAL, ESTOQUE_PROD_COTA_ID, ESTOQUE_PROD_COTA_JURAMENTADO_ID, ")
+                .append("QTDE, COTA_ID, DATA_LANCAMENTO_ORIGINAL, ESTOQUE_PROD_COTA_ID, ")
                 .append("ESTUDO_COTA_ID, NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, NOTA_ENVIO_ITEM_SEQUENCIA, LANCAMENTO_ID, ")
                 .append("MOVIMENTO_ESTOQUE_COTA_FURO_ID, MOVIMENTO_FINANCEIRO_COTA_ID, STATUS_ESTOQUE_FINANCEIRO, ")
                 .append("PRECO_COM_DESCONTO, PRECO_VENDA, VALOR_DESCONTO, ID) ")
                 .append("values ")
                 .append("(:aprovadoAutomaticamente, :usuarioAprovadorId, :dataAprovacao, :motivo, :status, :data, :dataCriacao, ")
                 .append(":dataIntegracao, :statusIntegracao, :tipoMovimentoId, :usuarioId, :idProdEd, ")
-                .append(":qtde, :idCota, :dataLancamentoOriginal, :estoqueProdutoEdicaoCotaId, :estoqueProdutoCotaJuramentadoId, ")
+                .append(":qtde, :idCota, :dataLancamentoOriginal, :estoqueProdutoEdicaoCotaId, ")
                 .append(":estudoCotaId, :notaEnvioItemNotaEnvioId, :notaEnvioItemSequencia, :lancamentoId, ")
                 .append(":movimentoEstoqueCotaFuroId, :movimentoFinanceiroCotaId, :statusEstoqueFinanceiro, ")
                 .append(":precoComDesconto, :precoVenda, :valorDesconto, -1) ");
