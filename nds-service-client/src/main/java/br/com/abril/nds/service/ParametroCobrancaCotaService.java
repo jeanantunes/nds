@@ -77,6 +77,8 @@ public interface ParametroCobrancaCotaService {
 	* @return Forma de cobrança do parametro de cobranca
 	*/
 	    FormaCobrancaDTO obterDadosFormaCobranca(Long idForma);
+	    
+	List<TipoCobranca> obterTiposCobrancaCota(Integer numeroCota);
 	
 	    /**
 	* Obtem os dados para o contrato de prestação de serviços de transportes de revistas.<br/>

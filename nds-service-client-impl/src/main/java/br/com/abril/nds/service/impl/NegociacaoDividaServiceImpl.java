@@ -354,8 +354,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 
                 ConsolidadoFinanceiroCota consolidado = null;
                 for (final ParcelaNegociacao parcelaNegociacao : parcelas) {
-                    
-                    final BigDecimal valorTotalParcela = parcelaNegociacao.getMovimentoFinanceiroCota().getValor();
+
+                    BigDecimal valorTotalParcela = parcelaNegociacao.getMovimentoFinanceiroCota().getValor();
                     
                     BigDecimal valorOriginalParcela = parcelaNegociacao.getMovimentoFinanceiroCota().getValor();
                     
@@ -394,8 +394,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                             .getMovimentoFinanceiroCota().getTipoMovimento()).getGrupoMovimentoFinaceiro();
                     
                     consolidado.setPendente(BigDecimal.ZERO);
-                    consolidado.setEncargos(parcelaNegociacao.getEncargos());
-                    
+                    consolidado.setEncargos(BigDecimal.ZERO);
+
+                    valorOriginalParcela = valorOriginalParcela.add(parcelaNegociacao.getEncargos());
+                    valorTotalParcela = valorTotalParcela.add(parcelaNegociacao.getEncargos());
+
                     if (OperacaoFinaceira.DEBITO.equals(grupoMovimentoFinaceiro.getOperacaoFinaceira())) {
                         
                         consolidado.setDebitoCredito(valorOriginalParcela.negate());

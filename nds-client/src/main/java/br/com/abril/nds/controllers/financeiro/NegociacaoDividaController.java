@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +46,7 @@ import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
+import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
@@ -99,6 +102,9 @@ public class NegociacaoDividaController extends BaseController {
 	private FormaCobrancaService formaCobrancaService;
 	
 	@Autowired
+	private ParametroCobrancaCotaService parametroCobrancaCotaService;
+	
+	@Autowired
 	private EmailService emailService;
 	
 	public NegociacaoDividaController(Result result) {
@@ -123,17 +129,51 @@ public class NegociacaoDividaController extends BaseController {
 		filtro.setAtivo(true);
 		
 		List<Banco> bancos = this.bancoService.obterBancos(filtro);
-		
+
 		this.result.include("qntdParcelas", parcelas);
 		this.result.include("bancos", bancos);
-		
-		List<TipoCobranca> tiposCobranca = this.cobrancaService.obterTiposCobrancaCadastradas();
-		
-		this.result.include("tipoPagamento", tiposCobranca);
-		
+
 		this.session.setAttribute(ID_ULTIMA_NEGOCIACAO, null);
 	}
+
+	@Post
+	public void atualizarTiposCobrancaNegociacao(Integer numeroCota, boolean isNegociacaoAvulsa) {
+		
+		List<TipoCobranca> tiposCobranca = this.obterTiposCobrancaNegociacao(numeroCota, isNegociacaoAvulsa);
+		
+		this.result.use(Results.json()).withoutRoot().from(this.tiposCobrancaToMap(tiposCobranca)).recursive().serialize();
+	}
 	
+	private List<TipoCobranca> obterTiposCobrancaNegociacao(Integer numeroCota, boolean isNegociacaoAvulsa) {
+		
+		Set<TipoCobranca> tiposCobranca = new HashSet<TipoCobranca>();
+		
+		if (isNegociacaoAvulsa) {
+			
+			tiposCobranca = new HashSet<TipoCobranca>(this.cobrancaService.obterTiposCobrancaCadastradas());
+
+		} else {
+
+			tiposCobranca = new HashSet<TipoCobranca>(this.parametroCobrancaCotaService.obterTiposCobrancaCota(numeroCota));
+		}
+		
+		tiposCobranca.remove(TipoCobranca.BOLETO_EM_BRANCO);
+		
+		return new ArrayList<>(tiposCobranca);
+	}
+	
+	private HashMap<TipoCobranca, String> tiposCobrancaToMap(Collection<TipoCobranca> tiposCobranca) {
+
+		HashMap<TipoCobranca, String> map = new HashMap<TipoCobranca, String>();
+		
+		for (TipoCobranca tipoCobranca : tiposCobranca) {
+			
+			map.put(tipoCobranca, tipoCobranca.getDescricao());
+		}
+		
+		return map;
+	}
+
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroConsultaNegociacaoDivida filtro, String sortname, String sortorder, int rp, int page) {
 		

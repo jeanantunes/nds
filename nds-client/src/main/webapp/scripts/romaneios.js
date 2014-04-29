@@ -71,7 +71,7 @@ var romaneiosController = $.extend(true, {
 		var params = [];
 		
 		params.push({name: 'filtro.data',      	value: $("#dataLancamento", romaneiosController.workspace).val()});
-		params.push({name: 'filtro.codigoBox', 	value:$('#codigoBox', romaneiosController.workspace).val()});
+		params.push({name: 'filtro.idBox', 	value:$('#codigoBox', romaneiosController.workspace).val()});
 		params.push({name: 'filtro.idRoteiro', 	value:$('#idRoteiro', romaneiosController.workspace).val()});
 		params.push({name: 'filtro.idRota',    	value:$('#idRota', romaneiosController.workspace).val()});
 		params.push({name: 'filtro.nomeRota',	value: $('#idRota option:selected', romaneiosController.workspace).text()});
