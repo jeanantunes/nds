@@ -40,6 +40,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoCota;
@@ -420,19 +421,22 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional
 	public boolean isCotaEmiteNfe(final Integer numeroCota) {
 
+		Distribuidor distribuidor =  distribuidorService.obter();
 		
-		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-
-		if (cota == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
+		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+			return true;
+		}else{ 
+			final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
+			
+			if (cota == null) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
+			}
+			
+			return (cota.getParametrosCotaNotaFiscalEletronica() != null && 
+					cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() != null) ? 
+					cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() != null || 
+					cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() !=null  : false;
 		}
-
-		final boolean indEmiteNfe = (cota.getParametrosCotaNotaFiscalEletronica() != null && 
-				cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() != null) ? 
-				cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() : false;
-
-		return indEmiteNfe;
-
 	}	
 	
 	/*

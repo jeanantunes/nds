@@ -135,6 +135,12 @@ var followUpSistemaController = $.extend(true, {
 				width : 125,
 				sortable : true,
 				align : 'left'
+			}, {
+				display : 'Ação',
+				name : 'acao',
+				width : 50,
+				sortable : true,
+				align : 'center'
 			}],
 			sortname : "cota",
 			sortorder : "asc",
@@ -453,9 +459,26 @@ var followUpSistemaController = $.extend(true, {
 		$.each(resultado.rows, function(index, row) {						
 			
 			if(row.cell.numeroTelefone = "undefined"){
-				console.log("ai chegou!!!");
 				row.cell.numeroTelefone = " - ";
 			}
+			
+			var linkLancamento = '<a isEdicao="true" href="javascript:;"  onclick="entradaNFETerceirosController.popup_nfe(\''+
+			row.cell.numeroCota+'\',\''+row.cell.nome+'\',\''+row.cell.idControleConferenciaEncalheCota+
+			'\');" style="cursor:pointer">' +
+		   	'<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_lancamento.png" hspace="5" border="0px" />' +
+		    '</a>';
+			
+			var linkCadastro = '<a isEdicao="true" href="javascript:;" onclick="entradaNFETerceirosController.popup_dadosNotaFiscal(\''+row.cell.numeroNfe +'\',\''
+				+ row.cell.dataEncalhe +'\',\''
+				+ row.cell.chaveAcesso +'\',\''
+				+ row.cell.serie +'\',\''
+				+ row.cell.valorNota +'\',\''
+				+ row.cell.idControleConferenciaEncalheCota +'\',\''
+				+ row.cell.idNotaFiscalEntrada +'\');" style="cursor:pointer">' +
+				'<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_cadastros.png" hspace="5" border="0px" />' +
+				'</a>';
+
+			row.cell.acao = linkLancamento + linkCadastro;
 			
 		});
 		
