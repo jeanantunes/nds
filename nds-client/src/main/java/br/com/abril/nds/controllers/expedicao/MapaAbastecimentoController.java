@@ -39,6 +39,7 @@ import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.MapaAbastecimentoService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
@@ -90,6 +91,9 @@ public class MapaAbastecimentoController extends BaseController {
 
 	@Autowired
 	private EntregadorService entregadorService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 
 	public void mapaAbastecimento() {
 
@@ -119,7 +123,7 @@ public class MapaAbastecimentoController extends BaseController {
 	@Post
 	public void getProdutos(Date dataLancamento) {
 
-		List<Produto> listaProdutos = produtoService.obterProdutosBalanceadosOrdenadosNome(dataLancamento);
+	    List<ItemDTO<String, String>> listaProdutos = produtoEdicaoService.obterProdutosBalanceados(dataLancamento);
 
 		if (listaProdutos.isEmpty()) {
 
@@ -127,14 +131,7 @@ public class MapaAbastecimentoController extends BaseController {
 					TipoMensagem.WARNING, "Não existem produtos balanceados na data informada!");
 		}
 
-		List<ItemDTO<String, String>> produtos = new ArrayList<ItemDTO<String,String>>();
-
-		for(Produto produto : listaProdutos) {
-
-			produtos.add(new ItemDTO<String, String>(produto.getCodigo(), produto.getNome()));
-		}
-
-		this.result.use(Results.json()).from(produtos, "result").recursive().serialize();
+		this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
 	}
 
 	@Post
@@ -203,6 +200,18 @@ public class MapaAbastecimentoController extends BaseController {
 		}
 
 		return listaRoteiros;
+	}
+	
+	private List<ItemDTO<Long, String>> carregarEntregadores(List<Entregador> entregadores){
+	    
+	    List<ItemDTO<Long, String>> listaEntregadores = new ArrayList<ItemDTO<Long,String>>();
+
+        for(Entregador item : entregadores){
+
+            listaEntregadores.add(new ItemDTO<Long, String>(item.getId(),item.getPessoa().getNome()));
+        }
+
+        return listaEntregadores;
 	}
 
 	@Post
@@ -299,14 +308,22 @@ public class MapaAbastecimentoController extends BaseController {
 
 			List<String> mensagens = new ArrayList<String>();
 
-			if (filtroAtual.getCodigosProduto()==null)
-				mensagens.add("'Produto' não foi preenchido.");
-			else if (filtroAtual.getCodigosProduto().size() > 1)
-				mensagens.add("Deve ser escolhido apenas um 'Produto'.");
-			if (filtroAtual.getEdicaoProduto()==null)
-				mensagens.add("'Edição' não foi preenchida.");
+			if (filtroAtual.getCodigosProduto()==null){
+				
+			    mensagens.add("'Produto' não foi preenchido.");
+			} else if (filtroAtual.getCodigosProduto().size() > 1){
+				
+			    mensagens.add("Deve ser escolhido apenas um 'Produto'.");
+			}
+			
+			if (filtroAtual.getNumerosEdicao()==null){
+				
+			    mensagens.add("'Edição' não foi preenchida.");
+			}
+			
 			if (!mensagens.isEmpty())
-				throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
+				
+			    throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
 			break;
 		case PRODUTO_X_COTA:
 			if(filtroAtual.getCodigosProduto()==null)
@@ -337,9 +354,7 @@ public class MapaAbastecimentoController extends BaseController {
 	@Post
 	public void buscarBoxRotaPorCota(Integer numeroCota) {
 
-		Object[] combos = new Object[3];
-
-
+		Object[] combos = new Object[4];
 
 		if(numeroCota != null) {
 			List<Box> boxes = new ArrayList<Box>();
@@ -356,7 +371,8 @@ public class MapaAbastecimentoController extends BaseController {
 			combos[1] = carregarRota(roteirizacaoService.buscarRotas());
 			combos[2] = carregarRoteiro(roteirizacaoService.obterRoteirosPorCota(null));
 		}
-
+		
+		combos[3] = carregarEntregadores(entregadorService.obterTodos());
 
 		this.result.use(Results.json()).from(combos, "result").recursive().serialize();
 	}
@@ -404,19 +420,10 @@ public class MapaAbastecimentoController extends BaseController {
 				result.forwardTo(MapaAbastecimentoController.class).impressaoPorCota(filtro);
 			break;
 			case PRODUTO:
-
-				if(filtro.getEdicaoProduto()!=null) {	
-
-					filtro.setPaginacao(null);
-					
-					ProdutoEdicaoMapaDTO produtoEdicaoMapaEdicaoProduto = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
-
-					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(produtoEdicaoMapaEdicaoProduto);
-
-				} else {
-					
-					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto(filtro);
-				}
+			    
+			    filtro.setPaginacao(null);
+			    result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto(filtro);
+			    
 			break;	
 			case PROMOCIONAL:
 				filtro.setPorRepartePromocional(true);
