@@ -76,9 +76,9 @@ var negociacaoDividaController = $.extend(true, {
 
 		var optionExists = $("#selectPagamento").filter(function() {
 			return $(this).attr('value') === value.tipoCobranca;
-		}).length; 
+		}).length;
 
-		if (!optionExists) {
+		if (!optionExists && value.tipoCobranca) {
 
 			$("#selectPagamento").append("<option value='" 
 										+ value.tipoCobranca + "'" 

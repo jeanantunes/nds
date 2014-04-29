@@ -747,6 +747,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
     }	
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<FormaCobrancaDefaultVO> obterFormaCobrancaCotaDefault(Integer numeroCota) {
 		
 		return this.formaCobrancaRepository.obterFormaCobrancaCotaDefault(numeroCota);
