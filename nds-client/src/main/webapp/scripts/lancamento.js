@@ -111,7 +111,7 @@ var lancamentoController = $.extend(true, {
 		
 		if (check.checked == false) {
 			
-			$("#selecionarTodosID", lancamentoController.workspace).attr("checked", false);
+			$("#selecionarTodosDiferencaID", lancamentoController.workspace).attr("checked", false);
 		}
 		
 		$.postJSON(
@@ -122,7 +122,7 @@ var lancamentoController = $.extend(true, {
 	
 	selecionarTodos : function (elementoCheck) {
 		
-		var selects =  $("[name='selecao']");
+		var selects =  $("[name='selecao']",lancamentoController.workspace);
 
 		var data = [];
 		
@@ -141,7 +141,7 @@ var lancamentoController = $.extend(true, {
 	
 	pesquisar : function(confirmado) { 
 		
-		$('#selecionarTodosID', lancamentoController.workspace).uncheck();
+		$('#selecionarTodosDiferencaID', lancamentoController.workspace).uncheck();
 		
 		$.postJSON(
 			contextPath + "/estoque/diferenca/lancamento/limparSessao", 
