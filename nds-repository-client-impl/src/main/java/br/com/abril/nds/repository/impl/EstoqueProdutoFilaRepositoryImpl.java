@@ -2,8 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
-import org.hibernate.LockMode;
-import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 

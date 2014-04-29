@@ -40,7 +40,7 @@ public enum GrupoMovimentoEstoque  {
 	 * Ocorre durante o a funcionalidade "Fechamento Encalhe" (Fechamento Estoque Físico X Lógico)
 	 * representando a saída de produtos do distribuidor que antes entraram de forma juramentada.
 	 */
-	ENVIO_JORNALEIRO_JURAMENTADO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
+	ENVIO_JORNALEIRO_JURAMENTADO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.JURAMENTADO),
 
 	
 	/**
@@ -51,7 +51,7 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Recebimento do encalhe JURAMENTADO da cota pelo distribuidor
 	 */
-	RECEBIMENTO_ENCALHE_JURAMENTADO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE), 
+	RECEBIMENTO_ENCALHE_JURAMENTADO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.JURAMENTADO), 
 	
 	/**
 	 * Sobra de pacote distribuidor

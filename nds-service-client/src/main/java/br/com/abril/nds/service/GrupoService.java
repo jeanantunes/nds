@@ -94,7 +94,14 @@ public interface GrupoService {
 	Integer countTodosGrupos(Date dataOperacao);
 
     public abstract Date getDataInicioProximaSemanaSemCE();
-
-
+    
+    /**
+	 * Obtém datas de recolhimento da semana da data de operação diferenciada
+	 * 
+	 * @param numeroCota
+	 * @param data
+	 * @return List<Date>
+	 */
+	List<Date> obterDatasRecolhimentoOperacaoDiferenciada(Integer numeroCota,Date data);
 
 }

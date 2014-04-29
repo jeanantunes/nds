@@ -3020,19 +3020,23 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         hql.append(" join pe.lancamentos l ");
         hql.append(" where ");
         
-        for (int i = 0; i < filtro.getCodigosProduto().size(); i++) {
-            hql.append(" p.codigo = :codigoProduto_" + i + " and ");
-        }
-        hql.append(" pe.numeroEdicao = :numeroEdicao and ");
         hql.append(" ( l.status = :balanceado or l.status = :expedido ) and ");
         hql.append(" l.dataLancamentoPrevista = :dataPrevista ");
         
+        if (filtro.getCodigosProduto() != null && !filtro.getCodigosProduto().isEmpty()){
+            
+            hql.append(" and p.codigo in (:codigoProduto) ");
+        }
+        
+        if (filtro.getNumerosEdicao() != null && !filtro.getNumerosEdicao().isEmpty()){
+            
+            hql.append(" and pe.numeroEdicao in (:numeroEdicao) ");
+        }
+        
         final Query query = this.getSession().createQuery(hql.toString());
         
-        for (int i = 0; i < filtro.getCodigosProduto().size(); i++) {
-            query.setParameter("codigoProduto_" + i, filtro.getCodigosProduto().get(i));
-        }
-        query.setParameter("numeroEdicao", filtro.getEdicaoProduto());
+        query.setParameterList("codigoProduto", filtro.getCodigosProduto());
+        query.setParameterList("numeroEdicao", filtro.getNumerosEdicao());
         query.setParameter("balanceado", StatusLancamento.BALANCEADO);
         query.setParameter("expedido", StatusLancamento.EXPEDIDO);
         query.setParameter("dataPrevista", filtro.getDataDate());

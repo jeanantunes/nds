@@ -49,7 +49,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * Obtém lista de conferenciaEncalhe em contingência.
 	 * 
 	 * @param numeroCota
-	 * @param dataRecolhimento
+	 * @param datasRecolhimento
 	 * @param indFechado
 	 * @param indPostergado
 	 * @param listaIdProdutoEdicao
@@ -58,7 +58,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 */
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTOContingencia(
 			Integer numeroCota,
-			Date dataRecolhimento,
+			List<Date> datasRecolhimento,
 			boolean indFechado,
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao);
@@ -114,6 +114,8 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	public BigInteger obterReparteConferencia(Long idCota, Long idControleConferenciaEncCota, Long produtoEdicaoId);
 	
 	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras);
+	
+	boolean isParcialNaoFinal(Long idProdutoEdicao);
 	
 	boolean isCromoParcialNaoFinal(Long idProdutoEdicao);
 }

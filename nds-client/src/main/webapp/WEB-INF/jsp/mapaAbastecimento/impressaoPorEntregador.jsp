@@ -22,6 +22,10 @@ p{margin:0px; padding:0px; font-size:11px;}
 .class_linha_1, .class_linha_2{background:none!important;}
 .class_linha_11 {background:none!important;}
 .class_linha_21 {background:none!important;}
+@media print
+{
+table {page-break-inside: avoid;}
+}
 </style>
 <script language="javascript" type="text/javascript">
 function imprimir(){
@@ -110,8 +114,8 @@ function imprimir(){
 						 		end="${qtdeTotal > qtdeColuna * (coluna.index+1)-1 ? qtdeColuna * (coluna.index+1)-1 : qtdeTotal-1}" >
 					  
 					  <tr class="class_linha_1">
-					    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${item.key}</td>
-					   <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${item.value}</td>
+					    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; font-size: 15px; font-weight: bold;">${item.key}</td>
+					   <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000; font-size: 15px; font-weight: bold;">${item.value}</td>
 					  </tr>
 					  
 					  </c:forEach>

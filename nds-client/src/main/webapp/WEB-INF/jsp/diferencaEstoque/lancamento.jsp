@@ -168,7 +168,7 @@
 					    <td id="selecionarTodos" width="110">
 					    	<span class="bt_sellAll" style="float: right;">
 								<label for="sel">Selecionar Todos</label>					
-								<input isEdicao="true" type="checkbox" name="Todos" id="selecionarTodosID" onclick="lancamentoController.selecionarTodos(this);" style="float: left;">
+								<input isEdicao="true" type="checkbox" name="Todos" id="selecionarTodosDiferencaID" onclick="lancamentoController.selecionarTodos(this);" style="float: left;">
 							</span>
 					    </td>
 					</tr>
