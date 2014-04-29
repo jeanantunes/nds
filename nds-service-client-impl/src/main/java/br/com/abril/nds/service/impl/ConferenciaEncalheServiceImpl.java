@@ -72,10 +72,14 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
+import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscal;
+import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalMEC;
 import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -101,6 +105,7 @@ import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.MovimentoFechamentoFiscalRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
@@ -261,6 +266,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
+	
+	@Autowired
+	private MovimentoFechamentoFiscalRepository movimentoFechamentoFiscalRepository;
 	
 	private final int PRIMEIRO_DIA_RECOLHIMENTO = 1;
 	
@@ -2123,20 +2131,55 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		movimentoEstoque = conferenciaEncalheFromDB.getMovimentoEstoque();
 			
-		if(movimentoEstoqueCota!=null) {
+		ChamadaEncalheCota chamadaEncalheCota = null;
+		
+		if (conferenciaEncalheDTO.getDataRecolhimento() != null) {
+			
+			chamadaEncalheCota = obterChamadaEncalheCotaParaConfEncalhe(
+				numeroCota, conferenciaEncalheDTO.getDataRecolhimento(), 
+					conferenciaEncalheDTO.getIdProdutoEdicao());
+		}
+		
+		if(movimentoEstoqueCota != null) {
 		
 			atualizarMovimentoEstoqueCota(movimentoEstoqueCota, conferenciaEncalheDTO);
+			
+			MovimentoFechamentoFiscalCota movimentoFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCota(chamadaEncalheCota);
 		
-		} else {
-			
-			ChamadaEncalheCota chamadaEncalheCota = null;
-			
-			if (conferenciaEncalheDTO.getDataRecolhimento() != null) {
+			if(movimentoFechamentoFiscalCota != null) {
 				
-				chamadaEncalheCota = obterChamadaEncalheCotaParaConfEncalhe(
-					numeroCota, conferenciaEncalheDTO.getDataRecolhimento(), 
-						conferenciaEncalheDTO.getIdProdutoEdicao());
+				for(OrigemItemMovFechamentoFiscal omff : movimentoFechamentoFiscalCota.getOrigemMovimentoFechamentoFiscal()) {
+					
+					if(((OrigemItemMovFechamentoFiscalMEC) omff).getMovimentoEstoqueCota().getId().equals(movimentoEstoqueCota.getId())) {
+						
+						movimentoFechamentoFiscalCota.setNotaFiscalLiberadaEmissao(false);
+						movimentoFechamentoFiscalCota.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
+						movimentoFechamentoFiscalCota.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
+						movimentoFechamentoFiscalCota.setTipoDestinatario(TipoDestinatario.COTA);
+						movimentoFechamentoFiscalCota.setCota(movimentoEstoqueCota.getCota());
+						movimentoFechamentoFiscalCota.setChamadaEncalheCota(chamadaEncalheCota);
+						movimentoFechamentoFiscalCota.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
+					}
+				}
+			} else {
+				
+				List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
+				MovimentoFechamentoFiscalCota mff = new MovimentoFechamentoFiscalCota();
+				listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mff, movimentoEstoqueCota));
+				mff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
+				mff.setNotaFiscalLiberadaEmissao(false);
+				mff.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
+				mff.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
+				mff.setTipoDestinatario(TipoDestinatario.COTA);
+				mff.setCota(movimentoEstoqueCota.getCota());
+				mff.setChamadaEncalheCota(chamadaEncalheCota);
+				mff.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
+	    			
+	    		movimentoFechamentoFiscalRepository.adicionar(mff);
 			}
+			
+			
+		} else {
 			
 			movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
 					controleConferenciaEncalheCota, 
@@ -2147,6 +2190,21 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					mapaTipoMovimentoEstoque, 
 					usuario,
 					chamadaEncalheCota);
+			
+			List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
+			MovimentoFechamentoFiscalCota mff = new MovimentoFechamentoFiscalCota();
+			listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mff, movimentoEstoqueCota));
+			mff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
+			mff.setNotaFiscalLiberadaEmissao(false);
+			mff.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
+			mff.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
+			mff.setTipoDestinatario(TipoDestinatario.COTA);
+			mff.setCota(movimentoEstoqueCota.getCota());
+			mff.setChamadaEncalheCota(chamadaEncalheCota);
+			mff.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
+    			
+    		movimentoFechamentoFiscalRepository.adicionar(mff);
+    		
 		}
 			
 		if (movimentoEstoque != null) {
@@ -2155,15 +2213,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		} else {	
 		
-			ChamadaEncalheCota chamadaEncalheCota = null;
-			
-			if (conferenciaEncalheDTO.getDataRecolhimento() != null) {
-				
-				chamadaEncalheCota = obterChamadaEncalheCotaParaConfEncalhe(
-					numeroCota, conferenciaEncalheDTO.getDataRecolhimento(), 
-						conferenciaEncalheDTO.getIdProdutoEdicao());
-			}
-			
 			movimentoEstoque = criarNovoRegistroMovimentoEstoque(
 					cota,
 					controleConferenciaEncalheCota, 

@@ -312,6 +312,7 @@ public class NFeServiceImpl implements NFeService {
 			final String sortname, final String sortorder, final Integer resultsPage, final Integer page, final SituacaoCadastro situacaoCadastro) {
 		
 		if (TRAVA_GERACAO_NFe.get("NFesSendoGeradas") != null) {
+
             throw new ValidacaoException(TipoMensagem.WARNING, "Notas de envio sendo geradas por outro usuário, tente novamente mais tarde.");
         }
         

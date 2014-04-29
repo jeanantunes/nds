@@ -15,7 +15,7 @@ import javax.persistence.Table;
 @Table(name = "NOTA_FISCAL_ORIGEM_ITEM")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TIPO", discriminatorType = DiscriminatorType.STRING)
-public class OrigemItemNotaFiscal implements Serializable {
+public abstract class OrigemItemNotaFiscal implements Serializable {
 	
 	private static final long serialVersionUID = 4968512055654760321L;
 	

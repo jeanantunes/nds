@@ -87,8 +87,11 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsolidadoDivida
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -123,6 +126,7 @@ import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
+import br.com.abril.nds.repository.MovimentoFechamentoFiscalRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -296,10 +300,13 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private FixacaoReparteService fixacaoReparteService;
-
 	
 	@Autowired
 	private BoletoService boletoService;
+	
+	@Autowired
+	private MovimentoFechamentoFiscalRepository movimentoFechamentoFiscalRepository;
+	
 	private static final Logger LOG = LoggerFactory.getLogger("fecharDiaLogger");
 	
 	@Override
@@ -1731,6 +1738,15 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			lancamento.setUsuario(usuario);
 			
 			this.lancamentoRepository.merge(lancamento);
+			
+			for(ChamadaEncalhe ce : lancamento.getChamadaEncalhe()) {
+				for(ChamadaEncalheCota cec : ce.getChamadaEncalheCotas()) {
+					MovimentoFechamentoFiscalCota movimentoFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCota(cec);
+					movimentoFechamentoFiscalCota.setNotaFiscalLiberadaEmissao(true);
+				}
+				
+			}
+			
 		}
 	}
 	
