@@ -38,7 +38,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" tpClassProd.DESCRICAO as classificacao,")
 		.append(" prod.PACOTE_PADRAO as pctPadrao,")
 		.append(" pessoa.NOME_FANTASIA as nomeFornecedor,")
-		.append(" sum(estoqueProdJuram.QTDE) AS juram,")
+		.append(" estoqueProd.QTDE_JURAMENTADO as juram,")
 		.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
 		.append(" estoqueProd.QTDE as estoque,")
         
@@ -75,7 +75,6 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		
 		.append(" join produto_edicao prodEdic on prodEdic.PRODUTO_ID = prod.ID")
 		.append(" left join estoque_produto estoqueProd on estoqueProd.PRODUTO_EDICAO_ID = prodEdic.ID ")
-		.append(" left join estoque_produto_cota_juramentado estoqueProdJuram on estoqueProdJuram.PRODUTO_EDICAO_ID = prodEdic.ID ")
 		
 		.append(" join lancamento lanc on lanc.PRODUTO_EDICAO_ID = prodEdic.ID")
 		.append(" left join estudo_gerado estudo on lanc.ID = estudo.LANCAMENTO_ID and estudo.produto_edicao_id = prodEdic.id ")
@@ -179,7 +178,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 			.append(" tpClassProd.DESCRICAO as classificacao,")
 			.append(" prod.PACOTE_PADRAO as pctPadrao,")
 			.append(" pessoa.NOME_FANTASIA as nomeFornecedor,")
-			.append(" estoqueProdJuram.QTDE as juram,")
+			.append(" estoqueProd.QTDE_JURAMENTADO as juram,")
 			.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
 			.append(" lanc.REPARTE_PROMOCIONAL as promo,")
 			.append(" lanc.DATA_LCTO_PREVISTA as dataLanctoSemFormatacao,")
@@ -193,7 +192,6 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 			.append(" from produto prod")
 			.append(" join produto_edicao prodEdic on prodEdic.PRODUTO_ID = prod.ID")
 			.append(" left join estoque_produto estoqueProd on estoqueProd.PRODUTO_EDICAO_ID = prodEdic.ID ")
-			.append(" left join estoque_produto_cota_juramentado estoqueProdJuram on estoqueProdJuram.PRODUTO_EDICAO_ID = prodEdic.ID ")
 			.append(" join lancamento lanc on lanc.PRODUTO_EDICAO_ID = prodEdic.ID")
 			.append(" left join estudo_gerado estudo on lanc.ID = estudo.LANCAMENTO_ID")
 			.append(" left join tipo_classificacao_produto tpClassProd on prodEdic.TIPO_CLASSIFICACAO_PRODUTO_ID = tpClassProd.ID")

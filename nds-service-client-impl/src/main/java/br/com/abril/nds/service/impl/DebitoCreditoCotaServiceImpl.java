@@ -275,12 +275,12 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	/**
 	 * Obtem lista de Débitos e Créditos quem não pertencem à reparte ou encalhe
 	 * @param cota
-	 * @param dataOperacao
+	 * @param datas
 	 * @return List<DebitoCreditoCotaDTO>
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(final Cota cota, final Date dataOperacao,
+	public List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(final Cota cota, final List<Date> datas,
 	        final Long idFornecedor){
 		
 		final List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
@@ -296,7 +296,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		//DEBITOS E CREDITOS DA COTA NA DATA DE OPERACAO
 		final List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaNaoConsolidado = 
 				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(cota.getNumeroCota(), 
-													dataOperacao, 
+													datas, 
 													tiposMovimentoFinanceiroIgnorados,
 													idFornecedor);
 
@@ -305,18 +305,17 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		//NEGOCIACOES AVULSAS DA COTA
 		final List<DebitoCreditoCotaDTO> listaDebitoNegociacaoNaoAvulsaMaisEncargos = 
 				movimentoFinanceiroCotaRepository.obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(
-				        cota.getNumeroCota(), dataOperacao, idFornecedor);
+				        cota.getNumeroCota(), datas, idFornecedor);
 		
 		if(listaDebitoNegociacaoNaoAvulsaMaisEncargos != null && !listaDebitoNegociacaoNaoAvulsaMaisEncargos.isEmpty()) {
 			
 		    listaDebitoCreditoCompleta.addAll(listaDebitoNegociacaoNaoAvulsaMaisEncargos);
 		}
 
-		
 		//DÉBIDO OU CRÉDITO DO CONSOLIDADO
 		final List<DebitoCreditoCotaDTO> outrosDebitoCreditoDoConsolidado =
 		        this.consolidadoFinanceiroRepository.buscarMovFinanPorCotaEData(
-		                cota.getId(), dataOperacao, idFornecedor);
+		                cota.getId(), datas, idFornecedor);
 		
 		if(outrosDebitoCreditoDoConsolidado!=null && !outrosDebitoCreditoDoConsolidado.isEmpty()) {
 			listaDebitoCreditoCompleta.addAll(outrosDebitoCreditoDoConsolidado);
@@ -330,19 +329,31 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	 * 
 	 * @param infoConfereciaEncalheCota
 	 * @param cota
-	 * @param dataOperacao
+	 * @param datas
 	 */
 	@Transactional
 	@Override
 	public void carregarDadosDebitoCreditoDaCota(InfoConferenciaEncalheCota infoConfereciaEncalheCota, 
 												  Cota cota,
-												  Date dataOperacao) {
-		
-		
-		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = this.obterListaDebitoCreditoCotaDTO(cota, dataOperacao, null);
+												  List<Date> datas) {
+
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = this.obterListaDebitoCreditoCotaDTO(cota, datas, null);
 		
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCompleta);		
 	}
+	
+	/**
+	 * Obtém débito ou crédito do consolidado da cota
+	 * 
+	 * @param idCota
+	 * @param datas
+	 * 
+	 * @return DebitoCreditoCotaDTO
+	 */
+	private List<DebitoCreditoCotaDTO> obterOutrosDebitoCreditoDeConsolidado(Long idCota, List<Date> datas) {
+	    
+	    return this.consolidadoFinanceiroRepository.buscarMovFinanPorCotaEData(idCota, datas, null);
+ 	}
 	
 	/**
 	 * Verifica se o Movimento Financeiro pode ser Editado

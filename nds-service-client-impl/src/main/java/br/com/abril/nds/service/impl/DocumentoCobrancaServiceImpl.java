@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -100,7 +101,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     
     @Autowired
     private EmailService emailService;
-    
+     
     @Autowired
     private RoteirizacaoService roteirizacaoService;
     
@@ -776,7 +777,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         BigDecimal valorTotalEncalhe 	   = null;
         final BigDecimal valorTotalPagar 		   = BigDecimal.ZERO;
         
-        BigDecimal valorTotalReparte = conferenciaEncalheService.obterValorTotalReparte(numeroCota, dataOperacao);
+        BigDecimal valorTotalReparte = conferenciaEncalheService.obterValorTotalReparte(numeroCota, Arrays.asList(dataOperacao));
         final BigDecimal valorTotalDesconto = conferenciaEncalheService.obterValorTotalDesconto(numeroCota, dataOperacao);
         final BigDecimal valorTotalSemDesconto = conferenciaEncalheService.obterValorTotalReparteSemDesconto(numeroCota, dataOperacao);
         
@@ -865,7 +866,8 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         }
         
         final List<DebitoCreditoCotaDTO> listaComposicaoCobranca =
-                debitoCreditoCotaService.obterListaDebitoCreditoCotaDTO(controleConferenciaEncalheCota.getCota(), dataOperacao, null);
+                debitoCreditoCotaService.obterListaDebitoCreditoCotaDTO(controleConferenciaEncalheCota.getCota(), Arrays.asList(dataOperacao), null);
+
         slipDTO.setListaComposicaoCobrancaDTO(listaComposicaoCobranca);
         parametersSlip.put("LISTA_COMPOSICAO_COBRANCA",listaComposicaoCobranca);
         

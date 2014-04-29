@@ -70,7 +70,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
 			
 			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.toString());
-			list.add(visaoEstoqueRepository.obterVisaoEstoqueJuramentado(filtro));
+			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
 			
 			filtro.setTipoEstoque(TipoEstoque.SUPLEMENTAR.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
@@ -88,7 +88,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
 			
 			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.toString());
-			list.add(visaoEstoqueRepository.obterVisaoEstoqueJuramentado(filtro));
+			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
 			
 			filtro.setTipoEstoque(TipoEstoque.SUPLEMENTAR.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
@@ -107,20 +107,22 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 	@Override
 	@Transactional
 	public List<? extends VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro) {
-		
+	    
 		List<? extends VisaoEstoqueDetalheDTO> list = null;
 		
-		if (filtro.getTipoEstoque().equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
-			list = visaoEstoqueRepository.obterVisaoEstoqueDetalheJuramentado(filtro);
+		if (TipoEstoque.LANCAMENTO_JURAMENTADO.name().equals(filtro.getTipoEstoque())) {
+		    
+		    list = visaoEstoqueRepository.obterVisaoEstoqueDetalheJuramentado(filtro);
+		    
 		} else {
-			
-			if (filtro.isBuscaHistorico()) {
-				list = visaoEstoqueRepository.obterVisaoEstoqueDetalheHistorico(filtro);
-			} else {
-				list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
-			}
+		
+    		if (filtro.isBuscaHistorico()) {
+    			list = visaoEstoqueRepository.obterVisaoEstoqueDetalheHistorico(filtro);
+    		} else {
+    			list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
+    		}
 		}
-
+		
 		return list;
 	}
 	
@@ -128,39 +130,28 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 	@Transactional
 	public Long obterCountVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro) {
 		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-
-		if (filtro.getTipoEstoque().equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
-			return visaoEstoqueRepository.obterCountVisaoEstoqueDetalheJuramentado(filtro);
+		if (filtro.getDataMovimentacao().compareTo(dataOperacao) == 0) {
+			return visaoEstoqueRepository.obterCountVisaoEstoqueDetalhe(filtro);
 		} else {
-			
-			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-			
-			if (filtro.getDataMovimentacao().compareTo(dataOperacao) == 0) {
-				return visaoEstoqueRepository.obterCountVisaoEstoqueDetalhe(filtro);
-			} else {
-				return visaoEstoqueRepository.obterCountVisaoEstoqueDetalheHistorico(filtro);
-			}
+			return visaoEstoqueRepository.obterCountVisaoEstoqueDetalheHistorico(filtro);
 		}
-		
 	}
 	
 	@Override
 	@Transactional(readOnly=true)
 	public BigInteger obtemQuantidadeEstoque(long idProdutoEdicao, String tipoEstoque, Date dataMovimentacao){ 
 		BigInteger qtd;
-		if (tipoEstoque.equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
-			qtd = visaoEstoqueRepository.obterQuantidadeEstoqueJuramentado(idProdutoEdicao);
-		} else {
 		
-			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-			
-			if (dataMovimentacao.compareTo(dataOperacao) == 0) {			
-				qtd = visaoEstoqueRepository.obterQuantidadeEstoque(idProdutoEdicao, tipoEstoque);
-			} else {
-				qtd = visaoEstoqueRepository.obterQuantidadeEstoqueHistorico(idProdutoEdicao, tipoEstoque);
-			}
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		if (dataMovimentacao.compareTo(dataOperacao) == 0) {			
+			qtd = visaoEstoqueRepository.obterQuantidadeEstoque(idProdutoEdicao, tipoEstoque);
+		} else {
+			qtd = visaoEstoqueRepository.obterQuantidadeEstoqueHistorico(idProdutoEdicao, tipoEstoque);
 		}
+		
 		return qtd;
 	}
 

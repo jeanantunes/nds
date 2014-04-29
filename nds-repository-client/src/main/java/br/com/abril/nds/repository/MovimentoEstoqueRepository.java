@@ -58,4 +58,6 @@ public interface MovimentoEstoqueRepository extends Repository<MovimentoEstoque,
 			GrupoMovimentoEstoque grupoMovimentoEstoqueRepartePromocional,
 			GrupoMovimentoEstoque grupoMovimentoEstoqueEstornoRecebimentoFisico);
 	
+	BigInteger buscarSomaEstoqueJuramentadoPorProdutoData(Long idProdutoEdicao, Date data);
+	
 }
