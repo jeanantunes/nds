@@ -34,6 +34,8 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 	
 	private Date dataFim;
 	
+	private Date dataOperacao;
+	
 	private TipoOperacao tipoOperacao;
     	
 	private ColunaOrdenacaoConsultaConsignadoCota ordenacaoColuna;
@@ -227,6 +229,14 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 		} else if (!nomeFornecedor.equals(other.nomeFornecedor))
 			return false;
 		return true;
+	}
+
+	public Date getDataOperacao() {
+		return dataOperacao;
+	}
+
+	public void setDataOperacao(Date dataOperacao) {
+		this.dataOperacao = dataOperacao;
 	}
 	
 	
