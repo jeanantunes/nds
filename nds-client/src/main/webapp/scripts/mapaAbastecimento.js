@@ -238,6 +238,8 @@
 		
 		case 'ENTREGADOR':
 			
+			$("#nomeEntregador", _workspace).text($("#idEntregador option:selected", _workspace).text());
+			
 			T.preencherGrid(
 				".mapaAbastecimentoEntregadorGrid", 
 				pathTela + "/mapaAbastecimento/pesquisar", 

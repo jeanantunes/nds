@@ -274,7 +274,7 @@
 			</div>
 			
 			 <div id="gridEntregador" style="display:none;">
-            	<span><strong>Nome:</strong> Nome do Entregador</span>
+            	<span><strong>Nome:</strong> <span id="nomeEntregador"></span> </span>
             	<table class="mapaAbastecimentoEntregadorGrid"></table>
             </div>
 			
