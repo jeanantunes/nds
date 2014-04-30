@@ -335,13 +335,16 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 				DescontoLogistica descontoLogistica = produtoEdicao.getDescontoLogistica() != null ? 
 					produtoEdicao.getDescontoLogistica() : produtoEdicao.getProduto().getDescontoLogistica();
 					
-				percentualProduto = descontoLogistica.getPercentualDesconto();
+				percentualProduto = descontoLogistica == null ? null : descontoLogistica.getPercentualDesconto();
 			}
 
 			if (percentualProduto == null) {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING, 
-						"Produto " + produtoEdicao.getProduto().getCodigo() + " sem desconto cadastrado!");
+						"Produto " + produtoEdicao.getProduto().getNome() 
+								   + " [Cod.: " + produtoEdicao.getProduto().getCodigo() 
+								   + " Ed.: " + produtoEdicao.getNumeroEdicao() + "]"
+								   + " sem desconto cadastrado!");
 			}
 			
 			if (BigDecimalUtil.neq(percentualProduto, item.getPercentualDesconto())) {
