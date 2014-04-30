@@ -575,6 +575,17 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 		return this.formaCobrancaRepository.obterFormaCobranca();
 	}
 	
+	/**
+     * Obtem FormaCobranca principal do Distribuidor com dados de fornecedor e concentração
+     * 
+     * @return FormaCobranca
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public FormaCobranca obterFormaCobrancaPrincipalDistribuidorCompleto() {
+
+        return this.formaCobrancaRepository.obterFormaCobrancaCompleto();
+    }
 	@Override
 	@Transactional(readOnly=true)
 	public List<FormaCobrancaDefaultVO> obterFormaCobrancaDefault() {
