@@ -162,7 +162,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
 				}, 1000);
 				
-				ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
+				ConferenciaEncalheCont.limparTela();
 			}
 			
 		}));
@@ -179,11 +179,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		var numeroCotaEmConferencia = $("#numeroCota", ConferenciaEncalheCont.workspace).val();
 		
-		ConferenciaEncalheCont.limpaTela();
-		
 		$("#numeroCota", ConferenciaEncalheCont.wokspace).val(numeroCotaEmConferencia);
-		
-		
+				
 		var data = [
 		            {name: 'numeroCota', value : $("#numeroCota", ConferenciaEncalheCont.workspace).val()}, 
 		            {name: 'indObtemDadosFromBD', value : true},
@@ -223,6 +220,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 						}, close : function(){
 							
 							ConferenciaEncalheCont.modalAberta = false;
+							ConferenciaEncalheCont.removerTravaConferenciaEncalheCotaUsuario();
 							
 							$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 							
@@ -1187,11 +1185,20 @@ var ConferenciaEncalheCont = $.extend(true, {
 				},
 				"Cancelar" : function() {
 					
+					ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
+					
+					$("#numeroCota", ConferenciaEncalhe.workspace).focus();
+					
 					$(this).dialog("close");
+					
 				}
 			}, close : function(){
 				
 				ConferenciaEncalheCont.modalAberta = false;
+				
+				ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
+				
+				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 			},
 			form: $("#dialog-dadosNotaFiscalContingencia", this.workspace).parents("form")			
 		});
@@ -1375,9 +1382,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				ConferenciaEncalheCont.modalAberta = false;
 				
-				// ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
+				ConferenciaEncalheCont.limpaTela();
 				
-				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
+				ConferenciaEncalheCont.removerTravaConferenciaEncalheCotaUsuario();
+				
+				$("#numeroCota", ConferenciaEncalheCont.workspace).val("");
+				
+				$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 			},
 			form: $("#dialog-notaFiscal", this.workspace).parents("form")			
 		});
