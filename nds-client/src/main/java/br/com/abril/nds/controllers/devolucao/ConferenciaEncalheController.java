@@ -172,6 +172,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@Autowired
 	private NaturezaOperacaoService naturezaOperacaoService;
 
+	@Autowired
 	private GrupoService grupoService;
 	
 	@Path("/")
