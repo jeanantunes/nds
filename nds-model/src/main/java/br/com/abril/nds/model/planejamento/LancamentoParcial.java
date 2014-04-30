@@ -154,5 +154,64 @@ public class LancamentoParcial implements Serializable{
 	public void setPeriodos(List<PeriodoLancamentoParcial> periodos) {
 		this.periodos = periodos;
 	}
+	
+	/**
+	 * Obtém um {@link PeriodoLancamentoParcial} através de seu {@link PeriodoLancamentoParcial#getNumeroPeriodo()} <br/>
+	 * Caso o número passado seja nulo, será retornado o primeiro período.
+	 * 
+	 * @param numeroPeriodo 
+	 * 
+	 * @return {@link PeriodoLancamentoParcial}
+	 */
+	public PeriodoLancamentoParcial getPeriodoPorNumero(Integer numeroPeriodo) {
 
+		return this.getPeriodoPorNumero(numeroPeriodo, null);
+	}
+	
+	/**
+	 * 
+	 * @param offset - Número período de onde será iniciado o incremento.
+	 */
+	public void incrementarNumeroPeriodos(int offset) {
+		
+		PeriodoLancamentoParcial periodo = this.getPeriodoPorNumero(offset);
+		
+		do {
+			
+			periodo.incrementarNumero();
+			
+		} while ((periodo = periodo.proximo()) != null);
+	}
+	
+	/**
+	 * Obtém um {@link PeriodoLancamentoParcial} através de seu {@link PeriodoLancamentoParcial#getNumeroPeriodo()} <br/>
+	 * Caso haja dois períodos com o mesmo número (momento da inclusão de um novo período) retornará o período diferente do argumento <br/>
+	 * Caso o número passado seja nulo, será retornado o primeiro período.
+	 * 
+	 * @param numeroPeriodo 
+	 * @param periodo
+	 * 
+	 * @return {@link PeriodoLancamentoParcial}
+	 */
+	public PeriodoLancamentoParcial getPeriodoPorNumero(Integer numeroPeriodo, PeriodoLancamentoParcial periodo) {
+
+		numeroPeriodo = numeroPeriodo == null ? 1 : numeroPeriodo;
+
+		for (PeriodoLancamentoParcial periodoAtual : this.periodos) {
+
+			if (numeroPeriodo.equals(periodoAtual.getNumeroPeriodo())) {
+
+				 if (periodo == null) {
+
+					return periodoAtual;
+
+				 } else if (!periodoAtual.equals(periodo)) {
+
+					 return periodoAtual;
+				 }
+			}
+		}
+		
+		return null;
+	}
 }
