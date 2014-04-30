@@ -298,11 +298,7 @@ public class NFeServiceImpl implements NFeService {
 		return dataRecolhimento;
 	}
 	
-	/**
-	 * 
-	 * Geracao NF-e Service
-	 * 
-	 */
+	
 	@Override
 	@Transactional
 	public synchronized List<CotaExemplaresDTO> busca(final Intervalo<Integer> intervaloBox,
@@ -358,7 +354,6 @@ public class NFeServiceImpl implements NFeService {
 				cotaExemplares.setTotalDesconto(entry.getValue().getPrecoComDesconto());
 				
 				listaCotaExemplares.add(cotaExemplares);
-				
 			}
 			
         } catch (Exception e) {
@@ -544,7 +539,7 @@ public class NFeServiceImpl implements NFeService {
 	}
 
 	// metodo responsavel pelo dados do distribuidor da nota
-	public Distribuidor obterInformacaoDistribuidor(){
+	private Distribuidor obterInformacaoDistribuidor(){
 		return distribuidorRepository.obter();
 	}
 	
@@ -608,7 +603,6 @@ public class NFeServiceImpl implements NFeService {
 			notasFiscais.add(notaFiscal);
 		}
 	}
-	
 
 	private void gerarNotaFiscalUnificada(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao, Map<String, ParametroSistema> parametrosSistema) {
 		

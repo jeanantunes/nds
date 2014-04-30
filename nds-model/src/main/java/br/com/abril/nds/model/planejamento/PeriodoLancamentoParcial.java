@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.planejamento;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.util.DateUtil;
 
 /**
  * Cadastro de período de lançamento parcial,
@@ -55,7 +60,7 @@ public class PeriodoLancamentoParcial implements Serializable {
 	@Column(name = "TIPO", nullable = false)
 	private TipoLancamentoParcial tipo;
 
-	@OneToMany(mappedBy="periodoLancamentoParcial", cascade=CascadeType.REMOVE)
+	@OneToMany(mappedBy="periodoLancamentoParcial", cascade=CascadeType.REMOVE, orphanRemoval = true)
 	private List<Lancamento> lancamentos;
 	
 	/** Número do Período do lançamento parcial. */
@@ -65,7 +70,7 @@ public class PeriodoLancamentoParcial implements Serializable {
 	@Temporal(value=TemporalType.DATE)
 	@Column(name = "DATA_CRIACAO")
 	private Date dataCriacao;
-
+	
 	public PeriodoLancamentoParcial() {
 		
 	}
@@ -173,6 +178,109 @@ public class PeriodoLancamentoParcial implements Serializable {
 		}
 		
 		return null;
+	}
+	
+	public List<Lancamento> getRedistribuicoes() {
+
+		if (this.lancamentos == null) {
+
+			return null;
+		}
+		
+		List<Lancamento> redistribuicoes = new ArrayList<Lancamento>(this.lancamentos);
+
+		redistribuicoes.remove(this.getPrimeiroLancamento());
+
+		return redistribuicoes;
+	}
+	
+	/**
+	 * Obtém o período anterior ao lançamento parcial atual.
+	 * 
+	 * @return {@link PeriodoLancamentoParcial} - O período anterior.
+	 */
+	public PeriodoLancamentoParcial anterior() {
+		
+		if (this.lancamentoParcial == null) {
+			
+			return null;
+		}
+
+		Integer numeroPeriodo = this.numeroPeriodo == null ? null : this.numeroPeriodo-1;
+
+		return this.lancamentoParcial.getPeriodoPorNumero(numeroPeriodo);
+	}
+
+	/**
+	 * Obtém o próximo período do lançamento parcial atual.
+	 * 
+	 * @return {@link PeriodoLancamentoParcial} - O próximo período.
+	 */
+	public PeriodoLancamentoParcial proximo() {
+		
+		if (this.lancamentoParcial == null) {
+			
+			return null;
+		}
+
+		PeriodoLancamentoParcial proximoPeriodo = this.lancamentoParcial.getPeriodoPorNumero(this.numeroPeriodo, this);
+
+		if (proximoPeriodo == null) {
+
+			Integer numeroPeriodo = this.numeroPeriodo == null ? null : this.numeroPeriodo+1;
+
+			proximoPeriodo = this.lancamentoParcial.getPeriodoPorNumero(numeroPeriodo, this);
+		}
+
+		return proximoPeriodo;
+	}
+
+	/**
+	 * Obtém o próximo lançamento parcial para realizar o ajuste da data de lançamento.
+	 * 
+	 * @param novaDataLancamento
+	 */
+	public void reajustarProximoLancamentoParcial(Date novaDataLancamento) {
+		
+		PeriodoLancamentoParcial proximoPeriodo = this.proximo();
+
+		if (proximoPeriodo != null) {
+
+			Lancamento lancamento = proximoPeriodo.getPrimeiroLancamento();
+
+			lancamento.setDataLancamentoPrevista(novaDataLancamento);
+			lancamento.setDataLancamentoDistribuidor(novaDataLancamento);
+
+			lancamento.validarPEB();
+
+			proximoPeriodo.validarDataLancamentoRedistribuicoesPeriodo();
+		}		
+	}
+
+	/**
+	 * Valida se há alguma redistribuição cadastrada neste período com uma data igual ou anterior à nova data de lançamento.
+	 */
+	public void validarDataLancamentoRedistribuicoesPeriodo() {
+		
+		Lancamento primeiroLancamento = this.getPrimeiroLancamento();
+		
+		for (Lancamento lancamento : this.lancamentos) {
+
+			if (TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())
+					&& DateUtil.isDataInicialMaiorIgualDataFinal(
+							primeiroLancamento.getDataLancamentoDistribuidor(), 
+							lancamento.getDataLancamentoDistribuidor())) {
+	
+				throw new ValidacaoException(TipoMensagem.WARNING, "A próxima data de lançamento interfere em uma redistribuição já cadastrada.");
+			}
+		}
+	}
+
+	/**
+	 * Incrementa o número atual do período.
+	 */
+	public void incrementarNumero() {
+		this.numeroPeriodo++;
 	}
 	
 	/**

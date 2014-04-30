@@ -563,10 +563,11 @@ public class ParametroCobrancaCotaController extends BaseController {
             formaCobranca.setFornecedoresId(listaIdsFornecedores);
         }
         
+
+        parametroCobrancaCotaService.validarFormaCobranca(formaCobranca);
+        
         formaCobranca = formatarFormaCobranca(formaCobranca);
-        
-        validarFormaCobranca(formaCobranca);
-        
+                
         // Caso a cota não possua formas de cobrança, informa que essa cobrança
         // veio pelo distribuidor
         if (parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(formaCobranca.getIdCota()) == 0) {
@@ -971,149 +972,6 @@ public class ParametroCobrancaCotaController extends BaseController {
         }
     }
     
-    
-	                                                        /**
-     * Método responsável pela validação dos dados da Forma de Cobranca.
-     * 
-     * @param formaCobranca
-     */
-    public void validarFormaCobranca(final FormaCobrancaDTO formaCobranca){
-        
-        //validar();
-        
-        if(formaCobranca.getTipoCobranca()==null){
-            throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Tipo de Pagamento.");
-        }
-        
-        if (formaCobranca.getTipoFormaCobranca()==null){
-            throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de concentração de Pagamentos.");
-        }
-        
-        if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
-            if (formaCobranca.getDiaDoMes()==null){
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o tipo de cobrança Mensal é necessário informar o dia do mês.");
-            }
-            else{
-                if ((formaCobranca.getDiaDoMes()>31)||(formaCobranca.getDiaDoMes()<1)){
-                    throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
-                }
-            }
-        }
-        
-        if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
-            if ((formaCobranca.getPrimeiroDiaQuinzenal()==null) || (formaCobranca.getSegundoDiaQuinzenal()==null)){
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o tipo de cobrança Quinzenal é necessário informar dois dias do mês.");
-            }
-            else{
-                if ((formaCobranca.getPrimeiroDiaQuinzenal()>31)||(formaCobranca.getPrimeiroDiaQuinzenal()<1)||(formaCobranca.getSegundoDiaQuinzenal()>31)||(formaCobranca.getSegundoDiaQuinzenal()<1)){
-                    throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
-                }
-            }
-        }
-        
-        if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-            if((!formaCobranca.isDomingo())&&
-                    (!formaCobranca.isSegunda())&&
-                    (!formaCobranca.isTerca())&&
-                    (!formaCobranca.isQuarta())&&
-                    (!formaCobranca.isQuinta())&&
-                    (!formaCobranca.isSexta())&&
-                    (!formaCobranca.isSabado())){
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o tipo de cobrança Semanal é necessário marcar ao menos um dia da semana.");
-            }
-        }
-        
-        if (formaCobranca.getIdBanco()==null){
-            if ((formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO)||
-                    (formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)||
-                    (formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
-                    (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)||
-                    (formaCobranca.getTipoCobranca()==TipoCobranca.DEPOSITO)){
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário a escolha de um Banco.");
-            }
-        }
-        
-        if (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA){
-            
-            if (StringUtils.isEmpty(formaCobranca.getNomeBanco())) {
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário digitar o nome do Banco.");
-            }
-            if (StringUtils.isEmpty(formaCobranca.getNumBanco())) {
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário digitar o numero do Banco.");
-            }
-            
-            if (formaCobranca.getConta() == null) {
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Conta.");
-            }
-            if (StringUtils.isEmpty(formaCobranca.getContaDigito())) {
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Conta.");
-            }
-            
-            if (formaCobranca.getAgencia() == null) {
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Agência.");
-            }
-            if (StringUtils.isEmpty(formaCobranca.getAgenciaDigito())) {
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Agência.");
-            }
-        }
-        
-        if (formaCobranca.isRecebeEmail()){
-            final Cota cota = cotaService.obterPorId(formaCobranca.getIdCota());
-            if (cota.getPessoa().getEmail()==null){
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Cadastre um e-mail para a cota ou desmarque a opção de envio de email.");
-            }
-        }
-        
-        if ((formaCobranca.getFornecedoresId()!=null)&&(formaCobranca.getFornecedoresId().size()>0)){
-            
-            // VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA
-            // DA CONCENTRAÇÃO SEMANAL
-            if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-                if (!formaCobrancaService.validarFormaCobrancaSemanal(formaCobranca.getIdFormaCobranca(),
-                        formaCobranca.getIdCota(),
-                        formaCobranca.getFornecedoresId(),
-                        formaCobranca.getTipoFormaCobranca(),
-                        formaCobranca.isDomingo(),
-                        formaCobranca.isSegunda(),
-                        formaCobranca.isTerca(),
-                        formaCobranca.isQuarta(),
-                        formaCobranca.isQuinta(),
-                        formaCobranca.isSexta(),
-                        formaCobranca.isSabado())){
-                    
-                    throw new ValidacaoException(TipoMensagem.WARNING,
-                            "Os fornecedores já possuem uma forma de pagamento cadastrada para este dia.");
-                }
-            }
-            
-            // VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA
-            // DA CONCENTRAÇÃO MENSAL
-            else{
-                if (!formaCobrancaService.validarFormaCobrancaMensal(formaCobranca.getIdFormaCobranca(),
-                        formaCobranca.getIdCota(),
-                        formaCobranca.getFornecedoresId(),
-                        formaCobranca.getTipoFormaCobranca(),
-                        Arrays.asList(formaCobranca.getDiaDoMes(),
-                                formaCobranca.getPrimeiroDiaQuinzenal(),
-                                formaCobranca.getSegundoDiaQuinzenal()))){
-                    
-                    throw new ValidacaoException(TipoMensagem.WARNING,
-                            "Os fornecedores já possuem uma forma de pagamento cadastrada para este dia.");
-                }
-            }
-        }
-    }
     
     @Post("/calcularDataTermino.json")
     public void calcularDataTermino(final Date dataInicio) {

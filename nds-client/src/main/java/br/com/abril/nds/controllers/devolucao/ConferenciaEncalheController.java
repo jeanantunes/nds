@@ -1721,7 +1721,6 @@ public class ConferenciaEncalheController extends BaseController {
 			}
 			
             if (controleConfEncalheCota.getUsuario()==null){
-			    
 				controleConfEncalheCota.setUsuario(this.usuarioService.getUsuarioLogado());
 			}
 			final Long idBox = conferenciaEncalheSessionScopeAttr.getIdBoxLogado();

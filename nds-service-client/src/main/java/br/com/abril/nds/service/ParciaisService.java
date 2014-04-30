@@ -101,4 +101,26 @@ public interface ParciaisService {
 	
 	Lancamento getProximoLancamentoPeriodo(Lancamento lancamento);
 	
+	/**
+	 * Obtém a próxima data a partir do parametro <code> Fator de Relançamento </code> do Distribuidor.
+	 * 
+	 * @param dataRecolhimento - Data a ser utilizada no cálculo.
+	 * 
+	 * @return Data calculada.
+	 */
+	Date obterProximaDataComFatorRelancamentoParcialDistribuidor(Date dataRecolhimento);
+
+	/**
+	 * Altera o recolhimento de um lançamento parcial e toda a lógica necessária para manter a integridade
+	 * entre os períodos e redistribuições já existentes.
+	 * 
+	 * @param lancamento - Lançamento a ser alterado.
+	 * 
+	 * @param novaData - Nova data de recolhimento.
+	 * 
+	 * @return {@link Lancamento} com as devidas alterações.
+	 * 
+	 */
+	Lancamento alterarRecolhimento(Lancamento lancamento, Date novaData);
+	
 }

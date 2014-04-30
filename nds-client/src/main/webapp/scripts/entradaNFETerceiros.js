@@ -179,15 +179,7 @@ var entradaNFETerceirosController = $.extend(true, {
 			return resultado;
 		}
 
-		$.each(resultado.rows, function(index, row) {
-
-			var inputQtdeInfo  = "<input type='text' name='inputQtdeInfo' style='text-align:center' size='5' value='" + row.cell.qtdInformada + "' />";
-			var inputPrecoCapa = "<input type='text' name='inputPrecoCapa' style='text-align:right' size='10' value='" + floatToPrice(row.cell.precoCapaFormatado) + "' />";
-
-			row.cell.qtdInformada = inputQtdeInfo;
-			row.cell.precoCapaFormatado = inputPrecoCapa;
-		});
-
+		
 		return resultado;
 	},
 	
@@ -305,12 +297,12 @@ var entradaNFETerceirosController = $.extend(true, {
 		});
 
 		$(".pesquisarProdutosNotaGrid", entradaNFETerceirosController.workspace).flexReload();
-	
 		$( "#dialog-dadosNotaFiscal", this.workspace ).dialog({
 			resizable: false,
 			height:'auto',
 			width:860,
-			modal: true,
+			modal: true
+			/*
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
@@ -322,8 +314,8 @@ var entradaNFETerceirosController = $.extend(true, {
 				}
 			},
 			form: $("#dialog-dadosNotaFiscal", this.workspace).parents("form")
+			 */     
 		});	
-		      
 	},
 	
 	popup_confirmar : function() {
