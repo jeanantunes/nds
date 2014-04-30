@@ -914,7 +914,7 @@ var negociacaoDividaController = $.extend(true, {
 		}else if (value == 'CHEQUE'){
 			$('#gridVenctos', negociacaoDividaController.workspace).hide();
 			$('#gridCheque', negociacaoDividaController.workspace).show();
-			$('#divBanco', negociacaoDividaController.workspace).show();
+			$('#divBanco', negociacaoDividaController.workspace).hide();
 
 		}else {
 			$('#gridVenctos', negociacaoDividaController.workspace).hide();
