@@ -73,8 +73,10 @@ function imprimir(){
 
 
 <c:forEach items="${mapa}" var="produto">
-	
-	<table width="800" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top:5px;">
+	<table width="800" border="0" align="center">
+	<tr>
+	<td>
+	<table>
 	  <tr class="class_linha_3">
 	    <td width="660"  style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><table width="793" border="0" cellspacing="1" cellpadding="1">
 	      <tr>
@@ -130,7 +132,9 @@ function imprimir(){
 	
 		
 	</table>
-	
+	</td>
+	</tr>
+	</table>
 </c:forEach>
 
 </body>
