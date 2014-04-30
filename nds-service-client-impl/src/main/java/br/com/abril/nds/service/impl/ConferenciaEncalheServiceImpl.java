@@ -2376,7 +2376,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			notaFiscalEntradaCotaFromBD = controleConferenciaEncalheCotaFromBD.getNotaFiscalEntradaCotaPricipal();
 			
-			
 		}
 		
 		if(notaFiscalEntradaCotaFromBD!=null) {
@@ -2999,9 +2998,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		this.movimentoEstoqueCotaRepository.alterar(movimentoEstoqueCota);
 
-		final EstoqueProdutoCota estoqueProdutoCota =  
-			movimentoEstoqueCota.getEstoqueProdutoCota();
-
+		final EstoqueProdutoCota estoqueProdutoCota = movimentoEstoqueCota.getEstoqueProdutoCota();
 		
 		if(estoqueProdutoCota == null) {
 			
@@ -3014,12 +3011,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		BigInteger qtdDevolvida = 
-			estoqueProdutoCota.getQtdeDevolvida() != null ? 
-				estoqueProdutoCota.getQtdeDevolvida() : BigInteger.ZERO;
+		BigInteger qtdDevolvida = estoqueProdutoCota.getQtdeDevolvida() != null ? estoqueProdutoCota.getQtdeDevolvida() : BigInteger.ZERO;
 				
-		qtdDevolvida = 
-			qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
+		qtdDevolvida = qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
 					
 		estoqueProdutoCota.setQtdeDevolvida(qtdDevolvida);
 		
@@ -3030,8 +3024,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	
 
-	private void validarAlteracaoEstoqueProdutoCota(final BigInteger saldoEstoque,
-			final ProdutoEdicao produtoEdicao) {
+	private void validarAlteracaoEstoqueProdutoCota(final BigInteger saldoEstoque, final ProdutoEdicao produtoEdicao) {
 
 		if (!this.validarSaldoEstoque(saldoEstoque)) {
 
@@ -3042,8 +3035,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 							+ " - "
 							+ produtoEdicao.getProduto().getNomeComercial()
 							+ " - "
-							+ produtoEdicao.getNumeroEdicao()
- + "] no estoque da cota, insuficiente para movimentação.");
+							+ produtoEdicao.getNumeroEdicao() + "] no estoque da cota, insuficiente para movimentação.");
 		}
 	}
 
@@ -3068,8 +3060,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final Long idControleConferenciaEncalheCota,
 			final String nossoNumero,
 			final br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe tipoDocumentoConferenciaEncalhe,
-			final boolean geraNovoNumeroSlip
-			) {
+			final boolean geraNovoNumeroSlip) {
 		
 		Cobranca cobranca = null;
 		
@@ -3130,7 +3121,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		BOLETO_OU_RECIBO;
 	}	
 	
-	    /**
+	/**
      * Obtém o valor total de débito ou credito de uma cota na dataOperacao.
      * 
      * @param numeroCota
@@ -3214,7 +3205,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	    /**
+	/**
      * Obtem valor total para geração de crédito na C.E.
      * 
      * @param idControleConferenciaEncalheCota
@@ -3280,10 +3271,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final boolean hasCotaAusenteFechamentoEncalhe = this.hasCotaAusenteFechamentoEncalhe(numeroCota);
 		
 		if (hasCotaAusenteFechamentoEncalhe) {
-		    throw new ValidacaoException(TipoMensagem.WARNING,
-		            "Cota já inserida no processo de cota ausente. Por favor, verificar.");
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Cota já inserida no processo de cota ausente. Por favor, verificar.");
 		}
-		
 		return cota;
 	}
 
@@ -3321,5 +3310,4 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return lancamentoDTO;
 	}
-	
 }
