@@ -85,4 +85,6 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	 * @return List<FormaCobranca>
 	 */
 	List<FormaCobranca> obterFormasCobrancaPorFornecedor(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana);
+
+    FormaCobranca obterFormaCobrancaCompleto();
 }

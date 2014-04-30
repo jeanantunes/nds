@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.enums.TipoMensagem;
@@ -573,6 +574,18 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		return this.formaCobrancaRepository.obterFormaCobranca();
 	}
+	
+	/**
+     * Obtem FormaCobranca principal do Distribuidor com dados de fornecedor e concentração
+     * 
+     * @return FormaCobranca
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public FormaCobranca obterFormaCobrancaPrincipalDistribuidorCompleto() {
+
+        return this.formaCobrancaRepository.obterFormaCobrancaCompleto();
+    }
 
 	@Override
 	@Transactional

@@ -138,4 +138,6 @@ public interface FormaCobrancaService {
 	 * @return Map<Fornecedor,List<FormaCobranca>>
 	 */
 	Map<Fornecedor, List<FormaCobranca>> obterMapFornecedorFormasCobranca(Date dataOperacao);
+
+    FormaCobranca obterFormaCobrancaPrincipalDistribuidorCompleto();
 }

@@ -274,6 +274,43 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	}
 	
 	/**
+     * Obtem FormaCobranca principal do Distribuidor com dados de fornecedor e concentração
+     * @return FormaCobranca
+     */
+    @Override
+    public FormaCobranca obterFormaCobrancaCompleto() {
+        
+        
+        StringBuilder hql = new StringBuilder();
+        
+        
+        hql.append(" select f from FormaCobranca f ");      
+        
+        hql.append(" join f.politicaCobranca p ");    
+        
+        hql.append(" join fetch f.concentracaoCobrancaCota ccc ");    
+        
+        hql.append(" join fetch f.fornecedores forn ");    
+        
+        hql.append(" where p.ativo = :indAtivo ");
+        
+        hql.append(" and p.principal = :principal ");
+
+        Query query = super.getSession().createQuery(hql.toString());
+        
+        
+        query.setParameter("indAtivo", true);
+        
+        query.setParameter("principal", true);
+        
+        
+        query.setMaxResults(1);
+        
+        
+        return (FormaCobranca) query.uniqueResult();
+    }
+	
+	/**
 	 * Obtém lista de forma de cobranca da Cota
 	 * @param Cota
 	 * @return {@link List<FormaCobranca>}
