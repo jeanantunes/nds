@@ -239,7 +239,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		switch (filtro.getOrdenacaoColuna()) {
 			
 			case BOX:
-				hql.append(" order by nomeBox ");
+				hql.append(" order by box.codigo ");
 				break;
 				
 			case NOME_COTA:
@@ -613,7 +613,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		hql.append(" join rota.rotaPDVs rotaPdv ");
 		hql.append(" join rotaPdv.pdv pdv ");
 		hql.append(" join pdv.cota cota ");
-		hql.append(" order by b.id, roteiro.ordem, rota.ordem, rotaPdv.ordem ");
+		hql.append(" order by b.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem, cota.numeroCota ");
 		
 		Query query  = getSession().createQuery(hql.toString());
 		

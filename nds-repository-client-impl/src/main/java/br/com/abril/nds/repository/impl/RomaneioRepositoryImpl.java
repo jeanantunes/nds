@@ -134,18 +134,18 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" and enderecoPDV_.PRINCIPAL = :pontoPrincipal ");
 		hql.append(" and lancamento_.PRODUTO_EDICAO_ID=itemNotaEnvio_.PRODUTO_EDICAO_ID "); 
 		hql.append(" and cota_.SITUACAO_CADASTRO <> :situacaoInativo ");
-		hql.append(" and lancamento_.STATUS in (:statusLancamento) ");
+		hql.append(" and lancamento_.STATUS not in (:statusLancamento) ");
 		
-		if(filtro.getCodigoBox() == null) {
+		if(filtro.getIdBox() == null) {
 			
 			hql.append(" and roteiro_.TIPO_ROTEIRO <> 'ESPECIAL' ");
 			
 		} else {
 			
-			if(filtro.getCodigoBox() <= 0){
+			if(filtro.getIdBox() <= 0){
 				hql.append(" and roteiro_.TIPO_ROTEIRO  = 'ESPECIAL' ");
 			}else{
-				hql.append(" and box_.CODIGO = :codigoBox ");
+				hql.append(" and box_.ID = :idBox ");
 				hql.append(" and roteiro_.TIPO_ROTEIRO  <> 'ESPECIAL' ");
 			}
 		}
@@ -201,30 +201,17 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		if (filtro.getIdRoteiro() == null && filtro.getIdRota() != null) {
-			hql = addSeparadorOrderBy(hql);
-			hql.append(" rotas_.ordem ");
-		}
-		
-		if (filtro.getIdRoteiro() != null && filtro.getIdRota() == null) {
-			hql = addSeparadorOrderBy(hql);
-			hql.append(" roteiro_.ordem ");
-		}
-		
-		if (filtro.getIdRoteiro() != null && filtro.getIdRota() != null) {
-			hql = addSeparadorOrderBy(hql);
-			hql.append(" roteiro_.ordem asc, rotas_.ordem ");
-		}
-		
 		if ("numeroCota".equals(filtro.getPaginacao().getSortColumn())) {
 			hql = addSeparadorOrderBy(hql);
-			hql.append(" cota_.numeroCota ");
+			hql.append(" cota_.numero_cota ");
 		} else if ("nome".equals(filtro.getPaginacao().getSortColumn())) {
 			hql = addSeparadorOrderBy(hql);
 			hql.append(" notaenvio_.NOME_DESTINATARIO ");
-		} else {
+		} else if("numeroNotaEnvio".equals(filtro.getPaginacao().getSortColumn())) {
 			hql = addSeparadorOrderBy(hql);
 			hql.append(" notaenvio_.numero ");
+		}else{
+			hql.append(" roteiro_.ordem asc, rotas_.ordem ");
 		}
 		
 		
@@ -240,7 +227,15 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				hql.insert(0, ", ");
 			}
 			
-			hql.insert(0, " box_.codigo asc, rota_.ordem, rotas_.ordem "); //roteiro.ordem asc, roteiro.descricaoRoteiro asc, rota.ordem asc, rota.descricaoRota asc, cota.numeroCota "); , rotaPDV.ordem 
+			if(filtro.getIdBox()!= null && filtro.getIdBox() <= 0){
+				hql.insert(0, "  roteiro_.ordem asc, rotas_.ordem  ");
+			}
+			else
+			{
+				hql.insert(0, " box_.codigo asc, rota_.ordem, rotas_.ordem ");
+			}
+			
+			
 		}
 		
 		if (hql.length() > 0) {
@@ -257,11 +252,14 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		query.setParameter("pontoPrincipal", true);
 	
 		query.setParameterList(
-			"statusLancamento",Arrays.asList(StatusLancamento.BALANCEADO.name(), StatusLancamento.EXPEDIDO.name()));
+			"statusLancamento",Arrays.asList(StatusLancamento.PLANEJADO.name(), 
+					StatusLancamento.CONFIRMADO.name(),
+					StatusLancamento.FURO.name(),
+					StatusLancamento.CANCELADO.name()));
 		
-		if(filtro.getCodigoBox() != null && filtro.getCodigoBox() > 0) {
+		if(filtro.getIdBox() != null && filtro.getIdBox() > 0) {
 			
-			query.setParameter("codigoBox", filtro.getCodigoBox());
+			query.setParameter("idBox", filtro.getIdBox());
 		}
 		
 		if(filtro.getIdRoteiro() != null){

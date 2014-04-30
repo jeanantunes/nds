@@ -25,7 +25,7 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private boolean possuiBrinde;
 	
-	private boolean parcial;
+	private boolean parcialNaoFinal;
 	
 	private boolean isContagemPacote;
 	
@@ -284,12 +284,12 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.precoCapaInformado = precoCapaInformado;
 	}
 
-	public boolean isParcial() {
-		return parcial;
+	public boolean isParcialNaoFinal() {
+		return parcialNaoFinal;
 	}
 
-	public void setParcial(boolean parcial) {
-		this.parcial = parcial;
+	public void setParcialNaoFinal(boolean parcialNaoFinal) {
+		this.parcialNaoFinal = parcialNaoFinal;
 	}
 
 	/**

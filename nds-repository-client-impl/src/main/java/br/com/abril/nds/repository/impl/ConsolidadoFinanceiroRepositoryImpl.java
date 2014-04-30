@@ -1243,7 +1243,7 @@ ConsolidadoFinanceiroRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<DebitoCreditoCotaDTO> buscarMovFinanPorCotaEData(
-            final Long idCota, final Date data, final Long idFornecedor) {
+            final Long idCota, final List<Date> datas, final Long idFornecedor) {
         
         final StringBuilder hql = new StringBuilder("select new ");
         hql.append(DebitoCreditoCotaDTO.class.getCanonicalName())
@@ -1258,7 +1258,7 @@ ConsolidadoFinanceiroRepository {
            .append(" join movs.fornecedor fornecedor ")
            .append(" join movs.tipoMovimento tpMov ")
            .append(" join c.cota cota ")
-           .append(" where c.dataConsolidado = :data ")
+           .append(" where c.dataConsolidado IN (:datas) ")
            .append(" and cota.id = :idCota ")
            .append(" and tpMov.grupoMovimentoFinaceiro not in (:grupoIgnorar) ");
         
@@ -1268,11 +1268,13 @@ ConsolidadoFinanceiroRepository {
         }
         
         final Query query = this.getSession().createQuery(hql.toString());
-        query.setParameter("data", data);
+        
+        query.setParameterList("datas", datas);
+        
         query.setParameter("idCota", idCota);
-        query.setParameterList("grupoIgnorar", 
-                Arrays.asList(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
-                GrupoMovimentoFinaceiro.ENVIO_ENCALHE));
+        
+        query.setParameterList("grupoIgnorar", Arrays.asList(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
+                                                             GrupoMovimentoFinaceiro.ENVIO_ENCALHE));
         
         if (idFornecedor != null){
             

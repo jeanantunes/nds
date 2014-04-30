@@ -46,7 +46,7 @@ public class PeriodoLancamentoParcialServiceImpl implements PeriodoLancamentoPar
 			// Reparte Acumulado
 			reparteAcumulado = reparteAcumulado.add(valoReparte);
 			item.setReparteAcum(reparteAcumulado);
-			
+
 			//Vendas Acumuladas
 			vendasAcumuladas = vendasAcumuladas.add(item.getVendas());
 			item.setVendaAcumulada(vendasAcumuladas);

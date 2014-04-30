@@ -29,6 +29,7 @@ import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO.ModoTela;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
@@ -429,7 +430,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     @Override
     @Transactional
-    public void salvarProdutoEdicao(final ProdutoEdicaoDTO dto, final String codigoProduto, final String contentType, final InputStream imgInputStream, final boolean istrac29) {
+    public void salvarProdutoEdicao(
+            final ProdutoEdicaoDTO dto, final String codigoProduto, final String contentType, 
+            final InputStream imgInputStream, final boolean istrac29, final ModoTela modoTela) {
         
         ProdutoEdicao produtoEdicao = null;
         
@@ -444,7 +447,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
         }
         
-        if (produtoEdicaoRepository.isNumeroEdicaoCadastrada(produtoEdicao.getProduto().getId(),
+        if (!ModoTela.EDICAO.equals(modoTela) && produtoEdicaoRepository.isNumeroEdicaoCadastrada(produtoEdicao.getProduto().getId(),
                 dto.getNumeroEdicao(), produtoEdicao.getId())) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Número da edição ja cadastra. Escolha outro número.");
         }
@@ -1418,7 +1421,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         BigInteger cotasEsmagadas = BigInteger.ZERO;
         BigDecimal vendaEsmagadas = BigDecimal.ZERO;
         BigDecimal qtdeCotasSemVenda = BigDecimal.ZERO;
+        
         final StringBuilder strCotas = new StringBuilder();
+        
         for (int i = 0; i < newFaixasVenda.length; i++) {
             final String[] faixa = newFaixasVenda[i].split("-");
             final AnaliseHistogramaDTO obj =
@@ -1659,6 +1664,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	public List<ProdutoEdicao> obterProdutosEdicaoPorId(final Set<Long> idsProdutoEdicao) {
     	
     	return this.produtoEdicaoRepository.obterProdutosEdicaoPorId(idsProdutoEdicao);
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public List<ItemDTO<String, String>> obterProdutosBalanceados(Date dataLancamento) {
+        
+        return this.produtoEdicaoRepository.obterProdutosBalanceados(dataLancamento);
     }
     
 }

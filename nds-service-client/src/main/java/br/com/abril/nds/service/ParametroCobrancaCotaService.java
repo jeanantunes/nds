@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.ContratoVO;
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
@@ -77,6 +78,8 @@ public interface ParametroCobrancaCotaService {
 	* @return Forma de cobrança do parametro de cobranca
 	*/
 	    FormaCobrancaDTO obterDadosFormaCobranca(Long idForma);
+	    
+	List<FormaCobrancaDefaultVO> obterFormaCobrancaCotaDefault(Integer numeroCota);
 	
 	    /**
 	* Obtem os dados para o contrato de prestação de serviços de transportes de revistas.<br/>

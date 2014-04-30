@@ -770,6 +770,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		var indDistribuidorAceitaJuramentado = result.indDistribuidorAceitaJuramentado;
 		
+		var cotaAVista = result.cotaAVista;
+		
 		$("._dadosConfEncalhe", ConferenciaEncalhe.workspace).remove();
 		
 		if (modeloConferenciaEncalhe){
@@ -777,7 +779,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			$.each(modeloConferenciaEncalhe, 
 				function(index, value) {
 					
-					var parcial =  value.parcial;
+					var parcialNaoFinal =  value.parcialNaoFinal;
 				
 					var _class;
 					
@@ -840,7 +842,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					if (indDistribuidorAceitaJuramentado == true) {
 					
-						if(parcial == true) {
+						if(parcialNaoFinal == true && !cotaAVista) {
 							
 							inputCheckBoxJuramentada = '<input isEdicao="true" type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
 							+ ' onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue; ConferenciaEncalhe.verificarPermissaoSuperVisor('+ 
@@ -1261,7 +1263,15 @@ var ConferenciaEncalhe = $.extend(true, {
 						
 						exibirMensagem('WARNING', [result[1]]);
 						ConferenciaEncalhe.resetValue = false;
-						ConferenciaEncalhe.atualizarValores(index);
+						
+						if (index || index == 0){
+							
+							ConferenciaEncalhe.atualizarValores(index);
+						} else {
+							
+							ConferenciaEncalhe.adicionarProdutoConferido();
+						}
+						
 					} else {
 						
 						$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result[1]);

@@ -38,6 +38,7 @@ import com.google.common.collect.Sets;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
 import br.com.abril.nds.client.vo.ContratoVO;
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
@@ -754,6 +755,12 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		}    
     }	
 
+	@Override
+	@Transactional(readOnly=true)
+	public List<FormaCobrancaDefaultVO> obterFormaCobrancaCotaDefault(Integer numeroCota) {
+		
+		return this.formaCobrancaRepository.obterFormaCobrancaCotaDefault(numeroCota);
+	}
 	
 
 	private void tratarPrimeiraFormaCobrancaEspecificaParaCota(FormaCobrancaDTO formaCobrancaDTO) {

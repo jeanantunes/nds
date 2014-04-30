@@ -8,6 +8,8 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -22,7 +24,9 @@ public interface EstudoCotaService {
 	
 	EstudoCota obterEstudoCotaDeLancamentoComEstudoFechado(Date dataLancamentoDistribuidor, Long idProdutoEdicao, Integer numeroCota);
 	
-	EstudoCota criarEstudoCotaJuramentado(ProdutoEdicao produtoEdicao, Estudo estudo, BigInteger reparte,Cota cota);
+	EstudoCotaGerado criarEstudoCotaJuramentado(ProdutoEdicao produtoEdicao, EstudoGerado estudo, BigInteger reparte,Cota cota);
 
 	List<EstudoCota> obterEstudosCota(Long idEstudo);
+	
+	EstudoCota liberar(Long idEstudoCotaGerado, Estudo estudo);
 }

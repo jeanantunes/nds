@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
 import br.com.abril.nds.controllers.BaseController;
@@ -44,6 +45,7 @@ import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
+import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
@@ -99,6 +101,9 @@ public class NegociacaoDividaController extends BaseController {
 	private FormaCobrancaService formaCobrancaService;
 	
 	@Autowired
+	private ParametroCobrancaCotaService parametroCobrancaCotaService;
+	
+	@Autowired
 	private EmailService emailService;
 	
 	public NegociacaoDividaController(Result result) {
@@ -123,15 +128,35 @@ public class NegociacaoDividaController extends BaseController {
 		filtro.setAtivo(true);
 		
 		List<Banco> bancos = this.bancoService.obterBancos(filtro);
-		
+
 		this.result.include("qntdParcelas", parcelas);
 		this.result.include("bancos", bancos);
-		
-		List<TipoCobranca> tiposCobranca = this.cobrancaService.obterTiposCobrancaCadastradas();
-		
-		this.result.include("tipoPagamento", tiposCobranca);
-		
+
 		this.session.setAttribute(ID_ULTIMA_NEGOCIACAO, null);
+	}
+
+	@Post
+	public void atualizarFormaCobranca(Integer numeroCota, boolean isNegociacaoAvulsa) {
+		
+		List<FormaCobrancaDefaultVO> formaCobranca = this.obterFormaCobrancaNegociacao(numeroCota, isNegociacaoAvulsa);
+		
+		this.result.use(Results.json()).from(formaCobranca, "result").recursive().serialize();
+	}
+	
+	private List<FormaCobrancaDefaultVO> obterFormaCobrancaNegociacao(Integer numeroCota, boolean isNegociacaoAvulsa) {
+		
+		List<FormaCobrancaDefaultVO> tiposCobranca = new ArrayList<FormaCobrancaDefaultVO>();
+		
+		if (isNegociacaoAvulsa) {
+			
+			tiposCobranca = this.formaCobrancaService.obterFormaCobrancaDefault();
+
+		} else {
+
+			tiposCobranca = this.parametroCobrancaCotaService.obterFormaCobrancaCotaDefault(numeroCota);
+		}
+
+		return tiposCobranca;
 	}
 	
 	@Path("/pesquisar.json")

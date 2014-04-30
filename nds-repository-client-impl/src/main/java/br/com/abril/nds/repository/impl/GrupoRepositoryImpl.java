@@ -208,8 +208,8 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 		   .append("                      and pdv.caracteristicas.pontoPrincipal is true ")
 		   .append("                     ) ")
 	       .append(" ) ")
-		   .append(" and ( g.dataInicioVigencia is null or g.dataInicioVigencia >= :dataOperacao ) ")
-		   .append(" and ( g.dataFimVigencia is null or g.dataFimVigencia <= :dataOperacao ) ");
+		   .append(" and ( g.dataInicioVigencia is null or g.dataInicioVigencia <= :dataOperacao ) ")
+		   .append(" and ( g.dataFimVigencia is null or g.dataFimVigencia >= :dataOperacao ) ");
 		   
 		Query query = this.getSession().createQuery(hql.toString());
 		
@@ -236,7 +236,7 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 		   .append(" left join g.cotas cota ")
 		   .append(" where ")
 		   .append(" ( ")
-		   .append("     cota.id = :idCota ")
+		   .append("     cota.numeroCota = :numeroCota ")
 		   .append("     or municipio in (select e.cidade ")
 		   .append("                      from PDV pdv ")
 		   .append("                      join pdv.enderecos enderecoPdv   ")
@@ -246,8 +246,8 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 		   .append("                      and pdv.caracteristicas.pontoPrincipal is true ")
 		   .append("                     ) ")
 	       .append(" ) ")
-		   .append(" and ( g.dataInicioVigencia is null or g.dataInicioVigencia >= :dataOperacao ) ")
-		   .append(" and ( g.dataFimVigencia is null or g.dataFimVigencia <= :dataOperacao ) ");
+		   .append(" and ( g.dataInicioVigencia is null or g.dataInicioVigencia <= :dataOperacao ) ")
+		   .append(" and ( g.dataFimVigencia is null or g.dataFimVigencia >= :dataOperacao ) ");
 		   
 		Query query = this.getSession().createQuery(hql.toString());
 		

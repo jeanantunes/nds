@@ -39,6 +39,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -50,6 +51,7 @@ import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.UsuarioService;
@@ -160,6 +162,9 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
 	private BoxService boxService;
+	
+	@Autowired
+	private GrupoService grupoService;
 	
 	@Path("/")
 	@SuppressWarnings("unchecked")
@@ -592,9 +597,13 @@ public class ConferenciaEncalheController extends BaseController {
 
 		} else {
 			
-			if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota)) {
+			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+			
+			List<Date> datas = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(numeroCota, dataOperacao);
+			
+			if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota, datas)) {
 				
-				this.result.use(CustomMapJson.class)
+				this.result.use(CustomMapJson.class) 
 				.put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
 			
 			} else {
@@ -717,6 +726,8 @@ public class ConferenciaEncalheController extends BaseController {
 							((PessoaJuridica)cota.getPessoa()).getRazaoSocial());
 			
 			dados.put("situacao", cota.getSituacaoCadastro().toString());
+			
+			dados.put("cotaAVista", TipoCota.A_VISTA.equals(cota.getTipoCota()));
 		}
 		
 		if(infoConfereciaEncalheCota.getNotaFiscalEntradaCota()!=null) {
@@ -1267,28 +1278,58 @@ public class ConferenciaEncalheController extends BaseController {
             this.validarAutenticidadeSupervisor(usuario, senha);
             
         } else {
+    		
+            final List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
             
-        	if(indPesquisaProduto){
-    			
-    			isVendaNegativaProduto = this.verificarPermissaoSupervisorProduto(qtdExemplares, usuario, senha, produtoEdicaoId);
-    		}
-        	else{
-        		
-        		final List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
+            final boolean supervisor = usuarioService.isSupervisor();
+            
+            if (listaConferencia == null || listaConferencia.isEmpty()){
                 
+                ProdutoEdicaoDTO pDto = null;
+                
+                try {
+                    
+                     pDto = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(
+                            this.getNumeroCotaFromSession(), 
+                            produtoEdicaoId);
+                } catch (final EncalheRecolhimentoParcialException e) {
+                    LOGGER.error("Não existe chamada de encalhe para produto parcial na data operação: " + e.getMessage(), e);
+                    throw new ValidacaoException(TipoMensagem.WARNING,
+                            "Não existe chamada de encalhe para produto parcial na data operação.");
+                }
+                
+                final ConferenciaEncalheDTO dto = 
+                        this.criarConferenciaEncalhe(pDto, new BigInteger(qtdExemplares), false, indConferenciaContingencia);
+                
+                isVendaNegativaProduto = this.validarVendaNegativaProduto(
+                        qtdExemplares,indConferenciaContingencia, dto, supervisor);
+                
+            } else {
+            
                 for (final ConferenciaEncalheDTO dto : listaConferencia) {
+                    
+                    String qtdJaInformada = null;
+                    
+                    if (indPesquisaProduto){
+                        
+                        qtdJaInformada = dto.getQtdInformada() == null ? this.obterQuantidadeEncalheDaString(qtdExemplares).toString() : 
+                            dto.getQtdInformada().add(this.obterQuantidadeEncalheDaString(qtdExemplares)).toString();
+                    } else {
+                        
+                        qtdJaInformada = qtdExemplares;
+                    }
                     
                     if (produtoEdicaoId != null) {
                         
                         if (produtoEdicaoId.equals(dto.getIdProdutoEdicao())) {
                             
-                        	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdExemplares,indConferenciaContingencia, dto);
+                        	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdJaInformada,indConferenciaContingencia, dto, supervisor);
                         }
                     } else {
                         
                         if (idConferencia.equals(dto.getIdConferenciaEncalhe())) {
                             
-                        	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdExemplares,indConferenciaContingencia, dto);
+                        	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdJaInformada,indConferenciaContingencia, dto, supervisor);
                         }
                     }
                     
@@ -1296,7 +1337,7 @@ public class ConferenciaEncalheController extends BaseController {
                         break;
                     }
                 }
-        	}
+            }
         }
     
         if(!isVendaNegativaProduto){
@@ -1307,7 +1348,8 @@ public class ConferenciaEncalheController extends BaseController {
 
 	private boolean validarVendaNegativaProduto(final String qtdExemplares,
 										 final boolean indConferenciaContingencia,
-										 final ConferenciaEncalheDTO dto) {
+										 final ConferenciaEncalheDTO dto,
+										 boolean supervisor) {
 		
 		BigInteger qtdeEncalhe = this.obterQuantidadeEncalhe(qtdExemplares,dto);
 		
@@ -1315,11 +1357,9 @@ public class ConferenciaEncalheController extends BaseController {
 		    
 		    Object[] ret = new Object[2];
 		    
-		    boolean superVisor = usuarioService.isSupervisor();
+		    ret[0] = supervisor;
 		    
-		    ret[0] = superVisor;
-		    
-		    if (superVisor){
+		    if (supervisor){
 		        
 		        ret[1] = "Venda negativa no encalhe.";
 		    } else {
@@ -2491,7 +2531,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		
 		conferenciaEncalheDTO.setDataConferencia(dataOperacao);
 		
-		conferenciaEncalheDTO.setParcial(produtoEdicao.isParcial());
+		conferenciaEncalheDTO.setParcialNaoFinal(this.conferenciaEncalheService.isParcialNaoFinal(produtoEdicao.getId()));
 		
 		if (quantidade != null){
 			conferenciaEncalheDTO.setQtdExemplar(quantidade);

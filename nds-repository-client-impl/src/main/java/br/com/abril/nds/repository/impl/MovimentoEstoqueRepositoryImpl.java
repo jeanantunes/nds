@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -422,5 +423,42 @@ implements MovimentoEstoqueRepository {
 		
 		return query.list();
 	}
+	
+	@Override
+    public BigInteger buscarSomaEstoqueJuramentadoPorProdutoData(Long idProdutoEdicao, Date data) {
+
+        if (idProdutoEdicao == null || data == null) {
+            
+            throw new IllegalArgumentException("Parâmetros não informados!");
+        }
+        
+        StringBuilder hql = new StringBuilder();
+        
+        hql.append(" select sum( ");
+        hql.append("    case when (tipoMovimento.operacaoEstoque = 'SAIDA') ");
+        hql.append("        then movimentoEstoque.qtde ");
+        hql.append("        else - movimentoEstoque.qtde ");
+        hql.append("    end ");
+        hql.append(" ) ");
+        hql.append(" from MovimentoEstoque movimentoEstoque ");
+        hql.append(" join movimentoEstoque.produtoEdicao produtoEdicao ");
+        hql.append(" join movimentoEstoque.tipoMovimento tipoMovimento ");
+        hql.append(" where produtoEdicao.id = :idProdutoEdicao ");
+        hql.append(" and movimentoEstoque.data = :data ");
+        hql.append(" and tipoMovimento.grupoMovimentoEstoque in (:grupoMovimento) ");
+        
+        Query query = this.getSession().createQuery(hql.toString());
+        
+        List<GrupoMovimentoEstoque> gruposMovimento = new ArrayList<>();
+        
+        gruposMovimento.add(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO);
+        gruposMovimento.add(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO);
+        
+        query.setParameter("idProdutoEdicao", idProdutoEdicao);
+        query.setParameter("data", data);
+        query.setParameterList("grupoMovimento", gruposMovimento);
+        
+        return (BigInteger) query.uniqueResult();
+    }
 	
 }
