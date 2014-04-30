@@ -29,7 +29,6 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 
@@ -181,6 +180,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			parameters.put("idFornecedor", filtro.getIdFornecedor());
 		}
 
+		parameters.put("dataOperacao", filtro.getDataOperacao());
+		
 		parameters.put("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
 
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
@@ -190,8 +191,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
 		
 		parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
-		
-		parameters.put("statusRecolhido", StatusLancamento.RECOLHIDO.name());
 
 		if(filtro.getPaginacao()!=null && limitar){
 			
@@ -303,7 +302,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(" MOVIMENTO_ESTOQUE_COTA MEC ");
 		
-		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID AND LCTO.STATUS <> :statusRecolhido) ");
+		sql.append(" INNER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID) ");
 		
 		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
 		
@@ -324,6 +323,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" WHERE ");
 		
 		sql.append(" MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
+		
+		sql.append(" AND LCTO.DATA_REC_DISTRIB >= :dataOperacao ");
 		
 		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL ");
        
@@ -389,7 +390,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" PJ.RAZAO_SOCIAL AS nomeFornecedor, "); 
 		sql.append(" forn.ID AS idFornecedor ");
 		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ");
-		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID AND LCTO.STATUS <> :statusRecolhido) ");
+		sql.append(" INNER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID) ");
 		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
 		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
 		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
@@ -400,6 +401,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID ");
 		sql.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL  ");
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
+		sql.append(" AND LCTO.DATA_REC_DISTRIB >= :dataOperacao ");
 		
 		if(filtro.getIdFornecedor()!=null) {
 		
@@ -442,6 +444,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
 
+		query.setParameter("dataOperacao", filtro.getDataOperacao());
+		
 		query.setParameterList("tipoMovimentoEstorno", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name()));
 
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
@@ -451,8 +455,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
 		
 		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
-		
-		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO.name());
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaPeloFornecedorDTO.class));
@@ -488,7 +490,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(" SELECT c.numero_cota AS numeroCota, forn.ID AS idFornecedor ");
 		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ");
-		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID AND LCTO.STATUS <> :statusRecolhido) ");
+		sql.append(" INNER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID) ");
 		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
 		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
 		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
@@ -499,6 +501,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID ");
 		sql.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL  ");
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
+		sql.append(" AND LCTO.DATA_REC_DISTRIB >= :dataOperacao ");
 		
 		if(filtro.getIdFornecedor()!=null) {
 		
@@ -528,6 +531,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
 
+		query.setParameter("dataOperacao", filtro.getDataOperacao());
+		
 		query.setParameterList("tipoMovimentoEstorno", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name()));
 
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
@@ -537,8 +542,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
 		
 		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
-		
-		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO.name());
 		
 		((SQLQuery) query).addScalar("contador", StandardBasicTypes.LONG);
 
@@ -585,6 +588,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			parameters.put("idFornecedor", filtro.getIdFornecedor());
 		}
 
+		parameters.put("dataOperacao", filtro.getDataOperacao());
+		
 		parameters.put("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
 
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
@@ -594,8 +599,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
 		
 		parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
-		
-		parameters.put("statusRecolhido", StatusLancamento.RECOLHIDO.name());
 
 		@SuppressWarnings("rawtypes")
 		RowMapper cotaRowMapper = new RowMapper() {
@@ -693,7 +696,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 		
-		parameters.put("statusRecolhido", StatusLancamento.RECOLHIDO.name());
+		parameters.put("dataOperacao", filtro.getDataOperacao());
 
 		@SuppressWarnings("rawtypes")
 		RowMapper cotaRowMapper = new RowMapper() {
