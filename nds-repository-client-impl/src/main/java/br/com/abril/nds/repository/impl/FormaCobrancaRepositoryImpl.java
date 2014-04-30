@@ -283,13 +283,11 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         hql.append(" select banco.id as idBanco, banco.nome as nomeBanco, f.tipoCobranca as tipoCobranca ");
         hql.append(" from FormaCobranca f ");	
 		hql.append(" join f.politicaCobranca p ");
-		hql.append(" join f.banco banco ");		
+		hql.append(" left join f.banco banco ");		
 		hql.append(" where p.ativo = :indAtivo ");
-		hql.append(" and p.principal = :principal ");
 
 		Query query = super.getSession().createQuery(hql.toString());
         query.setParameter("indAtivo", true);
-        query.setParameter("principal", true);
 
         query.setResultTransformer(Transformers.aliasToBean(FormaCobrancaDefaultVO.class));        
 
