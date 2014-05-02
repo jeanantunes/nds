@@ -379,27 +379,25 @@ public class NegociacaoDividaController extends BaseController {
 				((FiltroConsultaNegociacaoDivida)this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA))
 				.getNumeroCota();
 		
-		if (comissao == null || BigDecimal.ZERO.compareTo(comissao) == 0) {
-			
-			this.result.use(Results.json()).from("", "result").serialize();
-		} else {
-			
-			List<Object> valoresDesconto = new ArrayList<Object>();
+		List<Object> valoresDesconto = new ArrayList<Object>();
+
+		if (comissao != null && BigDecimal.ZERO.compareTo(comissao) != 0) {
+
 			valoresDesconto.add(comissao);
-			
-			//forma cobrança 'default' da cota
-			FormaCobranca formaDefault = 
-				this.formaCobrancaService.obterFormaCobrancaPrincipalCota(numeroCota);
-			
-			if (formaDefault == null){
-				
-				formaDefault = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
-			}
-			
-			valoresDesconto.add(formaDefault.getTipoCobranca());
-			
-			this.result.use(Results.json()).from(valoresDesconto, "result").recursive().serialize();
 		}
+
+		//forma cobrança 'default' da cota
+		FormaCobranca formaDefault = 
+			this.formaCobrancaService.obterFormaCobrancaPrincipalCota(numeroCota);
+		
+		if (formaDefault == null){
+			
+			formaDefault = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		}
+		
+		valoresDesconto.add(formaDefault.getTipoCobranca());
+		
+		this.result.use(Results.json()).from(valoresDesconto, "result").recursive().serialize();
 	}
 	
 	public void imprimirNegociacao(String valorDividaSelecionada) throws Exception{

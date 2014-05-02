@@ -385,7 +385,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 							
 						}
 						
-						ConferenciaEncalheCont.limpaTela();
+						ConferenciaEncalheCont.limparTela();
 						
 					} else {
 
@@ -1175,7 +1175,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 						
 						}, function(conteudo) {
 							
-							ConferenciaEncalheCont.limpaTela();
+							ConferenciaEncalheCont.limparTela();
 							
 							
 						}, true, "idModalDadosNotaFiscal"
@@ -1338,7 +1338,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								{name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalheCont.workspace).val()},
 								{name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalheCont.workspace).val()},
 								{name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalheCont.workspace).val()},
-								{name : "notaFiscal.valorProdutos", value : priceToFloat($("#valorNotaFiscal", ConferenciaEncalheCont.workspace).val())},
+								{name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal", ConferenciaEncalheCont.workspace).val()},
 								{name : "notaFiscal.chaveAcesso", value : $("#chaveAcessoNFE", ConferenciaEncalheCont.workspace).val()}
 						];
 						
@@ -1370,7 +1370,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				},
 				"Cancelar" : function() {
 					
-					ConferenciaEncalheCont.limpaTela();
+					ConferenciaEncalheCont.limparTela();
 					$("#numeroCota", ConferenciaEncalheCont.workspace).val("");
 					$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 					
@@ -1432,7 +1432,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 							if(result.tipoMensagem == 'SUCCESS') {
 								
-								ConferenciaEncalheCont.limpaTela();
+								ConferenciaEncalheCont.limparTela();
 								
 							}						
 							
@@ -1444,7 +1444,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 						}, function(conteudo) {
 							
-							ConferenciaEncalheCont.limpaTela();
+							ConferenciaEncalheCont.limparTela();
 							
 							
 						}, true, "idModalConfirmarSalvarConf"
@@ -1505,7 +1505,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 			}, null, true, "dialog-confirmar-regerar-cobranca"
 		);
 	},
-	limpaTela:function(){
+	
+	limparTela : function() {
 		ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe({reparte:0,valorEncalhe:0,valorVendaDia:0,valorDebitoCredito:0,valorPagar:0, listaDebitoCredito:{page:0,total:0, rows:null}});
 		$(".dadosFiltro", ConferenciaEncalheCont.workspace).hide();
 		$("#totalExemplaresFooter", ConferenciaEncalheCont.workspace).html(0);
