@@ -1065,7 +1065,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             
             somaParelas = somaParelas.add(valorParcela);
             
-            if (!filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE)
+            if (filtro.getTipoPagamento() != null 
+            		&& !filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE)
                     && (filtro.getIsentaEncargos() != null && !filtro.getIsentaEncargos())) {
                 
                 if (i == qntParcelas - 1) {
