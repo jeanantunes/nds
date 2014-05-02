@@ -322,10 +322,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 movFinan.setTipoMovimento(tipoMovimentoFinanceiro);
                 movFinan.setObservacao("Negociação de dívida.");
                 
-                if (parcelaNegociacao.getEncargos() != null
+                if (!isentaEncargos
+                		&& parcelaNegociacao.getEncargos() != null
                         && parcelaNegociacao.getEncargos().compareTo(BigDecimal.ZERO) != 0) {
-                    
-                    movFinan.setValor(movFinan.getValor().add(parcelaNegociacao.getEncargos()));
+
+                	movFinan.setValor(movFinan.getValor().add(parcelaNegociacao.getEncargos()));                        
                 }
 
                 final Fornecedor fornecedor = cota.getParametroCobranca() != null && cota.getParametroCobranca().getFornecedorPadrao() != null ? 
@@ -357,18 +358,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
                     BigDecimal valorTotalParcela = parcelaNegociacao.getMovimentoFinanceiroCota().getValor();
                     
-                    BigDecimal valorOriginalParcela = parcelaNegociacao.getMovimentoFinanceiroCota().getValor();
-                    
-                    BigDecimal encargos = BigDecimal.ZERO;
-                    
-                    if (parcelaNegociacao.getEncargos() != null
-                            && parcelaNegociacao.getEncargos().compareTo(BigDecimal.ZERO) != 0) {
-                        
-                        encargos = parcelaNegociacao.getEncargos(); 
+                    if (isentaEncargos && parcelaNegociacao.getEncargos() != null) {
 
-                        valorOriginalParcela = valorOriginalParcela.subtract(encargos);
+                    	valorTotalParcela.subtract(parcelaNegociacao.getEncargos());
                     }
-                    
+
                     consolidado = new ConsolidadoFinanceiroCota();
                     consolidado.setCota(cota);
                     consolidado.setDataConsolidado(dataOperacao);
@@ -386,17 +380,14 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     consolidado.setPendente(BigDecimal.ZERO);
                     consolidado.setEncargos(BigDecimal.ZERO);
 
-                    valorOriginalParcela = valorOriginalParcela.add(encargos);
-                    valorTotalParcela = valorTotalParcela.add(encargos);
-
                     if (OperacaoFinaceira.DEBITO.equals(grupoMovimentoFinaceiro.getOperacaoFinaceira())) {
                         
-                        consolidado.setDebitoCredito(valorOriginalParcela.negate());
+                        consolidado.setDebitoCredito(valorTotalParcela.negate());
                         consolidado.setTotal(valorTotalParcela.negate());
 
                     } else {
                         
-                        consolidado.setDebitoCredito(valorOriginalParcela);
+                        consolidado.setDebitoCredito(valorTotalParcela);
                         consolidado.setTotal(valorTotalParcela);                        
                     }
                     
@@ -450,8 +441,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                         cobrancaRepository.adicionar(cobranca);
                     }
                 }
-            }
-            
+            }            
         }
         
         if (formaCobranca != null) {
