@@ -1370,8 +1370,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 				},
 				"Cancelar" : function() {
 					
-					ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
-					
+					ConferenciaEncalheCont.limpaTela();
+					$("#numeroCota", ConferenciaEncalheCont.workspace).val("");
 					$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 					
 					$(this).dialog("close");
@@ -1382,11 +1382,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				ConferenciaEncalheCont.modalAberta = false;
 				
-				ConferenciaEncalheCont.limpaTela();
-				
 				ConferenciaEncalheCont.removerTravaConferenciaEncalheCotaUsuario();
-				
-				$("#numeroCota", ConferenciaEncalheCont.workspace).val("");
 				
 				$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 			},
