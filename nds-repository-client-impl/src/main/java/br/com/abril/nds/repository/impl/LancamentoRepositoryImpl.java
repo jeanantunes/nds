@@ -2648,7 +2648,7 @@ public class LancamentoRepositoryImpl extends
     	hql.append(" and fornecedor_id = :idFornecedor)  ");
     	hql.append(" order by dt  ");
     	
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createSQLQuery(hql.toString());
         
         query.setParameter("idFornecedor", idFornecedor);
 
