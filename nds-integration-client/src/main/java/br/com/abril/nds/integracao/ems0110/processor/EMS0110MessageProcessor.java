@@ -237,7 +237,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		Editor editor = this.findEditorByID(input.getCodEditor());
 
 		if (null == editor) {
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
+			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.SEM_DOMINIO,
 					"Editor " + input.getCodEditor() + " nao encontrado. Código do produto: " + input.getCodProd() +  " - Nome do Produto: " + input.getNomeProd());
 
@@ -247,13 +247,18 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		TipoProduto tipoProduto = this.findTipoProduto(input.getCodCategoria());
 
 		if (null == tipoProduto) {
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
+			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.SEM_DOMINIO,
-					"Tipo Produto REVISTA nao encontrado.");
+					"Tipo Produto nao encontrado."+input.getCodCategoria());
 
 //			throw new RuntimeException("Tipo Produto nao encontrado.");
 		}
-					
+				
+		this.ndsiLoggerFactory.getLogger().logError(message,
+				EventoExecucaoEnum.SEM_DOMINIO,
+				"Publicação Cadastrada atravéz do Produto Edição, Código ICD não será Preenchido. Código do Produto: "+input.getCodProd());
+
+		
 		produto.setTipoProduto(tipoProduto);
 		produto.setNome(input.getNomeProd());
 		produto.setCodigoContexto(input.getContextoPublicacao());
@@ -460,6 +465,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			
 			return;
 		}
+		
+		// FIX input.getCodIcd
 		
 		edicao.setProduto(produto);
 
