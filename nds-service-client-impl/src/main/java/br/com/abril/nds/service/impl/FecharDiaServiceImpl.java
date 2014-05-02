@@ -1743,6 +1743,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				for(ChamadaEncalheCota cec : ce.getChamadaEncalheCotas()) {
 					MovimentoFechamentoFiscalCota movimentoFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCota(cec);
 					movimentoFechamentoFiscalCota.setNotaFiscalLiberadaEmissao(true);
+					movimentoFechamentoFiscalRepository.merge(movimentoFechamentoFiscalCota);
 				}
 				
 			}
