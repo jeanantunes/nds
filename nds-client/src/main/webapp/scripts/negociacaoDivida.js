@@ -74,11 +74,11 @@ var negociacaoDividaController = $.extend(true, {
 		
 		var selected = value.tipoCobranca === negociacaoDividaController.tipoCobrancaDefaultCota ? 'selected' : '';
 
-		var optionExists = $("#selectPagamento").filter(function() {
+		var optionExists = $("#selectPagamento option").filter(function() {
 			return $(this).attr('value') === value.tipoCobranca;
-		}).length; 
+		}).length;
 
-		if (!optionExists) {
+		if (!optionExists && value.tipoCobranca) {
 
 			$("#selectPagamento").append("<option value='" 
 										+ value.tipoCobranca + "'" 
@@ -90,11 +90,11 @@ var negociacaoDividaController = $.extend(true, {
 
 	appendBancoOption: function(value) {
 		
-		var optionExists = $("#selectBancosBoleto").filter(function() {
-			return $(this).attr('value') === value.idBanco;
+		var optionExists = $("#selectBancosBoleto option").filter(function() {
+			return $(this).attr('value') == value.idBanco;
 		}).length;
 		
-		if (!optionExists) {
+		if (!optionExists && value.idBanco) {
 			
 			$("#selectBancosBoleto").append("<option value='" + value.idBanco + "'>" + value.nomeBanco + "</option>");
 		}
@@ -914,7 +914,7 @@ var negociacaoDividaController = $.extend(true, {
 		}else if (value == 'CHEQUE'){
 			$('#gridVenctos', negociacaoDividaController.workspace).hide();
 			$('#gridCheque', negociacaoDividaController.workspace).show();
-			$('#divBanco', negociacaoDividaController.workspace).show();
+			$('#divBanco', negociacaoDividaController.workspace).hide();
 
 		}else {
 			$('#gridVenctos', negociacaoDividaController.workspace).hide();

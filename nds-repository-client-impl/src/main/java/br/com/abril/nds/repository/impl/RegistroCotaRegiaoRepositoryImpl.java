@@ -53,10 +53,10 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 
 		hql.append(" FROM RegistroCotaRegiao AS registroCotaRegiao ");
 		hql.append(" LEFT JOIN registroCotaRegiao.cota as cota ");
-		hql.append(" LEFT JOIN cota.enderecos as enderecoCota ");
-		hql.append(" LEFT JOIN enderecoCota.endereco as endereco ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN cota.pdvs as pdv ");
+		hql.append(" LEFT JOIN pdv.enderecos as endPdv ");
+		hql.append(" LEFT JOIN endPdv.endereco as endereco ");
 		hql.append(" LEFT JOIN pdv.segmentacao as segmentacao ");
 		hql.append(" LEFT JOIN segmentacao.tipoPontoPDV as tipoPontoPDV ");
 		hql.append(" LEFT JOIN registroCotaRegiao.usuario  as usuario ");

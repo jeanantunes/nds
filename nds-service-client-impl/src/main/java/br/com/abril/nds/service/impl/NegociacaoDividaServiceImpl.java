@@ -359,19 +359,14 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     
                     BigDecimal valorOriginalParcela = parcelaNegociacao.getMovimentoFinanceiroCota().getValor();
                     
-                    if (parcelaNegociacao.getEncargos() != null
-                            && parcelaNegociacao.getEncargos().compareTo(BigDecimal.ZERO) != 0) {
-                        
-                        valorOriginalParcela = valorOriginalParcela.subtract(parcelaNegociacao.getEncargos());
-                    }
-                    
-                    MovimentoFinanceiroCota movFinanMulta = null;
+                    BigDecimal encargos = BigDecimal.ZERO;
                     
                     if (parcelaNegociacao.getEncargos() != null
                             && parcelaNegociacao.getEncargos().compareTo(BigDecimal.ZERO) != 0) {
                         
-                        movFinanMulta = this.criarMovimentoFinanceiroMulta(parcelaNegociacao
-                                .getMovimentoFinanceiroCota(), parcelaNegociacao.getEncargos());
+                        encargos = parcelaNegociacao.getEncargos(); 
+
+                        valorOriginalParcela = valorOriginalParcela.subtract(encargos);
                     }
                     
                     consolidado = new ConsolidadoFinanceiroCota();
@@ -379,11 +374,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     consolidado.setDataConsolidado(dataOperacao);
                     final List<MovimentoFinanceiroCota> movs = new ArrayList<MovimentoFinanceiroCota>();
                     movs.add(parcelaNegociacao.getMovimentoFinanceiroCota());
-                    
-                    if (movFinanMulta != null) {
-                        
-                        movs.add(movFinanMulta);
-                    }
                     
                     consolidado.setMovimentos(movs);
                     
@@ -396,8 +386,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     consolidado.setPendente(BigDecimal.ZERO);
                     consolidado.setEncargos(BigDecimal.ZERO);
 
-                    valorOriginalParcela = valorOriginalParcela.add(parcelaNegociacao.getEncargos());
-                    valorTotalParcela = valorTotalParcela.add(parcelaNegociacao.getEncargos());
+                    valorOriginalParcela = valorOriginalParcela.add(encargos);
+                    valorTotalParcela = valorTotalParcela.add(encargos);
 
                     if (OperacaoFinaceira.DEBITO.equals(grupoMovimentoFinaceiro.getOperacaoFinaceira())) {
                         
@@ -454,7 +444,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                         cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
                         cobranca.setDataVencimento(parcelaNegociacao.getDataVencimento());
                         cobranca.setValor(valorTotalParcela);
-                        cobranca.setEncargos(parcelaNegociacao.getEncargos());
                         dividaRepository.adicionar(divida);
                         cobranca.setNossoNumero(Util.gerarNossoNumero(numeroCota, dataOperacao, banco.getNumeroBanco(),
                                 null, divida.getId(), banco.getAgencia(), banco.getConta(), banco.getCarteira()));
@@ -532,42 +521,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             }
         }
     }
-    
-    private MovimentoFinanceiroCota criarMovimentoFinanceiroMulta(
-            final MovimentoFinanceiroCota movimentoFinanceiroCota, final BigDecimal valor) {
-        
-        final MovimentoFinanceiroCota novo = new MovimentoFinanceiroCota();
-        novo.setAprovadoAutomaticamente(movimentoFinanceiroCota.isAprovadoAutomaticamente());
-        novo.setAprovador(movimentoFinanceiroCota.getAprovador());
-        novo.setBaixaCobranca(movimentoFinanceiroCota.getBaixaCobranca());
-        novo.setConsolidadoFinanceiroCota(movimentoFinanceiroCota.getConsolidadoFinanceiroCota());
-        novo.setCota(movimentoFinanceiroCota.getCota());
-        novo.setData(movimentoFinanceiroCota.getData());
-        novo.setDataAprovacao(movimentoFinanceiroCota.getDataAprovacao());
-        novo.setDataIntegracao(movimentoFinanceiroCota.getDataIntegracao());
-        novo.setFornecedor(movimentoFinanceiroCota.getFornecedor() != null ? movimentoFinanceiroCota.getFornecedor()
-                : movimentoFinanceiroCota.getCota().getParametroCobranca().getFornecedorPadrao());
-        // novo.setHistoricos(movimentoFinanceiroCota.getHistoricos());
-        novo.setLancamentoManual(movimentoFinanceiroCota.isLancamentoManual());
-        novo.setMotivo(movimentoFinanceiroCota.getMotivo());
-        novo.setObservacao("Multa proveniente de negociação (encargos)");
-        novo.setParcelaNegociacao(movimentoFinanceiroCota.getParcelaNegociacao());
-        novo.setPrazo(movimentoFinanceiroCota.getPrazo());
-        novo.setStatus(movimentoFinanceiroCota.getStatus());
-        novo.setStatusIntegracao(movimentoFinanceiroCota.getStatusIntegracao());
-        
-        final TipoMovimentoFinanceiro tipo = tipoMovimentoFinanceiroRepository
-                .buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.MULTA);
-        
-        novo.setTipoMovimento(tipo);
-        novo.setUsuario(movimentoFinanceiroCota.getUsuario());
-        novo.setValor(valor);
-        
-        movimentoFinanceiroCotaRepository.adicionar(novo);
-        
-        return novo;
-    }
-    
+
     private void validarDadosEntrada(final List<String> msgs, final List<ParcelaNegociacao> parcelas,
             final BigDecimal valorDividaParaComissao, final Usuario usuarioResponsavel,
             final BigDecimal comissaoParaSaldoDivida, final FormaCobranca formaCobranca) {

@@ -383,14 +383,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			if (listaLancamentos == null || listaLancamentos.isEmpty()) {
 				
-				throw new ValidacaoException(TipoMensagem.WARNING,
- "Lançamento não encontrado!");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Lançamento não encontrado!");
 			}
 			
 			if (idsLancamento.size() != listaLancamentos.size()) {
 				
-				throw new ValidacaoException(TipoMensagem.WARNING,
- "Lançamento não encontrado!");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Lançamento não encontrado!");
 			}
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = null;
@@ -408,13 +406,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				Date novaData = produtoRecolhimento.getNovaData();
 				
-				lancamento.setDataRecolhimentoDistribuidor(novaData);
 				lancamento.setStatus(statusLancamento);
 				lancamento.setDataStatus(new Date());
 				lancamento.setUsuario(usuario);
-				
+
+				this.parciaisService.alterarRecolhimento(lancamento, novaData);
+
 				this.lancamentoRepository.merge(lancamento);
-				
+
 				this.lancamentoService.atualizarRedistribuicoes(lancamento, novaData);
 				
 				this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
