@@ -62,6 +62,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private String codigoDeBarras;
 	
+	private Date dataLancamento;
+	
 	private Date dataRecolhimento;
 	
 	private Date dataConferencia;
@@ -124,6 +126,14 @@ public class ConferenciaEncalheDTO implements Serializable {
 
 	public void setCodigoDeBarras(String codigoDeBarras) {
 		this.codigoDeBarras = codigoDeBarras;
+	}
+
+	public Date getDataLancamento() {
+		return dataLancamento;
+	}
+
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
 	}
 
 	public Date getDataRecolhimento() {

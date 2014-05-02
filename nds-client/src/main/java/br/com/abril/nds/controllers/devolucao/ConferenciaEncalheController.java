@@ -1163,6 +1163,10 @@ public class ConferenciaEncalheController extends BaseController {
 	
 		boolean isVendaNegativaProduto = false; 
 		
+		if(qtdExemplares == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Favor informar o valor de encalhe!");
+		}
+		
         if (usuario != null) {
             
             this.validarAutenticidadeSupervisor(usuario, senha);
@@ -1219,7 +1223,7 @@ public class ConferenciaEncalheController extends BaseController {
                         
                         if (idConferencia.equals(dto.getIdConferenciaEncalhe())) {
                             
-                        	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdJaInformada,indConferenciaContingencia, dto, supervisor);
+                        	isVendaNegativaProduto = this.validarVendaNegativaProduto(qtdJaInformada, indConferenciaContingencia, dto, supervisor);
                         }
                     }
                     
@@ -1241,7 +1245,7 @@ public class ConferenciaEncalheController extends BaseController {
 										 final ConferenciaEncalheDTO dto,
 										 boolean supervisor) {
 		
-		BigInteger qtdeEncalhe = this.obterQuantidadeEncalhe(qtdExemplares,dto);
+		BigInteger qtdeEncalhe = this.obterQuantidadeEncalhe(qtdExemplares, dto);
 		
 		if (this.validarExcedeReparte(qtdeEncalhe, dto, indConferenciaContingencia)) {
 		    
@@ -1699,14 +1703,15 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota = null;
 		
-		if (horaInicio != null){
+		if (horaInicio != null) {
 		
 			final ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
 			controleConfEncalheCota.setDataInicio(horaInicio);
 			
 			final InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 			
-			if (info == null){
+			if (info == null) {
+				
                 throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 			}
 			
@@ -1715,12 +1720,13 @@ public class ConferenciaEncalheController extends BaseController {
 			
 	        this.carregarNotasFiscais(controleConfEncalheCota, info);
 			
-			if (controleConfEncalheCota.getDataOperacao()==null){
+			if (controleConfEncalheCota.getDataOperacao() == null) {
 			    
 				controleConfEncalheCota.setDataOperacao(this.distribuidorService.obterDataOperacaoDistribuidor());
 			}
 			
-            if (controleConfEncalheCota.getUsuario()==null){
+            if (controleConfEncalheCota.getUsuario() == null) {
+            	
 				controleConfEncalheCota.setUsuario(this.usuarioService.getUsuarioLogado());
 			}
 			final Long idBox = conferenciaEncalheSessionScopeAttr.getIdBoxLogado();
@@ -1746,6 +1752,7 @@ public class ConferenciaEncalheController extends BaseController {
 			this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
 				
 			try {
+				
 				this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
 			} catch (final Exception e){
                 LOGGER.error("Erro ao gerar documentos da conferência de encalhe: " + e.getMessage(), e);
@@ -1757,7 +1764,7 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
 			dados.put(TIPOS_DOCUMENTO_IMPRESSAO_ENCALHE, session.getAttribute(TIPOS_DOCUMENTO_IMPRESSAO_ENCALHE));
 			
-			if(dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca()!=null) {
+			if(dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca() != null) {
 				
 				dados.put("listaMensagens", dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca().getListaMensagens());
 				
@@ -1765,7 +1772,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 				String msgSucess = "";
 				
-				if (listaConferenciaEncalheCotaToSave == null || listaConferenciaEncalheCotaToSave.isEmpty()){
+				if (listaConferenciaEncalheCotaToSave == null || listaConferenciaEncalheCotaToSave.isEmpty()) {
                     msgSucess = "Operação efetuada com sucesso. Nenhum ítem encalhado, total cobrado.";
 				} else {
                     msgSucess = "Operação efetuada com sucesso.";
@@ -1774,7 +1781,6 @@ public class ConferenciaEncalheController extends BaseController {
 				dados.put("listaMensagens", 	new String[]{msgSucess});
 				
 			}
-			
 
 			dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
 			
@@ -1831,7 +1837,7 @@ public class ConferenciaEncalheController extends BaseController {
                 itemNotaFiscalEntrada.setProdutoEdicao(produtoEdicao);
                 itemNotaFiscalEntrada.setTipoLancamento(TipoLancamento.LANCAMENTO);
                 itemNotaFiscalEntrada.setDataRecolhimento(conferenciaEncalhe.getDataRecolhimento());
-                itemNotaFiscalEntrada.setDataLancamento(conferenciaEncalhe.getDataConferencia());
+                itemNotaFiscalEntrada.setDataLancamento(conferenciaEncalhe.getDataLancamento());
                 itemNotaFiscalEntrada.setNotaFiscal(notaFiscal);
                 itemNotaFiscalEntrada.setDesconto(conferenciaEncalhe.getPrecoComDesconto());
                 itens.add(itemNotaFiscalEntrada);

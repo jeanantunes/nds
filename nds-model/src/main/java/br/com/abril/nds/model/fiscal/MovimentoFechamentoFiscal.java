@@ -9,6 +9,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,6 +44,7 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 	@Column(name = "QTDE")
 	private BigInteger qtde;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_DESTINATARIO")
 	private TipoDestinatario tipoDestinatario;
 	
