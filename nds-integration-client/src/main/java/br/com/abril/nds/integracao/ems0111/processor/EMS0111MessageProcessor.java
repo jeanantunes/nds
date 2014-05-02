@@ -175,7 +175,21 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			try {
 				//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
-				lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(input.getDataLancamento(), produtoEdicao.getProduto().getFornecedor().getId()));
+				Date dataOriginal = input.getDataLancamento();
+				Date dataSugerida = lancamentoService.obterDataLancamentoValido(dataOriginal, produtoEdicao.getProduto().getFornecedor().getId());
+				
+				if(dataOriginal.compareTo(dataSugerida)!=0){
+					
+				 this.ndsiLoggerFactory.getLogger().logWarning(message,
+				 		 EventoExecucaoEnum.INF_DADO_ALTERADO,
+						 "Alterado Data Lcto Distribuidor : "
+								+ codigoProduto
+								+ " e Edicao: " + edicao
+								+ " na lancamento");
+				
+				 lancamento.setDataLancamentoDistribuidor(dataSugerida);
+				}
+				
 			} catch (Exception e) {
 				return;
 			}
