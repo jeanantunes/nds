@@ -46,10 +46,6 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 	private TipoDestinatario tipoDestinatario;
 	
 	@OneToMany(cascade=CascadeType.ALL, mappedBy="movimentoFechamentoFiscal")
-	/*@JoinTable(name = "MOVIMENTO_FECHAMENTO_FISCAL_MFF_ORIGEM_ITEM", 
-		joinColumns = {@JoinColumn(name = "MOVIMENTO_FECHAMENTO_FISCAL_ID")}, 
-		inverseJoinColumns = {@JoinColumn(name = "ORIGEM_MOVIMENTO_FECHAMENTO_FISCAL_ID")}
-	)*/
 	private List<OrigemItemMovFechamentoFiscal> origemMovimentoFechamentoFiscal;
 
 	public Long getId() {
