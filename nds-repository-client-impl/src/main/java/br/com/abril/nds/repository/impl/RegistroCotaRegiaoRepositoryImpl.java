@@ -1,6 +1,8 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,9 +21,12 @@ import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.RegistroCotaRegiaoRepository;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
@@ -79,20 +84,32 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 	}
 	
 	@Override
-	public BigDecimal calcularFaturamentoCota(Long cotaID) {
+	public BigDecimal calcularFaturamentoCota(Long cotaID, Intervalo<Date> intervalo) {
 		
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" SELECT ");
-		sql.append(" sum((epc.QTDE_RECEBIDA-epc.QTDE_DEVOLVIDA)*pe.PRECO_VENDA) ");
-		sql.append(" from estoque_produto_cota epc  ");
-		sql.append(" JOIN produto_edicao pe ");
-		sql.append(" ON epc.PRODUTO_EDICAO_ID = pe.ID ");
-		sql.append(" where epc.COTA_ID = :idCota ");
+	    String sql = "select sum(" +
+	    		"case when (tp.OPERACAO_ESTOQUE = :opEstEnt) then mec.qtde else (mec.qtde*-1) end "+
+	    		" * pe.PRECO_VENDA  "+
+	    		" ) "+
+	    		" from movimento_estoque_cota mec " +
+                " join tipo_movimento tp on tp.id = mec.tipo_movimento_id " +
+                " join cota c on c.id = mec.cota_id " +
+                " join produto_edicao pe on pe.id = mec.produto_edicao_id " +
+                " join lancamento lanc on lanc.produto_edicao_id = pe.id " +
+                " where c.id = :idCota " +
+                " and lanc.DATA_REC_DISTRIB between :de and :ate " +
+                " and lanc.status in (:statusLancamento) ";
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
+		query.setParameter("opEstEnt", OperacaoEstoque.ENTRADA.name());
 		query.setParameter("idCota", cotaID);
+		query.setParameter("de", intervalo.getDe());
+		query.setParameter("ate", intervalo.getAte());
+		query.setParameterList("statusLancamento", 
+                Arrays.asList(
+                        StatusLancamento.EM_RECOLHIMENTO.name(), 
+                        StatusLancamento.RECOLHIDO.name(), 
+                        StatusLancamento.FECHADO.name()));
 		
 		return (BigDecimal)query.uniqueResult();
 		
