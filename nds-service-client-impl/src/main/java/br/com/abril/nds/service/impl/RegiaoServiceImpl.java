@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import br.com.abril.nds.repository.RegistroCotaRegiaoRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.repository.TipoSegmentoProdutoRepository;
 import br.com.abril.nds.service.RegiaoService;
+import br.com.abril.nds.util.Intervalo;
 
 @Service
 public class RegiaoServiceImpl implements RegiaoService  {
@@ -154,9 +156,9 @@ public class RegiaoServiceImpl implements RegiaoService  {
 
 	@Override
 	@Transactional
-	public BigDecimal calcularFaturamentoCota(Long cotaID) {
+	public BigDecimal calcularFaturamentoCota(Long cotaID, Intervalo<Date> intervalo) {
 
-		return registroCotaRegiaoRepository.calcularFaturamentoCota(cotaID);
+	    return registroCotaRegiaoRepository.calcularFaturamentoCota(cotaID, intervalo);
 	}
 	
 }
