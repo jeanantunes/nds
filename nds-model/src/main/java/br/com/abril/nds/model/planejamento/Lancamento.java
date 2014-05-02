@@ -522,7 +522,8 @@ public class Lancamento implements Serializable {
 
 	public boolean isRecolhido() {
 		
-		return Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO,
+		return Arrays.asList(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO,
+							 StatusLancamento.BALANCEADO_RECOLHIMENTO,
 							 StatusLancamento.EM_RECOLHIMENTO,
 							 StatusLancamento.RECOLHIDO,
 							 StatusLancamento.FECHADO).contains(this.status);
