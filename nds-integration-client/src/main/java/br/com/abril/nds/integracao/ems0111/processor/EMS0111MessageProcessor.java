@@ -108,11 +108,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (!precoPrevistoAtual.equals(precoPrevistoCorrente)) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteracao do Preco Previsto do Produto: "
+					"Alteração do Preço Previsto do Produto  "
 							+ codigoProduto
-							+ " e Edicao: " + edicao
-							+ ", de: " + precoPrevistoAtual
-							+ " para: " + precoPrevistoCorrente);
+							+ " e Edicao " + edicao
+							+ ", de " + precoPrevistoAtual
+							+ " para " + precoPrevistoCorrente);
 			produtoEdicao.setPrecoPrevisto(precoPrevistoCorrente);
 			produtoEdicao.setPrecoVenda(precoPrevistoCorrente);
 			this.getSession().merge(produtoEdicao);
@@ -182,10 +182,12 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 					
 				 this.ndsiLoggerFactory.getLogger().logWarning(message,
 				 		 EventoExecucaoEnum.INF_DADO_ALTERADO,
-						 "Alterado Data Lcto Distribuidor : "
+						 "Alteração da Data Lcto Distribuidor. Produto "
 								+ codigoProduto
-								+ " e Edicao: " + edicao
-								+ " na lancamento");
+								+ " na Edição " + edicao
+								+ " de  " + dataOriginal
+								+ " para  " + dataSugerida
+								+ " no processo de Lancamento");
 				
 				 lancamento.setDataLancamentoDistribuidor(dataSugerida);
 				}
@@ -209,10 +211,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Inserido Lancamento para Produto: "
+					"Inserção de Lancamento para Produto: "
 							+ codigoProduto
-							+ " e Edicao: " + edicao
-							+ " na lancamento");
+							+ " e Edição " + edicao
+							+ " no Lancamento");
 			return;
 			
 		} else {
@@ -236,10 +238,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteracao do REPARTE PREVISTO do Produto: "
-								+ codigoProduto + " e Edicao: " + edicao
-								+ " , de: " + lancamento.getReparte() 
-								+ "para: " + repartePrevisto);
+						"Alteração do REPARTE PREVISTO do Produto "
+								+ codigoProduto + " e Edição " + edicao
+								+ " , de " + lancamento.getReparte() 
+								+ "para " + repartePrevisto);
 				
 				lancamento.setReparte(repartePrevisto);
 			}
@@ -249,10 +251,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			if (null != lancamento.getRepartePromocional() && !lancamento.getRepartePromocional().equals(repartePromocional)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteracao do REPARTE PROMOCIONAL do Produto: "
-								+ codigoProduto + " e Edicao: " + edicao
-								+ " , de: " + lancamento.getRepartePromocional() 
-								+ "para: " + repartePromocional);
+						"Alteração do REPARTE PROMOCIONAL do Produto: "
+								+ codigoProduto + " e Edição " + edicao
+								+ "  de " + lancamento.getRepartePromocional() 
+								+ "para " + repartePromocional);
 				lancamento.setRepartePromocional(repartePromocional);
 			}
 			
@@ -266,11 +268,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			if (null != dtLancamentoAtual && !dtLancamentoAtual.equals(dtLancamentoNovo)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Enviar Alteracao da DATA LANCAMENTO PREVISTO do Produto: "
+						"Alteração da DATA LANCAMENTO PREVISTO do Produto "
 								+ codigoProduto + " e Edicao: " + edicao
-								+ " , de: " + simpleDateFormat.format(
+								+ " de " + simpleDateFormat.format(
 										dtLancamentoAtual)
-								+ "para: " + simpleDateFormat.format(
+								+ "para " + simpleDateFormat.format(
 										dtLancamentoNovo));
 				lancamento.setDataLancamentoPrevista(dtLancamentoNovo);
 				
@@ -283,9 +285,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				
 				this.ndsiLoggerFactory.getLogger().logError(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alterado Lancamento para Produto: "
+						"Alteração do Lancamento para Produto "
 								+ codigoProduto
-								+ " e Edicao: " + edicao
+								+ " e Edição: " + edicao
 								+ " na lancamento");
 			}
 			
@@ -311,11 +313,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteracao para PARCIAL da DATA LANCAMENTO DISTRIBUIDOR do Produto: "
-								+ codigoProduto + " e Edicao: " + edicao
-								+ " , de: " + simpleDateFormat.format(
+						"Alteração para PARCIAL da DATA LANCAMENTO DISTRIBUIDOR do Produto "
+								+ codigoProduto + " e Edição " + edicao
+								+ " de " + simpleDateFormat.format(
 										dtLancamentoNovo)
-								+ " para: " + simpleDateFormat.format(
+								+ " para " + simpleDateFormat.format(
 										dtLancamentoDistribuidor));
 				
 				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
@@ -350,7 +352,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					String.format("Erro ao processar as parcias para o Produto %1$s Edicao %2$s. " + e.getMessage(),
+					String.format("Erro ao processar as parcias para o Produto %1$s Edição %2$s. " + e.getMessage(),
 								  codigoProduto, edicao));
 			
 			return true;
@@ -444,67 +446,5 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	public void posProcess(Object tempVar) {
 		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
 	}
-	
-	/*
-	private Date getDiaMatrizAberta(Date dataLctoDistibuidor,Date dataRecDistibuidor,Message message, String codigoProduto, Long edicao) throws Exception{
-		
-		
-	    	
-		if(datasNaoBalanceaveis==null || datasNaoBalanceaveis.isEmpty()){
-		 return dataLctoDistibuidor;
-		}else if(!datasNaoBalanceaveis.contains(dataLctoDistibuidor) && !dataLctoDistibuidor.before(distribuidorService.obterDataOperacaoDistribuidor())){
-		 return dataLctoDistibuidor;
-		}else{
-			if(datasBalanceaveis!=null && !datasBalanceaveis.isEmpty()){
-			 for(Date data : datasBalanceaveis){
-				
-				if(!data.before(dataLctoDistibuidor)){
-			   
-			        // usa calendar para subtrair data
-			        Calendar calendarData = Calendar.getInstance();
-			        calendarData.setTime(dataLctoDistibuidor);
-			   
-			        int numeroDiasParaSubtrair = 2;
-			        // achar data de início
-			        calendarData.add(Calendar.DATE,numeroDiasParaSubtrair);
-			        
-			        if(data.before(calendarData.getTime())){
-			        	
-			        	this.ndsiLoggerFactory.getLogger().logInfo(message,
-								EventoExecucaoEnum.ERRO_INFRA,
-								"Não foi inserido o lancamento do Produto: "
-										+ codigoProduto
-										+ " e Edicao: " + edicao
-										+ ", data de Recolhimento: " + dataRecDistibuidor
-										+ " para: " + data+ " é menor que 2 dias.");
-			        	throw new Exception("Não foi inserido o lancamento do Produto: "
-											+ codigoProduto
-											+ " e Edicao: " + edicao
-											+ ", data de Recolhimento: " + dataRecDistibuidor
-											+ " para: " + data+ " é menor que 2 dias.");
-			        }else{
-					
-			        	this.ndsiLoggerFactory.getLogger().logInfo(message,
-							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Alteracao da Data Lcto Distribuidor do Produto: "
-									+ codigoProduto
-									+ " e Edicao: " + edicao
-									+ ", de: " + dataLctoDistibuidor
-									+ " para: " + data);
-					
-			        	return data;
-			        }
-					
-				}
-				
-			 }
-		     return	(Date)datasBalanceaveis.toArray()[0];
-			}else {
-			  return dataLctoDistibuidor;
-			}
-		}
-		
-	}
-	*/
 	
 }
