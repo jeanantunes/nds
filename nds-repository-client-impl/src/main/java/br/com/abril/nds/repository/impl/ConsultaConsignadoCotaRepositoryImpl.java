@@ -564,7 +564,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
         
         sql.append("	C.ID as cotaId,  ");
 
-        sql.append("    SUM( COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
+        sql.append("    SUM( COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
 		
         this.setarFromWhereConsultaConsignado(sql, filtro);
 		
@@ -647,7 +647,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
         
         sql.append("       PJ.RAZAO_SOCIAL AS nomeFornecedor, ");
         
-        sql.append("    (  COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ");
+        sql.append("    (  COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) * SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ");
         sql.append("    ) AS total ");
         
         this.setarFromWhereConsultaConsignado(sql, filtro);

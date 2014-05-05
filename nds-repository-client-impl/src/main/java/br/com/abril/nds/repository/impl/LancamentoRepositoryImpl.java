@@ -2621,7 +2621,7 @@ public class LancamentoRepositoryImpl extends
     }
     
 
-    public List<Date> obterDatasLancamentoValido(Long idFornecedor) {
+    public List<Date> obterDatasLancamentoValido(List<Long> idFornecedor) {
 
     	StringBuilder hql = new StringBuilder();
     	
@@ -2645,12 +2645,12 @@ public class LancamentoRepositoryImpl extends
     	hql.append(" and b.sm    in (select dia_semana  ");
     	hql.append(" from distribuicao_fornecedor  ");
     	hql.append(" where operacao_distribuidor = 'DISTRIBUICAO'  ");
-    	hql.append(" and fornecedor_id = :idFornecedor)  ");
+    	hql.append(" and fornecedor_id in (:idFornecedor))  ");
     	hql.append(" order by dt  ");
     	
         Query query = getSession().createSQLQuery(hql.toString());
         
-        query.setParameter("idFornecedor", idFornecedor);
+        query.setParameterList("idFornecedor", idFornecedor);
 
     	return query.list();
     
