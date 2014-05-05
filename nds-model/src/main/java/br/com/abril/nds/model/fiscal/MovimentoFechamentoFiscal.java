@@ -9,6 +9,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,14 +44,11 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 	@Column(name = "QTDE")
 	private BigInteger qtde;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_DESTINATARIO")
 	private TipoDestinatario tipoDestinatario;
 	
 	@OneToMany(cascade=CascadeType.ALL, mappedBy="movimentoFechamentoFiscal")
-	/*@JoinTable(name = "MOVIMENTO_FECHAMENTO_FISCAL_MFF_ORIGEM_ITEM", 
-		joinColumns = {@JoinColumn(name = "MOVIMENTO_FECHAMENTO_FISCAL_ID")}, 
-		inverseJoinColumns = {@JoinColumn(name = "ORIGEM_MOVIMENTO_FECHAMENTO_FISCAL_ID")}
-	)*/
 	private List<OrigemItemMovFechamentoFiscal> origemMovimentoFechamentoFiscal;
 
 	public Long getId() {

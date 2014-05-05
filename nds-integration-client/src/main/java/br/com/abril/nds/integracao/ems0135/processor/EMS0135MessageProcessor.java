@@ -168,15 +168,15 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         
         notafiscalEntrada.setDataEmissao(input.getDataEmissao());
         
-        notafiscalEntrada.setNumero(input.getNotaFiscal() != null ? input.getNotaFiscal().longValue() : 0L);
+        notafiscalEntrada.setNumero(input.getNotaFiscal() != null ? input.getNotaFiscal().longValue() : null);
         
         notafiscalEntrada.setSerie(input.getSerieNotaFiscal() != null && !input.getSerieNotaFiscal().isEmpty()
-                && !"0".equals(input.getSerieNotaFiscal()) ? input.getSerieNotaFiscal() : "0");
+                && !"0".equals(input.getSerieNotaFiscal()) ? input.getSerieNotaFiscal() : null);
         
         notafiscalEntrada.setDataExpedicao(input.getDataEmissao());
         
         notafiscalEntrada.setChaveAcesso(input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty()
-                && !"0".equals(input.getChaveAcessoNF()) ? input.getChaveAcessoNF() : "0");
+                && !"0".equals(input.getChaveAcessoNF()) ? input.getChaveAcessoNF() : null);
         notafiscalEntrada.setCfop(obterCFOP());
         
         notafiscalEntrada.setOrigem(Origem.INTERFACE);

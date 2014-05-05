@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.RegiaoCotaDTO;
@@ -10,6 +11,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
+import br.com.abril.nds.util.Intervalo;
 
 public interface RegistroCotaRegiaoRepository extends Repository<RegistroCotaRegiao, Long> {
 	
@@ -31,6 +33,6 @@ public interface RegistroCotaRegiaoRepository extends Repository<RegistroCotaReg
 
 	List<RegistroCotaRegiao> obterRegistroCotaReagiaPorRegiao(Regiao regiao);
 	
-	BigDecimal calcularFaturamentoCota (Long cotaID);
+	BigDecimal calcularFaturamentoCota (Long cotaID, Intervalo<Date> intervalo);
 	
 }

@@ -2299,6 +2299,24 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				movimentoEstoqueCota,
 				movimentoEstoque,
 				chamadaEncalheCota);
+		
+		if(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()).longValue() < 0) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "A quantidade do encalhe está negativa!");
+		}
+		
+		List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
+		MovimentoFechamentoFiscalCota mff = new MovimentoFechamentoFiscalCota();
+		listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mff, movimentoEstoqueCota));
+		mff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
+		mff.setNotaFiscalLiberadaEmissao(false);
+		mff.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
+		mff.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
+		mff.setTipoDestinatario(TipoDestinatario.COTA);
+		mff.setCota(movimentoEstoqueCota.getCota());
+		mff.setChamadaEncalheCota(chamadaEncalheCota);
+		mff.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
+			
+		movimentoFechamentoFiscalRepository.adicionar(mff);
 	}
 	
 	/**
@@ -2981,8 +2999,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(ctrlConfEncalheCota.getId()!=null) { 
 			
-			final ControleConferenciaEncalheCota controleConferenciaEncalheCotaFromBD = 			
-					controleConferenciaEncalheCotaRepository.buscarPorId(ctrlConfEncalheCota.getId());
+			final ControleConferenciaEncalheCota controleConferenciaEncalheCotaFromBD = controleConferenciaEncalheCotaRepository.buscarPorId(ctrlConfEncalheCota.getId());
 			
 			controleConferenciaEncalheCotaFromBD.setStatus(statusOperacao);
 			controleConferenciaEncalheCotaFromBD.setUsuario(usuario);

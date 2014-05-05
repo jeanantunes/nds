@@ -396,8 +396,8 @@ public class ConferenciaEncalheRepositoryImpl extends
         hql.append(" AND plp.TIPO = 'PARCIAL' ");
         hql.append(" AND lanc.status IN (:statusEmRecolhimento)) IS NOT NULL THEN TRUE ELSE FALSE END AS parcialNaoFinal, ");
         
-		
-		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	 ");
+        hql.append(" LANCAM.DATA_LCTO_DISTRIBUIDOR AS dataLancamento,  	 ");
+        hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	 ");
 		hql.append(" CH_ENCALHE.TIPO_CHAMADA_ENCALHE AS tipoChamadaEncalhe,	 ");
 		hql.append(" PROD.CODIGO AS codigo,");
 		hql.append(" PROD.NOME AS nomeProduto,                  ");
@@ -417,6 +417,9 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append("	inner join CHAMADA_ENCALHE AS CH_ENCALHE ON ");
 		hql.append("	(CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID = CH_ENCALHE.ID)	");
+
+		hql.append(" 	LEFT JOIN CHAMADA_ENCALHE_LANCAMENTO CH_ENC_LANCAMENTO ON (CH_ENCALHE.ID = CH_ENC_LANCAMENTO.CHAMADA_ENCALHE_ID) ");
+		hql.append(" 	LEFT JOIN (SELECT ID AS LANCAMENTO_ID, DATA_LCTO_DISTRIBUIDOR FROM LANCAMENTO LANCAM ) LANCAM ON LANCAM.LANCAMENTO_ID = CH_ENC_LANCAMENTO.LANCAMENTO_ID ");
 		
 		hql.append("	inner join PRODUTO_EDICAO as PROD_EDICAO ON ");
 		hql.append("	(PROD_EDICAO.ID = CH_ENCALHE.PRODUTO_EDICAO_ID)	");
@@ -470,6 +473,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		((SQLQuery)query).addScalar("pacotePadrao");
 
+		((SQLQuery)query).addScalar("dataLancamento");
 		((SQLQuery)query).addScalar("dataRecolhimento");
 		((SQLQuery)query).addScalar("tipoChamadaEncalhe");
 		((SQLQuery)query).addScalar("codigo");
@@ -623,6 +627,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" CH_ENCALHE.SEQUENCIA AS codigoSM, ");
 		
+		hql.append(" LANCAM.DATA_LCTO_DISTRIBUIDOR AS dataLancamento,  	 ");
 		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	 ");
 		hql.append(" CH_ENCALHE.TIPO_CHAMADA_ENCALHE AS tipoChamadaEncalhe,	 ");
 		hql.append(" PROD.CODIGO AS codigo,                                  ");
@@ -660,6 +665,10 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" LEFT JOIN CHAMADA_ENCALHE_COTA CH_ENCALHE_COTA ON (CH_ENCALHE_COTA.ID = CONF_ENCALHE.CHAMADA_ENCALHE_COTA_ID)	");
 		hql.append(" LEFT JOIN CHAMADA_ENCALHE CH_ENCALHE ON (CH_ENCALHE.ID = CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID) ");
+		
+		hql.append(" 	LEFT JOIN CHAMADA_ENCALHE_LANCAMENTO CH_ENC_LANCAMENTO ON (CH_ENCALHE.ID = CH_ENC_LANCAMENTO.CHAMADA_ENCALHE_ID) ");
+		hql.append(" 	LEFT JOIN (SELECT ID AS LANCAMENTO_ID, DATA_LCTO_DISTRIBUIDOR FROM LANCAMENTO LANCAM ) LANCAM ON LANCAM.LANCAMENTO_ID = CH_ENC_LANCAMENTO.LANCAMENTO_ID ");
+		
 		hql.append(" INNER JOIN MOVIMENTO_ESTOQUE_COTA MOV_ESTOQUE_COTA ON (MOV_ESTOQUE_COTA.ID = CONF_ENCALHE.MOVIMENTO_ESTOQUE_COTA_ID) ");
 		hql.append(" INNER JOIN PRODUTO_EDICAO PROD_EDICAO ON ( CONF_ENCALHE.PRODUTO_EDICAO_ID=PROD_EDICAO.ID )           						");
 		hql.append(" INNER JOIN PRODUTO PROD ON (PROD_EDICAO.PRODUTO_ID=PROD.ID)                         						");

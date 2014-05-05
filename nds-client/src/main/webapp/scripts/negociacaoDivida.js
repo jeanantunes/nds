@@ -46,11 +46,11 @@ var negociacaoDividaController = $.extend(true, {
 			params,
 			function(result) {
 
+				$("#selectPagamento").empty();
+				$("#selectBancosBoleto").empty();
+				
 				if (result && result.length > 0) {
 
-					$("#selectPagamento").empty();
-					$("#selectBancosBoleto").empty();
-					
 					$.each(result, function(index, value) {
 						
 						negociacaoDividaController.appendTipoPagamentoOption(value);
@@ -61,6 +61,11 @@ var negociacaoDividaController = $.extend(true, {
 					var optSelected = $("#selectPagamento option:selected");
 
 					if (optSelected) {
+						
+						if (!isNegociacaoAvulsa) {
+							
+							negociacaoDividaController.tipoCobrancaDefaultCota = $("#selectPagamento").val();
+						}
 						
 						negociacaoDividaController.opcaoFormasPagto(optSelected.val()); 
 						negociacaoDividaController.calcularParcelas();
@@ -261,7 +266,23 @@ var negociacaoDividaController = $.extend(true, {
 	},
 	
 	calcularParcelas : function(){
-		if($('#selectPagamento').val() != ""){
+		
+		if ($("#negociacaoPorComissao").is(":checked")) {
+			
+			if ($("#isentaEncargos", negociacaoDividaController.workspace).is(":checked")) {
+
+				$("#dividaSelecionada").html(
+					negociacaoDividaController.valorSelecionadoSemEncargo
+				);
+			
+			} else {
+
+				$("#dividaSelecionada").html(
+					$("#totalSelecionado", this.workspace).html()
+				);
+			}
+			
+		} else if($('#selectPagamento').val() != ""){
 			
 			$.postJSON(contextPath + '/financeiro/negociacaoDivida/calcularParcelas.json',
 					negociacaoDividaController.getParamsCalcularParcelas(),
@@ -400,8 +421,6 @@ var negociacaoDividaController = $.extend(true, {
 					$("#negociacaoPorComissao",negociacaoDividaController.workspace).attr("disabled", false);
 					$("#negociacaoPorComissao-tr",negociacaoDividaController.workspace).show();
 				}
-
-				negociacaoDividaController.tipoCobrancaDefaultCota = result[1];
 
 				$("#selectPagamento", negociacaoDividaController.workspace).val(result[1]);
 
@@ -551,14 +570,21 @@ var negociacaoDividaController = $.extend(true, {
 			});
 		}
 		
+		var valorDividaComissao = $('#totalSelecionado', negociacaoDividaController.wokspace).html();
+		
+		if ($("#isentaEncargos", negociacaoDividaController.workspace).is(":checked")) {
+
+			valorDividaComissao = negociacaoDividaController.valorSelecionadoSemEncargo;
+		}
+
+		params.push({
+			name: 'valorDividaComissao',
+			value: valorDividaComissao
+		});
+
 		params.push({
 			name: 'idBanco',
 			value: $("#selectBancosBoleto", negociacaoDividaController.wokspace).val()
-		});
-		
-		params.push({
-			name: 'valorDividaComissao',
-			value: $('#totalSelecionado', negociacaoDividaController.wokspace).html()
 		});
 		
 		params.push({
@@ -596,7 +622,14 @@ var negociacaoDividaController = $.extend(true, {
 	},
 
 	imprimirNegociacao : function() {
-		var url = contextPath + '/financeiro/negociacaoDivida/imprimirNegociacao?valorDividaSelecionada=' + $('#totalSelecionado', negociacaoDividaController.wokspace).html();
+		
+		var totalDivida = $('#totalSelecionado', negociacaoDividaController.wokspace).html();
+		
+		if ($("#isentaEncargos").is(":checked")) {
+			totalDivida = negociacaoDividaController.valorSelecionadoSemEncargo;
+		}
+
+		var url = contextPath + '/financeiro/negociacaoDivida/imprimirNegociacao?valorDividaSelecionada=' + totalDivida;
 		window.open(url, '_blank');
 	},
 
@@ -854,7 +887,7 @@ var negociacaoDividaController = $.extend(true, {
 	},
 	
 	mostraPgto : function() {
-		
+		negociacaoDividaController.atualizarFormaCobranca();
 		negociacaoDividaController.obterParcelasValorMinimo();
 		
 		$('.comissaoAtual', negociacaoDividaController.workspace).hide();
