@@ -2,6 +2,7 @@ package br.com.abril.nds.model.planejamento;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -22,17 +23,21 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.DateUtil;
 
 /**
  * @author T30541
@@ -102,7 +107,7 @@ public class Lancamento implements Serializable {
 	@OneToMany(orphanRemoval=true)
 	private Set<ItemRecebimentoFisico> recebimentos = new HashSet<ItemRecebimentoFisico>();
 	
-	@OneToMany(mappedBy = "lancamento", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "lancamento", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<HistoricoLancamento> historicos = new ArrayList<HistoricoLancamento>();
 		
 	@Column(name = "NUMERO_REPROGRAMACOES")
@@ -141,6 +146,9 @@ public class Lancamento implements Serializable {
 	@Column(name = "NUMERO_LANCAMENTO", nullable = true)
 	private Integer numeroLancamento;
 	
+	@Transient
+	public static final long PEB_MINIMA_LANCAMENTO = 7;
+
 	public Lancamento(Long id) {
 		this.id= id; 
 	}
@@ -443,4 +451,107 @@ public class Lancamento implements Serializable {
 			this.status = StatusLancamento.CONFIRMADO;
 		}
 	}
+
+	/**
+	 * Caso o lançamento seja parcial, será necessário reajustar os próximos períodos para se adequar
+	 * à nova data de recolhimento. <br/>
+	 * Ambas datas devem ser validadas antes. Este método não valida se o dia é útil ou não.
+	 * 
+	 * <br /> <br />
+	 * 
+	 * <b> Utilizar este método dentro de uma transação para garantir a integridade do objeto. </b>
+	 * 
+	 * @param dataRecolhimento - Data de recolhimento do lançamento atual. 
+	 * @param proximaDataLancamento - Data do próximo lançamento neste período 
+	 * (calculada, conforme o parâmetro <code> Fator de Relançamento Parcial </code> do distribuidor).
+	 */
+	public void novoRecolhimentoParcial(Date dataRecolhimento, Date proximaDataLancamento) {
+		
+		this.ajustarRecolhimentoParcial(dataRecolhimento, proximaDataLancamento);
+		
+		this.periodoLancamentoParcial.getLancamentoParcial().incrementarNumeroPeriodos(this.periodoLancamentoParcial.getNumeroPeriodo());
+	}
+
+	/**
+	 * Quando se altera um lançamento parcial, é necessário reajustar o lançamento do
+	 * próximo período para se adequar à nova data de recolhimento. <br/>
+	 * Ambas datas devem ser validadas antes. Este método não valida se o dia é útil ou não.
+	 * 
+	 * <br /> <br />
+	 * 
+	 * <b> Utilizar este método dentro de uma transação para garantir a integridade do objeto. </b>
+	 * 
+	 * @param dataRecolhimento - Data de recolhimento do lançamento atual. 
+	 * @param proximaDataLancamento - Data do próximo lançamento neste período 
+	 * (calculada, conforme o parâmetro <code> Fator de Relançamento Parcial </code> do distribuidor).
+	 */
+	public void alterarRecolhimentoParcial(Date dataRecolhimento, Date proximaDataLancamento) {
+		
+		this.ajustarRecolhimentoParcial(dataRecolhimento, proximaDataLancamento);
+	}
+
+	/**
+	 * Realiza os ajustes do lançamento e os períodos que o sucedem. 
+	 * 
+	 * @param dataRecolhimento
+	 * @param proximaDataLancamento
+	 */
+	private void ajustarRecolhimentoParcial(Date dataRecolhimento, Date proximaDataLancamento) {
+
+		this.dataRecolhimentoDistribuidor = dataRecolhimento;
+
+		if (this.periodoLancamentoParcial == null) {
+
+			return;
+		}
+
+		this.validarPEB();
+
+		this.periodoLancamentoParcial.reajustarProximoLancamentoParcial(proximaDataLancamento);
+	}
+
+	/**
+	 * Valida a PEB do lançamento, que não poder ser menor que {@value #PEB_MINIMA_LANCAMENTO} dias.
+	 */
+	public void validarPEB() {
+		
+		if (DateUtil.obterDiferencaDias(this.dataLancamentoDistribuidor, this.dataRecolhimentoDistribuidor) < PEB_MINIMA_LANCAMENTO) {
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Não podem haver períodos com peb menor que %s dias.", PEB_MINIMA_LANCAMENTO));
+		}
+	}
+
+	public boolean isRecolhido() {
+		
+		return Arrays.asList(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO,
+							 StatusLancamento.BALANCEADO_RECOLHIMENTO,
+							 StatusLancamento.EM_RECOLHIMENTO,
+							 StatusLancamento.RECOLHIDO,
+							 StatusLancamento.FECHADO).contains(this.status);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Lancamento other = (Lancamento) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
 }

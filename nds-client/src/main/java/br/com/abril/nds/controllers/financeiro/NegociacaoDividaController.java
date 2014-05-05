@@ -5,8 +5,6 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
 import br.com.abril.nds.controllers.BaseController;
@@ -137,43 +136,29 @@ public class NegociacaoDividaController extends BaseController {
 	}
 
 	@Post
-	public void atualizarTiposCobrancaNegociacao(Integer numeroCota, boolean isNegociacaoAvulsa) {
+	public void atualizarFormaCobranca(Integer numeroCota, boolean isNegociacaoAvulsa) {
 		
-		List<TipoCobranca> tiposCobranca = this.obterTiposCobrancaNegociacao(numeroCota, isNegociacaoAvulsa);
+		List<FormaCobrancaDefaultVO> formaCobranca = this.obterFormaCobrancaNegociacao(numeroCota, isNegociacaoAvulsa);
 		
-		this.result.use(Results.json()).withoutRoot().from(this.tiposCobrancaToMap(tiposCobranca)).recursive().serialize();
+		this.result.use(Results.json()).from(formaCobranca, "result").recursive().serialize();
 	}
 	
-	private List<TipoCobranca> obterTiposCobrancaNegociacao(Integer numeroCota, boolean isNegociacaoAvulsa) {
+	private List<FormaCobrancaDefaultVO> obterFormaCobrancaNegociacao(Integer numeroCota, boolean isNegociacaoAvulsa) {
 		
-		Set<TipoCobranca> tiposCobranca = new HashSet<TipoCobranca>();
+		List<FormaCobrancaDefaultVO> tiposCobranca = new ArrayList<FormaCobrancaDefaultVO>();
 		
 		if (isNegociacaoAvulsa) {
 			
-			tiposCobranca = new HashSet<TipoCobranca>(this.cobrancaService.obterTiposCobrancaCadastradas());
+			tiposCobranca = this.formaCobrancaService.obterFormaCobrancaDefault();
 
 		} else {
 
-			tiposCobranca = new HashSet<TipoCobranca>(this.parametroCobrancaCotaService.obterTiposCobrancaCota(numeroCota));
+			tiposCobranca = this.parametroCobrancaCotaService.obterFormaCobrancaCotaDefault(numeroCota);
 		}
-		
-		tiposCobranca.remove(TipoCobranca.BOLETO_EM_BRANCO);
-		
-		return new ArrayList<>(tiposCobranca);
+
+		return tiposCobranca;
 	}
 	
-	private HashMap<TipoCobranca, String> tiposCobrancaToMap(Collection<TipoCobranca> tiposCobranca) {
-
-		HashMap<TipoCobranca, String> map = new HashMap<TipoCobranca, String>();
-		
-		for (TipoCobranca tipoCobranca : tiposCobranca) {
-			
-			map.put(tipoCobranca, tipoCobranca.getDescricao());
-		}
-		
-		return map;
-	}
-
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroConsultaNegociacaoDivida filtro, String sortname, String sortorder, int rp, int page) {
 		
@@ -394,27 +379,25 @@ public class NegociacaoDividaController extends BaseController {
 				((FiltroConsultaNegociacaoDivida)this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA))
 				.getNumeroCota();
 		
-		if (comissao == null || BigDecimal.ZERO.compareTo(comissao) == 0) {
-			
-			this.result.use(Results.json()).from("", "result").serialize();
-		} else {
-			
-			List<Object> valoresDesconto = new ArrayList<Object>();
+		List<Object> valoresDesconto = new ArrayList<Object>();
+
+		if (comissao != null && BigDecimal.ZERO.compareTo(comissao) != 0) {
+
 			valoresDesconto.add(comissao);
-			
-			//forma cobrança 'default' da cota
-			FormaCobranca formaDefault = 
-				this.formaCobrancaService.obterFormaCobrancaPrincipalCota(numeroCota);
-			
-			if (formaDefault == null){
-				
-				formaDefault = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
-			}
-			
-			valoresDesconto.add(formaDefault.getTipoCobranca());
-			
-			this.result.use(Results.json()).from(valoresDesconto, "result").recursive().serialize();
 		}
+
+		//forma cobrança 'default' da cota
+		FormaCobranca formaDefault = 
+			this.formaCobrancaService.obterFormaCobrancaPrincipalCota(numeroCota);
+		
+		if (formaDefault == null){
+			
+			formaDefault = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		}
+		
+		valoresDesconto.add(formaDefault.getTipoCobranca());
+		
+		this.result.use(Results.json()).from(valoresDesconto, "result").recursive().serialize();
 	}
 	
 	public void imprimirNegociacao(String valorDividaSelecionada) throws Exception{

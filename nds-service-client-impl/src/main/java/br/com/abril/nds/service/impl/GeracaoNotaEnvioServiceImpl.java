@@ -216,8 +216,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
                 GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA,
                 GrupoMovimentoEstoque.SOBRA_DE,
                 GrupoMovimentoEstoque.SOBRA_EM,
-                GrupoMovimentoEstoque.SOBRA_ENVIO_PARA_COTA,
-                GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO   
+                GrupoMovimentoEstoque.SOBRA_ENVIO_PARA_COTA
         };
         
         final Map<Long, BigInteger> mapProdutos =

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -127,6 +128,8 @@ public interface FormaCobrancaService {
      */
     FormaCobranca obterFormaCobrancaPrincipalDistribuidor();
 
+    List<FormaCobrancaDefaultVO> obterFormaCobrancaDefault();
+    
 	FormaCobranca obterFormaCobrancaPrincipalCota(Integer numeroCota);
 
 	/**
@@ -138,4 +141,6 @@ public interface FormaCobrancaService {
 	 * @return Map<Fornecedor,List<FormaCobranca>>
 	 */
 	Map<Fornecedor, List<FormaCobranca>> obterMapFornecedorFormasCobranca(Date dataOperacao);
+
+    FormaCobranca obterFormaCobrancaPrincipalDistribuidorCompleto();
 }

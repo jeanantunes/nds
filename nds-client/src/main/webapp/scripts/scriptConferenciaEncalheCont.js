@@ -479,6 +479,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		var totalExemplaresFooter = 0;
 		
+		var cotaAVista = result.cotaAVista;
+		
 		ConferenciaEncalheCont.indDistribuidorAceitaJuramentado = result.indDistribuidorAceitaJuramentado;
 		
 		$("._dadosConfEncalhe", ConferenciaEncalheCont.workspace).remove();
@@ -488,7 +490,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			$.each(modeloConferenciaEncalhe, 
 				function(index, value) {
 				
-					var parcial = value.parcial;
+					var parcialNaoFinal =  value.parcialNaoFinal;
 				
 					var _class;
 					
@@ -552,7 +554,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					if (ConferenciaEncalheCont.indDistribuidorAceitaJuramentado == true) {
 
-						if(parcial == true) {
+						if(parcialNaoFinal == true && !cotaAVista) {
 							
 							inputCheckBoxJuramentada = '<input isEdicao="true" type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
 							+ ' onchange="ConferenciaEncalheCont.valorAnteriorInput = this.defaultValue;ConferenciaEncalheCont.verificarPermissaoSuperVisor('+ index +');" id="checkGroupJuramentada_' + index + '"/>';
@@ -887,6 +889,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 							$("#numEdicaoNovoEncalhe", ConferenciaEncalheCont.workspace).val(result2.numeroEdicao);
 							$("#precoCapaNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(result2.precoVenda).toFixed(2));
 							$("#descontoNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(result2.desconto).toFixed(4));
+							
+							if(result2.parcial){
+								$(".isParcial", ConferenciaEncalheCont.workspace).show();
+							}
+							else{
+								$(".isParcial", ConferenciaEncalheCont.workspace).hide();
+							}
 						}
 							
 						
@@ -894,6 +903,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 						ConferenciaEncalheCont.limparCamposNovoEncalhe();
 						$("#lstProdutos", ConferenciaEncalheCont.workspace).focus();
+						$(".isParcial", ConferenciaEncalheCont.workspace).show();
 					}, 
 					true, "idModalNovoEncalhe"
 				);
@@ -955,6 +965,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#descontoNovoEncalhe", ConferenciaEncalheCont.workspace).val("");
 		$("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val("");
 		$("#valorTotalNovoEncalhe", ConferenciaEncalheCont.workspace).val("");
+		
+		$(".isParcial", ConferenciaEncalheCont.workspace).show();
 		
 		if(ConferenciaEncalheCont.indDistribuidorAceitaJuramentado){
 			$("#checkboxJueramentadaNovoEncalhe", ConferenciaEncalheCont.workspace).removeAttr('disabled');

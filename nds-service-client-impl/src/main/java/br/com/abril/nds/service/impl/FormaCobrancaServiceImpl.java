@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.FormaCobrancaExcepion;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -572,6 +573,24 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	public FormaCobranca obterFormaCobrancaPrincipalDistribuidor() {
 
 		return this.formaCobrancaRepository.obterFormaCobranca();
+	}
+	
+	/**
+     * Obtem FormaCobranca principal do Distribuidor com dados de fornecedor e concentração
+     * 
+     * @return FormaCobranca
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public FormaCobranca obterFormaCobrancaPrincipalDistribuidorCompleto() {
+
+        return this.formaCobrancaRepository.obterFormaCobrancaCompleto();
+    }
+	@Override
+	@Transactional(readOnly=true)
+	public List<FormaCobrancaDefaultVO> obterFormaCobrancaDefault() {
+		
+		return this.formaCobrancaRepository.obterFormaCobrancaDefault();
 	}
 
 	@Override

@@ -53,7 +53,6 @@ import br.com.abril.nds.model.estoque.CobrancaControleConferenciaEncalheCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
-import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
@@ -90,7 +89,6 @@ import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
-import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
@@ -155,9 +153,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
-	
-	@Autowired
-	private EstoqueProdutoCotaJuramentadoRepository estoqueProdutoCotaJuramentadoRepository;
 	
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
@@ -951,6 +946,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return this.conferenciaEncalheRepository.isCromoParcialNaoFinal(idProdutoEdicao);
 	}
+	
+	@Override
+    @Transactional(readOnly = true)
+    public boolean isParcialNaoFinal(final Long idProdutoEdicao) {
+        
+        return this.conferenciaEncalheRepository.isParcialNaoFinal(idProdutoEdicao);
+    }
 	
 	    /**
      * Obtém lista de conferenciaEncalhe com os produtosEdicao que fazem parte
@@ -2748,17 +2750,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						tipoMovimentoEstoqueCota,
 						this.distribuidorService.obterDataOperacaoDistribuidor());
 		
-		if(conferenciaEncalheDTO.getJuramentada()!= null && conferenciaEncalheDTO.getJuramentada() ){
-			
-			final TipoMovimentoEstoque tipoMovimentoEstoque = mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO);
-			
-			final EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado = movimentoEstoqueService.atualizarEstoqueProdutoCotaJuramentado(movimentoEstoqueCota,tipoMovimentoEstoque);
-			
-			movimentoEstoqueCota.setEstoqueProdutoCotaJuramentado(estoqueProdutoCotaJuramentado);
-			
-			movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
-		}
-		
 		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
 		if(valoresAplicados == null){
 			valoresAplicados = new ValoresAplicados(BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
@@ -2822,8 +2813,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				? false : conferenciaEncalheDTO.getJuramentada();
 		
 		final ChamadaEncalhe chamadaEncalhe = 
-			(chamadaEncalheCota != null) ?
-				chamadaEncalheCota.getChamadaEncalhe() : null;
+    			(chamadaEncalheCota != null) ?
+    				chamadaEncalheCota.getChamadaEncalhe() : null;
 				
 		final TipoChamadaEncalhe tipoChamadaEncalhe = 
 			(chamadaEncalhe != null) ? chamadaEncalhe.getTipoChamadaEncalhe() : null;
@@ -3017,69 +3008,33 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		this.movimentoEstoqueCotaRepository.alterar(movimentoEstoqueCota);
 
-		final GrupoMovimentoEstoque grupoMovimentoEstoque = 
-			((TipoMovimentoEstoque) movimentoEstoqueCota.getTipoMovimento())
-				.getGrupoMovimentoEstoque();
-		
-		if (GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO.equals(grupoMovimentoEstoque)) {
-			
-			final EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado =
-				movimentoEstoqueCota.getEstoqueProdutoCotaJuramentado();
-			
-			if(estoqueProdutoCotaJuramentado == null) {
-				
-				throw new ValidacaoException(TipoMensagem.ERROR,
-						"Produto ["
-								+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo() + " - "
-								+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getNomeComercial()
-								+ " - " + movimentoEstoqueCota.getProdutoEdicao().getNumeroEdicao()
-                    + "] não possui registro de estoque da cota.");
-				
-			}
-			
-			BigInteger qtdDevolvida = 
-				estoqueProdutoCotaJuramentado.getQtde() != null ? 
-					estoqueProdutoCotaJuramentado.getQtde() : BigInteger.ZERO;
-					
-			qtdDevolvida = 
-				qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
-						
-			estoqueProdutoCotaJuramentado.setQtde(qtdDevolvida);
-			
-			validarAlteracaoEstoqueProdutoCota(estoqueProdutoCotaJuramentado.getQtde(), movimentoEstoqueCota.getProdutoEdicao());
-			
-			this.estoqueProdutoCotaJuramentadoRepository.alterar(estoqueProdutoCotaJuramentado);
-			
-		} else {
-			
-			final EstoqueProdutoCota estoqueProdutoCota =  
-				movimentoEstoqueCota.getEstoqueProdutoCota();
+		final EstoqueProdutoCota estoqueProdutoCota =  
+			movimentoEstoqueCota.getEstoqueProdutoCota();
 
+		
+		if(estoqueProdutoCota == null) {
 			
-			if(estoqueProdutoCota == null) {
-				
-				throw new ValidacaoException(TipoMensagem.ERROR,
-						"Produto ["
-								+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo() + " - "
-								+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getNomeComercial()
-								+ " - " + movimentoEstoqueCota.getProdutoEdicao().getNumeroEdicao()
-                    + "] não possui registro de estoque da cota.");
-				
-			}
+			throw new ValidacaoException(TipoMensagem.ERROR,
+					"Produto ["
+							+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo() + " - "
+							+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getNomeComercial()
+							+ " - " + movimentoEstoqueCota.getProdutoEdicao().getNumeroEdicao()
+                + "] não possui registro de estoque da cota.");
 			
-			BigInteger qtdDevolvida = 
-				estoqueProdutoCota.getQtdeDevolvida() != null ? 
-					estoqueProdutoCota.getQtdeDevolvida() : BigInteger.ZERO;
-					
-			qtdDevolvida = 
-				qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
-						
-			estoqueProdutoCota.setQtdeDevolvida(qtdDevolvida);
-			
-			validarAlteracaoEstoqueProdutoCota(estoqueProdutoCota.getQtdeDevolvida(), movimentoEstoqueCota.getProdutoEdicao());
-			
-			this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
 		}
+		
+		BigInteger qtdDevolvida = 
+			estoqueProdutoCota.getQtdeDevolvida() != null ? 
+				estoqueProdutoCota.getQtdeDevolvida() : BigInteger.ZERO;
+				
+		qtdDevolvida = 
+			qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
+					
+		estoqueProdutoCota.setQtdeDevolvida(qtdDevolvida);
+		
+		validarAlteracaoEstoqueProdutoCota(estoqueProdutoCota.getQtdeDevolvida(), movimentoEstoqueCota.getProdutoEdicao());
+		
+		this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
 	}
 	
 	
