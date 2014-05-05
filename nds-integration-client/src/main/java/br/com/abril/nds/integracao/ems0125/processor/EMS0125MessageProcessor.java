@@ -59,7 +59,7 @@ public class EMS0125MessageProcessor extends AbstractRepository implements
 		produtoEdicao.setChamadaCapa(input.getCodBarra());
 		ndsiLoggerFactory.getLogger().logInfo(message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
-				"Atualizacao do ProdutoEdicao " + input.getEdicao());
+				"Atualizacao do Código de Barra para "+input.getCodBarra()+" do Produto "+input.getCodProd()+" Edição " + input.getEdicao() );
 
 	}
 	
