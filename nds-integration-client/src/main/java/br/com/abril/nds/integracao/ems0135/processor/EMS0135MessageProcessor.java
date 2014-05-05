@@ -113,7 +113,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                         message,
                         EventoExecucaoEnum.INF_DADO_ALTERADO,
                         String.format("Nota Fiscal de Entrada " + input.getNumeroNotaEnvio()
-                                + " atualizada com chave de acesso NFE de " + chaveAcessoAntiga + " para "
+                                + " atualizada com chave de acesso NFE de " + chaveAcessoAntiga.trim() + " para "
                                 + input.getChaveAcessoNF() + " com sucesso!"));
                 return;
             }
@@ -137,7 +137,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 this.getSession().persist(notafiscalEntrada);
                 
                 this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.SEM_DOMINIO,
-                        String.format("Nota Fiscal inserida no sistema: %1$s", input.getNotaFiscal()));
+                        String.format("Nota Fiscal de Entrada: %1$s"
+                        		    + " inserida com chave de acesso NFE de " + input.getChaveAcessoNF().trim(), input.getNotaFiscal()));
                 
             } else {
                 
