@@ -864,6 +864,7 @@ var negociacaoDividaController = $.extend(true, {
 		$('#gridCheque', negociacaoDividaController.workspace).hide();
 		$('#divChequeDeposito', negociacaoDividaController.workspace).hide();
 		$('#divBanco', negociacaoDividaController.workspace).hide();
+		$('#checknegociacaoAvulsa', negociacaoDividaController.workspace).attr("checked", false);
 	},
 	
 	comissaoCota : function() {
