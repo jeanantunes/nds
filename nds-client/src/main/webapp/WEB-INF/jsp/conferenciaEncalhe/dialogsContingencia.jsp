@@ -182,9 +182,9 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Juramentada:</td>
+			<td class="isParcial">Juramentada:</td>
 			<td>
-				<input isEdicao="true" type="checkbox" name="checkbox" id="checkboxJueramentadaNovoEncalhe" />
+				<input isEdicao="true" type="checkbox" name="checkbox" id="checkboxJueramentadaNovoEncalhe" class="isParcial"/>
 			</td>
 		</tr>
 	</table>
