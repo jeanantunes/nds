@@ -914,9 +914,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         final List<Date> datasRecolhimento = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(cota.getNumeroCota(), 
                 																						  dataOperacao);
         
-        // CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE
-        // E ENVIO_ENCALHE)
-        movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, datasRecolhimento, usuario, null, null); 
+        if(datasRecolhimento != null && !datasRecolhimento.isEmpty()) {
+
+            // CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE
+            // E ENVIO_ENCALHE)
+            movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, datasRecolhimento, usuario, null, null); 
+        	
+        }
+        
     }
     
     @Override

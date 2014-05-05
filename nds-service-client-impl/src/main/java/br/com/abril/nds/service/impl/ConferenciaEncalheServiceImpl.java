@@ -963,6 +963,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
      * @param listaConferenciaEncalhe
      */
 	private List<ConferenciaEncalheDTO> obterListaConferenciaEncalheContingencia(
+			Date dataOperacao,
 			final Integer numeroCota,
 			final List<Date> datasRecolhimento,
 			final List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
@@ -996,8 +997,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		for(final ConferenciaEncalheDTO conferencia : listaConferenciaEncalheContingencia) {
 			final long id = (-1 * (idInicial++));
+			
 			conferencia.setIdConferenciaEncalhe(Long.valueOf(id));
-			conferencia.setDia(obterQtdeDiaAposDataRecolhimentoDistribuidor(conferencia.getDataRecolhimento()));
+			
+			final Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(dataOperacao, 
+					conferencia.getDataRecolhimento(),
+                    numeroCota,
+                    conferencia.getIdProdutoEdicao(), null);
+			
+			conferencia.setDia(diaRecolhimento);
+			
 		}
 		
 		return listaConferenciaEncalheContingencia;
@@ -1038,6 +1047,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional
 	@Override
     public BigDecimal obterValorTotalReparte(final Integer numeroCota, final List<Date> datas) {
+		
+		if(datas == null || datas.isEmpty()) {
+			return BigDecimal.ZERO;
+		}
 		
 		BigDecimal reparte = chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(numeroCota, datas, false, false);
 		
@@ -1137,31 +1150,36 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			infoConfereciaEncalheCota.setIdControleConferenciaEncalheCota(controleConferenciaEncalheCota.getId());
 			
 			infoConfereciaEncalheCota.setNotaFiscalEntradaCota(controleConferenciaEncalheCota.getNotaFiscalEntradaCotaPricipal());
+			
 		} else {
 			
 			infoConfereciaEncalheCota.setEncalhe(BigDecimal.ZERO);
+			
+		}
+		
+		if(infoConfereciaEncalheCota.getListaConferenciaEncalhe() == null) {
+			infoConfereciaEncalheCota.setListaConferenciaEncalhe(new ArrayList<ConferenciaEncalheDTO>());
 		}
 		
 		final List<Date> datasRecolhimento = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(numeroCota, dataOperacao);
-		
+	
 		if(indConferenciaContingencia) {
 			
-			final List<ConferenciaEncalheDTO> listaConferenciaEncalheContingencia = 
-					obterListaConferenciaEncalheContingencia(numeroCota, datasRecolhimento, infoConfereciaEncalheCota.getListaConferenciaEncalhe());
+			List<ConferenciaEncalheDTO> listaConferenciaEncalheContingencia = null;
 			
-			if(listaConferenciaEncalheDTO!=null && !listaConferenciaEncalheDTO.isEmpty()) {
-				
-				listaConferenciaEncalheDTO.addAll(listaConferenciaEncalheContingencia);
-				
-				infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
-			} else {
-				
-				infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheContingencia);
+			if(datasRecolhimento!=null && !datasRecolhimento.isEmpty()) {
+				listaConferenciaEncalheContingencia = obterListaConferenciaEncalheContingencia(dataOperacao, numeroCota, datasRecolhimento, infoConfereciaEncalheCota.getListaConferenciaEncalhe());
 			}
+			
+			if(listaConferenciaEncalheContingencia!=null && !listaConferenciaEncalheContingencia.isEmpty()) {
+				carregarDiaRecolhimento(numeroCota, dataOperacao, listaConferenciaEncalheContingencia);
+				infoConfereciaEncalheCota.getListaConferenciaEncalhe().addAll(listaConferenciaEncalheContingencia);
+			}
+			
 		}
 				
 		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-				
+		
 		this.debitoCreditoCotaService.carregarDadosDebitoCreditoDaCota(infoConfereciaEncalheCota, cota, datasRecolhimento);
 		
 		infoConfereciaEncalheCota.setCota(cota);
@@ -1185,6 +1203,33 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return infoConfereciaEncalheCota;
 	}
 	
+	/**
+	 * Carrega o dia de recolhimento nos itens de conferencia
+	 * 
+	 * @param numeroCota
+	 * @param dataOperacao
+	 * @param listaConferenciaEncalheDTO
+	 */
+	private void carregarDiaRecolhimento(
+			Integer numeroCota,
+			Date dataOperacao,
+			List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+		
+		for(ConferenciaEncalheDTO conf : listaConferenciaEncalhe) {
+			
+			final Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(
+					dataOperacao, 
+					conf.getDataRecolhimento(),
+	                numeroCota,
+	                conf.getIdProdutoEdicao(), 
+	                null);
+			
+			conf.setDia(diaRecolhimento);
+			
+		}
+		
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterDetalheConferenciaEncalhe(java.lang.Integer, java.lang.Long, java.lang.Long)
@@ -1237,30 +1282,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return conferenciaEncalheDTO;
 	}
-
-	    /**
-     * Retona a quantidade de dias que a dataOperacao é maior que a
-     * dataRecolhimentoDistribuidor mais 1. Caso a dataOperacao seja menor que a
-     * dataRecolhimentoDistribuidor retornará null.
-     * 
-     * @param dataRecolhimentoDistribuidor
-     * 
-     * @return Integer
-     */
-	private Integer obterQtdeDiaAposDataRecolhimentoDistribuidor(final Date dataRecolhimentoDistribuidor) {
-		
-		final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-		
-		if(dataOperacao.compareTo(dataRecolhimentoDistribuidor) < 0 ) {
-			return null;
-		}
-		
-		final Long qtde = DateUtil.obterDiferencaDias(dataRecolhimentoDistribuidor, dataOperacao);
-		
-		final Integer posicaoDia = (qtde.intValue() + 1);
-		
-		return posicaoDia;
-	}
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -1300,11 +1321,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			if( chamadaEncalheCota != null) {
 				
 				final ChamadaEncalhe chamadaEncalhe = chamadaEncalheCota.getChamadaEncalhe();
-				
-				final Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 				produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 				produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
-				produtoEdicaoDTO.setDia(dia);
 				produtoEdicaoDTO.setReparte(chamadaEncalheCota.getQtdePrevista());
 			}
 			else{
@@ -1365,9 +1383,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		produtoEdicaoDTO.setDataRecolhimentoDistribuidor(dataRecolhimentoDistribuidor);
 		
-		final Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(dataRecolhimentoDistribuidor);
-		
-		produtoEdicaoDTO.setDia(dia);
 	}
 	
 	@Override
@@ -1408,10 +1423,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				final ChamadaEncalhe chamadaEncalhe = chamadaEncalheCota.getChamadaEncalhe();
 				
-				final Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 				produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 				produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
-				produtoEdicaoDTO.setDia(dia);
 				produtoEdicaoDTO.setReparte(chamadaEncalheCota.getQtdePrevista());
 			}
 			else{
@@ -1530,10 +1543,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					
 					final ChamadaEncalhe chamadaEncalhe = chamadaEncalheCota.getChamadaEncalhe();
 					
-					final Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 					produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 					produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
-					produtoEdicaoDTO.setDia(dia);
 					produtoEdicaoDTO.setReparte(chamadaEncalheCota.getQtdePrevista());
 				}
 				else{
@@ -1878,7 +1889,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
         
         final List<Date> datasRecolhimento = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(controleConferenciaEncalheCota.getCota().getNumeroCota(), 
         		                                                                                          controleConferenciaEncalheCota.getDataOperacao());
-		
+        
 		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
 			
 			
@@ -1887,13 +1898,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					                                         controleConferenciaEncalheCota.getCota().getId(), 
 					                                         controleConferenciaEncalheCota.getDataOperacao(), 
 					                                         true);
-
-			//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE)
-			this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
-					                                                         datasRecolhimento,
-																			 controleConferenciaEncalheCota.getUsuario(),
-																			 controleConferenciaEncalheCota.getId(),
-																			 null);
+			
+			if(datasRecolhimento!=null && !datasRecolhimento.isEmpty()) {
+				//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE)
+				this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
+						                                                         datasRecolhimento,
+																				 controleConferenciaEncalheCota.getUsuario(),
+																				 controleConferenciaEncalheCota.getId(),
+																				 null);
+			}
+			
 		
 			final boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(controleConferenciaEncalheCota.getCota().getId(), 
 					                                                                                              controleConferenciaEncalheCota.getDataOperacao());
@@ -1935,13 +1949,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 			
 			final Integer diasUteisPostergar = 1;
+			
+			if(datasRecolhimento!=null && !datasRecolhimento.isEmpty()) {
 
-			//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE PARA O PROXIMO DIA UTIL (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA COTA A VISTA COM CONSIGNADO PENDENTE
-			this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
-					                                                         datasRecolhimento,
-																			 controleConferenciaEncalheCota.getUsuario(),
-																			 controleConferenciaEncalheCota.getId(),
-																			 diasUteisPostergar);
+				//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE PARA O PROXIMO DIA UTIL (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA COTA A VISTA COM CONSIGNADO PENDENTE
+				this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
+						                                                         datasRecolhimento,
+																				 controleConferenciaEncalheCota.getUsuario(),
+																				 controleConferenciaEncalheCota.getId(),
+																				 diasUteisPostergar);
+				
+			}
+			
 		}
 		
 		return nossoNumeroCollection;

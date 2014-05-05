@@ -352,7 +352,7 @@ public class GrupoServiceImpl implements GrupoService {
 	 * @param dataOperacao
 	 * @return List<DiaSemana>
 	 */
-	private Set<DiaSemana> diasOperacaoDiferenciadaCota(Integer numeroCota, Date dataOperacao){
+	protected Set<DiaSemana> diasOperacaoDiferenciadaCota(Integer numeroCota, Date dataOperacao){
 	    
 		List<GrupoCota> gps = this.grupoRepository.obterListaGrupoCotaPorNumeroCota(numeroCota, dataOperacao);
 		
@@ -486,15 +486,18 @@ public class GrupoServiceImpl implements GrupoService {
 		
 		List<Date> datas = new ArrayList<Date>();
 		
-		datas.add(data);
-		
 		if (diasSemanaOperacaoDiferenciadaCota==null || 
-	        diasSemanaOperacaoDiferenciadaCota.isEmpty() || 
-	        !diasSemanaOperacaoDiferenciadaCota.contains(diaSemanaDataOperacao)){
-			
+	        diasSemanaOperacaoDiferenciadaCota.isEmpty()){
+			datas.add(data);
 			return datas;
 		}
 		
+        if (!diasSemanaOperacaoDiferenciadaCota.contains(diaSemanaDataOperacao)){
+			return datas;
+		}
+		
+        datas.add(data);
+        
 		final DiaSemana diaSemanaInicioDistribuidor = distribuidorService.inicioSemanaRecolhimento();
 		
 		int numeroDiasSemana = 0;

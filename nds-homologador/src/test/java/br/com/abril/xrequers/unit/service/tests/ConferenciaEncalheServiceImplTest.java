@@ -1,6 +1,7 @@
 package br.com.abril.xrequers.unit.service.tests;
 
 import static org.mockito.Mockito.when;
+import static br.com.abril.xrequers.integration.service.tests.TestUtil.criarData;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,23 +50,7 @@ public class ConferenciaEncalheServiceImplTest {
     	
     }
     
-    public static Date criarData(int dia, int mes, int ano) {
-		Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
-		return data.getTime();
-	}
-    
-    private static Calendar criarCalendar(int dia, int mes, int ano, int hora,
-			int minuto, int segundo) {
-		Calendar data = Calendar.getInstance();
-		data.set(Calendar.DAY_OF_MONTH, dia);
-		data.set(Calendar.MONTH, mes);
-		data.set(Calendar.YEAR, ano);
-		data.set(Calendar.HOUR_OF_DAY, hora);
-		data.set(Calendar.MINUTE, minuto);
-		data.set(Calendar.SECOND, segundo);
-		data.clear(Calendar.MILLISECOND);
-		return data;
-	}
+  
     
     @Test
     public void test_obter_data_primeiro_dia_encalhe_operacao_diferenciada() {
