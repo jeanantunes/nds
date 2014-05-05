@@ -2269,6 +2269,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				dados.put("numeroEdicao", p.getNumeroEdicao());
 				dados.put("precoVenda", p.getPrecoVenda());
 				dados.put("desconto", p.getDesconto());
+				dados.put("parcial",p.isParcial());
 			}
 			
 			this.result.use(CustomJson.class).from(dados).serialize();
