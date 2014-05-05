@@ -3178,7 +3178,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
         
-        hql.append(" group by produtoEdicao.ID, cota.ID ");
+        hql.append(" group by produtoEdicao.ID ");
         
         if (filtro.getExcluirProdutoSemReparte()) {
         	

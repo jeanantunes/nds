@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0110.processor;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,11 +38,15 @@ import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.util.DateUtil;
 
 import com.google.common.base.Objects;
@@ -62,6 +67,9 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	
 	@Autowired
 	private DescontoService descontoService;
+	
+	@Autowired
+	private LancamentoService lancamentoService;
 
 	@Autowired
 	private DescontoLogisticaService descontoLogisticaService;
@@ -90,7 +98,12 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					produto = this.criarProdutoComInputDeEdicao(message);
 				}
 
-				this.criarProdutoEdicaoConformeInput(produto, message);
+				edicao = this.criarProdutoEdicaoConformeInput(produto, message);
+				
+				if (edicao != null) {
+				    
+				    this.criarLancamento(edicao, message);				    
+				}
 
 			} else {
 
@@ -106,7 +119,38 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		}
 	}
 	
-	private Editor findEditorByID(Long codigoEditor) {
+	private void criarLancamento(ProdutoEdicao edicao, Message message) {
+
+	    EMS0110FilialInput input = (EMS0110FilialInput) message.getBody();
+	    
+	    Lancamento lancamento = new Lancamento();
+	    
+	    Date dataGeracaoArq = DateUtil.parseData(input.getDataGeracaoArq(), FORMATO_DATA);
+	    
+	    Long idFornecedor = edicao.getProduto().getFornecedor().getId();
+	    
+	    Date dataLancamento = lancamentoService.obterDataLancamentoValido(dataGeracaoArq, idFornecedor);
+	    
+	    Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, edicao.getPeb());
+	    
+        lancamento.setDataCriacao(dataGeracaoArq);
+        lancamento.setNumeroLancamento(1);
+        lancamento.setDataLancamentoPrevista(dataLancamento);
+        lancamento.setDataLancamentoDistribuidor(dataLancamento);
+        lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
+        lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+        
+        lancamento.setProdutoEdicao(edicao);
+        lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+        lancamento.setDataStatus(new Date());
+        lancamento.setStatus(StatusLancamento.CONFIRMADO);
+        lancamento.setReparte(BigInteger.ZERO);
+        lancamento.setRepartePromocional(BigInteger.ZERO);
+        
+        this.getSession().persist(lancamento);
+    }
+
+    private Editor findEditorByID(Long codigoEditor) {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -378,7 +422,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	
 	
 	
-	private void criarProdutoEdicaoConformeInput(Produto produto, Message message) {
+	private ProdutoEdicao criarProdutoEdicaoConformeInput(Produto produto, Message message) {
 		
 		EMS0110FilialInput input = (EMS0110FilialInput) message.getBody();
 
@@ -463,7 +507,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					sb.toString());
 			
-			return;
+			return null;
 		}
 		
 		// FIX input.getCodIcd
@@ -508,6 +552,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 		inserirDescontoProdutoEdicao(edicao, produto);
 		
+		return edicao;
 	}
 
 	private boolean validarCodigoBarras(String codigo, Long edicao, Message message,	String codigoDeBarras) {
