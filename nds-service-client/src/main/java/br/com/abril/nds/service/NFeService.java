@@ -43,10 +43,10 @@ public interface NFeService {
 			Integer resultsPage, Integer page, SituacaoCadastro situacaoCadastro);
 
 	
-	public abstract List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroNFeDTO filtro);
+	public abstract List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
 
 
-	public abstract Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro);
+	public abstract Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
 
 
 	public abstract List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro);

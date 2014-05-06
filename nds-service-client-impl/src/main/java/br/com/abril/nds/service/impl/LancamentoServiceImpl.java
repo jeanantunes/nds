@@ -86,6 +86,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	LinkedList<Date> dinap = new LinkedList();
 	LinkedList<Date> fc = new LinkedList();
+	LinkedList<Date> dinapFC = new LinkedList();
     
     private static final List<StatusLancamento> STATUS_LANCAMENTOS_REMOVIVEL = Arrays.asList(
             StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO,
@@ -547,22 +548,39 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Date obterDataLancamentoValido(Date dataLancamento,Long idFornecedor){
 		
 	
+		List<Long> lista = new ArrayList<Long>();
+		
 		if(idFornecedor==1){	
 		 
+		 lista.add(new Long(1));
+		 
 		 if(dinap.isEmpty()){
-		  dinap.addAll(lancamentoRepository.obterDatasLancamentoValido(new Long(1)));
+		  dinap.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
 		 }
 		 
 		 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinap);
 		 
-		}else{
+		}else if (idFornecedor==2){
 		
+		 lista.add(new Long(2));
+		 
 		 if(fc.isEmpty()){
-		  fc.addAll(lancamentoRepository.obterDatasLancamentoValido(new Long(2)));
+		  fc.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
 		 }
 		 
 		 dataLancamento = this.obterDataLancamentoValida(dataLancamento, fc);
 		 
+		}else {
+			
+		 lista.add(new Long(1));
+		 lista.add(new Long(2));
+			 
+		 if(dinapFC.isEmpty()){
+			dinapFC.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
+		 }
+			 
+		 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinapFC);
+			 
 		}
 		
 		return dataLancamento;
@@ -572,10 +590,20 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		Date anterior;
 		Date posterior;
+		Date operacao;
 		long qtAnterior;
 		long qtPosterior;
+		
+		if(listaDatas==null || listaDatas.isEmpty()){
+		 
+		  operacao = distribuidorService.obterDataOperacaoDistribuidor();
 		  
-		if(listaDatas.contains(dataLancamento)){
+		  if(dataLancamento.before(operacao)){
+			return operacao;
+		  }else{
+			return dataLancamento;
+		  }
+		}else if(listaDatas.contains(dataLancamento)){
 		  return dataLancamento;
 		}else if(dataLancamento.before(listaDatas.getFirst())){
 		  return listaDatas.getFirst();
