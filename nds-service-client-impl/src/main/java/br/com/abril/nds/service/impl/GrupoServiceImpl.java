@@ -488,11 +488,14 @@ public class GrupoServiceImpl implements GrupoService {
 		
 		if (diasSemanaOperacaoDiferenciadaCota==null || 
 	        diasSemanaOperacaoDiferenciadaCota.isEmpty()){
+			
 			datas.add(data);
+			
 			return datas;
 		}
 		
         if (!diasSemanaOperacaoDiferenciadaCota.contains(diaSemanaDataOperacao)){
+        	
 			return datas;
 		}
 		

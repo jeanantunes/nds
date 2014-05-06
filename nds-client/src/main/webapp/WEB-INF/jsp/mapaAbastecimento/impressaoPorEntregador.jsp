@@ -47,8 +47,7 @@ function imprimir(){
     	</span>
     </td>
     <td width="301" align="center" valign="middle"><h3>${nomeDistribuidor}</h3></td>
-    <td width="359" align="right" valign="middle"><h1>Mapa de Abastecimento</h1>
-     <strong>Distribuidor:</strong> ${distribuidor}</td>
+    <td width="500" align="right" valign="middle"><h1>Mapa de Abastecimento por Entregador</h1></td>
   </tr>
   <tr>
     <td colspan="3" align="center" valign="middle"></td>
@@ -100,17 +99,42 @@ function imprimir(){
 		
 		<tr class="nivel0">
 			 
-			<c:forEach begin="0" end="${ qtdeTotal%qtdeColuna>0 ? qtdeTotal/qtdeColuna : qtdeTotal/qtdeColuna -1}" varStatus="coluna">
+			<c:forEach begin="0" end="${qtdColCota > 6 ? 6 : qtdColCota}" varStatus="coluna">
 				
 				<td width="158" valign="top">		
 				
 					<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"  style="margin-top:5px;border-right:1px">
-								  
-					  <tr class="class_linha_3">
-					    <td class="nivel1" width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-					    <td class="nivel1" width="51" align="center" style=" border:1px solid #000;"><strong>Qtde</strong></td>
-					  </tr> 
-					 
+							
+					<c:choose>
+						<c:when test="${(coluna.index * qtdeColuna) <= (qtdeTotal > qtdeColuna * (coluna.index+1)-1 ? qtdeColuna * (coluna.index+1)-1 : qtdeTotal-1)}">
+							<tr class="class_linha_3">
+						    <td class="nivel1" width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;">
+						    	
+						    		<strong>Cota</strong>
+						    	
+						    </td>
+						    <td class="nivel1" width="51" align="center" style=" border:1px solid #000;">
+						    	
+						    		<strong>Qtde</strong>
+						    	
+						    </td>
+						  </tr> 
+						</c:when>
+						<c:otherwise>
+							<tr class="class_linha_3">
+						    <td class="nivel1" width="48" style="padding-left:5px; border:1px solid white; background: white;">
+						    	
+						    		<strong style="color: white;">Cota</strong>
+						    	
+						    </td>
+						    <td class="nivel1" width="51" align="center" style="padding-left:5px; border:1px solid white; background: white;">
+						    	
+						    		<strong style="color: white;">Qtde</strong>
+						    	
+						    </td>
+						  </tr> 
+						</c:otherwise>	 
+					 </c:choose>
 					 <c:forEach items="${produto.value.cotasQtdes}" var="item" 
 						 		begin="${coluna.index * qtdeColuna }" 
 						 		end="${qtdeTotal > qtdeColuna * (coluna.index+1)-1 ? qtdeColuna * (coluna.index+1)-1 : qtdeTotal-1}" >
