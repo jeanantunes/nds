@@ -66,12 +66,12 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoFiscal;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
@@ -89,10 +89,11 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
-import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
 import br.com.abril.nds.model.integracao.ParametroSistema;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EncargoFinanceiroRepository;
@@ -131,9 +132,6 @@ import br.inf.portalfiscal.nfe.util.XmlDomUtils;
  */
 @Service
 public class NotaFiscalServiceImpl implements NotaFiscalService {
-
-	public static final String VERSAO = "2.2.21";
-	public static final String NAMESPACE = "http://www.portalfiscal.inf.br/nfe";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(NotaFiscalServiceImpl.class);
 
@@ -1919,14 +1917,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		NotaFiscalReferenciada notaReferenciada = null;
 
-		InformacaoEletronica informacaoEletronica = notaFiscal
-				.getNotaFiscalInformacoes().getInformacaoEletronica();
+		InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
 
 		if (informacaoEletronica != null) {
 
 			NotaFiscalReferenciadaPK pk = new NotaFiscalReferenciadaPK();
-			pk.setChaveAcesso(new BigInteger(informacaoEletronica
-					.getChaveAcesso()));
+			pk.setChaveAcesso(new BigInteger(informacaoEletronica.getChaveAcesso()));
 			pk.setNotaFiscal(notaFiscal);
 
 			notaReferenciada = new NotaFiscalReferenciada();
@@ -1936,15 +1932,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return notaReferenciada;
 	}
 
-	public byte[] imprimirNotasEnvio(List<NotaEnvio> notasEnvio) {
-
-		return null;
-
-	}
-
 	@Override
 	@Transactional
-	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizados(FiltroNFeDTO filtro) {
+	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
 
 		LOGGER.info("obter informações da cota sumarizadas...");
 
@@ -1952,76 +1942,96 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O intervalo de datas não pode ser nula!");
 		}
 
-		return this.notaFiscalRepository.consultaCotaExemplaresSumarizados(filtro);
+		
+		List<TipoMovimento> itensMovimentosFiscais = new ArrayList<>();
+		if(naturezaOperacao != null) {
+			for(TipoMovimento tm : naturezaOperacao.getTipoMovimento()) {
+				if(tm instanceof TipoMovimentoFiscal) {
+					itensMovimentosFiscais.add(tm);
+				}
+			}
+		}
+		
+		if(itensMovimentosFiscais.size() > 0) {
+			
+			return this.notaFiscalRepository.consultaCotaExemplaresMFFSumarizados(filtro);
+		} else {
+		
+			return this.notaFiscalRepository.consultaCotaExemplaresMECSumarizados(filtro);
+		}
 	}
 
 	@Override
 	@Transactional
-	public Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro) {
-		return this.notaFiscalRepository.consultaCotaExemplaresSumarizadosQtd(filtro);
+	public Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
+		
+		List<TipoMovimento> itensMovimentosFiscais = new ArrayList<>();
+		if(naturezaOperacao != null) {
+			for(TipoMovimento tm : naturezaOperacao.getTipoMovimento()) {
+				if(tm instanceof TipoMovimentoFiscal) {
+					itensMovimentosFiscais.add(tm);
+				}
+			}
+		}
+		
+		if(itensMovimentosFiscais.size() > 0) {
+			
+			return this.notaFiscalRepository.consultaCotaExemplaresMFFSumarizadosQtd(filtro);
+		} else {
+		
+			return this.notaFiscalRepository.consultaCotaExemplaresMECSumarizadosQtd(filtro);
+		}
+		
 	}
 
 	@Override
 	@Transactional
-	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(
-			TipoDestinatario tipoDestinatario) {
-		return this.notaFiscalRepository
-				.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
+	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
+		
+		return this.notaFiscalRepository.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
 	}
 
 	@Override
 	@Transactional
-	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(
-			FiltroNFeDTO filtro) {
+	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro) {
+		
 		LOGGER.info("obter informações dos forncedores sumarizados...");
-		return this.notaFiscalRepository
-				.consultaFornecedorExemplarSumarizado(filtro);
+		return this.notaFiscalRepository.consultaFornecedorExemplarSumarizado(filtro);
 	}
 
 	@Override
 	@Transactional
 	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro) {
-		return this.notaFiscalRepository
-				.consultaFornecedorExemplaresSumarizadosQtd(filtro);
+		
+		return this.notaFiscalRepository.consultaFornecedorExemplaresSumarizadosQtd(filtro);
 	}
 
-	public Document criarDocumentoCancelamento(NotaFiscal notaFiscal)
-			throws ParserConfigurationException {
+	@Transactional
+	public Document criarDocumentoCancelamento(NotaFiscal notaFiscal) throws ParserConfigurationException {
 
-		if (notaFiscal.getNotaFiscalInformacoes().getIdentificacao()
-				.getJustificativaEntradaContigencia() == null) {
-			throw new IllegalArgumentException(
-					"Justificativa não pode ser nula");
+		if (notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getJustificativaEntradaContigencia() == null) {
+			throw new IllegalArgumentException("Justificativa não pode ser nula");
 		}
 
-		if (notaFiscal.getNotaFiscalInformacoes().getIdentificacao()
-				.getJustificativaEntradaContigencia().length() < 15
-				|| notaFiscal.getNotaFiscalInformacoes().getIdentificacao()
-						.getJustificativaEntradaContigencia().length() > 255) {
+		if (notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getJustificativaEntradaContigencia().length() < 15
+				|| notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getJustificativaEntradaContigencia().length() > 255) {
 			throw new IllegalArgumentException(
 					"Justificativa deve possuir entre 15 e 255 caracteres, tamanho atual: "
-							+ notaFiscal.getNotaFiscalInformacoes()
-									.getIdentificacao()
-									.getJustificativaEntradaContigencia()
-									.length());
+							+ notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getJustificativaEntradaContigencia().length());
 		}
 
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
-				.newInstance();
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder;
 		documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		Document doc = documentBuilder.newDocument();
 
 		Element cancNFeElement = doc.getDocumentElement();
-		cancNFeElement.setAttribute("versao", VERSAO);
+		cancNFeElement.setAttribute("versao", parametroSistemaService.buscarParametroSistemaGeral().getNfeInformacoesVersaoEmissor());
 
 		Element infCancElement = doc.createElement("infCanc");
 		infCancElement.setAttribute(
 				"Id",
-				new StringBuilder("ID").append(
-						notaFiscal.getNotaFiscalInformacoes()
-								.getInformacaoEletronica().getChaveAcesso())
-						.toString());
+				new StringBuilder("ID").append(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso()).toString());
 		cancNFeElement.appendChild(infCancElement);
 
 		Element tpAmbElement = doc.createElement("tpAmb");

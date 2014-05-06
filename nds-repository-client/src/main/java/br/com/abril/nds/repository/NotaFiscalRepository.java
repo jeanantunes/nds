@@ -25,7 +25,7 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 	 * @param statusProcessamentoInterno
 	 * @return lista de notas fiscais.
 	 */
-	public abstract List<NotaFiscal> obterListaNotasFiscaisPor(StatusProcessamento statusProcessamentoInterno);
+	List<NotaFiscal> obterListaNotasFiscaisPor(StatusProcessamento statusProcessamentoInterno);
 	
 	public Integer obterQtdeRegistroNotaFiscal(FiltroMonitorNfeDTO filtro);
 	
@@ -33,35 +33,39 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 
 	List<Long> obterNumerosNFePorLancamento(Long idLancamento);
 
-	public abstract NotaFiscal buscarNotaFiscalNumeroSerie(RetornoNFEDTO dadosRetornoNFE);
+	NotaFiscal buscarNotaFiscalNumeroSerie(RetornoNFEDTO dadosRetornoNFE);
 	
-	public abstract List<NotaFiscal> obterListaNotasFiscaisNumeroSerie(FiltroMonitorNfeDTO filtro);
+	List<NotaFiscal> obterListaNotasFiscaisNumeroSerie(FiltroMonitorNfeDTO filtro);
 	
-	public abstract NotaFiscal obterChaveAcesso(RetornoNFEDTO dadosRetornoNFE);
+	NotaFiscal obterChaveAcesso(RetornoNFEDTO dadosRetornoNFE);
 	
 	/**
 	 * Metodos para nota fiscal
 	 */
-	public abstract List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroNFeDTO filtro);
+	List<CotaExemplaresDTO> consultaCotaExemplaresMECSumarizados(FiltroNFeDTO filtro);
 	
-	public abstract List<Cota> obterConjuntoCotasNotafiscal(FiltroNFeDTO filtro);
+	List<Cota> obterConjuntoCotasNotafiscal(FiltroNFeDTO filtro);
 
 	/**
 	 * Obtem naturezas de operacao pelo tipo de destinatario
 	 * @param tipoDestinatario
 	 */
-	public abstract List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario);
+	List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario);
 
-	public abstract Long consultaCotaExemplaresSumarizadosQtd(FiltroNFeDTO filtro);
+	Long consultaCotaExemplaresMECSumarizadosQtd(FiltroNFeDTO filtro);
 	
-	public abstract List<MovimentoEstoqueCota> obterMovimentosEstoqueCota(FiltroNFeDTO filtro);
+	List<MovimentoEstoqueCota> obterMovimentosEstoqueCota(FiltroNFeDTO filtro);
 	
-	public abstract List<EstoqueProduto> obterConjuntoFornecedorNotafiscal(FiltroNFeDTO filtro);
+	List<EstoqueProduto> obterConjuntoFornecedorNotafiscal(FiltroNFeDTO filtro);
 
-	public abstract List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro);
+	List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro);
 	
-	public abstract List<EstoqueProduto> obterEstoques(FiltroNFeDTO filtro);
+	List<EstoqueProduto> obterEstoques(FiltroNFeDTO filtro);
 
-	public abstract Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro);
+	Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro);
+	
+	Long consultaCotaExemplaresMFFSumarizadosQtd(FiltroNFeDTO filtro);
+	
+	List<CotaExemplaresDTO> consultaCotaExemplaresMFFSumarizados(FiltroNFeDTO filtro);
 	
 }

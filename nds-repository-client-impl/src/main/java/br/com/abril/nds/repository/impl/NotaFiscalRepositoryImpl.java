@@ -33,7 +33,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 	@Autowired
 	private DataSource dataSource;
-	
+
 	public NotaFiscalRepositoryImpl() {
 		super(NotaFiscal.class);
 	}
@@ -55,23 +55,23 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	public Integer obterQtdeRegistroNotaFiscal(FiltroMonitorNfeDTO filtro) {
 
 		StringBuilder hql = new StringBuilder("");
-		
+
 		hql.append(" SELECT DISTINCT ")
 		.append(" COUNT(notaFiscal.id) ");
 
 		Query query = createFiltroQuery(queryConsultaPainelMonitor(filtro, hql, true, true, true),filtro);
-		
+
 		Long qtde = (Long) query.uniqueResult();
 
 		return ((qtde == null) ? 0 : qtde.intValue());
 
 	}	
-	
+
 	@SuppressWarnings("unchecked")
 	public List<NfeDTO> pesquisarNotaFiscal(FiltroMonitorNfeDTO filtro) {
-				
+
 		StringBuilder hql = new StringBuilder("");
-		
+
 		hql.append(" SELECT ")
 		.append(" notaFiscal.id as idNotaFiscal,")
 		.append(" ident.numeroDocumentoFiscal as numero,")
@@ -83,9 +83,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" nfi.statusProcessamento as statusNfe,")
 		.append(" natOp.descricao as tipoNfe,")
 		.append(" natOp.descricao as movimentoIntegracao");
-		
+
 		Query query = createFiltroQuery(queryConsultaPainelMonitor(filtro, hql, false, false, false),filtro);
-		
+
 		if(filtro.getPaginacao()!=null) {
 			if(filtro.getPaginacao().getPosicaoInicial()!=null) {
 				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
@@ -95,16 +95,16 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
 		}
-		
+
 		query.setResultTransformer(new AliasToBeanResultTransformer(NfeDTO.class));
-		
+
 
 		return query.list();
 
 	}
-	
+
 	private StringBuilder queryConsultaPainelMonitor(FiltroMonitorNfeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup){
-		
+
 		hql.append(" FROM NotaFiscal as notaFiscal")
 		.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ")
 		.append(" JOIN nfi.identificacao as ident ")
@@ -115,9 +115,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" LEFT JOIN natOp.processo as proc ")
 		.append(" JOIN identEmit.documento as doc ")
 		.append(" JOIN identDest.documento as docDest ");
-			
+
 		hql.append(" WHERE 1=1 ");
-		
+
 		if(filtro.getDataInicial() != null) {
 			hql.append(" AND ident.dataEmissao >= :dataInicial ");
 		}
@@ -155,20 +155,20 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getSerie() != null) {
 			hql.append(" AND ident.serie = :serie ");
 		}
-		
+
 		if(!isCount && !isPagination){
 			if(filtro.getPaginacao() !=null && filtro.getPaginacao().getSortOrder() != null && filtro.getPaginacao().getSortColumn() != null) {
 				hql.append(" ORDER BY  ").append(filtro.getPaginacao().getSortColumn()).append(" ").append(filtro.getPaginacao().getSortOrder());
 			}
 		}
-			
+
 		return hql;
 	}
-	
+
 	private Query createFiltroQuery(StringBuilder hql, FiltroMonitorNfeDTO filtro) {
-		
+
 		Query query = this.getSession().createQuery(hql.toString());
-		
+
 		if(filtro.getBox()!=null) {
 			query.setParameter("codigoBox", filtro.getBox());
 		}
@@ -194,7 +194,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getTipoNfe()!=null && !filtro.getTipoNfe().isEmpty()) {
 			query.setParameter("tipoEmissaoNfe", filtro.getTipoNfe());
 		}
-		
+
 		if(filtro.getNumeroNotaInicial()!=null) {
 			query.setParameter("numeroInicial", filtro.getNumeroNotaInicial());
 		}
@@ -214,76 +214,76 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getSerie()!=null) {
 			query.setParameter("serie", filtro.getSerie());
 		}
-		
+
 		return query;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> obterNumerosNFePorLancamento(Long idLancamento){
-		
+
 		StringBuilder hql = new StringBuilder("select ");
 		hql.append(" nota.identificacao.numeroDocumentoFiscal ")
-		   .append(" from ")
-		   .append(" 	Lancamento l ")
-		   .append("	join l.movimentoEstoqueCotas movEst ")
-		   .append("	join movEst.listaProdutoServicos prodServ ")
-		   .append("	join prodServ.produtoServicoPK.notaFiscal nota ")
-		   .append(" where ")
-		   .append("	l.id = :idLancamento ");
-		
+		.append(" from ")
+		.append(" 	Lancamento l ")
+		.append("	join l.movimentoEstoqueCotas movEst ")
+		.append("	join movEst.listaProdutoServicos prodServ ")
+		.append("	join prodServ.produtoServicoPK.notaFiscal nota ")
+		.append(" where ")
+		.append("	l.id = :idLancamento ");
+
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idLancamento", idLancamento);
-		
+
 		return query.list();
 	}
 
 	@Override
 	public NotaFiscal buscarNotaFiscalNumeroSerie(RetornoNFEDTO dadosRetornoNFE) {
-		
+
 		StringBuffer sql = new StringBuffer("");
 
 		sql.append(" SELECT notaFiscal");
 		sql.append(" FROM NotaFiscal as notaFiscal");
 		sql.append(" WHERE");
-		
-		
+
+
 		if(dadosRetornoNFE.getChaveAcesso()!=null) {
 
 			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal = :numeroNotaFiscal ");
 
 		}
-		
+
 		Query query = this.getSession().createQuery(sql.toString());
 		query.setParameter("numeroNotaFiscal", dadosRetornoNFE.getNumeroNotaFiscal());
-		
+
 		return (NotaFiscal) query.uniqueResult();
-		
+
 	}
-	
+
 	@Override
 	public NotaFiscal obterChaveAcesso(RetornoNFEDTO dadosRetornoNFE) {
-		
+
 		StringBuffer sql = new StringBuffer("");
 
 		sql.append(" SELECT notaFiscal");
 		sql.append(" FROM NotaFiscal as notaFiscal");
 		sql.append(" WHERE");
-		
-		
+
+
 		if(dadosRetornoNFE.getChaveAcesso()!=null) {
 
 			sql.append(" notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso = :chaveAcesso ");
 
 		}
-		
+
 		Query query = this.getSession().createQuery(sql.toString());
 		query.setParameter("chaveAcesso", dadosRetornoNFE.getChaveAcesso());
-		
+
 		return (NotaFiscal) query.uniqueResult();
-		
+
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<NotaFiscal> obterListaNotasFiscaisNumeroSerie(FiltroMonitorNfeDTO filtro) {
@@ -291,30 +291,30 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		StringBuffer sql = new StringBuffer("SELECT notaFiscal");
 		sql.append(" FROM NotaFiscal as notaFiscal");
 		sql.append(" WHERE");
-		
+
 		if(filtro.getSerie() !=null ) {
 			sql.append(" notaFiscal.id = :serie ");
 		}
-		
+
 		if(filtro.getNumeroNotaInicial() !=null) {
 			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal = :numeroNotaFiscal ");
 		}
-		
+
 		Query query = this.getSession().createQuery(sql.toString());
 		query.setParameter("serie", filtro.getSerie());
 		query.setParameter("numeroNotaFiscal", filtro.getNumeroNotaInicial());
-		
+
 		query.setResultTransformer(new AliasToBeanResultTransformer(NotaFiscal.class));
-		
+
 		return query.list();
 	}
-	
+
 
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroNFeDTO filtro) {
-		
+	public List<CotaExemplaresDTO> consultaCotaExemplaresMECSumarizados(FiltroNFeDTO filtro) {
+
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" mec.cota.id as idCota, ");
@@ -326,9 +326,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" mec.cota.situacaoCadastro as situacaoCadastro, ");
 		hql.append(" cota.parametrosCotaNotaFiscalEletronica.emiteNotaFiscalEletronica as emiteNotaFiscalEletronica, ");
 		hql.append(" cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS as contribuinteICMS ");
-		
-		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, false, false, false), filtro);
-				
+
+		Query query = queryConsultaMECNfeParameters(queryConsultaMECNfe(filtro, hql, false, false, false), filtro);
+
 		if(filtro.getPaginacaoVO()!=null) {
 			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
 				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
@@ -338,23 +338,67 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
 			}
 		}
-		
+
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaExemplaresDTO.class));
-		
+
 		return query.list();
 	}
-	
+
 	@Override
-	public Long consultaCotaExemplaresSumarizadosQtd(FiltroNFeDTO filtro) {
-		
+	public Long consultaCotaExemplaresMECSumarizadosQtd(FiltroNFeDTO filtro) {
+
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" COUNT(mec.cota.id) ");
-		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, true, true, false), filtro);
-		
+		Query query = queryConsultaMECNfeParameters(queryConsultaMECNfe(filtro, hql, true, true, false), filtro);
+
 		return (long) query.list().size();
 	}
-	
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<CotaExemplaresDTO> consultaCotaExemplaresMFFSumarizados(FiltroNFeDTO filtro) {
+
+		// OBTER COTA EXEMPLARES SUMARIZADOS
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" mffc.cota.id as idCota, ");
+		hql.append(" mffc.cota.numeroCota as numeroCota, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') as nomeCota,");
+		hql.append(" SUM(mffc.qtde) as exemplares, ");
+		hql.append(" SUM(mffc.valoresAplicados.precoVenda * mffc.qtde) as total, "); 
+		hql.append(" SUM(mffc.valoresAplicados.precoComDesconto * mffc.qtde) as totalDesconto, "); 	
+		hql.append(" mffc.cota.situacaoCadastro as situacaoCadastro, ");
+		hql.append(" cota.parametrosCotaNotaFiscalEletronica.emiteNotaFiscalEletronica as emiteNotaFiscalEletronica, ");
+		hql.append(" cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS as contribuinteICMS ");
+
+		Query query = queryConsultaMFFNfeParameters(queryConsultaMFFNfe(filtro, hql, false, false, false), filtro);
+
+		if(filtro.getPaginacaoVO()!=null) {
+			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
+				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
+			}
+
+			if(filtro.getPaginacaoVO().getQtdResultadosPorPagina()!=null) {
+				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+			}
+		}
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaExemplaresDTO.class));
+
+		return query.list();
+	}
+
+	@Override
+	public Long consultaCotaExemplaresMFFSumarizadosQtd(FiltroNFeDTO filtro) {
+
+		// OBTER COTA EXEMPLARES SUMARIZADOS
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" COUNT(mffc.cota.id) ");
+		Query query = queryConsultaMFFNfeParameters(queryConsultaMFFNfe(filtro, hql, true, true, false), filtro);
+
+		return (long) query.list().size();
+	}
+
 	/**
 	 * Obter conjunto de cotas
 	 * @param FiltroNFeDTO
@@ -363,15 +407,15 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Cota> obterConjuntoCotasNotafiscal(FiltroNFeDTO filtro) {
-		
+
 		// OBTER ID DE TODAS AS COTAS DA TELA
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" mec.cota ");
-		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, false, false, false), filtro);
-		
+		Query query = queryConsultaMECNfeParameters(queryConsultaMECNfe(filtro, hql, false, false, false), filtro);
+
 		return query.list();
 	}
-	
+
 	/**
 	 * Obter os itens da nota com base nos movimentos de estoque cota
 	 * 
@@ -381,16 +425,16 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoqueCota> obterMovimentosEstoqueCota(FiltroNFeDTO filtro) {
-	
+
 		// ITENS DA NOTA FISCAL
 		StringBuilder hql = new StringBuilder("SELECT mec");
-		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, false, false, true), filtro);
-		
+		Query query = queryConsultaMECNfeParameters(queryConsultaMECNfe(filtro, hql, false, false, true), filtro);
+
 		return query.list();
 	}
-	
-	private StringBuilder queryConsultaNfe(FiltroNFeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
-		
+
+	private StringBuilder queryConsultaMECNfe(FiltroNFeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
+
 		hql.append(" FROM MovimentoEstoqueCota mec ")
 		.append(" JOIN mec.tipoMovimento tipoMovimento ")
 		.append(" JOIN mec.lancamento lancamento ")
@@ -399,11 +443,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" LEFT JOIN cota.box box ")
 		.append(" LEFT JOIN box.roteirizacao roteirizacao ")
 		.append(" LEFT JOIN roteirizacao.roteiros roteiro ");
-		
+
 		if(filtro.getIdRota()!= null){	
 			hql.append(" LEFT JOIN roteiro.rotas rota ");
 		}
-		
+
 		hql.append(" JOIN mec.produtoEdicao produtoEdicao")
 		.append(" JOIN produtoEdicao.produto produto ")
 		.append(" JOIN produto.fornecedores fornecedor")
@@ -411,7 +455,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" AND mec.movimentoEstoqueCotaEstorno is null ")
 		.append(" AND mec.movimentoEstoqueCotaFuro is null ")
 		.append(" AND mec.notaFiscalEmitida = false ");
-		
+
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null) {
 			hql.append(" AND mec.tipoMovimento.id in (SELECT tm.id ");
@@ -419,137 +463,137 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			hql.append("JOIN no.tipoMovimento tm ");
 			hql.append("WHERE no.id in(:idNaturezaOperacao)) ");
 		}
-		
+
 		// Data Emissão:	...		
 		if(filtro.getDataEmissao() != null) {
 			hql.append(" ");
 		}
-		
+
 		// Cota:		
 		if(filtro.getIdCota() != null) {
 			hql.append(" AND cota.id = :cotaId ");
 		}
-		
+
 		// Intervalo de Cota:
 		if(filtro.getIntervalorCotaInicial() != null && filtro.getIntervalorCotaFinal() != null) {
 			hql.append(" AND cota.numeroCota BETWEEN :numeroCotaInicial AND :numeroCotaFinal ");
 		}
-		
+
 		// Roteiro:
 		if(filtro.getIdRoteiro() != null) {
 			hql.append(" AND roteiro.id = :roteiroId ");
 		}
-		
+
 		// Rota:		
 		if(filtro.getIdRota() != null) {
 			hql.append(" AND rota.id = :rotaId ");
 		}
-		
+
 		// Cota de:	 Até   
 		if(filtro.getIntervaloBoxInicial() != null && filtro.getIntervaloBoxFinal() != null) {
 			hql.append(" AND box.codigo between :codigoBoxInicial AND :codigoBoxFinal ");
 		}
-		
+
 		if(filtro.getListIdFornecedor() != null) {
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
-		
+
 		if(!isGroup){
 			hql.append(" GROUP BY mec.cota.numeroCota ");
 		} else {
 			hql.append(" GROUP BY mec ");
 		}
-		
+
 		if(!isCount && !isPagination){
 			if(filtro.getPaginacaoVO()!=null && filtro.getPaginacaoVO().getSortOrder() != null && filtro.getPaginacaoVO().getSortColumn() != null) {
 				hql.append(" ORDER BY  ").append(filtro.getPaginacaoVO().getSortColumn()).append(" ").append(filtro.getPaginacaoVO().getSortOrder());
 			}
 		}
-		
+
 		return hql;
 	}
-	
-	public Query queryConsultaNfeParameters(StringBuilder hql, FiltroNFeDTO filtro) {
-		
+
+	public Query queryConsultaMECNfeParameters(StringBuilder hql, FiltroNFeDTO filtro) {
+
 
 		// Realizar a consulta e converter ao objeto cota exemplares.
 		Query query = this.getSession().createQuery(hql.toString());		
-		
+
 		// Data Movimento:	...  Até   ...
 		if (filtro.getDataInicial() != null && filtro.getDataFinal() != null) {
 			query.setParameter("dataInicial", filtro.getDataInicial());
 			query.setParameter("dataFinal", filtro.getDataFinal());
 		}
-		
+
 		// tipo da nota fiscal		
 		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao().longValue() > 0) {
 			query.setParameter("idNaturezaOperacao", filtro.getIdNaturezaOperacao());
 		}
-		
+
 		// forncedor id		
 		if(filtro.getListIdFornecedor() !=null && !filtro.getListIdFornecedor().isEmpty()) {
 			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
 		// Data Emissão:	...		
 		/*if(filtro.getDataEmissao() != null) {
-			
+
 		}*/
-		
+
 		if(filtro.getIdCota() != null) {
 			query.setParameter("cotaId", filtro.getIdCota());
 		}
-		
+
 		if(filtro.getIntervalorCotaInicial() != null && filtro.getIntervalorCotaFinal() != null) {
 			query.setParameter("numeroCotaInicial", filtro.getIntervalorCotaInicial());
 			query.setParameter("numeroCotaFinal", filtro.getIntervalorCotaFinal());
 		}
-		
+
 		// Roteiro:
 		if(filtro.getIdRoteiro() != null) {
 			query.setParameter("roteiroId", filtro.getIdRoteiro());
 		}
-		
+
 		// Rota:		
 		if(filtro.getIdRota() != null) {
 			query.setParameter("rotaId", filtro.getIdRota());
 		}
-		
+
 		// Cota de:	 Até   
 		if(filtro.getIntervaloBoxInicial() != null && filtro.getIntervaloBoxFinal() != null) {
 			query.setParameter("codigoBoxInicial", filtro.getIntervaloBoxInicial());
 			query.setParameter("codigoBoxFinal", filtro.getIntervaloBoxFinal());
 		}
-		
+
 		if(filtro.getListIdFornecedor() != null) {
 			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
-		
+
 		return query;	
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
-		
+
 		StringBuilder sql = new StringBuilder("")
-			.append("SELECT id as `key`, descricao as value ") 
-			.append("FROM natureza_operacao no ")
-			.append("WHERE no.TIPO_ATIVIDADE = (select TIPO_ATIVIDADE from distribuidor) ");
-		
+		.append("SELECT id as `key`, descricao as value ") 
+		.append("FROM natureza_operacao no ")
+		.append("WHERE no.TIPO_ATIVIDADE = (select TIPO_ATIVIDADE from distribuidor) ");
+
 		if(tipoDestinatario != null) {
 			sql.append("AND no.TIPO_DESTINATARIO = :tipoDestinatario ");
 		}
 
 		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
-		
+
 		if(tipoDestinatario != null) {
 			sqlQuery.setParameter("tipoDestinatario", tipoDestinatario.name());
 		}
-		
+
 		sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
 
 		return sqlQuery.list();
-		
+
 	}
 
 	@Override
@@ -564,12 +608,12 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN produto.fornecedores fornecedor ")
 		.append(" JOIN fornecedor.juridica pj ")
 		.append(" where fornecedor.id in (:idFornecedor) ");
-		
+
 		hql.append("GROUP BY fornecedor.id");
-		
+
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("idFornecedor", filtro.getListIdFornecedor());
-		
+
 		return query.list();
 	}
 
@@ -577,7 +621,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro) {
-		
+
 		StringBuilder hql = new StringBuilder("select ")
 		.append(" fornecedor.id AS idFornecedor, ")
 		.append(" fornecedor.codigoInterface as numeroFornecedor, ")
@@ -591,14 +635,14 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN produto.fornecedores as fornecedor ")
 		.append(" JOIN fornecedor.juridica as pj ")
 		.append(" where fornecedor.id in (:idFornecedor) ");
-		
+
 		hql.append("GROUP BY fornecedor.id");
-		
+
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("idFornecedor", filtro.getListIdFornecedor());
-		
+
 		query.setResultTransformer(new AliasToBeanResultTransformer(FornecedorExemplaresDTO.class));
-		
+
 		return query.list();
 	}
 
@@ -607,45 +651,189 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	@SuppressWarnings("unchecked")
 	public List<EstoqueProduto> obterEstoques(FiltroNFeDTO filtro) {
 		StringBuilder hql = new StringBuilder("select estoqueProduto ");
-		
+
 		Query query =  queryConsultaNfeEstoqueParameters(queryConsultaNfeEstoque(filtro, hql, true, true, true), filtro);
-		
+
 		hql.append("GROUP BY fornecedor.id");
-		
+
 		return query.list();
 	}
-	
-	
+
+
 	@Override
 	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro) {
-		
+
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" COUNT(fornecedor.id) ");
 		Query query = queryConsultaNfeEstoqueParameters(queryConsultaNfeEstoque(filtro, hql, true, true, false), filtro);
-		
+
 		return (long) query.list().size();
 	}
-	
+
 	public Query queryConsultaNfeEstoqueParameters(StringBuilder hql, FiltroNFeDTO filtro) {
 
 		Query query = this.getSession().createQuery(hql.toString());		
-		
+
 		query.setParameterList("idFornecedor", filtro.getListIdFornecedor());
-		
+
 		return query;
 	}
-	
+
 	public StringBuilder queryConsultaNfeEstoque(FiltroNFeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup){
-		
+
 		hql.append(" from EstoqueProduto as estoqueProduto ")
 		.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao")
 		.append(" JOIN produtoEdicao.produto as produto ")
 		.append(" JOIN produto.fornecedores as fornecedor ")
 		.append(" JOIN fornecedor.juridica pj ")
 		.append(" where fornecedor.id in (:idFornecedor) ");
-		
+
 		return hql;
 	}
-	
+
+	private StringBuilder queryConsultaMFFNfe(FiltroNFeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
+
+		hql.append(" FROM MovimentoFechamentoFiscalCota mffc ")
+		.append(" JOIN mffc.tipoMovimento tipoMovimento ")
+		.append(" JOIN mffc.chamadaEncalheCota chamadaEncalheCota ")
+		.append(" JOIN chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+		.append(" JOIN chamadaEncalhe.lancamentos lancamentos ")
+		.append(" JOIN mffc.cota cota ")
+		.append(" JOIN cota.pessoa pessoa ")
+		.append(" LEFT JOIN cota.box box ")
+		.append(" LEFT JOIN box.roteirizacao roteirizacao ")
+		.append(" LEFT JOIN roteirizacao.roteiros roteiro ");
+
+		if(filtro.getIdRota() != null) {	
+		//	hql.append(" LEFT JOIN roteiro.rotas rota ");
+		}
+
+		hql.append(" JOIN mffc.produtoEdicao produtoEdicao")
+		.append(" JOIN produtoEdicao.produto produto ")
+		.append(" JOIN produto.fornecedores fornecedor")
+		.append(" WHERE mffc.data BETWEEN :dataInicial AND :dataFinal ")
+		.append(" AND mffc.notaFiscalLiberadaEmissao = :true ")
+		.append(" AND mffc.notaFiscalVendaEmitida = :false ")
+		.append(" AND mffc.notaFiscalDevolucaoSimbolicaEmitida = :false ");
+
+		// Tipo de Nota:		
+		if(filtro.getIdNaturezaOperacao() != null) {
+			hql.append(" AND mffc.tipoMovimento.id in (SELECT tm.id ");
+			hql.append("FROM NaturezaOperacao no ");
+			hql.append("JOIN no.tipoMovimento tm ");
+			hql.append("WHERE no.id in(:idNaturezaOperacao)) ");
+		}
+
+		// Data Emissão:	...		
+		if(filtro.getDataEmissao() != null) {
+			hql.append(" ");
+		}
+
+		// Cota:		
+		if(filtro.getIdCota() != null) {
+			hql.append(" AND cota.id = :cotaId ");
+		}
+
+		// Intervalo de Cota:
+		if(filtro.getIntervalorCotaInicial() != null && filtro.getIntervalorCotaFinal() != null) {
+			hql.append(" AND cota.numeroCota BETWEEN :numeroCotaInicial AND :numeroCotaFinal ");
+		}
+
+		// Roteiro:
+		if(filtro.getIdRoteiro() != null) {
+			hql.append(" AND roteiro.id = :roteiroId ");
+		}
+
+		// Rota:		
+		if(filtro.getIdRota() != null) {
+			hql.append(" AND rota.id = :rotaId ");
+		}
+
+		// Cota de:	 Até   
+		if(filtro.getIntervaloBoxInicial() != null && filtro.getIntervaloBoxFinal() != null) {
+			hql.append(" AND box.codigo between :codigoBoxInicial AND :codigoBoxFinal ");
+		}
+
+		if(filtro.getListIdFornecedor() != null) {
+			hql.append(" AND fornecedor.id in (:fornecedor) ");
+		}
+
+		if(!isGroup){
+			hql.append(" GROUP BY mffc.cota.numeroCota ");
+		} else {
+			hql.append(" GROUP BY mffc ");
+		}
+
+		if(!isCount && !isPagination){
+			if(filtro.getPaginacaoVO()!=null && filtro.getPaginacaoVO().getSortOrder() != null && filtro.getPaginacaoVO().getSortColumn() != null) {
+				hql.append(" ORDER BY  ").append(filtro.getPaginacaoVO().getSortColumn()).append(" ").append(filtro.getPaginacaoVO().getSortOrder());
+			}
+		}
+
+		return hql;
+	}
+
+	public Query queryConsultaMFFNfeParameters(StringBuilder hql, FiltroNFeDTO filtro) {
+
+
+		// Realizar a consulta e converter ao objeto cota exemplares.
+		Query query = this.getSession().createQuery(hql.toString());		
+
+		query.setParameter("true", true);
+		
+		query.setParameter("false", false);
+		
+		// Data Movimento:	...  Até   ...
+		if (filtro.getDataInicial() != null && filtro.getDataFinal() != null) {
+			query.setParameter("dataInicial", filtro.getDataInicial());
+			query.setParameter("dataFinal", filtro.getDataFinal());
+		}
+
+		// tipo da nota fiscal		
+		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao().longValue() > 0) {
+			query.setParameter("idNaturezaOperacao", filtro.getIdNaturezaOperacao());
+		}
+
+		// forncedor id		
+		if(filtro.getListIdFornecedor() !=null && !filtro.getListIdFornecedor().isEmpty()) {
+			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
+		}
+		// Data Emissão:	...		
+		/*if(filtro.getDataEmissao() != null) {
+
+		}*/
+
+		if(filtro.getIdCota() != null) {
+			query.setParameter("cotaId", filtro.getIdCota());
+		}
+
+		if(filtro.getIntervalorCotaInicial() != null && filtro.getIntervalorCotaFinal() != null) {
+			query.setParameter("numeroCotaInicial", filtro.getIntervalorCotaInicial());
+			query.setParameter("numeroCotaFinal", filtro.getIntervalorCotaFinal());
+		}
+
+		// Roteiro:
+		if(filtro.getIdRoteiro() != null) {
+			query.setParameter("roteiroId", filtro.getIdRoteiro());
+		}
+
+		// Rota:		
+		if(filtro.getIdRota() != null) {
+			query.setParameter("rotaId", filtro.getIdRota());
+		}
+
+		// Cota de:	 Até   
+		if(filtro.getIntervaloBoxInicial() != null && filtro.getIntervaloBoxFinal() != null) {
+			query.setParameter("codigoBoxInicial", filtro.getIntervaloBoxInicial());
+			query.setParameter("codigoBoxFinal", filtro.getIntervaloBoxFinal());
+		}
+
+		if(filtro.getListIdFornecedor() != null) {
+			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
+		}
+
+		return query;	
+	}
+
 }

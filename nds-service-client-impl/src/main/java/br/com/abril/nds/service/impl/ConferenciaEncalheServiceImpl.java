@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
@@ -41,6 +42,7 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
@@ -53,6 +55,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.estoque.CobrancaControleConferenciaEncalheCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -61,6 +64,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
@@ -116,6 +120,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.repository.TipoMovimentoFiscalRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -173,6 +178,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
+	@Autowired
+	private TipoMovimentoFiscalRepository tipoMovimentoFiscalRepository;
 	
 	@Autowired
 	private CotaRepository cotaRepository;
@@ -2164,18 +2172,30 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			} else {
 				
 				List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
-				MovimentoFechamentoFiscalCota mff = new MovimentoFechamentoFiscalCota();
-				listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mff, movimentoEstoqueCota));
-				mff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
-				mff.setNotaFiscalLiberadaEmissao(false);
-				mff.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
-				mff.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
-				mff.setTipoDestinatario(TipoDestinatario.COTA);
-				mff.setCota(movimentoEstoqueCota.getCota());
-				mff.setChamadaEncalheCota(chamadaEncalheCota);
-				mff.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
+				MovimentoFechamentoFiscalCota mffc = new MovimentoFechamentoFiscalCota();
+				listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mffc, movimentoEstoqueCota));
+				mffc.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
+				mffc.setNotaFiscalLiberadaEmissao(false);
+				mffc.setData(dataCriacao);
+				mffc.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.ENTRADA));
+				mffc.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
+				mffc.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
+				mffc.setTipoDestinatario(TipoDestinatario.COTA);
+				mffc.setCota(movimentoEstoqueCota.getCota());
+				mffc.setChamadaEncalheCota(chamadaEncalheCota);
+				mffc.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
+				
+				if(cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica()
+						|| cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) {
+					
+					mffc.setNotaFiscalDevolucaoSimbolicaEmitida(true);
+				} else {
+					
+					mffc.setNotaFiscalDevolucaoSimbolicaEmitida(false);
+				}
 	    			
-	    		movimentoFechamentoFiscalRepository.adicionar(mff);
+	    		movimentoFechamentoFiscalRepository.adicionar(mffc);
+					
 			}
 			
 			
@@ -2196,6 +2216,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mff, movimentoEstoqueCota));
 			mff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
 			mff.setNotaFiscalLiberadaEmissao(false);
+			mff.setData(dataCriacao);
 			mff.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
 			mff.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
 			mff.setTipoDestinatario(TipoDestinatario.COTA);

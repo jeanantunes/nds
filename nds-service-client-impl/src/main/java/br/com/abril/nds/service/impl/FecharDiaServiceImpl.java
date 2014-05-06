@@ -52,8 +52,10 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -142,11 +144,13 @@ import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.FechamentoDiarioException;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.Util;
@@ -306,6 +310,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private MovimentoFechamentoFiscalRepository movimentoFechamentoFiscalRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private NaturezaOperacaoService naturezaOperacaoService; 
 	
 	private static final Logger LOG = LoggerFactory.getLogger("fecharDiaLogger");
 	
@@ -1731,6 +1741,21 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		Date dataBase = calendarioService.subtrairDiasUteisComOperacao(dataOperacao, ultimoDiaRecolhimento - 1);
 		
 		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosEmRecolhimentoVencidos(dataBase);
+		
+		/*NaturezaOperacao no = naturezaOperacaoService.
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		if(distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+			
+			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+				if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+					if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+						
+					}
+				}
+			}
+		}*/
+		
 		
 		for (Lancamento lancamento : lancamentos) {
 			
