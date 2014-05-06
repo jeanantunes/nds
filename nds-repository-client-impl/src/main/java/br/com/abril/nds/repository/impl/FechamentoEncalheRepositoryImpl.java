@@ -1150,7 +1150,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         hql.append("	box.nome as boxEncalhe, 	");
         
-        hql.append("   sum( coalesce(mec.qtde, 0)  *  coalesce(mec.valoresAplicados.precoComDesconto, 0)  ) as total ");
+        hql.append("    ROUND(sum( coalesce(mec.qtde, 0)  *  coalesce(mec.valoresAplicados.precoComDesconto, 0)  ),2) as total ");
         
         hql.append("   , coalesce(div.status, (");
         
