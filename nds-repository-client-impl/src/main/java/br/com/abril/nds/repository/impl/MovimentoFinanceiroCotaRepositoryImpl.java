@@ -1906,7 +1906,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		StringBuilder hql = new StringBuilder();
 		hql.append("select m.valor as valor, ")
 		   .append(" m.data as data, ")
-		   .append(" m.tipoMovimento.descricao || (case when m.observacao is not null then (' - ' || m.observacao) else '' end) as descricao ")
+		   .append(" (case when m.tipoMovimento.grupoMovimentoFinaceiro = 'ENVIO_ENCALHE' then 'Encalhe' ")
+		   .append(" when m.tipoMovimento.grupoMovimentoFinaceiro = 'RECEBIMENTO_REPARTE' then 'Reparte' ")
+		   .append(" else m.tipoMovimento.descricao end) || (case when m.observacao is not null then (' - ' || m.observacao) else '' end) as descricao ")
 		   .append(" from MovimentoFinanceiroCota m ")
 		   .append(" join m.cota cota ");
 		
