@@ -56,7 +56,7 @@ public interface MapaAbastecimentoService {
 	 * @param filtro
 	 * @return
 	 */
-	Map<Integer, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(
+	Map<String, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(
 			FiltroMapaAbastecimentoDTO filtro);
 
 	/**

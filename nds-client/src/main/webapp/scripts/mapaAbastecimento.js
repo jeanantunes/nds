@@ -183,7 +183,7 @@
 			T.preencherGrid(
 				flexiGrid, 
 				pathTela + "/mapaAbastecimento/pesquisar", 
-				T.processarMensagens, 
+				T.processarRetornoPesquisaPorRota,
 				grid,
 				params
 			);
@@ -328,6 +328,28 @@
 		if(produto) {
 			
 			$("#nomeProdutoHeader", _workspace).html(produto.nome);
+		}
+		
+		if (result.rows){
+			$.each(result.rows, function(index, item){
+				
+				item.cell.codigoBox += (" - " + item.cell.nomeBox);
+			});
+		}
+		
+		return result;
+	},
+	
+	this.processarRetornoPesquisaPorRota = function(result){
+		
+		T.processarMensagens(result);
+		
+		if (result.rows){
+			
+			$.each(result.rows, function(index, item){
+				
+				item.cell.codigoBox += (" - " + item.cell.nomeBox);
+			});
 		}
 		
 		return result;
