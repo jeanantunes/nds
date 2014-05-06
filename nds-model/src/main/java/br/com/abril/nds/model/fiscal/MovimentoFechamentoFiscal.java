@@ -50,8 +50,14 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 	@Column(name = "NOTA_FISCAL_VENDA_EMITIDA")
 	private boolean notaFiscalVendaEmitida;
 	
+	@Column(name = "DESOBRIGA_NOTA_FISCAL_VENDA")
+	private boolean desobrigaNotaFiscalVenda;
+	
 	@Column(name = "NOTA_FISCAL_DEVOLUCAO_SIMBOLICA_EMITIDA")
 	private boolean notaFiscalDevolucaoSimbolicaEmitida;
+	
+	@Column(name = "DESOBRIGA_NOTA_FISCAL_DEVOLUCAO_SIMBOLICA")
+	private boolean desobrigaNotaFiscalDevolucaoSimbolica;
 	
 	@Column(name = "NOTA_FISCAL_LIBERADA_EMISSAO")
 	private boolean notaFiscalLiberadaEmissao;
@@ -92,6 +98,23 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 
 	public void setDataCriacao(Date dataCriacao) {
 		this.dataCriacao = dataCriacao;
+	}
+
+	public boolean isDesobrigaNotaFiscalVenda() {
+		return desobrigaNotaFiscalVenda;
+	}
+
+	public void setDesobrigaNotaFiscalVenda(boolean desobrigaNotaFiscalVenda) {
+		this.desobrigaNotaFiscalVenda = desobrigaNotaFiscalVenda;
+	}
+
+	public boolean isDesobrigaNotaFiscalDevolucaoSimbolica() {
+		return desobrigaNotaFiscalDevolucaoSimbolica;
+	}
+
+	public void setDesobrigaNotaFiscalDevolucaoSimbolica(
+			boolean desobrigaNotaFiscalDevolucaoSimbolica) {
+		this.desobrigaNotaFiscalDevolucaoSimbolica = desobrigaNotaFiscalDevolucaoSimbolica;
 	}
 
 	public boolean isNotaFiscalVendaEmitida() {

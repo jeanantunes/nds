@@ -90,6 +90,8 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -1742,21 +1744,41 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosEmRecolhimentoVencidos(dataBase);
 		
-		//FIXME: Ajustar para obter as naturezas de devolucao simbolica e venda e setar as flags adequadamente
-		/*NaturezaOperacao no = naturezaOperacaoService.
-		
 		Distribuidor distribuidor = distribuidorService.obter();
-		if(distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+		
+		NaturezaOperacao naturezaOperacao = naturezaOperacaoService.obterNaturezaOperacaoDevolucaoSimbolica(TipoDestinatario.DISTRIBUIDOR);
+		boolean desobrigaEmissaoDevolucaoSimbolica = false;
+		if(naturezaOperacao != null) {
 			
-			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
-				if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
-					if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
-						
+			if(distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+				
+				for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+					if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+						if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+							desobrigaEmissaoDevolucaoSimbolica = true;
+							break;
+						}
 					}
 				}
 			}
-		}*/
+		}
 		
+		naturezaOperacao = naturezaOperacaoService.obterNaturezaOperacaoVendaConsignado(TipoDestinatario.COTA);
+		boolean desobrigaEmissaoVendaConsignado = false;
+		if(naturezaOperacao != null) {
+			
+			if(distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+				
+				for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+					if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+						if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+							desobrigaEmissaoVendaConsignado = true;
+							break;
+						}
+					}
+				}
+			}
+		}
 		
 		for (Lancamento lancamento : lancamentos) {
 			
@@ -1769,6 +1791,24 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				for(ChamadaEncalheCota cec : ce.getChamadaEncalheCotas()) {
 					MovimentoFechamentoFiscalCota movimentoFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCota(cec);
 					movimentoFechamentoFiscalCota.setNotaFiscalLiberadaEmissao(true);
+					
+					if(cec.getCota() != null
+							&& cec.getCota().getParametrosCotaNotaFiscalEletronica() != null
+							&& (cec.getCota().getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() 
+									|| cec.getCota().getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica())) {
+						
+						movimentoFechamentoFiscalCota.setDesobrigaNotaFiscalDevolucaoSimbolica(true);
+						movimentoFechamentoFiscalCota.setNotaFiscalDevolucaoSimbolicaEmitida(false);
+						movimentoFechamentoFiscalCota.setNotaFiscalVendaEmitida(false);
+						movimentoFechamentoFiscalCota.setDesobrigaNotaFiscalVenda(desobrigaEmissaoVendaConsignado);
+					} else {
+						
+						movimentoFechamentoFiscalCota.setDesobrigaNotaFiscalDevolucaoSimbolica(desobrigaEmissaoDevolucaoSimbolica);
+						movimentoFechamentoFiscalCota.setNotaFiscalDevolucaoSimbolicaEmitida(false);
+						movimentoFechamentoFiscalCota.setNotaFiscalVendaEmitida(false);
+						movimentoFechamentoFiscalCota.setDesobrigaNotaFiscalVenda(desobrigaEmissaoVendaConsignado);
+					}
+					
 					movimentoFechamentoFiscalRepository.merge(movimentoFechamentoFiscalCota);
 				}
 				
