@@ -285,6 +285,10 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		final List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
 		
+		if(datas == null || datas.isEmpty()) {
+			return listaDebitoCreditoCompleta;
+		}
+		
 		final List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = 
 		        this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
 		                Arrays.asList(
