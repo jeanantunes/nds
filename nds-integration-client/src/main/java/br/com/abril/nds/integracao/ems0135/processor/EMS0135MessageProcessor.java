@@ -248,7 +248,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                     produto.setCodigoICD(inputItem.getCodigoProduto());
                     produto.setPeriodicidade(PeriodicidadeProduto.MENSAL);
                     produto.setNome(inputItem.getNomeProduto());
-                    //produto.setNomeComercial(inputItem.getNomeProduto());
+                    produto.setNomeComercial(inputItem.getNomeProduto());
                     produto.setOrigem(Origem.MANUAL);
                     produto.setTipoProduto(tipoProduto);
                     produto.setPacotePadrao(10);
@@ -282,6 +282,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 produtoEdicao.setOrigem(Origem.PRODUTO_SEM_CADASTRO);
                 produtoEdicao.setPrecoPrevisto(new BigDecimal(inputItem.getPreco()));
                 produtoEdicao.setPrecoVenda(produtoEdicao.getPrecoPrevisto());
+                produtoEdicao.setNomeComercial(inputItem.getNomeProduto());
                 this.getSession().persist(produtoEdicao);
                 
                 Date dataAtual = new Date();
