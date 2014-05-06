@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0110.processor;
 
 import java.math.BigInteger;
+import java.text.Normalizer;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -217,7 +218,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	
     private TipoClassificacaoProduto findTipoClassificacaoProduto(String classificacao) {
         Criteria criteria = this.getSession().createCriteria(TipoClassificacaoProduto.class);
-        criteria.add(Restrictions.like("descricao", classificacao));
+        criteria.add(Restrictions.ge("descricao", classificacao.trim().toUpperCase()));
         return (TipoClassificacaoProduto) criteria.uniqueResult();
     }
     
@@ -531,7 +532,20 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		edicao.setChamadaCapa(input.getChamadaCapa());
 		edicao.setOrigem(Origem.INTERFACE);
 		edicao.setNomeComercial(input.getNomeComercial());
-		edicao.setTipoClassificacaoProduto(getTipoClassificacaoProduto(input.getClassificacao()));
+		
+		TipoClassificacaoProduto tpclassificacao = getTipoClassificacaoProduto(input.getClassificacao());
+		
+		if(tpclassificacao!=null){
+		  
+			edicao.setTipoClassificacaoProduto(tpclassificacao);
+		
+		} else {
+			
+			ndsiLoggerFactory.getLogger().logError(
+	                message,
+	                EventoExecucaoEnum.HIERARQUIA,
+	                "Classificação ("+input.getClassificacao()+") não existe. Produto "+input.getCodProd());
+		}
 		
 		boolean isParcial = false;
 		
