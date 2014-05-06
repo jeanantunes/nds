@@ -117,8 +117,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		carregarComboFornecedores();
 	}
 	
-	
-	        /**
+	/**
      * Método responsável por carregar o combo de fornecedores.
      */
 	private void carregarComboFornecedores() {
@@ -137,9 +136,10 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, String semanaConferenciaEncalhe, 
 			Long idDestinatario, String sortorder, String sortname, int page, int rp){
 
-		if(listaFornecedoresCombo == null || listaFornecedoresCombo.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe fornecedor terceiro cadastrado!");
-		}
+		//FIXME: Validar a lista que nao esta populada
+		//if(listaFornecedoresCombo == null || listaFornecedoresCombo.isEmpty()){
+		//	throw new ValidacaoException(TipoMensagem.WARNING, "Não existe fornecedor terceiro cadastrado!");
+		//}
 		
 		Intervalo<Date> periodo = null;
 

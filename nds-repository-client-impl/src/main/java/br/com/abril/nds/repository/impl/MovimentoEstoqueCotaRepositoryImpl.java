@@ -50,6 +50,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -1525,6 +1526,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         if(filtro.getIdFornecedor() != null){
         	sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
+        } else {
+        	sql.append(" AND PROD_FORNEC.FORNECEDORES_ID NOT IN ( ")
+        	.append(" SELECT ID FROM FORNECEDOR forn ")
+        	.append(" WHERE forn.SITUACAO_CADASTRO = 'ATIVO' ")
+        	.append(" AND forn.FORNECEDOR_UNIFICADOR_ID IS NOT NULL ")
+        	.append(" UNION ")
+        	.append(" SELECT FORNECEDOR_UNIFICADOR_ID FROM FORNECEDOR forn ")
+        	.append(" WHERE forn.SITUACAO_CADASTRO = 'ATIVO' ")
+        	.append(" AND FORNECEDOR_UNIFICADOR_ID IS NOT NULL ) ");
+
         }
            
         sql.append(" GROUP BY PROD_EDICAO.ID ");
