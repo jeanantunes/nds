@@ -80,7 +80,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (!codDistribuidorSistema.equals(codDistribuidorArquivo)) {
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Distribuidor nao encontrato. Código: " 
+					"Distribuidor não encontrato. Código " 
 					+ codDistribuidorArquivo);
 			return;
 		}
@@ -94,10 +94,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
+					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto "
 							+ codigoProduto
-							+ " e Edicao: " + edicao
-							+ " na tabela produto_edicao");
+							+ " e Edição " + edicao
+							+ " na tabela Produto Edição");
 			return;
 		}
 		
@@ -110,7 +110,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração do Preço Previsto do Produto  "
 							+ codigoProduto
-							+ " e Edicao " + edicao
+							+ " e Edição " + edicao
 							+ ", de " + precoPrevistoAtual
 							+ " para " + precoPrevistoCorrente);
 			produtoEdicao.setPrecoPrevisto(precoPrevistoCorrente);
@@ -288,7 +288,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 						"Alteração do Lancamento para Produto "
 								+ codigoProduto
 								+ " e Edição: " + edicao
-								+ " na lancamento");
+								+ " na Lancamento");
 			}
 			
 			// Atualizar lançamento Distribuidor:
