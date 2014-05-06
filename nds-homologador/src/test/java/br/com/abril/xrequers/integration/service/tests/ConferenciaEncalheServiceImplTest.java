@@ -1,6 +1,7 @@
 package br.com.abril.xrequers.integration.service.tests;
 
 import static org.mockito.Mockito.when;
+import static br.com.abril.xrequers.integration.service.tests.TestUtil.criarData;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,24 +51,6 @@ public class ConferenciaEncalheServiceImplTest extends AbstractJUnit4SpringConte
         when(this.grupoRepository.obterDiasOperacaoDiferenciadaCota(Matchers.anyInt(), new Date())).thenReturn(listaDiasSemana);
         
         
-    }
-    
-    public static Date criarData(final int dia, final int mes, final int ano) {
-        final Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
-        return data.getTime();
-    }
-    
-    private static Calendar criarCalendar(final int dia, final int mes, final int ano, final int hora,
-            final int minuto, final int segundo) {
-        final Calendar data = Calendar.getInstance();
-        data.set(Calendar.DAY_OF_MONTH, dia);
-        data.set(Calendar.MONTH, mes);
-        data.set(Calendar.YEAR, ano);
-        data.set(Calendar.HOUR_OF_DAY, hora);
-        data.set(Calendar.MINUTE, minuto);
-        data.set(Calendar.SECOND, segundo);
-        data.clear(Calendar.MILLISECOND);
-        return data;
     }
     
     @Test

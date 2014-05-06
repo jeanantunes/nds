@@ -74,9 +74,9 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
-							+ codigoProduto + " e Edicao: " + edicao
-							+ " na tabela produto_edicao");
+					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto "
+							+ codigoProduto + " Edição " + edicao
+							+ " no Produto Edição");
 			return;
 		}		
 
@@ -92,8 +92,8 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			if (lancamento == null) {
 				this.ndsiLoggerFactory.getLogger().logError(message,
 						EventoExecucaoEnum.RELACIONAMENTO,
-						"SEM LANCAMENTOS com RECOLHIMENTO para Produto: "
-								+ codigoProduto + " e Edicao: " + edicao);
+						"SEM LANCAMENTOS com RECOLHIMENTO para Produto "
+								+ codigoProduto + " Edição " + edicao);
 				return;
 			}
 		}
@@ -123,7 +123,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			if (!dtRecolhimentoPrevista.equals(dtRecolhimentoArquivo)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteracao da DATA RECOLHIMENTO PREVISTA do Produto: "
+						"Alteração da DATA RECOLHIMENTO PREVISTA do Produto: "
 								+ codigoProduto + " e Edicao: " + edicao
 								+ " , de: " + simpleDateFormat.format(
 										dtRecolhimentoPrevista)
@@ -136,11 +136,11 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteracao da DATA RECOLHIMENTO DISTRIBUIDOR do Produto: "
-							+ codigoProduto + " e Edicao: " + edicao
-							+ " , de: " + simpleDateFormat.format(
+					"Alteração da DATA RECOLHIMENTO DISTRIBUIDOR do Produto "
+							+ codigoProduto + " Edição " + edicao
+							+ " de " + simpleDateFormat.format(
 									lancamento.getDataRecolhimentoDistribuidor())
-							+ "para: " + simpleDateFormat.format(
+							+ "para " + simpleDateFormat.format(
 									dtRecolhimentoArquivo));
 			lancamento.setDataRecolhimentoDistribuidor(dtRecolhimentoArquivo);
 			lancamento.setAlteradoInteface(true);
@@ -172,7 +172,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					String.format("Erro ao processar as parcias para o Produto %1$s Edicao %2$s. " + e.getMessage(),
+					String.format("Erro ao processar as parcias para o Produto %1$s Edição %2$s. " + e.getMessage(),
 								  codigoProduto, edicao));
 			
 			return true;
