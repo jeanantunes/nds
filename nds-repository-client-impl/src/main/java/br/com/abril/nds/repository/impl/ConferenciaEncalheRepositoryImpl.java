@@ -534,8 +534,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" CONF_ENCALHE.QTDE AS qtdExemplar,                  		");
 		
-		hql.append(" CASE WHEN ");
-		
 		hql.append(" CASE WHEN (PROD_EDICAO.GRUPO_PRODUTO = :grupoProdutoCromo) THEN true ELSE false END as isContagemPacote, ");
 		
 		hql.append(" COALESCE(CH_ENCALHE_COTA.QTDE_PREVISTA, 0) AS qtdReparte, 				");
