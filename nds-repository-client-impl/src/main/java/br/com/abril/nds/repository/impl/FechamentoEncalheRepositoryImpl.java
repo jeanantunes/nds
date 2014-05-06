@@ -212,18 +212,17 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         query.append("			 pe.ORIGEM as origem, ");
         query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,");
         query.append("			 dlp.ID as produtoDescontoLogisticaId,");
-        
-        query.append("			 CASE WHEN (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
-        query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
-        query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
-        query.append("			  AND chEn.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalheChamadao ");
-        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID > 0) then true else false end as chamadao, ");
 
-        query.append("			 CASE WHEN (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
-        query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
-        query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
-        query.append("			  AND chEn.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalheMatrizRecolhimento ");
-        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID > 0) then true else false end as matrizRecolhimento, ");
+	  query.append("			 CASE WHEN ((SELECT chEn.TIPO_CHAMADA_ENCALHE FROM CHAMADA_ENCALHE chEn ");
+	  query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+	  query.append("			  AND chEn.DATA_RECOLHIMENTO <= :dataRecolhimento ");
+	  query.append("			  ORDER BY chEn.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheChamadao) then true else false end as chamadao, ");
+      
+      query.append("			 CASE WHEN ((SELECT chEn.TIPO_CHAMADA_ENCALHE FROM CHAMADA_ENCALHE chEn ");
+      query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+      query.append("			  AND chEn.DATA_RECOLHIMENTO <= :dataRecolhimento ");
+      query.append("			  ORDER BY chEn.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheMatrizRecolhimento) then true else false end as matrizRecolhimento, ");
+
         
         query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
         query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
@@ -267,17 +266,15 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,");
         query.append("			 dlp.ID as produtoDescontoLogisticaId,");
 
-        query.append("			 CASE WHEN (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
-        query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
-        query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
-        query.append("			  AND chEn.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalheChamadao ");
-        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID > 0) then true else false end as chamadao, ");
-        
-        query.append("			 CASE WHEN (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
-        query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
-        query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
-        query.append("			  AND chEn.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalheMatrizRecolhimento ");
-        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID > 0) then true else false end as matrizRecolhimento, ");
+        query.append("			 CASE WHEN ((SELECT chEn.TIPO_CHAMADA_ENCALHE FROM CHAMADA_ENCALHE chEn ");
+        query.append("			 WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+        query.append("			 AND chEn.DATA_RECOLHIMENTO <= :dataRecolhimento ");
+        query.append("			 ORDER BY chEn.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheChamadao) then true else false end as chamadao, ");
+
+        query.append("			 CASE WHEN ((SELECT chEn.TIPO_CHAMADA_ENCALHE FROM CHAMADA_ENCALHE chEn ");
+        query.append("			 WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+        query.append("			 AND chEn.DATA_RECOLHIMENTO <= :dataRecolhimento ");
+        query.append("			 ORDER BY chEn.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheMatrizRecolhimento) then true else false end as matrizRecolhimento, ");
         
         query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
         query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
