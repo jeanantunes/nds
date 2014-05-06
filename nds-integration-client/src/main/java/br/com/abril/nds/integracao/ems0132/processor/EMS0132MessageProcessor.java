@@ -64,7 +64,7 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 		
 		if (distribuidor == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.RELACIONAMENTO, "Distribuidor nao encontrato.");
-			throw new RuntimeException("Distribuidor nao encontrado.");
+			throw new RuntimeException("Distribuidor não encontrado.");
 		}
 		
 		Date dataOperacao = distribuidor.getDataOperacao();
