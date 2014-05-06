@@ -585,12 +585,14 @@ public class NFeServiceImpl implements NFeService {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoRegimeTributario);
 			}
 			
-			if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > 400){
+			int parametro = Integer.valueOf(parametrosSistema.get("NFE_LIMITAR_QTDE_ITENS").getValor());
+			
+			if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > parametro){
 				List<List<DetalheNotaFiscal>> listaItens = new ArrayList<>();
 				
-				int tamanho = (int) notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() / 400;
+				int tamanho = (int) notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() / parametro;
 				
-				for (int i = 401; i % 400 != 0 && notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > i; i++) {
+				for (int i = parametro+1; i % parametro != 0 && notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > i; i++) {
 					listaItens.subList(tamanho, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size());
 					listaItens.add(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal());
 				}
