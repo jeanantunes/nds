@@ -64,7 +64,7 @@ window.print();
       <c:forEach items="${mapa.produtos}" var="produto" varStatus="statusProduto" end="${mapa.produtos.size()%2==0?(mapa.produtos.size()/2)-1:(mapa.produtos.size()/2)}">
       
       <tr class="class_linha_${statusProduto.index%2==0?1:2}">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}<br />${produto.value.codigoDeBarras}</td>
+        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}<br />${empty produto.value.codigoDeBarras ? '&nbsp;' : produto.value.codigoDeBarras}</td>
         <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.numeroEdicao}</td>
         <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.sm}</strong></td>
         <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.precoCapa}</strong></td>
@@ -88,7 +88,7 @@ window.print();
         <c:forEach items="${mapa.produtos}" var="produto" varStatus="statusProduto" begin="${mapa.produtos.size()%2==0?mapa.produtos.size()/2:(mapa.produtos.size()/2)+1}" >
       
       <tr class="class_linha_${statusProduto.index%2==0?1:2}">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}<br />${produto.value.codigoDeBarras}</td>
+        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}<br />${empty produto.value.codigoDeBarras ? '&nbsp;' : produto.value.codigoDeBarras}</td>
         <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.numeroEdicao}</td>
         <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.sm}</strong></td>
         <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.precoCapa}</strong></td>

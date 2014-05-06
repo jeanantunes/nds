@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -196,10 +195,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	}
 	
 	@Transactional
-	public Map<Integer, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(
+	public Map<String, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(
 			FiltroMapaAbastecimentoDTO filtro) {
 	
-		Map<Integer, Map<String, ProdutoMapaRotaDTO>> boxes = new LinkedHashMap<Integer, Map<String, ProdutoMapaRotaDTO>> ();
+		Map<String, Map<String, ProdutoMapaRotaDTO>> boxes = new LinkedHashMap<String, Map<String, ProdutoMapaRotaDTO>> ();
 	
 		List<ProdutoAbastecimentoDTO> boxProdutoRota = this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoBoxRota(filtro);
 	
@@ -209,7 +208,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				return null;
 			}
 	
-			Integer keyBox = item.getCodigoBox();
+			String keyBox = item.getCodigoBox() + " - " + item.getNomeBox();
 	
 			if(!boxes.containsKey(keyBox)){
 				boxes.put(keyBox, new LinkedHashMap<String, ProdutoMapaRotaDTO>());
@@ -246,7 +245,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		
 		int maiorQtdRotas = 0;
-		for(Entry<Integer, Map<String, ProdutoMapaRotaDTO>> entry : boxes.entrySet()) {
+		for(Entry<String, Map<String, ProdutoMapaRotaDTO>> entry : boxes.entrySet()) {
 			
 			for (Entry<String, ProdutoMapaRotaDTO> ent : entry.getValue().entrySet()){
 				
@@ -258,7 +257,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			}
 		}
 	
-		for(Entry<Integer, Map<String, ProdutoMapaRotaDTO>> entry : boxes.entrySet()) {
+		for(Entry<String, Map<String, ProdutoMapaRotaDTO>> entry : boxes.entrySet()) {
 	
 			preencheRotasNaoUtilizadas(maiorQtdRotas, entry.getValue());	
 		}
@@ -359,7 +358,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				produtosBoxRota.get(0).getNumeroEdicao().longValue(),
 				produtosBoxRota.get(0).getCodigoBarra(),
 				produtosBoxRota.get(0).getPrecoCapa(),
-				new LinkedHashMap<Integer, BoxRotasDTO>(),
+				new LinkedHashMap<String, BoxRotasDTO>(),
 				produtosBoxRota.get(0).getMaterialPromocional());
 		
 		if(produtosBoxRota.size() == 0) {	
@@ -370,12 +369,14 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
 	
-			if(!peMapaDTO.getBoxes().containsKey(item.getCodigoBox())){
+		    final String labelBox = item.getCodigoBox() + " - " + item.getNomeBox();
+		    
+			if(!peMapaDTO.getBoxes().containsKey(labelBox)){
 				
-				peMapaDTO.getBoxes().put(item.getCodigoBox(), new BoxRotasDTO(0, new LinkedHashMap<String, Integer>()));
+			    peMapaDTO.getBoxes().put(labelBox, new BoxRotasDTO(0, new LinkedHashMap<String, Integer>()));
 			}
 	
-			BoxRotasDTO box = peMapaDTO.getBoxes().get(item.getCodigoBox());
+			BoxRotasDTO box = peMapaDTO.getBoxes().get(labelBox);
 			
 			if(!box.getRotasQtde().containsKey(item.getCodigoRota())){
 				
@@ -392,7 +393,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		}
 		
 		int maiorQtd = 0;
-		for (Entry<Integer, BoxRotasDTO> entry : peMapaDTO.getBoxes().entrySet()){
+		for (Entry<String, BoxRotasDTO> entry : peMapaDTO.getBoxes().entrySet()){
 			
 			int qtd = entry.getValue().getRotasQtde().size();
 			
@@ -407,9 +408,9 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	}
 	
 	private void preencheRotasNaoUtilizadasPE(int qtd,
-			HashMap<Integer, BoxRotasDTO> boxes) {
+			HashMap<String, BoxRotasDTO> boxes) {
 		
-		for(Entry<Integer, BoxRotasDTO> entry : boxes.entrySet()) {	
+		for(Entry<String, BoxRotasDTO> entry : boxes.entrySet()) {	
 			for (int index = entry.getValue().getRotasQtde().size() ; index < qtd ; index++){
 				entry.getValue().getRotasQtde().put("|" + index, 0);
 			}

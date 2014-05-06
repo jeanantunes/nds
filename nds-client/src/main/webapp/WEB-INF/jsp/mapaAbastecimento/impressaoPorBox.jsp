@@ -36,7 +36,7 @@ function imprimir(){
     	</span>
     </td>
     <td width="269" align="center" valign="middle"><h3>${nomeDistribuidor}</h3></td>
-    <td width="408" align="right" valign="middle"><h1>Mapa de Abastecimento&nbsp;</h1></td>
+    <td width="408" align="right" valign="middle"><h1>Mapa de Abastecimento por Box&nbsp;</h1></td>
     </tr>
   <tr>
     <td colspan="3" align="center" valign="middle"></td>
