@@ -40,25 +40,21 @@ function imprimir(){
     	</span>
     </td>
     <td width="269" align="center" valign="middle"><h3>${nomeDistribuidor}</h3></td>
-    <td width="408" align="right" valign="middle">
+    <td width="600" align="right" valign="middle">
     
      <c:if test="${isPromocional==true}"></br></c:if>
     
     <c:if test="${isPromocional!=true}">    
-	    <h1>Mapa de Abastecimento&nbsp;</h1>    
+	    <h1>Mapa de Abastecimento por Produto&nbsp;</h1>    
+    </c:if>
+    
+    <c:if test="${isPromocional==true}"> 	    
+	    <h1 >Mapa de Abastecimento - Material Promocional&nbsp;</h1>	    
     </c:if>
     
     </td>
     </tr>
-  <tr>
-    <td colspan="3" align="center" style="text-align: right">
-    
-    <c:if test="${isPromocional==true}"> 	    
-	    <h1 style="margin-top: 0;">Mapa de Abastecimento - Material Promocional&nbsp;</h1>	    
-    </c:if>
-    
-    </td>
-  </tr>
+
 </table>
 
 <table width="800" border="0" align="center" cellpadding="0" cellspacing="0">
