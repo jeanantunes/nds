@@ -2472,10 +2472,9 @@ public class BoletoServiceImpl implements BoletoService {
         }
     }
     
-	                                        /**
+	/**
      * Verifica se existe boleto antecipado para a cota Data de recolhimento
      * dentro do periodo de emissao CE do Boleto antecipado Boletos em Branco
-     * sem reimpressão
      * 
      * @param idCota
      * @param dataRecolhimento
@@ -2494,18 +2493,10 @@ public class BoletoServiceImpl implements BoletoService {
             return false;
         }
         
-        for (final BoletoAntecipado ba : bas){
-            
-            if (ba.getEmissaoBoletoAntecipado().getBoletoAntecipadoReimpresso() == null){
-                
-                return true;
-            }
-        }
-        
-        return false;
+        return true;
     }
     
-	                                        /**
+	/**
      * Atualiza boletos antecipados por periodo de recolhimento da CE e numero
      * cota - re-emissao de CE Adiciona referência do novo Boleto Impresso nos
      * boletos ja emitidos no mesmo período Atualiza apenas boletos qua nao
