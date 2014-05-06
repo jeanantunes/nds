@@ -1742,6 +1742,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosEmRecolhimentoVencidos(dataBase);
 		
+		//FIXME: Ajustar para obter as naturezas de devolucao simbolica e venda e setar as flags adequadamente
 		/*NaturezaOperacao no = naturezaOperacaoService.
 		
 		Distribuidor distribuidor = distribuidorService.obter();
