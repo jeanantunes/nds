@@ -108,12 +108,23 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 notafiscalEntrada.setSerie(input.getSerieNotaFiscal());
                 
                 this.getSession().merge(notafiscalEntrada);
-                this.ndsiLoggerFactory.getLogger().logInfo(
+                
+                if(!chaveAcessoAntiga.trim().equals(input.getChaveAcessoNF().trim())){
+                
+                	this.ndsiLoggerFactory.getLogger().logInfo(
+                        message,
+                        EventoExecucaoEnum.INF_DADO_ALTERADO,
+                        String.format("Nota Fiscal de Entrada " + input.getNumeroNotaEnvio()+"/"+input.getNotaFiscal()+"/"+input.getSerieNotaFiscal()
+                                + " Atualizada com chave de acesso NFE de " + chaveAcessoAntiga.trim() + " para "
+                                + input.getChaveAcessoNF() + " com sucesso!"));
+                } else {
+                	this.ndsiLoggerFactory.getLogger().logInfo(
                         message,
                         EventoExecucaoEnum.INF_DADO_ALTERADO,
                         String.format("Nota Fiscal de Entrada " + input.getNumeroNotaEnvio()
-                                + " atualizada com chave de acesso NFE de " + chaveAcessoAntiga.trim() + " para "
-                                + input.getChaveAcessoNF() + " com sucesso!"));
+                                + " Atualizada com Nota Fiscal " + input.getNotaFiscal() + " Série "+input.getSerieNotaFiscal()));
+                }
+                
                 return;
             }
         }
