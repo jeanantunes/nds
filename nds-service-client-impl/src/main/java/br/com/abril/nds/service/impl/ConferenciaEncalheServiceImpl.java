@@ -1200,7 +1200,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 				
-		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
+		final Cota cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		this.debitoCreditoCotaService.carregarDadosDebitoCreditoDaCota(infoConfereciaEncalheCota, cota, datasRecolhimento);
 		
