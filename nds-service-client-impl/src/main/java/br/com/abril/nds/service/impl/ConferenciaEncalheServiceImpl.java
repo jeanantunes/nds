@@ -1209,7 +1209,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		infoConfereciaEncalheCota.setReparte(obterValorTotalReparte(numeroCota, datasRecolhimento));
 		
 		// impl Erik Scaranello
-		BigDecimal valorDebitoCreditoFinalizado = new BigDecimal(0);
+		BigDecimal valorDebitoCreditoFinalizado = BigDecimal.ZERO;
 		for(final DebitoCreditoCotaDTO debitoCredito : infoConfereciaEncalheCota.getListaDebitoCreditoCota()) {
 			valorDebitoCreditoFinalizado = valorDebitoCreditoFinalizado.add(debitoCredito.getValor());
 		}
