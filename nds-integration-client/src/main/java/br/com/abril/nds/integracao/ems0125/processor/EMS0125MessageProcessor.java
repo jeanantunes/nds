@@ -51,15 +51,15 @@ public class EMS0125MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.SEM_DOMINIO,
-					"Produto " + input.getCodProd() + " e Produto Edicao "
-							+ input.getEdicao() + "nao encontrado.");
+					"Produto " + input.getCodProd() + " e Produto Edição "
+							+ input.getEdicao() + "não encontrado.");
 			return;
 		}
 
 		produtoEdicao.setChamadaCapa(input.getCodBarra());
 		ndsiLoggerFactory.getLogger().logInfo(message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
-				"Atualizacao do Código de Barra para "+input.getCodBarra()+" do Produto "+input.getCodProd()+" Edição " + input.getEdicao() );
+				"Atualização do Código de Barra para "+input.getCodBarra()+" do Produto "+input.getCodProd()+" Edição " + input.getEdicao() );
 
 	}
 	
