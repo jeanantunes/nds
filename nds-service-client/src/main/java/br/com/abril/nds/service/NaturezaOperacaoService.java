@@ -15,21 +15,21 @@ public interface NaturezaOperacaoService {
 
 	NaturezaOperacao obterPorId(Long id);
 
-	public Integer obterQuantidadeNaturezasOperacoes(FiltroNaturezaOperacaoDTO filtro);
+	Integer obterQuantidadeNaturezasOperacoes(FiltroNaturezaOperacaoDTO filtro);
 	
 	/**
 	 * Obtem o proximo numero do Documento fiscal com base na serie
 	 * @param serie
 	 * @return
 	 */
-	public Long proximoNumeroDocumentoFiscal(int serie);
+	Long proximoNumeroDocumentoFiscal(int serie);
 	
 	/**
 	 * Carrega combo tipo notas ficais de acordo com o tipo de atividade do distribuidor
 	 * 
 	 * @return lista de itens para combo
 	 */
-	public abstract List<ItemDTO<Long, String>> carregarComboNaturezasOperacoes(TipoAtividade tipoAtividade);
+	List<ItemDTO<Long, String>> carregarComboNaturezasOperacoes(TipoAtividade tipoAtividade);
 	
 	/**
 	 * Carrega combo tipo notas ficais de acordo com o tipo de operação
@@ -58,5 +58,23 @@ public interface NaturezaOperacaoService {
 	NaturezaOperacao obterNaturezaOperacaoPorId(Long idNaturezaOperacao);
 
 	NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoOperacao tipoOperacao);
+
+	/**
+	 * Metodo especifico para obter a natureza de operacao de devolucao simbolica por destinatario
+	 * pois nao pode haver mais de uma
+	 * 
+	 * @param tipoDestinatario
+	 * @return
+	 */
+	NaturezaOperacao obterNaturezaOperacaoDevolucaoSimbolica(TipoDestinatario tipoDestinatario);
+	
+	/**
+	 * Metodo especifico para obter a natureza de operacao de venda de consignado por destinatario
+	 * pois nao pode haver mais de uma
+	 * 
+	 * @param tipoDestinatario
+	 * @return
+	 */
+	NaturezaOperacao obterNaturezaOperacaoVendaConsignado(TipoDestinatario tipoDestinatario);
 	
 }

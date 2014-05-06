@@ -2,6 +2,7 @@ package br.com.abril.nds.model.fiscal;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -16,7 +17,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
@@ -32,11 +39,25 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
 	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA", nullable = false)
+	private Date data;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATA_CRIACAO", nullable = false)
+	private Date dataCriacao;
+	
 	@Column(name = "NOTA_FISCAL_VENDA_EMITIDA")
 	private boolean notaFiscalVendaEmitida;
 	
+	@Column(name = "DESOBRIGA_NOTA_FISCAL_VENDA")
+	private boolean desobrigaNotaFiscalVenda;
+	
 	@Column(name = "NOTA_FISCAL_DEVOLUCAO_SIMBOLICA_EMITIDA")
 	private boolean notaFiscalDevolucaoSimbolicaEmitida;
+	
+	@Column(name = "DESOBRIGA_NOTA_FISCAL_DEVOLUCAO_SIMBOLICA")
+	private boolean desobrigaNotaFiscalDevolucaoSimbolica;
 	
 	@Column(name = "NOTA_FISCAL_LIBERADA_EMISSAO")
 	private boolean notaFiscalLiberadaEmissao;
@@ -47,6 +68,10 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_DESTINATARIO")
 	private TipoDestinatario tipoDestinatario;
+	
+	@OneToOne
+	@JoinColumn(name="TIPO_MOVIMENTO_ID")
+	private TipoMovimento tipoMovimento;
 	
 	@OneToMany(cascade=CascadeType.ALL, mappedBy="movimentoFechamentoFiscal")
 	private List<OrigemItemMovFechamentoFiscal> origemMovimentoFechamentoFiscal;
@@ -59,6 +84,39 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 		this.id = id;
 	}
 	
+	public Date getData() {
+		return data;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
+	}
+
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+
+	public boolean isDesobrigaNotaFiscalVenda() {
+		return desobrigaNotaFiscalVenda;
+	}
+
+	public void setDesobrigaNotaFiscalVenda(boolean desobrigaNotaFiscalVenda) {
+		this.desobrigaNotaFiscalVenda = desobrigaNotaFiscalVenda;
+	}
+
+	public boolean isDesobrigaNotaFiscalDevolucaoSimbolica() {
+		return desobrigaNotaFiscalDevolucaoSimbolica;
+	}
+
+	public void setDesobrigaNotaFiscalDevolucaoSimbolica(
+			boolean desobrigaNotaFiscalDevolucaoSimbolica) {
+		this.desobrigaNotaFiscalDevolucaoSimbolica = desobrigaNotaFiscalDevolucaoSimbolica;
+	}
+
 	public boolean isNotaFiscalVendaEmitida() {
 		return notaFiscalVendaEmitida;
 	}
@@ -98,6 +156,14 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 
 	public void setTipoDestinatario(TipoDestinatario tipoDestinatario) {
 		this.tipoDestinatario = tipoDestinatario;
+	}
+
+	public TipoMovimento getTipoMovimento() {
+		return tipoMovimento;
+	}
+
+	public void setTipoMovimento(TipoMovimento tipoMovimento) {
+		this.tipoMovimento = tipoMovimento;
 	}
 
 	public List<OrigemItemMovFechamentoFiscal> getOrigemMovimentoFechamentoFiscal() {

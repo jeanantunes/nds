@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
@@ -156,6 +157,7 @@ public class GeracaoNFeController extends BaseController {
 	}
 	
 	@Post
+	@Transactional
 	public void pesquisar(final FiltroNFeDTO filtro, final String sortname, final String sortorder, final int rp, final int page) {
 		
 		List<CotaExemplaresDTO> cotaExemplaresDTOs = null;
@@ -172,14 +174,14 @@ public class GeracaoNFeController extends BaseController {
 		
 		switch (naturezaOperacao.getTipoDestinatario()) {
 		case COTA:
-			cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro);			
-			totalRegistros = nfeService.consultaCotaExemplareSumarizadoQtd(filtro);
+			cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);			
+			totalRegistros = nfeService.consultaCotaExemplareSumarizadoQtd(filtro, naturezaOperacao);
 			
 			break;
 			
 		case DISTRIBUIDOR:
-			cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro);			
-			totalRegistros = nfeService.consultaCotaExemplareSumarizadoQtd(filtro);
+			cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);			
+			totalRegistros = nfeService.consultaCotaExemplareSumarizadoQtd(filtro, naturezaOperacao);
 			break;
 			
 		case FORNECEDOR:			
