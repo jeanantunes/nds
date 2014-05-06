@@ -312,7 +312,7 @@ var negociacaoDividaController = $.extend(true, {
 			});
 			
 		});
-				
+
 		params.push({
 			name: 'filtro.tipoPagamento',
 			value: $("#selectPagamento", negociacaoDividaController.workspace).val()
@@ -804,6 +804,7 @@ var negociacaoDividaController = $.extend(true, {
 			parcela.modificada = true;
 			parcela.parcela = $(input).val();
 		}else{
+			parcela.modificada = true;
 			parcela.dataVencimento = $(input).val();
 		}
 		var params = negociacaoDividaController.getParamsCalcularParcelas();

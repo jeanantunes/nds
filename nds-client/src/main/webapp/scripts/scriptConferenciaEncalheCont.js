@@ -912,9 +912,31 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 	
 	},
-	
+
+	informaVendaNegativa: function(){
+		
+		var data = [{name: "idProdutoEdicao", value: ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe}, 
+		            {name: "quantidade", value: $("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val()},
+		            {name:"juramentada", value:$('#checkboxJueramentadaNovoEncalhe', ConferenciaEncalheCont.workspace).attr('checked') == 'checked' }];
+		
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/informaVendaNegativa', data,
+			function(result){
+
+			    if (result){
+				
+				    exibirMensagem('WARNING', [result[1]]);
+			    }
+			}, 
+			null, 
+			true, 
+			"idModalNovoEncalhe"
+		);
+	},
+
 	adicionarEncalhe: function(){	
 
+		var _this = this;
+		
 		var existeProduto = false;
 		
 		$("input[id*='idProdutoEdicaoGrid']", ConferenciaEncalheCont.workspace).each(function(){
@@ -941,6 +963,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,
 			function(result){
+			
+			    _this.informaVendaNegativa();
 				
 				ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe(result);
 				
@@ -979,7 +1003,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$("#valorTotalNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(($("#precoCapaNovoEncalhe", ConferenciaEncalheCont.workspace).val() - $("#descontoNovoEncalhe", ConferenciaEncalheCont.workspace).val()) * $("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val()).toFixed(2));
 	},
-	
 	
 	carregarGridItensNotaFiscal : function(modeloConferenciaEncalhe) {
 	
