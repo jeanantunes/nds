@@ -283,7 +283,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		if (null == editor) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.SEM_DOMINIO,
-					"Editor " + input.getCodEditor() + " nao encontrado. Produto " + input.getCodProd() +  " - Nome do Produto " + input.getNomeProd());
+					"Editor " + input.getCodEditor() + " não encontrado. Produto " + input.getCodProd() +  " - Nome do Produto " + input.getNomeProd());
 
 //			throw new RuntimeException("Editor " + input.getCodEditor() + " nao encontrado. Código do produto: " + input.getCodProd() +  " - Nome do Produto: " + input.getNomeProd());
 		}
@@ -293,7 +293,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		if (null == tipoProduto) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.SEM_DOMINIO,
-					"Tipo Produto nao encontrado."+input.getCodCategoria());
+					"Tipo Produto não encontrado."+input.getCodCategoria());
 
 //			throw new RuntimeException("Tipo Produto nao encontrado.");
 		}

@@ -43,9 +43,9 @@ function imprimir(){
     <td colspan="3" align="center" valign="middle"></td>
   </tr>
 </table>
-<table width="800" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top:5px;">
+
 <c:forEach items="${mapa}" var="box" varStatus="statusBox">
-	
+	<table width="800" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top:5px; page-break-after: always;">
 		<tr class="class_linha_3">
         	<td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; width: 60px;">
         		<strong>Publicação</strong>
@@ -77,7 +77,9 @@ function imprimir(){
                   	 </td>
                  </c:forEach>
                  
-                 <td width="80" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000; background-color: white;"><strong>Reparte</strong></td>
+                 <td width="80" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000; background-color: white; page-break-inside: avoid !important;">
+                 	<strong>Reparte</strong>
+                 </td>
             </tr>
 	        <tr class="class_linha_${statusProduto.index%2==0?1:2}">
 	        	<td style="padding-left:5px;  border-left:1px solid #000; border-bottom:1px solid #000;">${produto.value.codigoDeBarras}</td>
@@ -90,8 +92,7 @@ function imprimir(){
                 <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000; font-size: 18px;">${produto.value.totalReparte}</td>
            	</tr>
 	    </c:forEach>
-	
+	</table>
 </c:forEach>
-</table>
 </body>
 </html>
