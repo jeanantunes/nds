@@ -58,5 +58,23 @@ public interface NaturezaOperacaoService {
 	NaturezaOperacao obterNaturezaOperacaoPorId(Long idNaturezaOperacao);
 
 	NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoOperacao tipoOperacao);
+
+	/**
+	 * Metodo especifico para obter a natureza de operacao de devolucao simbolica por destinatario
+	 * pois nao pode haver mais de uma
+	 * 
+	 * @param tipoDestinatario
+	 * @return
+	 */
+	NaturezaOperacao obterNaturezaOperacaoDevolucaoSimbolica(TipoDestinatario tipoDestinatario);
+	
+	/**
+	 * Metodo especifico para obter a natureza de operacao de venda de consignado por destinatario
+	 * pois nao pode haver mais de uma
+	 * 
+	 * @param tipoDestinatario
+	 * @return
+	 */
+	NaturezaOperacao obterNaturezaOperacaoVendaConsignado(TipoDestinatario tipoDestinatario);
 	
 }

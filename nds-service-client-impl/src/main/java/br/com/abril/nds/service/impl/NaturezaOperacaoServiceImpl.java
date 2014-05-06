@@ -176,4 +176,14 @@ public class NaturezaOperacaoServiceImpl implements NaturezaOperacaoService {
 		return naturezaOperacaoRepository.obterNaturezaOperacao(tipoAtividade, tipoDestinatario, tipoOperacao);
 	}
 
+	@Override
+	public NaturezaOperacao obterNaturezaOperacaoDevolucaoSimbolica(TipoDestinatario tipoDestinatario) {
+		return naturezaOperacaoRepository.obterNaturezaOperacaoDevolucaoSimbolica(distribuidorRepository.obter().getTipoAtividade(), tipoDestinatario);
+	}
+
+	@Override
+	public NaturezaOperacao obterNaturezaOperacaoVendaConsignado(TipoDestinatario tipoDestinatario) {
+		return naturezaOperacaoRepository.obterNaturezaOperacaoVendaConsignado(distribuidorRepository.obter().getTipoAtividade(), tipoDestinatario);
+	}
+
 }

@@ -310,4 +310,36 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		
 		return (NaturezaOperacao) query.uniqueResult();
 	}
+
+	@Override
+	public NaturezaOperacao obterNaturezaOperacaoDevolucaoSimbolica(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" from NaturezaOperacao nat ")
+		   .append(" where nat.tipoAtividade = :tipoAtividade ")
+		   .append(" and nat.tipoDestinatario = :tipoDestinatario ");
+		
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("tipoAtividade", tipoAtividade);
+		query.setParameter("tipoDestinatario", tipoDestinatario);
+		
+		return (NaturezaOperacao) query.uniqueResult();
+	}
+
+	@Override
+	public NaturezaOperacao obterNaturezaOperacaoVendaConsignado(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" from NaturezaOperacao nat ")
+		   .append(" where nat.tipoAtividade = :tipoAtividade ")
+		   .append(" and nat.tipoDestinatario = :tipoDestinatario ");
+		
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("tipoAtividade", tipoAtividade);
+		query.setParameter("tipoDestinatario", tipoDestinatario);;
+		
+		return (NaturezaOperacao) query.uniqueResult();
+	}
 }
