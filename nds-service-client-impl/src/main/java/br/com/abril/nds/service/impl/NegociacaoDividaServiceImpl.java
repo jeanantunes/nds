@@ -346,7 +346,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 movimentoFinanceiroCotaRepository.adicionar(movFinan);
             }
             
-            // Caso essa seja uma negociação avulsa as parcelas não devem entrar TODO
+            // Caso essa seja uma negociação avulsa as parcelas não devem entrar 
             // nas próximas
             // gerações de cobrança, para isso é necessário criar um consolidado
             // financeiro para
@@ -851,8 +851,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     public List<CalculaParcelasVO> recalcularParcelas(final FiltroCalculaParcelas filtro,
             final List<CalculaParcelasVO> parcelas) {
         
-        final BigDecimal valorSelecionado = filtro.getValorSelecionado();
-        
+        final BigDecimal valorSelecionado = filtro.getValorSelecionadoSemEncargo();              
+
         Collections.sort(parcelas, new Comparator<CalculaParcelasVO>() {
             
             @Override
@@ -860,12 +860,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 return o1.getNumParcela().compareTo(o2.getNumParcela());
             }
         });
-
         
         BigDecimal valorParcelasModificadas = BigDecimal.ZERO;
-        final Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
-        final FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+
         int qtdParcelasModificadas = 0;
+        
         for (final CalculaParcelasVO calculaParcelasVO : parcelas) {
             if (calculaParcelasVO.isModificada()) {
                 
@@ -874,8 +873,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     throw new ValidacaoException(TipoMensagem.WARNING, "Valor de parcela inválido");
                 }
                 
-                valorParcelasModificadas = valorParcelasModificadas.add(
-                        CurrencyUtil.converterValor(calculaParcelasVO.getParcela()));
+                valorParcelasModificadas = valorParcelasModificadas.add(CurrencyUtil.converterValor(calculaParcelasVO.getParcela()));
                 qtdParcelasModificadas++;
             }
             
@@ -884,57 +882,77 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         BigDecimal novoValorParcela;
         if (qtd.intValue() > 0) {
             novoValorParcela = (filtro.getValorSelecionado().subtract(valorParcelasModificadas)).divide(qtd,
-                    DEFAULT_SCALE, RoundingMode.HALF_EVEN);
+                    DEFAULT_SCALE, RoundingMode.HALF_UP);
             
         } else {
             novoValorParcela = BigDecimal.ZERO;
         }
         BigDecimal valorParcela;
         BigDecimal valorTotal = BigDecimal.ZERO;
+
+        Integer qtdParcelas = filtro.getQntdParcelas() != null ? filtro.getQntdParcelas() : 0; 
+
+        BigDecimal somaEncargo = BigDecimal.ZERO;
+        BigDecimal valorEncargoPorParcela = 
+        		filtro.getValorEncargoSelecionado().divide(BigDecimal.valueOf(filtro.getQntdParcelas()), RoundingMode.HALF_UP);
+
+        Date dataBase = null;
         
-        final FormaCobranca formaCobrancaPrincipal = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
-        final Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
         for (int i = 0; i < parcelas.size(); i++) {
             
             final CalculaParcelasVO calculaParcelasVO = parcelas.get(i);
             if (!calculaParcelasVO.isModificada()) {
                 if (i == parcelas.size() - 1) {
                     novoValorParcela = valorSelecionado.subtract(valorTotal);
-                    novoValorParcela = novoValorParcela.setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN);
+                    novoValorParcela = novoValorParcela.setScale(DEFAULT_SCALE, RoundingMode.HALF_UP);
                 }
                 valorParcela = novoValorParcela;
                 calculaParcelasVO.setParcela(CurrencyUtil.formatarValor(novoValorParcela));
+                
+                if (dataBase != null) {
+                	dataBase = 
+                			this.getDataParcela(
+                				dataBase, 
+                				filtro.getPeriodicidade(), 
+                				filtro.getSemanalDias(), 
+                				filtro.getQuinzenalDia1(), 
+                				filtro.getQuinzenalDia2(), 
+                				filtro.getMensalDia());
+
+                	calculaParcelasVO.setDataVencimento(DateUtil.formatarDataPTBR(dataBase));
+                }
+                
             } else {
+        		
                 valorParcela = CurrencyUtil.converterValor(calculaParcelasVO.getParcela());
+
+                dataBase = DateUtil.parseDataPTBR(calculaParcelasVO.getDataVencimento());
             }
+
             valorTotal = valorTotal.add(valorParcela);
-            
-            Date dataVencimento = DateUtil.parseDataPTBR(calculaParcelasVO.getDataVencimento());
-            
-            if (dataVencimento == null){
-                throw new ValidacaoException(TipoMensagem.WARNING, "Campo data inválido.");
+
+            if (BigDecimalUtil.eq(somaEncargo, filtro.getValorEncargoSelecionado())) {
+
+            	valorEncargoPorParcela = BigDecimal.ZERO;
             }
-            
-            if (formaCobranca.isVencimentoDiaUtil()) {
-                dataVencimento = calendarioService.adicionarDiasUteis(dataVencimento, 0);
-            }
-            
-            calculaParcelasVO.setDataVencimento(DateUtil.formatarDataPTBR(dataVencimento));
-            
-            BigDecimal encargos = BigDecimal.ZERO;
+
             if (!filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE)
                     && (filtro.getIsentaEncargos() != null && !filtro.getIsentaEncargos())) {
                 
-                final BigDecimal juros = cobrancaService.calcularJuros(banco, cota.getId(), valorParcela,
-                        dataVencimento, new Date(), formaCobrancaPrincipal);
+            	if (i == qtdParcelas - 1) {
+                    valorEncargoPorParcela = filtro.getValorEncargoSelecionado().subtract(somaEncargo);
+                    valorEncargoPorParcela = valorEncargoPorParcela.setScale(DEFAULT_SCALE, RoundingMode.HALF_UP);
+                }
                 
-                final BigDecimal multas = cobrancaService.calcularMulta(banco, cota, valorParcela,
-                        formaCobrancaPrincipal);
-                
-                encargos = juros.add(multas);
+                somaEncargo = somaEncargo.add(valorEncargoPorParcela);
+            
+            } else {
+
+            	valorEncargoPorParcela = BigDecimal.ZERO;
             }
-            calculaParcelasVO.setEncargos(CurrencyUtil.formatarValor(encargos));
-            calculaParcelasVO.setParcTotal(CurrencyUtil.formatarValor(valorParcela.add(encargos)));
+            	
+            calculaParcelasVO.setEncargos(CurrencyUtil.formatarValor(valorEncargoPorParcela));
+            calculaParcelasVO.setParcTotal(CurrencyUtil.formatarValor(valorParcela.add(valorEncargoPorParcela)));
             
         }
         
@@ -1065,10 +1083,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             
             somaParelas = somaParelas.add(valorParcela);
             
-            if (filtro.getTipoPagamento() != null 
-            		&& !filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE)
+            if (!TipoCobranca.CHEQUE.equals(filtro.getTipoPagamento())
                     && (filtro.getIsentaEncargos() != null && !filtro.getIsentaEncargos())) {
-                
+
                 if (i == qntParcelas - 1) {
                     valorEncargo = filtro.getValorEncargoSelecionado().subtract(somaEncargo);
                     valorEncargo = valorEncargo.setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN);
@@ -1103,7 +1120,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         
         case DIARIA:
             
-            return DateUtil.adicionarDias(dataBase, 1);
+            return calendarioService.adicionarDiasUteis(dataBase, 1);
             
         case SEMANAL:
             
