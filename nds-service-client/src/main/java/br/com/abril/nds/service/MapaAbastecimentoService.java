@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
+import br.com.abril.nds.dto.EntregadorDTO;
 import br.com.abril.nds.dto.MapaCotaDTO;
 import br.com.abril.nds.dto.MapaProdutoCotasDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
@@ -176,7 +177,7 @@ public interface MapaAbastecimentoService {
 	 * @param filtro
 	 * @return
 	 */
-	Map<Long, MapaProdutoCotasDTO> obterMapaDeImpressaoPorEntregador(
+	Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> obterMapaDeImpressaoPorEntregador(
 			FiltroMapaAbastecimentoDTO filtro);
 	
 	Map<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>> obterMapaDeImpressaoPorBoxRotaQuebraCota(
