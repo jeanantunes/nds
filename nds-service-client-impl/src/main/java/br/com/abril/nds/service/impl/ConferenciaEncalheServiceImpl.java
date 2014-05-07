@@ -45,6 +45,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -961,13 +962,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	
 	@Override
-	@Transactional(readOnly = true)
-	public boolean isContagemPacote(final Long idProdutoEdicao) {
-		
-		return this.conferenciaEncalheRepository.isCromoParcialNaoFinal(idProdutoEdicao);
-	}
-	
-	@Override
     @Transactional(readOnly = true)
     public boolean isParcialNaoFinal(final Long idProdutoEdicao) {
         
@@ -1379,6 +1373,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(
 					produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor(),
 						numeroCota));
+			
+			produtoEdicaoDTO.setContagemPacote( GrupoProduto.CROMO.equals(produtoEdicao.getGrupoProduto()) ? true : false );
+
 		}
 		
 		return produtoEdicaoDTO;
@@ -1478,6 +1475,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 			
 			produtoEdicaoDTO.setSequenciaMatriz(sm);
+			
+			produtoEdicaoDTO.setContagemPacote( GrupoProduto.CROMO.equals(produtoEdicao.getGrupoProduto()) ? true : false );
 			
 		}
 		
@@ -1601,6 +1600,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(
 						produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor(),
 							numeroCota));
+				
+				produtoEdicaoDTO.setContagemPacote( GrupoProduto.CROMO.equals(produtoEdicao.getGrupoProduto()) ? true : false );
+
 				
 				produtosEdicaoDTO.add(produtoEdicaoDTO);
 		    }

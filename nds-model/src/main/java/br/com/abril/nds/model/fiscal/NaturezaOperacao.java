@@ -75,8 +75,11 @@ public class NaturezaOperacao implements Serializable {
 	            inverseJoinColumns=@JoinColumn(name="PROCESSO", referencedColumnName="id"))
 	private Set<Processo> processo;
 
-	@Column(name = "CONTRIBUINTE", nullable = false)
-	private boolean contribuinte;
+	@Column(name = "NOTA_FISCAL_VENDA_CONSIGNADO", nullable = true)
+	private boolean notaFiscalVendaConsignado;
+	
+	@Column(name = "NOTA_FISCAL_DEVOLUCAO_SIMBOLICA", nullable = true)
+	private boolean notaFiscalDevolucaoSimbolica;
 	
 	@OneToMany
 	@JoinTable(
@@ -156,13 +159,21 @@ public class NaturezaOperacao implements Serializable {
 	public void setTipoDestinatario(TipoDestinatario tipoDestinatario) {
 		this.tipoDestinatario = tipoDestinatario;
 	}
-
-	public boolean isContribuinte() {
-		return contribuinte;
+	
+	public boolean isNotaFiscalVendaConsignado() {
+		return notaFiscalVendaConsignado;
 	}
 
-	public void setContribuinte(boolean contribuinte) {
-		this.contribuinte = contribuinte;
+	public void setNotaFiscalVendaConsignado(boolean notaFiscalVendaConsignado) {
+		this.notaFiscalVendaConsignado = notaFiscalVendaConsignado;
+	}
+
+	public boolean isNotaFiscalDevolucaoSimbolica() {
+		return notaFiscalDevolucaoSimbolica;
+	}
+
+	public void setNotaFiscalDevolucaoSimbolica(boolean notaFiscalDevolucaoSimbolica) {
+		this.notaFiscalDevolucaoSimbolica = notaFiscalDevolucaoSimbolica;
 	}
 
 	public void setTipoOperacao(TipoOperacao tipoOperacao) {

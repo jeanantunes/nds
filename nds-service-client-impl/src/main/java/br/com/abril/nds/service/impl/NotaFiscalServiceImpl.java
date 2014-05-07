@@ -234,7 +234,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 					if (cota.getParametrosCotaNotaFiscalEletronica() != null) {
 
-						if (cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() == tipoNotaFiscal.isContribuinte()) {
+						if (cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica()) {
 
 							List<ItemNotaFiscalSaida> itensNotaFiscal = obterItensNotaFiscalPor(
 									parametrosRecolhimentoDistribuidor, cota,

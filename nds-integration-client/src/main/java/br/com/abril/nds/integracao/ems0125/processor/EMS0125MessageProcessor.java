@@ -52,7 +52,7 @@ public class EMS0125MessageProcessor extends AbstractRepository implements
 					message,
 					EventoExecucaoEnum.SEM_DOMINIO,
 					"Produto " + input.getCodProd() + " e Produto Edição "
-							+ input.getEdicao() + "não encontrado.");
+							+ input.getEdicao() + " não encontrado.");
 			return;
 		}
 

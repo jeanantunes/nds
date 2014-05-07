@@ -481,7 +481,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 		filtro.setPaginacao(null);
 
-		Map<Integer, Map<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
+		Map<String, Map<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
 		setaNomeParaImpressao();
 		result.include("mapa", produtosMapa);
 
@@ -516,7 +516,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 		Entregador entregador = entregadorService.buscarPorId(filtro.getIdEntregador());
 
-		result.include("distribuidor", distribuidorService.obterRazaoSocialDistribuidor());
+		result.include("nomeDistribuidor", distribuidorService.obterRazaoSocialDistribuidor());
 
 		result.include("entregador", entregador);
 
@@ -525,7 +525,15 @@ public class MapaAbastecimentoController extends BaseController {
 		result.include("data",data);
 
 		result.include("mapa", mapa);
-
+		
+		int qtd = 0;
+		for (Long key : mapa.keySet()){
+		    if (qtd < mapa.get(key).getCotasQtdes().size()){
+		        qtd = mapa.get(key).getCotasQtdes().size();
+		    }
+		}
+		
+		result.include("qtdColCota", qtd);
 	}
 
 	public void impressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {

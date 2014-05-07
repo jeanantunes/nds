@@ -178,8 +178,9 @@ implements ParametroSistemaRepository {
 		lst.add(TipoParametroSistema.FTF_CODIGO_ESTABELECIMENTO_EMISSOR);
 		lst.add(TipoParametroSistema.FTF_CODIGO_LOCAL);
 		lst.add(TipoParametroSistema.FTF_INDEX_FILENAME);
+		lst.add(TipoParametroSistema.NFE_LIMITAR_QTDE_ITENS);
 		//lst.add(TipoParametroSistema.VERSAO_SISTEMA);
-
+		
 		Query query = this.getSession().createQuery(hql);
 		query.setParameterList("listaTipoParametroSistema", lst);
 		

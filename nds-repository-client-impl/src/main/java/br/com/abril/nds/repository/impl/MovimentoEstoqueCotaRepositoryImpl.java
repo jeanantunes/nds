@@ -2405,6 +2405,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final StringBuilder hql = new StringBuilder();
         
         hql.append(" select box.CODIGO as codigoBox, ");
+        hql.append("        box.NOME as nomeBox, ");
         hql.append(" 		rota.DESCRICAO_ROTA as codigoRota, ");
         hql.append(" 		produtoEdicao.ID as idProdutoEdicao, ");
         hql.append(" 		produto.CODIGO as codigoProduto, ");
@@ -2434,6 +2435,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameterList("status", statusLancamento);
         
         query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
+        query.addScalar("nomeBox", StandardBasicTypes.STRING);
         query.addScalar("codigoRota", StandardBasicTypes.STRING);
         query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
         query.addScalar("codigoProduto", StandardBasicTypes.STRING);
@@ -2462,6 +2464,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final StringBuilder hql = new StringBuilder();
         
         hql.append(" select box.CODIGO as codigoBox, ");
+        hql.append("        box.NOME as nomeBox, ");
         hql.append(" 		rota.DESCRICAO_ROTA as codigoRota, ");
         hql.append(" 		cota.NUMERO_COTA as codigoCota, ");
         hql.append(" 		coalesce(pessoa.NOME, pessoa.NOME_FANTASIA, pessoa.RAZAO_SOCIAL, '') as nomeCota, ");
@@ -2491,6 +2494,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameterList("status", statusLancamento);
         
         query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
+        query.addScalar("nomeBox", StandardBasicTypes.STRING);
         query.addScalar("codigoRota", StandardBasicTypes.STRING);
         query.addScalar("codigoCota", StandardBasicTypes.INTEGER);
         query.addScalar("nomeCota", StandardBasicTypes.STRING);
@@ -2571,6 +2575,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final StringBuilder hql = new StringBuilder();
         
         hql.append(" select box.CODIGO as codigoBox, ");
+        hql.append("        box.NOME as nomeBox, ");
         hql.append(" 		rota.DESCRICAO_ROTA as codigoRota, ");
         hql.append(" 		produto.CODIGO as codigoProduto, ");
         hql.append(" 		produto.NOME as nomeProduto, ");
@@ -2607,6 +2612,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameterList("status", statusLancamento);
         
         query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
+        query.addScalar("nomeBox", StandardBasicTypes.STRING);
         query.addScalar("codigoRota", StandardBasicTypes.STRING);
         query.addScalar("codigoProduto", StandardBasicTypes.STRING);
         query.addScalar("nomeProduto", StandardBasicTypes.STRING);

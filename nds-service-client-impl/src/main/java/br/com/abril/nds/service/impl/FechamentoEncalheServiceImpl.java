@@ -1303,7 +1303,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         }
         
         for (final NaturezaOperacao tipo : listaNaturezasOperacao) {
-            if (tipo.isContribuinte() == contribuinte) {
+            if (contribuinte) {
                 tipoNotaFiscal = tipo;
                 break;
             }
