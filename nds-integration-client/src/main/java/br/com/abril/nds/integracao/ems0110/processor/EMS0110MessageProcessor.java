@@ -81,6 +81,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
+		System.out.println("Inicio");
 	}
 
 	@Override
@@ -216,9 +217,18 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
     }
 	
     private TipoClassificacaoProduto findTipoClassificacaoProduto(String classificacao) {
-        Criteria criteria = this.getSession().createCriteria(TipoClassificacaoProduto.class);
-        criteria.add(Restrictions.ge("descricao", classificacao.trim().toUpperCase()));
-        return (TipoClassificacaoProduto) criteria.uniqueResult();
+        
+    	TipoClassificacaoProduto tipoClassificacaoProdutoAux;
+    	Criteria criteria = this.getSession().createCriteria(TipoClassificacaoProduto.class);
+        criteria.add(Restrictions.eq("descricao", classificacao.trim().toUpperCase()));
+        tipoClassificacaoProdutoAux = (TipoClassificacaoProduto) criteria.uniqueResult();
+        
+        if(tipoClassificacaoProdutoAux==null){
+         criteria.add(Restrictions.ge("descricao", classificacao.trim().toUpperCase()));
+         tipoClassificacaoProdutoAux = (TipoClassificacaoProduto) criteria.list().get(0);
+        }
+        
+        return tipoClassificacaoProdutoAux;
     }
     
     private TipoClassificacaoProduto criarNovoTipoClassificacaoProduto(String classificacao) {
