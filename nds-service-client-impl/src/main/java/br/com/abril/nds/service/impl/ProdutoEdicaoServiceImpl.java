@@ -70,6 +70,7 @@ import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
@@ -163,6 +164,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     @Autowired
     private CotaService cotaService;
+    
+    @Autowired
+    private CalendarioService calendarioService;
     
     @Autowired
     private TipoSegmentoProdutoService tipoSegmentoProdutoService;
@@ -266,10 +270,18 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 }
                 
                 if (diaSemana == -1){
+                	
                     diaSemana = listaDiasSemana.get(0);
                 }
                 
-                while (calendar.get(Calendar.DAY_OF_WEEK) != diaSemana){
+                while ((calendar.get(Calendar.DAY_OF_WEEK) != diaSemana)){
+                	
+                    calendar.add(Calendar.DAY_OF_MONTH, 1);
+                }
+                
+                while (calendarioService.isFeriadoSemOperacao(calendar.getTime()) || 
+	                   calendarioService.isFeriadoMunicipalSemOperacao(calendar.getTime())){
+                	
                     calendar.add(Calendar.DAY_OF_MONTH, 1);
                 }
                 
