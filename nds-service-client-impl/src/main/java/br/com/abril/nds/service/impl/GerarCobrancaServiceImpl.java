@@ -1835,7 +1835,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				if (divida != null) {
 					
-					Negociacao negociacao = this.negociacaoRepository.obterNegociacaoPorCobranca(divida.getCobranca().getId());
+					Negociacao negociacao = this.negociacaoRepository.obterNegociacaoPorCobranca(consolidado.getId());
 
 					if (negociacao != null && TipoNegociacao.PAGAMENTO_AVULSO.equals(negociacao.getTipoNegociacao())) {
 						
