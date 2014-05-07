@@ -419,11 +419,12 @@ public class ParametroCobrancaCotaController extends BaseController {
      */
     @Post
     @Path("/postarParametroCobranca")
-    public void postarParametroCobranca(final ParametroCobrancaCotaDTO parametroCobranca){
+    public void postarParametroCobranca(final ParametroCobrancaCotaDTO parametroCobranca, boolean parametroCobrancaAlterado){
         
         validarParametroCobrancaCota(parametroCobranca);
         
-        if (parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(parametroCobranca.getIdCota()) == 0) {
+        if (parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(parametroCobranca.getIdCota()) == 0
+        		&& parametroCobrancaAlterado) {
             // A cota sempre terá uma forma de cobrança a forma de cobrança
             // principal do Distribuidor
             parametroCobrancaCotaService.inserirFormaCobrancaDoDistribuidorNaCota(parametroCobranca);
@@ -812,8 +813,8 @@ public class ParametroCobrancaCotaController extends BaseController {
      * @param tipoCota
      */
     @Post
-    @Path("/salvarFinanceiroEspecificoDaCota")
-    public void salvarFinanceiroEspecificoDaCota(final Long idCota, 
+    @Path("/salvarContratoTipoCotaEDevolveEncalhe")
+    public void salvarContratoTipoCotaEDevolveEncalhe(final Long idCota, 
     		                                     final Date inicioContrato, 
     		                                     final Date terminoContrato, 
     		                                     final TipoCota tipoCota, 
