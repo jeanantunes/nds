@@ -1043,7 +1043,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             subSqlIndObservacao.append(" 	and CONFERENCIA_ENCALHE_0.CHAMADA_ENCALHE_COTA_ID = CHAMADA_ENCALHE_COTA.id ");
         }
         
-        subSqlIndObservacao.append(" 	and CONFERENCIA_ENCALHE_0.OBSERVACAO is not null ");
+        subSqlIndObservacao.append(" 	and (CONFERENCIA_ENCALHE_0.OBSERVACAO is not null OR CONFERENCIA_ENCALHE_0.JURAMENTADA = 1) ");
         
         final StringBuilder sql = new StringBuilder();
         
