@@ -65,6 +65,7 @@ var fechamentoEncalheController = $.extend(true, {
 	init : function() {
 		
 		var sizeNomeProduto = 110;
+		var toggleColunaJuramentado = $("#toggleColunaJuramentado").val()==="true";
 
 		
 		if($("#permissaoColExemplDevolucao", fechamentoEncalheController.workspace).val() != "true"){
@@ -197,6 +198,7 @@ var fechamentoEncalheController = $.extend(true, {
 			}, {
 				display : 'Exe. Juramentado',
 				name : 'exemplaresJuramentadoFormatado',
+				hide: toggleColunaJuramentado,
 				width : 100,
 				sortable : true,
 				align : 'center'

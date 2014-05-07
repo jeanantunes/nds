@@ -52,6 +52,7 @@ import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.repository.CotaAusenteRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -256,8 +257,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             
             if (lancamento.getEstudo() == null) {
                 
-                throw new ValidacaoException(
-TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
+                throw new ValidacaoException(TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
             }
             
             final ItemNotaEnvio itemNotaEnvio = getItemNE(listItemNotaEnvio, mec.getProdutoEdicao());
@@ -273,7 +273,7 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
                     break;
                 }
             }
-            
+
             itemNotaEnvio.setProdutoEdicao(produtoEdicao);
             itemNotaEnvio.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
             itemNotaEnvio.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
@@ -477,10 +477,15 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
             itemNotaEnvio = new ItemNotaEnvio();
         }
         
+        String nomePublicacao = 
+        		TipoEstudoCota.JURAMENTADO.equals(estudoCota.getTipoEstudo()) ?
+        				produtoEdicao.getProduto().getNome() + " Juramentado" : 
+    					produtoEdicao.getProduto().getNome();
+        
         itemNotaEnvio.setProdutoEdicao(produtoEdicao);
         itemNotaEnvio.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
         itemNotaEnvio.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-        itemNotaEnvio.setPublicacao(produtoEdicao.getProduto().getNome());
+        itemNotaEnvio.setPublicacao(nomePublicacao);
         itemNotaEnvio.setDesconto(percentualDesconto);
         itemNotaEnvio.setReparte(quantidade);
         itemNotaEnvio.setPrecoCapa(precoVenda);

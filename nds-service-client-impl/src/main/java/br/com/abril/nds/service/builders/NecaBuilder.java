@@ -278,7 +278,7 @@ public class NecaBuilder  implements Serializable {
 		for(ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
 
 			codigoProduto 		= itemNotaEnvio.getCodigoProduto().toString();
-			descricaoProduto 	= itemNotaEnvio.getProdutoEdicao().getProduto().getNome();
+			descricaoProduto 	= itemNotaEnvio.getPublicacao();
 			produtoEdicao		= itemNotaEnvio.getProdutoEdicao().getNumeroEdicao();
 
 			valorUnitarioProduto = itemNotaEnvio.getPrecoCapa();
