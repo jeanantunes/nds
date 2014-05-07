@@ -47,8 +47,6 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	
 	List<Cota> buscarCotaChamadaEncalhe(Date dataEncalhe);
 	
-    List<Cota> buscarCotaFechamentoChamadaEncalhe(Date dataEncalhe);
-    
     Integer obterTotalCotasAusentes(Date dataEncalhe, Integer diaRecolhimento, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
 
     List<CotaAusenteEncalheDTO> obterCotasAusentes(Date dataEncalhe, Integer diaRecolhimento, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
