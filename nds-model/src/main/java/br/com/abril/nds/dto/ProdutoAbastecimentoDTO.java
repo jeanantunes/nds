@@ -34,6 +34,9 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private Cota cota;
 	private List<String> cotasSemRoteirizacao;
 	private String descRoteiro;
+	private Long idEntregador;
+	private String nomeEntregador;
+	private String descRota;
 	
 	public ProdutoAbastecimentoDTO() {
 	
@@ -300,5 +303,35 @@ public class ProdutoAbastecimentoDTO implements Serializable{
     
     public void setDescRoteiro(String descRoteiro) {
         this.descRoteiro = descRoteiro;
+    }
+
+    
+    public Long getIdEntregador() {
+        return idEntregador;
+    }
+
+    
+    public void setIdEntregador(Long idEntregador) {
+        this.idEntregador = idEntregador;
+    }
+
+    
+    public String getNomeEntregador() {
+        return nomeEntregador;
+    }
+
+    
+    public void setNomeEntregador(String nomeEntregador) {
+        this.nomeEntregador = nomeEntregador;
+    }
+
+    
+    public String getDescRota() {
+        return descRota;
+    }
+
+    
+    public void setDescRota(String descRota) {
+        this.descRota = descRota;
     }
 }
