@@ -276,18 +276,6 @@ public interface ConferenciaEncalheService {
 	
 	boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota);
 	
-	/**
-	 * Caso o produto seja do grupo CROMO 
-	 * e esteja com com lançamento parcial NÃO FINAL
-	 * então retornará true (indicando que este possui
-	 * contagem por pacote).
-	 * 
-	 * 
-	 * @param idProdutoEdicao
-	 * @return boolean
-	 */
-	boolean isContagemPacote(Long idProdutoEdicao);
-	
 	boolean isParcialNaoFinal(final Long idProdutoEdicao);
 	
 	void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao, boolean indOperacaoDiferenciada);

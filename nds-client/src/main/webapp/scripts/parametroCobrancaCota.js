@@ -764,7 +764,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		return false;
 	},
 	
-	salvarFinanceiroEspecificoDaCota : function(){
+	salvarContratoTipoCotaEDevolveEncalhe : function(){
 		
 		var params = parametroCobrancaCotaController.buildParametroCobrancaDto();
 		
@@ -787,7 +787,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 				       "possuiContrato": isContrato,
 				       "devolveEncalhe": devolveEncalhe};
         
-		$.postJSON(contextPath + "/cota/parametroCobrancaCota/salvarFinanceiroEspecificoDaCota",
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/salvarContratoTipoCotaEDevolveEncalhe",
 				   params,
 				   function(mensagens) {
 			
@@ -813,30 +813,15 @@ var parametroCobrancaCotaController = $.extend(true, {
 	postarParametroCobranca : function() {
 		
 		var params = parametroCobrancaCotaController.buildParametroCobrancaDto();
-
+		
+		var parametroCobrancaAlterado = parametroCobrancaCotaController.isAlterParametroCobranca(params);
+		
+		params["parametroCobrancaAlterado"] = parametroCobrancaAlterado;
+		
 	    if (parametroCobrancaCotaController.financeiro.parametroDistribuidor) {
 
 		   if (parametroCobrancaCotaController.isAlter(params)){
-               
 			   
-			   
-			   /*VERIFICACAO DE EXISTENCIA DE FORNECEDORES VINCULADOS À COTA
-			   var fornecedoresVinculados = 0;
-			   
-			   jQuery('fornecedorPadrao').find('option').each(function(){
-				   
-				   fornecedoresVinculados++;
-			   });
-			   
-			   if (fornecedoresVinculados <= 1){
-				   
-				   alert("A [Cota] não possui [Fornecedores] vinculados. Vincule [Fornecedores] à [Cota] na aba fornecedores");
-				   
-				   return;
-			   }
-			   */
-			   
-
 			   $("#dialog-confirm-formaCobrancaDistribuidor").dialog({
 					resizable : false,
 					height:170,
@@ -868,7 +853,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		   } 
 		   else{
 				
-		       parametroCobrancaCotaController.salvarFinanceiroEspecificoDaCota();
+		       parametroCobrancaCotaController.salvarContratoTipoCotaEDevolveEncalhe();
 		   }
 	    }
 	    else {
