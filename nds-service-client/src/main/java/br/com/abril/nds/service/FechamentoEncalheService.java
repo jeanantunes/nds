@@ -73,8 +73,6 @@ public interface FechamentoEncalheService {
 	
 	Date buscarUtimoDiaDaSemanaRecolhimento();
 	
-	void gerarNotaFiscal(Date dataEncalhe);
-
 	List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao);
 	
 	int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro);

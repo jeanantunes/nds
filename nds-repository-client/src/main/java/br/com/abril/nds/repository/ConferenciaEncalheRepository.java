@@ -117,5 +117,4 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	
 	boolean isParcialNaoFinal(Long idProdutoEdicao);
 	
-	boolean isCromoParcialNaoFinal(Long idProdutoEdicao);
 }

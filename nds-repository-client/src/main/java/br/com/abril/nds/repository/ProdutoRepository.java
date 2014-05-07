@@ -93,4 +93,6 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	
 	Produto obterProdutoPorICDBaseadoNoPrimeiroBarra(String codigo_icd);
 	
+	Produto obterProdutoPorICDSegmentoNotNull(String codigo_icd);
+	
 }
