@@ -42,7 +42,6 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -58,8 +57,6 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalheBoxPK;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -1196,7 +1193,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 
             }
         }
-
         
         // Cobra cotas as demais cotas, no caso, as não ausentes e com centralização
         // Não gera cobrança para cotas do tipo À Vista
@@ -1275,20 +1271,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                     StatusAprovacao.GANHO, Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
             
         }
-    }
-    
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void gerarNotaFiscal(final Date dataEncalhe, final Distribuidor distribuidor, final NaturezaOperacao naturezaOperacao) {
-        
-    	List<NotaFiscal> notasFiscais = new ArrayList<>();
-    	
-    	Map<String, ParametroSistema> parametrosSistema = parametroSistemaRepository.buscarParametroSistemaGeralMap();
-    	
-        final List<Cota> cotas = fechamentoEncalheRepository.buscarCotaFechamentoChamadaEncalhe(dataEncalhe);
-        
-        this.nFeService.gerarNotasFiscaisCotasEncalhe(notasFiscais, distribuidor, naturezaOperacao, parametrosSistema, cotas);
-        
     }
     
     private NaturezaOperacao obterTipoNotaFiscal(final List<NaturezaOperacao> listaNaturezasOperacao, final Cota cota) {

@@ -46,10 +46,12 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDetalhes;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoEntregador;
+import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.TipoConsulta;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -1525,6 +1527,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         if(filtro.getIdFornecedor() != null){
         	sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
+        } else {
+        	sql.append(" AND PROD_FORNEC.FORNECEDORES_ID NOT IN ( ")
+        	.append(" SELECT ID FROM FORNECEDOR forn ")
+        	.append(" WHERE forn.SITUACAO_CADASTRO = 'ATIVO' ")
+        	.append(" AND forn.FORNECEDOR_UNIFICADOR_ID IS NOT NULL ")
+        	.append(" UNION ")
+        	.append(" SELECT FORNECEDOR_UNIFICADOR_ID FROM FORNECEDOR forn ")
+        	.append(" WHERE forn.SITUACAO_CADASTRO = 'ATIVO' ")
+        	.append(" AND FORNECEDOR_UNIFICADOR_ID IS NOT NULL ) ");
+
         }
            
         sql.append(" GROUP BY PROD_EDICAO.ID ");
@@ -2024,9 +2036,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append("    join BOX box ON (box.ID = rtz.BOX_ID) ");
         
         
-        if(filtro.getIdEntregador() != null){
+        if(filtro.getIdEntregador() != null || TipoConsulta.ENTREGADOR.equals(filtro.getTipoConsulta())){
             
             hql.append(" join ENTREGADOR entregador ON (entregador.ROTA_ID = rota.ID) ");
+            hql.append(" join PESSOA pessoaEnt ON (entregador.PESSOA_ID = pessoaEnt.ID) ");
+            hql.append(" join ROTA rotaEnt ON (rotaEnt.ID = entregador.ROTA_ID) ");
+            hql.append(" join ROTEIRO roteiroEnt ON (roteiroEnt.ID = rotaEnt.ROTEIRO_ID) ");
+            hql.append(" join ROTEIRIZACAO roteirizacaoEnt ON (roteiroEnt.ROTEIRIZACAO_ID = roteirizacaoEnt.ID) ");
+            hql.append(" join BOX boxEnt ON (boxEnt.ID = roteirizacaoEnt.BOX_ID) ");
         }
         
         hql.append(" where lancamento.STATUS in (:status) ");
@@ -3126,7 +3143,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" select produto.CODIGO as codigoProduto, ");
         hql.append(" 		produto.NOME as nomeProduto, ");
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
-        hql.append(" 		produtoEdicao.CODIGO_DE_BARRAS as codigoBarra, ");
+        hql.append(" 		coalesce(produtoEdicao.CODIGO_DE_BARRAS, '') as codigoBarra, ");
         hql.append(" 		produtoEdicao.PACOTE_PADRAO as pacotePadrao, ");
         hql.append(" 		estudo.QTDE_REPARTE as reparte, ");
         hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
@@ -3136,7 +3153,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
         
-        hql.append(" group by produtoEdicao.ID ");
+        hql.append(" group by entregador.ID, produtoEdicao.ID ");
         
         gerarOrdenacaoEntregador(filtro, hql);
         
@@ -3184,7 +3201,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
         
-        hql.append(" group by produtoEdicao.ID ");
+        hql.append(" group by entregador.ID, produtoEdicao.ID ");
         
         if (filtro.getExcluirProdutoSemReparte()) {
         	
@@ -3227,11 +3244,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		produtoEdicao.ID as idProdutoEdicao, ");
         hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
         hql.append(" 		sum(estudoCota.REPARTE * produtoEdicao.PRECO_VENDA) as totalBox, ");
-        hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa ");
+        hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
+        hql.append("        entregador.ID as idEntregador, ");
+        hql.append("        coalesce(pessoaEnt.NOME, pessoaEnt.RAZAO_SOCIAL, '') as nomeEntregador, ");
+        hql.append("        rotaEnt.DESCRICAO_ROTA as descRota, ");
+        hql.append("        roteiroEnt.DESCRICAO_ROTEIRO as descRoteiro, ");
+        hql.append("        boxEnt.CODIGO as codigoBox ");
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
         
-        hql.append(" group by produtoEdicao.ID, cota.ID ");
+        hql.append(" group by entregador.ID, produtoEdicao.ID, cota.ID ");
         
         gerarOrdenacaoDadosAbastecimento(filtro, hql);
         
@@ -3251,6 +3273,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
         query.addScalar("totalBox", StandardBasicTypes.BIG_DECIMAL);
         query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
+        query.addScalar("idEntregador", StandardBasicTypes.LONG);
+        query.addScalar("nomeEntregador", StandardBasicTypes.STRING);
+        query.addScalar("descRota", StandardBasicTypes.STRING);
+        query.addScalar("descRoteiro", StandardBasicTypes.STRING);
+        query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
         
