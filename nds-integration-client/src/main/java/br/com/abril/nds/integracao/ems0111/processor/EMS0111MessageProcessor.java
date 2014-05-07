@@ -80,7 +80,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (!codDistribuidorSistema.equals(codDistribuidorArquivo)) {
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Distribuidor não encontrato. Código " 
+					"Distribuidor não encontrato. " 
 					+ codDistribuidorArquivo);
 			return;
 		}
@@ -94,7 +94,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto "
+					"Nenhum resultado encontrado para Produto "
 							+ codigoProduto
 							+ " e Edição " + edicao
 							+ " na tabela Produto Edição");
@@ -105,7 +105,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		// Verificação de alteração do Preço Previsto para o ProdutoEdiçao:
 		final BigDecimal precoPrevistoAtual = this.tratarValorNulo(produtoEdicao.getPrecoPrevisto());
 		final BigDecimal precoPrevistoCorrente = this.tratarValorNulo(input.getPrecoPrevisto());
-		if (!precoPrevistoAtual.equals(precoPrevistoCorrente)) {
+		if (precoPrevistoAtual.compareTo(precoPrevistoCorrente)!=0) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração do Preço Previsto do Produto  "
@@ -182,12 +182,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 					
 				 this.ndsiLoggerFactory.getLogger().logWarning(message,
 				 		 EventoExecucaoEnum.INF_DADO_ALTERADO,
-						 "Alteração da Data Lcto Distribuidor. Produto "
+						 "Alteração da Data Lcto Distribuidor Produto "
 								+ codigoProduto
-								+ " na Edição " + edicao
-								+ " de  " + dataOriginal
-								+ " para  " + dataSugerida
-								+ " no processo de Lancamento");
+								+ " Edição " + edicao
+								+ " de  " + simpleDateFormat.format(dataOriginal)
+								+ " para  " + simpleDateFormat.format(dataSugerida));
 				
 				 lancamento.setDataLancamentoDistribuidor(dataSugerida);
 				}
@@ -211,10 +210,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Inserção de Lancamento para Produto: "
+					"Inserção de Lancamento para Produto "
 							+ codigoProduto
-							+ " e Edição " + edicao
-							+ " no Lancamento");
+							+ " Edição " + edicao
+							+ " Lancamento "+lancamento.getDataLancamentoDistribuidor()
+							+ " Recolhimento "+lancamento.getDataRecolhimentoDistribuidor());
 			return;
 			
 		} else {
@@ -311,7 +311,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				//}
 				// Alterado por solicitacao da trac 185
 				
-				this.ndsiLoggerFactory.getLogger().logInfo(message,
+				if(!simpleDateFormat.format(dtLancamentoNovo).equals(simpleDateFormat.format(dtLancamentoDistribuidor))){
+				
+					this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteração para PARCIAL da DATA LANCAMENTO DISTRIBUIDOR do Produto "
 								+ codigoProduto + " e Edição " + edicao
@@ -319,6 +321,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 										dtLancamentoNovo)
 								+ " para " + simpleDateFormat.format(
 										dtLancamentoDistribuidor));
+				}
 				
 				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
 				
