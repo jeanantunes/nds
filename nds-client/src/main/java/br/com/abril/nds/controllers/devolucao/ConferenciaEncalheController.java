@@ -817,7 +817,7 @@ public class ConferenciaEncalheController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
 		} 
 		
-		BigInteger qtdeEncalhe = processarQtdeExemplar(produtoEdicao.getId(), produtoEdicao.getPacotePadrao(), quantidade);
+		BigInteger qtdeEncalhe = processarQtdeExemplar(produtoEdicao.isContagemPacote(), produtoEdicao.getId(), produtoEdicao.getPacotePadrao(), quantidade);
 		
 		if (conferenciaEncalheDTO == null){
 			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, false, false);
@@ -872,7 +872,7 @@ public class ConferenciaEncalheController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
 		}
 		
-		BigInteger qtdeEncalhe = processarQtdeExemplar(produtoEdicao.getId(), produtoEdicao.getPacotePadrao(), quantidade);
+		BigInteger qtdeEncalhe = processarQtdeExemplar(produtoEdicao.isContagemPacote(), produtoEdicao.getId(), produtoEdicao.getPacotePadrao(), quantidade);
 		
 		if (conferenciaEncalheDTO == null) {
 			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, false, false);
@@ -1231,7 +1231,7 @@ public class ConferenciaEncalheController extends BaseController {
             
             final boolean supervisor = usuarioService.isSupervisor();
             
-            if (listaConferencia == null || listaConferencia.isEmpty()){
+            if (!this.verificarProdutoJaConferido(listaConferencia, produtoEdicaoId, idConferencia)){
                 
                 ProdutoEdicaoDTO pDto = null;
                 
@@ -1294,7 +1294,34 @@ public class ConferenciaEncalheController extends BaseController {
         }
 	}
 
-	private boolean validarVendaNegativaProduto(final String qtdExemplares,
+	private boolean verificarProdutoJaConferido(List<ConferenciaEncalheDTO> listaConferencia, Long produtoEdicaoId,
+	        Long idConferencia) {
+        
+	    if (listaConferencia == null || listaConferencia.isEmpty()){
+	        
+	        return false;
+	    }
+	    
+	    for (ConferenciaEncalheDTO dto : listaConferencia){
+	        
+	        if (produtoEdicaoId != null){
+	        
+    	        if (produtoEdicaoId.equals(dto.getIdProdutoEdicao())){
+    	            return true;
+    	        }
+	        } else if (idConferencia != null){
+	            
+	            if (idConferencia.equals(dto.getIdConferenciaEncalhe())){
+	                
+	                return true;
+	            }
+	        }
+	    }
+	    
+        return false;
+    }
+
+    private boolean validarVendaNegativaProduto(final String qtdExemplares,
 										        final boolean indConferenciaContingencia,
 										        final ConferenciaEncalheDTO dto,
 										        boolean supervisor) {
@@ -1329,7 +1356,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if(isQuantidadeEncalheAlterada(this.obterQuantidadeEncalheDaString(qtdExemplares), dto.getQtdExemplar())) {
 			
-			qtdeEncalhe = processarQtdeExemplar(dto.getIdProdutoEdicao(), dto.getPacotePadrao(), qtdExemplares);
+			qtdeEncalhe = processarQtdeExemplar(dto.getIsContagemPacote(), dto.getIdProdutoEdicao(), dto.getPacotePadrao(), qtdExemplares);
 		} 
 		else {
 			
@@ -2407,7 +2434,7 @@ public class ConferenciaEncalheController extends BaseController {
 		dados.put("notaFiscal", session.getAttribute(NOTA_FISCAL_CONFERENCIA));
 	}
 	
-	            /**
+	/**
      * Processa a quantidade informada pelo usuario, validando quando um produto
      * CROMO é informado.
      * 
@@ -2419,6 +2446,7 @@ public class ConferenciaEncalheController extends BaseController {
      */
 			
 	private BigInteger processarQtdeExemplar(
+			boolean isContagemPacote,
 			final Long idProdutoEdicao,
 			Integer pacotePadrao,
 			String quantidade) {
@@ -2431,12 +2459,9 @@ public class ConferenciaEncalheController extends BaseController {
 			return null;
 		}
 		
-		boolean isContagemPacote = this.conferenciaEncalheService.isContagemPacote(idProdutoEdicao);
-		
 		if(!isContagemPacote) {
 			return obterQuantidadeEncalheDaString(quantidade);
 		}
-		
 		
 		if(quantidade.contains(Constants.ENVELOPE_DE_CROMO)) {
 			return obterQuantidadeEncalheDaString(quantidade);
@@ -2485,7 +2510,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		conferenciaEncalheDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
 
-		conferenciaEncalheDTO.setContagemPacote(this.conferenciaEncalheService.isContagemPacote(produtoEdicao.getId()));
+		conferenciaEncalheDTO.setContagemPacote(produtoEdicao.isContagemPacote());
 		
 		if (produtoEdicao.getTipoChamadaEncalhe() != null) {
 			

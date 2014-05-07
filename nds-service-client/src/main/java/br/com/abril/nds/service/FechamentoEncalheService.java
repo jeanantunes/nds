@@ -13,9 +13,7 @@ import br.com.abril.nds.dto.fechamentoencalhe.GridFechamentoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
-import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -75,21 +73,18 @@ public interface FechamentoEncalheService {
 	
 	Date buscarUtimoDiaDaSemanaRecolhimento();
 
-	void gerarNotaFiscal(Date dataEncalhe, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao);
-	
 	List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao);
 	
 	int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro);
 	
 	BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
 
-	public abstract void realizarCobrancaCotas(Date dataOperacao, 
-			                                                   Usuario usuario,
-			                                                   List<CotaAusenteEncalheDTO> listaCotasAusentes, 
-			                                                   Cota cotaAusente) throws GerarCobrancaValidacaoException;
+	void realizarCobrancaCotas(Date dataOperacao, 
+									Usuario usuario,
+									List<CotaAusenteEncalheDTO> listaCotasAusentes, 
+									Cota cotaAusente) throws GerarCobrancaValidacaoException;
 
-	public List<GridFechamentoEncalheDTO> listaEncalheTotalParaGrid(
-			List<FechamentoFisicoLogicoDTO> listaEncalheSessao);
+	List<GridFechamentoEncalheDTO> listaEncalheTotalParaGrid(List<FechamentoFisicoLogicoDTO> listaEncalheSessao);
 
 	Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao, boolean ignorarUnificacao);
 	

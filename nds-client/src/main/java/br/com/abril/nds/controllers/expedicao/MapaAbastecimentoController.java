@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AbastecimentoDTO;
+import br.com.abril.nds.dto.EntregadorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MapaCotaDTO;
 import br.com.abril.nds.dto.MapaProdutoCotasDTO;
@@ -333,8 +334,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 			break;
 		case ENTREGADOR:
-			if(filtroAtual.getIdEntregador()==null)
-				throw new ValidacaoException(TipoMensagem.WARNING, "'Entregador' não foi preenchido.");
+			
 			break;
 		default:
 			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
@@ -481,7 +481,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 		filtro.setPaginacao(null);
 
-		Map<Integer, Map<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
+		Map<String, Map<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
 		setaNomeParaImpressao();
 		result.include("mapa", produtosMapa);
 
@@ -512,20 +512,27 @@ public class MapaAbastecimentoController extends BaseController {
 
 	public void impressaoPorEntregador(FiltroMapaAbastecimentoDTO filtro) {
 
-		Map<Long, MapaProdutoCotasDTO> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorEntregador(filtro);
+		Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> entregadores = mapaAbastecimentoService.obterMapaDeImpressaoPorEntregador(filtro);
 
-		Entregador entregador = entregadorService.buscarPorId(filtro.getIdEntregador());
-
-		result.include("distribuidor", distribuidorService.obterRazaoSocialDistribuidor());
-
-		result.include("entregador", entregador);
+		result.include("nomeDistribuidor", distribuidorService.obterRazaoSocialDistribuidor());
 
 		String data = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
 
 		result.include("data",data);
 
-		result.include("mapa", mapa);
-
+		result.include("entregadores", entregadores);
+		
+		int qtd = 0;
+		for (EntregadorDTO dtoKey : entregadores.keySet()){
+		    Map<Long, MapaProdutoCotasDTO> mapa = entregadores.get(dtoKey);
+		    for (Long key : mapa.keySet()){
+    		    if (qtd < mapa.get(key).getCotasQtdes().size()){
+    		        qtd = mapa.get(key).getCotasQtdes().size();
+    		    }
+    		}
+		}
+		
+		result.include("qtdColCota", qtd);
 	}
 
 	public void impressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {

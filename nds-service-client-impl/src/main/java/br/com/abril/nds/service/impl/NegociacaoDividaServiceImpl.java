@@ -881,7 +881,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         final BigDecimal qtd = BigDecimal.valueOf(filtro.getQntdParcelas() - qtdParcelasModificadas);
         BigDecimal novoValorParcela;
         if (qtd.intValue() > 0) {
-            novoValorParcela = (filtro.getValorSelecionado().subtract(valorParcelasModificadas)).divide(qtd,
+            novoValorParcela = (valorSelecionado.subtract(valorParcelasModificadas)).divide(qtd,
                     DEFAULT_SCALE, RoundingMode.HALF_UP);
             
         } else {

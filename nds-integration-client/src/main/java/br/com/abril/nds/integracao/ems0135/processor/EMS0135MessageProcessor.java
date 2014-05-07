@@ -108,12 +108,23 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 notafiscalEntrada.setSerie(input.getSerieNotaFiscal());
                 
                 this.getSession().merge(notafiscalEntrada);
-                this.ndsiLoggerFactory.getLogger().logInfo(
+                
+                if(!chaveAcessoAntiga.trim().equals(input.getChaveAcessoNF().trim())){
+                
+                	this.ndsiLoggerFactory.getLogger().logInfo(
+                        message,
+                        EventoExecucaoEnum.INF_DADO_ALTERADO,
+                        String.format("Nota Fiscal de Entrada " + input.getNumeroNotaEnvio()+"/"+input.getNotaFiscal()+"/"+input.getSerieNotaFiscal()
+                                + " Atualizada com chave de acesso NFE de " + chaveAcessoAntiga.trim() + " para "
+                                + input.getChaveAcessoNF() + " com sucesso!"));
+                } else {
+                	this.ndsiLoggerFactory.getLogger().logInfo(
                         message,
                         EventoExecucaoEnum.INF_DADO_ALTERADO,
                         String.format("Nota Fiscal de Entrada " + input.getNumeroNotaEnvio()
-                                + " atualizada com chave de acesso NFE de " + chaveAcessoAntiga.trim() + " para "
-                                + input.getChaveAcessoNF() + " com sucesso!"));
+                                + " Atualizada com Nota Fiscal " + input.getNotaFiscal() + " Série "+input.getSerieNotaFiscal()));
+                }
+                
                 return;
             }
         }
@@ -233,10 +244,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                     produto = new Produto();
                     
                     produto.setCodigo(inputItem.getCodigoProduto());
-                    produto.setCodigoICD(inputItem.getCodigoProduto());
+                    produto.setCodigoICD(obterIcdPorCodigo(inputItem.getCodigoProduto()));
                     produto.setPeriodicidade(PeriodicidadeProduto.MENSAL);
                     produto.setNome(inputItem.getNomeProduto());
-                    //produto.setNomeComercial(inputItem.getNomeProduto());
+                    produto.setNomeComercial(inputItem.getNomeProduto());
                     produto.setOrigem(Origem.MANUAL);
                     produto.setTipoProduto(tipoProduto);
                     produto.setPacotePadrao(10);
@@ -248,6 +259,21 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                         produto.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
                     }
                     produto.setFormaComercializacao(FormaComercializacao.CONSIGNADO);
+                    
+                    Produto produtoAux =  produtoRepository.obterProdutoPorICDSegmentoNotNull(produto.getCodigoICD());
+                    
+                    if(produtoAux !=null){
+                      
+                    	produto.setSegmentacao(produtoAux.getSegmentacao());
+                    
+                    } else {
+                    	
+                    	this.ndsiLoggerFactory.getLogger().logError(
+                                message,
+                                EventoExecucaoEnum.RELACIONAMENTO,
+                                "Segmentação não encontrada por Código ICD "+produto.getCodigoICD()+" .");
+                    	
+                    }
 
                     this.getSession().persist(produto);
                 }
@@ -270,7 +296,14 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 produtoEdicao.setOrigem(Origem.PRODUTO_SEM_CADASTRO);
                 produtoEdicao.setPrecoPrevisto(new BigDecimal(inputItem.getPreco()));
                 produtoEdicao.setPrecoVenda(produtoEdicao.getPrecoPrevisto());
+                produtoEdicao.setNomeComercial(inputItem.getNomeProduto());
+                
                 this.getSession().persist(produtoEdicao);
+                
+                this.ndsiLoggerFactory.getLogger().logError(
+                        message,
+                        EventoExecucaoEnum.RELACIONAMENTO,
+                        "Classificação não Inserida para a o Produto "+produto.getCodigo()+" Edição "+inputItem.getEdicao()+" .");
                 
                 Date dataAtual = new Date();
                 Date dataLancamento = inputItem.getDataLancamento();
@@ -541,6 +574,17 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPorCodigo(Integer.parseInt(codigoDistribuidor));
         return fornecedor;
+    }
+    
+    private String obterIcdPorCodigo(String codigo) {
+        
+    	if(codigo.length() ==8 && !codigo.substring(1, 1).equals("0")){
+    	  return codigo.substring(1,6);
+    	} else if (codigo.length() ==8 && codigo.substring(1, 1).equals("0")){
+    	  return (new Integer(codigo)).intValue()+"";
+    	} else {
+    	  return codigo;
+    	}
     }
     
     @Override
