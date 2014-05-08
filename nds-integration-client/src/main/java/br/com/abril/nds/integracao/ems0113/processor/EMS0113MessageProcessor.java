@@ -71,7 +71,7 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
         if (fornecedor == null) {
             
             ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.RELACIONAMENTO,
-                "Fornecedor não encontrado. Código: " + codigoDistribuidor);
+                "Fornecedor/Distribuidor não encontrado. " + codigoDistribuidor);
             
             return;
         }

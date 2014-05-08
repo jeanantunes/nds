@@ -803,6 +803,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				this.distribuidorRepository.capacidadeRecolhimento());
 		
 		dadosRecolhimento.setForcarBalanceamento(forcarBalanceamento);
+	
+		dadosRecolhimento.setPeriodoRecolhimentoSemanaAnterior(
+		        this.getPeriodoSemanaAnterior(periodoRecolhimento.getDe()));
 		
 		if (!produtosRecolhimento.isEmpty()) {
 		
@@ -1616,4 +1619,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	    return this.lancamentoRepository.existeRecolhimentoBalanceado(dataRecolhimento);
 	}
 	
+	private Intervalo<Date> getPeriodoSemanaAnterior(Date dataInicioRecolhimento) {
+	     
+        Date dataInicioSemanaAnterior = DateUtil.subtrairDias(dataInicioRecolhimento, 7);
+        Date dataFimSemanaAnterior = DateUtil.subtrairDias(dataInicioRecolhimento, 1);
+        
+        return new Intervalo<Date>(dataInicioSemanaAnterior, dataFimSemanaAnterior);
+    }
 }

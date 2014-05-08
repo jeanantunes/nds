@@ -50,17 +50,28 @@ public class EMS0126MessageProcessor extends AbstractRepository implements
 		ProdutoEdicao produtoEdicao = (ProdutoEdicao) query.uniqueResult();
 
 		if (null != produtoEdicao) {
-			// Inserir codigo de barras
-			produtoEdicao.setCodigoDeBarras(input.getCodigoBarras());
-			this.getSession().merge(produtoEdicao);
+
+			
+			if(!produtoEdicao.getCodigoDeBarras().equals(input.getCodigoBarras())){
+				
+				ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Atualização do Codigo de Barras"
+						+" de "+produtoEdicao.getCodigoDeBarras()
+						+" para "+input.getCodigoBarras()
+						+" Produto "+input.getCodigoProduto()+" Edição " + input.getEdicao() );
+				
+				produtoEdicao.setCodigoDeBarras(input.getCodigoBarras());
+				this.getSession().merge(produtoEdicao);
+			}
 
 		} else {
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Nenhum resultado encontrado para Produto: "
-							+ input.getCodigoProduto() + " e Edição: "
-							+ input.getEdicao() + " na tabela produto_edicao");
+					"Nenhum resultado encontrado para Produto "
+							+ input.getCodigoProduto() + " e Edição "
+							+ input.getEdicao() + " na tabela Produto Edição");
 
 		}
 

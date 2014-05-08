@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import br.com.abril.nds.util.Intervalo;
+
 /**
  * DTO que representa os dados referentes ao balanceamento do recolhimento. 
  * 
@@ -37,6 +39,8 @@ public class RecolhimentoDTO implements Serializable {
 	private List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada;
 	
 	private List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados;
+	
+	private Intervalo<Date> periodoRecolhimentoSemanaAnterior;
 
 	/**
 	 * Construtor padrão.
@@ -184,5 +188,13 @@ public class RecolhimentoDTO implements Serializable {
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados) {
 		this.produtosRecolhimentoAgrupados = produtosRecolhimentoAgrupados;
 	}
-	
+
+    public Intervalo<Date> getPeriodoRecolhimentoSemanaAnterior() {
+        return periodoRecolhimentoSemanaAnterior;
+    }
+
+    public void setPeriodoRecolhimentoSemanaAnterior(Intervalo<Date> periodoRecolhimentoSemanaAnterior) {
+        this.periodoRecolhimentoSemanaAnterior = periodoRecolhimentoSemanaAnterior;
+    }
+    
 }

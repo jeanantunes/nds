@@ -47,95 +47,121 @@ function imprimir(){
     	</span>
     </td>
     <td width="301" align="center" valign="middle"><h3>${nomeDistribuidor}</h3></td>
-    <td width="359" align="right" valign="middle"><h1>Mapa de Abastecimento</h1>
-     <strong>Distribuidor:</strong> ${distribuidor}</td>
+    <td width="500" align="right" valign="middle"><h1>Mapa de Abastecimento por Entregador</h1></td>
   </tr>
   <tr>
     <td colspan="3" align="center" valign="middle"></td>
   </tr>
 </table>
-<table width="800" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top:5px;">
-  <tr class="class_linha_3">
-    <td width="660"  style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><table width="100%" border="0" cellspacing="1" cellpadding="1">
-      <tr>
-        <td width="10%"><strong>Box:</strong></td>
-        <td width="13%">${entregador.rota.roteiro.roteirizacao.box.codigo}</td>
-        <td width="7%"><strong>Roteiro:</strong></td>
-        <td width="20%">${entregador.rota.roteiro.descricaoRoteiro}</td>
-        <td width="5%"><strong>Rota:</strong></td>
-        <td width="28%">${entregador.rota.descricaoRota}</td>
-        <td width="5%"><strong>Data:</strong></td>
-        <td width="12%">${data}</td>
-      </tr>
-    </table></td>
-  </tr>
-</table>
 
-
-<c:forEach items="${mapa}" var="produto">
-	<table width="800" border="0" align="center">
-	<tr>
-	<td>
-	<table>
+<c:forEach items="${entregadores}" var="entregador" varStatus="entStatus">
+	<table width="800" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top:5px; ${entStatus.index == 0 ? '' : 'page-break-before:always;'}">
 	  <tr class="class_linha_3">
-	    <td width="660"  style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><table width="793" border="0" cellspacing="1" cellpadding="1">
+	    <td width="660"  style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><table width="100%" border="0" cellspacing="1" cellpadding="1">
 	      <tr>
-	        <td width="52"><strong>Produto</strong>:</td>
-	        <td width="195">${produto.value.nomeProduto}</td>
-	        <td width="45"><strong>Edição:</strong></td>
-	        <td width="44">${produto.value.numeroEdicao}</td>
-	        <td width="119"><strong>Código de Barras:</strong></td>
-	        <td width="154">${produto.value.codigoDeBarras}</td>
-	        <td width="96"><strong>Preço Capa R$:</strong></td>
-	        <td width="63">${produto.value.precoCapa}</td>
+	        <td width="10%"><strong>Box:</strong></td>
+	        <td width="13%">${entregador.key.codigoBox}</td>
+	        <td width="7%"><strong>Roteiro:</strong></td>
+	        <td width="20%">${entregador.key.descricaoRoteiro}</td>
+	        <td width="5%"><strong>Rota:</strong></td>
+	        <td width="28%">${entregador.key.descricaoRota}</td>
+	        <td width="5%"><strong>Data:</strong></td>
+	        <td width="12%">${data}</td>
 	      </tr>
 	    </table></td>
 	  </tr>
 	</table>
-	
-	<c:set scope="session" var="qtdeColuna" value="${(produto.value.cotasQtdes.size() + (7==(7 - produto.value.cotasQtdes.size() % 7)? 0 : (7 - produto.value.cotasQtdes.size() % 7))) /7}"/>					 
-	<c:set scope="session" var="qtdeTotal" value="${produto.value.cotasQtdes.size()}"/>
-		
-	<table width="800" align="center" cellpadding="0" cellspacing="0" border="0">
-		
-		<tr class="nivel0">
-			 
-			<c:forEach begin="0" end="${ qtdeTotal%qtdeColuna>0 ? qtdeTotal/qtdeColuna : qtdeTotal/qtdeColuna -1}" varStatus="coluna">
-				
-				<td width="158" valign="top">		
-				
-					<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"  style="margin-top:5px;border-right:1px">
-								  
-					  <tr class="class_linha_3">
-					    <td class="nivel1" width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-					    <td class="nivel1" width="51" align="center" style=" border:1px solid #000;"><strong>Qtde</strong></td>
-					  </tr> 
-					 
-					 <c:forEach items="${produto.value.cotasQtdes}" var="item" 
-						 		begin="${coluna.index * qtdeColuna }" 
-						 		end="${qtdeTotal > qtdeColuna * (coluna.index+1)-1 ? qtdeColuna * (coluna.index+1)-1 : qtdeTotal-1}" >
-					  
-					  <tr class="class_linha_1">
-					    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; font-size: 15px; font-weight: bold;">${item.key}</td>
-					   <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000; font-size: 15px; font-weight: bold;">${item.value}</td>
-					  </tr>
-					  
-					  </c:forEach>
-					  
-					</table>
-					    
-				</td>				 
-				    
-		 </c:forEach>
-			
-		</tr>
-	
-		
-	</table>
-	</td>
-	</tr>
-	</table>
-</c:forEach>
 
+
+	<c:forEach items="${entregador.value}" var="produto">
+		<table width="800" border="0" align="center" style="page-break-inside: avoid;">
+		<tr>
+		<td>
+		<table>
+		  <tr class="class_linha_3">
+		    <td width="660"  style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><table width="793" border="0" cellspacing="1" cellpadding="1">
+		      <tr>
+		        <td width="52"><strong>Produto</strong>:</td>
+		        <td width="195">${produto.value.nomeProduto}</td>
+		        <td width="45"><strong>Edição:</strong></td>
+		        <td width="44">${produto.value.numeroEdicao}</td>
+		        <td width="119"><strong>Código de Barras:</strong></td>
+		        <td width="154">${produto.value.codigoDeBarras}</td>
+		        <td width="96"><strong>Preço Capa R$:</strong></td>
+		        <td width="63">${produto.value.precoCapa}</td>
+		      </tr>
+		    </table></td>
+		  </tr>
+		</table>
+		
+		<c:set scope="session" var="qtdeColuna" value="${(produto.value.cotasQtdes.size() + (7==(7 - produto.value.cotasQtdes.size() % 7)? 0 : (7 - produto.value.cotasQtdes.size() % 7))) /7}"/>					 
+		<c:set scope="session" var="qtdeTotal" value="${produto.value.cotasQtdes.size()}"/>
+			
+		<table width="800" align="center" cellpadding="0" cellspacing="0" border="0">
+			
+			<tr class="nivel0">
+				 
+				<c:forEach begin="0" end="${qtdColCota > 6 ? 6 : qtdColCota}" varStatus="coluna">
+					
+					<td width="158" valign="top">		
+					
+						<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"  style="margin-top:5px;border-right:1px">
+								
+						<c:choose>
+							<c:when test="${(coluna.index * qtdeColuna) <= (qtdeTotal > qtdeColuna * (coluna.index+1)-1 ? qtdeColuna * (coluna.index+1)-1 : qtdeTotal-1)}">
+								<tr class="class_linha_3">
+							    <td class="nivel1" width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;">
+							    	
+							    		<strong>Cota</strong>
+							    	
+							    </td>
+							    <td class="nivel1" width="51" align="center" style=" border:1px solid #000;">
+							    	
+							    		<strong>Qtde</strong>
+							    	
+							    </td>
+							  </tr> 
+							</c:when>
+							<c:otherwise>
+								<tr class="class_linha_3">
+							    <td class="nivel1" width="48" style="padding-left:5px; border:1px solid white; background: white;">
+							    	
+							    		<strong style="opacity: 0.0;">Cota</strong>
+							    	
+							    </td>
+							    <td class="nivel1" width="51" align="center" style="padding-left:5px; border:1px solid white; background: white;">
+							    	
+							    		<strong style="opacity: 0.0;">Qtde</strong>
+							    	
+							    </td>
+							  </tr> 
+							</c:otherwise>	 
+						 </c:choose>
+						 <c:forEach items="${produto.value.cotasQtdes}" var="item" 
+							 		begin="${coluna.index * qtdeColuna }" 
+							 		end="${qtdeTotal > qtdeColuna * (coluna.index+1)-1 ? qtdeColuna * (coluna.index+1)-1 : qtdeTotal}" >
+						  
+						  <tr class="class_linha_1">
+						    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; font-size: 15px; font-weight: bold;">${item.key}</td>
+						   <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000; font-size: 15px; font-weight: bold;">${item.value}</td>
+						  </tr>
+						  
+						  </c:forEach>
+						  
+						</table>
+						    
+					</td>				 
+					    
+			 </c:forEach>
+				
+			</tr>
+		
+			
+		</table>
+		</td>
+		</tr>
+		</table>
+	</c:forEach>
+</c:forEach>
 </body>
 </html>

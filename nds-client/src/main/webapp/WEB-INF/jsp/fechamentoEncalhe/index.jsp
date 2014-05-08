@@ -38,6 +38,7 @@
 	<input id="permissaoColExemplDevolucao" type="hidden" value="${permissaoColExemplDevolucao}" />
 	<input id="permissaoBtnConfirmar" type="hidden" value="${permissaoBtnConfirmar}" />
 	<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+	<input id="toggleColunaJuramentado" type="hidden" value="${not aceitaJuramentado}" />
 	
 	<form id="form-confirm">
 	<div id="dialog-confirm" title="Encerrar Opera&ccedil;&atilde;o" style="display:none;">

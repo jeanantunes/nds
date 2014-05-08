@@ -43,9 +43,6 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.GrupoCota;
-import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
-import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
-import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
@@ -59,12 +56,6 @@ import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalheBoxPK;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -920,9 +911,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         final List<Date> datasRecolhimento = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(cota.getNumeroCota(), 
                 																						  dataOperacao);
         
-        // CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE
-        // E ENVIO_ENCALHE)
-        movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, datasRecolhimento, usuario, null, null); 
+        if(datasRecolhimento != null && !datasRecolhimento.isEmpty()) {
+
+            // CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE
+            // E ENVIO_ENCALHE)
+            movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, datasRecolhimento, usuario, null, null); 
+        	
+        }
+        
     }
     
     @Override
@@ -1183,12 +1179,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 
             }
         }
-
-        
-        if (ObrigacaoFiscal.COTA_TOTAL.equals(distribuidorRepository.obrigacaoFiscal())
-                || ObrigacaoFiscal.COTA_NFE_VENDA.equals(distribuidorRepository.obrigacaoFiscal())) {
-            this.gerarNotaFiscal(dataEncalhe);
-        }
         
         // Cobra cotas as demais cotas, no caso, as não ausentes e com centralização
         // Não gera cobrança para cotas do tipo À Vista
@@ -1267,78 +1257,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                     StatusAprovacao.GANHO, Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
             
         }
-    }
-    
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void gerarNotaFiscal(final Date dataEncalhe) {
-        
-        final List<TipoNotaFiscal> listaTipoNotaFiscal = tipoNotaFiscalRepository
-                .obterTiposNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
-        final ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = distribuidorRepository
-                .parametrosRecolhimentoDistribuidor();
-        final List<Cota> cotas = fechamentoEncalheRepository.buscarCotaFechamentoChamadaEncalhe(dataEncalhe);
-        for (final Cota cota : cotas) {
-            
-            try {
-                
-                final TipoNotaFiscal tipoNotaFiscal = obterTipoNotaFiscal(listaTipoNotaFiscal, cota);
-                
-                if (tipoNotaFiscal != null) {
-                    
-                    final List<ItemNotaFiscalSaida> listItemNotaFiscal = notaFiscalService.obterItensNotaFiscalPor(
-                            parametrosRecolhimentoDistribuidor, cota, null, null, null, tipoNotaFiscal);
-                    
-                    if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) {
-                        continue;
-                    }
-                    
-                    final List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = notaFiscalService
-                            .obterNotasReferenciadas(listItemNotaFiscal);
-                    
-                    final InformacaoTransporte transporte = notaFiscalService.obterTransporte(cota.getId());
-                    
-                    final Set<Processo> processos = new HashSet<Processo>();
-                    processos.add(Processo.GERACAO_NF_E);
-                    
-                    final Long idNotaFiscal = notaFiscalService
-                            .emitiNotaFiscal(tipoNotaFiscal.getId(), dataEncalhe, cota, listItemNotaFiscal, transporte,
-                                    null, listaNotasFiscaisReferenciadas, processos, null);
-                    
-                    final NotaFiscal notaFiscal = notaFiscalRepository.buscarPorId(idNotaFiscal);
-                    
-                    produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(),
-                            listItemNotaFiscal);
-                    
-                }
-                
-            } catch (final ValidacaoException e) {
-                throw e;
-            } catch (final Exception exception) {
-                LOGGER.error(exception.getLocalizedMessage(), exception);
-                continue;
-            }
-        }
-    }
-    
-    private TipoNotaFiscal obterTipoNotaFiscal(final List<TipoNotaFiscal> listaTipoNotaFiscal, final Cota cota) {
-        TipoNotaFiscal tipoNotaFiscal = null;
-        
-        Boolean contribuinte = Boolean.FALSE;
-        
-        if (cota.getParametrosCotaNotaFiscalEletronica() != null
-                && cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() != null) {
-            
-            contribuinte = cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica();
-        }
-        
-        for (final TipoNotaFiscal tipo : listaTipoNotaFiscal) {
-            if (tipo.isContribuinte() == contribuinte) {
-                tipoNotaFiscal = tipo;
-                break;
-            }
-        }
-        return tipoNotaFiscal;
     }
     
     @Transactional

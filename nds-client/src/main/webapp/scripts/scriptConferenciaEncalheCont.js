@@ -585,7 +585,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			
 			$("#totalExemplaresFooter", ConferenciaEncalheCont.workspace).html(totalExemplaresFooter);
 			
-			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalheCont.workspace).numericE();
+			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalheCont.workspace).numericPacotePadrao();
 		}
 		
 		ConferenciaEncalheCont.processandoConferenciaEncalhe = false;
@@ -793,7 +793,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		);
 	},
 	
-	autenticarSupervisor : function(index){
+	autenticarSupervisor : function(index, callback, paramCallback){
 		
 		var paramUsuario = {
 			usuario:$("#inputUsuarioSup", ConferenciaEncalheCont.workspace).val(),
@@ -832,7 +832,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 					return;
 				}
 				
-				ConferenciaEncalheCont.atualizarValores(index);
+				if (index){
+					ConferenciaEncalheCont.atualizarValores(index);
+				}
+				
+				if (callback){
+					callback(paramCallback);
+				}
 				
 				$("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog("close");
 				return;
@@ -889,6 +895,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 							$("#numEdicaoNovoEncalhe", ConferenciaEncalheCont.workspace).val(result2.numeroEdicao);
 							$("#precoCapaNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(result2.precoVenda).toFixed(2));
 							$("#descontoNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(result2.desconto).toFixed(4));
+							
+							if(result2.parcial){
+								$(".isParcial", ConferenciaEncalheCont.workspace).show();
+							}
+							else{
+								$(".isParcial", ConferenciaEncalheCont.workspace).hide();
+							}
 						}
 							
 						
@@ -896,6 +909,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 						ConferenciaEncalheCont.limparCamposNovoEncalhe();
 						$("#lstProdutos", ConferenciaEncalheCont.workspace).focus();
+						$(".isParcial", ConferenciaEncalheCont.workspace).show();
 					}, 
 					true, "idModalNovoEncalhe"
 				);
@@ -905,9 +919,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 	
 	},
-	
+
 	adicionarEncalhe: function(){	
 
+		var _this = this;
+		
 		var existeProduto = false;
 		
 		$("input[id*='idProdutoEdicaoGrid']", ConferenciaEncalheCont.workspace).each(function(){
@@ -927,14 +943,58 @@ var ConferenciaEncalheCont = $.extend(true, {
 			return;
 		}
 		
-		var data = [{name: "idProdutoEdicao", value: ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe}, 
-		            {name: "quantidade", value: $("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val()},
+		var data = [{name: "produtoEdicaoId", value: ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe}, 
+		            {name: "qtdExemplares", value: $("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val()},
 		            {name:"juramentada", value:$('#checkboxJueramentadaNovoEncalhe', ConferenciaEncalheCont.workspace).attr('checked') == 'checked' }];
 		
-		
-		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarPermissaoSupervisor", 
+			data, 
 			function(result){
 				
+				if (result && result.result != ""){
+					
+					if (result[0]){
+						
+						exibirMensagem('WARNING', [result[1]]);
+						_this._adicionarNovoProduto(data);
+					} else {
+						
+						$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result[1]);
+						
+						$("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog({
+							resizable: false,
+							height:'auto',
+							width:400,
+							modal: true,
+							buttons: {
+								"Ok": function() {
+									
+									ConferenciaEncalheCont.resetValue = false;
+									ConferenciaEncalheCont.autenticarSupervisor(null, _this._adicionarNovoProduto, data);
+									
+								},
+								"Cancelar": function() {
+									
+									$(this).dialog("close");
+								}
+							},
+							form: $("#dialog-autenticar-supervisor", this.workspace).parents("form")
+						});
+					}
+					
+				} else {
+					
+					_this._adicionarNovoProduto(data);
+				}
+			}
+		);
+	},
+	
+	_adicionarNovoProduto : function(params){
+		
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', params,
+			function(result){
+			
 				ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe(result);
 				
 				ConferenciaEncalheCont.limparCamposNovoEncalhe();
@@ -944,7 +1004,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				$("#lstProdutos", ConferenciaEncalheCont.workspace).focus();
 				
 				bloquearItensEdicao(ConferenciaEncalheCont.workspace);
-
+	
 			}, null, true, "idModalNovoEncalhe"
 		);
 	},
@@ -958,6 +1018,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val("");
 		$("#valorTotalNovoEncalhe", ConferenciaEncalheCont.workspace).val("");
 		
+		$(".isParcial", ConferenciaEncalheCont.workspace).show();
+		
 		if(ConferenciaEncalheCont.indDistribuidorAceitaJuramentado){
 			$("#checkboxJueramentadaNovoEncalhe", ConferenciaEncalheCont.workspace).removeAttr('disabled');
 		}else{
@@ -970,7 +1032,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$("#valorTotalNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(($("#precoCapaNovoEncalhe", ConferenciaEncalheCont.workspace).val() - $("#descontoNovoEncalhe", ConferenciaEncalheCont.workspace).val()) * $("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val()).toFixed(2));
 	},
-	
 	
 	carregarGridItensNotaFiscal : function(modeloConferenciaEncalhe) {
 	
