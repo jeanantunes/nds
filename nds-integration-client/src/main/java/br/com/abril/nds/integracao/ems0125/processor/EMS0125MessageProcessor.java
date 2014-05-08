@@ -56,7 +56,7 @@ public class EMS0125MessageProcessor extends AbstractRepository implements
 			return;
 		}
 
-		if(!produtoEdicao.getChamadaCapa().equals(input.getChamadaCapa())){
+		if(input.getChamadaCapa()!=null && !produtoEdicao.getChamadaCapa().equals(input.getChamadaCapa())){
 		 ndsiLoggerFactory.getLogger().logInfo(message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
 				"Atualização da Chamada de Capa"

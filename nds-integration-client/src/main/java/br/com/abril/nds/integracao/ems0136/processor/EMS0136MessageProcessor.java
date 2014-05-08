@@ -297,7 +297,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto "
+					"Nenhum resultado encontrado para Produto "
 							+ codigoProduto + " e Edição " + numeroEdicao
 							+ " na tabela Produto Edição");
 			return null;

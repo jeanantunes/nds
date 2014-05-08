@@ -74,7 +74,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto "
+					"Nenhum resultado encontrado para Produto "
 							+ codigoProduto + " Edição " + edicao
 							+ " no Produto Edição");
 			return;
@@ -124,7 +124,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteração da DATA RECOLHIMENTO PREVISTA do Produto "
-								+ codigoProduto + " e Edição: " + edicao
+								+ codigoProduto + " Edição: " + edicao
 								+ " de " + simpleDateFormat.format(
 										dtRecolhimentoPrevista)
 								+ " para " + simpleDateFormat.format(

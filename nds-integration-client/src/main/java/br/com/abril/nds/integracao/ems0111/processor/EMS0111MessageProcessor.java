@@ -108,10 +108,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (precoPrevistoAtual.compareTo(precoPrevistoCorrente)!=0) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Preço Previsto do Produto  "
+					"Alteração do Preço Previsto/Venda do Produto  "
 							+ codigoProduto
-							+ " e Edição " + edicao
-							+ ", de " + precoPrevistoAtual
+							+ " Edição " + edicao
+							+ " de " + precoPrevistoAtual
 							+ " para " + precoPrevistoCorrente);
 			produtoEdicao.setPrecoPrevisto(precoPrevistoCorrente);
 			produtoEdicao.setPrecoVenda(precoPrevistoCorrente);
@@ -272,7 +272,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 								+ codigoProduto + " e Edicao: " + edicao
 								+ " de " + simpleDateFormat.format(
 										dtLancamentoAtual)
-								+ "para " + simpleDateFormat.format(
+								+ " para " + simpleDateFormat.format(
 										dtLancamentoNovo));
 				lancamento.setDataLancamentoPrevista(dtLancamentoNovo);
 				
@@ -282,13 +282,13 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				if (erroRetornoParciais) {
 					return;
 				}
-				
+				/*
 				this.ndsiLoggerFactory.getLogger().logError(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteração do Lancamento para Produto "
 								+ codigoProduto
-								+ " e Edição: " + edicao
-								+ " na Lancamento");
+								+ " Edição: " + edicao);
+				*/
 			}
 			
 			// Atualizar lançamento Distribuidor:
