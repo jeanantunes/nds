@@ -168,7 +168,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
             this.ndsiLoggerFactory.getLogger().logWarning(
                     message,
                     EventoExecucaoEnum.REGISTRO_JA_EXISTENTE,
-                    String.format("Nota Fiscal %1$s já cadastrada com serie %2$s e nota envio %3$s",
+                    String.format("Nota Fiscal Entrada %1$s já cadastrada. Série %2$s Nota Envio %3$s",
                             notafiscalEntrada.getNumero(), notafiscalEntrada.getSerie(),
                             notafiscalEntrada.getNumeroNotaEnvio()));
             return;
