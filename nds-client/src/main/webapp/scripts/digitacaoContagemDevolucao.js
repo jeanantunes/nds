@@ -466,10 +466,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 												  qtdNota:qtdNota,
 												  valorTotalComDesconto:totalComDesconto};
 				
-					if (diferenca) {
-						
-						digitacaoContagemDevolucao.diferenca =diferenca;
-					}
+				if (!isNaN(diferenca)) {
+					
+					digitacaoContagemDevolucao.diferenca = diferenca;
+				}
 
 				listaDigitacaoContagemDevolucao.push(digitacaoContagemDevolucao);
 			});

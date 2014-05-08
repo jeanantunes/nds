@@ -196,8 +196,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			
 			Integer numeroSemana = SemanaUtil.getSemana(anoSemanaConferenciaEncalhe);
 			
-			Date dataInicioSemana = SemanaUtil.obterDataDaSemanaNoAno(
-				numeroSemana, inicioSemana, anoBase);
+			Date dataInicioSemana = SemanaUtil.obterDataDaSemanaNoAno(numeroSemana, inicioSemana, anoBase);
 			
 			Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 			
@@ -398,7 +397,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = null;
 		
-		if (replicarTodos){
+		if (replicarTodos) {
 			
 			FiltroDigitacaoContagemDevolucaoDTO filtro = (FiltroDigitacaoContagemDevolucaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 			
@@ -411,14 +410,13 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			
 			filtro.setPaginacao(null);
 			
-			listaContagemDevolucaoDTO = 
-				contagemDevolucaoService.obterListaContagemDevolucao(filtro, isPerfilUsuarioEncarregado());
+			listaContagemDevolucaoDTO = contagemDevolucaoService.obterListaContagemDevolucao(filtro, isPerfilUsuarioEncarregado());
 			
 			filtro.setPaginacao(paginacaoVO);
 			
 			listaContagemDevolucaoDTO.addAll(0, this.obterListaEdicoesFechadas());
 			
-			for (ContagemDevolucaoDTO dto : listaContagemDevolucaoDTO){
+			for (ContagemDevolucaoDTO dto : listaContagemDevolucaoDTO) {
 				
 				dto.setDiferenca(BigInteger.ZERO);
 				dto.setQtdNota(dto.getQtdDevolucao());
@@ -426,12 +424,10 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			
 		} else {
 			
-			listaContagemDevolucaoDTO = 
-					getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
+			listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		}
 		
-		this.contagemDevolucaoService.inserirListaContagemDevolucao(
-				listaContagemDevolucaoDTO, getUsuarioLogado(), isPerfilUsuarioEncarregado());
+		this.contagemDevolucaoService.inserirListaContagemDevolucao(listaContagemDevolucaoDTO, getUsuarioLogado(), isPerfilUsuarioEncarregado());
 		
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
@@ -505,7 +501,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			
 			digitacaoContagemDevolucaoVO.setQtdNota( (dto.getQtdNota()==null)?"":String.valueOf(dto.getQtdNota().intValue()));
 			
-			if(dto.getQtdNota()==null) {
+			if(dto.getQtdNota() == null) {
 				digitacaoContagemDevolucaoVO.setDiferenca("");
 			} else {
 				digitacaoContagemDevolucaoVO.setDiferenca(String.valueOf( (dto.getDiferenca() == null)?BigDecimal.ZERO.intValue():dto.getDiferenca().intValue()));
@@ -537,7 +533,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		ContagemDevolucaoDTO contagemDevolucaoDTO = null;
 		List<ContagemDevolucaoDTO> listaResultadosDto = new ArrayList<ContagemDevolucaoDTO>();
 		
-		for(DigitacaoContagemDevolucaoVO vo: listaContagemDevolucaoVOs){
+		for(DigitacaoContagemDevolucaoVO vo: listaContagemDevolucaoVOs) {
 			
 			contagemDevolucaoDTO = new ContagemDevolucaoDTO();
 
@@ -569,8 +565,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
      */
 	private void tratarFiltro(FiltroDigitacaoContagemDevolucaoDTO filtro) {
 
-		FiltroDigitacaoContagemDevolucaoDTO filtroResumoSession = 
-				(FiltroDigitacaoContagemDevolucaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroDigitacaoContagemDevolucaoDTO filtroResumoSession = (FiltroDigitacaoContagemDevolucaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtroResumoSession != null && !filtroResumoSession.equals(filtro)) {
 
@@ -635,7 +630,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		validacao.setTipoMensagem(TipoMensagem.ERROR);
 		
-		if(!mensagensErro.isEmpty()){
+		if(!mensagensErro.isEmpty()) {
 			
 			validacao.setListaMensagens(mensagensErro);
 			throw new ValidacaoException(validacao);
@@ -706,11 +701,10 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	}
 	
 	
-	public void pesquisaEdicoesFechadas(String sortorder, String sortname,int page, int rp){
+	public void pesquisaEdicoesFechadas(String sortorder, String sortname,int page, int rp) {
 		
 		
-		FiltroDigitacaoContagemDevolucaoDTO filtro = 
-				(FiltroDigitacaoContagemDevolucaoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroDigitacaoContagemDevolucaoDTO filtro = (FiltroDigitacaoContagemDevolucaoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		

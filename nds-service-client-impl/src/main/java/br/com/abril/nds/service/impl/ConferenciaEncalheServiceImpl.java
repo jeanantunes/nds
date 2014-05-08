@@ -2176,7 +2176,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				for(OrigemItemMovFechamentoFiscal omff : movimentoFechamentoFiscalCota.getOrigemMovimentoFechamentoFiscal()) {
 					
-					if(((OrigemItemMovFechamentoFiscalMEC) omff).getMovimentoEstoqueCota().getId().equals(movimentoEstoqueCota.getId())) {
+					if(((OrigemItemMovFechamentoFiscalMEC) omff).getMovimento().getId().equals(movimentoEstoqueCota.getId())) {
 						
 						movimentoFechamentoFiscalCota.setNotaFiscalLiberadaEmissao(false);
 						movimentoFechamentoFiscalCota.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
