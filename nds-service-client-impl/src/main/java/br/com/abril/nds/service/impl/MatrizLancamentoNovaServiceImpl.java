@@ -1518,23 +1518,17 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
             }
             
             if (!produtoLancamento.isLancamentoAgrupado()
-                    && !produtoLancamentoAdicionar.getIdLancamento().equals(
-                            produtoLancamento.getIdLancamento())
-                            && produtoLancamentoAdicionar.getIdProdutoEdicao().equals(
-                                    produtoLancamento.getIdProdutoEdicao())
-                                    && produtoLancamentoAdicionar.getNovaDataLancamento()
-                                    .equals(produtoLancamento.getNovaDataLancamento())) {
+                    && !produtoLancamentoAdicionar.getIdLancamento().equals(produtoLancamento.getIdLancamento())
+                    && produtoLancamentoAdicionar.getIdProdutoEdicao().equals(produtoLancamento.getIdProdutoEdicao())
+                    && produtoLancamentoAdicionar.getNovaDataLancamento().equals(produtoLancamento.getNovaDataLancamento())) {
                 
-                if (this.agruparPrimeiroLancamento(produtoLancamentoAdicionar,
-                        produtoLancamento)) {
+                if (this.agruparPrimeiroLancamento(produtoLancamentoAdicionar, produtoLancamento)) {
                     
-                    this.agruparProdutos(produtoLancamentoAdicionar,
-                            produtoLancamento);
+                    this.agruparProdutos(produtoLancamentoAdicionar, produtoLancamento);
                     
                 } else {
                     
-                    this.agruparProdutos(produtoLancamento,
-                            produtoLancamentoAdicionar);
+                    this.agruparProdutos(produtoLancamento, produtoLancamentoAdicionar);
                 }
             }
         }

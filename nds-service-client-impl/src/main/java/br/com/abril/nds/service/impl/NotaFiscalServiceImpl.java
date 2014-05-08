@@ -1498,16 +1498,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		List<ItemNotaFiscalSaida> listaItemNotaFiscal = null;
 
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
-		listaGrupoMovimentoEstoque
-				.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-		listaGrupoMovimentoEstoque
-				.add(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
-		listaGrupoMovimentoEstoque
-				.add(GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE);
-		listaGrupoMovimentoEstoque
-				.add(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
-		listaGrupoMovimentoEstoque
-				.add(GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR);
+		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
+		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE);
+		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
+		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR);
 
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaService
 				.obterMovimentoEstoqueCotaPor(

@@ -233,8 +233,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		return movimentoEstoqueCotaEstorno;
 	}
 
-	public void setMovimentoEstoqueCotaEstorno(
-			MovimentoEstoqueCota movimentoEstoqueCotaEstorno) {
+	public void setMovimentoEstoqueCotaEstorno(MovimentoEstoqueCota movimentoEstoqueCotaEstorno) {
 		this.movimentoEstoqueCotaEstorno = movimentoEstoqueCotaEstorno;
 	}
 
