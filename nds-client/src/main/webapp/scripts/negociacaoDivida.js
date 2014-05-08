@@ -614,10 +614,12 @@ var negociacaoDividaController = $.extend(true, {
 	            			(tipoPgto == 'BOLETO' || tipoPgto == 'BOLETO_EM_BRANCO')){
 	            		
 	            		$("#botaoImprimirBoleto", negociacaoDividaController.workspace).show();
+	            	} else {
+	            		$("#botaoImprimirRecibo", negociacaoDividaController.workspace).show();
 	            	}
 	            	
 	            } else {
-	            	
+	            	$("#botaoImprimirRecibo", negociacaoDividaController.workspace).hide();
 	            	$("#botaoImprimirNegociacao", negociacaoDividaController.workspace).hide();
 	            	$("#botaoImprimirBoleto", negociacaoDividaController.workspace).hide();
 	            }
