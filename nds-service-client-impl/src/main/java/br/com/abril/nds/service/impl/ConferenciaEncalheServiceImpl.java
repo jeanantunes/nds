@@ -2216,7 +2216,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					
 			}
 			
-			
 		} else {
 			
 			movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
@@ -2229,18 +2228,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					usuario,
 					chamadaEncalheCota);
 			
-			List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
-			MovimentoFechamentoFiscalCota mff = new MovimentoFechamentoFiscalCota();
-			listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mff, movimentoEstoqueCota));
-			mff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
-			mff.setNotaFiscalLiberadaEmissao(false);
-			mff.setData(dataCriacao);
-			mff.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
-			mff.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
-			mff.setTipoDestinatario(TipoDestinatario.COTA);
-			mff.setCota(movimentoEstoqueCota.getCota());
-			mff.setChamadaEncalheCota(chamadaEncalheCota);
-			mff.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
+			MovimentoFechamentoFiscalCota mff = popularItensFechamentoFiscal(dataCriacao, movimentoEstoqueCota, chamadaEncalheCota);
     			
     		movimentoFechamentoFiscalRepository.adicionar(mff);
     		
@@ -2270,6 +2258,22 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				movimentoEstoqueCota,
 				movimentoEstoque);
 		
+	}
+
+	private MovimentoFechamentoFiscalCota popularItensFechamentoFiscal(final Date dataCriacao, MovimentoEstoqueCota movimentoEstoqueCota, ChamadaEncalheCota chamadaEncalheCota) {
+		List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
+		MovimentoFechamentoFiscalCota mff = new MovimentoFechamentoFiscalCota();
+		listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mff, movimentoEstoqueCota));
+		mff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
+		mff.setNotaFiscalLiberadaEmissao(false);
+		mff.setData(dataCriacao);
+		mff.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
+		mff.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
+		mff.setTipoDestinatario(TipoDestinatario.COTA);
+		mff.setCota(movimentoEstoqueCota.getCota());
+		mff.setChamadaEncalheCota(chamadaEncalheCota);
+		mff.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
+		return mff;
 	}
 	
 	

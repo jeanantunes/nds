@@ -161,7 +161,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             		movimento.getCota().getId(), 
             		idUsuario,
                     movimento.getQtde(), 
-                    tipoMovimentoCota,lancamento.getDataLancamentoDistribuidor(), 
+                    tipoMovimentoCota, 
+                    lancamento.getDataLancamentoDistribuidor(), 
                     null, 
                     lancamento.getId(), 
                     null);
@@ -1212,9 +1213,17 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota, false);
     }
     
-    private MovimentoEstoqueCota criarMovimentoCota(final Date dataLancamento, final Long idProdutoEdicao, final Long idCota,
-            final Long idUsuario, final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque,
-            final Date dataMovimento, Date dataOperacao, Long idLancamento, final Long idEstudoCota,final boolean isMovimentoDiferencaAutomatico) {
+    private MovimentoEstoqueCota criarMovimentoCota(final Date dataLancamento, 
+    		final Long idProdutoEdicao, 
+    		final Long idCota,
+            final Long idUsuario, 
+            final BigInteger quantidade, 
+            final TipoMovimentoEstoque tipoMovimentoEstoque,
+            final Date dataMovimento, 
+            Date dataOperacao, 
+            Long idLancamento, 
+            final Long idEstudoCota, 
+            final boolean isMovimentoDiferencaAutomatico) {
         
         this.validarDominioGrupoMovimentoEstoque(tipoMovimentoEstoque, Dominio.COTA);
         
@@ -1299,24 +1308,20 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     
     @Override
     @Transactional
-    public Long atualizarEstoqueProdutoCota(final TipoMovimentoEstoque tipoMovimentoEstoque,
-            final MovimentoEstoqueCota movimentoEstoqueCota) {
+    public Long atualizarEstoqueProdutoCota(final TipoMovimentoEstoque tipoMovimentoEstoque, final MovimentoEstoqueCota movimentoEstoqueCota) {
         
         if (StatusAprovacao.APROVADO.equals(movimentoEstoqueCota.getStatus())) {
             
             final Long idCota = movimentoEstoqueCota.getCota().getId();
             final Long idProdutoEd = movimentoEstoqueCota.getProdutoEdicao().getId();
             
-            EstoqueProdutoCota estoqueProdutoCota =
-                    estoqueProdutoCotaRepository.buscarEstoquePorProdutoECota(
-                            idProdutoEd, idCota);
+            EstoqueProdutoCota estoqueProdutoCota = estoqueProdutoCotaRepository.buscarEstoquePorProdutoECota(idProdutoEd, idCota);
             
             if (estoqueProdutoCota == null) {
                 
                 estoqueProdutoCota = new EstoqueProdutoCota();
                 
-                final ProdutoEdicao produtoEdicao =
-                        produtoEdicaoRepository.buscarPorId(idProdutoEd);
+                final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEd);
                 
                 estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
                 estoqueProdutoCota.setQtdeDevolvida(BigInteger.ZERO);

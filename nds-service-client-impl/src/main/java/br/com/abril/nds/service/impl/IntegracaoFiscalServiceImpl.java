@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,8 @@ import br.com.abril.nds.service.IntegracaoFiscalService;
 @Service
 public class IntegracaoFiscalServiceImpl implements IntegracaoFiscalService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(NotaFiscalServiceImpl.class);
+	
 	@Autowired
 	private IntegracaoFiscalRepository integracaoFiscalRepository;
 	
@@ -31,6 +35,7 @@ public class IntegracaoFiscalServiceImpl implements IntegracaoFiscalService {
 	}
 
 	@Override
+	@Transactional
 	public List<IntegracaoFiscalDTO> obterFixacoesRepartePorProduto(
 			FiltroConsultaIntegracaoFiscal filtro) {
 		
@@ -56,9 +61,9 @@ public class IntegracaoFiscalServiceImpl implements IntegracaoFiscalService {
 			bw.flush();
 			bw.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.debug("Erro ao acessar o arquivo!", e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Erro na geração do arquivo P7!", e);
 		}
 		
 		return f;
@@ -71,9 +76,6 @@ public class IntegracaoFiscalServiceImpl implements IntegracaoFiscalService {
 		
 		return p7dto;
 	}
-
-	
-
 }
 
 
