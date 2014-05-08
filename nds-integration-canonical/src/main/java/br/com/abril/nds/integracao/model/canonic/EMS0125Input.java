@@ -99,8 +99,8 @@ public class EMS0125Input extends IntegracaoDocument implements Serializable {
 		this.edicao = edicao;
 	}
 	
-	@Field(offset = 46, length = 25)
-	public String getChamadaCapa() {  //input.getChamadaCapa()
+	@Field(offset = 46, length = 15)
+	public String getChamadaCapa() { 
 		return chamadaCapa;
 	}
 	
