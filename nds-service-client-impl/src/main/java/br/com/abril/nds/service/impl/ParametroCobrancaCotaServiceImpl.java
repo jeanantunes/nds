@@ -25,16 +25,11 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.http.client.utils.CloneUtils;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.collect.Sets;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
 import br.com.abril.nds.client.vo.ContratoVO;
@@ -954,18 +949,42 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				}
 			}
 			
+			final String detalhesTipoPagto = this.obterDetalheTipoPagamento(formaCobrancaItem);
+			
 			formasCobrancaDTO.add(
 				new FormaCobrancaDTO(
 					formaCobrancaItem.getId(),
 					strFornecedores.toString(),
 					strConcentracoes.toString(),
 					(formaCobrancaItem.getTipoCobranca()!=null?formaCobrancaItem.getTipoCobranca().getDescTipoCobranca():""),
-					(formaCobrancaItem.getBanco()!=null?formaCobrancaItem.getBanco().getNome()+" : "+formaCobrancaItem.getBanco().getAgencia()+" : "+formaCobrancaItem.getBanco().getConta()+"-"+formaCobrancaItem.getBanco().getDvConta():""),
+					detalhesTipoPagto,
 					isParametroDistribuidor,
 					descUnificacao
 				)
 			);
 		}
+	}
+
+	private String obterDetalheTipoPagamento(final FormaCobranca formaCobrancaItem) {
+		
+		String detalhesTipoPagto = "";
+		
+		if(formaCobrancaItem.getBanco()!= null){
+			
+			detalhesTipoPagto = (formaCobrancaItem.getBanco().getDvConta() != null)
+					? String.format("%s : %s : %s - %s",
+									formaCobrancaItem.getBanco().getNome(), 
+									formaCobrancaItem.getBanco().getAgencia(), 
+									formaCobrancaItem.getBanco().getConta(),
+				                    formaCobrancaItem.getBanco().getDvConta())
+		            
+				                    : String.format("%s : %s : %s",
+						    						formaCobrancaItem.getBanco().getNome(), 
+						    						formaCobrancaItem.getBanco().getAgencia(), 
+						    						formaCobrancaItem.getBanco().getConta());                    
+		}
+		
+		return detalhesTipoPagto;
 	}
 	
 	/*

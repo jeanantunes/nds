@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.BoxRotasDTO;
+import br.com.abril.nds.dto.EntregadorDTO;
 import br.com.abril.nds.dto.MapaCotaDTO;
 import br.com.abril.nds.dto.MapaProdutoCotasDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
@@ -574,21 +575,36 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 	@Override
 	@Transactional
-	public Map<Long, MapaProdutoCotasDTO> obterMapaDeImpressaoPorEntregador(
-			FiltroMapaAbastecimentoDTO filtro) {
+	public Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> obterMapaDeImpressaoPorEntregador(
+			final FiltroMapaAbastecimentoDTO filtro) {
 	
-		List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregador(filtro);
+		final List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregador(filtro);
 	
 		if(produtosBoxRota.size() == 0){
 			return null;
 		}
-	
-		Map<Long, MapaProdutoCotasDTO> mapas = new LinkedHashMap<Long, MapaProdutoCotasDTO>();
-	
+		
+		final Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> quebraPorEnt = 
+		        new LinkedHashMap<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>>();
+		
 		MapaProdutoCotasDTO pcMapaDTO = null;
 	
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
-	
+		    
+		    final EntregadorDTO entDto = new EntregadorDTO();
+		    entDto.setCodigoBox(item.getCodigoBox());
+		    entDto.setDescricaoRota(item.getDescRota());
+		    entDto.setDescricaoRoteiro(item.getDescRoteiro());
+		    entDto.setIdEntregador(item.getIdEntregador());
+		    entDto.setNomeEntregador(item.getNomeEntregador());
+		    
+		    if (!quebraPorEnt.containsKey(entDto)){
+		        
+		        quebraPorEnt.put(entDto, new LinkedHashMap<Long, MapaProdutoCotasDTO>());
+		    }
+		    
+		    final Map<Long, MapaProdutoCotasDTO> mapas = quebraPorEnt.get(entDto);
+		    
 			if(!mapas.containsKey(item.getIdProdutoEdicao())) {
 	
 				pcMapaDTO = new MapaProdutoCotasDTO(
@@ -603,10 +619,11 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				mapas.put(item.getIdProdutoEdicao(), pcMapaDTO);
 			}	
 	
-			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota()))
+			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota())){
 				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
+			}
 	
-			Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
+			final Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
 			
 			if (item.getReparte() != null){
 				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
@@ -614,7 +631,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 		}
 	
-		return mapas;
+		return quebraPorEnt;
 	}
 	
 	

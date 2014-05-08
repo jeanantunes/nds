@@ -1083,33 +1083,33 @@ public class ConferenciaEncalheController extends BaseController {
 
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
-	public void adicionarProdutoConferido(final Long idProdutoEdicao, final String quantidade, final Boolean juramentada, final boolean indConferenciaContingencia) {
+	public void adicionarProdutoConferido(final Long produtoEdicaoId, final String qtdExemplares, final Boolean juramentada, final boolean indConferenciaContingencia) {
 		
-		if (idProdutoEdicao == null){
+		if (produtoEdicaoId == null){
 			
             throw new ValidacaoException(TipoMensagem.WARNING, "Produto é obrigatório.");
 		}
 		
-		if (quantidade == null){
+		if (qtdExemplares == null){
 			
             throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade é obrigatório.");
 		}
 		
-		ProdutoEdicaoDTO produtoEdicao = this.getProdutoEdicaoDTO(idProdutoEdicao);
+		ProdutoEdicaoDTO produtoEdicao = this.getProdutoEdicaoDTO(produtoEdicaoId);
 
-		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = getConferenciaEncalheDTOFromSession(idProdutoEdicao, null);
+		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = getConferenciaEncalheDTOFromSession(produtoEdicaoId, null);
 
 		if (conferenciaEncalheDTOSessao != null){
 			
-			final BigInteger qtdeEncalhe = obterQuantidadeEncalheDaString(quantidade);
+			final BigInteger qtdeEncalhe = this.obterQuantidadeEncalheDaString(qtdExemplares);
 			
 			conferenciaEncalheDTOSessao.setQtdExemplar(qtdeEncalhe);
 
-			this.setListaConferenciaEncalheToSession(this.atualizarProdutoRepetido(idProdutoEdicao, qtdeEncalhe, indConferenciaContingencia));
+			this.setListaConferenciaEncalheToSession(this.atualizarProdutoRepetido(produtoEdicaoId, qtdeEncalhe, indConferenciaContingencia));
 			
 		} else {
 			
-			final BigInteger qtdeEncalhe = obterQuantidadeEncalheDaString(quantidade);
+			final BigInteger qtdeEncalhe = this.obterQuantidadeEncalheDaString(qtdExemplares);
 			
 			conferenciaEncalheDTOSessao = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, true, indConferenciaContingencia);
 			
@@ -1334,7 +1334,7 @@ public class ConferenciaEncalheController extends BaseController {
             
             final boolean supervisor = usuarioService.isSupervisor();
             
-            if (listaConferencia == null || listaConferencia.isEmpty()){
+            if (!this.verificarProdutoJaConferido(listaConferencia, produtoEdicaoId, idConferencia)){
                 
                 ProdutoEdicaoDTO pDto = null;
                 
@@ -1397,7 +1397,34 @@ public class ConferenciaEncalheController extends BaseController {
         }
 	}
 
-	private boolean validarVendaNegativaProduto(final String qtdExemplares,
+	private boolean verificarProdutoJaConferido(List<ConferenciaEncalheDTO> listaConferencia, Long produtoEdicaoId,
+	        Long idConferencia) {
+        
+	    if (listaConferencia == null || listaConferencia.isEmpty()){
+	        
+	        return false;
+	    }
+	    
+	    for (ConferenciaEncalheDTO dto : listaConferencia){
+	        
+	        if (produtoEdicaoId != null){
+	        
+    	        if (produtoEdicaoId.equals(dto.getIdProdutoEdicao())){
+    	            return true;
+    	        }
+	        } else if (idConferencia != null){
+	            
+	            if (idConferencia.equals(dto.getIdConferenciaEncalhe())){
+	                
+	                return true;
+	            }
+	        }
+	    }
+	    
+        return false;
+    }
+
+    private boolean validarVendaNegativaProduto(final String qtdExemplares,
 										        final boolean indConferenciaContingencia,
 										        final ConferenciaEncalheDTO dto,
 										        boolean supervisor) {

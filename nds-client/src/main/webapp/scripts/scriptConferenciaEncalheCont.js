@@ -585,7 +585,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 			
 			$("#totalExemplaresFooter", ConferenciaEncalheCont.workspace).html(totalExemplaresFooter);
 			
-			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalheCont.workspace).numericForEnvelopes();
+			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalheCont.workspace).numericPacotePadrao();
+
 		}
 		
 		ConferenciaEncalheCont.processandoConferenciaEncalhe = false;
@@ -793,7 +794,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		);
 	},
 	
-	autenticarSupervisor : function(index){
+	autenticarSupervisor : function(index, callback, paramCallback){
 		
 		var paramUsuario = {
 			usuario:$("#inputUsuarioSup", ConferenciaEncalheCont.workspace).val(),
@@ -832,7 +833,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 					return;
 				}
 				
-				ConferenciaEncalheCont.atualizarValores(index);
+				if (index){
+					ConferenciaEncalheCont.atualizarValores(index);
+				}
+				
+				if (callback){
+					callback(paramCallback);
+				}
 				
 				$("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog("close");
 				return;
@@ -914,26 +921,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	},
 
-	informaVendaNegativa: function(){
-		
-		var data = [{name: "idProdutoEdicao", value: ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe}, 
-		            {name: "quantidade", value: $("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val()},
-		            {name:"juramentada", value:$('#checkboxJueramentadaNovoEncalhe', ConferenciaEncalheCont.workspace).attr('checked') == 'checked' }];
-		
-		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/informaVendaNegativa', data,
-			function(result){
-
-			    if (result){
-				
-				    exibirMensagem('WARNING', [result[1]]);
-			    }
-			}, 
-			null, 
-			true, 
-			"idModalNovoEncalhe"
-		);
-	},
-
 	adicionarEncalhe: function(){	
 
 		var _this = this;
@@ -957,16 +944,58 @@ var ConferenciaEncalheCont = $.extend(true, {
 			return;
 		}
 		
-		var data = [{name: "idProdutoEdicao", value: ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe}, 
-		            {name: "quantidade", value: $("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val()},
+		var data = [{name: "produtoEdicaoId", value: ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe}, 
+		            {name: "qtdExemplares", value: $("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val()},
 		            {name:"juramentada", value:$('#checkboxJueramentadaNovoEncalhe', ConferenciaEncalheCont.workspace).attr('checked') == 'checked' }];
 		
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarPermissaoSupervisor", 
+			data, 
+			function(result){
+				
+				if (result && result.result != ""){
+					
+					if (result[0]){
+						
+						exibirMensagem('WARNING', [result[1]]);
+						_this._adicionarNovoProduto(data);
+					} else {
+						
+						$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result[1]);
+						
+						$("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog({
+							resizable: false,
+							height:'auto',
+							width:400,
+							modal: true,
+							buttons: {
+								"Ok": function() {
+									
+									ConferenciaEncalheCont.resetValue = false;
+									ConferenciaEncalheCont.autenticarSupervisor(null, _this._adicionarNovoProduto, data);
+									
+								},
+								"Cancelar": function() {
+									
+									$(this).dialog("close");
+								}
+							},
+							form: $("#dialog-autenticar-supervisor", this.workspace).parents("form")
+						});
+					}
+					
+				} else {
+					
+					_this._adicionarNovoProduto(data);
+				}
+			}
+		);
+	},
+	
+	_adicionarNovoProduto : function(params){
 		
-		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', params,
 			function(result){
 			
-			    _this.informaVendaNegativa();
-				
 				ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe(result);
 				
 				ConferenciaEncalheCont.limparCamposNovoEncalhe();
@@ -976,7 +1005,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				$("#lstProdutos", ConferenciaEncalheCont.workspace).focus();
 				
 				bloquearItensEdicao(ConferenciaEncalheCont.workspace);
-
+	
 			}, null, true, "idModalNovoEncalhe"
 		);
 	},

@@ -142,8 +142,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#numeroCota", ConferenciaEncalhe.workspace).numeric();
 		                                           
-		$("#qtdeExemplar", ConferenciaEncalhe.workspace).numericForEnvelopes();
-		
+		$("#qtdeExemplar", ConferenciaEncalhe.workspace).numericPacotePadrao();
 		
 		$("#vlrCE", this.workspace).maskMoney({
 			 thousands:'.', 
@@ -798,7 +797,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					valorExemplares = isNaN(valorExemplares) ? 0 : valorExemplares;
 					
 					var inputExemplares = '<input isEdicao="true" id="qtdExemplaresGrid_' + index + 
-						'" class="input-numericE" onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue;ConferenciaEncalhe.verificarPermissaoSuperVisor('+ 
+						'" class="input-numericPacotePadrao" onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue;ConferenciaEncalhe.verificarPermissaoSuperVisor('+ 
 						index +');" style="width:50px; text-align: center;" maxlength="255" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
@@ -877,7 +876,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#colunaJuramentada", ConferenciaEncalhe.workspace).hide();
 			}
 			
-			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalhe.workspace).numericForEnvelopes();
+			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalhe.workspace).numericPacotePadrao();
 			
 		}
 		

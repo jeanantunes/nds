@@ -149,8 +149,7 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		List<Long> tiposMovimentoConsignado = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
 					Arrays.asList(
-						GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
-						GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO
+						GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE
 					)
 				);
 		

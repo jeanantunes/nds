@@ -167,7 +167,7 @@
 				</tr>
 				<tr>
 					<td class="class_linha_1" align="center" style="border-left: 1px solid #666; border-bottom: 1px solid #666;">
-						<input name="qtdeExemplar" type="text" id="qtdeExemplar" class="input-numericE" style="width: 60px; text-align: center;" maxlength="255"/>
+						<input name="qtdeExemplar" type="text" id="qtdeExemplar" class="input-numericPacotePadrao" style="width: 60px; text-align: center;" maxlength="255"/>
 					</td>
 					<td class="class_linha_1" align="center" style="border-bottom: 1px solid #666;">
 						<input name="cod_barras" type="text" id="cod_barras_conf_encalhe" style="width: 160px;" maxlength="255"/>
