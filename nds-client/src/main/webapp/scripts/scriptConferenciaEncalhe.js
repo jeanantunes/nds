@@ -142,7 +142,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#numeroCota", ConferenciaEncalhe.workspace).numeric();
 		                                           
-		$("#qtdeExemplar", ConferenciaEncalhe.workspace).numericE();
+		$("#qtdeExemplar", ConferenciaEncalhe.workspace).numericForEnvelopes();
 		
 		
 		$("#vlrCE", this.workspace).maskMoney({
@@ -877,7 +877,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#colunaJuramentada", ConferenciaEncalhe.workspace).hide();
 			}
 			
-			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalhe.workspace).numericE();
+			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalhe.workspace).numericForEnvelopes();
 			
 		}
 		
