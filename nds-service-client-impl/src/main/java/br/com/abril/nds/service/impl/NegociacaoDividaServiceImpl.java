@@ -435,6 +435,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                         cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
                         cobranca.setDataVencimento(parcelaNegociacao.getDataVencimento());
                         cobranca.setValor(valorTotalParcela);
+                        cobranca.setOriundaNegociacaoAvulsa(true);
                         dividaRepository.adicionar(divida);
                         cobranca.setNossoNumero(Util.gerarNossoNumero(numeroCota, dataOperacao, banco.getNumeroBanco(),
                                 null, divida.getId(), banco.getAgencia(), banco.getConta(), banco.getCarteira()));
@@ -930,6 +931,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             }
 
             valorTotal = valorTotal.add(valorParcela);
+            
+            if (valorTotal.compareTo(valorSelecionado) > 0) {
+            	
+            	throw new ValidacaoException(TipoMensagem.WARNING, "A soma das parcelas ultrapassa o valor da dívida.");
+            }
 
             if (BigDecimalUtil.eq(somaEncargo, filtro.getValorEncargoSelecionado())) {
 
