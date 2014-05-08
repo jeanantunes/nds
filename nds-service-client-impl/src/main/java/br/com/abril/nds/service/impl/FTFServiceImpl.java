@@ -208,11 +208,13 @@ public class FTFServiceImpl implements FTFService {
 			bw.close();
 			
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LOGGER.error("Não foi possivel localizar o arquivo no diretorio especifico!", e);
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel localizar o arquivo no diretorio especifico!");
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("Erro ao acessar arquivo!", e);
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao acessar arquivo!");
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("Erro ao gerar o arquivo!", e);
 		}
 		
 		report.setPedidosGerados(Integer.parseInt(totalPedidos));
@@ -347,13 +349,13 @@ public class FTFServiceImpl implements FTFService {
 				l.add(n);
 				
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				LOGGER.error("Não foi possivel localizar o arquivo no diretorio especifico!", e);
 				throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel localizar o arquivo no diretorio especifico!");
 			} catch (IOException e) {
-				e.printStackTrace();
-				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar o arquivo!");
+				LOGGER.error("Erro ao acessar arquivo!", e);
+				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao acessar arquivo!");
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error("Erro ao gerar o arquivo!", e);
 				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar o arquivo!");
 			}
 			

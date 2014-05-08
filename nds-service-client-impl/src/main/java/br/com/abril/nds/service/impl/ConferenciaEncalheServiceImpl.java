@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
-import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
@@ -42,7 +41,6 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -56,7 +54,6 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
-import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.estoque.CobrancaControleConferenciaEncalheCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -2179,7 +2176,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				for(OrigemItemMovFechamentoFiscal omff : movimentoFechamentoFiscalCota.getOrigemMovimentoFechamentoFiscal()) {
 					
-					if(((OrigemItemMovFechamentoFiscalMEC) omff).getMovimentoEstoqueCota().getId().equals(movimentoEstoqueCota.getId())) {
+					if(((OrigemItemMovFechamentoFiscalMEC) omff).getMovimento().getId().equals(movimentoEstoqueCota.getId())) {
 						
 						movimentoFechamentoFiscalCota.setNotaFiscalLiberadaEmissao(false);
 						movimentoFechamentoFiscalCota.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());

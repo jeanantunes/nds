@@ -1124,8 +1124,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         return conferenciaEncalheRepository.obterListaCotaConferenciaNaoFinalizada(dataOperacao);
     }
     
-    
-    
     @Override
     @Transactional
     public Set<String> encerrarOperacaoEncalhe(final Date dataEncalhe, final Usuario usuario,

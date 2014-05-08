@@ -1,14 +1,12 @@
 package br.com.abril.nds.model.fiscal;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Transient;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 
@@ -19,30 +17,17 @@ public class OrigemItemMovFechamentoFiscalMEC extends OrigemItemMovFechamentoFis
 
 	private static final long serialVersionUID = -1646731362475540050L;
 	
-	@XmlTransient
-	@Transient
+	@Enumerated(EnumType.STRING)
+	@Column(name="ORIGEM")
 	OrigemItem origem = OrigemItem.MOVIMENTO_ESTOQUE_COTA;
-	
-	@XmlTransient
-	@OneToOne(cascade=CascadeType.ALL)
-	@JoinColumn(name="MOVIMENTO_ESTOQUE_ID")
-	private MovimentoEstoqueCota movimentoEstoqueCota;
 
 	public OrigemItemMovFechamentoFiscalMEC() {
 		super();
 	}
 	
 	public OrigemItemMovFechamentoFiscalMEC(MovimentoFechamentoFiscal mff, MovimentoEstoqueCota mec) {
-		this.movimentoEstoqueCota = mec;
+		super.setMovimento(mec);
 		super.setMovimentoFechamentoFiscal(mff);
-	}
-	
-	public MovimentoEstoqueCota getMovimentoEstoqueCota() {
-		return movimentoEstoqueCota;
-	}
-
-	public void setMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota) {
-		this.movimentoEstoqueCota = movimentoEstoqueCota;
 	}
 
 	public OrigemItem getOrigem() {

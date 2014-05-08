@@ -7,8 +7,11 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoFechamentoFiscalRepository;
@@ -30,6 +33,20 @@ public class MovimentoFechamentoFiscalRepositoryImpl extends AbstractRepositoryM
 		criteria.add(Restrictions.eq("chamadaEncalheCota", chamadaEncalheCota));
 		
 		return (MovimentoFechamentoFiscalCota) criteria.uniqueResult();
+	}
+
+	@Override
+	public MovimentoFechamentoFiscalFornecedor buscarPorProdutoEdicaoTipoMovimentoEstoque(ProdutoEdicao produtoEdicao, TipoMovimentoEstoque tipoMovimentoEstoque) {
+		
+		Criteria criteria = getSession().createCriteria(MovimentoFechamentoFiscalFornecedor.class);
+		criteria.createAlias("origemMovimentoFechamentoFiscal", "origemMovimentoFechamentoFiscal");
+		criteria.createAlias("origemMovimentoFechamentoFiscal.movimento", "movimento");
+		criteria.add(Restrictions.eq("movimento.tipoMovimento", tipoMovimentoEstoque));
+		criteria.add(Restrictions.eq("movimento.produtoEdicao", produtoEdicao));
+		criteria.add(Restrictions.eq("notaFiscalDevolucaoSimbolicaEmitida", false));
+		
+		return (MovimentoFechamentoFiscalFornecedor) criteria.uniqueResult();
+		
 	}
     
 }
