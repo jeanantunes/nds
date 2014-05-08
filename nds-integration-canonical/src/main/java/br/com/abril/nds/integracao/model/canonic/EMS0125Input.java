@@ -25,7 +25,7 @@ public class EMS0125Input extends IntegracaoDocument implements Serializable {
 	private Long codForncProd;
 	private String codProd;
 	private Long edicao;
-	private String codBarra;
+	private String chamadaCapa;
 	
 	@Field(offset = 1, length = 7)
 	public String getCodDistrib() {
@@ -100,12 +100,12 @@ public class EMS0125Input extends IntegracaoDocument implements Serializable {
 	}
 	
 	@Field(offset = 46, length = 25)
-	public String getCodBarra() {
-		return codBarra;
+	public String getChamadaCapa() {  //input.getChamadaCapa()
+		return chamadaCapa;
 	}
 	
-	public void setCodBarra(String codBarra) {
-		this.codBarra = codBarra;
+	public void setChamadaCapa(String chamadaCapa) {
+		this.chamadaCapa = chamadaCapa;
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class EMS0125Input extends IntegracaoDocument implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((codBarra == null) ? 0 : codBarra.hashCode());
+				+ ((chamadaCapa == null) ? 0 : chamadaCapa.hashCode());
 		result = prime * result
 				+ ((codDistrib == null) ? 0 : codDistrib.hashCode());
 		result = prime * result
@@ -140,10 +140,10 @@ public class EMS0125Input extends IntegracaoDocument implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		EMS0125Input other = (EMS0125Input) obj;
-		if (codBarra == null) {
-			if (other.codBarra != null)
+		if (chamadaCapa == null) {
+			if (other.chamadaCapa != null)
 				return false;
-		} else if (!codBarra.equals(other.codBarra))
+		} else if (!chamadaCapa.equals(other.chamadaCapa))
 			return false;
 		if (codDistrib == null) {
 			if (other.codDistrib != null)
@@ -194,8 +194,8 @@ public class EMS0125Input extends IntegracaoDocument implements Serializable {
 				+ dataGeracaoArq + ", horaGeracaoArq=" + horaGeracaoArq
 				+ ", mnemonicoTab=" + mnemonicoTab + ", contextoProd="
 				+ contextoProd + ", codForncProd=" + codForncProd
-				+ ", codProd=" + codProd + ", edicao=" + edicao + ", codBarra="
-				+ codBarra + "]";
+				+ ", codProd=" + codProd + ", edicao=" + edicao + ", chamadaCapa="
+				+ chamadaCapa + "]";
 	}
 
 

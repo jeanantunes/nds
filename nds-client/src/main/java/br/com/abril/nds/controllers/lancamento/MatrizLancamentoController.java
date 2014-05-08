@@ -853,6 +853,19 @@ public class MatrizLancamentoController extends BaseController {
     }
     
     /**
+     * Verifica se data é operante
+     * 
+     * @param data
+     */
+    private void validarFeriadoSemOperacao(Date data){
+    	
+    	 if(calendarioService.isFeriadoSemOperacao(data) || calendarioService.isFeriadoMunicipalSemOperacao(data)){
+	        	
+            throw new ValidacaoException(TipoMensagem.WARNING, DateUtil.formatarDataPTBR(data)+" não é uma data operante! ");
+	    }
+    }
+    
+    /**
      * Método que atualiza o mapa de lançamento de acordo com as escolhas do
      * usuário
      * 
@@ -888,16 +901,7 @@ public class MatrizLancamentoController extends BaseController {
             }
         }
         
-
-        if(calendarioService.isFeriadoSemOperacao(novaData)
-  	    || calendarioService.isFeriadoMunicipalSemOperacao(novaData)){
-        	
-            throw new ValidacaoException(
-                    TipoMensagem.WARNING,
-                    "A data de lançamento não pode ser alterada para uma data feriado não operante!");
-            
-        	
-        }
+        this.validarFeriadoSemOperacao(novaData);
   	  
         this.removerEAdicionarMapa(matrizLancamento, listaProdutoLancamentoAlterar, novaData);
         

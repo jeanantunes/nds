@@ -108,7 +108,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.ERRO_INFRA,
-					String.format( "Registro não será atualizado pois já está em processo de recolhimento. Data de recolhimento: %1$s Produto: %2$s Edicao: %3$s.", sdf.format(input.getDataRecolhimento()), input.getCodProd(), input.getEdicao().toString() ));
+					String.format( "Registro não será atualizado pois já está em processo de recolhimento. Data de recolhimento %1$s Produto %2$s Edição %3$s", sdf.format(input.getDataRecolhimento()), input.getCodProd(), input.getEdicao().toString() ));
 			return;
 		}
 		
@@ -123,11 +123,11 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			if (!dtRecolhimentoPrevista.equals(dtRecolhimentoArquivo)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração da DATA RECOLHIMENTO PREVISTA do Produto: "
-								+ codigoProduto + " e Edicao: " + edicao
-								+ " , de: " + simpleDateFormat.format(
+						"Alteração da DATA RECOLHIMENTO PREVISTA do Produto "
+								+ codigoProduto + " e Edição: " + edicao
+								+ " de " + simpleDateFormat.format(
 										dtRecolhimentoPrevista)
-								+ "para: " + simpleDateFormat.format(
+								+ " para " + simpleDateFormat.format(
 										dtRecolhimentoArquivo));
 				lancamento.setDataRecolhimentoPrevista(dtRecolhimentoArquivo);
 				lancamento.setAlteradoInteface(true);
@@ -140,7 +140,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 							+ codigoProduto + " Edição " + edicao
 							+ " de " + simpleDateFormat.format(
 									lancamento.getDataRecolhimentoDistribuidor())
-							+ "para " + simpleDateFormat.format(
+							+ " para " + simpleDateFormat.format(
 									dtRecolhimentoArquivo));
 			lancamento.setDataRecolhimentoDistribuidor(dtRecolhimentoArquivo);
 			lancamento.setAlteradoInteface(true);

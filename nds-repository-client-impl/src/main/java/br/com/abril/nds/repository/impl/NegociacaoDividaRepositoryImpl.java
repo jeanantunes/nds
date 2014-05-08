@@ -114,7 +114,23 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 
 	@Override
 	public Negociacao obterNegociacaoPorCobranca(Long id) {
-		Query query = getSession().createQuery("select o from Negociacao o join o.cobrancasOriginarias c where c.id = " + id);
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select n.* from consolidado_financeiro_cota cfc ");
+		sql.append(" join consolidado_mvto_financeiro_cota cfmc on cfmc.CONSOLIDADO_FINANCEIRO_ID=cfc.ID ");
+		sql.append(" join movimento_financeiro_cota mfc on cfmc.MVTO_FINANCEIRO_COTA_ID=mfc.ID ");
+		sql.append(" join parcela_negociacao pn on pn.MOVIMENTO_FINANCEIRO_ID=mfc.ID ");
+		sql.append(" join negociacao n on n.ID=pn.NEGOCIACAO_ID ");
+		sql.append(" where cfc.ID=:idConsolidado ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		query.setParameter("idConsolidado", id); 
+		
+		((SQLQuery) query).addEntity(Negociacao.class);
+		
+		query.setMaxResults(1);
+
 		return (Negociacao) query.uniqueResult();
 	}
 
