@@ -304,7 +304,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 this.ndsiLoggerFactory.getLogger().logError(
                         message,
                         EventoExecucaoEnum.RELACIONAMENTO,
-                        "Classificação não Inserida para a o Produto "+produto.getCodigo()+" Edição "+inputItem.getEdicao()+" .");
+                        "Classificação não Inserida para a o Produto "+produto.getCodigo()+" Edição "+inputItem.getEdicao());
                 
                 Date dataAtual = new Date();
                 Date dataLancamento = inputItem.getDataLancamento();
