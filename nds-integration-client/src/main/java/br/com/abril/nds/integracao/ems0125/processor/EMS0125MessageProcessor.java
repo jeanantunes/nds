@@ -56,10 +56,16 @@ public class EMS0125MessageProcessor extends AbstractRepository implements
 			return;
 		}
 
-		produtoEdicao.setChamadaCapa(input.getCodBarra());
-		ndsiLoggerFactory.getLogger().logInfo(message,
+		if(input.getChamadaCapa()!=null && !produtoEdicao.getChamadaCapa().equals(input.getChamadaCapa())){
+		 ndsiLoggerFactory.getLogger().logInfo(message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
-				"Atualização do Código de Barra para "+input.getCodBarra()+" do Produto "+input.getCodProd()+" Edição " + input.getEdicao() );
+				"Atualização da Chamada de Capa"
+				+" de "+produtoEdicao.getChamadaCapa()
+				+" para "+input.getChamadaCapa()
+				+" Produto "+input.getCodProd()+" Edição " + input.getEdicao() );
+		
+		 produtoEdicao.setChamadaCapa(input.getChamadaCapa());
+		}
 
 	}
 	
