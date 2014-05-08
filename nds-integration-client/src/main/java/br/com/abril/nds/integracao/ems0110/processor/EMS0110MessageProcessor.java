@@ -81,6 +81,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
+		System.out.println("Inicio");
 	}
 
 	@Override
@@ -216,9 +217,18 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
     }
 	
     private TipoClassificacaoProduto findTipoClassificacaoProduto(String classificacao) {
-        Criteria criteria = this.getSession().createCriteria(TipoClassificacaoProduto.class);
-        criteria.add(Restrictions.ge("descricao", classificacao.trim().toUpperCase()));
-        return (TipoClassificacaoProduto) criteria.uniqueResult();
+        
+    	TipoClassificacaoProduto tipoClassificacaoProdutoAux;
+    	Criteria criteria = this.getSession().createCriteria(TipoClassificacaoProduto.class);
+        criteria.add(Restrictions.eq("descricao", classificacao.trim().toUpperCase()));
+        tipoClassificacaoProdutoAux = (TipoClassificacaoProduto) criteria.uniqueResult();
+        
+        if(tipoClassificacaoProdutoAux==null){
+         criteria.add(Restrictions.ge("descricao", classificacao.trim().toUpperCase()));
+         tipoClassificacaoProdutoAux = (TipoClassificacaoProduto) criteria.list().get(0);
+        }
+        
+        return tipoClassificacaoProdutoAux;
     }
     
     private TipoClassificacaoProduto criarNovoTipoClassificacaoProduto(String classificacao) {
@@ -484,10 +494,13 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
                 (input.getSegmento() != null && !Objects.equal(
                         tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
             
-            produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Atualização do Tipo de Segmento do Produto "+input.getCodProd()+" para " + input.getSegmento());
+                    "Atualização do Tipo de Segmento do Produto "+input.getCodProd()
+                    +" de " + produto.getTipoSegmentoProduto()
+                    +" para " + input.getSegmento());
+            
+            produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
         }
         
 		if (descontoLogistica != null 
@@ -695,7 +708,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
                     "Atualização do Tipo de Segmento do Produto "+produto.getTipoSegmentoProduto()
-                    +" de " + input.getSegmento()
+                    +" de " + produto.getTipoSegmentoProduto()
                     +" para " + input.getSegmento());
             
             produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));

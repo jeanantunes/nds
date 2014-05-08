@@ -41,7 +41,7 @@
 		});
 	},
 	
-	$.fn.numericE = function() {
+	$.fn.numericPacotePadrao = function() {
 		
 		$(this).keypress(function(e) {
 	
@@ -77,15 +77,15 @@
 			var keyChar = String.fromCharCode(key);
 			var pattern = /[0-9]/;
 				
-			if (inputValue.indexOf("e") < 0) {
+			if (inputValue.indexOf("*") < 0) {
 			
-				pattern = /[0-9e]/;
+				pattern = /[0-9*]/;
 			
 			} else {
 
 				if (pattern.test(keyChar)) {
 					
-					inputValue = inputValue.split("e").join("").concat(keyChar+"e");
+					inputValue = inputValue.split("*").join("").concat(keyChar+"*");
 					
 					$(this).val(inputValue);
 				
