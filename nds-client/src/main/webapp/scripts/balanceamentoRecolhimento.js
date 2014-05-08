@@ -172,6 +172,11 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
 					$('#utilizaSedeAtendida').val(result.utilizaSedeAtendida);
 
+					var dataPesquisa = 
+						$("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val();
+					
+					balanceamentoRecolhimentoController.escolherDataParaVisualizacaoGrid(dataPesquisa);
+					
 					balanceamentoRecolhimentoController.visualizarMatrizBalanceamentoPorDia(null);
 					
 					$(this).dialog("close");
