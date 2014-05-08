@@ -179,6 +179,9 @@ public class MatrizRecolhimentoController extends BaseController {
                 if (balanceamentoRecolhimentoAux.getProdutosRecolhimentoNaoBalanceados() != null)
                     balanceamentoRecolhimento.addProdutosRecolhimentoNaoBalanceados(balanceamentoRecolhimentoAux
                             .getProdutosRecolhimentoNaoBalanceados());
+                if (balanceamentoRecolhimentoAux.getProdutosRecolhimentoDeOutraSemana() != null)
+                    balanceamentoRecolhimento.addProdutosRecolhimentoDeOutraSemana(balanceamentoRecolhimentoAux
+                            .getProdutosRecolhimentoDeOutraSemana());
                 
             }
             this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO, balanceamentoRecolhimento);
@@ -198,31 +201,26 @@ public class MatrizRecolhimentoController extends BaseController {
         
         resultadoResumoBalanceamento.setUtilizaSedeAtendida(utilizaSedeAtendida);
         
-        resultadoResumoBalanceamento.setProdutosNaoBalanceadosAposFechamentoMatriz(balanceamentoRecolhimento
-                .getProdutosRecolhimentoNaoBalanceados());
-        
+		resultadoResumoBalanceamento.setProdutosRecolhimentoDeOutraSemana(
+	        balanceamentoRecolhimento.getProdutosRecolhimentoDeOutraSemana());
+		
         removerAtributoAlteracaoSessao();
         
         configurarFiltropesquisa(anoNumeroSemana, dataPesquisa, listaIdsFornecedores);
         
+        processarProdutosNaoBalanceadosAposConfirmacaoMatriz(
+            balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
+        
         this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
     }
     
-    @Post
-    @Path("/processarProdutosNaoBalanceadosAposConfirmacaoMatriz")
-    public void processarProdutosNaoBalanceadosAposConfirmacaoMatriz() {
+    private void processarProdutosNaoBalanceadosAposConfirmacaoMatriz(List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados) {
         
         verificarExecucaoInterfaces();
         
-        BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = (BalanceamentoRecolhimentoDTO) this.httpSession
-                .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
-        
         FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
         
-        recolhimentoService.processarProdutosProximaSemanaRecolhimento(balanceamentoRecolhimento
-                .getProdutosRecolhimentoNaoBalanceados(), filtro.getAnoNumeroSemana());
-        
-        this.result.use(Results.json()).from(Results.nothing()).serialize();
+        recolhimentoService.processarProdutosProximaSemanaRecolhimento(produtosRecolhimentoNaoBalanceados, filtro.getAnoNumeroSemana());
     }
     
     private Integer tratarSemana(Integer anoNumeroSemana, Date dataPesquisa) {
@@ -341,10 +339,13 @@ public class MatrizRecolhimentoController extends BaseController {
         ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this
                 .obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
         
-        resultadoResumoBalanceamento.setProdutosNaoBalanceadosAposFechamentoMatriz(balanceamentoRecolhimento
-                .getProdutosRecolhimentoNaoBalanceados());
+        resultadoResumoBalanceamento.setProdutosRecolhimentoDeOutraSemana(
+            balanceamentoRecolhimento.getProdutosRecolhimentoDeOutraSemana());
         
         removerAtributoAlteracaoSessao();
+        
+        processarProdutosNaoBalanceadosAposConfirmacaoMatriz(
+            balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
         
         this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
     }
@@ -423,10 +424,13 @@ public class MatrizRecolhimentoController extends BaseController {
         ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this
                 .obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
         
-        resultadoResumoBalanceamento.setProdutosNaoBalanceadosAposFechamentoMatriz(balanceamentoRecolhimento
-                .getProdutosRecolhimentoNaoBalanceados());
+        resultadoResumoBalanceamento.setProdutosRecolhimentoDeOutraSemana(
+            balanceamentoRecolhimento.getProdutosRecolhimentoDeOutraSemana());
         
         removerAtributoAlteracaoSessao();
+        
+        processarProdutosNaoBalanceadosAposConfirmacaoMatriz(
+            balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
         
         this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
     }
