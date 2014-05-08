@@ -142,7 +142,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#numeroCota", ConferenciaEncalhe.workspace).numeric();
 		                                           
-		$("#qtdeExemplar", ConferenciaEncalhe.workspace).numericE();
+		$("#qtdeExemplar", ConferenciaEncalhe.workspace).numericPacotePadrao();
 		
 		
 		$("#vlrCE", this.workspace).maskMoney({
@@ -797,7 +797,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					valorExemplares = isNaN(valorExemplares) ? 0 : valorExemplares;
 					
 					var inputExemplares = '<input isEdicao="true" id="qtdExemplaresGrid_' + index + 
-						'" class="input-numericE" onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue;ConferenciaEncalhe.verificarPermissaoSuperVisor('+ 
+						'" class="input-numericPacotePadrao" onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue;ConferenciaEncalhe.verificarPermissaoSuperVisor('+ 
 						index +');" style="width:50px; text-align: center;" maxlength="255" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
@@ -876,7 +876,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#colunaJuramentada", ConferenciaEncalhe.workspace).hide();
 			}
 			
-			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalhe.workspace).numericE();
+			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalhe.workspace).numericPacotePadrao();
 			
 		}
 		
@@ -1587,8 +1587,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		var idProdutoEdicao = $("#idProdutoEdicaoHidden", ConferenciaEncalhe.workspace).val();
 		
-		var data = [{name: "idProdutoEdicao", value: idProdutoEdicao}, 
-		            {name: "quantidade", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()}];
+		var data = [{name: "produtoEdicaoId", value: idProdutoEdicao}, 
+		            {name: "qtdExemplares", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,
 			function(result){

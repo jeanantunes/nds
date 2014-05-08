@@ -1455,11 +1455,6 @@ ConsolidadoFinanceiroRepository {
         .append(" ),2) as saldo, ")
         
         .append(" coalesce(cfc.CONSIGNADO,0) - coalesce(cfc.ENCALHE,0) ")
-        .append(" - coalesce((select sum(coalesce(mfdc.valor,0)) from MOVIMENTO_FINANCEIRO_COTA mfdc ")
-        .append(" join CONSOLIDADO_MVTO_FINANCEIRO_COTA c_ on (c_.MVTO_FINANCEIRO_COTA_ID = mfdc.ID) ")
-        .append(" where mfdc.TIPO_MOVIMENTO_ID in (:tiposMovimentoNegociacaoComissao) ")
-        .append(" and c_.CONSOLIDADO_FINANCEIRO_ID = cfc.ID ")
-        .append(" and mfdc.DATA = cfc.DT_CONSOLIDADO), 0)")
         .append(" as valorVendaDia, ")
         
         .append(" case when divida.STATUS = :statusPendenteInadimplencia then 1 else 0 end as inadimplente ")
@@ -1915,7 +1910,6 @@ ConsolidadoFinanceiroRepository {
         query.setParameterList("tipoMovimentoVendaEncalhe", tipoMovimentoVendaEncalhe);
         query.setParameterList("tiposMovimentoConsignado", tiposMovimentoConsignado);
         query.setParameterList("tiposMovimentoPendente", tiposMovimentoPendente);
-        query.setParameterList("tiposMovimentoNegociacaoComissao", tiposMovimentoNegociacaoComissao);
         
         query.setParameter("naoPagoPostergado", StatusBaixa.NAO_PAGO_POSTERGADO.name());
         

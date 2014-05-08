@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.fiscal;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -22,6 +23,12 @@ public class MovimentoFechamentoFiscalCota extends MovimentoFechamentoFiscal {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	@Column(name = "NOTA_FISCAL_VENDA_EMITIDA")
+	private boolean notaFiscalVendaEmitida;
+	
+	@Column(name = "DESOBRIGA_NOTA_FISCAL_VENDA")
+	private boolean desobrigaNotaFiscalVenda;
+	
 	@OneToOne
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
@@ -37,6 +44,22 @@ public class MovimentoFechamentoFiscalCota extends MovimentoFechamentoFiscal {
 	@Embedded
 	private ValoresAplicados valoresAplicados;
 
+	public boolean isNotaFiscalVendaEmitida() {
+		return notaFiscalVendaEmitida;
+	}
+
+	public void setNotaFiscalVendaEmitida(boolean notaFiscalVendaEmitida) {
+		this.notaFiscalVendaEmitida = notaFiscalVendaEmitida;
+	}
+	
+	public boolean isDesobrigaNotaFiscalVenda() {
+		return desobrigaNotaFiscalVenda;
+	}
+
+	public void setDesobrigaNotaFiscalVenda(boolean desobrigaNotaFiscalVenda) {
+		this.desobrigaNotaFiscalVenda = desobrigaNotaFiscalVenda;
+	}
+	
 	public Cota getCota() {
 		return cota;
 	}

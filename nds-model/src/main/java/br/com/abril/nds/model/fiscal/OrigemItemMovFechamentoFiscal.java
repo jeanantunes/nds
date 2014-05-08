@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.movimentacao.Movimento;
+
 @Entity
 @Table(name = "MOVIMENTO_FECHAMENTO_FISCAL_ORIGEM_ITEM")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -27,6 +29,10 @@ public abstract class OrigemItemMovFechamentoFiscal implements Serializable {
 	private Long id;
 
 	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name="MOVIMENTO_ID")
+	private Movimento movimento;
+	
+	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="MOVIMENTO_FECHAMENTO_FISCAL_ID")
 	private MovimentoFechamentoFiscal movimentoFechamentoFiscal;
 
@@ -36,6 +42,14 @@ public abstract class OrigemItemMovFechamentoFiscal implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Movimento getMovimento() {
+		return movimento;
+	}
+
+	public void setMovimento(Movimento movimento) {
+		this.movimento = movimento;
 	}
 
 	public MovimentoFechamentoFiscal getMovimentoFechamentoFiscal() {

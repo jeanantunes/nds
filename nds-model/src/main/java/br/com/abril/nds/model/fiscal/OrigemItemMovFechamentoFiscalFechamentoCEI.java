@@ -1,18 +1,21 @@
 package br.com.abril.nds.model.fiscal;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Entity
-@DiscriminatorValue(value = "FECHAMENTO_CE_INTEGRACAO")
+@DiscriminatorValue(value = "MOVIMENTO_ESTOQUE")
 public class OrigemItemMovFechamentoFiscalFechamentoCEI extends OrigemItemMovFechamentoFiscal {
 
 	private static final long serialVersionUID = -1646731362475540050L;
 	
-	@Transient
+	@Enumerated(EnumType.STRING)
+	@Column(name="ORIGEM")
 	OrigemItem origem = OrigemItem.FECHAMENTO_CE_INTEGRACAO;
-	
+
 	public OrigemItem getOrigem() {
 		return origem;
 	}

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +13,6 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -41,7 +39,6 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -349,10 +346,6 @@ public class ResumoExpedicaoController extends BaseController {
 		
 		List<ResumoExpedicaoBoxVO> listaLancamentosExpedidosBox = retornoExpedicaoVO.getResumosExpedicaoBox();
 		
-		listaLancamentosExpedidosBox = 
-			ordenarEmMemoria(
-				listaLancamentosExpedidosBox, filtro.getPaginacao(), filtro.getOrdenacaoColunaBox().toString());
-		
 		TableModel<CellModelKeyValue<ResumoExpedicaoBoxVO>> tableModel = 
 			new TableModel<CellModelKeyValue<ResumoExpedicaoBoxVO>>();
 
@@ -399,7 +392,7 @@ public class ResumoExpedicaoController extends BaseController {
 			resumoExpedicaoBoxVO = new ResumoExpedicaoBoxVO();
 			
 			resumoExpedicaoBoxVO.setDataLancamento(DateUtil.formatarDataPTBR(expd.getDataLancamento()));
-			resumoExpedicaoBoxVO.setCodigoBox(expd.getCodigoBox());
+			resumoExpedicaoBoxVO.setCodigoBox(Util.nvl(expd.getCodigoBox(),"").toString());
 			resumoExpedicaoBoxVO.setDescricaoBox(expd.getNomeBox());
 			resumoExpedicaoBoxVO.setQntProduto(getValor(expd.getQntProduto()));
 			resumoExpedicaoBoxVO.setReparte(getValor(expd.getQntReparte()));
@@ -561,30 +554,6 @@ public class ResumoExpedicaoController extends BaseController {
 			filtro.setOrdenacaoColunaBox(Util.getEnumByStringValue(FiltroResumoExpedicaoDTO.OrdenacaoColunaBox.values(),sortname));
 		}
 	}
-	
-	
-	/**
-	 * Ordena a lista de resumo de lançamentos agrupadas por box.
-	 * @param listaAOrdenar
-	 * @param paginacao
-	 * @param nomeAtributoOrdenacao
-	 * @return List
-	 */
-	@SuppressWarnings("unchecked")
-	private <T extends Object> List<T> ordenarEmMemoria(List<T> listaAOrdenar, 
-														PaginacaoVO paginacao, 
-														String nomeAtributoOrdenacao) {
-		
-		Collections.sort(listaAOrdenar, new BeanComparator(nomeAtributoOrdenacao));
-		
-		if (Ordenacao.DESC.equals(paginacao.getOrdenacao())) {
-			
-			Collections.reverse(listaAOrdenar);
-		}
-		
-		return listaAOrdenar;
-	}
-	
 		
 	/**
 	 * Carrega o combo de Tipo de Consulta.

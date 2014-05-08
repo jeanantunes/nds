@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0126.processor;
 
+import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
@@ -33,6 +34,28 @@ public class EMS0126MessageProcessor extends AbstractRepository implements
 	public void processMessage(Message message) {
 
 		EMS0126Input input = (EMS0126Input) message.getBody();
+		
+		if(input.getCodigoProduto()==null || input.getCodigoProduto().trim().equals("")){
+		
+			ndsiLoggerFactory.getLogger().logError(
+				message,
+				EventoExecucaoEnum.RELACIONAMENTO,
+				"Código do Produto Nulo ou Vazio."
+				+ " Produto "+ input.getCodigoProduto());
+			return;
+		}
+		
+		if(input.getEdicao()==null || input.getEdicao().intValue()==0){
+			
+			ndsiLoggerFactory.getLogger().logError(
+				message,
+				EventoExecucaoEnum.RELACIONAMENTO,
+				"Edição do Produto Nula ou Vazia."
+						+ " Produto "+ input.getCodigoProduto() 
+						+ " Edição "+ input.getEdicao());
+			
+			return;
+		}
 
 		// Localizar Produto/Edicao
 		StringBuilder sql = new StringBuilder();
@@ -50,17 +73,29 @@ public class EMS0126MessageProcessor extends AbstractRepository implements
 		ProdutoEdicao produtoEdicao = (ProdutoEdicao) query.uniqueResult();
 
 		if (null != produtoEdicao) {
-			// Inserir codigo de barras
-			produtoEdicao.setCodigoDeBarras(input.getCodigoBarras());
-			this.getSession().merge(produtoEdicao);
+
+			
+			if(input.getCodigoBarras()!=null && !produtoEdicao.getCodigoDeBarras().equals(new BigInteger(input.getCodigoBarras()).toString())){
+				
+				ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Atualização do Codigo de Barras"
+						+" de "+produtoEdicao.getCodigoDeBarras()
+						+" para "+input.getCodigoBarras()
+						+" Produto "+input.getCodigoProduto()
+						+" Edição " + input.getEdicao() );
+				
+				produtoEdicao.setCodigoDeBarras(new BigInteger(input.getCodigoBarras()).toString());
+				this.getSession().merge(produtoEdicao);
+			}
 
 		} else {
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Nenhum resultado encontrado para Produto "
-							+ input.getCodigoProduto() + " e Edição "
-							+ input.getEdicao() + " na tabela Produto Edição");
+					"Nenhum resultado encontrado para" 
+					+ "Produto "+ input.getCodigoProduto() 
+					+ " Edição "+ input.getEdicao());
 
 		}
 

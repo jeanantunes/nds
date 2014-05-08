@@ -24,7 +24,7 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	
 	private boolean utilizaSedeAtendida;
 	
-	private List<ProdutoRecolhimentoDTO> produtosNaoBalanceadosAposFechamentoMatriz;
+	private List<ProdutoRecolhimentoDTO> produtosRecolhimentoDeOutraSemana;
 	
 	/**
 	 * Construtor padrão.
@@ -99,14 +99,13 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	public void setUtilizaSedeAtendida(boolean utilizaSedeAtendida) {
 		this.utilizaSedeAtendida = utilizaSedeAtendida;
 	}
+    
+    public List<ProdutoRecolhimentoDTO> getProdutosRecolhimentoDeOutraSemana() {
+        return produtosRecolhimentoDeOutraSemana;
+    }
 
-	public List<ProdutoRecolhimentoDTO> getProdutosNaoBalanceadosAposFechamentoMatriz() {
-		return produtosNaoBalanceadosAposFechamentoMatriz;
-	}
-
-	public void setProdutosNaoBalanceadosAposFechamentoMatriz(
-			List<ProdutoRecolhimentoDTO> produtosNaoBalanceadosAposFechamentoMatriz) {
-		this.produtosNaoBalanceadosAposFechamentoMatriz = produtosNaoBalanceadosAposFechamentoMatriz;
-	}
-
+    public void setProdutosRecolhimentoDeOutraSemana(List<ProdutoRecolhimentoDTO> produtosRecolhimentoDeOutraSemana) {
+        this.produtosRecolhimentoDeOutraSemana = produtosRecolhimentoDeOutraSemana;
+    }
+    
 }

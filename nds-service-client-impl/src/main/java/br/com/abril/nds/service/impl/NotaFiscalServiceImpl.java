@@ -665,19 +665,17 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 				Marshaller marshaller = jc.createMarshaller();
 				marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-				DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
-						.newInstance();
+				DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 				documentBuilderFactory.setNamespaceAware(true);
 				DocumentBuilder documentBuilder;
 				try {
-					documentBuilder = documentBuilderFactory
-							.newDocumentBuilder();
+					
+					documentBuilder = documentBuilderFactory.newDocumentBuilder();
 					Document document = documentBuilder.newDocument();
 
 					XmlDomUtils.removeUnusedNamespaces(document);
 
-					marshaller.setProperty(Marshaller.JAXB_FRAGMENT,
-							Boolean.TRUE);
+					marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 
 					marshaller.marshal(notaFiscal, document);
 
@@ -707,21 +705,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 					// document.normalizeDocument();
 
-					XmlDomUtils
-							.removeUnusedNamespaces(document.getFirstChild());
+					XmlDomUtils.removeUnusedNamespaces(document.getFirstChild());
 
-					ParametroSistema diretorioSaida = parametroSistemaService
-							.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
-					String numeroNF = notaFiscal.getNotaFiscalInformacoes()
-							.getIdentificacao().getCodigoNF();
-					String serieNF = notaFiscal.getNotaFiscalInformacoes()
-							.getIdentificacao().getSerie().toString();
+					ParametroSistema diretorioSaida = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
+					String numeroNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getCodigoNF();
+					String serieNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getSerie().toString();
 
 					signatureHandler.sign(new DOMStructure(root), "infNFe");
 
-					OutputStream os = new FileOutputStream(
-							diretorioSaida.getValor() + "/" + "NF-e-" + serieNF
-									+ "-" + numeroNF + ".xml");
+					OutputStream os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
 					TransformerFactory tf = TransformerFactory.newInstance();
 					Transformer trans = null;
 
@@ -731,12 +723,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 					os.flush();
 					os.close();
-					ajustaXml(new File(diretorioSaida.getValor() + "/"
-							+ "NF-e-" + serieNF + "-" + numeroNF + ".xml"));
+					ajustaXml(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + serieNF + "-" + numeroNF + ".xml"));
 				} catch (ParserConfigurationException e) {
 					LOGGER.error("Erro ao gerar XML", e);
-					throw new ValidacaoException(TipoMensagem.ERROR,
-							"Erro ao gerar XML.");
+					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar XML.");
 				}
 
 			} catch (JAXBException e) {
@@ -749,8 +739,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		}
 
-		return "NOTA FISCAL|" + notasFiscaisParaExportacao.size() + "|\n"
-				+ sBuilder.toString();
+		return "NOTA FISCAL|" + notasFiscaisParaExportacao.size() + "|\n" + sBuilder.toString();
 	}
 
 	// passa-se o file a ser re-formatado como string

@@ -115,8 +115,8 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 		List<Long> tiposMovimento = 
 			this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
 				Arrays.asList(GrupoMovimentoFinaceiro.ENVIO_ENCALHE,
-						GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
-						GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO));
+						GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE
+						));
 
 		return this.movimentoFinanceiroCotaRepository.obterDetalhesVendaDia(
 				numeroCota, idConsolidado, tiposMovimento,	data);
