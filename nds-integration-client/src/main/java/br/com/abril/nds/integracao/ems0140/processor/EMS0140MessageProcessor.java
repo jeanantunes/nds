@@ -97,8 +97,9 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                         message,
                         EventoExecucaoEnum.INF_DADO_ALTERADO,
                         String.format("Nota Fiscal de Entrada " + input.getNumeroNotaEnvio()
-                                + " atualizada com chave de acesso NFE de " + chaveAcessoAntiga + " para "
-                                + input.getChaveAcessoNF() + " com sucesso!"));
+                                + " Atualizada com Chave de Acesso NFE"
+                                +" de " + chaveAcessoAntiga 
+                                +" para "+ input.getChaveAcessoNF() + " com sucesso!"));
                 
                 return;
             }
@@ -122,13 +123,13 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                 this.getSession().persist(notafiscalEntrada);
                 
                 this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.SEM_DOMINIO,
-                        String.format("Nota Fiscal inserida no sistema: %1$s", input.getNotaFiscal()));
+                        String.format("Nota Fiscal Inserida no sistema %1$s", input.getNotaFiscal()));
             } else {
                 
-                String msg = "Nota fiscal com produtos não encontrados no sistema";
+                String msg = "Nota Fiscal com produtos não encontrados no sistema";
                 
                 if (input.getNotaFiscal() != null && input.getNotaFiscal() > 0) {
-                    msg = String.format("Nota fiscal com produtos não encontrados no sistema, número nota: %1$s",
+                    msg = String.format("Nota Fiscal com produtos não encontrados no sistema, Número Nota %1$s",
                             input.getNotaFiscal());
                 }
                 
@@ -144,7 +145,7 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                     
                     EventoExecucaoEnum.REGISTRO_JA_EXISTENTE,
                     
-                    String.format("Nota Fiscal %1$s já cadastrada com serie %2$s e nota envio %3$s",
+                    String.format("Nota Fiscal %1$s já cadastrada com Série %2$s Nota Envio %3$s",
                             notafiscalEntrada.getNumero(), notafiscalEntrada.getSerie(),
                             notafiscalEntrada.getNumeroNotaEnvio()));
             return;
