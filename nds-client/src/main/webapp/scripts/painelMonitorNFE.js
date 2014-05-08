@@ -131,7 +131,7 @@ var PainelMonitorNFE = $.extend(true, {
 		var dataFinal = $("#dataFinal", PainelMonitorNFE.workspace).val();
 		var documentoPessoa = $('input:radio[name=painelNfe-radioTipoDoc]:checked', PainelMonitorNFE.workspace).val();
 		var documento = $("#documento", PainelMonitorNFE.workspace).val();
-		var tipoNfe = $("#tipoNfe", PainelMonitorNFE.workspace).val();
+		var tipoNfe = $("#painelNfe-filtro-naturezaOperacao", PainelMonitorNFE.workspace).val();
 		var numeroInicial = $("#numeroInicial", PainelMonitorNFE.workspace).val();
 		var numeroFinal = $("#numeroFinal", PainelMonitorNFE.workspace).val();
 		var chaveAcesso = $("#chaveAcesso", PainelMonitorNFE.workspace).val();
@@ -300,7 +300,7 @@ var PainelMonitorNFE = $.extend(true, {
 		var dataFinal = $("#dataFinal", PainelMonitorNFE.workspace).val();
 		var documentoPessoa = $('input:radio[name=painelNfe-radioTipoDoc]:checked', PainelMonitorNFE.workspace).val();
 		var documento = $("#documento", PainelMonitorNFE.workspace).val();
-		var tipoNfe = $("#tipoNfe", PainelMonitorNFE.workspace).val();
+		var tipoNfe = $("#painelNfe-filtro-naturezaOperacao", PainelMonitorNFE.workspace).val();
 		var numeroInicial = $("#numeroInicial", PainelMonitorNFE.workspace).val();
 		var numeroFinal = $("#numeroFinal", PainelMonitorNFE.workspace).val();
 		var chaveAcesso = $("#chaveAcesso", PainelMonitorNFE.workspace).val();
