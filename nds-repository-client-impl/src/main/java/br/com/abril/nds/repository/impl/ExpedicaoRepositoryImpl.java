@@ -134,6 +134,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		hql.append(getHqlResumoLancamento(true, false, filtro));
 		
+		hql.append(this.ordenarConsultaPorBox(filtro));
+		
 		Query query = this.getQueryResumoLancamentoPorBox(hql);
 		
 		this.setParametersQueryResumoExpedicaoPorProduto(filtro, query);
@@ -236,7 +238,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		Query query = getSession().createSQLQuery(hql.toString())
 			.addScalar("dataLancamento")
 			.addScalar("idBox", StandardBasicTypes.LONG)
-			.addScalar("codigoBox")
+			.addScalar("codigoBox",StandardBasicTypes.LONG)
 			.addScalar("nomeBox")
 			.addScalar("precoCapa")
 			.addScalar("qntReparte", StandardBasicTypes.BIG_INTEGER)
@@ -389,7 +391,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		          .append(" mec.QTDE * produtoEdicao.PRECO_VENDA AS valorFaturado, ")
 		          .append(" tp.GRUPO_MOVIMENTO_ESTOQUE as grupoMovimento, ") 
 		          .append(" produtoEdicao.ID AS produtoEdicaoId, ")
-		          .append(" CONCAT(COALESCE(box.CODIGO, ''), '-', COALESCE(box.NOME, '')) AS codigoBox, ")
+		          .append(" box.CODIGO  AS codigoBox, ")
 		          .append(" expedicao.data_expedicao AS dataExpedicao, ");
 		
 		if (isDetalhesResumo) {
@@ -503,8 +505,51 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		   .append(" ) innerQuery ");
 				
 		sql.append(this.getAgrupamentoResumoLancamento(isAgrupamentoPorBox, isDetalhesResumo, filtro));
-
+		
 		return sql.toString();
+	}
+	
+	private String ordenarConsultaPorBox(final FiltroResumoExpedicaoDTO filtro){
+		
+		final StringBuilder hql = new StringBuilder();
+		
+		if (filtro.getOrdenacaoColunaBox() != null ){
+			
+			hql.append(" ORDER BY ");
+			
+			switch (filtro.getOrdenacaoColunaBox()) {
+			case CODIGO_BOX:
+				hql.append(" codigoBox ");
+				break;
+			case DATA_LANCAMENTO:
+				hql.append(" dataLancamento ");
+				break;
+			case DESCRICAO_BOX:
+				hql.append(" nomeBox ");
+				break;
+			case DIFERENCA:
+				hql.append(" qntDiferenca ");
+				break;
+			case QNT_PRODUTO:
+				hql.append(" qntProduto ");
+				break;
+			case REPARTE:
+				hql.append(" qntReparte ");
+				break;
+			case VALOR_FATURADO:
+				hql.append(" valorFaturado ");
+				break;
+			default:
+				hql.append(" codigoBox ");
+				break;
+			}
+			
+			if (filtro.getPaginacao().getOrdenacao() != null) {
+				hql.append( filtro.getPaginacao().getOrdenacao().toString());
+			}
+		}
+		
+		return hql.toString();
 	}
 	
 	private String getGruposFalta() {

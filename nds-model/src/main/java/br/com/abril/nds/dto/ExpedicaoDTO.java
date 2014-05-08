@@ -23,7 +23,7 @@ public class ExpedicaoDTO implements Serializable {
 	private Long idBox;
 	private String codigoProduto;
 	private String nomeProduto;
-	private String codigoBox;
+	private Long codigoBox;
 	private String nomeBox;
 	private Long numeroEdicao;
 	private BigDecimal precoCapa = BigDecimal.ZERO;
@@ -158,14 +158,14 @@ public class ExpedicaoDTO implements Serializable {
 	/**
 	 * @return the codigoBox
 	 */
-	public String getCodigoBox() {
+	public Long getCodigoBox() {
 		return codigoBox;
 	}
 
 	/**
 	 * @param codigoBox the codigoBox to set
 	 */
-	public void setCodigoBox(String codigoBox) {
+	public void setCodigoBox(Long codigoBox) {
 		this.codigoBox = codigoBox;
 	}
 
