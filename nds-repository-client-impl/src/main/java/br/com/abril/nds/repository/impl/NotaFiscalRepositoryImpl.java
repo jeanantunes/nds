@@ -133,7 +133,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(filtro.getTipoNfe() != null && !filtro.getTipoNfe().isEmpty()) {
-			hql.append(" AND proc.nome = :tipoEmissaoNfe");		
+			hql.append(" AND natOp.id = :tipoEmissaoNfe");		
 		}
 
 		if(filtro.getNumeroNotaInicial() != null) {
@@ -192,7 +192,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(filtro.getTipoNfe()!=null && !filtro.getTipoNfe().isEmpty()) {
-			query.setParameter("tipoEmissaoNfe", filtro.getTipoNfe());
+			query.setParameter("tipoEmissaoNfe", Long.valueOf(filtro.getTipoNfe()));
 		}
 
 		if(filtro.getNumeroNotaInicial()!=null) {
