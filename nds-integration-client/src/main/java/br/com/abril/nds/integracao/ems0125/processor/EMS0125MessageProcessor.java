@@ -27,8 +27,31 @@ public class EMS0125MessageProcessor extends AbstractRepository implements
 
 	@Override
 	public void processMessage(Message message) {
+		
 		EMS0125Input input = (EMS0125Input) message.getBody();
 
+		if(input.getCodProd()==null || input.getCodProd().trim().equals("")){
+			
+			ndsiLoggerFactory.getLogger().logError(
+				message,
+				EventoExecucaoEnum.RELACIONAMENTO,
+				"Código do Produto Nulo ou Vazio."
+				+ " Produto "+ input.getCodProd());
+			return;
+		}
+		
+		if(input.getEdicao()==null || input.getEdicao().intValue()==0){
+			
+			ndsiLoggerFactory.getLogger().logError(
+				message,
+				EventoExecucaoEnum.RELACIONAMENTO,
+				"Edição do Produto Nula ou Vazia."
+						+ " Produto "+ input.getCodProd() 
+						+ " Edição "+ input.getEdicao());
+			
+			return;
+		}
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT pe  ");
 		sql.append("FROM ProdutoEdicao pe ");
@@ -45,26 +68,28 @@ public class EMS0125MessageProcessor extends AbstractRepository implements
 
 		produtoEdicao = (ProdutoEdicao) query.uniqueResult();
 
-		if (null == produtoEdicao) {
+		if (null != produtoEdicao) {
 
-			// Não encontrou o Produto / ProdutoEdicao Realizar Log
-			ndsiLoggerFactory.getLogger().logWarning(
+			if(input.getChamadaCapa()!=null && !produtoEdicao.getChamadaCapa().equals(input.getChamadaCapa())){
+				 ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Atualização da Chamada de Capa"
+						+" de "+produtoEdicao.getChamadaCapa()
+						+" para "+input.getChamadaCapa()
+						+" Produto "+input.getCodProd()
+						+" Edição " + input.getEdicao() );
+				
+				 produtoEdicao.setChamadaCapa(input.getChamadaCapa());
+				 this.getSession().merge(produtoEdicao);
+			} else {
+			
+				// Não encontrou o Produto / ProdutoEdicao Realizar Log
+				ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.SEM_DOMINIO,
 					"Produto " + input.getCodProd() + " Edição "
 							+ input.getEdicao() + " não encontrado.");
-			return;
-		}
-
-		if(!produtoEdicao.getChamadaCapa().equals(input.getChamadaCapa())){
-		 ndsiLoggerFactory.getLogger().logInfo(message,
-				EventoExecucaoEnum.INF_DADO_ALTERADO,
-				"Atualização da Chamada de Capa"
-				+" de "+produtoEdicao.getChamadaCapa()
-				+" para "+input.getChamadaCapa()
-				+" Produto "+input.getCodProd()+" Edição " + input.getEdicao() );
-		
-		 produtoEdicao.setChamadaCapa(input.getChamadaCapa());
+			}
 		}
 
 	}

@@ -417,7 +417,8 @@ table.dadosTab { margin-left: 370px;}
 					<td width="209">
 						<input type="text" name="cotasQueNaoEntraramNoEstudo_nome" id="cotasQueNaoEntraramNoEstudo_nome" style="width: 185px;"/>
                     </td>
-                    <td><span class="classPesquisar" style="margin: 0 5px;"><a href="javascript:;">&nbsp;</a></span></td>
+                    <td><span class="classPesquisar" onclick="analiseParcialController.cotasQueNaoEntraramNoEstudo();" style="margin: 0 5px;">
+                    <a href="javascript:;">&nbsp;</a></span></td>
 				</tr>
 				<tr>
 					<td>Motivo:</td>
@@ -628,39 +629,41 @@ table.dadosTab { margin-left: 370px;}
         </fieldset>
 
     </div>
-
-    <div id="dialog-edicoes-produtos" title="Pesquisar Edições de Produto" style="display:none;">
-        <fieldset style="width:700px!important;">
-            <legend>Pesquisar Produto</legend>
-
-            <table width="700" border="0" cellpadding="2" cellspacing="1" class="filtro">
-                <tr>
-                    <td width="36">Código:</td>
-                    <td width="76"><input type="text" class="inputCodigoEB" name="codigoProduto" id="inputCodigoProduto" style="width:60px;" /></td>
-                    <td width="40">Produto:</td>
-                    <td width="180"><input type="text" class="inputProdutoEB" name="nomeProduto" id="inputNomeProduto" style="width:160px;" /></td>
-                    <td width="35">Edição:</td>
-                    <td width="61"><input type="text" class="inputEdicaoEB" name="edicao" id="inputNumeroEdicao" style="width:60px;" /></td>
-                    <td style="width: 80px;">Classificação:</td>
-                    <td>
-                        <select name="idClassificacao" id="filtroClassificacao" style="width:120px;">
-                            <option value="-1">SELECIONE</option>
-                            <c:forEach items="${classificacaoList}" var="tipoClassificacao">
-                                <option value="<c:out value="${tipoClassificacao.id}"/>" ${tipoClassificacao.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoClassificacao.descricao}"/></option>
-                            </c:forEach>
-                        </select>
-                    </td>
-                    <td width="47"><span class="classPesquisar" style="margin: 0 5px;"><a href="javascript:;">&nbsp;</a></span></td>
-                </tr>
-            </table>
-
-        </fieldset>
-
-        <fieldset style="width:700px!important; margin-top:10px;">
-            <legend>Edições do Produto</legend>
-            <table id="edicaoProdCadastradosGrid"></table>
-        </fieldset>
-    </div>
+	
+	<form id="form-edicoes-produtos">
+	    <div id="dialog-edicoes-produtos" title="Pesquisar Edições de Produto" style="display:none;">
+	        <fieldset style="width:700px!important;">
+	            <legend>Pesquisar Produto</legend>
+	
+	            <table width="700" border="0" cellpadding="2" cellspacing="1" class="filtro">
+	                <tr>
+	                    <td width="36">Código:</td>
+	                    <td width="76"><input type="text" class="inputCodigoEB" name="codigoProduto" id="inputCodigoProduto" style="width:60px;" /></td>
+	                    <td width="40">Produto:</td>
+	                    <td width="180"><input type="text" class="inputProdutoEB" name="nomeProduto" id="inputNomeProduto" style="width:160px;" /></td>
+	                    <td width="35">Edição:</td>
+	                    <td width="61"><input type="text" class="inputEdicaoEB" name="edicao" id="inputNumeroEdicao" style="width:60px;" /></td>
+	                    <td style="width: 80px;">Classificação:</td>
+	                    <td>
+	                        <select name="idClassificacao" id="filtroClassificacao" style="width:120px;">
+	                            <option value="-1">SELECIONE</option>
+	                            <c:forEach items="${classificacaoList}" var="tipoClassificacao">
+	                                <option value="<c:out value="${tipoClassificacao.id}"/>" ${tipoClassificacao.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoClassificacao.descricao}"/></option>
+	                            </c:forEach>
+	                        </select>
+	                    </td>
+	                    <td width="47"><span class="classPesquisar" style="margin: 0 5px;"><a href="javascript:;">&nbsp;</a></span></td>
+	                </tr>
+	            </table>
+	
+	        </fieldset>
+	
+	        <fieldset style="width:700px!important; margin-top:10px;">
+	            <legend>Edições do Produto</legend>
+	            <table id="edicaoProdCadastradosGrid"></table>
+	        </fieldset>
+	    </div>
+	</form>
 
     <div id="dialog-detalhes" title="Capa">
 		<img src="${pageContext.request.contextPath}/capa/getCapaEdicaoJson?codigoProduto=${estudo.produtoEdicao.produto.codigo}&numeroEdicao=${estudo.produtoEdicao.numeroEdicao}" width="235" height="314" />

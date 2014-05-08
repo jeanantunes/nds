@@ -463,15 +463,20 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		
 		TipoSegmentoProduto tipoSegmentoProduto = produto.getTipoSegmentoProduto();
 		
-		if ((tipoSegmentoProduto == null && input.getSegmento() != null && !input.getSegmento().trim().equals("")) || 
-		        (input.getSegmento() != null && !input.getSegmento().trim().equals("") && !Objects.equal(
-		                tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
+		if (input.getSegmento() != null && !input.getSegmento().trim().equals("") 
+				&& !Objects.equal(tipoSegmentoProduto.getDescricao(), input.getSegmento())) {
 		    
-            produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
+            
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Atualização do Tipo de Segmento do Produto para " + input.getSegmento());
-        }
+                    "Atualização da Segmentação"
+                    + " de "+ produto.getTipoSegmentoProduto()
+                    +" para " + input.getSegmento()
+                    +" Produto " + produto.getCodigo()
+                    );
+        
+                    produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
+		}
 		
 		Fornecedor produtoFornecedor = produto.getFornecedor();
 		if ((produtoFornecedor == null) || 
@@ -484,8 +489,10 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
                 this.ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualização de Fornecedor para "
-								+ fornecedor.getResponsavel());
+						"Atualização de Fornecedor"
+				        +" para " + fornecedor.getResponsavel()
+				        +" Produto " + produto.getCodigo()
+				        );
 		}
 		
 
@@ -493,34 +500,50 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			validarDescontoLogistico(message, input.getCodigoPublicacao(), tipoDescontoInt);
         } else {
 
-			if (produto.getDescontoLogistica() == null || !produto.getDescontoLogistica().equals(descontoLogistica)) {
+			if (descontoLogistica != null && !produto.getDescontoLogistica().equals(descontoLogistica)) {
 
-				produto.setDescontoLogistica(descontoLogistica);
+				
 
                 this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO,
-                        "Atualização do Tipo Desconto para " + descontoLogistica.getTipoDesconto());
+                        "Atualização do Tipo Desconto"
+                        + " de "+ descontoLogistica.getTipoDesconto()
+                        +" para " + descontoLogistica
+                        +" Produto " + produto.getCodigo()
+                );
+                
+                produto.setDescontoLogistica(descontoLogistica);
 				
 			}
 		}
 
 		TributacaoFiscal tributacaoFiscal = getTributacaoFiscal(input.getCodigoSituacaoTributaria());
 		
-		if (produto.getTributacaoFiscal() != tributacaoFiscal) {
-			produto.setTributacaoFiscal(tributacaoFiscal);
+		if (tributacaoFiscal!=null && produto.getTributacaoFiscal() != tributacaoFiscal) {
+			
             this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Atualização da Tributação Fiscal para " + tributacaoFiscal.getValue());
+                    "Atualização da Tributação Fiscal para "
+            		+ " de "+ tributacaoFiscal.getValue()
+            		+" para " + tributacaoFiscal
+            		+" Produto " + produto.getCodigo()
+            		);
+            
+            produto.setTributacaoFiscal(tributacaoFiscal);
 		}
 		FormaComercializacao formaComercializacaoInput = input.getFormaComercializacao().equals("CON") ? 
 		        FormaComercializacao.CONSIGNADO : FormaComercializacao.CONTA_FIRME;
 
-		if ( produto.getFormaComercializacao() != formaComercializacaoInput ) {
-
-		    produto.setFormaComercializacao(formaComercializacaoInput);
+		if (formaComercializacaoInput!=null && produto.getFormaComercializacao() != formaComercializacaoInput ) {
 				
             this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualização da Forma de Comercialização para " + formaComercializacaoInput.getValue());
+						"Atualização da Forma de Comercialização"
+    					+ " de "+ formaComercializacaoInput.getValue()
+    					+" para " + formaComercializacaoInput
+    					+" Produto " + produto.getCodigo()
+    					);
+            
+            produto.setFormaComercializacao(formaComercializacaoInput);
 		}
 
 		this.getSession().update(produto);

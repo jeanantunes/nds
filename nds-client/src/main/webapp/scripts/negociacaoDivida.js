@@ -293,9 +293,6 @@ var negociacaoDividaController = $.extend(true, {
 						}else{
 							negociacaoDividaController.geraLinhasParcelas(result);
 						}
-					},
-					function() {
-						
 					}
 			);
 		}
@@ -643,6 +640,8 @@ var negociacaoDividaController = $.extend(true, {
 
 	geraLinhasCheque :function(result) {
 		
+		negociacaoDividaController.parcelas = result;
+		
 		$('#encargos').hide();
 		
 		if($('#selectPagamento').val() != ""){
@@ -812,6 +811,8 @@ var negociacaoDividaController = $.extend(true, {
 	
 	recalcularParcelas:function(idParcela,input,porData){
 		var parcela = negociacaoDividaController.parcelas[idParcela];
+		var parcelaValorAntigo = parcela.parcela; 
+		var parcelaInput = $("#parcela" + (++idParcela));
 		if(!porData){			
 			parcela.modificada = true;
 			parcela.parcela = $(input).val();
@@ -856,6 +857,9 @@ var negociacaoDividaController = $.extend(true, {
 					}else{
 						negociacaoDividaController.geraLinhasParcelas(result);
 					}
+				}, function(result) {
+					$(parcelaInput).val(parcelaValorAntigo);
+					parcela.parcela = parcelaValorAntigo;
 				}
 		);		
 	},
