@@ -472,7 +472,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			produto.getTipoProduto().setCodigoNBM(input.getCodNBM());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Código NBM do Produto "+input.getCodProd()+" para " + input.getCodNBM());
+					"Atualização do Código NBM do Produto "+input.getCodProd()
+					+" para " + input.getCodNBM());
 		}
 
 		if (!Objects.equal(produto.getNomeComercial(), input.getNomeComercial()) 
