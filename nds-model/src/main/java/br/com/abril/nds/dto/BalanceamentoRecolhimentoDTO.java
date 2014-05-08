@@ -30,6 +30,8 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	
 	private List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados;
 	
+	private List<ProdutoRecolhimentoDTO> produtosRecolhimentoDeOutraSemana;
+	
 	private List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada;
 	
 	private List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados;
@@ -142,7 +144,20 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 		this.produtosRecolhimentoNaoBalanceados.addAll(produtosRecolhimentoNaoBalanceados);
 	}
 	
-	/**
+    public List<ProdutoRecolhimentoDTO> getProdutosRecolhimentoDeOutraSemana() {
+        return produtosRecolhimentoDeOutraSemana;
+    }
+    
+    public void setProdutosRecolhimentoDeOutraSemana(List<ProdutoRecolhimentoDTO> produtosRecolhimentoDeOutraSemana) {
+        this.produtosRecolhimentoDeOutraSemana = produtosRecolhimentoDeOutraSemana;
+    }
+    
+    public void addProdutosRecolhimentoDeOutraSemana(
+        List<ProdutoRecolhimentoDTO> produtosRecolhimentoDeOutraSemana) {
+        this.produtosRecolhimentoDeOutraSemana.addAll(produtosRecolhimentoDeOutraSemana);
+    }
+
+    /**
 	 * @return the cotasOperacaoDiferenciada
 	 */
 	public List<CotaOperacaoDiferenciadaDTO> getCotasOperacaoDiferenciada() {
