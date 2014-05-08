@@ -452,9 +452,13 @@ var analiseParcialController = $.extend(true, {
                     $saldoreparte.text(saldoReparteAtualizado);
                 	
                 	analiseParcialController.atualizaAbrangencia();
-                    $input_reparte.attr('reparteAtual', reparteDigitado);
-                    var reparteInicial = $input_reparte.attr('reparteInicial');
+                    
+                	$input_reparte.attr('reparteAtual', reparteDigitado);
+                	
+                	var reparteInicial = $input_reparte.attr('reparteInicial');
+                    
                     $input_reparte.attr('reducaoReparte', analiseParcialController.calculaPercentualReducaoReparte(reparteInicial, reparteDigitado));
+                    
                     if (reparteDigitado === reparteInicial) {
                         $legenda.removeClass('asterisco');
                     } else {
@@ -846,8 +850,8 @@ var analiseParcialController = $.extend(true, {
     },
 
     init : function(_id, _faixaDe, _faixaAte, _tipoExibicao){
-
-        $('#filtroOrdenarPor option:eq(1)').prop('selected', true).parent().change();
+    	
+    	$('#filtroOrdenarPor option:eq(1)').prop('selected', true).parent().change();
 
         $("#cotasQueNaoEntraramNoEstudo_cota").change(function(){
             var numeroCota = this.value;
@@ -1056,7 +1060,7 @@ var analiseParcialController = $.extend(true, {
             event.preventDefault();
         });
 
-        $('#cotasNaoSelec').flexigrid({
+        $('#cotasNaoSelec', analiseParcialController.workspace).flexigrid({
             preProcess : analiseParcialController.preProcessGridNaoSelec,
             url: analiseParcialController.path + '/distribuicao/analise/parcial/cotasQueNaoEntraramNoEstudo/filtrar',
             dataType : 'json',
@@ -1071,6 +1075,9 @@ var analiseParcialController = $.extend(true, {
             sortorder:'asc',
             sortname:'numeroCota'
         });
+        
+        
+        
 
 //        analiseParcialController.cotasQueNaoEntraramNoEstudo();
     },
@@ -1156,6 +1163,13 @@ var analiseParcialController = $.extend(true, {
             value.cell.quantidade +'" onchange="analiseParcialController.validaMotivoCotaReparte(this);" ' +
             ' numeroCota="'+ value.cell.numeroCota +'" ' + isReadOnly + ' />';
         });
+        
+        if($("[id='dialog-cotas-estudos']", analiseParcialController.workspace).length > 1){
+        	$("[id='dialog-cotas-estudos']:first", analiseParcialController.workspace).remove();		
+        }
+        
+        $("[id='saldoReparteNaoSelec']").text($('#saldo_reparte').text());
+        
         return resultado;
     },
 
@@ -1199,7 +1213,7 @@ var analiseParcialController = $.extend(true, {
     },
 
     atualizaQuantidadeTotal : function($input) {
-        var $saldoReparteNaoSelec = $('#saldoReparteNaoSelec');
+    	var $saldoReparteNaoSelec = $("#dialog-cotas-estudos").find("[id='saldoReparteNaoSelec']");
         var saldo = parseInt($saldoReparteNaoSelec.html(), 10);
 
         var valorDigitado = parseInt($input.val(), 10);
@@ -1211,34 +1225,30 @@ var analiseParcialController = $.extend(true, {
         var variacao = valorDigitado - valorAnterior;
 
         saldo = saldo - variacao;
-        $saldoReparteNaoSelec.html(saldo);
+        $saldoReparteNaoSelec.text(saldo);
 
         $input.data('valor-anterior', $input.val());
         $input.data('valid', true);
     },
     
+    
     cotasQueNaoEntraramNoEstudo : function() {
-        var filtrarCotasQueNaoEntraramNoEstudo = function() {
-            var cota = $("#cotasQueNaoEntraramNoEstudo_cota").val();
-            var nome = $("#cotasQueNaoEntraramNoEstudo_nome").val();
-            var motivo = $("#cotasQueNaoEntraramNoEstudo_motivo").val();
-            var elemento = $("#cotasQueNaoEntraramNoEstudo_elementos").val();
-            var estudo = $("#estudoId").val();
-            var tipoSegmentoProduto = $("#tipoSegmentoProduto").val();
 
-            $("#cotasNaoSelec").flexOptions({
-                params:[{name: 'queryDTO.cota',     value: cota}, 
-                        {name: 'queryDTO.nome',     value: nome}, 
-                        {name: 'queryDTO.motivo',   value: motivo}, 
-                        {name: 'queryDTO.elemento', value: elemento}, 
-                        {name: 'queryDTO.estudo',   value: estudo},
-                        {name: 'queryDTO.tipoSegmentoProduto',   value: tipoSegmentoProduto}]
-            }).flexReload();
-        };
+		var cota = $("#cotasQueNaoEntraramNoEstudo_cota").val();
+        var nome = $("#cotasQueNaoEntraramNoEstudo_nome").val();
+        var motivo = $("#cotasQueNaoEntraramNoEstudo_motivo").val();
+        var elemento = $("#cotasQueNaoEntraramNoEstudo_elementos").val();
+        var estudo = $("#estudoId").val();
+        var tipoSegmentoProduto = $("#tipoSegmentoProduto").val();
 
-        $('#dialog-cotas-estudos .classPesquisar').click(filtrarCotasQueNaoEntraramNoEstudo);
-
-        filtrarCotasQueNaoEntraramNoEstudo();
+        $("#cotasNaoSelec").flexOptions({
+            params:[{name: 'queryDTO.cota',     value: cota}, 
+                    {name: 'queryDTO.nome',     value: nome}, 
+                    {name: 'queryDTO.motivo',   value: motivo}, 
+                    {name: 'queryDTO.elemento', value: elemento}, 
+                    {name: 'queryDTO.estudo',   value: estudo},
+                    {name: 'queryDTO.tipoSegmentoProduto',   value: tipoSegmentoProduto}]
+        }).flexReload();
     },
     
     verCapa : function() {
@@ -1288,9 +1298,7 @@ var analiseParcialController = $.extend(true, {
     },
 
     exibirCotasQueNaoEntraramNoEstudo : function() {
-        $('#password').val('');
-        $('#saldoReparteNaoSelec').html($('#saldo_reparte').html());
-
+        
         //limpa os campos ao abrir o pop-up
         $("#cotasQueNaoEntraramNoEstudo_cota").val('');
         $("#cotasQueNaoEntraramNoEstudo_nome").val('');
@@ -1365,9 +1373,13 @@ var analiseParcialController = $.extend(true, {
                     }
                 },
                 "Cancelar" : function() {
-                    $(this).dialog("close");
+                	$(this).dialog("close");
                 }
-            }
+            },
+	        beforeClose: function() {
+	        	$("#cotasNaoSelec tr td input",  analiseParcialController.workspace).filter(function(){return this.value > 0;}).remove();
+	        	$(this, analiseParcialController.workspace).dialog("destroy");
+	        },
         });
     },
     
@@ -1711,6 +1723,7 @@ $("#edicaoProdCadastradosGrid").flexigrid({
 function popup_edicoes_produto() {
     $('#edicaoProdCadastradosGrid tbody').remove();
     $("#dialog-edicoes-produtos input").val('');
+    
     $("#dialog-edicoes-produtos").dialog({
         escondeHeader: false,
         resizable : false,
@@ -1753,7 +1766,8 @@ function popup_edicoes_produto() {
             "Cancelar" : function() {
                 $(this).dialog("close");
             }
-        }
+        },
+        form: $("#form-edicoes-produtos", this.workspace)
     });
 };
 
