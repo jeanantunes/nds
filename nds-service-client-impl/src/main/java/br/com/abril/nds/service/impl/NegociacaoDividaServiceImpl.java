@@ -426,6 +426,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     case DINHEIRO:
                     case OUTROS:
                         cobranca = new CobrancaDinheiro();
+                        cobranca.setTipoCobranca(tipoCobranca);
                         break;
                     default:
                         break;
