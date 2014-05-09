@@ -10,13 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.PessoaFisica;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
 import br.com.abril.nds.model.fiscal.nota.CNPJEmitente;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FinalidadeEmissaoNFe;
@@ -50,39 +45,7 @@ public class NotaFiscalBuilder implements Serializable {
 	@Autowired
 	private static ParametroSistemaRepository parametroSistemaRepository;
 	
-	// builder header Nota fiscal
-	public static NotaFiscalNds montarHeaderNotaFiscal(NotaFiscalNds notaFiscal, Cota cota){
-		
-		/** -- Natureza da Operação -- PROT. DE AUTORIZAÇÃO -- CRT(Codigo Regime Tributario)
-	     *  -- Inscricao Estadual   -- INSCRIÇÃO ESTADUAL DO SUBSTITUTO TRIBUTÁRIO -- CNPJ/CPF
-		 */
-		if (cota.getPessoa() instanceof PessoaJuridica) {
-			
-			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
-			
-			notaFiscal.getEmissor().setNome(pessoaJuridica.getRazaoSocial());
-			notaFiscal.getEmissor().setEmail(pessoaJuridica.getEmail()); 
-//			notaFiscal.getEmissor().setNomeFantasia(pessoaJuridica.getNomeFantasia() == null ?  cota.getPessoa().getNome() : pessoaJuridica.getNomeFantasia());
-//			notaFiscal.getEmissor().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
-//			notaFiscal.getEmissor().setCnpj(pessoaJuridica.getCnpj());
-			
-		} else if (cota.getPessoa() instanceof PessoaFisica) {
-			PessoaFisica pessoaFisica = (PessoaFisica) cota.getPessoa();
-			pessoaFisica.getCpf();
-			pessoaFisica.getRg();
-			pessoaFisica.getEmail();
-		}
-				
-		return notaFiscal;
-	}
-
-	public TipoOperacao tipoOperacaoNotaFiscal (){
-		
-		return null;
-	}
-
-
-	public static void popularDadosDistribuidor(NotaFiscal notaFiscal, Distribuidor distribuidor, FiltroNFeDTO filtro) {
+	public static void popularDadosEmissor(NotaFiscal notaFiscal, Distribuidor distribuidor, FiltroNFeDTO filtro) {
 		
 		if(notaFiscal.getNotaFiscalInformacoes() == null) {
 			notaFiscal.setNotaFiscalInformacoes(new NotaFiscalInformacoes());
@@ -240,7 +203,7 @@ public class NotaFiscalBuilder implements Serializable {
 		
 	}
 
-	public static void montarHeaderNotaFiscal(NotaFiscal notaFiscal, Cota cota, Map<String, ParametroSistema> parametrosSistema) {
+	public static void montarHeaderNotaFiscal(NotaFiscal notaFiscal, Map<String, ParametroSistema> parametrosSistema) {
 		
 		//FIXME: Obter forma de pagamento da cota
 		FormaPagamento formaPagamento = FormaPagamento.OUTROS;

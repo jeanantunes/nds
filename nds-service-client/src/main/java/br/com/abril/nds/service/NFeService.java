@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
@@ -60,5 +61,10 @@ public interface NFeService {
 			List<NotaFiscal> notasFiscais, Distribuidor distribuidor,
 			NaturezaOperacao naturezaOperacao,
 			Map<String, ParametroSistema> parametrosSistema, List<Cota> cotas);
+
+	void gerarNotasFiscaisFornecedor(FiltroNFeDTO filtro,
+			List<NotaFiscal> notasFiscais, Distribuidor distribuidor,
+			NaturezaOperacao naturezaOperacao,
+			Map<String, ParametroSistema> parametrosSistema, List<Fornecedor> fornecedores);
 	
 }

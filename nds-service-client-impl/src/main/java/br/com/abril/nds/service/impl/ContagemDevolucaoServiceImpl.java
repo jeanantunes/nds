@@ -900,7 +900,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 
 			MovimentoFechamentoFiscalFornecedor mfff = movimentoFechamentoFiscalRepository.buscarPorProdutoEdicaoTipoMovimentoEstoque(new ProdutoEdicao(contagem.getIdProdutoEdicao()), tipoMovimentoDevolucaoEncalhe);
 			
-			//TODO: Ajustar os movimentos fiscais ao fechar a Devolucao ao Fornecedor				
 			if(mfff == null) {
 				
 				List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
@@ -911,7 +910,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 				mfff = new MovimentoFechamentoFiscalFornecedor();
 				mfff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
 				mfff.setQtde(contagem.getQtdNota());
-				mfff.setNotaFiscalLiberadaEmissao(false);
+				mfff.setNotaFiscalLiberadaEmissao(true);
 				mfff.setData(distribuidorService.obterDataOperacaoDistribuidor());
 				mfff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.SAIDA));
 				mfff.setFornecedor(fornecedor);
