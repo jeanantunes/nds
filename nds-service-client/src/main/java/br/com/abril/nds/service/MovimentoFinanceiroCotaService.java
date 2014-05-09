@@ -160,4 +160,6 @@ public interface MovimentoFinanceiroCotaService {
 	 * @param dataOperacao
 	 */
 	void removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(Integer numeroCota, Date dataOperacao);
+
+	public abstract void removerMovimentosFinanceirosCota(final Long idConsolidado);
 }

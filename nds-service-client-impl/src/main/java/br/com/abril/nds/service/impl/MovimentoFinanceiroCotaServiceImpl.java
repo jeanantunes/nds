@@ -299,10 +299,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     @Transactional
     public void removerMovimentoFinanceiroCota(final Long idMovimento) {
         
-        final MovimentoFinanceiroCota movimentoFinanceiroCota = movimentoFinanceiroCotaRepository
-                .buscarPorId(idMovimento);
+        movimentoFinanceiroCotaRepository.removerPorId(idMovimento);
         
-        movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
+      
     }
     
     /**
@@ -643,6 +642,30 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         this.removerMovimentosFinanceirosCota(mfcs);
     }
     
+	@Override
+	@Transactional
+	public void removerMovimentosFinanceirosCota(final Long idConsolidado) {
+		final String motivo = "Financeiro Reprocessado "
+				+ DateUtil.formatarDataPTBR((distribuidorService
+						.obterDataOperacaoDistribuidor()));
+		
+		final List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros = Arrays.asList(
+				GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
+				GrupoMovimentoFinaceiro.ENVIO_ENCALHE,
+				GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO);
+		
+		
+		this.movimentoEstoqueCotaRepository.updateByIdConsolidadoAndGrupos(
+				idConsolidado,grupoMovimentoFinaceiros , motivo,
+				null, StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+		
+		this.historicoMovimentoFinanceiroCotaRepository.removeByIdConsolidadoAndGrupos(idConsolidado, grupoMovimentoFinaceiros);
+		
+		//TODO: Implementação de atualização de Negocioação de divida
+		
+		this.movimentoFinanceiroCotaRepository.removeByIdConsolidadoAndGrupos(idConsolidado, grupoMovimentoFinaceiros);
+	}
+    
     /**
      * Remove movimentos financeiros do consolidado ou postergado Referentes à
      * encalhe ou reparte da cota
@@ -668,7 +691,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                 
                 final List<MovimentoEstoqueCota> mecs = mfc.getMovimentos();
                 
-                if (mecs != null && !mecs.isEmpty()) {
+             //   if (mecs != null && !mecs.isEmpty()) {
                     
                     for (final MovimentoEstoqueCota mec : mecs) {
                         
@@ -677,21 +700,22 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                         mec.setMovimentoFinanceiroCota(null);
                         
                         mec.setMotivo("Financeiro Reprocessado "
-                                + DateUtil.formatarDataPTBR((distribuidorService.obterDataOperacaoDistribuidor())));
+                				+ DateUtil.formatarDataPTBR((distribuidorService
+                						.obterDataOperacaoDistribuidor())));
                         
                         movimentoEstoqueCotaRepository.alterar(mec);
                     }
-                }
+            //    }
                 
                 final List<HistoricoMovimentoFinanceiroCota> hmfcs = mfc.getHistoricos();
                 
-                if (hmfcs != null && !hmfcs.isEmpty()) {
+            //    if (hmfcs != null && !hmfcs.isEmpty()) {
                     
                     for (final HistoricoMovimentoFinanceiroCota hmfc : hmfcs) {
                         
                         idsHmfc.add(hmfc.getId());
                     }
-                }
+             //   }
                 
                 mfc.setHistoricos(null);
                 

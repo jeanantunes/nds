@@ -56,6 +56,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
@@ -3541,6 +3542,33 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));
         
         return query.list();
+    }
+    
+    @Override
+	public void updateByIdConsolidadoAndGrupos(Long idConsolidado, List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros,  String motivo, Long movimentoFinanceiroCota, StatusEstoqueFinanceiro statusEstoqueFinanceiro ){
+      	final StringBuilder sql =  new StringBuilder();
+    	sql.append("UPDATE MOVIMENTO_ESTOQUE_COTA AS estoque ");
+    	sql.append("join MOVIMENTO_FINANCEIRO_COTA movi on ");
+    	sql.append("movi.id = estoque.MOVIMENTO_FINANCEIRO_COTA_ID ");
+    	sql.append("join TIPO_MOVIMENTO tipo on ");
+    	sql.append("movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' ");
+    	sql.append("join CONSOLIDADO_MVTO_FINANCEIRO_COTA con on ");
+    	sql.append("con.MVTO_FINANCEIRO_COTA_ID = movi.id ");
+
+    	sql.append("SET estoque.MOTIVO = :motivo ");
+    	sql.append(",estoque.MOVIMENTO_FINANCEIRO_COTA_ID = :movimentoFinanceiroCota ");
+    	sql.append(",estoque.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro ");
+    	sql.append("where con.CONSOLIDADO_FINANCEIRO_ID = :idConsolidado ");
+    	sql.append("and tipo.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinaceiros)");
+    	
+    	 this.getSession().createSQLQuery(sql.toString() )
+	        .setParameter( "motivo", motivo )
+	        .setParameter( "movimentoFinanceiroCota", movimentoFinanceiroCota )
+	        .setParameter("statusEstoqueFinanceiro", statusEstoqueFinanceiro)
+	        .setParameter("idConsolidado", idConsolidado)
+	        .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
+	        .executeUpdate();
+
     }
     
 }
