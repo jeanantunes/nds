@@ -420,6 +420,32 @@ public class NegociacaoDividaController extends BaseController {
 		this.result.use(Results.nothing());
 	}
 	
+	public void imprimirRecibo() throws IOException {
+		
+		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
+		
+		if (idNegociacao == null){
+			
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, "É necessário confirmar a negociação antes de imprimir.");
+		}
+		
+		List<byte[]> arquivos = this.negociacaoDividaService.imprimirRecibos(idNegociacao);
+		
+		this.httpServletResponse.setContentType("application/pdf");
+		this.httpServletResponse.setHeader("Content-Disposition",
+				"attachment; filename=recibo.pdf");
+		
+		byte[] arquivo = PDFUtil.mergePDFs(arquivos);
+
+		OutputStream output = this.httpServletResponse.getOutputStream();
+		output.write(arquivo);
+
+		this.httpServletResponse.getOutputStream().close();
+
+		this.result.use(Results.nothing());		
+	}
+	
 	public void imprimirBoletos() throws IOException{
 		
 		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
