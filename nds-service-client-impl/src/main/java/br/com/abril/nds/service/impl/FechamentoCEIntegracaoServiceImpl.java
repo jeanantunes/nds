@@ -327,8 +327,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				totalCreditoInformado = totalCreditoInformado.add(itemFo.getValorVendaInformado()); 
 				totalMargemApurado = totalMargemApurado.add(itemFo.getValorMargemApurado());
 				totalMargemInformado = totalMargemInformado.add(itemFo.getValorMargemInformado());
-				totalVendaApurada = totalVendaApurada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeDevolucaoApurada(),0L)));
-				totalVendaInformada = totalVendaInformada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeVendaApurada(),0L)));	
+				totalVendaApurada = totalVendaApurada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeDevolucaoApurada(), 0L)));
+				totalVendaInformada = totalVendaInformada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeVendaApurada(), 0L)));	
 				
 				//TODO: Ajustar os movimentos fiscais ao fechar a CE Integracao				
 				List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
