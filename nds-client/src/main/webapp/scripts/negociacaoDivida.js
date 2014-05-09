@@ -606,24 +606,28 @@ var negociacaoDividaController = $.extend(true, {
 	            }
 	            
 	            if(result.tipoMensagem=='SUCCESS') {
+	            	
 	            	$("#botaoImprimirNegociacao", negociacaoDividaController.workspace).show();
 	            	
 	            	if (!$("#negociacaoPorComissao", negociacaoDividaController.workspace).is(":checked")) {
 	            			
-	            		if($("#checknegociacaoAvulsa", negociacaoDividaController.workspace).is(":checked") &&
-	            			(tipoPgto == 'BOLETO' || tipoPgto == 'BOLETO_EM_BRANCO')){
-	            		
-		            		$("#botaoImprimirBoleto", negociacaoDividaController.workspace).show();
-		            	} else {
-		            		$("#botaoImprimirRecibo", negociacaoDividaController.workspace).show();
-		            	}
+	            		if($("#checknegociacaoAvulsa", negociacaoDividaController.workspace).is(":checked")) {
+		            		
+	            			if(tipoPgto == 'BOLETO' || tipoPgto == 'BOLETO_EM_BRANCO') {
+		            		
+			            		$("#botaoImprimirBoleto", negociacaoDividaController.workspace).show();
+			            	} else {
+			            		$("#botaoImprimirRecibo", negociacaoDividaController.workspace).show();
+			            	}
+	            		}
 	            	
-	            } else {
+	            	}	
+
+				} else {
 	            	$("#botaoImprimirRecibo", negociacaoDividaController.workspace).hide();
 	            	$("#botaoImprimirNegociacao", negociacaoDividaController.workspace).hide();
 	            	$("#botaoImprimirBoleto", negociacaoDividaController.workspace).hide();
 	            }
-			}
 		
 		});
 	},
