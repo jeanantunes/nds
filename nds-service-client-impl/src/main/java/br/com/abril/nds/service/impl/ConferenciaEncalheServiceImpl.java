@@ -2358,7 +2358,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		mff.setCota(movimentoEstoqueCota.getCota());
 		mff.setChamadaEncalheCota(chamadaEncalheCota);
 		mff.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
-			
+		mff.setData(dataCriacao);
+		mff.setTipoMovimento(movimentoEstoqueCota.getTipoMovimento());
+		
 		movimentoFechamentoFiscalRepository.adicionar(mff);
 	}
 	
