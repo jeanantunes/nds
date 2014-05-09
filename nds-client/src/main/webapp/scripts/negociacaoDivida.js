@@ -268,22 +268,20 @@ var negociacaoDividaController = $.extend(true, {
 	
 	calcularParcelas : function(){
 		
-		if ($("#negociacaoPorComissao").is(":checked")) {
-			
-			if ($("#isentaEncargos", negociacaoDividaController.workspace).is(":checked")) {
+		if ($("#isentaEncargos", negociacaoDividaController.workspace).is(":checked")) {
 
-				$("#dividaSelecionada").html(
-					negociacaoDividaController.valorSelecionadoSemEncargo
-				);
-			
-			} else {
+			$("#dividaSelecionada").html(
+				negociacaoDividaController.valorSelecionadoSemEncargo
+			);
+		
+		} else {
 
-				$("#dividaSelecionada").html(
-					$("#totalSelecionado", this.workspace).html()
-				);
-			}
+			$("#dividaSelecionada").html(
+				$("#totalSelecionado", this.workspace).html()
+			);
+		}
 			
-		} else if($('#selectPagamento').val() != ""){
+		if($('#selectPagamento').val() != ""){
 			
 			$.postJSON(contextPath + '/financeiro/negociacaoDivida/calcularParcelas.json',
 					negociacaoDividaController.getParamsCalcularParcelas(),
