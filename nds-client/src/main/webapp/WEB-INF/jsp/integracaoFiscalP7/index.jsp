@@ -4,6 +4,7 @@
 
 var month,year;
 var dateInventario;
+
 $(function(){
 	$( "#datepickerMesAno").datepicker({
 		changeMonth: true,
@@ -97,6 +98,7 @@ function submitForm(f){
 				<span class="bt_arq" id="gerarAquivoP7XLS">
 				<a href="${pageContext.request.contextPath}/financeiro/integracaoFiscalP7/exportarXLS?fileType=XLS" rel="tipsy" title="Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					Arquivo XLS
 				</a>
 			</span>  
             </td>

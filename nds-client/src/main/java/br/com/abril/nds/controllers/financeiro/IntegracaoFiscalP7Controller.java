@@ -93,9 +93,9 @@ public class IntegracaoFiscalP7Controller extends BaseController{
 
         List<ExtratoEdicaoArquivoP7DTO> p7dto = integracaoFiscalService.inventarioP7(c.getTime());
 		
-        FileExporter.to("Integração Fiscal P7", fileType).inHTTPResponse(this.getNDSFileHeader(), mesAno, p7dto, ExtratoEdicaoArquivoP7DTO.class, this.httpResponse);
+        FileExporter.to("Integração Fiscal P7", fileType).inHTTPResponse(this.getNDSFileHeader(), null, p7dto, ExtratoEdicaoArquivoP7DTO.class, this.httpResponse);
 
-		result.nothing();
+        result.nothing();
 	}
 	
 }
