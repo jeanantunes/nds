@@ -117,7 +117,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setValorPostergado(BigDecimal valorPostergado) {
 		this.valorPostergado = 
 				valorPostergado != null ? 
-						valorPostergado.setScale(4, RoundingMode.HALF_EVEN) : valorPostergado;
+						valorPostergado.setScale(4, RoundingMode.HALF_UP) : valorPostergado;
 	}
 
 		/**
@@ -133,7 +133,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setConsignado(BigDecimal consignado) {
 		this.consignado = 
 				consignado != null ?
-						consignado.setScale(4, RoundingMode.HALF_EVEN) : consignado;
+						consignado.setScale(4, RoundingMode.HALF_UP) : consignado;
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setEncalhe(BigDecimal encalhe) {
 		this.encalhe = 
 				encalhe != null ? 
-						encalhe.setScale(4, RoundingMode.HALF_EVEN) : encalhe;
+						encalhe.setScale(4, RoundingMode.HALF_UP) : encalhe;
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setVendaEncalhe(BigDecimal vendaEncalhe) {
 		this.vendaEncalhe = 
 				vendaEncalhe != null ? 
-						vendaEncalhe.setScale(4, RoundingMode.HALF_EVEN) : vendaEncalhe;
+						vendaEncalhe.setScale(4, RoundingMode.HALF_UP) : vendaEncalhe;
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setDebitoCredito(BigDecimal debitoCredito) {
 		this.debitoCredito = 
 				debitoCredito != null ? 
-						debitoCredito.setScale(4, RoundingMode.HALF_EVEN) : debitoCredito;
+						debitoCredito.setScale(4, RoundingMode.HALF_UP) : debitoCredito;
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setEncargos(BigDecimal encargos) {
 		this.encargos = 
 				encargos != null ? 
-						encargos.setScale(4, RoundingMode.HALF_EVEN) : encargos;
+						encargos.setScale(4, RoundingMode.HALF_UP) : encargos;
 	}
 
 	/**
@@ -213,7 +213,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setPendente(BigDecimal pendente) {
 		this.pendente = 
 				pendente != null ? 
-						pendente.setScale(2, RoundingMode.HALF_EVEN) : pendente;
+						pendente.setScale(2, RoundingMode.HALF_UP) : pendente;
 	}
 
 	/**
@@ -285,7 +285,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setValorPago(BigDecimal valorPago) {
 		this.valorPago = 
 				valorPago != null ? 
-						valorPago.setScale(4, RoundingMode.HALF_EVEN) : valorPago;
+						valorPago.setScale(4, RoundingMode.HALF_UP) : valorPago;
 	}
 
 	/**
@@ -320,7 +320,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 			saldo = BigDecimal.ZERO;
 		}
 		
-		this.saldo = saldo.setScale(4, RoundingMode.HALF_EVEN);
+		this.saldo = saldo.setScale(4, RoundingMode.HALF_UP);
 	}
 
 	public BigDecimal getValorVendaDia() {
@@ -330,7 +330,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setValorVendaDia(BigDecimal valorVendaDia) {
 		this.valorVendaDia = 
 				valorVendaDia != null ? 
-						valorVendaDia.setScale(4, RoundingMode.HALF_EVEN) : valorVendaDia;
+						valorVendaDia.setScale(4, RoundingMode.HALF_UP) : valorVendaDia;
 	}
 
 	public String getNomeBox() {
