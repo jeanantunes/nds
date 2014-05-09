@@ -30,7 +30,9 @@ public interface NegociacaoDividaService {
 	Negociacao obterNegociacaoPorId(Long idNegociacao);
 	
 	List<byte[]> gerarBoletosNegociacao(Long idNegociacao);
-
+	
+	List<byte[]> imprimirRecibos(final Long idNegociacao);
+	
 	byte[] imprimirNegociacao(Long idNegociacao, String valorDividaSelecionada) throws Exception;
 	
 	List<NegociacaoDividaDetalheVO> obterDetalhesCobranca(Long idCobranca);
