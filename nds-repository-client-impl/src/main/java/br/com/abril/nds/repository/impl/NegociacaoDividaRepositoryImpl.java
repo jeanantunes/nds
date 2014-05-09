@@ -458,6 +458,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		sql.append(" join divida d on d.ID=dc.DIVIDA_ID ");
 		sql.append(" join cobranca cob on cob.DIVIDA_ID=d.ID ");
 		sql.append(" where n.ID=:idNegociacao ");
+		sql.append(" order by cob.DT_VENCIMENTO ");		
 		
 		Query query = this.getSession().createSQLQuery(sql.toString());
 		
