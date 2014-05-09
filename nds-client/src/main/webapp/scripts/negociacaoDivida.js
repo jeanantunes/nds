@@ -268,22 +268,21 @@ var negociacaoDividaController = $.extend(true, {
 	
 	calcularParcelas : function(){
 		
-		if ($("#negociacaoPorComissao").is(":checked")) {
-			
-			if ($("#isentaEncargos", negociacaoDividaController.workspace).is(":checked")) {
+		if ($("#isentaEncargos", negociacaoDividaController.workspace).is(":checked")
+				|| $('#selectPagamento').val() === 'CHEQUE') {
 
-				$("#dividaSelecionada").html(
-					negociacaoDividaController.valorSelecionadoSemEncargo
-				);
-			
-			} else {
+			$("#dividaSelecionada").html(
+				negociacaoDividaController.valorSelecionadoSemEncargo
+			);
+		
+		} else {
 
-				$("#dividaSelecionada").html(
-					$("#totalSelecionado", this.workspace).html()
-				);
-			}
+			$("#dividaSelecionada").html(
+				$("#totalSelecionado", this.workspace).html()
+			);
+		}
 			
-		} else if($('#selectPagamento').val() != ""){
+		if($('#selectPagamento').val() != ""){
 			
 			$.postJSON(contextPath + '/financeiro/negociacaoDivida/calcularParcelas.json',
 					negociacaoDividaController.getParamsCalcularParcelas(),
@@ -607,23 +606,30 @@ var negociacaoDividaController = $.extend(true, {
 	            }
 	            
 	            if(result.tipoMensagem=='SUCCESS') {
+	            	
 	            	$("#botaoImprimirNegociacao", negociacaoDividaController.workspace).show();
 	            	
-	            	if (!$("#negociacaoPorComissao", negociacaoDividaController.workspace).is(":checked") &&
-	            			$("#checknegociacaoAvulsa", negociacaoDividaController.workspace).is(":checked") &&
-	            			(tipoPgto == 'BOLETO' || tipoPgto == 'BOLETO_EM_BRANCO')){
-	            		
-	            		$("#botaoImprimirBoleto", negociacaoDividaController.workspace).show();
-	            	}
+	            	if (!$("#negociacaoPorComissao", negociacaoDividaController.workspace).is(":checked")) {
+	            			
+	            		if($("#checknegociacaoAvulsa", negociacaoDividaController.workspace).is(":checked")) {
+		            		
+	            			if(tipoPgto == 'BOLETO' || tipoPgto == 'BOLETO_EM_BRANCO') {
+		            		
+			            		$("#botaoImprimirBoleto", negociacaoDividaController.workspace).show();
+			            	} else {
+			            		$("#botaoImprimirRecibo", negociacaoDividaController.workspace).show();
+			            	}
+	            		}
 	            	
-	            } else {
-	            	
+	            	}	
+
+				} else {
+	            	$("#botaoImprimirRecibo", negociacaoDividaController.workspace).hide();
 	            	$("#botaoImprimirNegociacao", negociacaoDividaController.workspace).hide();
 	            	$("#botaoImprimirBoleto", negociacaoDividaController.workspace).hide();
 	            }
-			}
 		
-		);
+		});
 	},
 
 	imprimirNegociacao : function() {

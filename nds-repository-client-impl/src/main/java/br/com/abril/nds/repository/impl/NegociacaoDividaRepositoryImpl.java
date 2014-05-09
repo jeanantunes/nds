@@ -444,6 +444,31 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		return hql.toString();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<String> obterListaNossoNumeroPorNegociacao(Long idNegociacao) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select cob.NOSSO_NUMERO as nossoNumero from negociacao n ");
+		sql.append(" join parcela_negociacao pn on pn.NEGOCIACAO_ID=n.ID ");
+		sql.append(" join movimento_financeiro_cota mfc on pn.MOVIMENTO_FINANCEIRO_ID=mfc.ID "); 
+		sql.append(" join consolidado_mvto_financeiro_cota cmfc on cmfc.MVTO_FINANCEIRO_COTA_ID=mfc.ID ");
+		sql.append(" join consolidado_financeiro_cota cfc on cfc.ID=cmfc.CONSOLIDADO_FINANCEIRO_ID ");
+		sql.append(" join divida_consolidado dc on dc.CONSOLIDADO_ID=cfc.ID ");
+		sql.append(" join divida d on d.ID=dc.DIVIDA_ID ");
+		sql.append(" join cobranca cob on cob.DIVIDA_ID=d.ID ");
+		sql.append(" where n.ID=:idNegociacao ");
+		sql.append(" order by cob.DT_VENCIMENTO ");		
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		((SQLQuery) query).addScalar("nossoNumero");
+		
+		query.setParameter("idNegociacao", idNegociacao);
+		
+		return query.list();
+	}
+	
 	public Long obterIdCobrancaPor(Long idNegociacao) {
 
 		StringBuilder hql = new StringBuilder();

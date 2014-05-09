@@ -22,6 +22,7 @@ import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
@@ -834,6 +835,13 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		return query;	
+	}
+
+	@Override
+	public List<MovimentoFechamentoFiscal> obterMovimentosFechamentosFiscais(
+			FiltroNFeDTO filtro) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

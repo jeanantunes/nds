@@ -2,7 +2,6 @@ package br.com.abril.nds.service.builders;
 
 import java.math.BigDecimal;
 
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -13,7 +12,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 
 public class NotaFiscalValoresCalculadosBuilder {
 	
-	public static NotaFiscal montarValoresCalculados(NotaFiscal notaFiscal, Cota cota){
+	public static NotaFiscal montarValoresCalculados(NotaFiscal notaFiscal) {
 		
 		BigDecimal valorTotalItens = calcularValorTotalItens(notaFiscal);
 		BigDecimal valorICMS = calcularImpostosICMS(notaFiscal);

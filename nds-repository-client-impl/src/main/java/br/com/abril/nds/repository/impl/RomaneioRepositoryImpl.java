@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RomaneioRepository;
 
@@ -118,6 +119,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" join PDV pdvs_ on cota_.ID=pdvs_.COTA_ID ");
 		hql.append(" join LANCAMENTO lancamento_ cross ");
 		hql.append(" join ESTUDO estudo_ on estudo_.ID  = lancamento_.ESTUDO_ID ");
+		hql.append(" join ESTUDO_COTA estudo_cota_ on estudo_.ID  = estudo_cota_.ESTUDO_ID ");
 		hql.append(" join ESTUDO_GERADO estudoGerado_ on estudoGerado_.ID = estudo_.ID ");
 		hql.append(" join ESTUDO_PDV estudoPDV_ on estudoPDV_.ESTUDO_ID = estudoGerado_.ID and estudoPDV_.COTA_ID = cota_.ID ");
 		hql.append(" join ROTA_PDV rotas_ on estudoPDV_.PDV_ID=rotas_.PDV_ID ");
@@ -135,6 +137,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" and lancamento_.PRODUTO_EDICAO_ID=itemNotaEnvio_.PRODUTO_EDICAO_ID "); 
 		hql.append(" and cota_.SITUACAO_CADASTRO <> :situacaoInativo ");
 		hql.append(" and lancamento_.STATUS not in (:statusLancamento) ");
+		hql.append(" and estudo_cota_.TIPO_ESTUDO != :juramentado ");
 		
 		if(filtro.getIdBox() == null) {
 			
@@ -247,9 +250,11 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	
 	private void setarParametrosRomaneio(FiltroRomaneioDTO filtro, Query query) {
 		
-		query.setParameter("situacaoInativo", SituacaoCadastro.INATIVO);
+		query.setParameter("situacaoInativo", SituacaoCadastro.INATIVO.name());
 		
 		query.setParameter("pontoPrincipal", true);
+		
+		query.setParameter("juramentado", TipoEstudoCota.JURAMENTADO.name());
 	
 		query.setParameterList(
 			"statusLancamento",Arrays.asList(StatusLancamento.PLANEJADO.name(), 

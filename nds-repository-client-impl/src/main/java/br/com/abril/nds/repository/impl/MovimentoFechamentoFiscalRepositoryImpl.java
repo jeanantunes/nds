@@ -44,6 +44,7 @@ public class MovimentoFechamentoFiscalRepositoryImpl extends AbstractRepositoryM
 		criteria.add(Restrictions.eq("movimento.tipoMovimento", tipoMovimentoEstoque));
 		criteria.add(Restrictions.eq("movimento.produtoEdicao", produtoEdicao));
 		criteria.add(Restrictions.eq("notaFiscalDevolucaoSimbolicaEmitida", false));
+		criteria.add(Restrictions.eq("notaFiscalLiberadaEmissao", true));
 		
 		return (MovimentoFechamentoFiscalFornecedor) criteria.uniqueResult();
 		

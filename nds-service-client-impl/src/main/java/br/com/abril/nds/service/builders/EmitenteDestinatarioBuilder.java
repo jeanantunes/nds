@@ -5,10 +5,13 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.CNPJDestinatario;
@@ -22,149 +25,189 @@ import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoaJuridica;
 
 public class EmitenteDestinatarioBuilder {
 
-	public static void montarEnderecoEmitenteDestinatario(NotaFiscal notaFiscal2, Cota cota) {
-		
-		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario() == null) {
-			notaFiscal2.getNotaFiscalInformacoes().setIdentificacaoDestinatario(new IdentificacaoDestinatario());
-		}
-		
-		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco() == null) {
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEndereco(new NotaFiscalEndereco());
-		}
-		
-		if (cota.getPessoa() instanceof PessoaJuridica) {
-			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaJuridica.getRazaoSocial());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEmail(pessoaJuridica.getEmail());
-			
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setPessoaDestinatarioReferencia(new NotaFiscalPessoaJuridica());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setNome(pessoaJuridica.getRazaoSocial());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setEmail(pessoaJuridica.getEmail());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setIdPessoaOriginal(pessoaJuridica.getId());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
-			
-		} else if (cota.getPessoa() instanceof PessoaFisica) {			
-			PessoaFisica pessoaFisica = (PessoaFisica) cota.getPessoa();
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaFisica.getNome());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEmail(pessoaFisica.getEmail());
-			
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setPessoaDestinatarioReferencia(new NotaFiscalPessoaFisica());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setNome(pessoaFisica.getNome());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setEmail(pessoaFisica.getEmail());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setIdPessoaOriginal(pessoaFisica.getId());
-			
-		} else {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de destinatário não identificado.");
-		}
-		
-		DocumentoDestinatario documento = null;
-		if(cota.getPessoa() instanceof PessoaJuridica) { 
-			documento = new CNPJDestinatario();
-		} else {
-			documento = new CPFDestinatario();
-		}
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setTipoDestinatario(TipoDestinatario.COTA);
+	public static void montarEnderecoEmitenteDestinatario(NotaFiscal notaFiscal, Cota cota) {
+
+		DocumentoDestinatario documento = montarDadosPessoa(notaFiscal, cota.getPessoa());
+
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setTipoDestinatario(TipoDestinatario.COTA);
 		documento.setDocumento(cota.getPessoa().getDocumento());
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
-		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(cota.getEnderecoPrincipal().getEndereco().getLogradouro());
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(cota.getEnderecoPrincipal().getEndereco().getNumero());
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(cota.getEnderecoPrincipal().getEndereco().getComplemento());
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(cota.getEnderecoPrincipal().getEndereco().getBairro());
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCep(cota.getEnderecoPrincipal().getEndereco().getCep());
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(cota.getEnderecoPrincipal().getEndereco().getCidade());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
+
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(cota.getEnderecoPrincipal().getEndereco().getLogradouro());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(cota.getEnderecoPrincipal().getEndereco().getNumero());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(cota.getEnderecoPrincipal().getEndereco().getComplemento());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(cota.getEnderecoPrincipal().getEndereco().getBairro());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCep(cota.getEnderecoPrincipal().getEndereco().getCep());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(cota.getEnderecoPrincipal().getEndereco().getCidade());
 		//FIXME: Ajustar para trazer o codigo do municipio
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(3550308L);
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setUf(cota.getEnderecoPrincipal().getEndereco().getUf());
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(35L);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(3550308L);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setUf(cota.getEnderecoPrincipal().getEndereco().getUf());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(35L);
 		//FIXME: Ajustar os campos codigo e nome do pais
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoPais(1058L);
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setPais("Brasil");
-		
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoPais(1058L);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setPais("Brasil");
+
 		if(cota.getEnderecoPrincipal().getEndereco().getCodigoUf() != null) {
-			Long codigoUF = Long.parseLong(cota.getEnderecoPrincipal().getEndereco().getCodigoUf());
-			//FIXME: ajustar o codigo do estado
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(35L);
-		}
-		
-		for (TelefoneCota telefone : cota.getEnderecoPrincipal().getCota().getTelefones()) {
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setNumero(telefone.getTelefone().getNumero());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setRamal(telefone.getTelefone().getRamal());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setDDD(telefone.getTelefone().getDdd());
 			
+			//FIXME: ajustar o codigo do estado
+			Long codigoUF = Long.parseLong(cota.getEnderecoPrincipal().getEndereco().getCodigoUf());
+			codigoUF = 35L;
+			
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(codigoUF);
+		}
+
+		for (TelefoneCota telefone : cota.getEnderecoPrincipal().getCota().getTelefones()) {
+			
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setNumero(telefone.getTelefone().getNumero());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setRamal(telefone.getTelefone().getRamal());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setDDD(telefone.getTelefone().getDdd());
+
 			break;
 		}
 	}
-	
-	public static void montarEnderecoEmitenteDestinatario(NotaFiscal notaFiscal2, Distribuidor distribuidor) {
+
+	public static void montarEnderecoEmitenteDestinatario(NotaFiscal notaFiscal, Fornecedor fornecedor) {
+
+		DocumentoDestinatario documento = montarDadosPessoa(notaFiscal, fornecedor.getJuridica());
 		
-		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario() == null) {
-			notaFiscal2.getNotaFiscalInformacoes().setIdentificacaoDestinatario(new IdentificacaoDestinatario());
-		}
-		
-		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco() == null) {
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEndereco(new NotaFiscalEndereco());
-		}
-		
-		if (distribuidor.getJuridica() instanceof PessoaJuridica) {
-			PessoaJuridica pessoaJuridica = (PessoaJuridica) distribuidor.getJuridica();
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaJuridica.getRazaoSocial());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEmail(pessoaJuridica.getEmail());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setTipoDestinatario(TipoDestinatario.FORNECEDOR);
+		documento.setDocumento(fornecedor.getJuridica().getDocumento());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
+
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(fornecedor.getEnderecoPrincipal().getEndereco().getLogradouro());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(fornecedor.getEnderecoPrincipal().getEndereco().getNumero());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(fornecedor.getEnderecoPrincipal().getEndereco().getComplemento());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(fornecedor.getEnderecoPrincipal().getEndereco().getBairro());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCep(fornecedor.getEnderecoPrincipal().getEndereco().getCep());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(fornecedor.getEnderecoPrincipal().getEndereco().getCidade());
+		//FIXME: Ajustar para trazer o codigo do municipio
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(3550308L);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setUf(fornecedor.getEnderecoPrincipal().getEndereco().getUf());
+		//FIXME: Ajustar os campos codigo e nome do pais
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoPais(1058L);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setPais("Brasil");
+
+		if(fornecedor.getEnderecoPrincipal().getEndereco().getCodigoUf() != null) {
 			
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setPessoaDestinatarioReferencia(new NotaFiscalPessoaJuridica());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setNome("JORNALIROS DIVERSOS");
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setEmail(pessoaJuridica.getEmail());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setIdPessoaOriginal(pessoaJuridica.getId());
-			
-		} else {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de destinatário não identificado.");
+			//FIXME: ajustar o codigo do estado
+			Long codigoUF = Long.parseLong(fornecedor.getEnderecoPrincipal().getEndereco().getCodigoUf());
+			codigoUF = 35L;
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(codigoUF);
 		}
+
+		for (TelefoneFornecedor telefone : fornecedor.getTelefones()) {
+			
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setNumero(telefone.getTelefone().getNumero());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setRamal(telefone.getTelefone().getRamal());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setDDD(telefone.getTelefone().getDdd());
+
+			break;
+		}
+	}
+
+	public static void montarEnderecoEmitenteDestinatario(NotaFiscal notaFiscal, Distribuidor distribuidor) {
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setTipoDestinatario(TipoDestinatario.DISTRIBUIDOR);
+		DocumentoDestinatario documento = montarDadosPessoa(notaFiscal, distribuidor.getJuridica());
 		
-		DocumentoDestinatario documento = new CNPJDestinatario();
-		
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setTipoDestinatario(TipoDestinatario.DISTRIBUIDOR);
 		documento.setDocumento(distribuidor.getJuridica().getDocumento());
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());
 		
 		for (Endereco endereco : distribuidor.getJuridica().getEnderecos()) {
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(endereco.getLogradouro());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(endereco.getNumero());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(endereco.getComplemento());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(endereco.getBairro());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCep(endereco.getCep());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(endereco.getCidade());
+			
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(endereco.getLogradouro());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(endereco.getNumero());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(endereco.getComplemento());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(endereco.getBairro());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCep(endereco.getCep());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(endereco.getCidade());
 			//FIXME: Ajustar para trazer o codigo do municipio
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(Long.valueOf(endereco.getCodigoCidadeIBGE()));
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setUf(endereco.getUf());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(Long.valueOf(endereco.getCodigoUf()));
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(Long.valueOf(endereco.getCodigoCidadeIBGE()));
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setUf(endereco.getUf());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(Long.valueOf(endereco.getCodigoUf()));
 			//FIXME: Ajustar os campos codigo e nome do pais
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoPais(1058L);
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setPais("Brasil");
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoPais(1058L);
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setPais("Brasil");
+			
+			if(endereco.getCodigoUf() != null) {
+				
+				//FIXME: ajustar o codigo do estado
+				Long codigoUF = Long.parseLong(endereco.getCodigoUf());
+				codigoUF = 35L;
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(codigoUF);
+			}
 			
 			break;
 		}
 		
 		for (Telefone telefone : distribuidor.getJuridica().getTelefones()) {
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setNumero(telefone.getNumero());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setRamal(telefone.getRamal());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setDDD(telefone.getDdd());
+			
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setNumero(telefone.getNumero());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setRamal(telefone.getRamal());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setDDD(telefone.getDdd());
 			
 			break;
 		}
 	}
+
 	
-	public static void montarEnderecoEmitenteDestinatario(NotaFiscal notaFiscal2, EstoqueProduto estoque) {
+	private static DocumentoDestinatario montarDadosPessoa(NotaFiscal notaFiscal, Pessoa pessoa) {
 		
-		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario() == null) {
-			notaFiscal2.getNotaFiscalInformacoes().setIdentificacaoDestinatario(new IdentificacaoDestinatario());
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario() == null) {
+			notaFiscal.getNotaFiscalInformacoes().setIdentificacaoDestinatario(new IdentificacaoDestinatario());
+		}
+
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco() == null) {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEndereco(new NotaFiscalEndereco());
+		}
+
+		if (pessoa instanceof PessoaJuridica) {
+			PessoaJuridica pessoaJuridica = (PessoaJuridica) pessoa;
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaJuridica.getRazaoSocial());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEmail(pessoaJuridica.getEmail());
+
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setPessoaDestinatarioReferencia(new NotaFiscalPessoaJuridica());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setNome(pessoaJuridica.getRazaoSocial());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setEmail(pessoaJuridica.getEmail());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setIdPessoaOriginal(pessoaJuridica.getId());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
+
+		} else if (pessoa instanceof PessoaFisica) {			
+			PessoaFisica pessoaFisica = (PessoaFisica) pessoa;
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaFisica.getNome());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEmail(pessoaFisica.getEmail());
+
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setPessoaDestinatarioReferencia(new NotaFiscalPessoaFisica());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setNome(pessoaFisica.getNome());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setEmail(pessoaFisica.getEmail());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setIdPessoaOriginal(pessoaFisica.getId());
+
+		} else {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de destinatário não identificado.");
+		}
+
+		DocumentoDestinatario documento = null;
+		if(pessoa instanceof PessoaJuridica) { 
+			documento = new CNPJDestinatario();
+		} else {
+			documento = new CPFDestinatario();
 		}
 		
-		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco() == null) {
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEndereco(new NotaFiscalEndereco());
+		return documento;
+	}
+
+
+	public static void montarEnderecoEmitenteDestinatario(NotaFiscal notaFiscal, EstoqueProduto estoque) {
+
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario() == null) {
+			notaFiscal.getNotaFiscalInformacoes().setIdentificacaoDestinatario(new IdentificacaoDestinatario());
 		}
-		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setTipoDestinatario(TipoDestinatario.FORNECEDOR);
+
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco() == null) {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEndereco(new NotaFiscalEndereco());
+		}
+
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setTipoDestinatario(TipoDestinatario.FORNECEDOR);
 	}
 }

@@ -16,6 +16,7 @@ import br.com.abril.nds.model.cadastro.Tributacao;
 import br.com.abril.nds.model.cadastro.Tributacao.TributacaoTipoOperacao;
 import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
@@ -323,5 +324,12 @@ public class ItemNotaFiscalBuilder  {
 			detalheNotaFiscal.getProdutoServicoPK().setSequencia(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size()+1);
 			detalheNotaFiscal.getProdutoServicoPK().setNotaFiscal(notaFiscal);
 		}
+	}
+
+	public static void montaItemNotaFiscal(NotaFiscal notaFiscal,
+			MovimentoFechamentoFiscal movimentoFechamentoFiscal,
+			Map<String, TributoAliquota> tributoRegimeTributario) {
+		// TODO Auto-generated method stub
+		
 	}
 }
