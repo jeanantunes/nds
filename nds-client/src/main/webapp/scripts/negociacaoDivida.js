@@ -268,7 +268,8 @@ var negociacaoDividaController = $.extend(true, {
 	
 	calcularParcelas : function(){
 		
-		if ($("#isentaEncargos", negociacaoDividaController.workspace).is(":checked")) {
+		if ($("#isentaEncargos", negociacaoDividaController.workspace).is(":checked")
+				|| $('#selectPagamento').val() === 'CHEQUE') {
 
 			$("#dividaSelecionada").html(
 				negociacaoDividaController.valorSelecionadoSemEncargo
