@@ -75,7 +75,15 @@ public class EMS0126MessageProcessor extends AbstractRepository implements
 		if (null != produtoEdicao) {
 
 			
-			if(input.getCodigoBarras()!=null && !produtoEdicao.getCodigoDeBarras().equals(new BigInteger(input.getCodigoBarras()).toString())){
+			 if(input.getCodigoBarras()!=null && !input.getCodigoBarras().trim().equals("") ){
+				
+				
+				if(produtoEdicao.getCodigoDeBarras() ==null || produtoEdicao.getCodigoDeBarras().trim().equals("")){
+					produtoEdicao.setCodigoDeBarras("");
+				}
+				
+				if(!produtoEdicao.getCodigoDeBarras().equals(new BigInteger(input.getCodigoBarras()).toString())){
+			
 				
 				ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -85,16 +93,18 @@ public class EMS0126MessageProcessor extends AbstractRepository implements
 						+" Produto "+input.getCodigoProduto()
 						+" Edição " + input.getEdicao() );
 				
+				
 				produtoEdicao.setCodigoDeBarras(new BigInteger(input.getCodigoBarras()).toString());
 				this.getSession().merge(produtoEdicao);
-			}
+				}
+			 }
 
 		} else {
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
 					"Nenhum resultado encontrado para" 
-					+ "Produto "+ input.getCodigoProduto() 
+					+ " Produto "+ input.getCodigoProduto() 
 					+ " Edição "+ input.getEdicao());
 
 		}
