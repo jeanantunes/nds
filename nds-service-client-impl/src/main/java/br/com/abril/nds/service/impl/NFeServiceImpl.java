@@ -39,6 +39,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
@@ -48,6 +49,7 @@ import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
@@ -412,7 +414,7 @@ public class NFeServiceImpl implements NFeService {
 				break;
 				
 			case FORNECEDOR:			
-				this.gerarNotasFiscaisFornecedor(filtro, distribuidor, naturezaOperacao);
+				this.gerarNotasFiscaisFornecedorEstoque(filtro, distribuidor, naturezaOperacao);
 				break;
 	
 			default:
@@ -496,8 +498,7 @@ public class NFeServiceImpl implements NFeService {
 		}
 	}
 	
-
-	private void gerarNotasFiscaisFornecedor(FiltroNFeDTO filtro, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
+	private void gerarNotasFiscaisFornecedorEstoque(FiltroNFeDTO filtro, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
 
 		// obter as cotas que estão na tela pelo id das cotas
 		List<EstoqueProduto> estoques = this.notaFiscalRepository.obterConjuntoFornecedorNotafiscal(filtro);
@@ -538,6 +539,68 @@ public class NFeServiceImpl implements NFeService {
 		}	
 	}
 
+	@Override
+	@Transactional
+	public void gerarNotasFiscaisFornecedor(final FiltroNFeDTO filtro,
+			final List<NotaFiscal> notasFiscais, final Distribuidor distribuidor, final NaturezaOperacao naturezaOperacao, 
+			final Map<String, ParametroSistema> parametrosSistema, final List<Fornecedor> fornecedores) {
+		
+		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
+		
+		final Map<String, TributoAliquota> tributoRegimeTributario = new HashMap<String, TributoAliquota>();
+		
+		for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
+			tributoRegimeTributario.put(tributo.getNomeTributo(), tributo);
+		}
+		
+		for (final Fornecedor fornecedor : fornecedores) {
+			
+			final NotaFiscal notaFiscal = new NotaFiscal();
+			naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
+			naturezaOperacaoRepository.merge(naturezaOperacao);
+			
+			final Usuario usuario = this.usuarioService.getUsuarioLogado();
+			
+			notaFiscal.setUsuario(usuario);
+			
+			NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor, filtro);
+			
+			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
+			
+			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, parametrosSistema);
+			
+			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, fornecedor);
+			
+			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
+			
+			// obter os movimentos de cada cota
+			filtro.setIdCota(fornecedor.getId());
+			final List<MovimentoFechamentoFiscal> movimentosFechamentosFiscais = this.notaFiscalRepository.obterMovimentosFechamentosFiscais(filtro);
+			for (MovimentoFechamentoFiscal movimentoFechamentoFiscal : movimentosFechamentosFiscais) {
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoFechamentoFiscal, tributoRegimeTributario);
+			}
+			
+			int parametro = Integer.valueOf(parametrosSistema.get("NFE_LIMITAR_QTDE_ITENS").getValor());
+			
+			if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > parametro){
+				List<List<DetalheNotaFiscal>> listaItens = new ArrayList<>();
+				
+				int tamanho = (int) notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() / parametro;
+				
+				for (int i = parametro+1; i % parametro != 0 && notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > i; i++) {
+					listaItens.subList(tamanho, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size());
+					listaItens.add(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal());
+				}
+			}
+			
+			//FIXME: Ajustar o valor do campo para valores parametrizados
+			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosFechamentosFiscais);
+			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
+			notasFiscais.add(notaFiscal);
+		}
+	}
+	
 	// metodo responsavel pelo dados do distribuidor da nota
 	private Distribuidor obterInformacaoDistribuidor(){
 		return distribuidorRepository.obter();
@@ -568,11 +631,11 @@ public class NFeServiceImpl implements NFeService {
 			
 			notaFiscal.setUsuario(usuario);
 			
-			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
+			NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor, filtro);
 			
 			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
 			
-			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota, parametrosSistema);
+			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, parametrosSistema);
 			
 			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
 			
@@ -601,7 +664,7 @@ public class NFeServiceImpl implements NFeService {
 			//FIXME: Ajustar o valor do campo para valores parametrizados
 			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
-			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal, cota);
+			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 			notasFiscais.add(notaFiscal);
 		}
 	}
@@ -624,7 +687,7 @@ public class NFeServiceImpl implements NFeService {
 		}
 		
 		
-		NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
+		NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor, filtro);
 		NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor, filtro);
 		EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, distribuidor);
 		NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, distribuidor, parametrosSistema);
@@ -639,7 +702,7 @@ public class NFeServiceImpl implements NFeService {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
 			}
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
-			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal, cota);
+			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 		}
 		
 		notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
@@ -647,7 +710,7 @@ public class NFeServiceImpl implements NFeService {
 		//FIXME: Ajustar o transportador Principal
 		if(transportadores == null || transportadores.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Não foi .");
-		}else {			
+		} else {			
 			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
 		}
 		
@@ -733,7 +796,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
 			
-			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota, parametrosSistema);
+			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, parametrosSistema);
 			
 			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
 			
@@ -750,7 +813,7 @@ public class NFeServiceImpl implements NFeService {
 			//FIXME: Ajustar o valor do campo para valores parametrizados
 			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
-			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal, cota);
+			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 			notasFiscais.add(notaFiscal);
 		}
 	}

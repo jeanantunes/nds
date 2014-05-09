@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,16 +52,20 @@ import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.ChamadaEncalheCotaService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.GrupoService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -174,6 +180,12 @@ public class ConferenciaEncalheController extends BaseController {
 
 	@Autowired
 	private GrupoService grupoService;
+	
+	@Autowired
+	private LancamentoService lancamentoService;
+	
+	@Autowired
+	private ChamadaEncalheCotaService chamadaEncalheCotaService;
 	
 	@Path("/")
 	@SuppressWarnings("unchecked")
@@ -2515,7 +2527,47 @@ public class ConferenciaEncalheController extends BaseController {
 		if (produtoEdicao.getTipoChamadaEncalhe() != null) {
 			
 			conferenciaEncalheDTO.setTipoChamadaEncalhe(produtoEdicao.getTipoChamadaEncalhe().name());
+			
+			InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+			
+			ChamadaEncalheCota chamadaEncalheCota = chamadaEncalheCotaService.obterChamadaEncalheCota(info.getCota().getId(), produtoEdicao.getId(), produtoEdicao.getDataRecolhimentoDistribuidor());
+			
+			List<Lancamento> lancamentos = null;
+			if(chamadaEncalheCota != null && chamadaEncalheCota.getChamadaEncalhe() != null) {
+				lancamentos = new ArrayList<>(chamadaEncalheCota.getChamadaEncalhe().getLancamentos());
+			}
+			
+			if(lancamentos != null && !lancamentos.isEmpty()) {
+				
+				Collections.sort(lancamentos, new Comparator<Lancamento>() {
+					
+					@Override
+					public int compare(Lancamento l1, Lancamento l2) {
+						if(l1 != null && l2 != null) {
+							if(l1.getDataLancamentoDistribuidor().getTime() > l2.getDataLancamentoDistribuidor().getTime()) {
+								return 1;
+							} else {
+								return -1;
+							}
+						} else if (l1 == null && l2 != null) {
+							return 1;
+						} else if (l1 != null && l2 == null) {
+							return -1;
+						}
+						
+						return 0;
+					}
+				});
+				
+				conferenciaEncalheDTO.setDataLancamento(lancamentos.get(0).getDataLancamentoDistribuidor());
+				
+			} else {
+				throw new ValidacaoException(TipoMensagem.ERROR
+						, String.format("Impossível obter o lançamento do Produto: %s - %s.", produtoEdicao.getCodigoProduto(), produtoEdicao.getNumeroEdicao()));
+			}
+			
 		}
+
 		
 		conferenciaEncalheDTO.setDataRecolhimento(produtoEdicao.getDataRecolhimentoDistribuidor());
 		
@@ -2523,7 +2575,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		conferenciaEncalheDTO.setParcialNaoFinal(this.conferenciaEncalheService.isParcialNaoFinal(produtoEdicao.getId()));
 		
-		if (quantidade != null){
+		if (quantidade != null) {
 			conferenciaEncalheDTO.setQtdExemplar(quantidade);
 			conferenciaEncalheDTO.setQtdInformada(quantidade);
 		} else {
@@ -2539,7 +2591,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		conferenciaEncalheDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 		
-		if (adicionarGrid){
+		if (adicionarGrid) {
 			
 			final List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 			
