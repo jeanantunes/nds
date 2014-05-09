@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.ems0111.processor;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -105,6 +106,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		// Verificação de alteração do Preço Previsto para o ProdutoEdiçao:
 		final BigDecimal precoPrevistoAtual = this.tratarValorNulo(produtoEdicao.getPrecoPrevisto());
 		final BigDecimal precoPrevistoCorrente = this.tratarValorNulo(input.getPrecoPrevisto());
+		
+		precoPrevistoAtual.setScale(4,RoundingMode.DOWN);
+		precoPrevistoCorrente.setScale(4,RoundingMode.DOWN);
+		
 		if (precoPrevistoAtual.compareTo(precoPrevistoCorrente)!=0) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -113,6 +118,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 							+ " Edição " + edicao
 							+ " de " + precoPrevistoAtual
 							+ " para " + precoPrevistoCorrente);
+			
 			produtoEdicao.setPrecoPrevisto(precoPrevistoCorrente);
 			produtoEdicao.setPrecoVenda(precoPrevistoCorrente);
 			this.getSession().merge(produtoEdicao);
@@ -239,9 +245,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteração do REPARTE PREVISTO do Produto "
-								+ codigoProduto + " e Edição " + edicao
-								+ " , de " + lancamento.getReparte() 
-								+ "para " + repartePrevisto);
+								+ codigoProduto + " Edição " + edicao
+								+ " de " + lancamento.getReparte() 
+								+ " para " + repartePrevisto);
 				
 				lancamento.setReparte(repartePrevisto);
 			}
@@ -251,9 +257,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			if (null != lancamento.getRepartePromocional() && !lancamento.getRepartePromocional().equals(repartePromocional)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração do REPARTE PROMOCIONAL do Produto: "
-								+ codigoProduto + " e Edição " + edicao
-								+ "  de " + lancamento.getRepartePromocional() 
+						"Alteração do REPARTE PROMOCIONAL do Produto "
+								+ codigoProduto + " Edição " + edicao
+								+ " de " + lancamento.getRepartePromocional() 
 								+ "para " + repartePromocional);
 				lancamento.setRepartePromocional(repartePromocional);
 			}
@@ -269,7 +275,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteração da DATA LANCAMENTO PREVISTO do Produto "
-								+ codigoProduto + " e Edicao: " + edicao
+								+ codigoProduto + " Edição " + edicao
 								+ " de " + simpleDateFormat.format(
 										dtLancamentoAtual)
 								+ " para " + simpleDateFormat.format(
@@ -316,7 +322,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 					this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteração para PARCIAL da DATA LANCAMENTO DISTRIBUIDOR do Produto "
-								+ codigoProduto + " e Edição " + edicao
+								+ codigoProduto + " Edição " + edicao
 								+ " de " + simpleDateFormat.format(
 										dtLancamentoNovo)
 								+ " para " + simpleDateFormat.format(

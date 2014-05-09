@@ -25,15 +25,18 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.FeriadoRepository;
 import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
@@ -49,13 +52,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Autowired
-	private HistoricoLancamentoRepository historicoLancamentoRepository;
-	
-	@Autowired
 	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
-	
-	@Autowired
-	private EstudoCotaRepository estudoCotaRepository;
 
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
@@ -69,6 +66,12 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	@Autowired
 	private UsuarioRepository usuarioRepository; 
 
+	@Autowired
+	private FeriadoRepository feriadoRepository;
+	
+	@Autowired
+	private CalendarioService calendarioService;
+	
 	@Transactional
 	@Override
 	public void validarFuroProduto(String codigoProduto, Long idProdutoEdicao, Long idLancamento, Date novaData, Long idUsuario) {
@@ -119,9 +122,11 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(novaData);
 		
-		if (!this.distribuicaoFornecedorRepository.verificarDistribuicaoDiaSemana(
-				codigoProduto, idProdutoEdicao, DiaSemana.getByCodigoDiaSemana(calendar.get(Calendar.DAY_OF_WEEK)))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "A data de lançamento deve ser uma data em que o distribuidor realiza operação.");
+		boolean diaOperante = this.isDiaOperante(codigoProduto, idProdutoEdicao, calendar);
+		
+		if (!diaOperante) {
+			 
+		    throw new ValidacaoException(TipoMensagem.WARNING, DateUtil.formatarDataPTBR(novaData)+" não é uma data em que o distribuidor realiza operação! ");
 		}
 		
 		if (!this.distribuidorService.regimeEspecial()) {
@@ -243,4 +248,50 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		
 	}
 	
+	/**
+	 * Verifica se Data não é feriado e é dia de operação do Distribuidor
+	 * 
+	 * @param codigoProduto
+	 * @param idProdutoEdicao
+	 * @param c
+	 * @return boolean
+	 */
+	@Override
+	@Transactional 
+	public boolean isDiaOperante(String codigoProduto, Long idProdutoEdicao, Calendar c){
+		
+		boolean diaSemanaOperante = this.distribuicaoFornecedorRepository.verificarDistribuicaoDiaSemana(codigoProduto, 
+                                                                                                         idProdutoEdicao, 
+                                                                                                         DiaSemana.getByCodigoDiaSemana(c.get(Calendar.DAY_OF_WEEK)));
+
+        boolean feriadoSemOperacao = (calendarioService.isFeriadoSemOperacao(c.getTime()) || calendarioService.isFeriadoMunicipalSemOperacao(c.getTime()));
+        
+        return (diaSemanaOperante && !feriadoSemOperacao);
+	}
+	
+	/**
+     * Obtem a proxima data, considerando Feriados e Dia de Operação do Distribuidor
+     * 
+     * @param codigoProduto
+     * @param idProdutoEdicao
+     * @param data 
+     * @return Date
+     */
+    @Override
+    @Transactional
+    public Date obterProximaDataDiaOperante(String codigoProduto, Long idProdutoEdicao, Date data) {
+        
+        Calendar c = Calendar.getInstance();
+        
+        c.setTime(data);
+        
+        boolean diaOperante = this.isDiaOperante(codigoProduto, idProdutoEdicao, c);
+        
+        if (!diaOperante) {
+            
+            data = this.obterProximaDataDiaOperante(codigoProduto,idProdutoEdicao,DateUtil.adicionarDias(data, 1));
+        }
+        
+        return data;
+    }
 }

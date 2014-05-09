@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.lancamento;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -209,11 +210,17 @@ public class FuroProdutoController extends BaseController {
      * 
      * @param data
      */
-    private void validarFeriadoSemOperacao(Date data){
+    private void validarData(String codigoProduto, Long idProdutoEdicao, Date data){
     	
-    	 if(calendarioService.isFeriadoSemOperacao(data) || calendarioService.isFeriadoMunicipalSemOperacao(data)){
+    	final Calendar c = Calendar.getInstance();
+         
+        c.setTime(data);
+         
+        boolean diaOperante = this.furoProdutoService.isDiaOperante(codigoProduto, idProdutoEdicao, c);
+		
+		if (!diaOperante) {
 	        	
-            throw new ValidacaoException(TipoMensagem.WARNING, DateUtil.formatarDataPTBR(data)+" não é uma data operante! ");
+			throw new ValidacaoException(TipoMensagem.WARNING, DateUtil.formatarDataPTBR(data)+" não é uma data em que o distribuidor realiza operação! ");
 	    }
     }
 
@@ -221,7 +228,7 @@ public class FuroProdutoController extends BaseController {
 	public void validarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
 			Long idLancamento) throws Exception {
 		
-		this.validarFeriadoSemOperacao(new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData));
+		this.validarData(codigoProduto, idProdutoEdicao, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData));
 
 		codigoProduto = obterCodigoProdutoFormatado(codigoProduto);
 		

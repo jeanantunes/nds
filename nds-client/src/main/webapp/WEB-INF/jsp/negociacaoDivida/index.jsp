@@ -362,6 +362,13 @@
 						Imprimir Boletos
 				</a>
 			</span>
+			<span class="bt_novos" title="Imprimir Recibo" name="botoes" id="botaoImprimirRecibo">
+				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirRecibo">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+						Imprimir Recibo
+				</a>
+			</span>
+			
 			</form> 
 		</div>
 
