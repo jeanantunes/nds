@@ -84,6 +84,7 @@ import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.FormaCobrancaService;
+import br.com.abril.nds.service.ImpressaoDividaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
@@ -165,6 +166,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     
     @Autowired
     private AcumuloDividasRepository acumuloDividasRepository;
+    
+    @Autowired
+    private ImpressaoDividaService impressaoDividaService;
     
     @Override
     @Transactional(readOnly = true)
@@ -658,6 +662,22 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         }
         
         return boletos;
+    }
+    
+    @Override
+    @Transactional(readOnly=true) 
+    public List<byte[]> imprimirRecibos(final Long idNegociacao) {
+    	
+    	final List<String> listaNossoNumero = this.negociacaoDividaRepository.obterListaNossoNumeroPorNegociacao(idNegociacao);
+
+    	List<byte[]> recibos = new ArrayList<byte[]>();
+    	
+    	for (String nossoNumero : listaNossoNumero) {
+    		
+    		recibos.add(this.impressaoDividaService.gerarArquivoImpressao(nossoNumero));
+    	}
+    	
+    	return recibos;
     }
     
     @Override
@@ -1278,7 +1298,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
                     this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiro);
 
-                	valorMovimentoNegociacao = negociacao.getValorDividaPagaComissao();
+                	valorMovimentoNegociacao = valorComissao;
                 	
                     negociacao.setValorDividaPagaComissao(BigDecimal.ZERO);
                 }
