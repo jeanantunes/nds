@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.ems0111.processor;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -106,8 +107,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		final BigDecimal precoPrevistoAtual = this.tratarValorNulo(produtoEdicao.getPrecoPrevisto());
 		final BigDecimal precoPrevistoCorrente = this.tratarValorNulo(input.getPrecoPrevisto());
 		
-		precoPrevistoAtual.setScale(4);
-		precoPrevistoCorrente.setScale(4);
+		precoPrevistoAtual.setScale(4,RoundingMode.DOWN);
+		precoPrevistoCorrente.setScale(4,RoundingMode.DOWN);
 		
 		if (precoPrevistoAtual.compareTo(precoPrevistoCorrente)!=0) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
