@@ -51,6 +51,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.util.ComponentesPDV;
@@ -679,12 +680,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		final StringBuilder hql = new StringBuilder("select distinct l.produtoEdicao ");
 		hql.append(" from Lancamento l ")
+		   .append(" join l.estudo.estudoCotas estudoCotas ")
 		   .append(" where l.dataLancamentoDistribuidor = :data ")
 		   .append(" and l.status IN (:status) ")
+		   .append(" and estudoCotas.tipoEstudo != :juramentado ")
 		   .append(" order by l.produtoEdicao.produto.nome ");
 
 		final Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", data);
+		query.setParameter("juramentado", TipoEstudoCota.JURAMENTADO);
 		query.setParameterList("status",Arrays.asList(StatusLancamento.EXPEDIDO, StatusLancamento.BALANCEADO));
 		return query.list();
 	}
@@ -1746,7 +1750,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEdicao> obterProdutoPorCodigoNome(
+	public List<ProdutoEdicao> obterProdutoPorCodigoNomeCodigoSM(
+			final Integer codigoSM,
 			final String codigoNomeProduto, 
 			final Integer numeroCota, 
 			final Integer quantidadeRegisttros,
@@ -1762,22 +1767,36 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			.append(" inner join produto.fornecedores fornecedor  		")
 			.append(" inner join produtoEdicao.lancamentos lancamentos 	")
 			
-			.append(" where ")
+			.append(" where ");
+
+			hql.append(" cota.numeroCota = :numeroCota 				");
 			
-			.append(" (produto.nome like :nomeProduto 				")
-			.append(" or produto.codigo like :codigoProduto) 	and	")
-			.append(" cota.numeroCota = :numeroCota 				");
+			if(codigoNomeProduto!=null && !codigoNomeProduto.trim().isEmpty()) {
+				hql.append(" and ( produto.nome like :nomeProduto 	 ");
+				hql.append(" or produto.codigo like :codigoProduto ) ");
+			}
 			
-			 carregarHQLParametrosFornecedorDatasEncalhe(hql, null, mapaDataCEConferivel);
+			if(codigoSM != null) {
+				hql.append(" and ce.sequencia = :codigoSM ");
+			}
+			
+			carregarHQLParametrosFornecedorDatasEncalhe(hql, null, mapaDataCEConferivel);
 		
 			hql.append(" group by produtoEdicao.id			")
 			   .append(" order by produto.nome asc,			")
 			   .append(" produtoEdicao.numeroEdicao desc	");
 		
 		final Query query = this.getSession().createQuery(hql.toString());
+
+		if(codigoNomeProduto!=null && !codigoNomeProduto.trim().isEmpty()) {
+			query.setParameter("nomeProduto", "%"+codigoNomeProduto+"%" );
+			query.setParameter("codigoProduto", "%"+codigoNomeProduto+"%" );
+		}
+
+		if(codigoSM != null) {
+			query.setParameter("codigoSM", codigoSM);	
+		}
 		
-		query.setParameter("nomeProduto", "%"+codigoNomeProduto+"%" );
-		query.setParameter("codigoProduto", "%"+codigoNomeProduto+"%" );
 		query.setParameter("numeroCota", numeroCota);
 		
 		carregarHQLParametrosFornecedorDatasEncalhe(null, query, mapaDataCEConferivel);
@@ -1942,8 +1961,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
                 + " from Lancamento lancamento "
                 + " join lancamento.produtoEdicao produtoEdicao "
                 + " join produtoEdicao.produto produto "
+                + " join lancamento.estudo.estudoCotas estudoCotas "
                 + " where lancamento.status in (:status) "
                 + " and lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor "
+                + " and estudoCotas.tipoEstudo != :juramentado "
                 + " group by produtoEdicao.id "
                 + " order by produto.nome ";
         
@@ -1952,6 +1973,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         query.setParameterList("status", Arrays.asList(StatusLancamento.BALANCEADO,StatusLancamento.EXPEDIDO));
         
         query.setParameter("dataLancamentoDistribuidor", dataLancamento);
+        query.setParameter("juramentado", TipoEstudoCota.JURAMENTADO);
         
         return query.list();
     }

@@ -348,7 +348,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Codigo/nome produto é obrigatório.");
         }
         
-        final List<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.obterProdutoPorCodigoNome(
+        final List<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.obterProdutoPorCodigoNomeCodigoSM(null,
                 codigoNomeProduto, numeroCota, quantidadeRegistros, mapaDataCEConferivel);
         
         return produtosEdicao;
