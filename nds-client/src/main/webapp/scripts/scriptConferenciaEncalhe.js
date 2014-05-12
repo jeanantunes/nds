@@ -124,8 +124,6 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#pesq_prod", ConferenciaEncalhe.workspace).autocomplete({source: []});
 		
 		$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).autocomplete({source: []}); 
-
-		//$('#sm', ConferenciaEncalhe.workspace).autocomplete({source: []}); 
 		
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).datepicker({
 			showOn : "button",
@@ -2044,8 +2042,6 @@ var ConferenciaEncalhe = $.extend(true, {
 			function() {
 		
 				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("1");
-				
-				//$("#sm", ConferenciaEncalhe.workspace).autocomplete({});
 					
 				$('#sm', ConferenciaEncalhe.workspace).val("");
 				
