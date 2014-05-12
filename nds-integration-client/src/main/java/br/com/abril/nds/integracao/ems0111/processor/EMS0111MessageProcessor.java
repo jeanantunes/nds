@@ -218,11 +218,12 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Inserção de Lancamento para Produto "
+					"Lancamento Inserido para Produto "
 							+ codigoProduto
 							+ " Edição " + edicao
-							+ " Lancamento "+lancamento.getDataLancamentoDistribuidor()
-							+ " Recolhimento "+lancamento.getDataRecolhimentoDistribuidor());
+							+ " Lancamento "+simpleDateFormat.format(lancamento.getDataLancamentoDistribuidor())
+							+ " Recolhimento "+simpleDateFormat.format(lancamento.getDataRecolhimentoDistribuidor()));
+			
 			return;
 			
 		} else {
