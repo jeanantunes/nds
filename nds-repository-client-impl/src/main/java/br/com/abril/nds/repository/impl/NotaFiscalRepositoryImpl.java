@@ -978,4 +978,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return query;	
 	}
 
+	@Override
+	public List<FornecedorExemplaresDTO> consultaFornecedorExemplaresMESumarizados(FiltroNFeDTO filtro) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

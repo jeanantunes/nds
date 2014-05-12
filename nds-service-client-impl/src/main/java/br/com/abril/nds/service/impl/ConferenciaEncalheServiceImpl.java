@@ -275,11 +275,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
 	
 	@Autowired
-<<<<<<< HEAD
 	private MovimentoFechamentoFiscalRepository movimentoFechamentoFiscalRepository;
-=======
+
+	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
->>>>>>> db756cf97e3be3798be81458b8cc3ba4f5d01c6e
 	
 	private final int PRIMEIRO_DIA_RECOLHIMENTO = 1;
 	
@@ -3262,7 +3261,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras);
 	}
 	
-<<<<<<< HEAD
     /**
 	* Valida informações basicas antes de iniciar o recolhimento:
 	* 
@@ -3338,7 +3336,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return lancamentoDTO;
 	}
-=======
+
 	@Transactional
 	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoSM(
 			final Integer numeroCota, 
@@ -3378,5 +3376,4 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 
->>>>>>> db756cf97e3be3798be81458b8cc3ba4f5d01c6e
 }

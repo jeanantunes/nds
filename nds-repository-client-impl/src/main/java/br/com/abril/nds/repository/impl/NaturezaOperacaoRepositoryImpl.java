@@ -337,7 +337,6 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		   .append(" and nat.tipoDestinatario = :tipoDestinatario ")
 		   .append(" and nat.notaFiscalVendaConsignado = :true ");
 		
-		
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("true", true);
 		query.setParameter("tipoAtividade", tipoAtividade);
