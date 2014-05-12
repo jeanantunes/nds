@@ -74,5 +74,7 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 	List<FornecedorExemplaresDTO> consultaFornecedorExemplaresMFFSumarizados(FiltroNFeDTO filtro);
 
 	Long consultaFornecedorExemplaresMFFSumarizadosQtd(FiltroNFeDTO filtro);
+
+	List<FornecedorExemplaresDTO> consultaFornecedorExemplaresMESumarizados(FiltroNFeDTO filtro);
 	
 }
