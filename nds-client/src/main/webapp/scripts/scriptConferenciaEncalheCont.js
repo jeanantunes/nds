@@ -585,6 +585,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			$("#totalExemplaresFooter", ConferenciaEncalheCont.workspace).html(totalExemplaresFooter);
 			
 			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalheCont.workspace).numericPacotePadrao();
+
 		}
 		
 		ConferenciaEncalheCont.processandoConferenciaEncalhe = false;

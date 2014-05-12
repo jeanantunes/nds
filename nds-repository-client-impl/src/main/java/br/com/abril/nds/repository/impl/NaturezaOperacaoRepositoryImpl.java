@@ -334,10 +334,11 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		StringBuilder sql = new StringBuilder();
 		sql.append(" from NaturezaOperacao nat ")
 		   .append(" where nat.tipoAtividade = :tipoAtividade ")
-		   .append(" and nat.tipoDestinatario = :tipoDestinatario ");
-		
+		   .append(" and nat.tipoDestinatario = :tipoDestinatario ")
+		   .append(" and nat.notaFiscalVendaConsignado = :true ");
 		
 		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("true", true);
 		query.setParameter("tipoAtividade", tipoAtividade);
 		query.setParameter("tipoDestinatario", tipoDestinatario);;
 		
