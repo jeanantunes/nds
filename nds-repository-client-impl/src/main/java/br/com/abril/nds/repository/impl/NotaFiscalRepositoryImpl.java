@@ -372,7 +372,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" cota.parametrosCotaNotaFiscalEletronica.emiteNotaFiscalEletronica as emiteNotaFiscalEletronica, ");
 		hql.append(" cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS as contribuinteICMS ");
 
-		Query query = queryConsultaMFFNfeParameters(queryConsultaMFFNfe(filtro, hql, false, false, false), filtro);
+		Query query = queryConsultaCotaMFFNfeParameters(queryConsultaCotaMFFNfe(filtro, hql, false, false, false), filtro);
 
 		if(filtro.getPaginacaoVO()!=null) {
 			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
@@ -395,7 +395,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" COUNT(mffc.cota.id) ");
-		Query query = queryConsultaMFFNfeParameters(queryConsultaMFFNfe(filtro, hql, true, true, false), filtro);
+		Query query = queryConsultaCotaMFFNfeParameters(queryConsultaCotaMFFNfe(filtro, hql, true, true, false), filtro);
 
 		return (long) query.list().size();
 	}
@@ -693,7 +693,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return hql;
 	}
 
-	private StringBuilder queryConsultaMFFNfe(FiltroNFeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
+	private StringBuilder queryConsultaCotaMFFNfe(FiltroNFeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
 
 		hql.append(" FROM MovimentoFechamentoFiscalCota mffc ")
 		.append(" JOIN mffc.tipoMovimento tipoMovimento ")
@@ -775,7 +775,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return hql;
 	}
 
-	public Query queryConsultaMFFNfeParameters(StringBuilder hql, FiltroNFeDTO filtro) {
+	public Query queryConsultaCotaMFFNfeParameters(StringBuilder hql, FiltroNFeDTO filtro) {
 
 
 		// Realizar a consulta e converter ao objeto cota exemplares.
@@ -838,10 +838,144 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}
 
 	@Override
-	public List<MovimentoFechamentoFiscal> obterMovimentosFechamentosFiscais(
-			FiltroNFeDTO filtro) {
-		// TODO Auto-generated method stub
-		return null;
+	@SuppressWarnings("unchecked")
+	public List<FornecedorExemplaresDTO> consultaFornecedorExemplaresMFFSumarizados(FiltroNFeDTO filtro) {
+
+		// OBTER COTA EXEMPLARES SUMARIZADOS
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" mfff.fornecedor.id as idFornecedor, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, '') as nomeFornecedor,");
+		hql.append(" SUM(mfff.qtde) as exemplares ");
+
+		Query query = queryConsultaFornecedorMFFNfeParameters(queryConsultaFornecedorMFFNfe(filtro, hql, false, false, false), filtro);
+
+		if(filtro.getPaginacaoVO()!=null) {
+			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
+				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
+			}
+
+			if(filtro.getPaginacaoVO().getQtdResultadosPorPagina()!=null) {
+				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+			}
+		}
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(FornecedorExemplaresDTO.class));
+
+		return query.list();
+	}
+
+	@Override
+	public Long consultaFornecedorExemplaresMFFSumarizadosQtd(FiltroNFeDTO filtro) {
+
+		// OBTER COTA EXEMPLARES SUMARIZADOS
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" COUNT(mfff.fornecedor.id) ");
+		Query query = queryConsultaFornecedorMFFNfeParameters(queryConsultaFornecedorMFFNfe(filtro, hql, true, true, false), filtro);
+
+		return (long) query.list().size();
+	}
+	
+	/**
+	 * Obter os itens da nota com base nos movimentos de fechamento fiscal
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	@Override
+	public List<MovimentoFechamentoFiscal> obterMovimentosFechamentosFiscaisFornecedor(FiltroNFeDTO filtro) {
+		
+		// ITENS DA NOTA FISCAL
+		StringBuilder hql = new StringBuilder("SELECT mfff");
+		Query query = queryConsultaFornecedorMFFNfeParameters(queryConsultaFornecedorMFFNfe(filtro, hql, false, false, true), filtro);
+
+		return query.list();
+	}
+	
+	private StringBuilder queryConsultaFornecedorMFFNfe(FiltroNFeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
+
+		hql.append(" FROM MovimentoFechamentoFiscalFornecedor mfff ")
+		.append(" JOIN mfff.tipoMovimento tipoMovimento ")
+		.append(" JOIN mfff.fornecedor fornecedor ")
+		.append(" JOIN fornecedor.juridica pessoa ");
+
+		hql.append(" JOIN mfff.produtoEdicao produtoEdicao")
+		.append(" JOIN produtoEdicao.produto produto ")
+		.append(" JOIN produto.fornecedores fornecedor")
+		.append(" WHERE mfff.data BETWEEN :dataInicial AND :dataFinal ")
+		.append(" AND mfff.notaFiscalLiberadaEmissao = :true ")
+		.append(" AND mfff.notaFiscalDevolucaoSimbolicaEmitida = :false ");
+
+		// Tipo de Nota:		
+		if(filtro.getIdNaturezaOperacao() != null) {
+			hql.append(" AND mfff.tipoMovimento.id in (SELECT tm.id ");
+			hql.append("FROM NaturezaOperacao no ");
+			hql.append("JOIN no.tipoMovimento tm ");
+			hql.append("WHERE no.id in(:idNaturezaOperacao)) ");
+		}
+
+		// Data Emissão:	...		
+		if(filtro.getDataEmissao() != null) {
+			hql.append(" ");
+		}
+
+		if(filtro.getListIdFornecedor() != null) {
+			hql.append(" AND fornecedor.id in (:fornecedor) ");
+		}
+
+		if(!isGroup){
+			hql.append(" GROUP BY mfff.fornecedor.id ");
+		} else {
+			hql.append(" GROUP BY mfff ");
+		}
+
+		if(!isCount && !isPagination){
+			if(filtro.getPaginacaoVO()!=null && filtro.getPaginacaoVO().getSortOrder() != null && filtro.getPaginacaoVO().getSortColumn() != null) {
+				hql.append(" ORDER BY  ").append(filtro.getPaginacaoVO().getSortColumn()).append(" ").append(filtro.getPaginacaoVO().getSortOrder());
+			}
+		}
+
+		return hql;
+	}
+
+	public Query queryConsultaFornecedorMFFNfeParameters(StringBuilder hql, FiltroNFeDTO filtro) {
+
+		// Realizar a consulta e converter ao objeto cota exemplares.
+		Query query = this.getSession().createQuery(hql.toString());		
+
+		query.setParameter("true", true);
+		
+		query.setParameter("false", false);
+		
+		// Data Movimento:	...  Até   ...
+		if (filtro.getDataInicial() != null && filtro.getDataFinal() != null) {
+			query.setParameter("dataInicial", filtro.getDataInicial());
+			query.setParameter("dataFinal", filtro.getDataFinal());
+		}
+
+		// tipo da nota fiscal		
+		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao().longValue() > 0) {
+			query.setParameter("idNaturezaOperacao", filtro.getIdNaturezaOperacao());
+		}
+
+		// forncedor id		
+		if(filtro.getListIdFornecedor() !=null && !filtro.getListIdFornecedor().isEmpty()) {
+			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
+		}
+		// Data Emissão:	...		
+		/*if(filtro.getDataEmissao() != null) {
+
+		}*/
+
+		if(filtro.getIntervalorCotaInicial() != null && filtro.getIntervalorCotaFinal() != null) {
+			query.setParameter("numeroCotaInicial", filtro.getIntervalorCotaInicial());
+			query.setParameter("numeroCotaFinal", filtro.getIntervalorCotaFinal());
+		}
+
+		if(filtro.getListIdFornecedor() != null) {
+			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
+		}
+
+		return query;	
 	}
 
 }

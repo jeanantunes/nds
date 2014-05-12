@@ -48,10 +48,10 @@ var impressaoNfeController = $.extend(true, {
 		});
 		
 
-		this.initInputs();
-		this.initFlexiGrids();
-		this.initFiltroDatas();
-		
+		impressaoNfeController.initInputs();
+		impressaoNfeController.initFlexiGrids();
+		impressaoNfeController.initFiltroDatas();
+		impressaoNfeController.initDialog();
 		
 		$( "#msgBoxDataMovimentoInvalida", this.workspace ).dialog({
 			autoOpen: false,

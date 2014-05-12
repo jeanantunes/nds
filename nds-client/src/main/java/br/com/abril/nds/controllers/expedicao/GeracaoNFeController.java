@@ -190,12 +190,12 @@ public class GeracaoNFeController extends BaseController {
 			break;
 		}
 		
-		if(naturezaOperacao.getTipoDestinatario().getDescricao().equals("Fornecedor")){
+		if(naturezaOperacao.getTipoDestinatario().equals(TipoDestinatario.FORNECEDOR)) {
 			if (fornecedorExemplaresDTOs == null || fornecedorExemplaresDTOs.isEmpty()){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			}
 			result.use(FlexiGridJson.class).from(fornecedorExemplaresDTOs).page(page).total(totalRegistros.intValue()).serialize();			
-		}else{
+		} else {
 			if (cotaExemplaresDTOs == null || cotaExemplaresDTOs.isEmpty()){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			}

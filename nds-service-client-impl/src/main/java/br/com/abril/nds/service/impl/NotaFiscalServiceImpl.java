@@ -1980,14 +1980,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro) {
 		
 		LOGGER.info("obter informações dos forncedores sumarizados...");
-		return this.notaFiscalRepository.consultaFornecedorExemplarSumarizado(filtro);
+		return this.notaFiscalRepository.consultaFornecedorExemplaresMFFSumarizados(filtro);
 	}
 
 	@Override
 	@Transactional
 	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro) {
 		
-		return this.notaFiscalRepository.consultaFornecedorExemplaresSumarizadosQtd(filtro);
+		return this.notaFiscalRepository.consultaFornecedorExemplaresMFFSumarizadosQtd(filtro);
 	}
 
 	@Transactional

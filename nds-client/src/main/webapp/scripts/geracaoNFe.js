@@ -286,9 +286,9 @@ var geracaoNFeController = $.extend({
 			
 			for(var index in data.rows) {
 				
-				if(data.rows[index].cell["situacaoCadastro"] == 'SUSPENSO') {
+				if(data.rows[index].cell["situacaoCadastro"] && data.rows[index].cell["situacaoCadastro"] == 'SUSPENSO') {
 					data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_suspenso.gif" border="0" />';
-				} else if(data.rows[index].cell["situacaoCadastro"] == 'INATIVO') {
+				} else if(data.rows[index].cell["situacaoCadastro"] && data.rows[index].cell["situacaoCadastro"] == 'INATIVO') {
 				
 					data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_inativo.gif" border="0" />';
 				
