@@ -9,6 +9,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -23,6 +24,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 
 @Entity
@@ -58,6 +60,9 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 	
 	@Column(name = "QTDE")
 	private BigInteger qtde;
+	
+	@Embedded
+	private ValoresAplicados valoresAplicados;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_DESTINATARIO")
@@ -128,6 +133,14 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 		this.qtde = qtde;
 	}
 
+	public ValoresAplicados getValoresAplicados() {
+		return valoresAplicados;
+	}
+
+	public void setValoresAplicados(ValoresAplicados valoresAplicados) {
+		this.valoresAplicados = valoresAplicados;
+	}
+	
 	public TipoDestinatario getTipoDestinatario() {
 		return tipoDestinatario;
 	}

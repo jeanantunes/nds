@@ -43,6 +43,7 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
@@ -903,13 +904,52 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			if(mfff == null) {
 				
 				List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
-				OrigemItemMovFechamentoFiscalDevolucaoFornecedor oimffdv = new OrigemItemMovFechamentoFiscalDevolucaoFornecedor();
-				oimffdv.setMovimento(movimentoEstoque);
-				listaOrigemMovsFiscais.add(oimffdv);
+				OrigemItemMovFechamentoFiscalDevolucaoFornecedor oimffdf = new OrigemItemMovFechamentoFiscalDevolucaoFornecedor();
+				oimffdf.setMovimento(movimentoEstoque);
+				listaOrigemMovsFiscais.add(oimffdf);
+				
+				BigDecimal precoVenda = null;
+				BigDecimal precoComDesconto = null;
+				BigDecimal valorDesconto = null;
+				
+				if(movimentoEstoque != null && movimentoEstoque.getProdutoEdicao() != null) {
+					
+					precoVenda = movimentoEstoque.getProdutoEdicao().getPrecoVenda();
+					
+					if(movimentoEstoque.getProdutoEdicao().getOrigem().equals(Origem.MANUAL)) {
+						valorDesconto = movimentoEstoque.getProdutoEdicao().getDesconto();
+						if(valorDesconto == null 
+								&& movimentoEstoque.getProdutoEdicao().getProduto() != null) {
+							valorDesconto = movimentoEstoque.getProdutoEdicao().getProduto().getDesconto();
+						}
+								
+					} else {
+						
+						if(movimentoEstoque.getProdutoEdicao().getDescontoLogistica() != null) {
+							valorDesconto = movimentoEstoque.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto();
+							if(valorDesconto == null 
+									&& movimentoEstoque.getProdutoEdicao().getProduto() != null
+									&& movimentoEstoque.getProdutoEdicao().getProduto().getDescontoLogistica() != null) {
+								valorDesconto = movimentoEstoque.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto();
+							}
+						}
+						
+					}
+					
+					if(valorDesconto != null && precoVenda != null) {
+						precoComDesconto = precoVenda.multiply(valorDesconto).divide(BigDecimal.valueOf(100));
+					}
+					
+				}
+				
+				validarValoresAplicados(movimentoEstoque, precoVenda, precoComDesconto, valorDesconto);
+				
+				ValoresAplicados valoresAplicados = new ValoresAplicados(precoVenda, precoComDesconto, valorDesconto);
 				
 				mfff = new MovimentoFechamentoFiscalFornecedor();
 				mfff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
 				mfff.setQtde(contagem.getQtdNota());
+				mfff.setValoresAplicados(valoresAplicados);
 				mfff.setNotaFiscalLiberadaEmissao(true);
 				mfff.setData(distribuidorService.obterDataOperacaoDistribuidor());
 				mfff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.SAIDA));
@@ -918,7 +958,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 				mfff.setTipoDestinatario(TipoDestinatario.FORNECEDOR);
 				mfff.setNotaFiscalDevolucaoSimbolicaEmitida(false);
 				mfff.setDesobrigaNotaFiscalDevolucaoSimbolica(false);
-				oimffdv.setMovimentoFechamentoFiscal(mfff);
+				oimffdf.setMovimentoFechamentoFiscal(mfff);
 			} else {
 				
 				OrigemItemMovFechamentoFiscalDevolucaoFornecedor oimffdv = new OrigemItemMovFechamentoFiscalDevolucaoFornecedor();
@@ -928,7 +968,32 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 				mfff.setQtde(mfff.getQtde().add(movimentoEstoque.getQtde()));
 			}
 			
-			movimentoFechamentoFiscalRepository.adicionar(mfff);
+			movimentoFechamentoFiscalRepository.merge(mfff);
+		}
+	}
+
+	private void validarValoresAplicados(MovimentoEstoque movimentoEstoque,
+			BigDecimal precoVenda, BigDecimal precoComDesconto,
+			BigDecimal valorDesconto) {
+		if(precoVenda == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, 
+					String.format("Erro ao obter o preço de venda do produto: %s / %s"
+							, movimentoEstoque.getProdutoEdicao().getProduto().getCodigo()
+							, movimentoEstoque.getProdutoEdicao().getNumeroEdicao()));
+		}
+		
+		if(precoComDesconto == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, 
+					String.format("Erro ao obter o preço com desconto do produto: %s / %s"
+							, movimentoEstoque.getProdutoEdicao().getProduto().getCodigo()
+							, movimentoEstoque.getProdutoEdicao().getNumeroEdicao()));
+		}
+		
+		if(valorDesconto == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, 
+					String.format("Erro ao obter o valor do desconto do produto: %s / %s"
+							, movimentoEstoque.getProdutoEdicao().getProduto().getCodigo()
+							, movimentoEstoque.getProdutoEdicao().getNumeroEdicao()));
 		}
 	}
 	
