@@ -2028,7 +2028,7 @@ var ConferenciaEncalhe = $.extend(true, {
 						delay : 100,
 					});	
 					
-					//$("#sm", ConferenciaEncalhe.workspace).autocomplete("search", codSM);
+					$("#sm", ConferenciaEncalhe.workspace).autocomplete("search", codSM);
 					
 				}else{
 			    	
