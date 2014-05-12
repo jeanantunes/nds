@@ -492,7 +492,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 		TipoSegmentoProduto tipoSegmentoProduto = produto.getTipoSegmentoProduto();
         if ((tipoSegmentoProduto == null && input.getSegmento() != null) || 
-                (input.getSegmento() != null && !Objects.equal(
+                (input.getSegmento() != null && !input.getSegmento().trim().equals("") && !Objects.equal(
                         tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
