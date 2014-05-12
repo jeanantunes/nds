@@ -194,8 +194,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 								+ " de  " + simpleDateFormat.format(dataOriginal)
 								+ " para  " + simpleDateFormat.format(dataSugerida));
 				
-				 lancamento.setDataLancamentoDistribuidor(dataSugerida);
+				 
 				}
+				
+				lancamento.setDataLancamentoDistribuidor(dataSugerida);
 				
 			} catch (Exception e) {
 				return;
