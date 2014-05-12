@@ -51,6 +51,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.util.ComponentesPDV;
@@ -679,12 +680,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		final StringBuilder hql = new StringBuilder("select distinct l.produtoEdicao ");
 		hql.append(" from Lancamento l ")
+		   .append(" join l.estudo.estudoCotas estudoCotas ")
 		   .append(" where l.dataLancamentoDistribuidor = :data ")
 		   .append(" and l.status IN (:status) ")
+		   .append(" and estudoCotas.tipoEstudo != :juramentado ")
 		   .append(" order by l.produtoEdicao.produto.nome ");
 
 		final Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", data);
+		query.setParameter("juramentado", TipoEstudoCota.JURAMENTADO);
 		query.setParameterList("status",Arrays.asList(StatusLancamento.EXPEDIDO, StatusLancamento.BALANCEADO));
 		return query.list();
 	}
@@ -1942,8 +1946,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
                 + " from Lancamento lancamento "
                 + " join lancamento.produtoEdicao produtoEdicao "
                 + " join produtoEdicao.produto produto "
+                + " join lancamento.estudo.estudoCotas estudoCotas "
                 + " where lancamento.status in (:status) "
                 + " and lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor "
+                + " and estudoCotas.tipoEstudo != :juramentado "
                 + " group by produtoEdicao.id "
                 + " order by produto.nome ";
         
@@ -1952,6 +1958,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         query.setParameterList("status", Arrays.asList(StatusLancamento.BALANCEADO,StatusLancamento.EXPEDIDO));
         
         query.setParameter("dataLancamentoDistribuidor", dataLancamento);
+        query.setParameter("juramentado", TipoEstudoCota.JURAMENTADO);
         
         return query.list();
     }
