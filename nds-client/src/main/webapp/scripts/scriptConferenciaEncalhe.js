@@ -1603,8 +1603,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		var idProdutoEdicao = $("#idProdutoEdicaoHidden", ConferenciaEncalhe.workspace).val();
 		
-		var data = [{name: "idProdutoEdicao", value: idProdutoEdicao}, 
-		            {name: "quantidade", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()}];
+		var data = [{name: "produtoEdicaoId", value: idProdutoEdicao}, 
+		            {name: "qtdExemplares", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,
 			function(result){

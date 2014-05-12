@@ -916,11 +916,13 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append(" and cobranca.statusCobranca =:statusCobranca ");
 		hql.append(" and divida.status != :statusPendente ");
 		hql.append(" and cobranca.dataPagamento is null ");
+		hql.append(" and cobranca.oriundaNegociacaoAvulsa = :oriundaNegociacaoAvulsa ");
 
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
 		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
+		query.setParameter("oriundaNegociacaoAvulsa", false);
 		query.setParameter("statusPendente", StatusDivida.PENDENTE_INADIMPLENCIA);
 		
 		return query.list();

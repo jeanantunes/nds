@@ -75,9 +75,9 @@ import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
-import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoSegmentoProdutoService;
@@ -145,7 +145,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     private DistribuidorService distribuidorService;
     
     @Autowired
-    private ParciaisService parciaisService;
+    private FuroProdutoService furoProdutoService;
     
     @Autowired
     private LancamentoParcialRepository lancamentoParcialRepository;
@@ -278,13 +278,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 	
                     calendar.add(Calendar.DAY_OF_MONTH, 1);
                 }
-                
-                while (calendarioService.isFeriadoSemOperacao(calendar.getTime()) || 
-	                   calendarioService.isFeriadoMunicipalSemOperacao(calendar.getTime())){
-                	
-                    calendar.add(Calendar.DAY_OF_MONTH, 1);
-                }
-                
+
+                calendar.setTime(this.furoProdutoService.obterProximaDataDiaOperante(codigo,furoProdutoDTO.getIdProdutoEdicao(),calendar.getTime()));
+
                 furoProdutoDTO.setNovaData(
                         new SimpleDateFormat(furoProdutoDTO.DATE_PATTERN_PT_BR).format(calendar.getTime()));
             }

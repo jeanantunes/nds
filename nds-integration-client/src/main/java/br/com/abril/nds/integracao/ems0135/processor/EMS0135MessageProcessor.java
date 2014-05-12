@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
-import br.com.abril.nds.integracao.data.helper.LancamentoDataHelper;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
@@ -169,7 +168,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
             this.ndsiLoggerFactory.getLogger().logWarning(
                     message,
                     EventoExecucaoEnum.REGISTRO_JA_EXISTENTE,
-                    String.format("Nota Fiscal %1$s já cadastrada com serie %2$s e nota envio %3$s",
+                    String.format("Nota Fiscal Entrada %1$s já cadastrada. Série %2$s Nota Envio %3$s",
                             notafiscalEntrada.getNumero(), notafiscalEntrada.getSerie(),
                             notafiscalEntrada.getNumeroNotaEnvio()));
             return;
@@ -317,6 +316,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 	dataLancamento =lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId());
     			} catch (Exception e) {
     			}
+                
                 Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, produto.getPeb());
                 Lancamento lancamento = new Lancamento();
                 lancamento.setDataCriacao(dataAtual);
@@ -343,15 +343,43 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
             item.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
             
             Lancamento lancamento = obterLancamentoProdutoEdicao(produtoEdicao.getId());
+            
             if (null == lancamento) {
+            	
                 Calendar cal = Calendar.getInstance();
                 
                 cal.add(Calendar.DAY_OF_MONTH, 2);
-                item.setDataLancamento(cal.getTime());
+                Date dataLancamentoAux = cal.getTime();
                 
                 cal.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
-                item.setDataRecolhimento(cal.getTime());
+                Date dataRecolhimentoAux = cal.getTime();
                 
+                dataLancamentoAux =lancamentoService.obterDataLancamentoValido(dataLancamentoAux, produtoEdicao.getProduto().getFornecedor().getId());
+            	
+                Date dataAtual = new Date();
+                Date dataLancamento = inputItem.getDataLancamento();
+                int numeroLancamentoNovo = 1;
+                
+                dataLancamento = dataLancamento == null ? dataAtual : dataLancamento;
+                
+                lancamento = new Lancamento();
+                lancamento.setDataCriacao(dataAtual);
+                lancamento.setNumeroLancamento(numeroLancamentoNovo);
+                lancamento.setDataLancamentoPrevista(dataLancamentoAux);
+                lancamento.setDataLancamentoDistribuidor(dataLancamentoAux);
+                lancamento.setDataRecolhimentoPrevista(dataRecolhimentoAux);
+                lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoAux);
+                
+                lancamento.setProdutoEdicao(produtoEdicao);
+                lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+                lancamento.setDataStatus(dataAtual);
+                lancamento.setStatus(StatusLancamento.CONFIRMADO);
+                lancamento.setReparte(new BigInteger(inputItem.getQtdExemplar().toString()));
+                this.getSession().persist(lancamento);
+                
+
+                item.setDataLancamento(dataLancamentoAux);
+                item.setDataRecolhimento(dataRecolhimentoAux);
                 item.setTipoLancamento(TipoLancamento.LANCAMENTO);
                 
             } else {
