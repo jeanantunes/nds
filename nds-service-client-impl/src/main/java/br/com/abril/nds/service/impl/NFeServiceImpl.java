@@ -725,7 +725,7 @@ public class NFeServiceImpl implements NFeService {
 		
 		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
 			
-			return notaFiscalService.consultaCotaExemplareSumarizados(filtro, naturezaOperacao);
+			return notaFiscalService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);
 		} else {
 			
 			return this.listaRegimeEspecial(filtro, naturezaOperacao, distribuidor);	
@@ -735,7 +735,7 @@ public class NFeServiceImpl implements NFeService {
 	private List<CotaExemplaresDTO> listaRegimeEspecial(final FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao, Distribuidor distribuidor) {
 		List<CotaExemplaresDTO> cotasContribuinteEmitente = new ArrayList<CotaExemplaresDTO>();
 		
-		List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplareSumarizados(filtro, null);
+		List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplaresSumarizados(filtro, null);
 		
 		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
@@ -754,13 +754,13 @@ public class NFeServiceImpl implements NFeService {
 	@Override
 	@Transactional
 	public Long consultaCotaExemplareSumarizadoQtd(final FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
-		return notaFiscalService.consultaCotaExemplareSumarizadoQtd(filtro, naturezaOperacao);
+		return notaFiscalService.consultaCotaExemplaresSumarizadoQtd(filtro, naturezaOperacao);
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(final FiltroNFeDTO filtro) {
-		return notaFiscalService.consultaFornecedorExemplarSumarizado(filtro);
+		return notaFiscalService.consultaFornecedorExemplaresSumarizados(filtro, null);
 	}
 
 	@Override

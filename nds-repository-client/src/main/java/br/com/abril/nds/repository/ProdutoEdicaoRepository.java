@@ -121,10 +121,12 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 	ProdutoEdicao obterProdutoEdicaoPorSM(Long sm);
 	
-	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, 
-												  Integer numeroCota,
-												  Integer quantidadeRegistros,
-												  Map<Long, DataCEConferivelDTO> mapaDataCEConferivel);
+	List<ProdutoEdicao> obterProdutoPorCodigoNomeCodigoSM(
+			final Integer codigoSM,
+			final String codigoNomeProduto, 
+			final Integer numeroCota, 
+			final Integer quantidadeRegisttros,
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel );
 	
 	/**
 	 * Obtém uma lista de produtos edição de acordo com o parâmetro iformado.

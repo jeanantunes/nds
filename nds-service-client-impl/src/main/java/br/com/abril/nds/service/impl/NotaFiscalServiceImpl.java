@@ -1918,23 +1918,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Override
 	@Transactional
-	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
+	public List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
 
-		LOGGER.info("obter informações da cota sumarizadas...");
-
-		if (filtro.getDataInicial() == null || filtro.getDataFinal() == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "O intervalo de datas não pode ser nula!");
-		}
-
+		validarFiltrosNFe(filtro);
 		
-		List<TipoMovimento> itensMovimentosFiscais = new ArrayList<>();
-		if(naturezaOperacao != null) {
-			for(TipoMovimento tm : naturezaOperacao.getTipoMovimento()) {
-				if(tm instanceof TipoMovimentoFiscal) {
-					itensMovimentosFiscais.add(tm);
-				}
-			}
-		}
+		List<TipoMovimento> itensMovimentosFiscais = obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
 		
 		if(itensMovimentosFiscais.size() > 0) {
 			
@@ -1947,16 +1935,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Override
 	@Transactional
-	public Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
+	public Long consultaCotaExemplaresSumarizadoQtd(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
 		
-		List<TipoMovimento> itensMovimentosFiscais = new ArrayList<>();
-		if(naturezaOperacao != null) {
-			for(TipoMovimento tm : naturezaOperacao.getTipoMovimento()) {
-				if(tm instanceof TipoMovimentoFiscal) {
-					itensMovimentosFiscais.add(tm);
-				}
-			}
-		}
+		validarFiltrosNFe(filtro);
+		
+		List<TipoMovimento> itensMovimentosFiscais = obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
 		
 		if(itensMovimentosFiscais.size() > 0) {
 			
@@ -1977,10 +1960,20 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Override
 	@Transactional
-	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro) {
+	public List<FornecedorExemplaresDTO> consultaFornecedorExemplaresSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
 		
-		LOGGER.info("obter informações dos forncedores sumarizados...");
-		return this.notaFiscalRepository.consultaFornecedorExemplaresMFFSumarizados(filtro);
+		validarFiltrosNFe(filtro);
+		
+		List<TipoMovimento> itensMovimentosFiscais = obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
+		
+		if(itensMovimentosFiscais.size() > 0) {
+			
+			return this.notaFiscalRepository.consultaFornecedorExemplaresMFFSumarizados(filtro);
+		} else {
+		
+			return this.notaFiscalRepository.consultaFornecedorExemplaresMESumarizados(filtro);
+		}
+		
 	}
 
 	@Override
@@ -2045,6 +2038,24 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		infCancElement.appendChild(xJustElement);
 
 		return doc;
+	}
+	
+	private List<TipoMovimento> obterMovimentosFiscaisNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
+		List<TipoMovimento> itensMovimentosFiscais = new ArrayList<>();
+		if(naturezaOperacao != null) {
+			for(TipoMovimento tm : naturezaOperacao.getTipoMovimento()) {
+				if(tm instanceof TipoMovimentoFiscal) {
+					itensMovimentosFiscais.add(tm);
+				}
+			}
+		}
+		return itensMovimentosFiscais;
+	}
+
+	private void validarFiltrosNFe(FiltroNFeDTO filtro) {
+		if (filtro.getDataInicial() == null || filtro.getDataFinal() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "O intervalo de datas não pode ser nula!");
+		}
 	}
 
 }
