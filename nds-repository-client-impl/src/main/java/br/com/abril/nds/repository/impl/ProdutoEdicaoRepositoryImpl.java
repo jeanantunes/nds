@@ -1750,7 +1750,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEdicao> obterProdutoPorCodigoNome(
+	public List<ProdutoEdicao> obterProdutoPorCodigoNomeCodigoSM(
+			final Integer codigoSM,
 			final String codigoNomeProduto, 
 			final Integer numeroCota, 
 			final Integer quantidadeRegisttros,
@@ -1766,22 +1767,36 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			.append(" inner join produto.fornecedores fornecedor  		")
 			.append(" inner join produtoEdicao.lancamentos lancamentos 	")
 			
-			.append(" where ")
+			.append(" where ");
+
+			hql.append(" cota.numeroCota = :numeroCota 				");
 			
-			.append(" (produto.nome like :nomeProduto 				")
-			.append(" or produto.codigo like :codigoProduto) 	and	")
-			.append(" cota.numeroCota = :numeroCota 				");
+			if(codigoNomeProduto!=null && !codigoNomeProduto.trim().isEmpty()) {
+				hql.append(" and ( produto.nome like :nomeProduto 	 ");
+				hql.append(" or produto.codigo like :codigoProduto ) ");
+			}
 			
-			 carregarHQLParametrosFornecedorDatasEncalhe(hql, null, mapaDataCEConferivel);
+			if(codigoSM != null) {
+				hql.append(" and ce.sequencia = :codigoSM ");
+			}
+			
+			carregarHQLParametrosFornecedorDatasEncalhe(hql, null, mapaDataCEConferivel);
 		
 			hql.append(" group by produtoEdicao.id			")
 			   .append(" order by produto.nome asc,			")
 			   .append(" produtoEdicao.numeroEdicao desc	");
 		
 		final Query query = this.getSession().createQuery(hql.toString());
+
+		if(codigoNomeProduto!=null && !codigoNomeProduto.trim().isEmpty()) {
+			query.setParameter("nomeProduto", "%"+codigoNomeProduto+"%" );
+			query.setParameter("codigoProduto", "%"+codigoNomeProduto+"%" );
+		}
+
+		if(codigoSM != null) {
+			query.setParameter("codigoSM", codigoSM);	
+		}
 		
-		query.setParameter("nomeProduto", "%"+codigoNomeProduto+"%" );
-		query.setParameter("codigoProduto", "%"+codigoNomeProduto+"%" );
 		query.setParameter("numeroCota", numeroCota);
 		
 		carregarHQLParametrosFornecedorDatasEncalhe(null, query, mapaDataCEConferivel);

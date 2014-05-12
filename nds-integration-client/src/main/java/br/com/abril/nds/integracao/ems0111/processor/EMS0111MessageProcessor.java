@@ -104,11 +104,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		
 		
 		// Verificação de alteração do Preço Previsto para o ProdutoEdiçao:
-		final BigDecimal precoPrevistoAtual = this.tratarValorNulo(produtoEdicao.getPrecoPrevisto());
-		final BigDecimal precoPrevistoCorrente = this.tratarValorNulo(input.getPrecoPrevisto());
+		BigDecimal precoPrevistoAtual = this.tratarValorNulo(produtoEdicao.getPrecoPrevisto());
+		BigDecimal precoPrevistoCorrente = this.tratarValorNulo(input.getPrecoPrevisto());
 		
-		precoPrevistoAtual.setScale(4,RoundingMode.DOWN);
-		precoPrevistoCorrente.setScale(4,RoundingMode.DOWN);
+		precoPrevistoAtual = precoPrevistoAtual.setScale(4,RoundingMode.HALF_UP);
+		precoPrevistoCorrente = precoPrevistoCorrente.setScale(4,RoundingMode.HALF_UP);
 		
 		if (precoPrevistoAtual.compareTo(precoPrevistoCorrente)!=0) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
@@ -194,8 +194,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 								+ " de  " + simpleDateFormat.format(dataOriginal)
 								+ " para  " + simpleDateFormat.format(dataSugerida));
 				
-				 lancamento.setDataLancamentoDistribuidor(dataSugerida);
+				 
 				}
+				
+				lancamento.setDataLancamentoDistribuidor(dataSugerida);
 				
 			} catch (Exception e) {
 				return;
