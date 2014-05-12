@@ -122,6 +122,7 @@ import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
@@ -256,6 +257,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 	
 	private final int PRIMEIRO_DIA_RECOLHIMENTO = 1;
 	
@@ -1500,95 +1504,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		produtoEdicaoDTO.setDesconto(precoVenda.subtract(precoComDesconto));
 		produtoEdicaoDTO.setPrecoComDesconto(precoComDesconto);
 		produtoEdicaoDTO.setPrecoVenda(precoVenda);
-	}
-	
-	@Override
-	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws EncalheRecolhimentoParcialException {
-	    
-		final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-		
-		if (numeroCota == null){
-			
-            throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
-		}
-		
-		if (codigoDeBarras == null || codigoDeBarras.trim().isEmpty()){
-			
-            throw new ValidacaoException(TipoMensagem.WARNING, "Código de Barras é obrigatório.");
-		}
-		
-		final List<ProdutoEdicao> produtosEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoDeBarras);
-		
-		List<ProdutoEdicaoDTO> produtosEdicaoDTO = null;
-		
-		if (produtosEdicao != null && !produtosEdicao.isEmpty()) {
-
-			produtosEdicaoDTO = new ArrayList<>();
-			
-			final ProdutoEdicaoDTO produtoEdicaoDTO = new ProdutoEdicaoDTO();
-			
-		    final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-		    
-		    for (final ProdutoEdicao produtoEdicao : produtosEdicao) {
-		    
-		    	ChamadaEncalheCota chamadaEncalheCota = null;
-		    	
-		    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota(), dataOperacao)){
-		    		chamadaEncalheCota = this.validarChamadaEncalheOperacaoDiferenciada(cota, produtoEdicao);
-		    	} else {
-					chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
-		    	}
-				
-				if( chamadaEncalheCota != null) {
-					
-					final ChamadaEncalhe chamadaEncalhe = chamadaEncalheCota.getChamadaEncalhe();
-					
-					produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
-					produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
-					produtoEdicaoDTO.setReparte(chamadaEncalheCota.getQtdePrevista());
-				}
-				else{
-					
-					atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(produtoEdicao, produtoEdicaoDTO);
-				}
-				
-				produtoEdicaoDTO.setId(produtoEdicao.getId());
-				produtoEdicaoDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
-				produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-				final BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-	            produtoEdicaoDTO.setPrecoVenda(precoVenda);
-	
-				carregarValoresAplicadosProdutoEdicao(produtoEdicaoDTO, numeroCota, produtoEdicao.getId(), dataOperacao);
-				
-				produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
-				produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
-				produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
-				produtoEdicaoDTO.setPeso(produtoEdicao.getPeso());
-				produtoEdicaoDTO.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
-				produtoEdicaoDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
-				produtoEdicaoDTO.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
-				produtoEdicaoDTO.setExpectativaVenda(produtoEdicao.getExpectativaVenda());
-				produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
-				produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
-				
-				produtoEdicaoDTO.setNomeFornecedor(this.obterNomeFornecedor(produtoEdicao));
-				produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
-				produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
-				
-				produtoEdicaoDTO.setSequenciaMatriz(
-					produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(
-						produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor(),
-							numeroCota));
-				
-				produtoEdicaoDTO.setContagemPacote( GrupoProduto.CROMO.equals(produtoEdicao.getGrupoProduto()) ? true : false );
-
-				
-				produtosEdicaoDTO.add(produtoEdicaoDTO);
-		    }
-		}
-		
-		return produtosEdicaoDTO;
 	}
 
 	private String obterEditor(final ProdutoEdicao produtoEdicao) {
@@ -3254,4 +3169,44 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras);
 	}
+	
+	@Transactional
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoSM(
+			final Integer numeroCota, 
+			final Integer codigoSM,
+			final Integer quantidadeRegistros,
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO) {
+		  
+        final List<ProdutoEdicao> listaProdutoEdicao = 
+        		produtoEdicaoRepository.obterProdutoPorCodigoNomeCodigoSM(codigoSM,
+                null, numeroCota, quantidadeRegistros, mapaDataCEConferivelDTO);
+		
+		final List<ItemAutoComplete> listaItem = new ArrayList<ItemAutoComplete>();
+		
+		if (listaProdutoEdicao != null && !listaProdutoEdicao.isEmpty()){
+			
+			for (final ProdutoEdicao produtoEdicao : listaProdutoEdicao){
+				
+//				listaItem.add(
+//						new ItemAutoComplete(
+//								produtoEdicao.getProduto().getCodigo() + " - " + produtoEdicao.getProduto().getNome() + " - " + produtoEdicao.getNumeroEdicao(), 
+//								null,
+//								produtoEdicao.getId()));
+
+				
+				listaItem.add(
+						new ItemAutoComplete(codigoSM.toString(),
+								produtoEdicao.getProduto().getCodigo() + " - " + produtoEdicao.getProduto().getNome() + " - " + produtoEdicao.getNumeroEdicao(), 
+								produtoEdicao.getId()));
+
+				
+			}
+			
+			
+		}
+		
+		return listaItem;
+		
+	}
+
 }

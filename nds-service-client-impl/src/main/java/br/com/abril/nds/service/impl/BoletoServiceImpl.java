@@ -2393,9 +2393,21 @@ public class BoletoServiceImpl implements BoletoService {
         
         final Fornecedor fornecedor = fornecedorRepository.buscarPorId(bbDTO.getIdFornecedor());
         
-        final Banco banco = bancoRepository.obterBanco(bbDTO.getNumeroBanco(),
-                bbDTO.getNumeroAgencia(),
-                Long.parseLong((bbDTO.getNumeroConta().toString() + bbDTO.getDigitoVerificadorConta())));
+        String numeroBanco = bbDTO.getNumeroBanco();
+        Long numeroAgencia = bbDTO.getNumeroAgencia();
+        
+        String strContaComDV = (bbDTO.getNumeroConta()==null?"":bbDTO.getNumeroConta()) +""+
+        (bbDTO.getDigitoVerificadorConta()==null?"":bbDTO.getDigitoVerificadorConta());
+        
+        Banco banco = null;
+        
+        if( numeroBanco!=null && !numeroBanco.isEmpty() &&
+        	numeroAgencia!=null &&
+        	strContaComDV!=null && !strContaComDV.isEmpty()) {
+
+        	banco = bancoRepository.obterBanco(numeroBanco, numeroAgencia, Long.parseLong(strContaComDV));
+        	
+        }
         
         final Usuario usuario = usuarioService.getUsuarioLogado();
         
