@@ -327,6 +327,14 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		
 		validarTipoDesconto(message, input.getTipoDesconto(), input.getCodigoPublicacao());
 		
+		if(input.getTipoDesconto()==null){
+			
+            this.ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.ERRO_INFRA,
+					"Tipo Desconto Nulo");
+			 
+		}
 		
 		int tipoDescontoInt = Integer.parseInt( input.getTipoDesconto());
 
@@ -334,6 +342,15 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		        this.descontoLogisticaService.obterDescontoLogisticaVigente(tipoDescontoInt,
 		                                                                    fornecedor.getId(),
 		                                                                    input.getDataGeracaoArquivo());
+		
+        if(descontoLogistica==null){
+			
+            this.ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.ERRO_INFRA,
+					"Desconto Logistica não encontrado. "+tipoDescontoInt);
+			 
+		}
 
 		
 		produto.setOrigem(Origem.INTERFACE);
@@ -454,7 +471,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		}
 		
 		if (!Strings.isNullOrEmpty(input.getCodigoICD()) 
-		        && !Objects.equal(produto.getCodigoICD(), input.getCodigoICD())) {
+		        && (produto.getCodigoICD()== null ||!Objects.equal(produto.getCodigoICD(), input.getCodigoICD()))) {
 		    produto.setCodigoICD(new Integer(input.getCodigoICD()).toString());
 		    this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -462,15 +479,20 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		}
 		
 		TipoSegmentoProduto tipoSegmentoProduto = produto.getTipoSegmentoProduto();
+		String segmento ="";
+		
+		if(tipoSegmentoProduto!=null){
+			segmento = tipoSegmentoProduto.getDescricao();
+		}
 		
 		if (input.getSegmento() != null && !input.getSegmento().trim().equals("") 
-				&& !Objects.equal(tipoSegmentoProduto.getDescricao(), input.getSegmento())) {
+				&& !Objects.equal(segmento, input.getSegmento())) {
 		    
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
                     "Atualização da Segmentação"
-                    + " de "+ produto.getTipoSegmentoProduto()
+                    + " de "+ segmento
                     +" para " + input.getSegmento()
                     +" Produto " + produto.getCodigo()
                     );
