@@ -2,7 +2,6 @@ package br.com.abril.nds.model.fiscal;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -10,7 +9,6 @@ import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 
 @Entity
@@ -41,9 +39,6 @@ public class MovimentoFechamentoFiscalCota extends MovimentoFechamentoFiscal {
 	@JoinColumn(name = "CHAMADA_ENCALHE_COTA_ID")
 	private ChamadaEncalheCota chamadaEncalheCota;
 	
-	@Embedded
-	private ValoresAplicados valoresAplicados;
-
 	public boolean isNotaFiscalVendaEmitida() {
 		return notaFiscalVendaEmitida;
 	}
@@ -82,14 +77,6 @@ public class MovimentoFechamentoFiscalCota extends MovimentoFechamentoFiscal {
 
 	public void setChamadaEncalheCota(ChamadaEncalheCota chamadaEncalheCota) {
 		this.chamadaEncalheCota = chamadaEncalheCota;
-	}
-
-	public ValoresAplicados getValoresAplicados() {
-		return valoresAplicados;
-	}
-
-	public void setValoresAplicados(ValoresAplicados valoresAplicados) {
-		this.valoresAplicados = valoresAplicados;
 	}
 
 }
