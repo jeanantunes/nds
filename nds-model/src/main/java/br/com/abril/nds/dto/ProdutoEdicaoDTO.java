@@ -937,7 +937,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	}
 
 	public void setLancamento(String lancamento) {
-		this.lancamento = lancamento.toUpperCase().replace("Ç", "C");
+		this.lancamento = lancamento;
 	}
 
 	public String getDtLancPrevisto() {
