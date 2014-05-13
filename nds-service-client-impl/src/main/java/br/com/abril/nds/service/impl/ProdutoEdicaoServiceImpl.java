@@ -1625,11 +1625,17 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             return;
         }
         
-        if(produto.getDescontoLogistica()==null) {
+        if (Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()==null) {
             throw new ValidacaoException(TipoMensagem.WARNING, "O produto inserido não possui desconto cadastrado.");
         }
+
+        if (produto.getDesconto() == null) {
+        	throw new ValidacaoException(TipoMensagem.WARNING, "O produto inserido não possui desconto cadastrado.");
+        }
         
-        dto.setDesconto(produto.getDescontoLogistica().getPercentualDesconto());
+        dto.setDesconto(Origem.INTERFACE.equals(produto.getOrigem()) ? 
+        		produto.getDescontoLogistica().getPercentualDesconto() : 
+        		produto.getDesconto());
         
         if(dto.getPacotePadrao()==null) {
             dto.setPacotePadrao(produto.getPacotePadrao());

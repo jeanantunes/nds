@@ -694,36 +694,35 @@ fieldset {
 
 	<!-- ADICIONAR EM LOTE -->
 
-	<div id="dialog-lote" title="Adicionar em Lote" style="display: none;">
-		<fieldset style="width: 300px;">
-			<legend>Adicionar em Lote</legend>
-			<table width="200" border="0" cellspacing="2" cellpadding="2">
-				<tr>
-					<p>Utilize o modelo de exemplo para fazer upload para o
-						sistema:</p>
-					<p>
-						<span class="bt_novos" title="Download Modelo"> <a
-							href="${pageContext.request.contextPath}/modelos/modelo_edicao.xls">
-								<img align="center" src="images/ico_excel.png" hspace="5"
-								border="0" />Modelo de exemplo
-						</a>
-						</span>
-					</p>
-					<br>
-					<br>
-					<br>
-					<hr>
-					<p>Selecione um arquivo para upload:</p>
-					<form name="arquivoUpLoadEdicao" id="arquivoUpLoadEdicao"
-						method="post" enctype="multipart/form-data">
-						<input type="file" id="xls" name="xls" />
-					</form>
-				</tr>
-			</table>
-			<div id="example2grid" class="dataTable" style="background: #FFF;"></div>
-		</fieldset>
-	</div>
-
+	<form name="arquivoUpLoadEdicao" id="arquivoUpLoadEdicao"
+		method="post" enctype="multipart/form-data">
+		<div id="dialog-lote" title="Adicionar em Lote" style="display: none;">
+			<fieldset style="width: 300px;">
+				<legend>Adicionar em Lote</legend>
+				<table width="200" border="0" cellspacing="2" cellpadding="2">
+					<tr>
+						<p>Utilize o modelo de exemplo para fazer upload para o
+							sistema:</p>
+						<p>
+							<span class="bt_novos" title="Download Modelo"> <a
+								href="${pageContext.request.contextPath}/modelos/modelo_edicao.xls">
+									<img align="center" src="images/ico_excel.png" hspace="5"
+									border="0" />Modelo de exemplo
+							</a>
+							</span>
+						</p>
+						<br>
+						<br>
+						<br>
+						<hr>
+						<p>Selecione um arquivo para upload:</p>
+							<input type="file" id="xls" name="xls" />
+					</tr>
+				</table>
+				<div id="example2grid" class="dataTable" style="background: #FFF;"></div>
+			</fieldset>
+		</div>
+	</form>
 </body>
 
 </html>

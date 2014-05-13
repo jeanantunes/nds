@@ -35,6 +35,8 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
@@ -347,7 +349,18 @@ public class ProdutoEdicao implements Serializable {
 
 	public void setCodigoDeBarras(String codigoDeBarras) {
 		
-		if (codigoDeBarras != null && !"".equals(codigoDeBarras) && new BigInteger(codigoDeBarras).compareTo(BigInteger.ZERO) > 0){
+		BigInteger codigo = BigInteger.ZERO;
+		
+		try {
+		
+			codigo = new BigInteger(codigoDeBarras);
+		
+		} catch(NumberFormatException e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido!");
+		}
+		
+		if (codigoDeBarras != null && !"".equals(codigoDeBarras) && codigo.compareTo(BigInteger.ZERO) > 0){
 			
 			//evita que sejam gravados zeros na frente do código de barras, vide trac 677
 			if (codigoDeBarras.startsWith("0")){
