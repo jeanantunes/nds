@@ -1,5 +1,4 @@
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/jquery.multiselect.css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.br.js"></script>
@@ -47,7 +46,7 @@
    						<input type="radio" name="tipoDestinatario" id="tipoDestinatario${status.index}" value="${tipoDestinatario}" <c:if test="${status.index == 0}">checked="checked"</c:if> onchange="impressaoNfeController.verificarTipoDestinatario(this);" /> ${tipoDestinatario.descricao}
    					</c:forEach>
 				</td>
-   				<td colspan=2>
+   				<td colspan="2">
    					<select id="impressaoNfe-filtro-selectFornecedoresDestinatarios" name="selectFornecedores" multiple="multiple" style="width:300px">
 						<c:forEach items="${fornecedoresDestinatarios}" var="fornecedor">
 							<option value="${fornecedor.key }">${fornecedor.value }</option>
@@ -129,19 +128,12 @@
 				</td>
 				
 				<td>Fornecedor:</td>
-				<td><a href="javascript:void(0)" id="selFornecedor">Clique e Selecione o Fornecedor</a>
-					<div id="menuFornecedores" class="menu_fornecedor" style="display: none;">
-						<span class="bt_sellAll"> <input type="checkbox" name="selecionarTodosFornecedores"
-							id="selecionarTodosFornecedores" onclick="impressaoNfeController.checkTodosFornecedores();" style="float: left;" />
-							<label for="sel">Selecionar Todos</label>
-						</span> <br clear="all" />
-						<c:forEach items="${fornecedores}" var="fornecedor">
-							<input id="fornecedor_${fornecedor.key}" value="${fornecedor.key}" name="idsFornecedores"
-								onclick="verifyCheck($('#checkBoxSelecionarTodosFornecedores'));" type="checkbox" />
-							<label for="fornecedor_${fornecedor.key}">${fornecedor.value}</label>
-							<br clear="all" />
+				<td colspan="2">
+					<select id="impressaoNfe-filtro-selectFornecedores" name="selectFornecedor" multiple="multiple" style="width:150px">
+						<c:forEach items="${fornecedores}" var="fornecedores">
+							<option value="${fornecedores.key }">${fornecedores.value }</option>
 						</c:forEach>
-					</div>
+					</select>
 				</td>
 			</tr>
 			<tr>
