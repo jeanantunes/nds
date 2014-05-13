@@ -96,6 +96,8 @@ public interface DiferencaEstoqueService {
 			   Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 			   Long idUsuario,Boolean isDiferencaNova);
 	
+	Diferenca atualizar(Diferenca diferenca);
+	
 	/**
 	 * Cancela as diferenças obtidas de acordo com o filtro informado.
 	 * 

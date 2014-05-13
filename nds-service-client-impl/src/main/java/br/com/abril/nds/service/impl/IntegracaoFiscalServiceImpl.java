@@ -11,11 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ExtratoEdicaoArquivoP7DTO;
-import br.com.abril.nds.dto.IntegracaoFiscalDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaIntegracaoFiscal;
 import br.com.abril.nds.ftfutil.FTFParser;
 import br.com.abril.nds.repository.IntegracaoFiscalRepository;
 import br.com.abril.nds.service.IntegracaoFiscalService;
@@ -28,21 +25,6 @@ public class IntegracaoFiscalServiceImpl implements IntegracaoFiscalService {
 	@Autowired
 	private IntegracaoFiscalRepository integracaoFiscalRepository;
 	
-	@Override
-	@Transactional
-	public List<IntegracaoFiscalDTO> pesquisarPorMesAno(FiltroConsultaIntegracaoFiscal filtro) {
-		return  integracaoFiscalRepository.pesquisarPorMesAno(filtro);
-	}
-
-	@Override
-	@Transactional
-	public List<IntegracaoFiscalDTO> obterFixacoesRepartePorProduto(
-			FiltroConsultaIntegracaoFiscal filtro) {
-		
-		integracaoFiscalRepository.obterFixacoesRepartePorProduto(filtro);
-		return null;
-	}
-
 	@Override
 	public File gerarArquivoP7(Date time) {
 		
@@ -76,6 +58,12 @@ public class IntegracaoFiscalServiceImpl implements IntegracaoFiscalService {
 		
 		return p7dto;
 	}
+
+	@Override
+	public List<ExtratoEdicaoArquivoP7DTO> inventarioP7(Date time) {
+		return integracaoFiscalRepository.inventarioP7(time);
+	}
+
 }
 
 
