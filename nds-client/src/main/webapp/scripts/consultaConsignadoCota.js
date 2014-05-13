@@ -94,19 +94,25 @@ var consultaConsignadoCotaController = $.extend(true, {
 				}, {
 					display : 'Edição',
 					name : 'numeroEdicao',
-					width : 50,
+					width : 40,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Fornecedor',
 					name : 'nomeFornecedor',
-					width : 130,
+					width : 120,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Dt. Lancto',
 					name : 'dataLancamento',
-					width : 80,
+					width : 60,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Dt. Rec.',
+					name : 'dataRecolhimento',
+					width : 60,
 					sortable : true,
 					align : 'center'
 				},{
@@ -124,13 +130,13 @@ var consultaConsignadoCotaController = $.extend(true, {
 				},{
 					display : 'Reparte',
 					name : 'reparte',
-					width : 70,
+					width : 60,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Total $',
 					name : 'total',
-					width : 70,
+					width : 50,
 					sortable : true,
 					align : 'right'
 				}, {
