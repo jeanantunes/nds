@@ -255,14 +255,8 @@ public class EmissaoCEController extends BaseController {
 			filtro.setQtdMaximaProdutosComTotalizacao(20);
 		}
 
-		DadosImpressaoEmissaoChamadaEncalhe dados = (DadosImpressaoEmissaoChamadaEncalhe) session.getAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE);
 		
-		if (dados == null){
-
-		    dados = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
-		    
-		    session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, dados);
-		}    
+		DadosImpressaoEmissaoChamadaEncalhe dados = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
 		
 		return dados;
 	}
