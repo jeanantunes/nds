@@ -801,12 +801,26 @@ public class DiferencaEstoqueController extends BaseController {
         if(listaDiferencas!= null){
             
             for(final Diferenca df : listaDiferencas){
-                
+            	
                 if(df.getId().equals(idDiferenca)){
+                	
                     df.setQtde(qntDiferenca);
                     df.setTipoEstoque(diferencaEditavel.getTipoEstoque());
                     df.setTipoDirecionamento(diferencaEditavel.getTipoDirecionamento());
                     df.setValorTotalDiferenca(valorTotalDiferenca);
+                    
+                    Diferenca diferencaCadastrada = this.diferencaEstoqueService.obterDiferenca(df.getId());
+
+                    if (diferencaCadastrada != null) {
+
+                    	diferencaCadastrada.setQtde(qntDiferenca);
+                    	diferencaCadastrada.setTipoEstoque(diferencaEditavel.getTipoEstoque());
+                    	diferencaCadastrada.setTipoDirecionamento(diferencaEditavel.getTipoDirecionamento());
+                    	diferencaCadastrada.setValorTotalDiferenca(valorTotalDiferenca);
+
+                    	this.diferencaEstoqueService.atualizar(diferencaCadastrada);
+                    }
+                    
                     break;
                 }
             }
