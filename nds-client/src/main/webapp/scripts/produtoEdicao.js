@@ -1458,7 +1458,8 @@ var produtoEdicaoController =$.extend(true,  {
 				"Cancelar" : function() {
 					$(this).dialog("close");
 				}
-			}
+			},
+			form: $("#dialog-lote", this.workspace).parents("form")
 		});
 
 	},
