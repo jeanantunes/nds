@@ -1,15 +1,19 @@
-<%@ page contentType="text/html" pageEncoding="UTF-8" %>  
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
+
 
 <script>
 
 var month,year;
 var dateInventario;
+
 $(function(){
 	$( "#datepickerMesAno").datepicker({
 		changeMonth: true,
         changeYear: true,
 		showOn: "button",
 		dateFormat: 'MM/yy',
+		monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
 		buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 		buttonImageOnly: true,
 		onClose: function(dateText, inst) { 
@@ -19,6 +23,9 @@ $(function(){
 	        
 	        $("#mesInput").val(month);
 	        $("#anoInput").val(year);
+	        $("#mesInputXLS").val(month);
+	        $("#anoInputXLS").val(year);
+	        
 	        $(this).datepicker('setDate', dateInventario);
 	    },
 	    beforeShow: function() {
@@ -54,6 +61,18 @@ function submitForm(f){
 }
 
 </script>
+ 
+ <!-- 
+ <script language="javascript" type="text/javascript">
+ 
+ $(function(){
+	 integracaoP7Controller.init();
+ });
+ 
+ </script>
+  -->
+ 
+ 
 <div>
 
 <style type="text/css">
@@ -81,6 +100,12 @@ function submitForm(f){
 				 <input type="hidden" name="mes" id="mesInput" value=""/>
 				 <input type="hidden" name="ano" id="anoInput" value=""/>
 				</form>
+				
+				<form method="POST" action="${pageContext.request.contextPath}/financeiro/integracaoFiscalP7/exportarXLS" id="formInventarioXLS">
+				 <input type="hidden" name="mes" id="mesInputXLS" value=""/>
+				 <input type="hidden" name="ano" id="anoInputXLS" value=""/>
+				</form>
+				
 			 
 		 	</td>
 		   	        
@@ -89,11 +114,17 @@ function submitForm(f){
 		<tr>
             <td>
             	<span class="bt_novos" title="Gerar Arquivo">
-					<a href="javascript:submitForm('#formInventario');">
+					<a href="javascript:submitForm('#formInventario');" rel="tipsy" title="Arquivo .TXT">
 						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Arquivo
 					</a>
-				</span>  
+				</span>
+				<span class="bt_arq" id="gerarAquivoP7XLS">
+				<a href="javascript:submitForm('#formInventarioXLS');" rel="tipsy" title="Arquivo .XLS">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					Arquivo
+				</a>
+			</span>  
             </td>
 		</tr>
             
