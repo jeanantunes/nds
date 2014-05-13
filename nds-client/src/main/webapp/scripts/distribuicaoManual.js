@@ -135,6 +135,10 @@ var distribuicaoManual = $.extend(true, {
 						usuarioNaoSupervisorCallback: function(){
 							distribuicaoManual.isSolicitarSenhaReparte = true;
 							distribuicaoManual.limparLinha(index);
+							$("#row"+ (index+1), distribuicaoManual.workspace).remove();
+							$("#reparteGrid"+ index, distribuicaoManual.workspace).css("background-color", "#FFFFFF");
+							$("#reparteGrid"+ index, distribuicaoManual.workspace).val('0');
+							$("#percEstoqueGrid"+ index, distribuicaoManual.workspace).html('0');
 		        		}
 	    			}
 	            });
@@ -253,17 +257,18 @@ var distribuicaoManual = $.extend(true, {
 
 									var message = 'Cota SUSPENSA. Deseja incluir a cota? ';
 									
+									$('#row'+ (index + 1), distribuicaoManual.workspace).append(
+											distribuicaoManual.hiddenIdCota.replace(/#valor/g, result.idCota).replace(/#index/g, index));
+									$('#row'+ (index + 1), distribuicaoManual.workspace).append(
+											distribuicaoManual.hiddenStatusCota.replace(/#valor/g, result.status).replace(/#index/g, index));
+									$('#nomeCotaGrid'+ index, distribuicaoManual.workspace).val(result.nomePessoa);
+									$('#reparteGrid'+ index, distribuicaoManual.workspace).focus();
+									
 									usuarioController.supervisor.verificarRoleSupervisao({
 						            	optionalDialogMessage: message,
 						            	callbacks: {
 						    				usuarioSupervisorCallback: function() {
 						    					
-						    					$('#row'+ (index + 1), distribuicaoManual.workspace).append(
-														distribuicaoManual.hiddenIdCota.replace(/#valor/g, result.idCota).replace(/#index/g, index));
-												$('#row'+ (index + 1), distribuicaoManual.workspace).append(
-														distribuicaoManual.hiddenStatusCota.replace(/#valor/g, result.status).replace(/#index/g, index));
-												$('#nomeCotaGrid'+ index, distribuicaoManual.workspace).val(result.nomePessoa);
-												$('#reparteGrid'+ index, distribuicaoManual.workspace).focus();
 												distribuicaoManual.construirLinhaVazia();
 												distribuicaoManual.exibindoMensagem = false;
 												setTimeout(function() { $('#reparteGrid'+ index, distribuicaoManual.workspace).focus(); }, 100);
@@ -280,6 +285,8 @@ var distribuicaoManual = $.extend(true, {
 						            });
 									
 								}else{
+									
+									exibirMensagemDialog('WARNING', ['A cota de número '+ numeroCota +' está com status SUSPENSO.'], '');
 									
 									$('#row'+ (index + 1), distribuicaoManual.workspace).append(
 											distribuicaoManual.hiddenIdCota.replace(/#valor/g, result.idCota).replace(/#index/g, index));
