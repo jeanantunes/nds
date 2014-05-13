@@ -146,15 +146,15 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 this.getSession().persist(notafiscalEntrada);
                 
                 this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.SEM_DOMINIO,
-                        String.format("Nota Fiscal de Entrada: %1$s"
-                        		    + " inserida com chave de acesso NFE de " + input.getChaveAcessoNF().trim(), input.getNotaFiscal()));
+                        String.format("Nota Fiscal de Entrada %1$s"
+                        		    + " Inserida com chave de acesso NFE de " + input.getChaveAcessoNF().trim(), input.getNotaFiscal()));
                 
             } else {
                 
                 String msg = "Nota fiscal com produtos não encontrados no sistema";
                 
                 if (input.getNotaFiscal() != null && input.getNotaFiscal() > 0) {
-                    msg = String.format("Nota fiscal com produtos não encontrados no sistema, número nota: %1$s",
+                    msg = String.format("Nota fiscal com produtos não encontrados no sistema, Número Nota %1$s",
                             input.getNotaFiscal());
                 }
                 

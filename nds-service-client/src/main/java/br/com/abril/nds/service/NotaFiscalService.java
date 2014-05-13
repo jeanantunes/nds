@@ -151,6 +151,6 @@ public interface NotaFiscalService {
 
 	List<FornecedorExemplaresDTO> consultaFornecedorExemplaresSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
 	
-	Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro);
+	Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
 		
 }

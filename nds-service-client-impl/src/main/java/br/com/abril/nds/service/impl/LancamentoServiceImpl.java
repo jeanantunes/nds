@@ -329,7 +329,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(Date dataRecebimentoDistribuidor, List<StatusLancamento> status){
-		return lancamentoRepository.obterLancamentoDataDistribuidorInStatus(dataRecebimentoDistribuidor, status);
+		return lancamentoRepository.obterLancamentoInStatus(dataRecebimentoDistribuidor, status);
 	}
 	
 	
@@ -550,6 +550,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 		List<Long> lista = new ArrayList<Long>();
 		
+		//Fix
 		if(idFornecedor==1){	
 		 
 		 lista.add(new Long(1));
@@ -610,7 +611,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		}else{
 			
 		  for(int i =0;i<listaDatas.size();i++){
-			  if( dataLancamento.after(listaDatas.get(i-1)) 
+			  if(i>0 && dataLancamento.after(listaDatas.get(i-1)) 
 			   && dataLancamento.before(listaDatas.get(i+1))){
 				  
 				  anterior   = listaDatas.get(i-1);
@@ -625,6 +626,8 @@ public class LancamentoServiceImpl implements LancamentoService {
 					  return posterior;
 				  }
 				  
+			  }else {
+				  dataLancamento =  listaDatas.get(i);
 			  }
 		  }
 		  return dataLancamento;

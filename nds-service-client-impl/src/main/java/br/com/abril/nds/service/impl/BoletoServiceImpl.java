@@ -2585,7 +2585,5 @@ public class BoletoServiceImpl implements BoletoService {
     public BoletoAntecipado obterBoletoEmBrancoPorId(final Long idBoletoAntecipado) {
         
         return boletoAntecipadoRepository.buscarPorId(idBoletoAntecipado);
-    }
-    
-    
+    }  
 }
