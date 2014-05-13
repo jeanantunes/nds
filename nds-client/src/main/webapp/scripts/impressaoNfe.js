@@ -70,11 +70,12 @@ var impressaoNfeController = $.extend(true, {
 	},
 	
 	verificarTipoDestinatario : function(element) {
+		
 		if(element.value != "FORNECEDOR") {
-			$("#painelNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
-			$("#painelNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
+			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
 		} else {
-			$("#painelNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
+			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
 		}
 		
 		params = [];
@@ -87,10 +88,10 @@ var impressaoNfeController = $.extend(true, {
 				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 			}
 			
-			$("#painelNfe-filtro-naturezaOperacao").empty();
+			$("#impressaoNfe-filtro-naturezaOperacao").empty();
 			
 			$.each(data.rows, function (i, row) {
-			    $('#painelNfe-filtro-naturezaOperacao').append($('<option>', { 
+			    $('#impressaoNfe-filtro-naturezaOperacao').append($('<option>', { 
 			        value: row.cell.key,
 			        text : row.cell.value
 			    }));
