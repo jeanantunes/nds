@@ -3,79 +3,104 @@ package br.com.abril.nds.dto;
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
 import br.com.abril.nds.util.export.Delimiter;
+import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
 @Exportable
 @Delimiter("|")
 public class ExtratoEdicaoArquivoP7DTO extends FTFBaseDTO {
 	
 	@FTFfield(tamanho=9, tipo="char", ordem = 1)
+	@Export(label = "Codigo Empresa", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private String cod_empresa="";
 	
 	@FTFfield(tamanho=9, tipo="char", ordem = 2)
+	@Export(label = "Cod Filial", alignment=Alignment.LEFT, exhibitionOrder = 2)
 	private String cod_filial="";
 	
 	@FTFfield(tamanho=5, tipo="char", ordem = 3)
+	@Export(label = "Natureza do Estoque", alignment=Alignment.LEFT, exhibitionOrder = 3)
 	private String nat_estoque="180";
 	
 	@FTFfield(tamanho=28, tipo="char", ordem = 4)
+	@Export(label = "Centro de Custo", alignment=Alignment.LEFT, exhibitionOrder = 4)
 	private String centro_custo="@";
 	
 	@FTFfield(tamanho=10, tipo="char", ordem = 5)
+	@Export(label = "Data do Inventário", alignment=Alignment.LEFT, exhibitionOrder = 5)
 	private String dat_inventario="";
 	
 	@FTFfield(tamanho=20, tipo="char", ordem = 6)
+	@Export(label = "Codigo do Material", alignment=Alignment.LEFT, exhibitionOrder = 6)
 	private String cod_material="";
 	
 	@FTFfield(tamanho=10, tipo="char", ordem = 7)
+	@Export(label = "Classificação Fiscal", alignment=Alignment.LEFT, exhibitionOrder = 7)
 	private String classif_fiscal="";
 	
 	@FTFfield(tamanho=3, tipo="char", ordem = 8)
+	@Export(label = "Localização do Estoque", alignment=Alignment.LEFT, exhibitionOrder = 8)
 	private String local_estoque="1";
 	
 	@FTFfield(tamanho=28, tipo="char", ordem = 9)
+	@Export(label = "Conta de estoque", alignment=Alignment.LEFT, exhibitionOrder = 9)
 	private String cta_estoque="1140301004";
 
 	@FTFfield(tamanho=17, tipo="numeric", ordem = 10)
+	@Export(label = "Quantidade", alignment=Alignment.LEFT, exhibitionOrder = 10)
 	private String quantidade="";
 	
 	@FTFfield(tamanho=3, tipo="char", ordem = 11)
+	@Export(label = "Unidade de Medida", alignment=Alignment.LEFT, exhibitionOrder = 11)
 	private String unidade_medida="UN";
 	
 	@FTFfield(tamanho=21, tipo="numeric", ordem = 12)
+	@Export(label = "Custo Unitário", alignment=Alignment.LEFT, exhibitionOrder = 12)
 	private String custo_unitario="";
 	
 	@FTFfield(tamanho=19, tipo="numeric", ordem = 13)
+	@Export(label = "Custo Total", alignment=Alignment.LEFT, exhibitionOrder = 13)
 	private String custo_total="";
 	
 	@FTFfield(tamanho=4, tipo="char", ordem = 14)
+	@Export(label = "Divisão", alignment=Alignment.LEFT, exhibitionOrder = 14)
 	private String divisao="";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 15)
+	@Export(label = "Observação", alignment=Alignment.LEFT, exhibitionOrder = 15)
 	private String observacao="";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 16)
+	@Export(label = "openflex01", alignment=Alignment.LEFT, exhibitionOrder = 16)
 	private String openflex01="NDS";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 17)
+	@Export(label = "openflex02", alignment=Alignment.LEFT, exhibitionOrder = 17)
 	private String openflex02="";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 18)
+	@Export(label = "openflex03", alignment=Alignment.LEFT, exhibitionOrder = 18)
 	private String openflex03="";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 19)
+	@Export(label = "openflex04", alignment=Alignment.LEFT, exhibitionOrder = 19)
 	private String openflex04="NDS";
 	
 	@FTFfield(tamanho=150, tipo="char", ordem = 20)
+	@Export(label = "openflex05", alignment=Alignment.LEFT, exhibitionOrder = 20)
 	private String openflex05="";
 	
 	@FTFfield(tamanho=17, tipo="char", ordem = 21)
+	@Export(label = "openflex06", alignment=Alignment.LEFT, exhibitionOrder = 21)
 	private String openflex06="";
 	
 	@FTFfield(tamanho=17, tipo="char", ordem = 22)
+	@Export(label = "openflex07", alignment=Alignment.LEFT, exhibitionOrder = 22)
 	private String openflex07="";
 	
 	@FTFfield(tamanho=17, tipo="char", ordem = 23)
+	@Export(label = "openflex08", alignment=Alignment.LEFT, exhibitionOrder = 23)
 	private String openflex08="";
 	
 

@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExtratoEdicaoArquivoP7DTO;
-import br.com.abril.nds.dto.IntegracaoFiscalDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaIntegracaoFiscal;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -33,18 +31,6 @@ public class IntegracaoFiscalRepositoryImpl extends AbstractRepositoryModel<Movi
 	
 	public IntegracaoFiscalRepositoryImpl() {
 		super(MovimentoEstoque.class);
-	}
-
-	@Override
-	public List<IntegracaoFiscalDTO> pesquisarPorMesAno(FiltroConsultaIntegracaoFiscal filtro) {
-		
-		return null;
-	}
-
-	@Override
-	public void obterFixacoesRepartePorProduto(FiltroConsultaIntegracaoFiscal filtro) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@SuppressWarnings("unchecked")
