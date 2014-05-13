@@ -24,6 +24,7 @@ import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -40,6 +41,7 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -77,6 +79,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private FornecedorService fornecedorService;
 	
 	@Autowired
 	private CalendarioService calendarioService;
@@ -549,9 +554,12 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 	
 		List<Long> lista = new ArrayList<Long>();
+		Distribuidor distribuidor = distribuidorService.obter();
 		
-		//Fix
-		if(idFornecedor==1){	
+		Long idDinap = fornecedorService.obterFornecedorPorCodigoInterface(new Integer(distribuidor.getCodigoDistribuidorDinap())).getId();
+		Long idFc    = fornecedorService.obterFornecedorPorCodigoInterface(new Integer(distribuidor.getCodigoDistribuidorFC())).getId();
+		
+		if(idFornecedor==idDinap.intValue()){	
 		 
 		 lista.add(new Long(1));
 		 
@@ -561,7 +569,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		 
 		 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinap);
 		 
-		}else if (idFornecedor==2){
+		}else if (idFornecedor==idFc.intValue()){
 		
 		 lista.add(new Long(2));
 		 
@@ -611,7 +619,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		}else{
 			
 		  for(int i =0;i<listaDatas.size();i++){
-			  if(i>0 && dataLancamento.after(listaDatas.get(i-1)) 
+			  if(i>0 && i<listaDatas.size() && dataLancamento.after(listaDatas.get(i-1)) 
 			   && dataLancamento.before(listaDatas.get(i+1))){
 				  
 				  anterior   = listaDatas.get(i-1);
@@ -627,7 +635,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 				  }
 				  
 			  }else {
-				  dataLancamento =  listaDatas.get(i);
+				  dataLancamento =  listaDatas.getFirst();
 			  }
 		  }
 		  return dataLancamento;
