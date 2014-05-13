@@ -90,12 +90,16 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		}
 		if(row.venda == undefined){
 			row.venda = '';
-		}else {
-			row.percentualVenda = floatToPrice(row.percentualVenda);
 		}
-		if(row.percentualVenda == undefined){
+		
+		if (row.reparte && row.venda) {
+			
+			row.percentualVenda = floatToPrice(row.venda * 100 / row.reparte); 
+		} else {
+			
 			row.percentualVenda = '';
 		}
+		
 	};
 	
 	this.selecionarPesoProduto = function(index, select){

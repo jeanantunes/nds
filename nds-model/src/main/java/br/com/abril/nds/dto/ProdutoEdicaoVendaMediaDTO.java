@@ -1,7 +1,6 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,9 +18,8 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
     private Integer periodo;
     private boolean parcial;
     private String dataLancamentoFormatada;
-    private BigDecimal reparte;
-    private BigDecimal venda;
-    private BigDecimal percentualVenda;
+    private BigInteger reparte;
+    private BigInteger venda;
     private String status;
     private String classificacao;
     private BigInteger idClassificacao;
@@ -80,19 +78,19 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
 	this.dataLancamentoFormatada = dataLancamentoFormatada;
     }
 
-    public BigDecimal getReparte() {
+    public BigInteger getReparte() {
 	return reparte;
     }
 
-    public void setReparte(BigDecimal reparte) {
+    public void setReparte(BigInteger reparte) {
 	this.reparte = reparte;
     }
 
-    public BigDecimal getVenda() {
+    public BigInteger getVenda() {
 	return venda;
     }
 
-    public void setVenda(BigDecimal venda) {
+    public void setVenda(BigInteger venda) {
 	this.venda = venda;
     }
 
@@ -118,14 +116,6 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
 
     public void setCodigoProduto(String codigoProduto) {
 	this.codigoProduto = codigoProduto;
-    }
-
-    public BigDecimal getPercentualVenda() {
-	return percentualVenda;
-    }
-
-    public void setPercentualVenda(BigDecimal percentualVenda) {
-	this.percentualVenda = percentualVenda;
     }
 
     public boolean isParcial() {

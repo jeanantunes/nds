@@ -80,8 +80,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
-		System.out.println("Inicio");
+
 	}
 
 	@Override
