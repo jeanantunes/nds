@@ -1,4 +1,3 @@
-
 package br.com.abril.nds.model.estoque;
 import java.util.Date;
 

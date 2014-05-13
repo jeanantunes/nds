@@ -65,5 +65,3 @@ public class IntegracaoFiscalServiceImpl implements IntegracaoFiscalService {
 	}
 
 }
-
-

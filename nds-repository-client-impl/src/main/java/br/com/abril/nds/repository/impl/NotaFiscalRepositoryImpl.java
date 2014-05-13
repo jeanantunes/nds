@@ -514,8 +514,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return hql;
 	}
 
-	public Query queryConsultaMECNfeParameters(StringBuilder hql, FiltroNFeDTO filtro) {
-
+	private Query queryConsultaMECNfeParameters(StringBuilder hql, FiltroNFeDTO filtro) {
 
 		// Realizar a consulta e converter ao objeto cota exemplares.
 		Query query = this.getSession().createQuery(hql.toString());		
@@ -563,10 +562,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getIntervaloBoxInicial() != null && filtro.getIntervaloBoxFinal() != null) {
 			query.setParameter("codigoBoxInicial", filtro.getIntervaloBoxInicial());
 			query.setParameter("codigoBoxFinal", filtro.getIntervaloBoxFinal());
-		}
-
-		if(filtro.getListIdFornecedor() != null) {
-			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
 
 		return query;	
@@ -980,8 +975,111 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 	@Override
 	public List<FornecedorExemplaresDTO> consultaFornecedorExemplaresMESumarizados(FiltroNFeDTO filtro) {
+		
 		// TODO Auto-generated method stub
-		return null;
+		// OBTER FORNECEDOR EXEMPLARES SUMARIZADOS
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" fornecedor.id as idFornecedor, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, '') as nome,");
+		hql.append(" SUM(me.qtde) as exemplares ");
+		//hql.append(" SUM(me.valoresAplicados.precoVenda * mec.qtde) as total, "); 
+		//hql.append(" SUM(me.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto "); 	
+		
+		Query query = queryConsultaMENfeParameters(queryConsultaMENfe(filtro, hql, false, false, false), filtro);
+		
+		if(filtro.getPaginacaoVO()!=null) {
+			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
+				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
+			}
+			
+			if(filtro.getPaginacaoVO().getQtdResultadosPorPagina()!=null) {
+				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+			}
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaExemplaresDTO.class));
+		
+		return query.list();
+		
+	}
+	
+
+	@Override
+	public Long consultaFornecedorExemplaresMESumarizadosQtd(FiltroNFeDTO filtro) {
+
+		// OBTER COTA EXEMPLARES SUMARIZADOS
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" COUNT(distinct fornecedor.id) ");
+		Query query = queryConsultaMECNfeParameters(queryConsultaMECNfe(filtro, hql, true, true, false), filtro);
+
+		return (long) query.list().size();
+	}
+	
+	private StringBuilder queryConsultaMENfe(FiltroNFeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
+
+		hql.append(" FROM MovimentoEstoque me ")
+		.append(" JOIN me.tipoMovimento tipoMovimento ")
+		.append(" JOIN me.estoqueProduto estoqueProduto ")
+		.append(" JOIN estoqueProduto.produtoEdicao produtoEdicao ")
+		.append(" JOIN produtoEdicao.produto produto ")
+		.append(" JOIN produto.fornecedores fornecedor")
+		.append(" JOIN fornecedor.juridica pessoa ")
+		.append(" WHERE me.data BETWEEN :dataInicial AND :dataFinal ");
+
+		// Tipo de Nota:		
+		if(filtro.getIdNaturezaOperacao() != null) {
+			hql.append(" AND me.tipoMovimento.id in (SELECT tm.id ");
+			hql.append("FROM NaturezaOperacao no ");
+			hql.append("JOIN no.tipoMovimento tm ");
+			hql.append("WHERE no.id in(:idNaturezaOperacao)) ");
+		}
+
+		// Data Emissão:	...		
+		if(filtro.getDataEmissao() != null) {
+			hql.append(" ");
+		}
+
+		if(filtro.getListIdFornecedor() != null) {
+			hql.append(" AND fornecedor.id in (:fornecedor) ");
+		}
+
+		if(!isGroup){
+			hql.append(" GROUP BY fornecedor.id ");
+		} else {
+			hql.append(" GROUP BY me ");
+		}
+
+		if(!isCount && !isPagination){
+			if(filtro.getPaginacaoVO()!=null && filtro.getPaginacaoVO().getSortOrder() != null && filtro.getPaginacaoVO().getSortColumn() != null) {
+				hql.append(" ORDER BY  ").append(filtro.getPaginacaoVO().getSortColumn()).append(" ").append(filtro.getPaginacaoVO().getSortOrder());
+			}
+		}
+
+		return hql;
+	}
+	
+	private Query queryConsultaMENfeParameters(StringBuilder hql, FiltroNFeDTO filtro) {
+
+		// Realizar a consulta e converter ao objeto cota exemplares.
+		Query query = this.getSession().createQuery(hql.toString());		
+
+		// Data Movimento:	...  Até   ...
+		if (filtro.getDataInicial() != null && filtro.getDataFinal() != null) {
+			query.setParameter("dataInicial", filtro.getDataInicial());
+			query.setParameter("dataFinal", filtro.getDataFinal());
+		}
+
+		// tipo da Natureza de Operacao
+		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao().longValue() > 0) {
+			query.setParameter("idNaturezaOperacao", filtro.getIdNaturezaOperacao());
+		}
+
+		// forncedor id		
+		if(filtro.getListIdFornecedor() !=null && !filtro.getListIdFornecedor().isEmpty()) {
+			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
+		}
+
+		return query;	
 	}
 
 }
