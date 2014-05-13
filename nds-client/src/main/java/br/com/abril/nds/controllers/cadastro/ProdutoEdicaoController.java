@@ -58,6 +58,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -440,7 +441,8 @@ public class ProdutoEdicaoController extends BaseController {
 			} 
 			catch (Exception e) {
 			    if(e instanceof ValidacaoException)
-			        listaMensagem.add(e.getMessage());
+			        listaMensagem.add("Produto " + prodEdicao.getCodigoProduto() + " com a Edição "
+			                + prodEdicao.getNumeroEdicao() + " está inválido. " + e.getMessage());
 			    else
 			        listaMensagem.add("Produto " + prodEdicao.getCodigoProduto() + " com a Edição "
 			                + prodEdicao.getNumeroEdicao() + " está inválido. Por favor revise-o.");
@@ -470,12 +472,7 @@ public class ProdutoEdicaoController extends BaseController {
 			
 			if(peDTO.getLancamento()!=null){
 				
-				try {				    
-					peDTO.setTipoLancamento(TipoLancamento.valueOf(peDTO.getLancamento().toUpperCase()));
-					
-				} catch (Exception e) {
-					
-				}				
+				peDTO.setTipoLancamento(TipoLancamento.getByDescricao(peDTO.getLancamento()));
 			}
 			
 			if(!Strings.isNullOrEmpty(peDTO.getClassificacao()))
