@@ -1790,26 +1790,31 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			for(ChamadaEncalhe ce : lancamento.getChamadaEncalhe()) {
 				for(ChamadaEncalheCota cec : ce.getChamadaEncalheCotas()) {
 					MovimentoFechamentoFiscalCota movimentoFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCota(cec);
-					movimentoFechamentoFiscalCota.setNotaFiscalLiberadaEmissao(true);
 					
-					if(cec.getCota() != null
-							&& cec.getCota().getParametrosCotaNotaFiscalEletronica() != null
-							&& (cec.getCota().getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() 
-									|| cec.getCota().getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica())) {
+					if(movimentoFechamentoFiscalCota == null) {
+						continue;
+					} else{
+						movimentoFechamentoFiscalCota.setNotaFiscalLiberadaEmissao(true);
 						
-						movimentoFechamentoFiscalCota.setDesobrigaNotaFiscalDevolucaoSimbolica(true);
-						movimentoFechamentoFiscalCota.setNotaFiscalDevolucaoSimbolicaEmitida(false);
-						movimentoFechamentoFiscalCota.setNotaFiscalVendaEmitida(false);
-						movimentoFechamentoFiscalCota.setDesobrigaNotaFiscalVenda(desobrigaEmissaoVendaConsignado);
-					} else {
+						if(cec.getCota() != null
+								&& cec.getCota().getParametrosCotaNotaFiscalEletronica() != null
+								&& (cec.getCota().getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() 
+										|| cec.getCota().getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica())) {
+							
+							movimentoFechamentoFiscalCota.setDesobrigaNotaFiscalDevolucaoSimbolica(true);
+							movimentoFechamentoFiscalCota.setNotaFiscalDevolucaoSimbolicaEmitida(false);
+							movimentoFechamentoFiscalCota.setNotaFiscalVendaEmitida(false);
+							movimentoFechamentoFiscalCota.setDesobrigaNotaFiscalVenda(desobrigaEmissaoVendaConsignado);
+						} else {
+							
+							movimentoFechamentoFiscalCota.setDesobrigaNotaFiscalDevolucaoSimbolica(desobrigaEmissaoDevolucaoSimbolica);
+							movimentoFechamentoFiscalCota.setNotaFiscalDevolucaoSimbolicaEmitida(false);
+							movimentoFechamentoFiscalCota.setNotaFiscalVendaEmitida(false);
+							movimentoFechamentoFiscalCota.setDesobrigaNotaFiscalVenda(desobrigaEmissaoVendaConsignado);
+						}
 						
-						movimentoFechamentoFiscalCota.setDesobrigaNotaFiscalDevolucaoSimbolica(desobrigaEmissaoDevolucaoSimbolica);
-						movimentoFechamentoFiscalCota.setNotaFiscalDevolucaoSimbolicaEmitida(false);
-						movimentoFechamentoFiscalCota.setNotaFiscalVendaEmitida(false);
-						movimentoFechamentoFiscalCota.setDesobrigaNotaFiscalVenda(desobrigaEmissaoVendaConsignado);
+						movimentoFechamentoFiscalRepository.merge(movimentoFechamentoFiscalCota);
 					}
-					
-					movimentoFechamentoFiscalRepository.merge(movimentoFechamentoFiscalCota);
 				}
 				
 			}
