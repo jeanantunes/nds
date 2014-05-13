@@ -334,7 +334,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(Date dataRecebimentoDistribuidor, List<StatusLancamento> status){
-		return lancamentoRepository.obterLancamentoDataDistribuidorInStatus(dataRecebimentoDistribuidor, status);
+		return lancamentoRepository.obterLancamentoInStatus(dataRecebimentoDistribuidor, status);
 	}
 	
 	
