@@ -54,6 +54,8 @@ var usuarioController = $.extend(true, {
 	
 	    popupConfirmaSenha : function(usuarioSupervisorCallback, usuarioNaoSupervisorCallback) {
 	    	var _this = this;
+	    	var manterLinha = false;
+	    	
 	    	var $dialog = $('#dialog-confirmacao-senha');
 	        $dialog.dialog({
 				resizable: false,
@@ -68,19 +70,20 @@ var usuarioController = $.extend(true, {
 							$.trim($dialog.find('#senha-confirmar').val())
 						);
 
-						_this.validarUsuarioSupervisor({
+						_this.verificarSenhaUsuarioSupervisor({
 							usuarioSupervisorCallback: function(result) {
 								usuarioSupervisorCallback(result);
+								manterLinha = true;
 								$dialog.dialog("close");
 							},
 							
 							usuarioNaoSupervisorCallback: function(result){
 								if(usuarioNaoSupervisorCallback){
 									usuarioNaoSupervisorCallback(result);
+									exibirMensagemDialog('WARNING', ['Usuário não é supervisor.'], '');
 									$dialog.dialog("close");
 								}else{
-									var msg = result.mensagens && result.mensagens.listaMensagens[0] ? result.mensagens.listaMensagens[0] : 'Usuário não é supervisor.';
-									_this.setErrorMessages(msg);
+									exibirMensagemDialog('WARNING', ['Usuário não é supervisor.'], '');
 								}
 							}
 						});
@@ -97,9 +100,37 @@ var usuarioController = $.extend(true, {
 				form: $("#dialog-autenticar-supervisor").parents("form"),
 				close: function() {
 					_this.cleanDialogData();
+				},
+				
+				beforeClose: function(){
+					if(!manterLinha){
+						usuarioNaoSupervisorCallback();
+					}
 				}
 			});
 	    },
+	    
+	    verificarSenhaUsuarioSupervisor: function(callbacks) {
+
+	    	var _this = this;
+	    	
+	    	$.postJSON(contextPath + '/administracao/usuario/validarUsuarioSupervisor',
+				usuarioController.data.toJSON(), function (result) {
+
+					if (callbacks.usuarioSupervisorCallback) {
+						callbacks.usuarioSupervisorCallback(result);
+	            	}
+					usuarioController.data.reset();
+	            
+				}, function(result) {
+					if (callbacks.usuarioNaoSupervisorCallback) {
+						callbacks.usuarioNaoSupervisorCallback(result);
+	            	}
+					usuarioController.data.reset();
+	            }
+			);    	
+	    },
+	    
 	    
 	    cleanDialogData: function() {
 	    	
