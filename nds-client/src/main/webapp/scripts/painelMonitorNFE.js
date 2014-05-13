@@ -371,10 +371,10 @@ var PainelMonitorNFE = $.extend(true, {
 	
 	verificarTipoDestinatario : function(element) {
 		if(element.value != "FORNECEDOR") {
-			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
-			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+			$("#painelNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
+			$("#painelNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
 		} else {
-			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
+			$("#painelNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
 		}
 		
 		params = [];
