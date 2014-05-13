@@ -830,6 +830,29 @@ public class ConferenciaEncalheController extends BaseController {
 
 		this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
 	}
+	
+	@Post
+	public void autoCompleteProdutoEdicaoCodigoSM(final Integer numeroCota, final Integer sm) {
+		
+		if (sm == null) {
+
+            throw new ValidacaoException(TipoMensagem.WARNING, "Código SM inválido.");
+		}
+
+		final List<ItemAutoComplete> listaProdutos = 
+				this.conferenciaEncalheService.obterListaProdutoEdicaoParaRecolhimentoPorCodigoSM(
+						numeroCota, 
+						sm, 
+						QUANTIDADE_MAX_REGISTROS, 
+						obterFromSessionMapaDatasEncalheConferiveis()); 
+
+		if (listaProdutos == null || listaProdutos.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
+		}
+
+		this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
+	}
 
 	            /**
      * Obtém o objeto do tipo ConferenciaEncalheDTO que esta na lista de

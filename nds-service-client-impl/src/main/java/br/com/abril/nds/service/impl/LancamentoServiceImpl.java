@@ -550,6 +550,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 		List<Long> lista = new ArrayList<Long>();
 		
+		//Fix
 		if(idFornecedor==1){	
 		 
 		 lista.add(new Long(1));

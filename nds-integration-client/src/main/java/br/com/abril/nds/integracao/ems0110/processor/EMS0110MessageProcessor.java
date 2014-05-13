@@ -492,7 +492,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 		TipoSegmentoProduto tipoSegmentoProduto = produto.getTipoSegmentoProduto();
         if ((tipoSegmentoProduto == null && input.getSegmento() != null) || 
-                (input.getSegmento() != null && !Objects.equal(
+                (input.getSegmento() != null && !input.getSegmento().trim().equals("") && !Objects.equal(
                         tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
@@ -702,8 +702,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 		TipoSegmentoProduto tipoSegmentoProduto = produto.getTipoSegmentoProduto();
         
-        if ((tipoSegmentoProduto == null && input.getSegmento() != null) || 
-                (input.getSegmento() != null && !Objects.equal(
+        if ((tipoSegmentoProduto == null && input.getSegmento() != null && !input.getSegmento().trim().equals("")) || 
+                (input.getSegmento() != null && !input.getSegmento().trim().equals("") && !Objects.equal(
                         tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
@@ -730,7 +730,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 		Dimensao dimensaoEdicao = edicao.getDimensao();
 		
-		if (null != dimensaoEdicao && null != dimensaoEdicao.getLargura() && !dimensaoEdicao.getLargura().equals(input.getLargura())) {
+		if (null != dimensaoEdicao && null != dimensaoEdicao.getLargura() && input.getLargura()!=null && !dimensaoEdicao.getLargura().equals(input.getLargura())) {
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -772,7 +772,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualização Permite Venda Separada do Produto "+input.getCodProd()
-					+" para "+ brindeEdicao.getPermiteVendaSeparada()
+					+" de "+ brindeEdicao.getPermiteVendaSeparada()
 					+" para "+ input.getCondVendeSeparado());
 			
 			brindeEdicao.setPermiteVendaSeparada(input.getCondVendeSeparado());
