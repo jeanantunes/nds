@@ -50,9 +50,9 @@ public interface NFeService {
 	public abstract Long consultaCotaExemplareSumarizadoQtd(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
 
 
-	public abstract List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro);
+	public abstract List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
 
-	public abstract Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro);
+	public abstract Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
 
 	public void gerarNotasFiscaisCotasEncalhe(final List<NotaFiscal> notasFiscais, final Distribuidor distribuidor, final NaturezaOperacao naturezaOperacao, 
 			final Map<String, ParametroSistema> parametrosSistema, final List<Cota> cotas);

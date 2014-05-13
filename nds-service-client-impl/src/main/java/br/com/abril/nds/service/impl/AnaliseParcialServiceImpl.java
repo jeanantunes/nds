@@ -206,13 +206,15 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         }
         return lista;
     }
-
+    
+    @Transactional
     private void carregarInformacoesEdicoesBase(List<EdicoesProdutosDTO> edicoesBase) {
         for (EdicoesProdutosDTO edicao : edicoesBase) {
             edicao.setEdicaoAberta(produtoEdicaoRepository.isEdicaoAberta(edicao.getProdutoEdicaoId()));
         }
     }
 
+    @Transactional
     private Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas(int cota, List<Long> idsProdutoEdicao) {
 
         List<EdicoesProdutosDTO> edicoesProdutosDTOs = analiseParcialRepository.buscaHistoricoDeVendaParaCota((long) cota, idsProdutoEdicao);
@@ -249,6 +251,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         analiseParcialRepository.atualizaReparteEstudo(estudoId, reparte);
     }
     
+    @Transactional
     private void validarDistribuicaoPorMultiplo(Long estudoId, Long reparteDigitado) {
     	
     	EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(estudoId);
@@ -256,8 +259,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	if (estudoGerado.getDistribuicaoPorMultiplos() != null
     			&& estudoGerado.getDistribuicaoPorMultiplos() == 1) {
     		
-    		BigInteger multiplo = 
-    			new BigInteger(estudoGerado.getPacotePadrao().toString());
+    		BigInteger multiplo = new BigInteger(estudoGerado.getPacotePadrao().toString());
     		
     		BigInteger novoReparte = new BigInteger(reparteDigitado.toString());
     		

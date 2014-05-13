@@ -708,7 +708,7 @@ public class NFeServiceImpl implements NFeService {
 		notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 		
 		//FIXME: Ajustar o transportador Principal
-		if(transportadores == null || transportadores.isEmpty()){
+		if(transportadores == null || transportadores.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Não foi .");
 		} else {			
 			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
@@ -759,14 +759,14 @@ public class NFeServiceImpl implements NFeService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(final FiltroNFeDTO filtro) {
-		return notaFiscalService.consultaFornecedorExemplaresSumarizados(filtro, null);
+	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(final FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
+		return notaFiscalService.consultaFornecedorExemplaresSumarizados(filtro, naturezaOperacao);
 	}
 
 	@Override
 	@Transactional
-	public Long consultaFornecedorExemplaresSumarizadosQtd(final FiltroNFeDTO filtro) {
-		return notaFiscalService.consultaFornecedorExemplaresSumarizadosQtd(filtro);
+	public Long consultaFornecedorExemplaresSumarizadosQtd(final FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
+		return notaFiscalService.consultaFornecedorExemplaresSumarizadosQtd(filtro, naturezaOperacao);
 	}
 	
 	@Override

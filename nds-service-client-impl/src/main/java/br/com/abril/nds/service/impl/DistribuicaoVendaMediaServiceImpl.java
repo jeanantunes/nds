@@ -29,18 +29,6 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
     }
     
     /**
-     * @param filtro
-     * @param usarICD
-     * @return
-     * @see br.com.abril.nds.repository.DistribuicaoVendaMediaRepository#pesquisar(br.com.abril.nds.dto.filtro.FiltroEdicaoBaseDistribuicaoVendaMedia,
-     *      boolean)
-     */
-    @Override
-    public List<ProdutoEdicaoVendaMediaDTO> pesquisar(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, boolean usarICD) {
-        return distribuicaoVendaMediaRepository.pesquisar(filtro, usarICD);
-    }
-    
-    /**
      * @param codigoProduto
      * @param nomeProduto
      * @param edicao

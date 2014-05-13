@@ -1978,9 +1978,20 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Override
 	@Transactional
-	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro) {
+	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
 		
-		return this.notaFiscalRepository.consultaFornecedorExemplaresMFFSumarizadosQtd(filtro);
+		validarFiltrosNFe(filtro);
+		
+		List<TipoMovimento> itensMovimentosFiscais = obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
+		
+		if(itensMovimentosFiscais.size() > 0) {
+			
+			return this.notaFiscalRepository.consultaFornecedorExemplaresMFFSumarizadosQtd(filtro);
+		} else {
+		
+			return this.notaFiscalRepository.consultaFornecedorExemplaresMESumarizadosQtd(filtro);
+		}
+		
 	}
 
 	@Transactional

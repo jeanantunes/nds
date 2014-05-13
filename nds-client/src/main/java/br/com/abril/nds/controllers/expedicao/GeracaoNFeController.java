@@ -185,8 +185,8 @@ public class GeracaoNFeController extends BaseController {
 			break;
 			
 		case FORNECEDOR:			
-			fornecedorExemplaresDTOs = nfeService.consultaFornecedorExemplarSumarizado(filtro);
-			totalRegistros = nfeService.consultaFornecedorExemplaresSumarizadosQtd(filtro);
+			fornecedorExemplaresDTOs = nfeService.consultaFornecedorExemplarSumarizado(filtro, naturezaOperacao);
+			totalRegistros = nfeService.consultaFornecedorExemplaresSumarizadosQtd(filtro, naturezaOperacao);
 			break;
 		}
 		
