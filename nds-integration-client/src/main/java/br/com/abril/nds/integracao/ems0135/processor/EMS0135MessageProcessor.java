@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
-import br.com.abril.nds.integracao.data.helper.LancamentoDataHelper;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
@@ -148,15 +147,15 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 this.getSession().persist(notafiscalEntrada);
                 
                 this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.SEM_DOMINIO,
-                        String.format("Nota Fiscal de Entrada: %1$s"
-                        		    + " inserida com chave de acesso NFE de " + input.getChaveAcessoNF().trim(), input.getNotaFiscal()));
+                        String.format("Nota Fiscal de Entrada %1$s"
+                        		    + " Inserida com chave de acesso NFE de " + input.getChaveAcessoNF().trim(), input.getNotaFiscal()));
                 
             } else {
                 
                 String msg = "Nota fiscal com produtos não encontrados no sistema";
                 
                 if (input.getNotaFiscal() != null && input.getNotaFiscal() > 0) {
-                    msg = String.format("Nota fiscal com produtos não encontrados no sistema, número nota: %1$s",
+                    msg = String.format("Nota fiscal com produtos não encontrados no sistema, Número Nota %1$s",
                             input.getNotaFiscal());
                 }
                 
@@ -169,7 +168,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
             this.ndsiLoggerFactory.getLogger().logWarning(
                     message,
                     EventoExecucaoEnum.REGISTRO_JA_EXISTENTE,
-                    String.format("Nota Fiscal %1$s já cadastrada com serie %2$s e nota envio %3$s",
+                    String.format("Nota Fiscal Entrada %1$s já cadastrada. Série %2$s Nota Envio %3$s",
                             notafiscalEntrada.getNumero(), notafiscalEntrada.getSerie(),
                             notafiscalEntrada.getNumeroNotaEnvio()));
             return;
@@ -245,10 +244,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                     produto = new Produto();
                     
                     produto.setCodigo(inputItem.getCodigoProduto());
-                    produto.setCodigoICD(inputItem.getCodigoProduto());
+                    produto.setCodigoICD(obterIcdPorCodigo(inputItem.getCodigoProduto()));
                     produto.setPeriodicidade(PeriodicidadeProduto.MENSAL);
                     produto.setNome(inputItem.getNomeProduto());
-                    //produto.setNomeComercial(inputItem.getNomeProduto());
+                    produto.setNomeComercial(inputItem.getNomeProduto());
                     produto.setOrigem(Origem.MANUAL);
                     produto.setTipoProduto(tipoProduto);
                     produto.setPacotePadrao(10);
@@ -260,6 +259,21 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                         produto.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
                     }
                     produto.setFormaComercializacao(FormaComercializacao.CONSIGNADO);
+                    
+                    Produto produtoAux =  produtoRepository.obterProdutoPorICDSegmentoNotNull(produto.getCodigoICD());
+                    
+                    if(produtoAux !=null){
+                      
+                    	produto.setSegmentacao(produtoAux.getSegmentacao());
+                    
+                    } else {
+                    	
+                    	this.ndsiLoggerFactory.getLogger().logError(
+                                message,
+                                EventoExecucaoEnum.RELACIONAMENTO,
+                                "Segmentação não encontrada por Código ICD "+produto.getCodigoICD()+" .");
+                    	
+                    }
 
                     this.getSession().persist(produto);
                 }
@@ -282,7 +296,14 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 produtoEdicao.setOrigem(Origem.PRODUTO_SEM_CADASTRO);
                 produtoEdicao.setPrecoPrevisto(new BigDecimal(inputItem.getPreco()));
                 produtoEdicao.setPrecoVenda(produtoEdicao.getPrecoPrevisto());
+                produtoEdicao.setNomeComercial(inputItem.getNomeProduto());
+                
                 this.getSession().persist(produtoEdicao);
+                
+                this.ndsiLoggerFactory.getLogger().logError(
+                        message,
+                        EventoExecucaoEnum.RELACIONAMENTO,
+                        "Classificação não Inserida para a o Produto "+produto.getCodigo()+" Edição "+inputItem.getEdicao());
                 
                 Date dataAtual = new Date();
                 Date dataLancamento = inputItem.getDataLancamento();
@@ -295,6 +316,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 	dataLancamento =lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId());
     			} catch (Exception e) {
     			}
+                
                 Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, produto.getPeb());
                 Lancamento lancamento = new Lancamento();
                 lancamento.setDataCriacao(dataAtual);
@@ -321,15 +343,43 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
             item.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
             
             Lancamento lancamento = obterLancamentoProdutoEdicao(produtoEdicao.getId());
+            
             if (null == lancamento) {
+            	
                 Calendar cal = Calendar.getInstance();
                 
                 cal.add(Calendar.DAY_OF_MONTH, 2);
-                item.setDataLancamento(cal.getTime());
+                Date dataLancamentoAux = cal.getTime();
                 
                 cal.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
-                item.setDataRecolhimento(cal.getTime());
+                Date dataRecolhimentoAux = cal.getTime();
                 
+                dataLancamentoAux =lancamentoService.obterDataLancamentoValido(dataLancamentoAux, produtoEdicao.getProduto().getFornecedor().getId());
+            	
+                Date dataAtual = new Date();
+                Date dataLancamento = inputItem.getDataLancamento();
+                int numeroLancamentoNovo = 1;
+                
+                dataLancamento = dataLancamento == null ? dataAtual : dataLancamento;
+                
+                lancamento = new Lancamento();
+                lancamento.setDataCriacao(dataAtual);
+                lancamento.setNumeroLancamento(numeroLancamentoNovo);
+                lancamento.setDataLancamentoPrevista(dataLancamentoAux);
+                lancamento.setDataLancamentoDistribuidor(dataLancamentoAux);
+                lancamento.setDataRecolhimentoPrevista(dataRecolhimentoAux);
+                lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoAux);
+                
+                lancamento.setProdutoEdicao(produtoEdicao);
+                lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+                lancamento.setDataStatus(dataAtual);
+                lancamento.setStatus(StatusLancamento.CONFIRMADO);
+                lancamento.setReparte(new BigInteger(inputItem.getQtdExemplar().toString()));
+                this.getSession().persist(lancamento);
+                
+
+                item.setDataLancamento(dataLancamentoAux);
+                item.setDataRecolhimento(dataRecolhimentoAux);
                 item.setTipoLancamento(TipoLancamento.LANCAMENTO);
                 
             } else {
@@ -553,6 +603,17 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPorCodigo(Integer.parseInt(codigoDistribuidor));
         return fornecedor;
+    }
+    
+    private String obterIcdPorCodigo(String codigo) {
+        
+    	if(codigo.length() ==8 && !codigo.substring(1, 1).equals("0")){
+    	  return codigo.substring(1,6);
+    	} else if (codigo.length() ==8 && codigo.substring(1, 1).equals("0")){
+    	  return (new Integer(codigo)).intValue()+"";
+    	} else {
+    	  return codigo;
+    	}
     }
     
     @Override

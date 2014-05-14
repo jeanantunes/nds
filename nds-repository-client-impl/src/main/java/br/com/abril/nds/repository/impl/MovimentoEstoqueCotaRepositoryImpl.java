@@ -46,6 +46,7 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDetalhes;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoEntregador;
+import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.TipoConsulta;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -1043,7 +1044,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             subSqlIndObservacao.append(" 	and CONFERENCIA_ENCALHE_0.CHAMADA_ENCALHE_COTA_ID = CHAMADA_ENCALHE_COTA.id ");
         }
         
-        subSqlIndObservacao.append(" 	and CONFERENCIA_ENCALHE_0.OBSERVACAO is not null ");
+        subSqlIndObservacao.append(" 	and (CONFERENCIA_ENCALHE_0.OBSERVACAO is not null OR CONFERENCIA_ENCALHE_0.JURAMENTADA = 1) ");
         
         final StringBuilder sql = new StringBuilder();
         
@@ -2025,9 +2026,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append("    join BOX box ON (box.ID = rtz.BOX_ID) ");
         
         
-        if(filtro.getIdEntregador() != null){
+        if(filtro.getIdEntregador() != null || TipoConsulta.ENTREGADOR.equals(filtro.getTipoConsulta())){
             
             hql.append(" join ENTREGADOR entregador ON (entregador.ROTA_ID = rota.ID) ");
+            hql.append(" join PESSOA pessoaEnt ON (entregador.PESSOA_ID = pessoaEnt.ID) ");
+            hql.append(" join ROTA rotaEnt ON (rotaEnt.ID = entregador.ROTA_ID) ");
+            hql.append(" join ROTEIRO roteiroEnt ON (roteiroEnt.ID = rotaEnt.ROTEIRO_ID) ");
+            hql.append(" join ROTEIRIZACAO roteirizacaoEnt ON (roteiroEnt.ROTEIRIZACAO_ID = roteirizacaoEnt.ID) ");
+            hql.append(" join BOX boxEnt ON (boxEnt.ID = roteirizacaoEnt.BOX_ID) ");
         }
         
         hql.append(" where lancamento.STATUS in (:status) ");
@@ -2406,6 +2412,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final StringBuilder hql = new StringBuilder();
         
         hql.append(" select box.CODIGO as codigoBox, ");
+        hql.append("        box.NOME as nomeBox, ");
         hql.append(" 		rota.DESCRICAO_ROTA as codigoRota, ");
         hql.append(" 		produtoEdicao.ID as idProdutoEdicao, ");
         hql.append(" 		produto.CODIGO as codigoProduto, ");
@@ -2435,6 +2442,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameterList("status", statusLancamento);
         
         query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
+        query.addScalar("nomeBox", StandardBasicTypes.STRING);
         query.addScalar("codigoRota", StandardBasicTypes.STRING);
         query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
         query.addScalar("codigoProduto", StandardBasicTypes.STRING);
@@ -2463,6 +2471,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final StringBuilder hql = new StringBuilder();
         
         hql.append(" select box.CODIGO as codigoBox, ");
+        hql.append("        box.NOME as nomeBox, ");
         hql.append(" 		rota.DESCRICAO_ROTA as codigoRota, ");
         hql.append(" 		cota.NUMERO_COTA as codigoCota, ");
         hql.append(" 		coalesce(pessoa.NOME, pessoa.NOME_FANTASIA, pessoa.RAZAO_SOCIAL, '') as nomeCota, ");
@@ -2492,6 +2501,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameterList("status", statusLancamento);
         
         query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
+        query.addScalar("nomeBox", StandardBasicTypes.STRING);
         query.addScalar("codigoRota", StandardBasicTypes.STRING);
         query.addScalar("codigoCota", StandardBasicTypes.INTEGER);
         query.addScalar("nomeCota", StandardBasicTypes.STRING);
@@ -2572,6 +2582,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final StringBuilder hql = new StringBuilder();
         
         hql.append(" select box.CODIGO as codigoBox, ");
+        hql.append("        box.NOME as nomeBox, ");
         hql.append(" 		rota.DESCRICAO_ROTA as codigoRota, ");
         hql.append(" 		produto.CODIGO as codigoProduto, ");
         hql.append(" 		produto.NOME as nomeProduto, ");
@@ -2608,6 +2619,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameterList("status", statusLancamento);
         
         query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
+        query.addScalar("nomeBox", StandardBasicTypes.STRING);
         query.addScalar("codigoRota", StandardBasicTypes.STRING);
         query.addScalar("codigoProduto", StandardBasicTypes.STRING);
         query.addScalar("nomeProduto", StandardBasicTypes.STRING);
@@ -3121,7 +3133,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" select produto.CODIGO as codigoProduto, ");
         hql.append(" 		produto.NOME as nomeProduto, ");
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
-        hql.append(" 		produtoEdicao.CODIGO_DE_BARRAS as codigoBarra, ");
+        hql.append(" 		coalesce(produtoEdicao.CODIGO_DE_BARRAS, '') as codigoBarra, ");
         hql.append(" 		produtoEdicao.PACOTE_PADRAO as pacotePadrao, ");
         hql.append(" 		estudo.QTDE_REPARTE as reparte, ");
         hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
@@ -3131,7 +3143,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
         
-        hql.append(" group by produtoEdicao.ID ");
+        hql.append(" group by entregador.ID, produtoEdicao.ID ");
         
         gerarOrdenacaoEntregador(filtro, hql);
         
@@ -3179,7 +3191,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
         
-        hql.append(" group by produtoEdicao.ID ");
+        hql.append(" group by entregador.ID, produtoEdicao.ID ");
         
         if (filtro.getExcluirProdutoSemReparte()) {
         	
@@ -3222,11 +3234,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		produtoEdicao.ID as idProdutoEdicao, ");
         hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
         hql.append(" 		sum(estudoCota.REPARTE * produtoEdicao.PRECO_VENDA) as totalBox, ");
-        hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa ");
+        hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
+        hql.append("        entregador.ID as idEntregador, ");
+        hql.append("        coalesce(pessoaEnt.NOME, pessoaEnt.RAZAO_SOCIAL, '') as nomeEntregador, ");
+        hql.append("        rotaEnt.DESCRICAO_ROTA as descRota, ");
+        hql.append("        roteiroEnt.DESCRICAO_ROTEIRO as descRoteiro, ");
+        hql.append("        boxEnt.CODIGO as codigoBox ");
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
         
-        hql.append(" group by produtoEdicao.ID, cota.ID ");
+        hql.append(" group by entregador.ID, produtoEdicao.ID, cota.ID ");
         
         gerarOrdenacaoDadosAbastecimento(filtro, hql);
         
@@ -3246,6 +3263,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
         query.addScalar("totalBox", StandardBasicTypes.BIG_DECIMAL);
         query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
+        query.addScalar("idEntregador", StandardBasicTypes.LONG);
+        query.addScalar("nomeEntregador", StandardBasicTypes.STRING);
+        query.addScalar("descRota", StandardBasicTypes.STRING);
+        query.addScalar("descRoteiro", StandardBasicTypes.STRING);
+        query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
         

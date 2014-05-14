@@ -1150,7 +1150,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         hql.append("	box.nome as boxEncalhe, 	");
         
-        hql.append("   sum( coalesce(mec.qtde, 0)  *  coalesce(mec.valoresAplicados.precoComDesconto, 0)  ) as total ");
+        hql.append("    ROUND(sum( coalesce(mec.qtde, 0)  *  coalesce(mec.valoresAplicados.precoComDesconto, 0)  ),2) as total ");
         
         hql.append("   , coalesce(div.status, (");
         
@@ -1223,32 +1223,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         return ((Long)query.uniqueResult()).intValue();
     }
-    
-    
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Cota> buscarCotaFechamentoChamadaEncalhe(final Date dataEncalhe) {
-        
-        final StringBuilder hql = new StringBuilder();
-        
-        hql.append("  SELECT cota  ")
-        .append("  FROM ChamadaEncalhe chamadaEncalhe ")
-        .append("  join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCota ")
-        .append("  join chamadaEncalheCota.cota cota ")
-        .append("  join chamadaEncalheCota.conferenciasEncalhe conferenciaEncalhe ")
-        .append("  join conferenciaEncalhe.controleConferenciaEncalheCota controleConferenciaEncalheCota ")
-        .append("  join controleConferenciaEncalheCota.controleConferenciaEncalhe controleConferenciaEncalhe ");
-        
-        hql.append("   WHERE controleConferenciaEncalheCota.dataOperacao= :dataEncalhe")
-        .append("   AND chamadaEncalheCota.fechado= false")
-        .append("   AND chamadaEncalheCota.postergado= false");
-        
-        final Query query = this.getSession().createQuery(hql.toString());
-        query.setDate("dataEncalhe", dataEncalhe);
-        
-        return query.list();
-    }
-    
     
     @Override
     @SuppressWarnings("unchecked")

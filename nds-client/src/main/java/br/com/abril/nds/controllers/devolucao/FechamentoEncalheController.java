@@ -132,6 +132,7 @@ public class FechamentoEncalheController extends BaseController {
 		List<Box> listaBoxes = boxService.buscarPorTipo(TipoBox.ENCALHE);
 		
 		result.include("dataOperacao", DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()));
+		result.include("aceitaJuramentado", this.distribuidorService.aceitaJuramentado());
 		result.include("listaFornecedores", listaFornecedores);
 		result.include("listaBoxes", listaBoxes);
 		

@@ -16,6 +16,8 @@ import java.util.TreeSet;
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 
 /**
  * Classe abstrata para estratégias de balanceamento de recolhimento.
@@ -40,10 +42,8 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		
 		balanceamentoRecolhimento = this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
 		
-		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
-			balanceamentoRecolhimento.getMatrizRecolhimento();
-		
-		this.configurarMatrizRecolhimento(matrizRecolhimento);
+		this.configurarMatrizRecolhimento(
+		        balanceamentoRecolhimento, dadosRecolhimento.getPeriodoRecolhimentoSemanaAnterior());
 		
 		return balanceamentoRecolhimento;
 	}
@@ -380,8 +380,14 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	/*
 	 * Configura a data de recolhimento e a nova data dos produtos da matriz.
 	 */
-	private void configurarMatrizRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
+	private void configurarMatrizRecolhimento(BalanceamentoRecolhimentoDTO balanceamentoRecolhimento,
+	                                          Intervalo<Date> periodoRecolhimentoSemanaAnterior) {
 		
+	    TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
+            balanceamentoRecolhimento.getMatrizRecolhimento();
+	    
+	    List<ProdutoRecolhimentoDTO> produtosRecolhimentoDeOutraSemana = new ArrayList<>();
+	    
 		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entryMatrizRecolhimento 
 				: matrizRecolhimento.entrySet()) {
 			
@@ -393,10 +399,28 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 				
 				produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 				produtoRecolhimento.setNovaData(dataRecolhimento);
+				
+				if (this.isProdutoSemanaAnterior(
+				        produtoRecolhimento.getDataRecolhimentoPrevista(), periodoRecolhimentoSemanaAnterior)) {
+				    
+				      produtosRecolhimentoDeOutraSemana.add(produtoRecolhimento);
+				}
 			}
 		}
+		
+		balanceamentoRecolhimento.setProdutosRecolhimentoDeOutraSemana(produtosRecolhimentoDeOutraSemana);
 	}
 	
+	private boolean isProdutoSemanaAnterior(Date dataRecolhimentoPrevista, Intervalo<Date> intervalo) {
+
+	    if (DateUtil.validarDataEntrePeriodo(dataRecolhimentoPrevista, intervalo.getDe(), intervalo.getAte())) {
+	        
+	        return true;
+	    }
+	    
+        return false;
+    }
+
 	/*
 	 * Valida os dados de recolhimento.
 	 */

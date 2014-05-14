@@ -309,7 +309,7 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         
         hql.append(" join f.politicaCobranca p ");    
         
-        hql.append(" join fetch f.concentracaoCobrancaCota ccc ");    
+        hql.append(" left join fetch f.concentracaoCobrancaCota ccc ");    
         
         hql.append(" join fetch f.fornecedores forn ");    
         

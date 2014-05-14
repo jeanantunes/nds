@@ -73,23 +73,23 @@ p {
 </head>
 
 <body>
+	<table width="800" border="0" align="center" cellpadding="3"
+		cellspacing="0" style="border: 1px solid #000; margin-bottom: 5px;">
+		<tr>
+			<td width="121" height="21" align="center"><span> <span
+					class=""> <img
+						src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}"
+						border="0" height="70" width="110" />
+				</span>
+			</span></td>
+			<td width="301" align="center" valign="middle"><h3>${nomeDistribuidor}</h3></td>
+			<td width="359" align="right" valign="middle"><h1>Mapa de Abastecimento de Produto por Cota</h1></td>
+		</tr>
+		<tr>
+			<td colspan="3" align="center" valign="middle"></td>
+		</tr>
+	</table>
 	<c:forEach items="${maps}" var="mapa">
-		<table width="800" border="0" align="center" cellpadding="3"
-			cellspacing="0" style="border: 1px solid #000; margin-bottom: 5px;">
-			<tr>
-				<td width="121" height="21" align="center"><span> <span
-						class=""> <img
-							src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}"
-							border="0" height="70" width="110" />
-					</span>
-				</span></td>
-				<td width="301" align="center" valign="middle"><h3>${nomeDistribuidor}</h3></td>
-				<td width="359" align="right" valign="middle"><h1>Mapa de Abastecimento de Produto por Cota</h1></td>
-			</tr>
-			<tr>
-				<td colspan="3" align="center" valign="middle"></td>
-			</tr>
-		</table>
 		<table width="800" border="0" align="center" cellpadding="0"
 			cellspacing="0" style="margin-top: 5px;">
 			<tr class="class_linha_3">
@@ -128,7 +128,7 @@ p {
 							<td width="95" align="center"
 								style="border-bottom: 1px solid #000; border-top: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #000;"><strong>Total</strong></td>
 						</tr>
-
+						<c:set var="quebraColuna" value="0"></c:set>
 						<c:forEach items="${mapa.cotasQtdes}" var="cota"
 							varStatus="statusCota">
 
@@ -139,9 +139,17 @@ p {
 									style="border-right: 1px solid #000; border-left: 1px solid #000; border-bottom: 1px solid #000;">${cota.value}</td>
 							</tr>
 							<c:if test="${(((statusCota.index+1) % (qtdMaxRow)) == 0) }">
+							<c:set var="quebraColuna" value="${quebraColuna + 1}"></c:set>
 					</table>
 
 				</td>
+				
+				<c:if test="${quebraColuna == 4}">
+					</tr>
+					<tr>
+					<c:set value="0" var="quebraColuna"></c:set>
+				</c:if>
+				
 				<td width="195" valign="top">
 
 					<table width="195" border="0" cellpadding="0" cellspacing="0"

@@ -1137,7 +1137,8 @@ public class LancamentoRepositoryImpl extends
 
 		sql.append(" coalesce( ");
 		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
-		sql.append(" lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO ");
+		sql.append("   case when lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO < 1 then 1 ");
+		sql.append("   else round(lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO) end ");
 		sql.append(" else ");
 		sql.append(" lancamento.REPARTE ");
 		sql.append(" end, 0) as repartePrevisto, ");
@@ -1826,18 +1827,18 @@ public class LancamentoRepositoryImpl extends
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(
-			Date dataRecolhimentoDistribuidor, List<StatusLancamento> status) {
+	public List<Lancamento> obterLancamentoInStatus(Date dataLancamentoDistribuidor, List<StatusLancamento> status) {
+		
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" SELECT DISTINCT lancamento.dataLancamentoDistribuidor,lancamento.status ");
 		hql.append(" FROM Lancamento lancamento ");
-		hql.append(" WHERE lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
-		hql.append(" GROUP BY  lancamento.dataLancamentoDistribuidor, lancamento.status ");
+		hql.append(" WHERE lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor ");
+		hql.append(" AND lancamento.status IN (:status) ");
+		hql.append(" GROUP BY lancamento.dataLancamentoDistribuidor, lancamento.status ");
 
 		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("dataRecolhimentoDistribuidor",
-				dataRecolhimentoDistribuidor);
+		query.setParameter("dataLancamentoDistribuidor",dataLancamentoDistribuidor);
 		query.setParameterList("status", status);
 
 		return (List<Lancamento>) query.list();

@@ -72,6 +72,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	@XlsMapper(value="cod_corporativo")
 	private String codigoDeBarrasCorporativo;
 	
+	private boolean contagemPacote;
 	private BigDecimal precoPrevisto;
 	private Long id;
 	private Integer sequenciaMatriz;
@@ -936,7 +937,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	}
 
 	public void setLancamento(String lancamento) {
-		this.lancamento = lancamento.toUpperCase().replace("Ç", "C");
+		this.lancamento = lancamento;
 	}
 
 	public String getDtLancPrevisto() {
@@ -1035,4 +1036,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
     public void setIdFornecedor(Long idFornecedor) {
         this.idFornecedor = idFornecedor;
     }
+
+	public boolean isContagemPacote() {
+		return contagemPacote;
+	}
+
+	public void setContagemPacote(boolean contagemPacote) {
+		this.contagemPacote = contagemPacote;
+	}
+    
 }

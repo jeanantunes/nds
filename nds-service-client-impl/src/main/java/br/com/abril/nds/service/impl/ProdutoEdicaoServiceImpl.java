@@ -70,13 +70,14 @@ import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
-import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoSegmentoProdutoService;
@@ -144,7 +145,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     private DistribuidorService distribuidorService;
     
     @Autowired
-    private ParciaisService parciaisService;
+    private FuroProdutoService furoProdutoService;
     
     @Autowired
     private LancamentoParcialRepository lancamentoParcialRepository;
@@ -163,6 +164,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     @Autowired
     private CotaService cotaService;
+    
+    @Autowired
+    private CalendarioService calendarioService;
     
     @Autowired
     private TipoSegmentoProdutoService tipoSegmentoProdutoService;
@@ -266,13 +270,17 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 }
                 
                 if (diaSemana == -1){
+                	
                     diaSemana = listaDiasSemana.get(0);
                 }
                 
-                while (calendar.get(Calendar.DAY_OF_WEEK) != diaSemana){
+                while ((calendar.get(Calendar.DAY_OF_WEEK) != diaSemana)){
+                	
                     calendar.add(Calendar.DAY_OF_MONTH, 1);
                 }
-                
+
+                calendar.setTime(this.furoProdutoService.obterProximaDataDiaOperante(codigo,furoProdutoDTO.getIdProdutoEdicao(),calendar.getTime()));
+
                 furoProdutoDTO.setNovaData(
                         new SimpleDateFormat(furoProdutoDTO.DATE_PATTERN_PT_BR).format(calendar.getTime()));
             }
@@ -340,7 +348,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Codigo/nome produto é obrigatório.");
         }
         
-        final List<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.obterProdutoPorCodigoNome(
+        final List<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.obterProdutoPorCodigoNomeCodigoSM(null,
                 codigoNomeProduto, numeroCota, quantidadeRegistros, mapaDataCEConferivel);
         
         return produtosEdicao;
@@ -1617,11 +1625,17 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             return;
         }
         
-        if(produto.getDescontoLogistica()==null) {
+        if (Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()==null) {
             throw new ValidacaoException(TipoMensagem.WARNING, "O produto inserido não possui desconto cadastrado.");
         }
+
+        if (produto.getDesconto() == null) {
+        	throw new ValidacaoException(TipoMensagem.WARNING, "O produto inserido não possui desconto cadastrado.");
+        }
         
-        dto.setDesconto(produto.getDescontoLogistica().getPercentualDesconto());
+        dto.setDesconto(Origem.INTERFACE.equals(produto.getOrigem()) ? 
+        		produto.getDescontoLogistica().getPercentualDesconto() : 
+        		produto.getDesconto());
         
         if(dto.getPacotePadrao()==null) {
             dto.setPacotePadrao(produto.getPacotePadrao());

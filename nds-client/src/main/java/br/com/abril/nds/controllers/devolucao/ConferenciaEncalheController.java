@@ -830,6 +830,29 @@ public class ConferenciaEncalheController extends BaseController {
 
 		this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
 	}
+	
+	@Post
+	public void autoCompleteProdutoEdicaoCodigoSM(final Integer numeroCota, final Integer sm) {
+		
+		if (sm == null) {
+
+            throw new ValidacaoException(TipoMensagem.WARNING, "Código SM inválido.");
+		}
+
+		final List<ItemAutoComplete> listaProdutos = 
+				this.conferenciaEncalheService.obterListaProdutoEdicaoParaRecolhimentoPorCodigoSM(
+						numeroCota, 
+						sm, 
+						QUANTIDADE_MAX_REGISTROS, 
+						obterFromSessionMapaDatasEncalheConferiveis()); 
+
+		if (listaProdutos == null || listaProdutos.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
+		}
+
+		this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
+	}
 
 	            /**
      * Obtém o objeto do tipo ConferenciaEncalheDTO que esta na lista de
@@ -865,7 +888,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 	/**
 	 * Obtém a quantidade de encalhe a partir do que foi informado na grid de encalhe.
-	 * Esta informação pode conter o sufixo "e" indicando que o produto é CROMO e que 
+	 * Esta informação pode conter o sufixo "*" indicando que o produto é CROMO e que 
 	 * a quantidade informada equivale a de envelopes. 
 	 * 
 	 * @param qtdeEncalhe
@@ -922,7 +945,7 @@ public class ConferenciaEncalheController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
 		} 
 		
-		BigInteger qtdeEncalhe = processarQtdeExemplar(produtoEdicao.getId(), produtoEdicao.getPacotePadrao(), quantidade);
+		BigInteger qtdeEncalhe = processarQtdeExemplar(produtoEdicao.isContagemPacote(), produtoEdicao.getId(), produtoEdicao.getPacotePadrao(), quantidade);
 		
 		if (conferenciaEncalheDTO == null){
 			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, false, false);
@@ -978,7 +1001,7 @@ public class ConferenciaEncalheController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
 		}
 		
-		BigInteger qtdeEncalhe = processarQtdeExemplar(produtoEdicao.getId(), produtoEdicao.getPacotePadrao(), quantidade);
+		BigInteger qtdeEncalhe = processarQtdeExemplar(produtoEdicao.isContagemPacote(), produtoEdicao.getId(), produtoEdicao.getPacotePadrao(), quantidade);
 		
 		if (conferenciaEncalheDTO == null) {
 			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, false, false);
@@ -1083,33 +1106,33 @@ public class ConferenciaEncalheController extends BaseController {
 
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
-	public void adicionarProdutoConferido(final Long idProdutoEdicao, final String quantidade, final Boolean juramentada, final boolean indConferenciaContingencia) {
+	public void adicionarProdutoConferido(final Long produtoEdicaoId, final String qtdExemplares, final Boolean juramentada, final boolean indConferenciaContingencia) {
 		
-		if (idProdutoEdicao == null){
+		if (produtoEdicaoId == null){
 			
             throw new ValidacaoException(TipoMensagem.WARNING, "Produto é obrigatório.");
 		}
 		
-		if (quantidade == null){
+		if (qtdExemplares == null){
 			
             throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade é obrigatório.");
 		}
 		
-		ProdutoEdicaoDTO produtoEdicao = this.getProdutoEdicaoDTO(idProdutoEdicao);
+		ProdutoEdicaoDTO produtoEdicao = this.getProdutoEdicaoDTO(produtoEdicaoId);
 
-		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = getConferenciaEncalheDTOFromSession(idProdutoEdicao, null);
+		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = getConferenciaEncalheDTOFromSession(produtoEdicaoId, null);
 
 		if (conferenciaEncalheDTOSessao != null){
 			
-			final BigInteger qtdeEncalhe = obterQuantidadeEncalheDaString(quantidade);
+			final BigInteger qtdeEncalhe = this.obterQuantidadeEncalheDaString(qtdExemplares);
 			
 			conferenciaEncalheDTOSessao.setQtdExemplar(qtdeEncalhe);
 
-			this.setListaConferenciaEncalheToSession(this.atualizarProdutoRepetido(idProdutoEdicao, qtdeEncalhe, indConferenciaContingencia));
+			this.setListaConferenciaEncalheToSession(this.atualizarProdutoRepetido(produtoEdicaoId, qtdeEncalhe, indConferenciaContingencia));
 			
 		} else {
 			
-			final BigInteger qtdeEncalhe = obterQuantidadeEncalheDaString(quantidade);
+			final BigInteger qtdeEncalhe = this.obterQuantidadeEncalheDaString(qtdExemplares);
 			
 			conferenciaEncalheDTOSessao = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, true, indConferenciaContingencia);
 			
@@ -1334,7 +1357,7 @@ public class ConferenciaEncalheController extends BaseController {
             
             final boolean supervisor = usuarioService.isSupervisor();
             
-            if (listaConferencia == null || listaConferencia.isEmpty()){
+            if (!this.verificarProdutoJaConferido(listaConferencia, produtoEdicaoId, idConferencia)){
                 
                 ProdutoEdicaoDTO pDto = null;
                 
@@ -1397,7 +1420,34 @@ public class ConferenciaEncalheController extends BaseController {
         }
 	}
 
-	private boolean validarVendaNegativaProduto(final String qtdExemplares,
+	private boolean verificarProdutoJaConferido(List<ConferenciaEncalheDTO> listaConferencia, Long produtoEdicaoId,
+	        Long idConferencia) {
+        
+	    if (listaConferencia == null || listaConferencia.isEmpty()){
+	        
+	        return false;
+	    }
+	    
+	    for (ConferenciaEncalheDTO dto : listaConferencia){
+	        
+	        if (produtoEdicaoId != null){
+	        
+    	        if (produtoEdicaoId.equals(dto.getIdProdutoEdicao())){
+    	            return true;
+    	        }
+	        } else if (idConferencia != null){
+	            
+	            if (idConferencia.equals(dto.getIdConferenciaEncalhe())){
+	                
+	                return true;
+	            }
+	        }
+	    }
+	    
+        return false;
+    }
+
+    private boolean validarVendaNegativaProduto(final String qtdExemplares,
 										        final boolean indConferenciaContingencia,
 										        final ConferenciaEncalheDTO dto,
 										        boolean supervisor) {
@@ -1432,7 +1482,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if(isQuantidadeEncalheAlterada(this.obterQuantidadeEncalheDaString(qtdExemplares), dto.getQtdExemplar())) {
 			
-			qtdeEncalhe = processarQtdeExemplar(dto.getIdProdutoEdicao(), dto.getPacotePadrao(), qtdExemplares);
+			qtdeEncalhe = processarQtdeExemplar(dto.getIsContagemPacote(), dto.getIdProdutoEdicao(), dto.getPacotePadrao(), qtdExemplares);
 		} 
 		else {
 			
@@ -2494,7 +2544,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		}
 	}
 	
-	            /**
+	/**
      * Processa a quantidade informada pelo usuario, validando quando um produto
      * CROMO é informado.
      * 
@@ -2506,6 +2556,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
      */
 			
 	private BigInteger processarQtdeExemplar(
+			boolean isContagemPacote,
 			final Long idProdutoEdicao,
 			Integer pacotePadrao,
 			String quantidade) {
@@ -2518,12 +2569,9 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 			return null;
 		}
 		
-		boolean isContagemPacote = this.conferenciaEncalheService.isContagemPacote(idProdutoEdicao);
-		
 		if(!isContagemPacote) {
 			return obterQuantidadeEncalheDaString(quantidade);
 		}
-		
 		
 		if(quantidade.contains(Constants.ENVELOPE_DE_CROMO)) {
 			return obterQuantidadeEncalheDaString(quantidade);
@@ -2572,7 +2620,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		
 		conferenciaEncalheDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
 
-		conferenciaEncalheDTO.setContagemPacote(this.conferenciaEncalheService.isContagemPacote(produtoEdicao.getId()));
+		conferenciaEncalheDTO.setContagemPacote(produtoEdicao.isContagemPacote());
 		
 		if (produtoEdicao.getTipoChamadaEncalhe() != null) {
 			

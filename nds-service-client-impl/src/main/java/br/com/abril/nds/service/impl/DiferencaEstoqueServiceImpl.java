@@ -307,6 +307,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario,isDiferencaNova, StatusConfirmacao.PENDENTE);
     }
     
+    @Override
+    @Transactional
+    public Diferenca atualizar(Diferenca diferenca) {
+    	return this.diferencaEstoqueRepository.merge(diferenca);
+    }
+    
     private Set<Diferenca> salvarDiferenca(final Set<Diferenca> listaNovasDiferencas,
             final Map<Long, List<RateioCotaVO>> mapaRateioCotas,
             final Long idUsuario,

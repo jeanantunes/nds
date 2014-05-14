@@ -71,10 +71,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			balanceamentoRecolhimentoController.obterParametrosPesquisa(),
 			function(result) {
 				
-				if(result.produtosNaoBalanceadosAposFechamentoMatriz
-						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+				if(result.produtosRecolhimentoDeOutraSemana
+						&& result.produtosRecolhimentoDeOutraSemana.length > 0 ){
 					
-					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+					balanceamentoRecolhimentoController.mostrarProdutoDeOutraSemanaDeRecolhimento(result);
 				}
 				else{
 					
@@ -148,60 +148,43 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		$("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val(dataSelecionada);
 	},
 	
-	verificarProdutosNaoBalanceadosAposConfirmacaoMatriz : function(result) {
+	mostrarProdutoDeOutraSemanaDeRecolhimento : function(result) {
 		
 		var mensagemDialog ="<ul style='margin-left: 20px;'>" ;
 		
-		$.each(result.produtosNaoBalanceadosAposFechamentoMatriz, function(index, item) {
+		$.each(result.produtosRecolhimentoDeOutraSemana, function(index, item) {
 			
 			mensagemDialog += "<li style='padding-bottom: 10px;'>" + item.codigoProduto +" - "+ item.nomeProduto + " - " + item.numeroEdicao + "</li>";
 	    });	
 		
 		mensagemDialog += "</ul>";
 		
-		$("#descdialogProdutosNaoBalanceadosAposConfirmacaoMatriz",balanceamentoRecolhimentoController.workspace).html(mensagemDialog);
+		$("#descDialogProdutosDeOutraSemana", balanceamentoRecolhimentoController.workspace).html(mensagemDialog);
 		
-		$("#dialogProdutosNaoBalanceadosAposConfirmacaoMatriz", balanceamentoRecolhimentoController.workspace).dialog({
+		$("#dialogProdutosDeOutraSemana", balanceamentoRecolhimentoController.workspace).dialog({
 			resizable: false,
 			height:'auto',
 			width:600,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
+				"Fechar": function() {
 					
-					balanceamentoRecolhimentoController.processarProdutosNaoBalanceadosAposConfirmacaoMatriz(result);
-					
-					$(this).dialog("close");
-				},
-				"Cancelar": function() {
-					
-					balanceamentoRecolhimentoController.showResumo(false);
-					
-					$(this).dialog("close");
-				}
-			},
-			
-			form: $("#dialogProdutosNaoBalanceadosAposConfirmacaoMatriz", balanceamentoRecolhimentoController.workspace).parents("form")
-		});
-	},
-	
-	processarProdutosNaoBalanceadosAposConfirmacaoMatriz:function(results){
-		
-		$.postJSON(
-				contextPath + "/devolucao/balanceamentoMatriz/processarProdutosNaoBalanceadosAposConfirmacaoMatriz",
-				null,function(result){
-					
-					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(results);
-					$('#utilizaSedeAtendida').val(results.utilizaSedeAtendida);
+					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+					$('#utilizaSedeAtendida').val(result.utilizaSedeAtendida);
 
+					var dataPesquisa = 
+						$("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val();
+					
+					balanceamentoRecolhimentoController.escolherDataParaVisualizacaoGrid(dataPesquisa);
+					
 					balanceamentoRecolhimentoController.visualizarMatrizBalanceamentoPorDia(null);
 					
+					$(this).dialog("close");
 				},
-				function() {
-					
-					balanceamentoRecolhimentoController.showResumo(false);
-				}
-		);
+			},
+			
+			form: $("#dialogProdutosDeOutraSemana", balanceamentoRecolhimentoController.workspace).parents("form")
+		});
 	},
 	
 	montarResumoPeriodoBalanceamento : function(result) {
@@ -832,10 +815,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			null,
 			function(result) {
 				
-				if(result.produtosNaoBalanceadosAposFechamentoMatriz
-						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+				if(result.produtosRecolhimentoDeOutraSemana
+						&& result.produtosRecolhimentoDeOutraSemana.length > 0 ){
 					
-					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+					balanceamentoRecolhimentoController.mostrarProdutoDeOutraSemanaDeRecolhimento(result);
 				}
 				else{
 					
@@ -863,10 +846,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			null,
 			function(result) {
 				
-				if(result.produtosNaoBalanceadosAposFechamentoMatriz
-						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+				if(result.produtosRecolhimentoDeOutraSemana
+						&& result.produtosRecolhimentoDeOutraSemana.length > 0 ){
 					
-					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+					balanceamentoRecolhimentoController.mostrarProdutoDeOutraSemanaDeRecolhimento(result);
 				}
 				else{
 					

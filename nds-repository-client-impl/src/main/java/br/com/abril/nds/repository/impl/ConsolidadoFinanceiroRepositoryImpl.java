@@ -1455,16 +1455,15 @@ ConsolidadoFinanceiroRepository {
         .append(" ),2) as saldo, ")
         
         .append(" coalesce(cfc.CONSIGNADO,0) - coalesce(cfc.ENCALHE,0) ")
-        .append(" - coalesce((select sum(coalesce(mfdc.valor,0)) from MOVIMENTO_FINANCEIRO_COTA mfdc ")
-        .append(" join CONSOLIDADO_MVTO_FINANCEIRO_COTA c_ on (c_.MVTO_FINANCEIRO_COTA_ID = mfdc.ID) ")
-        .append(" where mfdc.TIPO_MOVIMENTO_ID in (:tiposMovimentoNegociacaoComissao) ")
-        .append(" and c_.CONSOLIDADO_FINANCEIRO_ID = cfc.ID ")
-        .append(" and mfdc.DATA = cfc.DT_CONSOLIDADO), 0)")
         .append(" as valorVendaDia, ")
         
         .append(" case when divida.STATUS = :statusPendenteInadimplencia then 1 else 0 end as inadimplente ")
         
+        .append(", mf.DATA as dataMovimento ")
+        
         .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
+        .append(" inner join consolidado_mvto_financeiro_cota cmfc on cmfc.CONSOLIDADO_FINANCEIRO_ID = cfc.ID")
+        .append(" inner join movimento_financeiro_cota mf on mf.ID = cmfc.MVTO_FINANCEIRO_COTA_ID")
         .append(" inner join COTA cota on cota.ID = cfc.COTA_ID")
         .append(" left join DIVIDA_CONSOLIDADO d_cons on d_cons.CONSOLIDADO_ID = cfc.ID ")
         .append(" left join DIVIDA divida on divida.ID = d_cons.DIVIDA_ID ")
@@ -1476,7 +1475,7 @@ ConsolidadoFinanceiroRepository {
             
             sql.append(" and cfc.DT_CONSOLIDADO between :inicioPeriodo and :fimPeriodo ");
         }
-        
+
         sql.append(" group by cfc.ID ")
         
         .append(" union all ")
@@ -1829,6 +1828,7 @@ ConsolidadoFinanceiroRepository {
         .append("),0) as valorVendaDia, ")
         
         .append(" 0 as inadimplente ")
+        .append(", null as dataMovimento ")
         
         .append(" from MOVIMENTO_FINANCEIRO_COTA mfc ")
         .append(" inner join COTA on COTA.ID = mfc.COTA_ID")
@@ -1850,7 +1850,6 @@ ConsolidadoFinanceiroRepository {
         
         if (filtro.getColunaOrdenacao() != null) {
             sql.append(" order by ").append(filtro.getColunaOrdenacao()).append(" ");
-            
             if (filtro.getPaginacao() != null) {
                 
                 sql.append(filtro.getPaginacao().getOrdenacao());
@@ -1858,6 +1857,7 @@ ConsolidadoFinanceiroRepository {
                 
                 sql.append("asc");
             }
+            sql.append(", dataMovimento desc");
         }
         
         final SQLQuery query = this.getSession().createSQLQuery(sql.toString());
@@ -1888,7 +1888,6 @@ ConsolidadoFinanceiroRepository {
         query.addScalar("nomeBox");
         query.addScalar("detalharDebitoCredito", StandardBasicTypes.BOOLEAN);
         
-        
         query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteCotaVO.class));
         
         query.setParameter("numeroCota", filtro.getNumeroCota());
@@ -1915,7 +1914,6 @@ ConsolidadoFinanceiroRepository {
         query.setParameterList("tipoMovimentoVendaEncalhe", tipoMovimentoVendaEncalhe);
         query.setParameterList("tiposMovimentoConsignado", tiposMovimentoConsignado);
         query.setParameterList("tiposMovimentoPendente", tiposMovimentoPendente);
-        query.setParameterList("tiposMovimentoNegociacaoComissao", tiposMovimentoNegociacaoComissao);
         
         query.setParameter("naoPagoPostergado", StatusBaixa.NAO_PAGO_POSTERGADO.name());
         

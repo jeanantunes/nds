@@ -84,6 +84,7 @@ import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.FormaCobrancaService;
+import br.com.abril.nds.service.ImpressaoDividaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
@@ -165,6 +166,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     
     @Autowired
     private AcumuloDividasRepository acumuloDividasRepository;
+    
+    @Autowired
+    private ImpressaoDividaService impressaoDividaService;
     
     @Override
     @Transactional(readOnly = true)
@@ -422,6 +426,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     case DINHEIRO:
                     case OUTROS:
                         cobranca = new CobrancaDinheiro();
+                        cobranca.setTipoCobranca(tipoCobranca);
                         break;
                     default:
                         break;
@@ -435,6 +440,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                         cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
                         cobranca.setDataVencimento(parcelaNegociacao.getDataVencimento());
                         cobranca.setValor(valorTotalParcela);
+                        cobranca.setOriundaNegociacaoAvulsa(true);
                         dividaRepository.adicionar(divida);
                         cobranca.setNossoNumero(Util.gerarNossoNumero(numeroCota, dataOperacao, banco.getNumeroBanco(),
                                 null, divida.getId(), banco.getAgencia(), banco.getConta(), banco.getCarteira()));
@@ -660,6 +666,22 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     }
     
     @Override
+    @Transactional(readOnly=true) 
+    public List<byte[]> imprimirRecibos(final Long idNegociacao) {
+    	
+    	final List<String> listaNossoNumero = this.negociacaoDividaRepository.obterListaNossoNumeroPorNegociacao(idNegociacao);
+
+    	List<byte[]> recibos = new ArrayList<byte[]>();
+    	
+    	for (String nossoNumero : listaNossoNumero) {
+    		
+    		recibos.add(this.impressaoDividaService.gerarArquivoImpressao(nossoNumero));
+    	}
+    	
+    	return recibos;
+    }
+    
+    @Override
     @Transactional(readOnly = true)
     public byte[] imprimirNegociacao(final Long idNegociacao, final String valorDividaSelecionada) throws Exception {
         
@@ -881,7 +903,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         final BigDecimal qtd = BigDecimal.valueOf(filtro.getQntdParcelas() - qtdParcelasModificadas);
         BigDecimal novoValorParcela;
         if (qtd.intValue() > 0) {
-            novoValorParcela = (filtro.getValorSelecionado().subtract(valorParcelasModificadas)).divide(qtd,
+            novoValorParcela = (valorSelecionado.subtract(valorParcelasModificadas)).divide(qtd,
                     DEFAULT_SCALE, RoundingMode.HALF_UP);
             
         } else {
@@ -930,6 +952,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             }
 
             valorTotal = valorTotal.add(valorParcela);
+            
+            if (valorTotal.compareTo(valorSelecionado) > 0) {
+            	
+            	throw new ValidacaoException(TipoMensagem.WARNING, "A soma das parcelas ultrapassa o valor da dívida.");
+            }
 
             if (BigDecimalUtil.eq(somaEncargo, filtro.getValorEncargoSelecionado())) {
 
@@ -1272,7 +1299,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
                     this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiro);
 
-                	valorMovimentoNegociacao = negociacao.getValorDividaPagaComissao();
+                	valorMovimentoNegociacao = valorComissao;
                 	
                     negociacao.setValorDividaPagaComissao(BigDecimal.ZERO);
                 }

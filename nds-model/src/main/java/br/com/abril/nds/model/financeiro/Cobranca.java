@@ -110,6 +110,9 @@ public abstract class Cobranca {
 	@JoinColumn(name = "BANCO_ID")
 	private Banco banco;
 	
+	@Column(name = "ORIUNDA_NEGOCIACAO_AVULSA")
+	private boolean oriundaNegociacaoAvulsa;
+	
 	@ManyToOne
 	@JoinColumn(name="FORNECEDOR_ID")
 	private Fornecedor fornecedor;
@@ -278,6 +281,14 @@ public abstract class Cobranca {
 
 	public void setBanco(Banco banco) {
 		this.banco = banco;
+	}
+
+	public boolean isOriundaNegociacaoAvulsa() {
+		return oriundaNegociacaoAvulsa;
+	}
+
+	public void setOriundaNegociacaoAvulsa(boolean oriundaNegociacaoAvulsa) {
+		this.oriundaNegociacaoAvulsa = oriundaNegociacaoAvulsa;
 	}
 
 	public Fornecedor getFornecedor() {

@@ -80,7 +80,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -216,9 +216,18 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
     }
 	
     private TipoClassificacaoProduto findTipoClassificacaoProduto(String classificacao) {
-        Criteria criteria = this.getSession().createCriteria(TipoClassificacaoProduto.class);
-        criteria.add(Restrictions.like("descricao", classificacao));
-        return (TipoClassificacaoProduto) criteria.uniqueResult();
+        
+    	TipoClassificacaoProduto tipoClassificacaoProdutoAux;
+    	Criteria criteria = this.getSession().createCriteria(TipoClassificacaoProduto.class);
+        criteria.add(Restrictions.eq("descricao", classificacao.trim().toUpperCase()));
+        tipoClassificacaoProdutoAux = (TipoClassificacaoProduto) criteria.uniqueResult();
+        
+        if(tipoClassificacaoProdutoAux==null){
+         criteria.add(Restrictions.ge("descricao", classificacao.trim().toUpperCase()));
+         tipoClassificacaoProdutoAux = (TipoClassificacaoProduto) criteria.list().get(0);
+        }
+        
+        return tipoClassificacaoProdutoAux;
     }
     
     private TipoClassificacaoProduto criarNovoTipoClassificacaoProduto(String classificacao) {
@@ -361,7 +370,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		this.ndsiLoggerFactory.getLogger().logWarning(message,
 				EventoExecucaoEnum.SEM_DOMINIO,
 				"Produto Inserido com Periodicidade INDEFINIDA. Produto "+ produto.getCodigo());	
-		return this.findProduto(message);
+		return produto;
 	}
 
     private Fornecedor obterFornecedor(Message message) {
@@ -462,29 +471,36 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			produto.getTipoProduto().setCodigoNBM(input.getCodNBM());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Código NBM do Produto "+input.getCodProd()+" para " + input.getCodNBM());
+					"Atualização do Código NBM do Produto "+input.getCodProd()
+					+" para " + input.getCodNBM());
 		}
 
 		if (!Objects.equal(produto.getNomeComercial(), input.getNomeComercial()) 
 		        && !input.getNomeComercial().isEmpty()) {
 
-			produto.setNomeComercial(input.getNomeComercial());
+			
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Nome Comercial do Produto "+input.getCodProd()+" para "
-							+ input.getNomeComercial());
+					"Atualização do Nome Comercial do Produto "+input.getCodProd()
+					+" de "+ produto.getNomeComercial()
+					+" para "+ input.getNomeComercial());
+			
+			produto.setNomeComercial(input.getNomeComercial());
 		}
 		
 		TipoSegmentoProduto tipoSegmentoProduto = produto.getTipoSegmentoProduto();
         if ((tipoSegmentoProduto == null && input.getSegmento() != null) || 
-                (input.getSegmento() != null && !Objects.equal(
+                (input.getSegmento() != null && !input.getSegmento().trim().equals("") && !Objects.equal(
                         tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
             
-            produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Atualização do Tipo de Segmento do Produto "+input.getCodProd()+" para " + input.getSegmento());
+                    "Atualização do Tipo de Segmento do Produto "+input.getCodProd()
+                    +" de " + produto.getTipoSegmentoProduto().getDescricao()
+                    +" para " + input.getSegmento());
+            
+            produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
         }
         
 		if (descontoLogistica != null 
@@ -531,7 +547,20 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		edicao.setChamadaCapa(input.getChamadaCapa());
 		edicao.setOrigem(Origem.INTERFACE);
 		edicao.setNomeComercial(input.getNomeComercial());
-		edicao.setTipoClassificacaoProduto(getTipoClassificacaoProduto(input.getClassificacao()));
+		
+		TipoClassificacaoProduto tpclassificacao = getTipoClassificacaoProduto(input.getClassificacao());
+		
+		if(tpclassificacao!=null){
+		  
+			edicao.setTipoClassificacaoProduto(tpclassificacao);
+		
+		} else {
+			
+			ndsiLoggerFactory.getLogger().logError(
+	                message,
+	                EventoExecucaoEnum.HIERARQUIA,
+	                "Classificação ("+input.getClassificacao()+") não existe. Produto "+input.getCodProd());
+		}
 		
 		boolean isParcial = false;
 		
@@ -633,132 +662,184 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 		if (!Objects.equal(produto.getCodigoContexto(),input.getContextoProd())) {
 
-			edicao.getProduto().setCodigoContexto(input.getContextoProd());
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Código Contexto do Produto "+input.getCodProd()+" para "
-							+ input.getContextoProd());
+					"Atualização do Código Contexto do Produto "+input.getCodProd()
+					+" de "+ edicao.getProduto().getCodigoContexto()
+					+" para "+ input.getContextoProd());
+			
+			edicao.getProduto().setCodigoContexto(input.getContextoProd());
 		}
 		
 		if (!Objects.equal(produto.getNomeComercial(), input.getNomeComercial()) 
 		        && !input.getNomeComercial().isEmpty()) {
-
-			produto.setNomeComercial(input.getNomeComercial());
+			
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Nome Comercial do Produto "+input.getCodProd()+" para "
-							+ input.getNomeComercial());
+					"Atualização do Nome Comercial do Produto "+input.getCodProd()
+					+" de "+ produto.getNomeComercial()
+					+" para "+ input.getNomeComercial());
+			
+			produto.setNomeComercial(input.getNomeComercial());
 		}
 		
 		if ( null != produto.getTipoProduto() && null != produto.getTipoProduto().getCodigoNBM() && !produto.getTipoProduto().getCodigoNBM()
 				.equals(input.getCodNBM()) && !input.getCodNBM().equals(ZEROS_NBM)) {
 
-			produto.getTipoProduto()
-					.setCodigoNBM(input.getCodNBM());
+			
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Código NBM do Produto "+input.getCodProd()+" para " + input.getCodNBM());
+					"Atualização do Código NBM do Produto "+input.getCodProd()
+					+" de " + produto.getTipoProduto().getCodigoNBM()
+					+" para " + input.getCodNBM());
+			
+			produto.getTipoProduto().setCodigoNBM(input.getCodNBM());
 		}
 
+		
 		TipoSegmentoProduto tipoSegmentoProduto = produto.getTipoSegmentoProduto();
         
-        if ((tipoSegmentoProduto == null && input.getSegmento() != null) || 
-                (input.getSegmento() != null && !Objects.equal(
+        if ((tipoSegmentoProduto == null && input.getSegmento() != null && !input.getSegmento().trim().equals("")) || 
+                (input.getSegmento() != null && !input.getSegmento().trim().equals("") && !Objects.equal(
                         tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
             
-            produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Atualização do Tipo de Segmento do Produto "+input.getCodProd()+" para " + input.getSegmento());
+                    "Atualização do Tipo de Segmento do Produto "+input.getCodProd()
+                    +" de " + produto.getTipoSegmentoProduto().getDescricao()
+                    +" para " + input.getSegmento());
+            
+            produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
         }
 		
 		if (!Objects.equal(edicao.getNomeComercial(), input.getNomeComercial()) 
 		        && !input.getNomeComercial().isEmpty()) {
-
-			edicao.setNomeComercial(input.getNomeComercial());
+			
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Nome Comercial do Produto "+input.getCodProd()+" para " + input.getNomeComercial());
+					"Atualização Nome Comercial do Produto "+input.getCodProd()
+					+" de " + edicao.getNomeComercial()
+					+" para " + input.getNomeComercial());
+			
+			edicao.setNomeComercial(input.getNomeComercial());
 		}
 		
+		
 		Dimensao dimensaoEdicao = edicao.getDimensao();
-		if (null != dimensaoEdicao && null != dimensaoEdicao.getLargura() && !dimensaoEdicao.getLargura().equals(input.getLargura())) {
+		
+		if (null != dimensaoEdicao && null != dimensaoEdicao.getLargura() && input.getLargura()!=null && !dimensaoEdicao.getLargura().equals(input.getLargura())) {
 
-		    dimensaoEdicao.setLargura(input.getLargura());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Largura do Produto "+input.getCodProd()+" para " + input.getLargura());
+					"Atualização Largura do Produto "+input.getCodProd()
+					+" de " + dimensaoEdicao.getLargura()
+					+" para " + input.getLargura());
+			
+			dimensaoEdicao.setLargura(input.getLargura());
 		}
+		
 		if (null != dimensaoEdicao && null != dimensaoEdicao.getComprimento() && !dimensaoEdicao.getComprimento()
 				.equals(input.getComprimento())) {
 
-		    dimensaoEdicao.setComprimento(input.getComprimento());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Comprimento do Produto "+input.getCodProd()+" para " + input.getComprimento());
+					"Atualização Comprimento do Produto "+input.getCodProd()
+					+" de " + dimensaoEdicao.getComprimento()
+					+" para " + input.getComprimento());
+			
+			dimensaoEdicao.setComprimento(input.getComprimento());
 		}
+		
 		if (null != dimensaoEdicao && null != dimensaoEdicao.getEspessura() && !dimensaoEdicao.getEspessura().equals(input.getExpessura())) {
 
-			dimensaoEdicao.setEspessura(input.getExpessura());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Espessura do Produto "+input.getCodProd()+" para " + input.getExpessura());
+					"Atualização Espessura do Produto "+input.getCodProd()
+					+" de " + dimensaoEdicao.getEspessura()
+					+" para " + input.getExpessura());
+			
+			dimensaoEdicao.setEspessura(input.getExpessura());
 		}
 		
 		Brinde brindeEdicao = edicao.getBrinde();
 		if (null != brindeEdicao && null != brindeEdicao.getPermiteVendaSeparada() && brindeEdicao.getPermiteVendaSeparada() != input
 				.getCondVendeSeparado()) {
 
-			brindeEdicao.setPermiteVendaSeparada(
-					input.getCondVendeSeparado());
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Permite Venda Separada do Produto "+input.getCodProd()+" para "
-							+ input.getCondVendeSeparado());
+					"Atualização Permite Venda Separada do Produto "+input.getCodProd()
+					+" de "+ brindeEdicao.getPermiteVendaSeparada()
+					+" para "+ input.getCondVendeSeparado());
+			
+			brindeEdicao.setPermiteVendaSeparada(input.getCondVendeSeparado());
 		}
 		if (null != brindeEdicao && null != brindeEdicao.getDescricao() && !brindeEdicao.getDescricao().equals(input.getDescBrinde())) {
 
-			brindeEdicao.setDescricao(input.getDescBrinde());
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Descricao Brinde do Produto "+input.getCodProd()+" para "
-							+ input.getDescBrinde());
+					"Atualização Descricao Brinde do Produto "+input.getCodProd()
+					+" de "+ brindeEdicao.getDescricao()
+					+" para "+ input.getDescBrinde());
+			
+			brindeEdicao.setDescricao(input.getDescBrinde());
 		}
 
 		if (!"".equals(input.getChamadaCapa().trim()) && 
 		        !Objects.equal(edicao.getChamadaCapa(), input.getChamadaCapa())) {
 
-			edicao.setChamadaCapa(input.getChamadaCapa());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Chamada Capa do Produto "+input.getCodProd()+" para " + input.getChamadaCapa());
+					"Atualização Chamada Capa do Produto "+input.getCodProd()
+					+" de " + edicao.getChamadaCapa()
+					+" para " + input.getChamadaCapa());
+			
+			edicao.setChamadaCapa(input.getChamadaCapa());
 		}
 		
 		TipoClassificacaoProduto tipoClassificacaoProduto = edicao.getTipoClassificacaoProduto();
 		
-        if ((tipoClassificacaoProduto == null && input.getClassificacao() != null) || 
-                (input.getClassificacao() != null && !Objects.equal(
-                        tipoClassificacaoProduto.getDescricao(), input.getClassificacao()))) {
+        if (tipoClassificacaoProduto == null && input.getClassificacao() != null){
             
-            produto.setTipoSegmentoProduto(getTipoSegmento(input.getClassificacao()));
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Atualização do Tipo de Classificação do Produto "+input.getCodProd()+" para " + input.getClassificacao());
+                    "Atualização do Tipo de Classificação do Produto "+input.getCodProd()
+                    +" de " + "Nulo"
+                    +" para " + input.getClassificacao());
+            
+            produto.setTipoSegmentoProduto(getTipoSegmento(input.getClassificacao()));
+        
+        }else if (input.getClassificacao() != null && !Objects.equal(
+                        tipoClassificacaoProduto.getDescricao(), input.getClassificacao())) {
+            
+            this.ndsiLoggerFactory.getLogger().logInfo(message,
+                    EventoExecucaoEnum.INF_DADO_ALTERADO,
+                    "Atualização do Tipo de Classificação do Produto "+input.getCodProd()
+                    +" de " + tipoClassificacaoProduto.getDescricao()
+                    +" para " + input.getClassificacao());
+            
+            produto.setTipoSegmentoProduto(getTipoSegmento(input.getClassificacao()));
+        } else if (input.getClassificacao() == null){
+        	
+        	this.ndsiLoggerFactory.getLogger().logInfo(message,
+                    EventoExecucaoEnum.INF_DADO_ALTERADO,
+                    "Tipo de Classificação do Produto "+input.getCodProd()
+                    +" Nula/Vazia na carga.");        	
         }
-		
 		if (edicao.isPossuiBrinde() != input.isContemBrinde()) {
 
-			edicao.setPossuiBrinde(input.isContemBrinde());
 			this.ndsiLoggerFactory.getLogger()
 					.logInfo(
 							message,
 							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualização Possui Brinde do Produto "+input.getCodProd()+" para "
-									+ input.isContemBrinde());
+							"Atualização Possui Brinde do Produto "+input.getCodProd()
+							+" de "+ edicao.isPossuiBrinde()
+							+" para "+ input.isContemBrinde());
+			
+			edicao.setPossuiBrinde(input.isContemBrinde());
 		}
 
 		if (null != edicao.getCodigoDeBarras() && !Objects.equal(edicao.getCodigoDeBarras(), input.getCodBarra())) {
@@ -768,55 +849,75 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			
 			if(validarCodigoBarras){
 				
-				edicao.setCodigoDeBarras(codigoDeBarras);
 				this.ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualização do Codigo de Barra do Produto "+input.getCodProd()+" para " + input.getCodBarra());
+						"Atualização do Codigo de Barra do Produto "+input.getCodProd()
+						+" de " + edicao.getCodigoDeBarras()
+						+" para " + input.getCodBarra());
+				
+				edicao.setCodigoDeBarras(codigoDeBarras);
 			}
 		}
 
 		if (!Objects.equal(edicao.getDataDesativacao(), input.getDataDesativacao())) {
 
-			edicao.setDataDesativacao(input.getDataDesativacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização da Data de Desativacao do Produto "+input.getCodProd()+" para "
-							+ input.getDataDesativacao());
+					"Atualização da Data de Desativacao do Produto "+input.getCodProd()
+					+" de "+ edicao.getDataDesativacao()
+					+" para "+ input.getDataDesativacao());
+			
+			edicao.setDataDesativacao(input.getDataDesativacao());
 		}
+		
 		if (edicao.getPeb() != input.getPeb()) {
 
-			edicao.setPeb(input.getPeb());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do PEB do Produto "+input.getCodProd()+" para " + input.getPeb());
+					"Atualização do PEB do Produto "+input.getCodProd()
+					+" de " + edicao.getPeb()
+					+" para " + input.getPeb());
+			
+			edicao.setPeb(input.getPeb());
 		}
+		
 		if (edicao.getPacotePadrao() != input.getPactPadrao()) {
 
-			edicao.setPacotePadrao(input.getPactPadrao());
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Pacote Padrao do Produto "+input.getCodProd()+" para "
-							+ input.getPactPadrao());
+					"Atualização do Pacote Padrao do Produto "+input.getCodProd()
+					+" de "+ edicao.getPacotePadrao()
+					+" para "+ input.getPactPadrao());
+			
+			edicao.setPacotePadrao(input.getPactPadrao());
 		}
+		
 		if (!Objects.equal(edicao.getPeso(),input.getPesoUni())) {
 
-			edicao.setPeso(input.getPesoUni());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Peso do Produto "+input.getCodProd()+" para " + input.getPesoUni());
+					"Atualização do Peso do Produto "+input.getCodProd()
+					+" de " + edicao.getPeso()
+					+" para " + input.getPesoUni());
+			
+			edicao.setPeso(input.getPesoUni());
 		}
 		
 		if (!Objects.equal(edicao.getCodigoDeBarraCorporativo(),input.getCodigoBarrasCorporativo())) {
 
-			edicao.setCodigoDeBarraCorporativo(input.getCodigoBarrasCorporativo());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Código de Barras Corporativo do Produto "+input.getCodProd()+" para " + input.getCodigoBarrasCorporativo());
+					"Atualização do Código de Barras Corporativo do Produto "+input.getCodProd()
+					+" de " + edicao.getCodigoDeBarraCorporativo()
+					+" para " + input.getCodigoBarrasCorporativo());
+			
+			edicao.setCodigoDeBarraCorporativo(input.getCodigoBarrasCorporativo());
 		}
 		
+		//this.getSession().merge(produto);
 		this.getSession().merge(edicao);
 	}
 	

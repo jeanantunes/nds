@@ -142,8 +142,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#numeroCota", ConferenciaEncalhe.workspace).numeric();
 		                                           
-		$("#qtdeExemplar", ConferenciaEncalhe.workspace).numericE();
-		
+		$("#qtdeExemplar", ConferenciaEncalhe.workspace).numericPacotePadrao();
 		
 		$("#vlrCE", this.workspace).maskMoney({
 			 thousands:'.', 
@@ -191,14 +190,6 @@ var ConferenciaEncalhe = $.extend(true, {
 			if (e.keyCode == 13) {
 				
 				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).focus();
-			}
-		});
-
-		$('#sm', ConferenciaEncalhe.workspace).keypress(function(e) {
-			
-			if (e.keyCode == 13) {
-				
-				ConferenciaEncalhe.autoCompletarPorSm();
 			}
 		});
 
@@ -266,7 +257,11 @@ var ConferenciaEncalhe = $.extend(true, {
 		    	setTimeout (function () {$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).select();}, 1);
 		    }
 		});
+		
 		this.bindkeypressCodigoBarras();
+		
+		this.bindkeypressCodigoSM();
+		
 		ConferenciaEncalhe.removerAtalhos();
 		$(".atalhosCE", ConferenciaEncalhe.workspace).hide();
 		
@@ -282,7 +277,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		}
 	},
 	
-	bindkeypressCodigoBarras:function(){
+	bindkeypressCodigoBarras : function(){
 	
 		$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).keypress(function(e) {
 			
@@ -292,6 +287,18 @@ var ConferenciaEncalhe = $.extend(true, {
 			}
 		});
 	},
+
+	bindkeypressCodigoSM : function(){
+		
+		$('#sm', ConferenciaEncalhe.workspace).keypress(function(e) {
+			
+			if (e.keyCode == 13) {
+				
+				ConferenciaEncalhe.autoCompletarPorCodigoSM();
+			}
+		});
+	},
+
 	
 	getProdutoEdicao: function() {
 
@@ -420,7 +427,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		if ($("#sm").val() != ""){
 			
-			ConferenciaEncalhe.autoCompletarPorSm();
+			ConferenciaEncalhe.autoCompletarPorCodigoSM();
 		}
 		else if ($("#cod_barras_conf_encalhe").val() != ""){
 			
@@ -798,7 +805,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					valorExemplares = isNaN(valorExemplares) ? 0 : valorExemplares;
 					
 					var inputExemplares = '<input isEdicao="true" id="qtdExemplaresGrid_' + index + 
-						'" class="input-numericE" onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue;ConferenciaEncalhe.verificarPermissaoSuperVisor('+ 
+						'" class="input-numericPacotePadrao" onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue;ConferenciaEncalhe.verificarPermissaoSuperVisor('+ 
 						index +');" style="width:50px; text-align: center;" maxlength="255" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
@@ -877,7 +884,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#colunaJuramentada", ConferenciaEncalhe.workspace).hide();
 			}
 			
-			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalhe.workspace).numericE();
+			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalhe.workspace).numericPacotePadrao();
 			
 		}
 		
@@ -1596,8 +1603,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		var idProdutoEdicao = $("#idProdutoEdicaoHidden", ConferenciaEncalhe.workspace).val();
 		
-		var data = [{name: "idProdutoEdicao", value: idProdutoEdicao}, 
-		            {name: "quantidade", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()}];
+		var data = [{name: "produtoEdicaoId", value: idProdutoEdicao}, 
+		            {name: "qtdExemplares", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,
 			function(result){
@@ -1989,47 +1996,58 @@ var ConferenciaEncalhe = $.extend(true, {
 		);
 	},
 	
-	autoCompletarPorSm : function(){
+	autoCompletarPorCodigoSM: function() {
+
+		var codSM = $("#sm", ConferenciaEncalhe.workspace).val().trim();
 		
-		if (ConferenciaEncalhe.ultimoSM != "" && ConferenciaEncalhe.ultimoSM == $("#sm", ConferenciaEncalhe.workspace).val()){
-			
-			var qtd = $("#qtdeExemplar", ConferenciaEncalhe.workspace).val() == "" ? 0 : parseInt($("#qtdeExemplar", ConferenciaEncalhe.workspace).val());
-			
-			$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(qtd + 1);
-		} else {
-			
-			var data = [{name: "sm", value: $("#sm", ConferenciaEncalhe.workspace).val()}, 
-			            {name: "idProdutoEdicaoAnterior", value: ConferenciaEncalhe.ultimoIdProdutoEdicao}];
-			
-			if ($("#qtdeExemplar", ConferenciaEncalhe.workspace).val().trim() != "") {
-				data.push({name: "quantidade", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()});
-			}
-			
-			
-			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/pesquisarProdutoEdicaoCodigoSM', data,
-				function(result){
-				
-					ConferenciaEncalhe.setarValoresPesquisados(result);
-					
-					$("#sm", ConferenciaEncalhe.workspace).focus();
-					
-					ConferenciaEncalhe.ultimoIdProdutoEdicao = result.idProdutoEdicao;
+		var data = 
+			[{name: 'numeroCota', value: $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
+			 {name: 'sm', value: codSM}];
+
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/autoCompleteProdutoEdicaoCodigoSM", data,
+			function(result){
+				//EXIBE AUTOCOMPLETE SOMENTE SE HOUVER MAIS DE UM RESULTADO
+			    if (result.length > 1){				
 			    	
-        		    ConferenciaEncalhe.setarValoresPesquisados(result);
+					$("#sm", ConferenciaEncalhe.workspace).autocomplete({
+						source: result,
+						select: function(event, ui){			
+							
+							ConferenciaEncalhe.ultimoIdProdutoEdicao = ui.item.chave.$;	
+							
+							ConferenciaEncalhe.getProdutoEdicao();								
+						},
+						
+						/*
+						close:function(event, ui){	
+							
+							ConferenciaEncalhe.bindkeypressCodigoSM();
+						},
+						*/
+						
+						delay : 100,
+					});	
 					
-					ConferenciaEncalhe.verificarPermissaoSuperVisor();
-        		    
-				}, 
-				function(){
+					$("#sm", ConferenciaEncalhe.workspace).autocomplete("search", codSM);
 					
-					$('#sm', ConferenciaEncalhe.workspace).val("");
+				}else{
+			    	
+			    	//$("#sm", ConferenciaEncalhe.workspace).autocomplete({});
+			    	
+			    	ConferenciaEncalhe.ultimoIdProdutoEdicao = result[0].chave.$;
+			    	
+        		    ConferenciaEncalhe.getProdutoEdicao();
+			    }    
+			}, 
+			function() {
+		
+				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("1");
 					
-					$('#sm', ConferenciaEncalhe.workspace).focus();
-				}, 
-				false, 
-				"idTelaConferenciaEncalhe"
-			);
-		}
+				$('#sm', ConferenciaEncalhe.workspace).val("");
+				
+				focusSelectRefField($("#sm", ConferenciaEncalhe.workspace));
+			}
+		);
 	},
 	
 	inicializarAutoCompleteSugestaoProdutoEdicao : function() {

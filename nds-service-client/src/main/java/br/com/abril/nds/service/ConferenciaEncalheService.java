@@ -186,18 +186,6 @@ public interface ConferenciaEncalheService {
 	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long id) throws EncalheRecolhimentoParcialException;
 	
 	/**
-	 * Obtém dados do produtoEdicao através do código de barras do mesmo se houver chamada de encalhe.
-	 * 
-	 * @param numeroCota
-	 * @param codigoDeBarras
-	 * 
-	 * @return List<ProdutoEdicaoDTO>
-	 * 
-	 * @throws EncalheRecolhimentoParcialException
-	 */
-	List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws EncalheRecolhimentoParcialException;
-	
-	/**
 	 * Obtém dados do produtoEdicao através do código SM do mesmo se houver chamada de encalhe.
 	 * 
 	 * @param numeroCota
@@ -274,19 +262,13 @@ public interface ConferenciaEncalheService {
 	
 	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras);
 	
-	boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota);
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoSM(
+			final Integer numeroCota, 
+			final Integer codigoSM,
+			final Integer quantidadeRegistros,
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO);
 	
-	/**
-	 * Caso o produto seja do grupo CROMO 
-	 * e esteja com com lançamento parcial NÃO FINAL
-	 * então retornará true (indicando que este possui
-	 * contagem por pacote).
-	 * 
-	 * 
-	 * @param idProdutoEdicao
-	 * @return boolean
-	 */
-	boolean isContagemPacote(Long idProdutoEdicao);
+	boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota);
 	
 	boolean isParcialNaoFinal(final Long idProdutoEdicao);
 	
