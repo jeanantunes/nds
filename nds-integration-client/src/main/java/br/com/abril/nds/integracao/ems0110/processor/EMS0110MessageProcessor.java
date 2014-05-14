@@ -114,7 +114,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Distribuidor nao encontrato.");
+					"Distribuidor não encontrato. "+message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.toString()));
 //			throw new RuntimeException("Distribuidor nao encontrado.");
 		}
 	}
@@ -276,7 +276,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             ndsiLoggerFactory.getLogger().logError(
                     message,
                     EventoExecucaoEnum.HIERARQUIA,
-                    String.format( "Fornecedor nulo para o Produto:  %1$s", input.getCodProd() )
+                    String.format( "Fornecedor Nulo. Produto  %1$s"+" Edição "+input.getEdicaoProd(), input.getCodProd() )
                 );
             
             return null;
@@ -292,7 +292,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		if (null == editor) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.SEM_DOMINIO,
-					"Editor " + input.getCodEditor() + " não encontrado. Produto " + input.getCodProd() +  " - Nome do Produto " + input.getNomeProd());
+					"Editor " + input.getCodEditor() + " não encontrado. Produto " + input.getCodProd() +" Edição "+input.getEdicaoProd());
 
 //			throw new RuntimeException("Editor " + input.getCodEditor() + " nao encontrado. Código do produto: " + input.getCodProd() +  " - Nome do Produto: " + input.getNomeProd());
 		}
@@ -302,14 +302,14 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		if (null == tipoProduto) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.SEM_DOMINIO,
-					"Tipo Produto não encontrado."+input.getCodCategoria());
+					"Tipo Produto "+input.getCodCategoria()+" não encontrado. Produto "+input.getCodProd()+" Edição "+input.getEdicaoProd());
 
 //			throw new RuntimeException("Tipo Produto nao encontrado.");
 		}
 				
 		this.ndsiLoggerFactory.getLogger().logError(message,
 				EventoExecucaoEnum.SEM_DOMINIO,
-				"Publicação Cadastrada atravéz do Produto Edição, Código ICD não será Preenchido. Produto "+input.getCodProd());
+				"Publicação Cadastrada atravéz do Produto Edição, Código ICD não será Preenchido. Produto "+input.getCodProd()+" Edição "+input.getEdicaoProd());
 
 		
 		produto.setTipoProduto(tipoProduto);
@@ -337,7 +337,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.HIERARQUIA,
-					String.format( "Produto sem Segmento. Produto "+input.getCodProd(), input.getCodProd(), input.getEdicaoProd() )
+					String.format( "Produto sem Segmento. Produto "+input.getCodProd()+" Edição "+input.getEdicaoProd(), input.getCodProd(), input.getEdicaoProd() )
 				);
 			
 		}
@@ -369,7 +369,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 		this.ndsiLoggerFactory.getLogger().logWarning(message,
 				EventoExecucaoEnum.SEM_DOMINIO,
-				"Produto Inserido com Periodicidade INDEFINIDA. Produto "+ produto.getCodigo());	
+				"Produto Inserido com Periodicidade INDEFINIDA. Produto "+ produto.getCodigo()+" Edição "+input.getEdicaoProd());	
 		return produto;
 	}
 
