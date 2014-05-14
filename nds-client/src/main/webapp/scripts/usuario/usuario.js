@@ -43,24 +43,19 @@ var usuarioController = $.extend(true, {
 					if (callbacks.usuarioSupervisorCallback) {
 						callbacks.usuarioSupervisorCallback(result);
 	            	}
-					
 					usuarioController.data.reset();
 	            
 				}, function(result) {
-	            	
-					if (callbacks.usuarioNaoSupervisorCallback) {
-						callbacks.usuarioNaoSupervisorCallback(result);
-					} else {
-						_this.popupConfirmaSenha(callbacks.usuarioSupervisorCallback);
-					}
-
+					_this.popupConfirmaSenha(callbacks.usuarioSupervisorCallback, callbacks.usuarioNaoSupervisorCallback);
 					usuarioController.data.reset();
 	            }
 			);    	
 	    },
 	
-	    popupConfirmaSenha : function(usuarioSupervisorCallback) {
+	    popupConfirmaSenha : function(usuarioSupervisorCallback, usuarioNaoSupervisorCallback) {
 	    	var _this = this;
+	    	var manterLinha = false;
+	    	
 	    	var $dialog = $('#dialog-confirmacao-senha');
 	        $dialog.dialog({
 				resizable: false,
@@ -75,28 +70,67 @@ var usuarioController = $.extend(true, {
 							$.trim($dialog.find('#senha-confirmar').val())
 						);
 
-						_this.validarUsuarioSupervisor({
+						_this.verificarSenhaUsuarioSupervisor({
 							usuarioSupervisorCallback: function(result) {
 								usuarioSupervisorCallback(result);
+								manterLinha = true;
 								$dialog.dialog("close");
 							},
-							usuarioNaoSupervisorCallback: function(result) {
-								var msg = result.mensagens && result.mensagens.listaMensagens[0] ? 
-										result.mensagens.listaMensagens[0] : 'Usuário não é supervisor.';
-								_this.setErrorMessages(msg);
+							
+							usuarioNaoSupervisorCallback: function(result){
+								if(usuarioNaoSupervisorCallback){
+									usuarioNaoSupervisorCallback(result);
+									exibirMensagemDialog('WARNING', ['Usuário não é supervisor.'], '');
+									$dialog.dialog("close");
+								}else{
+									exibirMensagemDialog('WARNING', ['Usuário não é supervisor.'], '');
+								}
 							}
 						});
 	                },
 	                "Cancelar": function() {
-	                	$(this).dialog("close");
+	                	if(usuarioNaoSupervisorCallback){
+							usuarioNaoSupervisorCallback();
+							$dialog.dialog("close");
+						}else{
+							$(this).dialog("close");
+						}
 	                }
 				},
 				form: $("#dialog-autenticar-supervisor").parents("form"),
 				close: function() {
 					_this.cleanDialogData();
+				},
+				
+				beforeClose: function(){
+					if(!manterLinha){
+						usuarioNaoSupervisorCallback();
+					}
 				}
 			});
 	    },
+	    
+	    verificarSenhaUsuarioSupervisor: function(callbacks) {
+
+	    	var _this = this;
+	    	
+	    	$.postJSON(contextPath + '/administracao/usuario/validarUsuarioSupervisor',
+				usuarioController.data.toJSON(), function (result) {
+
+					if (callbacks.usuarioSupervisorCallback) {
+						callbacks.usuarioSupervisorCallback(result);
+	            	}
+					usuarioController.data.reset();
+	            
+				}, function(result) {
+					if (callbacks.usuarioNaoSupervisorCallback) {
+						callbacks.usuarioNaoSupervisorCallback(result);
+	            	}
+					usuarioController.data.reset();
+	            }
+			);    	
+	    },
+	    
 	    
 	    cleanDialogData: function() {
 	    	

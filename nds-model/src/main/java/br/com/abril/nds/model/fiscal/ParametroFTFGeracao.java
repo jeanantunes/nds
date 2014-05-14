@@ -4,15 +4,11 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import br.com.abril.nds.model.cadastro.TipoAtividade;
 
 @Entity
 @Table(name="PARAMETROS_FTF_GERACAO")
@@ -31,7 +27,7 @@ public class ParametroFTFGeracao implements Serializable{
 	@Column(name="NOME")
 	private String nome;
 	
-	@Column(name="CENTRO+EMISSOR")
+	@Column(name="CENTRO_EMISSOR")
 	private String centroEmissor;
 	
 	@Column(name="CNPJ_EMISSOR")
@@ -57,13 +53,9 @@ public class ParametroFTFGeracao implements Serializable{
 	private NaturezaOperacao naturezaOperacao; 
 	
 	@OneToOne
-	@JoinColumn(name="CFOP", updatable=true, insertable=true)
+	@JoinColumn(name="CFOP_ID", updatable=true, insertable=true)
 	private CFOP cfop; 
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_ATIVIDADE", nullable = false)
-	private TipoAtividade tipoAtividade;
-
 	public long getId() {
 		return id;
 	}
@@ -152,11 +144,4 @@ public class ParametroFTFGeracao implements Serializable{
 		this.cfop = cfop;
 	}
 
-	public TipoAtividade getTipoAtividade() {
-		return tipoAtividade;
-	}
-
-	public void setTipoAtividade(TipoAtividade tipoAtividade) {
-		this.tipoAtividade = tipoAtividade;
-	}
 }

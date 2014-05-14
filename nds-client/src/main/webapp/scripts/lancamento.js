@@ -281,6 +281,8 @@ var lancamentoController = $.extend(true, {
 						function(result) {
 
 							lancamentoController.inicializar();
+
+							lancamentoNovoController.houveAlteracaoLancamentos = false;
 						}
 					);
 
