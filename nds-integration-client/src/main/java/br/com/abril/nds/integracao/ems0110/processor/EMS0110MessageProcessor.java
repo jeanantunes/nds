@@ -461,7 +461,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Código Contexto do Produto "+input.getCodProd()+" para "
+					"Alteração do Código Contexto do Produto "+input.getCodProd()+" para "
 							+ input.getContextoProd());
 		}
 		if (null != produto.getTipoProduto() && null != produto.getTipoProduto().getCodigoNBM() 
@@ -471,7 +471,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			produto.getTipoProduto().setCodigoNBM(input.getCodNBM());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Código NBM do Produto "+input.getCodProd()
+					"Alteração do Código NBM do Produto "+input.getCodProd()
 					+" para " + input.getCodNBM());
 		}
 
@@ -482,7 +482,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Nome Comercial do Produto "+input.getCodProd()
+					"Alteração do Nome Comercial do Produto "+input.getCodProd()
 					+" de "+ produto.getNomeComercial()
 					+" para "+ input.getNomeComercial());
 			
@@ -496,7 +496,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Atualização do Tipo de Segmento do Produto "+input.getCodProd()
+                    "Alteração do Tipo de Segmento do Produto "+input.getCodProd()
                     +" de " + produto.getTipoSegmentoProduto().getDescricao()
                     +" para " + input.getSegmento());
             
@@ -665,7 +665,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Código Contexto do Produto "+input.getCodProd()
+					"Alteração do Código Contexto do Produto "+input.getCodProd()
 					+" de "+ edicao.getProduto().getCodigoContexto()
 					+" para "+ input.getContextoProd());
 			
@@ -678,7 +678,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Nome Comercial do Produto "+input.getCodProd()
+					"Alteração do Nome Comercial do Produto "+input.getCodProd()
 					+" de "+ produto.getNomeComercial()
 					+" para "+ input.getNomeComercial());
 			
@@ -691,7 +691,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Código NBM do Produto "+input.getCodProd()
+					"Alteração do Código NBM do Produto "+input.getCodProd()
 					+" de " + produto.getTipoProduto().getCodigoNBM()
 					+" para " + input.getCodNBM());
 			
@@ -707,7 +707,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Atualização do Tipo de Segmento do Produto "+input.getCodProd()
+                    "Alteração do Tipo de Segmento do Produto "+input.getCodProd()
                     +" de " + produto.getTipoSegmentoProduto().getDescricao()
                     +" para " + input.getSegmento());
             
@@ -719,7 +719,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Nome Comercial do Produto "+input.getCodProd()
+					"Alteração Nome Comercial do Produto "+input.getCodProd()
 					+" de " + edicao.getNomeComercial()
 					+" para " + input.getNomeComercial());
 			
@@ -733,7 +733,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Largura do Produto "+input.getCodProd()
+					"Alteração Largura do Produto "+input.getCodProd()
 					+" de " + dimensaoEdicao.getLargura()
 					+" para " + input.getLargura());
 			
@@ -745,7 +745,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Comprimento do Produto "+input.getCodProd()
+					"Alteração Comprimento do Produto "+input.getCodProd()
 					+" de " + dimensaoEdicao.getComprimento()
 					+" para " + input.getComprimento());
 			
@@ -756,7 +756,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Espessura do Produto "+input.getCodProd()
+					"Alteração Espessura do Produto "+input.getCodProd()
 					+" de " + dimensaoEdicao.getEspessura()
 					+" para " + input.getExpessura());
 			
@@ -770,7 +770,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Permite Venda Separada do Produto "+input.getCodProd()
+					"Alteração Permite Venda Separada do Produto "+input.getCodProd()
 					+" de "+ brindeEdicao.getPermiteVendaSeparada()
 					+" para "+ input.getCondVendeSeparado());
 			
@@ -781,7 +781,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Descricao Brinde do Produto "+input.getCodProd()
+					"Alteração Descricao Brinde do Produto "+input.getCodProd()
 					+" de "+ brindeEdicao.getDescricao()
 					+" para "+ input.getDescBrinde());
 			
@@ -793,7 +793,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização Chamada Capa do Produto "+input.getCodProd()
+					"Alteração Chamada Capa do Produto "+input.getCodProd()
 					+" de " + edicao.getChamadaCapa()
 					+" para " + input.getChamadaCapa());
 			
@@ -806,7 +806,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Atualização do Tipo de Classificação do Produto "+input.getCodProd()
+                    "Alteração do Tipo de Classificação do Produto "+input.getCodProd()
                     +" de " + "Nulo"
                     +" para " + input.getClassificacao());
             
@@ -817,7 +817,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Atualização do Tipo de Classificação do Produto "+input.getCodProd()
+                    "Alteração do Tipo de Classificação do Produto "+input.getCodProd()
                     +" de " + tipoClassificacaoProduto.getDescricao()
                     +" para " + input.getClassificacao());
             
@@ -835,7 +835,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					.logInfo(
 							message,
 							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualização Possui Brinde do Produto "+input.getCodProd()
+							"Alteração Possui Brinde do Produto "+input.getCodProd()
 							+" de "+ edicao.isPossuiBrinde()
 							+" para "+ input.isContemBrinde());
 			
@@ -852,7 +852,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 				this.ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualização do Codigo de Barra do Produto "+input.getCodProd()
+						"Alteração do Codigo de Barra do Produto "+input.getCodProd()
 						+" de " + edicao.getCodigoDeBarras()
 						+" para " + input.getCodBarra());
 				
@@ -865,7 +865,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização da Data de Desativacao do Produto "+input.getCodProd()
+					"Alteração da Data de Desativacao do Produto "+input.getCodProd()
 					+" de "+ edicao.getDataDesativacao()
 					+" para "+ input.getDataDesativacao());
 			
@@ -876,7 +876,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do PEB do Produto "+input.getCodProd()
+					"Alteração do PEB do Produto "+input.getCodProd()
 					+" de " + edicao.getPeb()
 					+" para " + input.getPeb());
 			
@@ -888,7 +888,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Pacote Padrao do Produto "+input.getCodProd()
+					"Alteração do Pacote Padrao do Produto "+input.getCodProd()
 					+" de "+ edicao.getPacotePadrao()
 					+" para "+ input.getPactPadrao());
 			
@@ -899,7 +899,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Peso do Produto "+input.getCodProd()
+					"Alteração do Peso do Produto "+input.getCodProd()
 					+" de " + edicao.getPeso()
 					+" para " + input.getPesoUni());
 			
@@ -910,7 +910,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualização do Código de Barras Corporativo do Produto "+input.getCodProd()
+					"Alteração do Código de Barras Corporativo do Produto "+input.getCodProd()
 					+" de " + edicao.getCodigoDeBarraCorporativo()
 					+" para " + input.getCodigoBarrasCorporativo());
 			

@@ -87,7 +87,7 @@ public class EMS0126MessageProcessor extends AbstractRepository implements
 				
 				ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualização do Codigo de Barras"
+						"Alteração do Codigo de Barras"
 						+" de "+produtoEdicao.getCodigoDeBarras()
 						+" para "+input.getCodigoBarras()
 						+" Produto "+input.getCodigoProduto()
@@ -103,9 +103,9 @@ public class EMS0126MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Nenhum resultado encontrado para" 
-					+ " Produto "+ input.getCodigoProduto() 
-					+ " Edição "+ input.getEdicao());
+					" Produto "+ input.getCodigoProduto() 
+					+ " Edição "+ input.getEdicao()
+					+" não encontrado.");
 
 		}
 
