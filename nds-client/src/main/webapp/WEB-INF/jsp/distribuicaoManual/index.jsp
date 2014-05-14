@@ -1,5 +1,6 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/distribuicaoManual.js"></script>
+<script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/scripts/usuario/usuario.js"></script>
 
 <script type="text/javascript">
 	$(function() {
