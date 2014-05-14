@@ -129,6 +129,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 						dto.setEntregaBox(romaneio.getNomeBox());
 						dto.setRota(romaneio.getNomeRota());
 						dto.setRoteiro(romaneio.getNomeRoteiro());
+						dto.setEntregaBox(idBox + " - " + romaneio.getNomeBox());
 						
 						dto.setItens(new ArrayList<RomaneioDTO>());
 						dto.getItens().add(romaneio);
