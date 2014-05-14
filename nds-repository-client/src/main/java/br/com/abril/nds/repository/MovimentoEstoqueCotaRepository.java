@@ -502,5 +502,11 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 
 	public abstract void updateByIdConsolidadoAndGrupos(Long idConsolidado, List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros,
 			String motivo, Long movimentoFinanceiroCota, StatusEstoqueFinanceiro statusEstoqueFinanceiro);
+
+	public abstract Long findIdByIdConferenciaEncalhe(Long idConferenciaEncalhe);
+
+	public abstract void updateById(Long id, ValoresAplicados valoresAplicados, BigInteger qtde);
+
+	public abstract BigInteger loadQtdeById(Long id);
 	
 }

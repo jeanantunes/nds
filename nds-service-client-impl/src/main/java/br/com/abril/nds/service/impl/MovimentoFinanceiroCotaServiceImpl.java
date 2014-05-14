@@ -661,7 +661,11 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 		
 		this.historicoMovimentoFinanceiroCotaRepository.removeByIdConsolidadoAndGrupos(idConsolidado, grupoMovimentoFinaceiros);
 		
-		//TODO: Implementação de atualização de Negocioação de divida
+		final List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceirosNegocioacao = Arrays.asList(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO/*TODO: GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO*/);
+		
+		this.negociacaoDividaRepository.updateValorDividaValorMovimento(idConsolidado,grupoMovimentoFinaceirosNegocioacao);
+		
+		this.negociacaoDividaRepository.removeNegociacaoMovimentoFinanceiroByIdConsolidadoAndGrupos(idConsolidado, grupoMovimentoFinaceirosNegocioacao);
 		
 		this.movimentoFinanceiroCotaRepository.removeByIdConsolidadoAndGrupos(idConsolidado, grupoMovimentoFinaceiros);
 	}

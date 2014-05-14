@@ -3571,4 +3571,49 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
     }
     
+    @Override
+	public Long findIdByIdConferenciaEncalhe(Long idConferenciaEncalhe){
+    	final StringBuilder sql = new StringBuilder();
+    	
+    	sql.append("SELECT confe.movimentoEstoqueCota.id FROM ConferenciaEncalhe confe ");
+    	sql.append("WHERE confe.id = :idConferenciaEncalhe");
+    	
+    	Query query =  getSession().createQuery(sql.toString());
+    	
+    	query.setParameter("idConferenciaEncalhe", idConferenciaEncalhe);
+    	
+    	return (Long) query.uniqueResult();
+    }
+    
+	@Override
+	public void updateById(Long id, ValoresAplicados valoresAplicados,
+			BigInteger qtde) {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE MovimentoEstoqueCota estoque ");
+		sql.append("SET estoque.valoresAplicados.precoVenda = :precoVenda ");
+		sql.append(",estoque.valoresAplicados.precoComDesconto = :precoComDesconto ");
+		sql.append(",estoque.valoresAplicados.precoComDesconto = :valorDesconto ");
+		sql.append(",estoque.qtde = :qtde ");
+		sql.append("WHERE estoque.id = :id");
+
+		this.getSession()
+				.createQuery(sql.toString())
+				.setParameter("precoVenda", valoresAplicados.getPrecoVenda())
+				.setParameter("precoComDesconto",
+						valoresAplicados.getPrecoComDesconto())
+				.setParameter("valorDesconto",
+						valoresAplicados.getValorDesconto())
+				.setParameter("qtde", qtde).setParameter("id", id)
+				.executeUpdate();
+	}
+
+    @Override
+	public BigInteger loadQtdeById(Long id){
+    	Query query =  getSession().createQuery("SELECT o.qtde FROM MovimentoEstoqueCota o WHERE o.id = :id");
+    	
+    	query.setParameter("id", id);
+    	
+    	return (BigInteger) query.uniqueResult();
+    }
+    
 }
