@@ -457,25 +457,50 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		if (!Objects.equal(produto.getCodigoContexto(), input.getContextoProd())) {
 
-			produto.setCodigoContexto(input.getContextoProd());
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Código Contexto do Produto "+input.getCodProd()+" para "
-							+ input.getContextoProd());
+					"Alteração do Código Contexto do Produto "+input.getCodProd()
+					+" de "+ produto.getCodigoContexto()
+					+" para "+ input.getContextoProd()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
+			
+			produto.setCodigoContexto(input.getContextoProd());
 		}
-		if (null != produto.getTipoProduto() && null != produto.getTipoProduto().getCodigoNBM() 
-		        && !produto.getTipoProduto().getCodigoNBM().equals(input.getCodNBM()) 
-		        && !input.getCodNBM().equals(ZEROS_NBM)) {
+		if (null != produto.getTipoProduto() ) {
 
+			if(null != produto.getTipoProduto().getCodigoNBM() && !input.getCodNBM().equals(ZEROS_NBM)){
+				
+				if(!produto.getTipoProduto().getCodigoNBM().equals(input.getCodNBM())){
+					
+				  this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteração do Código NBM"
+						+" de "+ produto.getTipoProduto().getCodigoNBM()
+						+" para "+ input.getCodNBM()
+						+" Produto "+ input.getCodProd()
+						+" Edição "+ input.getEdicaoProd());
+				}
+				
+			}else{
+				
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteração do Código NBM"
+						+" de Nulo "
+						+" para "+ input.getCodNBM()
+						+" Produto "+ input.getCodProd()
+						+" Edição "+ input.getEdicaoProd());
+				
+			}
+			
+			
+			
 			produto.getTipoProduto().setCodigoNBM(input.getCodNBM());
-			this.ndsiLoggerFactory.getLogger().logInfo(message,
-					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Código NBM do Produto "+input.getCodProd()
-					+" para " + input.getCodNBM());
 		}
 
-		if (!Objects.equal(produto.getNomeComercial(), input.getNomeComercial()) 
+		if (input.getNomeComercial()!=null && !input.getNomeComercial().trim().equals("") && !Objects.equal(produto.getNomeComercial(), input.getNomeComercial()) 
 		        && !input.getNomeComercial().isEmpty()) {
 
 			
@@ -484,7 +509,9 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração do Nome Comercial do Produto "+input.getCodProd()
 					+" de "+ produto.getNomeComercial()
-					+" para "+ input.getNomeComercial());
+					+" para "+ input.getNomeComercial()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			produto.setNomeComercial(input.getNomeComercial());
 		}
@@ -498,7 +525,9 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
                     "Alteração do Tipo de Segmento do Produto "+input.getCodProd()
                     +" de " + produto.getTipoSegmentoProduto().getDescricao()
-                    +" para " + input.getSegmento());
+                    +" para " + input.getSegmento()
+                    +" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
             
             produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
         }
@@ -511,7 +540,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		} else {
 			
-			StringBuilder sb = new StringBuilder("Desconto Logística ("+input.getTipoDesconto()+") Não encontrado para o Produto "+input.getCodProd()+" Edição "+input.getEdicaoProd());
+			StringBuilder sb = new StringBuilder("Desconto Logística ("+input.getTipoDesconto()+") Não encontrado. Produto "+input.getCodProd()+" Edição "+input.getEdicaoProd());
 			
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
@@ -559,7 +588,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logError(
 	                message,
 	                EventoExecucaoEnum.HIERARQUIA,
-	                "Classificação ("+input.getClassificacao()+") não existe. Produto "+input.getCodProd());
+	                "Classificação ("+input.getClassificacao()+") não existe. Produto "+input.getCodProd()+" Edição "+ input.getEdicaoProd());
+			
 		}
 		
 		boolean isParcial = false;
@@ -582,7 +612,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	private boolean validarCodigoBarras(String codigo, Long edicao, Message message,	String codigoDeBarras) {
 		 
 		if (codigoDeBarras == null || "".equals(codigoDeBarras) || new BigInteger(codigoDeBarras).compareTo(BigInteger.ZERO) <= 0){
-			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Código de barras vazio para o Produto "+codigo +" Edição: "+edicao);
+			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Código de barras vazio. Produto "+codigo +" Edição "+edicao);
 			return false;
 		}
 		return true;
@@ -605,11 +635,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		List<Fornecedor> fornecedores = fornecedorRepository.obterFornecedoresDeProduto(produto.getCodigo(), null);
 		
 		if(fornecedores == null || fornecedores.isEmpty()) {
-			throw new IllegalStateException("Não há Fornecedor associado ao Produto " + produto.getCodigo() + " Edição " + produtoEdicao.getNumeroEdicao());
+			throw new IllegalStateException("Não há Fornecedor associado. Produto " + produto.getCodigo() + " Edição " + produtoEdicao.getNumeroEdicao());
 		}
 
 		if(fornecedores.size()!=1) {
-			throw new IllegalStateException("Mais de um Fornecedor associado ao Produto " + produto.getCodigo() + " Edição " + produtoEdicao.getNumeroEdicao());
+			throw new IllegalStateException("Mais de um Fornecedor associado. Produto " + produto.getCodigo() + " Edição " + produtoEdicao.getNumeroEdicao());
 		}
 		
 		Set<Fornecedor> conjuntoFornecedor = new HashSet<Fornecedor>();
@@ -665,9 +695,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Código Contexto do Produto "+input.getCodProd()
+					"Alteração do Código Contexto"
 					+" de "+ edicao.getProduto().getCodigoContexto()
-					+" para "+ input.getContextoProd());
+					+" para "+ input.getContextoProd()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			edicao.getProduto().setCodigoContexto(input.getContextoProd());
 		}
@@ -678,9 +710,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Nome Comercial do Produto "+input.getCodProd()
+					"Alteração do Nome Comercial"
 					+" de "+ produto.getNomeComercial()
-					+" para "+ input.getNomeComercial());
+					+" para "+ input.getNomeComercial()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			produto.setNomeComercial(input.getNomeComercial());
 		}
@@ -691,9 +725,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Código NBM do Produto "+input.getCodProd()
+					"Alteração do Código NBM"
 					+" de " + produto.getTipoProduto().getCodigoNBM()
-					+" para " + input.getCodNBM());
+					+" para " + input.getCodNBM()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			produto.getTipoProduto().setCodigoNBM(input.getCodNBM());
 		}
@@ -707,9 +743,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Alteração do Tipo de Segmento do Produto "+input.getCodProd()
+                    "Alteração de Segmentação"
                     +" de " + produto.getTipoSegmentoProduto().getDescricao()
-                    +" para " + input.getSegmento());
+                    +" para " + input.getSegmento()
+                    +" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
             
             produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
         }
@@ -719,9 +757,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração Nome Comercial do Produto "+input.getCodProd()
+					"Alteração Nome Comercial"
 					+" de " + edicao.getNomeComercial()
-					+" para " + input.getNomeComercial());
+					+" para " + input.getNomeComercial()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			edicao.setNomeComercial(input.getNomeComercial());
 		}
@@ -733,9 +773,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração Largura do Produto "+input.getCodProd()
+					"Alteração Largura"
 					+" de " + dimensaoEdicao.getLargura()
-					+" para " + input.getLargura());
+					+" para " + input.getLargura()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			dimensaoEdicao.setLargura(input.getLargura());
 		}
@@ -745,9 +787,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração Comprimento do Produto "+input.getCodProd()
+					"Alteração Comprimento"
 					+" de " + dimensaoEdicao.getComprimento()
-					+" para " + input.getComprimento());
+					+" para " + input.getComprimento()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			dimensaoEdicao.setComprimento(input.getComprimento());
 		}
@@ -756,9 +800,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração Espessura do Produto "+input.getCodProd()
+					"Alteração Espessura"
 					+" de " + dimensaoEdicao.getEspessura()
-					+" para " + input.getExpessura());
+					+" para " + input.getExpessura()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			dimensaoEdicao.setEspessura(input.getExpessura());
 		}
@@ -770,9 +816,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração Permite Venda Separada do Produto "+input.getCodProd()
+					"Alteração Permite Venda Separada"
 					+" de "+ brindeEdicao.getPermiteVendaSeparada()
-					+" para "+ input.getCondVendeSeparado());
+					+" para "+ input.getCondVendeSeparado()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			brindeEdicao.setPermiteVendaSeparada(input.getCondVendeSeparado());
 		}
@@ -781,9 +829,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração Descricao Brinde do Produto "+input.getCodProd()
+					"Alteração Descricao Brinde"
 					+" de "+ brindeEdicao.getDescricao()
-					+" para "+ input.getDescBrinde());
+					+" para "+ input.getDescBrinde()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			brindeEdicao.setDescricao(input.getDescBrinde());
 		}
@@ -793,9 +843,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração Chamada Capa do Produto "+input.getCodProd()
+					"Alteração Chamada Capa"
 					+" de " + edicao.getChamadaCapa()
-					+" para " + input.getChamadaCapa());
+					+" para " + input.getChamadaCapa()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			edicao.setChamadaCapa(input.getChamadaCapa());
 		}
@@ -806,9 +858,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Alteração do Tipo de Classificação do Produto "+input.getCodProd()
+                    "Alteração do Tipo de Classificação"
                     +" de " + "Nulo"
-                    +" para " + input.getClassificacao());
+                    +" para " + input.getClassificacao()
+                    +" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
             
             produto.setTipoSegmentoProduto(getTipoSegmento(input.getClassificacao()));
         
@@ -817,17 +871,20 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Alteração do Tipo de Classificação do Produto "+input.getCodProd()
+                    "Alteração do Tipo de Classificação"
                     +" de " + tipoClassificacaoProduto.getDescricao()
-                    +" para " + input.getClassificacao());
+                    +" para " + input.getClassificacao()
+                    +" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
             
             produto.setTipoSegmentoProduto(getTipoSegmento(input.getClassificacao()));
         } else if (input.getClassificacao() == null){
         	
         	this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Tipo de Classificação do Produto "+input.getCodProd()
-                    +" Nula/Vazia na carga.");        	
+                    "Tipo de Classificação Nula."
+                    +" Produto "+ input.getCodProd()
+        			+" Edição "+ input.getEdicaoProd());
         }
 		if (edicao.isPossuiBrinde() != input.isContemBrinde()) {
 
@@ -835,9 +892,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					.logInfo(
 							message,
 							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Alteração Possui Brinde do Produto "+input.getCodProd()
+							"Alteração Possui Brinde"
 							+" de "+ edicao.isPossuiBrinde()
-							+" para "+ input.isContemBrinde());
+							+" para "+ input.isContemBrinde()
+							+" Produto "+ input.getCodProd()
+							+" Edição "+ input.getEdicaoProd());
 			
 			edicao.setPossuiBrinde(input.isContemBrinde());
 		}
@@ -852,9 +911,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 				this.ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração do Codigo de Barra do Produto "+input.getCodProd()
+						"Alteração do Codigo de Barra"
 						+" de " + edicao.getCodigoDeBarras()
-						+" para " + input.getCodBarra());
+						+" para " + input.getCodBarra()
+						+" Produto "+ input.getCodProd()
+						+" Edição "+ input.getEdicaoProd());
 				
 				edicao.setCodigoDeBarras(codigoDeBarras);
 			}
@@ -865,9 +926,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração da Data de Desativacao do Produto "+input.getCodProd()
+					"Alteração da Data de Desativação"
 					+" de "+ edicao.getDataDesativacao()
-					+" para "+ input.getDataDesativacao());
+					+" para "+ input.getDataDesativacao()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			edicao.setDataDesativacao(input.getDataDesativacao());
 		}
@@ -876,9 +939,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do PEB do Produto "+input.getCodProd()
+					"Alteração do PEB"
 					+" de " + edicao.getPeb()
-					+" para " + input.getPeb());
+					+" para " + input.getPeb()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			edicao.setPeb(input.getPeb());
 		}
@@ -888,9 +953,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Pacote Padrao do Produto "+input.getCodProd()
+					"Alteração do Pacote Padrao"
 					+" de "+ edicao.getPacotePadrao()
-					+" para "+ input.getPactPadrao());
+					+" para "+ input.getPactPadrao()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			edicao.setPacotePadrao(input.getPactPadrao());
 		}
@@ -899,9 +966,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Peso do Produto "+input.getCodProd()
+					"Alteração do Peso"
 					+" de " + edicao.getPeso()
-					+" para " + input.getPesoUni());
+					+" para " + input.getPesoUni()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			edicao.setPeso(input.getPesoUni());
 		}
@@ -910,9 +979,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Código de Barras Corporativo do Produto "+input.getCodProd()
+					"Alteração do Código de Barras Corporativo"+input.getCodProd()
 					+" de " + edicao.getCodigoDeBarraCorporativo()
-					+" para " + input.getCodigoBarrasCorporativo());
+					+" para " + input.getCodigoBarrasCorporativo()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
 			
 			edicao.setCodigoDeBarraCorporativo(input.getCodigoBarrasCorporativo());
 		}
