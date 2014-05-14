@@ -124,7 +124,7 @@ public class EmissaoCEController extends BaseController {
 		
 		this.setFiltroSessao(filtro);
 	
-		List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
+		final List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
 		
 		if(lista == null || lista.isEmpty()){
 			
@@ -239,7 +239,7 @@ public class EmissaoCEController extends BaseController {
 
 	private DadosImpressaoEmissaoChamadaEncalhe obterDadosImpressaoCE(FiltroEmissaoCE filtro){
 		
-		TipoImpressaoCE tipoImpressao = this.distribuidorService.tipoImpressaoCE();
+		final TipoImpressaoCE tipoImpressao = this.distribuidorService.tipoImpressaoCE();
 		
 		filtro.setTipoImpressao(tipoImpressao);
 		
@@ -256,9 +256,7 @@ public class EmissaoCEController extends BaseController {
 		}
 
 		
-		DadosImpressaoEmissaoChamadaEncalhe dados = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
-		
-		return dados;
+		return chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
 	}
 	
 	@Post
