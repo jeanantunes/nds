@@ -973,31 +973,31 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return query;	
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<FornecedorExemplaresDTO> consultaFornecedorExemplaresMESumarizados(FiltroNFeDTO filtro) {
 		
-		// TODO Auto-generated method stub
 		// OBTER FORNECEDOR EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" fornecedor.id as idFornecedor, ");
-		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, '') as nome,");
-		hql.append(" SUM(me.qtde) as exemplares ");
-		//hql.append(" SUM(me.valoresAplicados.precoVenda * mec.qtde) as total, "); 
-		//hql.append(" SUM(me.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto "); 	
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, '') as nomeFornecedor,");
+		hql.append(" SUM(me.qtde) as exemplares, ");
+		hql.append(" SUM(produtoEdicao.precoVenda * me.qtde) as total, "); 
+		hql.append(" SUM(coalesce(descontoLogisticaPE.percentualDesconto, descontoLogistica.percentualDesconto, 0) * me.qtde) as totalDesconto "); 
 		
 		Query query = queryConsultaMENfeParameters(queryConsultaMENfe(filtro, hql, false, false, false), filtro);
 		
-		if(filtro.getPaginacaoVO()!=null) {
-			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
+		if(filtro.getPaginacaoVO() != null) {
+			if(filtro.getPaginacaoVO().getPosicaoInicial() != null) {
 				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
 			}
 			
-			if(filtro.getPaginacaoVO().getQtdResultadosPorPagina()!=null) {
+			if(filtro.getPaginacaoVO().getQtdResultadosPorPagina() != null) {
 				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
 			}
 		}
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(CotaExemplaresDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(FornecedorExemplaresDTO.class));
 		
 		return query.list();
 		
@@ -1010,7 +1010,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" COUNT(distinct fornecedor.id) ");
-		Query query = queryConsultaMECNfeParameters(queryConsultaMECNfe(filtro, hql, true, true, false), filtro);
+		Query query = queryConsultaMENfeParameters(queryConsultaMENfe(filtro, hql, true, true, false), filtro);
 
 		return (long) query.list().size();
 	}
@@ -1022,6 +1022,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN me.estoqueProduto estoqueProduto ")
 		.append(" JOIN estoqueProduto.produtoEdicao produtoEdicao ")
 		.append(" JOIN produtoEdicao.produto produto ")
+		.append(" JOIN produtoEdicao.descontoLogistica descontoLogisticaPE ")
+		.append(" JOIN produto.descontoLogistica descontoLogistica ")
 		.append(" JOIN produto.fornecedores fornecedor")
 		.append(" JOIN fornecedor.juridica pessoa ")
 		.append(" WHERE me.data BETWEEN :dataInicial AND :dataFinal ");
