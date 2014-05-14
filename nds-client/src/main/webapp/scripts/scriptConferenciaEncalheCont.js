@@ -162,7 +162,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
 				}, 1000);
 				
-				ConferenciaEncalheCont.limpaTela();
+				ConferenciaEncalheCont.limparTela();
 			}
 			
 		}));

@@ -96,13 +96,16 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			intervaloCotas = new Intervalo<Integer>(filtro.getNumCotaDe(), filtro.getNumCotaAte());
 		}
 		
-		Intervalo<Date> intervaloDataRecolhimento = new Intervalo<Date>(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
+		final Intervalo<Date> intervaloDataRecolhimento = new Intervalo<Date>(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
 		
 		this.cotaService.verificarCotasSemRoteirizacao(intervaloCotas, null, intervaloDataRecolhimento);
 		
-		List<CotaEmissaoDTO> listaChamadaEncalhe = chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
+		final List<CotaEmissaoDTO> listaChamadaEncalhe = chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
 		
-		if (listaChamadaEncalhe == null) return new ArrayList<>();
+		if (listaChamadaEncalhe == null) {
+		    
+		    return new ArrayList<>();
+		}
 		
 		for(int i = 0; i < listaChamadaEncalhe.size(); i++) {
 			
