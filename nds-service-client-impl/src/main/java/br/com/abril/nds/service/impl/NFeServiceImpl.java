@@ -455,7 +455,13 @@ public class NFeServiceImpl implements NFeService {
 				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
 					
 					for (Cota cota : cotas) {
-						if((cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() != null && cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) || cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica()){
+						
+						if(cota.getParametrosCotaNotaFiscalEletronica() != null 
+								&& (cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() != null 
+								&& cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) 
+								|| (cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() != null 
+								&& cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica())) {
+							
 							cotasContribuinteEmitente.add(cota);
 						}
 					}
