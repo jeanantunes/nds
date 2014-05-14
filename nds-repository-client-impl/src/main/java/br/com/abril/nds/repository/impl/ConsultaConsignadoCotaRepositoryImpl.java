@@ -107,6 +107,11 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("			THEN LCTO.DATA_LCTO_DISTRIBUIDOR ");
 		sql.append("			ELSE MEC.DATA END AS dataLancamento, ");
 		
+		sql.append(" 	CASE ");
+		sql.append("			WHEN LCTO.ID IS NOT NULL ");
+		sql.append("			THEN LCTO.DATA_REC_DISTRIB ");
+		sql.append("			ELSE MEC.DATA END AS dataRecolhimento, ");
+		
 		sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) AS precoCapa, ");
 		
 		if (filtro.getIdCota() == null){
@@ -214,6 +219,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 				dto.setNumeroEdicao(rs.getLong("numeroEdicao"));
 				dto.setNomeFornecedor(rs.getString("nomeFornecedor"));
 				dto.setDataLancamento(rs.getDate("dataLancamento"));
+				dto.setDataRecolhimento(rs.getDate("dataRecolhimento"));
 				dto.setPrecoCapa(rs.getBigDecimal("precoCapa"));
 				dto.setDesconto(rs.getBigDecimal("desconto"));
 				dto.setPrecoDesconto(rs.getBigDecimal("precoDesconto"));
