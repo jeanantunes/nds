@@ -146,6 +146,9 @@ public class Lancamento implements Serializable {
 	@Column(name = "NUMERO_LANCAMENTO", nullable = true)
 	private Integer numeroLancamento;
 	
+	@Column(name="JURAMENTADO", nullable = true)
+    private Boolean juramentado;
+	
 	@Transient
 	public static final long PEB_MINIMA_LANCAMENTO = 7;
 
@@ -425,7 +428,17 @@ public class Lancamento implements Serializable {
 		this.numeroLancamento = numeroLancamento;
 	}
 
-	public Date getDataFinMatDistrib() {
+	
+    public Boolean getJuramentado() {
+        return juramentado;
+    }
+
+    
+    public void setJuramentado(Boolean juramentado) {
+        this.juramentado = juramentado;
+    }
+
+    public Date getDataFinMatDistrib() {
 		return dataFinMatDistrib;
 	}
 
@@ -468,8 +481,6 @@ public class Lancamento implements Serializable {
 	public void novoRecolhimentoParcial(Date dataRecolhimento, Date proximaDataLancamento) {
 		
 		this.ajustarRecolhimentoParcial(dataRecolhimento, proximaDataLancamento);
-		
-		this.periodoLancamentoParcial.getLancamentoParcial().incrementarNumeroPeriodos(this.periodoLancamentoParcial.getNumeroPeriodo());
 	}
 
 	/**

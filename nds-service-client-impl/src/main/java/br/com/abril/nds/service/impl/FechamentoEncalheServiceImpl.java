@@ -1040,66 +1040,87 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     	
     	final Lancamento proximoLancamentoParcial = parciaisService.getProximoLancamentoPeriodo(lancamentoParcial);
     	
+    	if (proximoLancamentoParcial == null) {
+            return null;
+        }
+    	
     	Date dataNovoLancamento = this.getDataNovoLancamentoJuramentado(lancamentoParcial, proximoLancamentoParcial);
     	
-    	if (proximoLancamentoParcial == null) {
-    		return null;
-    	} else if (dataNovoLancamento == null) {
-    		return proximoLancamentoParcial;
+    	if (proximoLancamentoParcial.getJuramentado() == null
+    	        || !proximoLancamentoParcial.getJuramentado()) {
+    	    
+    	    this.ajustarDataProximoLancamentoParcial(dataNovoLancamento, proximoLancamentoParcial);
+    	    
+    	    return this.criarNovoLancamentoJuramentado(proximoLancamentoParcial, dataNovoLancamento);
     	}
+    	
+    	return proximoLancamentoParcial;
+    }
+    
+    private Lancamento criarNovoLancamentoJuramentado(Lancamento proximoLancamentoParcial, Date dataNovoLancamento) {
 
-    	proximoLancamentoParcial.setTipoLancamento(TipoLancamento.REDISTRIBUICAO);
+        proximoLancamentoParcial.setTipoLancamento(TipoLancamento.REDISTRIBUICAO);
 
         this.lancamentoRepository.merge(proximoLancamentoParcial);
 
+        Lancamento novoLancamento = null;
+        
         try {
 
-        	Lancamento novoLancamento = (Lancamento) BeanUtils.cloneBean(proximoLancamentoParcial);
-
-        	novoLancamento.setReparte(BigInteger.ZERO);
-        	novoLancamento.setRepartePromocional(BigInteger.ZERO);
-        	novoLancamento.setDataLancamentoPrevista(dataNovoLancamento);
-        	novoLancamento.setDataLancamentoDistribuidor(dataNovoLancamento);
-        	novoLancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
-        	novoLancamento.setStatus(StatusLancamento.EXPEDIDO);
-        	novoLancamento.setNumeroLancamento(null);
-        	novoLancamento.setEstudo(null);
-        	novoLancamento.setChamadaEncalhe(null);
-        	novoLancamento.setHistoricos(null);
-        	novoLancamento.setMovimentoEstoqueCotas(null);
-        	novoLancamento.setRecebimentos(null);
-
-        	Long id = this.lancamentoRepository.adicionar(novoLancamento);
-        	
-        	novoLancamento = this.lancamentoRepository.buscarPorId(id);
-        	
-        	PeriodoLancamentoParcial periodo = proximoLancamentoParcial.getPeriodoLancamentoParcial();
-            periodo.getLancamentos().add(novoLancamento);
-        	
-            this.periodoLancamentoParcialRepository.merge(periodo);
+            novoLancamento = (Lancamento) BeanUtils.cloneBean(proximoLancamentoParcial);
             
-        	return novoLancamento;
-        	
         } catch (Exception e) {
 
-        	throw new IllegalArgumentException(e);
-		}
+            throw new IllegalArgumentException(e);
+        }
+
+        novoLancamento.setReparte(BigInteger.ZERO);
+        novoLancamento.setRepartePromocional(BigInteger.ZERO);
+        novoLancamento.setDataLancamentoPrevista(dataNovoLancamento);
+        novoLancamento.setDataLancamentoDistribuidor(dataNovoLancamento);
+        novoLancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+        novoLancamento.setStatus(StatusLancamento.EXPEDIDO);
+        novoLancamento.setNumeroLancamento(null);
+        novoLancamento.setEstudo(null);
+        novoLancamento.setChamadaEncalhe(null);
+        novoLancamento.setHistoricos(null);
+        novoLancamento.setMovimentoEstoqueCotas(null);
+        novoLancamento.setRecebimentos(null);
+        novoLancamento.setJuramentado(true);
+
+        Long id = this.lancamentoRepository.adicionar(novoLancamento);
+        
+        novoLancamento = this.lancamentoRepository.buscarPorId(id);
+        
+        PeriodoLancamentoParcial periodo = proximoLancamentoParcial.getPeriodoLancamentoParcial();
+        periodo.getLancamentos().add(novoLancamento);
+        
+        this.periodoLancamentoParcialRepository.merge(periodo);
+        
+        return novoLancamento;
     }
-    
+
+    private void ajustarDataProximoLancamentoParcial(Date dataNovoLancamento, Lancamento proximoLancamentoParcial) {
+
+        Date dataLancamento = proximoLancamentoParcial.getDataLancamentoDistribuidor();
+        
+        if (dataNovoLancamento.compareTo(proximoLancamentoParcial.getDataLancamentoDistribuidor()) == 0) {
+            
+            Date dataLancamentoAjustada = this.calendarioService.adicionarDiasUteis(dataLancamento, 1);
+            
+            proximoLancamentoParcial.setDataLancamentoDistribuidor(dataLancamentoAjustada);
+            proximoLancamentoParcial.setDataLancamentoPrevista(dataLancamentoAjustada);
+            
+            this.lancamentoRepository.merge(proximoLancamentoParcial);
+        }
+    }
+
     private Date getDataNovoLancamentoJuramentado(final Lancamento lancamentoParcial, final Lancamento proximoLancamentoParcial) {
     	
-    	if (proximoLancamentoParcial == null) {
-    		return null;
-    	}
-    	
-        final Date dataNovoLancamento = this.calendarioService.adicionarDiasUteis(
-    		lancamentoParcial.getDataRecolhimentoDistribuidor(), 1
-    	);
+        final Date dataNovoLancamento =
+            this.calendarioService.adicionarDiasUteis(
+                lancamentoParcial.getDataRecolhimentoDistribuidor(), 1);
 
-        if (dataNovoLancamento.compareTo(proximoLancamentoParcial.getDataLancamentoDistribuidor()) == 0) {
-        	return null;
-        }
-        
         return dataNovoLancamento;
     }
     
