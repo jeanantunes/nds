@@ -888,7 +888,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 	/**
 	 * Obtém a quantidade de encalhe a partir do que foi informado na grid de encalhe.
-	 * Esta informação pode conter o sufixo "e" indicando que o produto é CROMO e que 
+	 * Esta informação pode conter o sufixo "*" indicando que o produto é CROMO e que 
 	 * a quantidade informada equivale a de envelopes. 
 	 * 
 	 * @param qtdeEncalhe
