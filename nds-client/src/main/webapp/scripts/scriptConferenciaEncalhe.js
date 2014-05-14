@@ -2274,8 +2274,7 @@ function confirmarPopup_notaFiscal(){
 	}
 
 
-	$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarNotaFiscal', data, 
-			function(result){
+	$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarNotaFiscal', data, function(result){
 		
 		$("#dialog-notaFiscal", ConferenciaEncalhe.workspace).dialog("close");
 		

@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="PARAMETROS_FTF_GERACAO")
-public class ParametroFTFGeracao implements Serializable{
+public class ParametroFTFGeracao implements Serializable {
 
 	/**
 	 * 

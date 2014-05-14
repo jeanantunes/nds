@@ -261,8 +261,8 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		Map<String, ParametroSistema> ps = parametroSistemaRepository.buscarParametroSistemaGeralMap();
 		if (ps != null) {
-			sqlBuilder.append(String.format(" '%s' as codEstabelecimentoEmissor,  ", ps.get("FTF_CODIGO_ESTABELECIMENTO_EMISSOR").getValor()));
-			sqlBuilder.append(String.format(" '%s' as cnpjEstabelecimentoEmissor,  ", ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR").getValor()));
+			sqlBuilder.append(String.format(" '%s' as codigoCentroEmissor,  ", ps.get("FTF_CODIGO_ESTABELECIMENTO_EMISSOR").getValor()));
+			sqlBuilder.append(String.format(" '%s' as cnpjEmpresaEmissora,  ", ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR").getValor()));
 			sqlBuilder.append(String.format(" '%s' as codLocal,  ", ps.get("FTF_CODIGO_LOCAL").getValor()));
 		}
 	}
@@ -450,7 +450,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(" select  ")
-		.append(" nfn.DOCUMENTO_EMITENTE as cnpjEstabelecimentoEmissor, ")
+		.append(" nfn.DOCUMENTO_EMITENTE as cnpjEmpresaEmissora, ")
 		.append(" '' as codLocal, ")
 		.append(" cast(nfn.TIPO_EMISSAO as char) as tipoPedido, ")
 		.append(" '' as numeroDocOrigem, ")
@@ -523,8 +523,6 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		hql.append("select param ").append(" from ParametroFTFGeracao param ");		 
 		   	
 		Query query = super.getSession().createQuery(hql.toString());
-
-		query.setResultTransformer(new AliasToBeanResultTransformer(ParametroFTFGeracao.class));
 		
 		return query.list();
 	}
