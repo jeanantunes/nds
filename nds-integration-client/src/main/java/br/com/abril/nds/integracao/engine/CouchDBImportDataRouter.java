@@ -7,6 +7,8 @@ import org.lightcouch.CouchDbClient;
 import org.lightcouch.View;
 import org.lightcouch.ViewResult;
 import org.lightcouch.ViewResult.Rows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -33,6 +35,8 @@ import br.com.abril.nds.repository.AbstractRepository;
 @Component("couchDBImportDataRouter")
 public class CouchDBImportDataRouter extends AbstractRepository implements ContentBasedRouter {
 
+	private static Logger LOGGER = LoggerFactory.getLogger(CouchDBImportDataRouter.class);
+	
 	@Autowired
 	private PlatformTransactionManager transactionManager;
 	
@@ -88,7 +92,23 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		messageProcessor.preProcess(tempVar);
 
 		//
-		  ndsiLoggerFactory.getLogger().logInfo(null, EventoExecucaoEnum.SEM_DOMINIO,
+		final Message messageAux = new Message();
+		
+		if(result!=null && result.getRows()!=null && result.getRows().size()>0){
+		
+			IntegracaoDocument doc = (IntegracaoDocument) result.getRows().get(0).getDoc(); 
+			
+			messageAux.getHeader().put(MessageHeaderProperties.URI.getValue(), inputModel.getRouteInterface().getName());
+			messageAux.getHeader().put(MessageHeaderProperties.PAYLOAD.getValue(), doc);
+			messageAux.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(),   doc.getNomeArquivo());
+			messageAux.getHeader().put(MessageHeaderProperties.FILE_CREATION_DATE.getValue(), doc.getDataHoraExtracao());
+			messageAux.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), doc.getLinhaArquivo());
+			messageAux.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), inputModel.getUserName());
+			messageAux.getHeader().put(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue(), codigoDistribuidor);
+		    messageAux.setTempVar(tempVar);
+		}
+		
+		  ndsiLoggerFactory.getLogger().logInfo(messageAux, EventoExecucaoEnum.INF_DADO_ALTERADO,
 				  "Qtd documentos a processar : "+result.getRows().size());
 
 		do {	
@@ -131,6 +151,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 					});
 				} catch(Exception e) {
                     ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
+                    LOGGER.error("",e);
 
 				}
 				
