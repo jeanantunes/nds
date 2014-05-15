@@ -1736,6 +1736,8 @@ var ConferenciaEncalhe = $.extend(true, {
 			buttons : {
 				"Confirmar" : function() {
 					
+					ConferenciaEncalheCont.isConfirmar = true;
+					
 					window.event.preventDefault();
 					
 					confirmarPopup_notaFiscal();
@@ -1749,7 +1751,9 @@ var ConferenciaEncalhe = $.extend(true, {
 					$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 					
 					$(this).dialog("close");
+					
 					$("#vlrCE", ConferenciaEncalhe.workspace).focus();
+					
 					$("#qtdCE", ConferenciaEncalhe.workspace).focus();
 					
 				}
@@ -1757,13 +1761,13 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				setTimeout (function () {$("#numNotaFiscal").focus();}, 1);
 			}, close : function(){
-				
-				ConferenciaEncalhe.modalAberta = false;
-				
-				ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
-				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
-				
+				if(!ConferenciaEncalheCont.isConfirmar){
+					ConferenciaEncalhe.modalAberta = false;
+					
+					ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
+					
+					focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));					
+				}
 			},
 			form: $("#dialog-notaFiscal", this.workspace).parents("form")
 		});

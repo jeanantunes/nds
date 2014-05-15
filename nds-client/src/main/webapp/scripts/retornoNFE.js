@@ -52,12 +52,21 @@ var retornoNFEController  = $.extend(true, {
 		
 	},
 	
+	
 	initFiltroDatas : function() {
+		$.postJSON(contextPath + '/cadastro/distribuidor/obterDataDistribuidor', null, 
+				function(result) {
+					$("#retornoNFEDataReferencia", this.workspace).val(result);
+		        }
+		);
+		
 		$( "#retornoNFEDataReferencia", retornoNFEController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
+		
+		$('#retornoNFEDataReferencia', retornoNFEController.workspace).mask("99/99/9999");
 	},
 	
 	pesquisar : function() {

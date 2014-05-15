@@ -37,7 +37,7 @@ public class FecharDiaDTO implements Serializable {
 				&& this.lancamentoFaltasESobras
 				&& this.fechamentoEncalhe
 				&& this.consolidadoCota
-				&& this.matrizRecolhimentoSalva;
+				&& !this.matrizRecolhimentoSalva;
 	}
 
 	public Boolean getBaixaBancaria() {

@@ -149,8 +149,8 @@ var impressaoNfeController = $.extend(true, {
 		impressaoNfeController.filtroNotasImprimirNFe = [];
 		
 		params = [ 	{name:'filtro.idNaturezaOperacao', value:$('#impressaoNfe-filtro-naturezaOperacao', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoInicial', value:$('#impressaoNfe-dataMovimentoInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoFinal', value:$('#impressaoNfe-dataMovimentoFinal', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataEmissao', value:$('#impressaoNfe-filtro-dataEmissao', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idRoteiro', value:$('#idRoteiro', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idRota', value:$('#idRota option:selected', impressaoNfeController.workspace).val()},
@@ -329,8 +329,8 @@ var impressaoNfeController = $.extend(true, {
 		params = [];
 		
 		params = [ 	{name:'filtro.idNaturezaOperacao', value:$('#impressaoNfe-filtro-naturezaOperacao', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoInicial', value:$('#impressaoNfe-dataMovimentoInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoFinal', value:$('#impressaoNfe-dataMovimentoFinal', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataEmissao', value:$('#impressaoNfe-filtro-dataEmissao', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idRoteiro', value:$('#idRoteiro', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idRota', value:$('#idRota option:selected', impressaoNfeController.workspace).val()},
@@ -453,8 +453,8 @@ var impressaoNfeController = $.extend(true, {
 	},
 	
 	filtrarProdutos : function(codigoProduto, nomeProduto) {
-		params = [ 	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()},
+		params = [ 	{name:'filtro.dataMovimentoInicial', value:$('#impressaoNfe-dataMovimentoInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoFinal', value:$('#impressaoNfe-dataMovimentoFinal', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.codigoProduto', value:$('#dialog-pesqProdutos-codigoProduto').val()},
 		           	{name:'filtro.nomeProduto', value:$('#dialog-pesqProdutos-nomeProduto').val()},
 		           	];
@@ -696,21 +696,34 @@ var impressaoNfeController = $.extend(true, {
 	},
 	
 	initFiltroDatas : function() {
+		
+		$.postJSON(contextPath + '/cadastro/distribuidor/obterDataDistribuidor', null, 
+				function(result) {
+					$("#impressaoNfe-dataMovimentoInicial", this.workspace).val(result);
+					
+					$("#impressaoNfe-dataMovimentoFinal", this.workspace).val(result);
+		        }
+		);
+		
 		$( "#impressaoNfe-filtro-dataEmissao", impressaoNfeController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#dataMovimentoInicial", impressaoNfeController.workspace ).datepicker({
+		$( "#impressaoNfe-dataMovimentoInicial", impressaoNfeController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#dataMovimentoFinal", impressaoNfeController.workspace ).datepicker({
+		$( "#impressaoNfe-dataMovimentoFinal", impressaoNfeController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
+		
+		$('#impressaoNfe-dataMovimentoInicial', impressaoNfeController.workspace).mask("99/99/9999");
+		
+		$('#impressaoNfe-dataMovimentoFinal', impressaoNfeController.workspace).mask("99/99/9999");
 	},
 	
 	initInputs : function() {
@@ -745,15 +758,16 @@ var impressaoNfeController = $.extend(true, {
 	
 	initDialog : function(){
 		$("#selProdutos", impressaoNfeController.workspace).click(function() {
-			if( $('#dataMovimentoInicial', impressaoNfeController.workspace).val() == ''
-					|| $('#dataMovimentoFinal', impressaoNfeController.workspace).val() == '') {
+			if($('#impressaoNfe-dataMovimentoInicial', impressaoNfeController.workspace).val() == ''
+				|| $('#impressaoNfe-dataMovimentoFinal', impressaoNfeController.workspace).val() == '') {
+				
 				$( "#msgBoxDataMovimentoInvalida", this.workspace ).dialog( "open" );
 				return;
 			}
 			
 			params = [ 	
-		           	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()}
+		           	{name:'filtro.dataMovimentoInicial', value:$('#impressaoNfe-dataMovimentoInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoFinal', value:$('#impressaoNfe-dataMovimentoFinal', impressaoNfeController.workspace).val()}
 		           	];
 			$(".produtosPesqGrid").flexOptions({params : params}).flexReload();
 			$("#dialog-pesqProdutos", this.workspace).dialog( "open" );
