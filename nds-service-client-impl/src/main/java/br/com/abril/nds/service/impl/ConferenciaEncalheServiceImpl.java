@@ -1867,11 +1867,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			    		                                                                                       controleConferenciaEncalheCota.getDataOperacao());
 			}
 			
-			final Integer diasUteisPostergar = 1;
-			
 			if(datasRecolhimento!=null && !datasRecolhimento.isEmpty()) {
+				
+				final Integer diasUteisPostergar = null;
 
-				//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE PARA O PROXIMO DIA UTIL (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA COTA A VISTA COM CONSIGNADO PENDENTE
+				//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE PARA A DATA ATUAL (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA COTA A VISTA COM CONSIGNADO PENDENTE
 				this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
 						                                                         datasRecolhimento,
 																				 controleConferenciaEncalheCota.getUsuario(),
@@ -1879,7 +1879,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 																				 diasUteisPostergar);
 				
 			}
-			
 		}
 		
 		return nossoNumeroCollection;
