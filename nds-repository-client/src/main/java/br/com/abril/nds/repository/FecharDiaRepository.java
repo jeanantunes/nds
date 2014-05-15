@@ -9,7 +9,6 @@ import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
@@ -29,6 +28,8 @@ public interface FecharDiaRepository {
 	List<ValidacaoLancamentoFaltaESobraFecharDiaDTO> existeLancamentoFaltasESobrasPendentes(Date dataOperacaoDistribuidor);
 
 	boolean existePendenciasDeAprovacao(Date dataOperacao, StatusAprovacao pendente, List<TipoMovimento> tiposMovimentoVerificaAprovacao);
+	
+	boolean existeMatrizRecolhimentoSalva(Date dataOperacaoDistribuidor);
 
 	List<ValidacaoGeracaoCobrancaFecharDiaDTO> obterFormasDeCobranca();
 
