@@ -62,11 +62,9 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	numeroCotaEditavel : function(r){
 		
-		if (r==false){
-			
+	if (r==false){
 			$("#numeroCota",ConferenciaEncalhe.workspace).attr('readonly', true);
-		}
-		else{
+		} else{
 			
 			$("#numeroCota",ConferenciaEncalhe.workspace).attr('readonly', false);
 		}
@@ -74,11 +72,9 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	pesquisaProduto : function(){
 		
-		if (ConferenciaEncalhe.ultimoIdProdutoEdicao != "" && 
-				ConferenciaEncalhe.ultimoIdProdutoEdicao == $("#pesq_prod", ConferenciaEncalhe.workspace).val()){
+		if (ConferenciaEncalhe.ultimoIdProdutoEdicao != "" && ConferenciaEncalhe.ultimoIdProdutoEdicao == $("#pesq_prod", ConferenciaEncalhe.workspace).val()){
 			
-			var qtd = $("#qtdeExemplar", ConferenciaEncalhe.workspace).val() == "" 
-				? 0 
+			var qtd = $("#qtdeExemplar", ConferenciaEncalhe.workspace).val() == "" ? 0 
 				: parseInt($("#qtdeExemplar", ConferenciaEncalhe.workspace).val());
 			
 			$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(qtd + 1);
@@ -1760,6 +1756,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			}, open : function(){
 				
 				setTimeout (function () {$("#numNotaFiscal").focus();}, 1);
+				
 			}, close : function(){
 				if(!ConferenciaEncalheCont.isConfirmar){
 					ConferenciaEncalhe.modalAberta = false;
@@ -2083,12 +2080,6 @@ var ConferenciaEncalhe = $.extend(true, {
 			},
 			delay : 500,
 		});
-		
-		
-		
-		
-			
-		
 	},
 
 	fechar_produtos : function() {
