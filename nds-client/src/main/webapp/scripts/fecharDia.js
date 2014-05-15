@@ -997,6 +997,7 @@ var fecharDiaController =  $.extend(true, {
 				fecharDiaController.validacaoLancamentoFaltasESobras(result);
 				fecharDiaController.validacaoControleDeAprovacao(result);
 				fecharDiaController.validacaoConsolidarFinanceiro(result);
+				fecharDiaController.validarMatrizRecolhimento(result);
 				
 				if (result.habilitarConfirmar){
 					$('#btnConfirmarFechamento', fecharDiaController.workspace).show();
@@ -1169,6 +1170,23 @@ var fecharDiaController =  $.extend(true, {
 					}
 				);
 		}
+	},
+	
+	validarMatrizRecolhimento: function(result) {
+
+		var matrizRecolhimentoSalva = "<tr class='class_linha_1' id='consolidarFinanceiro'><td>Matriz de recolhimento salva e não confirmada:</td>";					
+		var iconeMatrizRecolhimentoSalva = null;
+
+		if(result.matrizRecolhimentoSalva){
+
+			iconeMatrizRecolhimentoSalva = 'ico_bloquear.gif';
+
+		} else{
+
+			iconeMatrizRecolhimentoSalva = 'ico_check.gif';
+		}
+		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeMatrizRecolhimentoSalva+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+		$('#tabela-validacao', fecharDiaController.workspace).append(matrizRecolhimentoSalva + imagem);
 	},
 
 	validacaoConsolidarFinanceiro : function(result){

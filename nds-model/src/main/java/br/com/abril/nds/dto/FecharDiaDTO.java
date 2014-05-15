@@ -25,6 +25,8 @@ public class FecharDiaDTO implements Serializable {
 	
 	private Boolean consolidadoCota = false;
 	
+	private Boolean matrizRecolhimentoSalva = false;
+	
 	private Boolean fechamentoRealizadoNaData = false;
 	
 	public boolean isFechamentoPermitido() {
@@ -34,7 +36,8 @@ public class FecharDiaDTO implements Serializable {
 				&& this.confirmacaoDeExpedicao 
 				&& this.lancamentoFaltasESobras
 				&& this.fechamentoEncalhe
-				&& this.consolidadoCota;
+				&& this.consolidadoCota
+				&& this.matrizRecolhimentoSalva;
 	}
 
 	public Boolean getBaixaBancaria() {
@@ -99,6 +102,14 @@ public class FecharDiaDTO implements Serializable {
 
 	public void setConsolidadoCota(Boolean consolidadoCota) {
 		this.consolidadoCota = consolidadoCota;
+	}
+
+	public Boolean getMatrizRecolhimentoSalva() {
+		return matrizRecolhimentoSalva;
+	}
+
+	public void setMatrizRecolhimentoSalva(Boolean matrizRecolhimentoSalva) {
+		this.matrizRecolhimentoSalva = matrizRecolhimentoSalva;
 	}
 
 	public Boolean getFechamentoRealizadoNaData() {
