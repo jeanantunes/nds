@@ -129,28 +129,23 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		Query query = this.getSession().createQuery(sql.toString());
 		query.setParameter("codigo", input.getCategoria());
 
-		@SuppressWarnings("unchecked")
-		List<TipoProduto> tiposProduto = query.list();
+		TipoProduto tipoProduto =(TipoProduto) query.uniqueResult();
 
-		TipoProduto tipoProduto = null;
+		if (tipoProduto==null) {
 
-		if (!tiposProduto.isEmpty()) {
+			sql = new StringBuilder();
 
-			tipoProduto = tiposProduto.get(0);
+			sql.append("SELECT tp FROM TipoProduto tp ");
+			sql.append("WHERE  tp.descricao = :descricao ");
 
-			return tipoProduto;
+		    query = this.getSession().createQuery(sql.toString());
+			query.setParameter("descricao","Outros" );
 
-		} else {
+			tipoProduto =(TipoProduto) query.uniqueResult();
 
-            this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.SEM_DOMINIO,
-					"Tipo Produto REVISTA não encontrado.");
-
-
-//			throw new RuntimeException("Tipo Produto nao encontrado.");
-		}
+		}	
 		return tipoProduto;
-	}
+		}
 
 	private Fornecedor findFornecedor(Integer codigoInterface) {
 		StringBuilder sql = new StringBuilder();
@@ -390,7 +385,18 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
             produto.setCodigoContexto(input.getContextoPublicacao());
             
 		}
-		if (input.getNomePublicacao()!=null && !input.getNomePublicacao().trim().equals("") && !Objects.equal(produto.getNomeComercial(), input.getNomePublicacao())) {
+		if(produto.getNomeComercial()==null && input.getNomePublicacao()!=null){
+			
+			this.ndsiLoggerFactory.getLogger().logInfo(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteração da Descrição de "+ "Nulo"
+					+ " para "+input.getNomePublicacao()
+					+" Produto " + produto.getCodigo());
+            
+            produto.setNomeComercial(input.getNomePublicacao());
+            
+	    }else if (input.getNomePublicacao()!=null && !input.getNomePublicacao().trim().equals("") && !Objects.equal(produto.getNomeComercial(), input.getNomePublicacao())) {
 
             this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
@@ -401,7 +407,21 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
             
             produto.setNomeComercial(input.getNomePublicacao());
 		}
-		if (input.getCodigoEditor()!=null && input.getCodigoEditor().intValue()!=0 && !Objects.equal(input.getCodigoEditor(), produto.getEditor().getCodigo())) {
+		
+		if(produto.getEditor()==null || produto.getEditor().getCodigo()==null){
+			
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteração do Editor"
+					+ " de " + " Nulo "
+					+ " para " + editor.getPessoaJuridica().getNome()
+					+" Produto " + produto.getCodigo());
+			
+			produto.setEditor(editor);
+			
+		} else if (input.getCodigoEditor()!=null 
+				&& input.getCodigoEditor().intValue()!=0 
+				&& !Objects.equal(input.getCodigoEditor(), produto.getEditor().getCodigo())) {
 
 		 if(produto.getEditor()!=null && produto.getEditor().getPessoaJuridica()!=null){
             this.ndsiLoggerFactory.getLogger().logInfo(message,
@@ -421,7 +441,18 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		 }
 		 produto.setEditor(editor);
 		}
-		if (input.getPeriodicidade()!=null && input.getPeriodicidade().intValue()!=0 && !Objects.equal(produto.getPeriodicidade(), PeriodicidadeProduto.getByOrdem(input.getPeriodicidade())) ) {
+		
+		if(produto.getPeriodicidade()==null || produto.getPeriodicidade()==null){
+			this.ndsiLoggerFactory.getLogger().logInfo(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteração da Periodicidade de "+ "Nulo"
+					+ " para "+PeriodicidadeProduto.getByOrdem(input.getPeriodicidade())
+					+" Produto " + produto.getCodigo());
+            
+            produto.setPeriodicidade(PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
+            
+	    } else if (input.getPeriodicidade()!=null && input.getPeriodicidade().intValue()!=0 && !Objects.equal(produto.getPeriodicidade(), PeriodicidadeProduto.getByOrdem(input.getPeriodicidade())) ) {
 
             this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
