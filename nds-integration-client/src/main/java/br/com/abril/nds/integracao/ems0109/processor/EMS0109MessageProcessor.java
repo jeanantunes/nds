@@ -418,8 +418,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					+ " para " + editor.getPessoaJuridica().getNome()
 					+" Produto " + produto.getCodigo());
             
-            produto.setEditor(editor);
 		 }
+		 produto.setEditor(editor);
 		}
 		if (input.getPeriodicidade()!=null && input.getPeriodicidade().intValue()!=0 && !Objects.equal(produto.getPeriodicidade(), PeriodicidadeProduto.getByOrdem(input.getPeriodicidade())) ) {
 
@@ -434,12 +434,14 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		}
 		if (input.getSlogan()!=null && !input.getSlogan().trim().equals("") && !Objects.equal(produto.getSlogan(), input.getSlogan())) {
 
-			produto.setSlogan(input.getSlogan());
+			
             this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração do Slogan de " + produto.getSlogan()
 					+ " para "+input.getSlogan()
 					+" Produto " + produto.getCodigo());
+            
+            produto.setSlogan(input.getSlogan());
 		}		
 		if (input.getPeso()!=null && input.getPeso().longValue()!=0 && !Objects.equal(produto.getPeso(),input.getPeso())) {
 
@@ -466,12 +468,13 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		}
 		if (produto.isAtivo() != input.isStatus()) {
 
-			produto.setAtivo(input.isStatus());
             this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração do Status de " + produto.isAtivo()
 					+" para "+input.isStatus()
 					+" Produto " + produto.getCodigo());
+            
+            produto.setAtivo(input.isStatus());
 		}
 		if (input.getDataDesativacao()!=null && !Objects.equal(produto.getDataDesativacao(), input.getDataDesativacao())) {
 
@@ -553,7 +556,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		}
 		
 		Fornecedor produtoFornecedor = produto.getFornecedor();
-		if ((produtoFornecedor == null) || 
+		if ((produtoFornecedor == null && produtoFornecedor.getCodigoInterface()!=null) || 
 		        !Objects.equal(produtoFornecedor.getCodigoInterface(), fornecedor.getCodigoInterface()))  {
 
                 this.ndsiLoggerFactory.getLogger().logInfo(
