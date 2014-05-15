@@ -1905,8 +1905,6 @@ public class MatrizRecolhimentoController extends BaseController {
         
         for (Entry<Date, Boolean> item : entrySet) {
             
-        	//TODO: VALIDAR DATA DE OPERAÇÃO - SE ESTIVER CONFIRMADO OU A DATA DO ITEM FOR >= DATA DE OPERAÇÃO.
-        	
         	if (item.getValue() || DateUtil.isDataInicialMaiorIgualDataFinal(item.getKey(), dataOperacao)) {
         	
         		confirmacoesVO.add(new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
