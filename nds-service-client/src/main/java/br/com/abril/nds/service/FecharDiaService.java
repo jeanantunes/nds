@@ -74,6 +74,15 @@ public interface FecharDiaService {
 	Boolean existeLancamentoFaltasESobrasPendentes(Date dataOperacaoDistribuidor);
 	
 	/**
+	 * Verifica se tem algum produto com lançamento de faltas e sobras pendentes
+	 * @param dataOperacaoDistribuidor 
+	 * 
+	 * 
+	 * @return boolean
+	 */
+	Boolean existeMatrizRecolhimentoSalva(Date dataOperacaoDistribuidor);
+	
+	/**
 	 * Retorna uma lista de produtos com diferenças 
 	 * @param dataOperacaoDistribuidor 
 	 * 
