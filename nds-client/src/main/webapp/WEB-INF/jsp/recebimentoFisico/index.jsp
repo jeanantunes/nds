@@ -323,7 +323,7 @@
 							</td>
 							<td width="33">Série:</td>
 							<td width="43"><input id="serie" type="text"
-								style="width: 30px;" maxlength="3"/>
+								style="width: 30px;" maxlength="4"/>
 							</td>
 							<td width="110"><span class="bt_novos">
 								<a href="javascript:;"
@@ -445,7 +445,7 @@
 
 			        <td width="34">Série:</td>
 			        <td width="97">
-			            <input maxlength="200" type="text" style="width:50px " id="novoSerieNota" name="novoSerieNota" />
+			            <input maxlength="4" type="text" style="width:50px " id="novoSerieNota" name="novoSerieNota" />
 			        </td>
 
 			    </tr>
