@@ -95,10 +95,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Nenhum resultado encontrado para Produto "
-							+ codigoProduto
-							+ " e Edição " + edicao
-							+ " na tabela Produto Edição");
+					"Produto "
+					+ codigoProduto
+					+ " e Edição " + edicao
+					+ " não encontrado.");
 			return;
 		}
 		
@@ -280,9 +280,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 						"Alteração da DATA LANCAMENTO PREVISTO do Produto "
 								+ codigoProduto + " Edição " + edicao
 								+ " de " + simpleDateFormat.format(
-										dtLancamentoAtual)
+										dtLancamentoNovo)
 								+ " para " + simpleDateFormat.format(
-										dtLancamentoNovo));
+										dtLancamentoAtual));
 				lancamento.setDataLancamentoPrevista(dtLancamentoNovo);
 				
 				boolean erroRetornoParciais =
@@ -327,9 +327,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 						"Alteração para PARCIAL da DATA LANCAMENTO DISTRIBUIDOR do Produto "
 								+ codigoProduto + " Edição " + edicao
 								+ " de " + simpleDateFormat.format(
-										dtLancamentoNovo)
+										dtLancamentoDistribuidor)
 								+ " para " + simpleDateFormat.format(
-										dtLancamentoDistribuidor));
+										dtLancamentoNovo));
 				}
 				
 				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);

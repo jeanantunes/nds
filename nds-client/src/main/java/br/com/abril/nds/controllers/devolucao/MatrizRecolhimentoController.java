@@ -1322,6 +1322,14 @@ public class MatrizRecolhimentoController extends BaseController {
     
     private void validarDataReprogramacao(Integer numeroSemana, Date novaData, Date dataBalanceamento) {
         
+        Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+
+        if (DateUtil.isDataInicialMaiorDataFinal(dataOperacao, novaData)) {
+        	
+        	throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Não é possível reprogramar para uma data anterior à data de operação do sistema.");
+        }
+
         this.recolhimentoService.verificaDataOperacao(novaData);
         
         List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
@@ -1893,9 +1901,14 @@ public class MatrizRecolhimentoController extends BaseController {
         
         Set<Entry<Date, Boolean>> entrySet = mapaDatasConfirmacaoOrdenada.entrySet();
         
+        Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+        
         for (Entry<Date, Boolean> item : entrySet) {
             
-            confirmacoesVO.add(new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
+        	if (item.getValue() || DateUtil.isDataInicialMaiorIgualDataFinal(item.getKey(), dataOperacao)) {
+        	
+        		confirmacoesVO.add(new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
+        	}
         }
         
         if (confirmacoesVO.isEmpty()) {
