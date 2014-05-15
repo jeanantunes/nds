@@ -343,7 +343,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		var cont = 1;
 
 		//Imprime todos os documentos recebidos
-		for(i=0;i < tiposDocumento.length;i++){
+		for(var i=0;i < tiposDocumento.length;i++){
 			
 			var data = [{name: 'tipo_documento_impressao_encalhe', value: tiposDocumento[i]}];
 			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca', 
@@ -353,8 +353,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 				if(resultado != "" && resultado.resultado!=""){
 					
 					var callApplet = '';
-					callApplet+='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">'
-						callApplet+='	<param name="tipo_documento_impressao_encalhe" value="'+resultado.tipo_documento_impressao_encalhe+'">';
+					callApplet+='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">';
+					callApplet+='	<param name="tipo_documento_impressao_encalhe" value="'+resultado.tipo_documento_impressao_encalhe+'">';
 					callApplet+='	<param name="conteudoImpressao" value="'+resultado.resultado+'">';
 					callApplet+='</applet>';						
 					
