@@ -1394,6 +1394,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					var data = []; 
 					
+					ConferenciaEncalheCont.isConfirmar = true;
+					
 					if($('input:radio[name=radioNFE]:checked', ConferenciaEncalheCont.workspace).val() == 'S') {
 						
 						data = [
@@ -1442,11 +1444,16 @@ var ConferenciaEncalheCont = $.extend(true, {
 				}
 			}, close : function(){
 				
-				ConferenciaEncalheCont.modalAberta = false;
+				if(!ConferenciaEncalheCont.isConfirmar){
+					ConferenciaEncalheCont.modalAberta = false;
+					
+					ConferenciaEncalheCont.removerTravaConferenciaEncalheCotaUsuario();
+					
+					ConferenciaEncalheCont.limparTela();
+					
+					$("#numeroCota", ConferenciaEncalheCont.workspace).focus();					
+				}
 				
-				ConferenciaEncalheCont.removerTravaConferenciaEncalheCotaUsuario();
-				
-				$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 			},
 			form: $("#dialog-notaFiscal", this.workspace).parents("form")			
 		});
