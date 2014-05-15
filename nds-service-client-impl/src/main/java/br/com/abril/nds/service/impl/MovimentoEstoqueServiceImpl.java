@@ -846,8 +846,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             final Long idProdutoEdicao = movimentoEstoque.getProdutoEdicao().getId();
             
-            EstoqueProduto estoqueProduto =
-                    estoqueProdutoRespository.buscarEstoqueProdutoPorProdutoEdicao(idProdutoEdicao);
+            EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoqueProdutoPorProdutoEdicao(idProdutoEdicao);
             
             if (estoqueProduto == null) {
                 
@@ -897,32 +896,44 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
             case DEVOLUCAO_ENCALHE:
             	
+            	BigInteger qntMovimento = movimentoEstoque.getQtde();
             	
-                final BigInteger qtdeEstoqueProdutoEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+                BigInteger qtdeEstoqueProdutoSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
                 
-                final BigInteger qtdeEstoqueProdutoSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
+                BigInteger qtdeEstoqueProdutoEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
                 
                 final BigInteger qtdeEstoqueProduto = estoqueProduto.getQtde() == null ? BigInteger.ZERO : estoqueProduto.getQtde();
                 
                 final BigInteger qtdeEstoqueProdutoTotal = qtdeEstoqueProdutoEncalhe.add(qtdeEstoqueProdutoSuplementar).add(qtdeEstoqueProduto);
-                
-               
-                BigInteger qntMovimento = movimentoEstoque.getQtde();
-                
-                if(movimentoEstoque.getOrigem() != null || qtdeEstoqueProdutoSuplementar.longValue() > 0) {
+
+                if(!isOperacaoEntrada && qtdeEstoqueProdutoEncalhe.subtract(qntMovimento).longValue() >= 0) {
                 	
-                	if(qtdeEstoqueProdutoSuplementar.longValue() > 0) {
-                		//FIXME: Refatorar nome para ser relacionado a transferencia de suplementar para recolhimento
-                		transferirEstoqueProdutoChamadaoParaRecolhimento(estoqueProduto.getProdutoEdicao().getId(), movimentoEstoque.getUsuario());
+                	novaQuantidade = qtdeEstoqueProdutoEncalhe.subtract(qntMovimento);
+                } else {
+                	
+                	if(movimentoEstoque.getOrigem() != null || qtdeEstoqueProdutoSuplementar.longValue() > 0) {
+                		
+                		if(qtdeEstoqueProdutoSuplementar.longValue() > 0) {
+                			
+                			//FIXME: Refatorar nome para ser relacionado a transferencia de suplementar para recolhimento
+                			transferirEstoqueProdutoChamadaoParaRecolhimento(estoqueProduto.getProdutoEdicao().getId(), movimentoEstoque.getUsuario());
+                			
+                			qtdeEstoqueProdutoEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+                			
+                		} else {
+                			
+                			qntMovimento = this.efetuarOperacaoDeTransferenciaEstoque(movimentoEstoque, estoqueProduto, qntMovimento);		
+                		}
+                	}
+                
+                	if(!isOperacaoEntrada && qtdeEstoqueProdutoEncalhe.subtract(qntMovimento).longValue() >= 0) {
+                		
+                		novaQuantidade = qtdeEstoqueProdutoEncalhe.subtract(qntMovimento);
                 	} else {
-                	
-                		qntMovimento = this.efetuarOperacaoDeTransferenciaEstoque(
-							movimentoEstoque, estoqueProduto, qntMovimento);		
+                		
+                		novaQuantidade = isOperacaoEntrada ? qtdeEstoqueProdutoTotal.add(qntMovimento) : qtdeEstoqueProdutoTotal.subtract(qntMovimento);
                 	}
                 }
-                
-                novaQuantidade = isOperacaoEntrada ? qtdeEstoqueProdutoTotal.add(qntMovimento) :
-                	qtdeEstoqueProdutoTotal.subtract(qntMovimento);
                 
                 estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
                 
