@@ -2121,7 +2121,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         switch(coluna) {
         case BOX:
-            nome = " box ";
+            nome = " box.CODIGO ";
             break;
         case TOTAL_PRODUTO:
             nome = " totalProduto ";
