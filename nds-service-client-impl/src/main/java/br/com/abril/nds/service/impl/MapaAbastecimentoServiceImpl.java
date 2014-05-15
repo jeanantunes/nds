@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,7 +106,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				produtoPorBox.getCodigoBarra(),
 				produtoPorBox.getPrecoCapa(),
 				0,
-				new LinkedHashMap<Integer, Integer>()));
+				new TreeMap<Integer, Integer>()));
 				
 				for (Integer bx : boxes){
 				    produtoMapa.get(keyProduto).getBoxQtde().put(bx, 0);
