@@ -152,7 +152,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		ndsiLoggerFactory.getLogger().logInfo(
 				message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
-				"Atualização do Telefone PDV "
+				"Alteração do Telefone PDV "
 						+ telefonePDV.getId());
 			
 	}
@@ -411,7 +411,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		
 		ndsiLoggerFactory.getLogger().logInfo(message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
-				"Atualização da PDV " + pdv.getId());
+				"Alteração da PDV " + pdv.getId());
 	}
 	
 	/*

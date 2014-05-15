@@ -93,8 +93,9 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 	if (produtoEdicao == null) {
 	    this.ndsiLoggerFactory.getLogger().logError(
 		    message, EventoExecucaoEnum.RELACIONAMENTO,
-		    "Não foi possível incluir registro - Nenhum resultado encontrado para Produto/Edição: " + input.getCodigoProduto() + " e Edicao: "
-		    + input.getNumeroEdicao() + " no cadastro de edições do Novo Distrib");
+		    "Não foi possível incluir registro - Produto "+input.getCodigoProduto() + " Edição "
+		    + input.getNumeroEdicao() 
+			+" não encontrado.");
 	}
 	
 	Estrategia estrategia = new Estrategia();
@@ -123,8 +124,9 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 		this.ndsiLoggerFactory.getLogger().logError(
 			message,
 			EventoExecucaoEnum.RELACIONAMENTO,
-			"Não foi possível incluir registro - Nenhum resultado encontrado para Produto/Edição: " + item.getCodigoProduto()
-				+ " e Edicao: " + item.getNumeroEdicao() + " no cadastro de edições do Novo Distrib");
+			"Não foi possível incluir registro - Produto " + item.getCodigoProduto()
+				+ " Edição " + item.getNumeroEdicao() 
+				+" não encontrado.");
 		continue;
 	    }
 
