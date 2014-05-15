@@ -906,76 +906,96 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	private MovimentoFechamentoFiscalFornecedor gerarMovimentoFechamentoFiscalFornecedor(
 			TipoMovimentoEstoque tipoMovimentoDevolucaoEncalhe, ContagemDevolucaoDTO contagem, Fornecedor fornecedor,
 			MovimentoEstoque movimentoEstoque) {
+		
 		MovimentoFechamentoFiscalFornecedor mfff = movimentoFechamentoFiscalRepository.buscarPorProdutoEdicaoTipoMovimentoEstoque(new ProdutoEdicao(contagem.getIdProdutoEdicao()), tipoMovimentoDevolucaoEncalhe);
 		
-		if(mfff == null) {
-			
-			List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
-			OrigemItemMovFechamentoFiscalDevolucaoFornecedor oimffdf = new OrigemItemMovFechamentoFiscalDevolucaoFornecedor();
-			oimffdf.setMovimento(movimentoEstoque);
-			listaOrigemMovsFiscais.add(oimffdf);
-			
-			BigDecimal precoVenda = null;
-			BigDecimal precoComDesconto = null;
-			BigDecimal valorDesconto = null;
-			
-			if(movimentoEstoque != null && movimentoEstoque.getProdutoEdicao() != null) {
-				
-				precoVenda = movimentoEstoque.getProdutoEdicao().getPrecoVenda();
-				
-				if(movimentoEstoque.getProdutoEdicao().getOrigem().equals(Origem.MANUAL)) {
-					valorDesconto = movimentoEstoque.getProdutoEdicao().getDesconto();
-					if(valorDesconto == null 
-							&& movimentoEstoque.getProdutoEdicao().getProduto() != null) {
-						valorDesconto = movimentoEstoque.getProdutoEdicao().getProduto().getDesconto();
-					}
-							
-				} else {
-					
-					if(movimentoEstoque.getProdutoEdicao().getDescontoLogistica() != null) {
-						valorDesconto = movimentoEstoque.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto();
-						if(valorDesconto == null 
-								&& movimentoEstoque.getProdutoEdicao().getProduto() != null
-								&& movimentoEstoque.getProdutoEdicao().getProduto().getDescontoLogistica() != null) {
-							valorDesconto = movimentoEstoque.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto();
-						}
-					}
-					
-				}
-				
-				if(valorDesconto != null && precoVenda != null) {
-					precoComDesconto = precoVenda.multiply(valorDesconto).divide(BigDecimal.valueOf(100));
-				}
-				
+		Set<MovimentoEstoque> movimentos = movimentoEstoque.getProdutoEdicao().getMovimentoEstoques();
+		
+		BigInteger qtdeDevSimb = BigInteger.ZERO;
+		for(MovimentoEstoque me : movimentos) {
+			if(((TipoMovimentoEstoque) me.getTipoMovimento()).getGrupoMovimentoEstoque().getOperacaoEstoque().equals(OperacaoEstoque.ENTRADA)) {
+				qtdeDevSimb = qtdeDevSimb.add(me.getQtde());
+			} else {
+				qtdeDevSimb = qtdeDevSimb.subtract(me.getQtde());
 			}
-			
-			validarValoresAplicados(movimentoEstoque, precoVenda, precoComDesconto, valorDesconto);
-			
-			ValoresAplicados valoresAplicados = new ValoresAplicados(precoVenda, precoComDesconto, valorDesconto);
-			
-			mfff = new MovimentoFechamentoFiscalFornecedor();
-			mfff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
-			mfff.setQtde(contagem.getQtdNota());
-			mfff.setValoresAplicados(valoresAplicados);
-			mfff.setNotaFiscalLiberadaEmissao(true);
-			mfff.setData(distribuidorService.obterDataOperacaoDistribuidor());
-			mfff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.SAIDA));
-			mfff.setFornecedor(fornecedor);
-			mfff.setProdutoEdicao(new ProdutoEdicao(contagem.getIdProdutoEdicao()));
-			mfff.setTipoDestinatario(TipoDestinatario.FORNECEDOR);
-			mfff.setNotaFiscalDevolucaoSimbolicaEmitida(false);
-			mfff.setDesobrigaNotaFiscalDevolucaoSimbolica(false);
-			oimffdf.setMovimentoFechamentoFiscal(mfff);
-		} else {
-			
-			OrigemItemMovFechamentoFiscalDevolucaoFornecedor oimffdv = new OrigemItemMovFechamentoFiscalDevolucaoFornecedor();
-			oimffdv.setMovimento(movimentoEstoque);
-			oimffdv.setMovimentoFechamentoFiscal(mfff);
-			mfff.getOrigemMovimentoFechamentoFiscal().add(oimffdv);
-			mfff.setQtde(mfff.getQtde().add(movimentoEstoque.getQtde()));
 		}
 		
-		movimentoFechamentoFiscalRepository.merge(mfff);
+		if(qtdeDevSimb.intValue() > 0) {
+			
+			if(mfff == null) {
+				
+				List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
+				OrigemItemMovFechamentoFiscalDevolucaoFornecedor oimffdf = new OrigemItemMovFechamentoFiscalDevolucaoFornecedor();
+				oimffdf.setMovimento(movimentoEstoque);
+				listaOrigemMovsFiscais.add(oimffdf);
+				
+				BigDecimal precoVenda = null;
+				BigDecimal precoComDesconto = null;
+				BigDecimal valorDesconto = null;
+				
+				if(movimentoEstoque != null && movimentoEstoque.getProdutoEdicao() != null) {
+					
+					precoVenda = movimentoEstoque.getProdutoEdicao().getPrecoVenda();
+					
+					if(movimentoEstoque.getProdutoEdicao().getOrigem().equals(Origem.MANUAL)) {
+						
+						valorDesconto = movimentoEstoque.getProdutoEdicao().getDesconto();
+						if(valorDesconto == null && movimentoEstoque.getProdutoEdicao().getProduto() != null) {
+							valorDesconto = movimentoEstoque.getProdutoEdicao().getProduto().getDesconto();
+						}
+						
+					} else {
+						
+						if(movimentoEstoque.getProdutoEdicao().getDescontoLogistica() != null) {
+							valorDesconto = movimentoEstoque.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto();
+							if(valorDesconto == null 
+									&& movimentoEstoque.getProdutoEdicao().getProduto() != null
+									&& movimentoEstoque.getProdutoEdicao().getProduto().getDescontoLogistica() != null) {
+								valorDesconto = movimentoEstoque.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto();
+							}
+						}
+						
+					}
+					
+					if(valorDesconto != null && precoVenda != null) {
+						precoComDesconto = precoVenda.multiply(valorDesconto).divide(BigDecimal.valueOf(100));
+					}
+					
+				}
+				
+				validarValoresAplicados(movimentoEstoque, precoVenda, precoComDesconto, valorDesconto);
+				
+				ValoresAplicados valoresAplicados = new ValoresAplicados(precoVenda, precoComDesconto, valorDesconto);
+				
+				mfff = new MovimentoFechamentoFiscalFornecedor();
+				mfff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
+				mfff.setQtde(contagem.getQtdNota());
+				mfff.setValoresAplicados(valoresAplicados);
+				mfff.setNotaFiscalLiberadaEmissao(true);
+				mfff.setData(distribuidorService.obterDataOperacaoDistribuidor());
+				mfff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.SAIDA));
+				mfff.setFornecedor(fornecedor);
+				mfff.setProdutoEdicao(new ProdutoEdicao(contagem.getIdProdutoEdicao()));
+				mfff.setTipoDestinatario(TipoDestinatario.FORNECEDOR);
+				mfff.setNotaFiscalDevolucaoSimbolicaEmitida(false);
+				mfff.setDesobrigaNotaFiscalDevolucaoSimbolica(false);
+				oimffdf.setMovimentoFechamentoFiscal(mfff);
+				
+				movimentoFechamentoFiscalRepository.adicionar(mfff);
+				
+			} else {
+				
+				OrigemItemMovFechamentoFiscalDevolucaoFornecedor oimffdv = new OrigemItemMovFechamentoFiscalDevolucaoFornecedor();
+				oimffdv.setMovimento(movimentoEstoque);
+				mfff.getOrigemMovimentoFechamentoFiscal().add(oimffdv);
+				mfff.setQtde(mfff.getQtde().add(movimentoEstoque.getQtde()));
+				oimffdv.setMovimentoFechamentoFiscal(mfff);
+				
+				movimentoFechamentoFiscalRepository.alterar(mfff);
+			}
+			
+		}
+		
 		return mfff;
 	}
 
