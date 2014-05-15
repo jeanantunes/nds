@@ -170,21 +170,6 @@ public class LancamentoParcial implements Serializable{
 	}	
 		
 	/**
-	 * 
-	 * @param offset - Número período de onde será iniciado o incremento.
-	 */
-	public void incrementarNumeroPeriodos(int offset) {
-		
-		PeriodoLancamentoParcial periodo = this.getPeriodoPorNumero(offset);
-		
-		do {
-			
-			periodo.incrementarNumero();
-			
-		} while ((periodo = periodo.proximo()) != null);
-	}
-	
-	/**
 	 * Obtém um {@link PeriodoLancamentoParcial} através de seu {@link PeriodoLancamentoParcial#getNumeroPeriodo()} <br/>
 	 * Caso haja dois períodos com o mesmo número (momento da inclusão de um novo período) retornará o período diferente do argumento <br/>
 	 * Caso o número passado seja nulo, será retornado o primeiro período.

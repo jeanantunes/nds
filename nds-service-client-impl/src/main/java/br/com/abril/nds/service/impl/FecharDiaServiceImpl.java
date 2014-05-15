@@ -370,6 +370,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	public List<ValidacaoLancamentoFaltaESobraFecharDiaDTO> obterLancamentoFaltasESobras(Date dataOperacaoDistribuidor) {
 		return this.fecharDiaRepository.existeLancamentoFaltasESobrasPendentes(dataOperacaoDistribuidor);
 	}
+	
+	@Override
+	@Transactional
+	public Boolean existeMatrizRecolhimentoSalva(Date dataOperacaoDistribuidor) {
+		return this.fecharDiaRepository.existeMatrizRecolhimentoSalva(dataOperacaoDistribuidor);
+	}
 
 	/**
 	 * Verifica se cotas a vista tiveram seus movimentos financeiros consolidados

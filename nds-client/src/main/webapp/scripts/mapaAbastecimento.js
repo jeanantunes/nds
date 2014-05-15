@@ -746,7 +746,7 @@ $(function() {
 			sortable : true,
 			align : 'right'
 		}],
-		sortname : "codigoProduto",
+		sortname : "nomeProduto",
 		sortorder : "asc",
 		usepager : true,
 		useRp : true,

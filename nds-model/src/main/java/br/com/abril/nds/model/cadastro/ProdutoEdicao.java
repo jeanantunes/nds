@@ -351,13 +351,17 @@ public class ProdutoEdicao implements Serializable {
 		
 		BigInteger codigo = BigInteger.ZERO;
 		
+		if(codigoDeBarras==null || codigoDeBarras.trim().equals("")){
+			codigoDeBarras = "0";
+		}
+		
 		try {
 		
 			codigo = new BigInteger(codigoDeBarras);
 		
 		} catch(NumberFormatException e) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras "+codigoDeBarras+" inválido!");
 		}
 		
 		if (codigoDeBarras != null && !"".equals(codigoDeBarras) && codigo.compareTo(BigInteger.ZERO) > 0){
