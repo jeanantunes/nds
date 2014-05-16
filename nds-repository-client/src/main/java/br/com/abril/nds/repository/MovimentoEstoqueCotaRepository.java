@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.CotaReparteDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
+import br.com.abril.nds.dto.MovimentosEstoqueEncalheDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
@@ -28,6 +29,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.util.Intervalo;
 
@@ -73,7 +75,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @return List - MovimentoEstoqueCota
 	 */
-	public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota);
+	public List<MovimentosEstoqueEncalheDTO> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota);
 	
 	/**
 	 * Pesquisa uma lista de ContagemDevolucao.
@@ -508,5 +510,9 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public abstract void updateById(Long id, ValoresAplicados valoresAplicados, BigInteger qtde);
 
 	public abstract BigInteger loadQtdeById(Long id);
+
+	public abstract void updateById(Long id, MovimentoFinanceiroCota movimentoFinanceiroCota);
+
+	public abstract void updateById(Long id, StatusEstoqueFinanceiro statusEstoqueFinanceiro);
 	
 }

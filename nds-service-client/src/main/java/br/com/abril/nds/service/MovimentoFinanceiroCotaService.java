@@ -7,6 +7,7 @@ import java.util.Map;
 
 import br.com.abril.nds.client.vo.ProcessamentoFinanceiroCotaVO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
+import br.com.abril.nds.dto.MovimentosEstoqueEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -90,14 +91,7 @@ public interface MovimentoFinanceiroCotaService {
 											List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno,
 											Date dataOperacao, Usuario usuario);
 
-	/**
-     * Distingue Movimentos de Estoque da Cota por Fornecedor; 
-     * Separa a lista de Movimentos de Estoque em outras listas;
-     * Cada lista separada possui Movimentos de Estoque de um único Fornecedor.
-     * @param movimentosEstoqueCota
-     * @return Map<Long,List<MovimentoEstoqueCota>>
-     */
-	Map<Long, List<MovimentoEstoqueCota>> agrupaMovimentosEstoqueCotaPorFornecedor(List<MovimentoEstoqueCota> movimentosEstoqueCota);
+
 
 	/**
 	 * Gera Movimentos Financeiros das Cotas
