@@ -80,9 +80,10 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Nenhum resultado encontrado para Produto "
-							+ input.getCodigoPublicacao() + "  Edição "
-							+ input.getEdicao() + " na tabela Produto Edição");
+					"Produto "
+					+ input.getCodigoPublicacao() + "  Edição "
+					+ input.getEdicao() 
+					+" não encontrado.");
 
 		}
 

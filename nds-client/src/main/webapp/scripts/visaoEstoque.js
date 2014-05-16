@@ -327,7 +327,7 @@ var visaoEstoqueController = $.extend(true, {
 		
 		$.each( visaoEstoqueController.visaoEstoqueInventarioArray, function(produtoEdicaoId, qtde) {
 			
-			dados += '{name:"filtro.listaTransferencia['+index+'].produtoEdicaoId", value: '+ produtoEdicaoId +'}, {name:"filtro.listaTransferencia['+index+'].qtde", value: '+ ((qtde['inventario'] != "") ? qtde['diferenca'] : 0) +'},';
+			dados += '{name:"filtro.listaTransferencia['+index+'].produtoEdicaoId", value: '+ produtoEdicaoId +'}, {name:"filtro.listaTransferencia['+index+'].qtde", value: '+ (qtde['diferenca']) +'},';
 			index++;
 			
 		});
@@ -524,7 +524,7 @@ var visaoEstoqueController = $.extend(true, {
 				},
 			},
 			form: $("#dialog-visaoEstoque-inventario-confirm", visaoEstoqueController.workspace).parents("form"),
-			close: function(ev, ui) { visaoEstoqueController.visaoEstoqueInventarioArray = {}; $(this).close(); },
+			close: function(ev, ui) { visaoEstoqueController.visaoEstoqueInventarioArray = {};},
 		});
 	},
 	

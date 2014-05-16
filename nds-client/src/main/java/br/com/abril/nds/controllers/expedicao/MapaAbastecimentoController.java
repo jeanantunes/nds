@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -273,8 +274,15 @@ public class MapaAbastecimentoController extends BaseController {
 	@Post
 	public void pesquisarDetalhes(Long idBox, Integer numeroCota, String data, String sortname, String sortorder) {
 
-		FiltroMapaAbastecimentoDTO filtro = (FiltroMapaAbastecimentoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);	
-		filtro.setDataLancamento(data);
+		FiltroMapaAbastecimentoDTO filtro = null;
+        try {
+            filtro = (FiltroMapaAbastecimentoDTO) BeanUtils.cloneBean(session.getAttribute(FILTRO_SESSION_ATTRIBUTE));
+        } catch (Exception e) {
+            
+            throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao pesquisar detalhes.");
+        }
+	    
+	    filtro.setDataLancamento(data);
 		filtro.setCodigoCota(numeroCota);
 
 		filtro.setPaginacaoDetalhes(new PaginacaoVO(null, null, sortorder, sortname));

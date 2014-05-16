@@ -200,9 +200,9 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 				this.ndsiLoggerFactory.getLogger().logError(message,
 						EventoExecucaoEnum.RELACIONAMENTO,
 						"Não foi possível incluir registro - Chamada de Encalhe/Item: "+ input.getCePK().getNumeroChamadaEncalhe() 
-						+ "/"+ item.getCeItemPK().getNumeroItem() +" - Nenhum resultado encontrado para Produto/Edição: "
-						+ codigoProduto + " e Edicao: " + numeroEdicao
-						+ " no cadastro de edições do Novo Distrib");
+						+ "/"+ item.getCeItemPK().getNumeroItem() 
+						+ " Produto "+codigoProduto + " Edição " + numeroEdicao
+						+" não encontrado.");
 				continue;
 			}
 			

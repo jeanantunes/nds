@@ -77,7 +77,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		return (ChamadaEncalhe) query.uniqueResult();
 	}
 
-	public List<Long> obterIdsProdutoEdicaoNaMatrizRecolhimento(
+	@SuppressWarnings("unchecked")
+    public List<Long> obterIdsProdutoEdicaoNaMatrizRecolhimento(
 			Date dataEncalhe, 
 			List<Long> idsProdutoEdicao) {
 
@@ -415,17 +416,17 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" select ");
 		sql.append(" sum(chamadaenc14_.QTDE_PREVISTA) as qtdeExemplares, ");
 		sql.append(" sum(chamadaenc14_.QTDE_PREVISTA*produtoedi17_.PRECO_VENDA) as vlrTotalCe ");
-		sql.append(" from ");
-		sql.append(" CHAMADA_ENCALHE_COTA chamadaenc14_ ");
-		sql.append(" inner join ");
-		sql.append(" CHAMADA_ENCALHE chamadaenc15_ ");
-		sql.append(" on chamadaenc14_.CHAMADA_ENCALHE_ID=chamadaenc15_.ID ");
-		sql.append(" inner join ");
-		sql.append(" PRODUTO_EDICAO produtoedi17_ ");
-		sql.append(" on chamadaenc15_.PRODUTO_EDICAO_ID=produtoedi17_.ID ");
-		sql.append(" inner join ");
-		sql.append(" COTA cota16_ ");
-		sql.append(" on chamadaenc14_.COTA_ID=cota16_.ID ");
+		sql.append(" from CHAMADA_ENCALHE_COTA chamadaenc14_ ");
+		sql.append(" inner join CHAMADA_ENCALHE chamadaenc15_ on chamadaenc14_.CHAMADA_ENCALHE_ID=chamadaenc15_.ID ");
+		sql.append(" inner join PRODUTO_EDICAO produtoedi17_ on chamadaenc15_.PRODUTO_EDICAO_ID=produtoedi17_.ID ");
+		
+		if (filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()){
+		    
+		    sql.append(" inner join PRODUTO prod on produtoedi17_.PRODUTO_ID = prod.ID ");
+		    sql.append(" inner join PRODUTO_FORNECEDOR prod_fornec on prod.ID = prod_fornec.PRODUTO_ID ");
+		}
+		
+		sql.append(" inner join COTA cota16_ on chamadaenc14_.COTA_ID=cota16_.ID ");
 		sql.append(" where ");
 		sql.append(" cota16_.ID= ? ");
 		sql.append(" and chamadaenc14_.POSTERGADO= ? ");
@@ -443,6 +444,19 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if(filtro.getDtRecolhimentoAte() != null) {
 			sql.append(" and chamadaenc15_.DATA_RECOLHIMENTO <= ? ");
 			param.add(filtro.getDtRecolhimentoAte());
+		}
+		
+		if (filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()){
+		    
+		    sql.append(" and prod_fornec.fornecedores_ID in ( ");
+		    
+		    for (int index = 0 ; index < filtro.getFornecedores().size() ; index++){
+		        
+		        sql.append((index > 0) ? ", ?" : " ? ");
+		        param.add(filtro.getFornecedores().get(index));
+		    }
+		    
+		    sql.append(")");
 		}
 		
 		@SuppressWarnings("rawtypes")
@@ -832,7 +846,13 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if(filtro.getDtRecolhimentoAte() != null) {
 			hql.append(" and chamadaEncalhe.dataRecolhimento <=:dataAte ");
 			param.put("dataAte", filtro.getDtRecolhimentoAte());
-		}		
+		}
+		
+		if (filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()){
+		    
+		    hql.append(" and fornecedores.id in (:fornec) ");
+		    param.put("fornec", filtro.getFornecedores());
+		}
 	}
 
 	@Override

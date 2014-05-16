@@ -206,6 +206,24 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		return ((BigDecimal)query.uniqueResult()).intValue() > 0;
 	}
 
+	@Override
+	public boolean existeMatrizRecolhimentoSalva(Date dataOperacaoDistribuidor) {
+
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append(" SELECT count(l.id) ");
+		jpql.append(" FROM Lancamento l ");
+		jpql.append(" WHERE l.dataRecolhimentoDistribuidor = :dataOperacaoDistribuidor ");
+		jpql.append(" AND l.status = :matrizSalva ");
+				
+		Query query = getSession().createQuery(jpql.toString());
+		
+		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
+		query.setParameter("matrizSalva", StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+
+		return ((Long) query.uniqueResult()) > 0;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ValidacaoGeracaoCobrancaFecharDiaDTO> obterFormasDeCobranca() {
