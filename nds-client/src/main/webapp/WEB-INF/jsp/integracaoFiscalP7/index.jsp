@@ -62,17 +62,6 @@ function submitForm(f){
 
 </script>
  
- <!-- 
- <script language="javascript" type="text/javascript">
- 
- $(function(){
-	 integracaoP7Controller.init();
- });
- 
- </script>
-  -->
- 
- 
 <div>
 
 <style type="text/css">
@@ -91,8 +80,6 @@ function submitForm(f){
           <tr width="50">
           <td>M&ecirc;s/Ano:</td>
 
-<!-- <td width="50"> <input type="text" maxlength="6" /></td> -->
-            
 		   	<td>
 				 <input class="campoDePesquisa" type="text" name="" id="datepickerMesAno" readonly="readonly" style="width:120px;" value="" />
 				 
