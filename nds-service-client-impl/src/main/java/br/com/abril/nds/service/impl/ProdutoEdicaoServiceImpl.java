@@ -1635,7 +1635,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         if (Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()==null) {
             throw new ValidacaoException(TipoMensagem.WARNING, "O produto inserido não possui desconto cadastrado.");
-        } else if (produto.getDesconto() == null) {
+        } else if (!Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDesconto() == null) {
         	throw new ValidacaoException(TipoMensagem.WARNING, "O produto inserido não possui desconto cadastrado.");
         }
         
