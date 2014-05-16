@@ -7,7 +7,6 @@ var painelProcessamentoController = $.extend(true, {
 		this.initGridPainelProcessamentoGrid();
 		this.pesquisarInterfaces();
 		this.bindButtonsInterfaces();
-		$( "#tabPainel", painelProcessamentoController.workspace ).tabs();
 	},
 	initGridDetalheInterfaceGrid : function() {
 		$(".detalheInterfaceGrid", painelProcessamentoController.workspace).flexigrid({
