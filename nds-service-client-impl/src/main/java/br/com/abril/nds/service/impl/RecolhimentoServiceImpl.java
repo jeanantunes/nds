@@ -824,13 +824,19 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	        TreeSet<Date> datasRecolhimentoDisponiveis = new TreeSet<>();
 	        
 	        boolean isMatrizRecolhimentoConfirmado;
+	        boolean isAnteriorDataOperacao;
+	        
+	        Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 	        
 	        for (Date dataRecolhimentoFornecedor : datasRecolhimentoFornecedor) {
 	            
 	            isMatrizRecolhimentoConfirmado =
 	                    this.lancamentoRepository.existeMatrizRecolhimentoConfirmado(dataRecolhimentoFornecedor);
 	            
-	            if (!isMatrizRecolhimentoConfirmado) {
+	            isAnteriorDataOperacao = 
+	            		DateUtil.isDataInicialMaiorDataFinal(dataOperacao, dataRecolhimentoFornecedor);
+	            
+	            if (!isMatrizRecolhimentoConfirmado && !isAnteriorDataOperacao) {
 	                
 	                datasRecolhimentoDisponiveis.add(dataRecolhimentoFornecedor);
 	            }

@@ -535,6 +535,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             final boolean indNovoProdutoEdicao, final Lancamento lancamento) {
         
         if(indNovoProdutoEdicao){
+        	
+        	if (!TipoLancamento.LANCAMENTO.equals(dto.getTipoLancamento())) {
+        		throw new ValidacaoException(TipoMensagem.WARNING, "O tipo de distribuição deve ser \"Lançamento\"");
+        	}
             
             final LancamentoParcial lancamentoParcial =
                     this.criarNovoLancamentoParcial(dto, produtoEdicao);
@@ -553,7 +557,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             LancamentoParcial lancamentoParcial  = produtoEdicao.getLancamentoParcial();
             
             if (lancamentoParcial == null) {
-                
+
+            	if (!TipoLancamento.LANCAMENTO.equals(dto.getTipoLancamento())) {
+            		throw new ValidacaoException(TipoMensagem.WARNING, "O tipo de distribuição deve ser \"Lançamento\"");
+            	}
+            	
                 lancamentoParcial =
                         this.criarNovoLancamentoParcial(dto, produtoEdicao);
                 
@@ -1285,19 +1293,19 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 }
                 
                 final PeriodoLancamentoParcial primeiroPeriodo = periodoLancamentoParcialRepository.obterPrimeiroLancamentoParcial(produtoEdicao.getId());
+
+                dataLancamento = uLancamento.getDataLancamentoDistribuidor();
                 
-                Lancamento lancamento = primeiroPeriodo.getLancamentoPeriodoParcial();
-                
-                if(primeiroPeriodo!= null && lancamento != null){
-                    dataLancamento = lancamento.getDataLancamentoDistribuidor();
-                }
-                else{
-                    dataLancamento = uLancamento.getDataLancamentoDistribuidor();
+                if(primeiroPeriodo!= null) {
+
+                	Lancamento lancamento = primeiroPeriodo.getLancamentoPeriodoParcial();
+                    
+                    dataLancamento = lancamento != null ? lancamento.getDataLancamentoDistribuidor() : dataLancamento;
                 }
                 
                 final PeriodoLancamentoParcial ultimoPeriodo = periodoLancamentoParcialRepository.obterUltimoLancamentoParcial(produtoEdicao.getId());
                 
-                lancamento = ultimoPeriodo.getLancamentoPeriodoParcial();
+                Lancamento lancamento = ultimoPeriodo.getLancamentoPeriodoParcial();
                 
                 if(ultimoPeriodo!= null && lancamento!= null){
                     dto.setDataRecolhimentoReal(lancamento.getDataRecolhimentoDistribuidor());
@@ -1627,16 +1635,18 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         if (Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()==null) {
             throw new ValidacaoException(TipoMensagem.WARNING, "O produto inserido não possui desconto cadastrado.");
-        }
-
-        if (produto.getDesconto() == null) {
+        } else if (!Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDesconto() == null) {
         	throw new ValidacaoException(TipoMensagem.WARNING, "O produto inserido não possui desconto cadastrado.");
         }
         
         dto.setDesconto(Origem.INTERFACE.equals(produto.getOrigem()) ? 
         		produto.getDescontoLogistica().getPercentualDesconto() : 
         		produto.getDesconto());
-        
+
+        dto.setDescricaoDesconto(Origem.INTERFACE.equals(produto.getOrigem()) ? 
+        		produto.getDescontoLogistica().getDescricao() : 
+        		produto.getDescricaoDesconto());
+
         if(dto.getPacotePadrao()==null) {
             dto.setPacotePadrao(produto.getPacotePadrao());
         }
@@ -1653,8 +1663,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         if("SIM".equalsIgnoreCase(parcial) || "TRUE".equalsIgnoreCase(parcial)  || "PARCIAL".equalsIgnoreCase(parcial)) {
             dto.setParcial(true);
-        } else {
+        } else if("NÃO".equalsIgnoreCase(parcial) || "NAO".equalsIgnoreCase(parcial) || "FALSE".equalsIgnoreCase(parcial)) {
             dto.setParcial(false);
+        } else {
+        	throw new ValidacaoException(TipoMensagem.WARNING, String.format("Informação \"%s\" na coluna parcial está inválida", parcial));
         }
         
         final Calendar calendar = Calendar.getInstance();

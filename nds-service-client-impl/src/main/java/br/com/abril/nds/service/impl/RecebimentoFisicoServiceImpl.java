@@ -910,7 +910,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 		
 	        /**
-     * Atualização de Data e Satatus em Recebimento Fisico.
+     * Alteração de Data e Satatus em Recebimento Fisico.
      * 
      * @param usuarioLogado
      * @param notaFiscal

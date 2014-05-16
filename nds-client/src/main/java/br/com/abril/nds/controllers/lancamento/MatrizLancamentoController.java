@@ -1011,7 +1011,7 @@ public class MatrizLancamentoController extends BaseController {
             			  lancamentoAnterior = lancamentosParciaisRebistribuicao.get(i-1);
             			}
             			
-            			if(i<lancamentosParciaisRebistribuicao.size() && lancamentosParciaisRebistribuicao.get(i).getProdutoEdicao().getId().longValue()==
+            			if(i<lancamentosParciaisRebistribuicao.size()-1 && lancamentosParciaisRebistribuicao.get(i).getProdutoEdicao().getId().longValue()==
                     	  lancamentosParciaisRebistribuicao.get(i+1).getProdutoEdicao().getId()){
 
                     	  lancamentoPosterior = lancamentosParciaisRebistribuicao.get(i+1);
