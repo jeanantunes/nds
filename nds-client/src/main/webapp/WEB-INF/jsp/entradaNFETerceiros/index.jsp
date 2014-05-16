@@ -191,9 +191,9 @@ fieldset label {
 				<tr>
 					<td>Per&iacute;odo:</td>
 					<td>
-						<input name="filtro.dataInicial" type="text" id="dataInicial" style="width: 70px; " /> 
+						<input name="filtro.dataInicial" type="text" id="entradaNFETerceiros-dataInicial" style="width: 70px; " /> 
 						At&eacute;: 
-						<input name="filtro.dataFinal" type="text" id="dataFinal" style="width: 70px;" />
+						<input name="filtro.dataFinal" type="text" id="entradaNFETerceiros-dataFinal" style="width: 70px;" />
 					</td>
 					<td width="34">Status:</td>
 					<td width="165">

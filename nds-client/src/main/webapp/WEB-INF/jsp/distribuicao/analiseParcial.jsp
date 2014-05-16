@@ -580,7 +580,7 @@ table.dadosTab { margin-left: 370px;}
         </fieldset>
 	</div>
 
-    <div id="dialog-defineReparte" title="Define Reparte por PDV" style="display:none;">
+    <div id="AP_dialog-defineReparte" title="Define Reparte por PDV" style="display:none;">
         <fieldset style="width:605px !important;">
             <legend>Dados da Cota</legend>
             <table width="500" border="0" cellspacing="1" cellpadding="1">
@@ -612,13 +612,14 @@ table.dadosTab { margin-left: 370px;}
         <br clear="all" />
         <fieldset style="width:605px !important; margin-top:10px;">
             <legend>PDV da Cota</legend>
-            <table class="pdvCotaGrid"></table>
+            <table class="pdvCotaGrid_AP"></table>
             <table width="600" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                     <td width="312">&nbsp;
                     </td>
                     <td width="174">&nbsp;</td>
-                    <td width="71" align="center"><span class="reparteCota">999</span></td>
+                    <td width="71" align="center">
+                    	<span class="reparteCota" id="reparteCota">999</span></td>
                     <td width="43">&nbsp;</td>
                 </tr>
                 <tr>
