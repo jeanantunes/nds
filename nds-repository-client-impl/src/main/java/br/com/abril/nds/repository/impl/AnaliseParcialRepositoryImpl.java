@@ -488,12 +488,13 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     @Override
     @Transactional(readOnly = true)
     public List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo) {
-        StringBuilder sql = new StringBuilder();
+       
+    	StringBuilder sql = new StringBuilder();
         sql.append("select pdv.id, ");
         sql.append("       t.descricao descricaoTipoPontoPDV, ");
         sql.append("       pdv.nome nomePDV,");
         sql.append("       pdv.porcentagem_faturamento porcentagemFaturamento,");
-        sql.append("       ifnull(ep.principal, false) principal, ");
+        sql.append("       ifnull(pdv.ponto_principal, false) principal, ");
         sql.append("       est.reparte,");
         sql.append("       concat(e.logradouro, ', ', e.numero, ' - ', e.bairro, ' - ', e.cep, ' - ', e.cidade, ' - ', e.uf) endereco ");
         sql.append("  from pdv ");

@@ -767,7 +767,7 @@ var analiseParcialController = $.extend(true, {
     },
 
     salvarRepartePorPDV: function ($dialogReparte, reparteCota, numeroCota, legenda) {
-        var $repartesPDV = $dialogReparte.find('table.pdvCotaGrid tr input.repartePDV');
+        var $repartesPDV = $dialogReparte.find('table.pdvCotaGrid_AP tr input.repartePDV');
         var totalRepartePDVs = $repartesPDV.map(function () {
             return parseInt(this.value, 10);
         }).toArray().reduce(function (a, b) {
@@ -781,7 +781,7 @@ var analiseParcialController = $.extend(true, {
         param.push({name: 'estudoId', value: $('#estudoId').val()});
         param.push({name: 'numeroCota', value: numeroCota});
         param.push({name: 'legenda', value: legenda});
-        param.push({name: 'manterFixa', value: $('#dialog-defineReparte').find('input[name="input2"]').is(':checked')});
+        param.push({name: 'manterFixa', value: $('#AP_dialog-defineReparte').find('input[name="input2"]').is(':checked')});
         $repartesPDV.each(function (k) {
             param.push({name: 'reparteMap[' + k + '].id', value: $(this).closest('tr').find('td[abbr="id"] div').text()});
             param.push({name: 'reparteMap[' + k + '].reparte', value: this.value});
@@ -791,12 +791,12 @@ var analiseParcialController = $.extend(true, {
 
     defineRepartePorPDV: function(numeroCota, nomeCota, reparteCota, legenda) {
 
-        var $dialogReparte = $('#dialog-defineReparte');
+        var $dialogReparte = $('#AP_dialog-defineReparte', analiseParcialController.workspace);
         $dialogReparte.find('span.numeroCota').text(numeroCota);
         $dialogReparte.find('span.nomeCota').text(nomeCota);
         $dialogReparte.find('span.reparteCota').text(reparteCota);
 
-        $('.pdvCotaGrid').flexOptions({params:[{name: 'numeroCota', value: numeroCota},
+        $('.pdvCotaGrid_AP', analiseParcialController.workspace).flexOptions({params:[{name: 'numeroCota', value: numeroCota},
                                                {name: 'estudoId', value: $('#estudoId').val()}]}).flexReload();
 
         $dialogReparte.dialog({
@@ -1629,7 +1629,7 @@ $(".cotasDetalhesGrid").flexigrid({
     }
 });
 
-$(".pdvCotaGrid").flexigrid({
+$(".pdvCotaGrid_AP", analiseParcialController.workspace).flexigrid({
     url: analiseParcialController.path +'/distribuicao/analise/parcial/carregarDetalhesPdv',
     dataType : 'json',
     autoload: false,
@@ -1655,11 +1655,33 @@ $(".pdvCotaGrid").flexigrid({
             reparte:''
         };
 
+        var isReparteDefinido = false;
+        
         for (var i=0; i<result.rows.length; i++) {
-            var cell = result.rows[i].cell;
-            result.rows[i].cell = $.extend({}, defaultCell, cell);
+            
+        	var cell = result.rows[i].cell;
+            
+            if(result.rows[i].cell.reparte != undefined){
+            	isReparteDefinido = true;
+            }
 
-            result.rows[i].cell.reparte = '<input class="repartePDV" value="#">'.replace(/#/, result.rows[i].cell.reparte);
+        }
+        
+        for (var i=0; i<result.rows.length; i++) {
+            
+        	var cell = result.rows[i].cell;
+            result.rows[i].cell = $.extend({}, defaultCell, cell);
+            
+            if(isReparteDefinido){
+            	result.rows[i].cell.reparte = '<input class="repartePDV" value="#">'.replace(/#/, result.rows[i].cell.reparte);
+            }else{
+            	if(cell.principal){
+            		var reparte = $('#reparteCota').text();
+            		result.rows[i].cell.reparte = '<input class="repartePDV" value="#">'.replace(/#/, reparte);
+            	}else{
+            		result.rows[i].cell.reparte= '<input class="repartePDV" value="">'
+            	}
+            }
         }
 
         return result;
