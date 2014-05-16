@@ -436,7 +436,6 @@ public class NFeServiceImpl implements NFeService {
 			
 			this.ftfService.gerarFtf(notas);
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "FTF gerado");
 		} else {
 			
 			this.notaFiscalService.exportarNotasFiscais(notas);

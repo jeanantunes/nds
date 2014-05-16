@@ -428,12 +428,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 						modal : true,
 						buttons : {
 							"Sim" : function() {
-								
 								ConferenciaEncalheCont.verificarValorTotalNotaFiscal();
 								$("#dialog-confirmar", ConferenciaEncalheCont.workspace).dialog("close");
 							},
 							"Não" : function() {
-								
 								$("#dialog-confirmar", ConferenciaEncalheCont.workpace).dialog("close");
 							}
 						},
@@ -452,22 +450,16 @@ var ConferenciaEncalheCont = $.extend(true, {
 	},
 	
 	carregarListaConferencia: function(data){
-		
-		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/carregarListaConferencia', 
-				data, 
-				function(result){
-					
-					ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe(result);
-					
-					bloquearItensEdicao(ConferenciaEncalheCont.workspace);
-				}
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/carregarListaConferencia', data, 
+			function(result){
+				ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe(result);
+				bloquearItensEdicao(ConferenciaEncalheCont.workspace);
+			}
 		);
 	},
-	indDistribuidorAceitaJuramentado:null,
-	preProcessarConsultaConferenciaEncalhe : function(result){
+	indDistribuidorAceitaJuramentado:null, preProcessarConsultaConferenciaEncalhe : function(result){
 		
 		if (result.mensagens){
-			
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 			return;
 		}
@@ -578,7 +570,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 			);
 			
 			if (!ConferenciaEncalheCont.indDistribuidorAceitaJuramentado) {
-				
 				$("#colunaJuramentada", ConferenciaEncalheCont.workspace).hide();
 			}
 			
@@ -653,8 +644,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			
 		});
 		
-		var param = serializeArrayToPost('listaConferenciaEncalhe', 
-				data);
+		var param = serializeArrayToPost('listaConferenciaEncalhe', data);
 		
 		param.indConferenciaContingencia = true;
 		
@@ -667,17 +657,14 @@ var ConferenciaEncalheCont = $.extend(true, {
 				}, function(){
 					
 					var data = [
-								  {name: 'numeroCota', 			value : $("#numeroCota", ConferenciaEncalheCont.workspace).val()}, 
-								  {name: 'indObtemDadosFromBD', value : false},
-								  {name: 'indConferenciaContingencia', value: false}
-								 ];
+					            {name: 'numeroCota', 			value : $("#numeroCota", ConferenciaEncalheCont.workspace).val()}, 
+								{name: 'indObtemDadosFromBD', value : false},
+								{name: 'indConferenciaContingencia', value: false}
+								];
 								
 					ConferenciaEncalheCont.carregarListaConferencia(data);				
 				}
-			
 		);
-		
-		
 	},
 	
 	atualizarValores: function(index) {
@@ -1579,11 +1566,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe({reparte:0,valorEncalhe:0,valorVendaDia:0,valorDebitoCredito:0,valorPagar:0, listaDebitoCredito:{page:0,total:0, rows:null}});
 		$(".dadosFiltro", ConferenciaEncalheCont.workspace).hide();
 		$("#totalExemplaresFooter", ConferenciaEncalheCont.workspace).html(0);
-		
 		$("#numeroCota", ConferenciaEncalheCont.workspace).val("");
-		
 		$("#numeroCota", ConferenciaEncalheCont.workspace).select();
-		
 		$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 		
 		bloquearItensEdicao(ConferenciaEncalheCont.workspace);
@@ -1643,17 +1627,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					form: $("#dialog-conferencia-nao-salva", this.workspace).parents("form")
 				});
-				
-				
 			} else {
-				
 				ConferenciaEncalheCont.removerTravaConferenciaEncalheCotaUsuario();
-				
 				$(self).tabs("remove", index);
-				
 			}
 		});	
 	 }
 }, BaseController);
-
 //@ sourceURL=scriptConferenciaEncalheCont.js
