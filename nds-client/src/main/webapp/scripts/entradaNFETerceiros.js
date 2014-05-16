@@ -4,6 +4,7 @@ var entradaNFETerceirosController = $.extend(true, {
 	
 	init : function() {
 		this.initInputs();
+		this.initFiltroDatas();
 		this.initEncalheNfeGrid();
 		this.initNotaRecebidaGrid();
 		this.initPesqProdutosNotaGrid();
@@ -53,12 +54,12 @@ var entradaNFETerceirosController = $.extend(true, {
 		
 		if(status != ''){
 			
-			if($("#dataInicial").val() == '' || $("#dataFinal").val() == '') {
+			if($("#entradaNFETerceiros-dataInicial").val() == '' || $("#entradaNFETerceiros-dataFinal").val() == '') {
 				mensagens.push('A data de movimento não nula');
 				exibirMensagem('WARNING', mensagens);
 				return false;
 			} else {
-				var retorno = validarDatas($("#dataInicial").val(), $("#dataFinal").val());
+				var retorno = validarDatas($("#entradaNFETerceiros-dataInicial").val(), $("#entradaNFETerceiros-dataFinal").val());
 				
 				if(!retorno){			
 					mensagens.push('A data de movimento final não pode ser maior que a data inicial');
@@ -516,18 +517,6 @@ var entradaNFETerceirosController = $.extend(true, {
 	
 	initInputs : function() {
 		
-		$( "#dataInicial", this.workspace ).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
-		$( "#dataFinal", this.workspace ).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
 		$("#entrada-terceiros-selectFornecedoresDestinatarios").multiselect({
 			selectedList : 6,
 		});
@@ -544,6 +533,34 @@ var entradaNFETerceirosController = $.extend(true, {
 		});
 		
 	},
+	
+	initFiltroDatas : function() {
+		
+		$.postJSON(contextPath + '/cadastro/distribuidor/obterDataDistribuidor', null, 
+				function(result) {
+					$("#entradaNFETerceiros-dataInicial", this.workspace).val(result);
+					
+					$("#entradaNFETerceiros-dataFinal", this.workspace).val(result);
+		        }
+		);
+		
+		$( "#entradaNFETerceiros-dataInicial", this.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$( "#entradaNFETerceiros-dataFinal", this.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$('#entradaNFETerceiros-dataInicial', entradaNFETerceirosController.workspace).mask("99/99/9999");
+		
+		$('#entradaNFETerceiros-dataFinal', entradaNFETerceirosController.workspace).mask("99/99/9999");
+	},
+	
 	
 	initPesqProdutosNotaGrid : function() {
 		$(".pesquisarProdutosNotaGrid", this.workspace).flexigrid({
