@@ -139,6 +139,13 @@ var distribuicaoManual = $.extend(true, {
 							$("#reparteGrid"+ index, distribuicaoManual.workspace).css("background-color", "#FFFFFF");
 							$("#reparteGrid"+ index, distribuicaoManual.workspace).val('0');
 							$("#percEstoqueGrid"+ index, distribuicaoManual.workspace).html('0');
+							
+							var a = $("input[id^='numeroCotaGrid']").length;
+							
+							setTimeout(function() { 
+								$("input[id^='numeroCotaGrid']", distribuicaoManual.workspace)[a-1].focus();
+							}, 500);
+							
 		        		}
 	    			}
 	            });
@@ -273,12 +280,20 @@ var distribuicaoManual = $.extend(true, {
 												distribuicaoManual.exibindoMensagem = false;
 												setTimeout(function() { $('#reparteGrid'+ index, distribuicaoManual.workspace).focus(); }, 100);
 						    					
+												exibirMensagemDialog('WARNING', ['A cota de número '+ numeroCota +' está com status SUSPENSO.'], '');
+												
 												distribuicaoManual.isSolicitarSenhaCotaSuspensa = false;
 						    				},
 						    				usuarioNaoSupervisorCallback: function(){
 												distribuicaoManual.isSolicitarSenhaCotaSuspensa = true;
 												distribuicaoManual.limparLinha(index);
 												distribuicaoManual.exibindoMensagem = false;
+												
+												var a = $("input[id^='numeroCotaGrid']").length;
+												
+												setTimeout(function() { 
+													$("input[id^='numeroCotaGrid']", distribuicaoManual.workspace)[a-1].focus();
+												}, 500);
 												
 							        		}
 						    			}
@@ -300,18 +315,6 @@ var distribuicaoManual = $.extend(true, {
 								}
 								
 							break;
-							
-							/*
-							case 'SUSPENSO':
-								distribuicaoManual.exibindoMensagem = true;
-								distribuicaoManual.confirmar('#dialog-status-suspenso', callback, function() {
-									distribuicaoManual.limparLinha(index);
-									distribuicaoManual.exibindoMensagem = false;
-									setTimeout(function() { $('#numeroCotaGrid'+ index, distribuicaoManual.workspace).focus(); }, 100);
-								});
-							break;
-							*/
-							
 							case 'INATIVO':
 								distribuicaoManual.limparLinha(index);
 								exibirMensagemDialog('WARNING', ['A cota de número '+ numeroCota +' está com status INATIVO.'], '');
