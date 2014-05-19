@@ -1758,8 +1758,9 @@ var ConferenciaEncalhe = $.extend(true, {
 				setTimeout (function () {$("#numNotaFiscal").focus();}, 1);
 				
 			}, close : function(){
+				ConferenciaEncalhe.modalAberta = false;
+				
 				if(!ConferenciaEncalheCont.isConfirmar){
-					ConferenciaEncalhe.modalAberta = false;
 					
 					ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
 					

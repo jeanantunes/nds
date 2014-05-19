@@ -513,7 +513,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     	
     	if(encalhe.getFechado()) {
     		
-    		if("P".equals(encalhe.getTipo())) {
+    		if(isEstoqueLancamento(encalhe)) {
     			
                 encalhe.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
                 
@@ -1204,7 +1204,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 
                 gerarMovimentoFaltasSobras(item, usuario);
                 
-                if (item.isParcial()) {
+                if (item.getRecolhimento() != null && TipoLancamentoParcial.PARCIAL.name().equals(item.getRecolhimento())) {
                 	
                 	this.tratarEncalheProdutoEdicaoParcial(item, usuario, item.getFisico());
                 	

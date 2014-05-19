@@ -80,9 +80,9 @@ public class MovimentoFinanceiroCotaController extends BaseController{
 	 */
 	private void verificaLiberacaoProcessamentoFinanceiro(Date dataOperacao){
 		
-        Date dataUltimoFechamento = this.fechamentoEncalheService.buscaDataUltimoControleFechamentoEncalhe();
+        boolean fechamentoRealizado = this.fechamentoEncalheService.validarEncerramentoOperacaoEncalhe(dataOperacao);
 		
-		if (dataOperacao.compareTo(dataUltimoFechamento) > 0){
+		if (!fechamentoRealizado){
 			
 			 throw new ValidacaoException(TipoMensagem.WARNING, "Fechamento de Encalhe ainda não realizado !");
 		}

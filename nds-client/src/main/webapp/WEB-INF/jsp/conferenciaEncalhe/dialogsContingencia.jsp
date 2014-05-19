@@ -66,7 +66,7 @@
 					    	Chave de Acesso:
 					    </td>
 				    	<td colspan="3">
-				    		<input isEdicao="true" type="text" id="chaveAcessoNFE" style="width:510px;" />
+				    		<input isEdicao="true" type="text" id="chaveAcessoNFE" maxlength="44" style="width:510px;" />
 				    	</td>
 					</table>
 				</div>				

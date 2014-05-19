@@ -1414,7 +1414,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 							$("#vlrCE", ConferenciaEncalheCont.workspace).focus();
 
 							$("#qtdCE", ConferenciaEncalheCont.workspace).focus();
-
+							
+							ConferenciaEncalheCont.removerTravaConferenciaEncalheCotaUsuario();
 							
 					}, null, true, "dialog-notaFiscal"
 					);
@@ -1431,8 +1432,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 				}
 			}, close : function(){
 				
+				ConferenciaEncalheCont.modalAberta = false;
 				if(!ConferenciaEncalheCont.isConfirmar){
-					ConferenciaEncalheCont.modalAberta = false;
 					
 					ConferenciaEncalheCont.removerTravaConferenciaEncalheCotaUsuario();
 					
