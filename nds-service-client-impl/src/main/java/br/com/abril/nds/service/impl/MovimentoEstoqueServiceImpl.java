@@ -11,6 +11,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -132,6 +133,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     
     @Autowired
     private DistribuidorService distribuidorService;
+    
+    @Autowired
+    private SchedulerFactoryBean schedulerFactoryBean;
     
     @Override
     @Transactional
@@ -786,7 +790,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     		OperacaoEstoque operacaoEstoque,
     		BigInteger qtde) {
     	
-    	EstoqueProdutoFila epf = new EstoqueProdutoFila();
+    	final EstoqueProdutoFila epf = new EstoqueProdutoFila();
     	
     	epf.setProdutoEdicao(produtoEdicao);
     	epf.setCota(cota);
@@ -795,7 +799,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     	epf.setTipoEstoque(grupoMovimentoEstoque.getTipoEstoque());
 		
     	estoqueProdutoFilaRepository.adicionar(epf);
-    	
     }
     
     

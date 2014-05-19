@@ -639,12 +639,9 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return dataAProcessar;
 	}
 	
-	
 	/**
-	 * Método que obtém uma lista de datas de recolhimento 
-	 * anteriores ou posterior a dataAtual informada em que o distribuidor opera.
-	 * 
-	 * 
+	 * Método que obtém uma lista de datas operacionais a partir da data atual
+	 * (datas posteriores ou anteriores a data atual de acordo com o parâmetro posterior).
 	 * @param dataAtual
 	 * @param qtndDiasUteis
 	 * @param diasSemanaDistribuidorOpera
@@ -653,7 +650,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	 * @return List - Date
 	 */
 	@Override
-	public List<Date> obterListaDatasRecolhimentoAPartirDataAtual(
+	public List<Date> obterListaDataOperacional(
 			Date dataAtual, 
 			int qtndDiasUteis, 
 			final List<Integer> diasSemanaDistribuidorOpera,
@@ -664,7 +661,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		final int qtdDias =  posterior ? 1 : -1;
 		
 		do {
-			dataAtual = processarDataRecolhimento(DateUtil.adicionarDias(dataAtual, qtdDias), diasSemanaDistribuidorOpera, false);
+			dataAtual = processarDataRecolhimento(DateUtil.adicionarDias(dataAtual, qtdDias), diasSemanaDistribuidorOpera, posterior);
 			listaDatasRecolhimento.add(dataAtual);
 		} while(--qtndDiasUteis> 0);
 		
