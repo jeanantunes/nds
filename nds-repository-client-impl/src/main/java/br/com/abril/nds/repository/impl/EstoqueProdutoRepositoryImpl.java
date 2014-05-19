@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +17,6 @@ import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
