@@ -108,7 +108,7 @@ public interface DistribuidorService {
 	
 	public List<Integer> getListaDiaOrdinalAceitaRecolhimento();
 	
-	List<Date> obterListaDatasRecolhimentoAPartirDataAtual(
+	List<Date> obterListaDataOperacional(
 			Date dataAtual, 
 			int qtndDiasUteis, 
 			final List<Integer> diasSemanaDistribuidorOpera,

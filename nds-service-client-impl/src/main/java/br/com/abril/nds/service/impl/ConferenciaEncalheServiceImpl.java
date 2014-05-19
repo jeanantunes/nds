@@ -338,11 +338,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(listaDiasRecolheAtrasado.contains(dia)) {
 			
-			dataCEConferivel.getListaDataConferivelProdutoNaoParcial().add(DateUtil.removerTimestamp(dataCE));
+			if(!dataCEConferivel.getListaDataConferivelProdutoNaoParcial().contains(DateUtil.removerTimestamp(dataCE))) {
+				dataCEConferivel.getListaDataConferivelProdutoNaoParcial().add(DateUtil.removerTimestamp(dataCE));
+			}
 			
 			if(PRIMEIRO_DIA_RECOLHIMENTO==dia) {
 				
-				dataCEConferivel.getListaDataConferivelProdutoParcial().add(DateUtil.removerTimestamp(dataCE));
+				if(!dataCEConferivel.getListaDataConferivelProdutoParcial().contains(DateUtil.removerTimestamp(dataCE))) {
+					dataCEConferivel.getListaDataConferivelProdutoParcial().add(DateUtil.removerTimestamp(dataCE));
+				}
 				
 			}
 		}
@@ -368,7 +372,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataOperacao, numeroCota, listaIdFornecedor);
 		
-		final List<Date> datasAnteriores = distribuidorService.obterListaDatasRecolhimentoAPartirDataAtual(
+		final List<Date> datasAnteriores = distribuidorService.obterListaDataOperacional(
 				dataOperacao, 
 				QUANTIDADE_DIAS_UTEIS, 
 				diasSemanaDistribuidorOpera, 
@@ -384,7 +388,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			return;
 		}
 		
-		final List<Date> datasPosteriores = distribuidorService.obterListaDatasRecolhimentoAPartirDataAtual(
+		final List<Date> datasPosteriores = distribuidorService.obterListaDataOperacional(
 					dataOperacao, 
 					QUANTIDADE_DIAS_UTEIS, 
 					diasSemanaDistribuidorOpera, 
@@ -3186,16 +3190,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			for (final ProdutoEdicao produtoEdicao : listaProdutoEdicao){
 				
-//				listaItem.add(
-//						new ItemAutoComplete(
-//								produtoEdicao.getProduto().getCodigo() + " - " + produtoEdicao.getProduto().getNome() + " - " + produtoEdicao.getNumeroEdicao(), 
-//								null,
-//								produtoEdicao.getId()));
-
-				
 				listaItem.add(
 						new ItemAutoComplete(codigoSM.toString(),
-								produtoEdicao.getProduto().getCodigo() + " - " + produtoEdicao.getProduto().getNome() + " - " + produtoEdicao.getNumeroEdicao(), 
+								codigoSM.toString() + " - " +produtoEdicao.getProduto().getCodigo() + " - " + produtoEdicao.getProduto().getNome() + " - " + produtoEdicao.getNumeroEdicao(), 
 								produtoEdicao.getId()));
 
 				
