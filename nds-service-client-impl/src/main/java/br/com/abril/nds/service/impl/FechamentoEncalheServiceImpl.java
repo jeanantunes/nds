@@ -500,7 +500,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     	
     	if(encalhe.getFechado()) {
     		
-    		if("P".equals(encalhe.getTipo())) {
+    		if(isEstoqueLancamento(encalhe)) {
     			
                 encalhe.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
                 
@@ -584,9 +584,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
                 qtd = exemplaresDevolucao.subtract(exemplaresDevolucaoJuramentado).subtract(exemplaresVendaEncalhe);
 
+            } else if (fechamento.getFisico() == null) {
+            	
+            	throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, indique valor de físico para todos os produtos.");
+            	
             } else {
                 
-                qtd = fechamento.getFisico() != null ? fechamento.getFisico() : BigInteger.ZERO;
+                qtd = fechamento.getFisico();
             }
             
             final FechamentoEncalhePK id = new FechamentoEncalhePK();
@@ -1188,7 +1192,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 
                 gerarMovimentoFaltasSobras(item, usuario);
                 
-                if (item.isParcial()) {
+                if (item.getRecolhimento() != null && TipoLancamentoParcial.PARCIAL.name().equals(item.getRecolhimento())) {
                 	
                 	this.tratarEncalheProdutoEdicaoParcial(item, usuario, item.getFisico());
                 	

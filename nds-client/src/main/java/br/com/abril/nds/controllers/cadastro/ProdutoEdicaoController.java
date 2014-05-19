@@ -474,10 +474,15 @@ public class ProdutoEdicaoController extends BaseController {
 				
 				peDTO.setTipoLancamento(TipoLancamento.getByDescricao(peDTO.getLancamento()));
 			}
+
+			if(!Strings.isNullOrEmpty(peDTO.getClassificacao())) {
+
+				TipoClassificacaoProduto tipoClassificacao = 
+						this.tipoClassificacaoProdutoService.obterPorClassificacao(peDTO.getClassificacao());
+				
+				peDTO.setTipoClassificacaoProduto(tipoClassificacao);
+			}
 			
-			if(!Strings.isNullOrEmpty(peDTO.getClassificacao()))
-			    peDTO.setTipoClassificacaoProduto(tipoClassificacaoProdutoService.obterPorClassificacao(peDTO.getClassificacao()));
-            
 			if(peDTO.getDtLancPrevisto()!=null)
 			peDTO.setDataLancamentoPrevisto(DateUtil.parseDataPTBR(peDTO.getDtLancPrevisto()));
 			
