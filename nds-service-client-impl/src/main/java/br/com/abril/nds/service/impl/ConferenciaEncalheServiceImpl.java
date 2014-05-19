@@ -437,8 +437,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 			
 			return (cota.getParametrosCotaNotaFiscalEletronica() != null && 
-					cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() != null) ? 
-					cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() != null || 
+					cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null) ? 
+					cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null || 
 					cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() !=null  : false;
 		}
 	}	
@@ -2117,7 +2117,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				mffc.setChamadaEncalheCota(chamadaEncalheCota);
 				mffc.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
 				
-				if(cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica()
+				if(cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica()
 						|| cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) {
 					
 					mffc.setNotaFiscalDevolucaoSimbolicaEmitida(true);

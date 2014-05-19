@@ -1805,7 +1805,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 						if(cec.getCota() != null
 								&& cec.getCota().getParametrosCotaNotaFiscalEletronica() != null
 								&& (cec.getCota().getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() 
-										|| cec.getCota().getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica())) {
+										|| cec.getCota().getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica())) {
 							
 							movimentoFechamentoFiscalCota.setDesobrigaNotaFiscalDevolucaoSimbolica(true);
 							movimentoFechamentoFiscalCota.setNotaFiscalDevolucaoSimbolicaEmitida(false);

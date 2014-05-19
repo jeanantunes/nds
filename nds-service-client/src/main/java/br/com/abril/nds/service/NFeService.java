@@ -60,11 +60,14 @@ public interface NFeService {
 	void gerarNotasFiscaisCotas(FiltroNFeDTO filtro,
 			List<NotaFiscal> notasFiscais, Distribuidor distribuidor,
 			NaturezaOperacao naturezaOperacao,
-			Map<String, ParametroSistema> parametrosSistema, List<Cota> cotas);
+			Map<String, ParametroSistema> parametrosSistema, 
+			List<Cota> cotas);
 
 	void gerarNotasFiscaisFornecedor(FiltroNFeDTO filtro,
 			List<NotaFiscal> notasFiscais, Distribuidor distribuidor,
 			NaturezaOperacao naturezaOperacao,
-			Map<String, ParametroSistema> parametrosSistema, List<Fornecedor> fornecedores);
+			Map<String, ParametroSistema> parametrosSistema, 
+			List<Fornecedor> fornecedores);
 	
+	public NaturezaOperacao regimeEspecialParaCota(Cota cota);
 }

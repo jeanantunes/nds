@@ -51,6 +51,8 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -458,8 +460,8 @@ public class NFeServiceImpl implements NFeService {
 						if(cota.getParametrosCotaNotaFiscalEletronica() != null 
 								&& (cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() != null 
 								&& cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) 
-								|| (cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() != null 
-								&& cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica())) {
+								|| (cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null 
+								&& cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica())) {
 							
 							cotasContribuinteEmitente.add(cota);
 						}
@@ -821,5 +823,36 @@ public class NFeServiceImpl implements NFeService {
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 			notasFiscais.add(notaFiscal);
 		}
+	}
+	
+	@Override
+	@Transactional
+	public NaturezaOperacao regimeEspecialParaCota(Cota cota){
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		if(distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+			if(cota.getParametrosCotaNotaFiscalEletronica() != null){				
+				if(cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()){
+					return this.naturezaOperacaoRepository.obterNaturezaOperacao(distribuidor.getTipoAtividade(), TipoDestinatario.FORNECEDOR, TipoOperacao.SAIDA);
+				} else {//if(cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica()){
+					return this.naturezaOperacaoRepository.obterNaturezaOperacao(distribuidor.getTipoAtividade(), TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA);
+					
+				}
+			} else {
+				return this.naturezaOperacaoRepository.obterNaturezaOperacao(distribuidor.getTipoAtividade(), TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA);
+			}
+		} else {
+        	
+			if(cota.getParametrosCotaNotaFiscalEletronica() != null){
+				if(cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()){
+	               return this.naturezaOperacaoRepository.obterNaturezaOperacao(distribuidor.getTipoAtividade(), TipoDestinatario.FORNECEDOR, TipoOperacao.SAIDA);
+	            }else {//if(cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica()){
+	            	return this.naturezaOperacaoRepository.obterNaturezaOperacao(distribuidor.getTipoAtividade(), TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA);
+	            } 
+	        } else {
+            	return this.naturezaOperacaoRepository.obterNaturezaOperacao(distribuidor.getTipoAtividade(), TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA);
+            }
+        }		
 	}
 }

@@ -234,7 +234,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 					if (cota.getParametrosCotaNotaFiscalEletronica() != null) {
 
-						if (cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica()) {
+						if (cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica()) {
 
 							List<ItemNotaFiscalSaida> itensNotaFiscal = obterItensNotaFiscalPor(
 									parametrosRecolhimentoDistribuidor, cota,
@@ -1427,7 +1427,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			if (cota.getParametrosCotaNotaFiscalEletronica() != null) {
 
 				if (!cota.getParametrosCotaNotaFiscalEletronica()
-						.isEmiteNotaFiscalEletronica()) {
+						.isExigeNotaFiscalEletronica()) {
 					itensNotaFiscal = this
 							.obterItensNFeEntradaDevolucaoRemessaConsignacao(
 									parametrosRecolhimentoDistribuidor, idCota,
@@ -1442,7 +1442,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 			if (cota.getParametrosCotaNotaFiscalEletronica() != null) {
 				if (!cota.getParametrosCotaNotaFiscalEletronica()
-						.isEmiteNotaFiscalEletronica()) {
+						.isExigeNotaFiscalEletronica()) {
 					itensNotaFiscal = this.obterItensNFeVenda(
 							parametrosRecolhimentoDistribuidor, idCota,
 							periodo, listaIdFornecedores, listaIdProdutos,
