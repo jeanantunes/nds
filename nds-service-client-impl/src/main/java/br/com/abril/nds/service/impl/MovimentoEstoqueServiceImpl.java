@@ -64,6 +64,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
@@ -130,6 +131,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     
     @Autowired
     private DistribuidorService distribuidorService;
+    
+    @Autowired
+    private EstoqueProdutoService estoqueProdutoService; 
     
     @Override
     @Transactional
@@ -935,6 +939,17 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 	}
                 }
                 
+                if(BigIntegerUtil.isMenorQueZero(novaQuantidade)) {
+                	
+                	TipoMovimentoEstoque tipoMovimentoPara = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.GANHO_DE);
+                	
+                	this.gerarMovimentoEstoque(idProdutoEdicao, movimentoEstoque.getUsuario().getId(), novaQuantidade.negate(), tipoMovimentoPara);
+                	
+                	estoqueProdutoService.processarTransferenciaEntreEstoques(idProdutoEdicao, TipoEstoque.LANCAMENTO, TipoEstoque.DEVOLUCAO_ENCALHE, movimentoEstoque.getUsuario().getId());
+                	
+                	novaQuantidade = BigInteger.ZERO;
+                }                 	
+                	
                 estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
                 
                 break;
