@@ -404,7 +404,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     	
         for (FormaCobranca fc : fcs){
         	
-        	if (fc.getParametroCobrancaCota()!=null){
+        	if (fc.getParametroCobrancaCota()!=null && 
+        	        fc.getParametroCobrancaCota().getCota() != null){
         		
         		if (fc.getParametroCobrancaCota().getCota().equals(cota)){
         			
