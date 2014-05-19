@@ -407,7 +407,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
         	if (fc.getParametroCobrancaCota()!=null && 
         	        fc.getParametroCobrancaCota().getCota() != null){
         		
-        		if (fc.getParametroCobrancaCota().getCota().equals(cota)){
+        		if (fc.getParametroCobrancaCota().getCota() != null && fc.getParametroCobrancaCota().getCota().equals(cota)){
         			
         		    return (fc.getFornecedores().contains(fornecedorAtual) && !fornecedorAtual.equals(fornecedorAnterior));
         		}    
