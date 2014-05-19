@@ -1302,9 +1302,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         Boolean contribuinte = Boolean.FALSE;
         
         if (cota.getParametrosCotaNotaFiscalEletronica() != null
-                && cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica() != null) {
+                && cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null) {
             
-            contribuinte = cota.getParametrosCotaNotaFiscalEletronica().isEmiteNotaFiscalEletronica();
+            contribuinte = cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica();
         }
         
         for (final NaturezaOperacao tipo : listaNaturezasOperacao) {

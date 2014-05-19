@@ -22,7 +22,7 @@ public class ParametrosCotaNotaFiscalEletronica implements Serializable {
 	/**
 	 * @return the emiteNotaFiscalEletronica
 	 */
-	public Boolean isEmiteNotaFiscalEletronica() {
+	public Boolean isExigeNotaFiscalEletronica() {
 		return emiteNotaFiscalEletronica;
 	}
 

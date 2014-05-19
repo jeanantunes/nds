@@ -478,20 +478,14 @@ public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribu
 
 	@Override
 	public Boolean regimeEspecial() {
-		
-		Boolean regimeEspecial = 
-				(Boolean) this.getSession().createQuery(
-						"select possuiRegimeEspecialDispensaInterna from Distribuidor").uniqueResult();
-		
+		Boolean regimeEspecial = (Boolean) this.getSession().createQuery("select possuiRegimeEspecialDispensaInterna from Distribuidor").uniqueResult();
 		return regimeEspecial == null ? false : regimeEspecial;
 	}
 
 	@Override
 	public TipoAtividade tipoAtividade() {
 		
-		return (TipoAtividade)
-				this.getSession().
-				createQuery("select tipoAtividade from Distribuidor").uniqueResult();
+		return (TipoAtividade) this.getSession().createQuery("select tipoAtividade from Distribuidor").uniqueResult();
 	}
 
 	@Override
