@@ -270,7 +270,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	 @Transactional
 	 public void atualizarEstoqueProdutoCota(){
 	     
-	     List<EstoqueProdutoFila> epfs = this.estoqueProdutoFilaRepository.buscarTodos();
+	     final List<EstoqueProdutoFila> epfs = this.estoqueProdutoFilaRepository.buscarTodos();
 	     
 	     for (EstoqueProdutoFila epf : epfs){
 	         
