@@ -22,6 +22,8 @@ import java.util.Set;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
@@ -1668,7 +1670,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Override
-	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 900)
+	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 900, isolation= Isolation.READ_COMMITTED)
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			final ControleConferenciaEncalheCota controleConfEncalheCota, 
 			final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
