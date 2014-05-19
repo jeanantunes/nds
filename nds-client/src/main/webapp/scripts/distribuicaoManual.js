@@ -130,7 +130,15 @@ var distribuicaoManual = $.extend(true, {
 	            	optionalDialogMessage: message,
 	            	callbacks: {
 	    				usuarioSupervisorCallback: function() {
+
 	    					distribuicaoManual.isSolicitarSenhaReparte = false;
+	    					
+	    					var a = $("input[id^='numeroCotaGrid']").length;
+							
+							setTimeout(function() { 
+								$("input[id^='numeroCotaGrid']", distribuicaoManual.workspace)[a-1].focus();
+							}, 500);
+	    					
 	    				},
 						usuarioNaoSupervisorCallback: function(){
 							distribuicaoManual.isSolicitarSenhaReparte = true;
@@ -283,6 +291,13 @@ var distribuicaoManual = $.extend(true, {
 												exibirMensagemDialog('WARNING', ['A cota de número '+ numeroCota +' está com status SUSPENSO.'], '');
 												
 												distribuicaoManual.isSolicitarSenhaCotaSuspensa = false;
+												
+												var a = $("input[id^='numeroCotaGrid']").length;
+												
+												setTimeout(function() { 
+													$("input[id^='numeroCotaGrid']", distribuicaoManual.workspace)[a-1].focus();
+												}, 500);
+												
 						    				},
 						    				usuarioNaoSupervisorCallback: function(){
 												distribuicaoManual.isSolicitarSenhaCotaSuspensa = true;

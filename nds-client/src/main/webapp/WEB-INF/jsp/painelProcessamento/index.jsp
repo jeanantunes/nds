@@ -68,10 +68,6 @@
        	  <legend>Painel de Processamentos</legend>
           <div class="grids" style="display:block;">
         	<div id="tabPainel">
-                <ul>
-                    <li><a href="#tabPainel-Interfaces" onclick="painelProcessamentoController.pesquisarInterfaces()">Interfaces</a></li>
-                    <li><a href="#tabPainel-Processos" onclick="painelProcessamentoController.pesquisarProcessos()">Processos</a></li>
-                </ul>
                 <div id="tabPainel-Interfaces">
                     <table width="600" border="0" align="right" cellpadding="2" cellspacing="1" >
                       <tr>
