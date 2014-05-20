@@ -1814,7 +1814,7 @@ public class BoletoServiceImpl implements BoletoService {
         }
     }
     
-	                                        /**
+	/**
      * Método responsável por gerar impressao em formato PDF
      * 
      * @param nossoNumero
@@ -1839,7 +1839,16 @@ public class BoletoServiceImpl implements BoletoService {
         
         final GeradorBoleto geradorBoleto = new GeradorBoleto(this.gerarCorpoBoletoCota(boleto, pessoaCedente, aceitaPagamentoVencido));
         
-        final byte[] b = geradorBoleto.getBytePdf();
+        byte[] b = null;
+        
+        try{
+        	
+            b = geradorBoleto.getBytePdf();
+        }
+        catch(Exception e){
+        	
+        	throw new ValidacaoException(TipoMensagem.ERROR, e.getCause().getMessage()+". Para o banco ["+boleto.getBanco().getNome()+"]");
+        }
         
         cobrancaRepository.atualizarVias(boleto);
         
