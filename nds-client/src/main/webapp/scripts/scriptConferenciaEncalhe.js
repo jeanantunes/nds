@@ -1061,6 +1061,7 @@ var ConferenciaEncalhe = $.extend(true, {
 								}
 								
 								ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
+								ConferenciaEncalhe.limparNotaFiscal();
 							}
 
 							exibirMensagem(conteudo.tipoMensagem, conteudo.listaMensagens);
@@ -2227,7 +2228,18 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 			}, null, true, "dialog-confirmar-regerar-cobranca"
 		);
-	}
+	},
+	
+	limparNotaFiscal : function() {
+		
+		$("#numNotaFiscal", ConferenciaEncalheCont.workspace).html("");
+		$("#serieNotaFiscal", ConferenciaEncalheCont.workspace).html("");
+		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).html("");
+		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
+		$("#valorNotaFiscal", ConferenciaEncalheCont.workspace).html("");
+		$("#chaveAcessoNFE", ConferenciaEncalheCont.workspace).html("");
+		
+	},
 
 }, BaseController);
 

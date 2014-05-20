@@ -1217,6 +1217,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								
 							}
 							
+							ConferenciaEncalheCont.limparNotaFiscal();
 						}
 
 						exibirMensagem(conteudo.tipoMensagem, conteudo.listaMensagens);
@@ -1225,7 +1226,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 						}, function(conteudo) {
 							
 							ConferenciaEncalheCont.limparTela();
-							
 							
 						}, true, "idModalDadosNotaFiscal"
 						
@@ -1246,7 +1246,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				ConferenciaEncalheCont.modalAberta = false;
 				
 				ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
-				
+				ConferenciaEncalheCont.limparNotaFiscal();
 				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 			},
 			form: $("#dialog-dadosNotaFiscalContingencia", this.workspace).parents("form")			
@@ -1572,6 +1572,17 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 		
 		bloquearItensEdicao(ConferenciaEncalheCont.workspace);
+	},
+	
+	limparNotaFiscal : function() {
+		
+		$("#numNotaFiscal", ConferenciaEncalheCont.workspace).html("");
+		$("#serieNotaFiscal", ConferenciaEncalheCont.workspace).html("");
+		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).html("");
+		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
+		$("#valorNotaFiscal", ConferenciaEncalheCont.workspace).html("");
+		$("#chaveAcessoNFE", ConferenciaEncalheCont.workspace).html("");
+		
 	},
 	
 	/**

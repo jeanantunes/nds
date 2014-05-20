@@ -367,7 +367,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	/**
 	 * indetifica se a nota foi gerada com a condição de falta de mercadoria.
 	 * 
-	 * @param tipoNotaFiscal
+	 * @param naturezaOprecao
 	 * @return
 	 */
 	private boolean isFaltaMercadoria(NotaFiscal notaFiscal) {
@@ -378,7 +378,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	/**
 	 * indetifica se a nota foi gerada com a condição de devolução de encalhe.
 	 * 
-	 * @param tipoNotaFiscal
+	 * @param naturezaOprecao
 	 * @return
 	 */
 	private boolean isDevolucaoEncalhe(NotaFiscal notaFiscal) {
@@ -389,7 +389,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	/**
 	 * indentifica se a nota foi gerada com a condição de sobra de mercadoria.
 	 * 
-	 * @param tipoNotaFiscal
+	 * @param naturezaOprecao
 	 * @return
 	 */
 	private boolean isSobraMercadoria(NotaFiscal notaFiscal) {
