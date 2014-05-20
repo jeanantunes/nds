@@ -863,8 +863,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     private Lancamento salvarLancamento(Lancamento lancamento, final ProdutoEdicaoDTO dto, final ProdutoEdicao produtoEdicao, final Usuario usuario) {
         
         lancamento.setNumeroLancamento(dto.getNumeroLancamento());
-        lancamento.setTipoLancamento(dto.getTipoLancamento());
-        
+
         if(dto.getDataLancamento()!=null){
             lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento());
         }
@@ -882,6 +881,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             lancamento.setReparte(dto.getRepartePrevisto());
         }
         
+        if (lancamento.getId() == null && !TipoLancamento.LANCAMENTO.equals(dto.getTipoLancamento())) {
+
+        	throw new ValidacaoException(TipoMensagem.WARNING, "O tipo de distribuição deve ser \"Lançamento\"");
+        }
+
+        lancamento.setTipoLancamento(dto.getTipoLancamento());
         lancamento.setRepartePromocional(repartePromocional);
         lancamento.setUsuario(usuario);
         

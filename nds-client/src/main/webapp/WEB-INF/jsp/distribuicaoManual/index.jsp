@@ -139,7 +139,7 @@
 						alt="Cancelar" hspace="5" border="0" />Cancelar</a>
 				</span>
 				<span class="bt_novos">
-					<a href="javascript:;" onclick="distribuicaoManual.gerarEstudo();">
+					<a href="javascript:;" id="distbManual_gerarEstudo" onclick="distribuicaoManual.gerarEstudo();">
 						<img src="${pageContext.request.contextPath}/images/ico_check.gif"
 						alt="Confirmar" hspace="5" border="0" />Gerar Estudo</a>
 				</span>
