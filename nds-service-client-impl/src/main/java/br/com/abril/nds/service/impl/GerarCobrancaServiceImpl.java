@@ -1857,7 +1857,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
                 if (excluiFinanceiro && mfcs!=null && !mfcs.isEmpty()){
 					
-			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(mfcs);
+			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(consolidado.getId());
 				}
                 
 			    this.consolidadoFinanceiroRepository.remover(consolidado);

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -59,5 +60,9 @@ public interface MovimentoEstoqueRepository extends Repository<MovimentoEstoque,
 			GrupoMovimentoEstoque grupoMovimentoEstoqueEstornoRecebimentoFisico);
 	
 	BigInteger buscarSomaEstoqueJuramentadoPorProdutoData(Long idProdutoEdicao, Date data);
+
+	public abstract MovimentoEstoqueDTO findByIdConferenciaEncalhe(Long idConferenciaEncalhe);
+
+	public abstract void updateById(Long id, BigInteger qtde);
 	
 }
