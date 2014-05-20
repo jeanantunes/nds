@@ -14,7 +14,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -25,7 +24,6 @@ import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.BigIntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
-import org.hibernate.type.Type;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -3642,7 +3640,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("UPDATE MovimentoEstoqueCota estoque ");
 		sql.append("SET estoque.valoresAplicados.precoVenda = :precoVenda ");
 		sql.append(",estoque.valoresAplicados.precoComDesconto = :precoComDesconto ");
-		sql.append(",estoque.valoresAplicados.precoComDesconto = :valorDesconto ");
+		sql.append(",estoque.valoresAplicados.valorDesconto = :valorDesconto ");
 		sql.append(",estoque.qtde = :qtde ");
 		sql.append("WHERE estoque.id = :id");
 
