@@ -284,7 +284,7 @@ public class EstudoServiceImpl implements EstudoService {
 	public Estudo liberar(Long idEstudoGerado) {
 		
 	    
-		EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(idEstudoGerado);
+		EstudoGerado estudoGerado = this.estudoGeradoRepository.obterParaAtualizar(idEstudoGerado);
 		
 		Lancamento lancamento = 
 			this.lancamentoRepository.buscarPorId(estudoGerado.getLancamentoID());
@@ -294,7 +294,7 @@ public class EstudoServiceImpl implements EstudoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não há lançamento para este estudo.");
 		}
 		
-		if (lancamento.getEstudo() != null) {
+		if (lancamento.getEstudo() != null || estudoGerado.isLiberado()) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um estudo liberado para este lançamento.");
 		}

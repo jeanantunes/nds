@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Projections;
@@ -279,6 +280,20 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		query.setParameter("estudoId", idEstudo);
 
 		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public EstudoGerado obterParaAtualizar(Long id) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				" select eg from EstudoGerado eg where eg.id = :id ");
+		
+		query.setLockOptions(LockOptions.UPGRADE);
+		
+		query.setParameter("id", id);
+		
+		return (EstudoGerado) query.uniqueResult();
 	}
 	
 }
