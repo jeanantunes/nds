@@ -487,6 +487,11 @@ var distribuicaoManual = $.extend(true, {
 					function(result){
 						$('#estudo').html(result.long);
 						distribuicaoManual.bloquearCampos();
+						
+						if(typeof(matrizDistribuicao)=="object"){
+		            		matrizDistribuicao.carregarGrid();
+						}
+						
 						exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
 	 				},
 	 				function(result){
@@ -514,6 +519,9 @@ var distribuicaoManual = $.extend(true, {
 				$("#reparteGrid"+ i, distribuicaoManual.workspace).attr("disabled", true).css("background-color", "#f0f0f0");
 			}
 		}
+		
+		$('#distbManual_gerarEstudo').css("display", "none");
+		
 	},
 	
 	analisar : function() {
