@@ -265,6 +265,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                     produto.setFornecedores(fornecedores);
                     if(inputItem.getDesconto() != null) {
                         produto.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
+                        produto.setDescricaoDesconto("PROD CADASTRADO MANUALMENTE");
                     }
                     produto.setFormaComercializacao(FormaComercializacao.CONSIGNADO);
                     
@@ -292,6 +293,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 
                 if(inputItem.getDesconto() != null) {
                     produtoEdicao.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
+                    produtoEdicao.setDescricaoDesconto("PROD CADASTRADO MANUALMENTE");
                 }
                 
                 produtoEdicao.setPacotePadrao(10);

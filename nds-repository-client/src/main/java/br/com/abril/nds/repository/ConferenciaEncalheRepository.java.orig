@@ -117,7 +117,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	
 	boolean isParcialNaoFinal(Long idProdutoEdicao);
 	
-
 	public abstract void update(Long id, boolean juramentada, String observacao,
 			BigInteger qtdeInformada, BigDecimal precoCapaInformado, Long idMovimentoEstoqueCota, Long idMovimentoEstoque, BigInteger qtde);
+
 }

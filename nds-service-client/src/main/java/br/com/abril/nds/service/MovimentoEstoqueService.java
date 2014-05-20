@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -47,10 +48,12 @@ public interface MovimentoEstoqueService {
 
 	public void excluirRegistroMovimentoEstoqueDeEncalhe(Cota cota, MovimentoEstoque movimentoEstoque);
 	
+	
+
 	public void atualizarMovimentoEstoqueDeEncalhe(
 			Cota cota,
-			MovimentoEstoque movimentoEstoque, 
-			BigInteger newQtdeMovEstoque);
+			MovimentoEstoqueDTO movimentoEstoqueDTO, 
+			BigInteger newQtdeMovEstoque, Long idProdutoEdicao);
 
 
 	Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque,

@@ -404,7 +404,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     	
         for (FormaCobranca fc : fcs){
         	
-        	if (fc.getParametroCobrancaCota()!=null){
+        	if (fc.getParametroCobrancaCota()!=null && 
+        	        fc.getParametroCobrancaCota().getCota() != null){
         		
         		if (fc.getParametroCobrancaCota().getCota() != null && fc.getParametroCobrancaCota().getCota().equals(cota)){
         			
@@ -1856,7 +1857,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
                 if (excluiFinanceiro && mfcs!=null && !mfcs.isEmpty()){
 					
-			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(mfcs);
+			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(consolidado.getId());
 				}
                 
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
