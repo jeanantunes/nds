@@ -886,10 +886,10 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		for(ContagemDevolucaoDTO contagemDevolucaoAprovada : listaContagemDevolucaoAprovada) {
 			
-			if(contagemDevolucaoAprovada.getDiferenca() == null){
+			/*if(contagemDevolucaoAprovada.getDiferenca() == null){
 				
 				continue;
-			}
+			}*/
 
 			List<ContagemDevolucaoDTO> contagemAgrupada = conferenciaEncalheParcialRepository.
 					obterListaContagemDevolucao(
