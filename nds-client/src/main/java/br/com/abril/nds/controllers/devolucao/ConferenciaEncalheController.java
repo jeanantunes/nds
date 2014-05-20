@@ -47,22 +47,16 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.cadastro.TipoCota;
-import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoDestinatario;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -195,7 +189,6 @@ public class ConferenciaEncalheController extends BaseController {
 	private GrupoService grupoService;
 	
 	@Autowired
-<<<<<<< HEAD
 	private LancamentoService lancamentoService;
 	
 	@Autowired
@@ -203,9 +196,9 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
     private NFeService nFeService;
-=======
+
+	@Autowired
 	private SchedulerFactoryBean schedulerFactoryBean;
->>>>>>> 8f1c0d7af1cbdbd1263a9eaae26974e260426c89
 	
 	@Path("/")
 	@SuppressWarnings("unchecked")
