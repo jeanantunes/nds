@@ -1,5 +1,8 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -17,11 +20,17 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.job.AtualizaEstoqueJob;
 import br.com.abril.nds.client.util.Constants;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
@@ -165,6 +174,9 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
 	private GrupoService grupoService;
+	
+	@Autowired
+	private SchedulerFactoryBean schedulerFactoryBean;
 	
 	@Path("/")
 	@SuppressWarnings("unchecked")
@@ -1562,6 +1574,8 @@ public class ConferenciaEncalheController extends BaseController {
 																         this.getUsuarioLogado(),
 																         indConferenciaContingencia);
 	        
+	        
+	        
 
 		} catch (final EncalheSemPermissaoSalvarException e) {
             LOGGER.error(
@@ -1580,6 +1594,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 		}
 		
+		agendarAgoraAtualizacaoEstoqueProdutoConf();
 		
 		final String loginUsuarioLogado = this.getIdentificacaoUnicaUsuarioLogado();
 		
@@ -1980,6 +1995,8 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 																										  indConferenciaContingencia,
 																										  info.getReparte());
 			
+			agendarAgoraAtualizacaoEstoqueProdutoConf();
+			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			
 			final Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
@@ -2030,6 +2047,20 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                     .recursive().serialize();
 		}
 	}
+	
+	private void agendarAgoraAtualizacaoEstoqueProdutoConf() {
+
+		Scheduler scheduler = schedulerFactoryBean.getScheduler();
+	    JobDetail job = newJob(AtualizaEstoqueJob.class).build();
+	    Trigger trigger = newTrigger().startNow().build();
+        
+		try {
+			scheduler.scheduleJob(job, trigger);
+		} catch (SchedulerException e) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Falha na atualização de estoque de produtos");
+		}
+		
+    }
 	
 	@Post
 	public void pesquisarProdutoPorCodigoNome(final String codigoNomeProduto){
