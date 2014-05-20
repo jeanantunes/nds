@@ -9,6 +9,7 @@ public class EstudoDTO implements Serializable {
     private Long produtoEdicaoId;
     private String dataLancamento;
     private Long reparteDistribuir;
+    private Long reparteDistribuido;
     private Long lancamentoId;
     
     public Long getProdutoEdicaoId() {
@@ -29,7 +30,13 @@ public class EstudoDTO implements Serializable {
     public void setReparteDistribuir(Long reparteDistribuir) {
         this.reparteDistribuir = reparteDistribuir;
     }
-	public Long getLancamentoId() {
+    public Long getReparteDistribuido() {
+        return reparteDistribuido;
+    }
+    public void setReparteDistribuido(Long reparteDistribuido) {
+        this.reparteDistribuido = reparteDistribuido;
+    }
+    public Long getLancamentoId() {
 		return lancamentoId;
 	}
 	public void setLancamentoId(Long lancamentoId) {
