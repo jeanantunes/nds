@@ -19,8 +19,8 @@ public abstract class NotaFiscal implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	
-	@Column(name = "NATUREZA_OPERACAO")
-	private	String naturezaOperacao;
+	@Column(name = "DESCRICAO_NATUREZA_OPERACAO")
+	private	String descricaoNaturezaOperacao;
 	
 	@Column(name = "FORMA_PAGAMENTO")
 	private	String formaPagamento;
@@ -164,8 +164,8 @@ public abstract class NotaFiscal implements Serializable {
 	protected BigDecimal valorDesconto;	
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "TIPO_NF_ID")
-	protected NaturezaOperacao tipoNotaFiscal;
+	@JoinColumn(name = "NATUREZA_OPERACAO_ID")
+	protected NaturezaOperacao naturezaOperacao;
 	
 	@Column(name = "VALOR_INFORMADO", nullable = true)
 	protected BigDecimal valorInformado;
@@ -246,12 +246,12 @@ public abstract class NotaFiscal implements Serializable {
 		this.chaveAcesso = chaveAcesso;
 	}
 
-	public NaturezaOperacao getTipoNotaFiscal() {
-		return tipoNotaFiscal;
+	public NaturezaOperacao getNaturezaOperacao() {
+		return naturezaOperacao;
 	}
 
-	public void setTipoNotaFiscal(NaturezaOperacao tipoNotaFiscal) {
-		this.tipoNotaFiscal = tipoNotaFiscal;
+	public void setNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
+		this.naturezaOperacao = naturezaOperacao;
 	}
 
 	public BigDecimal getValorBruto() {
@@ -350,16 +350,16 @@ public abstract class NotaFiscal implements Serializable {
 	 *
 	 * @return String
 	 */
-	public String getNaturezaOperacao() {
-		return naturezaOperacao;
+	public String getDescricaoNaturezaOperacao() {
+		return descricaoNaturezaOperacao;
 	}
 
 	/**
 	 * Atribuí naturezaOperacao
 	 * @param naturezaOperacao 
 	 */
-	public void setNaturezaOperacao(String naturezaOperacao) {
-		this.naturezaOperacao = naturezaOperacao;
+	public void setNaturezaOperacao(String descricaoNaturezaOperacao) {
+		this.descricaoNaturezaOperacao = descricaoNaturezaOperacao;
 	}
 
 	/**

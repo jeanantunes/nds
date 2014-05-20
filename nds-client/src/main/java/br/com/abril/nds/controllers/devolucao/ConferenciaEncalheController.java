@@ -1931,7 +1931,7 @@ public class ConferenciaEncalheController extends BaseController {
             notaFiscal.setControleConferenciaEncalheCota(controleConfEncalheCota);
             notaFiscal.setCota(info.getCota());
             notaFiscal.setDataExpedicao( DateUtil.parseDataPTBR((String) dadosNotaFiscal.get("dataEmissao")));
-            notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
+            notaFiscal.setNaturezaOperacao(tipoNotaFiscal);
             notaFiscal.setOrigem(Origem.MANUAL);
             notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
             notaFiscal.setValorInformado(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
