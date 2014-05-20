@@ -186,8 +186,10 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
         
         notafiscalEntrada.setEmitente(emitente);
         
-        notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_MERCADORIA_CONSIGNACAO,
-                TipoUsuarioNotaFiscal.TREELOG, TipoUsuarioNotaFiscal.DISTRIBUIDOR));
+        notafiscalEntrada.setNaturezaOperacao(
+        		obterTipoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_MERCADORIA_CONSIGNACAO,
+                TipoUsuarioNotaFiscal.TREELOG, 
+                TipoUsuarioNotaFiscal.DISTRIBUIDOR));
         
         notafiscalEntrada.setEmitida(true);
         

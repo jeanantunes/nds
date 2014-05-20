@@ -198,7 +198,7 @@ fieldset label {
 					<td width="34">Status:</td>
 					<td width="165">
 						<select name="filtro.statusNotaFiscalEntrada" id="situacaoNfe" style="width: 160px;" onchange="mostra_status(this.value); entradaNFETerceirosController.pesquisarEncalhe();">
-							<option value="" selected="selected"></option>
+							<option value=""selected="selected">Selecione...</option>
 							<c:forEach items="${comboStatusNota}" var="comboStatusNota">
 								<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>
 							</c:forEach>

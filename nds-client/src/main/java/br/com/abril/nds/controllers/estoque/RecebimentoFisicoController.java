@@ -1716,8 +1716,7 @@ public class RecebimentoFisicoController extends BaseController {
         
         final long codigoTipoNotaFiscalRemessaMercadoriaConsignacao = 5L;
         
-        notaFiscal.setTipoNotaFiscal(
-                tipoNotaService.obterPorId(codigoTipoNotaFiscalRemessaMercadoriaConsignacao));
+        notaFiscal.setNaturezaOperacao(tipoNotaService.obterPorId(codigoTipoNotaFiscalRemessaMercadoriaConsignacao));
         
         notaFiscal.setValorDesconto(BigDecimal.ZERO);
         

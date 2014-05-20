@@ -316,7 +316,7 @@ public class ControleConferenciaEncalheCota {
 		if (notaFiscalEntradaCota != null && !notaFiscalEntradaCota.isEmpty()) {
 			for (NotaFiscalEntradaCota notaFiscal : notaFiscalEntradaCota) {
 				if (notaFiscal != null
-						&& notaFiscal.getTipoNotaFiscal() != null) {
+						&& notaFiscal.getNaturezaOperacao() != null) {
 //						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != null
 //						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR) {
 

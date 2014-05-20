@@ -1535,29 +1535,9 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		controleConfEncalheCota.setCota(info.getCota());
 		controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
-
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		final Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
 		
-		NotaFiscalEntradaCota notaFiscal = null;
+		this.carregarNotasFiscais(controleConfEncalheCota, info);
 		
-		if(dadosNotaFiscal!=null) {
-			
-			notaFiscal = new NotaFiscalEntradaCota();
-			
-			notaFiscal.setNumero((Long) dadosNotaFiscal.get("numero"));
-			notaFiscal.setSerie((String) dadosNotaFiscal.get("serie"));
-			notaFiscal.setDataEmissao( DateUtil.parseDataPTBR((String) dadosNotaFiscal.get("dataEmissao")));
-			notaFiscal.setChaveAcesso((String) dadosNotaFiscal.get("chaveAcesso"));
-			notaFiscal.setValorProdutos((BigDecimal) dadosNotaFiscal.get("valorProdutos"));
-			notaFiscal.setControleConferenciaEncalheCota(controleConfEncalheCota);
-			notaFiscal.setCota(info.getCota());
-		}
-		
-		final List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
-		notaFiscalEntradaCotas.add(notaFiscal);
-		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
-				
 		final Box boxEncalhe = new Box();
 		boxEncalhe.setId(conferenciaEncalheSessionScopeAttr.getIdBoxLogado());
 		
@@ -1920,6 +1900,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			limparDadosSessao();
 			limparDadosSessaoConferenciaEncalheCotaFinalizada();
+			
 			this.result.use(CustomMapJson.class).put("result", dados).serialize();
 			
 		} else {
@@ -1950,7 +1931,7 @@ public class ConferenciaEncalheController extends BaseController {
             notaFiscal.setControleConferenciaEncalheCota(controleConfEncalheCota);
             notaFiscal.setCota(info.getCota());
             notaFiscal.setDataExpedicao( DateUtil.parseDataPTBR((String) dadosNotaFiscal.get("dataEmissao")));
-            notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
+            notaFiscal.setNaturezaOperacao(tipoNotaFiscal);
             notaFiscal.setOrigem(Origem.MANUAL);
             notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
             notaFiscal.setValorInformado(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
@@ -2138,9 +2119,9 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@SuppressWarnings("unchecked")
 	public void carregarNotaFiscal(){
 		
-		@SuppressWarnings("unchecked")
 		final Map<String, Object> dadosNotaFiscal = (Map<String, Object>) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
 		
 		if(dadosNotaFiscal!=null) {
