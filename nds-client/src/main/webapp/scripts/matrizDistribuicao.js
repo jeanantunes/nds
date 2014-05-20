@@ -232,7 +232,9 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
         
         reparte = (row.cell.reparte);
         
-        repDist = (row.cell.reparte);
+        repDist = row.cell.repDistrib;
+        
+        repDist = (repDist != undefined) ? repDist : reparte;
         
         row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i, liberado);
 
