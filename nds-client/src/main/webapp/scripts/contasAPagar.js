@@ -166,12 +166,18 @@ var contasAPagarController = $.extend(true, {
 	pesquisarPorFornecedor : function (params) {
 		
 		params['filtro.primeiraCarga'] = true;
+		params['page'] = 1;
+		params['rp'] = 15;
+		
+		$.each($("[name='filtro.idsFornecedores']", this.workspace), function(index, item){
+			params['filtro.idsFornecedores['+index+']'] = item.value;
+		});
+		
 		var url = contasAPagarController.path + 'pesquisarPorFornecedor.json'; 
 		
 		$(".porDistrFornecedorGrid", this.workspace).flexOptions({
 			url : url,
 			params: serializeParamsToFlexiGridPost(params),
-			preProcess : contasAPagarController.insereLinksContasAPagarPorDistribuidores,
 			newp : 1
 		});
 
@@ -189,11 +195,21 @@ var contasAPagarController = $.extend(true, {
 				$('#contasAPagar_areaBts', contasAPagarController.workspace).show();
 				
 				$(".pesquisaContasPagar", contasAPagarController.workspace).show();
+				
+				params['filtro.primeiraCarga'] = false;
+				$(".porDistrFornecedorGrid", this.workspace).flexOptions({
+					params: serializeParamsToFlexiGridPost(params)
+				});
 			},
 			function(result) {
 				
 				$('#contasAPagar_gridDistrib', contasAPagarController.workspace).hide();
 				$('#contasAPagar_areaBts', contasAPagarController.workspace).hide();
+				
+				params['filtro.primeiraCarga'] = false;
+				$(".porDistrFornecedorGrid", this.workspace).flexOptions({
+					params: serializeParamsToFlexiGridPost(params)
+				});
 			},
 			true
 		);
@@ -556,6 +572,7 @@ var contasAPagarController = $.extend(true, {
 	initGridPesquisarPorFornecedor : function(){
 	
 		$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexigrid({
+			preProcess : contasAPagarController.insereLinksContasAPagarPorDistribuidores,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Data',

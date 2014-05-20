@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -461,4 +463,35 @@ implements MovimentoEstoqueRepository {
         return (BigInteger) query.uniqueResult();
     }
 	
+	@Override
+	public MovimentoEstoqueDTO findByIdConferenciaEncalhe(Long idConferenciaEncalhe){
+    	final StringBuilder sql = new StringBuilder();
+    	
+    	sql.append("SELECT confe.movimentoEstoque.id as id ");
+    	sql.append(", confe.movimentoEstoque.qtde as qtde");
+    	sql.append(", confe.movimentoEstoque.tipoMovimento.grupoMovimentoEstoque as grupoMovimentoEstoque ");
+    	sql.append("FROM ConferenciaEncalhe confe ");
+    	sql.append("WHERE confe.id = :idConferenciaEncalhe");
+    	
+    	Query query =  getSession().createQuery(sql.toString());
+    	
+    	query.setParameter("idConferenciaEncalhe", idConferenciaEncalhe);
+    	
+    	query.setResultTransformer(new AliasToBeanResultTransformer(MovimentoEstoqueDTO.class));
+    	
+    	return (MovimentoEstoqueDTO) query.uniqueResult();
+    }
+	
+	@Override
+	public void updateById(Long id, BigInteger qtde){
+		final StringBuilder sql =  new StringBuilder();
+		sql.append("UPDATE MovimentoEstoque estoque ");
+		sql.append("SET estoque.qtde = :qtde ");
+		sql.append("WHERE estoque.id = :id");
+
+		this.getSession().createQuery(sql.toString() )
+		.setParameter( "qtde", qtde )
+		.setParameter("id", id)
+		.executeUpdate();
+	}
 }

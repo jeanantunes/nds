@@ -25,6 +25,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import br.com.abril.nds.client.job.AjusteReparteJob;
+import br.com.abril.nds.client.job.AtualizaEstoqueJob;
 import br.com.abril.nds.client.job.FixacaoReparteJob;
 import br.com.abril.nds.client.job.IntegracaoOperacionalDistribuidorJob;
 import br.com.abril.nds.client.job.RankingFaturamentoJob;
@@ -87,6 +88,8 @@ public class ApplicationContextListener implements ServletContextListener {
 //			this.agendaExclusaoFixacaoReparte();
 //			this.agendaExclusaoRegiao();
 			
+			this.agendarAtualizacaoEstoqueProdutoConf(scheduler);
+			
 			scheduler.start();
 			
 		} catch (SchedulerException e) {
@@ -98,7 +101,28 @@ public class ApplicationContextListener implements ServletContextListener {
 		
 	}
 
-	        /*
+	private void agendarAtualizacaoEstoqueProdutoConf(Scheduler scheduler) throws SchedulerException {
+	    
+	    final String groupName = "epcJobGroupName";
+	    final String identityTrigger = "epcTriggerIdentity";
+	    final String frequencia = "0 0/10 * * * ?";
+	    
+	    QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
+	    
+	    JobDetail job = newJob(AtualizaEstoqueJob.class)
+                .withIdentity(AtualizaEstoqueJob.class.getName(), groupName)
+                .build();
+
+        CronTrigger cronTrigger = newTrigger()
+                .withIdentity(identityTrigger, groupName)
+                .withSchedule(
+                        cronSchedule(frequencia))
+                .build();
+
+        scheduler.scheduleJob(job, cronTrigger);
+    }
+
+    /*
      * Efetua o agendamento do serviço de integração operacional do
      * distribuidor.
      */

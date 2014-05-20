@@ -710,4 +710,32 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		return (BigInteger) query.uniqueResult();
 	}
+	
+	@Override
+	public void update(Long id, boolean juramentada, String observacao,
+			BigInteger qtdeInformada, BigDecimal precoCapaInformado,
+			Long idMovimentoEstoqueCota, Long idMovimentoEstoque,
+			BigInteger qtde) {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE conferencia_encalhe ");
+		sql.append("SET JURAMENTADA = :juramentada,");
+		sql.append("OBSERVACAO = :observacao,");
+		sql.append("PRECO_CAPA_INFORMADO = :precoCapaInformado,");
+		sql.append("QTDE = :qtde,");
+		sql.append("QTDE_INFORMADA = :qtdeInformada,");
+		sql.append("MOVIMENTO_ESTOQUE_ID = :idMovimentoEstoque,");
+		sql.append("MOVIMENTO_ESTOQUE_COTA_ID = :idMovimentoEstoqueCota ");
+		sql.append("WHERE id = :id");
+		this.getSession().createSQLQuery(sql.toString())
+		.setParameter("juramentada", juramentada)
+		.setParameter("observacao", observacao)
+		.setParameter("precoCapaInformado", precoCapaInformado)
+		.setParameter("qtde", qtde)
+		.setParameter("qtdeInformada", qtdeInformada)
+		.setParameter("idMovimentoEstoque", idMovimentoEstoque)
+		.setParameter("idMovimentoEstoqueCota", idMovimentoEstoqueCota)
+		.setParameter("id", id)
+		.executeUpdate();
+
+	}
 }
