@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.enums.CodigoErro;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -781,6 +783,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 	}
 
+
     private void enfileirarAlteracaoEncalheEstoqueProduto(
     		Cota cota,
     		ProdutoEdicao produtoEdicao, 
@@ -798,29 +801,29 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
     	estoqueProdutoFilaRepository.adicionar(epf);
     }
+
+
+	
     
     
-    /**
+    
+	/**
 	 * Atualiza registro de MovimentoEstoque de encalhe bem como o registro de EstoqueProduto relacionado.
-	 * 
-	 * @param movimentoEstoque
-	 * @param conferenciaEncalheDTO
+     * @param movimentoEstoqueDTO
+     * @param conferenciaEncalheDTO
 	 */
     @Override
 	@Transactional
     public void atualizarMovimentoEstoqueDeEncalhe(
     		Cota cota, 
-    		MovimentoEstoque movimentoEstoque, 
-			BigInteger newQtdeMovEstoque) {
+    		MovimentoEstoqueDTO movimentoEstoqueDTO, 
+			BigInteger newQtdeMovEstoque, Long idProdutoEdicao) {
 		
-		BigInteger oldQtdeMovEstoque = movimentoEstoque.getQtde() != null ? movimentoEstoque.getQtde() : BigInteger.ZERO;
-		newQtdeMovEstoque = newQtdeMovEstoque != null ? newQtdeMovEstoque : BigInteger.ZERO;
+		BigInteger oldQtdeMovEstoque = (BigInteger) ObjectUtils.defaultIfNull(movimentoEstoqueDTO.getQtde(),  BigInteger.ZERO);
+		newQtdeMovEstoque =(BigInteger) ObjectUtils.defaultIfNull( newQtdeMovEstoque, BigInteger.ZERO);
 		
-		movimentoEstoque.setQtde(newQtdeMovEstoque);
 		
-		GrupoMovimentoEstoque grupoMovimentoEstoque = ((TipoMovimentoEstoque) movimentoEstoque.getTipoMovimento()).getGrupoMovimentoEstoque();
-		
-		this.movimentoEstoqueRepository.alterar(movimentoEstoque);
+		this.movimentoEstoqueRepository.updateById(movimentoEstoqueDTO.getId(), newQtdeMovEstoque);
 		
 		BigInteger diferencaQtdItens = oldQtdeMovEstoque.subtract(newQtdeMovEstoque);
 		
@@ -838,7 +841,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		diferencaQtdItens = diferencaQtdItens.abs();
 		
-		enfileirarAlteracaoEncalheEstoqueProduto(cota, movimentoEstoque.getProdutoEdicao(), grupoMovimentoEstoque, operacaoEstoque, diferencaQtdItens);
+		estoqueProdutoFilaRepository.insert(cota.getId(), idProdutoEdicao,movimentoEstoqueDTO.getGrupoMovimentoEstoque().getTipoEstoque() , operacaoEstoque, diferencaQtdItens);
 	}
     
 	private Long atualizarEstoqueProduto(final TipoMovimentoEstoque tipoMovimentoEstoque,

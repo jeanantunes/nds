@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
 import br.com.abril.nds.dto.filtro.FiltroFollowupNegociacaoDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoNegociacao;
@@ -606,4 +607,56 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
         
         return (boolean) ret;
     }
+    
+    
+    @Override
+	public void updateValorDividaValorMovimento(final Long idConsolidado,final List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros){
+    	final StringBuilder sql =  new StringBuilder();
+    	sql.append("update NEGOCIACAO nego ");
+    	sql.append("join NEGOCIACAO_MOV_FINAN nego_movi on ");
+    	sql.append("nego_movi.NEGOCIACAO_ID = nego.id ");
+    	sql.append("join MOVIMENTO_FINANCEIRO_COTA movi on ");
+    	sql.append("movi.id = nego_movi.MOV_FINAN_ID ");
+    	sql.append("join TIPO_MOVIMENTO tipo on ");
+    	sql.append("movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' ");
+    	sql.append("join CONSOLIDADO_MVTO_FINANCEIRO_COTA con on ");
+    	sql.append("con.MVTO_FINANCEIRO_COTA_ID = movi.id ");
+
+
+    	sql.append("set VALOR_DIVIDA_PAGA_COMISSAO =  VALOR_DIVIDA_PAGA_COMISSAO + movi.VALOR ");
+
+    	sql.append("where con.CONSOLIDADO_FINANCEIRO_ID = :idConsolidado ");
+    	sql.append("and tipo.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinaceiros) ");
+    	sql.append("AND NOT EXISTS(SELECT parcela.id FROM PARCELA_NEGOCIACAO parcela where parcela.NEGOCIACAO_ID = nego.id)");
+    	
+    	 this.getSession().createSQLQuery(sql.toString() )
+	        .setParameter("idConsolidado", idConsolidado)
+	        .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
+	        .executeUpdate();
+    }
+    
+    @Override
+	public void removeNegociacaoMovimentoFinanceiroByIdConsolidadoAndGrupos(Long idConsolidado, List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros){
+		
+    	final StringBuilder sql =  new StringBuilder();
+    	sql.append("DELETE nego_movi from NEGOCIACAO_MOV_FINAN nego_movi ");
+    	sql.append("join MOVIMENTO_FINANCEIRO_COTA movi on ");
+    	sql.append("movi.id = nego_movi.MOV_FINAN_ID ");
+    	sql.append("join TIPO_MOVIMENTO tipo on ");
+    	sql.append("movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' ");
+    	sql.append("join CONSOLIDADO_MVTO_FINANCEIRO_COTA con on ");
+    	sql.append("con.MVTO_FINANCEIRO_COTA_ID = movi.id ");
+
+
+    	sql.append("where con.CONSOLIDADO_FINANCEIRO_ID = :idConsolidado ");
+    	sql.append("and tipo.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinaceiros) ");
+    	sql.append("AND NOT EXISTS(SELECT parcela.id FROM PARCELA_NEGOCIACAO parcela where parcela.NEGOCIACAO_ID = nego_movi.NEGOCIACAO_ID)");
+    	
+    	 this.getSession().createSQLQuery(sql.toString() )
+	        .setParameter("idConsolidado", idConsolidado)
+	        .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
+	        .executeUpdate();
+		
+	}
+	
 }
