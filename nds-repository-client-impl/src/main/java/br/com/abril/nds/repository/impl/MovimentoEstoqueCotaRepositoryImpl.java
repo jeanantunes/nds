@@ -14,13 +14,18 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.BigIntegerType;
+import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.Type;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -38,6 +43,7 @@ import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.CotaReparteDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
+import br.com.abril.nds.dto.MovimentosEstoqueEncalheDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
@@ -57,6 +63,8 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
@@ -295,21 +303,42 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
      */
     @Override
     @SuppressWarnings("unchecked")
-    public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(final Long idControleConferenciaEncalheCota) {
+    public List<MovimentosEstoqueEncalheDTO> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(final Long idControleConferenciaEncalheCota) {
         
         final StringBuilder hql = new StringBuilder();
-        
-        hql.append(" select movimentoEstoqueCota  ");
-        
-        hql.append(" from ConferenciaEncalhe conferenciaEncalhe ");
-        
-        hql.append(" join conferenciaEncalhe.movimentoEstoqueCota movimentoEstoqueCota ");
-        
-        hql.append(" WHERE conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
-        
-        final Query query = getSession().createQuery(hql.toString());
-        
+        hql.append("SELECT movimentoe1_.ID AS idMovimentoEstoqueCota,");
+        hql.append("movimentoe1_.COTA_ID AS idCota,");
+        hql.append("edicao.id as idProdutoEdicao,");
+        hql.append("forn.id as idFornecedor,");
+        hql.append("movimentoe1_.QTDE AS qtde,");
+        hql.append("movimentoe1_.PRECO_COM_DESCONTO AS precoComDesconto,");
+        hql.append("edicao.PRECO_VENDA AS precoVenda,");
+        hql.append("movimentoe1_.VALOR_DESCONTO AS valorDesconto ");
+        hql.append("FROM CONFERENCIA_ENCALHE conferenci0_ ");
+        hql.append("INNER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe1_ ");
+        hql.append("ON conferenci0_.MOVIMENTO_ESTOQUE_COTA_ID=movimentoe1_.ID ");
+        hql.append("INNER JOIN produto_edicao edicao ");
+        hql.append("ON movimentoe1_.produto_edicao_id = edicao.id ");
+        hql.append("INNER JOIN PRODUTO prod ");
+        hql.append("ON edicao.PRODUTO_ID = prod.id ");
+        hql.append("INNER JOIN produto_fornecedor prodForn ");
+        hql.append("on prod.id = prodForn.PRODUTO_ID ");
+        hql.append("INNER JOIN fornecedor forn ");
+        hql.append("on prodForn.fornecedores_ID = forn.id ");
+        hql.append("WHERE conferenci0_.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID=:idControleConferenciaEncalheCota");
+        final Query query = getSession().createSQLQuery(hql.toString())
+        		.addScalar("idMovimentoEstoqueCota",LongType.INSTANCE)
+        		.addScalar("idCota",LongType.INSTANCE)
+        		.addScalar("idProdutoEdicao",LongType.INSTANCE)
+        		.addScalar("idFornecedor",LongType.INSTANCE)
+        		
+        		.addScalar("qtde",BigIntegerType.INSTANCE)
+        		.addScalar("precoComDesconto",BigDecimalType.INSTANCE)
+        		.addScalar("precoVenda",BigDecimalType.INSTANCE)
+        		.addScalar("valorDesconto",BigDecimalType.INSTANCE);
         query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
+        query.setResultTransformer(new AliasToBeanResultTransformer(MovimentosEstoqueEncalheDTO.class));
+        
         
         return query.list();
     }
@@ -3564,5 +3593,105 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         return query.list();
     }
+    
+    @Override
+	public void updateByIdConsolidadoAndGrupos(Long idConsolidado, List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros,  String motivo, Long movimentoFinanceiroCota, StatusEstoqueFinanceiro statusEstoqueFinanceiro ){
+      	final StringBuilder sql =  new StringBuilder();
+    	sql.append("UPDATE MOVIMENTO_ESTOQUE_COTA AS estoque ");
+    	sql.append("join MOVIMENTO_FINANCEIRO_COTA movi on ");
+    	sql.append("movi.id = estoque.MOVIMENTO_FINANCEIRO_COTA_ID ");
+    	sql.append("join TIPO_MOVIMENTO tipo on ");
+    	sql.append("movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' ");
+    	sql.append("join CONSOLIDADO_MVTO_FINANCEIRO_COTA con on ");
+    	sql.append("con.MVTO_FINANCEIRO_COTA_ID = movi.id ");
+
+    	sql.append("SET estoque.MOTIVO = :motivo ");
+    	sql.append(",estoque.MOVIMENTO_FINANCEIRO_COTA_ID = :movimentoFinanceiroCota ");
+    	sql.append(",estoque.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro ");
+    	sql.append("where con.CONSOLIDADO_FINANCEIRO_ID = :idConsolidado ");
+    	sql.append("and tipo.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinaceiros)");
+    	
+    	 this.getSession().createSQLQuery(sql.toString() )
+	        .setParameter( "motivo", motivo )
+	        .setParameter( "movimentoFinanceiroCota", movimentoFinanceiroCota )
+	        .setParameter("statusEstoqueFinanceiro", statusEstoqueFinanceiro)
+	        .setParameter("idConsolidado", idConsolidado)
+	        .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
+	        .executeUpdate();
+
+    }
+    
+    @Override
+	public Long findIdByIdConferenciaEncalhe(Long idConferenciaEncalhe){
+    	final StringBuilder sql = new StringBuilder();
+    	
+    	sql.append("SELECT confe.movimentoEstoqueCota.id FROM ConferenciaEncalhe confe ");
+    	sql.append("WHERE confe.id = :idConferenciaEncalhe");
+    	
+    	Query query =  getSession().createQuery(sql.toString());
+    	
+    	query.setParameter("idConferenciaEncalhe", idConferenciaEncalhe);
+    	
+    	return (Long) query.uniqueResult();
+    }
+    
+	@Override
+	public void updateById(Long id, ValoresAplicados valoresAplicados,
+			BigInteger qtde) {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE MovimentoEstoqueCota estoque ");
+		sql.append("SET estoque.valoresAplicados.precoVenda = :precoVenda ");
+		sql.append(",estoque.valoresAplicados.precoComDesconto = :precoComDesconto ");
+		sql.append(",estoque.valoresAplicados.precoComDesconto = :valorDesconto ");
+		sql.append(",estoque.qtde = :qtde ");
+		sql.append("WHERE estoque.id = :id");
+
+		this.getSession()
+				.createQuery(sql.toString())
+				.setParameter("precoVenda", valoresAplicados.getPrecoVenda())
+				.setParameter("precoComDesconto",
+						valoresAplicados.getPrecoComDesconto())
+				.setParameter("valorDesconto",
+						valoresAplicados.getValorDesconto())
+				.setParameter("qtde", qtde).setParameter("id", id)
+				.executeUpdate();
+	}
+
+    @Override
+	public BigInteger loadQtdeById(Long id){
+    	Query query =  getSession().createQuery("SELECT o.qtde FROM MovimentoEstoqueCota o WHERE o.id = :id");
+    	
+    	query.setParameter("id", id);
+    	
+    	return (BigInteger) query.uniqueResult();
+    }
+    
+	@Override
+	public void updateById(Long id, MovimentoFinanceiroCota movimentoFinanceiroCota) {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE MovimentoEstoqueCota estoque ");
+		sql.append("SET estoque.movimentoFinanceiroCota = :movimentoFinanceiroCota ");
+		sql.append("WHERE estoque.id = :id");
+
+		this.getSession()
+				.createQuery(sql.toString())
+				.setParameter("movimentoFinanceiroCota", movimentoFinanceiroCota)
+				.setParameter("id", id)
+				.executeUpdate();
+	}
+	
+	@Override
+	public void updateById(Long id, StatusEstoqueFinanceiro statusEstoqueFinanceiro) {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE MovimentoEstoqueCota estoque ");
+		sql.append("SET estoque.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ");
+		sql.append("WHERE estoque.id = :id");
+
+		this.getSession()
+				.createQuery(sql.toString())
+				.setParameter("statusEstoqueFinanceiro", statusEstoqueFinanceiro)
+				.setParameter("id", id)
+				.executeUpdate();
+	}
     
 }
