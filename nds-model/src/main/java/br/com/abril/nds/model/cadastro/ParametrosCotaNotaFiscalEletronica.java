@@ -11,7 +11,7 @@ public class ParametrosCotaNotaFiscalEletronica implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Column( name="EMITE_NF_E", nullable = true)
-	private Boolean emiteNotaFiscalEletronica;
+	private Boolean exigeNotaFiscalEletronica;
 	
 	@Column( name="EMAIL_NF_E", nullable = true)
 	private String emailNotaFiscalEletronica;
@@ -20,17 +20,17 @@ public class ParametrosCotaNotaFiscalEletronica implements Serializable {
 	private Boolean contribuinteICMS;
 	
 	/**
-	 * @return the emiteNotaFiscalEletronica
+	 * @return the exigeNotaFiscalEletronica
 	 */
 	public Boolean isExigeNotaFiscalEletronica() {
-		return emiteNotaFiscalEletronica;
+		return exigeNotaFiscalEletronica;
 	}
 
 	/**
-	 * @param emiteNotaFiscalEletronica the emiteNotaFiscalEletronica to set
+	 * @param exigeNotaFiscalEletronica the exigeNotaFiscalEletronica to set
 	 */
-	public void setEmiteNotaFiscalEletronica(Boolean emiteNotaFiscalEletronica) {
-		this.emiteNotaFiscalEletronica = emiteNotaFiscalEletronica;
+	public void setExigeNotaFiscalEletronica(Boolean exigeNotaFiscalEletronica) {
+		this.exigeNotaFiscalEletronica = exigeNotaFiscalEletronica;
 	}
 
 	/**

@@ -325,7 +325,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" SUM(mec.valoresAplicados.precoVenda * mec.qtde) as total, "); 
 		hql.append(" SUM(mec.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto, "); 	
 		hql.append(" mec.cota.situacaoCadastro as situacaoCadastro, ");
-		hql.append(" cota.parametrosCotaNotaFiscalEletronica.emiteNotaFiscalEletronica as emiteNotaFiscalEletronica, ");
+		hql.append(" cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica as exigeNotaFiscalEletronica, ");
 		hql.append(" cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS as contribuinteICMS ");
 
 		Query query = queryConsultaMECNfeParameters(queryConsultaMECNfe(filtro, hql, false, false, false), filtro);
@@ -369,7 +369,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" SUM(mffc.valoresAplicados.precoVenda * mffc.qtde) as total, "); 
 		hql.append(" SUM(mffc.valoresAplicados.precoComDesconto * mffc.qtde) as totalDesconto, "); 	
 		hql.append(" mffc.cota.situacaoCadastro as situacaoCadastro, ");
-		hql.append(" cota.parametrosCotaNotaFiscalEletronica.emiteNotaFiscalEletronica as emiteNotaFiscalEletronica, ");
+		hql.append(" cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica as exigeNotaFiscalEletronica, ");
 		hql.append(" cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS as contribuinteICMS ");
 
 		Query query = queryConsultaCotaMFFNfeParameters(queryConsultaCotaMFFNfe(filtro, hql, false, false, false), filtro);

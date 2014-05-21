@@ -747,10 +747,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 				+ DateUtil.formatarDataPTBR((distribuidorService
 						.obterDataOperacaoDistribuidor()));
 		
-		final List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros = Arrays.asList(
-				GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
-				GrupoMovimentoFinaceiro.ENVIO_ENCALHE,
-				GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO);
+		final List<String> grupoMovimentoFinaceiros = Arrays.asList(
+				GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE.name(),
+				GrupoMovimentoFinaceiro.ENVIO_ENCALHE.name());
 		
 		
 		this.movimentoEstoqueCotaRepository.updateByIdConsolidadoAndGrupos(

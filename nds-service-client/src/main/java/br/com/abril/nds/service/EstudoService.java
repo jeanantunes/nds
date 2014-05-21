@@ -41,8 +41,6 @@ public interface EstudoService {
 	
 	public void setIdLancamentoNoEstudo(Long idLancamento, Long idEstudo);
 	
-	public Long obterUltimoAutoIncrement();
-	
 	Estudo liberar(Long idEstudoGerado);
 
     void gravarDadosVendaMedia(Long estudoId, DistribuicaoVendaMediaDTO distribuicaoVendaMedia);

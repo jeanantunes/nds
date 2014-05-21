@@ -33,8 +33,6 @@ public interface EstudoGeradoRepository extends Repository<EstudoGerado, Long> {
 
     int obterCotasComRepartePorIdEstudo(Long estudoId);
 
-	Long obterUltimoAutoIncrement();
-	
 	BigDecimal reparteFisicoOuPrevistoLancamento(Long idEstudo);
 	
 	EstudoGerado obterParaAtualizar(Long id);

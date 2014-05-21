@@ -64,7 +64,7 @@ var painelProcessamentoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}],
-			sortname : "tipoErro",
+			sortname : "Default",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
