@@ -766,6 +766,28 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 		
 		this.movimentoFinanceiroCotaRepository.removeByIdConsolidadoAndGrupos(idConsolidado, grupoMovimentoFinaceiros);
 	}
+	
+	@Override
+    @Transactional
+    public void removerMovimentosFinanceirosCotaPorDataCota(final Date dataOperacao, final Long idCota) {
+        final String motivo = "Financeiro Reprocessado "
+                + DateUtil.formatarDataPTBR((distribuidorService
+                        .obterDataOperacaoDistribuidor()));
+        
+        final List<String> grupoMovimentoFinaceiros = Arrays.asList(
+                GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE.name(),
+                GrupoMovimentoFinaceiro.ENVIO_ENCALHE.name());
+        
+        this.movimentoEstoqueCotaRepository.updateByCotaAndDataOpAndGrupos(
+                idCota, dataOperacao, grupoMovimentoFinaceiros , motivo,
+                StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+        
+        this.historicoMovimentoFinanceiroCotaRepository.removeByCotaAndDataOpAndGrupos(
+                idCota, dataOperacao, grupoMovimentoFinaceiros);
+        
+        this.movimentoFinanceiroCotaRepository.removeByCotaAndDataOpAndGrupos(
+                idCota, dataOperacao, grupoMovimentoFinaceiros);
+    }
     
     /**
      * Remove movimentos financeiros do consolidado ou postergado Referentes à

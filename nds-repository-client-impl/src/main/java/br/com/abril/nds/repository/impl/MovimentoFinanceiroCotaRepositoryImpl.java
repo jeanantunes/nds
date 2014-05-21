@@ -2028,4 +2028,21 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
                     .executeUpdate();
         }
 	}
+
+    @Override
+    public void removeByCotaAndDataOpAndGrupos(Long idCota, Date dataOperacao, List<String> grupoMovimentoFinaceiros) {
+        
+        final String sql = "delete movi FROM MOVIMENTO_FINANCEIRO_COTA movi "+
+            "join TIPO_MOVIMENTO tipo on " +
+            "movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' " +
+            "where movi.COTA_ID = :idCota " +
+            "and movi.DATA = :dataOperacao " +
+            "and tipo.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinaceiros)";
+        
+        this.getSession().createSQLQuery(sql)
+                .setParameter("idCota", idCota)
+                .setParameter("dataOperacao", dataOperacao)
+                .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
+                .executeUpdate();
+    }
 }
