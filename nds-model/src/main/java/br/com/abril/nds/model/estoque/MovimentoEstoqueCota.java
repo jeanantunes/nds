@@ -96,6 +96,9 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@Column(name = "FORMA_COMERCIALIZACAO")
 	private FormaComercializacao formaComercializacao;
 	
+	@Column(name = "COTA_CONTRIBUINTE_EXIGE_NF")
+	private boolean cotaContribuinteExigeNF;
+	
 	public Object clone() {
 
 		MovimentoEstoqueCota mec = new MovimentoEstoqueCota();
@@ -261,7 +264,15 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.formaComercializacao = formaComercializacao;
 	}
     
-    public MovimentoEstoqueCota getMovimentoEstoqueCotaJuramentado() {
+    public boolean isCotaContribuinteExigeNF() {
+		return cotaContribuinteExigeNF;
+	}
+
+	public void setCotaContribuinteExigeNF(boolean cotaContribuinteExigeNF) {
+		this.cotaContribuinteExigeNF = cotaContribuinteExigeNF;
+	}
+
+	public MovimentoEstoqueCota getMovimentoEstoqueCotaJuramentado() {
         return movimentoEstoqueCotaJuramentado;
     }
 
