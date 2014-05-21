@@ -24,9 +24,10 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EMS2021MessageProcessor.class);
 
-    @Autowired
-	private SessionFactory sessionFactoryIcd;
+    //Autowired
+	//private SessionFactory sessionFactoryIcd;
     
+    /*
     private Session session = null;
 	
 	protected Session getSessionIcd() {
@@ -43,19 +44,22 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 		}
 		return session;
 	}
-	
+	*/
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
 
+    	/*
 	List<Object> objs = new ArrayList<Object>();
 	Object dummyObj = new Object();
 	objs.add(dummyObj);
 	tempVar.set(objs);
+	*/
     }
 
     @Override
     public void processMessage(Message message) {
 
+    /*
 	CouchDbClient cdbc = null;
 	List<IcdEstrategia> estrategias = obterEstrategias();
 	IcdEstrategia estrategiaTemp = null;
@@ -78,8 +82,10 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 	    }
 	    estrategiaTemp = estrategia;
 	}
+	*/
     }
 
+    /*
     private List<IcdEstrategia> obterEstrategias() {
 
 	StringBuilder sql = new StringBuilder();
@@ -121,6 +127,7 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 	return query.list();
     }
 
+*/
     @Override
     public void posProcess(Object tempVar) {
     }
