@@ -336,16 +336,17 @@ var fixacaoReparteController = $.extend(true, {
 				resultado.mensagens.listaMensagens
 			);
 
-			$("#btAddLoteProduto").hide();
-			$("#btGerarArquivoProduto").hide();
-			$("#btImprimirProduto").hide();
+//			$("#btAddLoteProduto").hide();
+			$("#btGerarArquivoProduto", fixacaoReparteController.wsp).hide();
+			$("#btImprimirProduto", fixacaoReparteController.wsp).hide();
 
 		}else{
-			$("#btNovoProduto").show();
-			$("#btAddLoteProduto").show();
-			$("#btGerarArquivoProduto").show();
-			$("#btImprimirProduto").show();
+			$("#btNovoProduto", fixacaoReparteController.wsp).show();
+			$("#btAddLoteProduto", fixacaoReparteController.wsp).show();
+			$("#btGerarArquivoProduto", fixacaoReparteController.wsp).show();
+			$("#btImprimirProduto", fixacaoReparteController.wsp).show();
 		}
+		
 		var i;
 		for (i = 0 ; i < resultado.rows.length; i++) {
 
@@ -369,7 +370,7 @@ var fixacaoReparteController = $.extend(true, {
 				data.mensagens.tipoMensagem, 
 				data.mensagens.listaMensagens
 			);
-			$("#btAddLoteCota").hide();
+//			$("#btAddLoteCota").hide();
 			$("#btGerarArquivoCota").hide();
 			$("#btImprimirCota").hide();
 			return data;
@@ -970,17 +971,23 @@ var fixacaoReparteController = $.extend(true, {
 			}
 
 			if($('#radioQtdeEdicoes').is(":checked")){
-				if($("#qtdeEdicoesModal").val()==''){
+				if($("#qtdeEdicoesModal").val().trim()==''){
 					exibirMensagem("WARNING", ["Qtde. edições não informado "]);
 					return false;
+				}
 			}
-
+			
+			if($("#qtdeFixadaModal").val().trim()=="" ){
+				exibirMensagem("WARNING", ["Qtde. a ser fixada não informada "]);
+				return false;
 			}
-				if($('#radioIntervalo').is(":checked")){
-					if($("#edInicialModal").val()=='' || $("#edIniciaFinal").val()==''){
-						exibirMensagem("WARNING", ["Informe Ed. inicial / final "]);
-						return false;
-					}
+			
+			
+			if($('#radioIntervalo').is(":checked")){
+				if($("#edInicialModal").val().trim()=='' || $("#edIniciaFinal").val().trim()==''){
+					exibirMensagem("WARNING", ["Informe Ed. inicial / final "]);
+					return false;
+				}
 			}
 
             if (porCota && $('#selectModal').val() == '-1') {
