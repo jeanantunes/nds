@@ -1994,26 +1994,38 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 	}
     
+    @SuppressWarnings("unchecked")
     @Override
-	public void removeByIdConsolidadoAndGrupos(Long idConsolidado, List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros){
+	public void removeByIdConsolidadoAndGrupos(Long idConsolidado, List<String> grupoMovimentoFinaceiros){
 		
-	  	final StringBuilder sql =  new StringBuilder();
-    	sql.append("DELETE movi FROM MOVIMENTO_FINANCEIRO_COTA movi ");
-    	sql.append("join TIPO_MOVIMENTO tipo on ");
-    	sql.append("movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' ");
-    	sql.append("join CONSOLIDADO_MVTO_FINANCEIRO_COTA con on ");
-    	sql.append("con.MVTO_FINANCEIRO_COTA_ID = movi.id ");
-
-    	sql.append("where con.CONSOLIDADO_FINANCEIRO_ID = :idConsolidado ");
-    	sql.append("and tipo.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinaceiros)");
-    	
-    	 this.getSession().createSQLQuery(sql.toString() )
-	        .setParameter("idConsolidado", idConsolidado)
-	        .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
-	        .executeUpdate();
-		
+        //pesquisa por ids de mov. finan. do consolidado vindo como parametro
+        final StringBuilder sql =  new StringBuilder();
+        sql.append("select movi.id FROM MOVIMENTO_FINANCEIRO_COTA movi ");
+        sql.append("join TIPO_MOVIMENTO tipo on ");
+        sql.append("movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' ");
+        sql.append("join CONSOLIDADO_MVTO_FINANCEIRO_COTA con on ");
+        sql.append("con.MVTO_FINANCEIRO_COTA_ID = movi.id ");
+        sql.append("where con.CONSOLIDADO_FINANCEIRO_ID = :idConsolidado ");
+        sql.append("and tipo.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinaceiros)");
+        
+        final List<Long> idsMovs = this.getSession().createSQLQuery(sql.toString())
+                .setParameter("idConsolidado", idConsolidado)
+                .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
+                .list();
+        
+        //apaga o registro de ligação entre mov. finan. e consolidado
+        this.getSession().createSQLQuery(
+                "delete from CONSOLIDADO_MVTO_FINANCEIRO_COTA where CONSOLIDADO_FINANCEIRO_ID = :idConsolidado")
+                .setParameter("idConsolidado", idConsolidado)
+                .executeUpdate();
+        
+        //apaga o mov. finan. com os ids encontrados
+        //apaga-los diretamente fazendo join com a tabela de ligação resultaria em exceptiom de integridade referencial
+        if (idsMovs != null && !idsMovs.isEmpty()){
+            this.getSession().createSQLQuery(
+                    "delete from MOVIMENTO_FINANCEIRO_COTA where id in (:idsMovs)")
+                    .setParameterList("idsMovs", idsMovs)
+                    .executeUpdate();
+        }
 	}
-	
-	
-	
 }

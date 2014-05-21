@@ -253,6 +253,6 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
     public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDeConsolidado(final Long idConsolidado);
 
 	public abstract void removeByIdConsolidadoAndGrupos(Long idConsolidado,
-			List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros);
+			List<String> grupoMovimentoFinaceiros);
 
 }

@@ -8,6 +8,6 @@ import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 public interface HistoricoMovimentoFinanceiroCotaRepository extends Repository<HistoricoMovimentoFinanceiroCota, Long> {
 
 	public abstract void removeByIdConsolidadoAndGrupos(Long idConsolidado,
-			List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros);
+			List<String> grupoMovimentoFinaceiros);
 	
 }
