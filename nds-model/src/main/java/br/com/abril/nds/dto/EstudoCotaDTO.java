@@ -11,11 +11,18 @@ public class EstudoCotaDTO implements Serializable {
 	private static final long serialVersionUID = 1031571090326764200L;
 	
 	private Long id;
+	
 	private BigInteger qtdeEfetiva;
+	
 	private Long idCota;
+	
 	private TipoEstudoCota tipoEstudo;
-	private Boolean devolveEncalhe;
+	
+	private boolean devolveEncalhe;
+	
 	private TipoCota tipoCota;
+	
+	private boolean cotaContribuinteExigeNotaFiscal;
 
 	public Long getId() {
 		return id;
@@ -53,11 +60,11 @@ public class EstudoCotaDTO implements Serializable {
 		this.tipoEstudo = tipoEstudo;
 	}
 
-	public Boolean isDevolveEncalhe() {
+	public boolean isDevolveEncalhe() {
 		return devolveEncalhe;
 	}
 
-	public void setDevolveEncalhe(Boolean devolveEncalhe) {
+	public void setDevolveEncalhe(boolean devolveEncalhe) {
 		this.devolveEncalhe = devolveEncalhe;
 	}
 
@@ -68,4 +75,13 @@ public class EstudoCotaDTO implements Serializable {
 	public void setTipoCota(TipoCota tipoCota) {
 		this.tipoCota = tipoCota;
 	}
+
+	public boolean isCotaContribuinteExigeNotaFiscal() {
+		return cotaContribuinteExigeNotaFiscal;
+	}
+
+	public void setCotaContribuinteExigeNotaFiscal(boolean cotaContribuinteExigeNotaFiscal) {
+		this.cotaContribuinteExigeNotaFiscal = cotaContribuinteExigeNotaFiscal;
+	}
+	
 }
