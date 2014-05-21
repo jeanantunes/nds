@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -250,5 +251,8 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @return List - MovimentoFinanceiroCota
 	 */
     public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDeConsolidado(final Long idConsolidado);
+
+	public abstract void removeByIdConsolidadoAndGrupos(Long idConsolidado,
+			List<String> grupoMovimentoFinaceiros);
 
 }

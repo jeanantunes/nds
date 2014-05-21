@@ -92,8 +92,6 @@ public class EstudoServiceImpl implements EstudoService {
 	@Transactional
 	public void gravarEstudo(EstudoGerado estudo) {
 	    
-		estudo.setId(this.obterUltimoAutoIncrement());
-		
 	    for (EstudoCotaGerado estudoCota : estudo.getEstudoCotas()) {
 			estudoCota.setEstudo(estudo);
 	    }
@@ -128,13 +126,6 @@ public class EstudoServiceImpl implements EstudoService {
 
 		List<Long> listIdEstudoAdicionado = null;
 
-		EstudoGerado obterEstudo = this.obterEstudo(listEstudo.get(0).getId());
-		EstudoGerado obterEstudo2 = this.obterEstudo(listEstudo.get(1).getId());
-		
-        if (obterEstudo != null && obterEstudo2 != null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, " Número dos estudo gerados já estão sendo utilizados.");
-		}
-		
 		if (listEstudo != null && !listEstudo.isEmpty()) {
 
 			// 2 estudo para ser salvo
@@ -239,13 +230,6 @@ public class EstudoServiceImpl implements EstudoService {
 		this.estudoGeradoRepository.setIdLancamentoNoEstudo(idLancamento, idEstudo);
 	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public Long obterUltimoAutoIncrement() {
-		return this.estudoGeradoRepository.obterUltimoAutoIncrement();
-		
-	}
-
 	@Transactional
 	public EstudoGerado criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,
 	        Date dataLancamento, Long lancamentoId){
@@ -254,7 +238,6 @@ public class EstudoServiceImpl implements EstudoService {
 		
 		EstudoGerado estudo = new EstudoGerado();
 		
-		estudo.setId(this.obterUltimoAutoIncrement());
 		estudo.setDataCadastro(dataOperacao);
 		estudo.setDataLancamento(dataLancamento);
 		estudo.setProdutoEdicao(produtoEdicao);
@@ -284,7 +267,7 @@ public class EstudoServiceImpl implements EstudoService {
 	public Estudo liberar(Long idEstudoGerado) {
 		
 	    
-		EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(idEstudoGerado);
+		EstudoGerado estudoGerado = this.estudoGeradoRepository.obterParaAtualizar(idEstudoGerado);
 		
 		Lancamento lancamento = 
 			this.lancamentoRepository.buscarPorId(estudoGerado.getLancamentoID());
@@ -294,7 +277,7 @@ public class EstudoServiceImpl implements EstudoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não há lançamento para este estudo.");
 		}
 		
-		if (lancamento.getEstudo() != null) {
+		if (lancamento.getEstudo() != null || estudoGerado.isLiberado()) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um estudo liberado para este lançamento.");
 		}

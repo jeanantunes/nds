@@ -182,16 +182,6 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 			condicoes += "".equals(condicoes) ? " where " : " and ";
 			
 			condicoes += " tipoNotaFiscal.id = :idTipoNotaFiscal ";
-		} else {
-			
-			if (filtroConsultaNotaFiscal.getIdDistribuidor() != null) {
-				
-				condicoes += "".equals(condicoes) ? " where " : " and ";
-			
-				condicoes += " tipoNotaFiscal.tipoAtividade = ";
-				
-				condicoes += " ( select distribuidor.tipoAtividade from Distribuidor distribuidor where distribuidor.id = :idDistribuidor ) ";
-			}
 		}
 
 		if (filtroConsultaNotaFiscal.getIdFornecedor() != null) {
@@ -326,11 +316,6 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		if (filtroConsultaNotaFiscal.getIdTipoNotaFiscal() != null) {
 			
 			query.setParameter("idTipoNotaFiscal", filtroConsultaNotaFiscal.getIdTipoNotaFiscal());
-		} else {
-		
-			if (filtroConsultaNotaFiscal.getIdDistribuidor() != null) {
-				query.setParameter("idDistribuidor", filtroConsultaNotaFiscal.getIdDistribuidor());
-			}
 		}
 		
 		if (filtroConsultaNotaFiscal.getIdFornecedor() != null) {

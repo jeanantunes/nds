@@ -11,6 +11,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FixacaoReparteDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -258,6 +259,41 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
             query.setResultTransformer(new AliasToBeanResultTransformer(FixacaoReparteDTO.class));
 			
 			return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public ItemDTO<Long, BigInteger> loadIdAndQtdDevolvidaByIdProdutoEdicaoAndIdCota(final Long idProdutoEdicao, final Long idCota){
+		
+
+		final StringBuilder hql = new StringBuilder("select estoque.qtdeDevolvida as value , estoque.id as key ");
+		hql.append("from EstoqueProdutoCota estoque    ")
+		.append("join estoque.produtoEdicao produtoEdicao ")
+		.append("join estoque.cota cota ")
+		.append("where produtoEdicao.id = :idProdutoEdicao ")
+		.append("and cota.id = :idCota ");
+
+		final Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+
+		query.setParameter("idCota", idCota);
+		query.setMaxResults(1);
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
+
+		return (ItemDTO<Long, BigInteger>) query.uniqueResult();
+		
+		
+	}
+	
+	@Override
+	public void updateById(Long id, BigInteger qtdeDevolvida){
+		final String jpql = "UPDATE EstoqueProdutoCota o SET o.qtdeDevolvida = :qtdeDevolvida WHERE o.id = :id";
+		
+		super.getSession().createQuery(jpql)
+			.setParameter("qtdeDevolvida", qtdeDevolvida)
+			.setParameter("id", id)
+			.executeUpdate();
 	}
 	
 }

@@ -558,9 +558,7 @@ public class GrupoServiceImpl implements GrupoService {
 			datas.addAll(datasPosteriores);
 		}
 		
-		List<Date> datasFeriadosTratados = this.tratarFeriadosDatasRecolhimentoOperacaoDiferenciada(datas);
-		
-		return datasFeriadosTratados;
+		return datas;
 	}
 
 }

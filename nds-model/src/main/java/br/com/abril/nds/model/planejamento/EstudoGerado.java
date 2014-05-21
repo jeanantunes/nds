@@ -12,31 +12,38 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.hibernate.annotations.*;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Entity
 @SuppressWarnings("serial")
 @Table(name = "ESTUDO_GERADO")
+@SequenceGenerator(name="ESTUDO_GERADO_SEQ", initialValue = 1, allocationSize = 1)
 public class EstudoGerado implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EstudoGerado.class);
 
     @Id
+    @GeneratedValue(generator = "ESTUDO_GERADO_SEQ")
 	@Column(name = "ID")
 	protected Long id;
 	
