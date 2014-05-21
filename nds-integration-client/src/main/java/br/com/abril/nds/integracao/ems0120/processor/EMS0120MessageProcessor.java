@@ -36,8 +36,8 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 	
-	@Autowired
-	private DistribuidorService distribuidorService;
+	//Autowired
+	//private DistribuidorService distribuidorService;
 	
 	
 	@Override
@@ -50,6 +50,7 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 	@SuppressWarnings("unchecked")
 	public void processMessage(Message message) {
 	
+		/*
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
 		
 		StringBuilder sql = new  StringBuilder();
@@ -114,7 +115,7 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 		}
 				
 		
-		
+		*/
 	}
 
 	@Override
