@@ -519,28 +519,26 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
     }
 
     private EstudoGerado obterCopiaDeEstudo(EstudoGerado estudo, Lancamento lancamento) {
-
-    EstudoGerado estudoCopia = new EstudoGerado();
-    
-	BeanUtils.copyProperties(estudo, estudoCopia, new String[] {"id", "lancamentoID", "lancamentos", "estudoCotas", "dataLancamento"});
-	
-	estudoCopia.setDataAlteracao(new Date());
-	estudoCopia.setLiberado(false);
-	estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>());
-	estudoCopia.setProdutoEdicao(lancamento.getProdutoEdicao());
-	estudoCopia.setLancamentoID(lancamento.getId());
-    estudoCopia.setIdEstudoOrigemCopia(estudo.getId());
-    estudoCopia.setDataLancamento(lancamento.getDataLancamentoPrevista());
-    estudoCopia.setReparteDistribuir(lancamento.getReparte());
-
-    Long id = this.estudoService.obterUltimoAutoIncrement();
-    
-    estudoCopia.setId(id);
-    
-	this.estudoGeradoRepository.adicionar(estudoCopia);
-	estudoCopia = estudoGeradoRepository.buscarPorId(id);
-
-	return estudoCopia;
+        
+        EstudoGerado estudoCopia = new EstudoGerado();
+        
+        BeanUtils.copyProperties(estudo, estudoCopia, new String[] { "id", "lancamentoID", "lancamentos",
+                "estudoCotas", "dataLancamento" });
+        
+        estudoCopia.setDataAlteracao(new Date());
+        estudoCopia.setLiberado(false);
+        estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>());
+        estudoCopia.setProdutoEdicao(lancamento.getProdutoEdicao());
+        estudoCopia.setLancamentoID(lancamento.getId());
+        estudoCopia.setIdEstudoOrigemCopia(estudo.getId());
+        estudoCopia.setDataLancamento(lancamento.getDataLancamentoPrevista());
+        estudoCopia.setReparteDistribuir(lancamento.getReparte());
+        
+        Long id = this.estudoGeradoRepository.adicionar(estudoCopia);
+        
+        estudoCopia = estudoGeradoRepository.buscarPorId(id);
+        
+        return estudoCopia;
     }
 
     private LinkedList<EstudoCotaGerado> copiarListaDeCotas(LinkedList<EstudoCotaGerado> lista, EstudoGerado estudo, boolean isFixacao) {

@@ -142,10 +142,6 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
         estudo1.setReparteDistribuir(qtdDistribuido);
         estudo1.setSobra(estudo1.getQtdeReparte().subtract(estudo1.getReparteDistribuir()));
 
-        Long id = this.estudoService.obterUltimoAutoIncrement();
-
-        estudo1.setId(id);
-
         // Gera Novo Estudo
         Long idEstudo = estudoGeradoRepository.adicionar(estudo1);
 
