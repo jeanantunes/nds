@@ -3520,7 +3520,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
                 .append(":qtde, :idCota, :dataLancamentoOriginal, :estoqueProdutoEdicaoCotaId, ")
                 .append(":estudoCotaId, :notaEnvioItemNotaEnvioId, :notaEnvioItemSequencia, :lancamentoId, ")
                 .append(":movimentoEstoqueCotaFuroId, :movimentoFinanceiroCotaId, :statusEstoqueFinanceiro, ")
-                .append(":precoComDesconto, :precoVenda, :valorDesconto, :formaComercializacao, cotaContribuinteExigeNf, -1) ");
+                .append(":precoComDesconto, :precoVenda, :valorDesconto, :formaComercializacao, :cotaContribuinteExigeNF, -1) ");
                 
                 final SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(movimentosEstoqueCota.toArray());
                 

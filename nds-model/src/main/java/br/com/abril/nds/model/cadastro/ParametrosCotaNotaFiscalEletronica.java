@@ -10,7 +10,7 @@ public class ParametrosCotaNotaFiscalEletronica implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column( name="EMITE_NF_E", nullable = true)
+	@Column( name="EXIGE_NF_E", nullable = true)
 	private Boolean exigeNotaFiscalEletronica;
 	
 	@Column( name="EMAIL_NF_E", nullable = true)
