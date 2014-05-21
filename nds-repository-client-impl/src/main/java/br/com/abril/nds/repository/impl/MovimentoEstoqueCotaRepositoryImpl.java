@@ -61,7 +61,6 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
-import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
@@ -3514,14 +3513,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
                 .append("QTDE, COTA_ID, DATA_LANCAMENTO_ORIGINAL, ESTOQUE_PROD_COTA_ID, ")
                 .append("ESTUDO_COTA_ID, NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, NOTA_ENVIO_ITEM_SEQUENCIA, LANCAMENTO_ID, ")
                 .append("MOVIMENTO_ESTOQUE_COTA_FURO_ID, MOVIMENTO_FINANCEIRO_COTA_ID, STATUS_ESTOQUE_FINANCEIRO, ")
-                .append("PRECO_COM_DESCONTO, PRECO_VENDA, VALOR_DESCONTO, FORMA_COMERCIALIZACAO, ID) ")
+                .append("PRECO_COM_DESCONTO, PRECO_VENDA, VALOR_DESCONTO, FORMA_COMERCIALIZACAO, COTA_CONTRIBUINTE_EXIGE_NF, ID) ")
                 .append("values ")
                 .append("(:aprovadoAutomaticamente, :usuarioAprovadorId, :dataAprovacao, :motivo, :status, :data, :dataCriacao, ")
                 .append(":dataIntegracao, :statusIntegracao, :tipoMovimentoId, :usuarioId, :idProdEd, ")
                 .append(":qtde, :idCota, :dataLancamentoOriginal, :estoqueProdutoEdicaoCotaId, ")
                 .append(":estudoCotaId, :notaEnvioItemNotaEnvioId, :notaEnvioItemSequencia, :lancamentoId, ")
                 .append(":movimentoEstoqueCotaFuroId, :movimentoFinanceiroCotaId, :statusEstoqueFinanceiro, ")
-                .append(":precoComDesconto, :precoVenda, :valorDesconto, :formaComercializacao, -1) ");
+                .append(":precoComDesconto, :precoVenda, :valorDesconto, :formaComercializacao, cotaContribuinteExigeNf, -1) ");
                 
                 final SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(movimentosEstoqueCota.toArray());
                 

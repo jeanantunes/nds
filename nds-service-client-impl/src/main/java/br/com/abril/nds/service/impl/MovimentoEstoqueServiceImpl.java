@@ -1636,7 +1636,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                         new ProdutoEdicao(produtoEdicao.getId()), null, dataLancamento);
             }
             
-            
             if (idLancamento != null) {
                 
                 final Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
