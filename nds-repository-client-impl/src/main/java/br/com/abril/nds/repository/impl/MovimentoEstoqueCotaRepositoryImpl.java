@@ -3604,7 +3604,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     }
     
     @Override
-	public void updateByIdConsolidadoAndGrupos(Long idConsolidado, List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros,  String motivo, Long movimentoFinanceiroCota, StatusEstoqueFinanceiro statusEstoqueFinanceiro ){
+	public void updateByIdConsolidadoAndGrupos(Long idConsolidado, List<String> grupoMovimentoFinaceiros,  String motivo, Long movimentoFinanceiroCota, StatusEstoqueFinanceiro statusEstoqueFinanceiro ){
       	final StringBuilder sql =  new StringBuilder();
     	sql.append("UPDATE MOVIMENTO_ESTOQUE_COTA AS estoque ");
     	sql.append("join MOVIMENTO_FINANCEIRO_COTA movi on ");
@@ -3623,7 +3623,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	 this.getSession().createSQLQuery(sql.toString() )
 	        .setParameter( "motivo", motivo )
 	        .setParameter( "movimentoFinanceiroCota", movimentoFinanceiroCota )
-	        .setParameter("statusEstoqueFinanceiro", statusEstoqueFinanceiro)
+	        .setParameter("statusEstoqueFinanceiro", statusEstoqueFinanceiro.name())
 	        .setParameter("idConsolidado", idConsolidado)
 	        .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
 	        .executeUpdate();
@@ -3651,7 +3651,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("UPDATE MovimentoEstoqueCota estoque ");
 		sql.append("SET estoque.valoresAplicados.precoVenda = :precoVenda ");
 		sql.append(",estoque.valoresAplicados.precoComDesconto = :precoComDesconto ");
-		sql.append(",estoque.valoresAplicados.precoComDesconto = :valorDesconto ");
+		sql.append(",estoque.valoresAplicados.valorDesconto = :valorDesconto ");
 		sql.append(",estoque.qtde = :qtde ");
 		sql.append("WHERE estoque.id = :id");
 

@@ -231,27 +231,6 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
     }
 
 	@Override
-	public Long obterUltimoAutoIncrement() {
-
-		Connection conn;
-		Long long1 =null;
-		try {
-			conn = this.dataSource.getConnection();
-			String sql="SELECT (MAX(ID)+1) ID FROM ESTUDO_GERADO";
-			PreparedStatement statement=conn.prepareStatement(sql);
-			ResultSet rs=statement.executeQuery();
-			rs.next();
-			long1 = rs.getLong("ID");
-            statement.close();
-            conn.close();
-
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-		return (long1 == null || long1.equals(0L)) ? 1L : long1;
-	}
-
-	@Override
 	public BigDecimal reparteFisicoOuPrevistoLancamento(Long idEstudo) {
 
 		StringBuilder sql = new StringBuilder();
