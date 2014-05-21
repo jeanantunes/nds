@@ -97,6 +97,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		sql.append(" from interface_execucao ie ");
 		sql.append(" left join log_execucao le on le.id = (select MAX(lei.id) as id from log_execucao lei where lei.interface_execucao_id = ie.id) ");
 		sql.append(" left join log_execucao_mensagem lem on le.id = lem.log_execucao_id ");
+		sql.append(" where descricao not like '%MDC%' ");
 		sql.append(" group by ie.id ");
 
 		if (filtro.getOrdenacaoColuna() != null) {
@@ -192,6 +193,14 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 						criteria.addOrder(Order.desc("logExecucao.status"));
 					else
 						criteria.addOrder(Order.asc("logExecucao.status"));
+					break;
+					
+				case DEFAULT:
+					
+					criteria.addOrder(Order.desc("nomeArquivo"));
+					criteria.addOrder(Order.desc("numeroLinha"));
+					criteria.addOrder(Order.desc("mensagem"));
+					
 					break;
 			}
 		}

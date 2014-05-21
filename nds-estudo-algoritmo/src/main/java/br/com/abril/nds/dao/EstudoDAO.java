@@ -1,5 +1,8 @@
 package br.com.abril.nds.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,10 +10,13 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
@@ -43,19 +49,20 @@ public class EstudoDAO {
     @Value("#{query_estudo.queryPercentuaisExcedentes}")
     private String queryPercentuaisExcedentes;
     
-    @Value("#{query_estudo.queryIDEstudo}")
-    private String queryIDEstudo;
-
     public void gravarEstudo(EstudoTransient estudo) {
     	
-    	Long estudoId = this.obterProximoIDEstudo();
-		
-		estudo.setId(estudoId);
+    	Long estudoId = null;
 		
 	    SqlParameterSource paramSource = new BeanPropertySqlParameterSource(estudo);
 	    
-	    jdbcTemplate.update(insertEstudo, paramSource);
-
+	    KeyHolder keyHolder = new GeneratedKeyHolder();
+	    
+	    jdbcTemplate.update(insertEstudo, paramSource, keyHolder);
+	    
+	    estudoId = keyHolder.getKey().longValue();
+	    
+	    estudo.setId(estudoId);
+	    
 	    List<ProdutoEdicaoEstudo> listaProdutoEdicao = new ArrayList<>();
 	    
 	    for (CotaEstudo cota : estudo.getCotas()) {
@@ -78,24 +85,13 @@ public class EstudoDAO {
 
 	    for (ProdutoEdicaoEstudo prod : estudo.getEdicoesBase()) {
 	    	
-	    	prod.setIdEstudo(estudoId);
+	    	prod.setIdEstudo(estudoId.longValue());
 	    }
 	    
 	    gravarProdutoEdicaoBase(estudo.getEdicoesBase());
 	    gravarProdutoEdicao(listaProdutoEdicao);
     }
     
-    private Long obterProximoIDEstudo() {
-    	
-    	SqlRowSet rs = jdbcTemplate.queryForRowSet(queryIDEstudo, new HashMap<String, Object>());
-    	
-    	rs.next();
-    	
-    	Long id = rs.getLong("ID");
-    	
-    	return (id == null || id.equals(0L) ? 1L : id);
-    }
-
     public void gravarCotas(final List<CotaEstudo> cotas) {
 	SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(cotas.toArray());
 	jdbcTemplate.batchUpdate(insertEstudoCotas, batch);

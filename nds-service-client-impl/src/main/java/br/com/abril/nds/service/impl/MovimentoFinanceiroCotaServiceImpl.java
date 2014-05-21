@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -1114,7 +1115,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
      * @param datas
      * @return Map<Long,List<MovimentoEstoqueCota>>
      */
-    private Map<Long, List<MovimentoEstoqueCota>> obterMovimentosEstoqueReparteComChamadaEncalheOuProdutoContaFirme(
+    private Map<Long, List<MovimentosEstoqueEncalheDTO>> obterMovimentosEstoqueReparteComChamadaEncalheOuProdutoContaFirme(
             final Long idCota, final List<Date> datas) {
         
     	
@@ -1125,17 +1126,12 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                 GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE,
                 GrupoMovimentoEstoque.SOBRA_EM_COTA));
     	
-        final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte = movimentoEstoqueCotaRepository
+        final List<MovimentosEstoqueEncalheDTO> movimentosEstoqueCotaOperacaoEnvioReparte = movimentoEstoqueCotaRepository
                 .obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(idCota, datas, idTiposMovimentoEstoque);
-  StringBuilder idMovs = new StringBuilder();
+  
         
-        for(MovimentoEstoqueCota m : movimentosEstoqueCotaOperacaoEnvioReparte) {
-        	idMovs.append(m.getId() + ", ");
-        }
-        
-        
-        final Map<Long, List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = this
-                .agrupaMovimentosEstoqueCotaPorFornecedor(movimentosEstoqueCotaOperacaoEnvioReparte);
+        final Map<Long, List<MovimentosEstoqueEncalheDTO>> movimentosReparteAgrupadosPorFornecedor = this
+                .agrupaMovimentosEstoqueEncalheEncPorFornecedor(movimentosEstoqueCotaOperacaoEnvioReparte);
         
         return movimentosReparteAgrupadosPorFornecedor;
     }
@@ -1300,6 +1296,53 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         this.gerarMovimentoFinanceiroCota(cota, fornecedor, movimentosEstoqueCota, movimentosEstorno,
                 tipoMovimentoFinanceiro, totalGeral, dataOperacao, usuario);
     }
+    private void gerarMovimentoFinanceiroCotaReparte(final Cota cota, final Fornecedor fornecedor,
+             final List<MovimentoEstoqueCota> movimentosEstorno,
+            final Date dataOperacao, final Usuario usuario, final List<MovimentosEstoqueEncalheDTO> movimentosEstoqueCota) {
+        
+        BigDecimal precoVendaItem = BigDecimal.ZERO;
+        BigInteger quantidadeItem = BigInteger.ZERO;
+        BigDecimal totalItem = BigDecimal.ZERO;
+        BigDecimal totalGeral = BigDecimal.ZERO;
+        BigDecimal totalEstorno = BigDecimal.ZERO;
+        
+        totalEstorno = this.obterValorMovimentosEstoqueCota(movimentosEstorno);
+        
+        if (movimentosEstoqueCota != null) {
+            
+            for (final MovimentosEstoqueEncalheDTO item : movimentosEstoqueCota) {
+                
+                
+                
+                if (item.getPrecoComDesconto() != null) {
+                    
+                    precoVendaItem = item.getPrecoComDesconto();
+                } else {
+                    
+                    precoVendaItem = (BigDecimal) ObjectUtils.defaultIfNull(item.getPrecoVenda(), BigDecimal.ZERO);
+                }
+                
+                quantidadeItem = (item.getQtde() != null) ? item.getQtde() : BigInteger.ZERO;
+                
+                totalItem = precoVendaItem.multiply(new BigDecimal(quantidadeItem.longValue()));
+                
+                totalGeral = totalGeral.add(totalItem);
+            }
+        }
+        
+        final TipoMovimentoFinanceiro tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository
+                .buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
+        
+        totalGeral = totalGeral.subtract(totalEstorno != null ? totalEstorno : BigDecimal.ZERO);
+        
+        this.gerarMovimentoFinanceiro(cota, fornecedor, movimentosEstoqueCota, movimentosEstorno,
+                tipoMovimentoFinanceiro, totalGeral, dataOperacao, usuario);
+    }
+    
+    
+
+    
+    
     
     /**
      * Gera Financeiro para Movimentos de Estoque da Cota à Vista referentes à
@@ -1346,7 +1389,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 														               final Long idControleConferenciaEncalheCota, 
 														               final Date dataOperacao, 
 														               final Usuario usuario,
-														               final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte,
+														               final List<MovimentosEstoqueEncalheDTO> movimentosEstoqueCotaOperacaoEnvioReparte,
 														               final List<MovimentosEstoqueEncalheDTO> movimentosEstoqueCotaOperacaoConferenciaEncalhe,
 														               final List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno) {
         
@@ -1361,10 +1404,11 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         
         this.gerarMovimentoFinanceiroCotaReparte(cota, 
         										 fornecedor, 
-        										 movimentosEstoqueCotaOperacaoEnvioReparte,
+        										 
         										 movimentosEstoqueCotaOperacaoEstorno, 
         										 dataOperacao, 
-        										 usuario);
+        										 usuario,
+        										 movimentosEstoqueCotaOperacaoEnvioReparte);
         
         // COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO
         // CONSIGNADA ATÉ FECHAMENTO DO DIA
@@ -1521,7 +1565,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         
         // MOVIMENTOS DE ENVIO DE REPARTE À COTA QUE AINDA NÃO GERARAM
         // FINANCEIRO AGUPADOS POR FORNECEDOR
-        final Map<Long, List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = this
+        final Map<Long, List<MovimentosEstoqueEncalheDTO>> movimentosReparteAgrupadosPorFornecedor = this
                 .obterMovimentosEstoqueReparteComChamadaEncalheOuProdutoContaFirme(cota.getId(), datas);
         
         // MOVIMENTOS ESTORNADOS QUE ENTRAM COMO CREDITO À COTA AGUPADOS POR
