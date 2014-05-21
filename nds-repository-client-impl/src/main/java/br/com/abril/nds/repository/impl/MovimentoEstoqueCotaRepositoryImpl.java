@@ -424,38 +424,50 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(final Long idCota, final List<Date> datas, List<Long> idTiposMovimentoEstoque) {
+    public List<MovimentosEstoqueEncalheDTO> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(final Long idCota, final List<Date> datas, List<Long> idTiposMovimentoEstoque) {
         
         final StringBuilder sql = new StringBuilder();
         
-        sql.append("select mec.* from ");
-        sql.append("( ");
-        sql.append("	select distinct pe.id as produto_edicao_id ");
+        sql.append("SELECT mec.ID AS idMovimentoEstoqueCota,");
+        sql.append("mec.COTA_ID AS idCota,");
+        sql.append("edicao.id AS idProdutoEdicao,");
+        sql.append("forn.id AS idFornecedor,");
+        sql.append("mec.QTDE AS qtde,");
+        sql.append("mec.PRECO_COM_DESCONTO AS precoComDesconto,");
+        sql.append("edicao.PRECO_VENDA AS precoVenda,");
+        sql.append("mec.VALOR_DESCONTO AS valorDesconto ");
+        sql.append("FROM movimento_estoque_cota mec ");
+        sql.append("INNER JOIN produto_edicao edicao ON mec.produto_edicao_id = edicao.id ");
+        sql.append("INNER JOIN PRODUTO prod ON edicao.PRODUTO_ID = prod.id ");
+        sql.append("INNER JOIN produto_fornecedor prodForn ON prod.id = prodForn.PRODUTO_ID ");
+        sql.append("INNER JOIN fornecedor forn ON prodForn.fornecedores_ID = forn.id ");
+        sql.append("WHERE ");
+        sql.append("mec.STATUS = :statusAprovacao AND	mec.produto_edicao_id IN (");
+        sql.append("SELECT DISTINCT pe.id AS produto_edicao_id ");
+        sql.append("FROM produto_edicao pe ");
+        sql.append("INNER JOIN produto p ON p.ID = pe.PRODUTO_ID ");
+        sql.append("LEFT JOIN chamada_encalhe ce ON ce.PRODUTO_EDICAO_ID = pe.id ");
+        sql.append("LEFT JOIN chamada_encalhe_cota cec ON (ce.ID = cec.CHAMADA_ENCALHE_ID AND cec.cota_id = :idCota) ");
+        sql.append("WHERE ");
+        sql.append("p.FORMA_COMERCIALIZACAO = :formaComercializacaoProduto OR (cec.COTA_ID = :idCota AND ce.DATA_RECOLHIMENTO IN (:datas) ) ");
+        sql.append(") AND ");
+        sql.append("mec.cota_id = :idCota AND ");
+        sql.append("(mec.STATUS_ESTOQUE_FINANCEIRO IS NULL OR ");
+        sql.append("mec.STATUS_ESTOQUE_FINANCEIRO = :statusFinanceiro) AND ");
+        sql.append("mec.TIPO_MOVIMENTO_ID IN :idTiposMovimentoEstoque AND ");	 
+        sql.append("mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
+        sql.append("GROUP BY mec.ID");
         
-        sql.append("	from produto_edicao pe ");
-        
-        sql.append("	inner join produto p on p.ID = pe.PRODUTO_ID ");
-        sql.append("	left join chamada_encalhe ce on ce.PRODUTO_EDICAO_ID = pe.id ");
-        sql.append("	left join chamada_encalhe_cota cec on (ce.ID = cec.CHAMADA_ENCALHE_ID and cec.cota_id = :idCota) ");
-        
-        sql.append("	where ");
-        
-        sql.append("	p.FORMA_COMERCIALIZACAO = :formaComercializacaoProduto or ( cec.COTA_ID = :idCota and ce.DATA_RECOLHIMENTO IN (:datas) )        ");
-        
-        sql.append(") pe_conta_firme_ou_cota_encalhe_na_data ");
-        
-        sql.append("inner join movimento_estoque_cota mec on ( ");
-        sql.append(" 	                                      mec.STATUS = :statusAprovacao and ");
-        sql.append("	                                      pe_conta_firme_ou_cota_encalhe_na_data.produto_edicao_id = mec.produto_edicao_id and ");
-        sql.append("	                                      mec.cota_id = :idCota and ");
-        sql.append("	                                      ( mec.STATUS_ESTOQUE_FINANCEIRO is null or mec.STATUS_ESTOQUE_FINANCEIRO = :statusFinanceiro ) and ");
-        sql.append("                                          mec.TIPO_MOVIMENTO_ID in (:idTiposMovimentoEstoque) and ");
-        
-        sql.append(" 	                                      mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
-        
-        sql.append("                                         ) group by mec.ID ");
-        
-        final Query query = getSession().createSQLQuery(sql.toString()).addEntity(MovimentoEstoqueCota.class);
+        final Query query = getSession().createSQLQuery(sql.toString())
+        		.addScalar("idMovimentoEstoqueCota",LongType.INSTANCE)
+        		.addScalar("idCota",LongType.INSTANCE)
+        		.addScalar("idProdutoEdicao",LongType.INSTANCE)
+        		.addScalar("idFornecedor",LongType.INSTANCE)
+        		
+        		.addScalar("qtde",BigIntegerType.INSTANCE)
+        		.addScalar("precoComDesconto",BigDecimalType.INSTANCE)
+        		.addScalar("precoVenda",BigDecimalType.INSTANCE)
+        		.addScalar("valorDesconto",BigDecimalType.INSTANCE);
         
         query.setParameterList("idTiposMovimentoEstoque", idTiposMovimentoEstoque);
         
@@ -464,9 +476,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameter("idCota", idCota);
         query.setParameterList("datas", datas);
         query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME.name());
+        query.setResultTransformer(new AliasToBeanResultTransformer(MovimentosEstoqueEncalheDTO.class));
         
         
-        query.setCacheable(true);
         
         return query.list();
     }
@@ -3520,7 +3532,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
                 .append(":qtde, :idCota, :dataLancamentoOriginal, :estoqueProdutoEdicaoCotaId, ")
                 .append(":estudoCotaId, :notaEnvioItemNotaEnvioId, :notaEnvioItemSequencia, :lancamentoId, ")
                 .append(":movimentoEstoqueCotaFuroId, :movimentoFinanceiroCotaId, :statusEstoqueFinanceiro, ")
-                .append(":precoComDesconto, :precoVenda, :valorDesconto, :formaComercializacao, cotaContribuinteExigeNf, -1) ");
+                .append(":precoComDesconto, :precoVenda, :valorDesconto, :formaComercializacao, :cotaContribuinteExigeNF, -1) ");
                 
                 final SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(movimentosEstoqueCota.toArray());
                 
