@@ -3017,21 +3017,26 @@ public class CotaServiceImpl implements CotaService {
             
             cota.setAlteracaoTipoCota(distribuidorService.obterDataOperacaoDistribuidor());
             
-            this.alterarCota(cota);
+            alterado = true;
+        }
+        
+        if (cota.getValorMinimoCobranca().compareTo(valorMinimoCobranca) != 0){
+            
+            cota.setValorMinimoCobranca(valorMinimoCobranca);
             
             alterado = true;
         }
         
-        if (((cota.isDevolveEncalhe()!=null) && (devolveEncalhe != cota.isDevolveEncalhe())) || 
-            cota.getValorMinimoCobranca().compareTo(valorMinimoCobranca) != 0){
+        if ((cota.isDevolveEncalhe()==null) || (devolveEncalhe != cota.isDevolveEncalhe())){
                 
             cota.setDevolveEncalhe(devolveEncalhe);
-            
-            cota.setValorMinimoCobranca(valorMinimoCobranca);
-            
-            this.alterarCota(cota);
-            
+
             alterado = true;
+        }
+        
+        if (alterado){
+        	
+        	this.alterarCota(cota);
         }
         
         return alterado;
