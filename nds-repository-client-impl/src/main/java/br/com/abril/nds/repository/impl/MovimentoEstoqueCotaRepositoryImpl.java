@@ -3713,5 +3713,31 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				.setParameter("id", id)
 				.executeUpdate();
 	}
+
+    @Override
+    public void updateByCotaAndDataOpAndGrupos(Long idCota, Date dataOperacao, List<String> grupoMovimentoFinaceiros,
+            String motivo, StatusEstoqueFinanceiro statusEstoqueFinanceiro) {
+        
+        final String sql = "UPDATE MOVIMENTO_ESTOQUE_COTA AS estoque "+
+            "join MOVIMENTO_FINANCEIRO_COTA movi on "+
+            "movi.id = estoque.MOVIMENTO_FINANCEIRO_COTA_ID "+
+            "join TIPO_MOVIMENTO tipo on "+
+            "movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' "+
+            "SET estoque.MOTIVO = :motivo "+
+            ",estoque.MOVIMENTO_FINANCEIRO_COTA_ID = :movimentoFinanceiroCota "+
+            ",estoque.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro "+
+            "where movi.COTA_ID = :idCota "+
+            "and tipo.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinaceiros)"+
+            "and movi.DATA = :dataOperacao ";
+        
+         this.getSession().createSQLQuery(sql)
+            .setParameter("motivo", motivo)
+            .setParameter("movimentoFinanceiroCota", null)
+            .setParameter("statusEstoqueFinanceiro", statusEstoqueFinanceiro.name())
+            .setParameter("idCota", idCota)
+            .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
+            .setParameter("dataOperacao", dataOperacao)
+            .executeUpdate();
+    }
     
 }

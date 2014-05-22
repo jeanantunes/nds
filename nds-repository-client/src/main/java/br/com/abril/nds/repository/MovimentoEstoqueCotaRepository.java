@@ -28,7 +28,6 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
-import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.util.Intervalo;
@@ -514,5 +513,8 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public abstract void updateById(Long id, MovimentoFinanceiroCota movimentoFinanceiroCota);
 
 	public abstract void updateById(Long id, StatusEstoqueFinanceiro statusEstoqueFinanceiro);
+
+    void updateByCotaAndDataOpAndGrupos(Long idCota, Date dataOperacao, List<String> grupoMovimentoFinaceiros,
+            String motivo, StatusEstoqueFinanceiro financeiroNaoProcessado);
 	
 }

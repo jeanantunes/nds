@@ -7,7 +7,6 @@ import java.util.Map;
 
 import br.com.abril.nds.client.vo.ProcessamentoFinanceiroCotaVO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
-import br.com.abril.nds.dto.MovimentosEstoqueEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -156,4 +155,6 @@ public interface MovimentoFinanceiroCotaService {
 	void removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(Integer numeroCota, Date dataOperacao);
 
 	public abstract void removerMovimentosFinanceirosCota(final Long idConsolidado);
+
+    void removerMovimentosFinanceirosCotaPorDataCota(Date dataOperacao, Long idCota);
 }
