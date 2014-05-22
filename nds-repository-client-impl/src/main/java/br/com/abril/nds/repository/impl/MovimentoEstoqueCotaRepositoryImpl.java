@@ -3556,7 +3556,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final Query query = this.getSession().createQuery(hql.toString());
         query.setParameter("idEstudo", idEstudo);
         
-        
     }
     
     @SuppressWarnings("unchecked")

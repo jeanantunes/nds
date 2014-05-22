@@ -27,6 +27,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -204,6 +205,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         final List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(idLancamento, idProdutoEdicao);
         
+        Distribuidor distribuidor = distribuidorService.obter();
+        
         BigInteger total = BigInteger.ZERO;
         
         BigInteger totalParcialJuramentado = BigInteger.ZERO;
@@ -230,9 +233,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                     produtoEdicao.getProduto().getFornecedor().getId(), idProdutoEdicao, idProduto);
             
             final MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
-                    dataPrevista, produtoEdicao, idUsuario,
-                    tipoMovimentoCota, dataDistribuidor, dataOperacao,
-                    idLancamento, descontos, false, estudoCota);
+                    distribuidor, dataPrevista, produtoEdicao,
+                    idUsuario, tipoMovimentoCota, dataDistribuidor,
+                    dataOperacao, idLancamento, descontos, false, estudoCota);
             
             if(TipoEstudoCota.NORMAL.equals(estudoCota.getTipoEstudo())){
                 
@@ -1583,15 +1586,20 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     
     @Override
     @Transactional
-    public MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(final Date dataLancamento, final ProdutoEdicao produtoEdicao, final Long idUsuario,
-            final TipoMovimentoEstoque tipoMovimentoEstoque, final Date dataMovimento, Date dataOperacao,
-            Long idLancamento, final Map<String, DescontoDTO> descontos, final boolean isMovimentoDiferencaAutomatico, EstudoCotaDTO estudoCotaDTO) {
+    public MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(Distribuidor distribuidor, final Date dataLancamento, final ProdutoEdicao produtoEdicao,
+            final Long idUsuario, final TipoMovimentoEstoque tipoMovimentoEstoque, final Date dataMovimento,
+            Date dataOperacao, Long idLancamento, final Map<String, DescontoDTO> descontos, final boolean isMovimentoDiferencaAutomatico, EstudoCotaDTO estudoCotaDTO) {
         
         this.validarDominioGrupoMovimentoEstoque(tipoMovimentoEstoque, Dominio.COTA);
         
         if(estudoCotaDTO == null) {
         	
-        	throw new IllegalArgumentException("Estudo cota não pode ser nulo.");
+        	throw new IllegalArgumentException(String.format("%s não pode ser nulo.", EstudoCotaDTO.class.getName()));
+        }
+        
+        if(distribuidor == null) {
+        	
+        	throw new IllegalArgumentException(String.format("%s não pode ser nulo.", Distribuidor.class.getName()));
         }
         
         if (dataOperacao == null) {
@@ -1626,7 +1634,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             movimentoEstoqueCota.setEstudoCotaId(estudoCotaDTO.getId());
         }
         
-        movimentoEstoqueCota.setCotaContribuinteExigeNF(estudoCotaDTO.isCotaContribuinteExigeNotaFiscal());
+        movimentoEstoqueCota.setCotaContribuinteExigeNF(!distribuidor.isPossuiRegimeEspecialDispensaInterna() || estudoCotaDTO.isCotaContribuinteExigeNotaFiscal());
         
         if (dataLancamento != null && produtoEdicao.getId() != null) {
             
