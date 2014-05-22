@@ -2,6 +2,8 @@ package br.com.abril.nds.model.ftf.envio;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
 import br.com.abril.nds.model.ftf.FTFCommons;
@@ -60,34 +62,34 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=12, tipo="char", ordem=16)
 	private String numDeclaracaoImportacao;
 	
-	@FTFfield(tamanho=18, tipo="char", ordem=17)
+	@FTFfield(tamanho=15, tipo="char", ordem=17)
 	private String valorDespesasAcessorias;
 	
-	@FTFfield(tamanho=18, tipo="char", ordem=18)
+	@FTFfield(tamanho=15, tipo="char", ordem=18)
 	private String valorVariacaoCambial;
 	
-	@FTFfield(tamanho=18, tipo="char", ordem=19)
+	@FTFfield(tamanho=15, tipo="char", ordem=19)
 	private String valorFrete;
 	
-	@FTFfield(tamanho=18, tipo="char", ordem=20)
+	@FTFfield(tamanho=15, tipo="char", ordem=20)
 	private String valorSeguro;
 	
-	@FTFfield(tamanho=18, tipo="char", ordem=21)
+	@FTFfield(tamanho=15, tipo="char", ordem=21)
 	private String valorOutrasDespesas;
 	
-	@FTFfield(tamanho=18, tipo="char", ordem=22)
+	@FTFfield(tamanho=15, tipo="char", ordem=22)
 	private String valorComplemento;
 	
-	@FTFfield(tamanho=18, tipo="char", ordem=23)
+	@FTFfield(tamanho=15, tipo="char", ordem=23)
 	private String valorIcmsComplemento;
 	
-	@FTFfield(tamanho=18, tipo="char", ordem=24)
+	@FTFfield(tamanho=15, tipo="char", ordem=24)
 	private String valorIpiComplemento;
 	
 	@FTFfield(tamanho=1, tipo="char", ordem=25)
 	private String imprimePercentualDesconto;
 	
-	@FTFfield(tamanho=18, tipo="char", ordem=26)
+	@FTFfield(tamanho=1, tipo="char", ordem=26)
 	private String codMotivoCancelamento;
 	
 	@FTFfield(tamanho=1, tipo="char", ordem=27)
@@ -117,10 +119,10 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=4, tipo="char", ordem=35)
 	private String quantidadeVolumes;
 	
-	@FTFfield(tamanho=15, tipo="char", ordem=36)
+	@FTFfield(tamanho=10, tipo="char", ordem=36)
 	private String pesoLiquido;
 	
-	@FTFfield(tamanho=15, tipo="char", ordem=37)
+	@FTFfield(tamanho=10, tipo="char", ordem=37)
 	private String pesoBruto;
 	
 	@FTFfield(tamanho=10, tipo="char", ordem=38)
@@ -138,7 +140,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=1, tipo="char", ordem=42)
 	private String formaFaturamento;
 	
-	@FTFfield(tamanho=7, tipo="char", ordem=43)
+	@FTFfield(tamanho=4, tipo="char", ordem=43)
 	private String percentualComissaoIntermediaio;
 	
 	@FTFfield(tamanho=8, tipo="char", ordem=44)
@@ -150,7 +152,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=9, tipo="char", ordem=46)
 	private String codIntermediarioSistemaOrigem;
 	
-	@FTFfield(tamanho=18, tipo="char", ordem=47)
+	@FTFfield(tamanho=15, tipo="char", ordem=47)
 	private String valorBruto;
 	
 	@FTFfield(tamanho=6, tipo="char", ordem=48)
@@ -171,7 +173,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=15, tipo="char", ordem=53)
 	private String numFaturaCliente;
 	
-	@FTFfield(tamanho=18, tipo="char", ordem=54)
+	@FTFfield(tamanho=15, tipo="char", ordem=54)
 	private String valorDescontoComercial;
 	
 	@FTFfield(tamanho=11, tipo="char", ordem=55)
@@ -207,7 +209,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=11, tipo="char", ordem=65)
 	private String codUnidadeOperacionalEmpresaDestinataria;
 	
-	@FTFfield(tamanho=7, tipo="numeric", ordem=66)
+	@FTFfield(tamanho=5, tipo="numeric", ordem=66)
 	private String percentualDescontoFidelidade;
 	
 	@FTFfield(tamanho=30, tipo="char", ordem=67)
@@ -272,12 +274,6 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	
 	@FTFfield(tamanho=12, tipo="numeric", ordem=86)
 	private String codFaturaAssociada;
-	
-	@FTFfield(tamanho=10, tipo="numeric", ordem=87)
-	private String codPessoaDetalheEmissorNota;
-	
-	@FTFfield(tamanho=10, tipo="numeric", ordem=88)
-	private String codPessoaDetalheDestinatarioNota;
 
 	public String getTipoRegistro() {
 		return tipoRegistro;
@@ -932,29 +928,13 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	public void setCodFaturaAssociada(String codFaturaAssociada) {
 		this.codFaturaAssociada = codFaturaAssociada;
 	}
-
-	public String getCodPessoaDetalheEmissorNota() {
-		return codPessoaDetalheEmissorNota;
-	}
-
-	public void setCodPessoaDetalheEmissorNota(String codPessoaDetalheEmissorNota) {
-		this.codPessoaDetalheEmissorNota = codPessoaDetalheEmissorNota;
-	}
-
-	public String getCodPessoaDetalheDestinatarioNota() {
-		return codPessoaDetalheDestinatarioNota;
-	}
-
-	public void setCodPessoaDetalheDestinatarioNota(
-			String codPessoaDetalheDestinatarioNota) {
-		this.codPessoaDetalheDestinatarioNota = codPessoaDetalheDestinatarioNota;
-	}
-
+	
 	public String getCodigoCentroEmissor() {
 		return codigoCentroEmissor;
 	}
 
 	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
+		codigoCentroEmissor = StringUtils.leftPad(codigoCentroEmissor, 2, '0');
 		this.codigoCentroEmissor = codigoCentroEmissor;
 	}
 

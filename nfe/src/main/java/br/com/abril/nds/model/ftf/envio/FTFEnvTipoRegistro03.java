@@ -57,7 +57,7 @@ public class FTFEnvTipoRegistro03 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=4, tipo="char", ordem=17)
 	private String subTipo;
 	
-	@FTFfield(tamanho=4, tipo="char", ordem=18)
+	@FTFfield(tamanho=3, tipo="char", ordem=18)
 	private String codEmpresaIQ;
 	
 	@FTFfield(tamanho=11, tipo="char", ordem=19)

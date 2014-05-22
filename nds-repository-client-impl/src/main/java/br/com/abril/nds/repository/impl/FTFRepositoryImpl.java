@@ -201,9 +201,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" '' as nomeMunicipioServicoPrestado, ");
 		sqlBuilder.append(" '' as numNotaEmpenho, ");
 		sqlBuilder.append(" '' as codViagem, ");
-		sqlBuilder.append(" '' as codFaturaAssociada, ");
-		sqlBuilder.append(" '' as codPessoaDetalheEmissorNota, ");
-		sqlBuilder.append(" '' as codPessoaDetalheDestinatarioNota ");
+		sqlBuilder.append(" '' as codFaturaAssociada ");
 		sqlBuilder.append(" from nota_fiscal_novo nfn ");
 		sqlBuilder.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ");
 		sqlBuilder.append(" left join nota_fiscal_endereco endereco on endereco.ID = nfn.ENDERECO_ID_DESTINATARIO ");

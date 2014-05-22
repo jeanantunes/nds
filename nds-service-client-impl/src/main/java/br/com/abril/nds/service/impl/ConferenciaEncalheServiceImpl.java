@@ -448,10 +448,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
 			}
 			
-			return (cota.getParametrosCotaNotaFiscalEletronica() != null && 
-					cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null) ? 
-					cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null || 
-					cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() !=null  : false;
+			return (cota.getParametrosCotaNotaFiscalEletronica() != null && (cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() || cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) ? cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() !=null  : false);
 		}
 	}	
 	

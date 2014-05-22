@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.ftf.envio;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
 import br.com.abril.nds.model.ftf.FTFCommons;
@@ -38,9 +40,6 @@ public class FTFEnvTipoRegistro00 extends FTFBaseDTO implements FTFCommons {
 	
 	@FTFfield(tamanho=6, tipo="char", ordem=11)
 	private String numSequencia;
-	
-	@FTFfield(tamanho=50, tipo="char", ordem=12)
-	private String novoNomeArquivo;
 
 	public String getTipoRegistro() {
 		return tipoRegistro;
@@ -55,6 +54,8 @@ public class FTFEnvTipoRegistro00 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
+		
+		codigoCentroEmissor = StringUtils.leftPad(codigoCentroEmissor, 2, '0');
 		this.codigoCentroEmissor = codigoCentroEmissor;
 	}
 
@@ -129,13 +130,4 @@ public class FTFEnvTipoRegistro00 extends FTFBaseDTO implements FTFCommons {
 	public void setNumSequencia(String numSequencia) {
 		this.numSequencia = numSequencia;
 	}
-
-	public String getNovoNomeArquivo() {
-		return novoNomeArquivo;
-	}
-
-	public void setNovoNomeArquivo(String novoNomeArquivo) {
-		this.novoNomeArquivo = novoNomeArquivo;
-	}
-
 }
