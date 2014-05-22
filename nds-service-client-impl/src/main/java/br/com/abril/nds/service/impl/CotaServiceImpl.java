@@ -3022,7 +3022,7 @@ public class CotaServiceImpl implements CotaService {
             alterado = true;
         }
         
-        if (devolveEncalhe!=cota.isDevolveEncalhe() || 
+        if (((cota.isDevolveEncalhe()!=null) && (devolveEncalhe != cota.isDevolveEncalhe())) || 
             cota.getValorMinimoCobranca().compareTo(valorMinimoCobranca) != 0){
                 
             cota.setDevolveEncalhe(devolveEncalhe);
