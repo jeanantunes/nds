@@ -5,8 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +19,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +47,13 @@ import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.FileService;
-import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.FileImportUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -110,9 +109,6 @@ public class ParametroCobrancaCotaController extends BaseController {
     
     @Autowired
     private ParametroSistemaService parametroSistemaService;
-    
-    @Autowired
-    private FormaCobrancaService formaCobrancaService;
     
     private final HttpServletResponse httpResponse;
     
@@ -425,8 +421,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         
         if (parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(parametroCobranca.getIdCota()) == 0
         		&& parametroCobrancaAlterado) {
-            // A cota sempre terá uma forma de cobrança a forma de cobrança
-            // principal do Distribuidor
+
             parametroCobrancaCotaService.inserirFormaCobrancaDoDistribuidorNaCota(parametroCobranca);
             
         } else {
@@ -437,7 +432,10 @@ public class ParametroCobrancaCotaController extends BaseController {
         	this.salvarContrato(parametroCobranca.getIdCota(), parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
         }
         
-        cotaService.salvarTipoCota(parametroCobranca.getIdCota(), parametroCobranca.getTipoCota(), parametroCobranca.isDevolveEncalhe());
+        cotaService.salvarCaracteristicasFinanceirasEspecificasCota(parametroCobranca.getIdCota(), 
+        		                                                    parametroCobranca.getTipoCota(), 
+        		                                                    parametroCobranca.isDevolveEncalhe(), 
+        		                                                    CurrencyUtil.converterValor(parametroCobranca.getValorMinimo()));
         
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),
                 						Constantes.PARAM_MSGS).recursive().serialize();
@@ -804,7 +802,7 @@ public class ParametroCobrancaCotaController extends BaseController {
     }
     
     
-	                                                        /**
+	/**
      * Método responsável por postar os dados da aba financeiro que são
      * específicos da cota.
      * 
@@ -813,13 +811,14 @@ public class ParametroCobrancaCotaController extends BaseController {
      * @param tipoCota
      */
     @Post
-    @Path("/salvarContratoTipoCotaEDevolveEncalhe")
-    public void salvarContratoTipoCotaEDevolveEncalhe(final Long idCota, 
-    		                                     final Date inicioContrato, 
-    		                                     final Date terminoContrato, 
-    		                                     final TipoCota tipoCota, 
-    		                                     final boolean possuiContrato,
-    		                                     final boolean devolveEncalhe) {
+    @Path("/salvarContratoECaracteristicasFinanceirasEspecificasCota")
+    public void salvarContratoECaracteristicasFinanceirasEspecificasCota(final Long idCota, 
+					    		                                         final Date inicioContrato, 
+					    		                                         final Date terminoContrato, 
+					    		                                         final TipoCota tipoCota, 
+					    		                                         final boolean possuiContrato,
+					    		                                         final boolean devolveEncalhe,
+					    		                                         final BigDecimal valorMinimoCobranca) {
         
         String msg1 = "";
         String msg2 = "";
@@ -830,9 +829,9 @@ public class ParametroCobrancaCotaController extends BaseController {
             msg1 = "Contrato";
         }
         
-        if (cotaService.salvarTipoCota(idCota, tipoCota, devolveEncalhe)){
+        if (cotaService.salvarCaracteristicasFinanceirasEspecificasCota(idCota, tipoCota, devolveEncalhe, valorMinimoCobranca)){
             
-            msg2 = "Tipo da cota";
+            msg2 = "Características Financeiras Específicas";
         }
         
         if (!msg1.equals("") || !msg2.equals("")){

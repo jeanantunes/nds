@@ -280,7 +280,7 @@ public class EmissaoCEController extends BaseController {
 			
 			if (dados == null){
 				
-				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir a Boleto em Branco !");
+				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir o Boleto em Branco !");
 			}
 			
 			List<BoletoEmBrancoDTO> boletosEmBranco = this.obterDadosBoletosEmBrancoPorListaCE(dados.getCotasEmissao(), filtro);
@@ -295,7 +295,7 @@ public class EmissaoCEController extends BaseController {
 			}
 			else{
 				
-				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir a Boleto em Branco !");
+				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir o Boleto em Branco !");
 			}
 			
 			result.use(Results.json()).from(existemBoletosEmBranco,"result").recursive().serialize();
