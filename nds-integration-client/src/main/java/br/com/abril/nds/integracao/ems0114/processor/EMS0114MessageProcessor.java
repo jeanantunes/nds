@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.jfree.data.general.DatasetUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,7 @@ import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
+import br.com.abril.nds.util.DateUtil;
 
 @Component
 public class EMS0114MessageProcessor extends AbstractRepository implements
@@ -123,12 +125,11 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			if (!dtRecolhimentoPrevista.equals(dtRecolhimentoArquivo)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração da DATA RECOLHIMENTO PREVISTA do Produto "
-								+ codigoProduto + " Edição: " + edicao
-								+ " de " + simpleDateFormat.format(
-										dtRecolhimentoPrevista)
-								+ " para " + simpleDateFormat.format(
-										dtRecolhimentoArquivo));
+						"Alteração da DATA RECOLHIMENTO PREVISTA"
+								+ " de " + DateUtil.formatarDataPTBR(dtRecolhimentoPrevista)
+								+ " para " + DateUtil.formatarDataPTBR(dtRecolhimentoArquivo)
+								+ " Produto "+codigoProduto 
+								+ " Edição " + edicao);
 				lancamento.setDataRecolhimentoPrevista(dtRecolhimentoArquivo);
 				lancamento.setAlteradoInteface(true);
 				this.getSession().merge(lancamento);
@@ -136,12 +137,11 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração da DATA RECOLHIMENTO DISTRIBUIDOR do Produto "
-							+ codigoProduto + " Edição " + edicao
-							+ " de " + simpleDateFormat.format(
-									lancamento.getDataRecolhimentoDistribuidor())
-							+ " para " + simpleDateFormat.format(
-									dtRecolhimentoArquivo));
+					"Alteração da DATA RECOLHIMENTO DISTRIBUIDOR"
+							+ " de " + DateUtil.formatarDataPTBR(lancamento.getDataRecolhimentoDistribuidor())
+							+ " para " + DateUtil.formatarDataPTBR(dtRecolhimentoArquivo)
+							+ " Produto "+codigoProduto 
+							+ " Edição " + edicao);
 			lancamento.setDataRecolhimentoDistribuidor(dtRecolhimentoArquivo);
 			lancamento.setAlteradoInteface(true);
 			this.getSession().merge(lancamento);

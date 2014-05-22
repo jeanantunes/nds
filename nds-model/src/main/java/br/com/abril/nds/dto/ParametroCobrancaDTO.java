@@ -15,7 +15,6 @@ public class ParametroCobrancaDTO {
 	Long idPolitica;
 	Long idBanco;
 	
-	BigDecimal valorMinimo;
 	BigDecimal taxaMulta;
 	BigDecimal valorMulta;
 	BigDecimal taxaJuros;
@@ -72,7 +71,6 @@ public class ParametroCobrancaDTO {
 		this.idPolitica = idPolitica;
 		this.idBanco = idBanco;
 		this.idFornecedorPadrao = idFornecedorPadrao;
-		this.valorMinimo = valorMinimo;
 		this.taxaMulta = taxaMulta;
 		this.valorMulta = valorMulta;
 		this.taxaJuros = taxaJuros;
@@ -114,16 +112,6 @@ public class ParametroCobrancaDTO {
 	public void setIdBanco(Long idBanco) {
 		this.idBanco = idBanco;
 	}
-
-
-	public BigDecimal getValorMinimo() {
-		return valorMinimo;
-	}
-
-	public void setValorMinimo(BigDecimal valorMinimo) {
-		this.valorMinimo = valorMinimo;
-	}
-
 
 	public BigDecimal getTaxaMulta() {
 		return taxaMulta;

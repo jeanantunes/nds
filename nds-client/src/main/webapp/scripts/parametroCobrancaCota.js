@@ -680,7 +680,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 				"parametroCobranca.tipoCota": tipoCota,
 				"parametroCobranca.devolveEncalhe": devolveEncalhe,
 				"parametroCobranca.idFornecedor": fornecedorPadrao};
-				//"parametroCobranca.unificaCobranca": unificaCobranca};
 		
 		return params;
 	},
@@ -718,16 +717,12 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		var parametroCobranca = parametroCobrancaCotaController.financeiro.resultParametroCobranca;
 
-		if(parametroCobrancaTela['parametroCobranca.sugereSuspensao'] != parametroCobranca['parametroCobranca.sugereSuspensao']){return true;}
     	if(parametroCobrancaTela['parametroCobranca.fatorVencimento'] != parametroCobranca['parametroCobranca.fatorVencimento']){return true;}
     	if(parametroCobrancaTela['parametroCobranca.idCota'] != parametroCobranca['parametroCobranca.idCota']){return true;}
     	if(parametroCobrancaTela['parametroCobranca.idFornecedor'] != parametroCobranca['parametroCobranca.idFornecedor']){return true;}
     	if(parametroCobrancaTela['parametroCobranca.idParametroCobranca'] != parametroCobranca['parametroCobranca.idParametroCobranca']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.numCota'] != parametroCobranca['parametroCobranca.numCota']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.qtdDividasAberto'] != parametroCobranca['parametroCobranca.qtdDividasAberto']){return true;}
-	    if(parametroCobrancaTela['parametroCobranca.sugereSuspensao'] != parametroCobranca['parametroCobranca.sugereSuspensao']){return true;}
-	    //if(parametroCobrancaTela['parametroCobranca.unificaCobranca'] != parametroCobranca['parametroCobranca.unificaCobranca']){return true;}
-	    if(parametroCobrancaTela['parametroCobranca.valorMinimo'] != parametroCobranca['parametroCobranca.valorMinimo']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.vrDividasAberto'] != parametroCobranca['parametroCobranca.vrDividasAberto']){return true;}
 
 		return false;
@@ -764,7 +759,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		return false;
 	},
 	
-	salvarContratoTipoCotaEDevolveEncalhe : function(){
+	salvarContratoECaracteristicasFinanceirasEspecificasCota : function(){
 		
 		var params = parametroCobrancaCotaController.buildParametroCobrancaDto();
 		
@@ -780,14 +775,17 @@ var parametroCobrancaCotaController = $.extend(true, {
         
         var isContrato 			= $("#contrato", this.workspace).is(":checked");
         
+        var valorMinimo         = $("#valorMinimo", this.workspace).val();
+        
         var params =  {"idCota": idCota,
         		       "inicioContrato": inicioContrato,
 				       "terminoContrato": terminoContrato,
 				       "tipoCota": tipoCota,
 				       "possuiContrato": isContrato,
-				       "devolveEncalhe": devolveEncalhe};
+				       "devolveEncalhe": devolveEncalhe,
+				       "valorMinimoCobranca": valorMinimo};
         
-		$.postJSON(contextPath + "/cota/parametroCobrancaCota/salvarContratoTipoCotaEDevolveEncalhe",
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/salvarContratoECaracteristicasFinanceirasEspecificasCota",
 				   params,
 				   function(mensagens) {
 			
@@ -853,7 +851,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		   } 
 		   else{
 				
-		       parametroCobrancaCotaController.salvarContratoTipoCotaEDevolveEncalhe();
+		       parametroCobrancaCotaController.salvarContratoECaracteristicasFinanceirasEspecificasCota();
 		   }
 	    }
 	    else {

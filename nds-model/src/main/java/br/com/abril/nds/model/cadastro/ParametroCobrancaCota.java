@@ -1,7 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,9 +40,6 @@ public class ParametroCobrancaCota implements Serializable {
 	@JoinColumn(name = "COTA_ID", unique = true)
 	private Cota cota;
 	
-	@Column(name = "VALOR_MINIMO_COBRANCA", precision=18, scale=4)
-	private BigDecimal valorMininoCobranca;
-	
 	@Column(name = "FATOR_VENCIMENTO")
 	private Integer fatorVencimento;
 	
@@ -75,14 +71,6 @@ public class ParametroCobrancaCota implements Serializable {
 
 	public void setCota(Cota cota) {
 		this.cota = cota;
-	}
-
-	public BigDecimal getValorMininoCobranca() {
-		return valorMininoCobranca;
-	}
-
-	public void setValorMininoCobranca(BigDecimal valorMininoCobranca) {
-		this.valorMininoCobranca = valorMininoCobranca;
 	}
 
 	public Integer getFatorVencimento() {
