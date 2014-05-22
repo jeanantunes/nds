@@ -29,6 +29,8 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Util;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
@@ -356,7 +358,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração do Tipo de Publicação"
-					+" de "+ produto.getTipoProduto()
+					+" de "+ produto.getTipoProduto().getDescricao()
 					+" para "+ tipoProduto.getDescricao()
 					+ " Produto "+produto.getCodigo());
             
@@ -367,7 +369,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
             this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Nome da Publicação de "+ produto.getNome()
+					"Alteração do Nome do Produto de "+ produto.getNome()
 					+ " para "+input.getNomePublicacao()
 					+" Produto " + produto.getCodigo());
             
@@ -378,7 +380,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
             this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualizacao do Contexto Publicação de "+ produto.getCodigoContexto()
+					"Atualizacao do Contexto do Produto de "+ produto.getCodigoContexto()
 					+ " para "+input.getContextoPublicacao()
 					+" Produto " + produto.getCodigo());
             
@@ -514,7 +516,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração da Data de Desativação de "
 					+ produto.getDataDesativacao()
-					+ " para "+input.getDataDesativacao()
+					+ " para "+DateUtil.formatarDataPTBR(input.getDataDesativacao())
 					+" Produto " + produto.getCodigo());
             
             produto.setDataDesativacao(input.getDataDesativacao());
