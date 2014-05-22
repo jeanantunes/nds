@@ -2,6 +2,8 @@ package br.com.abril.nds.model.ftf.envio;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
 import br.com.abril.nds.model.ftf.FTFCommons;
@@ -932,6 +934,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
+		codigoCentroEmissor = StringUtils.leftPad(codigoCentroEmissor, 2, '0');
 		this.codigoCentroEmissor = codigoCentroEmissor;
 	}
 
