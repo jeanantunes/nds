@@ -348,7 +348,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 															        idUsuario, 
 															        qtdeARestaurarCotaAusenteSuplementar, 
 															        tipoMovimentoCota,
-																	dataOperacaoDistribuidor);
+																	dataOperacaoDistribuidor, null);
 				}	
 			}	
 		}

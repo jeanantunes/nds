@@ -835,7 +835,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi encontrado tipo de movimento de estoque para compra de encalhe suplementar!");
 		}
 
-		return movimentoEstoqueService.gerarMovimentoCota(dataLancamento, produtoEdicao.getId(), idCota, idUsuario, qntProduto, tipoMovimentoEstoqueCota, dataOperacao);
+		return movimentoEstoqueService.gerarMovimentoCota(
+		        dataLancamento, produtoEdicao.getId(), idCota, idUsuario, qntProduto, 
+		        tipoMovimentoEstoqueCota, dataOperacao, null);
 	}
 
 	/**
@@ -870,7 +872,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		}
 
 		movimentoEstoqueService.gerarMovimentoCota(null, idProdutoEdicao,idCota, idUsuario, qntProduto, 
-				tipoMovimentoEstoqueCota, dataOperacao);
+				tipoMovimentoEstoqueCota, dataOperacao, null);
 	}
 
 	/**
@@ -1384,7 +1386,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		}
 
 		movimentoEstoqueService.gerarMovimentoCota(null, idProdutoEdicao,idCota, idUsuario, quantidadeProdutoAlterada, 
-				tipoMovimento, dataOperacao);
+				tipoMovimento, dataOperacao, null);
 	}
 
 	@Override
