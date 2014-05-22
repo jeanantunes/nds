@@ -1828,7 +1828,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota, dataOperacao);
 		}
 		
-		if (consolidados != null) {
+		if (consolidados != null && !consolidados.isEmpty()) {
 			
 			for (ConsolidadoFinanceiroCota consolidado : consolidados) {
 				
@@ -1863,6 +1863,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
 			    
 			}
+		} else {
+		    //caso esteja finalizando conf. de uma cota centralizada/centralizadora
+		    this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaPorDataCota(dataOperacao, idCota);
 		}
 		
 		this.removerPostergados(idCota, dataOperacao);
