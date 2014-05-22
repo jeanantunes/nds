@@ -23,7 +23,6 @@ import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
@@ -2661,6 +2660,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final TipoMovimentoEstoque tipoMovimentoEstoqueCota = mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 	
+		ValoresAplicados valoresAplicados = 
+		        movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(
+		                numeroCota, produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
+		
+        if(valoresAplicados == null){
+            valoresAplicados = new ValoresAplicados(BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
+        }else{
+            verificarValorAplicadoNulo(valoresAplicados);
+        }
+		
 		MovimentoEstoqueCota movimentoEstoqueCota = 
 				movimentoEstoqueService.gerarMovimentoCota(
 						null, 
@@ -2669,16 +2678,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						usuario.getId(), 
 						conferenciaEncalheDTO.getQtdExemplar(), 
 						tipoMovimentoEstoqueCota,
-						this.distribuidorService.obterDataOperacaoDistribuidor());
-		
-		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
-		if(valoresAplicados == null){
-			valoresAplicados = new ValoresAplicados(BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
-		}else{
-			verificarValorAplicadoNulo(valoresAplicados);
-		}
-		
-		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
+						this.distribuidorService.obterDataOperacaoDistribuidor(),
+						valoresAplicados);
 		
 		return movimentoEstoqueCota;
 	}
