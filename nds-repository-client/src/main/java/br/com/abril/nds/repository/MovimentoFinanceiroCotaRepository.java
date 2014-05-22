@@ -255,4 +255,6 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	public abstract void removeByIdConsolidadoAndGrupos(Long idConsolidado,
 			List<String> grupoMovimentoFinaceiros);
 
+    public void removeByCotaAndDataOpAndGrupos(Long idCota, Date dataOperacao, List<String> grupoMovimentoFinaceiros);
+
 }

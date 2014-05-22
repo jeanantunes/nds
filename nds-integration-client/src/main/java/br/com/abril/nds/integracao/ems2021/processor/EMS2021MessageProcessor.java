@@ -37,14 +37,14 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
     @Autowired
     private NdsiLoggerFactory ndsiLoggerFactory;
 
-    @Autowired
-    private EstrategiaService estrategiaService;
+    //Autowired
+    //private EstrategiaService estrategiaService;
 
-    @Autowired
-    private DistribuidorService distribuidorService;
+    //Autowired
+    //private DistribuidorService distribuidorService;
 
-    @Autowired
-    private ProdutoEdicaoRepository produtoEdicaoRepository;
+    //Autowired
+    //private ProdutoEdicaoRepository produtoEdicaoRepository;
 
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
@@ -52,6 +52,8 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 
     @Override
     public void processMessage(Message message) {
+    	
+    /*
 
 	message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), "Oracle : Icd : TH152 : icd_user");
 	CouchDbClient dbClient = null;
@@ -83,8 +85,10 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 		dbClient.shutdown();
 	    }
 	}
+	*/
     }
 
+    /*
     private Estrategia montarEstrategia(Message message, EMS2021Input input) {
 
 	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
@@ -137,6 +141,7 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 	    estrategia.getBasesEstrategia().add(edicao);
 	}
     }
+    */
 
     @Override
     public void posProcess(Object tempVar) {
