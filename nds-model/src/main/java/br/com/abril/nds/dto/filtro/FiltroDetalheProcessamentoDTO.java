@@ -17,7 +17,8 @@ public class FiltroDetalheProcessamentoDTO extends FiltroDTO implements Serializ
 		
 		TIPO_ERRO("tipoErro"),
 		MENSAGEM("mensagem"),
-		NUMERO_LINHA("numeroLinha");
+		NUMERO_LINHA("numeroLinha"),
+		DEFAULT("Default");
 		
 		private String nomeColuna;
 		

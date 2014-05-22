@@ -5,13 +5,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
@@ -122,10 +122,9 @@ public interface MovimentoEstoqueService {
 													boolean validarTransfEstoqueDiferenca, Date dataLancamento,
 													StatusIntegracao statusIntegracao, Origem origem);
 	
-	MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(Date dataLancamento, ProdutoEdicao produtoEdicao, Long idCota, 
-			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
-			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota, Map<String, DescontoDTO> descontos, 
-			boolean isMovimentoDiferencaAutomatico, boolean isDevolveEncalhe, TipoCota tipoCota);
+	MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(Date dataLancamento, ProdutoEdicao produtoEdicao, Long idUsuario, 
+			TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao, 
+			Long idLancamento, Map<String, DescontoDTO> descontos, boolean isMovimentoDiferencaAutomatico, EstudoCotaDTO estudoCotaDTO);
 
 	
 	

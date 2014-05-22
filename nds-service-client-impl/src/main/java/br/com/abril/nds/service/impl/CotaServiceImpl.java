@@ -1627,7 +1627,7 @@ public class CotaServiceImpl implements CotaService {
 	    }
 	    		
 	    paramNFE.setEmailNotaFiscalEletronica(cotaDto.getEmailNF());
-	    paramNFE.setEmiteNotaFiscalEletronica(cotaDto.isEmiteNFE());
+	    paramNFE.setExigeNotaFiscalEletronica(cotaDto.isEmiteNFE());
 	    paramNFE.setContribuinteICMS(cotaDto.isContribuinteICMS());
 	    
 	    return paramNFE;

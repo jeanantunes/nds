@@ -750,7 +750,7 @@ public class NFeServiceImpl implements NFeService {
 			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
 				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
 					for (CotaExemplaresDTO cota : cotas) {
-						if((cota.isContribuinteICMS() != null && cota.isContribuinteICMS()) || (cota.isEmiteNotaFiscalEletronica() != null && cota.isEmiteNotaFiscalEletronica() )){
+						if((cota.isContribuinteICMS() != null && cota.isContribuinteICMS()) || (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() )){
 							cotasContribuinteEmitente.add(cota);
 						}
 					}

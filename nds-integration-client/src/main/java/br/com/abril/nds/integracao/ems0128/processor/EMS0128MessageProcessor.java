@@ -1,42 +1,41 @@
 package br.com.abril.nds.integracao.ems0128.processor;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+//import java.util.ArrayList;
+//import java.util.Date;
+//import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.hibernate.Query;
-import org.lightcouch.CouchDbClient;
-import org.lightcouch.NoDocumentException;
-import org.lightcouch.View;
-import org.lightcouch.ViewResult;
-import org.lightcouch.ViewResult.Rows;
-import org.springframework.beans.factory.annotation.Autowired;
+//import org.hibernate.Query;
+//import org.lightcouch.CouchDbClient;
+//import org.lightcouch.NoDocumentException;
+//import org.lightcouch.View;
+//import org.lightcouch.ViewResult;
+//import org.lightcouch.ViewResult.Rows;
+//import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
-import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
-import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.estoque.AtualizacaoEstoqueGFS;
-import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.LancamentoDiferenca;
-import br.com.abril.nds.model.estoque.MovimentoEstoque;
-import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+//import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
+//import br.com.abril.nds.model.Origem;
+//import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+//import br.com.abril.nds.model.estoque.AtualizacaoEstoqueGFS;
+//import br.com.abril.nds.model.estoque.Diferenca;
+//import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+//import br.com.abril.nds.model.estoque.LancamentoDiferenca;
+//import br.com.abril.nds.model.estoque.MovimentoEstoque;
+//import br.com.abril.nds.model.estoque.TipoDiferenca;
+//import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.integracao.Message;
-import br.com.abril.nds.model.integracao.StatusIntegracao;
+//import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
-
 public class EMS0128MessageProcessor extends AbstractRepository implements MessageProcessor  {
 
-	@Autowired
-	private DistribuidorService distribuidorService;
+	//Autowired
+	//private DistribuidorService distribuidorService;
 	
 	private int itens=1;
 	private EMS0128Input input;
@@ -45,6 +44,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		
+		/*
 		input = new EMS0128Input();
 		
 		input.setCodigoDistribuidor(distribuidorService.obter().getCodigoDistribuidorDinap());
@@ -57,10 +57,13 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		Query query = queryMovimentoEstoque();
 		
 		tempVar.set( query.list() );		
+		*/
 	}
 
-	
+	/*
 	private void atualizaStatus(String distribuidor) {
+		
+		
 		
 		CouchDbClient couchDbClient = this.getCouchDBClient(distribuidor);
 		
@@ -206,9 +209,11 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		return (LancamentoDiferenca) query.uniqueResult();
 	}
 
+	*/
 	@Override
 	public void processMessage(Message message) {
 		
+		/*
 		EMS0128InputItem item = new EMS0128InputItem();
 		
 		MovimentoEstoque me = (MovimentoEstoque) message.getBody();
@@ -244,6 +249,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		item.setSituacaoAcerto("SOLICITADO");
 		
 		input.getItems().add(item);
+		*/
 		
 	}
 
@@ -251,6 +257,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 	@SuppressWarnings("unchecked")
 	public void posProcess(Object tempVar) {
 
+		/*
 		if (!input.getItem().isEmpty()) {
 			CouchDbClient cdbc = this.getCouchDBClient(input.getCodigoDistribuidor());
 			input.setTipoDocumento("EMS0128");
@@ -266,9 +273,11 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 				me.setDataIntegracao(new Date());
 				getSession().merge(me);
 			}
-		}		
+		}
+		*/		
 	}
 
+	/*
 	private Query queryMovimentoEstoque() {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT me ");
@@ -303,5 +312,6 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		return query;
 	}
+	*/
 	
 }

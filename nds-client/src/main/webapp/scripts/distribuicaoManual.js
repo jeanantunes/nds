@@ -490,6 +490,7 @@ var distribuicaoManual = $.extend(true, {
 			var data = [];
 			data.push({name: 'estudoDTO.produtoEdicaoId', value: $('#idProdutoEdicao').val()});
 			data.push({name: 'estudoDTO.reparteDistribuir', value: $('#reparteInicial').val()});
+			data.push({name: 'estudoDTO.reparteDistribuido', value: $('#totalDistribuido').text()});
 			data.push({name: 'estudoDTO.dataLancamento', value: $('#dataLancamento').html()});
 			data.push({name: 'estudoDTO.lancamentoId', value: distribuicaoManual.idLancamento});
 			

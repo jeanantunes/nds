@@ -76,6 +76,8 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	
 	private String formaComercializacao;
 	
+	private boolean cotaContribuinteExigeNF;
+	
 	public MovimentoEstoqueCotaDTO() {
 	}
 	
@@ -335,4 +337,13 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	public void setFormaComercializacao(String formaComercializacao) {
 		this.formaComercializacao = formaComercializacao;
 	}
+
+	public boolean isCotaContribuinteExigeNF() {
+		return cotaContribuinteExigeNF;
+	}
+
+	public void setCotaContribuinteExigeNF(boolean cotaContribuinteExigeNF) {
+		this.cotaContribuinteExigeNF = cotaContribuinteExigeNF;
+	}
+	
 }

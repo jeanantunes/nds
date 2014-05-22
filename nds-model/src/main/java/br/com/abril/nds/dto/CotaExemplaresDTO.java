@@ -55,7 +55,7 @@ public class CotaExemplaresDTO implements Serializable {
 	
 	private Boolean contribuinteICMS;
 	
-	private Boolean emiteNotaFiscalEletronica;
+	private Boolean exigeNotaFiscalEletronica;
 
 	/**
 	 * @return the idCota
@@ -159,11 +159,11 @@ public class CotaExemplaresDTO implements Serializable {
 		this.contribuinteICMS = contribuinteICMS;
 	}
 
-	public Boolean isEmiteNotaFiscalEletronica() {
-		return emiteNotaFiscalEletronica;
+	public Boolean isExigeNotaFiscalEletronica() {
+		return exigeNotaFiscalEletronica;
 	}
 
-	public void setEmiteNotaFiscalEletronica(Boolean emiteNotaFiscalEletronica) {
-		this.emiteNotaFiscalEletronica = emiteNotaFiscalEletronica;
+	public void setExigeNotaFiscalEletronica(Boolean exigeNotaFiscalEletronica) {
+		this.exigeNotaFiscalEletronica = exigeNotaFiscalEletronica;
 	}
 }

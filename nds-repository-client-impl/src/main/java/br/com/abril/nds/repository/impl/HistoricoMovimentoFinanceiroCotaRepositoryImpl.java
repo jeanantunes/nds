@@ -19,7 +19,7 @@ public class HistoricoMovimentoFinanceiroCotaRepositoryImpl
 	}
 	
 	@Override
-	public void removeByIdConsolidadoAndGrupos(Long idConsolidado, List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros){
+	public void removeByIdConsolidadoAndGrupos(Long idConsolidado, List<String> grupoMovimentoFinaceiros){
 		
 	  	final StringBuilder sql =  new StringBuilder();
     	sql.append("DELETE histo FROM HISTORICO_MOVTO_FINANCEIRO_COTA AS histo  ");
