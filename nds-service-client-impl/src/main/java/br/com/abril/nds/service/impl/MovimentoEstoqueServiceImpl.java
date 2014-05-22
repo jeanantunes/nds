@@ -138,8 +138,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     @Autowired
     private EstoqueProdutoService estoqueProdutoService; 
 
-    @Autowired
-    private SchedulerFactoryBean schedulerFactoryBean;
     
     @Override
     @Transactional
