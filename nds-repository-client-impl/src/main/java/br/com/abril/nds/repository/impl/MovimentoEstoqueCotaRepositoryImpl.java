@@ -3556,7 +3556,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final Query query = this.getSession().createQuery(hql.toString());
         query.setParameter("idEstudo", idEstudo);
         
-        
     }
     
     @SuppressWarnings("unchecked")
@@ -3566,6 +3565,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final StringBuilder sql = new StringBuilder();
         
         sql.append(" select cota as cota, ");
+        sql.append(" mec.cotaContribuinteExigeNF, ");
         sql.append(" sum( ");
         sql.append(" 	case when (tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = 'ENTRADA') ");
         sql.append(" 	then (mec.qtde) ");
