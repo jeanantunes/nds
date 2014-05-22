@@ -95,9 +95,6 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepositoryModel<Poli
 				case NOME_BANCO:
 					hql.append(" order by p.formaCobranca.banco ");
 					break;
-				case VALOR_MINIMO_EMISSAO:
-					hql.append(" order by p.formaCobranca.valorMinimoEmissao ");
-					break;
 				case ACUMULA_DIVIDA:
 					hql.append(" order by p.acumulaDivida ");
 					break;
