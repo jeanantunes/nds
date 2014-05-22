@@ -36,20 +36,32 @@ public class FTFEnvTipoRegistro05 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=10, tipo="char", ordem=10)
 	private String dataVencimentoParcela;
 	
-	@FTFfield(tamanho=6, tipo="numeric", ordem=11)
+	@FTFfield(tamanho=10, tipo="char", ordem=11)
+	private String dataCotacao;
+	
+	@FTFfield(tamanho=6, tipo="numeric", ordem=12)
 	private String percentualDescontoCondicional;
 	
-	@FTFfield(tamanho=10, tipo="char", ordem=12)
+	@FTFfield(tamanho=10, tipo="char", ordem=13)
+	private String dataLimiteDescontoCondicional;
+	
+	@FTFfield(tamanho=6, tipo="numeric", ordem=14)
+	private String percentualDescontoFinanceiro;
+	
+	@FTFfield(tamanho=10, tipo="char", ordem=15)
 	private String dataLimiteDescontoFinanceiro;
 	
-	@FTFfield(tamanho=4, tipo="numeric", ordem=13)
+	@FTFfield(tamanho=4, tipo="numeric", ordem=16)
 	private String bancoCobranca;
 	
-	@FTFfield(tamanho=16, tipo="char", ordem=14)
+	@FTFfield(tamanho=16, tipo="char", ordem=17)
 	private String agenciaCobranca;
 	
-	@FTFfield(tamanho=2, tipo="char", ordem=15)
+	@FTFfield(tamanho=2, tipo="char", ordem=18)
 	private String digitoAgencia;
+	
+	@FTFfield(tamanho=2, tipo="char", ordem=19)
+	private String DataRelatCartao;
 	
 	/**
 	 * Data impressa no relatório de Cartões debitados.
@@ -115,6 +127,14 @@ public class FTFEnvTipoRegistro05 extends FTFBaseDTO implements FTFCommons {
 
 	public void setDataVencimentoParcela(String dataVencimentoParcela) {
 		this.dataVencimentoParcela = dataVencimentoParcela;
+	}
+	
+	public String getDataCotacao() {
+		return dataCotacao;
+	}
+
+	public void setDataCotacao(String dataCotacao) {
+		this.dataCotacao = dataCotacao;
 	}
 
 	public String getPercentualDescontoCondicional() {

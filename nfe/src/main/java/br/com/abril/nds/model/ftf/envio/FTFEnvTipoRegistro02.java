@@ -33,7 +33,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=10, tipo="numeric", ordem=9)
 	private String codProdutoOuServicoSistemaOrigem;
 	
-	@FTFfield(tamanho=15, tipo="numeric", ordem=10)
+	@FTFfield(tamanho=11, tipo="numeric", ordem=10)
 	private String qtdeProdutoOuServico;
 	
 	@FTFfield(tamanho=18, tipo="numeric", ordem=11)

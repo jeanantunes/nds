@@ -101,8 +101,14 @@ public class ItemNotaFiscalBuilder  {
 		
 		Long codigoBarras = null;
 		try {
-			String cb = movimentoEstoqueCota.getProdutoEdicao().getCodigoDeBarras();
-			codigoBarras = Long.parseLong(StringUtils.leftPad(cb, 13, '0').substring(0, 13));
+			if(movimentoEstoqueCota.getProdutoEdicao().getCodigoDeBarras() == null){
+				codigoBarras = Long.parseLong(StringUtils.leftPad("0", 13, '0').substring(0, 13));
+			}else{
+				
+				String cb = movimentoEstoqueCota.getProdutoEdicao().getCodigoDeBarras();
+				codigoBarras = Long.parseLong(StringUtils.leftPad(cb, 13, '0').substring(0, 13));
+			}
+			
 		} catch (Exception e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido: "+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo() +" / "+ movimentoEstoqueCota.getProdutoEdicao().getNumeroEdicao());
 		}

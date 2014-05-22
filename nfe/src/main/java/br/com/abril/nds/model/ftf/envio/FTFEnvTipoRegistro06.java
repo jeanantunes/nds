@@ -30,37 +30,40 @@ public class FTFEnvTipoRegistro06 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=10, tipo="char", ordem=8)
 	private String dataEntradaOuSaidaNfReferenciada;
 	
-	@FTFfield(tamanho=250, tipo="char", ordem=9)
+	@FTFfield(tamanho=1, tipo="char", ordem=9)
+	private String indicadorTipoNfReferenciada;
+	
+	@FTFfield(tamanho=250, tipo="char", ordem=10)
 	private String observacaoNotaReferenciada;
 	
-	@FTFfield(tamanho=1, tipo="char", ordem=10)
+	@FTFfield(tamanho=1, tipo="char", ordem=11)
 	private String indicadorEmitenteTituloNfReferenciada;
 	
-	@FTFfield(tamanho=3, tipo="char", ordem=11)
+	@FTFfield(tamanho=3, tipo="char", ordem=12)
 	private String modeloDocumentoNfReferenciada;
 	
-	@FTFfield(tamanho=14, tipo="char", ordem=12)
+	@FTFfield(tamanho=14, tipo="char", ordem=13)
 	private String cpfCnpjEmissorNfReferenciada;
 	
-	@FTFfield(tamanho=2, tipo="char", ordem=13)
+	@FTFfield(tamanho=2, tipo="char", ordem=14)
 	private String categoriaPfPjNfReferenciada;
 	
-	@FTFfield(tamanho=5, tipo="char", ordem=14)
+	@FTFfield(tamanho=5, tipo="char", ordem=15)
 	private String serieNfReferenciada;
 	
-	@FTFfield(tamanho=15, tipo="char", ordem=15)
+	@FTFfield(tamanho=15, tipo="char", ordem=16)
 	private String numNfRreferenciada;
 	
-	@FTFfield(tamanho=10, tipo="char", ordem=16)
+	@FTFfield(tamanho=10, tipo="char", ordem=17)
 	private String dataEmissaoNfReferenciada;
 	
-	@FTFfield(tamanho=10, tipo="numeric", ordem=17)
+	@FTFfield(tamanho=10, tipo="numeric", ordem=18)
 	private String numSequencial;
 	
-	@FTFfield(tamanho=3, tipo="numeric", ordem=18)
+	@FTFfield(tamanho=3, tipo="numeric", ordem=19)
 	private String numItemPedido;
 	
-	@FTFfield(tamanho=44, tipo="char", ordem=19)
+	@FTFfield(tamanho=44, tipo="char", ordem=20)
 	private String chaveAcessoNfe;
 
 	public String getTipoRegistro() {
@@ -86,6 +89,14 @@ public class FTFEnvTipoRegistro06 extends FTFBaseDTO implements FTFCommons {
 	public void setDataEntradaOuSaidaNfReferenciada(
 			String dataEntradaOuSaidaNfReferenciada) {
 		this.dataEntradaOuSaidaNfReferenciada = dataEntradaOuSaidaNfReferenciada;
+	}
+	
+	public String getIndicadorTipoNfReferenciada() {
+		return indicadorTipoNfReferenciada;
+	}
+
+	public void setIndicadorTipoNfReferenciada(String indicadorTipoNfReferenciada) {
+		this.indicadorTipoNfReferenciada = indicadorTipoNfReferenciada;
 	}
 
 	public String getObservacaoNotaReferenciada() {

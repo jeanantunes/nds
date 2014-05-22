@@ -23,6 +23,7 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0135InputItem;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -183,8 +184,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         }
     }
     
-    private NotaFiscalEntradaFornecedor populaNotaFiscalEntrada(NotaFiscalEntradaFornecedor notafiscalEntrada,
-            EMS0135Input input) {
+    private NotaFiscalEntradaFornecedor populaNotaFiscalEntrada(NotaFiscalEntradaFornecedor notafiscalEntrada, EMS0135Input input) {
         
         notafiscalEntrada.setDataEmissao(input.getDataEmissao());
         
@@ -215,6 +215,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         
         notafiscalEntrada.setEmitente(emitente);
         
+        Distribuidor distribuidor = distribuidorService.obter();
+        
+        
+        // FIXME - Ajustar para obter a natureza de operação corretamente 
         notafiscalEntrada.setNaturezaOperacao(
         		obterTipoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_MERCADORIA_CONSIGNACAO,
                 TipoUsuarioNotaFiscal.TREELOG, 
