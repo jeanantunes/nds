@@ -2234,6 +2234,13 @@ public class BoletoServiceImpl implements BoletoService {
         
         final BigDecimal valorTotalBoletoEmBranco = valorTotalLiquidoCE.add(valorDebitos.subtract(valorCreditos)).setScale(2, RoundingMode.HALF_UP);
         
+        boolean valorMinimoAtingido = this.formaCobrancaService.isValorMinimoAtingido(ceDTO.getIdCota(), valorTotalBoletoEmBranco);
+        
+        if (!valorMinimoAtingido){
+        	
+        	return null;
+        }
+        
         final Fornecedor fornecedor = paramtroCobrancaCotaService.obterFornecedorPadraoCota(ceDTO.getIdCota());
         
         if (fornecedor == null){
@@ -2241,7 +2248,7 @@ public class BoletoServiceImpl implements BoletoService {
             return null;
         }
         
-        final FormaCobranca fc = formaCobrancaService.obterFormaCobrancaCota(ceDTO.getIdCota(), fornecedor.getId(), dataEmissao, valorTotalBoletoEmBranco);
+        final FormaCobranca fc = formaCobrancaService.obterFormaCobrancaCota(ceDTO.getIdCota(), fornecedor.getId(), dataEmissao);
         
         if (fc == null || !fc.getTipoCobranca().equals(TipoCobranca.BOLETO_EM_BRANCO)){
             

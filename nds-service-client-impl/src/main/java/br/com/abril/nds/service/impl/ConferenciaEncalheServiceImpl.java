@@ -1700,15 +1700,27 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 		
+		
+		
+		
+		
+		
+		/*
 		try {
+		
 			nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
 		} catch(final GerarCobrancaValidacaoException e) {
 			
 			documentoConferenciaEncalhe.setMsgsGeracaoCobranca(e.getValidacaoVO());			
 		}
+        */
+
 		
+		
+		
+
 		final ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
-		
+
 		final PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
 		final FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
@@ -1754,7 +1766,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero, true);
 			}
 		}
-		
+
 		return documentoConferenciaEncalhe;
 	}
 	

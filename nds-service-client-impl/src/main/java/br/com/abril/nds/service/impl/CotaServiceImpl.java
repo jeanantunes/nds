@@ -2992,13 +2992,24 @@ public class CotaServiceImpl implements CotaService {
         return cotas;
     }
     
+    /**
+     * Salva as caracteristicas financeiras especificas da Cota
+     * 
+     * @param idCota
+     * @param tipoCota
+     * @param devolveEncalhe
+     * @return boolean
+     */
     @Transactional
     @Override
-    public boolean salvarTipoCota(final long idCota, final TipoCota tipoCota, boolean devolveEncalhe){
+    public boolean salvarCaracteristicasFinanceirasEspecificasCota(final long idCota, 
+    		                                                       final TipoCota tipoCota, 
+    		                                                       final boolean devolveEncalhe, 
+    		                                                       final BigDecimal valorMinimoCobranca){
         
+    	boolean alterado = false;
+    	
         final Cota cota = this.obterPorId(idCota);
-        
-        cota.setDevolveEncalhe(devolveEncalhe);
         
         if (!cota.getTipoCota().equals(tipoCota)){
             
@@ -3008,12 +3019,23 @@ public class CotaServiceImpl implements CotaService {
             
             this.alterarCota(cota);
             
-            return true;
+            alterado = true;
         }
         
-        return false;
+        if (devolveEncalhe!=cota.isDevolveEncalhe() || 
+            cota.getValorMinimoCobranca().compareTo(valorMinimoCobranca) != 0){
+                
+            cota.setDevolveEncalhe(devolveEncalhe);
+            
+            cota.setValorMinimoCobranca(valorMinimoCobranca);
+            
+            this.alterarCota(cota);
+            
+            alterado = true;
+        }
+        
+        return alterado;
     }
-    
     
     /**
      * Verifica se a cota teve seu tipo alterado na data informada
