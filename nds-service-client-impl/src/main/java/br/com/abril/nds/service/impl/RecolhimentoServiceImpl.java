@@ -514,17 +514,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					Cota cota = cotaReparte.getCota();
 					BigInteger qtdPrevista = cotaReparte.getReparte();
 
-					List<ChamadaEncalhe> chamadasEncalhe =
-						this.chamadaEncalheRepository.obterChamadasEncalhe(
-							produtoEdicao, null, false);
+					List<ChamadaEncalhe> chamadasEncalhe = this.chamadaEncalheRepository.obterChamadasEncalhe(produtoEdicao, null, false);
 					
 					this.removerChamadaEncalheCotaAntecipadaChamadao(cota, chamadasEncalhe);
 					
-					ChamadaEncalhe chamadaEncalhe =
-				        this.getChamadaEncalheMatrizRecolhimento(chamadasEncalhe, dataRecolhimento);
+					ChamadaEncalhe chamadaEncalhe = this.getChamadaEncalheMatrizRecolhimento(chamadasEncalhe, dataRecolhimento);
 
 					if (chamadaEncalhe == null) {
-						
 						
 					    chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
 					}
@@ -542,7 +538,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
 
-					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor());
+					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF());
 				}
 			}
 		}
@@ -615,7 +611,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
      */
 	private void criarChamadaEncalheCota(BigInteger qtdPrevista,
 										 Cota cota, ChamadaEncalhe chamadaEncalhe,
-										 Date dataLctoDistribuidor) {
+										 Date dataLctoDistribuidor,
+										 boolean cotaContribuinteExigeNF) {
 		
 		if(BigInteger.ZERO.compareTo(qtdPrevista)>=0) {
 			
@@ -632,15 +629,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		    return;
 		}
 		
-		ChamadaEncalheCota chamadaEncalheCota =
-			this.getChamadaEncalheCota(chamadaEncalhe, cota.getId());
+		ChamadaEncalheCota chamadaEncalheCota = this.getChamadaEncalheCota(chamadaEncalhe, cota.getId());
 		
 		if (chamadaEncalheCota == null) {
 			chamadaEncalheCota = new ChamadaEncalheCota();
 		}
 		
-		BigInteger qtdPrevistaExistente =
-			chamadaEncalheCota.getQtdePrevista() != null ? chamadaEncalheCota.getQtdePrevista() : BigInteger.ZERO;
+		BigInteger qtdPrevistaExistente = chamadaEncalheCota.getQtdePrevista() != null ? chamadaEncalheCota.getQtdePrevista() : BigInteger.ZERO;
 			
 		qtdPrevista = qtdPrevista.add(qtdPrevistaExistente);
 		
@@ -648,6 +643,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		chamadaEncalheCota.setFechado(false);
 		chamadaEncalheCota.setCota(cota);
 		chamadaEncalheCota.setQtdePrevista(qtdPrevista);
+		chamadaEncalheCota.setCotaContribuinteExigeNF(cotaContribuinteExigeNF);
 		
 		chamadaEncalheCota = this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
 		
