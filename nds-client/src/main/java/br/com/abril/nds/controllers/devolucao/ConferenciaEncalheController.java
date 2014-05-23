@@ -135,7 +135,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private static final String DATAS_ENCALHE_CONFERIVEIS = "DATAS_ENCALHE_CONFERIVEIS";
 	
-	private static final String IND_COTA_EMITE_NFE = "IND_COTA_EMITE_NFE";
+	private static final String IND_COTA_EXIGE_NFE = "IND_COTA_EXIGE_NFE";
 	
 	/*
      * Conferência de encalhe da cota que foi iniciada porém ainda não foi salva.
@@ -507,11 +507,11 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
-	public void verificarCotaEmiteNFe(final Integer numeroCota) {
+	public void verificarCotaExigeNFe(final Integer numeroCota) {
 				
-		final boolean emiteNfe = conferenciaEncalheService.isCotaEmiteNfe(numeroCota);
+		final boolean exigeNfe = conferenciaEncalheService.isCotaExigeNfe(numeroCota);
 		
-		this.result.use(CustomMapJson.class).put(IND_COTA_EMITE_NFE, emiteNfe).serialize();
+		this.result.use(CustomMapJson.class).put(IND_COTA_EXIGE_NFE, exigeNfe).serialize();
 	}
 	 
      /**

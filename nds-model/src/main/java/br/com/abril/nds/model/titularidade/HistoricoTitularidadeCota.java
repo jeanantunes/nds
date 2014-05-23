@@ -96,8 +96,8 @@ public class HistoricoTitularidadeCota implements Serializable {
     /**
      * Flag indicando se a cota emite NFE
      */
-    @Column(name = "EMITE_NFE")
-    private boolean emiteNfe;
+    @Column(name = "EXIGE_NFE")
+    private boolean exigeNfe;
     
     /**
      * Flag indicando se a cota emite NFE
@@ -336,17 +336,17 @@ public class HistoricoTitularidadeCota implements Serializable {
     }
     
     /**
-     * @return the emiteNfe
+     * @return the exigeNfe
      */
-    public boolean isEmiteNfe() {
-        return emiteNfe;
+    public boolean isExigeNfe() {
+        return exigeNfe;
     }
 
     /**
-     * @param emiteNfe the emiteNfe to set
+     * @param exigeNfe the exigeNfe to set
      */
-    public void setEmiteNfe(boolean emiteNfe) {
-        this.emiteNfe = emiteNfe;
+    public void setExigeNfe(boolean exigeNfe) {
+        this.exigeNfe = exigeNfe;
     }
     
     public boolean isContribuinteICMS() {

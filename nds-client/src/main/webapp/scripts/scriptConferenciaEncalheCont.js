@@ -205,7 +205,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
 								
 								ConferenciaEncalheCont.carregarListaConferencia(data);
-								ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalhe.popup_notaFiscal);
+								ConferenciaEncalheCont.ifCotaExigeNfe(data, ConferenciaEncalhe.popup_notaFiscal);
 								
 								ConferenciaEncalheCont.numeroCotaEditavel(true);
 							},
@@ -239,7 +239,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					ConferenciaEncalheCont.carregarListaConferencia(data);
 					
 					$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
-					ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalheCont.popup_notaFiscal);
+					ConferenciaEncalheCont.ifCotaExigeNfe(data, ConferenciaEncalheCont.popup_notaFiscal);
 					
 					ConferenciaEncalheCont.numeroCotaEditavel(true);
 				}
@@ -252,11 +252,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 			}
 		);
 	},
-	ifCotaEmiteNfe :  function(data, fnCotaEmiteNfe) {
-		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarCotaEmiteNFe", data, 
+	ifCotaExigeNfe :  function(data, fnCotaExigeNfe) {
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarCotaExigeNFe", data, 
 		function(result){
-			if(result.IND_COTA_EMITE_NFE) {
-				fnCotaEmiteNfe();
+			if(result.IND_COTA_EXIGE_NFE) {
+				fnCotaExigeNfe();
 			} 
 		});
 	},

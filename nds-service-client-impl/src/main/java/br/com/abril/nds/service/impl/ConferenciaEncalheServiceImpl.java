@@ -435,7 +435,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Override
 	@Transactional
-	public boolean isCotaEmiteNfe(final Integer numeroCota) {
+	public boolean isCotaExigeNfe(final Integer numeroCota) {
 
 		Distribuidor distribuidor =  distribuidorService.obter();
 		
