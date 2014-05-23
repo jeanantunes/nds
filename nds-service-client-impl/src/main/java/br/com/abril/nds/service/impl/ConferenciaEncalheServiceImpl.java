@@ -1713,15 +1713,27 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 		
+		
+		
+		
+		
+		
+		/*
 		try {
+		
 			nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
 		} catch(final GerarCobrancaValidacaoException e) {
 			
 			documentoConferenciaEncalhe.setMsgsGeracaoCobranca(e.getValidacaoVO());			
 		}
+        */
+
 		
+		
+		
+
 		final ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
-		
+
 		final PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
 		final FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
@@ -1767,7 +1779,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero, true);
 			}
 		}
-		
+
 		return documentoConferenciaEncalhe;
 	}
 	
@@ -2751,10 +2763,21 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(conferenciaEncalheDTO.getIdProdutoEdicao());
 		
 		final TipoMovimentoEstoque tipoMovimentoEstoqueCota = mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+	
+		ValoresAplicados valoresAplicados = 
+		        movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(
+		                numeroCota, produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
 		
-		LancamentoDTO lancamentoDTO = this.obtemLancamentoDTO(conferenciaEncalheDTO, chamadaEncalheCota);
+        if(valoresAplicados == null) {
+            valoresAplicados = new ValoresAplicados(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+        } else {
+            verificarValorAplicadoNulo(valoresAplicados);
+        }
 		
-		MovimentoEstoqueCota movimentoEstoqueCota = movimentoEstoqueService.gerarMovimentoCota(
+        LancamentoDTO lancamentoDTO = this.obtemLancamentoDTO(conferenciaEncalheDTO, chamadaEncalheCota);
+        
+		MovimentoEstoqueCota movimentoEstoqueCota = 
+				movimentoEstoqueService.gerarMovimentoCota(
 						lancamentoDTO.getDataDistribuidor(), 
 						produtoEdicao.getId(), 
 						idCota, 
@@ -2762,6 +2785,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						conferenciaEncalheDTO.getQtdExemplar(), 
 						tipoMovimentoEstoqueCota,
 						this.distribuidorService.obterDataOperacaoDistribuidor(),
+						valoresAplicados);
+
+		
+		//------------------------
+		/*
+		movimentoEstoqueCota = movimentoEstoqueService.gerarMovimentoCota(
+				lancamentoDTO.getDataDistribuidor(), 
 						this.distribuidorService.obterDataOperacaoDistribuidor(),
 						lancamentoDTO.getId(), 
 						null);
@@ -2774,6 +2804,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
+		*/
+		//------------------------
+		
+		
 		
 		return movimentoEstoqueCota;
 	}
@@ -3324,7 +3358,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			/*
 			 * FIXME Verificar se existe a possibilidade de interromper o processo não ira criar insumo para gerar nota de venda
 			 */
-			LOGGER.error("Atenção não foi passivel recuperar lancamento!!!");
+			LOGGER.error("Atenção não foi possível recuperar lancamento!!!");
 		}
 		
 		return lancamentoDTO;

@@ -612,7 +612,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	private boolean validarCodigoBarras(String codigo, Long edicao, Message message,	String codigoDeBarras) {
 		 
 		if (codigoDeBarras == null || "".equals(codigoDeBarras) || new BigInteger(codigoDeBarras).compareTo(BigInteger.ZERO) <= 0){
-			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Código de barras vazio. Produto "+codigo +" Edição "+edicao);
+			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Não Atualização do Código de Barras Vazio. Produto "+codigo +" Edição "+edicao);
 			return false;
 		}
 		return true;

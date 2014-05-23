@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -191,6 +192,9 @@ public class Cota implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "ALTERACAO_TIPO_COTA")
 	private Date alteracaoTipoCota;
+	
+	@Column(name = "VALOR_MINIMO_COBRANCA", precision=18, scale=4)
+	private BigDecimal valorMinimoCobranca;
 	
 	@ManyToMany(mappedBy = "cotas", fetch = FetchType.LAZY)
 	private Set<CotaUnificacao> cotasUnificacao;
@@ -644,6 +648,14 @@ public class Cota implements Serializable {
 
 	public void setAlteracaoTipoCota(Date alteracaoTipoCota) {
 		this.alteracaoTipoCota = alteracaoTipoCota;
+	}
+
+	public BigDecimal getValorMinimoCobranca() {
+		return valorMinimoCobranca;
+	}
+
+	public void setValorMinimoCobranca(BigDecimal valorMinimoCobranca) {
+		this.valorMinimoCobranca = valorMinimoCobranca;
 	}
 
 	public Set<CotaUnificacao> getCotasUnificacao() {

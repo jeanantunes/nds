@@ -12,7 +12,6 @@ import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -1204,14 +1203,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     @Override
     @Transactional
     public MovimentoEstoqueCota gerarMovimentoCota(final Date dataLancamento,
-            final Long idProdutoEdicao, 
-            final Long idCota, 
-            final Long idUsuario,
-            final BigInteger quantidade, 
-            final TipoMovimentoEstoque tipoMovimentoEstoque, 
-            final Date dataOperacao) {
+            final Long idProdutoEdicao, final Long idCota, final Long idUsuario,
+            final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque, final Date dataOperacao,
+            final ValoresAplicados valoresAplicados) {
         
-        return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, null, dataOperacao, null, null, false);
+        return criarMovimentoCota(
+                dataLancamento, idProdutoEdicao, idCota, idUsuario, 
+                quantidade, tipoMovimentoEstoque, null, dataOperacao, null, null, false, 
+                valoresAplicados);
         
     }
     
@@ -1225,37 +1224,25 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             final Long idEstudoCota,
             final boolean isMovimentoDiferencaAutomatico) {
         
-        return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico);
+        return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota,
+                idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico, null);
     }
     
     
     @Override
     @Transactional
-    public MovimentoEstoqueCota gerarMovimentoCota(final Date dataLancamento, 
-    		final Long idProdutoEdicao, 
-    		final Long idCota,
-            final Long idUsuario, 
-            final BigInteger quantidade, 
-            final TipoMovimentoEstoque tipoMovimentoEstoque,
-            final Date dataMovimento, 
-            final Date dataOperacao, 
-            final Long idLancamento, 
-            final Long idEstudoCota){
+    public MovimentoEstoqueCota gerarMovimentoCota(final Date dataLancamento, final Long idProdutoEdicao, final Long idCota,
+            final Long idUsuario, final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque,
+            final Date dataMovimento, final Date dataOperacao, final Long idLancamento, final Long idEstudoCota){
         
-        return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota, false);
+        return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade,
+                tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota, false, null);
     }
     
-    private MovimentoEstoqueCota criarMovimentoCota(final Date dataLancamento, 
-    		final Long idProdutoEdicao, 
-    		final Long idCota,
-            final Long idUsuario, 
-            final BigInteger quantidade, 
-            final TipoMovimentoEstoque tipoMovimentoEstoque,
-            final Date dataMovimento, 
-            Date dataOperacao, 
-            Long idLancamento, 
-            final Long idEstudoCota, 
-            final boolean isMovimentoDiferencaAutomatico) {
+    private MovimentoEstoqueCota criarMovimentoCota(final Date dataLancamento, final Long idProdutoEdicao, final Long idCota,
+            final Long idUsuario, final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque,
+            final Date dataMovimento, Date dataOperacao, Long idLancamento, final Long idEstudoCota,final boolean isMovimentoDiferencaAutomatico,
+            final ValoresAplicados valoresAplicadosParam) {
         
         this.validarDominioGrupoMovimentoEstoque(tipoMovimentoEstoque, Dominio.COTA);
         
@@ -1316,6 +1303,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
                 
             }
+        }
+        
+        if (valoresAplicadosParam != null){
+            
+            movimentoEstoqueCota.setValoresAplicados(valoresAplicadosParam);
         }
         
         if (tipoMovimentoEstoque.isAprovacaoAutomatica() || isMovimentoDiferencaAutomatico) {
@@ -1475,7 +1467,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoEnvioReparte, dataOperacao, true);
             
-            gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoRecebimentoReparte, dataOperacao);
+            gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoRecebimentoReparte, dataOperacao, null);
         }
     }
     
@@ -1522,7 +1514,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoRecebimentoEncalhe, dataOperacao, true);
             
-            gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe, dataOperacao);
+            gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe, dataOperacao, null);
         }
     }
     

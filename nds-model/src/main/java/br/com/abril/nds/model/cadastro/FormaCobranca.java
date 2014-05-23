@@ -55,9 +55,6 @@ public class FormaCobranca implements Serializable {
 	@JoinColumn(name = "BANCO_ID")
 	private Banco banco;
 	
-	@Column(name = "VALOR_MINIMO_EMISSAO")
-	private BigDecimal valorMinimoEmissao;
-	
 	@Column(name = "TAXA_MULTA")
 	private BigDecimal taxaMulta;
 	
@@ -135,14 +132,6 @@ public class FormaCobranca implements Serializable {
 	
 	public void setBanco(Banco banco) {
 		this.banco = banco;
-	}
-	
-	public BigDecimal getValorMinimoEmissao() {
-		return valorMinimoEmissao;
-	}
-	
-	public void setValorMinimoEmissao(BigDecimal valorMinimoEmissao) {
-		this.valorMinimoEmissao = valorMinimoEmissao;
 	}
 	
 	public BigDecimal getTaxaMulta() {

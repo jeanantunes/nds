@@ -18,6 +18,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
@@ -41,7 +42,10 @@ public interface MovimentoEstoqueService {
     MovimentoEstoque gerarMovimentoEstoque(final Long idProdutoEdicao, final Long idUsuario, final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque, boolean enfileiraAlteracaoEstoqueProduto, Cota cota);
 
 	
-	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao);
+	MovimentoEstoqueCota gerarMovimentoCota(
+	        Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, 
+	        BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao,
+	        ValoresAplicados valoresAplicados);
 
 	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao,Long idLancamento,Long idEestudoCota);
 
