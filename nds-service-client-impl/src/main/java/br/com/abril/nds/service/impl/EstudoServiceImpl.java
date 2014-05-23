@@ -265,12 +265,11 @@ public class EstudoServiceImpl implements EstudoService {
 	
 	@Transactional
 	public Estudo liberar(Long idEstudoGerado) {
-		
-	    
+
 		EstudoGerado estudoGerado = this.estudoGeradoRepository.obterParaAtualizar(idEstudoGerado);
 		
 		Lancamento lancamento = 
-			this.lancamentoRepository.buscarPorId(estudoGerado.getLancamentoID());
+			this.lancamentoRepository.obterParaAtualizar(estudoGerado.getLancamentoID());
 		
 		if (lancamento == null) {
 			
