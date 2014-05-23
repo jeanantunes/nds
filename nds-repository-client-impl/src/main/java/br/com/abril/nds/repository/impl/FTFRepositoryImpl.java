@@ -117,10 +117,10 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		concatenarTipoPedidoBy(idTipoNotaFiscal, sqlBuilder);
 
 		sqlBuilder.append(" cast(nfn.id as char) as numeroDocOrigem, ");
-		sqlBuilder.append(" 'NDS' as codSolicitante,  "); 
+		sqlBuilder.append(" paramFtf.CODIGO_SOLICITANTE as codSolicitante,  "); 
 		sqlBuilder.append(" endereco.LOGRADOURO as  nomeLocalEntregaNf, ");
 		sqlBuilder.append(" DATE_FORMAT(nfn.DATA_EMISSAO,'%d/%m/%Y') as dataPedido, ");
-		sqlBuilder.append(" 'NDS' as codCentroEmissor, ");
+		sqlBuilder.append(" paramFtf.CENTRO_EMISSOR as codCentroEmissor, ");
 		sqlBuilder.append(" nfn.DOCUMENTO_DESTINATARIO as cpfCnpjDestinatario, ");
 		sqlBuilder.append(" nfn.DOCUMENTO_DESTINATARIO as cpfCnpjEstabelecimentoEntrega, ");
 
@@ -138,7 +138,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" '' as valorIcmsComplemento, ");
 		sqlBuilder.append(" '' as valorIpiComplemento, ");
 		sqlBuilder.append(" '' as imprimePercentualDesconto, ");
-		sqlBuilder.append(" COALESCE(cast(nfn.motivo as char),'') as codMotivoCancelamento, ");
+		sqlBuilder.append(" '' as codMotivoCancelamento, ");
 		sqlBuilder.append(" '' as indicadorRefaturamento, ");
 		sqlBuilder.append(" 'REAL' as codMoeda, ");
 		sqlBuilder.append(" '' as dataCancelamento,  ");
