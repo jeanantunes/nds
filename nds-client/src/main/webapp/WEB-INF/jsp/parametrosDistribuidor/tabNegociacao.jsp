@@ -4,6 +4,14 @@
     	<fieldset style="width:420px!important; margin-bottom:5px; margin-left:10px;">
         	<legend>Negociação de Dividas</legend>
              <table width="393" border="0" cellspacing="1" cellpadding="1">
+             
+                 <tr>
+                     <td><label>Sugere Suspensão:</label></td>
+	                 <td colspan="3">
+	                     <input id="sugereSuspensao" name="sugereSuspensao" type="checkbox" value="" />
+	                 </td>
+                 </tr>  
+                 
                  <tr>
                    <td colspan="4">                          <label>Sugere suspensão quando atingir</label>
 

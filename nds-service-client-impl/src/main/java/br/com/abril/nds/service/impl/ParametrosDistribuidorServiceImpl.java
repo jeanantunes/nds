@@ -362,6 +362,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 				parametrosDistribuidor.setSugereSuspensaoQuandoAtingirBoletos(CurrencyUtil.formatarValorTruncado(distribuidor.getPoliticaSuspensao().getNumeroAcumuloDivida()));
 			if (distribuidor.getPoliticaSuspensao().getValor() != null)
 				parametrosDistribuidor.setSugereSuspensaoQuandoAtingirReais(CurrencyUtil.formatarValor(distribuidor.getPoliticaSuspensao().getValor()));
+			
+			parametrosDistribuidor.setSugereSuspensao(distribuidor.isSugereSuspensao());
 		}
 
 		parametrosDistribuidor.setParcelamentoDividas(distribuidor.isParcelamentoDividas());
@@ -839,6 +841,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
+		
+		distribuidor.setSugereSuspensao(parametrosDistribuidor.isSugereSuspensao());
 				
 		if(parametrosDistribuidor.getUtilizaDesconto() != null && parametrosDistribuidor.getUtilizaDesconto())
 			distribuidor.setDescontoCotaNegociacao(CurrencyUtil.converterValor(parametrosDistribuidor.getPercentualDesconto()));
