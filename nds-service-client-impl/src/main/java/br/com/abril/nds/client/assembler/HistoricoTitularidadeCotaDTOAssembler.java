@@ -102,7 +102,7 @@ public final class HistoricoTitularidadeCotaDTOAssembler {
         dto.setStatus(cota.getSituacaoCadastro());
         dto.setClassificacaoSelecionada(cota.getClassificacaoExpectativaFaturamento());
         dto.addItemClassificacaoFaturamento(cota.getClassificacaoExpectativaFaturamento());
-        dto.setEmiteNFE(cota.isEmiteNfe());
+        dto.setExigeNFE(cota.isExigeNfe());
         dto.setContribuinteICMS(cota.isContribuinteICMS());
         dto.setEmailNF(cota.getEmailNfe());
        

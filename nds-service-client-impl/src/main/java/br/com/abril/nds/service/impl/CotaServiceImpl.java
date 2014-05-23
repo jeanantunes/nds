@@ -1213,7 +1213,7 @@ public class CotaServiceImpl implements CotaService {
 		cotaDTO.setClassificacaoSelecionada(cota.getClassificacaoEspectativaFaturamento());
 		cotaDTO.setDataInclusao(cota.getInicioAtividade());
 		cotaDTO.setEmailNF((cota.getParametrosCotaNotaFiscalEletronica()!= null) ? cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() : "");
-		cotaDTO.setEmiteNFE((cota.getParametrosCotaNotaFiscalEletronica() != null && cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null) ? cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() : false);
+		cotaDTO.setExigeNFE((cota.getParametrosCotaNotaFiscalEletronica() != null && cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null) ? cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() : false);
 		cotaDTO.setContribuinteICMS((cota.getParametrosCotaNotaFiscalEletronica() != null && cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() != null) ? cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() : false);
 		cotaDTO.setStatus(cota.getSituacaoCadastro());
 		
@@ -1627,7 +1627,7 @@ public class CotaServiceImpl implements CotaService {
 	    }
 	    		
 	    paramNFE.setEmailNotaFiscalEletronica(cotaDto.getEmailNF());
-	    paramNFE.setExigeNotaFiscalEletronica(cotaDto.isEmiteNFE());
+	    paramNFE.setExigeNotaFiscalEletronica(cotaDto.isExigeNFE());
 	    paramNFE.setContribuinteICMS(cotaDto.isContribuinteICMS());
 	    
 	    return paramNFE;
@@ -1692,7 +1692,7 @@ public class CotaServiceImpl implements CotaService {
             }
         }
         
-        if(cotaDto.isEmiteNFE()){
+        if(cotaDto.isExigeNFE()){
             if(cotaDto.getEmailNF() == null || cotaDto.getEmailNF().isEmpty()){
                 mensagensValidacao.add("O preenchimento do campo [E-mail NF-e] é obrigatório!");
             }

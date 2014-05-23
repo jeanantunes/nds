@@ -477,11 +477,11 @@ var ConferenciaEncalhe = $.extend(true, {
 		}));
 	},
 
-	ifCotaEmiteNfe :  function(data, fnCotaEmiteNfe) {
-		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarCotaEmiteNFe", data, 
+	ifCotaExigeNfe :  function(data, fnCotaExigeNfe) {
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarCotaExigeNFe", data, 
 		function(result){
-			if(result.IND_COTA_EMITE_NFE) {
-				fnCotaEmiteNfe();
+			if(result.IND_COTA_EXIGE_NFE) {
+				fnCotaExigeNfe();
 			} 
 		});
 	},
@@ -524,7 +524,7 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 							ConferenciaEncalhe.modalAberta = false;
 							
-							ConferenciaEncalhe.ifCotaEmiteNfe(data, ConferenciaEncalhe.popup_notaFiscal);
+							ConferenciaEncalhe.ifCotaExigeNfe(data, ConferenciaEncalhe.popup_notaFiscal);
 							
 							focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 							
@@ -572,7 +572,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				ConferenciaEncalhe.carregarListaConferencia(data);
 				
-				ConferenciaEncalhe.ifCotaEmiteNfe(data, ConferenciaEncalhe.popup_notaFiscal);
+				ConferenciaEncalhe.ifCotaExigeNfe(data, ConferenciaEncalhe.popup_notaFiscal);
 				
 				if( $("#vlrCE", ConferenciaEncalhe.workspace).length != 0 ){
 					

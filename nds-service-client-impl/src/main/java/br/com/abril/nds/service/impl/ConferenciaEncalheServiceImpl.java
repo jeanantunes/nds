@@ -435,7 +435,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Override
 	@Transactional
-	public boolean isCotaEmiteNfe(final Integer numeroCota) {
+	public boolean isCotaExigeNfe(final Integer numeroCota) {
 
 		Distribuidor distribuidor =  distribuidorService.obter();
 		
@@ -1712,13 +1712,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Set<String> nossoNumeroCollection = new LinkedHashSet<String>();
 		
 		final DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
-		
-		
-		
-		
-		
-		
-		/*
+
 		try {
 		
 			nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
@@ -1726,11 +1720,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			documentoConferenciaEncalhe.setMsgsGeracaoCobranca(e.getValidacaoVO());			
 		}
-        */
-
-		
-		
-		
 
 		final ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
 

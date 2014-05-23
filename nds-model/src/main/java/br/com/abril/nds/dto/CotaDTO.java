@@ -41,7 +41,7 @@ public class CotaDTO implements Serializable {
     private String inscricaoEstadual;
     private String inscricaoMunicipal;
     private String emailNF;
-    private boolean emiteNFE;
+    private boolean exigeNFE;
     private boolean contribuinteICMS;
     private Date inicioPeriodo;
     private Date fimPeriodo;
@@ -411,17 +411,17 @@ public class CotaDTO implements Serializable {
     }
 
     /**
-     * @return the emiteNFE
+     * @return the exigeNFE
      */
-    public boolean isEmiteNFE() {
-        return emiteNFE;
+    public boolean isExigeNFE() {
+        return exigeNFE;
     }
 
     /**
-     * @param emiteNFE the emiteNFE to set
+     * @param exigeNFE the exigeNFE to set
      */
-    public void setEmiteNFE(boolean emiteNFE) {
-        this.emiteNFE = emiteNFE;
+    public void setExigeNFE(boolean exigeNFE) {
+        this.exigeNFE = exigeNFE;
     }
 
     /**
