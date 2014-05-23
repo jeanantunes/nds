@@ -286,8 +286,12 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		StringBuilder sqlBuilder = new StringBuilder();
 
 		sqlBuilder.append(" select ")
-		.append("  '2' as tipoRegistro, ");
-		setParametersFromDistribuidor(sqlBuilder);
+		.append("  '2' as tipoRegistro, ")
+		.append(" paramFtf.CENTRO_EMISSOR as codigoCentroEmissor,  ")
+		.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora,  ")
+		.append(" paramFtf.ESTABELECIMENTO as codLocal,  ");
+		
+		// setParametersFromDistribuidor(sqlBuilder);
 
 		concatenarTipoPedidoBy(idTipoNotaFiscal, sqlBuilder);
 		sqlBuilder.append(" LPAD(nfn.NUMERO_DOCUMENTO_FISCAL, 8, '0') as numeroDocOrigem, ")
@@ -314,6 +318,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" from nota_fiscal_produto_servico nfps ")
 		.append(" inner join nota_fiscal_novo nfn ON nfn.id = nfps.NOTA_FISCAL_ID ")
 		.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ")
+		.append(" join parametros_ftf_geracao paramFtf ON no.ID = paramftf.NATUREZA_OPERACAO_ID ")
 		.append(" where nfps.NOTA_FISCAL_ID = :idNF ");
 
 		SQLQuery query = getSession().createSQLQuery(sqlBuilder.toString());
