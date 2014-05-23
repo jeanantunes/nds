@@ -604,7 +604,6 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		this.getSession().persist(edicao);
 		
-		//Chamada comentada . Cesar
 		//inserirDescontoProdutoEdicao(edicao, produto);
 		
 		return edicao;
@@ -927,17 +926,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração da Data de Desativação"		if (edicao.getPacotePadrao() != input.getPactPadrao()) {
-
-						this.ndsiLoggerFactory.getLogger().logInfo(
-								message,
-								EventoExecucaoEnum.INF_DADO_ALTERADO,
-								"Alteração do Pacote Padrao"
-								+" de "+ edicao.getPacotePadrao()
-								+" para "+ input.getPactPadrao()
-								+" Produto "+ input.getCodProd()
-								+" Edição "+ input.getEdicaoProd());
-						
+					"Alteração da Data de Desativação"
 					+" de "+ DateUtil.formatarDataPTBR(edicao.getDataDesativacao())
 					+" para "+ input.getDataDesativacao()
 					+" Produto "+ input.getCodProd()
