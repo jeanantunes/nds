@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.ftf.envio;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
 import br.com.abril.nds.model.ftf.FTFCommons;
@@ -88,6 +90,7 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCpfOuCnpj(String cpfOuCnpj) {
+		cpfOuCnpj = StringUtils.leftPad(cpfOuCnpj, 14, ' ');
 		this.cpfOuCnpj = cpfOuCnpj;
 	}
 
@@ -213,6 +216,7 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 	
 	@Override
 	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
+		codigoCentroEmissor = StringUtils.leftPad(codigoCentroEmissor, 2, '0');
 		this.codigoCentroEmissor = codigoCentroEmissor;
 	}
 	
