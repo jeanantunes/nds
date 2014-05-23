@@ -16,6 +16,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.hibernate.Criteria;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Order;
@@ -2654,6 +2655,19 @@ public class LancamentoRepositoryImpl extends
         query.setParameterList("idFornecedor", idFornecedor);
 
     	return query.list();
-    
     }
+    
+    @Override
+	public Lancamento obterParaAtualizar(Long id) {
+		
+		Query query = 
+			this.getSession().createQuery("from Lancamento where id = :id ");
+		
+		query.setLockOptions(LockOptions.UPGRADE);
+		
+		query.setParameter("id", id);
+		
+		return (Lancamento) query.uniqueResult();
+	}
+    
 }

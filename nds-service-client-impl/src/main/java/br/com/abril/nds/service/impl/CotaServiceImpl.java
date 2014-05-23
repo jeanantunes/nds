@@ -53,6 +53,7 @@ import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.TitularidadeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
+import br.com.abril.nds.enums.TipoFlag;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -67,6 +68,7 @@ import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.FlagPendenteAtivacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.HistoricoNumeroCota;
 import br.com.abril.nds.model.cadastro.HistoricoNumeroCotaPK;
@@ -94,6 +96,7 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.fiscal.TipoEntidadeDestinoFlag;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
@@ -110,6 +113,7 @@ import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoPDVRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EntregadorRepository;
+import br.com.abril.nds.repository.FlagPendenteAtivacaoRepository;
 import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
@@ -266,6 +270,9 @@ public class CotaServiceImpl implements CotaService {
     
     @Autowired
     private CotaBaseService cotaBaseService;
+    
+    @Autowired
+    private FlagPendenteAtivacaoRepository flagPendenteAtivacaoRepository;
     
     @Transactional(readOnly = true)
     @Override
@@ -1627,8 +1634,39 @@ public class CotaServiceImpl implements CotaService {
 	    }
 	    		
 	    paramNFE.setEmailNotaFiscalEletronica(cotaDto.getEmailNF());
-	    paramNFE.setExigeNotaFiscalEletronica(cotaDto.isExigeNFE());
-	    paramNFE.setContribuinteICMS(cotaDto.isContribuinteICMS());
+	    // Parametro ajusta ao fechar o dia para nao impactar em cenarios do decorrer do dia
+	    //paramNFE.setExigeNotaFiscalEletronica(cotaDto.isExigeNFE());
+	    //paramNFE.setContribuinteICMS(cotaDto.isContribuinteICMS());
+	    
+	    
+	    FlagPendenteAtivacao flagCotaExigeNFe = 
+	    		flagPendenteAtivacaoRepository.obterPor(TipoFlag.COTA_EXIGE_NF_E, TipoEntidadeDestinoFlag.COTA, cotaDto.getIdCota());
+	    
+	    FlagPendenteAtivacao flagCotaContribuinteICMS = 
+	    		flagPendenteAtivacaoRepository.obterPor(TipoFlag.COTA_CONTRIBUINTE_ICMS, TipoEntidadeDestinoFlag.COTA, cotaDto.getIdCota());
+	    
+	    if(flagCotaExigeNFe == null) {
+	    	
+	    	flagCotaExigeNFe = new FlagPendenteAtivacao(TipoFlag.COTA_EXIGE_NF_E, TipoFlag.COTA_EXIGE_NF_E.getDescricao()
+	    					, TipoEntidadeDestinoFlag.COTA, cotaDto.isExigeNFE(), cotaDto.getIdCota());
+	    } else {
+	    	
+	    	flagCotaExigeNFe.setValor(cotaDto.isExigeNFE());
+	    }
+	    
+	    
+	    if(flagCotaContribuinteICMS == null) {
+	    	
+	    	flagCotaContribuinteICMS = 
+	    			new FlagPendenteAtivacao(TipoFlag.COTA_CONTRIBUINTE_ICMS, TipoFlag.COTA_CONTRIBUINTE_ICMS.getDescricao()
+	    					, TipoEntidadeDestinoFlag.COTA, cotaDto.isContribuinteICMS(), cotaDto.getIdCota());
+	    } else {
+	    	
+	    	flagCotaContribuinteICMS.setValor(cotaDto.isContribuinteICMS());
+	    }
+	    
+	    flagPendenteAtivacaoRepository.merge(flagCotaExigeNFe);
+	    flagPendenteAtivacaoRepository.merge(flagCotaContribuinteICMS);
 	    
 	    return paramNFE;
 	}
