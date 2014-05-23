@@ -1712,13 +1712,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Set<String> nossoNumeroCollection = new LinkedHashSet<String>();
 		
 		final DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
-		
-		
-		
-		
-		
-		
-		/*
+
 		try {
 		
 			nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
@@ -1726,11 +1720,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			documentoConferenciaEncalhe.setMsgsGeracaoCobranca(e.getValidacaoVO());			
 		}
-        */
-
-		
-		
-		
 
 		final ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
 

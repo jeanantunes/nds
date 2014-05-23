@@ -604,7 +604,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		this.getSession().persist(edicao);
 		
-		inserirDescontoProdutoEdicao(edicao, produto);
+		//inserirDescontoProdutoEdicao(edicao, produto);
 		
 		return edicao;
 	}
