@@ -2775,28 +2775,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						tipoMovimentoEstoqueCota,
 						this.distribuidorService.obterDataOperacaoDistribuidor(),
 						valoresAplicados);
-
-		
-		//------------------------
-		/*
-		movimentoEstoqueCota = movimentoEstoqueService.gerarMovimentoCota(
-				lancamentoDTO.getDataDistribuidor(), 
-						this.distribuidorService.obterDataOperacaoDistribuidor(),
-						lancamentoDTO.getId(), 
-						null);
-		
-		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
-		if(valoresAplicados == null){
-			valoresAplicados = new ValoresAplicados(BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
-		}else{
-			verificarValorAplicadoNulo(valoresAplicados);
-		}
-		
-		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
-		*/
-		//------------------------
-		
-		
 		
 		return movimentoEstoqueCota;
 	}

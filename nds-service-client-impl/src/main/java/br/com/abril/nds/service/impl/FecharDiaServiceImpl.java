@@ -45,6 +45,7 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
+import br.com.abril.nds.enums.TipoFlag;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -53,6 +54,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
+import br.com.abril.nds.model.cadastro.FlagPendenteAtivacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
@@ -92,6 +94,7 @@ import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoEntidadeDestinoFlag;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -125,6 +128,7 @@ import br.com.abril.nds.repository.FechamentoDiarioResumoConsignadoRepository;
 import br.com.abril.nds.repository.FechamentoDiarioResumoConsolidadoDividaRepository;
 import br.com.abril.nds.repository.FechamentoDiarioResumoEstoqueRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
+import br.com.abril.nds.repository.FlagPendenteAtivacaoRepository;
 import br.com.abril.nds.repository.HistoricoEstoqueProdutoRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -318,6 +322,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private NaturezaOperacaoService naturezaOperacaoService; 
+	
+	@Autowired
+	private FlagPendenteAtivacaoRepository flagPendenteAtivacaoRepository; 
 	
 	private static final Logger LOG = LoggerFactory.getLogger("fecharDiaLogger");
 	
@@ -750,7 +757,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         
 		if(this.isDiaComFechamentoRealizado(data)){
 			
-			return  fechamentoDiarioResumoConsolidadoDividaRepository.sumarizacaoDividas(data, TipoDivida.DIVIDA_A_RECEBER);
+			return fechamentoDiarioResumoConsolidadoDividaRepository.sumarizacaoDividas(data, TipoDivida.DIVIDA_A_RECEBER);
 		}
 			
 		return dividaService.sumarizacaoDividasReceberEm(data);
@@ -765,7 +772,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         
     	if(this.isDiaComFechamentoRealizado(data)){
     		
-    		return  fechamentoDiarioResumoConsolidadoDividaRepository.sumarizacaoDividas(data, TipoDivida.DIVIDA_A_VENCER);
+    		return fechamentoDiarioResumoConsolidadoDividaRepository.sumarizacaoDividas(data, TipoDivida.DIVIDA_A_VENCER);
     	}
     		
     	return dividaService.sumarizacaoDividasVencerApos(data);
@@ -966,6 +973,34 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
     		this.historicoSituacaoCotaRepository.alterar(historicoSituacaoCota);
     	}
+    	
+    	List<FlagPendenteAtivacao> flagsPendentesAtivacao = flagPendenteAtivacaoRepository.obterPor(TipoEntidadeDestinoFlag.COTA);
+    	
+    	for(FlagPendenteAtivacao fpa : flagsPendentesAtivacao) {
+    		
+    		Cota cota = cotaRepository.buscarPorId(fpa.getIdAlterado());
+    		if(cota == null) {
+    			continue;
+    		}
+    		
+    		if(cota.getParametrosCotaNotaFiscalEletronica() != null) {
+    			if(fpa.getNome().equals(TipoFlag.COTA_EXIGE_NF_E)) {
+    				cota.getParametrosCotaNotaFiscalEletronica().setExigeNotaFiscalEletronica(fpa.isValor());
+    			}
+    			
+    			if(fpa.getNome().equals(TipoFlag.COTA_CONTRIBUINTE_ICMS)) {
+    				cota.getParametrosCotaNotaFiscalEletronica().setContribuinteICMS(fpa.isValor());
+    			}
+    		}
+    		
+    		cotaRepository.merge(cota);
+    		
+    	}
+    	
+    	for(FlagPendenteAtivacao fpa : flagsPendentesAtivacao) {
+    		flagPendenteAtivacaoRepository.remover(fpa);
+    	}
+    	
     }
     
     private Date liberarNovaDataOperacionalParaDistribuidor(Date dataFechamento) {
