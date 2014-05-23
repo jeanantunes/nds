@@ -155,20 +155,25 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 					&& !filtroAlteracaoCotaDTO.getFiltroModalFinanceiro()
 							.getVrMinimo().isEmpty()) {
 
-				cota.getParametroCobranca().setValorMininoCobranca(
+				cota.setValorMinimoCobranca(
 						CurrencyUtil.converterValor(filtroAlteracaoCotaDTO
 								.getFiltroModalFinanceiro().getVrMinimo()));
 			}
 
 			// Suspensao = true -> Cria Politica de Suspensao
 			if (cota.isSugereSuspensao()) {
+				
 				PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
+				
 				if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getQtdDividaEmAberto() != null) {
+					
 					politicaSuspensao.setNumeroAcumuloDivida(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getQtdDividaEmAberto());
 				}
 				if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrDividaEmAberto() != null) {
+					
 					politicaSuspensao.setValor(CurrencyUtil.converterValor(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrDividaEmAberto()));
 				}
+				
 				cota.getParametroCobranca().setPoliticaSuspensao(politicaSuspensao);
 			}
 

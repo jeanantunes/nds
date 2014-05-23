@@ -196,11 +196,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		Produto produto = new Produto();
 
 
-        String codigoDistribuidor = 
-                message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
+        String codigoDistribuidor =  message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
         
-        Fornecedor fornecedor = this
-                .findFornecedor(Integer.parseInt(codigoDistribuidor));
+        Fornecedor fornecedor = this.findFornecedor(Integer.parseInt(codigoDistribuidor));
 
         if (fornecedor == null) {
         
@@ -319,9 +317,18 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		String codigoDistribuidor = 
 	            message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
 		
-		Fornecedor fornecedor = this
-				.findFornecedor(Integer.parseInt(codigoDistribuidor));
+		Fornecedor fornecedor = this.findFornecedor(Integer.parseInt(codigoDistribuidor));
 		
+        if (fornecedor == null || fornecedor.getId()==null) {
+            
+            ndsiLoggerFactory.getLogger().logError(
+                    message,
+                    EventoExecucaoEnum.HIERARQUIA,
+                    String.format( "Fornecedor nulo. Produto %1$s .", input.getCodigoPublicacao() )
+                );
+            return ;
+        }
+        
 		validarTipoDesconto(message, input.getTipoDesconto(), input.getCodigoPublicacao());
 		
 		if(input.getTipoDesconto()==null){
@@ -336,9 +343,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		int tipoDescontoInt = Integer.parseInt( input.getTipoDesconto());
 
 		DescontoLogistica descontoLogistica =
-		        this.descontoLogisticaService.obterDescontoLogisticaVigente(tipoDescontoInt,
-		                                                                    fornecedor.getId(),
-		                                                                    input.getDataGeracaoArquivo());
+		        this.descontoLogisticaService.obterDescontoLogisticaVigente(tipoDescontoInt,fornecedor.getId(),input.getDataGeracaoArquivo());
 		
         if(descontoLogistica==null){
 			

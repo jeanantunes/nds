@@ -384,15 +384,13 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	 * @param idCota
 	 * @param idFornecedor
 	 * @param data
-	 * @param valor
 	 * @return FormaCobranca
 	 */
 	@Override
 	@Transactional(readOnly = true)
 	public FormaCobranca obterFormaCobrancaCota(Long idCota, 
 			                                    Long idFornecedor,
-												Date data, 
-												BigDecimal valor) {
+												Date data) {
 
 		Integer diaDoMes = DateUtil.obterDiaDoMes(data);
 
@@ -400,7 +398,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		FormaCobranca formaCobranca = this.formaCobrancaRepository
 				.obterFormaCobranca(idCota, idFornecedor, diaDoMes,
-						diaDaSemana, valor);
+						diaDaSemana);
 
 		return formaCobranca;
 	}
@@ -410,24 +408,51 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	 * 
 	 * @param idFornecedor
 	 * @param data
-	 * @param valor
 	 * @return FormaCobranca
 	 */
 	@Override
 	@Transactional(readOnly = true)
 	public FormaCobranca obterFormaCobrancaDistribuidor(Long idFornecedor,
-														Date data, 
-														BigDecimal valor) {
+														Date data) {
 
 		Integer diaDoMes = DateUtil.obterDiaDoMes(data);
 
 		Integer diaDaSemana = SemanaUtil.obterDiaDaSemana(data);
 
-		
 		FormaCobranca formaCobranca = this.formaCobrancaRepository
-				.obterFormaCobranca(idFornecedor, diaDoMes, diaDaSemana, valor, true);
+				.obterFormaCobranca(idFornecedor, diaDoMes, diaDaSemana, true);
 
 		return formaCobranca;
+	}
+	
+	/**
+	 * Verifica se valor à cobrar é menor ou igual ao valor minimo para cobranca estipulado para a Cota
+	 * 
+	 * @param valorMinimoCota
+	 * @param valorTotalCobrar
+	 * @return boolean
+	 */
+	@Override
+	@Transactional
+	public boolean isValorMinimoAtingido(BigDecimal valorMinimoCota, BigDecimal valorTotalCobrar){
+		
+		return valorMinimoCota.compareTo(valorTotalCobrar) <= 0;
+	}
+	
+	/**
+	 * Verifica se valor à cobrar é menor ou igual ao valor minimo para cobranca estipulado para a Cota
+	 * 
+	 * @param idCota
+	 * @param valorTotalCobrar
+	 * @return boolean
+	 */
+	@Override
+	@Transactional
+	public boolean isValorMinimoAtingido(Long idCota, BigDecimal valorTotalCobrar){
+		
+		Cota cota = this.cotaRepository.buscarCotaPorID(idCota);
+		
+		return this.isValorMinimoAtingido(cota.getValorMinimoCobranca(), valorTotalCobrar);
 	}
 
 	/**
@@ -452,7 +477,14 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		if (idCota != null) {
 
-			cota = this.cotaRepository.buscarPorId(idCota);
+			cota = this.cotaRepository.buscarPorId(idCota);	
+			
+			boolean valorMinimoAtingido = this.isValorMinimoAtingido(cota.getValorMinimoCobranca(), valor);
+			
+			if (!valorMinimoAtingido){
+				
+				return null;
+			}
 		}
 
 		if (idFornecedor == null && cota != null) {
@@ -479,8 +511,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 			}
 		}
 
-		FormaCobranca formaCobranca = this.obterFormaCobrancaCota(idCota,
-				idFornecedor, data, valor);
+		FormaCobranca formaCobranca = this.obterFormaCobrancaCota(idCota, idFornecedor, data);
 
 		if (formaCobranca == null) {
 
@@ -492,8 +523,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 		        return null; 
 			}
 			
-	        formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor,
-					data, valor);
+	        formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor, data);
 		}
 
 		return formaCobranca;

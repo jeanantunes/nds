@@ -235,9 +235,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 
 				parametroCobranca.setCota(cota);
 				parametroCobranca.setFormasCobrancaCota(null);
-
-				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor != null ? 
-														 formaCobrancaDistribuidor.getValorMinimoEmissao() : BigDecimal.ZERO);
 				
 				if(politicaCobranca != null) {
 					
@@ -261,8 +258,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaDTO.setIdParametroCobranca(parametroCobranca.getId());
 			parametroCobrancaDTO.setFatorVencimento((parametroCobranca.getFatorVencimento()==null) ? 0 : parametroCobranca.getFatorVencimento());
 			
-			if (parametroCobranca.getValorMininoCobranca() != null) {
-				parametroCobrancaDTO.setValorMinimo(CurrencyUtil.formatarValor(parametroCobranca.getValorMininoCobranca()));
+			if (parametroCobranca.getCota().getValorMinimoCobranca() != null) {
+				parametroCobrancaDTO.setValorMinimo(CurrencyUtil.formatarValor(parametroCobranca.getCota().getValorMinimoCobranca()));
 			}
 			
 			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
@@ -455,7 +452,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			}
 
 			parametroCobranca.setFatorVencimento((int) parametroCobrancaDTO.getFatorVencimento());
-			parametroCobranca.setValorMininoCobranca(CurrencyUtil.converterValor(parametroCobrancaDTO.getValorMinimo()));
 			parametroCobranca.setUnificaCobranca(parametroCobrancaDTO.isUnificaCobranca());
 			
 			if (politicaSuspensao == null) {
@@ -492,6 +488,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			cota.setParametroCobranca(parametroCobranca);
 			cota.setSugereSuspensao(parametroCobrancaDTO.isSugereSuspensao());
 			cota.setPossuiContrato(parametroCobrancaDTO.isContrato());
+			cota.setValorMinimoCobranca(CurrencyUtil.converterValor(parametroCobrancaDTO.getValorMinimo()));
 						
 			this.cotaRepository.merge(cota);
 		}
@@ -680,7 +677,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		formaCobranca.setTaxaJurosMensal((formaCobranca.getTaxaJurosMensal() == null ? BigDecimal.ZERO : formaCobranca.getTaxaJurosMensal()));
 	    formaCobranca.setTaxaMulta((formaCobranca.getTaxaMulta() == null ? BigDecimal.ZERO : formaCobranca.getTaxaMulta()));
-	    formaCobranca.setValorMinimoEmissao((formaCobranca.getValorMinimoEmissao() == null ? BigDecimal.ZERO : formaCobranca.getValorMinimoEmissao()));
 		
 		formaCobranca.setAtiva(true);
 		
@@ -722,7 +718,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		    	
 				parametroCobranca.setCota(c);
 				parametroCobranca.setFatorVencimento(formaCobrancaDistribuidor.getPoliticaCobranca().getFatorVencimento());
-				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
 				parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
 				parametroCobranca.setFornecedorPadrao(formaCobrancaDistribuidor.getPoliticaCobranca().getFornecedorPadrao());
 				parametroCobranca.setPoliticaSuspensao(null);
@@ -789,7 +784,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
         copia.setTaxaMulta(fc.getTaxaMulta());
         copia.setTipoCobranca(fc.getTipoCobranca());
         copia.setTipoFormaCobranca(fc.getTipoFormaCobranca());
-        copia.setValorMinimoEmissao(fc.getValorMinimoEmissao());
         copia.setValorMulta(fc.getValorMulta());
         copia.setVencimentoDiaUtil(fc.isVencimentoDiaUtil());
         
@@ -1422,13 +1416,13 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		formaCobranca.setInstrucoes(formaCobrancaDistribuidor.getInstrucoes());
 		
 		if(cota.getParametroCobranca() == null) {
+			
 			ParametroCobrancaCota pcc = new ParametroCobrancaCota();
 		
 			pcc.setCota(cota);
 			pcc.setFatorVencimento(Integer.valueOf(""+ parametroCobranca.getFatorVencimento()));
 			pcc.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobranca.getIdFornecedor()));
 			pcc.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
-			pcc.setValorMininoCobranca(CurrencyUtil.converterValor(parametroCobranca.getValorMinimo()));
 			
 			PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
 			
@@ -1438,20 +1432,20 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			pcc.setPoliticaSuspensao(politicaSuspensao);
 			
 			parametroCobrancaCotaRepository.adicionar(pcc);
+			
 			cota.setParametroCobranca(pcc);
 		} else {
+			
 			cota.getParametroCobranca().setFatorVencimento(Integer.valueOf(""+ parametroCobranca.getFatorVencimento()));
 			cota.getParametroCobranca().setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobranca.getIdFornecedor()));
-			
-			if (cota.getParametroCobranca().getValorMininoCobranca() == null){
-			    
-			    cota.getParametroCobranca().setValorMininoCobranca(CurrencyUtil.converterValor(parametroCobranca.getValorMinimo()));
-			}
 		}
 		
 		formaCobranca.setParametroCobrancaCota(cota.getParametroCobranca());
 		
-		//formaCobranca.setPoliticaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca());
+		cota.setValorMinimoCobranca(CurrencyUtil.converterValor(parametroCobranca.getValorMinimo()));
+		
+		this.cotaRepository.merge(cota);
+		
 		formaCobranca.setPrincipal(true);
 		formaCobranca.setRecebeCobrancaEmail(formaCobrancaDistribuidor.isRecebeCobrancaEmail());
 		formaCobranca.setTaxaJurosMensal(formaCobrancaDistribuidor.getTaxaJurosMensal());
@@ -1459,11 +1453,9 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		formaCobranca.setValorMulta(formaCobrancaDistribuidor.getValorMulta());
 		formaCobranca.setTipoCobranca(formaCobrancaDistribuidor.getTipoCobranca());
 		formaCobranca.setTipoFormaCobranca(formaCobrancaDistribuidor.getTipoFormaCobranca());
-		formaCobranca.setValorMinimoEmissao(formaCobrancaDistribuidor.getValorMinimoEmissao());
 		formaCobranca.setVencimentoDiaUtil(formaCobrancaDistribuidor.isVencimentoDiaUtil());
 		
 		formaCobrancaRepository.adicionar(formaCobranca);
-		
 	}
 	
 	/**

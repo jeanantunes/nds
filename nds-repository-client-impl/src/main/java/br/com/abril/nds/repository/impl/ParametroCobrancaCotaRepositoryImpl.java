@@ -27,10 +27,10 @@ public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepositoryModel
 	
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT distinct parametro.valorMininoCobranca ");
+		hql.append(" SELECT distinct parametro.cota.valorMinimoCobranca ");
 		hql.append(" FROM ParametroCobrancaCota parametro ");
-		hql.append(" WHERE parametro.valorMininoCobranca is not null ");
-		hql.append(" ORDER BY parametro.valorMininoCobranca ASC ");
+		hql.append(" WHERE parametro.cota.valorMinimoCobranca is not null ");
+		hql.append(" ORDER BY parametro.cota.valorMinimoCobranca ASC ");
 
 		Query query = getSession().createQuery(hql.toString());
 		
