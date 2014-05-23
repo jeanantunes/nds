@@ -259,16 +259,6 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		}
 	}
 
-	private void setParametersFromDistribuidor(StringBuilder sqlBuilder) {
-
-		Map<String, ParametroSistema> ps = parametroSistemaRepository.buscarParametroSistemaGeralMap();
-		if (ps != null) {
-			sqlBuilder.append(String.format(" '%s' as codigoCentroEmissor,  ", ps.get("FTF_CODIGO_ESTABELECIMENTO_EMISSOR").getValor()));
-			sqlBuilder.append(String.format(" '%s' as cnpjEmpresaEmissora,  ", ps.get("FTF_CNPJ_ESTABELECIMENTO_EMISSOR").getValor()));
-			sqlBuilder.append(String.format(" '%s' as codLocal,  ", ps.get("FTF_CODIGO_LOCAL").getValor()));
-		}
-	}
-
 	private List<Long> obterIdsFrom(List<NotaFiscal> notas){
 		int length = notas.size();
 		List<Long> ids = new ArrayList<>();
@@ -456,9 +446,11 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	public FTFEnvTipoRegistro08 obterRegistroTipo08(long idTipoNotaFiscal) {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(" select  ")
-		.append(" nfn.DOCUMENTO_EMITENTE as cnpjEmpresaEmissora, ")
-		.append(" '' as codLocal, ")
+		sb.append(" select DISTINCT ")
+		.append(" '8' as tipoRegistro, ")
+		.append(" paramFtf.CENTRO_EMISSOR as codigoCentroEmissor,  ")
+		.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora,  ")
+		.append(" paramFtf.ESTABELECIMENTO as codLocal,  ")
 		.append(" cast(nfn.TIPO_EMISSAO as char) as tipoPedido, ")
 		.append(" '' as numeroDocOrigem, ")
 		.append(" COALESCE(pessoa.NOME,'') as nomeDoCliente, ")
@@ -480,6 +472,8 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" '' as complementoTelefone ")
 		.append("  ")
 		.append(" from nota_fiscal_novo nfn ")
+		.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ")
+		.append(" join parametros_ftf_geracao paramFtf ON no.ID = paramftf.NATUREZA_OPERACAO_ID ")
 		.append(" left join nota_fiscal_pessoa pessoa ON pessoa.ID = nfn.PESSOA_DESTINATARIO_ID_REFERENCIA ")
 		.append(" left join nota_fiscal_endereco endereco ON endereco.ID = nfn.ENDERECO_ID_DESTINATARIO ")
 		.append(" left join nota_fiscal_telefone telefone ON telefone.ID = nfn.TELEFONE_ID_DESTINATARIO ")
@@ -493,7 +487,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		Object uniqueResult = query.uniqueResult();
 
 		FTFEnvTipoRegistro08 reg08 = (FTFEnvTipoRegistro08) uniqueResult;
-		setCommonsParameters(reg08);
+		// setCommonsParameters(reg08);
 		
 		return reg08;
 

@@ -234,10 +234,7 @@ public class FTFServiceImpl implements FTFService {
 		List<FTFEnvTipoRegistro08> registrosTipo08 = new ArrayList<>();
 		for(NotaFiscal nf : notas) {
 			
-			FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(nf.getId());		
-			
-			populateRegTipo08(nf, parametrosGeracaoFTF, regTipo08);
-			
+			FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(nf.getId());
 			validacaoBeans.addAll(regTipo08.validateBean());
 			registrosTipo08.add(regTipo08);
 		}
@@ -315,7 +312,6 @@ public class FTFServiceImpl implements FTFService {
 		return type == 1 ? "CNPJ" : "CPF";
 	}
 	
-	
 	@SuppressWarnings("resource")
 	public List<FTFRetornoRET> processarArquivosRet(final File...files){
 		
@@ -369,18 +365,6 @@ public class FTFServiceImpl implements FTFService {
 	public void atualizarRetornoFTF(final List<FTFRetTipoRegistro01> list){
 		
 		this.ftfRepository.atualizarRetornoFTF(list);
-		
-	}
-	
-	private void populateRegTipo08(NotaFiscal nf, Map<String, ParametroFTFGeracao> parametrosGeracaoFTF, FTFEnvTipoRegistro08 regTipo08) {
-
-		ParametroFTFGeracao param = parametrosGeracaoFTF.get(nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getCfopEstado());
-			
-		regTipo08.setCodigoCentroEmissor(param.getCentroEmissor());
-		regTipo08.setCnpjEmpresaEmissora(param.getCnpjEmissor());
-		regTipo08.setTipoPedido(param.getTipoPedido());
-		regTipo08.setCodLocal(param.getCodigoSolicitante());
-		// regTipo08.setTipoRegistro(param.get);
 		
 	}
 	
