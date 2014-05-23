@@ -376,11 +376,11 @@ public class FTFServiceImpl implements FTFService {
 
 		ParametroFTFGeracao param = parametrosGeracaoFTF.get(nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getCfopEstado());
 			
-		regTipo08.setCodigoCentroEmissor(param.getTipoPedido());
-		regTipo08.setCnpjEmpresaEmissora(param.getTipoPedido());
+		regTipo08.setCodigoCentroEmissor(param.getCentroEmissor());
+		regTipo08.setCnpjEmpresaEmissora(param.getCnpjEmissor());
 		regTipo08.setTipoPedido(param.getTipoPedido());
-		regTipo08.setCodLocal(param.getCentroEmissor());
-		regTipo08.setTipoRegistro(param.getTipoPedido());
+		regTipo08.setCodLocal(param.getCodigoSolicitante());
+		// regTipo08.setTipoRegistro(param.get);
 		
 	}
 	
