@@ -108,7 +108,11 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" select DISTINCT ");
 		sqlBuilder.append(" '1' as tipoRegistro, ");
 
-		setParametersFromDistribuidor(sqlBuilder);
+		sqlBuilder.append(" paramFtf.CENTRO_EMISSOR as codigoCentroEmissor,  ");
+		sqlBuilder.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora,  ");
+		sqlBuilder.append(" paramFtf.ESTABELECIMENTO as codLocal,  ");
+		
+		// setParametersFromDistribuidor(sqlBuilder);
 
 		concatenarTipoPedidoBy(idTipoNotaFiscal, sqlBuilder);
 
@@ -204,6 +208,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" '' as codFaturaAssociada ");
 		sqlBuilder.append(" from nota_fiscal_novo nfn ");
 		sqlBuilder.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ");
+		sqlBuilder.append(" join parametros_ftf_geracao paramFtf ON no.ID = paramftf.NATUREZA_OPERACAO_ID ");
 		sqlBuilder.append(" left join nota_fiscal_endereco endereco on endereco.ID = nfn.ENDERECO_ID_DESTINATARIO ");
 
 		adicionarJoinCota(idTipoNotaFiscal, sqlBuilder);
@@ -231,8 +236,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		}
 	}
 
-	private void adicionarCodDestinatarioSistemaOrigem(long idTipoNotaFiscal,
-			StringBuilder sqlBuilder) {
+	private void adicionarCodDestinatarioSistemaOrigem(long idTipoNotaFiscal, StringBuilder sqlBuilder) {
 		if (idTipoNotaFiscal == NF_DEVOLUCAO_FORNECEDOR) {
 			sqlBuilder.append(" COALESCE(cast(:codDestinatario as char),'') as codDestinatarioSistemaOrigem, ");
 		}else if (idTipoNotaFiscal == NF_VENDA_COTA) {
