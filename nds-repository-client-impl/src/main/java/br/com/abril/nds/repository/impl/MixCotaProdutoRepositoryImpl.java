@@ -419,10 +419,11 @@ public class MixCotaProdutoRepositoryImpl extends
 		
 	
 		@Override
-		public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long produtoId) {
+		public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long classificaoProdutoId, String codICD) {
 			return (MixCotaProduto) getSession().createCriteria(MixCotaProduto.class)
 			.add(Restrictions.eq("cota.id", cotaId))
-			.add(Restrictions.eq("produto.id", produtoId))
+			.add(Restrictions.eq("tipoClassificacaoProduto.id", classificaoProdutoId))
+			.add(Restrictions.eq("codigoICD", codICD))
 			.uniqueResult();
 		}
 		

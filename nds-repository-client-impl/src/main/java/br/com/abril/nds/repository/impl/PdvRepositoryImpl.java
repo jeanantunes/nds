@@ -450,6 +450,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 			.append("  endereco.logradouro  as  endereco , ")
 			.append("  telefone.ddd || '-'|| telefone.numero as telefone ,")
 			.append("  pdv.status as statusPDV ,")
+			.append("  pdv.caracteristicas.pontoPrincipal as principal, ")
 			.append("  cota.id as idCota ")
 			.append(" FROM PDV pdv ")
 			.append(" JOIN pdv.cota cota ")

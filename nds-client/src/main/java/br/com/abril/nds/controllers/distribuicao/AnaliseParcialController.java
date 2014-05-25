@@ -273,7 +273,12 @@ public class AnaliseParcialController extends BaseController {
 
         for (CotaQueNaoEntrouNoEstudoDTO cota : cotas) {
             analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().longValue(), cota.getQuantidade().longValue());
-            analiseParcialService.atualizaClassificacaoCota(estudoId, cota.getNumeroCota());
+            
+            if(cota.getMotivo().equalsIgnoreCase("SM")){
+            	analiseParcialService.atualizaClassificacaoCota(estudoId, cota.getNumeroCota(), "MX");
+            }else{
+            	analiseParcialService.atualizaClassificacaoCota(estudoId, cota.getNumeroCota(), "IN");
+            }
         }
 
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();

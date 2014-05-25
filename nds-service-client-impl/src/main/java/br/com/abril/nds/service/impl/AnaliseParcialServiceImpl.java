@@ -237,8 +237,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     @Override
     @Transactional
-    public void atualizaClassificacaoCota(Long estudoId, Long numeroCota) {
-	analiseParcialRepository.atualizaClassificacaoCota(estudoId, numeroCota);
+    public void atualizaClassificacaoCota(Long estudoId, Long numeroCota, String classificacaoCota) {
+	analiseParcialRepository.atualizaClassificacaoCota(estudoId, numeroCota, classificacaoCota);
     }
     
     @Override
@@ -356,7 +356,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 repartePDVDTOs.add(repartePDVDTO);
             }
             Produto produto = estudo.getProdutoEdicao().getProduto();
-            MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaProduto(cota.getId(), produto.getId());
+            MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaProduto(cota.getId(), estudo.getProdutoEdicao().getTipoClassificacaoProduto().getId(), estudo.getProdutoEdicao().getProduto().getCodigoICD());
             repartePdvService.salvarRepartesPDVMix(repartePDVDTOs, produto.getCodigo(), mixCotaProduto.getId());
         }
     }
