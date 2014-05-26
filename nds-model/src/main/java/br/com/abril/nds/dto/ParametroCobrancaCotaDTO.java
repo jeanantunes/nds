@@ -1,9 +1,11 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.util.CurrencyUtil;
 
 public class ParametroCobrancaCotaDTO implements Serializable {
 
@@ -20,6 +22,8 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	private long fatorVencimento;
 	
 	private Boolean sugereSuspensao;
+	
+	private Boolean sugereSuspensaoDistribuidor;
 	
 	private Boolean contrato;
 	
@@ -102,6 +106,13 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 		this.sugereSuspensao = sugereSuspensao;
 	}
 
+	public Boolean isSugereSuspensaoDistribuidor() {
+		return sugereSuspensaoDistribuidor;
+	}
+
+	public void setSugereSuspensaoDistribuidor(Boolean sugereSuspensaoDistribuidor) {
+		this.sugereSuspensaoDistribuidor = sugereSuspensaoDistribuidor;
+	}
 
 	public Boolean isContrato() {
 		return contrato;
@@ -144,6 +155,12 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 		return valorMinimo;
 	}
 
+    public BigDecimal getValorMinimoBigDecimal() {
+		
+		BigDecimal vr = CurrencyUtil.converterValor(this.valorMinimo);
+		
+		return vr;
+	}
 
 	public void setValorMinimo(String valorMinimo) {
 		this.valorMinimo = valorMinimo;
@@ -162,7 +179,13 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	public String getVrDividasAberto() {
 		return vrDividasAberto;
 	}
-
+	
+	public BigDecimal getVrDividasAbertoBigDecimal() {
+		
+		BigDecimal vr = CurrencyUtil.converterValor(this.vrDividasAberto);
+		
+		return vr;
+	}
 
 	public void setVrDividasAberto(String vrDividasAberto) {
 		this.vrDividasAberto = vrDividasAberto;
