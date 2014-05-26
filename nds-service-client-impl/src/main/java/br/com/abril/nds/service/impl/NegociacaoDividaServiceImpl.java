@@ -1028,14 +1028,13 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         
         final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
         
-        BigDecimal valorMinimoCobranca = cota.getParametroCobranca() != null ? cota.getParametroCobranca()
-                .getValorMininoCobranca() : null;
+        BigDecimal valorMinimoCobranca = cota.getValorMinimoCobranca();
                 
                 if (valorMinimoCobranca == null) {
                     
                     final FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
                     
-                    valorMinimoCobranca = formaCobranca != null ? formaCobranca.getValorMinimoEmissao() : null;
+                    valorMinimoCobranca = formaCobranca != null ? cota.getValorMinimoCobranca() : null;
                 }
                 
                 return valorMinimoCobranca;

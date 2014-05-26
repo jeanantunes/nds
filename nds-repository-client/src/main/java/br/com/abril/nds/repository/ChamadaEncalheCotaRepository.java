@@ -165,4 +165,6 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	
 	ChamadaEncalheCota obterChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento);
 	
+	Long quantidadeChamadasEncalheParaCota(Long idCota, Date periodoInicial, Date periodoFinal);
+	
 }

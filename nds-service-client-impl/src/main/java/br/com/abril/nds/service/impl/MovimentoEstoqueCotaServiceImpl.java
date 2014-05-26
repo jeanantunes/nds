@@ -255,7 +255,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			
 			this.movimentoEstoqueService.gerarMovimentoCota(
 				null, produtoEdicao.getId(), cota.getId(), usuario.getId(), 
-					transferencia.getQuantidadeTransferir(), tipoMovimento, dataOperacao);
+					transferencia.getQuantidadeTransferir(), tipoMovimento, dataOperacao, null);
 		}
 	}
 
