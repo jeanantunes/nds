@@ -113,6 +113,9 @@ public class Cota implements Serializable {
 	@Embedded
 	private ParametroDistribuicaoCota parametroDistribuicao;
 	
+	@OneToOne(mappedBy="cota")
+	private ParametroCobrancaDistribuicaoCota parametroCobrancaDistribuicaoCota;
+	
 	@ManyToOne(optional = true)
 	@JoinColumn(name="ID_FIADOR")
 	private Fiador fiador;
@@ -694,5 +697,18 @@ public class Cota implements Serializable {
 	public void setCotasUnificacao(Set<CotaUnificacao> cotasUnificacao) {
 		this.cotasUnificacao = cotasUnificacao;
 	}
+
+
+	public ParametroCobrancaDistribuicaoCota getParametroCobrancaDistribuicaoCota() {
+		return parametroCobrancaDistribuicaoCota;
+	}
+
+
+	public void setParametroCobrancaDistribuicaoCota(
+			ParametroCobrancaDistribuicaoCota parametroCobrancaDistribuicaoCota) {
+		this.parametroCobrancaDistribuicaoCota = parametroCobrancaDistribuicaoCota;
+	}
+	
+	
 	
 }

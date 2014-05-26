@@ -50,10 +50,6 @@ public class Transportador implements Serializable {
 	@OneToMany(mappedBy = "transportador")
 	private List<EnderecoTransportador> enderecosTransportador;
 	
-	@OneToOne
-	@JoinColumn(name = "PARAM_COB_TRANSP_ID")
-	private ParametroCobrancaTransportador parametroCobrancaTransportador;
-
 	public Long getId() {
 		return id;
 	}
@@ -119,14 +115,5 @@ public class Transportador implements Serializable {
 
 	public void setMotoristas(List<Motorista> motoristas) {
 		this.motoristas = motoristas;
-	}
-
-	public ParametroCobrancaTransportador getParametroCobrancaTransportador() {
-		return parametroCobrancaTransportador;
-	}
-
-	public void setParametroCobrancaTransportador(
-			ParametroCobrancaTransportador parametroCobrancaTransportador) {
-		this.parametroCobrancaTransportador = parametroCobrancaTransportador;
 	}
 }

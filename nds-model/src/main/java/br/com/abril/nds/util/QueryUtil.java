@@ -1,6 +1,12 @@
 package br.com.abril.nds.util;
 
+import java.util.Properties;
+
 import org.hibernate.Query;
+import org.hibernate.internal.TypeLocatorImpl;
+import org.hibernate.type.EnumType;
+import org.hibernate.type.Type;
+import org.hibernate.type.TypeResolver;
 
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -47,5 +53,17 @@ public class QueryUtil {
     	query.append(order);
     	
     }
+    
+    public static Type obterTypeEnum(final Class<?> clazz){
+    	
+   	 final Properties params = new Properties();
+        
+        params.put("enumClass", clazz.getCanonicalName());
+        params.put("type", "12");
+        
+        final Type enumType = new TypeLocatorImpl(new TypeResolver()).custom(EnumType.class, params);
+        
+        return enumType;
+   }
     
 }

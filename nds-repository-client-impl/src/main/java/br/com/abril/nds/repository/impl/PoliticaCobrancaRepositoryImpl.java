@@ -8,6 +8,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -219,5 +220,14 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepositoryModel<Poli
 		query.setParameter("indAtiva", true);
 		
 		return (boolean) query.uniqueResult();
+	}
+	
+	public Fornecedor obterFornecedorPadrao(){
+		
+		Query query = this.getSession().createQuery("select p.fornecedorPadrao from PoliticaCobranca p where p.principal=true");
+		
+		query.setMaxResults(1);
+		
+		return (Fornecedor) query.uniqueResult();
 	}
 }

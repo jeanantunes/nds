@@ -32,6 +32,7 @@ import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.DadosCotaVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.controllers.cadastro.validator.DistribuicaoEntregaValidator;
 import br.com.abril.nds.dto.ArquivoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
@@ -847,20 +848,6 @@ public class CotaController extends BaseController {
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	/**
 	 * Salva os dados dos fornecedores, associa os fornecedores a cota informada.
@@ -1135,6 +1122,8 @@ public class CotaController extends BaseController {
 	public void pesquisarCotas(BigInteger numCota,String nomeCota,String numeroCpfCnpj, String sortorder, 
 							   String logradouro, String bairro, String municipio,String status,
 			 				   String sortname, int page, int rp){
+		
+		
 		
 		if (numeroCpfCnpj != null) {
 			numeroCpfCnpj = numeroCpfCnpj.replace(".", "").replace("-", "").replace("/", "");
@@ -1440,23 +1429,24 @@ public class CotaController extends BaseController {
 		}	
 	}
 
-	                /**
+	/**
      * Valida os dados de Distribuição da Cota ao salvar.
      * 
      * @param distribuicao - DTO que representa os dados de distribuição da cota
      */
 	private void validarDadosDistribuicaoCotaSalvar(DistribuicaoDTO distribuicao) {
 		
-		if (DescricaoTipoEntrega.ENTREGA_EM_BANCA.equals(distribuicao.getDescricaoTipoEntrega())) {
+		if(distribuicao.getDescricaoTipoEntrega() == null){
 			
-			this.validarPercentualTaxa(distribuicao.getPercentualFaturamento(), distribuicao.getTaxaFixa());
-			
-			this.validarPeriodoCarencia(distribuicao.getInicioPeriodoCarencia(), distribuicao.getFimPeriodoCarencia());
-			
-		} else if (DescricaoTipoEntrega.ENTREGADOR.equals(distribuicao.getDescricaoTipoEntrega())) {
-			
-			this.validarPeriodoCarencia(distribuicao.getInicioPeriodoCarencia(), distribuicao.getFimPeriodoCarencia());
+			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo de Entrega deve ser informado!");
 		}
+		
+		if(!DescricaoTipoEntrega.COTA_RETIRA.equals(distribuicao.getDescricaoTipoEntrega())) {
+			
+			cotaService.validarTipoEntrega(distribuicao.getNumCota(),distribuicao.getDescricaoTipoEntrega());
+			
+			DistribuicaoEntregaValidator.validar(distribuicao);
+		} 
 	}
 
 	/**
@@ -1472,63 +1462,7 @@ public class CotaController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um dos campos \"Percentual de Faturamento\" ou \"Taxa Fixa\" deve ser preenchido!");
 		}
 	}
-
-	                /**
-     * Valida o período de carência informado.
-     * 
-     * @param inicioPeriodoCarenciaFormatado - início do período de carência
-     *            formatado
-     * @param fimPeriodoCarenciaFormatado - fim do período de carência formatado
-     */
-	private void validarPeriodoCarencia(String inicioPeriodoCarenciaFormatado,
-									   	String fimPeriodoCarenciaFormatado) {
-		
-		List<String> listaMensagens = new ArrayList<String>();
-		
-		if ((inicioPeriodoCarenciaFormatado == null || inicioPeriodoCarenciaFormatado.trim().isEmpty())
-				&& (fimPeriodoCarenciaFormatado == null || fimPeriodoCarenciaFormatado.trim().isEmpty())) {
-			
-			return;
-		}
-		
-		if (inicioPeriodoCarenciaFormatado == null || inicioPeriodoCarenciaFormatado.trim().isEmpty()) {
-			
-			throw new ValidacaoException(
-TipoMensagem.WARNING, "O início do Período de Carência deve ser preenchido!");
-		}
-		
-		if (fimPeriodoCarenciaFormatado == null || fimPeriodoCarenciaFormatado.trim().isEmpty()) {
-			
-			throw new ValidacaoException(
-TipoMensagem.WARNING, "O fim do Período de Carência deve ser preenchido!");
-		}
-				
-		if (!DateUtil.isValidDatePTBR(inicioPeriodoCarenciaFormatado)) {
-			
-            listaMensagens.add("Início do Período de Carência inválido!");
-		}
-		
-		if (!DateUtil.isValidDatePTBR(fimPeriodoCarenciaFormatado)) {
-			
-            listaMensagens.add("Fim do Período de Carência inválido!");
-		}
-		
-		if (!listaMensagens.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, listaMensagens);	
-		}
-		
-		Date inicioPeriodoCarencia = DateUtil.parseDataPTBR(inicioPeriodoCarenciaFormatado);
-		Date fimPeriodoCarencia = DateUtil.parseDataPTBR(fimPeriodoCarenciaFormatado);
-		
-		if (DateUtil.isDataInicialMaiorDataFinal(
-				inicioPeriodoCarencia, fimPeriodoCarencia)) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-                    "O início do Período de Carência deve ser menor que o fim do Período de Carência!");
-		}
-	}
-
+	
 	/**
 	 * Gera combos de Tipo de Entrega
 	 * 
@@ -1792,15 +1726,7 @@ TipoMensagem.WARNING, "O fim do Período de Carência deve ser preenchido!");
 		
 		fileService.esvaziarTemp(path);
 	}
-	
-	@Post
-	public void carregarValoresEntregaBanca(Integer numCota) {
-		
-		DistribuicaoDTO dto = cotaService.carregarValoresEntregaBanca(numCota);
-		
-		this.result.use(Results.json()).from(dto, "result").serialize();
-	}
-	
+
 	@Post
 	public void distribuidorUtilizaTermoAdesao(){
 		
@@ -1816,5 +1742,14 @@ TipoMensagem.WARNING, "O fim do Período de Carência deve ser preenchido!");
 	
 		this.result.use(Results.json()).from(utilizaTermo, "result").serialize();
 	}
+	
+	@Post
+	public void validarTipoEntrega(Integer numeroCota,DescricaoTipoEntrega tipoEntrega){
+		
+		cotaService.validarTipoEntrega(numeroCota,tipoEntrega);
+		
+		this.result.use(Results.json()).from("", "result").serialize();
+	}
+	
 	
 }

@@ -106,4 +106,6 @@ public interface PdvRepository extends Repository<PDV, Long> {
 	public List<PdvDTO> obterPDVs(Integer numeroCota);
 
 	public List<PdvDTO> obterPdvPorCotaComEndereco(Long idCota);
+	
+	PDV obterPDVPrincipal(Integer numeroCota);
 }
