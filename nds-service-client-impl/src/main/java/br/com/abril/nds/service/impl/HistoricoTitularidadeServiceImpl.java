@@ -771,8 +771,6 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		historicoTitularidadeCotaDistribuicao.setProcuracaoAssinada(parametroDistribuicaoCota.getProcuracaoRecebida());
 		historicoTitularidadeCotaDistribuicao.setPossuiTermoAdesao(parametroDistribuicaoCota.getUtilizaTermoAdesao());
 		historicoTitularidadeCotaDistribuicao.setTermoAdesaoAssinado(parametroDistribuicaoCota.getTermoAdesaoRecebido());
-		historicoTitularidadeCotaDistribuicao.setTaxaFixaEntrega(parametroDistribuicaoCota.getTaxaFixa());
-		historicoTitularidadeCotaDistribuicao.setPercentualFaturamentoEntrega(parametroDistribuicaoCota.getPercentualFaturamento());
 		historicoTitularidadeCotaDistribuicao.setInicioPeriodoCarencia(parametroDistribuicaoCota.getInicioPeriodoCarencia());
 		historicoTitularidadeCotaDistribuicao.setFimPeriodoCarencia(parametroDistribuicaoCota.getFimPeriodoCarencia());
 		historicoTitularidadeCotaDistribuicao.setTipoEntrega(parametroDistribuicaoCota.getDescricaoTipoEntrega());

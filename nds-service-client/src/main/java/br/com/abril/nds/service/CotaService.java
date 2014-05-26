@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
@@ -341,9 +342,6 @@ public interface CotaService {
 	void atualizaTermoAdesao(String numCota, DescricaoTipoEntrega descricaoTipoEntrega) throws FileNotFoundException, IOException ;
 	
 	byte[] getDocumentoTermoAdesao(Integer numeroCota, BigDecimal valorDebito, BigDecimal percentualDebito) throws Exception;
-	
-	DistribuicaoDTO carregarValoresEntregaBanca(Integer numCota);
-
 
     /**
      * Obtém as informações de distribuição do histórico de titularidade da cota
@@ -449,4 +447,10 @@ public interface CotaService {
 	Long obterIdPorNumeroCota(Integer numeroCota);
 	
 	String obterEmailCota(Integer numeroCota);
+	
+	void processarParametrosCobrancaDistribuicao(DistribuicaoDTO dto, Cota cota);
+	
+	List<ParametroDistribuicaoEntregaCotaDTO> obterParametrosDistribuicaoEntregaCota();
+
+	void validarTipoEntrega(Integer numeroCota, DescricaoTipoEntrega tipoEntrega);
 }

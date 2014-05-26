@@ -81,7 +81,11 @@ public enum GrupoMovimentoFinaceiro {
 	
 	RESGATE_CAUCAO_LIQUIDA(OperacaoFinaceira.CREDITO, "Resgate Caução Líquida"),
 	
-	NEGOCIACAO_COMISSAO(OperacaoFinaceira.DEBITO, "Comissão Negociação");
+	NEGOCIACAO_COMISSAO(OperacaoFinaceira.DEBITO, "Comissão Negociação"),
+	
+	DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR(OperacaoFinaceira.DEBITO,"Débito Taxa de Entrega - Transportador"),
+	
+	DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR(OperacaoFinaceira.DEBITO,"Débito Taxa de Entrega - Entregador");
 	
 	private OperacaoFinaceira operacaoFinaceira;
 	

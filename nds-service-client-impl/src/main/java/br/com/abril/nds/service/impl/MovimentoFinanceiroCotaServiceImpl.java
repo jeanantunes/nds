@@ -30,6 +30,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -43,6 +44,7 @@ import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
@@ -527,6 +529,17 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         return res;
     }
     
+    @Transactional(readOnly = true)
+    public BigDecimal obterFaturamentoDaCotaNoPeriodo(final Long idCota,final BaseCalculo baseCalculo,
+            final Date dataInicial, final Date dataFinal){
+    	
+    	Cota cota = new Cota();
+    	cota.setId(idCota);
+    	
+    	Map<Long, BigDecimal> res = this.obterFaturamentoCotasPeriodo(Arrays.asList(cota),baseCalculo,dataInicial,dataFinal);
+    	
+    	return res.containsKey(idCota)? res.get(idCota) : BigDecimal.ZERO;  
+    }
     
     
     @Override
@@ -1592,5 +1605,34 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                                                                        movimentosEncalheAgrupadosPorFornecedor.get(fornecedorId),
                                                                        movimentosEstornoAgrupadosPorFornecedor.get(fornecedorId));
         }
+    }
+    
+    @Override
+    @Transactional
+    public void gerarMovimentoFinanceiroDebitoDistribuicaoEntregaCota(final TipoMovimentoFinanceiro tipoMovimento,
+														    		  final Usuario usuario,
+														    		  final Cota cota,
+														    		  final Date dataVencimento,
+														    		  final Date dataOperacao,
+														    		  final BigDecimal valorDebito){
+														    	
+    	MovimentoFinanceiroCota movimentoFinanceiro = new MovimentoFinanceiroCota();
+		
+		movimentoFinanceiro.setAprovadoAutomaticamente(true);
+		movimentoFinanceiro.setAprovador(usuario);
+		movimentoFinanceiro.setCota(cota);
+		movimentoFinanceiro.setData(dataVencimento);
+		movimentoFinanceiro.setDataAprovacao(dataOperacao);
+		movimentoFinanceiro.setDataCriacao(dataOperacao);
+		movimentoFinanceiro.setLancamentoManual(false);
+		movimentoFinanceiro.setStatus(StatusAprovacao.APROVADO);
+		movimentoFinanceiro.setStatusIntegracao(StatusIntegracao.INTEGRADO);
+		movimentoFinanceiro.setUsuario(usuario);
+		movimentoFinanceiro.setValor(valorDebito);	
+		movimentoFinanceiro.setTipoMovimento(tipoMovimento);
+		movimentoFinanceiro.setFornecedor(cota.getParametroCobranca().getFornecedorPadrao());
+		
+		movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiro);
+    	
     }
 }
