@@ -143,6 +143,7 @@ import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
@@ -311,6 +312,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Autowired
 	private FixacaoReparteService fixacaoReparteService;
 	
+	@Autowired
+	private DebitoCreditoCotaService debitoCreditoCotaService;
+
 	@Autowired
 	private BoletoService boletoService;
 	
@@ -1714,6 +1718,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			fixacaoReparteService.verificarFixacao(dataFechamento);
 			
+			LOGGER.info("FECHAMENTO DIARIO - PROCESSADA DEBITOS COTAS TAXA DE ENTREGA");
+			
+			processarDebitosCotaTaxasEntrega(dataFechamento);
+			
 			return fechamentoDiarioDTO;
 		
 		} catch (FechamentoDiarioException e) {
@@ -1722,6 +1730,11 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 		}
+	}
+	
+	private void processarDebitosCotaTaxasEntrega(Date dataFechamento){
+		
+		this.debitoCreditoCotaService.processarDebitoDeDistribuicaoDeEntregaDaCota(dataFechamento);
 	}
 	
 	private void processarDividasNaoPagas(Usuario usuario, Date dataPagamento) {

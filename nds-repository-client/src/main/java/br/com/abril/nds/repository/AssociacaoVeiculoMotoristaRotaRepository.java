@@ -22,4 +22,6 @@ public interface AssociacaoVeiculoMotoristaRotaRepository extends
 	boolean verificarAssociacaoVeiculo(Long idVeiculo, Set<Long> idsIgnorar);
 
 	boolean verificarAssociacaoRotaRoteiro(Long idRota);
+	
+	Long obterQuantidadeAssociaoesDaCota(Integer numeroCota);
 }

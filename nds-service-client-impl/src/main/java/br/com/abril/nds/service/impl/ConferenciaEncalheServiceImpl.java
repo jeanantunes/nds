@@ -1174,6 +1174,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
 			
+			//Se um dos itens foi expedido com nota fiscal, a conferencia deve solicitar a entrada de nota
+			for(ConferenciaEncalheDTO ceDTO : listaConferenciaEncalheDTO) {
+				if(ceDTO.isProcessoUtilizaNfe()) {
+					infoConfereciaEncalheCota.setProcessoUtilizaNfe(true);
+					break;
+				}
+			}
+			
 			infoConfereciaEncalheCota.setEncalhe(null);
 			
 			infoConfereciaEncalheCota.setIdControleConferenciaEncalheCota(controleConferenciaEncalheCota.getId());

@@ -87,6 +87,12 @@ public class ControleConferenciaEncalheCota {
 	@JoinColumn(name = "BOX_ID")
 	private Box box;
 
+	@Column(name="PROCESSO_UTILIZA_NFE")
+	private boolean processoUtilizaNfe;
+	
+	@Column(name="NFE_DIGITADA")
+	private boolean nfeDigitada;
+	
 	/**
 	 * Obtém id
 	 * 
@@ -267,6 +273,22 @@ public class ControleConferenciaEncalheCota {
 	 */
 	public void setBox(Box box) {
 		this.box = box;
+	}
+
+	public boolean isProcessoUtilizaNfe() {
+		return processoUtilizaNfe;
+	}
+
+	public void setProcessoUtilizaNfe(boolean processoUtilizaNfe) {
+		this.processoUtilizaNfe = processoUtilizaNfe;
+	}
+
+	public boolean isNfeDigitada() {
+		return nfeDigitada;
+	}
+
+	public void setNfeDigitada(boolean nfeDigitada) {
+		this.nfeDigitada = nfeDigitada;
 	}
 
 	/**
