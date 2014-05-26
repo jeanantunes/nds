@@ -56,8 +56,8 @@ public class ChamadaEncalheCota implements Serializable {
 	@OneToMany(mappedBy = "chamadaEncalheCota")
 	private Set<ConferenciaEncalhe> conferenciasEncalhe = new HashSet<ConferenciaEncalhe>();
 	
-	@Column(name = "COTA_CONTRIBUINTE_EXIGE_NF", nullable = false)
-	private boolean cotaContribuinteExigeNF;
+	@Column(name = "PROCESSO_UTILIZA_NFE", nullable = false)
+	private boolean processoUtilizaNfe;
 	
 	public ChamadaEncalheCota() {
 		super();
@@ -152,15 +152,15 @@ public class ChamadaEncalheCota implements Serializable {
 	/**
 	 * @return
 	 */
-	public boolean isCotaContribuinteExigeNF() {
-		return cotaContribuinteExigeNF;
+	public boolean isProcessoUtilizaNfe() {
+		return processoUtilizaNfe;
 	}
 
 	/**
-	 * @param cotaContribuinteExigeNF
+	 * @param processoUtilizaNfe
 	 */
-	public void setCotaContribuinteExigeNF(boolean cotaContribuinteExigeNF) {
-		this.cotaContribuinteExigeNF = cotaContribuinteExigeNF;
+	public void setProcessoUtilizaNfe(boolean processoUtilizaNfe) {
+		this.processoUtilizaNfe = processoUtilizaNfe;
 	}
 
 	@Override

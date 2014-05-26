@@ -23,6 +23,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private int pacotePadrao;
 	
+	private boolean processoUtilizaNfe;
+	
 	private boolean possuiBrinde;
 	
 	private boolean parcialNaoFinal;
@@ -266,6 +268,14 @@ public class ConferenciaEncalheDTO implements Serializable {
 
 	public void setPacotePadrao(int pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
+	}
+
+	public boolean isProcessoUtilizaNfe() {
+		return processoUtilizaNfe;
+	}
+
+	public void setProcessoUtilizaNfe(boolean processoUtilizaNfe) {
+		this.processoUtilizaNfe = processoUtilizaNfe;
 	}
 
 	public boolean isPossuiBrinde() {

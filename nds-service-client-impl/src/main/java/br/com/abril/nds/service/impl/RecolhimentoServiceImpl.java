@@ -643,7 +643,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		chamadaEncalheCota.setFechado(false);
 		chamadaEncalheCota.setCota(cota);
 		chamadaEncalheCota.setQtdePrevista(qtdPrevista);
-		chamadaEncalheCota.setCotaContribuinteExigeNF(cotaContribuinteExigeNF);
+		chamadaEncalheCota.setProcessoUtilizaNfe(cotaContribuinteExigeNF);
 		
 		chamadaEncalheCota = this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
 		

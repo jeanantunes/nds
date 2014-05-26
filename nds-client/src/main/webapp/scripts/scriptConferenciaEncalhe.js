@@ -524,8 +524,6 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 							ConferenciaEncalhe.modalAberta = false;
 							
-							ConferenciaEncalhe.ifCotaExigeNfe(data, ConferenciaEncalhe.popup_notaFiscal);
-							
 							focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 							
 							ConferenciaEncalhe.numeroCotaEditavel(false);
@@ -571,9 +569,13 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 				} 
 				
+				if(data.processoUtilizaNfe != undefined && data.processoUtilizaNfe) {
+					
+					ConferenciaEncalhe.ifCotaExigeNfe(data, ConferenciaEncalhe.popup_notaFiscal);
+				}
+
 				ConferenciaEncalhe.carregarListaConferencia(data);
 				
-				ConferenciaEncalhe.ifCotaExigeNfe(data, ConferenciaEncalhe.popup_notaFiscal);
 				
 				if( $("#vlrCE", ConferenciaEncalhe.workspace).length != 0 ){
 					
@@ -708,8 +710,13 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/carregarListaConferencia', 
 				data, 
-				function(result){
+				function(result) {
 					
+					if(result.processoUtilizaNfe != undefined && result.processoUtilizaNfe) {
+						
+						ConferenciaEncalhe.popup_notaFiscal();
+					}
+			
 					ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result);
 					
 					ConferenciaEncalhe.configurarAtalhos();

@@ -643,6 +643,8 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		dados.put("indDistribuidorAceitaJuramentado", infoConfereciaEncalheCota.isDistribuidorAceitaJuramentado());
 		
+		dados.put("processoUtilizaNfe", infoConfereciaEncalheCota.isProcessoUtilizaNfe());
+		
 		this.calcularValoresMonetarios(dados);
 		
 		final Cota cota = infoConfereciaEncalheCota.getCota();

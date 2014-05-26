@@ -39,6 +39,8 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	
 	private boolean distribuidorAceitaJuramentado;
 	
+	private boolean processoUtilizaNfe;
+	
 	
 	public boolean isDistribuidorAceitaJuramentado() {
 		return distribuidorAceitaJuramentado;
@@ -131,6 +133,13 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	public void setNotaFiscalEntradaCota(NotaFiscalEntradaCota notaFiscalEntradaCota) {
 		this.notaFiscalEntradaCota = notaFiscalEntradaCota;
 	}
-	
+
+	public boolean isProcessoUtilizaNfe() {
+		return processoUtilizaNfe;
+	}
+
+	public void setProcessoUtilizaNfe(boolean processoUtilizaNfe) {
+		this.processoUtilizaNfe = processoUtilizaNfe;
+	}
 	
 }
