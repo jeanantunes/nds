@@ -124,6 +124,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setTipoPedido(String tipoPedido) {
+		tipoPedido = StringUtils.leftPad(tipoPedido, 2, '0');
 		this.tipoPedido = tipoPedido;
 	}
 
@@ -298,7 +299,4 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	public void setCodEanProduto(String codEanProduto) {
 		this.codEanProduto = codEanProduto;
 	}
-
-	
-	
 }

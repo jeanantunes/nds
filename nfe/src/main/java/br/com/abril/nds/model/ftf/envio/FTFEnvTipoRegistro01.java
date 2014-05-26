@@ -934,7 +934,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
-		codigoCentroEmissor = StringUtils.leftPad(codigoCentroEmissor, 2, '0');
+		codigoCentroEmissor = codigoCentroEmissor != null ? StringUtils.leftPad(codigoCentroEmissor, 2, '0') : StringUtils.leftPad(codigoCentroEmissor, ' ', '0');
 		this.codigoCentroEmissor = codigoCentroEmissor;
 	}
 
@@ -951,7 +951,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodLocal(String codLocal) {
-		codLocal = StringUtils.leftPad(codLocal, 2, '0');
+		codLocal = codLocal != null ? StringUtils.leftPad(codLocal, 2, '0') : StringUtils.leftPad(codLocal, ' ', '0');
 		this.codLocal = codLocal;
 	}
 
@@ -960,7 +960,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setTipoPedido(String tipoPedido) {
-		tipoPedido = StringUtils.leftPad(tipoPedido, 2, '0');
+		tipoPedido = tipoPedido != null ? StringUtils.leftPad(tipoPedido, 2, '0') : StringUtils.leftPad(tipoPedido, ' ', '0');
 		this.tipoPedido = tipoPedido;
 	}
 
@@ -987,7 +987,4 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	public void setItemNFList(List<FTFEnvTipoRegistro02> itemNFList) {
 		this.itemNFList = itemNFList;
 	}
-
-
-	
 }

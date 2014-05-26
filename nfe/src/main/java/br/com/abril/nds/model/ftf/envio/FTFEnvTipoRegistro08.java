@@ -90,7 +90,7 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCpfOuCnpj(String cpfOuCnpj) {
-		cpfOuCnpj = StringUtils.leftPad(cpfOuCnpj, 14, ' ');
+		cpfOuCnpj = cpfOuCnpj != null ? StringUtils.leftPad(cpfOuCnpj, 14, ' ') : StringUtils.leftPad(cpfOuCnpj, 14, ' ');
 		this.cpfOuCnpj = cpfOuCnpj;
 	}
 
@@ -216,7 +216,7 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 	
 	@Override
 	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
-		codigoCentroEmissor = StringUtils.leftPad(codigoCentroEmissor, 2, '0');
+		codigoCentroEmissor = codigoCentroEmissor != null ? StringUtils.leftPad(codigoCentroEmissor, 2, '0') : StringUtils.leftPad(codigoCentroEmissor, ' ', '0');
 		this.codigoCentroEmissor = codigoCentroEmissor;
 	}
 	
@@ -266,6 +266,4 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 	public void setNomeDoCliente(String nomeDoCliente) {
 		this.nomeDoCliente = nomeDoCliente;
 	}
-
-	
 }
