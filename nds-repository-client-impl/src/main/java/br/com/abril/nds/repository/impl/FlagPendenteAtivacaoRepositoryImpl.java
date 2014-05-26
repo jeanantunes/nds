@@ -7,7 +7,8 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.enums.TipoFlag;
+import br.com.abril.nds.enums.Dominio;
+import br.com.abril.nds.enums.Flag;
 import br.com.abril.nds.model.cadastro.FlagPendenteAtivacao;
 import br.com.abril.nds.model.fiscal.TipoEntidadeDestinoFlag;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -34,11 +35,10 @@ public class FlagPendenteAtivacaoRepositoryImpl extends AbstractRepositoryModel<
 	}
 
 	@Override
-	public FlagPendenteAtivacao obterPor(TipoFlag tipoFlag, TipoEntidadeDestinoFlag tipoEntidadeDestinoFlag, Long idAlterado) {
+	public FlagPendenteAtivacao obterPor(Flag flag, Long idAlterado) {
 		
 		Criteria criteria = getSession().createCriteria(FlagPendenteAtivacao.class);
-		criteria.add(Restrictions.eq("nome", tipoFlag));
-		criteria.add(Restrictions.eq("tipo", tipoEntidadeDestinoFlag));
+		criteria.add(Restrictions.eq("flag", flag));
 		criteria.add(Restrictions.eq("idAlterado", idAlterado));
 		
 		return (FlagPendenteAtivacao) criteria.uniqueResult();
@@ -50,6 +50,15 @@ public class FlagPendenteAtivacaoRepositoryImpl extends AbstractRepositoryModel<
 		
 		Criteria criteria = getSession().createCriteria(FlagPendenteAtivacao.class);
 		criteria.add(Restrictions.eq("tipo", tipoEntidadeDestinoFlag));
+		
+		return criteria.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<FlagPendenteAtivacao> obterPor(Dominio dominio) {
+		
+		Criteria criteria = getSession().createCriteria(FlagPendenteAtivacao.class);
+		criteria.add(Restrictions.eq("flag.dominio", dominio));
 		
 		return criteria.list();
 	}

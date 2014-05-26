@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
+import br.com.abril.nds.enums.Dominio;
+
 
 
 /**
@@ -393,20 +395,6 @@ public enum GrupoMovimentoEstoque  {
 	 */
 	public TipoEstoque getTipoEstoque() {
 		return tipoEstoque;
-	}
-
-	/**
-	 * Domínio do movimento estoque
-	 * 
-	 * @author francisco.garcia
-	 *
-	 */
-	public static enum Dominio {
-		
-		DISTRIBUIDOR, 
-		
-		COTA;
-		
 	}
 
 }
