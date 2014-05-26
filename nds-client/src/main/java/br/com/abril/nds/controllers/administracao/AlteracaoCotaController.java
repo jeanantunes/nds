@@ -264,15 +264,15 @@ public class AlteracaoCotaController extends BaseController {
             filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrMinimo(
                     String.valueOf(cota.getValorMinimoCobranca()));
         }
-        if (cota.getParametroCobranca().getPoliticaSuspensao() != null) {
-            if (cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida() != null) {
+        if (cota.getPoliticaSuspensao() != null) {
+            if (cota.getPoliticaSuspensao().getNumeroAcumuloDivida() != null) {
                 filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setQtdDividaEmAberto(
-                        cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida());
+                        cota.getPoliticaSuspensao().getNumeroAcumuloDivida());
             }
             
-            if (cota.getParametroCobranca().getPoliticaSuspensao().getValor() != null) {
+            if (cota.getPoliticaSuspensao().getValor() != null) {
                 filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrDividaEmAberto(
-                        String.valueOf(cota.getParametroCobranca().getPoliticaSuspensao().getValor()));
+                        String.valueOf(cota.getPoliticaSuspensao().getValor()));
             }
         }
         

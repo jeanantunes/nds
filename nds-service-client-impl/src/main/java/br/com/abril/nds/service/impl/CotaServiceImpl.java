@@ -44,6 +44,7 @@ import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
+import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -81,6 +82,7 @@ import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.ReferenciaCota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -141,6 +143,8 @@ import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.BigDecimalUtil;
+import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -3003,45 +3007,112 @@ public class CotaServiceImpl implements CotaService {
     }
     
     /**
+     * Altera politica de suspensão da Cota
+     * 
+     * @param cota
+     * @param sugereSuspensao
+     * @param sugereSuspensaoDistribuidor
+     * @param qtdDividasAberto
+     * @param vrDividasAberto
+     * @return boolean
+     */
+    private boolean salvarPoliticaSuspensaoCota(Cota cota,
+    		                                    boolean sugereSuspensao,
+    		                                    boolean sugereSuspensaoDistribuidor,
+                                                Integer qtdDividasAberto,
+                                                BigDecimal vrDividasAberto){
+    	
+    	if (sugereSuspensaoDistribuidor){
+
+    		if (cota.isSugereSuspensaoDistribuidor() != sugereSuspensaoDistribuidor){
+    			
+    			cota.setSugereSuspensaoDistribuidor(sugereSuspensaoDistribuidor);
+    			
+    			return true;
+    		}
+    		
+    		return false;
+    	}
+    	
+    	cota.setSugereSuspensaoDistribuidor(sugereSuspensaoDistribuidor);
+    	
+    	PoliticaSuspensao ps = cota.getPoliticaSuspensao();
+    	
+    	if (ps==null){
+    		
+    		ps = new PoliticaSuspensao();
+    		
+    		cota.setPoliticaSuspensao(ps);
+    	}
+    	
+    	BigInteger qtdAcumuloAtual = BigIntegerUtil.valueOfInteger(ps.getNumeroAcumuloDivida());
+    			
+    	BigInteger qtdAcumuloInformado = BigIntegerUtil.valueOfInteger(qtdDividasAberto);	
+    	
+    	if ((cota.isSugereSuspensao() != sugereSuspensao) ||
+    		(BigIntegerUtil.compareToTryNull(qtdAcumuloAtual, qtdAcumuloInformado) != 0) ||
+            (BigDecimalUtil.compareToTryNull(ps.getValor(), vrDividasAberto) != 0)){
+    		
+    		ps.setNumeroAcumuloDivida(qtdDividasAberto);
+    		
+    		ps.setValor(vrDividasAberto);
+    		
+    		cota.setSugereSuspensao(sugereSuspensao);
+    		
+    		return true;
+    	}
+    	
+    	return false;
+    }
+    
+    /**
      * Salva as caracteristicas financeiras especificas da Cota
      * 
-     * @param idCota
-     * @param tipoCota
-     * @param devolveEncalhe
+     * @param parametroCobranca
      * @return boolean
      */
     @Transactional
     @Override
-    public boolean salvarCaracteristicasFinanceirasEspecificasCota(final long idCota, 
-    		                                                       final TipoCota tipoCota, 
-    		                                                       final boolean devolveEncalhe, 
-    		                                                       final BigDecimal valorMinimoCobranca){
+	public boolean salvarCaracteristicasFinanceirasEspecificasCota(final ParametroCobrancaCotaDTO parametroCobranca){
         
     	boolean alterado = false;
     	
-        final Cota cota = this.obterPorId(idCota);
+        final Cota cota = this.obterPorId(parametroCobranca.getIdCota());
         
-        if (!cota.getTipoCota().equals(tipoCota)){
+        if (!cota.getTipoCota().equals(parametroCobranca.getTipoCota())){
             
-            cota.setTipoCota(tipoCota);
+            cota.setTipoCota(parametroCobranca.getTipoCota());
             
             cota.setAlteracaoTipoCota(distribuidorService.obterDataOperacaoDistribuidor());
             
             alterado = true;
         }
         
-        if (cota.getValorMinimoCobranca().compareTo(valorMinimoCobranca) != 0){
+        BigDecimal valorMinimoCobranca = parametroCobranca.getValorMinimoBigDecimal();
+        
+        if (BigDecimalUtil.compareToTryNull(cota.getValorMinimoCobranca(), valorMinimoCobranca) != 0){
             
             cota.setValorMinimoCobranca(valorMinimoCobranca);
             
             alterado = true;
         }
         
-        if ((cota.isDevolveEncalhe()==null) || (devolveEncalhe != cota.isDevolveEncalhe())){
+        if ((cota.isDevolveEncalhe()==null) || (parametroCobranca.isDevolveEncalhe() != cota.isDevolveEncalhe())){
                 
-            cota.setDevolveEncalhe(devolveEncalhe);
+            cota.setDevolveEncalhe(parametroCobranca.isDevolveEncalhe());
 
             alterado = true;
+        }
+        
+        boolean politicaSuspensaoAlterado = this.salvarPoliticaSuspensaoCota(cota, 
+        		                                                             parametroCobranca.isSugereSuspensao(), 
+        		                                                             parametroCobranca.isSugereSuspensaoDistribuidor(),
+        		                                                             parametroCobranca.getQtdDividasAberto(), 
+        		                                                             parametroCobranca.getVrDividasAbertoBigDecimal());
+        
+        if (politicaSuspensaoAlterado){
+        	
+        	alterado = true;
         }
         
         if (alterado){

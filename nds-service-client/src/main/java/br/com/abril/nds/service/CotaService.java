@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
+import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
@@ -414,14 +415,10 @@ public interface CotaService {
 	/**
      * Salva as caracteristicas financeiras especificas da Cota
      * 
-     * @param idCota
-     * @param tipoCota
-     * @param devolveEncalhe
+     * @param parametroCobranca
      * @return boolean
      */
-	boolean salvarCaracteristicasFinanceirasEspecificasCota(long idCota,
-			TipoCota tipoCota, boolean devolveEncalhe,
-			BigDecimal valorMinimoCobranca);
+	boolean salvarCaracteristicasFinanceirasEspecificasCota(final ParametroCobrancaCotaDTO parametroCobranca);
 
 	/**
      * Verifica se a cota teve seu tipo alterado na data informada

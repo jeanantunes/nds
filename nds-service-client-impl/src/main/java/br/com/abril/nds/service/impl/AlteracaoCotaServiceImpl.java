@@ -176,7 +176,7 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 					politicaSuspensao.setValor(CurrencyUtil.converterValor(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrDividaEmAberto()));
 				}
 				
-				cota.getParametroCobranca().setPoliticaSuspensao(politicaSuspensao);
+				cota.setPoliticaSuspensao(politicaSuspensao);
 			}
 
 		} catch (NumberFormatException e) {

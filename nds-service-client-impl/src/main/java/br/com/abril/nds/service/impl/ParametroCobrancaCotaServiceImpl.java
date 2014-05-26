@@ -213,6 +213,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaDTO.setIdCota(cota.getId());
 			parametroCobrancaDTO.setNumCota(cota.getNumeroCota());
 			parametroCobrancaDTO.setSugereSuspensao(cota.isSugereSuspensao());
+			parametroCobrancaDTO.setSugereSuspensaoDistribuidor(cota.isSugereSuspensaoDistribuidor());
 			parametroCobrancaDTO.setContrato(cota.isPossuiContrato());
 			parametroCobrancaDTO.setTipoCota(cota.getTipoCota());
 			
@@ -250,7 +251,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 					PoliticaSuspensao ps = new PoliticaSuspensao();
 			    	ps.setNumeroAcumuloDivida(distribuidor.getPoliticaSuspensao().getNumeroAcumuloDivida());
 				    ps.setValor(distribuidor.getPoliticaSuspensao().getValor());				
-				    parametroCobranca.setPoliticaSuspensao(ps);
+				    cota.setPoliticaSuspensao(ps);
 				}
 								
 			}
@@ -266,7 +267,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaDTO.setDevolveEncalhe(cota.isDevolveEncalhe()!=null?cota.isDevolveEncalhe():true);
 			parametroCobrancaDTO.setParametroDistribuidor(parametroDistribuidor);
 			
-			politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
+			politicaSuspensao = cota.getPoliticaSuspensao();
 			
 			if (cota.isSugereSuspensao() && politicaSuspensao != null){
 				
@@ -448,7 +449,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			} else {
 				novo=false;
 				//POLITICA DE SUSPENSAO DO PARAMETRO DE COBRANCA DA COTA
-				politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
+				politicaSuspensao = cota.getPoliticaSuspensao();
 			}
 
 			parametroCobranca.setFatorVencimento((int) parametroCobrancaDTO.getFatorVencimento());
@@ -469,7 +470,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				politicaSuspensao.setValor(null);
 			}
 			
-			parametroCobranca.setPoliticaSuspensao(politicaSuspensao);
+			cota.setPoliticaSuspensao(politicaSuspensao);
 			
 			
 			Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedor());
@@ -487,6 +488,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			cota.setParametroCobranca(parametroCobranca);
 			cota.setSugereSuspensao(parametroCobrancaDTO.isSugereSuspensao());
+			cota.setSugereSuspensaoDistribuidor(parametroCobrancaDTO.isSugereSuspensaoDistribuidor());
 			cota.setPossuiContrato(parametroCobrancaDTO.isContrato());
 			cota.setValorMinimoCobranca(CurrencyUtil.converterValor(parametroCobrancaDTO.getValorMinimo()));
 						
@@ -720,7 +722,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				parametroCobranca.setFatorVencimento(formaCobrancaDistribuidor.getPoliticaCobranca().getFatorVencimento());
 				parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
 				parametroCobranca.setFornecedorPadrao(formaCobrancaDistribuidor.getPoliticaCobranca().getFornecedorPadrao());
-				parametroCobranca.setPoliticaSuspensao(null);
+				c.setPoliticaSuspensao(null);
 				
 				parametroCobrancaCotaRepository.adicionar(parametroCobranca);
 				formaCobranca.setPoliticaCobranca(null);
@@ -1429,7 +1431,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			politicaSuspensao.setNumeroAcumuloDivida(parametroCobranca.getQtdDividasAberto());
 			politicaSuspensao.setValor(CurrencyUtil.converterValor(parametroCobranca.getVrDividasAberto()));
 			
-			pcc.setPoliticaSuspensao(politicaSuspensao);
+			cota.setPoliticaSuspensao(politicaSuspensao);
 			
 			parametroCobrancaCotaRepository.adicionar(pcc);
 			

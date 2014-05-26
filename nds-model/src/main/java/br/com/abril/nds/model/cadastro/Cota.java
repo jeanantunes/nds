@@ -66,6 +66,12 @@ public class Cota implements Serializable {
 	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
 	private boolean sugereSuspensao = true;
 	
+	@Embedded
+	private PoliticaSuspensao politicaSuspensao;
+	
+	@Column(name = "SUGERE_SUSPENSAO_DISTRIBUIDOR", nullable = false)
+	private boolean sugereSuspensaoDistribuidor = true;
+	
 	@Column(name = "POSSUI_CONTRATO", nullable = false)
 	private boolean possuiContrato;
 	
@@ -263,6 +269,22 @@ public class Cota implements Serializable {
 		this.sugereSuspensao = sugereSuspensao;
 	}
 	
+	public PoliticaSuspensao getPoliticaSuspensao() {
+		return politicaSuspensao;
+	}
+
+	public void setPoliticaSuspensao(PoliticaSuspensao politicaSuspensao) {
+		this.politicaSuspensao = politicaSuspensao;
+	}
+
+	public boolean isSugereSuspensaoDistribuidor() {
+		return sugereSuspensaoDistribuidor;
+	}
+
+	public void setSugereSuspensaoDistribuidor(boolean sugereSuspensaoDistribuidor) {
+		this.sugereSuspensaoDistribuidor = sugereSuspensaoDistribuidor;
+	}
+
 	public boolean isPossuiContrato() {
 		return possuiContrato;
 	}
