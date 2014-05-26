@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
-import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
@@ -27,6 +26,15 @@ import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 import br.com.abril.nds.util.ItemAutoComplete;
 
 public interface ConferenciaEncalheService {
+	
+	/**
+	 * Sinaliza se o processo de finalizacao de conferencia
+	 * de encalhe iniciou ou finalizou.
+	 * 
+	 * @param numeroCota
+	 * @param atualizando
+	 */
+	public void sinalizarConferenciaEncalhe(Integer numeroCota, boolean atualizando);
 	
 	/**
 	 * Obtém mapa tendo como chave idFornecedor e valor 
@@ -243,7 +251,7 @@ public interface ConferenciaEncalheService {
 	 * @param indConferenciaContingencia
 	 * @param reparte
 	 */
-	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
+	public void finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,

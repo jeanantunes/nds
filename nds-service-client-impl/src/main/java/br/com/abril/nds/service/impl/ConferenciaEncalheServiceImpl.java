@@ -23,7 +23,6 @@ import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
@@ -64,6 +63,7 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.estoque.Semaforo;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -111,6 +111,7 @@ import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoReposit
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
+import br.com.abril.nds.repository.SemaforoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
@@ -269,6 +270,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private SemaforoRepository semaforoRepository;
+	
 	
 	private final int PRIMEIRO_DIA_RECOLHIMENTO = 1;
 	
@@ -1673,16 +1678,53 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	
+	/**
+	 * Sinaliza se o processo de finalizacao da conferencia de encalhe
+	 * iniciou ou finalizou.
+	 *  
+	 * @param numeroCota
+	 */
+	@Transactional
+	public void sinalizarConferenciaEncalhe(Integer numeroCota, boolean atualizando) {
+		
+		Semaforo semaforo = semaforoRepository.buscarPorId(numeroCota);
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		if(semaforo == null) {
+			
+			semaforo = new Semaforo();
+			
+			semaforo.setNumeroCota(numeroCota);
+			semaforo.setAtualizando(atualizando);
+			semaforo.setDataOperacao(dataOperacao);
+			
+			semaforoRepository.adicionar(semaforo);
+			
+		} else {
+			
+			semaforo.setNumeroCota(numeroCota);
+			semaforo.setAtualizando(atualizando);
+			semaforo.setDataOperacao(dataOperacao);
+			
+			semaforoRepository.alterar(semaforo);
+			
+		}
+
+	
+		
+	}
+	
 	@Override
 	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 900, isolation= Isolation.READ_COMMITTED)
-	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
+	public void finalizarConferenciaEncalhe(
 			final ControleConferenciaEncalheCota controleConfEncalheCota, 
 			final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			final Set<Long> listaIdConferenciaEncalheParaExclusao,
 			final Usuario usuario,
 			final boolean indConferenciaContingencia, 
 			BigDecimal reparte) throws GerarCobrancaValidacaoException {
-		
 		
 		final Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
@@ -1755,7 +1797,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 		}
 		
-		return documentoConferenciaEncalhe;
+//		return documentoConferenciaEncalhe;
 	}
 	
 	private void abaterNegociacao(final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, final Long idCota, final Usuario usuario) {
