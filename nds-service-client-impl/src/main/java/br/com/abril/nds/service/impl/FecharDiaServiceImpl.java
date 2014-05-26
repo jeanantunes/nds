@@ -45,7 +45,8 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
-import br.com.abril.nds.enums.TipoFlag;
+import br.com.abril.nds.enums.Dominio;
+import br.com.abril.nds.enums.Flag;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -94,7 +95,6 @@ import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
-import br.com.abril.nds.model.fiscal.TipoEntidadeDestinoFlag;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -974,7 +974,13 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     		this.historicoSituacaoCotaRepository.alterar(historicoSituacaoCota);
     	}
     	
-    	List<FlagPendenteAtivacao> flagsPendentesAtivacao = flagPendenteAtivacaoRepository.obterPor(TipoEntidadeDestinoFlag.COTA);
+    	ajustarFlagsCota();
+    	
+    }
+
+	private void ajustarFlagsCota() {
+		
+		List<FlagPendenteAtivacao> flagsPendentesAtivacao = flagPendenteAtivacaoRepository.obterPor(Dominio.COTA);
     	
     	for(FlagPendenteAtivacao fpa : flagsPendentesAtivacao) {
     		
@@ -984,11 +990,11 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     		}
     		
     		if(cota.getParametrosCotaNotaFiscalEletronica() != null) {
-    			if(fpa.getNome().equals(TipoFlag.COTA_EXIGE_NF_E)) {
+    			if(fpa.getFlag().equals(Flag.COTA_EXIGE_NF_E)) {
     				cota.getParametrosCotaNotaFiscalEletronica().setExigeNotaFiscalEletronica(fpa.isValor());
     			}
     			
-    			if(fpa.getNome().equals(TipoFlag.COTA_CONTRIBUINTE_ICMS)) {
+    			if(fpa.getFlag().equals(Flag.COTA_CONTRIBUINTE_ICMS)) {
     				cota.getParametrosCotaNotaFiscalEletronica().setContribuinteICMS(fpa.isValor());
     			}
     		}
@@ -1000,8 +1006,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	for(FlagPendenteAtivacao fpa : flagsPendentesAtivacao) {
     		flagPendenteAtivacaoRepository.remover(fpa);
     	}
-    	
-    }
+	}
     
     private Date liberarNovaDataOperacionalParaDistribuidor(Date dataFechamento) {
     	

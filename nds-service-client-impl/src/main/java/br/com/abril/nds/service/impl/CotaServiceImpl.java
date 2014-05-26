@@ -53,7 +53,7 @@ import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.TitularidadeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
-import br.com.abril.nds.enums.TipoFlag;
+import br.com.abril.nds.enums.Flag;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -1629,25 +1629,25 @@ public class CotaServiceImpl implements CotaService {
 		
 		ParametrosCotaNotaFiscalEletronica paramNFE = cota.getParametrosCotaNotaFiscalEletronica(); 
 	    
-	    if(paramNFE == null){
+	    if(paramNFE == null) {
 	    	paramNFE = new ParametrosCotaNotaFiscalEletronica();
 	    }
 	    		
 	    paramNFE.setEmailNotaFiscalEletronica(cotaDto.getEmailNF());
-	    // Parametro ajusta ao fechar o dia para nao impactar em cenarios do decorrer do dia
+	    // Parametro ajustado ao fechar o dia para nao impactar em cenarios do decorrer do dia
 	    //paramNFE.setExigeNotaFiscalEletronica(cotaDto.isExigeNFE());
 	    //paramNFE.setContribuinteICMS(cotaDto.isContribuinteICMS());
 	    
 	    
 	    FlagPendenteAtivacao flagCotaExigeNFe = 
-	    		flagPendenteAtivacaoRepository.obterPor(TipoFlag.COTA_EXIGE_NF_E, TipoEntidadeDestinoFlag.COTA, cotaDto.getIdCota());
+	    		flagPendenteAtivacaoRepository.obterPor(Flag.COTA_EXIGE_NF_E, cotaDto.getIdCota());
 	    
 	    FlagPendenteAtivacao flagCotaContribuinteICMS = 
-	    		flagPendenteAtivacaoRepository.obterPor(TipoFlag.COTA_CONTRIBUINTE_ICMS, TipoEntidadeDestinoFlag.COTA, cotaDto.getIdCota());
+	    		flagPendenteAtivacaoRepository.obterPor(Flag.COTA_CONTRIBUINTE_ICMS, cotaDto.getIdCota());
 	    
 	    if(flagCotaExigeNFe == null) {
 	    	
-	    	flagCotaExigeNFe = new FlagPendenteAtivacao(TipoFlag.COTA_EXIGE_NF_E, TipoFlag.COTA_EXIGE_NF_E.getDescricao()
+	    	flagCotaExigeNFe = new FlagPendenteAtivacao(Flag.COTA_EXIGE_NF_E, Flag.COTA_EXIGE_NF_E.getDescricao()
 	    					, TipoEntidadeDestinoFlag.COTA, cotaDto.isExigeNFE(), cotaDto.getIdCota());
 	    } else {
 	    	
@@ -1658,7 +1658,7 @@ public class CotaServiceImpl implements CotaService {
 	    if(flagCotaContribuinteICMS == null) {
 	    	
 	    	flagCotaContribuinteICMS = 
-	    			new FlagPendenteAtivacao(TipoFlag.COTA_CONTRIBUINTE_ICMS, TipoFlag.COTA_CONTRIBUINTE_ICMS.getDescricao()
+	    			new FlagPendenteAtivacao(Flag.COTA_CONTRIBUINTE_ICMS, Flag.COTA_CONTRIBUINTE_ICMS.getDescricao()
 	    					, TipoEntidadeDestinoFlag.COTA, cotaDto.isContribuinteICMS(), cotaDto.getIdCota());
 	    } else {
 	    	
