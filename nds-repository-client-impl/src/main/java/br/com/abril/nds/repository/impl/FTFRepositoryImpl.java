@@ -321,18 +321,29 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	}
 
 	@Override
-	public FTFEnvTipoRegistro09 obterRegistroTipo09(long idTipoNotaFiscal) {
-
-		FTFEnvTipoRegistro09 reg09 = new FTFEnvTipoRegistro09();
-		reg09.setTipoRegistro("9");
-		reg09.setTipoPedido("99");
-
-		setCommonsParameters(reg09);
+	public FTFEnvTipoRegistro09 obterRegistroTipo09(long idNaturezaOperacao) {
 		
-		reg09.setNumeroDocOrigem("99999999");
-		
-		// código do estabelecimento, de acordo com o sistema GFF - obrigatório
-		reg09.setCodLocal("99999");
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(" select DISTINCT ")
+		.append(" '9' as tipoRegistro, ")
+		.append(" paramFtf.CENTRO_EMISSOR as codigoCentroEmissor,  ")
+		.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora,  ")
+		.append(" paramFtf.ESTABELECIMENTO as codLocal,  ")
+		.append(" '99' as tipoPedido, ")
+		.append(" '99999999' as numeroDocOrigem ")
+		.append(" from natureza_operacao no ")
+		.append(" join parametros_ftf_geracao paramFtf ON no.ID = paramftf.NATUREZA_OPERACAO_ID ")
+		.append(" where no.id = :idNaturezaOperacao ");
+
+		SQLQuery query = getSession().createSQLQuery(sb.toString());
+		query.setParameter("idNaturezaOperacao", idNaturezaOperacao);
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(FTFEnvTipoRegistro09.class));
+
+		Object uniqueResult = query.uniqueResult();
+
+		FTFEnvTipoRegistro09 reg09 = (FTFEnvTipoRegistro09) uniqueResult;
 		
 		return reg09;
 	}
@@ -443,7 +454,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 
 	@Override
-	public FTFEnvTipoRegistro08 obterRegistroTipo08(long idTipoNotaFiscal) {
+	public FTFEnvTipoRegistro08 obterRegistroTipo08(long idNotaFiscal) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(" select DISTINCT ")
@@ -480,7 +491,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" where nfn.id = :idNF ");
 
 		SQLQuery query = getSession().createSQLQuery(sb.toString());
-		query.setParameter("idNF", idTipoNotaFiscal);
+		query.setParameter("idNF", idNotaFiscal);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(FTFEnvTipoRegistro08.class));
 
