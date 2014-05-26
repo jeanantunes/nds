@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import br.com.abril.nds.enums.TipoFlag;
+import br.com.abril.nds.enums.Flag;
 import br.com.abril.nds.model.fiscal.TipoEntidadeDestinoFlag;
 
 @Entity
@@ -31,7 +31,7 @@ public class FlagPendenteAtivacao implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name="NOME")
-	private TipoFlag nome;
+	private Flag flag;
 	
 	@Column(name="DESCRICAO")
 	private String descricao;
@@ -54,8 +54,8 @@ public class FlagPendenteAtivacao implements Serializable {
 		super();
 	}
 	
-	public FlagPendenteAtivacao(TipoFlag tipoFlag, String descricao, TipoEntidadeDestinoFlag tipo, boolean valor, Long idAlterado) {
-		this.nome = tipoFlag;
+	public FlagPendenteAtivacao(Flag tipoFlag, String descricao, TipoEntidadeDestinoFlag tipo, boolean valor, Long idAlterado) {
+		this.flag = tipoFlag;
 		this.descricao = descricao;
 		this.tipo = tipo;
 		this.valor = valor;
@@ -70,12 +70,12 @@ public class FlagPendenteAtivacao implements Serializable {
 		this.id = id;
 	}
 
-	public TipoFlag getNome() {
-		return nome;
+	public Flag getFlag() {
+		return flag;
 	}
 
-	public void setNome(TipoFlag nome) {
-		this.nome = nome;
+	public void setFlag(Flag flag) {
+		this.flag = flag;
 	}
 
 	public String getDescricao() {
@@ -119,7 +119,7 @@ public class FlagPendenteAtivacao implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime * result + ((this.getNome() == null) ? 0 : this.getNome().hashCode());
+		result = prime * result + ((this.getFlag() == null) ? 0 : this.getFlag().hashCode());
 		result = prime * result + ((this.getIdAlterado() == null) ? 0 : this.getIdAlterado().hashCode());
 		return result;
 	}
@@ -138,10 +138,10 @@ public class FlagPendenteAtivacao implements Serializable {
 				return false;
 		} else if (!this.getId().equals(other.getId()))
 			return false;
-		if (this.getNome() == null) {
-			if (other.getNome() != null)
+		if (this.getFlag() == null) {
+			if (other.getFlag() != null)
 				return false;
-		} else if (!this.getNome().equals(other.getNome()))
+		} else if (!this.getFlag().equals(other.getFlag()))
 			return false;
 		if (this.getIdAlterado() == null) {
 			if (other.getIdAlterado() != null)
@@ -153,7 +153,7 @@ public class FlagPendenteAtivacao implements Serializable {
 
 	@Override
 	public String toString() {
-		return (this.nome == null ? "" : this.nome) +" - "+ (this.descricao == null ? "" : this.descricao);
+		return (this.flag == null ? "" : this.flag) +" - "+ (this.descricao == null ? "" : this.descricao);
 	}
 
 }
