@@ -1699,11 +1699,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 
-		
-		
-		
-		//TESTE PERFORMANCE
-		/*
 		try {
 		
 			nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
@@ -1711,10 +1706,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			documentoConferenciaEncalhe.setMsgsGeracaoCobranca(e.getValidacaoVO());			
 		}
-		*/
-		
-		
-		
 
 		final ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
 
