@@ -439,9 +439,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		Distribuidor distribuidor =  distribuidorService.obter();
 		
-		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+			
 			return true;
-		}else{ 
+			
+		} else {
+			
 			final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 			
 			if (cota == null) {

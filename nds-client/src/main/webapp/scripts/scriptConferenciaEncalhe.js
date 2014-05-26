@@ -546,6 +546,7 @@ var ConferenciaEncalhe = $.extend(true, {
 						}
 					},
 					form: $("#dialog-reabertura", this.workspace).parents("form"),
+					
 					close : function(){
 						
 						if( $("#vlrCE", ConferenciaEncalhe.workspace).length != 0 ){
@@ -1754,16 +1755,19 @@ var ConferenciaEncalhe = $.extend(true, {
 					$("#qtdCE", ConferenciaEncalhe.workspace).focus();
 					
 				}
-			}, open : function(){
+			}, open : function() {
 				
 				setTimeout (function () {$("#numNotaFiscal").focus();}, 1);
 				
-			}, close : function(){
+			}, close : function() {
+				
 				ConferenciaEncalhe.modalAberta = false;
 				
-				if(!ConferenciaEncalheCont.isConfirmar){
+				if(!ConferenciaEncalhe.isConfirmar) {
 					
 					ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
+					
+					ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
 					
 					focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));					
 				}
