@@ -232,10 +232,10 @@ $(function(){
 	<table width="770" border="0" cellspacing="1" cellpadding="1">
 		<tbody>
 		    <tr>
-			    <td width="100" style="width: 100px; ">Utiliza Politica de Suspensão do Distribuidor:</td>
+			    <td width="100" style="width: 221px; ">Utiliza Politica de Suspensão do Distribuidor:</td>
 				<td width="24"><input id="sugereSuspensaoDistribuidor"
 					name="sugereSuspensaoDistribuidor" type="checkbox" value="" onclick="parametroCobrancaCotaController.exibe_form_suspencao_distribuidor(this.checked);" /></td>
-			    <td></td>
+			    <td colspan="2" style="width: 326px; "></td>
 			</tr>	
 		</tbody>
 	</table>		

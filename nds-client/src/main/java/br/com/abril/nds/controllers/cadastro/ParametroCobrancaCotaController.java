@@ -55,6 +55,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.FileImportUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -1005,6 +1006,14 @@ public class ParametroCobrancaCotaController extends BaseController {
     	
         PoliticaSuspensao pl = d.getPoliticaSuspensao();
         
-        this.result.use(Results.json()).from(pl, "result").recursive().serialize();
+        ParametroCobrancaCotaDTO pDTO = new ParametroCobrancaCotaDTO();
+        
+        pDTO.setSugereSuspensao(d.isSugereSuspensao());
+        
+        pDTO.setQtdDividasAberto(pl!=null?pl.getNumeroAcumuloDivida():null);
+        
+        pDTO.setVrDividasAberto(pl!=null?CurrencyUtil.formatarValor(pl.getValor()):null);
+        
+        this.result.use(Results.json()).from(pDTO, "result").recursive().serialize();
     }
 }
