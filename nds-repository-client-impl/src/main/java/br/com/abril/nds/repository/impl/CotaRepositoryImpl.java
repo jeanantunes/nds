@@ -3489,7 +3489,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     	
     	final StringBuilder hql = new StringBuilder();
         
-    	hql.append(" select cota.ID as idCota , ")
+    	hql.append(" select distinct cota.ID as idCota , ")
     		.append(" 	cota.DESCRICAO_TIPO_ENTREGA as tipoEntrega, ")
 		    .append("	cota.INICIO_PERIODO_CARENCIA as inicioCarencia,  ")
 		    .append("	cota.FIM_PERIODO_CARENCIA as fimCarencia, ")
