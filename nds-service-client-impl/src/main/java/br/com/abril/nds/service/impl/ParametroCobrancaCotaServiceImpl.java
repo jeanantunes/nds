@@ -1659,4 +1659,26 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
             }
         }
     }
+    
+    /**
+     * Obtem Politica de Suspensao da Cota ou do Distribuidor
+     * 
+     * @param cota
+     * @return PoliticaSuspensao
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public PoliticaSuspensao obterPoliticaSuspensaoCota(Cota cota) {
+        
+    	PoliticaSuspensao ps = cota.getPoliticaSuspensao();
+    	
+    	if (cota.isSugereSuspensaoDistribuidor()){
+    		
+    		Distribuidor d = this.distribuidorRepository.obter();
+    		
+    		ps = d.getPoliticaSuspensao();
+    	}
+        
+        return ps;
+    }
 }
