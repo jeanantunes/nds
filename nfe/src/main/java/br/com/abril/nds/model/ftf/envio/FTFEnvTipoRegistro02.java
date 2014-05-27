@@ -99,8 +99,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
-		codigoCentroEmissor = StringUtils.leftPad(codigoCentroEmissor, 2, '0');
-		this.codigoCentroEmissor = codigoCentroEmissor;
+		this.codigoCentroEmissor = codigoCentroEmissor != null ? StringUtils.leftPad(codigoCentroEmissor, 2, '0') : StringUtils.leftPad(codigoCentroEmissor, 2, '0');
 	}
 
 	public String getCnpjEmpresaEmissora() {
@@ -116,7 +115,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodLocal(String codLocal) {
-		this.codLocal = codLocal;
+		this.codLocal = codLocal != null ? StringUtils.rightPad(codLocal, 11, ' ') : StringUtils.leftPad("", 11, ' ');
 	}
 
 	public String getTipoPedido() {
@@ -124,7 +123,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setTipoPedido(String tipoPedido) {
-		tipoPedido = StringUtils.leftPad(tipoPedido, 2, '0');
+		tipoPedido = tipoPedido != null ? StringUtils.leftPad(tipoPedido, 2, '0') : StringUtils.leftPad(tipoPedido, 2, '0');
 		this.tipoPedido = tipoPedido;
 	}
 
@@ -156,8 +155,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 		return codProdutoOuServicoSistemaOrigem;
 	}
 
-	public void setCodProdutoOuServicoSistemaOrigem(
-			String codProdutoOuServicoSistemaOrigem) {
+	public void setCodProdutoOuServicoSistemaOrigem(String codProdutoOuServicoSistemaOrigem) {
 		this.codProdutoOuServicoSistemaOrigem = codProdutoOuServicoSistemaOrigem;
 	}
 
@@ -261,8 +259,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 		return indicadorProdutoServicoMaterial;
 	}
 
-	public void setIndicadorProdutoServicoMaterial(
-			String indicadorProdutoServicoMaterial) {
+	public void setIndicadorProdutoServicoMaterial(String indicadorProdutoServicoMaterial) {
 		this.indicadorProdutoServicoMaterial = indicadorProdutoServicoMaterial;
 	}
 
@@ -270,8 +267,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 		return codMaterialOuServicoCorporativo;
 	}
 
-	public void setCodMaterialOuServicoCorporativo(
-			String codMaterialOuServicoCorporativo) {
+	public void setCodMaterialOuServicoCorporativo(String codMaterialOuServicoCorporativo) {
 		this.codMaterialOuServicoCorporativo = codMaterialOuServicoCorporativo;
 	}
 
@@ -279,8 +275,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 		return novoCodigoTipoNaturezaOperacao;
 	}
 
-	public void setNovoCodigoTipoNaturezaOperacao(
-			String novoCodigoTipoNaturezaOperacao) {
+	public void setNovoCodigoTipoNaturezaOperacao(String novoCodigoTipoNaturezaOperacao) {
 		this.novoCodigoTipoNaturezaOperacao = novoCodigoTipoNaturezaOperacao;
 	}
 

@@ -12,6 +12,8 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 
 	public List<FTFEnvTipoRegistro02> itemNFList;
 	
+	public List<FTFEnvTipoRegistro03> itemNFList03;
+	
 	private FTFEnvTipoRegistro06 regTipo06;
 	
 	@FTFfield(tamanho=1, tipo="char", ordem=1)
@@ -951,8 +953,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodLocal(String codLocal) {
-		codLocal = codLocal != null ? StringUtils.leftPad(codLocal, 2, '0') : StringUtils.leftPad(codLocal, ' ', '0');
-		this.codLocal = codLocal;
+		this.codLocal = codLocal != null ? StringUtils.leftPad(codLocal, 11, '0') : StringUtils.leftPad("", 11, '0');
 	}
 
 	public String getTipoPedido() {
@@ -960,8 +961,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setTipoPedido(String tipoPedido) {
-		tipoPedido = tipoPedido != null ? StringUtils.leftPad(tipoPedido, 2, '0') : StringUtils.leftPad(tipoPedido, ' ', '0');
-		this.tipoPedido = tipoPedido;
+		this.tipoPedido = tipoPedido != null ? StringUtils.leftPad(tipoPedido, 2, '0') : StringUtils.leftPad(tipoPedido, ' ', '0');
 	}
 
 	public String getNumeroDocOrigem() {
@@ -986,5 +986,13 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 
 	public void setItemNFList(List<FTFEnvTipoRegistro02> itemNFList) {
 		this.itemNFList = itemNFList;
+	}
+
+	public List<FTFEnvTipoRegistro03> getItemNFList03() {
+		return itemNFList03;
+	}
+
+	public void setItemNFList03(List<FTFEnvTipoRegistro03> itemNFList03) {
+		this.itemNFList03 = itemNFList03;
 	}
 }
