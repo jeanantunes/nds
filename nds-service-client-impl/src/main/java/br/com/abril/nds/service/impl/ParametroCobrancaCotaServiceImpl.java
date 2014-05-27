@@ -940,28 +940,28 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				strConcentracoes .append("Diariamente");
 			}
 			
+			final String detalhesTipoPagto = this.obterDetalheTipoPagamento(formaCobrancaItem);
+			
+
+			FormaCobrancaDTO formaCobranca = new FormaCobrancaDTO(
+				formaCobrancaItem.getId(),
+				strFornecedores.toString(),
+				strConcentracoes.toString(),
+				(formaCobrancaItem.getTipoCobranca()!=null?formaCobrancaItem.getTipoCobranca().getDescTipoCobranca():""),
+				detalhesTipoPagto,
+				isParametroDistribuidor,
+				descUnificacao
+			);
+
 			if ((fornecedores!=null)&&(!fornecedores.isEmpty())){
 				for (Fornecedor itemFornecedor:fornecedores){
-					if (strFornecedores.length()>0){
-						strFornecedores.append("/");
-					}
-					strFornecedores.append(itemFornecedor.getJuridica().getRazaoSocial());
+					formaCobranca.addFornecedor(new Fornecedor(itemFornecedor.getId(), itemFornecedor.getJuridica().getNomeFantasia()));
 				}
 			}
 			
-			final String detalhesTipoPagto = this.obterDetalheTipoPagamento(formaCobrancaItem);
+			formaCobranca.getFornecedores().size();
 			
-			formasCobrancaDTO.add(
-				new FormaCobrancaDTO(
-					formaCobrancaItem.getId(),
-					strFornecedores.toString(),
-					strConcentracoes.toString(),
-					(formaCobrancaItem.getTipoCobranca()!=null?formaCobrancaItem.getTipoCobranca().getDescTipoCobranca():""),
-					detalhesTipoPagto,
-					isParametroDistribuidor,
-					descUnificacao
-				)
-			);
+			formasCobrancaDTO.add(formaCobranca);
 		}
 	}
 
