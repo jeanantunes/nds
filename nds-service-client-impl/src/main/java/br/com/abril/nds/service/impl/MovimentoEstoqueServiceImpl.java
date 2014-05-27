@@ -72,6 +72,7 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.service.validation.CobrancaFornecedorValidator;
 import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.MathUtil;
@@ -141,6 +142,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     @Autowired
     private SchedulerFactoryBean schedulerFactoryBean;
     
+    @Autowired
+    private CobrancaFornecedorValidator cobrancaFornecedorValidator;
+
     @Override
     @Transactional
     public void gerarMovimentoEstoqueFuroPublicacao(final Lancamento lancamento, final FuroProduto furoProduto, final Long idUsuario) {
@@ -214,7 +218,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota = new ArrayList<MovimentoEstoqueCotaDTO>();
         
         ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-        
+
         tratarIncrementoProximoLancamento(descontos,descontoProximosLancamentos, null, 
                 produtoEdicao.getProduto().getFornecedor().getId(), idProdutoEdicao, idProduto);
         
@@ -225,6 +229,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 continue;
             }
             
+            this.cobrancaFornecedorValidator.filter(
+            	estudoCota.getIdCota(), 
+            	produtoEdicao.getProduto().getFornecedor(), 
+            	produtoEdicao.getProduto().getCodigo()
+            ).validate();
+
             tratarIncrementoProximoLancamento(descontos,descontoProximosLancamentos, estudoCota.getIdCota(), 
                     produtoEdicao.getProduto().getFornecedor().getId(), idProdutoEdicao, idProduto);
             
@@ -256,7 +266,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         movimentoEstoqueCotaRepository.adicionarEmLoteDTO(movimentosEstoqueCota);
         
     }
-    
+
 	private void tratarIncrementoProximoLancamento(Map<String, DescontoDTO>  descontos, 
 	        DescontoProximosLancamentos descontoProximosLancamentos, Long idCota, Long idFornecedor, Long idProduto, Long idEdicao) {
 	    
