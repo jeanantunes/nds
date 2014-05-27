@@ -107,4 +107,10 @@ public interface DebitoCreditoCotaService {
 	 * @return boolean
 	 */
 	boolean isMovimentoEditavel(MovimentoFinanceiroCota movimentoFinanceiroCota);
+	
+	/**
+	 * Processa os movimentos de debito para cota referente as entregas (Transportador/Entregador) de mercadoria.
+	 * @param dataOperacao TODO
+	 */
+	void processarDebitoDeDistribuicaoDeEntregaDaCota(Date dataOperacao);
 }

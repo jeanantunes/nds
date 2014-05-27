@@ -205,7 +205,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
 								
 								ConferenciaEncalheCont.carregarListaConferencia(data);
-								ConferenciaEncalheCont.ifCotaExigeNfe(data, ConferenciaEncalhe.popup_notaFiscal);
+								ConferenciaEncalheCont.ifCotaExigeNfe(data, ConferenciaEncalheCont.popup_notaFiscal);
 								
 								ConferenciaEncalheCont.numeroCotaEditavel(true);
 							},
@@ -252,6 +252,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			}
 		);
 	},
+	
 	ifCotaExigeNfe :  function(data, fnCotaExigeNfe) {
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarCotaExigeNFe", data, 
 		function(result){
@@ -261,7 +262,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		});
 	},
 	
-	recalcularValoresFinalizar : function(index){
+	recalcularValoresFinalizar : function(index) {
 		
 		var data = [
             {name: "idConferencia", value: $("#idConferenciaEncalheHiddenFinalizarConf_" + index, ConferenciaEncalheCont.workspace).val()},

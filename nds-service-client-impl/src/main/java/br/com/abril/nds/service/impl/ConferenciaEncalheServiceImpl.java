@@ -439,9 +439,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		Distribuidor distribuidor =  distribuidorService.obter();
 		
-		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+			
 			return true;
-		}else{ 
+			
+		} else {
+			
 			final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 			
 			if (cota == null) {
@@ -1170,6 +1173,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(controleConferenciaEncalheCota.getId());
 			
 			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
+			
+			//Se um dos itens foi expedido com nota fiscal, a conferencia deve solicitar a entrada de nota
+			for(ConferenciaEncalheDTO ceDTO : listaConferenciaEncalheDTO) {
+				if(ceDTO.isProcessoUtilizaNfe()) {
+					infoConfereciaEncalheCota.setProcessoUtilizaNfe(true);
+					break;
+				}
+			}
 			
 			infoConfereciaEncalheCota.setEncalhe(null);
 			

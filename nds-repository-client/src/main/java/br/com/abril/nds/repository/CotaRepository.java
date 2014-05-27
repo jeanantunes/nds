@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.MunicipioDTO;
+import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
@@ -27,6 +28,7 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
@@ -421,4 +423,8 @@ public interface CotaRepository extends Repository<Cota, Long> {
     List<Cota> obterConjuntoCota(FiltroNFeDTO filtro);
 
     String obterEmailCota(Integer numeroCota);
+    
+    List<ParametroDistribuicaoEntregaCotaDTO> obterParametrosDistribuicaoEntregaCota();
+
+	Fornecedor obterFornecedorPadrao(Long idCota);
 }

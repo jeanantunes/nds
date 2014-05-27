@@ -8,7 +8,7 @@
                  <tr>
                      <td><label>Sugere Suspensão:</label></td>
 	                 <td colspan="3">
-	                     <input id="sugereSuspensao" name="sugereSuspensao" type="checkbox" value="" />
+	                     <input name="parametrosDistribuidor.sugereSuspensao" id="sugereSuspensao" type="checkbox" ${parametrosDistribuidor.sugereSuspensao?"checked":""} />
 	                 </td>
                  </tr>  
                  
