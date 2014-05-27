@@ -11,8 +11,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
@@ -171,7 +169,13 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		hql.append(" where dcpe.produto is null and  dcpe.produtoEdicao is null ");
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
-		if(filtro != null && filtro.getNumeroCota() != null) {
+		
+		if(filtro != null && filtro.getIdCota() != null) {
+			
+			hql.append(" and c.id = :idCota ");
+			param.put("idCota", filtro.getIdCota());
+		
+		} else if (filtro != null && filtro.getNumeroCota() != null) {
 			
 			hql.append(" and c.numeroCota = :numeroCota ");
 			param.put("numeroCota", filtro.getNumeroCota());

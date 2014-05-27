@@ -61,13 +61,7 @@ public class ParametroCobrancaController extends BaseController {
 	private BancoService bancoService;
 	
 	@Autowired
-	private DistribuidorService distribuidorService;
-	
-	@Autowired
 	private FornecedorService fornecedorService;
-	
-	@Autowired
-	private FormaCobrancaService formaCobrancaService;
 	
 	@Autowired
 	private ParametroCobrancaCotaService parametroCobrancaCotaService;
@@ -293,7 +287,6 @@ public class ParametroCobrancaController extends BaseController {
 		}
 		
 		if ((parametros.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)){
-			parametros.setValorMinimo(null);
 			parametros.setTaxaJuros(null);
 			parametros.setTaxaMulta(null);
 			parametros.setValorMulta(null);
@@ -303,7 +296,6 @@ public class ParametroCobrancaController extends BaseController {
 		}    
 		else if (parametros.getTipoCobranca()==TipoCobranca.OUTROS){
 			parametros.setIdBanco(null);
-			parametros.setValorMinimo(null);
 		}    
         
 		return parametros;

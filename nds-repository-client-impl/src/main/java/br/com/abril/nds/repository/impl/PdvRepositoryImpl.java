@@ -202,6 +202,16 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		criteria.setMaxResults(1);
 		return (PDV) criteria.uniqueResult();
 	}
+	
+	public PDV obterPDVPrincipal(Integer numeroCota) {
+		
+		Criteria criteria = getSession().createCriteria(PDV.class);
+		criteria.createAlias("cota", "cota");
+		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
+		criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
+		criteria.setMaxResults(1);
+		return (PDV) criteria.uniqueResult();
+	}
 
 	    /**
      * Obtém PDV's por Rota

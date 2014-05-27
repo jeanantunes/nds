@@ -6,8 +6,11 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.ModalidadeCobranca;
+import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
@@ -40,25 +43,29 @@ public class FiltroModalDistribuicao implements Serializable{
 	
 	private boolean termoAdesaoRecebido;
 	
-	private BigDecimal percentualFaturamentoEntregaBanca;
+	private BigDecimal percentualFaturamento;
 	
-	private BigDecimal taxaFixaEntregaBanca;
+	private BigDecimal taxaFixa;
 	
-	private Date carenciaInicioEntregaBanca;
+	private Date carenciaInicio;
 	
-	private Date  carenciaFimEntregaBanca;
+	private Date  carenciaFim;
 	
 	private boolean procuracao;
 	
 	private boolean procuracaoRecebida;
 	
-	private BigDecimal percentualFaturamentoEntregador;
-	
-	private Date carenciaInicioEntregador;
-	
-	private Date carenciaFimEntregador;
-	
 	private BaseCalculo baseCalculo;
+	
+	private ModalidadeCobranca modalidadeCobranca;
+	
+	private boolean porEntrega;
+	
+	private PeriodicidadeCobranca periodicidadeCobranca;
+	
+	private Integer diaCobranca;
+	
+	private DiaSemana diaSemanaCobranca;
 	
 	private List<ItemDTO<BaseCalculo,String>> basesCalculo;
 
@@ -151,11 +158,6 @@ public class FiltroModalDistribuicao implements Serializable{
 		this.termoAdesaoRecebido = termoAdesaoRecebido;
 	}
 
-
-
-
-
-
 	public boolean isProcuracao() {
 		return procuracao;
 	}
@@ -170,64 +172,6 @@ public class FiltroModalDistribuicao implements Serializable{
 
 	public void setProcuracaoRecebida(boolean procuracaoRecebida) {
 		this.procuracaoRecebida = procuracaoRecebida;
-	}
-
-	public BigDecimal getPercentualFaturamentoEntregador() {
-		return percentualFaturamentoEntregador;
-	}
-
-	public void setPercentualFaturamentoEntregador(
-			BigDecimal percentualFaturamentoEntregador) {
-		this.percentualFaturamentoEntregador = percentualFaturamentoEntregador;
-	}
-
-	public Date getCarenciaInicioEntregador() {
-		return carenciaInicioEntregador;
-	}
-
-	public void setCarenciaInicioEntregador(Date carenciaInicioEntregador) {
-		this.carenciaInicioEntregador = carenciaInicioEntregador;
-	}
-
-	public Date getCarenciaFimEntregador() {
-		return carenciaFimEntregador;
-	}
-
-	public void setCarenciaFimEntregador(Date carenciaFimEntregador) {
-		this.carenciaFimEntregador = carenciaFimEntregador;
-	}
-
-	public BigDecimal getPercentualFaturamentoEntregaBanca() {
-		return percentualFaturamentoEntregaBanca;
-	}
-
-	public void setPercentualFaturamentoEntregaBanca(
-			BigDecimal percentualFaturamentoEntregaBanca) {
-		this.percentualFaturamentoEntregaBanca = percentualFaturamentoEntregaBanca;
-	}
-
-	public BigDecimal getTaxaFixaEntregaBanca() {
-		return taxaFixaEntregaBanca;
-	}
-
-	public void setTaxaFixaEntregaBanca(BigDecimal taxaFixaEntregaBanca) {
-		this.taxaFixaEntregaBanca = taxaFixaEntregaBanca;
-	}
-
-	public Date getCarenciaInicioEntregaBanca() {
-		return carenciaInicioEntregaBanca;
-	}
-
-	public void setCarenciaInicioEntregaBanca(Date carenciaInicioEntregaBanca) {
-		this.carenciaInicioEntregaBanca = carenciaInicioEntregaBanca;
-	}
-
-	public Date getCarenciaFimEntregaBanca() {
-		return carenciaFimEntregaBanca;
-	}
-
-	public void setCarenciaFimEntregaBanca(Date carenciaFimEntregaBanca) {
-		this.carenciaFimEntregaBanca = carenciaFimEntregaBanca;
 	}
 
 	public BaseCalculo getBaseCalculo() {
@@ -245,5 +189,79 @@ public class FiltroModalDistribuicao implements Serializable{
 	public void setBasesCalculo(List<ItemDTO<BaseCalculo,String>> basesCalculo) {
 		this.basesCalculo = basesCalculo;
 	}
+
+	public BigDecimal getPercentualFaturamento() {
+		return percentualFaturamento;
+	}
+
+	public void setPercentualFaturamento(BigDecimal percentualFaturamento) {
+		this.percentualFaturamento = percentualFaturamento;
+	}
+
+	public BigDecimal getTaxaFixa() {
+		return taxaFixa;
+	}
+
+	public void setTaxaFixa(BigDecimal taxaFixa) {
+		this.taxaFixa = taxaFixa;
+	}
+
+	public Date getCarenciaInicio() {
+		return carenciaInicio;
+	}
+
+	public void setCarenciaInicio(Date carenciaInicio) {
+		this.carenciaInicio = carenciaInicio;
+	}
+
+	public Date getCarenciaFim() {
+		return carenciaFim;
+	}
+
+	public void setCarenciaFim(Date carenciaFim) {
+		this.carenciaFim = carenciaFim;
+	}
+
+	public ModalidadeCobranca getModalidadeCobranca() {
+		return modalidadeCobranca;
+	}
+
+	public void setModalidadeCobranca(ModalidadeCobranca modalidadeCobranca) {
+		this.modalidadeCobranca = modalidadeCobranca;
+	}
+
+	public boolean isPorEntrega() {
+		return porEntrega;
+	}
+
+	public void setPorEntrega(boolean porEntrega) {
+		this.porEntrega = porEntrega;
+	}
+
+	public PeriodicidadeCobranca getPeriodicidadeCobranca() {
+		return periodicidadeCobranca;
+	}
+
+	public void setPeriodicidadeCobranca(PeriodicidadeCobranca periodicidadeCobranca) {
+		this.periodicidadeCobranca = periodicidadeCobranca;
+	}
+
+	public Integer getDiaCobranca() {
+		return diaCobranca;
+	}
+
+	public void setDiaCobranca(Integer diaCobranca) {
+		this.diaCobranca = diaCobranca;
+	}
+
+	public DiaSemana getDiaSemanaCobranca() {
+		return diaSemanaCobranca;
+	}
+
+	public void setDiaSemanaCobranca(DiaSemana diaSemanaCobranca) {
+		this.diaSemanaCobranca = diaSemanaCobranca;
+	}
+	
+	
 
 }

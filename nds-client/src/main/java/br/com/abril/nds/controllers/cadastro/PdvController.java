@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.PdvVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.controllers.cadastro.CotaController;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.GeradorFluxoDTO;
 import br.com.abril.nds.dto.ItemDTO;

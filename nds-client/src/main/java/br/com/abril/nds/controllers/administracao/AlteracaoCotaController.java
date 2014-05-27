@@ -17,10 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.controllers.cadastro.validator.DistribuicaoEntregaValidator;
 import br.com.abril.nds.dto.ArquivoDTO;
 import br.com.abril.nds.dto.ConsultaAlteracaoCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroAlteracaoCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroModalDistribuicao;
 import br.com.abril.nds.dto.filtro.FiltroModalFornecedor;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
@@ -29,6 +31,7 @@ import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -198,16 +201,16 @@ public class AlteracaoCotaController extends BaseController {
                 
             } else {
             	
-            	List<ItemDTO<BaseCalculo, String>> basesCalculo =  new ArrayList<ItemDTO<BaseCalculo, String>>();
-        		for (BaseCalculo itemBaseCalculo: BaseCalculo.values()){
-        			basesCalculo.add(new ItemDTO<BaseCalculo, String>(itemBaseCalculo, itemBaseCalculo.getValue()));
-        		}
-        		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setBasesCalculo(basesCalculo);
-        		
                 filtroAlteracaoCotaDTO.getFiltroModalFornecedor().setListFornecedores(fornecedoresAtivos);
             }
+            
+            List<ItemDTO<BaseCalculo, String>> basesCalculo =  new ArrayList<ItemDTO<BaseCalculo, String>>();
+    		for (BaseCalculo itemBaseCalculo: BaseCalculo.values()){
+    			basesCalculo.add(new ItemDTO<BaseCalculo, String>(itemBaseCalculo, itemBaseCalculo.getValue()));
+    		}
+    		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setBasesCalculo(basesCalculo);
         }
-        
+       
         result.use(Results.json()).from(filtroAlteracaoCotaDTO, "filtroAlteracaoCotaDTO").recursive().serialize();
     }
     
@@ -227,13 +230,29 @@ public class AlteracaoCotaController extends BaseController {
     @Post
     public void salvarAlteracao(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
         
+    	this.validarDadosDistribuicaoEntrega(filtroAlteracaoCotaDTO);
+    	
         alteracaoCotaService.salvarAlteracoes(filtroAlteracaoCotaDTO);
         
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota alterada com sucesso."),
                 Constantes.PARAM_MSGS).recursive().serialize();
     }
     
-    public void preencherFiltroFinanceiro(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, final Cota cota) {
+    private void validarDadosDistribuicaoEntrega(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
+		
+    	FiltroModalDistribuicao distribuicao = filtroAlteracaoCotaDTO.getFiltroModalDistribuicao();
+    	
+    	if(distribuicao!= null){
+    		
+        	if(distribuicao.getDescricaoTipoEntrega()!= null 
+        			&& !DescricaoTipoEntrega.COTA_RETIRA.equals(distribuicao.getDescricaoTipoEntrega())){
+        		
+        		DistribuicaoEntregaValidator.validar(distribuicao);
+        	}
+    	}    	
+	}
+    
+	public void preencherFiltroFinanceiro(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, final Cota cota) {
         
         // FINANCEIRO
         if (cota.getParametroCobranca().getFatorVencimento() != null) {
@@ -241,19 +260,19 @@ public class AlteracaoCotaController extends BaseController {
                     cota.getParametroCobranca().getFatorVencimento());
         }
         
-        if (cota.getParametroCobranca().getValorMininoCobranca() != null) {
+        if (cota.getValorMinimoCobranca() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrMinimo(
-                    String.valueOf(cota.getParametroCobranca().getValorMininoCobranca()));
+                    String.valueOf(cota.getValorMinimoCobranca()));
         }
-        if (cota.getParametroCobranca().getPoliticaSuspensao() != null) {
-            if (cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida() != null) {
+        if (cota.getPoliticaSuspensao() != null) {
+            if (cota.getPoliticaSuspensao().getNumeroAcumuloDivida() != null) {
                 filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setQtdDividaEmAberto(
-                        cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida());
+                        cota.getPoliticaSuspensao().getNumeroAcumuloDivida());
             }
             
-            if (cota.getParametroCobranca().getPoliticaSuspensao().getValor() != null) {
+            if (cota.getPoliticaSuspensao().getValor() != null) {
                 filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrDividaEmAberto(
-                        String.valueOf(cota.getParametroCobranca().getPoliticaSuspensao().getValor()));
+                        String.valueOf(cota.getPoliticaSuspensao().getValor()));
             }
         }
         
@@ -285,54 +304,7 @@ public class AlteracaoCotaController extends BaseController {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setRecebeRecolheProdutosParciais(cota.getParametroDistribuicao().getRecebeRecolheParciais());
         }
         
-        // Tipo Entrega
-        if (cota.getParametroDistribuicao().getDescricaoTipoEntrega() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setDescricaoTipoEntrega(cota.getParametroDistribuicao().getDescricaoTipoEntrega());
-            
-            if (cota.getParametroDistribuicao().getDescricaoTipoEntrega().equals(DescricaoTipoEntrega.ENTREGA_EM_BANCA)) {
-                if (cota.getParametroDistribuicao().getUtilizaTermoAdesao() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTermoAdesao(cota.getParametroDistribuicao().getUtilizaTermoAdesao());
-                }
-                if (cota.getParametroDistribuicao().getTermoAdesaoRecebido() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTermoAdesaoRecebido(cota.getParametroDistribuicao().getTermoAdesaoRecebido());
-                }
-                // TODO arquivo
-                if (cota.getParametroDistribuicao().getPercentualFaturamento() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setPercentualFaturamentoEntregaBanca(
-                            cota.getParametroDistribuicao().getPercentualFaturamento());
-                }
-                if (cota.getParametroDistribuicao().getTaxaFixa() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTaxaFixaEntregaBanca(cota.getParametroDistribuicao().getTaxaFixa());
-                }
-                if (cota.getParametroDistribuicao().getInicioPeriodoCarencia() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaInicioEntregaBanca(cota.getParametroDistribuicao().getInicioPeriodoCarencia());
-                }
-                if (cota.getParametroDistribuicao().getFimPeriodoCarencia() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaFimEntregaBanca(cota.getParametroDistribuicao().getFimPeriodoCarencia());
-                }
-                
-                if (cota.getParametroDistribuicao().getFimPeriodoCarencia() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaFimEntregaBanca(cota.getParametroDistribuicao().getFimPeriodoCarencia());
-                }
-                
-            } else {
-                if (cota.getParametroDistribuicao().getUtilizaProcuracao() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setProcuracao(cota.getParametroDistribuicao().getUtilizaProcuracao());
-                }
-                if (cota.getParametroDistribuicao().getProcuracaoRecebida() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setProcuracaoRecebida(cota.getParametroDistribuicao().getProcuracaoRecebida());
-                }
-                if (cota.getParametroDistribuicao().getPercentualFaturamento() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setPercentualFaturamentoEntregador(cota.getParametroDistribuicao().getPercentualFaturamento());
-                }
-                if (cota.getParametroDistribuicao().getInicioPeriodoCarencia() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaInicioEntregador(cota.getParametroDistribuicao().getInicioPeriodoCarencia());
-                }
-                if (cota.getParametroDistribuicao().getFimPeriodoCarencia() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaFimEntregador(cota.getParametroDistribuicao().getFimPeriodoCarencia());
-                }
-            }
-        }
+        this.carregarDadosDistribuicaoEntrega(filtroAlteracaoCotaDTO, cota);
         
         // --Emissao Documentos
         if (cota.getParametroDistribuicao().getSlipImpresso() != null) {
@@ -384,6 +356,49 @@ public class AlteracaoCotaController extends BaseController {
         }
         
     }
+
+	private void carregarDadosDistribuicaoEntrega(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, final Cota cota) {
+		
+		// Tipo Entrega
+        if (cota.getParametroDistribuicao().getDescricaoTipoEntrega() != null) {
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setDescricaoTipoEntrega(cota.getParametroDistribuicao().getDescricaoTipoEntrega());
+            
+            if (cota.getParametroDistribuicao().getDescricaoTipoEntrega().equals(DescricaoTipoEntrega.ENTREGA_EM_BANCA)) {
+                if (cota.getParametroDistribuicao().getUtilizaTermoAdesao() != null) {
+                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTermoAdesao(cota.getParametroDistribuicao().getUtilizaTermoAdesao());
+                }
+                if (cota.getParametroDistribuicao().getTermoAdesaoRecebido() != null) {
+                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTermoAdesaoRecebido(cota.getParametroDistribuicao().getTermoAdesaoRecebido());
+                }
+                
+            } else {
+                if (cota.getParametroDistribuicao().getUtilizaProcuracao() != null) {
+                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setProcuracao(cota.getParametroDistribuicao().getUtilizaProcuracao());
+                }
+                if (cota.getParametroDistribuicao().getProcuracaoRecebida() != null) {
+                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setProcuracaoRecebida(cota.getParametroDistribuicao().getProcuracaoRecebida());
+                }
+            }
+            
+            ParametroCobrancaDistribuicaoCota parametro = cota.getParametroCobrancaDistribuicaoCota();
+
+            if(parametro!= null){
+            	
+            	FiltroModalDistribuicao distribuicaoDTO = filtroAlteracaoCotaDTO.getFiltroModalDistribuicao();
+                
+                distribuicaoDTO.setCarenciaInicio(cota.getParametroDistribuicao().getInicioPeriodoCarencia());
+                distribuicaoDTO.setCarenciaFim(cota.getParametroDistribuicao().getFimPeriodoCarencia());
+                distribuicaoDTO.setDiaCobranca(parametro.getDiaCobranca());
+                distribuicaoDTO.setDiaSemanaCobranca(parametro.getDiaSemanaCobranca());
+                distribuicaoDTO.setModalidadeCobranca(parametro.getModalidadeCobranca());
+                distribuicaoDTO.setPercentualFaturamento(parametro.getPercentualFaturamento());
+                distribuicaoDTO.setPeriodicidadeCobranca(parametro.getPeriodicidadeCobranca());
+                distribuicaoDTO.setPorEntrega(parametro.isPorEntrega());
+                distribuicaoDTO.setTaxaFixa(parametro.getTaxaFixa());
+                distribuicaoDTO.setBaseCalculo(parametro.getBaseCalculo());
+            }
+        }
+	}
     
     private static void removerFornecedorAssociadoLista(final List<ItemDTO<Long, String>> listFornecedoresCota,
             final List<ItemDTO<Long, String>> fornecedoresAtivos) {

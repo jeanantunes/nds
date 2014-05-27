@@ -3,36 +3,61 @@
 	<br/>
     	<fieldset style="width:420px!important; margin-bottom:5px; margin-left:10px;">
         	<legend>Negociação de Dividas</legend>
+        	
+        	 <table width="393" border="0" cellspacing="1" cellpadding="1">
+        	 
+        	     <tr>
+                     <td><label>Sugere Suspensão:</label></td>
+	                 <td colspan="3">
+	                     <input name="parametrosDistribuidor.sugereSuspensao" id="sugereSuspensao" onclick="parametrosDistribuidorController.exibe_form_suspencao(this.checked);" type="checkbox" ${parametrosDistribuidor.sugereSuspensao?"checked":""} />
+	                 </td>
+                 </tr>  
+                 
+        	 </table>
+        	 
+        	 <div class="form-suspensao-hidden-class">
+        	
+                 <table width="393" border="0" cellspacing="1" cellpadding="1">
+
+	                 <tr>
+	                   <td colspan="4">
+	                   
+	                       <label>Sugere suspensão quando atingir</label>
+	
+						   <!-- Supere Suspensao Quando Atingir Qtde Boletos -->                      
+						   <input name="parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos" id="sugereSuspensaoQuandoAtingirBoletos" value="${parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos}" type="text" style="width:30px; " /> 
+	
+	
+	                       &nbsp;boletos 
+	                       ou R$
+	
+						   <!-- Supere Suspensão quando atingir valor R$ -->
+						   <input name="parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais" id="sugereSuspensaoQuandoAtingirReais" value="${parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais}" type="text" style="width:60px; text-align:right;" value="0,00" />
+	
+	
+	                   </td>
+	                   
+	                 </tr>
+	                 
+                 </table>
+                 
+             </div>
+             
              <table width="393" border="0" cellspacing="1" cellpadding="1">
-                 <tr>
-                   <td colspan="4">                          <label>Sugere suspensão quando atingir</label>
-
-<!-- Supere Suspensao Quando Atingir Qtde Boletos -->                      
-<input name="parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos" id="sugereSuspensaoQuandoAtingirBoletos" value="${parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos}" type="text" style="width:30px; " /> 
-
-
-                     &nbsp;boletos 
-                     ou R$
-
-<!-- Supere Suspensão quando atingir valor R$ -->
-<input name="parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais" id="sugereSuspensaoQuandoAtingirReais" value="${parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais}" type="text" style="width:60px; text-align:right;" value="0,00" />
-
-
-                      </td>
-                    </tr>
-					<tr>
-						<td><label>Parar de acumular dívidas?</label></td>
-						<td colspan="3">
-							<input type="hidden" value="${parametrosDistribuidor.pararAcumuloDividas}" id="pararAcumuloDividasHidden" />
-							<select name="pararAcumuloDividas" id="pararAcumuloDividas">
-								<option value="true">Sim</option>
-								<option value="false">Não</option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="4">&nbsp;</td>
-					</tr>
+                 
+				 <tr>
+					<td><label>Parar de acumular dívidas?</label></td>
+					<td colspan="3">
+						<input type="hidden" value="${parametrosDistribuidor.pararAcumuloDividas}" id="pararAcumuloDividasHidden" />
+						<select name="pararAcumuloDividas" id="pararAcumuloDividas">
+							<option value="true">Sim</option>
+							<option value="false">Não</option>
+						</select>
+					</td>
+				 </tr>
+				 <tr>
+					<td colspan="4">&nbsp;</td>
+				 </tr>
 					<tr>
                       <td><label>Utiliza desconto da cota para negociação?</label></td>
                       <td width="27">

@@ -231,31 +231,52 @@ $(function(){
 	
 	<table width="770" border="0" cellspacing="1" cellpadding="1">
 		<tbody>
-			<tr>
-				<td width="126">Sugere Suspensão:</td>
-				<td width="24"><input id="sugereSuspensao"
-					name="sugereSuspensao" type="checkbox" value="" onclick="parametroCobrancaCotaController.exibe_form_suspencao(this.checked);" /></td>
-				<td colspan="3">
-					<div class="form-suspensao-hidden-class">
-						<table width="100%" border="0" cellspacing="0" cellpadding="0">
-							<tr>
-								<td width="31%" style="width: 171px; ">Qtde de dividas em aberto:</td>
-								<td width="13%"><input maxlength="15" type="text"
-									name="qtdDividasAberto" id="qtdDividasAberto"
-									style="width: 60px;" /></td>
-								<td width="8%">ou</td>
-								<td width="6%">R$:</td>
-								<td width="42%"><input maxlength="15" type="text"
-									name="vrDividasAberto" id="vrDividasAberto"
-									style="width: 60px;" /></td>
-							</tr>
-						</table>
-					</div>
-				</td>
-			</tr>
+		    <tr>
+			    <td width="100" style="width: 221px; ">Utiliza Politica de Suspensão do Distribuidor:</td>
+				<td width="24"><input id="sugereSuspensaoDistribuidor"
+					name="sugereSuspensaoDistribuidor" type="checkbox" value="" onclick="parametroCobrancaCotaController.exibe_form_suspencao_distribuidor(this.checked);" /></td>
+			    <td colspan="2" style="width: 326px; "></td>
+			</tr>	
 		</tbody>
-	</table>
+	</table>		
+	
+	<div class="form-suspensao-hidden1-class">
+	
+		<table width="770" border="0" cellspacing="1" cellpadding="1">
+		
+			<tbody>	
+			
+					<tr>
+						<td width="126" style="width: 114px; ">Sugere Suspensão:</td>
+						<td width="24"><input id="sugereSuspensao"
+							name="sugereSuspensao" type="checkbox" value="" onclick="parametroCobrancaCotaController.exibe_form_suspencao(this.checked);" /></td>
+						<td colspan="3">
+							<div class="form-suspensao-hidden2-class">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tr>
+										<td width="31%" style="width: 171px; ">Qtde de dividas em aberto:</td>
+										<td width="13%"><input maxlength="15" type="text"
+											name="qtdDividasAberto" id="qtdDividasAberto"
+											style="width: 60px;" /></td>
+										<td width="8%">ou</td>
+										<td width="6%">R$:</td>
+										<td width="42%"><input maxlength="15" type="text"
+											name="vrDividasAberto" id="vrDividasAberto"
+											style="width: 60px;" /></td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+		
+			</tbody>
+			
+		</table>
+		
+	</div>
+	
 	</fieldset>
+	
 </div>
 <fieldset style="width:880px!important; margin:5px;">
  	<legend>Formas de Pagamento</legend>
