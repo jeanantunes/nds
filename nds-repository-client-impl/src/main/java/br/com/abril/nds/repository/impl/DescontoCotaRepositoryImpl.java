@@ -172,7 +172,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		
 		if(filtro != null && filtro.getIdCota() != null) {
 			
-			hql.append(" and c.idCota = :idCota ");
+			hql.append(" and c.id = :idCota ");
 			param.put("idCota", filtro.getIdCota());
 		
 		} else if (filtro != null && filtro.getNumeroCota() != null) {
