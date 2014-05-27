@@ -854,33 +854,40 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         this.gerarMovimentosFinanceiros(cota, dataOperacao, usuario, isAlteracaoTipoCotaNaDataAtual);
         
-        if (!cotaUnificacaoRepository.verificarCotaUnificada(cota.getNumeroCota())
-                && !cotaUnificacaoRepository.verificarCotaUnificadora(cota.getNumeroCota())) {
-            
-            if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual) {
-                
-                try {
-                    
-                    final boolean existeBoletoAntecipado = boletoService.existeBoletoAntecipadoCotaDataRecolhimento(
-                            cota.getId(), dataOperacao);
-                    
-                    if (existeBoletoAntecipado) {
-                        
-                        gerarCobrancaService.gerarDividaPostergada(cota.getId(), usuario.getId());
-                    } else {
-                        
-                        gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail, new HashSet<String>());
-                    }
-                } catch (final GerarCobrancaValidacaoException e) {
-                    LOGGER.error(e.getMessage(), e);
-                    if (validacaoVO.getListaMensagens() == null) {
-                        
-                        validacaoVO.setListaMensagens(new ArrayList<String>());
-                    }
-                    
-                    validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
-                }
-            }
+        if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual) {
+           
+        	// se a cota for unificadora ou unificada não pode gerar cobrança
+            // nesse ponto
+			final boolean cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificada(
+					cota.getNumeroCota()),
+					
+					cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificadora(
+							cota.getNumeroCota());
+			
+			if (!cotaUnificadora && !cotaUnificada) {
+
+	            try {
+	                
+	                final boolean existeBoletoAntecipado = boletoService.existeBoletoAntecipadoCotaDataRecolhimento(
+	                        cota.getId(), dataOperacao);
+	                
+	                if (existeBoletoAntecipado) {
+	                    
+	                    gerarCobrancaService.gerarDividaPostergada(cota.getId(), usuario.getId());
+	                } else {
+	                    
+	                    gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail, new HashSet<String>());
+	                }
+	            } catch (final GerarCobrancaValidacaoException e) {
+	                LOGGER.error(e.getMessage(), e);
+	                if (validacaoVO.getListaMensagens() == null) {
+	                    
+	                    validacaoVO.setListaMensagens(new ArrayList<String>());
+	                }
+	                
+	                validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
+	            }
+			}
         }
         
         final List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository
