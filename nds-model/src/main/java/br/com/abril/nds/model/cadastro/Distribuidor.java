@@ -338,6 +338,9 @@ public class Distribuidor {
 	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<DistribuidorPercentualExcedente> listPercentualExcedente;
 	
+	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
+	private boolean sugereSuspensao = true;
+	
 	public Long getId() {
 		return id;
 	}
@@ -489,6 +492,20 @@ public class Distribuidor {
 		this.tiposGarantiasAceita = tiposGarantiasAceita;
 	}
 	
+	/**
+	 * @return the sugereSuspensao
+	 */
+	public boolean isSugereSuspensao() {
+		return sugereSuspensao;
+	}
+
+	/**
+	 * @param sugereSuspensao the sugereSuspensao to set
+	 */
+	public void setSugereSuspensao(boolean sugereSuspensao) {
+		this.sugereSuspensao = sugereSuspensao;
+	}
+
 	/**
 	 * Adiciona um novo tipo de garantia aceita pelo distribuidor, 
 	 * ou atualiza o tipo de garantia aceita existente com o(s) valore(s)

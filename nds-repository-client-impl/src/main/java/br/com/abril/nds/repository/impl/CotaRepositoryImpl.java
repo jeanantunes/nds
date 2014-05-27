@@ -46,6 +46,7 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.MunicipioDTO;
+import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
@@ -53,11 +54,17 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ModalidadeCobranca;
+import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
@@ -83,6 +90,7 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.QueryUtil;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade
@@ -3493,5 +3501,64 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setParameter("numeroCota", numeroCota);
         
         return (String) query.uniqueResult();
+    }
+    
+    @SuppressWarnings("unchecked")
+	public List<ParametroDistribuicaoEntregaCotaDTO> obterParametrosDistribuicaoEntregaCota(){
+    	
+    	final StringBuilder hql = new StringBuilder();
+        
+    	hql.append(" select cota.ID as idCota , ")
+    		.append(" 	cota.DESCRICAO_TIPO_ENTREGA as tipoEntrega, ")
+		    .append("	cota.INICIO_PERIODO_CARENCIA as inicioCarencia,  ")
+		    .append("	cota.FIM_PERIODO_CARENCIA as fimCarencia, ")
+		    .append("	parametroCob.BASE_CALCULO as baseCalculo, ")
+		    .append("	parametroCob.DIA_COBRANCA as diaCobranca, ")
+		    .append("	parametroCob.DIA_SEMANA as diaSemana, ")
+		    .append("	parametroCob.MODELIDADE_COBRANCA as modalidadeCobranca, ")
+		    .append("	parametroCob.PERCENTUAL_FATURAMENTO percentualFaturamento, ")
+		    .append("	parametroCob.PERIODICIDADE_COBRANCA periodicidade, ")
+		    .append("	parametroCob.POR_ENTREGA  as porEntrega, ")
+		    .append("	parametroCob.TAXA_FIXA as taxaFixa ")
+		    .append(" from cota cota ")
+		    .append("	join parametro_cobranca_distribuicao_cota parametroCob on parametroCob.COTA_ID = cota.ID ")
+		    .append("   join pdv pdv on pdv.COTA_ID = cota.ID ")
+		    .append("   join rota_pdv rotaPdv on rotaPDV.PDV_ID  = pdv.ID ")
+		    .append("   join rota rota on rota.ID = rotaPdv.ROTA_ID ")
+		    .append(" where cota.SITUACAO_CADASTRO IN (:statusCadastro) ")
+		    .append(" and cota.TIPO_DISTRIBUICAO_COTA <> :cotaRetira ");
+		
+        final SQLQuery query = this.getSession().createSQLQuery(hql.toString());
+        
+        query.setParameter("cotaRetira", DescricaoTipoEntrega.COTA_RETIRA.name());
+        query.setParameterList("statusCadastro", Arrays.asList(SituacaoCadastro.ATIVO.name(),SituacaoCadastro.SUSPENSO.name()));
+         
+        query.addScalar("idCota",StandardBasicTypes.LONG)
+	        .addScalar("inicioCarencia",StandardBasicTypes.DATE)
+	        .addScalar("fimCarencia",StandardBasicTypes.DATE)
+	        .addScalar("baseCalculo", QueryUtil.obterTypeEnum(BaseCalculo.class))
+	        .addScalar("diaCobranca",StandardBasicTypes.INTEGER)
+	        .addScalar("diaSemana",QueryUtil.obterTypeEnum(DiaSemana.class))
+	        .addScalar("modalidadeCobranca", QueryUtil.obterTypeEnum(ModalidadeCobranca.class))
+	        .addScalar("percentualFaturamento",StandardBasicTypes.BIG_DECIMAL)
+	        .addScalar("periodicidade",QueryUtil.obterTypeEnum(PeriodicidadeCobranca.class))
+	        .addScalar("taxaFixa",StandardBasicTypes.BIG_DECIMAL)
+	        .addScalar("porEntrega",StandardBasicTypes.BOOLEAN)
+	        .addScalar("tipoEntrega",QueryUtil.obterTypeEnum(DescricaoTipoEntrega.class));
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(ParametroDistribuicaoEntregaCotaDTO.class));
+        
+        return query.list();
+    }
+    
+    @Override
+    public Fornecedor obterFornecedorPadrao(Long idCota) {
+    	
+    	Query query = getSession().createQuery(" select c.parametroCobranca.fornecedorPadrao from Cota c where c.id =:idCota ");
+    	
+    	query.setParameter("idCota", idCota);
+    	query.setMaxResults(1);
+    	
+    	return (Fornecedor) query.uniqueResult();
     }
 }

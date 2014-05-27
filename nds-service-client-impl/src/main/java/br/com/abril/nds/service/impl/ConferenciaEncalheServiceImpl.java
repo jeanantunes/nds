@@ -1218,6 +1218,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		infoConfereciaEncalheCota.setDistribuidorAceitaJuramentado(this.controleConferenciaEncalheCotaRepository.obterAceitaJuramentado(cota.getId()));
 		
+		infoConfereciaEncalheCota.setIndCotaOperacaoDiferenciada(cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao));
+		
 		return infoConfereciaEncalheCota;
 	}
 	
@@ -1718,7 +1720,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Override
 	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 900, isolation= Isolation.READ_COMMITTED)
-	public void finalizarConferenciaEncalhe(
+	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			final ControleConferenciaEncalheCota controleConfEncalheCota, 
 			final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			final Set<Long> listaIdConferenciaEncalheParaExclusao,
@@ -1741,16 +1743,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Set<String> nossoNumeroCollection = new LinkedHashSet<String>();
 		
 		final DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
-		
+
 		try {
+		
 			nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
 		} catch(final GerarCobrancaValidacaoException e) {
 			
 			documentoConferenciaEncalhe.setMsgsGeracaoCobranca(e.getValidacaoVO());			
 		}
-		
+
 		final ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
-		
+
 		final PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
 		final FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
@@ -1796,8 +1799,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero, true);
 			}
 		}
+
+		return documentoConferenciaEncalhe;
 		
-//		return documentoConferenciaEncalhe;
 	}
 	
 	private void abaterNegociacao(final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, final Long idCota, final Usuario usuario) {
@@ -2691,6 +2695,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final TipoMovimentoEstoque tipoMovimentoEstoqueCota = mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 	
+		ValoresAplicados valoresAplicados = 
+		        movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(
+		                numeroCota, produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
+		
+        if(valoresAplicados == null){
+            valoresAplicados = new ValoresAplicados(BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
+        }else{
+            verificarValorAplicadoNulo(valoresAplicados);
+        }
+		
 		MovimentoEstoqueCota movimentoEstoqueCota = 
 				movimentoEstoqueService.gerarMovimentoCota(
 						null, 
@@ -2699,16 +2713,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						usuario.getId(), 
 						conferenciaEncalheDTO.getQtdExemplar(), 
 						tipoMovimentoEstoqueCota,
-						this.distribuidorService.obterDataOperacaoDistribuidor());
-		
-		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
-		if(valoresAplicados == null){
-			valoresAplicados = new ValoresAplicados(BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
-		}else{
-			verificarValorAplicadoNulo(valoresAplicados);
-		}
-		
-		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
+						this.distribuidorService.obterDataOperacaoDistribuidor(),
+						valoresAplicados);
 		
 		return movimentoEstoqueCota;
 	}
@@ -3205,11 +3211,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final Integer numeroCota, 
 			final Integer codigoSM,
 			final Integer quantidadeRegistros,
-			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO) {
-		  
-        final List<ProdutoEdicao> listaProdutoEdicao = 
-        		produtoEdicaoRepository.obterProdutoPorCodigoNomeCodigoSM(codigoSM,
-                null, numeroCota, quantidadeRegistros, mapaDataCEConferivelDTO);
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO, boolean indCotaOperacaoDif) {
+		
+		Date dataOperacao = null;
+		
+		if(!indCotaOperacaoDif) {
+			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		}
+         
+		final List<ProdutoEdicao> listaProdutoEdicao = produtoEdicaoRepository.obterProdutoPorCodigoNomeCodigoSM(codigoSM,
+                null, numeroCota, quantidadeRegistros, mapaDataCEConferivelDTO, dataOperacao);
 		
 		final List<ItemAutoComplete> listaItem = new ArrayList<ItemAutoComplete>();
 		

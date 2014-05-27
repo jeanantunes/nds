@@ -1755,7 +1755,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			final String codigoNomeProduto, 
 			final Integer numeroCota, 
 			final Integer quantidadeRegisttros,
-			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel ) {
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel,
+			final Date dataOperacao) {
 		
 		final StringBuilder hql = new StringBuilder(" select produtoEdicao ");
 		   
@@ -1780,7 +1781,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				hql.append(" and ce.sequencia = :codigoSM ");
 			}
 			
-			carregarHQLParametrosFornecedorDatasEncalhe(hql, null, mapaDataCEConferivel);
+			if(dataOperacao!=null){
+				hql.append(" and ce.dataRecolhimento = :dataOperacao ");
+			} else {
+				carregarHQLParametrosFornecedorDatasEncalhe(hql, null, mapaDataCEConferivel);
+			}
 		
 			hql.append(" group by produtoEdicao.id			")
 			   .append(" order by produto.nome asc,			")
@@ -1794,18 +1799,22 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		}
 
 		if(codigoSM != null) {
-			query.setParameter("codigoSM", codigoSM);	
+			query.setParameter("codigoSM", codigoSM);
 		}
 		
 		query.setParameter("numeroCota", numeroCota);
 		
-		carregarHQLParametrosFornecedorDatasEncalhe(null, query, mapaDataCEConferivel);
+		if(dataOperacao!=null){
+			query.setParameter("dataOperacao", dataOperacao);
+		} else {
+			carregarHQLParametrosFornecedorDatasEncalhe(null, query, mapaDataCEConferivel);
+		}
 		
 		query.setMaxResults(quantidadeRegisttros);
 		
 		return query.list();
 	}
-
+	
 	
 	private void carregarHQLParametrosFornecedorDatasEncalhe(
 			final StringBuilder hql,

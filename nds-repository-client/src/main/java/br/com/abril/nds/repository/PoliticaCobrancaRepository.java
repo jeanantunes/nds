@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.List;
 
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
@@ -49,4 +50,6 @@ public interface PoliticaCobrancaRepository extends Repository<PoliticaCobranca,
 	List<TipoCobranca> obterTiposCobrancaDistribuidor();
 
 	boolean verificarPorTipoCobrancaPor(TipoCobranca tipoCobranca);
+	
+	Fornecedor obterFornecedorPadrao();
 }

@@ -274,7 +274,7 @@ public interface ConferenciaEncalheService {
 			final Integer numeroCota, 
 			final Integer codigoSM,
 			final Integer quantidadeRegistros,
-			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO);
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO, boolean indCotaOperacaoDif);
 	
 	boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota);
 	

@@ -349,7 +349,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         }
         
         final List<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.obterProdutoPorCodigoNomeCodigoSM(null,
-                codigoNomeProduto, numeroCota, quantidadeRegistros, mapaDataCEConferivel);
+                codigoNomeProduto, numeroCota, quantidadeRegistros, mapaDataCEConferivel, null);
         
         return produtosEdicao;
 

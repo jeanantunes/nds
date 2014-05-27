@@ -12,6 +12,8 @@ public interface NotaEnvioRepository extends Repository<NotaEnvio, Long> {
 	
 	Date obterMenorDataLancamentoPorNotaEnvio(Long numeroNotaEnvio);
 	
-	List<NotaEnvioProdutoEdicao> obterEmissoesAlemDoConsignado(Long numeroCota, List<Long> idsProdutoEdicao, Date dataRecolhimentoCE, Date dataOperacao);	
+	List<NotaEnvioProdutoEdicao> obterEmissoesAlemDoConsignado(Long numeroCota, List<Long> idsProdutoEdicao, Date dataRecolhimentoCE, Date dataOperacao);
+	
+	Long quantidadeNotasEmitidasParaCota(Long idCota, Date periodoInicial, Date periodoFinal);
 }
  

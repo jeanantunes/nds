@@ -72,11 +72,10 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	 * @param idCota
 	 * @param idFornecedor
 	 * @param data
-	 * @param valor
 	 * @return FormaCobranca
 	 */
 	@Override
-	public FormaCobranca obterFormaCobranca(Long idCota, Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor) {
+	public FormaCobranca obterFormaCobranca(Long idCota, Long idFornecedor, Integer diaDoMes, Integer diaDaSemana) {
 		
 		
 		StringBuilder hql = new StringBuilder();
@@ -99,8 +98,6 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		    hql.append(" and fnc.id = :idFornecedor ");
 		}
 		
-		hql.append(" and pcc.valorMininoCobranca <= :valor ");
-		
 		hql.append(" and ( f.tipoFormaCobranca = :tipoFormaCobranca ");
 			
 	    hql.append("       or ( ( :diaMes IN ELEMENTS(f.diasDoMes) ) ");
@@ -120,8 +117,6 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
             query.setParameter("idFornecedor", idFornecedor);
         }
         
-        query.setParameter("valor", valor);
-        
         query.setParameter("diaMes", diaDoMes);
         
         query.setParameter("diaSemana", diaDaSemana);
@@ -139,12 +134,11 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	 * Obtem FormaCobranca do Distribuidor
 	 * @param idFornecedor
 	 * @param data
-	 * @param valor
 	 * @param principal
 	 * @return FormaCobranca
 	 */
 	@Override
-	public FormaCobranca obterFormaCobranca(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor, boolean principal) {
+	public FormaCobranca obterFormaCobranca(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, boolean principal) {
 		
 		
 		StringBuilder hql = new StringBuilder();
@@ -165,8 +159,6 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 			hql.append(" and fnc.id = :idFornecedor ");
 		}
 		
-        hql.append(" and f.valorMinimoEmissao <= :valor ");
-		
         hql.append(" and ( f.tipoFormaCobranca = :tipoFormaCobranca ");
 		
         hql.append("       or ( :diaMes IN ELEMENTS(f.diasDoMes) ");
@@ -185,8 +177,6 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         	
             query.setParameter("idFornecedor", idFornecedor);
         }
-        
-        query.setParameter("valor", valor);
         
         query.setParameter("diaMes", diaDoMes);
         

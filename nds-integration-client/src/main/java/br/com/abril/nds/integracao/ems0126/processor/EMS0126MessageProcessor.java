@@ -87,7 +87,7 @@ public class EMS0126MessageProcessor extends AbstractRepository implements
 				
 				ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração do Codigo de Barras"
+						"Alteração do Código de Barras"
 						+" de "+produtoEdicao.getCodigoDeBarras()
 						+" para "+input.getCodigoBarras()
 						+" Produto "+input.getCodigoProduto()
