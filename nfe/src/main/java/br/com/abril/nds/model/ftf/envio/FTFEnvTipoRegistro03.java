@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.ftf.envio;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
 import br.com.abril.nds.model.ftf.FTFCommons;
@@ -68,27 +70,30 @@ public class FTFEnvTipoRegistro03 extends FTFBaseDTO implements FTFCommons {
 
 	@Override
 	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
-		this.codigoCentroEmissor = codigoCentroEmissor;
+		this.codigoCentroEmissor = codigoCentroEmissor != null ? StringUtils.leftPad(codigoCentroEmissor, 2, '0') : StringUtils.leftPad("", 2, '0');
 	}
 
 	@Override
 	public void setCnpjEmpresaEmissora(String cnpjEmpresaEmissora) {
-		this.cnpjEmpresaEmissora = cnpjEmpresaEmissora;
+		this.cnpjEmpresaEmissora = cnpjEmpresaEmissora != null ? cnpjEmpresaEmissora.replaceAll("\\D+","") : null;
 	}
 
 	@Override
 	public void setCodLocal(String codLocal) {
-		this.codLocal = codLocal;
+		this.codLocal = codLocal != null ? StringUtils.rightPad(codLocal, 11, ' ') : StringUtils.leftPad("", 11, ' ');
 	}
 
 	@Override
 	public void setTipoPedido(String tipoPedido) {
-		this.tipoPedido = tipoPedido;
+		this.tipoPedido = tipoPedido != null ? StringUtils.leftPad(tipoPedido, 2, '0') : StringUtils.leftPad("", 2, '0');
 	}
 
 	@Override
 	public void setNumeroDocOrigem(String numeroDocOrigem) {
 		this.numeroDocOrigem = numeroDocOrigem;
 	}
-	
+
+	public void setTipoRegistro(String tipoRegistro) {
+		this.tipoRegistro = tipoRegistro;
+	}
 }

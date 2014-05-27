@@ -8,9 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +24,11 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFParser;
-import br.com.abril.nds.model.fiscal.ParametroFTFGeracao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro00;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro01;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro02;
+import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro03;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro06;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro08;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro09;
@@ -78,8 +76,6 @@ public class FTFServiceImpl implements FTFService {
 		
 		long idNaturezaOperacao = verificarNaturezaOperacao(notas);
 		
-		Map<String, ParametroFTFGeracao> parametrosGeracaoFTF = parametrosGeracaoFTF();
-		
 		List<FTFBaseDTO> list = new ArrayList<FTFBaseDTO>();
 		FTFReportDTO report = new FTFReportDTO();
 		
@@ -87,7 +83,7 @@ public class FTFServiceImpl implements FTFService {
 		
 		FTFEnvTipoRegistro00 regTipo00 = ftfRepository.obterRegistroTipo00(idNaturezaOperacao);
 		
-		List<FTFEnvTipoRegistro08> registrosTipo08 = carregarRegitrosTipo08(notas, validacaoBeans, parametrosGeracaoFTF);
+		List<FTFEnvTipoRegistro08> registrosTipo08 = carregarRegitrosTipo08(notas, validacaoBeans);
 				
 		FTFEnvTipoRegistro09 regTipo09 = ftfRepository.obterRegistroTipo09(idNaturezaOperacao);
 		
@@ -98,13 +94,18 @@ public class FTFServiceImpl implements FTFService {
 		List<FTFEnvTipoRegistro01> listTipoRegistro01Cadastrados = this.obterPessoasCadastradasCRP(report, listTipoRegistro01);
 		
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
+			
 			long idNF = Long.parseLong(ftfEnvTipoRegistro01.getNumeroDocOrigem());
 			
 			List<FTFEnvTipoRegistro02> obterResgistroTipo02 = this.carregarRegistroTipo02(idNaturezaOperacao, validacaoBeans, idNF);
 			
 			ftfEnvTipoRegistro01.setItemNFList(obterResgistroTipo02);
 			
+			List<FTFEnvTipoRegistro03> regTipo03 = carregarRegitrosTipo03(obterResgistroTipo02, validacaoBeans);
+			ftfEnvTipoRegistro01.setItemNFList03(regTipo03);
+			
 			this.carregarRegistroTipo06(validacaoBeans, ftfEnvTipoRegistro01, idNF);
+			
 		}
 		
 		this.setarRegistrosTipo06(list, listTipoRegistro01Cadastrados);
@@ -124,6 +125,27 @@ public class FTFServiceImpl implements FTFService {
 		list.add(regTipo09);
 		
 		return gerarArquivoFTF(notas, list, report, regTipo00, totalPedidos);
+	}
+
+	private List<FTFEnvTipoRegistro03> carregarRegitrosTipo03(List<FTFEnvTipoRegistro02> obterResgistroTipo02, List<String> validacaoBeans) {
+		
+		List<FTFEnvTipoRegistro03> listaEnvTipoRegistro03 = new ArrayList<>();
+		
+		for(FTFEnvTipoRegistro02 ftfTipoRegistro02 : obterResgistroTipo02){
+			FTFEnvTipoRegistro03 ftfEnvTipoRegistro03 = new FTFEnvTipoRegistro03();
+			
+			ftfEnvTipoRegistro03.setTipoRegistro("3");
+			ftfEnvTipoRegistro03.setCodigoCentroEmissor(ftfTipoRegistro02.getCodigoCentroEmissor());
+			ftfEnvTipoRegistro03.setCnpjEmpresaEmissora(ftfTipoRegistro02.getCnpjEmpresaEmissora());
+			ftfEnvTipoRegistro03.setCodLocal(ftfTipoRegistro02.getCodLocal());
+			ftfEnvTipoRegistro03.setNumeroDocOrigem(ftfTipoRegistro02.getNumeroDocOrigem());
+			ftfEnvTipoRegistro03.setTipoPedido(ftfTipoRegistro02.getTipoPedido());
+			
+			listaEnvTipoRegistro03.add(ftfEnvTipoRegistro03);
+			
+		}
+		
+		return listaEnvTipoRegistro03;
 	}
 
 	private void setarRegistrosTipo06(List<FTFBaseDTO> list, List<FTFEnvTipoRegistro01> listTipoRegistro01Cadastrados) {
@@ -230,7 +252,7 @@ public class FTFServiceImpl implements FTFService {
 		}
 	}
 
-	private List<FTFEnvTipoRegistro08> carregarRegitrosTipo08(final List<NotaFiscal> notas, List<String> validacaoBeans, Map<String, ParametroFTFGeracao> parametrosGeracaoFTF) {
+	private List<FTFEnvTipoRegistro08> carregarRegitrosTipo08(final List<NotaFiscal> notas, List<String> validacaoBeans) {
 		List<FTFEnvTipoRegistro08> registrosTipo08 = new ArrayList<>();
 		for(NotaFiscal nf : notas) {
 			
@@ -240,19 +262,7 @@ public class FTFServiceImpl implements FTFService {
 		}
 		return registrosTipo08;
 	}
-
-	private Map<String, ParametroFTFGeracao> parametrosGeracaoFTF() {
-		List<ParametroFTFGeracao> lisParametroFTFGeracao = this.ftfRepository.obterTodosParametrosGeracaoFTF();
-		
-		Map<String, ParametroFTFGeracao> mapasParametrosFTF = new HashMap<String, ParametroFTFGeracao>();
-		
-		for (ParametroFTFGeracao parametroFTFGeracao : lisParametroFTFGeracao) {
-			mapasParametrosFTF.put(parametroFTFGeracao.getCfop().getCodigo(), parametroFTFGeracao);
-		}
-		
-		return mapasParametrosFTF;
-	}
-
+	
 	private long verificarNaturezaOperacao(final List<NotaFiscal> notas) {
 		long idNaturezaOperacao = 0;
 		for(NotaFiscal nf : notas) {

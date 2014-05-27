@@ -99,8 +99,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
-		codigoCentroEmissor = codigoCentroEmissor != null ? StringUtils.leftPad(codigoCentroEmissor, 2, '0') : StringUtils.leftPad(codigoCentroEmissor, 2, '0');
-		this.codigoCentroEmissor = codigoCentroEmissor;
+		this.codigoCentroEmissor = codigoCentroEmissor != null ? StringUtils.leftPad(codigoCentroEmissor, 2, '0') : StringUtils.leftPad(codigoCentroEmissor, 2, '0');
 	}
 
 	public String getCnpjEmpresaEmissora() {
@@ -116,7 +115,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodLocal(String codLocal) {
-		this.codLocal = codLocal;
+		this.codLocal = codLocal != null ? StringUtils.rightPad(codLocal, 11, ' ') : StringUtils.leftPad("", 11, ' ');
 	}
 
 	public String getTipoPedido() {

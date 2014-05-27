@@ -12,6 +12,8 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 
 	public List<FTFEnvTipoRegistro02> itemNFList;
 	
+	public List<FTFEnvTipoRegistro03> itemNFList03;
+	
 	private FTFEnvTipoRegistro06 regTipo06;
 	
 	@FTFfield(tamanho=1, tipo="char", ordem=1)
@@ -986,5 +988,13 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 
 	public void setItemNFList(List<FTFEnvTipoRegistro02> itemNFList) {
 		this.itemNFList = itemNFList;
+	}
+
+	public List<FTFEnvTipoRegistro03> getItemNFList03() {
+		return itemNFList03;
+	}
+
+	public void setItemNFList03(List<FTFEnvTipoRegistro03> itemNFList03) {
+		this.itemNFList03 = itemNFList03;
 	}
 }
