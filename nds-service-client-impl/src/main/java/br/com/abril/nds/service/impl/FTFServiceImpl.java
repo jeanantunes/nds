@@ -100,9 +100,12 @@ public class FTFServiceImpl implements FTFService {
 			List<FTFEnvTipoRegistro02> obterResgistroTipo02 = this.carregarRegistroTipo02(idNaturezaOperacao, validacaoBeans, idNF);
 			
 			ftfEnvTipoRegistro01.setItemNFList(obterResgistroTipo02);
-			
-			List<FTFEnvTipoRegistro03> regTipo03 = carregarRegitrosTipo03(obterResgistroTipo02, validacaoBeans);
-			ftfEnvTipoRegistro01.setItemNFList03(regTipo03);
+						
+			if(ftfRepository.verificarRegistroVenda(idNaturezaOperacao)){				
+				List<FTFEnvTipoRegistro03> regTipo03 = carregarRegitrosTipo03(obterResgistroTipo02, validacaoBeans);
+				ftfEnvTipoRegistro01.setItemNFList03(regTipo03);
+				
+			}
 			
 			this.carregarRegistroTipo06(validacaoBeans, ftfEnvTipoRegistro01, idNF);
 			
@@ -152,6 +155,11 @@ public class FTFServiceImpl implements FTFService {
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
 			list.add(ftfEnvTipoRegistro01);
 			list.addAll(ftfEnvTipoRegistro01.getItemNFList());
+			
+			if(ftfEnvTipoRegistro01.getItemNFList03() != null){				
+				list.addAll(ftfEnvTipoRegistro01.getItemNFList03());
+			}
+			
 			if(ftfEnvTipoRegistro01.getRegTipo06() != null){
 				list.add(ftfEnvTipoRegistro01.getRegTipo06());				
 			}

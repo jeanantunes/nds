@@ -36,5 +36,7 @@ public interface FTFRepository {
 	ParametroFTFGeracao obterParametrosFTFGeracao(Long idNaturezaOperacao, String codigoCFOP, TipoAtividade tipoAtividade);
 
 	List<ParametroFTFGeracao> obterTodosParametrosGeracaoFTF();
+
+	boolean verificarRegistroVenda(long idNaturezaOperacao);
 	
 }

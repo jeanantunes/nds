@@ -953,8 +953,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodLocal(String codLocal) {
-		codLocal = codLocal != null ? StringUtils.leftPad(codLocal, 2, '0') : StringUtils.leftPad(codLocal, ' ', '0');
-		this.codLocal = codLocal;
+		this.codLocal = codLocal != null ? StringUtils.leftPad(codLocal, 11, '0') : StringUtils.leftPad("", 11, '0');
 	}
 
 	public String getTipoPedido() {
@@ -962,8 +961,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setTipoPedido(String tipoPedido) {
-		tipoPedido = tipoPedido != null ? StringUtils.leftPad(tipoPedido, 2, '0') : StringUtils.leftPad(tipoPedido, ' ', '0');
-		this.tipoPedido = tipoPedido;
+		this.tipoPedido = tipoPedido != null ? StringUtils.leftPad(tipoPedido, 2, '0') : StringUtils.leftPad(tipoPedido, ' ', '0');
 	}
 
 	public String getNumeroDocOrigem() {
