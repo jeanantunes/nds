@@ -63,19 +63,24 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 	@Override
 	@Transactional
 	public void salvarRepartesPDVMix(List<RepartePDVDTO> listaRepartes, String codProduto, Long idMix) {
+		
 		int soma = 0;
 		Produto produto= this.produtoService.obterProdutoPorCodigo(codProduto);
 		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(idMix);
 		PDV pdv = null;
 		
 		for (RepartePDVDTO repartePDVDTO : listaRepartes) {
+			
 			if(repartePDVDTO.getCodigoPdv() !=null){
 				pdv= pdvRepository.buscarPorId(repartePDVDTO.getCodigoPdv());
 			}
+			
 			RepartePDV repartePDV =  repartePDVRepository.obterRepartePdvMix(idMix, produto.getId(), pdv.getId());
+			
 			if(repartePDV == null){
 				repartePDV = new RepartePDV();
 			}	
+			
 			repartePDV.setMixCotaProduto(mixCotaProduto);
 			repartePDV.setPdv(pdv);
 			repartePDV.setReparte(repartePDVDTO.getReparte().intValue());
@@ -85,9 +90,16 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 			repartePDVRepository.merge(repartePDV);
 		}
 
-		mixCotaProduto.setReparteMinimo(Long.valueOf(soma));
-		mixCotaProduto.setReparteMaximo(Long.valueOf(soma));
+		if(soma > mixCotaProduto.getReparteMaximo()){
+			mixCotaProduto.setReparteMaximo(Long.valueOf(soma));
+		}else{ 
+			if(soma < mixCotaProduto.getReparteMinimo()){
+				mixCotaProduto.setReparteMinimo(Long.valueOf(soma));
+			}
+		}
+		
         mixCotaProduto.setDataHora(new Date());
+        
         mixCotaProdutoRepository.alterar(mixCotaProduto);
 	}
 

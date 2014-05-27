@@ -984,7 +984,7 @@ var fixacaoReparteController = $.extend(true, {
 			
 			
 			if($('#radioIntervalo').is(":checked")){
-				if($("#edInicialModal").val().trim()=='' || $("#edIniciaFinal").val().trim()==''){
+				if($("#edFinalModal").val().trim()=='' || $("#edFinalModal").val().trim()==''){
 					exibirMensagem("WARNING", ["Informe Ed. inicial / final "]);
 					return false;
 				}
