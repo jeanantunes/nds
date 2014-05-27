@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -65,6 +66,12 @@ public class Cota implements Serializable {
 	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
 	private boolean sugereSuspensao = true;
 	
+	@Embedded
+	private PoliticaSuspensao politicaSuspensao;
+	
+	@Column(name = "SUGERE_SUSPENSAO_DISTRIBUIDOR", nullable = false)
+	private boolean sugereSuspensaoDistribuidor = true;
+	
 	@Column(name = "POSSUI_CONTRATO", nullable = false)
 	private boolean possuiContrato;
 	
@@ -111,6 +118,9 @@ public class Cota implements Serializable {
 		
 	@Embedded
 	private ParametroDistribuicaoCota parametroDistribuicao;
+	
+	@OneToOne(mappedBy="cota")
+	private ParametroCobrancaDistribuicaoCota parametroCobrancaDistribuicaoCota;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name="ID_FIADOR")
@@ -192,6 +202,9 @@ public class Cota implements Serializable {
 	@Column(name = "ALTERACAO_TIPO_COTA")
 	private Date alteracaoTipoCota;
 	
+	@Column(name = "VALOR_MINIMO_COBRANCA", precision=18, scale=4)
+	private BigDecimal valorMinimoCobranca;
+	
 	@ManyToMany(mappedBy = "cotas", fetch = FetchType.LAZY)
 	private Set<CotaUnificacao> cotasUnificacao;
 	
@@ -256,6 +269,22 @@ public class Cota implements Serializable {
 		this.sugereSuspensao = sugereSuspensao;
 	}
 	
+	public PoliticaSuspensao getPoliticaSuspensao() {
+		return politicaSuspensao;
+	}
+
+	public void setPoliticaSuspensao(PoliticaSuspensao politicaSuspensao) {
+		this.politicaSuspensao = politicaSuspensao;
+	}
+
+	public boolean isSugereSuspensaoDistribuidor() {
+		return sugereSuspensaoDistribuidor;
+	}
+
+	public void setSugereSuspensaoDistribuidor(boolean sugereSuspensaoDistribuidor) {
+		this.sugereSuspensaoDistribuidor = sugereSuspensaoDistribuidor;
+	}
+
 	public boolean isPossuiContrato() {
 		return possuiContrato;
 	}
@@ -675,6 +704,14 @@ public class Cota implements Serializable {
 		this.alteracaoTipoCota = alteracaoTipoCota;
 	}
 
+	public BigDecimal getValorMinimoCobranca() {
+		return valorMinimoCobranca;
+	}
+
+	public void setValorMinimoCobranca(BigDecimal valorMinimoCobranca) {
+		this.valorMinimoCobranca = valorMinimoCobranca;
+	}
+
 	public Set<CotaUnificacao> getCotasUnificacao() {
 		return cotasUnificacao;
 	}
@@ -682,5 +719,18 @@ public class Cota implements Serializable {
 	public void setCotasUnificacao(Set<CotaUnificacao> cotasUnificacao) {
 		this.cotasUnificacao = cotasUnificacao;
 	}
+
+
+	public ParametroCobrancaDistribuicaoCota getParametroCobrancaDistribuicaoCota() {
+		return parametroCobrancaDistribuicaoCota;
+	}
+
+
+	public void setParametroCobrancaDistribuicaoCota(
+			ParametroCobrancaDistribuicaoCota parametroCobrancaDistribuicaoCota) {
+		this.parametroCobrancaDistribuicaoCota = parametroCobrancaDistribuicaoCota;
+	}
+	
+	
 	
 }

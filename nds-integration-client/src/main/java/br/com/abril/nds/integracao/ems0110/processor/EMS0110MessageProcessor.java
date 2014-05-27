@@ -507,7 +507,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Nome Comercial do Produto "+input.getCodProd()
+					"Alteração do Nome Comercial"
 					+" de "+ produto.getNomeComercial()
 					+" para "+ input.getNomeComercial()
 					+" Produto "+ input.getCodProd()
@@ -523,7 +523,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Alteração do Tipo de Segmento do Produto "+input.getCodProd()
+                    "Alteração do Tipo de Segmento"
                     +" de " + produto.getTipoSegmentoProduto().getDescricao()
                     +" para " + input.getSegmento()
                     +" Produto "+ input.getCodProd()
@@ -604,7 +604,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		this.getSession().persist(edicao);
 		
-		inserirDescontoProdutoEdicao(edicao, produto);
+		//inserirDescontoProdutoEdicao(edicao, produto);
 		
 		return edicao;
 	}
@@ -612,7 +612,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	private boolean validarCodigoBarras(String codigo, Long edicao, Message message,	String codigoDeBarras) {
 		 
 		if (codigoDeBarras == null || "".equals(codigoDeBarras) || new BigInteger(codigoDeBarras).compareTo(BigInteger.ZERO) <= 0){
-			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Código de barras vazio. Produto "+codigo +" Edição "+edicao);
+			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Não Atualização do Código de Barras Vazio. Produto "+codigo +" Edição "+edicao);
 			return false;
 		}
 		return true;
@@ -843,7 +843,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração Chamada Capa"
+					"Alteração da Chamada de Capa"
 					+" de " + edicao.getChamadaCapa()
 					+" para " + input.getChamadaCapa()
 					+" Produto "+ input.getCodProd()
@@ -911,7 +911,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 				this.ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração do Codigo de Barra"
+						"Alteração do Código de Barras"
 						+" de " + edicao.getCodigoDeBarras()
 						+" para " + input.getCodBarra()
 						+" Produto "+ input.getCodProd()
@@ -927,7 +927,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração da Data de Desativação"
-					+" de "+ edicao.getDataDesativacao()
+					+" de "+ DateUtil.formatarDataPTBR(edicao.getDataDesativacao())
 					+" para "+ input.getDataDesativacao()
 					+" Produto "+ input.getCodProd()
 					+" Edição "+ input.getEdicaoProd());

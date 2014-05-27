@@ -32,6 +32,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.DateUtil;
 
 /**
  * @author Jones.Costa
@@ -113,22 +114,17 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (precoPrevistoAtual.compareTo(precoPrevistoCorrente)!=0) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Preço Previsto/Venda do Produto  "
-							+ codigoProduto
-							+ " Edição " + edicao
+					"Alteração do Preço Previsto/Venda"
 							+ " de " + precoPrevistoAtual
-							+ " para " + precoPrevistoCorrente);
+							+ " para " + precoPrevistoCorrente
+							+ " Produto "+codigoProduto
+							+ " Edição " + edicao);
 			
 			produtoEdicao.setPrecoPrevisto(precoPrevistoCorrente);
 			produtoEdicao.setPrecoVenda(precoPrevistoCorrente);
 			this.getSession().merge(produtoEdicao);
 		}
 		
-		
-		//Douglas teve preguica de apagar e acha importante caso der erro manter o codigo comentado
-		//if (input.getRepartePrevisto().equals(0L)) {
-		//	return;
-		//}
 		
 		/**
 		 * Modificado devido ser incoerente a realizar busca por um campo e persistir outro junto com a o Eduardo "PunkRock" Castro em 05/12
@@ -188,11 +184,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 					
 				 this.ndsiLoggerFactory.getLogger().logWarning(message,
 				 		 EventoExecucaoEnum.INF_DADO_ALTERADO,
-						 "Alteração da Data Lcto Distribuidor Produto "
-								+ codigoProduto
-								+ " Edição " + edicao
-								+ " de  " + simpleDateFormat.format(dataOriginal)
-								+ " para  " + simpleDateFormat.format(dataSugerida));
+						 "Alteração da Data Lcto Distribuidor"
+								+ " de  " + DateUtil.formatarDataPTBR(dataOriginal)
+								+ " para  " + DateUtil.formatarDataPTBR(dataSugerida)
+								+ " Produto "+codigoProduto
+								+ " Edição " + edicao);
 				
 				 
 				}
@@ -218,11 +214,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Lancamento Inserido para Produto "
-							+ codigoProduto
-							+ " Edição " + edicao
+					"Lancamento Inserido "
 							+ " Lancamento "+simpleDateFormat.format(lancamento.getDataLancamentoDistribuidor())
-							+ " Recolhimento "+simpleDateFormat.format(lancamento.getDataRecolhimentoDistribuidor()));
+							+ " Recolhimento "+simpleDateFormat.format(lancamento.getDataRecolhimentoDistribuidor())
+							+ " Produto "+codigoProduto
+							+ " Edição " + edicao);
 			
 			return;
 			
@@ -247,10 +243,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração do REPARTE PREVISTO do Produto "
-								+ codigoProduto + " Edição " + edicao
+						"Alteração do REPARTE PREVISTO"
 								+ " de " + lancamento.getReparte() 
-								+ " para " + repartePrevisto);
+								+ " para " + repartePrevisto
+								+ " Produto "+codigoProduto
+								+ " Edição " + edicao);
 				
 				lancamento.setReparte(repartePrevisto);
 			}
@@ -260,10 +257,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			if (null != lancamento.getRepartePromocional() && !lancamento.getRepartePromocional().equals(repartePromocional)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração do REPARTE PROMOCIONAL do Produto "
-								+ codigoProduto + " Edição " + edicao
+						"Alteração do REPARTE PROMOCIONAL"
 								+ " de " + lancamento.getRepartePromocional() 
-								+ "para " + repartePromocional);
+								+ "para " + repartePromocional
+								+ " Produto "+codigoProduto
+								+ " Edição " + edicao);
 				lancamento.setRepartePromocional(repartePromocional);
 			}
 			
@@ -277,12 +275,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			if (null != dtLancamentoAtual && !dtLancamentoAtual.equals(dtLancamentoNovo)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração da DATA LANCAMENTO PREVISTO do Produto "
-								+ codigoProduto + " Edição " + edicao
-								+ " de " + simpleDateFormat.format(
-										dtLancamentoNovo)
-								+ " para " + simpleDateFormat.format(
-										dtLancamentoAtual));
+						"Alteração da DATA LANCAMENTO PREVISTO"
+								+ " de " + DateUtil.formatarDataPTBR(dtLancamentoNovo)
+								+ " para " + DateUtil.formatarDataPTBR(dtLancamentoAtual)
+								+ " Produto "+codigoProduto
+								+ " Edição " + edicao);
 				lancamento.setDataLancamentoPrevista(dtLancamentoNovo);
 				
 				boolean erroRetornoParciais =
@@ -296,7 +293,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteração do Lancamento para Produto "
 								+ codigoProduto
-								+ " Edição: " + edicao);
+								+ " Edição " + edicao);
 				*/
 			}
 			
@@ -324,12 +321,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				
 					this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração para PARCIAL da DATA LANCAMENTO DISTRIBUIDOR do Produto "
-								+ codigoProduto + " Edição " + edicao
-								+ " de " + simpleDateFormat.format(
-										dtLancamentoDistribuidor)
-								+ " para " + simpleDateFormat.format(
-										dtLancamentoNovo));
+						"Alteração para PARCIAL da DATA LANCAMENTO DISTRIBUIDOR"						+ " de " + simpleDateFormat.format(dtLancamentoDistribuidor)
+								+ " para " + DateUtil.formatarDataPTBR(dtLancamentoNovo)
+								+ " Produto "+codigoProduto
+								+ " Edição " + edicao);
 				}
 				
 				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);

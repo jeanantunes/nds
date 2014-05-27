@@ -94,7 +94,7 @@ public class DistribuicaoManualController extends BaseController {
     	EstudoGerado estudo = new EstudoGerado();
 		estudo.setProdutoEdicao(new ProdutoEdicao(estudoDTO.getProdutoEdicaoId()));
 		estudo.setReparteDistribuir(BigInteger.valueOf(estudoDTO.getReparteDistribuir()));
-		estudo.setQtdeReparte(BigInteger.valueOf(estudoDTO.getReparteDistribuir()));
+		estudo.setQtdeReparte(BigInteger.valueOf(estudoDTO.getReparteDistribuido()));
 		estudo.setDataCadastro(new Date());
 		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 		estudo.setLiberado(false);

@@ -56,7 +56,9 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 						GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS,
 						GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA,
 						GrupoMovimentoFinaceiro.RESGATE_CAUCAO_LIQUIDA,
-						GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO
+						GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO,
+						GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR,
+						GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR
 					)
 				);
 

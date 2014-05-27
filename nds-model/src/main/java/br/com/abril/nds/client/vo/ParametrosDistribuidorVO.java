@@ -140,6 +140,7 @@ public class ParametrosDistribuidorVO {
     // Frame Negociação de Dívidas
     private String sugereSuspensaoQuandoAtingirBoletos;
     private String sugereSuspensaoQuandoAtingirReais;
+    private boolean sugereSuspensao;
     private Boolean parcelamentoDividas;
     private Boolean utilizaDesconto;
     private String percentualDesconto;
@@ -942,7 +943,15 @@ public class ParametrosDistribuidorVO {
         this.sugereSuspensaoQuandoAtingirReais = sugereSuspensaoQuandoAtingirReais;
     }
 
-    public Boolean getParcelamentoDividas() {
+	public boolean isSugereSuspensao() {
+		return sugereSuspensao;
+	}
+
+	public void setSugereSuspensao(boolean sugereSuspensao) {
+		this.sugereSuspensao = sugereSuspensao;
+	}
+
+	public Boolean getParcelamentoDividas() {
         return parcelamentoDividas;
     }
 

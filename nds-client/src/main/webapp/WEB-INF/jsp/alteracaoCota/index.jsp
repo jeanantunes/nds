@@ -154,7 +154,7 @@
 			<div id="tabs-4">
 				<table width="840" border="0" cellspacing="1" cellpadding="1">
 					<tr>
-						<td width="370" valign="top">
+						<td width="400" valign="top">
 							<table width="370" cellpadding="2" cellspacing="2" style="text-align: left;">
 								<tr>
 									<td width="157">Assist./Promotor Comercial:</td>
@@ -193,8 +193,11 @@
 						</td>
 						<td width="12" style="width: 10px;">&nbsp;</td>
 						<td width="390" valign="top">
-							<table width="299" cellpadding="2" cellspacing="2"
-								style="text-align: left;">
+							
+							<fieldset style="width: 400px">
+								<legend>Tipo de Entrega</legend>
+								
+								<table width="400" cellpadding="2" cellspacing="2" style="text-align: left;">
 								<tr>
 									<td width="106">Tipo de Entrega:</td>
 									<td width="177">
@@ -257,29 +260,6 @@
 									</div>	
 									
 									</div>
-								<table width="420" border="0" cellspacing="1" cellpadding="1">	
-									<tr>
-										<td>Percentual Faturamento:</td>
-										<td><input type="text" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregaBanca"   id="percentualFaturamentoEntregaBanca" 	style="width: 70px; text-align: right;" /></td>
-										<td>Base de Cálculo:</td>
-										<td><select id="basesCalculoEntregaBanca" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.baseCalculo"></select></td>
-									</tr>
-									<tr>
-										<td>Taxa Fixa R$</td>
-										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.taxaFixaEntregaBanca" id="taxaFixaEntregaBanca"	style="width: 70px; text-align: right;" /></td>
-									</tr>
-									<tr>
-										<td>Per&iacute;odo Car&ecirc;ncia:</td>
-										<td colspan="3"><table width="100%" border="0"
-												cellspacing="0" cellpadding="0">
-												<tr>
-													<td width="27%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntregaBanca" type="text" id="carenciaInicioEntregaBanca" style="width: 70px" /></td>
-													<td width="6%">At&eacute; </td>
-													<td width="34%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaFimEntregaBanca"	type="text" id="carenciaFimEntregaBanca" style="width: 70px" /></td>
-												</tr>
-											</table></td>
-									</tr>
-								</table>
 							</div>
 
 							<div id="entregadorPj" style="display: none;">
@@ -327,32 +307,151 @@
 									</div>	
 									
 									</div>
-								<table width="420" border="0" cellspacing="1" cellpadding="1">	
+							</div> 
+							
+							<div class="dadosCobrancaComuns"  style="display: none;">
+								
+								<table width="415" cellpadding="3" cellspacing="2">
+		
 									<tr>
-										<td>Percentual Faturamento:</td>
-										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregador"   id="percentualFaturamentoEntregador" 	style="width: 70px; text-align: right;" /></td>
+										<td>Cobrança:</td>
+										<td>
+											<select style="width: 95px;" 
+													id="modalidadeCobranca" onchange="alteracaoCotaController.mostrarOpcaoSelecionada()" 
+													name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.modalidadeCobranca">
+												<option onclick="alteracaoCotaController.mostrarOpcaoSelecionada();" value=""></option>	
+												<option onclick="alteracaoCotaController.mostrarOpcaoTaxaFixa();" value="TAXA_FIXA">Taxa Fixa</option>
+												<option onclick="alteracaoCotaController.mostrarOpcaoPercentual()" value="PERCENTUAL">Percentual</option>
+											</select>
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											<input type="checkbox" id="checkPorEntrega" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.porEntrega" /> Por Entrega
+										</td>
+							
 									</tr>
 									<tr>
-										<td>Taxa Fixa R$</td>
-										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.taxaFixaEntregador" id="taxaFixaEntregador"	style="width: 70px; text-align: right;" /></td>
+										<td class="transpTaxaFixa">Valor R$:</td>
+										<td class="transpTaxaFixa">
+											<input type="text" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.taxaFixa" id="valorTaxaFixa" style="width: 70px;"/>
+										</td>
+										
+										<td class="transpPercentual" style="display: none;">Percentual Faturamento:</td>
+										<td class="transpPercentual" style="display: none;">
+											<input type="text" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamento" id="valorPercentualFaturamento" style="width: 70px;"/>
+										</td>
+										
 									</tr>
+									
 									<tr>
-										<td>Per&iacute;odo Car&ecirc;ncia:</td>
-										<td colspan="3"><table width="100%" border="0"
-												cellspacing="0" cellpadding="0">
-												<tr>
-													<td width="27%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntragador" type="text" id="carenciaInicioEntregador" style="width: 70px" /></td>
-													<td width="6%">At&eacute; </td>
-													<td width="34%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaFimEntregador"	type="text" id="carenciaFimEntregador" style="width: 70px" /></td>
-												</tr>
-											</table></td>
+										<td class="transpPercentual" style="display: none;">Base de Cálculo:</td>
+										<td class="transpPercentual" style="display: none;">
+											<select id="basesCalculo" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.baseCalculo"  style="width:128px"></select>
+										</td>
+									
+									</tr>
+							
+								</table>
+								
+								<table width="415" cellspacing="3" cellpadding="2">
+									<tr>
+								        <td>Periodicidade:</td>
+								        <td>
+								        	<input name="radioPeriodicidade" type="radio" value="DIARIO" 
+								        		onclick="alteracaoCotaController.alterarPeriodicidadeCobranca(this.value);" id="radioPeridioDiario" />
+								        </td>
+								        <td>Diário</td>
+								        <td>
+								        	<input name="radioPeriodicidade" type="radio" value="SEMANAL" 
+								        		onclick="alteracaoCotaController.alterarPeriodicidadeCobranca(this.value);" />
+								        </td>
+								        <td>Semanal</td>
+								        <td>
+								        	<input name="radioPeriodicidade" type="radio" value="QUINZENAL" 
+								        		onclick="alteracaoCotaController.alterarPeriodicidadeCobranca(this.value);" />
+								        </td>
+								        <td>Quinzenal</td>
+								        <td>
+								        	<input name="radioPeriodicidade" type="radio" value="MENSAL" 
+								        		onclick="alteracaoCotaController.alterarPeriodicidadeCobranca(this.value);" />
+								        </td>
+								        <td>Mensal</td>
 									</tr>
 								</table>
-							</div> <br />
+								
+								<table width="415" cellspacing="1" cellpadding="1" class="perCobrancaSemanal" style="display: none;">
+									<tr class="checksDiasSemana">
+										<td ><input type="radio"  value="SEGUNDA_FEIRA" name="diaSemanaCob" /></td>
+										<td>Segunda</td>
+										<td><input type="radio"   value="TERCA_FEIRA" name="diaSemanaCob" /></td>
+										<td>Terça</td>
+										<td><input type="radio"   value="QUARTA_FEIRA" name="diaSemanaCob" /></td>
+										<td>Quarta</td>
+										<td><input type="radio"   value="QUINTA_FEIRA" name="diaSemanaCob" /></td>
+										<td>Quinta</td>
+										<td><input type="radio"   value="SEXTA_FEIRA" name="diaSemanaCob" /></td>
+										<td>Sexta</td>
+										<td><input type="radio"   value="SABADO" name="diaSemanaCob" /></td>
+										<td>Sábado</td>
+										<td><input type="radio"   value="DOMINGO" name="diaSemanaCob" /></td>
+										<td>Domingo</td>
+								     </tr>
+								</table>
+								
+								<table width="415" cellspacing="1" cellpadding="1" class="perCobrancaQuinzenal" style="display: none;">
+							    	<tr>
+										<td width="396" height="24" align="right">Todo dia:&nbsp;</td>
+										<td width="69">
+											<input type="text" id="inputQuinzenalDiaInicio" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.diaCobranca"
+												onkeyup="alteracaoCotaController.calcularDiaFimCobQuinzenal();" style="width:60px;"/>
+										</td>
+										<td width="21" align="center">e</td>
+										<td width="271">
+											<input type="text" id="inputQuinzenalDiaFim" disabled="disabled" style="width:60px;"/>
+										</td>
+							  		</tr>
+								</table>
+								
+								<table width="415" cellspacing="1" cellpadding="1" class="perCobrancaMensal" style="display: none;">
+									<tr>
+										<td width="495" align="right">Todo dia:&nbsp;</td>
+										<td width="268">
+											<input type="text" id="inputCobrancaMensal" style="width:60px;" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.diaCobranca"/>
+										</td>
+									</tr>
+								</table>
+								
+								<table width="415" cellspacing="1" cellpadding="1">
+								 <tr>
+								    <td width="22%">Período Carência:</td>
+								    <td>
+								    	<table cellspacing="0" cellpadding="0">
+									      <tr>
+									        <td>
+									        	<input id="inicioPeriodoCarencia"
+													   name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicio" type="text" style="width: 70px" />		        	
+									        </td>
+									        <td>&nbsp;</td>
+									        <td>Até</td>
+									        <td>&nbsp;</td>
+									        <td>
+									        	<input id="fimPeriodoCarencia"
+													   name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaFim" type="text" style="width: 70px" />
+									        </td>
+									      </tr>
+								    	</table>
+								    </td>
+							  	</tr>
+							  </table>
+									
+							</div>	
+								
+							</fieldset>
+							
+							
+							<br />
 
-							<fieldset style="width: 335px;">
+							<fieldset style="width: 400px">
 								<legend>Emiss&atilde;o de Documentos</legend>
-								<table width="330" border="0" cellspacing="1" cellpadding="0">
+								<table width="400" border="0" cellspacing="1" cellpadding="0">
 									<tr>
 										<td width="120" align="left">Utiliza</td>
 										<td width="100" align="center">Impresso</td>
@@ -386,7 +485,9 @@
 									<tr>
 										<td>Chamda de encalhe:</td>
 										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isChamdaEncalheImpresso" id="isChamdaEncalheImpresso" /></td>
-										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isChamdaEncalheEmail" id="isChamdaEncalheEmail" /></td>
+									<td align="center">
+										<input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isChamdaEncalheEmail" id="isChamdaEncalheEmail" />
+									</td>
 									</tr>
 								</table>
 							</fieldset>

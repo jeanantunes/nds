@@ -406,11 +406,43 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		if(exibir){
 			
-			$(".form-suspensao-hidden-class").show();
+			$(".form-suspensao-hidden2-class").show();
 		}	
 		else{
 			
-			$(".form-suspensao-hidden-class").hide();
+			$(".form-suspensao-hidden2-class").hide();
+		}	
+	},
+	
+    exibe_form_suspencao_distribuidor : function(checked) {
+		
+        if(checked){
+
+        	$.postJSON(contextPath + "/cota/parametroCobrancaCota/obterPoliticaSuspensaoDistribuidor.json", 
+    			null,
+				function(data){
+    		
+					if(data) {
+			
+						$("#qtdDividasAberto").val(data.numeroAcumuloDivida);
+
+			        	$("#vrDividasAberto").val(data.valor);
+					}
+    		});
+        	
+        	$("#qtdDividasAberto").prop('disabled', true);
+
+        	$("#vrDividasAberto").prop('disabled', true);
+        	
+        	$("#sugereSuspensao").prop('disabled', true);
+		}	
+		else{
+			
+			$("#qtdDividasAberto").prop('disabled', false);
+			
+			$("#vrDividasAberto").prop('disabled', false);
+			
+			$("#sugereSuspensao").prop('disabled', false);
 		}	
 	},
 	
@@ -590,8 +622,14 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		$("#sugereSuspensao", this.workspace).val(resultado.sugereSuspensao);
 		$("#sugereSuspensao").attr("checked", resultado.sugereSuspensao);
+		
+		$("#sugereSuspensaoDistribuidor", this.workspace).val(resultado.sugereSuspensaoDistribuidor);
+		$("#sugereSuspensaoDistribuidor").attr("checked", resultado.sugereSuspensaoDistribuidor);
+		
 		parametroCobrancaCotaController.exibe_form_suspencao(resultado.sugereSuspensao);
 
+		parametroCobrancaCotaController.exibe_form_suspencao_distribuidor(resultado.sugereSuspensaoDistribuidor);
+		
 		$("#contrato", this.workspace).val(resultado.contrato);
 		$("#contrato").attr("checked", resultado.contrato);
 
@@ -648,6 +686,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 		}
 		var sugereSuspensao = $("#sugereSuspensao", this.workspace).val();
 		
+		$("#sugereSuspensaoDistribuidor", this.workspace).val(0);
+		//if (document.formFinanceiro.sugereSuspensaoDistribuidor.checked){
+		if ($("#sugereSuspensaoDistribuidor", this.workspace).is(":checked")) {
+			$("#sugereSuspensaoDistribuidor", this.workspace).val(1);
+		}
+		var sugereSuspensaoDistribuidor = $("#sugereSuspensaoDistribuidor", this.workspace).val();
+		
 		$("#contrato", this.workspace).val(0);
 		//if (document.formFinanceiro.contrato.checked){
 		if ($("#contrato", this.workspace).is(":checked")) {
@@ -671,6 +716,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 				"parametroCobranca.numCota": numCota,   
 				"parametroCobranca.fatorVencimento": fatorVencimento,   
 				"parametroCobranca.sugereSuspensao": sugereSuspensao,   
+				"parametroCobranca.sugereSuspensaoDistribuidor": sugereSuspensaoDistribuidor,
 				"parametroCobranca.contrato": contrato,
 				"parametroCobranca.inicioContrato": inicioContrato,
 				"parametroCobranca.terminoContrato": terminoContrato,
@@ -680,7 +726,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 				"parametroCobranca.tipoCota": tipoCota,
 				"parametroCobranca.devolveEncalhe": devolveEncalhe,
 				"parametroCobranca.idFornecedor": fornecedorPadrao};
-				//"parametroCobranca.unificaCobranca": unificaCobranca};
 		
 		return params;
 	},
@@ -718,17 +763,11 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		var parametroCobranca = parametroCobrancaCotaController.financeiro.resultParametroCobranca;
 
-		if(parametroCobrancaTela['parametroCobranca.sugereSuspensao'] != parametroCobranca['parametroCobranca.sugereSuspensao']){return true;}
     	if(parametroCobrancaTela['parametroCobranca.fatorVencimento'] != parametroCobranca['parametroCobranca.fatorVencimento']){return true;}
     	if(parametroCobrancaTela['parametroCobranca.idCota'] != parametroCobranca['parametroCobranca.idCota']){return true;}
     	if(parametroCobrancaTela['parametroCobranca.idFornecedor'] != parametroCobranca['parametroCobranca.idFornecedor']){return true;}
     	if(parametroCobrancaTela['parametroCobranca.idParametroCobranca'] != parametroCobranca['parametroCobranca.idParametroCobranca']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.numCota'] != parametroCobranca['parametroCobranca.numCota']){return true;}
-	    if(parametroCobrancaTela['parametroCobranca.qtdDividasAberto'] != parametroCobranca['parametroCobranca.qtdDividasAberto']){return true;}
-	    if(parametroCobrancaTela['parametroCobranca.sugereSuspensao'] != parametroCobranca['parametroCobranca.sugereSuspensao']){return true;}
-	    //if(parametroCobrancaTela['parametroCobranca.unificaCobranca'] != parametroCobranca['parametroCobranca.unificaCobranca']){return true;}
-	    if(parametroCobrancaTela['parametroCobranca.valorMinimo'] != parametroCobranca['parametroCobranca.valorMinimo']){return true;}
-	    if(parametroCobrancaTela['parametroCobranca.vrDividasAberto'] != parametroCobranca['parametroCobranca.vrDividasAberto']){return true;}
 
 		return false;
 	},
@@ -764,30 +803,11 @@ var parametroCobrancaCotaController = $.extend(true, {
 		return false;
 	},
 	
-	salvarContratoTipoCotaEDevolveEncalhe : function(){
+	salvarContratoECaracteristicasFinanceirasEspecificasCota : function(){
 		
-		var params = parametroCobrancaCotaController.buildParametroCobrancaDto();
-		
-		var idCota              = $("#_idCota", this.workspace).val();
-		
-		var inicioContrato 		= $("#parametroCobrancaDateInicio", this.workspace).val();
-		
-        var terminoContrato 	= $("#parametroCobrancaDateTermino", this.workspace).val();
+		var params = parametroCobrancaCotaController.buildFormaCobrancaDTO();
         
-        var tipoCota            = $("#tipoCota", this.workspace).val();
-        
-        var devolveEncalhe      = $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
-        
-        var isContrato 			= $("#contrato", this.workspace).is(":checked");
-        
-        var params =  {"idCota": idCota,
-        		       "inicioContrato": inicioContrato,
-				       "terminoContrato": terminoContrato,
-				       "tipoCota": tipoCota,
-				       "possuiContrato": isContrato,
-				       "devolveEncalhe": devolveEncalhe};
-        
-		$.postJSON(contextPath + "/cota/parametroCobrancaCota/salvarContratoTipoCotaEDevolveEncalhe",
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/salvarContratoECaracteristicasFinanceirasEspecificasCota",
 				   params,
 				   function(mensagens) {
 			
@@ -853,7 +873,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		   } 
 		   else{
 				
-		       parametroCobrancaCotaController.salvarContratoTipoCotaEDevolveEncalhe();
+		       parametroCobrancaCotaController.salvarContratoECaracteristicasFinanceirasEspecificasCota();
 		   }
 	    }
 	    else {
@@ -1188,6 +1208,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var fornecedorPadrao 	= $("#fornecedorPadrao", this.workspace).val();
 		//var unificaCobranca 	= $("#unificaCobranca", this.workspace).val() == 0 ? 1 : 0;
 		var sugereSuspensao 	= $("#sugereSuspensao", this.workspace).val();
+		var sugereSuspensaoDistribuidor	= $("#sugereSuspensaoDistribuidor", this.workspace).val();
 		var contrato			= $("#contrato", this.workspace).val();
 		var inicioContrato 		= $("#parametroCobrancaDateInicio", this.workspace).val();
         var terminoContrato 	= $("#parametroCobrancaDateTermino", this.workspace).val();
@@ -1280,6 +1301,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 						 "parametroCobranca.idFornecedor": fornecedorPadrao,
 						 //"parametroCobranca.unificaCobranca": unificaCobranca,
 						 "parametroCobranca.sugereSuspensao": sugereSuspensao,   
+						 "parametroCobranca.sugereSuspensaoDistribuidor": sugereSuspensaoDistribuidor,   
 						 "parametroCobranca.qtdDividasAberto": qtdDividasAberto,  
 						 "parametroCobranca.vrDividasAberto": vrDividasAberto,
 						 "parametroCobranca.contrato": contrato,

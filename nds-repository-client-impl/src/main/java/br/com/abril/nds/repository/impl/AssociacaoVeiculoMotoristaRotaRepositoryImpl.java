@@ -5,8 +5,10 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
@@ -165,5 +167,25 @@ public class AssociacaoVeiculoMotoristaRotaRepositoryImpl extends
 		query.setParameter("idRota", idRota);
 		
 		return (Long)query.uniqueResult() > 0;
+	}
+	
+	public Long obterQuantidadeAssociaoesDaCota(Integer numeroCota){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("select count(cota.ID) as quantidade from rota rota join rota_pdv rotaPDV on rotaPDV.ROTA_ID = rota.ID ");
+		sql.append("join pdv pdv on pdv.ID = rotaPDV.PDV_ID ");
+		sql.append("join cota cota on cota.ID  = pdv.COTA_ID ");
+		sql.append("join assoc_veiculo_motorista_rota ass on ass.ROTA = rota.ID ");
+		sql.append("where cota.NUMERO_COTA = :numeroCota ");
+		sql.append("and pdv.PONTO_PRINCIPAL = true ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.addScalar("quantidade",StandardBasicTypes.LONG);
+		
+		return (Long) query.uniqueResult();
 	}
 }

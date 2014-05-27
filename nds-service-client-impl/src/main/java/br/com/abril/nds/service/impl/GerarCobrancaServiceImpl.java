@@ -550,15 +550,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		return listaBoletoDistribuidor;
 	}
-	
-	private BigDecimal obterValorMinino(Cota cota, BigDecimal valorMininoDistribuidor){
-		BigDecimal valorMinimo = 
-				(cota.getParametroCobranca() != null && cota.getParametroCobranca().getValorMininoCobranca() != null) ?
-						cota.getParametroCobranca().getValorMininoCobranca() :
-							valorMininoDistribuidor;
-						
-		return valorMinimo;
-	}
 
     /**
      * Obtem forma de cobranca da Cota
@@ -1511,7 +1502,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
   			
   		boolean cotaSuspensa = SituacaoCadastro.SUSPENSO.equals(this.obterSitiacaoCadastroCota(cota.getId()));
   
- 		BigDecimal valorMinino = this.obterValorMinino(cota, formaCobrancaPrincipal.getValorMinimoEmissao());
+ 		BigDecimal valorMinino = cota.getValorMinimoCobranca();
   			
   		Banco banco = formaCobrancaPrincipal.getBanco();
  			
@@ -1598,7 +1589,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		boolean cotaSuspensa = SituacaoCadastro.SUSPENSO.equals(this.obterSitiacaoCadastroCota(cota.getId()));
 
-		BigDecimal valorMinino = this.obterValorMinino(cota, formaCobrancaPrincipal.getValorMinimoEmissao());
+		BigDecimal valorMinino = cota.getValorMinimoCobranca(); 
 		
 		Banco banco = formaCobrancaPrincipal.getBanco();
 
@@ -1882,7 +1873,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota, dataOperacao);
 		}
 		
-		if (consolidados != null) {
+		if (consolidados != null && !consolidados.isEmpty()) {
 			
 			for (ConsolidadoFinanceiroCota consolidado : consolidados) {
 				
@@ -1917,6 +1908,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
 			    
 			}
+		} else {
+		    //caso esteja finalizando conf. de uma cota centralizada/centralizadora
+		    this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaPorDataCota(dataOperacao, idCota);
 		}
 		
 		this.removerPostergados(idCota, dataOperacao);

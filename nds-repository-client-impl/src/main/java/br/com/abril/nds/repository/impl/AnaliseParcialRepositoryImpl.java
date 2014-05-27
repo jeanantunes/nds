@@ -466,14 +466,12 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         StringBuilder sql = new StringBuilder();
         sql.append("update estudo_gerado ");
-        sql.append("   set reparte_distribuir = reparte_distribuir + ?, ");
-        sql.append("       sobra = sobra - ? ");
+        sql.append("   set sobra = coalesce(sobra, 0) - ? ");
         sql.append(" where id = ? ");
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setLong(0, reparteSubtraido);
-        query.setLong(1, reparteSubtraido);
-        query.setLong(2, estudoId);
+        query.setLong(1, estudoId);
         query.executeUpdate();
     }
 

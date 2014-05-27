@@ -28,7 +28,6 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
-import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.util.Intervalo;
@@ -423,7 +422,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @return List<MovimentoEstoqueCota>
 	 */
-	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(final Long idCota, final List<Date> datas, final List<Long> idTiposMovimentoEstoque);
+	public List<MovimentosEstoqueEncalheDTO> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(final Long idCota, final List<Date> datas, final List<Long> idTiposMovimentoEstoque);
 	
 	/**
 	 * Obtém movimentos de estoque da cota que forão estornados
@@ -502,7 +501,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	
 	List<CotaReparteDTO> obterReparte(Long idLancamento, Long idProdutoEdicao);
 
-	public abstract void updateByIdConsolidadoAndGrupos(Long idConsolidado, List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros,
+	public abstract void updateByIdConsolidadoAndGrupos(Long idConsolidado, List<String> grupoMovimentoFinaceiros,
 			String motivo, Long movimentoFinanceiroCota, StatusEstoqueFinanceiro statusEstoqueFinanceiro);
 
 	public abstract Long findIdByIdConferenciaEncalhe(Long idConferenciaEncalhe);
@@ -514,5 +513,8 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public abstract void updateById(Long id, MovimentoFinanceiroCota movimentoFinanceiroCota);
 
 	public abstract void updateById(Long id, StatusEstoqueFinanceiro statusEstoqueFinanceiro);
+
+    void updateByCotaAndDataOpAndGrupos(Long idCota, Date dataOperacao, List<String> grupoMovimentoFinaceiros,
+            String motivo, StatusEstoqueFinanceiro financeiroNaoProcessado);
 	
 }
