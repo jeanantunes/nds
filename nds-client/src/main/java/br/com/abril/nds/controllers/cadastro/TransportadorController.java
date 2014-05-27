@@ -3,7 +3,6 @@ package br.com.abril.nds.controllers.cadastro;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,12 +25,8 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO.OrdenacaoColunaTransportador;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Motorista;
-import br.com.abril.nds.model.cadastro.ParametroCobrancaTransportador;
-import br.com.abril.nds.model.cadastro.ParametroCobrancaTransportador.ModalidadeCobranca;
-import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
@@ -389,44 +384,6 @@ public class TransportadorController extends BaseController {
 			msgs.add("Insc. Estadual é obrigatório.");
 		}
 		
-		//
-		if (transportador.getParametroCobrancaTransportador().getModalidadeCobranca() == null) {
-			
-			msgs.add("Modalidade de Cobrança é obrigatório.");
-		} else {
-			
-			boolean isPercentual = ModalidadeCobranca.PERCENTUAL.equals(
-					transportador.getParametroCobrancaTransportador().getModalidadeCobranca());
-			
-			if (isPercentual) {
-				
-				if (transportador.getParametroCobrancaTransportador().getValor() == null) {
-					msgs.add("É necessário informar um percentual.");
-				} else {
-					boolean isMaiorCem = 100D < transportador.getParametroCobrancaTransportador().getValor().doubleValue();
-					if (isPercentual && isMaiorCem) {
-						msgs.add("O percentual não deve ser maior que 100%.");
-					}
-				}
-			}
-		}
-		
-		if (transportador.getParametroCobrancaTransportador() != null){
-			
-			ParametroCobrancaTransportador param = transportador.getParametroCobrancaTransportador();
-			
-			if (PeriodicidadeCobranca.SEMANAL == param.getPeriodicidadeCobranca() && 
-					(param.getDiasSemanaCobranca() == null || param.getDiasSemanaCobranca().isEmpty())){
-				
-				msgs.add("Selecione os dias da semana para cobrança semanal.");
-			} else if ((PeriodicidadeCobranca.QUINZENAL == param.getPeriodicidadeCobranca() ||
-					PeriodicidadeCobranca.MENSAL == param.getPeriodicidadeCobranca()) && 
-					(param.getDiaCobranca() == null || param.getDiaCobranca() <= 0 || param.getDiaCobranca() > 31)){
-				
-				msgs.add("Dia da cobrança inválido");
-			}
-		}
-		
 		validarEnderecos(msgs);
 		
 		validarTelefones(msgs);
@@ -521,25 +478,7 @@ public class TransportadorController extends BaseController {
 			}
 		}
 	}
-	
-	/*
-	 * Método que obtém os telefones a serem salvos, que estão na sessão.
-	 */
-	@SuppressWarnings("unchecked")
-	private Map<Integer, TelefoneAssociacaoDTO> obterTelefonesSalvarSessao(){
-		
-		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = (Map<Integer, TelefoneAssociacaoDTO>) 
-				this.httpSession.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
-		
-		if (telefonesSessao == null){
 
-			telefonesSessao = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
-		}
-		
-		return telefonesSessao;
-	}
-
-	
 	@Post
 	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO)
 	public void editarTransportador(Long referencia){
@@ -558,27 +497,7 @@ public class TransportadorController extends BaseController {
 			dados.add(transportador.getResponsavel());
 			dados.add(Util.adicionarMascaraCNPJ(transportador.getPessoaJuridica().getCnpj()));
 			dados.add(transportador.getPessoaJuridica().getInscricaoEstadual());
-			
-			if (transportador.getParametroCobrancaTransportador() != null){
-				
-				ParametroCobrancaTransportador param = transportador.getParametroCobrancaTransportador();
-				
-				dados.add(param.getModalidadeCobranca() != null ? param.getModalidadeCobranca().toString() : "");
-				dados.add(param.getValor() != null ? String.format("%.2f", param.getValor()) : "0,00");
-				dados.add(String.valueOf(param.isPorEntrega()));
-				dados.add(param.getPeriodicidadeCobranca().toString());
-				dados.add(param.getDiaCobranca() != null ? param.getDiaCobranca().toString() : "");
-				dados.add(param.getId().toString());
-				
-				if (param.getDiasSemanaCobranca() != null){
-					
-					for (DiaSemana dia : param.getDiasSemanaCobranca()){
-						
-						dados.add(dia.toString());
-					}
-				}
-			}
-			
+
 			this.carregarTelefonesEnderecosPessoa(transportador.getPessoaJuridica().getId());
 		}
 		

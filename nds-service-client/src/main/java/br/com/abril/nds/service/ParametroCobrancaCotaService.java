@@ -12,9 +12,11 @@ import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
+import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 /**
@@ -215,4 +217,12 @@ public interface ParametroCobrancaCotaService {
     void verificarDataAlteracaoTipoCota(Long idCota);
 
     void validarFormaCobranca(FormaCobrancaDTO formaCobranca);
+
+    /**
+     * Obtem Politica de Suspensao da Cota ou do Distribuidor
+     * 
+     * @param cota
+     * @return PoliticaSuspensao
+     */
+	PoliticaSuspensao obterPoliticaSuspensaoCota(Cota cota);
 }

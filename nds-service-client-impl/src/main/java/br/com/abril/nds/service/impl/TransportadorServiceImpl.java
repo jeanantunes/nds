@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +40,7 @@ import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EnderecoTransportadorRepository;
 import br.com.abril.nds.repository.MotoristaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
-import br.com.abril.nds.repository.ParametroCobrancaTransportadorRepository;
+import br.com.abril.nds.repository.ParametroCobrancaDistribuicaoCotaRepository;
 import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.TelefoneTransportadorRepositoty;
@@ -88,7 +87,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 	private AssociacaoVeiculoMotoristaRotaRepository associacaoVeiculoMotoristaRotaRepository;
 	
 	@Autowired
-	private ParametroCobrancaTransportadorRepository parametroCobrancaTransportadorRepository;
+	private ParametroCobrancaDistribuicaoCotaRepository parametroCobrancaTransportadorRepository;
 	
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
@@ -106,9 +105,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 		}
 		
 		Transportador transportador = this.transportadorRepository.buscarPorId(idTransportador);
-		
-		Hibernate.initialize(transportador.getParametroCobrancaTransportador().getDiasSemanaCobranca());
-		
+			
 		return transportador;
 	}
 
@@ -155,20 +152,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 			
 			this.transportadorRepository.alterar(transportador);
 		}
-		
-		if (transportador.getParametroCobrancaTransportador() != null){
-			
-			if (transportador.getParametroCobrancaTransportador().getId() == null){
-				
-				this.parametroCobrancaTransportadorRepository.adicionar(
-						transportador.getParametroCobrancaTransportador());
-			} else {
-				
-				this.parametroCobrancaTransportadorRepository.alterar(
-						transportador.getParametroCobrancaTransportador());
-			}
-		}
-		
+
 		this.processarEnderecos(transportador, listaEnderecosAdicionar, listaEnderecosRemover);
 		
 		this.processarTelefones(transportador, listaTelefoneAdicionar, listaTelefoneRemover);

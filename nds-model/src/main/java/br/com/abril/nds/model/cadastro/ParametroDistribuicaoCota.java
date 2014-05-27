@@ -1,7 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -92,15 +91,6 @@ public class ParametroDistribuicaoCota implements Serializable {
 	@Column(name = "PROCURACAO_RECEBIDA")
     private Boolean procuracaoRecebida;
 	
-    @Column(name = "TAXA_FIXA", precision=18, scale=4)
-    private BigDecimal taxaFixa;
-    
-    @Column(name = "PERCENTUAL_FATURAMENTO", precision=18, scale=4)
-    private BigDecimal percentualFaturamento;
-    
-    @Column(name = "BASE_CALCULO")
-    private BaseCalculo baseCalculo;
-
     @Column(name = "INICIO_PERIODO_CARENCIA")
     @Temporal(TemporalType.DATE)
     private Date inicioPeriodoCarencia;
@@ -417,49 +407,7 @@ public class ParametroDistribuicaoCota implements Serializable {
 	public void setReciboEmail(Boolean reciboEmail) {
 		this.reciboEmail = reciboEmail;
 	}
-
-	/**
-	 * @return the taxaFixa
-	 */
-	public BigDecimal getTaxaFixa() {
-		return taxaFixa;
-	}
-
-	/**
-	 * @param taxaFixa the taxaFixa to set
-	 */
-	public void setTaxaFixa(BigDecimal taxaFixa) {
-		this.taxaFixa = taxaFixa;
-	}
-
-	/**
-	 * @return the percentualFaturamento
-	 */
-	public BigDecimal getPercentualFaturamento() {
-		return percentualFaturamento;
-	}
-
-	/**
-	 * @param percentualFaturamento the percentualFaturamento to set
-	 */
-	public void setPercentualFaturamento(BigDecimal percentualFaturamento) {
-		this.percentualFaturamento = percentualFaturamento;
-	}
 	
-	/**
-	 * @return the baseCalculo
-	 */
-	public BaseCalculo getBaseCalculo() {
-		return baseCalculo;
-	}
-
-	/**
-	 * @param baseCalculo the baseCalculo to set
-	 */
-	public void setBaseCalculo(BaseCalculo baseCalculo) {
-		this.baseCalculo = baseCalculo;
-	}
-
 	/**
 	 * @return the inicioPeriodoCarencia
 	 */
