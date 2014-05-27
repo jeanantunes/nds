@@ -21,6 +21,8 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	
 	private Cota cota;
 	
+	private boolean indCotaOperacaoDiferenciada;
+	
 	private List<ConferenciaEncalheDTO> listaConferenciaEncalhe;
 	
 	private List<DebitoCreditoCotaDTO> listaDebitoCreditoCota;
@@ -131,6 +133,16 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	public void setNotaFiscalEntradaCota(NotaFiscalEntradaCota notaFiscalEntradaCota) {
 		this.notaFiscalEntradaCota = notaFiscalEntradaCota;
 	}
+
+	public boolean isIndCotaOperacaoDiferenciada() {
+		return indCotaOperacaoDiferenciada;
+	}
+
+	public void setIndCotaOperacaoDiferenciada(boolean indCotaOperacaoDiferenciada) {
+		this.indCotaOperacaoDiferenciada = indCotaOperacaoDiferenciada;
+	}
+	
+	
 	
 	
 }

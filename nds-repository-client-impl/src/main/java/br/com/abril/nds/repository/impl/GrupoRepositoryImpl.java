@@ -40,17 +40,61 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DiaSemana> obterDiasOperacaoDiferenciadaCota(final Integer numeroCota, final Date dataOperacao) {
-	    Criteria criteria = super.getSession().createCriteria(GrupoCota.class);
-	    criteria.createAlias("diasRecolhimento", "dia");
-	    criteria.createAlias("cotas", "cota");
-	    
-	    addDataVigencia(dataOperacao, criteria);
-	    criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
-	    
-	    criteria.setProjection(Projections.distinct(Projections.property("dia."+ CollectionPropertyNames.COLLECTION_ELEMENTS)));
-	    
 		
-		return (List<DiaSemana>) criteria.list();
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select diaRecolhimento	");
+		
+		hql.append(" from GrupoCota g ");
+
+		hql.append(" inner join g.diasRecolhimento diaRecolhimento	");
+	
+		hql.append(" left join g.cotas cota ");
+		
+		hql.append(" left join g.municipios municipio ");
+		
+		hql.append(" where ");
+		
+		hql.append(" g.dataInicioVigencia <= :dataOperacao and ");
+		
+		hql.append(" ( g.dataFimVigencia is null or g.dataFimVigencia >= :dataOperacao ) and ");
+		
+		hql.append(" ( ");
+	    
+		hql.append(" cota.numeroCota = :numeroCota ");
+		
+		hql.append(" or municipio = ");
+			
+		hql.append(" 	( ");
+		
+		hql.append(" 	select max(ender.cidade) from Cota cota "); 
+			
+		hql.append(" 	inner join cota.pdvs pdv ");
+			
+		hql.append(" 	inner join pdv.enderecos enderecoPDV ");
+		
+		hql.append("    inner join enderecoPDV.endereco ender  ");
+			
+		hql.append(" 	where cota.numeroCota = :numeroCota and ");
+		
+		hql.append("	pdv.caracteristicas.pontoPrincipal = true and	");
+		
+		hql.append(" 	enderecoPDV.principal = true ");
+		
+		hql.append(" 	) ");
+		
+		hql.append(" ) ");
+		
+		
+		hql.append(" group by diaRecolhimento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		return (List<DiaSemana>) query.list();
 		
 	}
 	
