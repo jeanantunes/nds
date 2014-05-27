@@ -424,25 +424,27 @@ var parametroCobrancaCotaController = $.extend(true, {
     		
 					if(data) {
 			
-						$("#qtdDividasAberto").val(data.numeroAcumuloDivida);
+						$("#qtdDividasAberto", this.workspace).val(data.qtdDividasAberto);
 
-			        	$("#vrDividasAberto").val(data.valor);
+			        	$("#vrDividasAberto", this.workspace).val(data.vrDividasAberto);
+			        	
+			        	$("#sugereSuspensao", this.workspace).attr("checked", data.sugereSuspensao);
 					}
     		});
         	
-        	$("#qtdDividasAberto").prop('disabled', true);
+        	$("#qtdDividasAberto", this.workspace).prop('disabled', true);
 
-        	$("#vrDividasAberto").prop('disabled', true);
+        	$("#vrDividasAberto", this.workspace).prop('disabled', true);
         	
-        	$("#sugereSuspensao").prop('disabled', true);
+        	$("#sugereSuspensao", this.workspace).prop('disabled', true);
 		}	
 		else{
 			
-			$("#qtdDividasAberto").prop('disabled', false);
+			$("#qtdDividasAberto", this.workspace).prop('disabled', false);
 			
-			$("#vrDividasAberto").prop('disabled', false);
+			$("#vrDividasAberto", this.workspace).prop('disabled', false);
 			
-			$("#sugereSuspensao").prop('disabled', false);
+			$("#sugereSuspensao", this.workspace).prop('disabled', false);
 		}	
 	},
 	
