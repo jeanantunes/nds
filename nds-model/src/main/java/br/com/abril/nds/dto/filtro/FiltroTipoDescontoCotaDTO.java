@@ -18,6 +18,8 @@ public class FiltroTipoDescontoCotaDTO extends FiltroDTO implements Serializable
 	
 	@Export(label="Nome" , exhibitionOrder=3)
 	private String nomeCota;
+	
+	private Long idCota;
 		
 	private OrdenacaoColunaConsulta ordenacaoColuna;
 	
@@ -78,6 +80,14 @@ public class FiltroTipoDescontoCotaDTO extends FiltroDTO implements Serializable
 	 */
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
+	}
+
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
 	}
 
 	/**

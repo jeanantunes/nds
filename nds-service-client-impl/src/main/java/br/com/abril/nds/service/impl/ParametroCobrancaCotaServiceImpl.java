@@ -940,28 +940,28 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				strConcentracoes .append("Diariamente");
 			}
 			
+			final String detalhesTipoPagto = this.obterDetalheTipoPagamento(formaCobrancaItem);
+			
+
+			FormaCobrancaDTO formaCobranca = new FormaCobrancaDTO(
+				formaCobrancaItem.getId(),
+				strFornecedores.toString(),
+				strConcentracoes.toString(),
+				(formaCobrancaItem.getTipoCobranca()!=null?formaCobrancaItem.getTipoCobranca().getDescTipoCobranca():""),
+				detalhesTipoPagto,
+				isParametroDistribuidor,
+				descUnificacao
+			);
+
 			if ((fornecedores!=null)&&(!fornecedores.isEmpty())){
 				for (Fornecedor itemFornecedor:fornecedores){
-					if (strFornecedores.length()>0){
-						strFornecedores.append("/");
-					}
-					strFornecedores.append(itemFornecedor.getJuridica().getRazaoSocial());
+					formaCobranca.addFornecedor(new Fornecedor(itemFornecedor.getId(), itemFornecedor.getJuridica().getNomeFantasia()));
 				}
 			}
 			
-			final String detalhesTipoPagto = this.obterDetalheTipoPagamento(formaCobrancaItem);
+			formaCobranca.getFornecedores().size();
 			
-			formasCobrancaDTO.add(
-				new FormaCobrancaDTO(
-					formaCobrancaItem.getId(),
-					strFornecedores.toString(),
-					strConcentracoes.toString(),
-					(formaCobrancaItem.getTipoCobranca()!=null?formaCobrancaItem.getTipoCobranca().getDescTipoCobranca():""),
-					detalhesTipoPagto,
-					isParametroDistribuidor,
-					descUnificacao
-				)
-			);
+			formasCobrancaDTO.add(formaCobranca);
 		}
 	}
 
@@ -1669,16 +1669,34 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
     @Override
     @Transactional(readOnly = true)
     public PoliticaSuspensao obterPoliticaSuspensaoCota(Cota cota) {
-        
-    	PoliticaSuspensao ps = cota.getPoliticaSuspensao();
     	
     	if (cota.isSugereSuspensaoDistribuidor()){
     		
     		Distribuidor d = this.distribuidorRepository.obter();
     		
-    		ps = d.getPoliticaSuspensao();
+    		return d.getPoliticaSuspensao();
     	}
         
-        return ps;
+        return cota.getPoliticaSuspensao();
+    }
+    
+    /**
+     * Verifica se cota utiliza politica de suspensao, seja propria ou do distribuidor
+     * 
+     * @param cota
+     * @return boolean
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isSugereSuspensao(Cota cota) {
+    	
+    	if (cota.isSugereSuspensaoDistribuidor()){
+    		
+    		Distribuidor d = this.distribuidorRepository.obter();
+    		
+    		return d.isSugereSuspensao();
+    	}
+    		
+    	return cota.isSugereSuspensao();
     }
 }

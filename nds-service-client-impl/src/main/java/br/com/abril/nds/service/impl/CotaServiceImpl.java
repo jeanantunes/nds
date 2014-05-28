@@ -43,8 +43,8 @@ import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
+import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -55,6 +55,7 @@ import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.TitularidadeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
+import br.com.abril.nds.enums.Dominio;
 import br.com.abril.nds.enums.Flag;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
@@ -101,7 +102,6 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
-import br.com.abril.nds.model.fiscal.TipoEntidadeDestinoFlag;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
@@ -1705,7 +1705,7 @@ public class CotaServiceImpl implements CotaService {
 	    if(flagCotaExigeNFe == null) {
 	    	
 	    	flagCotaExigeNFe = new FlagPendenteAtivacao(Flag.COTA_EXIGE_NF_E, Flag.COTA_EXIGE_NF_E.getDescricao()
-	    					, TipoEntidadeDestinoFlag.COTA, cotaDto.isExigeNFE(), cotaDto.getIdCota());
+	    					, Dominio.COTA, cotaDto.isExigeNFE(), cotaDto.getIdCota());
 	    } else {
 	    	
 	    	flagCotaExigeNFe.setValor(cotaDto.isExigeNFE());
@@ -1716,7 +1716,7 @@ public class CotaServiceImpl implements CotaService {
 	    	
 	    	flagCotaContribuinteICMS = 
 	    			new FlagPendenteAtivacao(Flag.COTA_CONTRIBUINTE_ICMS, Flag.COTA_CONTRIBUINTE_ICMS.getDescricao()
-	    					, TipoEntidadeDestinoFlag.COTA, cotaDto.isContribuinteICMS(), cotaDto.getIdCota());
+	    					, Dominio.COTA, cotaDto.isContribuinteICMS(), cotaDto.getIdCota());
 	    } else {
 	    	
 	    	flagCotaContribuinteICMS.setValor(cotaDto.isContribuinteICMS());

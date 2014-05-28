@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -59,7 +60,8 @@ public class FormaCobrancaDTO {
 	}
 
 	//CONTRUTOR PARA DADOS DA GRID
-	public FormaCobrancaDTO(Long idFormaCobranca, String fornecedor,
+	public FormaCobrancaDTO(Long idFormaCobranca, 
+			String fornecedor,
 			String concentracaoPagto, String tipoPagto, String detalhesTipoPagto,
 			boolean parametroDistribuidor,
 			String descUnificacao) {
@@ -371,6 +373,27 @@ public class FormaCobrancaDTO {
 
 	public void setFornecedores(Set<Fornecedor> fornecedores) {
 		this.fornecedores = fornecedores;
+	}
+	
+	public void addFornecedor(Fornecedor fornecedor) {
+		
+		if (this.fornecedores == null) {
+			
+			this.fornecedores = new HashSet<Fornecedor>();			
+		}
+
+		if (this.fornecedor == null) {
+			
+			this.fornecedor = "";
+		
+		} else if (!this.fornecedor.isEmpty()) {
+			
+			this.fornecedor += "/";
+		}
+		
+		this.fornecedor += fornecedor.getJuridica().getNomeFantasia();
+
+		this.fornecedores.add(fornecedor);
 	}
 
 	public String getUnificacao() {
