@@ -11,6 +11,8 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -864,9 +866,28 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		return (ChamadaEncalheCota) query.uniqueResult();
 	}
 	
-	public void fecharChamadasEncalheDaCota(Long idCota, Date data) {
+	public Long quantidadeChamadasEncalheParaCota(Long idCota, Date periodoInicial, Date periodoFinal){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select count(chamadas.data) as quantidade from ( ")
+		.append(" select chamadaEncalhe.DATA_RECOLHIMENTO as data ")
+		.append(" from chamada_encalhe_cota chamadaCota ")
+		.append(" join chamada_encalhe chamadaEncalhe on chamadaEncalhe.ID = chamadaCota.CHAMADA_ENCALHE_ID ") 
+		.append(" where chamadaCota.COTA_ID =:idCota ")
+		.append(" and chamadaEncalhe.DATA_RECOLHIMENTO  between :dataInicio and :dataFim ") 
+		.append(" group by chamadaEncalhe.DATA_RECOLHIMENTO) as chamadas "); 
 		
 		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataInicio", periodoInicial);
+		query.setParameter("dataFim", periodoFinal);
+		query.setParameter("idCota", idCota);
+		
+		query.addScalar("quantidade",StandardBasicTypes.LONG);
+		
+		return (Long) query.uniqueResult();
 	}
 	
 }

@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,7 +35,9 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
+import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
@@ -50,6 +51,7 @@ import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -85,6 +87,9 @@ public class ParametroCobrancaCotaController extends BaseController {
     
     @Autowired
     private BancoService bancoService;
+    
+    @Autowired
+    private DistribuidorService distribuidorService;
     
     @Autowired
     private CotaService cotaService;
@@ -351,7 +356,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         result.use(Results.json()).withoutRoot().from(qtdFormaCobranca).serialize();
     }
     
-	                                                        /**
+	/**
      * Retorna formas de cobrança da cota para preencher a grid da view
      * 
      * @param idCota
@@ -384,9 +389,8 @@ public class ParametroCobrancaCotaController extends BaseController {
         
         result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
     }
-    
-    
-	                                                        /**
+   
+	/**
      * Método responsável por obter os dados default da forma de cobranca
      * principal dos parametros de cobrança do distribuidor.
      * 
@@ -407,7 +411,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         result.use(Results.json()).from(parametroCobrancaDistribuidor,"result").recursive().serialize();
     }
     
-	                                                        /**
+	/**
      * Método responsável por postar os dados do parametro de cobrança da cota.
      * 
      * @param cotaCobranca: Data Transfer Object com os dados cadastrados ou
@@ -432,15 +436,11 @@ public class ParametroCobrancaCotaController extends BaseController {
         	this.salvarContrato(parametroCobranca.getIdCota(), parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
         }
         
-        cotaService.salvarCaracteristicasFinanceirasEspecificasCota(parametroCobranca.getIdCota(), 
-        		                                                    parametroCobranca.getTipoCota(), 
-        		                                                    parametroCobranca.isDevolveEncalhe(), 
-        		                                                    CurrencyUtil.converterValor(parametroCobranca.getValorMinimo()));
+        cotaService.salvarCaracteristicasFinanceirasEspecificasCota(parametroCobranca);
         
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),
                 						Constantes.PARAM_MSGS).recursive().serialize();
     }
-    
     
     private void validarParametroCobrancaCota(final ParametroCobrancaCotaDTO parametroCobranca) {
         
@@ -454,7 +454,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         }
     }
     
-	                                                        /**
+	/**
      * Formata os dados de FormaCobranca, apagando valores que não são
      * compatíveis com o Tipo de Cobranca escolhido.
      * 
@@ -697,7 +697,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         }
     }
     
-	                                                        /**
+    /**
      * @return obtém arquivo anexo
      */
     private byte[] obterArquivoAnexo() {
@@ -801,35 +801,26 @@ public class ParametroCobrancaCotaController extends BaseController {
         return false;
     }
     
-    
 	/**
      * Método responsável por postar os dados da aba financeiro que são
      * específicos da cota.
      * 
-     * @param inicioContrato
-     * @param terminoContrato
-     * @param tipoCota
+     * @param parametroCobranca
      */
     @Post
     @Path("/salvarContratoECaracteristicasFinanceirasEspecificasCota")
-    public void salvarContratoECaracteristicasFinanceirasEspecificasCota(final Long idCota, 
-					    		                                         final Date inicioContrato, 
-					    		                                         final Date terminoContrato, 
-					    		                                         final TipoCota tipoCota, 
-					    		                                         final boolean possuiContrato,
-					    		                                         final boolean devolveEncalhe,
-					    		                                         final BigDecimal valorMinimoCobranca) {
+    public void salvarContratoECaracteristicasFinanceirasEspecificasCota(final ParametroCobrancaCotaDTO parametroCobranca) {
         
         String msg1 = "";
         String msg2 = "";
         String msg = "";
         
-        if ((possuiContrato) && (this.salvarContrato(idCota, inicioContrato, terminoContrato))){
+        if ((parametroCobranca.isContrato()) && (this.salvarContrato(parametroCobranca.getIdCota(), parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato()))){
             
             msg1 = "Contrato";
         }
         
-        if (cotaService.salvarCaracteristicasFinanceirasEspecificasCota(idCota, tipoCota, devolveEncalhe, valorMinimoCobranca)){
+        if (cotaService.salvarCaracteristicasFinanceirasEspecificasCota(parametroCobranca)){
             
             msg2 = "Características Financeiras Específicas";
         }
@@ -1006,5 +997,23 @@ public class ParametroCobrancaCotaController extends BaseController {
         this.parametroCobrancaCotaService.verificarDataAlteracaoTipoCota(idCota);
         
         this.result.use(Results.json()).from("result", "").recursive().serialize();
+    }
+    
+    @Post("/obterPoliticaSuspensaoDistribuidor.json")
+    public void obterPoliticaSuspensaoDistribuidor(){
+        
+    	Distribuidor d = this.distribuidorService.obter();
+    	
+        PoliticaSuspensao pl = d.getPoliticaSuspensao();
+        
+        ParametroCobrancaCotaDTO pDTO = new ParametroCobrancaCotaDTO();
+        
+        pDTO.setSugereSuspensao(d.isSugereSuspensao());
+        
+        pDTO.setQtdDividasAberto(pl!=null?pl.getNumeroAcumuloDivida():null);
+        
+        pDTO.setVrDividasAberto(pl!=null?CurrencyUtil.formatarValor(pl.getValor()):null);
+        
+        this.result.use(Results.json()).from(pDTO, "result").recursive().serialize();
     }
 }

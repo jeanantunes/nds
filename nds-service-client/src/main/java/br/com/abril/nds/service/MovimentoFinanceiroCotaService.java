@@ -157,4 +157,30 @@ public interface MovimentoFinanceiroCotaService {
 	public abstract void removerMovimentosFinanceirosCota(final Long idConsolidado);
 
     void removerMovimentosFinanceirosCotaPorDataCota(Date dataOperacao, Long idCota);
+    
+    /**
+     * Retorna o faturamento da cota em um determinado periodo
+     * @param idCota
+     * @param baseCalculo
+     * @param dataInicial
+     * @param dataFinal
+     * @return BigDecimal - faturamento da cota
+     */
+    BigDecimal obterFaturamentoDaCotaNoPeriodo(final Long idCota,final BaseCalculo baseCalculo,
+            final Date dataInicial, final Date dataFinal);
+    
+    /**
+     * Gera movimento de Débito para cota referentes as distribuições(entrega) de produtos.
+     * @param tipoMovimento
+     * @param usuario
+     * @param cota
+     * @param dataVencimento
+     * @param dataOperacao
+     * @param valorDebito
+     */
+    void gerarMovimentoFinanceiroDebitoDistribuicaoEntregaCota(final TipoMovimentoFinanceiro tipoMovimento,
+													  		  final Usuario usuario,final Cota cota,
+													  		  final Date dataVencimento,
+													  		  final Date dataOperacao,
+													  		  final BigDecimal valorDebito);
 }
