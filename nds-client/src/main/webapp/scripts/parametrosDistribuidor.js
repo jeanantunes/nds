@@ -164,7 +164,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.validadeOutros', value: $('#validadeOutros', this.workspace).val()},
 			{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos', value: $('#sugereSuspensaoQuandoAtingirBoletos', this.workspace).val() != undefined ? $('#sugereSuspensaoQuandoAtingirBoletos', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais', value: $('#sugereSuspensaoQuandoAtingirReais', this.workspace).val() != undefined ? $('#sugereSuspensaoQuandoAtingirReais', this.workspace).val() : ''},
-			{name:'parametrosDistribuidor.sugereSuspensao', value: $('#sugereSuspensao', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.sugereSuspensao', value: $('#sugereSuspensaoDistribuidor', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.parcelamentoDividas', value: $('#parcelamentoDividas', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.negociacaoAteParcelas', value: $('#negociacaoAteParcelas', this.workspace).val() != undefined ? $('#negociacaoAteParcelas', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.aceitaBaixaPagamentoMaior', value: $('#aceitaBaixaPagamentoMaior', this.workspace).is(':checked')},
@@ -739,7 +739,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		// fim F2
 		
-		parametrosDistribuidorController.exibe_form_suspencao($('#sugereSuspensao', this.workspace).is(':checked'));
+		parametrosDistribuidorController.exibe_form_suspencao_distribuidor($('#sugereSuspensaoDistribuidor', this.workspace).is(':checked'));
 	},
 	
 	desabilitarItens : function() {
@@ -818,7 +818,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		 }
 	 },
 	 
-	 exibe_form_suspencao : function(exibir) {
+	 exibe_form_suspencao_distribuidor : function(exibir) {
 			
 		if(exibir){
 			
