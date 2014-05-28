@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.component.ConferenciaEncalheAsyncComponent;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -46,8 +45,6 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 			boolean indConferenciaContingencia,
 			BigDecimal reparte) {
 		
-		conferenciaEncalheService.sinalizarConferenciaEncalhe(controleConfEncalheCota.getCota().getNumeroCota(), true);
-		
 		try {
 			
 			conferenciaEncalheService.finalizarConferenciaEncalhe(
@@ -60,16 +57,48 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 
 			agendarAgoraAtualizacaoEstoqueProdutoConf();
 			
-			conferenciaEncalheService.sinalizarConferenciaEncalhe(controleConfEncalheCota.getCota().getNumeroCota(), false);
+			conferenciaEncalheService.sinalizarFimProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota());
 			
 			
-		} catch(GerarCobrancaValidacaoException e) {
+		} catch(Exception e) {
 			
-			e.printStackTrace();
+			conferenciaEncalheService.sinalizarErroProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota(), e);
 			
 		}
 		
 	}
+	
+	
+	
+	@Override
+	@Async
+	public void salvarConferenciaEncalhe(
+			final ControleConferenciaEncalheCota controleConfEncalheCota, 
+			final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
+			final Set<Long> listaIdConferenciaEncalheParaExclusao,
+			final Usuario usuario, 
+			final boolean indConferenciaContingencia) {
+		
+		try {
+			
+			conferenciaEncalheService.salvarDadosConferenciaEncalhe(
+					controleConfEncalheCota, 
+					listaConferenciaEncalhe, 
+					listaIdConferenciaEncalheParaExclusao, 
+					usuario, 
+					indConferenciaContingencia);
+		
+			conferenciaEncalheService.sinalizarFimProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota());
+
+		
+		} catch(Exception e){
+			
+			conferenciaEncalheService.sinalizarErroProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota(), e);
+			
+		} 
+		
+	}
+	
 
 	private void agendarAgoraAtualizacaoEstoqueProdutoConf() {
 
@@ -80,9 +109,13 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 	    Trigger trigger = newTrigger().startNow().build();
         
 		try {
+			
 			scheduler.scheduleJob(job, trigger);
+		
 		} catch (SchedulerException e) {
-            throw new ValidacaoException(TipoMensagem.WARNING, "Falha na atualização de estoque de produtos");
+        
+			throw new ValidacaoException(TipoMensagem.WARNING, "Falha na atualização de estoque de produtos");
+		
 		}
 		
     }

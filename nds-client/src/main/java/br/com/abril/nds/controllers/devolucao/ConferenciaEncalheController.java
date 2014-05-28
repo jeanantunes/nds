@@ -1,8 +1,5 @@
 package br.com.abril.nds.controllers.devolucao;
 
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.TriggerBuilder.newTrigger;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -20,10 +17,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +62,6 @@ import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.service.job.AtualizaEstoqueJob;
 import br.com.abril.nds.sessionscoped.ConferenciaEncalheSessionScopeAttr;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
@@ -1572,33 +1564,15 @@ public class ConferenciaEncalheController extends BaseController {
 			                           final List<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave,
 			                           final boolean indConferenciaContingencia){
 		
-		try {
-
-	        this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(controleConfEncalheCota, 
-																         listaConferenciaEncalheCotaToSave, 
-																         this.getSetConferenciaEncalheExcluirFromSession(), 
-																         this.getUsuarioLogado(),
-																         indConferenciaContingencia);
-	        
-	        
-	        
-
-		} catch (final EncalheSemPermissaoSalvarException e) {
-            LOGGER.error(
-                    "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados: "
-                            + e.getMessage(), e);
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados. ");
 			
-		} catch (final ConferenciaEncalheFinalizadaException e) {
-            LOGGER.error(
-"Conferência não pode ser salvar, finalize a operação para não perder os dados: "
-                + e.getMessage(),
-                    e);
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
+			this.conferenciaEncalheService.sinalizarInicioProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota());
 			
-		}
+			this.conferenciaEncalheAsyncComponent.salvarConferenciaEncalhe(controleConfEncalheCota, 
+			         listaConferenciaEncalheCotaToSave, 
+			         this.getSetConferenciaEncalheExcluirFromSession(), 
+			         this.getUsuarioLogado(),
+			         indConferenciaContingencia);
+	
 		
 		final String loginUsuarioLogado = this.getIdentificacaoUnicaUsuarioLogado();
 		
@@ -1990,6 +1964,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 			
 			limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 			
+			this.conferenciaEncalheService.sinalizarInicioProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota());
 			
 			this.conferenciaEncalheAsyncComponent.finalizarConferenciaEncalheAsync(
 					  controleConfEncalheCota, 

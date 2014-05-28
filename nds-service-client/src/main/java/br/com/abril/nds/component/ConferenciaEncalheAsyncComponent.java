@@ -17,4 +17,11 @@ public interface ConferenciaEncalheAsyncComponent {
 			boolean indConferenciaContingencia,
 			BigDecimal reparte);
 	
+	public void salvarConferenciaEncalhe(
+			final ControleConferenciaEncalheCota controleConfEncalheCota, 
+			final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
+			final Set<Long> listaIdConferenciaEncalheParaExclusao,
+			final Usuario usuario, 
+			final boolean indConferenciaContingencia);
+	
 }

@@ -64,6 +64,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.Semaforo;
+import br.com.abril.nds.model.estoque.StatusProcessoEncalhe;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -1680,41 +1681,97 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
-	/**
-	 * Sinaliza se o processo de finalizacao da conferencia de encalhe
-	 * iniciou ou finalizou.
-	 *  
-	 * @param numeroCota
-	 */
 	@Transactional
-	public void sinalizarConferenciaEncalhe(Integer numeroCota, boolean atualizando) {
+	public void sinalizarInicioProcessoEncalhe(Integer numeroCota) {
+		
+		Semaforo semaforo = semaforoRepository.selectForUpdate(numeroCota);
+		
+		if(semaforo!=null && StatusProcessoEncalhe.INICIADO.equals(semaforo.getStatusProcessoEncalhe())){
+			throw new ValidacaoException(TipoMensagem.WARNING, "A cota " + numeroCota + " ainda esta sendo processada!");
+		}
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		if(semaforo == null) {
+			semaforo = new Semaforo();
+		} 
+		
+		semaforo.setStatusProcessoEncalhe(StatusProcessoEncalhe.INICIADO);
+		semaforo.setDataAtualizacao(dataOperacao);
+		semaforo.setErrorLog(null);
+		semaforo.setDataInicio(new Date());
+		semaforo.setDataFim(null);
+		
+		if(semaforo.getNumeroCota()==null) {
+			semaforo.setNumeroCota(numeroCota);
+			semaforoRepository.adicionar(semaforo);
+		} else {
+			semaforoRepository.alterar(semaforo);
+		}
+		
+	}
+	
+	@Transactional
+	public void sinalizarFimProcessoEncalhe(Integer numeroCota) {
 		
 		Semaforo semaforo = semaforoRepository.buscarPorId(numeroCota);
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
 		if(semaforo == null) {
-			
-			semaforo = new Semaforo();
-			
-			semaforo.setNumeroCota(numeroCota);
-			semaforo.setAtualizando(atualizando);
-			semaforo.setDataOperacao(dataOperacao);
-			
-			semaforoRepository.adicionar(semaforo);
-			
-		} else {
-			
-			semaforo.setNumeroCota(numeroCota);
-			semaforo.setAtualizando(atualizando);
-			semaforo.setDataOperacao(dataOperacao);
-			
-			semaforoRepository.alterar(semaforo);
-			
-		}
-
+			throw new IllegalStateException("Processo da cota [" + numeroCota + "] não possui sinalização de início.");
+		} 
+		
+		semaforo.setStatusProcessoEncalhe(StatusProcessoEncalhe.FINALIZADO);
+		semaforo.setDataAtualizacao(dataOperacao);
+		semaforo.setErrorLog(null);
+		semaforo.setDataFim(new Date());
+		
+		semaforoRepository.alterar(semaforo);
+		
+	}
 	
+	
+	private String obterDescricaoErro(Exception e) {
+		
+		String logMessage = "Erro não identificado no processo de encalhe da cota";
+		
+		if(e!=null && e.getMessage()!=null) {
+			
+			if(e.getMessage().length()>255) {
+				logMessage = e.getMessage().substring(0,255);
+			} else {
+				logMessage = e.getMessage();
+			}
+		} 
+
+		return logMessage;
+	}
+	
+	public void sinalizarErroProcessoEncalhe(Integer numeroCota, Exception e) {
+		
+		Semaforo semaforo = semaforoRepository.buscarPorId(numeroCota);
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		if(semaforo == null) {
+			semaforo = new Semaforo();
+		} 
+		
+		semaforo.setStatusProcessoEncalhe(StatusProcessoEncalhe.INTERROMPIDO);
+		semaforo.setDataAtualizacao(dataOperacao);
+		semaforo.setDataFim(new Date());
+		
+		String logMessage = obterDescricaoErro(e);
+		
+		semaforo.setErrorLog(logMessage);
+		
+		if(semaforo.getNumeroCota()==null) {
+			semaforo.setNumeroCota(numeroCota);
+			semaforoRepository.adicionar(semaforo);
+		} else {
+			semaforoRepository.alterar(semaforo);
+		}
 		
 	}
 	
@@ -1799,7 +1856,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero, true);
 			}
 		}
-
+		
 		return documentoConferenciaEncalhe;
 		
 	}

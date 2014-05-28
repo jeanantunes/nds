@@ -28,14 +28,11 @@ import br.com.abril.nds.util.ItemAutoComplete;
 
 public interface ConferenciaEncalheService {
 	
-	/**
-	 * Sinaliza se o processo de finalizacao de conferencia
-	 * de encalhe iniciou ou finalizou.
-	 * 
-	 * @param numeroCota
-	 * @param atualizando
-	 */
-	public void sinalizarConferenciaEncalhe(Integer numeroCota, boolean atualizando);
+	public void sinalizarInicioProcessoEncalhe(Integer numeroCota);
+
+	public void sinalizarFimProcessoEncalhe(Integer numeroCota);
+
+	public void sinalizarErroProcessoEncalhe(Integer numeroCota, Exception e);
 	
 	/**
 	 * Obtém mapa tendo como chave idFornecedor e valor 
