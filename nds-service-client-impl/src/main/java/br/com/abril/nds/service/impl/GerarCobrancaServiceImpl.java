@@ -914,24 +914,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return cobrarHoje;
 	}
 	
-	/**
-	 * Gera Divida e Cobrança para Cota com Centralizacao
-	 * 
-	 * @param usuario
-	 * @param dataOperacao
-	 * @param setNossoNumero
-	 * @param consolidadosCota
-	 * @param msgs
-	 * @throws GerarCobrancaValidacaoException 
-	 */
-	private void gerarDividaCobrancaComCentralizacao(Usuario usuario, 
-						                             Date dataOperacao, 
-						                             Set<String> setNossoNumero,
-						                             Map<Cota, List<GerarCobrancaHelper>> consolidadosCota,
-						                             List<String> msgs) throws GerarCobrancaValidacaoException {
+	private List<Map<CotaCentralizadoraDTO, List<GerarCobrancaHelper>>> quebrarUnificacaoPorFornecedor(Map<Cota, List<GerarCobrancaHelper>> consolidadosCota) {
 		
 		List<Map<CotaCentralizadoraDTO, List<GerarCobrancaHelper>>> list = new ArrayList<>();
-		
+
+		Map<Fornecedor,List<FormaCobranca>> mapFormasCobrancaFornecedor = 
+				this.formaCobrancaService.obterMapFornecedorFormasCobranca(this.distribuidorRepository.obterDataOperacaoDistribuidor());
+
 		for (Entry<Cota, List<GerarCobrancaHelper>> entry : consolidadosCota.entrySet()){
 			
 			Cota unificadora = entry.getKey();
@@ -952,7 +941,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			for (GerarCobrancaHelper helper : entry.getValue()) {
 				
-				if (fornecedorAnterior.equals(helper.getFornecedor())) {
+				if (fornecedorAnterior.equals(helper.getFornecedor()) ||
+						this.isUnificaCobranca(helper.getCota(), fornecedorAnterior, helper.getFornecedor(), mapFormasCobrancaFornecedor)) {
 					
 					helpers.add(helper);
 
@@ -977,7 +967,28 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			list.add(map);
 		}
 		
-		for (Map<CotaCentralizadoraDTO, List<GerarCobrancaHelper>> mapPorFornecedor : list) {
+		return list;
+	}
+	
+	/**
+	 * Gera Divida e Cobrança para Cota com Centralizacao
+	 * 
+	 * @param usuario
+	 * @param dataOperacao
+	 * @param setNossoNumero
+	 * @param consolidadosCota
+	 * @param msgs
+	 * @throws GerarCobrancaValidacaoException 
+	 */
+	private void gerarDividaCobrancaComCentralizacao(Usuario usuario, 
+						                             Date dataOperacao, 
+						                             Set<String> setNossoNumero,
+						                             Map<Cota, List<GerarCobrancaHelper>> consolidadosCota,
+						                             List<String> msgs) throws GerarCobrancaValidacaoException {
+		
+		List<Map<CotaCentralizadoraDTO, List<GerarCobrancaHelper>>> quebraPorFornecedor = this.quebrarUnificacaoPorFornecedor(consolidadosCota); 
+		
+		for (Map<CotaCentralizadoraDTO, List<GerarCobrancaHelper>> mapPorFornecedor : quebraPorFornecedor) {
 		
 	        for (Entry<CotaCentralizadoraDTO, List<GerarCobrancaHelper>> entry : mapPorFornecedor.entrySet()) {
 				
@@ -990,8 +1001,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				GerarCobrancaHelper helperPrincipal = null;
 				
 				List<ConsolidadoFinanceiroCota> consolidados = new ArrayList<ConsolidadoFinanceiroCota>();
-				
-				//TODO - Usar sempre a cota unificadora para parametros de cobrança. Mesmo que essa não tenho movimentos financeiros.
+
 				for (GerarCobrancaHelper helper : lista) {
 					
 					valorTotalMovimentos = valorTotalMovimentos.add(helper.getConsolidadoFinanceiroCota().getTotal().setScale(2, RoundingMode.HALF_UP));
