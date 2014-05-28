@@ -42,6 +42,8 @@ public class FiltroDebitoCreditoDTO implements Serializable {
 	
 	private ColunaOrdenacao colunaOrdenacao;
 	
+	private List<Long> idsTipoMovimentoTaxaEntrega;
+	
 	/**
 	 * @author Discover Technology
 	 *
@@ -224,5 +226,16 @@ public class FiltroDebitoCreditoDTO implements Serializable {
 			List<GrupoMovimentoFinaceiro> grupoMovimentosFinanceirosDebitosCreditos) {
 		this.grupoMovimentosFinanceirosDebitosCreditos = grupoMovimentosFinanceirosDebitosCreditos;
 	}
+
+	public List<Long> getIdsTipoMovimentoTaxaEntrega() {
+		return idsTipoMovimentoTaxaEntrega;
+	}
+
+	public void setIdsTipoMovimentoTaxaEntrega(
+			List<Long> idsTipoMovimentoTaxaEntrega) {
+		this.idsTipoMovimentoTaxaEntrega = idsTipoMovimentoTaxaEntrega;
+	}
+	
+	
 	
 }
