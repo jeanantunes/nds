@@ -760,13 +760,15 @@ public class ConferenciaEncalheController extends BaseController {
 
             throw new ValidacaoException(TipoMensagem.WARNING, "Código SM inválido.");
 		}
-
+		
+		
+		
 		final List<ItemAutoComplete> listaProdutos = 
 				this.conferenciaEncalheService.obterListaProdutoEdicaoParaRecolhimentoPorCodigoSM(
 						numeroCota, 
 						sm, 
 						QUANTIDADE_MAX_REGISTROS, 
-						obterFromSessionMapaDatasEncalheConferiveis()); 
+						obterFromSessionMapaDatasEncalheConferiveis(), getInfoConferenciaSession().isIndCotaOperacaoDiferenciada()); 
 
 		if (listaProdutos == null || listaProdutos.isEmpty()) {
 			

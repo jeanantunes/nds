@@ -72,11 +72,11 @@ public class EstoqueProdutoFilaRepositoryImpl extends AbstractRepositoryModel<Es
 		sql.append("VALUES (:tipoEstoque,:idCota,:idProdutoEdicao,:qtde,:operacaoEstoque)");
 		
 		super.getSession().createSQLQuery(sql.toString())
-		.setParameter("tipoEstoque", tipoEstoque)
+		.setParameter("tipoEstoque", tipoEstoque.name())
 		.setParameter("idCota", idCota)
 		.setParameter("idProdutoEdicao", idProdutoEdicao)
 		.setParameter("qtde", qtde)
-		.setParameter("operacaoEstoque", operacaoEstoque)
+		.setParameter("operacaoEstoque", operacaoEstoque.name())
 		.executeUpdate();
 		
 	}

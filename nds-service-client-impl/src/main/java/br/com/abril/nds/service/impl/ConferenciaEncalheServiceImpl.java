@@ -1237,6 +1237,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		infoConfereciaEncalheCota.setDistribuidorAceitaJuramentado(this.controleConferenciaEncalheCotaRepository.obterAceitaJuramentado(cota.getId()));
 		
+		infoConfereciaEncalheCota.setIndCotaOperacaoDiferenciada(cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao));
+		
 		return infoConfereciaEncalheCota;
 	}
 	
@@ -3347,11 +3349,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final Integer numeroCota, 
 			final Integer codigoSM,
 			final Integer quantidadeRegistros,
-			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO) {
-		  
-        final List<ProdutoEdicao> listaProdutoEdicao = 
-        		produtoEdicaoRepository.obterProdutoPorCodigoNomeCodigoSM(codigoSM,
-                null, numeroCota, quantidadeRegistros, mapaDataCEConferivelDTO);
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO, boolean indCotaOperacaoDif) {
+		
+		Date dataOperacao = null;
+		
+		if(!indCotaOperacaoDif) {
+			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		}
+         
+		final List<ProdutoEdicao> listaProdutoEdicao = produtoEdicaoRepository.obterProdutoPorCodigoNomeCodigoSM(codigoSM,
+                null, numeroCota, quantidadeRegistros, mapaDataCEConferivelDTO, dataOperacao);
 		
 		final List<ItemAutoComplete> listaItem = new ArrayList<ItemAutoComplete>();
 		

@@ -126,7 +126,8 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 			final String codigoNomeProduto, 
 			final Integer numeroCota, 
 			final Integer quantidadeRegisttros,
-			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel );
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel,
+			final Date dataOperacao);
 	
 	/**
 	 * Obtém uma lista de produtos edição de acordo com o parâmetro iformado.

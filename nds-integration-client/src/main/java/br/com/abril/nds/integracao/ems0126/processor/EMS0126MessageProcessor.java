@@ -82,7 +82,7 @@ public class EMS0126MessageProcessor extends AbstractRepository implements
 					produtoEdicao.setCodigoDeBarras("");
 				}
 				
-				if(!produtoEdicao.getCodigoDeBarras().equals(new BigInteger(input.getCodigoBarras()).toString())){
+				if(new BigInteger(input.getCodigoBarras()).longValue() >0 && new BigInteger(produtoEdicao.getCodigoDeBarras()).longValue()!= new BigInteger(input.getCodigoBarras()).longValue()){
 			
 				
 				ndsiLoggerFactory.getLogger().logInfo(message,

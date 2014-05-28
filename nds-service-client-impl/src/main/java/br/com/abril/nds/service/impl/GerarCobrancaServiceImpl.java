@@ -1029,7 +1029,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					if(	valorTotalMovimentos == null || 
 						valorTotalMovimentos.compareTo(BigDecimal.ZERO) == 0){
 						
-						return;
+						break;
 						
 					}
 					
@@ -1046,7 +1046,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 				    this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
 				    
-				    return;
+				    break;
 				}
 				
 				helperPrincipal.setFormaCobrancaPrincipal(formaCobranca);
@@ -1087,7 +1087,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		            msgs.add("Não foi possível calcular data de vencimento da cobrança, verifique os parâmetros de cobrança da cota número: "
 		                    + cotaCentralizadora.getCota().getNumeroCota());
 					
-					return;
+					break;
 				}
 	
 				this.gerarDividaCobrancaCentralizacao(cotaCentralizadora.getCota(),  
