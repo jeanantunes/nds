@@ -138,7 +138,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração da DATA RECOLHIMENTO DISTRIBUIDOR"
-							+ " de " + DateUtil.formatarDataPTBR(lancamento.getDataRecolhimentoDistribuidor())
+							+ " de " + DateUtil.formatarDataPTBR(dtRecolhimentoDistribuidor)
 							+ " para " + DateUtil.formatarDataPTBR(dtRecolhimentoArquivo)
 							+ " Produto "+codigoProduto 
 							+ " Edição " + edicao);

@@ -86,6 +86,16 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=14, tipo="char", ordem=26)
 	private String codEanProduto;
 
+	// campos abaixo somente para versão 3.10
+	@FTFfield(tamanho=36, tipo="char", ordem=27)
+	private String numeroCodFCI;
+	
+	@FTFfield(tamanho=14, tipo="char", ordem=26)
+	private String percentualCI;
+	
+	@FTFfield(tamanho=14, tipo="char", ordem=26)
+	private String origemMercadoria;
+	
 	public String getTipoRegistro() {
 		return tipoRegistro;
 	}
