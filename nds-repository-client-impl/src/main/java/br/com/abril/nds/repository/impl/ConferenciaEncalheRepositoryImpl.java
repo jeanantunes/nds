@@ -331,6 +331,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		hql.append(" 0 AS qtdExemplar, ");
 		
+		hql.append(" CH_ENCALHE_COTA.PROCESSO_UTILIZA_NFE AS processoUtilizaNfe, ");
+		
 		hql.append(" CASE WHEN (PROD_EDICAO.GRUPO_PRODUTO = :grupoProdutoCromo) THEN true ELSE false END as isContagemPacote, ");
 		
 		hql.append(" CH_ENCALHE_COTA.QTDE_PREVISTA AS qtdReparte, ");
@@ -417,6 +419,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("codigoSM", StandardBasicTypes.INTEGER);
 		
 		((SQLQuery)query).addScalar("qtdExemplar", StandardBasicTypes.BIG_INTEGER);
+		((SQLQuery)query).addScalar("processoUtilizaNfe", StandardBasicTypes.BOOLEAN);
 		((SQLQuery)query).addScalar("isContagemPacote", StandardBasicTypes.BOOLEAN);
 		
 		((SQLQuery)query).addScalar("qtdReparte", StandardBasicTypes.BIG_INTEGER);
@@ -741,4 +744,37 @@ public class ConferenciaEncalheRepositoryImpl extends
 		.executeUpdate();
 
 	}
+
+
+	@Override
+	public boolean obterProcessoUtilizaNfeConferenciaEncalheCota(Integer numeroCota, Date dataOperacao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT COUNT(0) as totalUtilizaNfe ")
+		.append(" FROM CHAMADA_ENCALHE_COTA CH_ENCALHE_COTA ")
+		.append(" INNER JOIN CHAMADA_ENCALHE CH_ENCALHE ON (CH_ENCALHE.ID = CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID) ")
+		.append(" LEFT JOIN CHAMADA_ENCALHE_LANCAMENTO CH_ENC_LANCAMENTO ON (CH_ENCALHE.ID = CH_ENC_LANCAMENTO.CHAMADA_ENCALHE_ID) ") 
+		.append(" LEFT JOIN (SELECT ID AS LANCAMENTO_ID, DATA_LCTO_DISTRIBUIDOR ")
+		.append(" FROM LANCAMENTO LANCAM ) LANCAM ON LANCAM.LANCAMENTO_ID = CH_ENC_LANCAMENTO.LANCAMENTO_ID ")
+		.append(" INNER JOIN PRODUTO_EDICAO PROD_EDICAO ON ( CH_ENCALHE.PRODUTO_EDICAO_ID=PROD_EDICAO.ID ) ")
+		.append(" INNER JOIN PRODUTO PROD ON (PROD_EDICAO.PRODUTO_ID=PROD.ID) ")                         						
+		.append(" INNER JOIN PRODUTO_FORNECEDOR PROD_FORNEC ON (PROD.ID = PROD_FORNEC.PRODUTO_ID) ")	
+		.append(" INNER JOIN FORNECEDOR FORNECEDOR_0 ON (FORNECEDOR_0.ID = PROD_FORNEC.FORNECEDORES_ID) ") 	
+		.append(" INNER JOIN EDITOR EDITOR_0 ON (PROD.EDITOR_ID = EDITOR_0.ID) ")
+		.append(" INNER JOIN PESSOA PESSOA_FORNECEDOR ON (FORNECEDOR_0.JURIDICA_ID = PESSOA_FORNECEDOR.ID) ")
+		.append(" INNER JOIN PESSOA PESSOA_EDITOR ON (EDITOR_0.JURIDICA_ID = PESSOA_EDITOR.ID) ")
+		.append(" INNER JOIN COTA c ON c.id = CH_ENCALHE_COTA.COTA_ID ")
+		.append(" WHERE CH_ENCALHE.DATA_RECOLHIMENTO = :dataOperacao ")
+		.append(" AND CH_ENCALHE_COTA.PROCESSO_UTILIZA_NFE = true ")
+		.append(" AND c.NUMERO_COTA = :numeroCota ");
+		
+		Query query =  this.getSession().createSQLQuery(hql.toString());
+		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameter("numeroCota", numeroCota);
+		
+		BigInteger qtd = (BigInteger) query.uniqueResult();
+		return (boolean) (qtd != null && qtd.longValue() > 0);
+	}
+	
 }

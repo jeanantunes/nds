@@ -884,7 +884,7 @@ var parametrosDistribuidorController = $.extend(true, {
 				 var input = '';
 				 
 				 $.each(value, function(k, v) {
-					 //console.log(k +' - '+ value[k]);
+
 					 var impTD = $('<td>');
 					 if(k == 'tributo') {
 						 tributo = value[k];

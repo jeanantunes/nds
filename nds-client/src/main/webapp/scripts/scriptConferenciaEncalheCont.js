@@ -47,6 +47,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$(".message-dialog-encalhe > div", ConferenciaEncalheCont.workspace).css('width', '93%');
 		
 		$("#numeroCota", ConferenciaEncalheCont.workspace).numeric();
+		jQuery('#numeroCota').keyup(function () { 
+			if (/\D/g.test(this.value)) {
+		        this.value = this.value.replace(/\D/g, '');
+		    }
+		});
 		$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 		$("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).numeric();
 		

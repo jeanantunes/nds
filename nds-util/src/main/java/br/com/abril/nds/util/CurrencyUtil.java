@@ -244,7 +244,7 @@ public abstract class CurrencyUtil {
 	 * @return
 	 */
 	public static BigDecimal arredondarValorParaDuasCasas(final BigDecimal valor) {
-		BigDecimal valorArredondado = valor.setScale(2, RoundingMode.HALF_EVEN);
+		BigDecimal valorArredondado = valor.setScale(2, RoundingMode.HALF_UP);
 
 		return valorArredondado;
 	}
@@ -257,7 +257,7 @@ public abstract class CurrencyUtil {
 	 */
 	public static BigDecimal arredondarValorParaQuatroCasas(final BigDecimal valor) {
 		
-		BigDecimal valorArredondado = valor.setScale(4, RoundingMode.HALF_EVEN);
+		BigDecimal valorArredondado = valor.setScale(4, RoundingMode.HALF_UP);
 		
 		return valorArredondado;
 	}

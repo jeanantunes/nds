@@ -53,7 +53,7 @@
 				<tr>
 					<td width="40" height="25">Cota:</td>
 					<td width="161">
-						<input type="text" id="numeroCota" style="width: 80px; float: left; margin-right: 5px;" maxlength="255" /> 
+						<input type="text" id="numeroCota" style="width: 80px; float: left; margin-right: 5px;" maxlength="6" /> 
 						<span class="bt_novos">
 							<a href="javascript:;" onclick="ConferenciaEncalheCont.pesquisarCota();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 						</span>

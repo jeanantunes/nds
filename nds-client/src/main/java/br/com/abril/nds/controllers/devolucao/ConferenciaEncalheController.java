@@ -2158,9 +2158,9 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.calcularValoresMonetarios(dadosMonetarios);
 		
-		final BigDecimal valorEncalhe = CurrencyUtil.arredondarValorParaDuasCasas(((BigDecimal)dadosMonetarios.get("valorEncalhe")));
+		final BigDecimal valorEncalhe = CurrencyUtil.arredondarValorParaDuasCasas(((BigDecimal) dadosMonetarios.get("valorEncalhe")));
 		
-		if (dadosNotaFiscal != null && dadosNotaFiscal.get("valorProdutos") != null && ((BigDecimal)dadosNotaFiscal.get("valorProdutos")).compareTo(valorEncalhe) != 0){
+		if (dadosNotaFiscal != null && dadosNotaFiscal.get("valorProdutos") != null && ((BigDecimal) dadosNotaFiscal.get("valorProdutos")).compareTo(valorEncalhe) != 0){
 			
 			final Map<String, Object> dadosResposta = new HashMap<String, Object>();
 			
@@ -2417,21 +2417,24 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			if (info.getListaConferenciaEncalhe() != null && !info.getListaConferenciaEncalhe().isEmpty()) {
 			
-				for (final ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
+				for (final ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()) {
 					
-					final BigDecimal precoCapa = CurrencyUtil.arredondarValorParaDuasCasas(conferenciaEncalheDTO.getPrecoCapa() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoCapa());
+					if(conferenciaEncalheDTO.isProcessoUtilizaNfe()) {
 					
-					final BigDecimal desconto =  CurrencyUtil.arredondarValorParaDuasCasas(conferenciaEncalheDTO.getDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getDesconto());
-					
-					final BigDecimal precoComDesconto =  CurrencyUtil.arredondarValorParaDuasCasas(conferenciaEncalheDTO.getPrecoComDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoComDesconto());
-					
-					final BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar());
-					
-					valorTotal = valorTotal.add( CurrencyUtil.arredondarValorParaQuatroCasas(conferenciaEncalheDTO.getValorTotal() != null ? conferenciaEncalheDTO.getValorTotal() :  BigDecimal.ZERO ));
-					
-					valorEncalhe = valorEncalhe.add(precoComDesconto.multiply(qtdExemplar));
-					
-					valorEncalheAtualizado = valorEncalheAtualizado.add(precoCapa.subtract(desconto).multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada())));
+						final BigDecimal precoCapa = CurrencyUtil.arredondarValorParaDuasCasas(conferenciaEncalheDTO.getPrecoCapa() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoCapa());
+						
+						final BigDecimal desconto =  CurrencyUtil.arredondarValorParaDuasCasas(conferenciaEncalheDTO.getDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getDesconto());
+						
+						final BigDecimal precoComDesconto =  CurrencyUtil.arredondarValorParaQuatroCasas(conferenciaEncalheDTO.getPrecoComDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoComDesconto());
+						
+						final BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar());
+						
+						valorTotal = valorTotal.add( CurrencyUtil.arredondarValorParaQuatroCasas(conferenciaEncalheDTO.getValorTotal() != null ? conferenciaEncalheDTO.getValorTotal() :  BigDecimal.ZERO ));
+						
+						valorEncalhe = valorEncalhe.add(precoComDesconto.multiply(qtdExemplar));
+						
+						valorEncalheAtualizado = valorEncalheAtualizado.add(precoCapa.subtract(desconto).multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada())));
+					}
 				}
 			}
 			
