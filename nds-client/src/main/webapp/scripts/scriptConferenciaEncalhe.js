@@ -137,6 +137,11 @@ var ConferenciaEncalhe = $.extend(true, {
 		});
 		
 		$("#numeroCota", ConferenciaEncalhe.workspace).numeric();
+		jQuery('#numeroCota').keyup(function () { 
+			if (/\D/g.test(this.value)) {
+		        this.value = this.value.replace(/\D/g, '');
+		    }
+		});
 		                                           
 		$("#qtdeExemplar", ConferenciaEncalhe.workspace).numericPacotePadrao();
 		

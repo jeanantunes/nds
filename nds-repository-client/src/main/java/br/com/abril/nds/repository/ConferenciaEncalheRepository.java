@@ -120,4 +120,6 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 
 	public abstract void update(Long id, boolean juramentada, String observacao,
 			BigInteger qtdeInformada, BigDecimal precoCapaInformado, Long idMovimentoEstoqueCota, Long idMovimentoEstoque, BigInteger qtde);
+
+	public boolean obterProcessoUtilizaNfeConferenciaEncalheCota(Integer numeroCota, Date dataOperacao);
 }

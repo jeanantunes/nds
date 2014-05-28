@@ -1351,7 +1351,7 @@ ConsolidadoFinanceiroRepository {
         .append(" cfc.DEBITO_CREDITO as debitoCredito, ")
         
         //detalharDebitoCredito
-        .append("(select case when count(m.id) > 0 or cfc.DEBITO_CREDITO != 0 then true else false end ")
+        .append(" if(cfc.DEBITO_CREDITO = 0,false,(select case when count(m.id) > 0 then true else false end ")
         .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
         .append(" inner join COTA on COTA.ID = m.COTA_ID")
         .append(" where COTA.NUMERO_COTA = :numeroCota ")
@@ -1362,7 +1362,7 @@ ConsolidadoFinanceiroRepository {
         .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
         .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
         .append(") and m.DATA = cfc.DT_CONSOLIDADO ")
-        .append(")")
+        .append("))")
         .append(" as detalharDebitoCredito, ")
         
         .append(" cfc.ENCALHE as encalhe, ")
@@ -1552,7 +1552,7 @@ ConsolidadoFinanceiroRepository {
         .append(") as debitoCredito, ")
         
         //detalharDebitoCredito
-        .append("(select case when count(m.id) > 0 then true else false end ")
+        .append("(select case when count(m.id) > 0  then true else false end ")
         .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
         .append(" inner join COTA on COTA.ID = m.COTA_ID")
         .append(" where COTA.NUMERO_COTA = :numeroCota ")

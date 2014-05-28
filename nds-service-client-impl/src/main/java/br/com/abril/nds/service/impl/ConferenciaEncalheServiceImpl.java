@@ -1190,6 +1190,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		} else {
 			
+			boolean processoUtilizaNfe = conferenciaEncalheRepository.obterProcessoUtilizaNfeConferenciaEncalheCota(numeroCota, dataOperacao);
+			infoConfereciaEncalheCota.setProcessoUtilizaNfe(processoUtilizaNfe);
+			
 			infoConfereciaEncalheCota.setEncalhe(BigDecimal.ZERO);
 			
 		}
