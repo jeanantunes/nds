@@ -225,4 +225,12 @@ public interface ParametroCobrancaCotaService {
      * @return PoliticaSuspensao
      */
 	PoliticaSuspensao obterPoliticaSuspensaoCota(Cota cota);
+
+	 /**
+     * Verifica se cota utiliza politica de suspensao, seja propria ou do distribuidor
+     * 
+     * @param cota
+     * @return boolean
+     */
+	boolean isSugereSuspensao(Cota cota);
 }
