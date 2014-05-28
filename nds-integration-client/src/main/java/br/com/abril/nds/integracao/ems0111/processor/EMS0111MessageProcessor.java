@@ -321,7 +321,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				
 					this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração para PARCIAL da DATA LANCAMENTO DISTRIBUIDOR"						+ " de " + simpleDateFormat.format(dtLancamentoDistribuidor)
+						"Alteração da DATA LANCAMENTO DISTRIBUIDOR"						
+						+ " de " + simpleDateFormat.format(dtLancamentoDistribuidor)
 								+ " para " + DateUtil.formatarDataPTBR(dtLancamentoNovo)
 								+ " Produto "+codigoProduto
 								+ " Edição " + edicao);
