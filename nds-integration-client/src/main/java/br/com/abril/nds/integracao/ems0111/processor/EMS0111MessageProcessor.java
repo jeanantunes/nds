@@ -111,7 +111,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		precoPrevistoAtual = precoPrevistoAtual.setScale(4,RoundingMode.HALF_UP);
 		precoPrevistoCorrente = precoPrevistoCorrente.setScale(4,RoundingMode.HALF_UP);
 		
-		if (precoPrevistoAtual.compareTo(precoPrevistoCorrente)!=0) {
+		if (precoPrevistoAtual.compareTo(precoPrevistoCorrente)!=0 && precoPrevistoCorrente.longValue()>0) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração do Preço Previsto/Venda"
