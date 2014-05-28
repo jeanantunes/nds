@@ -71,11 +71,7 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 				}
 			}
 		}
-		
-		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
-			hql.append(" and f.id in (:idFornecedores) ");
-		}
-		
+
 		hql.append(getOrdenacao(filtro));
 		
 		Query query  = getSession().createQuery(hql.toString());

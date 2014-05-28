@@ -41,6 +41,7 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	
 	private boolean processoUtilizaNfe;
 	
+	private boolean nfeDigitada;
 	
 	public boolean isDistribuidorAceitaJuramentado() {
 		return distribuidorAceitaJuramentado;
@@ -140,6 +141,14 @@ public class InfoConferenciaEncalheCota implements Serializable {
 
 	public void setProcessoUtilizaNfe(boolean processoUtilizaNfe) {
 		this.processoUtilizaNfe = processoUtilizaNfe;
+	}
+
+	public boolean isNfeDigitada() {
+		return nfeDigitada;
+	}
+
+	public void setNfeDigitada(boolean nfeDigitada) {
+		this.nfeDigitada = nfeDigitada;
 	}
 	
 }

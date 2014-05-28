@@ -375,7 +375,7 @@ public class ConsultaBoletosController extends BaseController {
 	 */
 	public boolean validarBoletoPago(String nossoNumero){
 		
-		Boleto boleto = boletoService.obterBoletoPorNossoNumero(nossoNumero,null);
+		Boleto boleto = boletoService.obterBoletoPorNossoNumero(nossoNumero,false);
 		
 		if (boleto == null){
 			
@@ -386,7 +386,7 @@ public class ConsultaBoletosController extends BaseController {
 			    return false;
 			}
 			
-			return (boletoantecipado.getStatus()!=StatusDivida.QUITADA);
+			return ( boletoantecipado.getStatus()!=StatusDivida.QUITADA);
 		}
 		
 		return (boleto.getStatusCobranca()!=StatusCobranca.PAGO);

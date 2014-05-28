@@ -13,8 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.com.abril.nds.enums.Dominio;
 import br.com.abril.nds.enums.Flag;
-import br.com.abril.nds.model.fiscal.TipoEntidadeDestinoFlag;
 
 @Entity
 @Table(name = "FLAG_PENDENTE_ATIVACAO")
@@ -30,7 +30,7 @@ public class FlagPendenteAtivacao implements Serializable {
 	private Long id;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name="NOME")
+	@Column(name="FLAG")
 	private Flag flag;
 	
 	@Column(name="DESCRICAO")
@@ -38,7 +38,7 @@ public class FlagPendenteAtivacao implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name="TIPO")
-	private TipoEntidadeDestinoFlag tipo;
+	private Dominio dominio;
 	
 	@Column(name="VALOR")
 	private boolean valor;
@@ -54,10 +54,10 @@ public class FlagPendenteAtivacao implements Serializable {
 		super();
 	}
 	
-	public FlagPendenteAtivacao(Flag tipoFlag, String descricao, TipoEntidadeDestinoFlag tipo, boolean valor, Long idAlterado) {
+	public FlagPendenteAtivacao(Flag tipoFlag, String descricao, Dominio dominio, boolean valor, Long idAlterado) {
 		this.flag = tipoFlag;
 		this.descricao = descricao;
-		this.tipo = tipo;
+		this.dominio = dominio;
 		this.valor = valor;
 		this.idAlterado = idAlterado;
 	}
@@ -86,12 +86,12 @@ public class FlagPendenteAtivacao implements Serializable {
 		this.descricao = descricao;
 	}
 
-	public TipoEntidadeDestinoFlag getTipo() {
-		return tipo;
+	public Dominio getDominio() {
+		return dominio;
 	}
 
-	public void setTipo(TipoEntidadeDestinoFlag tipo) {
-		this.tipo = tipo;
+	public void setDominio(Dominio dominio) {
+		this.dominio = dominio;
 	}
 
 	public Date getDataAlteracao() {

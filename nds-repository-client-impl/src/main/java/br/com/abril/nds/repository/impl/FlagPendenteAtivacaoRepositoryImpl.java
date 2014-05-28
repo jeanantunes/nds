@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.enums.Dominio;
 import br.com.abril.nds.enums.Flag;
 import br.com.abril.nds.model.cadastro.FlagPendenteAtivacao;
-import br.com.abril.nds.model.fiscal.TipoEntidadeDestinoFlag;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.FlagPendenteAtivacaoRepository;
 
@@ -43,22 +42,13 @@ public class FlagPendenteAtivacaoRepositoryImpl extends AbstractRepositoryModel<
 		
 		return (FlagPendenteAtivacao) criteria.uniqueResult();
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<FlagPendenteAtivacao> obterPor(TipoEntidadeDestinoFlag tipoEntidadeDestinoFlag) {
-		
-		Criteria criteria = getSession().createCriteria(FlagPendenteAtivacao.class);
-		criteria.add(Restrictions.eq("tipo", tipoEntidadeDestinoFlag));
-		
-		return criteria.list();
-	}
 	
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<FlagPendenteAtivacao> obterPor(Dominio dominio) {
 		
 		Criteria criteria = getSession().createCriteria(FlagPendenteAtivacao.class);
-		criteria.add(Restrictions.eq("flag.dominio", dominio));
+		criteria.add(Restrictions.eq("dominio", dominio));
 		
 		return criteria.list();
 	}

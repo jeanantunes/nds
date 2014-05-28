@@ -1959,6 +1959,8 @@ public class ConferenciaEncalheController extends BaseController {
             notaFiscal.setItens(itens);
             notaFiscalEntradaCotas.add(notaFiscal);
             controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
+            controleConfEncalheCota.setProcessoUtilizaNfe(true);
+            controleConfEncalheCota.setNfeDigitada(true);
         }
     }
 	

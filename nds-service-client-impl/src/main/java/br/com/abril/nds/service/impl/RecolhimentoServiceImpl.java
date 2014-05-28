@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -11,11 +12,13 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -126,6 +129,36 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	@Autowired
 	private LancamentoService lancamentoService;
 	
+	
+	private TreeMap<Date, List<ProdutoRecolhimentoDTO>>  copiarMatriz(TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizOriginal){
+		
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizCopia = new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
+		  
+		  try {
+
+		    //for (int i = 0; i < matrizOriginal.size(); i++) {
+		    for(Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizOriginal.entrySet()){
+		    
+		     List<ProdutoRecolhimentoDTO> lista = new ArrayList<>();	
+		     
+		     lista.addAll(entry.getValue());
+		    	
+			 BeanUtils.copyProperties(lista, matrizOriginal.get(entry.getKey()));
+			 
+			 matrizCopia.put(entry.getKey(), lista);
+				
+			}
+		  } catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+			e.printStackTrace();
+		  } catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+			e.printStackTrace();
+		  }
+		  
+		  return matrizCopia;
+		
+	}
 	/**
 	 * {@inheritDoc}
 	 */
@@ -146,6 +179,41 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO =
 			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
+		
+		
+		if(balanceamentoRecolhimentoDTO!=null && balanceamentoRecolhimentoDTO.getMatrizRecolhimento()!=null){
+		  
+		  TreeMap<Date, List<ProdutoRecolhimentoDTO>> copiaMatriz = copiarMatriz(balanceamentoRecolhimentoDTO.getMatrizRecolhimento());
+			
+		  Date dataMatriz;
+		  List <ProdutoRecolhimentoDTO> listaProdutos;
+		
+		  for(Entry<Date, List<ProdutoRecolhimentoDTO>> entry : balanceamentoRecolhimentoDTO.getMatrizRecolhimento().entrySet()){
+			
+			dataMatriz = entry.getKey();
+			listaProdutos = entry.getValue();
+			
+			if(listaProdutos!=null && !listaProdutos.isEmpty()){
+				
+			 for(ProdutoRecolhimentoDTO prDTO :listaProdutos){
+				
+				if(prDTO!=null && dataMatriz!=null && prDTO.getDataRecolhimentoPrevista().after(dataMatriz)){
+					//remove e insere no dia certo 
+
+					if(copiaMatriz.containsKey(prDTO.getDataRecolhimentoPrevista())){
+						
+						copiaMatriz.get(dataMatriz).remove(prDTO);
+						prDTO.setNovaData(prDTO.getDataRecolhimentoPrevista());
+						copiaMatriz.get(prDTO.getDataRecolhimentoPrevista()).add(prDTO);
+					}
+				}
+				
+			 }
+			}
+			
+		  }
+		  balanceamentoRecolhimentoDTO.setMatrizRecolhimento(copiaMatriz);
+		}
 		
 		return balanceamentoRecolhimentoDTO;
 	}

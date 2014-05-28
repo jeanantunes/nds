@@ -782,6 +782,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		parametrosDistribuidorController.obterTributosPeloRegimeTributario();
 		// fim F2
 		
+		parametrosDistribuidorController.exibe_form_suspencao($('#sugereSuspensao', this.workspace).is(':checked'));
 	},
 	
 	desabilitarItens : function() {
@@ -950,6 +951,22 @@ var parametrosDistribuidorController = $.extend(true, {
 		 }, 100);
 		 
 	 },
+
+	 exibe_form_suspencao : function(exibir) {
+			
+		if(exibir){
+			
+			$(".form-suspensao-hidden-class").show();
+		}	
+		else{
+			
+			$(".form-suspensao-hidden-class").hide();
+			
+			$("#sugereSuspensaoQuandoAtingirBoletos", this.workspace).val("");
+
+        	$("#sugereSuspensaoQuandoAtingirReais", this.workspace).val("");
+		}	
+	}
 	 
 }, BaseController);
 
