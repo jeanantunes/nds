@@ -9,7 +9,7 @@
         	     <tr>
                      <td><label>Sugere Suspensão:</label></td>
 	                 <td colspan="3">
-	                     <input name="parametrosDistribuidor.sugereSuspensao" id="sugereSuspensao" onclick="parametrosDistribuidorController.exibe_form_suspencao(this.checked);" type="checkbox" ${parametrosDistribuidor.sugereSuspensao?"checked":""} />
+	                     <input name="parametrosDistribuidor.sugereSuspensao" id="sugereSuspensaoDistribuidor" onclick="parametrosDistribuidorController.exibe_form_suspencao_distribuidor(this.checked);" type="checkbox" ${parametrosDistribuidor.sugereSuspensao?"checked":""} />
 	                 </td>
                  </tr>  
                  
