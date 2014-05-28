@@ -76,6 +76,7 @@
 	</div>
 	</form>
 	<form action="/administracao/gruposAcesso" id="novo_usuario_form">
+	<input name="failAutoFill" style="display: none;" type="password" />
 	<div id="dialog-novo-usuario" title="Usuário" style="display:none;">
 		<fieldset style="width:710px;">
     	<legend>Dados do Usuário</legend>
