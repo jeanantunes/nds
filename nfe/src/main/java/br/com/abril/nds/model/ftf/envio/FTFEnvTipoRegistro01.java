@@ -277,6 +277,39 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=12, tipo="numeric", ordem=86)
 	private String codFaturaAssociada;
 
+	@FTFfield(tamanho=10, tipo="numeric", ordem=87)
+	private String codigoPessoaEmissor;
+
+	@FTFfield(tamanho=10, tipo="numeric", ordem=88)
+	private String codigoPessoaDetalheDestinatario;
+	
+	@FTFfield(tamanho=10, tipo="numeric", ordem=89)
+	private String codigoCGLServicoPrestado;
+	
+	@FTFfield(tamanho=10, tipo="char", ordem=90)
+	private String dataInicioPrestacaoServicoIntangivel;
+	
+	@FTFfield(tamanho=10, tipo="char", ordem=91)
+	private String dataConclusaoPrestacaoServicoIntangivel;
+	
+	@FTFfield(tamanho=1, tipo="numeric", ordem=92)
+	private String modoPrestacaoServico;
+	
+	@FTFfield(tamanho=1, tipo="numeric", ordem=93)
+	private String identificaoVendaConsumidorFinal;
+	
+	@FTFfield(tamanho=1, tipo="numeric", ordem=94)
+	private String identificaoVendaPresencialAtendimento;
+	
+	@FTFfield(tamanho=2, tipo="char", ordem=95)
+	private String siglaUfEmbarque;
+	
+	@FTFfield(tamanho=60, tipo="char", ordem=96)
+	private String localEmbarque;
+	
+	@FTFfield(tamanho=60, tipo="char", ordem=97)
+	private String localDespacho;
+	
 	public String getTipoRegistro() {
 		return tipoRegistro;
 	}
@@ -970,6 +1003,99 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 
 	public void setNumeroDocOrigem(String numeroDocOrigem) {
 		this.numeroDocOrigem = numeroDocOrigem;
+	}
+	
+	public String getCodigoPessoaEmissor() {
+		return codigoPessoaEmissor;
+	}
+
+	public void setCodigoPessoaEmissor(String codigoPessoaEmissor) {
+		this.codigoPessoaEmissor = codigoPessoaEmissor;
+	}
+
+	public String getCodigoPessoaDetalheDestinatario() {
+		return codigoPessoaDetalheDestinatario;
+	}
+
+	public void setCodigoPessoaDetalheDestinatario(
+			String codigoPessoaDetalheDestinatario) {
+		this.codigoPessoaDetalheDestinatario = codigoPessoaDetalheDestinatario;
+	}
+
+	public String getCodigoCGLServicoPrestado() {
+		return codigoCGLServicoPrestado;
+	}
+
+	public void setCodigoCGLServicoPrestado(String codigoCGLServicoPrestado) {
+		this.codigoCGLServicoPrestado = codigoCGLServicoPrestado;
+	}
+
+	public String getDataInicioPrestacaoServicoIntangivel() {
+		return dataInicioPrestacaoServicoIntangivel;
+	}
+
+	public void setDataInicioPrestacaoServicoIntangivel(
+			String dataInicioPrestacaoServicoIntangivel) {
+		this.dataInicioPrestacaoServicoIntangivel = dataInicioPrestacaoServicoIntangivel;
+	}
+
+	public String getDataConclusaoPrestacaoServicoIntangivel() {
+		return dataConclusaoPrestacaoServicoIntangivel;
+	}
+
+	public void setDataConclusaoPrestacaoServicoIntangivel(
+			String dataConclusaoPrestacaoServicoIntangivel) {
+		this.dataConclusaoPrestacaoServicoIntangivel = dataConclusaoPrestacaoServicoIntangivel;
+	}
+
+	public String getModoPrestacaoServico() {
+		return modoPrestacaoServico;
+	}
+
+	public void setModoPrestacaoServico(String modoPrestacaoServico) {
+		this.modoPrestacaoServico = modoPrestacaoServico;
+	}
+
+	public String getIdentificaoVendaConsumidorFinal() {
+		return identificaoVendaConsumidorFinal;
+	}
+
+	public void setIdentificaoVendaConsumidorFinal(
+			String identificaoVendaConsumidorFinal) {
+		this.identificaoVendaConsumidorFinal = identificaoVendaConsumidorFinal;
+	}
+
+	public String getIdentificaoVendaPresencialAtendimento() {
+		return identificaoVendaPresencialAtendimento;
+	}
+
+	public void setIdentificaoVendaPresencialAtendimento(
+			String identificaoVendaPresencialAtendimento) {
+		this.identificaoVendaPresencialAtendimento = identificaoVendaPresencialAtendimento;
+	}
+
+	public String getSiglaUfEmbarque() {
+		return siglaUfEmbarque;
+	}
+
+	public void setSiglaUfEmbarque(String siglaUfEmbarque) {
+		this.siglaUfEmbarque = siglaUfEmbarque;
+	}
+
+	public String getLocalEmbarque() {
+		return localEmbarque;
+	}
+
+	public void setLocalEmbarque(String localEmbarque) {
+		this.localEmbarque = localEmbarque;
+	}
+
+	public String getLocalDespacho() {
+		return localDespacho;
+	}
+
+	public void setLocalDespacho(String localDespacho) {
+		this.localDespacho = localDespacho;
 	}
 
 	public List<FTFEnvTipoRegistro02> getItemNFList() {
