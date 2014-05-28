@@ -386,7 +386,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append(" JOIN DISTRIBUIDOR AS POLITICADISTRIB ")
            .append(" JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ")
            
-           .append(" WHERE SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO!=false ")
+           .append(" WHERE COTA_.SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO!=false ")
            .append(" AND ((COTA_.NUM_ACUMULO_DIVIDA IS NOT NULL ")
            .append(" 		AND COTA_.NUM_ACUMULO_DIVIDA <> 0 ")
            .append("		AND COTA_.NUM_ACUMULO_DIVIDA <= ( ")
