@@ -114,9 +114,28 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
      * Construtor.
      */
     public CotaRepositoryImpl() {
-        
         super(Cota.class);
     }
+    
+    public Cota selectForUpdate(Long numeroCota) {
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" SELECT C.* ");
+		
+		hql.append(" FROM COTA C ");
+		
+		hql.append(" WHERE C.NUMERO_COTA = :numeroCota FOR UPDATE ");
+		
+		Query query = this.getSession().createSQLQuery(hql.toString());
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		((org.hibernate.SQLQuery)query).addEntity(Cota.class);
+		
+		return (Cota) query.uniqueResult();
+		
+	}
     
     @Override
     public Cota obterPorNumeroDaCota(final Integer numeroCota) {
@@ -385,10 +404,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append(" JOIN DISTRIBUIDOR AS POLITICADISTRIB ")
            .append(" JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ")
            
-           .append(" WHERE SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO!=false ")
-           .append(" AND ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NOT NULL ")
-           .append(" 		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <> 0 ")
-           .append("		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <= ( ")
+           .append(" WHERE COTA_.SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO!=false ")
+           .append(" AND ((COTA_.NUM_ACUMULO_DIVIDA IS NOT NULL ")
+           .append(" 		AND COTA_.NUM_ACUMULO_DIVIDA <> 0 ")
+           .append("		AND COTA_.NUM_ACUMULO_DIVIDA <= ( ")
            .append("											SELECT count(DIVIDA.ID) ")
            .append("											FROM DIVIDA DIVIDA ")
            .append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
@@ -399,9 +418,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("                                                               AND COBRANCA_.STATUS_COBRANCA = :statusCobrancaNaoPago)")
            .append("	   ) ")
            .append("	   OR ")
-           .append("	   (POLITICACOTA.VALOR_SUSPENSAO IS NOT NULL ")
-           .append("       AND POLITICACOTA.VALOR_SUSPENSAO <> 0 ")
-           .append("		AND POLITICACOTA.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
+           .append("	   (COTA_.VALOR_SUSPENSAO IS NOT NULL ")
+           .append("       AND COTA_.VALOR_SUSPENSAO <> 0 ")
+           .append("		AND COTA_.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
            .append("											FROM DIVIDA DIVIDA ")
            .append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
            .append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
@@ -411,10 +430,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("                                                               AND COBRANCA_.STATUS_COBRANCA = :statusCobrancaNaoPago)")
            .append("	   ) ")
            .append("	   OR ")
-           .append("	   ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL or POLITICACOTA.VALOR_SUSPENSAO IS NULL) ")
-           .append("	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA IS NOT NULL ")
-           .append("	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <> 0 ")
-           .append("		AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <= (")
+           .append("	   ((COTA_.NUM_ACUMULO_DIVIDA IS NULL or COTA_.VALOR_SUSPENSAO IS NULL) ")
+           .append("	    AND COTA_.NUM_ACUMULO_DIVIDA IS NOT NULL ")
+           .append("	    AND COTA_.NUM_ACUMULO_DIVIDA <> 0 ")
+           .append("		AND COTA_.NUM_ACUMULO_DIVIDA <= (")
            .append("											SELECT count(DIVIDA.ID) ")
            .append("											FROM DIVIDA DIVIDA ")
            .append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
@@ -425,10 +444,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("                                                               AND COBRANCA_.STATUS_COBRANCA = :statusCobrancaNaoPago)")
            .append("	   ) ")
            .append("	   OR ")
-           .append("	   ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL or POLITICACOTA.VALOR_SUSPENSAO IS NULL) ")
-           .append("	    AND POLITICADISTRIB.VALOR_SUSPENSAO IS NOT NULL ")
-           .append("	    AND POLITICADISTRIB.VALOR_SUSPENSAO <> 0")
-           .append("		AND POLITICADISTRIB.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
+           .append("	   ((COTA_.NUM_ACUMULO_DIVIDA IS NULL or COTA_.VALOR_SUSPENSAO IS NULL) ")
+           .append("	    AND COTA_.VALOR_SUSPENSAO IS NOT NULL ")
+           .append("	    AND COTA_.VALOR_SUSPENSAO <> 0")
+           .append("		AND COTA_.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
            .append("											FROM DIVIDA DIVIDA ")
            .append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
            .append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
@@ -3489,7 +3508,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     	
     	final StringBuilder hql = new StringBuilder();
         
-    	hql.append(" select cota.ID as idCota , ")
+    	hql.append(" select distinct cota.ID as idCota , ")
     		.append(" 	cota.DESCRICAO_TIPO_ENTREGA as tipoEntrega, ")
 		    .append("	cota.INICIO_PERIODO_CARENCIA as inicioCarencia,  ")
 		    .append("	cota.FIM_PERIODO_CARENCIA as fimCarencia, ")

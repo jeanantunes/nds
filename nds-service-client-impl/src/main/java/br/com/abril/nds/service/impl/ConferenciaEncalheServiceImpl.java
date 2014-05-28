@@ -63,6 +63,8 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.estoque.Semaforo;
+import br.com.abril.nds.model.estoque.StatusProcessoEncalhe;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -110,6 +112,7 @@ import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoReposit
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
+import br.com.abril.nds.repository.SemaforoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
@@ -268,6 +271,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private SemaforoRepository semaforoRepository;
+	
 	
 	private final int PRIMEIRO_DIA_RECOLHIMENTO = 1;
 	
@@ -1212,6 +1219,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		infoConfereciaEncalheCota.setDistribuidorAceitaJuramentado(this.controleConferenciaEncalheCotaRepository.obterAceitaJuramentado(cota.getId()));
 		
+		infoConfereciaEncalheCota.setIndCotaOperacaoDiferenciada(cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao));
+		
 		return infoConfereciaEncalheCota;
 	}
 	
@@ -1672,6 +1681,100 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	@Transactional
+	public void sinalizarInicioProcessoEncalhe(Integer numeroCota) {
+		
+		Semaforo semaforo = semaforoRepository.selectForUpdate(numeroCota);
+		
+		if(semaforo!=null && StatusProcessoEncalhe.INICIADO.equals(semaforo.getStatusProcessoEncalhe())){
+			throw new ValidacaoException(TipoMensagem.WARNING, "A cota " + numeroCota + " ainda esta sendo processada!");
+		}
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		if(semaforo == null) {
+			semaforo = new Semaforo();
+		} 
+		
+		semaforo.setStatusProcessoEncalhe(StatusProcessoEncalhe.INICIADO);
+		semaforo.setDataAtualizacao(dataOperacao);
+		semaforo.setErrorLog(null);
+		semaforo.setDataInicio(new Date());
+		semaforo.setDataFim(null);
+		
+		if(semaforo.getNumeroCota()==null) {
+			semaforo.setNumeroCota(numeroCota);
+			semaforoRepository.adicionar(semaforo);
+		} else {
+			semaforoRepository.alterar(semaforo);
+		}
+		
+	}
+	
+	@Transactional
+	public void sinalizarFimProcessoEncalhe(Integer numeroCota) {
+		
+		Semaforo semaforo = semaforoRepository.buscarPorId(numeroCota);
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		if(semaforo == null) {
+			throw new IllegalStateException("Processo da cota [" + numeroCota + "] não possui sinalização de início.");
+		} 
+		
+		semaforo.setStatusProcessoEncalhe(StatusProcessoEncalhe.FINALIZADO);
+		semaforo.setDataAtualizacao(dataOperacao);
+		semaforo.setErrorLog(null);
+		semaforo.setDataFim(new Date());
+		
+		semaforoRepository.alterar(semaforo);
+		
+	}
+	
+	
+	private String obterDescricaoErro(Exception e) {
+		
+		String logMessage = "Erro não identificado no processo de encalhe da cota";
+		
+		if(e!=null && e.getMessage()!=null) {
+			
+			if(e.getMessage().length()>255) {
+				logMessage = e.getMessage().substring(0,255);
+			} else {
+				logMessage = e.getMessage();
+			}
+		} 
+
+		return logMessage;
+	}
+	
+	public void sinalizarErroProcessoEncalhe(Integer numeroCota, Exception e) {
+		
+		Semaforo semaforo = semaforoRepository.buscarPorId(numeroCota);
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		if(semaforo == null) {
+			semaforo = new Semaforo();
+		} 
+		
+		semaforo.setStatusProcessoEncalhe(StatusProcessoEncalhe.INTERROMPIDO);
+		semaforo.setDataAtualizacao(dataOperacao);
+		semaforo.setDataFim(new Date());
+		
+		String logMessage = obterDescricaoErro(e);
+		
+		semaforo.setErrorLog(logMessage);
+		
+		if(semaforo.getNumeroCota()==null) {
+			semaforo.setNumeroCota(numeroCota);
+			semaforoRepository.adicionar(semaforo);
+		} else {
+			semaforoRepository.alterar(semaforo);
+		}
+		
+	}
+	
 	@Override
 	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 900, isolation= Isolation.READ_COMMITTED)
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
@@ -1681,7 +1784,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final Usuario usuario,
 			final boolean indConferenciaContingencia, 
 			BigDecimal reparte) throws GerarCobrancaValidacaoException {
-		
 		
 		final Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
@@ -1699,11 +1801,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 
-		
-		
-		
-		//TESTE PERFORMANCE
-		/*
 		try {
 		
 			nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
@@ -1711,10 +1808,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			documentoConferenciaEncalhe.setMsgsGeracaoCobranca(e.getValidacaoVO());			
 		}
-		*/
-		
-		
-		
 
 		final ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
 
@@ -1763,8 +1856,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero, true);
 			}
 		}
-
+		
 		return documentoConferenciaEncalhe;
+		
 	}
 	
 	private void abaterNegociacao(final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, final Long idCota, final Usuario usuario) {
@@ -3174,11 +3268,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final Integer numeroCota, 
 			final Integer codigoSM,
 			final Integer quantidadeRegistros,
-			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO) {
-		  
-        final List<ProdutoEdicao> listaProdutoEdicao = 
-        		produtoEdicaoRepository.obterProdutoPorCodigoNomeCodigoSM(codigoSM,
-                null, numeroCota, quantidadeRegistros, mapaDataCEConferivelDTO);
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO, boolean indCotaOperacaoDif) {
+		
+		Date dataOperacao = null;
+		
+		if(!indCotaOperacaoDif) {
+			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		}
+         
+		final List<ProdutoEdicao> listaProdutoEdicao = produtoEdicaoRepository.obterProdutoPorCodigoNomeCodigoSM(codigoSM,
+                null, numeroCota, quantidadeRegistros, mapaDataCEConferivelDTO, dataOperacao);
 		
 		final List<ItemAutoComplete> listaItem = new ArrayList<ItemAutoComplete>();
 		

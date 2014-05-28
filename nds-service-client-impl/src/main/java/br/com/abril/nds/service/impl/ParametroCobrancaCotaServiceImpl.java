@@ -196,12 +196,15 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	public ParametroCobrancaCotaDTO obterDadosParametroCobrancaPorCota(Long idCota) {
 		
 		Cota cota = cotaRepository.buscarPorId(idCota);
+		
 		PoliticaSuspensao politicaSuspensao = null; 
+		
 		ParametroCobrancaCota parametroCobranca = null;
 		
 		boolean parametroDistribuidor = false;
 		
 		ParametroCobrancaCotaDTO parametroCobrancaDTO = null;
+		
 		if (cota != null) {
 			
 			Distribuidor distribuidor = distribuidorRepository.obter();
@@ -211,16 +214,21 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaDTO = new ParametroCobrancaCotaDTO();
 			
 			parametroCobrancaDTO.setIdCota(cota.getId());
+			
 			parametroCobrancaDTO.setNumCota(cota.getNumeroCota());
-			parametroCobrancaDTO.setSugereSuspensao(cota.isSugereSuspensao());
-			parametroCobrancaDTO.setSugereSuspensaoDistribuidor(cota.isSugereSuspensaoDistribuidor());
+			
+			
 			parametroCobrancaDTO.setContrato(cota.isPossuiContrato());
+			
 			parametroCobrancaDTO.setTipoCota(cota.getTipoCota());
 			
 			if(cota.getContratoCota() != null) {
+				
 				parametroCobrancaDTO.setInicioContrato(cota.getContratoCota().getDataInicio());
+				
 				parametroCobrancaDTO.setTerminoContrato(cota.getContratoCota().getDataTermino());
 			}
+			
 			
 			parametroCobranca = cota.getParametroCobranca();
 			
@@ -235,6 +243,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				parametroCobranca = new ParametroCobrancaCota();
 
 				parametroCobranca.setCota(cota);
+				
 				parametroCobranca.setFormasCobrancaCota(null);
 				
 				if(politicaCobranca != null) {
@@ -244,55 +253,50 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 					parametroCobranca.setUnificaCobranca(politicaCobranca.isUnificaCobranca());
 
 					parametroCobranca.setFornecedorPadrao(politicaCobranca.getFornecedorPadrao());
-				}
-				
-				if(distribuidor.getPoliticaSuspensao()!=null){
-				    
-					PoliticaSuspensao ps = new PoliticaSuspensao();
-			    	ps.setNumeroAcumuloDivida(distribuidor.getPoliticaSuspensao().getNumeroAcumuloDivida());
-				    ps.setValor(distribuidor.getPoliticaSuspensao().getValor());				
-				    cota.setPoliticaSuspensao(ps);
-				}
-								
+				}					
 			}
 
 			parametroCobrancaDTO.setIdParametroCobranca(parametroCobranca.getId());
+			
 			parametroCobrancaDTO.setFatorVencimento((parametroCobranca.getFatorVencimento()==null) ? 0 : parametroCobranca.getFatorVencimento());
 			
 			if (parametroCobranca.getCota().getValorMinimoCobranca() != null) {
+				
 				parametroCobrancaDTO.setValorMinimo(CurrencyUtil.formatarValor(parametroCobranca.getCota().getValorMinimoCobranca()));
 			}
 			
 			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
+			
 			parametroCobrancaDTO.setDevolveEncalhe(cota.isDevolveEncalhe()!=null?cota.isDevolveEncalhe():true);
+			
 			parametroCobrancaDTO.setParametroDistribuidor(parametroDistribuidor);
 			
-			politicaSuspensao = cota.getPoliticaSuspensao();
 			
-			if (cota.isSugereSuspensao() && politicaSuspensao != null){
+			if (cota.isSugereSuspensaoDistribuidor()){
 				
-				parametroCobrancaDTO.setSugereSuspensao(true);
-				parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
+				politicaSuspensao = distribuidor.getPoliticaSuspensao();	
+			}
+			else {
 				
-				if (politicaSuspensao.getValor() != null) {
-					parametroCobrancaDTO.setVrDividasAberto(CurrencyUtil.formatarValor(politicaSuspensao.getValor()));
+				if (cota.isSugereSuspensao()){
+						
+				    politicaSuspensao = cota.getPoliticaSuspensao();
 				}
 			}
 			
-			parametroCobrancaDTO.setIdFornecedor(parametroCobranca.getFornecedorPadrao()!=null?parametroCobranca.getFornecedorPadrao().getId():null);		
-			
-			//Obtem Valor e Qtd do Distribuidor caso sejam null, VAZIO ou ZERO   
-			if ((parametroCobrancaDTO.getVrDividasAberto()==null || "".equals(parametroCobrancaDTO.getVrDividasAberto()) || 
-					CurrencyUtil.converterValor(parametroCobrancaDTO.getVrDividasAberto()).compareTo(BigDecimal.ZERO) < 1) && 
-					(parametroCobrancaDTO.getQtdDividasAberto()==null || parametroCobrancaDTO.getQtdDividasAberto() < 1)){
-			
-				if(distribuidor.getPoliticaSuspensao()!=null){
-					
-					parametroCobrancaDTO.setVrDividasAberto(CurrencyUtil.formatarValor(distribuidor.getPoliticaSuspensao().getValor()));
-					
-					parametroCobrancaDTO.setQtdDividasAberto(distribuidor.getPoliticaSuspensao().getNumeroAcumuloDivida());				
-				}
+			if(politicaSuspensao!=null){
+				
+				parametroCobrancaDTO.setVrDividasAberto(politicaSuspensao.getValor()!=null?CurrencyUtil.formatarValor(politicaSuspensao.getValor()):null);
+				
+				parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());				
 			}
+			
+			parametroCobrancaDTO.setSugereSuspensao(cota.isSugereSuspensao());
+			
+			parametroCobrancaDTO.setSugereSuspensaoDistribuidor(cota.isSugereSuspensaoDistribuidor());
+			
+			
+			parametroCobrancaDTO.setIdFornecedor(parametroCobranca.getFornecedorPadrao()!=null?parametroCobranca.getFornecedorPadrao().getId():null);			
 		}
 
 		return parametroCobrancaDTO;
@@ -936,28 +940,28 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				strConcentracoes .append("Diariamente");
 			}
 			
+			final String detalhesTipoPagto = this.obterDetalheTipoPagamento(formaCobrancaItem);
+			
+
+			FormaCobrancaDTO formaCobranca = new FormaCobrancaDTO(
+				formaCobrancaItem.getId(),
+				strFornecedores.toString(),
+				strConcentracoes.toString(),
+				(formaCobrancaItem.getTipoCobranca()!=null?formaCobrancaItem.getTipoCobranca().getDescTipoCobranca():""),
+				detalhesTipoPagto,
+				isParametroDistribuidor,
+				descUnificacao
+			);
+
 			if ((fornecedores!=null)&&(!fornecedores.isEmpty())){
 				for (Fornecedor itemFornecedor:fornecedores){
-					if (strFornecedores.length()>0){
-						strFornecedores.append("/");
-					}
-					strFornecedores.append(itemFornecedor.getJuridica().getRazaoSocial());
+					formaCobranca.addFornecedor(new Fornecedor(itemFornecedor.getId(), itemFornecedor.getJuridica().getNomeFantasia()));
 				}
 			}
 			
-			final String detalhesTipoPagto = this.obterDetalheTipoPagamento(formaCobrancaItem);
+			formaCobranca.getFornecedores().size();
 			
-			formasCobrancaDTO.add(
-				new FormaCobrancaDTO(
-					formaCobrancaItem.getId(),
-					strFornecedores.toString(),
-					strConcentracoes.toString(),
-					(formaCobrancaItem.getTipoCobranca()!=null?formaCobrancaItem.getTipoCobranca().getDescTipoCobranca():""),
-					detalhesTipoPagto,
-					isParametroDistribuidor,
-					descUnificacao
-				)
-			);
+			formasCobrancaDTO.add(formaCobranca);
 		}
 	}
 
@@ -1654,5 +1658,45 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
                 }
             }
         }
+    }
+    
+    /**
+     * Obtem Politica de Suspensao da Cota ou do Distribuidor
+     * 
+     * @param cota
+     * @return PoliticaSuspensao
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public PoliticaSuspensao obterPoliticaSuspensaoCota(Cota cota) {
+    	
+    	if (cota.isSugereSuspensaoDistribuidor()){
+    		
+    		Distribuidor d = this.distribuidorRepository.obter();
+    		
+    		return d.getPoliticaSuspensao();
+    	}
+        
+        return cota.getPoliticaSuspensao();
+    }
+    
+    /**
+     * Verifica se cota utiliza politica de suspensao, seja propria ou do distribuidor
+     * 
+     * @param cota
+     * @return boolean
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isSugereSuspensao(Cota cota) {
+    	
+    	if (cota.isSugereSuspensaoDistribuidor()){
+    		
+    		Distribuidor d = this.distribuidorRepository.obter();
+    		
+    		return d.isSugereSuspensao();
+    	}
+    		
+    	return cota.isSugereSuspensao();
     }
 }

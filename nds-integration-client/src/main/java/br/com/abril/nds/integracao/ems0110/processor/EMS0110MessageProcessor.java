@@ -928,7 +928,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração da Data de Desativação"
 					+" de "+ DateUtil.formatarDataPTBR(edicao.getDataDesativacao())
-					+" para "+ input.getDataDesativacao()
+					+" para "+ DateUtil.formatarDataPTBR(input.getDataDesativacao())
 					+" Produto "+ input.getCodProd()
 					+" Edição "+ input.getEdicaoProd());
 			

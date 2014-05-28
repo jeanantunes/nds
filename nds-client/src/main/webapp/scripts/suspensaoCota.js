@@ -1,6 +1,6 @@
 var suspensaoCotaController = $.extend(true, {
 
-	nomeCota : "",
+	infoCota : "",
 
 	init : function() {
 		$( "#datepickerDe", suspensaoCotaController.workspace ).datepicker({
@@ -93,16 +93,16 @@ var suspensaoCotaController = $.extend(true, {
 		
 	},	
 	
-	getDetalhes : function(idCota, nome) {
-		suspensaoCotaController.nomeCota = nome;
+	getDetalhes : function(idCota, numeroCota, nome) {
+		suspensaoCotaController.infoCota = numeroCota + " - " + nome;
 		$.postJSON(contextPath + "/suspensaoCota/getInadinplenciasDaCota", 
 				{idCota:idCota,method:'get'}, 
 				suspensaoCotaController.popupDetalhes);	
 	}, 
 	
 	popupDetalhes : function(result) {
-				
-		suspensaoCotaController.gerarTabelaDetalhes(result, suspensaoCotaController.nomeCota);
+
+		suspensaoCotaController.gerarTabelaDetalhes(result, suspensaoCotaController.infoCota);
 		
 		$( "#dialog-detalhes", suspensaoCotaController.workspace ).dialog({
 			resizable: false,
@@ -277,11 +277,11 @@ var suspensaoCotaController = $.extend(true, {
 		return input.outerHTML || new XMLSerializer().serializeToString(input);
 	},
 	
-	gerarAcoes : function(idCota,dividas,nome) {
+	gerarAcoes : function(idCota,dividas,numCota, nome) {
 		
 		var a = document.createElement("A");
 		a.href = "javascript:;";
-		a.setAttribute("onclick","suspensaoCotaController.getDetalhes("+idCota+",'"+nome+"');");
+		a.setAttribute("onclick","suspensaoCotaController.getDetalhes("+idCota+",'"+numCota+"','"+nome+"');");
 		
 		var img =document.createElement("IMG");
 		img.src=contextPath + "/images/ico_detalhes.png";
@@ -307,7 +307,7 @@ var suspensaoCotaController = $.extend(true, {
 		//div.appendChild(fieldset);
 		
 		var legend = document.createElement("LEGEND");
-		legend.innerHTML = "Cota: ".bold() + " - " + nome;
+		legend.innerHTML = "Cota: ".bold() + nome;
 		
 		fieldset.appendChild(legend);
 		
@@ -454,7 +454,7 @@ var suspensaoCotaController = $.extend(true, {
 			
 			var cell = grid.rows[i].cell;
 			
-			cell.acao = suspensaoCotaController.gerarAcoes(cell.idCota,cell.dividas,cell.nome);
+			cell.acao = suspensaoCotaController.gerarAcoes(cell.idCota,cell.dividas,cell.numCota,cell.nome);
 			cell.selecionado = suspensaoCotaController.gerarCheckbox('idCheck'+i,'selecao', cell.idCota,cell.selecionado);;					
 		}
 		

@@ -84,13 +84,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 			 precision:2
 		});
 		
-		$("#qtdDividasAberto", this.workspace).maskMoney({
+		$("#qtdDividasAbertoCota", this.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:0
 		});	
 		
-		$("#vrDividasAberto", this.workspace).maskMoney({
+		$("#vrDividasAbertoCota", this.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
@@ -424,25 +424,29 @@ var parametroCobrancaCotaController = $.extend(true, {
     		
 					if(data) {
 			
-						$("#qtdDividasAberto").val(data.numeroAcumuloDivida);
+						$("#qtdDividasAbertoCota", this.workspace).val(data.qtdDividasAberto);
 
-			        	$("#vrDividasAberto").val(data.valor);
+			        	$("#vrDividasAbertoCota", this.workspace).val(data.vrDividasAberto);
+			        	
+			        	$("#sugereSuspensaoCota", this.workspace).attr("checked", data.sugereSuspensao);
 					}
     		});
         	
-        	$("#qtdDividasAberto").prop('disabled', true);
-
-        	$("#vrDividasAberto").prop('disabled', true);
+        	$(".form-suspensao-hidden2-class").show();
         	
-        	$("#sugereSuspensao").prop('disabled', true);
+        	$("#qtdDividasAbertoCota", this.workspace).prop('disabled', true);
+
+        	$("#vrDividasAbertoCota", this.workspace).prop('disabled', true);
+        	
+        	$("#sugereSuspensaoCota", this.workspace).prop('disabled', true);
 		}	
 		else{
 			
-			$("#qtdDividasAberto").prop('disabled', false);
+			$("#qtdDividasAbertoCota", this.workspace).prop('disabled', false);
 			
-			$("#vrDividasAberto").prop('disabled', false);
+			$("#vrDividasAbertoCota", this.workspace).prop('disabled', false);
 			
-			$("#sugereSuspensao").prop('disabled', false);
+			$("#sugereSuspensaoCota", this.workspace).prop('disabled', false);
 		}	
 	},
 	
@@ -620,8 +624,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 	
 		$("#fatorVencimento", this.workspace).val(resultado.fatorVencimento);
 		
-		$("#sugereSuspensao", this.workspace).val(resultado.sugereSuspensao);
-		$("#sugereSuspensao").attr("checked", resultado.sugereSuspensao);
+		$("#sugereSuspensaoCota", this.workspace).val(resultado.sugereSuspensao);
+		$("#sugereSuspensaoCota").attr("checked", resultado.sugereSuspensao);
 		
 		$("#sugereSuspensaoDistribuidor", this.workspace).val(resultado.sugereSuspensaoDistribuidor);
 		$("#sugereSuspensaoDistribuidor").attr("checked", resultado.sugereSuspensaoDistribuidor);
@@ -636,8 +640,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		parametroCobrancaCotaController.exibe_form_contrato(resultado.contrato);
 		
 		$("#valorMinimo", this.workspace).val( resultado.valorMinimo );
-		$("#qtdDividasAberto", this.workspace).val(resultado.qtdDividasAberto);
-		$("#vrDividasAberto", this.workspace).val( resultado.vrDividasAberto );
+		$("#qtdDividasAbertoCota", this.workspace).val(resultado.qtdDividasAberto);
+		$("#vrDividasAbertoCota", this.workspace).val( resultado.vrDividasAberto );
 		$("#tipoCota", this.workspace).val(resultado.tipoCota);
 		$("#devolveEncalhe", this.workspace).val(resultado.devolveEncalhe?0:1);
 		
@@ -679,12 +683,12 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		var fatorVencimento  = $("#fatorVencimento", this.workspace).val();
 		
-		$("#sugereSuspensao", this.workspace).val(0);
-		//if (document.formFinanceiro.sugereSuspensao.checked){
-		if ($("#sugereSuspensao", this.workspace).is(":checked")) {
-			$("#sugereSuspensao", this.workspace).val(1);
+		$("#sugereSuspensaoCota", this.workspace).val(0);
+		//if (document.formFinanceiro.sugereSuspensaoCota.checked){
+		if ($("#sugereSuspensaoCota", this.workspace).is(":checked")) {
+			$("#sugereSuspensaoCota", this.workspace).val(1);
 		}
-		var sugereSuspensao = $("#sugereSuspensao", this.workspace).val();
+		var sugereSuspensao = $("#sugereSuspensaoCota", this.workspace).val();
 		
 		$("#sugereSuspensaoDistribuidor", this.workspace).val(0);
 		//if (document.formFinanceiro.sugereSuspensaoDistribuidor.checked){
@@ -704,8 +708,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 	 
 		var valorMinimo = $("#valorMinimo", this.workspace).val();
 
-		var qtdDividasAberto = $("#qtdDividasAberto", this.workspace).val();
-		var vrDividasAberto = $("#vrDividasAberto", this.workspace).val();
+		var qtdDividasAberto = $("#qtdDividasAbertoCota", this.workspace).val();
+		var vrDividasAberto = $("#vrDividasAbertoCota", this.workspace).val();
 		var tipoCota = $("#tipoCota", this.workspace).val();
 		var devolveEncalhe = $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
 		var fornecedorPadrao = $("#fornecedorPadrao", this.workspace).val();
@@ -1207,13 +1211,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var devolveEncalhe		= $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
 		var fornecedorPadrao 	= $("#fornecedorPadrao", this.workspace).val();
 		//var unificaCobranca 	= $("#unificaCobranca", this.workspace).val() == 0 ? 1 : 0;
-		var sugereSuspensao 	= $("#sugereSuspensao", this.workspace).val();
+		var sugereSuspensao 	= $("#sugereSuspensaoCota", this.workspace).val();
 		var sugereSuspensaoDistribuidor	= $("#sugereSuspensaoDistribuidor", this.workspace).val();
 		var contrato			= $("#contrato", this.workspace).val();
 		var inicioContrato 		= $("#parametroCobrancaDateInicio", this.workspace).val();
         var terminoContrato 	= $("#parametroCobrancaDateTermino", this.workspace).val();
-		var qtdDividasAberto	= $("#qtdDividasAberto", this.workspace).val();
-		var vrDividasAberto		= $("#vrDividasAberto", this.workspace).val();
+		var qtdDividasAberto	= $("#qtdDividasAbertoCota", this.workspace).val();
+		var vrDividasAberto		= $("#vrDividasAbertoCota", this.workspace).val();
 			
 		$("#recebeEmail", this.workspace).val(0);
 		//if (document.formularioDadosBoleto.recebeEmail.checked){

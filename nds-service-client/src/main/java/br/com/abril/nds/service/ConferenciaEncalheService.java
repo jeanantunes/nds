@@ -28,6 +28,12 @@ import br.com.abril.nds.util.ItemAutoComplete;
 
 public interface ConferenciaEncalheService {
 	
+	public void sinalizarInicioProcessoEncalhe(Integer numeroCota);
+
+	public void sinalizarFimProcessoEncalhe(Integer numeroCota);
+
+	public void sinalizarErroProcessoEncalhe(Integer numeroCota, Exception e);
+	
 	/**
 	 * Obtém mapa tendo como chave idFornecedor e valor 
 	 * o objeto DataCEConferivel (objeto que possui 2 lista
@@ -242,6 +248,8 @@ public interface ConferenciaEncalheService {
 	 * @param usuario
 	 * @param indConferenciaContingencia
 	 * @param reparte
+	 * 
+	 * @return DadosDocumentacaoConfEncalheCotaDTO
 	 */
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
@@ -266,7 +274,7 @@ public interface ConferenciaEncalheService {
 			final Integer numeroCota, 
 			final Integer codigoSM,
 			final Integer quantidadeRegistros,
-			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO);
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO, boolean indCotaOperacaoDif);
 	
 	boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota);
 	

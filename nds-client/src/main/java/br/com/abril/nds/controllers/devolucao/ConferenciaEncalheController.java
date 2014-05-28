@@ -1,8 +1,5 @@
 package br.com.abril.nds.controllers.devolucao;
 
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.TriggerBuilder.newTrigger;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -20,18 +17,14 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.job.AtualizaEstoqueJob;
 import br.com.abril.nds.client.util.Constants;
+import br.com.abril.nds.component.ConferenciaEncalheAsyncComponent;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -147,6 +140,9 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
+	
+	@Autowired
+	private ConferenciaEncalheAsyncComponent conferenciaEncalheAsyncComponent;  
 	
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
@@ -850,13 +846,15 @@ public class ConferenciaEncalheController extends BaseController {
 
             throw new ValidacaoException(TipoMensagem.WARNING, "Código SM inválido.");
 		}
-
+		
+		
+		
 		final List<ItemAutoComplete> listaProdutos = 
 				this.conferenciaEncalheService.obterListaProdutoEdicaoParaRecolhimentoPorCodigoSM(
 						numeroCota, 
 						sm, 
 						QUANTIDADE_MAX_REGISTROS, 
-						obterFromSessionMapaDatasEncalheConferiveis()); 
+						obterFromSessionMapaDatasEncalheConferiveis(), getInfoConferenciaSession().isIndCotaOperacaoDiferenciada()); 
 
 		if (listaProdutos == null || listaProdutos.isEmpty()) {
 			
@@ -1566,35 +1564,15 @@ public class ConferenciaEncalheController extends BaseController {
 			                           final List<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave,
 			                           final boolean indConferenciaContingencia){
 		
-		try {
-
-	        this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(controleConfEncalheCota, 
-																         listaConferenciaEncalheCotaToSave, 
-																         this.getSetConferenciaEncalheExcluirFromSession(), 
-																         this.getUsuarioLogado(),
-																         indConferenciaContingencia);
-	        
-	        
-	        
-
-		} catch (final EncalheSemPermissaoSalvarException e) {
-            LOGGER.error(
-                    "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados: "
-                            + e.getMessage(), e);
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados. ");
 			
-		} catch (final ConferenciaEncalheFinalizadaException e) {
-            LOGGER.error(
-"Conferência não pode ser salvar, finalize a operação para não perder os dados: "
-                + e.getMessage(),
-                    e);
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
+			this.conferenciaEncalheService.sinalizarInicioProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota());
 			
-		}
-		
-		agendarAgoraAtualizacaoEstoqueProdutoConf();
+			this.conferenciaEncalheAsyncComponent.salvarConferenciaEncalhe(controleConfEncalheCota, 
+			         listaConferenciaEncalheCotaToSave, 
+			         this.getSetConferenciaEncalheExcluirFromSession(), 
+			         this.getUsuarioLogado(),
+			         indConferenciaContingencia);
+	
 		
 		final String loginUsuarioLogado = this.getIdentificacaoUnicaUsuarioLogado();
 		
@@ -1931,8 +1909,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		
 		final Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
-		DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota = null;
-		
 		if (horaInicio != null){
 		
 			final ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
@@ -1988,53 +1964,32 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 			
 			limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 			
-			dadosDocumentacaoConfEncalheCota = this.conferenciaEncalheService.finalizarConferenciaEncalhe(controleConfEncalheCota, 
-																										  listaConferenciaEncalheCotaToSave, 
-																										  this.getSetConferenciaEncalheExcluirFromSession(), 
-																										  this.getUsuarioLogado(),
-																										  indConferenciaContingencia,
-																										  info.getReparte());
+			this.conferenciaEncalheService.sinalizarInicioProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota());
 			
-			agendarAgoraAtualizacaoEstoqueProdutoConf();
+			this.conferenciaEncalheAsyncComponent.finalizarConferenciaEncalheAsync(
+					  controleConfEncalheCota, 
+					  listaConferenciaEncalheCotaToSave, 
+					  this.getSetConferenciaEncalheExcluirFromSession(), 
+					  this.getUsuarioLogado(),
+					  indConferenciaContingencia,
+					  info.getReparte());
+			
 			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
-			
-			final Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
-			
-			this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
-				
-			try {
-				this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
-			} catch (final Exception e){
-                LOGGER.error("Erro ao gerar documentos da conferência de encalhe: " + e.getMessage(), e);
-                throw new Exception("Erro ao gerar documentos da conferência de encalhe - " + e.getMessage());
-			}
 			
 			final Map<String, Object> dados = new HashMap<String, Object>();
 			
 			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
 			dados.put(TIPOS_DOCUMENTO_IMPRESSAO_ENCALHE, session.getAttribute(TIPOS_DOCUMENTO_IMPRESSAO_ENCALHE));
 			
-			if(dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca()!=null) {
-				
-				dados.put("listaMensagens", dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca().getListaMensagens());
-				
+			String msgSucess = "";
+			if (listaConferenciaEncalheCotaToSave == null || listaConferenciaEncalheCotaToSave.isEmpty()){
+                msgSucess = "Operação efetuada com sucesso. Nenhum ítem encalhado, total cobrado.";
 			} else {
-
-				String msgSucess = "";
-				
-				if (listaConferenciaEncalheCotaToSave == null || listaConferenciaEncalheCotaToSave.isEmpty()){
-                    msgSucess = "Operação efetuada com sucesso. Nenhum ítem encalhado, total cobrado.";
-				} else {
-                    msgSucess = "Operação efetuada com sucesso.";
-				}
-				
-				dados.put("listaMensagens", 	new String[]{msgSucess});
-				
+                msgSucess = "Operação efetuada com sucesso.";
 			}
 			
-
-			dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
+			dados.put("listaMensagens", 	new String[]{msgSucess});
 			
 			limparDadosSessaoConferenciaEncalheCotaFinalizada();
 			
@@ -2047,20 +2002,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                     .recursive().serialize();
 		}
 	}
-	
-	private void agendarAgoraAtualizacaoEstoqueProdutoConf() {
-
-		Scheduler scheduler = schedulerFactoryBean.getScheduler();
-	    JobDetail job = newJob(AtualizaEstoqueJob.class).build();
-	    Trigger trigger = newTrigger().startNow().build();
-        
-		try {
-			scheduler.scheduleJob(job, trigger);
-		} catch (SchedulerException e) {
-            throw new ValidacaoException(TipoMensagem.WARNING, "Falha na atualização de estoque de produtos");
-		}
-		
-    }
 	
 	@Post
 	public void pesquisarProdutoPorCodigoNome(final String codigoNomeProduto){
