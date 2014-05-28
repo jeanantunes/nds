@@ -94,7 +94,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		reg00.setNomeArquivo(String.format("NDS%s%s.PED", output, codigoDistribuidor));
 		reg00.setNumSequencia(output);
-
+		reg00.setNovoNomeArquivo(String.format("NDS%s%s.PED", output, codigoDistribuidor));
 		return reg00;
 
 	}
