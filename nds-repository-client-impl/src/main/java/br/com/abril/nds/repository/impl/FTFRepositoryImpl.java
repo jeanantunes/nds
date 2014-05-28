@@ -461,9 +461,9 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" '8' as tipoRegistro, ")
 		.append(" paramFtf.CENTRO_EMISSOR as codigoCentroEmissor,  ")
 		.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora,  ")
-		.append(" paramFtf.ESTABELECIMENTO as codLocal,  ")
-		.append(" cast(nfn.TIPO_EMISSAO as char) as tipoPedido, ")
-		.append(" '' as numeroDocOrigem, ")
+		.append(" paramFtf.ESTABELECIMENTO as codLocal,  ");
+		concatenarTipoPedidoBy(idNotaFiscal, sb);
+		sb.append(" LPAD(nfn.NUMERO_DOCUMENTO_FISCAL, 8, '0') as numeroDocOrigem, ")
 		.append(" COALESCE(pessoa.NOME,'') as nomeDoCliente, ")
 		.append(" '' as cpfOuCnpj, ")
 		.append(" endereco.LOGRADOURO as endereco, ")
@@ -537,6 +537,22 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		return query.list();
+	}
+
+	@Override
+	public boolean verificarRegistroVenda(long idNaturezaOperacao) {
+		
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(" select DISTINCT ")
+		.append(" no.NOTA_FISCAL_VENDA_CONSIGNADO as notaFiscalVendaConsignado ")
+		.append(" from natureza_operacao no ")
+		.append(" where no.id = :idNaturezaOperacao ");
+
+		SQLQuery query = getSession().createSQLQuery(sb.toString());
+		query.setParameter("idNaturezaOperacao", idNaturezaOperacao);
+		
+		return (boolean) query.uniqueResult();
 	}
 
 }
