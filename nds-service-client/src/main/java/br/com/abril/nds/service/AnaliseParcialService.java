@@ -43,5 +43,7 @@ public interface AnaliseParcialService {
     List<EstudoCotaGerado> obterEstudosCotaGerado(Long id);
     
     BigDecimal reparteFisicoOuPrevistoLancamento (Long idEstudo);
+    
+	void atualizarFixacaoOuMix(Long estudoId, Long numeroCota, Long reparteDigitado, String legendaCota);
 
 }

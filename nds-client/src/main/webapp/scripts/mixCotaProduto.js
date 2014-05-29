@@ -461,9 +461,9 @@ var mixCotaProdutoController = $.extend(true, {
 		'</a>';
 		
 		//Checa quantidade de pdvs. Caso seja maior que 1 o retorna botoes editar/excluir senao apenas o botao excluir
-//		if (cell.qtdPdv > 1) {
+		if (cell.qtdPdv > 1) {
 			components = imgAlteracao;
-//		}
+		}
 			components += imgExcluir;
 		
 		return  components;

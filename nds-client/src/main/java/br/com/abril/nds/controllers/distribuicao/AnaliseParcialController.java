@@ -263,8 +263,13 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Path("/mudarReparte")
-    public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado) {
+    public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado, String legendaCota) {
         analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte, reparteDigitado);
+        
+        if((legendaCota.equalsIgnoreCase("FX")) || (legendaCota.equalsIgnoreCase("MX"))){
+        	analiseParcialService.atualizarFixacaoOuMix(estudoId, numeroCota, reparteDigitado, legendaCota);
+        }
+        
         result.nothing();
     }
 
