@@ -529,7 +529,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 		if (filtroDebitoCreditoDTO.getIdTipoMovimento() != null) {
 
-			conditions += " and movimentoFinanceiroCota.tipoMovimento.id = :idTipoMovimento ";
+			conditions += " and movimentoFinanceiroCota.tipoMovimento.id in ( :idTipoMovimento) ";
 		}
 
 		if (filtroDebitoCreditoDTO.getDataLancamentoInicio() != null && 
@@ -570,8 +570,17 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		query.setParameterList("grupoMovimentosFinanceiros", filtroDebitoCreditoDTO.getGrupoMovimentosFinanceirosDebitosCreditos());
 		
 		if (filtroDebitoCreditoDTO.getIdTipoMovimento() != null) {
-
-			query.setParameter("idTipoMovimento", filtroDebitoCreditoDTO.getIdTipoMovimento());
+			
+			if(filtroDebitoCreditoDTO.getIdsTipoMovimentoTaxaEntrega()!= null){
+				
+				filtroDebitoCreditoDTO.getIdsTipoMovimentoTaxaEntrega().add(filtroDebitoCreditoDTO.getIdTipoMovimento());
+				
+				query.setParameterList("idTipoMovimento", filtroDebitoCreditoDTO.getIdsTipoMovimentoTaxaEntrega());
+			}
+			else{
+				
+				query.setParameterList("idTipoMovimento", Arrays.asList(filtroDebitoCreditoDTO.getIdTipoMovimento()));
+			}
 		}
 
 		if (filtroDebitoCreditoDTO.getDataLancamentoInicio() != null && 

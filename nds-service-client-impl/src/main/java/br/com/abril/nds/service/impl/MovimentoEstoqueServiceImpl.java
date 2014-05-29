@@ -834,7 +834,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		BigInteger oldQtdeMovEstoque = (BigInteger) ObjectUtils.defaultIfNull(movimentoEstoqueDTO.getQtde(),  BigInteger.ZERO);
 		newQtdeMovEstoque =(BigInteger) ObjectUtils.defaultIfNull( newQtdeMovEstoque, BigInteger.ZERO);
 		
-		
 		this.movimentoEstoqueRepository.updateById(movimentoEstoqueDTO.getId(), newQtdeMovEstoque);
 		
 		BigInteger diferencaQtdItens = oldQtdeMovEstoque.subtract(newQtdeMovEstoque);

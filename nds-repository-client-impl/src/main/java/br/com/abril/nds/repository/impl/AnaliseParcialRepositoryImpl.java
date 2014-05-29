@@ -445,18 +445,20 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @Override
     @Transactional
-    public void atualizaClassificacaoCota(Long estudoId, Long numeroCota) {
+    public void atualizaClassificacaoCota(Long estudoId, Long numeroCota, String classificacaoCota) {
 
         StringBuilder sql = new StringBuilder();
+        
         sql.append("update estudo_cota_gerado ec ");
         sql.append("  left join cota cota on cota.id = ec.cota_id ");
-        sql.append("   set ec.classificacao = 'IN' ");
+        sql.append("   set ec.classificacao = ? ");
         sql.append(" where ec.estudo_id = ? ");
         sql.append("   and cota.numero_cota = ? ");
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
-        query.setLong(0, estudoId);
-        query.setLong(1, numeroCota);
+        query.setString(0, classificacaoCota);
+        query.setLong(1, estudoId);
+        query.setLong(2, numeroCota);
         query.executeUpdate();
     }
 

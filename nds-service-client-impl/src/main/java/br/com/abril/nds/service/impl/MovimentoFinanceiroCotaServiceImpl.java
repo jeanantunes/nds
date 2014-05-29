@@ -30,7 +30,6 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -412,11 +411,40 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
             final FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
         
-        filtroDebitoCreditoDTO.setGrupoMovimentosFinanceirosDebitosCreditos(this
-                .getGrupoMovimentosFinanceirosDebitosCreditos());
+    	List<GrupoMovimentoFinaceiro> 
+    		gruposMovimentoFinanceiro = this.getGrupoMovimentosFinanceirosDebitosCreditos();
+    	
+    	gruposMovimentoFinanceiro.add(GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR);
+    	gruposMovimentoFinanceiro.add(GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR);
+    	
+        filtroDebitoCreditoDTO.setGrupoMovimentosFinanceirosDebitosCreditos(gruposMovimentoFinanceiro); 
+        
+        this.aplicarParametrosDebitoTaxaDeEntrega(filtroDebitoCreditoDTO);
         
         return movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
     }
+
+	private void aplicarParametrosDebitoTaxaDeEntrega(
+			final FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+		
+		if(filtroDebitoCreditoDTO.getIdTipoMovimento()!= null){
+        	
+        	final TipoMovimentoFinanceiro tipoMovimento =  
+        			tipoMovimentoFinanceiroRepository.buscarPorId(filtroDebitoCreditoDTO.getIdTipoMovimento());
+        	
+        	if(tipoMovimento!= null
+        			&& GrupoMovimentoFinaceiro.DEBITO.equals(tipoMovimento.getGrupoMovimentoFinaceiro())){
+        		
+        		final List<Long> idsMovimentosDebitoTaxaEntrega = 
+        				tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
+        						Arrays.asList(GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR,
+        									  GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR));
+        		
+        		filtroDebitoCreditoDTO.setIdsTipoMovimentoTaxaEntrega(idsMovimentosDebitoTaxaEntrega);
+        	}
+        	
+        }
+	}
     
     @Override
     @Transactional

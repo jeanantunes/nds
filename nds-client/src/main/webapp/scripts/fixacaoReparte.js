@@ -15,7 +15,7 @@ var fixacaoReparteController = $.extend(true, {
 		
 		autoComplete = new AutoCompleteCampos(fixacaoReparteController.workspace);
 		
-		$(".historicoGrid",fixacaoReparteController.workspace).flexigrid({
+		$(".historicoGrid", fixacaoReparteController.wsp).flexigrid({
 			preProcess: fixacaoReparteController.preProcessHistoricoGrid,
 			dataType : 'json',
 			colModel : [ 
@@ -336,16 +336,17 @@ var fixacaoReparteController = $.extend(true, {
 				resultado.mensagens.listaMensagens
 			);
 
-			$("#btAddLoteProduto").hide();
-			$("#btGerarArquivoProduto").hide();
-			$("#btImprimirProduto").hide();
+//			$("#btAddLoteProduto").hide();
+			$("#btGerarArquivoProduto", fixacaoReparteController.wsp).hide();
+			$("#btImprimirProduto", fixacaoReparteController.wsp).hide();
 
 		}else{
-			$("#btNovoProduto").show();
-			$("#btAddLoteProduto").show();
-			$("#btGerarArquivoProduto").show();
-			$("#btImprimirProduto").show();
+			$("#btNovoProduto", fixacaoReparteController.wsp).show();
+			$("#btAddLoteProduto", fixacaoReparteController.wsp).show();
+			$("#btGerarArquivoProduto", fixacaoReparteController.wsp).show();
+			$("#btImprimirProduto", fixacaoReparteController.wsp).show();
 		}
+		
 		var i;
 		for (i = 0 ; i < resultado.rows.length; i++) {
 
@@ -369,7 +370,7 @@ var fixacaoReparteController = $.extend(true, {
 				data.mensagens.tipoMensagem, 
 				data.mensagens.listaMensagens
 			);
-			$("#btAddLoteCota").hide();
+//			$("#btAddLoteCota").hide();
 			$("#btGerarArquivoCota").hide();
 			$("#btImprimirCota").hide();
 			return data;
@@ -454,7 +455,7 @@ var fixacaoReparteController = $.extend(true, {
 	
 	//exibe msg de confirmacao de fixação produto
 	excluirFixacaoProduto:function (idFixacao){
-		$("#dialog-excluir").dialog({
+		$("#dialog-excluir", fixacaoReparteController.wsp).dialog({
 			resizable: false,
 			height:'auto',
 			width:300,
@@ -472,15 +473,15 @@ var fixacaoReparteController = $.extend(true, {
 	},
 	//exibe msg de confirmacao de fixação cota
 	excluirFixacaoCota:function (idFixacao){
-		$("#dialog-excluir").dialog({
+		$("#dialog-excluir", fixacaoReparteController.wsp).dialog({
 			resizable: false,
 			height:'auto',
 			width:300,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-						$.postJSON(contextPath + '/distribuicao/fixacaoReparte/removerFixacaoReparte', fixacaoReparteController.getIdExcluir(idFixacao) , fixacaoReparteController.exclusaoCotaSucesso, fixacaoReparteController.exclusaoCotaErro);
-						$(this).dialog("close");
+					$.postJSON(contextPath + '/distribuicao/fixacaoReparte/removerFixacaoReparte', fixacaoReparteController.getIdExcluir(idFixacao) , fixacaoReparteController.exclusaoCotaSucesso, fixacaoReparteController.exclusaoCotaErro);
+					$(this).dialog("close");
 				},
 				"Cancelar": function() {
 					$(this).dialog("close");
@@ -551,7 +552,7 @@ var fixacaoReparteController = $.extend(true, {
 
 		);
 
-		$( "#dialog-defineReparte" ).dialog({
+		$( "#dialog-defineReparte", fixacaoReparteController.wsp ).dialog({
 			resizable: false,
 			height:590,
 			width:650,
@@ -947,7 +948,7 @@ var fixacaoReparteController = $.extend(true, {
 			$("#qtdeFixadaModal").val("");
 			$('#edInicialModal').val("");
 			$('#edFinalModal').val("");
-			$(".historicoGrid").html("");
+			$(".historicoGrid", fixacaoReparteController.wsp).html("");
 		},
 
 		//Executada em caso de erro durante tentativa de chamada postJSON para adicionar fixação
@@ -970,17 +971,23 @@ var fixacaoReparteController = $.extend(true, {
 			}
 
 			if($('#radioQtdeEdicoes').is(":checked")){
-				if($("#qtdeEdicoesModal").val()==''){
+				if($("#qtdeEdicoesModal").val().trim()==''){
 					exibirMensagem("WARNING", ["Qtde. edições não informado "]);
 					return false;
+				}
 			}
-
+			
+			if($("#qtdeFixadaModal").val().trim()=="" ){
+				exibirMensagem("WARNING", ["Qtde. a ser fixada não informada "]);
+				return false;
 			}
-				if($('#radioIntervalo').is(":checked")){
-					if($("#edInicialModal").val()=='' || $("#edIniciaFinal").val()==''){
-						exibirMensagem("WARNING", ["Informe Ed. inicial / final "]);
-						return false;
-					}
+			
+			
+			if($('#radioIntervalo').is(":checked")){
+				if($("#edFinalModal").val().trim()=='' || $("#edFinalModal").val().trim()==''){
+					exibirMensagem("WARNING", ["Informe Ed. inicial / final "]);
+					return false;
+				}
 			}
 
             if (porCota && $('#selectModal').val() == '-1') {
@@ -1027,7 +1034,7 @@ var fixacaoReparteController = $.extend(true, {
 			$("#nomeModalFixacao").val("");
 			$('#spanCodigoProduto').text("");
 			$('#spanNomeProduto').text("");
-			$(".historicoGrid").html("");
+			$(".historicoGrid", fixacaoReparteController.wsp).html("");
 			$('#qtdeFixadaModal').val("");
 			$('#qtdeEdicoesModal').val("");
 			$('#edInicialModal').val("");
@@ -1040,13 +1047,13 @@ var fixacaoReparteController = $.extend(true, {
 			
 			if(fixacaoReparteController.validarFiltroPrincipal(codigoModalFixacao, nomeModalFixacao)){
 
-				$(".historicoGrid").flexOptions({
+				$(".historicoGrid", fixacaoReparteController.wsp).flexOptions({
 					url: contextPath + "/distribuicao/fixacaoReparte/carregarGridHistoricoProduto",
 					dataType : 'json',
 					params: fixacaoReparteController.getDadosProdutoHistorico()
 				});
 
-				$(".historicoGrid").flexReload();
+				$(".historicoGrid", fixacaoReparteController.wsp).flexReload();
 				
 			}else{
 				exibirMensagem("WARNING", ["Por favor preencha os campos necessários!"]);
@@ -1057,19 +1064,19 @@ var fixacaoReparteController = $.extend(true, {
 		//Função que realiza a pesquisa que preenche os dados da grid historico produto
 		pesquisaHistoricoPorCota:function(){
 			
-			$(".historicoGrid").show();
+			$(".historicoGrid", fixacaoReparteController.wsp).show();
 			
 			if(fixacaoReparteController.validarFiltroPrincipal(codigoModalFixacao, nomeModalFixacao)){
 				
 				$.postJSON(contextPath + '/distribuicao/fixacaoReparte/validarTipoCota', {numeroCota:$(codigoModalFixacao).val()},
 						function(result){
 
-							$(".historicoGrid").flexOptions({
+							$(".historicoGrid", fixacaoReparteController.wsp).flexOptions({
 								url: contextPath + "/distribuicao/fixacaoReparte/carregarGridHistoricoCota",
 								dataType : 'json',
 								params: fixacaoReparteController.getDadosCotaHistorico()
 							});
-							$(".historicoGrid").flexReload();
+							$(".historicoGrid", fixacaoReparteController.wsp).flexReload();
 							
 						},
 						function(result){
@@ -1079,7 +1086,7 @@ var fixacaoReparteController = $.extend(true, {
 							$("#edicaoDestaque").text("");
 							$("#statusDestaque").text("");
 							
-							$(".historicoGrid").hide();
+							$(".historicoGrid", fixacaoReparteController.wsp).hide();
 						});
 				
 			}else{
@@ -1241,7 +1248,7 @@ var fixacaoReparteController = $.extend(true, {
 						$('#nomeModalFixacao').val('');
 						$("#edicaoDestaque").text("");
 						$("#statusDestaque").text("");
-						$(".historicoGrid").hide();
+						$(".historicoGrid", fixacaoReparteController.wsp).hide();
 					});
 				}		
 				,undefined);
