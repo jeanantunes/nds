@@ -96,7 +96,7 @@ public class HistoricoTitularidadeCota implements Serializable {
     /**
      * Flag indicando se a cota emite NFE
      */
-    @Column(name = "EXIGE_NFE")
+    @Column(name = "EXIGE_NF_E")
     private boolean exigeNfe;
     
     /**

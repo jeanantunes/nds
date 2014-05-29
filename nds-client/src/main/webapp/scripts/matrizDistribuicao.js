@@ -1828,5 +1828,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.esconderOpcoes();
 	};
+
 }
 //@ sourceURL=matrizDistribuicao.js

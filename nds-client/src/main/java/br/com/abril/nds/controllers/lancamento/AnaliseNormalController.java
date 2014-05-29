@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -44,6 +45,9 @@ public class AnaliseNormalController extends BaseController{
 
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private HttpSession session;
 	
 	public AnaliseNormalController(Result result) {
 		this.result = result;

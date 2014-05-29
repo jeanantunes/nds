@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import br.com.abril.nds.client.util.Constants;
 import br.com.abril.nds.controllers.devolucao.ConferenciaEncalheController;
+import br.com.abril.nds.controllers.distribuicao.AnaliseEstudoController;
 
 
 public class ControleSessionListener implements HttpSessionListener {
@@ -31,6 +32,8 @@ public class ControleSessionListener implements HttpSessionListener {
 		ServletContext context = session.getServletContext();
 		
 		removerTravaConferenciaCotaUsuario(context, session);
+		
+		removerTravaAnaliseEstudo(context);
 	}
 	
 	/**
@@ -63,6 +66,23 @@ public class ControleSessionListener implements HttpSessionListener {
 		ConferenciaEncalheController.removerTravaConferenciaCotaUsuario(
 			session.getServletContext(), autenticacaoUsuarioLogado, 
 				mapaCotaConferidaUsuario, mapaLoginNomeUsuario);
+	}
+	
+	/**
+	 * Remove a trava de análise de estudo por usuario. 
+	 * 
+	 * @param context
+	 */
+	private void removerTravaAnaliseEstudo(ServletContext context) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (authentication == null) {
+			
+			return;
+		}
+		
+		AnaliseEstudoController.desbloquearAnaliseEstudo(context, authentication.getName());
 	}
 
 }

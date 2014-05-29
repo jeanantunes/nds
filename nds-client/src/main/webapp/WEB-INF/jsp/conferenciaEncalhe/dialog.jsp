@@ -221,10 +221,10 @@
 	<p><strong>Insira os dados da Nota Fiscal</strong></p>
 	<table width="670" border="0" cellspacing="1" cellpadding="1">
 		<tr>
-			<td width="119">N&uacute;. Nota Fiscal:</td>
-		    <td width="321"><input isEdicao="true" type="text" id="numNotaFiscal" style="width:200px;" /></td>
+			<td width="119">N&uacute;m. Nota Fiscal:</td>
+		    <td width="321"><input isEdicao="true" type="text" id="numNotaFiscal" style="width:200px;" maxlength="10" /></td>
 		    <td width="106">S&eacute;rie:</td>
-		    <td width="111"><input isEdicao="true" type="text" id="serieNotaFiscal" style="width:80px;" /></td>
+		    <td width="111"><input isEdicao="true" type="text" id="serieNotaFiscal" style="width:80px;" maxlength="3" /></td>
   		</tr>
   		<tr>
 		    <td>Data:</td>

@@ -40,25 +40,26 @@ public class NotaFiscalTransportadorBuilder {
 			endereco = new NotaFiscalEndereco();
 		}
 		
-		if(transportadores == null || transportadores.isEmpty()){
+		if(transportadores == null || transportadores.isEmpty()) {
 			
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setDocumento("07348198000148");	
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setNome("Treelog");	
-			endereco.setBairro("Osasco");
-			endereco.setLogradouro("Kenkiti Shinomoto");
-			endereco.setCep("08250000");
-			endereco.setNumero("158");
-			endereco.setCodigoCidadeIBGE(3550308L);
-			endereco.setCidade("Sãp Paulo");
-			endereco.setCodigoPais(30L);
-			endereco.setCodigoUf(20L);
-			endereco.setComplemento("XXXX");
-			endereco.setPais("Brasil");
-			endereco.setTipoLogradouro("Rua");
-			endereco.setUf("SP");
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setDocumento("");	
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setNome("");	
+			endereco.setBairro("");
+			endereco.setLogradouro("");
+			endereco.setCep("");
+			endereco.setNumero("");
+			endereco.setCodigoCidadeIBGE(0L);
+			endereco.setCidade("");
+			endereco.setCodigoPais(0L);
+			endereco.setCodigoUf(0L);
+			endereco.setComplemento("");
+			endereco.setPais("");
+			endereco.setTipoLogradouro("");
+			endereco.setUf("");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setEndereco(endereco);
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(1);
-		}else{
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(0);
+		} else {
+			
 			for (Transportador transportador : transportadores) {
 				
 				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setDocumento(transportador.getPessoaJuridica().getCnpj());	
