@@ -419,10 +419,11 @@ public class MixCotaProdutoRepositoryImpl extends
 		
 	
 		@Override
-		public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long produtoId) {
+		public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long classificaoProdutoId, String codICD) {
 			return (MixCotaProduto) getSession().createCriteria(MixCotaProduto.class)
 			.add(Restrictions.eq("cota.id", cotaId))
-			.add(Restrictions.eq("produto.id", produtoId))
+			.add(Restrictions.eq("tipoClassificacaoProduto.id", classificaoProdutoId))
+			.add(Restrictions.eq("codigoICD", codICD))
 			.uniqueResult();
 		}
 		
@@ -448,11 +449,6 @@ public class MixCotaProdutoRepositoryImpl extends
 		public MixCotaProduto obterMixPorCotaICDCLassificacao(Long cotaid,	String codigoICD, String classificacaoProduto) {
 			StringBuilder hql = new StringBuilder();
 			
-			/*hql.append(" select " ).
-					append("").
-					append("from mix_cota_produto m left join tipo_classificacao_produto on m.TIPO_CLASSIFICACAO_PRODUTO_ID = tipo_classificacao_produto.ID")
-			.append(" where m.ID_COTA= :cotaid and m.CODIGO_ICD= :codigoICD and tipo_classificacao_produto.DESCRICAO= :classificacaoProduto");*/
-
 			hql.append("select mcp from MixCotaProduto mcp left join mcp.cota left join mcp.tipoClassificacaoProduto ")
 			.append(" where mcp.cota.id = :cotaid and mcp.codigoICD= :codigoICD and mcp.tipoClassificacaoProduto.descricao= :classificacaoProduto");
 			
@@ -461,15 +457,9 @@ public class MixCotaProdutoRepositoryImpl extends
 			query.setParameter("cotaid", cotaid);
 			query.setParameter("codigoICD", codigoICD);
 			query.setParameter("classificacaoProduto", classificacaoProduto);
-//			query.setResultTransformer(new AliasToBeanResultTransformer(MixCotaProduto.class));
 			
 			MixCotaProduto uniqueResult = (MixCotaProduto)query.uniqueResult();
 			return uniqueResult;
-			/*return (MixCotaProduto) getSession().createCriteria(MixCotaProduto.class)
-					.add(Restrictions.eq("cota.id", cotaid))
-					.add(Restrictions.eq("codigoICD", codigoICD))
-					.add(Restrictions.eq("tipoClassificacaoProduto.descricao", classificacaoProduto))
-					.uniqueResult();*/
 		}
 		
 		

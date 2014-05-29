@@ -19,6 +19,7 @@ import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.DetalheInterfaceVO;
 import br.com.abril.nds.client.vo.DetalheProcessamentoVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.CodigoDistribuidorDTO;
 import br.com.abril.nds.dto.InterfaceDTO;
 import br.com.abril.nds.dto.ProcessoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheInterfaceDTO;
@@ -85,6 +86,10 @@ public class PainelProcessamentoController extends BaseController {
     @Path("/")
     public void index() {
         
+    	String codigoDinap = this.distribuidorService.codigoDistribuidorDinap();
+        String codigoFC = this.distribuidorService.codigoDistribuidorFC();
+        
+        this.result.include("codigoDistribuidor", new CodigoDistribuidorDTO(codigoDinap, codigoFC));
     }
     
     /**
@@ -167,9 +172,9 @@ public class PainelProcessamentoController extends BaseController {
      * @throws Exception
      */
     @Path("/pesquisarInterfaces")
-    public void pesquisarInterfaces(final String sortname, final String sortorder, final int rp, final int page) throws Exception {
+    public void pesquisarInterfaces(final String codigoDistribuidor, final String sortname, final String sortorder, final int rp, final int page) throws Exception {
         
-        final FiltroInterfacesDTO filtro = carregarFiltroInterfaces(sortorder, sortname, page, rp);
+        final FiltroInterfacesDTO filtro = carregarFiltroInterfaces(codigoDistribuidor, sortorder, sortname, page, rp);
         
         final List<InterfaceDTO> resultado = painelProcessamentoService.listarInterfaces(filtro);
         
@@ -449,9 +454,10 @@ public class PainelProcessamentoController extends BaseController {
      * @param dataDe
      * @return
      */
-    private FiltroInterfacesDTO carregarFiltroInterfaces(final String sortorder, final String sortname, final int page, final int rp) {
+    private FiltroInterfacesDTO carregarFiltroInterfaces(final String codigoDistribuidor, final String sortorder, final String sortname, final int page, final int rp) {
         
         final FiltroInterfacesDTO filtro = new FiltroInterfacesDTO();
+        filtro.setCodigoDistribuidor(codigoDistribuidor);
         
         this.configurarPaginacaoInterfaces(filtro, sortorder, sortname, page, rp);
         

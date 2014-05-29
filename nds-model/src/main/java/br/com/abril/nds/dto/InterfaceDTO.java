@@ -16,25 +16,24 @@ public class InterfaceDTO implements Serializable {
 	
 	private Long idLogExecucao;
 	
-	@Export(label="Interface")
 	private String nome;
 	
-	@Export(label="Arquivo")
+	@Export(label="Arquivo", exhibitionOrder=2)
 	private String nomeArquivo;
 	
-	@Export(label="Extensao")
+	@Export(label="Extensao", exhibitionOrder=3)
 	private String extensaoArquivo;
-	
-	@Export(label="Descricao")
+
+	@Export(label="Interface", exhibitionOrder=1, widthPercent=40)
 	private String descricaoInterface;
 	
-	@Export(label="Status")
+	@Export(label="Status", exhibitionOrder=4)
 	private String status;
 	
-	@Export(label="Data Processamento")
+	@Export(label="Data Processamento",exhibitionOrder=5)
 	private String dataProcessmento;
 	
-	@Export(label="Hora Processamento")
+	@Export(label="Hora Processamento",exhibitionOrder=6)
 	private String horaProcessamento;
 
 	public String getNome() {
