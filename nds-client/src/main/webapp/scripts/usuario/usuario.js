@@ -54,7 +54,7 @@ var usuarioController = $.extend(true, {
 	
 	    popupConfirmaSenha : function(usuarioSupervisorCallback, usuarioNaoSupervisorCallback) {
 	    	var _this = this;
-	    	var manterLinha = false;
+	    	var validarClose = false;
 	    	
 	    	var $dialog = $('#dialog-confirmacao-senha');
 	        $dialog.dialog({
@@ -73,7 +73,7 @@ var usuarioController = $.extend(true, {
 						_this.verificarSenhaUsuarioSupervisor({
 							usuarioSupervisorCallback: function(result) {
 								usuarioSupervisorCallback(result);
-								manterLinha = true;
+								validarClose = true;
 								$dialog.dialog("close");
 							},
 							
@@ -93,7 +93,7 @@ var usuarioController = $.extend(true, {
 							usuarioNaoSupervisorCallback();
 							$dialog.dialog("close");
 						}else{
-							$(this).dialog("close");
+							$dialog.dialog("close");
 						}
 	                }
 				},
@@ -103,8 +103,14 @@ var usuarioController = $.extend(true, {
 				},
 				
 				beforeClose: function(){
-					if(!manterLinha){
-						usuarioNaoSupervisorCallback();
+					if(!validarClose){
+						if(usuarioNaoSupervisorCallback){
+							usuarioNaoSupervisorCallback();
+							validarClose = true;
+							$dialog.dialog("close");
+						}else{
+							$dialog.dialog("close");
+						}
 					}
 				}
 			});

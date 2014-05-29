@@ -20,7 +20,7 @@ public interface AnaliseParcialService {
 
 	EstudoCotaGerado buscarPorId(Long id);
 	List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO);
-	void atualizaClassificacaoCota(Long estudoId, Long numeroCota);
+	void atualizaClassificacaoCota(Long estudoId, Long numeroCota, String classificacaoCota);
 	void atualizaReparte(Long estudoId, Long numeroCota, Long reparte, Long reparteDigitado);
 	void liberar(Long id, List<CotaLiberacaoEstudo> cotas);
 	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId);
@@ -43,5 +43,7 @@ public interface AnaliseParcialService {
     List<EstudoCotaGerado> obterEstudosCotaGerado(Long id);
     
     BigDecimal reparteFisicoOuPrevistoLancamento (Long idEstudo);
+    
+	void atualizarFixacaoOuMix(Long estudoId, Long numeroCota, Long reparteDigitado, String legendaCota);
 
 }
