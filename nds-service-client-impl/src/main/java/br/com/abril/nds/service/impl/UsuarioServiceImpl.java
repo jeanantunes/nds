@@ -80,11 +80,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 		return false;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<GrupoPermissao> buscarGrupoPermissoes(Long codigoUsuario) {
 		return new ArrayList(usuarioRepository.buscarPorId(codigoUsuario).getGruposPermissoes());
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<Permissao> buscarPermissoes(Long codigoUsuario) {
 		return new ArrayList(usuarioRepository.buscarPorId(codigoUsuario).getPermissoes());
@@ -169,6 +171,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     private String getCurrentUserName() {
         String loginUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
         return loginUsuario;
+    }
+    
+    @Transactional(readOnly = true)
+    public String obterNomeUsuarioPorLogin(String login) {
+    	
+    	return this.usuarioRepository.getNomeUsuarioPorLogin(login);
     }
 
 }
