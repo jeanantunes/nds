@@ -259,7 +259,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteração do REPARTE PROMOCIONAL"
 								+ " de " + lancamento.getRepartePromocional() 
-								+ "para " + repartePromocional
+								+ " para " + repartePromocional
 								+ " Produto "+codigoProduto
 								+ " Edição " + edicao);
 				lancamento.setRepartePromocional(repartePromocional);
