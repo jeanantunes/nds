@@ -628,6 +628,7 @@ var ConferenciaEncalhe = $.extend(true, {
 						}
 						
 						ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
+						ConferenciaEncalhe.limparNotaFiscal();
 						
 					} else if(result.tipoMensagem == 'WARNING') {
 						
@@ -1034,13 +1035,12 @@ var ConferenciaEncalhe = $.extend(true, {
 					innerTable +=
 						'<td style="text-align: center;"><input isEdicao="true" id="precoCapaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" maxlength="255" style="width:50px; text-align: right;" value="' + parseFloat(value.precoCapaInformado).toFixed(2) + '"/></td>';
 					
-					innerTable += "<td style='text-align: right;'>" + parseFloat(value.precoComDesconto).toFixed(2) + "</td>";
+					innerTable += "<td style='text-align: right;'>" + parseFloat(value.precoComDesconto).toFixed(4) + "</td>";
 					
-					innerTable += "<td style='text-align: right;' id='valorTotalConferenciaFinalizar_" + index + "'>" + parseFloat(value.valorTotal).toFixed(2) + "</td>";
+					innerTable += "<td style='text-align: right;' id='valorTotalConferenciaFinalizar_" + index + "'>" + parseFloat(value.valorTotal).toFixed(4) + "</td>";
 					
 					var imgExclusao = '<img src="' + contextPath + '/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />';
-					innerTable += '<td style="text-align: center;"><a isEdicao="true" href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.idConferenciaEncalhe + ');">' + imgExclusao + '</a></td>';
-					
+					innerTable += '<td style="text-align: center;"><a isEdicao="true" href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.idConferenciaEncalhe + ');">' + imgExclusao + '</a></td>';					
 					innerTable += "</tr>";
 					
 					$(innerTable).appendTo("#dadosGridConferenciaEncalheFinalizar", ConferenciaEncalhe.workspace);
@@ -1141,7 +1141,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#somatorioQtdInformada", ConferenciaEncalhe.workspace).text(parseInt(result.qtdInformada));
 		$("#somatorioQtdRecebida", ConferenciaEncalhe.workspace).text(parseInt(result.qtdRecebida));
-		$("#somatorioTotal", ConferenciaEncalhe.workspace).text(parseFloat(result.valorPagar).toFixed(2));
+		$("#somatorioTotal", ConferenciaEncalhe.workspace).text(parseFloat(result.valorTotalNota).toFixed(2));
 	},
 	
 	atualizarValoresGridInteira : function(executarPosAtualizacaoGrid) {

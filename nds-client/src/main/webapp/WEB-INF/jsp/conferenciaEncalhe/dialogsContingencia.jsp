@@ -208,8 +208,7 @@
 <div id="dialog-reabertura" title="Reabertura" style="display: none;">
 	<fieldset style="width: 310px;">
 		<legend>Nota Fiscal</legend>
-	    <p>Já existe conferencia de encalhe para esta cota.<br/>
-	    Efetuar reabertura?</p>
+	    <p>Já existe conferencia de encalhe para esta cota.<br/> Efetuar reabertura?</p>
 	</fieldset>
 </div>
 </form>
