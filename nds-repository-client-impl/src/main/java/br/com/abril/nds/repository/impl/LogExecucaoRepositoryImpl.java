@@ -54,6 +54,8 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 				.addScalar("idInterface", StandardBasicTypes.LONG)
 				.setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class));
 
+		query.setParameter("codigoDistribuidor", filtro.getCodigoDistribuidor());
+		
 		if(filtro.getPaginacao()!=null) {
 			
 			if(filtro.getPaginacao().getPosicaoInicial() != null) {
@@ -73,6 +75,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	public BigInteger obterTotalInterfaces(FiltroInterfacesDTO filtro) {
 		String sql = getConsultaObterInterfaces(new Date(), filtro, true);
 		Query query = (Query) getSession().createSQLQuery(sql.toString());
+		query.setParameter("codigoDistribuidor", filtro.getCodigoDistribuidor());
 		return (BigInteger) query.uniqueResult();
 	}
 	
@@ -95,9 +98,10 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		sql.append("else 3 end as ordenacao, ");
 		sql.append(" ie.id as idInterface ");
 		sql.append(" from interface_execucao ie ");
-		sql.append(" left join log_execucao le on le.id = (select MAX(lei.id) as id from log_execucao lei where lei.interface_execucao_id = ie.id) ");
+		sql.append(" left join log_execucao le on le.INTERFACE_EXECUCAO_ID=ie.ID ");
 		sql.append(" left join log_execucao_mensagem lem on le.id = lem.log_execucao_id ");
 		sql.append(" where descricao not like '%MDC%' ");
+		sql.append(" and (le.COD_DISTRIBUIDOR is null or le.COD_DISTRIBUIDOR = :codigoDistribuidor) ");		
 		sql.append(" group by ie.id ");
 
 		if (filtro.getOrdenacaoColuna() != null) {
