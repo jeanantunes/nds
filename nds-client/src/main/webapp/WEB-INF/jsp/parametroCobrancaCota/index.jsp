@@ -34,7 +34,7 @@ $(function(){
 	visibility: hidden;
 }
 
-.parametroCobrancaFileField, .form-suspensao-hidden-class {
+.parametroCobrancaFileField, .form-suspensao-hidden-class2 {
 	display: none;
 }
 
@@ -248,20 +248,20 @@ $(function(){
 			
 					<tr>
 						<td width="126" style="width: 114px; ">Sugere Suspensão:</td>
-						<td width="24"><input id="sugereSuspensao"
-							name="sugereSuspensao" type="checkbox" value="" onclick="parametroCobrancaCotaController.exibe_form_suspencao(this.checked);" /></td>
+						<td width="24"><input id="sugereSuspensaoCota"
+							name="sugereSuspensaoCota" type="checkbox" value="" onclick="parametroCobrancaCotaController.exibe_form_suspencao(this.checked);" /></td>
 						<td colspan="3">
 							<div class="form-suspensao-hidden2-class">
 								<table width="100%" border="0" cellspacing="0" cellpadding="0">
 									<tr>
 										<td width="31%" style="width: 171px; ">Qtde de dividas em aberto:</td>
 										<td width="13%"><input maxlength="15" type="text"
-											name="qtdDividasAberto" id="qtdDividasAberto"
+											name="qtdDividasAbertoCota" id="qtdDividasAbertoCota"
 											style="width: 60px;" /></td>
 										<td width="8%">ou</td>
 										<td width="6%">R$:</td>
 										<td width="42%"><input maxlength="15" type="text"
-											name="vrDividasAberto" id="vrDividasAberto"
+											name="vrDividasAbertoCota" id="vrDividasAbertoCota"
 											style="width: 60px;" /></td>
 									</tr>
 								</table>

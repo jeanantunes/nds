@@ -3,8 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
-import br.com.abril.nds.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +12,19 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
+import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.FixacaoRepartePdvRepository;
+import br.com.abril.nds.repository.FixacaoReparteRepository;
+import br.com.abril.nds.repository.MixCotaProdutoRepository;
+import br.com.abril.nds.repository.PdvRepository;
+import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.repository.RepartePDVRepository;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
+import br.com.abril.nds.service.UsuarioService;
 
 @Service
 public class RepartePdvServiceImpl implements RepartePdvService{
@@ -44,6 +52,9 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 	
 	@Autowired
 	private PdvRepository pdvRepository;
+	
+	@Autowired
+	private UsuarioService usuarioService;
 
 	@Transactional
 	@Override
@@ -63,19 +74,25 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 	@Override
 	@Transactional
 	public void salvarRepartesPDVMix(List<RepartePDVDTO> listaRepartes, String codProduto, Long idMix) {
+		
 		int soma = 0;
 		Produto produto= this.produtoService.obterProdutoPorCodigo(codProduto);
 		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(idMix);
+		Usuario usuarioLogado = usuarioService.getUsuarioLogado();
 		PDV pdv = null;
 		
 		for (RepartePDVDTO repartePDVDTO : listaRepartes) {
+			
 			if(repartePDVDTO.getCodigoPdv() !=null){
 				pdv= pdvRepository.buscarPorId(repartePDVDTO.getCodigoPdv());
 			}
+			
 			RepartePDV repartePDV =  repartePDVRepository.obterRepartePdvMix(idMix, produto.getId(), pdv.getId());
+			
 			if(repartePDV == null){
 				repartePDV = new RepartePDV();
 			}	
+			
 			repartePDV.setMixCotaProduto(mixCotaProduto);
 			repartePDV.setPdv(pdv);
 			repartePDV.setReparte(repartePDVDTO.getReparte().intValue());
@@ -85,9 +102,17 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 			repartePDVRepository.merge(repartePDV);
 		}
 
-		mixCotaProduto.setReparteMinimo(Long.valueOf(soma));
-		mixCotaProduto.setReparteMaximo(Long.valueOf(soma));
+		if(soma > mixCotaProduto.getReparteMaximo()){
+			mixCotaProduto.setReparteMaximo(Long.valueOf(soma));
+		}else{ 
+			if(soma < mixCotaProduto.getReparteMinimo()){
+				mixCotaProduto.setReparteMinimo(Long.valueOf(soma));
+			}
+		}
+		
         mixCotaProduto.setDataHora(new Date());
+        mixCotaProduto.setUsuario(usuarioLogado);
+        
         mixCotaProdutoRepository.alterar(mixCotaProduto);
 	}
 
@@ -97,6 +122,7 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 		int soma = 0;
 		FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorId(idFixacao);
 		fixacaoReparte.setManterFixa(manterFixa);
+		Usuario usuarioLogado = usuarioService.getUsuarioLogado();
 		PDV pdv = null;
 		
 		for (RepartePDVDTO repartePDVDTO : listaRepartes) {
@@ -118,6 +144,7 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 		}
 		fixacaoReparte.setDataHora(new Date());
 		fixacaoReparte.setQtdeExemplares(soma);
+		fixacaoReparte.setUsuario(usuarioLogado);
 		fixacaoReparteRepository.alterar(fixacaoReparte);
 	}
 }
