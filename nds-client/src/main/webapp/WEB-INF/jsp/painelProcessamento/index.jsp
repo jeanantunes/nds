@@ -3,6 +3,10 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/painelProcessamento.js"></script>
 <script type="text/javascript">
 	$(function() {
+		$("#toggleFornecedores").buttonset();
+		$("input[name='radioToggle']").click(function() {
+			painelProcessamentoController.pesquisarInterfaces();
+		});
 		painelProcessamentoController.init("${pageContext.request.contextPath}");
 	});
 </script>
@@ -64,8 +68,18 @@
 	  	</div>
 	  </div>
 	  <div class="linha_separa_fields">&nbsp;</div>
+
       <fieldset class="fieldFiltro">
        	  <legend>Painel de Processamentos</legend>
+		<div id="toggleFornecedores">
+
+		  <input type="radio" id="visao-dinap" name="radioToggle" value="${codigoDistribuidor.dinap}" checked="checked">
+		  <label for="visao-dinap" style="width:100px">DINAP</label>
+		
+		  <input type="radio" id="visao-fc" name="radioToggle" value="${codigoDistribuidor.fc}">
+		  <label for="visao-fc" style="width:100px">FC</label>
+		
+		</div>
           <div class="grids" style="display:block;">
         	<div id="tabPainel">
                 <div id="tabPainel-Interfaces">
@@ -95,7 +109,6 @@
                       </tr>
                       </table>
                       <br clear="all"/>
-                	<table class="painelProcessamentoGrid"></table>
                 </div>                
             </div>
         </div>

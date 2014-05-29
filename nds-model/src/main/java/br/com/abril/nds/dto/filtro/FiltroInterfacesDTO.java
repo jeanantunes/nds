@@ -9,6 +9,7 @@ public class FiltroInterfacesDTO extends FiltroDTO implements Serializable {
 
 	private static final long serialVersionUID = 6820210049063162567L;
 	
+	private String codigoDistribuidor;
 	private OrdenacaoColunaConsulta ordenacaoColuna;
 	
 	public enum OrdenacaoColunaConsulta {
@@ -29,6 +30,14 @@ public class FiltroInterfacesDTO extends FiltroDTO implements Serializable {
 		public String toString() {
 			return this.nomeColuna;
 		}
+	}
+
+	public String getCodigoDistribuidor() {
+		return codigoDistribuidor;
+	}
+
+	public void setCodigoDistribuidor(String codigoDistribuidor) {
+		this.codigoDistribuidor = codigoDistribuidor;
 	}
 
 	public OrdenacaoColunaConsulta getOrdenacaoColuna() {

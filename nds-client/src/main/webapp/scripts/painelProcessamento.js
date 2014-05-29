@@ -4,7 +4,6 @@ var painelProcessamentoController = $.extend(true, {
 		this.initGridDetalheInterfaceGrid();
 		this.initGridDetalheProcessamentoGrid();
 		this.initGridPainelInterfaceGrid();
-		this.initGridPainelProcessamentoGrid();
 		this.pesquisarInterfaces();
 		this.bindButtonsInterfaces();
 	},
@@ -72,45 +71,6 @@ var painelProcessamentoController = $.extend(true, {
 			showTableToggleBtn : true,			
 			width : 700,
 			height : 200
-		});
-	},
-	initGridPainelProcessamentoGrid : function() {
-		$(".painelProcessamentoGrid", painelProcessamentoController.workspace).flexigrid({
-			preProcess : painelProcessamentoController.executarPreProcessamentoGrid,
-			dataType : 'json',
-			colModel : [ {
-				display : 'Processos',
-				name : 'nome',
-				width : 539,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Status',
-				name : 'status',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Data Processamento',
-				name : 'dataProcessmento',
-				width : 130,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Hora Processamento',
-				name : 'horaProcessamento',
-				width : 130,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "nome",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 920,
-			height : 'auto'
 		});
 	},
 	initGridPainelInterfaceGrid : function() {
@@ -217,21 +177,13 @@ var painelProcessamentoController = $.extend(true, {
 	},
 	pesquisarInterfaces : function() {
 		painelProcessamentoController.bindButtonsInterfaces();
+		var codigoDistribuidor = $("#toggleFornecedores :radio:checked").val();
 		$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
 			url : contextPath + '/administracao/painelProcessamento/pesquisarInterfaces',
-			params: [],
+			params: [{name: 'codigoDistribuidor', value: codigoDistribuidor}],
 			newp: 1,
 		});
 		$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
-	},
-	pesquisarProcessos : function() {
-		painelProcessamentoController.bindButtonsProcessos();
-		$(".painelProcessamentoGrid", painelProcessamentoController.workspace).flexOptions({
-			url : contextPath + '/administracao/painelProcessamento/pesquisarProcessos',
-			params: [],
-			newp : 1,
-		});
-		$(".painelProcessamentoGrid", painelProcessamentoController.workspace).flexReload();
 	},
 	executarPreProcessamentoInterfaceGrid : function(resultado) {
 		
