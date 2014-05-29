@@ -1065,17 +1065,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 						innerTable += "<td></td>";
 					}
 					
-					innerTable +=
-						'<td style="text-align: center"><input id="qtdeInformadaFinalizarConf_'+ index +'" onchange="ConferenciaEncalheCont.recalcularValoresFinalizar('+ index +');" type="text" maxlength="255" style="width:50px; text-align: center;" value="' + parseInt(value.qtdInformada) + '"/></td>';
+					innerTable += '<td style="text-align: center"><input id="qtdeInformadaFinalizarConf_'+ index +'" onchange="ConferenciaEncalheCont.recalcularValoresFinalizar('+ index +');" type="text" maxlength="255" style="width:50px; text-align: center;" value="' + parseInt(value.qtdInformada) + '"/></td>';
 					
 					innerTable += "<td style='text-align: center;'>" + (value.qtdExemplar ? parseInt(value.qtdExemplar) : "0") + "</td>";
 				
-					innerTable +=
-						'<td style="text-align: center;"><input id="precoCapaFinalizarConf_'+ index +'" onchange="ConferenciaEncalheCont.recalcularValoresFinalizar('+ index +');" maxlength="255" style="width:50px; text-align: right;" value="' + parseFloat(value.precoCapaInformado).toFixed(2) + '"/></td>';
+					innerTable += '<td style="text-align: center;"><input id="precoCapaFinalizarConf_'+ index +'" onchange="ConferenciaEncalheCont.recalcularValoresFinalizar('+ index +');" maxlength="255" style="width:50px; text-align: right;" value="' + parseFloat(value.precoCapaInformado).toFixed(2) + '"/></td>';
 					
-					innerTable += "<td style='text-align: right;'>" + parseFloat(value.desconto).toFixed(4) + "</td>";
+					innerTable += "<td style='text-align: right;'>" + parseFloat(value.precoComDesconto).toFixed(4) + "</td>";
 					
-					innerTable += "<td style='text-align: right;' id='valorTotalConferenciaFinalizar_" + index + "'>" + parseFloat(value.valorTotal).toFixed(2) + "</td>";
+					innerTable += "<td style='text-align: right;' id='valorTotalConferenciaFinalizar_" + index + "'>" + parseFloat(value.valorTotal).toFixed(4) + "</td>";
 					
 					var imgExclusao = '<img src="' + contextPath + '/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />';
 					innerTable += '<td style="text-align: center;"><a href="javascript:;" onclick="ConferenciaEncalheCont.excluirConferencia(' + value.idConferenciaEncalhe + ');">' + imgExclusao + '</a></td>';
@@ -1285,7 +1283,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$("#somatorioQtdInformada", ConferenciaEncalheCont.workspace).text(parseInt(result.qtdInformada));
 		$("#somatorioQtdRecebida", ConferenciaEncalheCont.workspace).text(parseInt(result.qtdRecebida));
-		$("#somatorioTotal", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
+		$("#somatorioTotal", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorTotalNota).toFixed(2));
 		
 		bloquearItensEdicao(ConferenciaEncalheCont.workspace);
 	},
