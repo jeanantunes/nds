@@ -1,11 +1,8 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.math.BigInteger;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,8 +56,6 @@ public class AnaliseEstudoController extends BaseController {
 	private ProdutoService produtoService;
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroEstudo";
-	
-	public static final String MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE = "mapa_analise_estudo";
 
 	public AnaliseEstudoController(Result result) {
 		this.result = result;
@@ -174,73 +169,14 @@ public class AnaliseEstudoController extends BaseController {
 		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Este estudo não pode ser analisado por problemas com os dados deste produto"));
 		}
 	}
-	
-	@SuppressWarnings("unchecked")
-	public static void bloquearAnaliseEstudo(Long idProdutoEdicao, 
-											 HttpSession session, 
-											 String loginUsuario,
-											 String nomeUsuario) {
-		
-		if (idProdutoEdicao == null) {
-			
-			throw new ValidacaoException(
-				new ValidacaoVO(TipoMensagem.WARNING, "Estudo inválido!"));
-		}
-		
-		Map<Long, String> mapaAnaliseEstudo = 
-			(Map<Long, String>) session.getServletContext().getAttribute(
-				MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
-		
-		if (mapaAnaliseEstudo != null) {
-			
-			String loginUsuarioBloqueio = mapaAnaliseEstudo.get(idProdutoEdicao);
-			
-			if (loginUsuarioBloqueio != null
-					&& !loginUsuarioBloqueio.equals(loginUsuario)) {
-				
-				throw new ValidacaoException(
-					new ValidacaoVO(TipoMensagem.WARNING, 
-						"Este estudo já está sendo analisado pelo usuário [" + nomeUsuario + "]."));
-			}
-		} else {
-		
-			mapaAnaliseEstudo = new HashMap<Long, String>();
-		}
-		
-		mapaAnaliseEstudo.put(idProdutoEdicao, loginUsuario);
-		
-		session.getServletContext().setAttribute(
-			MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE, mapaAnaliseEstudo);
-	}
-	
+
 	@Post
 	public void desbloquear() {
 		
-		desbloquearAnaliseEstudo(
+		HistogramaPosEstudoController.desbloquearAnaliseEstudo(
 			this.session.getServletContext(), super.getUsuarioLogado().getLogin());
 		
 		this.result.use(Results.json()).from("").serialize();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static void desbloquearAnaliseEstudo(ServletContext servletContext, String loginUsuario) {
-
-		Map<Long, String> mapaAnaliseEstudo = 
-			(Map<Long, String>) servletContext.getAttribute(
-				MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
-		
-		if (mapaAnaliseEstudo != null) {
-			
-			for (Map.Entry<Long, String> entry : mapaAnaliseEstudo.entrySet()) {
-				
-				if (entry.getValue().equals(loginUsuario)) {
-					
-					mapaAnaliseEstudo.remove(entry.getKey());
-					
-					break;
-				}
-			}
-		}
 	}
 	
 }

@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import br.com.abril.nds.client.util.Constants;
 import br.com.abril.nds.controllers.devolucao.ConferenciaEncalheController;
-import br.com.abril.nds.controllers.distribuicao.AnaliseEstudoController;
+import br.com.abril.nds.controllers.distribuicao.HistogramaPosEstudoController;
 
 
 public class ControleSessionListener implements HttpSessionListener {
@@ -82,7 +82,7 @@ public class ControleSessionListener implements HttpSessionListener {
 			return;
 		}
 		
-		AnaliseEstudoController.desbloquearAnaliseEstudo(context, authentication.getName());
+		HistogramaPosEstudoController.desbloquearAnaliseEstudo(context, authentication.getName());
 	}
 
 }
