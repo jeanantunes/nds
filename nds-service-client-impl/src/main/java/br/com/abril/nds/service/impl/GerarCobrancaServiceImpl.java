@@ -1405,6 +1405,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				case RESGATE_CAUCAO_LIQUIDA:
 				case VENDA_TOTAL:
 				case NEGOCIACAO_COMISSAO:
+				case DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR:
+				case DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR:	
 					
 					vlMovFinanDebitoCredito = this.adicionarValor(vlMovFinanDebitoCredito, movimentoFinanceiroCota);
 					

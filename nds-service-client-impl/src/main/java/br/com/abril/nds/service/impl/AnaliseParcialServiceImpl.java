@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +39,7 @@ import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
@@ -50,6 +52,7 @@ import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
+import br.com.abril.nds.service.UsuarioService;
 
 @Service
 public class AnaliseParcialServiceImpl implements AnaliseParcialService {
@@ -89,6 +92,9 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     
     @Autowired
     private EstudoGeradoRepository estudoGerado;
+    
+    @Autowired 
+    private UsuarioService usuarioService;
     
     
     private Map<String, String> mapClassificacaoCota;
@@ -237,8 +243,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     @Override
     @Transactional
-    public void atualizaClassificacaoCota(Long estudoId, Long numeroCota) {
-	analiseParcialRepository.atualizaClassificacaoCota(estudoId, numeroCota);
+    public void atualizaClassificacaoCota(Long estudoId, Long numeroCota, String classificacaoCota) {
+	analiseParcialRepository.atualizaClassificacaoCota(estudoId, numeroCota, classificacaoCota);
     }
     
     @Override
@@ -356,7 +362,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 repartePDVDTOs.add(repartePDVDTO);
             }
             Produto produto = estudo.getProdutoEdicao().getProduto();
-            MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaProduto(cota.getId(), produto.getId());
+            MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaProduto(cota.getId(), estudo.getProdutoEdicao().getTipoClassificacaoProduto().getId(), estudo.getProdutoEdicao().getProduto().getCodigoICD());
             repartePdvService.salvarRepartesPDVMix(repartePDVDTOs, produto.getCodigo(), mixCotaProduto.getId());
         }
     }
@@ -441,5 +447,46 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 	@Transactional
 	public BigDecimal reparteFisicoOuPrevistoLancamento(Long idEstudo) {
 		return estudoGerado.reparteFisicoOuPrevistoLancamento(idEstudo);
+	}
+
+	@Override
+	@Transactional
+	public void atualizarFixacaoOuMix(Long estudoId, Long numeroCota, Long reparteDigitado, String LegendaCota) {
+		
+        EstudoGerado estudo = estudoGeradoRepository.buscarPorId(estudoId);
+        Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota.intValue());
+        Produto produto = estudo.getProdutoEdicao().getProduto();
+        Usuario usuarioLogado = usuarioService.getUsuarioLogado();
+
+        
+        if(LegendaCota.equalsIgnoreCase("FX")){
+
+        	FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCotaClassificacao(cota, produto.getCodigoICD(), estudo.getProdutoEdicao().getTipoClassificacaoProduto());
+        	
+        	fixacaoReparte.setQtdeExemplares(reparteDigitado.intValue());
+        	fixacaoReparte.setUsuario(usuarioLogado);
+        	fixacaoReparte.setDataHora(new Date());
+        	
+        	fixacaoReparteRepository.alterar(fixacaoReparte);
+        	
+        }else{
+        	
+        	MixCotaProduto mix =  mixCotaProdutoRepository.obterMixPorCotaICDCLassificacao(cota.getId(), produto.getCodigoICD(), estudo.getProdutoEdicao().getTipoClassificacaoProduto().getDescricao());
+        	
+        	if(reparteDigitado > mix.getReparteMaximo()){
+    			mix.setReparteMaximo(Long.valueOf(reparteDigitado));
+    		}else{ 
+    			if(reparteDigitado < mix.getReparteMinimo()){
+    				mix.setReparteMinimo(Long.valueOf(reparteDigitado));
+    			}
+    		}
+        	
+        	mix.setUsuario(usuarioLogado);
+        	mix.setDataHora(new Date());
+        	
+        	mixCotaProdutoRepository.alterar(mix);
+        	
+        }
+        
 	}
 }

@@ -31,6 +31,9 @@ function filtroPorCotaFixacao(){
 	$("#codigoProdutoFixacao").val("");
 	$("#nomeProdutoFixacao").val("");
 	
+	$("#fixReparte_divBotoesPorProduto").hide();
+	$("#fixReparte_divBotoesPorCota").show();
+	
 	//$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoCota");
 	//$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoCota");
 	
@@ -42,6 +45,9 @@ function filtroPorProdutoFixacao(){
 	$('#fixacaoReparte_porCota').hide();
 	$("#codigoCotaFixacao").val("");
 	$("#nomeCotaFixacao").val("");
+	
+	$("#fixReparte_divBotoesPorProduto").show();
+	$("#fixReparte_divBotoesPorCota").hide();
 	
 	//$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoProduto");
 	//$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoProduto");
@@ -167,7 +173,7 @@ function mostraIntervalo(){
 
 <div class="areaBts">
 		<div class="area">
-			<div class="porExcessao" style="display:none">
+			<div class="porExcessao" id="fixReparte_divBotoesPorProduto" style="display:none">
 				<span class="bt_novos" id="btNovoProduto">
 					<a href="javascript:;" rel="tipsy" title="Incluir Novo">
 						<img src="images/ico_salvar.gif" hspace="5" border="0" />
@@ -194,7 +200,7 @@ function mostraIntervalo(){
 					</a>
 				</span>
 			</div>
-			<div class="porCota" style="display:none;">
+			<div class="porCota" id="fixReparte_divBotoesPorCota" style="display:none;">
 				<span class="bt_novos" id="btNovoCota">
 					<a href="javascript:;" rel="tipsy" title="Incluir Novo">
 						<img src="images/ico_salvar.gif" hspace="5" border="0" />

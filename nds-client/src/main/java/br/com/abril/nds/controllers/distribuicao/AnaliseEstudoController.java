@@ -156,13 +156,27 @@ public class AnaliseEstudoController extends BaseController {
 	}
 	
 	@Post
-	public void obterMatrizDistribuicaoPorEstudo(BigInteger id){
+	public void obterMatrizDistribuicaoPorEstudo(BigInteger id) {
+		
 		ProdutoDistribuicaoVO produtoDistribuicaoVO = matrizDistribuicaoService.obterMatrizDistribuicaoPorEstudo(id);
 		
 		if (produtoDistribuicaoVO != null) {
+			
 		    result.use(Results.json()).withoutRoot().from(produtoDistribuicaoVO).recursive().serialize();
+		    
 		} else {
+			
 		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Este estudo não pode ser analisado por problemas com os dados deste produto"));
 		}
 	}
+
+	@Post
+	public void desbloquear() {
+		
+		HistogramaPosEstudoController.desbloquearAnaliseEstudo(
+			this.session.getServletContext(), super.getUsuarioLogado().getLogin());
+		
+		this.result.use(Results.json()).from("").serialize();
+	}
+	
 }

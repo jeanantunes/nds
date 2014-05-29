@@ -583,19 +583,8 @@ var transportadorController = $.extend(true, {
 					id: "btnConfNovoVeiculo",
 					text: "Confirmar",
 					click: function() {
-						/*
-						$.postJSON("<c:url value='/cadastro/transportador/cadastrarVeiculos'/>", null, 
-							function(result){
-								
-								$(".veiculosGrid").flexAddData({
-									page: result.page, total: result.total, rows: result.rows
-								});
-								
-								$("#dialog-incluir-veiculo").dialog("close");
-							}
-						);
-						*/
-						$("#dialog-incluir-veiculo", transportadorController.workspace).dialog("close");
+						
+						transportadorController.adicionarVeiculo(true);
 					}
 				},
 				{
@@ -621,7 +610,7 @@ var transportadorController = $.extend(true, {
 		});
 	},
 	
-	adicionarVeiculo : function(){
+	adicionarVeiculo : function(fecharModal){
 		
 		data = [{name:"veiculo.tipoVeiculo", value: $("#tipoVeiculo", transportadorController.workspace).val()},
 				{name:"veiculo.placa", value: $("#placa", transportadorController.workspace).val()}];
@@ -635,6 +624,11 @@ var transportadorController = $.extend(true, {
 				$("#placa", transportadorController.workspace).val("");
 				
 				$("#tipoVeiculo", transportadorController.workspace).focus();
+				
+				if(fecharModal){
+					$("#dialog-incluir-veiculo", transportadorController.workspace).dialog("close");
+				}
+	
 			}, null, true, "idModalCadastroVeiculo"
 		);
 	},
@@ -743,19 +737,8 @@ var transportadorController = $.extend(true, {
 					id: "btnConfNovoMotorista",
 					text: "Confirmar",
 					click: function() {
-						/*
-						$.postJSON("<c:url value='/cadastro/transportador/cadastrarMotoristas'/>", null, 
-							function(result){
-								
-								$(".motoristasGrid").flexAddData({
-									page: result.page, total: result.total, rows: result.rows
-								});
-								
-								
-							}
-						);
-						*/
-						$("#dialog-incluir-motorista", transportadorController.workspace).dialog("close");
+						
+						transportadorController.adicionarMotorista(true);	
 					}
 				},
 				{
@@ -781,7 +764,7 @@ var transportadorController = $.extend(true, {
 		});
 	},
 	
-	adicionarMotorista : function(){
+	adicionarMotorista : function(fecharModal){
 		
 		data = [{name:"motorista.nome", value: $("#nomeMotorista", transportadorController.workspace).val()},
 				{name:"motorista.cnh", value: $("#cnhMotorista", transportadorController.workspace).val()}];
@@ -795,6 +778,11 @@ var transportadorController = $.extend(true, {
 				$("#cnhMotorista", transportadorController.workspace).val("");
 				
 				$("#nomeMotorista", transportadorController.workspace).focus();
+				
+				if(fecharModal){
+					$("#dialog-incluir-motorista", transportadorController.workspace).dialog("close");
+				}
+				
 			}, null, true, "idModalCadastroMotorista"
 		);
 	},

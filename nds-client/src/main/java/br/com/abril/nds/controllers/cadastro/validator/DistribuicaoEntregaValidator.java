@@ -12,7 +12,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ModalidadeCobranca;
 import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.Util;
 
 public class DistribuicaoEntregaValidator {
 	
@@ -84,6 +83,11 @@ public class DistribuicaoEntregaValidator {
 	
 	
 	private static void validarPeriodoCobranca(final DistribuicaoDTO distribuicao) {
+		
+		if(distribuicao.getPeriodicidadeCobranca() == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,("Selecione uma Periodicidade."));
+		}
 		
 		if (PeriodicidadeCobranca.SEMANAL == distribuicao.getPeriodicidadeCobranca() && 
 				(distribuicao.getDiaSemanaCobranca() == null)){
