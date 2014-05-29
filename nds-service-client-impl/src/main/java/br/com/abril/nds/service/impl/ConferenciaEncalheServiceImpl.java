@@ -1182,6 +1182,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				}
 			}
 			
+			infoConfereciaEncalheCota.setNfeDigitada(controleConferenciaEncalheCota.isNfeDigitada());
+			
 			infoConfereciaEncalheCota.setEncalhe(null);
 			
 			infoConfereciaEncalheCota.setIdControleConferenciaEncalheCota(controleConferenciaEncalheCota.getId());

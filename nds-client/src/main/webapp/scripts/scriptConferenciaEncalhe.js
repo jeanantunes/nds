@@ -159,6 +159,11 @@ var ConferenciaEncalhe = $.extend(true, {
 		});
 		
 		$("#numNotaFiscal", ConferenciaEncalhe.workspace).numeric();
+		jQuery('#numNotaFiscal').keyup(function () { 
+			if (/\D/g.test(this.value)) {
+		        this.value = this.value.replace(/\D/g, '');
+		    }
+		});
 		
 		$("#qtdCE", ConferenciaEncalhe.workspace).numeric();
 		
@@ -574,7 +579,8 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 				} 
 				
-				if(data.processoUtilizaNfe != undefined && data.processoUtilizaNfe) {
+				if(data.processoUtilizaNfe != undefined && data.processoUtilizaNfe 
+						&& data.nfeDigitada != undefined && !data.nfeDigitada) {
 					
 					ConferenciaEncalhe.ifCotaExigeNfe(data, ConferenciaEncalhe.popup_notaFiscal);
 				}
@@ -717,7 +723,8 @@ var ConferenciaEncalhe = $.extend(true, {
 				data, 
 				function(result) {
 					
-					if(result.processoUtilizaNfe != undefined && result.processoUtilizaNfe) {
+					if(result.processoUtilizaNfe != undefined && result.processoUtilizaNfe
+								&& result.nfeDigitada != undefined && !result.nfeDigitada) {
 						
 						ConferenciaEncalhe.popup_notaFiscal();
 					}
