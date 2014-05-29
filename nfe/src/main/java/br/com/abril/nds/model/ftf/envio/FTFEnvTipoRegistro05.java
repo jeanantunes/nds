@@ -60,15 +60,15 @@ public class FTFEnvTipoRegistro05 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=2, tipo="char", ordem=18)
 	private String digitoAgencia;
 	
-	@FTFfield(tamanho=2, tipo="char", ordem=19)
-	private String DataRelatCartao;
-	
 	/**
 	 * Data impressa no relatório de Cartões debitados.
 	 */
-	@FTFfield(tamanho=10, tipo="char", ordem=16)
+	@FTFfield(tamanho=10, tipo="char", ordem=19)
 	private String dataRelatorioCartaoDebitado;
 
+	@FTFfield(tamanho=10, tipo="char", ordem=20)
+	private String idCentroCustoCorporativo;
+	
 	public String getTipoRegistro() {
 		return tipoRegistro;
 	}
@@ -209,5 +209,30 @@ public class FTFEnvTipoRegistro05 extends FTFBaseDTO implements FTFCommons {
 	@Override
 	public void setNumeroDocOrigem(String numeroDocOrigem) {
 		this.numeroDocOrigem = numeroDocOrigem;
+	}
+
+	public String getDataLimiteDescontoCondicional() {
+		return dataLimiteDescontoCondicional;
+	}
+
+	public void setDataLimiteDescontoCondicional(
+			String dataLimiteDescontoCondicional) {
+		this.dataLimiteDescontoCondicional = dataLimiteDescontoCondicional;
+	}
+
+	public String getPercentualDescontoFinanceiro() {
+		return percentualDescontoFinanceiro;
+	}
+
+	public void setPercentualDescontoFinanceiro(String percentualDescontoFinanceiro) {
+		this.percentualDescontoFinanceiro = percentualDescontoFinanceiro;
+	}
+
+	public String getIdCentroCustoCorporativo() {
+		return idCentroCustoCorporativo;
+	}
+
+	public void setIdCentroCustoCorporativo(String idCentroCustoCorporativo) {
+		this.idCentroCustoCorporativo = idCentroCustoCorporativo;
 	}
 }
