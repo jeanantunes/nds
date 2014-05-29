@@ -263,8 +263,13 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Path("/mudarReparte")
-    public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado) {
+    public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado, String legendaCota) {
         analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte, reparteDigitado);
+        
+        if((legendaCota.equalsIgnoreCase("FX")) || (legendaCota.equalsIgnoreCase("MX"))){
+        	analiseParcialService.atualizarFixacaoOuMix(estudoId, numeroCota, reparteDigitado, legendaCota);
+        }
+        
         result.nothing();
     }
 
@@ -273,7 +278,12 @@ public class AnaliseParcialController extends BaseController {
 
         for (CotaQueNaoEntrouNoEstudoDTO cota : cotas) {
             analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().longValue(), cota.getQuantidade().longValue());
-            analiseParcialService.atualizaClassificacaoCota(estudoId, cota.getNumeroCota());
+            
+            if(cota.getMotivo().equalsIgnoreCase("SM")){
+            	analiseParcialService.atualizaClassificacaoCota(estudoId, cota.getNumeroCota(), "MX");
+            }else{
+            	analiseParcialService.atualizaClassificacaoCota(estudoId, cota.getNumeroCota(), "IN");
+            }
         }
 
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();

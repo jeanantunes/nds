@@ -216,7 +216,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					incluirSegmento : function () {
 						//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
-						$( "#dialog-novo").dialog({
+						$( "#dialog-novo", segmentoNaoRecebidoController.workspace).dialog({
 							resizable: false,
 							height:170,
 							width:380,
@@ -556,7 +556,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 							value : $('#tipoSegmentoProduto option:selected',segmentoNaoRecebidoController.workspace).val()
 						});
 						
-							$( "#dialog-novo-cota").dialog({
+							$("#dialog-novo-cota", segmentoNaoRecebidoController.workspace).dialog({
 								resizable: false,
 								height:170,
 								width:380,
