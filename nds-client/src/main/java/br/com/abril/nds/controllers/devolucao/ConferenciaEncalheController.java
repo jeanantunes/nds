@@ -2414,6 +2414,7 @@ public class ConferenciaEncalheController extends BaseController {
 		BigDecimal valorTotal = BigDecimal.ZERO;
 		BigDecimal valorEncalheAtualizado = BigDecimal.ZERO;
 		BigDecimal valorVendaDiaAtualizado = BigDecimal.ZERO;
+		BigDecimal valorTotalNota = BigDecimal.ZERO;
 		
 		final InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 		
@@ -2433,7 +2434,9 @@ public class ConferenciaEncalheController extends BaseController {
 						
 						final BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar());
 						
-						valorTotal = valorTotal.add( CurrencyUtil.arredondarValorParaQuatroCasas(conferenciaEncalheDTO.getValorTotal() != null ? conferenciaEncalheDTO.getValorTotal() :  BigDecimal.ZERO ));
+						valorTotal = valorTotal.add(precoCapa.subtract(desconto).multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada())));
+						
+						valorTotalNota = valorTotalNota.add(precoCapa.subtract(desconto).multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada())));
 						
 						valorEncalhe = valorEncalhe.add(precoComDesconto.multiply(qtdExemplar));
 						
@@ -2482,6 +2485,7 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("valorDebitoCredito", valorDebitoCredito.abs());
 			dados.put("valorPagar",  CurrencyUtil.arredondarValorParaDuasCasas(valorPagar.setScale(2, RoundingMode.HALF_UP)));
 			dados.put("valorTotal",  valorTotal.setScale(4, RoundingMode.HALF_UP));
+			dados.put("valorTotalNota", valorTotalNota);
 			dados.put("valorPagarAtualizado",  CurrencyUtil.arredondarValorParaQuatroCasas(valorPagarAtualizado));
 			dados.put("idconf", info.getIdControleConferenciaEncalheCota());
 		}

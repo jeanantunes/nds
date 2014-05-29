@@ -257,7 +257,7 @@
 					<td style="width: 70px; text-align: left;">Qtde. info</td>
 					<td style="width: 101px; text-align: left;">Qtde. Recebida</td>
 					<td style="width: 80px; text-align: right;" nowrap="nowrap">Preço Capa R$</td>
-					<td style="width: 80px; text-align: right;" nowrap="nowrap">Preço Desconto R$</td>
+					<td style="width: 60px; text-align: right;" nowrap="nowrap">Preço Desconto R$</td>
 					<td style="width: 60px; text-align: right;">Total R$</td>
 					<td style="width: 30px; text-align: center;">Ação</td>
 				</tr>
