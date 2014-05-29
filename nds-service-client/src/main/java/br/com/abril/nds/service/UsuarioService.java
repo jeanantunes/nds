@@ -46,4 +46,7 @@ public interface UsuarioService {
     public abstract Boolean isSupervisor();
 
     public abstract Boolean isNotSupervisor();
+    
+    String obterNomeUsuarioPorLogin(String login);
+    
 }

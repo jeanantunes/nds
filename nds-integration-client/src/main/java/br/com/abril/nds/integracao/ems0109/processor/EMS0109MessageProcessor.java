@@ -594,8 +594,23 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		}
 		
 		Fornecedor produtoFornecedor = produto.getFornecedor();
-		if ((produtoFornecedor == null && produtoFornecedor.getCodigoInterface()!=null) || 
-		        !Objects.equal(produtoFornecedor.getCodigoInterface(), fornecedor.getCodigoInterface()))  {
+		
+		if(produtoFornecedor == null  && fornecedor!=null && fornecedor.getResponsavel()!=null && !fornecedor.getResponsavel().trim().equals("")){
+			
+			this.ndsiLoggerFactory.getLogger().logInfo(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteração de Fornecedor"
+			        +" de Vazio" 
+			        +" para " + fornecedor.getResponsavel()
+			        +" Produto " + produto.getCodigo()
+			        );
+            
+            	produto.setFornecedores(new HashSet<Fornecedor>());
+		    
+            	produto.addFornecedor(fornecedor);
+			
+		} else if (!Objects.equal(produtoFornecedor.getCodigoInterface(), fornecedor.getCodigoInterface()))  {
 
                 this.ndsiLoggerFactory.getLogger().logInfo(
 						message,
