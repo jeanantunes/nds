@@ -42,7 +42,7 @@ public interface NaturezaOperacaoRepository extends Repository<NaturezaOperacao,
 	
 	NaturezaOperacao obterNaturezaOperacao(Long idNaturezaOperacao);
 	
-	NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoOperacao tipoOperacao);
+	NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoOperacao tipoOperacao, boolean devolucaoSimbolica, boolean vendaConsignado);
 
 	NaturezaOperacao obterNaturezaOperacaoDevolucaoSimbolica(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario);
 

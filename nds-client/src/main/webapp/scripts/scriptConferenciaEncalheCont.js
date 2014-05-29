@@ -210,7 +210,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
 								
 								ConferenciaEncalheCont.carregarListaConferencia(data);
-								ConferenciaEncalheCont.ifCotaExigeNfe(data, ConferenciaEncalheCont.popup_notaFiscal);
+								//ConferenciaEncalheCont.ifCotaExigeNfe(data, ConferenciaEncalheCont.popup_notaFiscal);
 								
 								ConferenciaEncalheCont.numeroCotaEditavel(true);
 							},
@@ -244,7 +244,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					ConferenciaEncalheCont.carregarListaConferencia(data);
 					
 					$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
-					ConferenciaEncalheCont.ifCotaExigeNfe(data, ConferenciaEncalheCont.popup_notaFiscal);
+					//ConferenciaEncalheCont.ifCotaExigeNfe(data, ConferenciaEncalheCont.popup_notaFiscal);
 					
 					ConferenciaEncalheCont.numeroCotaEditavel(true);
 				}

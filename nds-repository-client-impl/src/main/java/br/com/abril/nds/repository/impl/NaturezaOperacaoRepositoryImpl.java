@@ -294,19 +294,24 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 	}
 
 	@Override
-	public NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoOperacao tipoOperacao) {
+	public NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario
+			, TipoOperacao tipoOperacao, boolean devolucaoSimbolica, boolean vendaConsignado) {
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append(" from NaturezaOperacao nat ")
 		   .append(" where nat.tipoAtividade = :tipoAtividade ")
 		   .append(" and nat.tipoDestinatario = :tipoDestinatario ")
-		   .append(" and nat.tipoOperacao = :tipoOperacao ");
+		   .append(" and nat.tipoOperacao = :tipoOperacao ")
+		   .append(" and nat.notaFiscalDevolucaoSimbolica = :devolucaoSimbolica ")
+		   .append(" and nat.notaFiscalVendaConsignado = :vendaConsignado ");
 		
 		
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("tipoAtividade", tipoAtividade);
 		query.setParameter("tipoDestinatario", tipoDestinatario);
 		query.setParameter("tipoOperacao", tipoOperacao);
+		query.setParameter("devolucaoSimbolica", devolucaoSimbolica);
+		query.setParameter("vendaConsignado", vendaConsignado);
 		
 		return (NaturezaOperacao) query.uniqueResult();
 	}
