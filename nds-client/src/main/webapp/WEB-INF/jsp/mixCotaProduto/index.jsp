@@ -232,6 +232,7 @@
             <td width="92"><span id="codigoCotaModalReparte"></span></td>
             <td width="44"><strong>Nome:</strong></td>
             <td width="400"><span id="nomeCotaModalReparte" ></span></td>
+            <td width="400"><span id="reparteOriginal"></span></td>
             <td width="151">&nbsp;</td>
           </tr>
         </table>
