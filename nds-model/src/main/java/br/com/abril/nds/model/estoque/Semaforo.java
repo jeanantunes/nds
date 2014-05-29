@@ -8,9 +8,13 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
 @Table(name = "SEMAFORO")
@@ -43,6 +47,10 @@ public class Semaforo implements Serializable {
 
 	@Column(name="ERROR_LOG", nullable = true)
 	private String errorLog;
+	
+	@ManyToOne
+	@JoinColumn(name = "USUARIO_ID")
+	private Usuario usuario;
 
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -91,6 +99,13 @@ public class Semaforo implements Serializable {
 	public void setDataFim(Date dataFim) {
 		this.dataFim = dataFim;
 	}
-	
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
 	
 }

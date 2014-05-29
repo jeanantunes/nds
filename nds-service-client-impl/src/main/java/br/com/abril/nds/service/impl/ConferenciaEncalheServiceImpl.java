@@ -1682,7 +1682,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Transactional
-	public void sinalizarInicioProcessoEncalhe(Integer numeroCota) {
+	public void sinalizarInicioProcessoEncalhe(Integer numeroCota, Usuario usuario) {
 		
 		Semaforo semaforo = semaforoRepository.selectForUpdate(numeroCota);
 		
@@ -1696,6 +1696,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			semaforo = new Semaforo();
 		} 
 		
+		semaforo.setUsuario(usuario);
 		semaforo.setStatusProcessoEncalhe(StatusProcessoEncalhe.INICIADO);
 		semaforo.setDataAtualizacao(dataOperacao);
 		semaforo.setErrorLog(null);
@@ -1707,6 +1708,19 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			semaforoRepository.adicionar(semaforo);
 		} else {
 			semaforoRepository.alterar(semaforo);
+		}
+		
+	}
+	
+	
+	public void validarCotaProcessandoEncalhe(Integer numeroCota) {
+		
+		Semaforo semaforo = semaforoRepository.buscarPorId(numeroCota);
+		
+		if(semaforo!=null && StatusProcessoEncalhe.INICIADO.equals(semaforo.getStatusProcessoEncalhe())){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Encalhe da cota " + numeroCota + " ainda esta sendo processado!");
+		
 		}
 		
 	}
@@ -1774,6 +1788,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 	}
+	
+	public void criarBackupConferenciaEncalhe() {
+		//TODO implementar
+	}
+	
+	public void limparBackupConferenciaEncalhe() {
+		//TODO implementar
+	}
+	
+
+	
 	
 	@Override
 	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 900, isolation= Isolation.READ_COMMITTED)

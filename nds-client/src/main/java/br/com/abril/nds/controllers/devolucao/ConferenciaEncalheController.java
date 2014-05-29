@@ -553,6 +553,8 @@ public class ConferenciaEncalheController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
 		}
 		
+		this.conferenciaEncalheService.validarCotaProcessandoEncalhe(numeroCota);
+		
 		try {
 			
 			this.conferenciaEncalheService.validarFechamentoEncalheRealizado();
@@ -1565,7 +1567,7 @@ public class ConferenciaEncalheController extends BaseController {
 			                           final boolean indConferenciaContingencia){
 		
 			
-			this.conferenciaEncalheService.sinalizarInicioProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota());
+			this.conferenciaEncalheService.sinalizarInicioProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota(), this.getUsuarioLogado());
 			
 			this.conferenciaEncalheAsyncComponent.salvarConferenciaEncalhe(controleConfEncalheCota, 
 			         listaConferenciaEncalheCotaToSave, 
@@ -1964,7 +1966,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 			
 			limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 			
-			this.conferenciaEncalheService.sinalizarInicioProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota());
+			this.conferenciaEncalheService.sinalizarInicioProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota(), this.getUsuarioLogado());
 			
 			this.conferenciaEncalheAsyncComponent.finalizarConferenciaEncalheAsync(
 					  controleConfEncalheCota, 
@@ -2538,7 +2540,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		}
 		
 		if(quantidade == null || quantidade.trim().isEmpty()) {
-			return null;
+			return BigInteger.ZERO;
 		}
 		
 		if(!isContagemPacote) {

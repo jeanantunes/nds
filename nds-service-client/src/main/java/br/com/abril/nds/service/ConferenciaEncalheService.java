@@ -28,11 +28,14 @@ import br.com.abril.nds.util.ItemAutoComplete;
 
 public interface ConferenciaEncalheService {
 	
-	public void sinalizarInicioProcessoEncalhe(Integer numeroCota);
+	public void sinalizarInicioProcessoEncalhe(Integer numeroCota, Usuario usuario);
 
 	public void sinalizarFimProcessoEncalhe(Integer numeroCota);
 
 	public void sinalizarErroProcessoEncalhe(Integer numeroCota, Exception e);
+	
+	public void validarCotaProcessandoEncalhe(Integer numeroCota);
+
 	
 	/**
 	 * Obtém mapa tendo como chave idFornecedor e valor 
