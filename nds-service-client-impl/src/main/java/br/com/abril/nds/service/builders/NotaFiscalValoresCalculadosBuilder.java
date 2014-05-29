@@ -41,8 +41,8 @@ public class NotaFiscalValoresCalculadosBuilder {
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorSeguro(BigDecimal.valueOf(0));
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorImpostoImportacao(BigDecimal.valueOf(0));
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorIPI(CurrencyUtil.arredondarValorParaDuasCasas(valorIPI));
-		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorBaseICMS(valorTotalItens);
-		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorBaseICMSSubstituto(valorTotalItens);
+		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorBaseICMS(BigDecimal.valueOf(0));
+		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorBaseICMSSubstituto(BigDecimal.valueOf(0));
 		
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorICMS(CurrencyUtil.arredondarValorParaDuasCasas(valorICMS));
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorICMSSubstituto(BigDecimal.valueOf(0));
