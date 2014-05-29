@@ -3,6 +3,8 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoBaseSugeridaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.caelum.vraptor.Path;
@@ -45,6 +48,9 @@ public class HistogramaPosEstudoController extends BaseController{
 	
 	@Autowired
 	private Result result;
+	
+	@Autowired
+	private HttpSession session;
 	
 	@Autowired
 	private EstudoProdutoEdicaoBaseService estudoProdutoEdicaoBaseService; 
@@ -66,6 +72,9 @@ public class HistogramaPosEstudoController extends BaseController{
 
     @Autowired
     private MatrizDistribuicaoService matrizDistribuicaoService;
+    
+    @Autowired
+	private UsuarioService usuarioService;
 
     @Path("/index")
 	public void histogramaPosEstudo(String codigoProduto, String edicao) {
@@ -93,10 +102,17 @@ public class HistogramaPosEstudoController extends BaseController{
 
     @Post
 	public void carregarDadosFieldsetHistogramaPreAnalise(HistogramaPosEstudoDadoInicioDTO selecionado ){
-		Produto produto = produtoService.obterProdutoPorCodigo(selecionado.getCodigoProduto());
-		EstudoGerado estudo = (EstudoGerado) estudoService.obterEstudo(Long.parseLong(selecionado.getEstudo()));
 		
+    	Produto produto = produtoService.obterProdutoPorCodigo(selecionado.getCodigoProduto());
+		EstudoGerado estudo = (EstudoGerado) estudoService.obterEstudo(Long.parseLong(selecionado.getEstudo()));
 		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(selecionado.getCodigoProduto(), selecionado.getEdicao());
+		
+		String loginUsuario = super.getUsuarioLogado().getLogin();
+		
+		AnaliseEstudoController.bloquearAnaliseEstudo(
+			produtoEdicao.getId(), this.session, loginUsuario, 
+				this.usuarioService.obterNomeUsuarioPorLogin(loginUsuario));
+		
 		selecionado.setParcial(produtoEdicao.isParcial());
 
 		String modoAnalise = "NORMAL";
