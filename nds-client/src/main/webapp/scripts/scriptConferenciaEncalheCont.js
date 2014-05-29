@@ -1441,6 +1441,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				"Cancelar" : function() {
 					
 					ConferenciaEncalheCont.limparTela();
+					ConferenciaEncalheCont.limparNotaFiscal();
 					$("#numeroCota", ConferenciaEncalheCont.workspace).val("");
 					$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 					
@@ -1456,7 +1457,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					ConferenciaEncalheCont.removerTravaConferenciaEncalheCotaUsuario();
 					
 					ConferenciaEncalheCont.limparTela();
-					
+					ConferenciaEncalheCont.limparNotaFiscal();
 					$("#numeroCota", ConferenciaEncalheCont.workspace).focus();					
 				}
 				
@@ -1508,7 +1509,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 							if(result.tipoMensagem == 'SUCCESS') {
 								
 								ConferenciaEncalheCont.limparTela();
-								
+								ConferenciaEncalheCont.limparNotaFiscal();
 							}						
 							
 							exibirMensagem(result.tipoMensagem, result.listaMensagens);
@@ -1520,7 +1521,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 						}, function(conteudo) {
 							
 							ConferenciaEncalheCont.limparTela();
-							
+							ConferenciaEncalheCont.limparNotaFiscal();
 							
 						}, true, "idModalConfirmarSalvarConf"
 					);
