@@ -67,9 +67,9 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	private CotaRepository cotaRepository;
 
 	@Override
-	public FTFEnvTipoRegistro00 obterRegistroTipo00(long idNotaFiscal) {
+	public FTFEnvTipoRegistro00 obterRegistroTipo00(long idNaturezaOperacao) {
 		
-		FTFEnvTipoRegistro00 reg00 = popularRegistro00(idNotaFiscal);
+		FTFEnvTipoRegistro00 reg00 = popularRegistro00(idNaturezaOperacao);
 		
 		reg00.setDataGeracao(DateUtil.formatarData(GregorianCalendar.getInstance().getTime(), Constantes.DATE_PATTERN_PT_BR));
 
@@ -346,7 +346,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		return reg09;
 	}
 
-	private FTFEnvTipoRegistro00 popularRegistro00(long idNotaFiscal) {
+	private FTFEnvTipoRegistro00 popularRegistro00(long idNaturezaOperacao) {
 		
 		StringBuilder sb = new StringBuilder();
 		
@@ -357,17 +357,13 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" paramFtf.ESTABELECIMENTO as codLocal,  ")
 		.append(" '  ' as tipoPedido,  ")
 		.append(" '00000000' as numeroDocOrigem ")
-		.append(" from nota_fiscal_novo nfn ")
-		.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ")
+		.append(" from natureza_operacao no ")
 		.append(" join parametros_ftf_geracao paramFtf ON no.ID = paramftf.NATUREZA_OPERACAO_ID ")
-		.append(" left join nota_fiscal_pessoa pessoa ON pessoa.ID = nfn.PESSOA_DESTINATARIO_ID_REFERENCIA ")
-		.append(" left join nota_fiscal_endereco endereco ON endereco.ID = nfn.ENDERECO_ID_DESTINATARIO ")
-		.append(" left join nota_fiscal_telefone telefone ON telefone.ID = nfn.TELEFONE_ID_DESTINATARIO ")
-		.append(" where nfn.id = :idNF ");
+		.append(" where no.id = :idNaturezaOperacao ");
 
 		SQLQuery query = getSession().createSQLQuery(sb.toString());
 		
-		query.setParameter("idNF", idNotaFiscal);
+		query.setParameter("idNaturezaOperacao", idNaturezaOperacao);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(FTFEnvTipoRegistro00.class));
 
