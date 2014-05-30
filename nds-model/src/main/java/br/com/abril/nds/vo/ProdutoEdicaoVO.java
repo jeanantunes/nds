@@ -1,9 +1,16 @@
 package br.com.abril.nds.vo;
 
+import java.io.Serializable;
 
 
-public class ProdutoEdicaoVO {
+
+public class ProdutoEdicaoVO implements Serializable {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7568941971653076485L;
+
     private Long id;
     
     private String nome, codigoBarras, precoCapaFormatado;

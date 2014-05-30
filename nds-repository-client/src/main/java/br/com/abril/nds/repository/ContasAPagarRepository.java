@@ -3,13 +3,13 @@ package br.com.abril.nds.repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.ContasAPagarConsultaProdutoVO;
+import br.com.abril.nds.client.vo.ContasApagarConsultaPorDistribuidorVO;
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
-import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarParcialDTO;
-import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 
@@ -17,7 +17,7 @@ public interface ContasAPagarRepository {
 	
 	Integer pesquisarPorDistribuidorCount(FiltroContasAPagarDTO filtro);
 	
-	List<ContasApagarConsultaPorDistribuidorDTO> pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro);
+	List<ContasApagarConsultaPorDistribuidorVO> pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro);
 	
 	/**
 	 * Busca de Contas a Pagar por Produto
@@ -49,7 +49,7 @@ public interface ContasAPagarRepository {
 
 	List<ContasAPagarFaltasSobrasDTO> pesquisarDetalheFaltasSobras(FiltroContasAPagarDTO filtro);
 
-	List<ContasAPagarConsultaProdutoDTO> obterProdutos(FiltroContasAPagarDTO filtro);
+	List<ContasAPagarConsultaProdutoVO> obterProdutos(FiltroContasAPagarDTO filtro);
 
 	List<ContasAPagarParcialDTO> pesquisarParcial(FiltroContasAPagarDTO filtro);
 

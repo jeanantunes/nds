@@ -171,5 +171,6 @@ public interface DistribuidorService {
 	boolean isConferenciaCegaRecebimentoFisico();
 	
 	boolean isConferenciaCegaFechamentoEncalhe();
-	
+
+    Integer obterNumeroSemana(Date data);
 }

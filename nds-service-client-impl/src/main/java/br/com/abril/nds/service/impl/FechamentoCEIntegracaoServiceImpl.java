@@ -65,13 +65,11 @@ import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.PDFUtil;
-import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.Util;
 
 import com.google.common.base.Predicate;
@@ -130,6 +128,9 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	
 	@Autowired
 	private EstoqueProdutoRespository estoqueProdutoRespository;
+	
+	@Autowired
+	private RecolhimentoService recolhimentoService;
 
 	@Transactional(readOnly=true)
 	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
@@ -225,15 +226,23 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
      * @param filtro
      * @return List<ChamadaEncalheFornecedor>
      */
-    private List<ChamadaEncalheFornecedor> obterChamadasEncalheFornecedor(FiltroFechamentoCEIntegracaoDTO filtro){
+    private List<ChamadaEncalheFornecedor> obterChamadasEncalheFornecedor(final FiltroFechamentoCEIntegracaoDTO filtro){
     	
-		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
+        if (filtro.getSemana() == null){
+            
+            throw new ValidacaoException(TipoMensagem.WARNING, "Semana é obrigatório");
+        }
+        
+		filtro.setPeriodoRecolhimento(
+		        this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
 		
-		List<ChamadaEncalheFornecedor> chamadasFornecedor = chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
+		final List<ChamadaEncalheFornecedor> chamadasFornecedor = 
+		        chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
 		
 		if(chamadasFornecedor == null || chamadasFornecedor.isEmpty()){
 			
-			throw new ValidacaoException(TipoMensagem.ERROR,"Erro no processo de confirmação do fechamento de CE integação. Registro não encontrado!");
+			throw new ValidacaoException(TipoMensagem.ERROR,
+			        "Erro no processo de confirmação do fechamento de CE integação. Registro não encontrado!");
 		}
 		
 		return chamadasFornecedor;
@@ -667,17 +676,23 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 
 	@Override
 	@Transactional(readOnly=true)
-	public FechamentoCEIntegracaoDTO obterCEIntegracaoFornecedor(FiltroFechamentoCEIntegracaoDTO filtro) {
+	public FechamentoCEIntegracaoDTO obterCEIntegracaoFornecedor(final FiltroFechamentoCEIntegracaoDTO filtro) {
 		
-		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
+	    if (filtro.getSemana() == null){
+            
+            throw new ValidacaoException(TipoMensagem.WARNING, "Semana é obrigatório");
+        }
+        
+        filtro.setPeriodoRecolhimento(
+                this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
 		
-		BigInteger qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoCeIntegracao(filtro);
+		final BigInteger qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoCeIntegracao(filtro);
 		
 		if(qntItens.compareTo(BigInteger.ZERO) == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 		
-		FechamentoCEIntegracaoDTO fechamentoCEIntegracaoDTO = new FechamentoCEIntegracaoDTO();
+		final FechamentoCEIntegracaoDTO fechamentoCEIntegracaoDTO = new FechamentoCEIntegracaoDTO();
 	
 		fechamentoCEIntegracaoDTO.setQntItensCE(qntItens.intValue());
 		
@@ -718,9 +733,15 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	}
 	
 	@Transactional(readOnly=true)
-	public FechamentoCEIntegracaoConsolidadoDTO obterConsolidadoCE(FiltroFechamentoCEIntegracaoDTO filtro) {
+	public FechamentoCEIntegracaoConsolidadoDTO obterConsolidadoCE(final FiltroFechamentoCEIntegracaoDTO filtro) {
 		
-		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
+	    if (filtro.getSemana() == null){
+            
+            throw new ValidacaoException(TipoMensagem.WARNING, "Semana é obrigatório");
+        }
+        
+        filtro.setPeriodoRecolhimento(
+                this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
 		
 		return this.fechamentoCEIntegracaoRepository.buscarConsolidadoItensFechamentoCeIntegracao(filtro);
 	}
@@ -775,24 +796,6 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				.append(" pois a data de operação do distribuidor é diferente da data de fechamento da CE ou a interface de integração já processou os dados!");
 		
 		return mensagem.toString();
-	}
-
-	private Intervalo<Date> obterPeriodoDataRecolhimento(String anoSemana) {
-		
-		Integer inicioSemana = this.distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana();
-		
-		Integer anoBase = SemanaUtil.getAno(anoSemana);
-		
-		Integer numeroSemana = SemanaUtil.getSemana(anoSemana);
-		
-		Date dataInicioSemana = SemanaUtil.obterDataDaSemanaNoAno(
-			numeroSemana, inicioSemana, anoBase);
-		
-		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
-		
-		Intervalo<Date> periodoRecolhimento = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
-		
-		return periodoRecolhimento;
 	}
 
 	private BigDecimal obterPercentualDesconto(ItemChamadaEncalheFornecedor item) {
@@ -894,10 +897,16 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
     @Override
     @Transactional(readOnly=true)
     public FechamentoCEIntegracaoDTO obterDiferencaCEIntegracaoFornecedor(
-    		FiltroFechamentoCEIntegracaoDTO filtroCE,
-    		Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlteradosFechamento) {
+    		final FiltroFechamentoCEIntegracaoDTO filtroCE,
+    		final Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlteradosFechamento) {
     	
-    	filtroCE.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtroCE.getSemana()));
+        if (filtroCE.getSemana() == null){
+            
+            throw new ValidacaoException(TipoMensagem.WARNING, "Semana é obrigatório");
+        }
+        
+        filtroCE.setPeriodoRecolhimento(
+                this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtroCE.getSemana())));
 		
     	List<ItemFechamentoCEIntegracaoDTO> itensFechamento = 
     			fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracaoComDiferenca(filtroCE);

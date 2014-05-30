@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
+	<property name="ireport.zoom" value="1.3636363636363658"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
+		<paragraph leftIndent="3"/>
+	</style>
+	<style name="rel_ftext" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false">
+		<paragraph leftIndent="3"/>
+	</style>
+	<style name="rel_stext_centralizado" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
+	<style name="rel_ftext_centralizado" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Estilo Zebrado" backcolor="#CCCCCC" fontName="Arial" fontSize="8">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#CCCCCC"/>
+		</conditionalStyle>
+	</style>
+	<style name="Estilo Zebrado_centralizado" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#CCCCCC"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="IMAGEM" class="java.io.InputStream"/>
+	<parameter name="NOME_RELATORIO" class="java.lang.String"/>
+	<parameter name="NOME_DISTRIBUIDOR" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="key" class="java.lang.Object"/>
+	<field name="value" class="java.util.Map"/>
+	<detail>
+		<band height="73" splitType="Prevent">
+			<elementGroup>
+				<rectangle>
+					<reportElement uuid="3c48adbb-1f14-4212-948d-b9d9dbd043b1" x="0" y="1" width="552" height="21" backcolor="#D3D3D3"/>
+				</rectangle>
+				<textField>
+					<reportElement uuid="2caa06eb-8496-4d07-8727-baf9c7639704" style="rel_ftext" x="64" y="4" width="114" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getNome()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="8eb5ff58-ebe7-4470-bae4-2fe66e1693d4" style="rel_ftext" x="223" y="4" width="38" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getEdicao()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="51fde178-acc5-4746-834e-bf72ea03afde" style="rel_ftext" x="516" y="4" width="20" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getPrecoCapaFormatado()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="c309c600-b0b5-4c5a-ab01-489d39268c54" style="rel_ftext" x="349" y="4" width="72" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getCodigoBarras()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="1dd77dd5-365e-44e1-bd98-a306179bd1a4" style="rel_stext" x="261" y="4" width="105" height="15"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Código de Barras:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="77bfddaa-72df-4617-9e30-fc373398d037" style="rel_stext" x="12" y="4" width="52" height="15"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Produto:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="3a229de3-be24-4f34-857a-3e95acf2710d" style="rel_stext" x="421" y="4" width="95" height="15"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Preço Capa RS:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ac9382df-6d4e-41a8-8042-2935698e1a0d" style="rel_stext" x="178" y="4" width="45" height="15"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Edição:]]></text>
+				</staticText>
+				<subreport>
+					<reportElement uuid="a533d979-0118-4e2b-832a-4daf974ea42d" x="0" y="22" width="555" height="50"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="IMAGEM">
+						<subreportParameterExpression><![CDATA[$P{IMAGEM}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="NOME_DISTRIBUIDOR">
+						<subreportParameterExpression><![CDATA[$P{NOME_DISTRIBUIDOR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="NOME_RELATORIO">
+						<subreportParameterExpression><![CDATA[$P{NOME_RELATORIO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
+((java.util.Map<String, Integer>)$F{value}).entrySet()
+)]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rel_box_por_quebra_cota_subbox.jasper"]]></subreportExpression>
+				</subreport>
+			</elementGroup>
+		</band>
+	</detail>
+</jasperReport>

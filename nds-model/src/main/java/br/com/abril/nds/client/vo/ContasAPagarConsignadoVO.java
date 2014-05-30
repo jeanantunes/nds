@@ -1,5 +1,8 @@
 package br.com.abril.nds.client.vo;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
@@ -116,8 +119,8 @@ public class ContasAPagarConsignadoVO {
 	public String getDiferenca() {
 		return diferenca;
 	}
-	public void setDiferenca(String diferenca) {
-		this.diferenca = diferenca;
+	public void setDiferenca(BigDecimal diferenca) {
+		this.diferenca = diferenca == null ? null : diferenca.setScale(0, RoundingMode.HALF_UP).toString();
 	}
 	public String getMotivo() {
 		return motivo;

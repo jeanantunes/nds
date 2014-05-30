@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.model.estoque.TipoDiferenca;
+
 public class ContasAPagarConsignadoDTO implements Serializable {
 
 	private static final long serialVersionUID = 796550216964502238L;
@@ -73,8 +75,8 @@ public class ContasAPagarConsignadoDTO implements Serializable {
 	public String getMotivo() {
 		return motivo;
 	}
-	public void setMotivo(String motivo) {
-		this.motivo = motivo;
+	public void setMotivo(TipoDiferenca motivo) {
+		this.motivo = motivo == null ? "" : motivo.getDescricao();
 	}
 	public String getFornecedor() {
 		return fornecedor;
