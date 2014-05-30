@@ -21,8 +21,7 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ConsultaFollowupPendenciaNFeDTO> obterConsignadosParaChamadao(
-			FiltroFollowupPendenciaNFeDTO filtro) {
+	public List<ConsultaFollowupPendenciaNFeDTO> obterConsignadosParaChamadao(FiltroFollowupPendenciaNFeDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -31,7 +30,7 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		hql.append("conf.data as dataEntrada, ");		
 		hql.append("notaCota.statusNotaFiscal as tipoPendencia, ");		
 		hql.append("((conf.qtdeInformada * conf.precoCapaInformado) -  (conf.qtde * conf.precoCapaInformado)) as valorDiferenca, ");
-		hql.append(" concat(telefone.ddd, ' ',telefone.numero)  as numeroTelefone ");		
+		hql.append(" concat(telefone.ddd, ' ', telefone.numero)  as numeroTelefone ");		
 		
 		hql.append(getSqlFromEWhereNotaPendente(filtro));
 		
@@ -39,8 +38,7 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 
 		Query query =  getSession().createQuery(hql.toString());		
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				ConsultaFollowupPendenciaNFeDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(ConsultaFollowupPendenciaNFeDTO.class));
 		
 		if(filtro.getPaginacao() != null) {
 			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
@@ -60,13 +58,12 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" from ControleConferenciaEncalheCota as controleCota ");
 		hql.append(" LEFT JOIN controleCota.notaFiscalEntradaCota as notaCota ");
 		hql.append(" LEFT JOIN notaCota.cota as cota ");
+		hql.append(" LEFT JOIN notaCota.naturezaOperacao as no ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
-		hql.append(" LEFT JOIN notaCota.tipoNotaFiscal as tipo ");
-		hql.append(" LEFT JOIN controleCota.conferenciasEncalhe as conf");
-		hql.append(" LEFT JOIN pessoa.telefones as telefone");
+		hql.append(" LEFT JOIN controleCota.conferenciasEncalhe as conf ");
+		hql.append(" LEFT JOIN pessoa.telefones as telefone ");
 		
-		
-		hql.append(" where tipo.tipoOperacao = 'ENTRADA' ");
+		hql.append(" where no.tipoOperacao = 'ENTRADA' ");
 		
 		hql.append(" and ((conf.qtdeInformada * conf.precoCapaInformado) -  (conf.qtde * notaCota.valorInformado)) != 0 ");
 		
