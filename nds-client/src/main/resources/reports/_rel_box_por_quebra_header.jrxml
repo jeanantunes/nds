@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_mapa_header" pageWidth="555" pageHeight="77" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="7c5c7996-1687-46f4-a031-fd58fc653d65">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGEM" class="java.io.InputStream"/>
+	<parameter name="NOME_DISTRIBUIDOR" class="java.lang.String"/>
+	<parameter name="NOME_RELATORIO" class="java.lang.String"/>
+	<title>
+		<band height="67" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="8d737bdd-4813-48c5-9e3a-7685e0cd84bd" x="0" y="0" width="555" height="67"/>
+			</rectangle>
+			<elementGroup>
+				<textField>
+					<reportElement uuid="475c8af7-bead-4860-a5e9-e4ddfcdb98c7" x="111" y="21" width="132" height="30"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{NOME_DISTRIBUIDOR}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="54745b77-40e3-4938-ac46-5c4024d38ba2" x="267" y="21" width="275" height="43"/>
+					<textElement>
+						<font size="16" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{NOME_RELATORIO}]]></textFieldExpression>
+				</textField>
+				<image>
+					<reportElement uuid="3c6bed92-4d86-4471-b233-e4b48e951378" x="6" y="6" width="65" height="54"/>
+					<imageExpression><![CDATA[$P{IMAGEM}]]></imageExpression>
+				</image>
+			</elementGroup>
+		</band>
+	</title>
+</jasperReport>

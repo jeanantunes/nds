@@ -916,24 +916,22 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	@Transactional
 	public Intervalo<Date> getPeriodoRecolhimento(Integer anoNumeroSemana) {
 		
-		int codigoInicioSemana = 
+		final int codigoInicioSemana = 
 				this.distribuidorRepository.buscarInicioSemanaRecolhimento().getCodigoDiaSemana();
 		
-		Integer anoBase = SemanaUtil.getAno(anoNumeroSemana);
+		final Integer anoBase = SemanaUtil.getAno(anoNumeroSemana);
 		
-		Integer numeroSemana = SemanaUtil.getSemana(anoNumeroSemana);
+		final Integer numeroSemana = SemanaUtil.getSemana(anoNumeroSemana);
 		
-		Date dataInicioSemana = 
+		final Date dataInicioSemana = 
 			SemanaUtil.obterDataDaSemanaNoAno(
 				numeroSemana,
 				codigoInicioSemana, 
 				anoBase);
 		
-		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+		final Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
-		Intervalo<Date> periodoRecolhimento = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
-		
-		return periodoRecolhimento;
+		return new Intervalo<Date>(dataInicioSemana, dataFimSemana);
 	}
 	
 	    /**
