@@ -106,7 +106,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("   ( ");
 		sql.append("     SELECT ");
 		
-		sql.append("       (SELECT case when estp.QTDE is null then case when plp.NUMERO_PERIODO = 1 then ((lc.REPARTE)-lc.REPARTE_PROMOCIONAL) else lc.REPARTE end else estp.qtde end as rprte ");
+		sql.append("       (SELECT case when estp.QTDE is null then case when plp.NUMERO_PERIODO=1 then ((lc.REPARTE)-lc.REPARTE_PROMOCIONAL) else CASE WHEN lc.REPARTE=0 THEN eg.QTDE_REPARTE ELSE lc.REPARTE END end else estp.qtde end as rprte ");
 		sql.append("       			From estudo_gerado eg JOIN lancamento lc ON lc.ID = eg.LANCAMENTO_ID LEFT JOIN periodo_lancamento_parcial plp ON plp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ");
 		sql.append("       			LEFT JOIN estoque_produto estp ON estp.PRODUTO_EDICAO_ID = eg.PRODUTO_EDICAO_ID where eg.ID = :estudoId ) AS qtdReparteDistribuidor, ");
 		

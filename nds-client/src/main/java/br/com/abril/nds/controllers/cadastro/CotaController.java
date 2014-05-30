@@ -859,9 +859,9 @@ public class CotaController extends BaseController {
 	@Path("/salvarFornecedores")
 	public void salvarFornecedores(List<Long> fornecedores, Long idCota){
 		
-		fornecedorService.salvarFornecedorCota(fornecedores, idCota);
+		this.fornecedorService.salvarFornecedorCota(fornecedores, idCota);
 
-        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+		this.result.use(Results.json()).from(this.fornecedorService.validarFormaCobrancaFornecedoresCota(fornecedores, idCota),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
