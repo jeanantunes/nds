@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -43,6 +44,8 @@ import br.com.abril.nds.repository.TelefoneFornecedorRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.TelefoneService;
+import br.com.abril.nds.service.validation.CobrancaFornecedorValidator;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class FornecedorServiceImpl implements FornecedorService {
@@ -70,6 +73,9 @@ public class FornecedorServiceImpl implements FornecedorService {
 	
 	@Autowired
 	private TelefoneService telefoneService;
+	
+	@Autowired
+	private CobrancaFornecedorValidator cobrancaFornecedorValidator;
 	
 	@Transactional
 	public Fornecedor obterFornecedorUnico(String codigoProduto) {
@@ -168,7 +174,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
 		}
 		
-		validarIntegridadeFornecedor(fornecedores,idCota);
+		this.validarIntegridadeFornecedor(fornecedores,idCota);
 		
 		Set<Fornecedor> listaFonecedores = new HashSet<Fornecedor>();
 		
@@ -183,7 +189,6 @@ public class FornecedorServiceImpl implements FornecedorService {
 				if(fornecedor != null){
 					listaFonecedores.add( fornecedor );
 				}
-
 			}
 		}
 
@@ -193,6 +198,37 @@ public class FornecedorServiceImpl implements FornecedorService {
 		cotaRepository.alterar(cota);
 
 		processarDescontosFornecedorCota(cota, listaFonecedores);
+	}
+	
+	@Transactional(readOnly = true)
+	public ValidacaoVO validarFormaCobrancaFornecedoresCota(List<Long> fornecedores, Long idCota) {
+		
+		ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.");
+		
+		Fornecedor fornecedor = null;
+		
+		for(Long id :  fornecedores ){
+			
+			try {
+			
+				fornecedor = this.fornecedorRepository.buscarPorId(id);
+				
+				this.cobrancaFornecedorValidator.filter(
+					idCota, 
+					fornecedor, 
+					null
+				).validate();
+			
+			} catch (ValidacaoException e) {
+				
+				validacaoVO.setTipoMensagem(TipoMensagem.WARNING);
+				validacaoVO.addMensagem(
+						String.format("Não existem formas de cobrança cadastradas para o fornecedor %s.", 
+									  fornecedor.getJuridica().getNomeFantasia()));
+			}
+		}
+		
+		return validacaoVO;
 	}
 
 	private void validarIntegridadeFornecedor(List<Long> fornecedores,Long idCota) {

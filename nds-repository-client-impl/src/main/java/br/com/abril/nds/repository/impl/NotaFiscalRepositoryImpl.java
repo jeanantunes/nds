@@ -409,7 +409,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	@SuppressWarnings("unchecked")
 	public List<Cota> obterConjuntoCotasNotafiscal(FiltroNFeDTO filtro) {
 
-		// OBTER ID DE TODAS AS COTAS DA TELA
+		// OBTER TODAS AS COTAS DA TELA
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" mec.cota ");
 		Query query = queryConsultaMECNfeParameters(queryConsultaMECNfe(filtro, hql, false, false, false), filtro);

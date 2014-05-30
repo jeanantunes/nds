@@ -4,6 +4,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	modalAberta: false,
 	
+	processoUtilizaNfe: false,
+	
 	idProdutoEdicaoNovoEncalhe: "",
 	
 	valorAnteriorInput : undefined,
@@ -126,14 +128,20 @@ var ConferenciaEncalheCont = $.extend(true, {
 		}));
 		
 		$(document.body).bind('keydown.popUpNotaFiscal', jwerty.event('F6',function() {
+			
 			if(!permissaoAlteracao){
 				exibirAcessoNegado();
 				return;
 			}
-			if (!ConferenciaEncalheCont.modalAberta){
+			
+			if (!ConferenciaEncalhe.modalAberta && ConferenciaEncalhe.processoUtilizaNfe) {
 				
-				ConferenciaEncalheCont.popup_notaFiscal();
+				ConferenciaEncalhe.popup_notaFiscal();
+			} else {
+				
+				exibirMensagem('WARNING', ['Este Processo não exige Nota Fiscal.']);
 			}
+			
 			
 		}));
 		
@@ -469,7 +477,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 					ConferenciaEncalheCont.popup_notaFiscal();
 				}
-			
+				
 				ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe(result);
 				
 				bloquearItensEdicao(ConferenciaEncalheCont.workspace);
