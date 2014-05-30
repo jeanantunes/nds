@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
 import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
@@ -116,5 +117,6 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
 	Long obterQuantidadeDadosParaImpressaoNaData(Date data);
 	
 	List<Diferenca> obterDiferencas(Date data, StatusConfirmacao... statusConfirmacao);
-	
+
+    List<ContasAPagarConsignadoVO> pesquisarDiferncas(String codigoProduto, Long numeroEdicao, Date data);
 }

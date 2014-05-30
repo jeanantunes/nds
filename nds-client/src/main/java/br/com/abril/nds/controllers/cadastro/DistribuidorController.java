@@ -48,17 +48,7 @@ public class DistribuidorController extends BaseController {
     @Path("/obterNumeroSemana")
     public void obterNumeroSemana(final Date data) {
         
-        final DiaSemana diaSemana = distribuidorService.inicioSemanaRecolhimento();
-        
-        if (diaSemana == null) {
-            
-            throw new RuntimeException("Dados do distribuidor inexistentes: início semana");
-        }
-        
-        final Integer anoSemana =
-                SemanaUtil.obterAnoNumeroSemana(data, diaSemana.getCodigoDiaSemana());
-        
-        result.use(Results.json()).from(anoSemana).serialize();
+        result.use(Results.json()).from(this.distribuidorService.obterNumeroSemana(data)).serialize();
     }
     
     @Get

@@ -2,10 +2,12 @@ package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -21,26 +23,26 @@ import br.com.abril.nds.client.vo.ContasAPagarTotalDistribVO;
 import br.com.abril.nds.client.vo.ContasApagarConsultaPorDistribuidorVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
-import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
-import br.com.abril.nds.dto.ContasAPagarGridPrincipalFornecedorDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarParcialDTO;
 import br.com.abril.nds.dto.ContasAPagarTotalDistribDTO;
-import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ContasAPagarService;
+import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -81,6 +83,12 @@ public class ContasAPagarController extends BaseController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private RecolhimentoService recolhimentoService;
+	
+	@Autowired
+	private DiferencaEstoqueService diferencaEstoqueService;
 
 
 	public ContasAPagarController(Result result) {
@@ -92,29 +100,31 @@ public class ContasAPagarController extends BaseController {
 	@Path("/")
 	public void index() {
 
-		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO);
-		result.include("fornecedores", fornecedores);
+		result.include("fornecedores", 
+		        fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO));
+		
+		final Integer numeroSemana = this.distribuidorService.obterNumeroSemana(new Date());
+		
+		result.include("numeroSemana", numeroSemana);
+		
+		final Intervalo<Date> periodo = this.recolhimentoService.getPeriodoRecolhimento(numeroSemana);
+		
+		result.include("dataDe", DateUtil.formatarDataPTBR(periodo.getDe()));
+		result.include("dataAte", DateUtil.formatarDataPTBR(periodo.getAte()));
 	}
 
 
 	@Path("/pesquisarProduto.json")
 	public void pesquisarProduto(FiltroContasAPagarDTO filtro, String sortname, String sortorder) {
 		filtro.setPaginacaoVO(new PaginacaoVO(sortname, sortorder));
-		List<ContasAPagarConsultaProdutoDTO> produtos = contasAPagarService.pesquisarProdutos(filtro);
-		List<ContasAPagarConsultaProdutoVO> produtosVO = new ArrayList<ContasAPagarConsultaProdutoVO>();
-
-		for(ContasAPagarConsultaProdutoDTO dto : produtos){
-			produtosVO.add(new ContasAPagarConsultaProdutoVO(dto));
-		}
-
-		result.use(FlexiGridJson.class).from(produtosVO).total(produtosVO.size()).serialize();
+		List<ContasAPagarConsultaProdutoVO> produtos = contasAPagarService.pesquisarProdutos(filtro);
+		
+		result.use(FlexiGridJson.class).from(produtos).total(produtos.size()).serialize();
 	}
 
 
 	@Path("/pesquisarPorProduto.json")
 	public void pesquisarPorProduto(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		
-		validaSemanaCE(filtro.getCe());
 		
 		filtro.setIdsFornecedores(null);
 		this.session.setAttribute(FILTRO_CONTAS_A_PAGAR, filtro);
@@ -145,6 +155,11 @@ public class ContasAPagarController extends BaseController {
 		
 		List<ContasAPagarParcialVO> listVO = new ArrayList<ContasAPagarParcialVO>();
 		FlexiGridDTO<ContasAPagarParcialDTO> flexiDTO = contasAPagarService.pesquisarParcial(filtro);
+		
+		if (flexiDTO.getGrid() == null || flexiDTO.getGrid().isEmpty()){
+		    
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
 
 		for (ContasAPagarParcialDTO dto : flexiDTO.getGrid()) {
 			listVO.add(new ContasAPagarParcialVO(dto));
@@ -157,39 +172,17 @@ public class ContasAPagarController extends BaseController {
 	@Path("/pesquisarPorFornecedor.json")
 	public void pesquisarPorFornecedor(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
-		validaSemanaCE(filtro.getCe());
-		
 		this.session.setAttribute(FILTRO_CONTAS_A_PAGAR, filtro);
 
-		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+		final PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 		filtro.setPaginacaoVO(paginacaoVO);
 		
-		ContasAPagarGridPrincipalFornecedorDTO dto = contasAPagarService.pesquisarPorDistribuidor(filtro);
-		
-		if (dto == null || dto.getGrid() == null || dto.getGrid().size() == 0) {
-
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
-		}
-		
-		ContasAPagarGridPrincipalFornecedorVO vo = new ContasAPagarGridPrincipalFornecedorVO(dto);
+		final ContasAPagarGridPrincipalFornecedorVO vo = this.contasAPagarService.pesquisarPorDistribuidor(filtro);
 		
 		if (filtro.isPrimeiraCarga()) {
 			result.use(Results.json()).from(vo, "result").recursive().serialize();
 		} else {
 			result.use(FlexiGridJson.class).from(vo.getGrid()).total(vo.getTotalGrid()).page(page).serialize();
-		}
-	}
-
-	private void validaSemanaCE(Integer ce) {
-		
-		if (ce != null) {
-			
-			String semanaCE = ce.toString();
-			
-			if (semanaCE.length() != 6) {
-				
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A semana deve ser preenchida com o ano + semana com 6 digitos ex: (AAAASS)"));
-			}
 		}
 	}
 
@@ -269,7 +262,7 @@ public class ContasAPagarController extends BaseController {
 			listVO.add(new ContasAPagarConsultaPorProdutoVO(dto));
 		}
 		
-		FileExporter.to("contas-a-pagar", fileType).inHTTPResponse(getNDSFileHeader(), null, null,
+		FileExporter.to("contas-a-pagar", fileType).inHTTPResponse(getNDSFileHeader(), null, 
 						listVO, ContasAPagarConsultaPorProdutoVO.class,
 						this.httpServletResponse);
 		
@@ -282,20 +275,12 @@ public class ContasAPagarController extends BaseController {
 		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) this.session.getAttribute(FILTRO_CONTAS_A_PAGAR);
 		filtro.setPaginacaoVO(null);
 		
-		ContasAPagarGridPrincipalFornecedorDTO listContasAPagar = contasAPagarService.pesquisarPorDistribuidor(filtro);
-		List <ContasApagarConsultaPorDistribuidorVO> listVO = new ArrayList<ContasApagarConsultaPorDistribuidorVO>();
-		
-		for(ContasApagarConsultaPorDistribuidorDTO dto : listContasAPagar.getGrid()){
-			listVO.add(new ContasApagarConsultaPorDistribuidorVO(dto));
-		}
-		
-		FileExporter.to("contas-a-pagar",fileType).inHTTPResponse(getNDSFileHeader(), null, null, 
-						listVO, ContasApagarConsultaPorDistribuidorVO.class, 
+		FileExporter.to("contas-a-pagar",fileType).inHTTPResponse(getNDSFileHeader(), null, 
+		                this.contasAPagarService.pesquisarContasPorDistribuidor(filtro), 
+		                ContasApagarConsultaPorDistribuidorVO.class, 
 						this.httpServletResponse);
 		
 		result.use(Results.nothing());
-		
-		
 	}
 	
 	@Path("/exportPesquisarParcial")
@@ -311,33 +296,11 @@ public class ContasAPagarController extends BaseController {
 			listVO.add(new ContasAPagarParcialVO(dto));
 		}
 		
-		FileExporter.to("detalhe-parcial", fileType).inHTTPResponse(getNDSFileHeader(), null, null,
+		FileExporter.to("detalhe-parcial", fileType).inHTTPResponse(getNDSFileHeader(), null, 
 						listVO, ContasAPagarParcialVO.class, 
 						this.httpServletResponse);
 		
 		result.use(Results.nothing());
-	}
-	
-	@Path("/exportPesquisarDetalheConsignado")
-	public void exportPesquisarDetalheConsignado(FileType fileType) throws IOException {
-		
-		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_DETALHE_CONSIGNADO);
-		filtro.setPaginacaoVO(null);
-		
-		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> dto = contasAPagarService.pesquisarDetalheConsignado(filtro);
-		
-		List <ContasAPagarConsignadoVO> listVO = new ArrayList<ContasAPagarConsignadoVO>();
-		
-		for(ContasAPagarConsignadoDTO dt : dto.getGrid()){
-			
-			listVO.add(new ContasAPagarConsignadoVO(dt));
-		}
-		
-		FileExporter.to("detalhe-consignado", fileType).inHTTPResponse(getNDSFileHeader(), null, null,
-						listVO, ContasAPagarConsignadoVO.class,
-						this.httpServletResponse);
-		result.use(Results.nothing());
-
 	}
 	
 	@Path("/exportPesquisarDetalheEncalhe")
@@ -355,7 +318,7 @@ public class ContasAPagarController extends BaseController {
 			listVO.add(new ContasAPagarEncalheVO(dt));
 		}
 		
-		FileExporter.to("detalhe-encalhe", fileType).inHTTPResponse(getNDSFileHeader(), null, null,
+		FileExporter.to("detalhe-encalhe", fileType).inHTTPResponse(getNDSFileHeader(), null, 
 						listVO, ContasAPagarEncalheVO.class, 
 						this.httpServletResponse);
 		
@@ -377,10 +340,24 @@ public class ContasAPagarController extends BaseController {
 			listVO.add(new ContasAPagarFaltasSobrasVO(to));
 		}
 		
-		FileExporter.to("detalhe-faltas-sobras", fileType).inHTTPResponse(getNDSFileHeader(), null, null,
+		FileExporter.to("detalhe-faltas-sobras", fileType).inHTTPResponse(getNDSFileHeader(), null, 
 				listVO, ContasAPagarFaltasSobrasVO.class, this.httpServletResponse);
 		
 		result.use(Results.nothing());
 	}
 	
+	@Path("/calcularPeriodoCE.json")
+	public void calcularPeriodoCE(Integer semanaCE){
+	    
+	    this.result.use(Results.json()).from(
+	            this.recolhimentoService.getPeriodoRecolhimento(semanaCE), "result").recursive().serialize();
+	}
+	
+	@Path("/pesquisarDiferencas")
+	public void pesquisarDiferencas(String codigoProduto, Long numeroEdicao, Date data){
+	    
+	    this.result.use(FlexiGridJson.class).from(
+	            this.diferencaEstoqueService.pesquisarDiferncas(
+	                    codigoProduto, numeroEdicao, data)).serialize();
+	}
 }

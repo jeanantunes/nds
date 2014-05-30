@@ -30,6 +30,7 @@ var contasAPagarController = $.extend(true, {
 		this.initGridConsignado();
 		this.initGridEncalhe();
 		this.initGridFaltasSobras();
+		this.initGridDiferencas();
 		
 		$('#contasAPagar_areaBts', this.workspace).hide();
 	},
@@ -169,7 +170,7 @@ var contasAPagarController = $.extend(true, {
 		params['page'] = 1;
 		params['rp'] = 15;
 		
-		$.each($("[name='filtro.idsFornecedores']", this.workspace), function(index, item){
+		$.each($("input:checked[name='filtro.idsFornecedores']", this.workspace), function(index, item){
 			params['filtro.idsFornecedores['+index+']'] = item.value;
 		});
 		
@@ -220,7 +221,7 @@ var contasAPagarController = $.extend(true, {
 	
 	pesquisarProdutoEdicao : function(){
 		
-		var params = $("#contasAPagarPesquisaProdutoEdicaoForm", this.workspace).serialize();
+		var params = $("#form-pesq-produto-contasAPagar", this.workspace).serialize();
 		
 		$(".contasAPagarListaProdutosGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisarProduto.json?' + params, 
@@ -304,16 +305,19 @@ var contasAPagarController = $.extend(true, {
 		
 		$.each(data.rows, function(index, value) {
 			
-			var params = "'" + value.cell.produtoEdicaoId + "', '" 
-							 + value.cell.codigo          + "', '"
-							 + value.cell.produto         + "', '"
-							 + value.cell.edicao          + "', '"
-			                 + value.cell.fornecedor      + "', '" 
-			                 + value.cell.dataLcto        + "', '" 
-			                 + value.cell.dataFinal       + "'";
+			if (value.cell.tipo != "N"){
+				
+				var params = "'" + value.cell.produtoEdicaoId + "', '" 
+				 	+ value.cell.codigo          + "', '"
+				 	+ value.cell.produto         + "', '"
+				 	+ value.cell.edicao          + "', '"
+				 	+ value.cell.fornecedor      + "', '" 
+				 	+ value.cell.rctl	         + "', '" 
+				 	+ value.cell.dataFinal       + "'";
+				
+				value.cell.tipo = '<a href="javascript:;" onclick="contasAPagarController.popup_detalhes(' + params + ');" title="Detalhe Consignado">' + value.cell.tipo + '</a>';
+			}
 			
-			var linkTipo = '<a href="javascript:;" onclick="contasAPagarController.popup_detalhes(' + params + ');" title="Detalhe Consignado">' + value.cell.tipo + '</a>';
-			value.cell.tipo = linkTipo;
 		});
 	
 		return data;
@@ -363,7 +367,8 @@ var contasAPagarController = $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#form-pesq-produto-contasAPagar", this.workspace)
 		});
 	},
 	
@@ -377,30 +382,29 @@ var contasAPagarController = $.extend(true, {
 		$("#contasAPagar_popupTipo_fornecedor", this.workspace).html(fornecedor);
 		$("#contasAPagar_popupTipo_dataLcto", this.workspace).html(dataLcto);
 		$("#contasAPagar_popupTipo_dataFinal", this.workspace).html(dataFinal);
-	
-		// preenche grid
-		var params = $("#contasAPagarPesquisaProdutoEdicaoForm", this.workspace).serialize();
 		
-		$(".contasAPagar_parciaispopGrid", this.workspace).flexOptions({
-			url : this.path + 'pesquisarParcial.json?' + params, 
-			newp : 1
-		});
-
-		$(".contasAPagar_parciaispopGrid", this.workspace).flexReload();
-		
-		// abre popup
-		$("#dialog-contasAPagar-tipo", this.workspace).dialog({
-			resizable: false,
-			height:500,
-			width:950,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
+		$.postJSON(
+			contasAPagarController.path + 'pesquisarParcial.json',
+			[{name:'filtro.produto', value:codigo}, {name:'filtro.dataDetalhe', value:dataLcto}],
+			function(result) {
 				
-				},
-			 }
-		});
+				$(".contasAPagar_parciaispopGrid", contasAPagarController.workspace).flexAddData(
+						{rows: toFlexiGridObject(result.grid), page : result.page, total : result.total});
+				
+				$("#dialog-contasAPagar-tipo", contasAPagarController.workspace).dialog({
+					resizable: false,
+					height:500,
+					width:950,
+					modal: true,
+					buttons: {
+						"Fechar": function() {
+							$( contasAPagarController ).dialog( "close" );
+						
+						},
+					 }
+				});
+			}
+		);
 	},
 	
 	
@@ -422,7 +426,7 @@ var contasAPagarController = $.extend(true, {
 				contasAPagarController.montaTabelaTotaisDistribuidores(
 						$("#contasAPagar_table_popupConsignado", contasAPagarController.workspace).get(0), result.totalDistrib);
 				$(".contasAPagar-consignadoGrid", contasAPagarController.workspace).flexAddData(
-						{rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+						{rows: contasAPagarController.montarLinkDiferencas(toFlexiGridObject(result.grid), data), page : 1, total : 1});
 				
 				if (data){
 					$("#contasAPagar_legend_popupConsignado", contasAPagarController.workspace).html(data);
@@ -439,6 +443,64 @@ var contasAPagarController = $.extend(true, {
 						},
 					},
 					form: $("#form-contasAPagar-consignado", contasAPagarController.workspace)
+				});
+			}
+		);
+	},
+	
+	montarLinkDiferencas : function(grid, data){
+		
+		$.each(grid, function(index, element){
+			
+			if (element.cell.diferenca && element.cell.diferenca != 0){
+				
+				element.cell.diferenca = 
+					'<a href="javascript:;" onclick="contasAPagarController.exibirDiferencas('
+					.concat(element.cell.codigo)
+					.concat(",")
+					.concat(element.cell.edicao)
+					.concat(",")
+					.concat("'").concat(data).concat("'")
+					.concat(",")
+					.concat("'").concat(element.cell.produto).concat("'")
+					.concat(');">')
+					.concat('<img style="width:15px; height:15px;" src="')
+					.concat(contextPath)
+					.concat('/images/bt_expedicao.png">')
+					.concat('</img>')
+					.concat('</a>');
+			}
+		});
+		
+		return grid;
+	},
+	
+	exibirDiferencas : function(codigoProduto, numeroEdicao, data, nomeProd){
+		
+		$.postJSON(
+			contasAPagarController.path + 'pesquisarDiferencas',
+			[{name:'codigoProduto', value:codigoProduto},
+			 {name:'numeroEdicao', value:numeroEdicao},
+			 {name:'data', value:data}],
+			function(result) {
+				
+				$("#legend_diferencas", contasAPagarController.workspace).text(
+						codigoProduto + " - " + nomeProd + ": " + numeroEdicao);
+				
+				$("#grid_diferencas", contasAPagarController.workspace).flexAddData(
+						{rows: result.rows, page: 1, total: result.rows.length});
+				
+				$("#dialog-diferencas", contasAPagarController.workspace).dialog({
+					resizable: false,
+					height:360,
+					width:300,
+					modal: true,
+					buttons: {
+						"Fechar": function() {
+							$( this ).dialog( "close" );
+						},
+					},
+					form: $("#form-diferencas", contasAPagarController.workspace)
 				});
 			}
 		);
@@ -509,6 +571,23 @@ var contasAPagarController = $.extend(true, {
 		});
 	},
 	
+	limparCampoSemanaCE : function(){
+		
+		$("#contasAPagar_Filtro_Ce", this.workspace).val("");
+	},
+	
+	calcularPeriodoCE : function(){
+		
+		$.postJSON(
+			this.path + "calcularPeriodoCE.json",
+			[{name:'semanaCE', value:$("#contasAPagar_Filtro_Ce", this.workspace).val()}],
+			function(result) {
+				
+				$("#contasAPagar_Filtro_De", this.workspace).val(result.de.$);
+				$("#contasAPagar_Filtro_Ate", this.workspace).val(result.ate.$);
+			}
+		);
+	},
 	
 	/*
 	 * *************************
@@ -866,12 +945,6 @@ var contasAPagarController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Motivo',
-				name : 'motivo',
-				width : 40,
-				sortable : true,
-				align : 'left'
-			}, {
 				display : 'Fornecedor',
 				name : 'fornecedor',
 				width : 70,
@@ -880,21 +953,15 @@ var contasAPagarController = $.extend(true, {
 			}, {
 				display : 'Valor R$',
 				name : 'valor',
-				width : 40,
+				width : 50,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Valor c/Desc R$',
 				name : 'valorComDesconto',
-				width : 60,
+				width : 70,
 				sortable : true,
 				align : 'right'
-			}, {
-				display : 'N° NF-e',
-				name : 'nfe',
-				width : 57,
-				sortable : true,
-				align : 'left'
 			}],
 			sortname : "codigo",
 			sortorder : "asc",
@@ -927,7 +994,7 @@ var contasAPagarController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
-				name : 'valor',
+				name : 'precoCapa',
 				width : 95,
 				sortable : true,
 				align : 'right'
@@ -1028,6 +1095,36 @@ var contasAPagarController = $.extend(true, {
 			height : 200
 		});
 	},
+	
+	initGridDiferencas : function(){
+		$("#grid_diferencas", contasAPagarController.workspace).flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Quantidade',
+				name : 'diferenca',
+				width : 60,
+				sortable : false,
+				align : 'left'
+			}, {
+				display : 'Motivo',
+				name : 'motivo',
+				width : 120,
+				sortable : false,
+				align : 'left'
+			}]
+		});
+	},
+	
+	exportarPesquisaPrincipal: function(tipoArquivo){
+		
+		if ($("#contasAPagarRadioProduto", this.workspace).is(":checked")){
+			
+			window.open(contasAPagarController.path + "exportPesquisarPorProduto?fileType=" + tipoArquivo, "_blank");
+		} else {
+			
+			window.open(contasAPagarController.path + "exportPesquisarPorDistribuidor?fileType=" + tipoArquivo, "_blank");
+		}
+	}
 	
 }, BaseController);
 

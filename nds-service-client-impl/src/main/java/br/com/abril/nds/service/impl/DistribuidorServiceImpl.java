@@ -753,5 +753,24 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 			this.distribuidorRepository.obter().getNaturezasOperacoesNotasEnvio().isEmpty();
 		}
 		return this.distribuidorRepository.obter().getNaturezasOperacoesNotasEnvio();
+    }
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Integer obterNumeroSemana(Date data){
+	    
+	    if (data == null){
+	        
+	        data = this.obterDataOperacaoDistribuidor();
+	    }
+	    
+	    final DiaSemana diaSemana = this.inicioSemanaRecolhimento();
+        
+        if (diaSemana == null) {
+            
+            throw new ValidacaoException(TipoMensagem.ERROR, "Dados do distribuidor inexistentes: início semana");
+        }
+        
+        return SemanaUtil.obterAnoNumeroSemana(data, diaSemana.getCodigoDiaSemana());
 	}
 }
