@@ -70,7 +70,7 @@ public class CobrancaFornecedorValidator {
     		
     		filtro.setIdFornecedores(Arrays.asList(this.fornecedor.getId()));
     		
-    		List<TipoDescontoDTO> desconto = descontoDistribuidorRepository.buscarDescontos(filtro);
+    		List<TipoDescontoDTO> desconto = CobrancaFornecedorValidator.this.descontoDistribuidorRepository.buscarDescontos(filtro);
     		
     		return desconto != null && !desconto.isEmpty();
     	}
@@ -86,7 +86,7 @@ public class CobrancaFornecedorValidator {
     		
     		filtro.setIdCota(this.idCota);
     		
-    		List<TipoDescontoCotaDTO> desconto = descontoCotaRepository.obterDescontoCota(filtro);
+    		List<TipoDescontoCotaDTO> desconto = CobrancaFornecedorValidator.this.descontoCotaRepository.obterDescontoCota(filtro);
     		
     		return desconto != null && !desconto.isEmpty();
     	}
@@ -102,7 +102,7 @@ public class CobrancaFornecedorValidator {
     		
     		filtro.setCodigoProduto(this.codigoProduto);
     		
-    		List<TipoDescontoProdutoDTO> desconto = descontoProdutoRepository.buscarTipoDescontoProduto(filtro);
+    		List<TipoDescontoProdutoDTO> desconto = CobrancaFornecedorValidator.this.descontoProdutoRepository.buscarTipoDescontoProduto(filtro);
     		
     		return desconto != null && !desconto.isEmpty();
     	}
@@ -110,7 +110,8 @@ public class CobrancaFornecedorValidator {
     	@Transactional
         public void validate() {
 
-        	List<FormaCobrancaDTO> formasCobrancaCota = parametroCobrancaCotaService.obterDadosFormasCobrancaPorCota(this.idCota);
+        	List<FormaCobrancaDTO> formasCobrancaCota = 
+        			CobrancaFornecedorValidator.this.parametroCobrancaCotaService.obterDadosFormasCobrancaPorCota(this.idCota);
 
         	boolean fornecedorValido = false;
 
@@ -119,6 +120,10 @@ public class CobrancaFornecedorValidator {
         		if (formaCobranca.getFornecedores() != null && formaCobranca.getFornecedores().contains(this.fornecedor)) {
 
            			fornecedorValido = true;
+           			
+           			if (this.codigoProduto == null) {
+           				break;
+           			}
 
         			if (this.hasDescontoGeral()) {
         				break;
@@ -134,10 +139,10 @@ public class CobrancaFornecedorValidator {
 
         	if (!fornecedorValido) {
 
-        		Cota cota = cotaRepository.buscarPorId(this.idCota);
+        		Cota cota = CobrancaFornecedorValidator.this.cotaRepository.buscarPorId(this.idCota);
 
         		throw new ValidacaoException(TipoMensagem.WARNING, 
-        				String.format("Não existem formas de cobrança para o fornecedor %s na cota %s", 
+        				String.format("Não existem formas de cobrança cadastradas para o fornecedor %s na cota %s", 
         						this.fornecedor.getJuridica().getNomeFantasia(),
         						cota.getNumeroCota()));
         	}
