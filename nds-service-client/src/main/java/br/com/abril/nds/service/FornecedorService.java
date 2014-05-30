@@ -14,6 +14,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 public interface FornecedorService {
 
@@ -55,6 +56,8 @@ public interface FornecedorService {
 	List<Fornecedor> obterFornecedores(Long idCota);
 	
 	void salvarFornecedorCota(List<Long> fornecedores, Long idCota);
+	
+	ValidacaoVO validarFormaCobrancaFornecedoresCota(List<Long> fornecedores, Long idCota);
 	
 	/**
 	 * @deprecated use {@link FornecedorService#obterFornecedoresIdNome(SituacaoCadastro, Boolean)}
