@@ -674,9 +674,10 @@ var histogramaPosEstudoController = $.extend(true, {
 		
 		histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual);
 		
-		$(this).tipsy('hide');  
+		$(this).tipsy('hide');
 		removeTabByTitle('Distribuição Venda Média');
 		selectTabTitle('Matriz Distribuição');
+		
 	}
 
 }, BaseController);
