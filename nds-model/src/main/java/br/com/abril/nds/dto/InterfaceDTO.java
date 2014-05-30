@@ -27,14 +27,31 @@ public class InterfaceDTO implements Serializable {
 	@Export(label="Interface", exhibitionOrder=1, widthPercent=40)
 	private String descricaoInterface;
 	
-	@Export(label="Status", exhibitionOrder=4)
-	private String status;
+	private Status status;
 	
 	@Export(label="Data Processamento",exhibitionOrder=5)
 	private String dataProcessmento;
 	
 	@Export(label="Hora Processamento",exhibitionOrder=6)
 	private String horaProcessamento;
+	
+	public enum Status {
+		S("Realizado com Sucesso"),
+		A("Realizado com sucesso / Alerta"),
+		F("Processado com erro"),
+		V("Sem dados a processar"),
+		E("Não processado");
+		
+		private String descricao;
+		
+		Status(String descricao) {
+			this.descricao = descricao;
+		}
+		
+		public String getDescricao() {
+			return this.descricao;
+		}
+	}
 
 	public String getNome() {
 		return nome;
@@ -52,12 +69,17 @@ public class InterfaceDTO implements Serializable {
 		this.extensaoArquivo = extensaoArquivo;
 	}
 
-	public String getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	@Export(label="Status", exhibitionOrder=4, widthPercent=20)
+	public String getStatusDescricao() {
+		return this.status == null ? Status.V.getDescricao() : this.status.getDescricao();
 	}
 
 	public String getDataProcessmento() {
