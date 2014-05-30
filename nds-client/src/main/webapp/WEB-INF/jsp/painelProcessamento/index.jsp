@@ -97,19 +97,7 @@
                       </table>
                       <br clear="all"/>
                   <table class="painelInterfaceGrid"></table>
-              	</div>
-                <div id="tabPainel-Processos">
-                	<table width="500" border="0" align="right" cellpadding="2" cellspacing="1" class="filtro">
-                      <tr>
-                      	<td width="167">&nbsp;</td>
-                        <td width="17"><img src="${pageContext.request.contextPath}/images/ico_operando.png" alt="Operando" /></td>
-                        <td width="146">Realizado com Sucesso</td>
-                        <td width="19"><img src="${pageContext.request.contextPath}/images/ico_encerrado.png" alt="Off-line" /></td>
-                        <td width="125">Não Processado</td>
-                      </tr>
-                      </table>
-                      <br clear="all"/>
-                </div>                
+              	</div>  
             </div>
         </div>
         

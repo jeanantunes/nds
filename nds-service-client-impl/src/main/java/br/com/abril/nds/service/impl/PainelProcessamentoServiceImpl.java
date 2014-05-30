@@ -32,6 +32,7 @@ import br.com.abril.nds.service.HistoricoSituacaoCotaService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.Util;
 
 /**
  * Classe de implementação referente ao serviço da entidade
@@ -150,7 +151,8 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 						
 			interfaceDTO.setNome(logExecucao.getNome());
 			interfaceDTO.setDescricaoInterface(logExecucao.getDescricao());
-			interfaceDTO.setStatus(logExecucao.getStatus());
+			interfaceDTO.setStatus(Util.getEnumByStringValue(InterfaceDTO.Status.values(), logExecucao.getStatus()));
+			
 			
 			listaInterface.add(interfaceDTO);
 			
