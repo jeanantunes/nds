@@ -123,6 +123,12 @@ public class ValidacaoVO {
 		this.tratarValidacao = tratarValidacao;
 	}
 	
-	
-	
+	public void addMensagem(String mensagem) {
+		
+		if (this.listaMensagens == null) {
+			this.listaMensagens = new ArrayList<String>();
+		}
+		
+		this.listaMensagens.add(mensagem);
+	}	
 }
