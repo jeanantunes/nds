@@ -872,6 +872,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#dialog-informacoes-produto", _workspace).hide();
 		$("#telaPesquisaMatriz", _workspace).show();
         this.tabSomarCopiarEstudos = '';
+        $(".areaBts").show();
     },
 	
 	this.mostraTelaCopiarProporcionalDeEstudo = function() {
@@ -937,38 +938,42 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#dialog-informacoes-produto", _workspace).show();
 	},
 	
-	this.redirectToTelaAnalise = function redirectToTelaAnalise(divToHide, divToShow, estudo){
+	this.redirectToTelaAnalise = function redirectToTelaAnalise(estudo){
 
-		var matrizSelecionado_estudo =null;
-		
-		if(typeof(histogramaPosEstudoController)!="undefined"){
-			matrizSelecionado_estudo = histogramaPosEstudoController.matrizSelecionado.estudo;
-		}
-		var data = [];
-		var idEstudo =  estudo || matrizSelecionado_estudo;
-		data.push({name: 'id', value: idEstudo});
-		if ($('#parcial').val() === 'true') {
-			data.push({name: "modoAnalise", value: "PARCIAL"});
-		}
-        data.push({name: "reparteCopiado", value: $("#copiarEstudo-copia-reparte").text()});
+        // Obter matriz de distribuição
+        var matriz = [],
+        	url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo",
+        	dadosResumo = {},
+        	numeroEstudo = estudo;
         
-        console.log(T.estudoAserCopiado);
-        data.push({name: "estudoOrigem", value: T.estudoAserCopiado});
-        data.push({name: "dataLancamentoEdicao", value: $("#copiarEstudo-dataLancto").text()});
+        $.postJSON(url,
+                [{name : "id" , value : numeroEstudo}],
+                function(response){
+	            // CALLBACK
+	            // ONSUCESS
+	            matriz.push({name: "selecionado.classificacao",  value: response.classificacao});
+	            matriz.push({name: "selecionado.nomeProduto",    value: response.nomeProduto});
+	            matriz.push({name: "selecionado.codigoProduto",  value: response.codigoProduto});
+	            matriz.push({name: "selecionado.dataLcto",       value: response.dataLancto});
+	            matriz.push({name: "selecionado.edicao",         value: response.numeroEdicao});
+	            matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
+	            matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
+	            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
+	            
+	            $('#workspace').tabs({load : function(event, ui) {
+					
+	            	histogramaPosEstudoController.dadosResumo = dadosResumo;
+	            	histogramaPosEstudoController.matrizSelecionado = matriz;
+	            	histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz);
 
-		$.get(
-				contextPath + '/distribuicao/analise/parcial/',
-				data, // parametros
-				function(html){ // onSucessCallBack
-					$(divToHide).hide();
-					$(divToShow).html(html);
-					$(divToShow).show();
-					$( divToShow + ' #botaoVoltarTelaAnalise').click(function voltarTelaAnalise(){
-						$(divToShow).hide();
-						$(divToHide).show();
-					});
-			});
-		
+					$('#workspace').tabs({load : function(event, ui) {}});
+				}});
+
+                var parametros = '?codigoProduto='+ response.codigoProduto +'&edicao='+ response.numeroEdicao;
+				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo' + parametros);
+        	}
+        );
+    
 	},
 
 	this.somarEstudos = function() {
@@ -1004,6 +1009,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.copiarProporcionalDeEstudo = function() {
 		
 		T.esconderOpcoes();
+		
+		$(".areaBts").hide();
 		
 		if (!T.validarMarcacaoUnicoItem()) {
 			return;
@@ -1518,7 +1525,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		} else {
 			$(".areaBts").hide();
 			// Deve ir direto para EMS 2031
-			T.redirectToTelaAnalise('#dialog-copiar-estudo','#telaAnalise', $('#copiarEstudo-estudo').html());
+			T.redirectToTelaAnalise($('#copiarEstudo-estudo').text());
 		}
 	},
 
@@ -1828,5 +1835,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.esconderOpcoes();
 	};
+
 }
 //@ sourceURL=matrizDistribuicao.js

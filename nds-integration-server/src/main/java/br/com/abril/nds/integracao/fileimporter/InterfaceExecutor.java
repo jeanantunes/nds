@@ -675,7 +675,10 @@ public class InterfaceExecutor {
 
 		List<File> listaArquivos = new ArrayList<File>();
 		
-		String pattern = interfaceExecucao.getMascaraArquivo();
+		String pattern = (interfaceExecucao.getMascaraArquivo()!= null) 
+				? interfaceExecucao.getMascaraArquivo().trim()
+						:interfaceExecucao.getMascaraArquivo();
+				
 		String dirPath = diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator;
 		
 		File dir = new File(dirPath);

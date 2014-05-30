@@ -655,6 +655,29 @@ var histogramaPosEstudoController = $.extend(true, {
 //        urlAnalise += '&repDistrib=' + $('#fieldSetResumoReparteDistribuida').text().replace(/\D/g, '');
 
 		$('#workspace').tabs('addTab', 'Distribuição Venda Média', urlAnalise);
+	},
+	
+	desbloquearAnaliseEstudo : function(indexAba) {
+		
+		$.postJSON(
+				contextPath + "/distribuicao/analiseEstudo/desbloquear",
+			null,
+			function() {
+				$("#workspace").tabs("remove", indexAba);
+			}
+		);
+	},
+	
+	voltar : function() {
+		
+		var indexAbaAtual =  $('#workspace').tabs('option', 'selected');
+		
+		histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual);
+		
+		$(this).tipsy('hide');
+		removeTabByTitle('Distribuição Venda Média');
+		selectTabTitle('Matriz Distribuição');
+		
 	}
 
 }, BaseController);
