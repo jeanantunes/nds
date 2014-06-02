@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box_subbox" columnCount="6" printOrder="Horizontal" pageWidth="555" pageHeight="842" columnWidth="92" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="cbea841f-93cd-4abd-a1db-6f08806c45de">
+	<property name="ireport.zoom" value="1.610510000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
+		<paragraph leftIndent="3"/>
+	</style>
+	<style name="rel_ftext" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false">
+		<paragraph leftIndent="3"/>
+	</style>
+	<style name="rel_stext_centralizado" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
+	<style name="rel_ftext_centralizado" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<parameter name="IMAGEM" class="java.io.InputStream"/>
+	<parameter name="NOME_RELATORIO" class="java.lang.String"/>
+	<parameter name="NOME_DISTRIBUIDOR" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<field name="key" class="java.lang.String"/>
+	<field name="value" class="java.lang.Integer"/>
+	<columnHeader>
+		<band height="20">
+			<staticText>
+				<reportElement uuid="367a548c-10e5-4c8a-9536-808becf2cbf0" style="rel_ftext_centralizado" stretchType="RelativeToBandHeight" mode="Opaque" x="46" y="0" width="46" height="20" isPrintWhenDetailOverflows="true" backcolor="#D3D3D3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qtde]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="95378988-d1fc-4e95-b215-f9c8af98f0a3" style="rel_stext" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="46" height="20" backcolor="#D3D3D3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Cota]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="c3f4b6ab-7b8e-4c29-824f-93aebc04d66d" style="rel_ftext_centralizado" stretchType="RelativeToBandHeight" mode="Opaque" x="46" y="0" width="46" height="20" isPrintWhenDetailOverflows="true" backcolor="#F0F0F0"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="7a3755b9-7da6-43b8-b6cf-d23158138b2c" style="rel_ftext" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="46" height="20" backcolor="#F0F0F0"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{key}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

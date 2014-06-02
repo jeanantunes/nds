@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
 import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.RelatorioLancamentoFaltasSobrasVO;
@@ -1739,4 +1740,25 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
        return diferenca;
     }
     
+    @Override
+    public List<ContasAPagarConsignadoVO> pesquisarDiferncas(
+            final String codigoProduto, final Long numeroEdicao, final Date data) {
+        
+        final List<String> msgs = new ArrayList<String>();
+        
+        if (codigoProduto == null || codigoProduto.isEmpty()){
+            
+            msgs.add("Código de Produto inválido");
+        }
+        
+        if (numeroEdicao == null){
+            
+        }
+        
+        if (data == null){
+            
+        }
+        
+        return this.diferencaEstoqueRepository.pesquisarDiferncas(codigoProduto, numeroEdicao, data);
+    }
 }

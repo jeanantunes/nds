@@ -1,13 +1,13 @@
 package br.com.abril.nds.client.vo;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
-import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class ContasApagarConsultaPorDistribuidorVO {
@@ -41,17 +41,37 @@ public class ContasApagarConsultaPorDistribuidorVO {
 	{}
 	
 	
-	public ContasApagarConsultaPorDistribuidorVO(ContasApagarConsultaPorDistribuidorDTO dto) {
-		
-		this.data = DateUtil.formatarDataPTBR(dto.getData());
-		this.consignado = CurrencyUtil.formatarValor(dto.getConsignado() == null ? BigDecimal.ZERO : dto.getConsignado());
-		this.suplementacao = CurrencyUtil.formatarValor(dto.getSuplementacao() == null ? BigDecimal.ZERO : dto.getSuplementacao());
-		this.encalhe = CurrencyUtil.formatarValor(dto.getEncalhe() == null ? BigDecimal.ZERO : dto.getEncalhe());
-		this.venda = CurrencyUtil.formatarValor(dto.getVenda() == null ? BigDecimal.ZERO : dto.getVenda());
-		this.faltasSobras = CurrencyUtil.formatarValor(dto.getFaltasSobras() == null ? BigDecimal.ZERO : dto.getFaltasSobras());
-		this.debitoCredito = CurrencyUtil.formatarValor(dto.getDebitoCredito() == null ? BigDecimal.ZERO : dto.getDebitoCredito());
-		this.saldo = CurrencyUtil.formatarValor(dto.getSaldo() == null ? BigDecimal.ZERO : dto.getSaldo());
-	}
+	public ContasApagarConsultaPorDistribuidorVO(Date dataMovimento, BigDecimal consignado, BigDecimal encalhe, 
+            BigDecimal suplementacao, BigDecimal faltasSobras, BigDecimal perdasGanhos){
+        
+        this.data = DateUtil.formatarDataPTBR(dataMovimento);
+        this.consignado = CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(consignado));
+        this.encalhe = CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(encalhe));
+        
+        if (consignado == null){
+            
+            consignado = BigDecimal.ZERO;
+        }
+        
+        if (encalhe == null){
+            
+            encalhe = BigDecimal.ZERO;
+        }
+        
+        this.venda = CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(consignado.subtract(encalhe)));
+        
+        this.suplementacao = CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(suplementacao));
+        
+        this.faltasSobras = CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(faltasSobras));
+        
+        this.debitoCredito = CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(perdasGanhos));
+        
+        this.saldo = CurrencyUtil.formatarValor(
+                CurrencyUtil.arredondarValorParaDuasCasas(
+                        consignado.subtract(encalhe == null ? BigDecimal.ZERO : encalhe)
+                        .subtract(faltasSobras == null ? BigDecimal.ZERO : faltasSobras)
+                        .subtract(perdasGanhos == null ? BigDecimal.ZERO : perdasGanhos)));
+    }
 	
 	
 	public String getData() {
