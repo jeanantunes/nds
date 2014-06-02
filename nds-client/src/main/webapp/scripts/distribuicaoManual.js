@@ -550,7 +550,7 @@ var distribuicaoManual = $.extend(true, {
 			return;
 		} else {
 			// Deve ir direto para EMS 2031
-			matrizDistribuicao.redirectToTelaAnalise('#distribuicaoManualContent','#distribuicaoManualTelaAnalise', $('#estudo').html());
+			matrizDistribuicao.redirectToTelaAnalise($('#estudo').html());
 		}
 	}
 	
