@@ -140,14 +140,18 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     		       .append(" join prEd1.produto pr1 ")
     		       .append(" join pr1.descontoLogistica descLogPr1 ")
     		       .append(" join pr1.fornecedores fornecedor1 ")
-    		       .append(" where chamadaEncalhe.dataRecolhimento = l.dataRecolhimentoDistribuidor ")
-    		       .append(" and fornecedor1.id in (:fornecedores) ")
-    		       .append(" ) ,0) ");
+    		       .append(" where chamadaEncalhe.dataRecolhimento = l.dataRecolhimentoDistribuidor ");
+    		    
+    			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+    			    
+    			    hql.append(" and fornecedor1.id in (:fornecedores) ");
+    			}
     			
-    			hql.append(" as encalhe, ");
+    		    hql.append(" ) ,0) ")
+    		       .append(" as encalhe, ")
     			
     			//suplementar
-    			hql.append(" coalesce((select sum( ");
+    		       .append(" coalesce((select sum( ");
     			
     			if (desconto){
     				
@@ -164,9 +168,14 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			   .append(" join prEd2.produto pr2 ")
     			   .append(" join pr2.fornecedores fornecedor2 ")
     			   .append(" where m.data = l.dataRecolhimentoDistribuidor ")
-    			   .append(" and m.qtde is not null ")
-    			   .append(" and fornecedor2.id in (:fornecedores) ")
-    			   .append(" and prEd2.precoVenda is not null")
+    			   .append(" and m.qtde is not null ");
+    			   
+    			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+    			    
+    			    hql.append(" and fornecedor2.id in (:fornecedores) ");
+    			}
+    			
+    			hql.append(" and prEd2.precoVenda is not null")
     		   	   .append(" and tpMov.grupoMovimentoEstoque in (:movimentosSuplementarEntrada)) ,0) - ")
     		   	   .append("coalesce((select sum( ");
     			
@@ -184,9 +193,14 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			   .append(" join m2.produtoEdicao prEd3 ")
     			   .append(" join prEd3.produto pr3 ")
     			   .append(" join pr3.fornecedores fornecedor3 ")
-    			   .append(" where m2.data = l.dataRecolhimentoDistribuidor ")
-    			   .append(" and fornecedor3.id in (:fornecedores) ")
-    			   .append(" and m2.qtde is not null ")
+    			   .append(" where m2.data = l.dataRecolhimentoDistribuidor ");
+    			
+    			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+    			    
+    			    hql.append(" and fornecedor3.id in (:fornecedores) ");
+    			}
+    			
+    			hql.append(" and m2.qtde is not null ")
     		       .append(" and prEd3.precoVenda is not null")
     		       .append(" and tpMov.grupoMovimentoEstoque in (:movimentosSuplementarSaida)) ,0)");
     			
@@ -209,9 +223,14 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			   .append(" join dif.produtoEdicao prEd4 ")
     			   .append(" join prEd4.produto pr4 ")
     			   .append(" join pr4.fornecedores fornecedor4 ")
-    			   .append(" where ld2.dataProcessamento = l.dataRecolhimentoDistribuidor ")
-    			   .append(" and fornecedor4.id in (:fornecedores) ")
-    			   .append(" and dif.qtde is not null ")
+    			   .append(" where ld2.dataProcessamento = l.dataRecolhimentoDistribuidor ");
+    			   
+    			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+    			    
+    			    hql.append(" and fornecedor4.id in (:fornecedores) ");
+    			}
+    			
+    			hql.append(" and dif.qtde is not null ")
     		       .append(" and prEd4.precoVenda is not null")
     		       .append(" and (dif.tipoDiferenca = :tipoDiferencaSobraEm or dif.tipoDiferenca = :tipoDiferencaSobraDe)")
     		       .append(" group by dif.tipoDiferenca) ,0) - ")
@@ -232,9 +251,14 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			   .append(" join dif.produtoEdicao prEd5 ")
     			   .append(" join prEd5.produto pr5 ")
     			   .append(" join pr5.fornecedores fornecedor5 ")
-    			   .append(" where ld.dataProcessamento = l.dataRecolhimentoDistribuidor ")
-    			   .append(" and fornecedor5.id in (:fornecedores) ")
-    			   .append(" and dif.qtde is not null ")
+    			   .append(" where ld.dataProcessamento = l.dataRecolhimentoDistribuidor ");
+    			
+    			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+    			    
+    			    hql.append(" and fornecedor5.id in (:fornecedores) ");
+    			}
+    			
+    			hql.append(" and dif.qtde is not null ")
     		       .append(" and prEd5.precoVenda is not null")
     		       .append(" and (dif.tipoDiferenca = :tipoDiferencaFaltaEm or dif.tipoDiferenca = :tipoDiferencaFaltaDe)")
     		       .append(" group by dif.tipoDiferenca) ,0) ");
@@ -258,9 +282,14 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			   .append(" join dif.produtoEdicao prEd6 ")
     			   .append(" join prEd6.produto pr6 ")
     			   .append(" join pr6.fornecedores fornecedor6 ")
-    			   .append(" where ld3.dataProcessamento = l.dataRecolhimentoDistribuidor ")
-    			   .append(" and fornecedor6.id in (:fornecedores) ")
-    			   .append(" and dif.qtde is not null ")
+    			   .append(" where ld3.dataProcessamento = l.dataRecolhimentoDistribuidor ");
+    			
+    			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+    			    
+    			    hql.append(" and fornecedor6.id in (:fornecedores) ");
+    			}
+    			
+    			hql.append(" and dif.qtde is not null ")
     		   	   .append(" and prEd6.precoVenda is not null ")
     		   	   .append(" and ld3.status = :statusPerda ")
     		   	   .append(" group by dif.tipoDiferenca),0) + ")
@@ -281,9 +310,14 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			   .append(" join dif.produtoEdicao prEd7 ")
     			   .append(" join prEd7.produto pr7 ")
     			   .append(" join pr7.fornecedores fornecedor7 ")
-    			   .append(" where ld4.dataProcessamento = l.dataRecolhimentoDistribuidor ")
-    			   .append(" and fornecedor7.id in (:fornecedores) ")
-    			   .append(" and ld4.diferenca.qtde is not null ")
+    			   .append(" where ld4.dataProcessamento = l.dataRecolhimentoDistribuidor ");
+    			
+    			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+    			    
+    			    hql.append(" and fornecedor7.id in (:fornecedores) ");
+    			}
+    			
+    			hql.append(" and ld4.diferenca.qtde is not null ")
     		   	   .append(" and prEd.precoVenda is not null ")
     		   	   .append(" and ld4.status = :statusGanho ")
     		   	   .append(" group by dif.tipoDiferenca),0) ");
@@ -344,9 +378,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		        )
 		);
 		
-		if (totais){
-		    
-		} else {
+		if (!totais){
 		    
 		    //movimentos de grupo de estoque suplementar de entrada
             List<GrupoMovimentoEstoque> movimentosSuplementar = new ArrayList<GrupoMovimentoEstoque>();
