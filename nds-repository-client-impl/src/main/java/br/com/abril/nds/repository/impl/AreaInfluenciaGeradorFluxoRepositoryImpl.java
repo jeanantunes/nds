@@ -130,15 +130,15 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		//hql.append(" tipoGeradorFluxoSecundarioPDV.descricao as geradorFluxoSecundario "); // GERADOR DE FLUXO SECUNDARIO
 		
 		// FROM
-		hql.append(" from EstoqueProdutoCota as estoqueProdutoCota");
+		hql.append(" from Cota cota ");
+		hql.append(" left join cota.estoqueProdutoCotas estoqueProdutoCota");
 		//hql.append(" from Cota as cota");
 		//hql.append(" left join cota.estoqueProdutoCotas as estoqueProdutoCota");
 		hql.append(" left join estoqueProdutoCota.produtoEdicao as produtoEdicao ");
-		hql.append(" left join estoqueProdutoCota.cota as cota ");
-		hql.append(" left join cota.enderecos as cotaEndereco ");
 		hql.append(" left join cota.pessoa as pessoa ");
-		hql.append(" left join cotaEndereco.endereco as endereco ");
 		hql.append(" left join cota.pdvs as pdv ");
+		hql.append(" left join pdv.enderecos as enderecoPDV ");
+		hql.append(" left join enderecoPDV.endereco as endereco ");
 		hql.append(" left join pdv.segmentacao as segmento ");
 		hql.append(" left join pdv.geradorFluxoPDV as geradorFluxoPrincipalPDV ");
 		hql.append(" left join geradorFluxoPrincipalPDV.principal as tipoGeradorFluxoPrincipal ");
@@ -148,7 +148,7 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
 		hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
 		hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-		hql.append(" and cotaEndereco.principal = true ");
+		hql.append(" and enderecoPDV.principal = true ");
 		
 		return hql;
 	}

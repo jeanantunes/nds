@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.EstudoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -112,7 +113,7 @@ public class DistribuicaoManualController extends BaseController {
 		    estudoCota.setQtdeEfetiva(cotaDTO.getQtdeEfetiva());
 		    estudoCota.setReparte(cotaDTO.getQtdeEfetiva());
 		    estudoCota.setReparteInicial(cotaDTO.getQtdeEfetiva());
-		    estudoCota.setClassificacao("IN");
+		    estudoCota.setClassificacao(ClassificacaoCota.InclusaoManualCotas.getCodigo());
 		    estudoCota.setTipoEstudo(TipoEstudoCota.NORMAL);
 		    estudo.getEstudoCotas().add(estudoCota);
 		}

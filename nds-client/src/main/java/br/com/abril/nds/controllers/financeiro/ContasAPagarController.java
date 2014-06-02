@@ -172,6 +172,11 @@ public class ContasAPagarController extends BaseController {
 	@Path("/pesquisarPorFornecedor.json")
 	public void pesquisarPorFornecedor(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
+	    if (filtro == null || filtro.getIdsFornecedores() == null || filtro.getIdsFornecedores().isEmpty()){
+	        
+	        throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos um fornecedor.");
+	    }
+	    
 		this.session.setAttribute(FILTRO_CONTAS_A_PAGAR, filtro);
 
 		final PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
