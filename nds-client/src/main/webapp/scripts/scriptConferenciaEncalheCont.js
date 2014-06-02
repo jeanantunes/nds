@@ -134,9 +134,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 				return;
 			}
 			
-			if (!ConferenciaEncalhe.modalAberta && ConferenciaEncalhe.processoUtilizaNfe) {
+			if (!ConferenciaEncalheCont.modalAberta && ConferenciaEncalheCont.processoUtilizaNfe) {
 				
-				ConferenciaEncalhe.popup_notaFiscal();
+				ConferenciaEncalheCont.popup_notaFiscal();
 			} else {
 				
 				exibirMensagem('WARNING', ['Este Processo não exige Nota Fiscal.']);
@@ -475,6 +475,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				if(result.processoUtilizaNfe != undefined && result.processoUtilizaNfe
 						&& result.nfeDigitada != undefined && !result.nfeDigitada) {
 				
+					ConferenciaEncalheCont.processoUtilizaNfe = true;
 					ConferenciaEncalheCont.popup_notaFiscal();
 				}
 				
@@ -1430,8 +1431,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 						
 					}
 					
-					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarNotaFiscal', data, 
-						function(result){
+					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarNotaFiscal', data, function(result) {
 							
 							$("#dialog-notaFiscal", ConferenciaEncalheCont.workspace).dialog("close");
 							
@@ -1443,8 +1443,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 							
 							ConferenciaEncalheCont.removerTravaConferenciaEncalheCotaUsuario();
 							
-					}, null, true, "dialog-notaFiscal"
+						}, null, true, "dialog-notaFiscal"
 					);
+					
+					ConferenciaEncalheCont.limparNotaFiscal();
 				},
 				"Cancelar" : function() {
 					
@@ -1592,6 +1594,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	limparTela : function() {
 		ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe({reparte:0,valorEncalhe:0,valorVendaDia:0,valorDebitoCredito:0,valorPagar:0, listaDebitoCredito:{page:0,total:0, rows:null}});
+		ConferenciaEncalheCont.processoUtilizaNfe = false;
 		$(".dadosFiltro", ConferenciaEncalheCont.workspace).hide();
 		$("#totalExemplaresFooter", ConferenciaEncalheCont.workspace).html(0);
 		$("#numeroCota", ConferenciaEncalheCont.workspace).val("");
@@ -1603,12 +1606,12 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	limparNotaFiscal : function() {
 		
-		$("#numNotaFiscal", ConferenciaEncalheCont.workspace).html("");
-		$("#serieNotaFiscal", ConferenciaEncalheCont.workspace).html("");
-		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).html("");
+		$("#numNotaFiscal", ConferenciaEncalheCont.workspace).val("");
+		$("#serieNotaFiscal", ConferenciaEncalheCont.workspace).val("");
+		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).val("");
 		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
-		$("#valorNotaFiscal", ConferenciaEncalheCont.workspace).html("");
-		$("#chaveAcessoNFE", ConferenciaEncalheCont.workspace).html("");
+		$("#valorNotaFiscal", ConferenciaEncalheCont.workspace).val("");
+		$("#chaveAcessoNFE", ConferenciaEncalheCont.workspace).val("");
 		
 	},
 	
