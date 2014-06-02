@@ -585,6 +585,13 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         where.append("   and ec.classificacao <> 'S' ");
         paramsWhere.add(queryDTO.getEstudo());
 
+        where.append(" and (cota.situacao_cadastro = 'ATIVO' ");
+        
+		where.append(" or (cota.SITUACAO_CADASTRO = 'SUSPENSO' and "); 
+		where.append(" 	(select max(DATA_EDICAO) from historico_situacao_cota h where h.COTA_ID=cota.ID) >= ");
+		where.append(" 	date_sub((select data_operacao from distribuidor), interval 90 day) ");
+		where.append(" )) ");
+    
         if (queryDTO.possuiCota()) {
             where.append(" and cota.numero_cota = ? ");
             paramsWhere.add(queryDTO.getCota());
