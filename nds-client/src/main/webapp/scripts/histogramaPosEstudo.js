@@ -664,6 +664,8 @@ var histogramaPosEstudoController = $.extend(true, {
 			function() {
 				$("#workspace").tabs("remove", indexAba);
 				removeTabByTitle('Distribuição Venda Média');
+				removeTabByTitle('Distribuição Manual');
+				matrizDistribuicao.mostraTelaMatrizDistribuicao();
 			}
 		);
 	},
