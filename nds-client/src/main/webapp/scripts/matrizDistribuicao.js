@@ -973,7 +973,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo' + parametros);
         	}
         );
-    
+
 	},
 
 	this.somarEstudos = function() {

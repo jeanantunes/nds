@@ -117,18 +117,4 @@
 			</elementGroup>
 		</band>
 	</detail>
-	<lastPageFooter>
-		<band height="20">
-			<textField pattern="EEEEE dd MMMMM yyyy">
-				<reportElement uuid="7574f6f9-688b-46a4-b78a-e772cd5a5e2a" style="rel_ftext" x="13" y="0" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement uuid="46608798-f20f-4df5-bf20-6ed9d12ba33c" style="rel_ftext" x="455" y="0" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-		</band>
-	</lastPageFooter>
 </jasperReport>
