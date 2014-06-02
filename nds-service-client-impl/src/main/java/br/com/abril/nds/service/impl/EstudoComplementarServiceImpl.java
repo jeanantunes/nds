@@ -22,6 +22,7 @@ import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -153,7 +154,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
             nova.setEstudo(estudo1);
             nova.setReparte(reparte);
             nova.setReparteInicial(reparte);
-            nova.setClassificacao("CP");
+            nova.setClassificacao(ClassificacaoCota.BancaEstudoComplementar.getCodigo());
             nova.setTipoEstudo(TipoEstudoCota.NORMAL);
             cotas.add(nova);
 

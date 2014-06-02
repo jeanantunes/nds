@@ -170,7 +170,7 @@ consultarEstudo:function (obj) {
 			return;
 		} else {
 			// Deve ir direto para EMS 2031
-			matrizDistribuicao.redirectToTelaAnalise('#estudoComplementarContent', '#estudoComplementarTelaAnalise', $('#idEstudoComplementar').html());
+			matrizDistribuicao.redirectToTelaAnalise($('#idEstudoComplementar').html());
 		}
 	},
 
