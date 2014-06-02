@@ -973,7 +973,42 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo' + parametros);
         	}
         );
-    
+
+        /*
+         * var matrizSelecionado_estudo =null;
+		
+		if(typeof(histogramaPosEstudoController)!="undefined"){
+			matrizSelecionado_estudo = histogramaPosEstudoController.matrizSelecionado.estudo;
+		}
+		var data = [];
+		var idEstudo =  estudo || matrizSelecionado_estudo;
+		data.push({name: 'id', value: idEstudo});
+		if ($('#parcial').val() === 'true') {
+			data.push({name: "modoAnalise", value: "PARCIAL"});
+		}
+        data.push({name: "reparteCopiado", value: $("#copiarEstudo-copia-reparte").text()});
+        
+        console.log(T.estudoAserCopiado);
+        data.push({name: "estudoOrigem", value: T.estudoAserCopiado});
+        data.push({name: "dataLancamentoEdicao", value: $("#copiarEstudo-dataLancto").text()});
+
+		$.get(
+				contextPath + '/distribuicao/analise/parcial/',
+				data, // parametros
+				function(html){ // onSucessCallBack
+					$(divToHide).hide();
+					$(divToShow).html(html);
+					$(divToShow).show();
+					$( divToShow + ' #botaoVoltarTelaAnalise').click(function voltarTelaAnalise(){
+						$(divToShow).hide();
+						$(divToHide).show();
+					});
+			});
+		
+         */
+        
+        
+        
 	},
 
 	this.somarEstudos = function() {
