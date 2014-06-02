@@ -95,7 +95,7 @@ public class AnaliseParcialController extends BaseController {
     private static final String EDICOES_BASE_SESSION_ATTRIBUTE = "";
 
     @Path("/")
-    public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado,String dataLancamentoEdicao) {
+    public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado, String dataLancamentoEdicao) {
 
         EstudoCotaGerado estudoCota = analiseParcialService.buscarPorId(id);
         Lancamento lancamento = lancamentoService.obterPorId(estudoCota.getEstudo().getLancamentoID());
