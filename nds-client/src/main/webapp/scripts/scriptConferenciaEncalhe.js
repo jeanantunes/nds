@@ -292,6 +292,10 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$('#sm', ConferenciaEncalhe.workspace).keypress(function(e) {
 			
+			$("#sm", ConferenciaEncalhe.workspace).autocomplete({
+				source: []
+			});
+			
 			if (e.keyCode == 13) {
 				
 				ConferenciaEncalhe.autoCompletarPorCodigoSM();
