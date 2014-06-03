@@ -95,7 +95,7 @@ public class AnaliseParcialController extends BaseController {
     private static final String EDICOES_BASE_SESSION_ATTRIBUTE = "";
 
     @Path("/")
-    public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado,String dataLancamentoEdicao) {
+    public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado, String dataLancamentoEdicao) {
 
         EstudoCotaGerado estudoCota = analiseParcialService.buscarPorId(id);
         Lancamento lancamento = lancamentoService.obterPorId(estudoCota.getEstudo().getLancamentoID());
@@ -266,8 +266,10 @@ public class AnaliseParcialController extends BaseController {
     public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado, String legendaCota) {
         analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte, reparteDigitado);
         
-        if((legendaCota.equalsIgnoreCase("FX")) || (legendaCota.equalsIgnoreCase("MX"))){
-        	analiseParcialService.atualizarFixacaoOuMix(estudoId, numeroCota, reparteDigitado, legendaCota);
+        if(ClassificacaoCota.ReparteFixado.getCodigo().equalsIgnoreCase(legendaCota) || 
+                ClassificacaoCota.CotaMix.getCodigo().equalsIgnoreCase(legendaCota)){
+        	
+            analiseParcialService.atualizarFixacaoOuMix(estudoId, numeroCota, reparteDigitado, legendaCota);
         }
         
         result.nothing();
@@ -315,7 +317,9 @@ public class AnaliseParcialController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
         }
 
-        FileExporter.to("Analise do Estudo", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista, AnaliseParcialDTO.class, this.httpResponse);
+        FileExporter.to(
+                "Analise do Estudo", fileType).inHTTPResponse(
+                        this.getNDSFileHeader(), null, lista, AnaliseParcialDTO.class, this.httpResponse);
 
         result.nothing();
     }
