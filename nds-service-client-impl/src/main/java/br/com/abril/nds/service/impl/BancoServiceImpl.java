@@ -196,7 +196,14 @@ public class BancoServiceImpl implements BancoService {
 			bancos = bancoRepository.obterBancosPorStatus(ativo);
 		
 		for (Banco itemBanco : bancos){
-			comboBancos.add(new ItemDTO<Integer,String>(itemBanco.getId().intValue(), itemBanco.getNumeroBanco()+"-"+itemBanco.getApelido()+" "+itemBanco.getConta()+"-"+itemBanco.getDvConta()));
+
+			String descricaoBanco = 
+					 (itemBanco.getNumeroBanco() == null ? "" : itemBanco.getNumeroBanco() + "-") 
+					 + (itemBanco.getApelido() == null ? "" :  itemBanco.getApelido() + " ")
+					 + (itemBanco.getConta() == null ? "" : itemBanco.getConta())
+					 + (itemBanco.getDvConta() == null ? "" : "-" + itemBanco.getDvConta());
+
+			comboBancos.add(new ItemDTO<Integer,String>(itemBanco.getId().intValue(), descricaoBanco));
 		}
 		return comboBancos;
 	}
