@@ -29,8 +29,7 @@ public class EntradaNFETerceirosServiceImpl implements
 
 	@Override
 	@Transactional
-	public List<ConsultaEntradaNFETerceirosRecebidasDTO> buscarNFNotasRecebidas(
-			FiltroEntradaNFETerceiros filtro, boolean limitar) {		 
+	public List<ConsultaEntradaNFETerceirosRecebidasDTO> buscarNFNotasRecebidas(FiltroEntradaNFETerceiros filtro, boolean limitar) {		 
 		return this.entradaNFETerceirosRepository.buscarNFNotasRecebidas(filtro, limitar);
 	}
 
@@ -42,8 +41,8 @@ public class EntradaNFETerceirosServiceImpl implements
 
 	@Override
 	@Transactional
-	public List<ConsultaEntradaNFETerceirosPendentesDTO> buscarNFNotasPendentes(FiltroEntradaNFETerceiros filtro, boolean limitar) {
-		return this.entradaNFETerceirosRepository.buscarNFNotasPendentes(filtro, limitar);
+	public List<ConsultaEntradaNFETerceirosPendentesDTO> consultaNotasPendentesRecebimento(FiltroEntradaNFETerceiros filtro, boolean limitar) {
+		return this.entradaNFETerceirosRepository.consultaNotasPendentesRecebimento(filtro, limitar);
 	}
 
 	@Override

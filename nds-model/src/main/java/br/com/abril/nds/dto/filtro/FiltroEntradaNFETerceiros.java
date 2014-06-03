@@ -68,7 +68,7 @@ public class FiltroEntradaNFETerceiros implements Serializable{
 		
 		TODAS("Todas"),
 		ENTRADA("Entrada"),
-		COMPLEMENTAR("Complementar");
+		SAIDA("Saida");
 		
 		private String descricao;
 		
