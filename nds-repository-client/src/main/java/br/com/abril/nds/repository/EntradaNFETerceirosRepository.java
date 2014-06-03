@@ -21,4 +21,6 @@ public interface EntradaNFETerceirosRepository extends Repository<NotaFiscalEntr
 	
 	Integer buscarTodasItensPorNota(Long idConferenciaCota);
 
+	Integer qtdeNotasRecebidas(FiltroEntradaNFETerceiros filtro);
+
 }

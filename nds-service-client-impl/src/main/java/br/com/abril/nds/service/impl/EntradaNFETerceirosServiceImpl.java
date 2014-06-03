@@ -91,10 +91,14 @@ public class EntradaNFETerceirosServiceImpl implements
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public Long quantidadeItemNotaFiscalEntradaPorControleConferenciaEncalheCota(
-			long idControleConferencia) {
-		return itemNotaFiscalEntradaRepository
-				.quantidadePorControleConferenciaEncalheCota(idControleConferencia);
+	public Long quantidadeItemNotaFiscalEntradaPorControleConferenciaEncalheCota(long idControleConferencia) {
+		return itemNotaFiscalEntradaRepository.quantidadePorControleConferenciaEncalheCota(idControleConferencia);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public Integer qtdeNotasRecebidas(FiltroEntradaNFETerceiros filtro) {
+		return this.entradaNFETerceirosRepository.qtdeNotasRecebidas(filtro);
 	}
 	
 	
