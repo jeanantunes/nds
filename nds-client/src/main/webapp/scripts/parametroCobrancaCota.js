@@ -60,8 +60,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 				name : 'unificacao',
 				width : 100,
 				sortable : false,
-				align : 'center',
-				hide: true
+				align : 'center'
 			}, {
 				display : 'Ação',
 				name : 'acao',

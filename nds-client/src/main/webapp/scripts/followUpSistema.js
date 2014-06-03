@@ -382,11 +382,18 @@ var followUpSistemaController = $.extend(true, {
 			
 			url = '\'devolucao/chamadao/popularGridFollowUp?numeroCota='+row.cell.numeroCota+'&data='+row.cell.dataProgramadoChamadao + '\'';
 				
-			var linkExcluir = '<a href="javascript:;" onclick="$(\'#workspace\').tabs(\'addTab\', \'Chamadão\', ' + url + ')"  style="cursor:pointer">' +
-							   	 '<img title="Excluir Desconto" src="' + contextPath + '/images/ico_reprogramar.gif" hspace="5" border="0px" />Programar' +
-							   '</a>';
-			
-			row.cell.acao = linkExcluir;
+			if (!row.cell.dataProgramadoChamadao || row.cell.dataProgramadoChamadao == ''){
+				
+				var linkExcluir = '<a href="javascript:;" onclick="$(\'#workspace\').tabs(\'addTab\', \'Chamadão\', ' + url + ')"  style="cursor:pointer">' +
+								   	 '<img title="Excluir Desconto" src="' + contextPath + '/images/ico_reprogramar.gif" hspace="5" border="0px" />Programar' +
+								   '</a>';
+				
+				row.cell.acao = linkExcluir;
+			}
+			else{
+				
+				row.cell.acao = '';
+			}
 		});
 		
 		if(resultado.rows.length == 0){
@@ -397,8 +404,9 @@ var followUpSistemaController = $.extend(true, {
 		return resultado;
 	},
 
-	exPreProcFollowupStatusCota : function(resultado) {		
-			$.each(resultado.rows, function(index, row) {						
+	exPreProcFollowupStatusCota : function(resultado) {	
+		
+		$.each(resultado.rows, function(index, row) {						
 			
 			url = '\'financeiro/manutencaoStatusCota/popularGridFollowUp?numeroCota='+row.cell.numeroCota + '\'';
 			
@@ -407,6 +415,8 @@ var followUpSistemaController = $.extend(true, {
 							   '</a>';
 			
 			row.cell.acao = linkExcluir;
+			
+			row.cell.statusAtual = row.cell.statusAtual?row.cell.statusAtual:'';
 		});
 		
 		$(".grids", followUpSistemaController.workspace).show();
@@ -457,6 +467,12 @@ var followUpSistemaController = $.extend(true, {
 		if(resultado.rows.length == 0){
 			$('#botoesArquivoDistribuicao').hide();
 		}
+		
+		$.each(resultado.rows, function(index, row) {
+		
+		    row.cell.qtdDiasRestantes = Math.abs(row.cell.qtdDiasRestantes);
+		});
+		
 		return resultado;
 	},
 	

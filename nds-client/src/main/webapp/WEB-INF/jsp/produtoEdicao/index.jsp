@@ -96,8 +96,7 @@ fieldset {
 	<div
 		id="produtoEdicaoController-dialog-precos-real-previsto-divergentes"
 		title="Preços Real e Previsto divergentes">
-		<p>Os valores de preço previsto e real estão divergentes. Deseja
-			corrigir?</p>
+		<p>Os valores de preço previsto e real estão divergentes. Deseja continuar?</p>
 	</div>
 
 	<!--  INICIO POPUP CADASTRO EDICAO -->

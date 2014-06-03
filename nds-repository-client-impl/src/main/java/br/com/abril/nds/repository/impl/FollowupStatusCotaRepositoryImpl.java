@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -22,7 +23,7 @@ public class FollowupStatusCotaRepositoryImpl  extends AbstractRepositoryModel<C
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaFollowupStatusCotaDTO> obterConsignadosParaChamadao(
-			FiltroFollowupStatusCotaDTO filtro) {
+			FiltroFollowupStatusCotaDTO filtro, List<Date> datas) {
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT cota.numeroCota as numeroCota, ");
@@ -32,11 +33,13 @@ public class FollowupStatusCotaRepositoryImpl  extends AbstractRepositoryModel<C
 		hql.append("historico.situacaoAnterior as statusAtual, ");
 		hql.append("historico.novaSituacao as statusNovo ");			
 		
-		hql.append(getSqlFromEWhereStatusCota(filtro));
+		hql.append(getSqlFromEWhereStatusCota(filtro, datas));
 		
 		hql.append(getOrderByStatusCota(filtro));
 
 		Query query =  getSession().createQuery(hql.toString());		
+		
+		query.setParameterList("datas", datas);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupStatusCotaDTO.class));
@@ -52,14 +55,14 @@ public class FollowupStatusCotaRepositoryImpl  extends AbstractRepositoryModel<C
 		return query.list();
 	}
 	
-	private Object getSqlFromEWhereStatusCota(FiltroFollowupStatusCotaDTO filtro) {
+	private Object getSqlFromEWhereStatusCota(FiltroFollowupStatusCotaDTO filtro, List<Date> datas) {
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" from HistoricoSituacaoCota as historico, Distribuidor as distribuidor ");		
 		hql.append(" LEFT JOIN historico.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
-		hql.append(" where distribuidor.dataOperacao = historico.dataInicioValidade ");	
+		hql.append(" where historico.dataInicioValidade in (:datas) ");	
 		
 		return hql.toString();
 	}
