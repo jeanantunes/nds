@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosPendentesDTO;
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
+import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros.TipoNota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
@@ -97,11 +98,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append(" where no.tipoOperacao = :tipoOperacaoEntrada ");
 		
 		if (filtro.getTipoNota() != null && !FiltroEntradaNFETerceiros.TipoNota.TODAS.equals(filtro.getTipoNota())) {
-			if(FiltroEntradaNFETerceiros.TipoNota.COMPLEMENTAR.equals(filtro.getTipoNota())) {
-				hql.append("   and tipoNotaFiscal.grupoNotaFiscal = :complementar ");
-			} else {
-				hql.append("   and tipoNotaFiscal.grupoNotaFiscal != :complementar ");
-			}
+			// hql.append(" and no.tipoOperacao = :complementar ");
 		}
 
 		if (filtro.getCota() != null) {
@@ -145,10 +142,12 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 			query.setParameter("tipoOperacaoEntrada", TipoOperacao.ENTRADA);
 		}
 
-		if (!count || filtro.getTipoNota() != null && !FiltroEntradaNFETerceiros.TipoNota.TODAS.equals(filtro.getTipoNota())) {
-			// query.setParameter("complementar", GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR);
-			
-			// retirado temporiamente.....
+		if (filtro.getTipoNota() != null && !FiltroEntradaNFETerceiros.TipoNota.TODAS.equals(filtro.getTipoNota())) {
+			if(FiltroEntradaNFETerceiros.TipoNota.ENTRADA.equals(filtro.getTipoNota())) {
+				// query.setParameter("complementar", TipoNota.ENTRADA);
+			} else {
+				// query.setParameter("complementar", TipoNota.SAIDA);
+			}
 		}
 
 		if (filtro.getCota() != null) {
@@ -189,7 +188,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ConsultaEntradaNFETerceirosPendentesDTO> buscarNFNotasPendentes(FiltroEntradaNFETerceiros filtro, boolean limitar) {
+	public List<ConsultaEntradaNFETerceirosPendentesDTO> consultaNotasPendentesRecebimento(FiltroEntradaNFETerceiros filtro, boolean limitar) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -208,7 +207,6 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append("               LEFT JOIN notaFiscalEntradaCota.naturezaOperacao as tipoNotaFiscal ");
 		hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota  ");
 		hql.append("               AND tipoNotaFiscal.tipoOperacao = :tipoOperacaoEntrada");
-		// hql.append("               AND tipoNotaFiscal.grupoNotaFiscal = :complementar ");
 		hql.append("        ) = 0 THEN 'Entrada' ELSE 'Complementar' END  as tipoNotaFiscal, ");
 		hql.append("        ( ");
 		hql.append("             SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");
@@ -252,6 +250,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 	
 		hql.append(" from ControleConferenciaEncalheCota as controleConferenciaEncalheCota ");
 		hql.append(" LEFT JOIN controleConferenciaEncalheCota.notaFiscalEntradaCota as notaFiscalEntradaCotas ");
+		hql.append(" LEFT JOIN notaFiscalEntradaCotas.naturezaOperacao as no ");
 		hql.append(" LEFT JOIN controleConferenciaEncalheCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN controleConferenciaEncalheCota.conferenciasEncalhe as conferenciasEncalhe");
@@ -278,8 +277,8 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 			hql.append("               LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
 			hql.append("               LEFT JOIN notaFiscalEntradaCota.naturezaOperacao as tipoNotaFiscal ");
 			hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota  ");
-			hql.append("               AND tipoNotaFiscal.tipoOperacao = :tipoOperacaoEntrada");
-			if(FiltroEntradaNFETerceiros.TipoNota.COMPLEMENTAR.equals(filtro.getTipoNota())) {
+			hql.append("               AND tipoNotaFiscal.tipoOperacao = :tipoOperacaoEntrada ");
+			if(FiltroEntradaNFETerceiros.TipoNota.SAIDA.equals(filtro.getTipoNota())) {
 				hql.append("        ) > 0");
 			} else {
 				hql.append("        ) = 0");
@@ -288,6 +287,10 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 
 		if(filtro.getCota() != null) {			
 			hql.append( " and cota.id = :idCota ");			
+		}
+		
+		if(filtro.getTipoNota() != null && !FiltroEntradaNFETerceiros.TipoNota.TODAS.equals(filtro.getTipoNota())) {
+			// hql.append(" and no.tipoOperacao = :complementar ");
 		}
 		
 		if(filtro.getDataInicial() != null && filtro.getDataFinal() != null){

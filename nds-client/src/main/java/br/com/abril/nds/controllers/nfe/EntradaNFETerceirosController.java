@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
+import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros.TipoNota;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -93,6 +94,7 @@ public class EntradaNFETerceirosController extends BaseController {
 	public void index(){
 		this.carregarComboStatusNota();
 		this.carregarFornecedores();
+		this.carregarTipoNota();
 	}
 
 	private void carregarFornecedores() {
@@ -112,8 +114,20 @@ public class EntradaNFETerceirosController extends BaseController {
 		comboStatusNota.add(new ItemDTO(StatusNotaFiscalEntrada.PENDENTE_EMISAO.name(), StatusNotaFiscalEntrada.PENDENTE_EMISAO.getDescricao()));
 
 		result.include("comboStatusNota", comboStatusNota);
-		
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void carregarTipoNota() {
+        
+        List<ItemDTO<String, String>> tiposNotas = new ArrayList<ItemDTO<String, String>>();
+        
+        tiposNotas.add(new ItemDTO(TipoNota.TODAS.name(), TipoNota.TODAS.getDescricao()));
+        tiposNotas.add(new ItemDTO(TipoNota.ENTRADA.name(), TipoNota.ENTRADA.getDescricao()));
+        tiposNotas.add(new ItemDTO(TipoNota.SAIDA.name(), TipoNota.SAIDA.getDescricao()));
+
+        result.include("tiposNotas", tiposNotas);
+        
+    }
 	
 	@Post
 	@Path("/pesquisarNotasRecebidas")
@@ -180,8 +194,8 @@ public class EntradaNFETerceirosController extends BaseController {
 	}
 	
 	@Post
-	@Path("/pesquisarNotasPendentes")
-	public void pesquisarNotasPendentes(final FiltroEntradaNFETerceiros filtro, final String sortorder, final String sortname, final int page, final int rp){
+	@Path("/pesquisarNotasPendentesRecebimento")
+	public void pesquisarNotasPendentesRecebimento(final FiltroEntradaNFETerceiros filtro, final String sortorder, final String sortname, final int page, final int rp){
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
@@ -189,14 +203,14 @@ public class EntradaNFETerceirosController extends BaseController {
 		
 		this.tratarFiltro(filtro);
 		
-		final TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = efetuarConsultaNotasPendentes(filtro);
+		final TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = consultaNotasPendentesRecebimento(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> efetuarConsultaNotasPendentes(final FiltroEntradaNFETerceiros filtro) {
+	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> consultaNotasPendentesRecebimento(final FiltroEntradaNFETerceiros filtro) {
 
-		List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, true);
+		List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.consultaNotasPendentesRecebimento(filtro, true);
 
 		Integer tamanhoListaNotasPendentes = this.entradaNFETerceirosService.buscarTodasNFNotas(filtro);
 		
@@ -215,6 +229,41 @@ public class EntradaNFETerceirosController extends BaseController {
 		return tableModel;
 	}
 	
+	@Post
+    @Path("/pesquisarNotasPedenteEmissao")
+    public void pesquisarNotasPedenteEmissao(final FiltroEntradaNFETerceiros filtro, final String sortorder, final String sortname, final int page, final int rp){
+        
+        filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+        
+        this.validarEntrada(filtro);
+        
+        this.tratarFiltro(filtro);
+        
+        final TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = efetuarConsultaNotasPendentesEmissao(filtro);
+        
+        result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+    }
+	
+	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> efetuarConsultaNotasPendentesEmissao(final FiltroEntradaNFETerceiros filtro) {
+
+        List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.consultaNotasPendentesRecebimento(filtro, true);
+
+        Integer tamanhoListaNotasPendentes = this.entradaNFETerceirosService.buscarTodasNFNotas(filtro);
+        
+        TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>>();
+        
+        if(listaNotasPendentes.size() == 0){
+            throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+        }
+        
+        tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasPendentes));
+        
+        tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+        
+        tableModel.setTotal(tamanhoListaNotasPendentes);
+        
+        return tableModel;
+    }
 	
 	@Path("/pesquisarItensPorNota")
 	public void pesquisarItensPorNota(final long idControleConferencia, final String sortorder, final String sortname, final int page, final int rp){
@@ -306,7 +355,7 @@ public class EntradaNFETerceirosController extends BaseController {
 					listaNotasRecebidas, ConsultaEntradaNFETerceirosRecebidasDTO.class, this.httpResponse);			
 		}else{
 			
-			List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, false);
+			List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.consultaNotasPendentesRecebimento(filtro, false);
 			// List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = new ArrayList<ConsultaEntradaNFETerceirosPendentesDTO>();
 			/*if(listaNotasRecebidas.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");

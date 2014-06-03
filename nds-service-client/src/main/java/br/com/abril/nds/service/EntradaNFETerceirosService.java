@@ -15,7 +15,7 @@ public interface EntradaNFETerceirosService {
 	
 	Integer buscarTodasNFNotas(FiltroEntradaNFETerceiros filtro);
 	
-	List<ConsultaEntradaNFETerceirosPendentesDTO> buscarNFNotasPendentes(FiltroEntradaNFETerceiros filtro, boolean limitar);
+	List<ConsultaEntradaNFETerceirosPendentesDTO> consultaNotasPendentesRecebimento(FiltroEntradaNFETerceiros filtro, boolean limitar);
 	
 	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(
 			Long idConferenciaCota, String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults);

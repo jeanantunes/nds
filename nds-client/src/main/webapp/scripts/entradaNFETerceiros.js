@@ -69,10 +69,13 @@ var entradaNFETerceirosController = $.extend(true, {
 			}
 			
 			if(status == 'RECEBIDA'){
+				// inputadas manualmente no sistema
 				$("#btnRegistrarNFe").show();
 				this.pesquisarNotaRecebidas();		
-			}else{			
-				this.pesquisarNotasPendente();
+			}else if(status == 'PENDENTE_RECEBIMENTO') {			
+				this.pesquisarNotasPendentesRecebimento();
+			}else if (status == 'PENDENTE_EMISAO'){
+				this.pesquisarNotasPedenteEmissao();
 			}
 		}else{
 			mensagens.push('["Escolha o status da nota"]');
@@ -90,12 +93,22 @@ var entradaNFETerceirosController = $.extend(true, {
 		$(".notaRecebidaGrid", this.workspace).flexReload();
 	},
 	
-	pesquisarNotasPendente : function(){
+	pesquisarNotasPendentesRecebimento : function(){
 		
 		var params = $("#form-pesquisa-nfe").serialize();
 		
 		$(".encalheNfeGrid", this.workspace).flexOptions({
-			url: this.path +"pesquisarNotasPendentes?" + params, newp: 1
+			url: this.path +"pesquisarNotasPendentesRecebimento?" + params, newp: 1
+		});
+		$(".encalheNfeGrid", this.workspace).flexReload();		
+	},
+	
+	pesquisarNotasPedenteEmissao : function(){
+		
+		var params = $("#form-pesquisa-nfe").serialize();
+		
+		$(".encalheNfeGrid", this.workspace).flexOptions({
+			url: this.path +"pesquisarNotasPedenteEmissao?" + params, newp: 1
 		});
 		$(".encalheNfeGrid", this.workspace).flexReload();		
 	},
