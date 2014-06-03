@@ -122,6 +122,8 @@ public enum TipoParametroSistema {
     
 	FTF_CODIGO_CENTRO_EMISSOR,
 	
+	SIGLA_SISTEMA_FTF,
+	
 	;
 
 	

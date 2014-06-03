@@ -104,7 +104,6 @@ public class FTFServiceImpl implements FTFService {
 			if(ftfRepository.verificarRegistroVenda(idNaturezaOperacao)){				
 				List<FTFEnvTipoRegistro03> regTipo03 = carregarRegitrosTipo03(obterResgistroTipo02, validacaoBeans);
 				ftfEnvTipoRegistro01.setItemNFList03(regTipo03);
-				
 			}
 			
 			this.carregarRegistroTipo06(validacaoBeans, ftfEnvTipoRegistro01, idNF);
@@ -287,8 +286,7 @@ public class FTFServiceImpl implements FTFService {
 		return idNaturezaOperacao;
 	}
 
-	private List<FTFEnvTipoRegistro01> obterPessoasCadastradasCRP(
-			FTFReportDTO report, List<FTFEnvTipoRegistro01> listTipoRegistro01) {
+	private List<FTFEnvTipoRegistro01> obterPessoasCadastradasCRP(FTFReportDTO report, List<FTFEnvTipoRegistro01> listTipoRegistro01) {
 		List<FTFEnvTipoRegistro01> listTipoRegistro01Cadastrados = new ArrayList<>();
 		
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01) {
@@ -312,7 +310,10 @@ public class FTFServiceImpl implements FTFService {
 		boolean valid = false;
 //		String testedCpnj = "68252618000182";
 		// validar as pessoas no CRP
-		PessoaDto wsResponse = pessoaCRPService.obterDadosFiscais("MDC", getCodTipoDocFrom(cpfCnpj), cpfCnpj);
+		
+		ParametroSistema pathFTF = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SIGLA_SISTEMA_FTF);
+		
+		PessoaDto wsResponse = pessoaCRPService.obterDadosFiscais(pathFTF.getValor(), getCodTipoDocFrom(cpfCnpj), cpfCnpj);
 		PessoaType pessoaCRP = wsResponse.getPessoa();
 		
 		if (pessoaCRP != null && !StringUtil.isEmpty(pessoaCRP.getNome())) {

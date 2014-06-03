@@ -1603,12 +1603,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	limparNotaFiscal : function() {
 		
-		$("#numNotaFiscal", ConferenciaEncalheCont.workspace).html("");
-		$("#serieNotaFiscal", ConferenciaEncalheCont.workspace).html("");
-		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).html("");
-		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
-		$("#valorNotaFiscal", ConferenciaEncalheCont.workspace).html("");
-		$("#chaveAcessoNFE", ConferenciaEncalheCont.workspace).html("");
+		$("#numNotaFiscal", ConferenciaEncalhe.workspace).text("");
+		$("#serieNotaFiscal", ConferenciaEncalhe.workspace).text("");
+		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).text("");
+		$("#valorNotaFiscal", ConferenciaEncalhe.workspace).text("");
+		$("#chaveAcessoNFE", ConferenciaEncalhe.workspace).text("");
 		
 	},
 	
