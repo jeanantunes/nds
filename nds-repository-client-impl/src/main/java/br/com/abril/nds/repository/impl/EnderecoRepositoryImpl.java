@@ -22,12 +22,15 @@ import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
-
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -131,6 +134,69 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		}
 		
 		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+    public List<Endereco> buscarEnderecosPorPessoaCotaPDVs(Long idPessoa, Set<Long> idsIgnorar){
+	    
+	    StringBuilder hql = new StringBuilder(
+                "select e.ID as id, e.BAIRRO as bairro, e.CEP as cep, e.CODIGO_CIDADE_IBGE as codigoCidadeIBGE, e.CIDADE as cidade, e.COMPLEMENTO as complemento, e.TIPO_LOGRADOURO as tipoLogradouro, e.LOGRADOURO as logradouro, e.NUMERO as numero, e.UF as uf, e.CODIGO_UF as codigoUf ");
+        hql.append(" from ENDERECO e ")
+           .append(" join PESSOA p on e.PESSOA_ID = p.ID ")
+           .append(" where p.ID = :idPessoa ");
+        
+        if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+            hql.append(" and e.ID not in (:idsIgnorar) ");
+        }
+        
+        hql.append(" UNION ")
+           .append(" select e.ID as id, e.BAIRRO as bairro, e.CEP as cep, e.CODIGO_CIDADE_IBGE as codigoCidadeIBGE, e.CIDADE as cidade, e.COMPLEMENTO as complemento, e.TIPO_LOGRADOURO as tipoLogradouro, e.LOGRADOURO as logradouro, e.NUMERO as numero, e.UF as uf, e.CODIGO_UF as codigoUf ")
+           .append(" from PESSOA p ")
+           .append(" join COTA c on c.PESSOA_ID = p.ID ")
+           .append(" join ENDERECO_COTA ed on ed.COTA_ID = c.ID ")
+           .append(" join ENDERECO e on e.ID = ed.ENDERECO_ID ")
+           .append(" where p.ID = :idPessoa ");
+        
+        if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+            hql.append(" and e.id not in (:idsIgnorar) ");
+        }
+        
+        hql.append(" UNION ")
+           .append(" select e.ID as id, e.BAIRRO as bairro, e.CEP as cep, e.CODIGO_CIDADE_IBGE as codigoCidadeIBGE, e.CIDADE as cidade, e.COMPLEMENTO as complemento, e.TIPO_LOGRADOURO as tipoLogradouro, e.LOGRADOURO as logradouro, e.NUMERO as numero, e.UF as uf, e.CODIGO_UF as codigoUf ")
+           .append(" from PDV p ")
+           .append(" join COTA c on c.ID = p.COTA_ID ")
+           .append(" join ENDERECO_PDV ed on ed.PDV_ID = p.ID ")
+           .append(" join ENDERECO e on e.ID = ed.ENDERECO_ID ")
+           .append(" join PESSOA pes on pes.ID = c.PESSOA_ID ")
+           .append(" where pes.ID = :idPessoa ");
+        
+        if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+            hql.append(" and e.id not in (:idsIgnorar) ");
+        }
+        
+        SQLQuery query = this.getSession().createSQLQuery(hql.toString());
+        query.setParameter("idPessoa", idPessoa);
+        
+        if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+            query.setParameterList("idsIgnorar", idsIgnorar);
+        }
+        
+        query.addScalar("id", StandardBasicTypes.LONG);
+        query.addScalar("bairro", StandardBasicTypes.STRING);
+        query.addScalar("cep", StandardBasicTypes.STRING);
+        query.addScalar("codigoCidadeIBGE", StandardBasicTypes.INTEGER);
+        query.addScalar("cidade", StandardBasicTypes.STRING);
+        query.addScalar("complemento", StandardBasicTypes.STRING);
+        query.addScalar("tipoLogradouro", StandardBasicTypes.STRING);
+        query.addScalar("logradouro", StandardBasicTypes.STRING);
+        query.addScalar("numero", StandardBasicTypes.STRING);
+        query.addScalar("uf", StandardBasicTypes.STRING);
+        query.addScalar("codigoUf", StandardBasicTypes.STRING);
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(Endereco.class));
+        
+        return query.list();
 	}
 
 	@Override

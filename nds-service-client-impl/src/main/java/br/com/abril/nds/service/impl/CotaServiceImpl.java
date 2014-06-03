@@ -43,8 +43,8 @@ import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
+import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -393,14 +393,12 @@ public class CotaServiceImpl implements CotaService {
                 endRemover.add(dto.getEndereco().getId());
             }
         }
-        else{
+        
+        final List<EnderecoAssociacaoDTO> lista = enderecoService.buscarEnderecosPorIdPessoa(idPessoa, endRemover);
+        
+        if (lista!= null && !lista.isEmpty()){
             
-            final List<EnderecoAssociacaoDTO> lista = enderecoService.buscarEnderecosPorIdPessoa(idPessoa, endRemover);
-            
-            if (lista!= null && !lista.isEmpty()){
-                
-                listRetorno.addAll(lista);
-            }
+            listRetorno.addAll(lista);
         }
         
         return listRetorno;
@@ -526,18 +524,6 @@ public class CotaServiceImpl implements CotaService {
             
             enderecoCotaRepository.merge(enderecoCota);
         }
-    }
-    
-    /**
-     * ENDERECO
-     * 
-     * Remove lista de EnderecoCota
-     * 
-     * @param cota
-     * @param listaEnderecoAssociacao
-     */
-    private void removerEnderecosCota(final Cota cota, final List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
-        removerEnderecosCota(listaEnderecoAssociacao);
     }
     
     /**
