@@ -213,7 +213,7 @@ public class FTFServiceImpl implements FTFService {
 	private FTFReportDTO gerarArquivoFTF(final List<NotaFiscal> notas, List<FTFBaseDTO> list, FTFReportDTO report, FTFEnvTipoRegistro00 regTipo00, String totalPedidos) {
 		
 		ParametroSistema pathNFEExportacao = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO_FTF);
-
+		
 		File diretorioExportacaoNFE = new File(pathNFEExportacao.getValor());
 		
 		File f = new File(String.format("%s/%s",pathNFEExportacao.getValor(),regTipo00.getNomeArquivo()));

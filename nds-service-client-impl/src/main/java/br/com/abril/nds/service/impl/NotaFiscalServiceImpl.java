@@ -574,9 +574,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	@Override
 	@Transactional
-	public synchronized void exportarNotasFiscais(
-			List<NotaFiscal> notasFiscaisParaExportacao)
-			throws FileNotFoundException, IOException {
+	public synchronized void exportarNotasFiscais(List<NotaFiscal> notasFiscaisParaExportacao) throws FileNotFoundException, IOException {
 
 		// String dados = "";
 
@@ -601,22 +599,18 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					msgs.append(msg);
 				}
 
-				throw new ValidacaoException(TipoMensagem.ERROR,
-						"Erro ao gerar arquivo de nota: " + msgs.toString());
+				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar arquivo de nota: " + msgs.toString());
 			}
 
 			LOGGER.error("Falha ao gerar arquivo de exportação: ", e);
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-					"Falha ao gerar arquivo de exportação: " + e.getMessage()));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Falha ao gerar arquivo de exportação: " + e.getMessage()));
 		}
 
 		ParametroSistema pathNFEExportacao = this.parametroSistemaService
 				.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
 
 		if (pathNFEExportacao == null) {
-			throw new ValidacaoException(
-					new ValidacaoVO(TipoMensagem.WARNING,
-							"Informe o diretório de exportação das notas na tela de parametros do sistema"));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe o diretório de exportação das notas na tela de parametros do sistema"));
 		}
 
 		/*

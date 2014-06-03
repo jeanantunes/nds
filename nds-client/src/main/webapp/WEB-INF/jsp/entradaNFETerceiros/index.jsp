@@ -171,12 +171,11 @@ fieldset label {
 	<form id="form-pesquisa-nfe">
 		<fieldset class="fieldFiltro">
 			<legend> Pesquisa NF-e</legend>
-			<table width="950" border="0" cellpadding="2" cellspacing="1"
-				class="filtro">
+			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td width="75">Fornecedor:</td>
-					<td width="250">
-						<select id="entrada-terceiros-selectFornecedoresDestinatarios"  name="filtro.listIdFornecedor.id" multiple="multiple" style="width:250px">
+					<td width="200">
+						<select id="entrada-terceiros-selectFornecedoresDestinatarios"  name="filtro.listIdFornecedor.id" multiple="multiple" style="width:180px">
 							<c:forEach items="${listFornecedores}" var="fornecedor">
 								<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
 							</c:forEach>
@@ -202,14 +201,14 @@ fieldset label {
 							<c:forEach items="${comboStatusNota}" var="comboStatusNota">
 								<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>
 							</c:forEach>
-					</select>
+						</select>
 					<td width="76">Tipo de Nota:</td>
 					<td width="211">
-						<select name="filtro.tipoNota" id="tipoNota" style="width: 130px;">
+						<select name="filtro.tipoNota" id="tipoNota" style="width: 160px;">
 							<option value=""selected="selected">Selecione...</option>
-							<option value="1">Todas</option>
-							<option value="2">Entrada</option>
-							<option value="3">Complementar</option>
+							<c:forEach items="${tiposNotas}" var="tiposNotas">
+								<option value="${tiposNotas.key}">${tiposNotas.value}</option>
+							</c:forEach>
 						</select>
 					</td>
 					<td width="131">

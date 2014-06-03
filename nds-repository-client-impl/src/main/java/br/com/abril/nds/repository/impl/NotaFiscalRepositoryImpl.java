@@ -982,8 +982,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" fornecedor.id as idFornecedor, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, '') as nomeFornecedor,");
 		hql.append(" SUM(me.qtde) as exemplares, ");
-		hql.append(" SUM(produtoEdicao.precoVenda * me.qtde) as total, "); 
-		hql.append(" SUM(coalesce(descontoLogisticaPE.percentualDesconto, descontoLogistica.percentualDesconto, 0) * me.qtde) as totalDesconto "); 
+		hql.append(" SUM(coalesce(produtoEdicao.precoVenda, 0) * me.qtde) as total, "); 
+		hql.append(" SUM(coalesce(descontoLogisticaPE.percentualDesconto, descontoLogistica.percentualDesconto, produtoEdicao.desconto, produto.desconto, 0) * me.qtde) as totalDesconto "); 
 		
 		Query query = queryConsultaMENfeParameters(queryConsultaMENfe(filtro, hql, false, false, false), filtro);
 		
@@ -1022,8 +1022,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN me.estoqueProduto estoqueProduto ")
 		.append(" JOIN estoqueProduto.produtoEdicao produtoEdicao ")
 		.append(" JOIN produtoEdicao.produto produto ")
-		.append(" JOIN produtoEdicao.descontoLogistica descontoLogisticaPE ")
-		.append(" JOIN produto.descontoLogistica descontoLogistica ")
+		.append(" LEFT JOIN produtoEdicao.descontoLogistica descontoLogisticaPE ")
+		.append(" LEFT JOIN produto.descontoLogistica descontoLogistica ")
 		.append(" JOIN produto.fornecedores fornecedor")
 		.append(" JOIN fornecedor.juridica pessoa ")
 		.append(" WHERE me.data BETWEEN :dataInicial AND :dataFinal ");
