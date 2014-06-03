@@ -1085,21 +1085,19 @@ var produtoEdicaoController =$.extend(true,  {
 				modal: true,
 				buttons: {
 					"Sim": function() {
-						
+
+						produtoEdicaoController.submeterProdutoEdicao(closePopUp);
+
+						$( this ).dialog( "close" );
+					},
+					"Não": function() {
 						setTimeout(function() {
 							$("#produtoEdicaoController-precoVenda", this.workspace).focus(); }, 10);
 						
 						setTimeout(function() {
 							$("#produtoEdicaoController-precoVenda", this.workspace).select(); }, 10);
-						
-						
+
 						$( this ).dialog( "close" );
-					},
-					"Não": function() {
-						
-						produtoEdicaoController.submeterProdutoEdicao(closePopUp);
-						
-						$( this ).dialog( "close" );						
 					}
 				}
 			});
