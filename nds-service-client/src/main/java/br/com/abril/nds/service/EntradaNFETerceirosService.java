@@ -25,7 +25,8 @@ public interface EntradaNFETerceirosService {
 	public abstract List<ItemNotaFiscalEntrada> obtemItemNotaFiscalEntradaPorControleConferenciaEncalheCota(
 			long idControleConferencia, String orderBy, Ordenacao ordenacao, Integer firstResult, Integer maxResults);
 
-	public abstract Long quantidadeItemNotaFiscalEntradaPorControleConferenciaEncalheCota(
-			long idControleConferencia);
+	public abstract Long quantidadeItemNotaFiscalEntradaPorControleConferenciaEncalheCota(long idControleConferencia);
+
+	Integer qtdeNotasRecebidas(FiltroEntradaNFETerceiros filtro);
 	
 }

@@ -149,7 +149,7 @@ public class EntradaNFETerceirosController extends BaseController {
 		
 		final List<ConsultaEntradaNFETerceirosRecebidasDTO> notasRecebidas = this.entradaNFETerceirosService.buscarNFNotasRecebidas(filtro, true);
 
-		final Integer tamanhoListaNotasRecebidas = this.entradaNFETerceirosService.buscarTodasNFNotas(filtro);
+		final Integer qtdeNotasRecebidas = this.entradaNFETerceirosService.qtdeNotasRecebidas(filtro);
 		
 		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>>();
 		
@@ -157,38 +157,11 @@ public class EntradaNFETerceirosController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 		
-		/*List<ConsultaEntradaNFETerceirosRecebidasDTO> listaNotasRecebidas = new ArrayList<ConsultaEntradaNFETerceirosRecebidasDTO>();
-		
-		ConsultaEntradaNFETerceirosRecebidasDTO nota1 = new ConsultaEntradaNFETerceirosRecebidasDTO();
-		nota1.setChaveAcesso("chaveAcesso");
-		nota1.setContemDiferenca(Integer.valueOf(1));
-		nota1.setDataEmissao(new Date());
-		nota1.setNome("Victor Henrique");
-		nota1.setNumeroNota(Long.valueOf("12231"));
-		nota1.setSerie("192837456");
-		nota1.setTipoNotaFiscal("SAIDA");
-		nota1.setValorNota(new BigDecimal(9090));
-		
-		ConsultaEntradaNFETerceirosRecebidasDTO nota2 = new ConsultaEntradaNFETerceirosRecebidasDTO();
-		nota2.setChaveAcesso("chaveAcesso2");
-		nota2.setContemDiferenca(Integer.valueOf(0));
-		nota2.setDataEmissao(new Date());
-		nota2.setNome("Victor Henrique");
-		nota2.setNumeroNota(Long.valueOf(445566));
-		nota2.setSerie("910293758921");
-		nota2.setTipoNotaFiscal("SAIDA");
-		nota2.setValorNota(new BigDecimal(9090));
-		
-		listaNotasRecebidas.add(nota1);
-		listaNotasRecebidas.add(nota2);
-		
-		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>>();*/
-		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(notasRecebidas));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(tamanhoListaNotasRecebidas);
+		tableModel.setTotal(qtdeNotasRecebidas);
 		
 		return tableModel;
 	}
