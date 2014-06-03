@@ -549,7 +549,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 					mensagemDialog = mensagemDialog + "</p>";
 					
-					$( "#confirm_button", _workspace ).text(mensagemDialog);
+					$( "#confirm_button", _workspace ).html(mensagemDialog);
 					
 					T.mostarDialogConfirmacaoSelecionados(novaDataDeLancamento);
 				
