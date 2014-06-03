@@ -245,7 +245,7 @@ public class FollowupController extends BaseController {
 		List<ConsultaFollowupStatusCotaDTO> listacadastral = this.followupstatuscotaService.obterStatusCota(filtroStatusCota);
 		
 		for(ConsultaFollowupStatusCotaDTO dto: listacadastral){
-			String periodo = dto.getDataInicioPeriodo() + " até " + dto.getDataFimPeriodo();
+			String periodo = dto.getDataInicioPeriodo() + (dto.getDataFimPeriodo()!=null && !dto.getDataFimPeriodo().isEmpty()?" até " + dto.getDataFimPeriodo():"");
 			dto.setPeriodoStatus(periodo);
 		}
 		
