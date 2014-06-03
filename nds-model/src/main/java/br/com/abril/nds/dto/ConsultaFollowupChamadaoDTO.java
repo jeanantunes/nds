@@ -88,9 +88,12 @@ public class ConsultaFollowupChamadaoDTO implements Serializable {
 
 	public void setDataHistoricoEdicao(Date dataHistoricoEdicao) {
 		this.dataHistoricoEdicao = dataHistoricoEdicao;
-		qtdDiasSuspensao = DateUtil.obterDiferencaDias(new Date(), getDataHistoricoEdicao());
 	}
 	
+	public void setQtdDiasSuspensao(Integer qtdDiasSuspensao) {
+		this.qtdDiasSuspensao = qtdDiasSuspensao.longValue();
+	}
+
 	@Export(label = "Suspenso (dias)", alignment=Alignment.RIGHT, exhibitionOrder = 4)
 	public Long getQtdDiasSuspensao() {
 		return qtdDiasSuspensao;

@@ -30,7 +30,8 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		hql.append("pessoa.nome as nomeJornaleiro, ");
 		hql.append("sum(movimentos.valoresAplicados.precoComDesconto * (estoqueProdCota.qtdeRecebida - estoqueProdCota.qtdeDevolvida)) as valorTotalConsignado,  ");
 		hql.append("lancamento.dataRecolhimentoPrevista as dataProgramadoChamadao, ");
-		hql.append("historico.dataEdicao as dataHistoricoEdicao");
+		hql.append("historico.dataEdicao as dataHistoricoEdicao, ");
+		hql.append("datediff((select dist.dataOperacao from Distribuidor dist), historico.dataInicioValidade) as qtdDiasSuspensao");
 		
 		hql.append(getSqlFromEWhereChamadao(filtro));
 		
@@ -62,7 +63,7 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		hql.append("  join estoqueProdCota.movimentos movimentos ");
 		hql.append("  join estoqueProdCota.cota cota ");
 		hql.append("  join cota.pessoa pessoa ");
-		hql.append("  join cota.historicos historico ");
+		hql.append("  join cota.historicos historico WITH historico.novaSituacao = 'SUSPENSO' ");
 		hql.append("  join cota.chamadaEncalheCotas cec ");
 		hql.append("  join cec.chamadaEncalhe ce ");
 		hql.append("  join estoqueProdCota.produtoEdicao produtoEdicao ");
@@ -76,7 +77,7 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		hql.append(" ORDER BY cota.numeroCota, pessoa.nome");
 
 		return hql.toString();
-	}
+   }
 
 
    private HashMap<String,Object> aplicarParametros(FiltroFollowupChamadaoDTO filtro) {
