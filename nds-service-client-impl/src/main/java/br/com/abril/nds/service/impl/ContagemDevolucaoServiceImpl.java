@@ -913,9 +913,11 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		BigInteger qtdeDevSimb = BigInteger.ZERO;
 		for(MovimentoEstoque me : movimentos) {
-			if(((TipoMovimentoEstoque) me.getTipoMovimento()).getGrupoMovimentoEstoque().getOperacaoEstoque().equals(OperacaoEstoque.ENTRADA)) {
+			if(((TipoMovimentoEstoque) me.getTipoMovimento()).getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.RECEBIMENTO_FISICO)) {
 				qtdeDevSimb = qtdeDevSimb.add(me.getQtde());
-			} else {
+			} 
+			
+			if(((TipoMovimentoEstoque) me.getTipoMovimento()).getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE)) {
 				qtdeDevSimb = qtdeDevSimb.subtract(me.getQtde());
 			}
 		}

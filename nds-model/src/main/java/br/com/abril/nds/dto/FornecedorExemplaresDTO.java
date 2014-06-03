@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
@@ -16,7 +17,7 @@ public class FornecedorExemplaresDTO implements Serializable {
 		
 	}
 	
-	public FornecedorExemplaresDTO(Long idFornecedor, Integer numeroFornecedor, String nomeFornecedor, BigInteger exemplares, BigInteger total, BigInteger totalDesconto, boolean inativo) {
+	public FornecedorExemplaresDTO(Long idFornecedor, Integer numeroFornecedor, String nomeFornecedor, BigInteger exemplares, BigDecimal total, BigDecimal totalDesconto, boolean inativo) {
 		super();
 		this.idFornecedor = idFornecedor;
 		this.numeroFornecedor = numeroFornecedor;
@@ -39,10 +40,10 @@ public class FornecedorExemplaresDTO implements Serializable {
 	private BigInteger exemplares;
 	
 	@Export(label="Total R$", alignment=Alignment.RIGHT)
-	private BigInteger total;
+	private BigDecimal total;
 	
 	@Export(label="Total Desconto R$", alignment=Alignment.RIGHT)
-	private BigInteger totalDesconto;
+	private BigDecimal totalDesconto;
 	
 	private boolean inativo;
 
@@ -88,19 +89,19 @@ public class FornecedorExemplaresDTO implements Serializable {
 		this.inativo = inativo;
 	}
 
-	public BigInteger getTotal() {
+	public BigDecimal getTotal() {
 		return total;
 	}
 
-	public void setTotal(BigInteger total) {
+	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
 
-	public BigInteger getTotalDesconto() {
+	public BigDecimal getTotalDesconto() {
 		return totalDesconto;
 	}
 
-	public void setTotalDesconto(BigInteger totalDesconto) {
+	public void setTotalDesconto(BigDecimal totalDesconto) {
 		this.totalDesconto = totalDesconto;
 	}
 	
