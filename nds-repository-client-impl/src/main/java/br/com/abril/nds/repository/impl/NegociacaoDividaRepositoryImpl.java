@@ -177,6 +177,8 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		query.setParameter("statusDivida", StatusDivida.NEGOCIADA);
 		
+		query.setParameter("tipoNegociacaoComissao", TipoNegociacao.COMISSAO);
+		
 		return (Long) query.uniqueResult();
 	}
 	
@@ -210,6 +212,8 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("statusDivida", StatusDivida.NEGOCIADA);
+		
+		query.setParameter("tipoNegociacaoComissao", TipoNegociacao.COMISSAO);
 		
 		if (filtro.getPaginacao() != null) {
 
@@ -282,7 +286,9 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" where divida.status =:statusDivida ")
 			
-			.append(" and negociacao.valorDividaPagaComissao is null  ")
+			.append(" and ((negociacao.tipoNegociacao <> :tipoNegociacaoComissao) or ")
+			
+			.append("      (negociacao.valorDividaPagaComissao is not null and negociacao.valorDividaPagaComissao > 0))  ")
 			
 			.append(" and EXISTS (").append(this.subSelectUtimaParcelaPendenteAprovacao(" negociacao.id ")).append(")");
 		
