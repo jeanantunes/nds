@@ -1877,7 +1877,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		var data = [{name: "idConferenciaEncalhe", value: ConferenciaEncalhe.idConferenciaEncalheVisualizacao},
 		            {name: "observacao", value: $("#observacao", ConferenciaEncalhe.workspace).val()}];
 		
-		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/gravarObservacaoConferecnia', data, 
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/gravarObservacaoConferencia', data, 
 			function(result){
 			
 				$("#observacao", ConferenciaEncalhe.workspace).fadeOut();
