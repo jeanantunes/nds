@@ -2864,7 +2864,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final MovimentoEstoque movimentoEstoque = 
 			this.movimentoEstoqueService.gerarMovimentoEstoque(
 					conferenciaEncalheDTO.getIdProdutoEdicao(), usuario.getId(), 
-					conferenciaEncalheDTO.getQtdExemplar(), tipoMovimentoEstoque, true, cota);
+					conferenciaEncalheDTO.getQtdExemplar(), tipoMovimentoEstoque, false, cota);
 		
 		return movimentoEstoque;
 	}
