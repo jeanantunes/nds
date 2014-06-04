@@ -727,4 +727,9 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 		
 	}
+
+	@Override
+	public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long tipoClassifProdId, String codigoICD) {
+		return mixCotaProdutoRepository.obterMixPorCotaProduto(cotaId, tipoClassifProdId, codigoICD);
+	}
 }
