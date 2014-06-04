@@ -21,8 +21,7 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ConsultaFollowupChamadaoDTO> obterConsignadosParaChamadao(
-			FiltroFollowupChamadaoDTO filtro) {
+	public List<ConsultaFollowupChamadaoDTO> obterConsignadosParaChamadao(FiltroFollowupChamadaoDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
 		

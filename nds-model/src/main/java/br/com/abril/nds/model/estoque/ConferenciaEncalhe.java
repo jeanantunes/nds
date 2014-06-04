@@ -89,6 +89,13 @@ public class ConferenciaEncalhe implements Serializable {
 	private BigDecimal precoCapaInformado;
 	
 	/**
+	 * Preco ccom desconto relativo ao item de nota fiscal de entrada
+	 * fornecida pela cota na operação de conferência de encalhe.
+	 */
+	@Column(name = "PRECO_COM_DESCONTO")
+	private BigDecimal precoComDesconto;
+	
+	/**
 	 * Quantidade replicada na coluna qtde em movimento_estoque_cota 
 	 * relativa a conferência de encalhe
 	 */
@@ -261,13 +268,31 @@ public class ConferenciaEncalhe implements Serializable {
 	public BigDecimal getPrecoCapaInformado() {
 		return precoCapaInformado;
 	}
-
+	
 	/**
 	 * Atribuí precoCapaInformado
 	 * @param precoCapaInformado 
 	 */
 	public void setPrecoCapaInformado(BigDecimal precoCapaInformado) {
 		this.precoCapaInformado = precoCapaInformado;
+	}
+	
+	/**
+	 * Obtém precoComDesconto
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getPrecoComDesconto() {
+		return precoComDesconto;
+	}
+
+	
+	/**
+	 * Atribuí precoComDesconto
+	 * @return BigDecimal
+	 */
+	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+		this.precoComDesconto = precoComDesconto;
 	}
 
 	/**

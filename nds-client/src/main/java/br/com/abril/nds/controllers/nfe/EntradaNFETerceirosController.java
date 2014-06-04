@@ -139,15 +139,15 @@ public class EntradaNFETerceirosController extends BaseController {
 		
 		this.tratarFiltro(filtro);
 		
-		final TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> tableModel = efetuarConsultaNotasRecebidas(filtro);
+		final TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> tableModel = consultarNotasRecebidas(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> efetuarConsultaNotasRecebidas(final FiltroEntradaNFETerceiros filtro) {
+	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> consultarNotasRecebidas(final FiltroEntradaNFETerceiros filtro) {
 		
-		final List<ConsultaEntradaNFETerceirosRecebidasDTO> notasRecebidas = this.entradaNFETerceirosService.buscarNFNotasRecebidas(filtro, true);
+		final List<ConsultaEntradaNFETerceirosRecebidasDTO> notasRecebidas = this.entradaNFETerceirosService.consultarNotasRecebidas(filtro, true);
 
 		final Integer qtdeNotasRecebidas = this.entradaNFETerceirosService.qtdeNotasRecebidas(filtro);
 		
@@ -324,8 +324,7 @@ public class EntradaNFETerceirosController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}*/
 			
-			FileExporter.to("consulta_notas_recebidas", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					listaNotasRecebidas, ConsultaEntradaNFETerceirosRecebidasDTO.class, this.httpResponse);			
+			FileExporter.to("consulta_notas_recebidas", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, listaNotasRecebidas, ConsultaEntradaNFETerceirosRecebidasDTO.class, this.httpResponse);			
 		}else{
 			
 			List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.consultaNotasPendentesRecebimento(filtro, false);

@@ -11,7 +11,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface EntradaNFETerceirosRepository extends Repository<NotaFiscalEntrada, Long> {
 	
-	List<ConsultaEntradaNFETerceirosRecebidasDTO> buscarNFNotasRecebidas(FiltroEntradaNFETerceiros filtro, boolean limitar);
+	List<ConsultaEntradaNFETerceirosRecebidasDTO> consultarNotasRecebidas(FiltroEntradaNFETerceiros filtro, boolean limitar);
 	
 	Integer buscarTotalNotas(FiltroEntradaNFETerceiros filtro);
 	

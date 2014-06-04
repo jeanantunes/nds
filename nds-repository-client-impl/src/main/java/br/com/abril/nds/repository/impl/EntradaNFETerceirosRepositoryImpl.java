@@ -26,7 +26,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ConsultaEntradaNFETerceirosRecebidasDTO> buscarNFNotasRecebidas(FiltroEntradaNFETerceiros filtro, boolean limitar) {
+	public List<ConsultaEntradaNFETerceirosRecebidasDTO> consultarNotasRecebidas(FiltroEntradaNFETerceiros filtro, boolean limitar) {
 		
 		StringBuilder hql = new StringBuilder();
 		
