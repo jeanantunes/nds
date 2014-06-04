@@ -1010,7 +1010,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.esconderOpcoes();
 		
-		$(".areaBts").hide();
+		$(".areaBts", _workspace).hide();
 		
 		if (!T.validarMarcacaoUnicoItem()) {
 			return;
