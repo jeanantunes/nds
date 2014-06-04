@@ -33,7 +33,7 @@ public class FollowupStatusCotaServiceImpl implements FollowupStatusCotaService 
 		
 		Date proximaData = DateUtil.adicionarDias(dataOperacao, 1);
 		
-		List<Date> datas = Arrays.asList(dataOperacao, proximaData);
+		List<Date> datas = Arrays.asList(proximaData);
 		 
 		return this.followupStatusCotaRepository.obterConsignadosParaChamadao(filtro, datas);
 	}
