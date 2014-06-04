@@ -161,34 +161,9 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 
         fixacaoReparteRepository.adicionar(fixacaoReparte);
 		
-//		fixarTudoNoPDVPrincipal(fixacaoReparte);
-		
 		return fixacaoReparte;
 	}
 	
-	@Transactional
-	private void fixarTudoNoPDVPrincipal(FixacaoReparte fixacaoReparte) {
-		List<PDV> pdvs = fixacaoReparte.getCotaFixada().getPdvs();
-		
-		for (PDV pdv : pdvs) {
-			if(pdv.getCaracteristicas().isPontoPrincipal()){
-				
-				FixacaoRepartePdv fixacaoRepartePdv = fixacaoRepartePdvRepository.obterPorFixacaoReparteEPdv(fixacaoReparte, pdv);
-				
-				if(fixacaoRepartePdv == null) {
-					fixacaoRepartePdv = new FixacaoRepartePdv();
-				}
-				
-				fixacaoRepartePdv.setFixacaoReparte(fixacaoReparte);
-				fixacaoRepartePdv.setPdv(pdv);
-				fixacaoRepartePdv.setRepartePdv(fixacaoReparte.getQtdeExemplares());
-
-	            fixacaoRepartePdvRepository.merge(fixacaoRepartePdv);
-			}
-		}
-		
-	}
-
 	@Override
 	@Transactional
 	public List<PdvDTO> obterListaPdvPorFixacao(Long id) {
@@ -472,8 +447,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		}
 		
 	}
-	
-	
 	
 	@Transactional
 	@Override

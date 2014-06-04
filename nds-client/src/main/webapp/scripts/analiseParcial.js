@@ -1706,31 +1706,12 @@ $(".pdvCotaGrid_AP", analiseParcialController.workspace).flexigrid({
             reparte:''
         };
 
-//        var isReparteDefinido = false;
-//        
-//        for (var i=0; i<result.rows.length; i++) {
-//            
-//            if(result.rows[i].cell.reparte != undefined){
-//            	isReparteDefinido = true;
-//            }
-//
-//        }
-        
         for (var i=0; i<result.rows.length; i++) {
             
         	var cell = result.rows[i].cell;
             result.rows[i].cell = $.extend({}, defaultCell, cell);
             
-//            if(isReparteDefinido){
         	result.rows[i].cell.reparte = "<input class='repartePDV' value='"+(result.rows[i].cell.repartePDV || '0')+"' name='repartePDV' id='repartePDV"+i+"' onchange='analiseParcialController.atualizaRepartePDV();' >"
-//            }else{
-//            	if(cell.principal){
-//            		var reparte = $('#reparteCota').text();
-//            		result.rows[i].cell.reparte = "<input class='repartePDV' value='"+reparte+"' name='repartePDV' id='repartePDV"+i+"' onchange='analiseParcialController.atualizaRepartePDV();' >"
-//            	}else{
-//            		result.rows[i].cell.reparte= "<input class='repartePDV' value='' name='repartePDV' id='repartePDV"+i+"' onchange='analiseParcialController.atualizaRepartePDV();' >"
-//            	}
-//            }
         }
 
         return result;
