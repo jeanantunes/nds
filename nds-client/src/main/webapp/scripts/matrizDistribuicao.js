@@ -169,10 +169,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.processaRetornoPesquisa = function(resultadoPesquisa) {
 		
 		if (resultadoPesquisa[3]) {
-			$("#matrizFinalizada").show();
+			$("#matrizFinalizada", _workspace).show();
 		}
 		else {
-			$("#matrizFinalizada").hide();
+			$("#matrizFinalizada", _workspace).hide();
 		}
 		
 		$("#totalGerado", _workspace).clear();
@@ -872,7 +872,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#dialog-informacoes-produto", _workspace).hide();
 		$("#telaPesquisaMatriz", _workspace).show();
         this.tabSomarCopiarEstudos = '';
-        $(".areaBts").show();
+        $(".areaBts", _workspace).show();
     },
 	
 	this.mostraTelaCopiarProporcionalDeEstudo = function() {
@@ -1523,7 +1523,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			exibirMensagem("WARNING",["Favor gerar um estudo."]);
 			return;
 		} else {
-			$(".areaBts").hide();
+			$(".areaBts", _workspace).hide();
 			// Deve ir direto para EMS 2031
 			T.redirectToTelaAnalise($('#copiarEstudo-estudo').text());
 		}
