@@ -370,7 +370,7 @@ public class AnaliseParcialController extends BaseController {
     		}
     	} 
 
-    	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getReparteDistribuir().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)){
+    	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)){
     		throw new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é maior que estoque disponível!");
     	}
     	
