@@ -79,7 +79,7 @@ public class AnaliseParcialController extends BaseController {
 
     @Autowired
     private DistribuicaoVendaMediaRepository distribuicaoVendaMediaRepository;
-
+    
     @Autowired
     private HttpSession session;
 
@@ -155,12 +155,14 @@ public class AnaliseParcialController extends BaseController {
 
     @Path("/carregarDetalhesPdv")
     public void carregarDetalhesPdv(Integer numeroCota, Long estudoId) {
-        List<PdvDTO> lista = analiseParcialService.carregarDetalhesPdv(numeroCota, estudoId);
-
+        
+    	List<PdvDTO> lista = analiseParcialService.carregarDetalhesPdv(numeroCota, estudoId);
+        
         TableModel<CellModelKeyValue<PdvDTO>> table = new TableModel<>();
         table.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
         table.setPage(1);
         table.setTotal(lista.size());
+        
         result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
 

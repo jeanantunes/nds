@@ -144,7 +144,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	public FixacaoReparte adicionarFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO) {
 		FixacaoReparte fixacaoReparte = getFixacaoRepartePorDTO(fixacaoReparteDTO);
 		
-		
 		fixacaoReparte.setDataFixa(distribuidorService.obterDataOperacaoDistribuidor());
 		
 		if(fixacaoReparte.getId() != null) {
@@ -162,7 +161,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 
         fixacaoReparteRepository.adicionar(fixacaoReparte);
 		
-		fixarTudoNoPDVPrincipal(fixacaoReparte);
+//		fixarTudoNoPDVPrincipal(fixacaoReparte);
 		
 		return fixacaoReparte;
 	}
@@ -171,19 +170,23 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	private void fixarTudoNoPDVPrincipal(FixacaoReparte fixacaoReparte) {
 		List<PDV> pdvs = fixacaoReparte.getCotaFixada().getPdvs();
 		
-		if (pdvs != null && pdvs.size() > 0) {
-			PDV pdv = pdvs.get(0);
-            FixacaoRepartePdv fixacaoRepartePdv = fixacaoRepartePdvRepository.obterPorFixacaoReparteEPdv(fixacaoReparte, pdv);
-			if(fixacaoRepartePdv == null) {
-				fixacaoRepartePdv = new FixacaoRepartePdv();
-			}
-			
-			fixacaoRepartePdv.setFixacaoReparte(fixacaoReparte);
-			fixacaoRepartePdv.setPdv(pdv);
-			fixacaoRepartePdv.setRepartePdv(fixacaoReparte.getQtdeExemplares());
+		for (PDV pdv : pdvs) {
+			if(pdv.getCaracteristicas().isPontoPrincipal()){
+				
+				FixacaoRepartePdv fixacaoRepartePdv = fixacaoRepartePdvRepository.obterPorFixacaoReparteEPdv(fixacaoReparte, pdv);
+				
+				if(fixacaoRepartePdv == null) {
+					fixacaoRepartePdv = new FixacaoRepartePdv();
+				}
+				
+				fixacaoRepartePdv.setFixacaoReparte(fixacaoReparte);
+				fixacaoRepartePdv.setPdv(pdv);
+				fixacaoRepartePdv.setRepartePdv(fixacaoReparte.getQtdeExemplares());
 
-            fixacaoRepartePdvRepository.merge(fixacaoRepartePdv);
+	            fixacaoRepartePdvRepository.merge(fixacaoRepartePdv);
+			}
 		}
+		
 	}
 
 	@Override
@@ -541,6 +544,12 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 				}
 			}
 		}
+	}
+
+	@Transactional
+	@Override
+	public FixacaoReparte buscarPorProdutoCotaClassificacao(Cota cota, String codigoICD, TipoClassificacaoProduto tipoClassificacaoProduto) {
+		return fixacaoReparteRepository.buscarPorProdutoCotaClassificacao(cota, codigoICD, tipoClassificacaoProduto);
 	}
 	
 }
