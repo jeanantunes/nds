@@ -344,7 +344,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	List<LancamentoDTO> obterDatasStatusAgrupados(FiltroLancamentoDTO filtro,Intervalo<Date> intervalo);
 
-	List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);
+	List<ProdutoLancamentoDTO> verificarDataConfirmada(Date dataLancamento);
 
 	public List<Lancamento> obterLancamentoInStatus(Date dataLancamentoDistribuidor, List<StatusLancamento> status);
 	

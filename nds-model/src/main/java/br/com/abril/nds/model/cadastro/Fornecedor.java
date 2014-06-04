@@ -129,6 +129,10 @@ public class Fornecedor implements Serializable {
 	
 	public Fornecedor(){}
 	
+	public Fornecedor(Long id) {
+		this.id = id;
+	}
+	
 	public Fornecedor(Long id, String nomeFantasia){
 		this.id = id;
 		this.juridica = new PessoaJuridica();

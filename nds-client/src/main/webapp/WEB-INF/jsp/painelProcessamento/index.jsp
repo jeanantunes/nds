@@ -3,6 +3,10 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/painelProcessamento.js"></script>
 <script type="text/javascript">
 	$(function() {
+		$("#toggleFornecedores").buttonset();
+		$("input[name='radioToggle']").click(function() {
+			painelProcessamentoController.pesquisarInterfaces();
+		});
 		painelProcessamentoController.init("${pageContext.request.contextPath}");
 	});
 </script>
@@ -64,8 +68,18 @@
 	  	</div>
 	  </div>
 	  <div class="linha_separa_fields">&nbsp;</div>
+
       <fieldset class="fieldFiltro">
        	  <legend>Painel de Processamentos</legend>
+		<div id="toggleFornecedores">
+
+		  <input type="radio" id="visao-dinap" name="radioToggle" value="${codigoDistribuidor.dinap}" checked="checked">
+		  <label for="visao-dinap" style="width:100px">DINAP</label>
+		
+		  <input type="radio" id="visao-fc" name="radioToggle" value="${codigoDistribuidor.fc}">
+		  <label for="visao-fc" style="width:100px">FC</label>
+		
+		</div>
           <div class="grids" style="display:block;">
         	<div id="tabPainel">
                 <div id="tabPainel-Interfaces">
@@ -83,20 +97,7 @@
                       </table>
                       <br clear="all"/>
                   <table class="painelInterfaceGrid"></table>
-              	</div>
-                <div id="tabPainel-Processos">
-                	<table width="500" border="0" align="right" cellpadding="2" cellspacing="1" class="filtro">
-                      <tr>
-                      	<td width="167">&nbsp;</td>
-                        <td width="17"><img src="${pageContext.request.contextPath}/images/ico_operando.png" alt="Operando" /></td>
-                        <td width="146">Realizado com Sucesso</td>
-                        <td width="19"><img src="${pageContext.request.contextPath}/images/ico_encerrado.png" alt="Off-line" /></td>
-                        <td width="125">Não Processado</td>
-                      </tr>
-                      </table>
-                      <br clear="all"/>
-                	<table class="painelProcessamentoGrid"></table>
-                </div>                
+              	</div>  
             </div>
         </div>
         

@@ -112,9 +112,9 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 	 * Ambas consultas utilizam o mesmo corpo de query
 	 */
 	private StringBuilder montarCorpoHql() {
+		
 		StringBuilder hql = new StringBuilder();
 		
-		// RETURNING FIELDS
 		hql.append(" select ");
 		hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA
 		hql.append(" cota.situacaoCadastro as statusCota, "); // STATUS COTA
@@ -124,31 +124,24 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		hql.append(" endereco.cidade as cidade, "); // CIDADE
 		hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamento, "); // FATURAMENTO
 		hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
-		hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorFluxoPrincipal "); // GERADOR DE FLUXO PRINCIPAL
+		hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorFluxoPrincipal, "); // GERADOR DE FLUXO PRINCIPAL
+		hql.append(" (select max(secundarios.descricao) from GeradorFluxoPDV gfPDV join gfPDV.secundarios as secundarios where gfPDV.id = geradorFluxoPrincipalPDV.id order by secundarios.descricao asc) as geradorFluxoSecundario "); // GERADOR DE FLUXO SECUNDARIO
 		
-		// TODO INFORMAR O CAMPO SECUNDÁRIO GERADOR
-		//hql.append(" tipoGeradorFluxoSecundarioPDV.descricao as geradorFluxoSecundario "); // GERADOR DE FLUXO SECUNDARIO
-		
-		// FROM
-		hql.append(" from EstoqueProdutoCota as estoqueProdutoCota");
-		//hql.append(" from Cota as cota");
-		//hql.append(" left join cota.estoqueProdutoCotas as estoqueProdutoCota");
+		hql.append(" from Cota cota ");
+		hql.append(" left join cota.estoqueProdutoCotas estoqueProdutoCota");
 		hql.append(" left join estoqueProdutoCota.produtoEdicao as produtoEdicao ");
-		hql.append(" left join estoqueProdutoCota.cota as cota ");
-		hql.append(" left join cota.enderecos as cotaEndereco ");
 		hql.append(" left join cota.pessoa as pessoa ");
-		hql.append(" left join cotaEndereco.endereco as endereco ");
 		hql.append(" left join cota.pdvs as pdv ");
+		hql.append(" left join pdv.enderecos as enderecoPDV ");
+		hql.append(" left join enderecoPDV.endereco as endereco ");
 		hql.append(" left join pdv.segmentacao as segmento ");
 		hql.append(" left join pdv.geradorFluxoPDV as geradorFluxoPrincipalPDV ");
 		hql.append(" left join geradorFluxoPrincipalPDV.principal as tipoGeradorFluxoPrincipal ");
-		
-		//TODO FAZER O JOIN DO GERADOR SECUNDÁRIO
-		//hql.append(" left join geradorFluxoPrincipalPDV.secundarios as tipoGeradorFluxoSecundarioPDV ");
 		hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
 		hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
+		
 		hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-		hql.append(" and cotaEndereco.principal = true ");
+		hql.append(" and enderecoPDV.principal = true ");
 		
 		return hql;
 	}

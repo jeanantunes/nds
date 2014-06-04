@@ -3,30 +3,21 @@ package br.com.abril.nds.controllers.lancamento;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.SerializationUtils;
-
-
-
-
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
@@ -45,7 +36,6 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
-import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -483,10 +473,41 @@ public class MatrizLancamentoController extends BaseController {
     
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
-    public void perguntarDataConfirmadaOuNao(final ProdutoLancamentoDTO produtoLancamento) {
+    public void validarDataReprogramacao(final Date novaDataLancamento,
+                                             final List<ProdutoLancamentoVO> produtosLancamento) {
         
-        final boolean retornoDataConfirmada = matrizLancamentoService.isDataConfirmada(produtoLancamento);
-        result.use(Results.json()).from(retornoDataConfirmada).serialize();
+        ValidacaoDataLancamento validacaoDataLancamento = null;
+        
+        final boolean retornoDataConfirmada = matrizLancamentoService.isDataConfirmada(novaDataLancamento);
+        
+        if (retornoDataConfirmada) {
+            
+            validacaoDataLancamento = ValidacaoDataLancamento.DATA_JA_CONFIRMADA;
+        }
+        
+        List<String> listaMensagem =
+            this.validarPebNaoParciais(novaDataLancamento, produtosLancamento);
+        
+        if (validacaoDataLancamento == null && !listaMensagem.isEmpty()) {
+            
+            validacaoDataLancamento = ValidacaoDataLancamento.PEB_MENOR_7_DIAS;
+            
+            final Map<String, Object> mapa = new TreeMap<String, Object>();
+            
+            mapa.put("tipo", validacaoDataLancamento);
+            mapa.put("mensagens", listaMensagem);
+            
+            result.use(CustomJson.class).from(mapa).serialize();
+            
+            return;
+        }
+        
+        if (validacaoDataLancamento == null) {
+            
+            validacaoDataLancamento = ValidacaoDataLancamento.DATA_VALIDA;
+        }
+        
+        result.use(Results.json()).from(validacaoDataLancamento, "result").serialize();
     }
     
     
@@ -530,7 +551,58 @@ public class MatrizLancamentoController extends BaseController {
     	
     }
     
-    private List<String> validarPeb(Date novadata,List<ProdutoLancamentoVO> produtosLancamento){
+    private List<String> validarPebNaoParciais(Date novadata, List<ProdutoLancamentoVO> produtosLancamento) {
+        
+        /*
+         *  Há uma regra nas parciais que não está sendo respeitada matriz. 
+         *  A PEB não pode ser menor que 7 dias, ou seja, se fizermos uma postergação 
+         *  do lançamento de qualquer parcial, o limite será data de recolhimento – 7. P.ex.
+         *  
+         *  Parcial 1 – Lacto 01/04/2014 e recolhimento 01/05/2014, 
+         *  o lançto poderá ser postergado somente até o dia 24/04/2014 (ou seja 01/05/2014 – 7 dias).
+         */
+    	
+        List<String> listaMensagens = new ArrayList<String>();
+        
+    	if (produtosLancamento == null) {
+    		
+    		return listaMensagens;
+    	}
+    	
+        for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
+            
+            if (!this.isParcial(produtoLancamento)) {
+                
+                if (this.isPEBMenor7Dias(novadata, listaMensagens, produtoLancamento)) {
+                    
+                    if (listaMensagens.isEmpty()) {
+                        listaMensagens.add(
+                            "PEB não pode ser menor que 7 dias. Deseja reprogramar assim mesmo a(s) publicação(ções) abaixo:");
+                    }
+                    
+                    listaMensagens.add("Produto: " + produtoLancamento.getNomeProduto() + " Edição: "
+                        + produtoLancamento.getNumeroEdicao());
+                }
+            }
+        }
+ 
+        return listaMensagens;
+    }
+
+    private boolean isPEBMenor7Dias(Date novadata, List<String> listaMensagens, ProdutoLancamentoVO produtoLancamento) {
+        
+        if (produtoLancamento != null && produtoLancamento.getDataRecolhimentoDistribuidor() != null && novadata != null) {
+            
+            if (!novadata.before(DateUtil.subtrairDias(DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimentoDistribuidor()), 7))) {
+                
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private List<String> validarPeb(Date novadata, List<ProdutoLancamentoVO> produtosLancamento, boolean reprogramarProdutosPEBMenor7Dias) {
     	
     	/*
     	 *  Há uma regra nas parciais que não está sendo respeitada matriz. 
@@ -544,30 +616,40 @@ public class MatrizLancamentoController extends BaseController {
     	List<ProdutoLancamentoVO> produtosLancamentoAux = new ArrayList<ProdutoLancamentoVO>();
     	produtosLancamentoAux.addAll(produtosLancamento);
     	
-    	for(ProdutoLancamentoVO produtoLancamento :produtosLancamento){
-    	
-    	 if(produtoLancamento!=null && produtoLancamento.getDataRecolhimentoDistribuidor()!=null && novadata!=null){
-    		if (!novadata.before(DateUtil.subtrairDias(DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimentoDistribuidor()),7))) {
-    			
-    			if(listaMensagens.isEmpty()){
-    				listaMensagens.add("PEB não pode ser menor que 7 dias. A(s) publicação(ções) abaixo não foi/foram alterada(s):");
-    			}
-    			listaMensagens.add("Produto: "+produtoLancamento.getNomeProduto()+" Edição: "+produtoLancamento.getNumeroEdicao());
-    			produtosLancamentoAux.remove(produtoLancamento);
-    			//throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "PEB não pode ser menor que 7 dias. A(s) publicação(ções) abaixo não foi/foram alterada(s): "));
-    		}
-    	 }
+        for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
+            
+            if (this.isParcial(produtoLancamento)
+                    || (!this.isParcial(produtoLancamento) && !reprogramarProdutosPEBMenor7Dias)) {
+                
+                if (this.isPEBMenor7Dias(novadata, listaMensagens, produtoLancamento)) {
+                        
+                    if (listaMensagens.isEmpty()) {
+                        listaMensagens.add(
+                            "PEB não pode ser menor que 7 dias. A(s) publicação(ções) abaixo não foi/foram alterada(s):");
+                    }
+                    
+                    listaMensagens.add("Produto: " + produtoLancamento.getNomeProduto() + " Edição: "
+                        + produtoLancamento.getNumeroEdicao());
+                    
+                    produtosLancamentoAux.remove(produtoLancamento);
+                }
+            }
         }
  
     	produtosLancamento.clear();
     	produtosLancamento.addAll(produtosLancamentoAux);
     	return listaMensagens;
     }
+
+    private boolean isParcial(ProdutoLancamentoVO produtoLancamento) {
+        
+        return !produtoLancamento.getDescricaoLancamento().equals(TipoLancamento.LANCAMENTO.getDescricao());
+    }
     
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void reprogramarLancamentosSelecionados( List<ProdutoLancamentoVO> produtosLancamento,
-            final String novaDataFormatada) {
+            final String novaDataFormatada, boolean reprogramarProdutosPEBMenor7Dias) {
         
     	List<String> listaMensagens = new ArrayList<String>();
     	List<String> listaMensagensAux = new ArrayList<String>();
@@ -578,7 +660,7 @@ public class MatrizLancamentoController extends BaseController {
         
         this.validarListaParaReprogramacao(produtosLancamento);
         
-        listaMensagensAux = this.validarPeb(novaData,produtosLancamento);
+        listaMensagensAux = this.validarPeb(novaData, produtosLancamento, reprogramarProdutosPEBMenor7Dias);
     	 
         this.verificarExecucaoInterfaces();
         
@@ -668,7 +750,7 @@ public class MatrizLancamentoController extends BaseController {
             
             this.validarListaParaReprogramacao(produtosLancamento);
             
-            listaMensagensAux = validarPeb(novaData,produtosLancamento);
+            listaMensagensAux = validarPeb(novaData, produtosLancamento, true);
             
             if(!produtosLancamento.isEmpty()){
              listaMensagens.addAll(this.validarDataReprogramacao(produtosLancamento, novaData));
@@ -1776,6 +1858,11 @@ public class MatrizLancamentoController extends BaseController {
         result.use(PlainJSONSerialization.class).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Excluido com sucesso!"), "result").recursive().serialize();
         
+    }
+    
+    public enum ValidacaoDataLancamento {
+        
+        DATA_JA_CONFIRMADA, PEB_MENOR_7_DIAS, DATA_VALIDA
     }
     
 }

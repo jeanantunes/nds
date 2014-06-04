@@ -761,8 +761,7 @@ function Distribuicao(tela) {
 		D.set("inputCobrancaMensal",'');
 		D.set("diaSemanaCob",'');
 		D.set("checkPorEntrega",false);
-		D.alterarPeriodicidadeCobranca("");
-		$("input:radio", this.workspace).uncheck();
+		D.alterarPeriodicidadeCobranca("DIARIO");
 		D.set('baseCalculo','');
 		
 	};
