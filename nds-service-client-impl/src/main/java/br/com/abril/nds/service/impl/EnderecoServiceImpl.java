@@ -11,7 +11,6 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -23,6 +22,8 @@ import org.ektorp.ViewQuery;
 import org.ektorp.http.HttpClient;
 import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -206,6 +207,20 @@ public class EnderecoServiceImpl implements EnderecoService {
 		}
 		
 		return ret;
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<EnderecoAssociacaoDTO> buscarEnderecosPorPessoaCotaPDVs(Long idPessoa, Set<Long> idsIgnorar){
+	    
+	    List<EnderecoAssociacaoDTO> ret = new ArrayList<EnderecoAssociacaoDTO>();
+        
+        for (Endereco endereco : this.enderecoRepository.buscarEnderecosPorPessoaCotaPDVs(idPessoa, idsIgnorar)){
+            
+            ret.add(new EnderecoAssociacaoDTO(false, null, null, endereco));
+        }
+        
+        return ret;
 	}
 
 	@Override
