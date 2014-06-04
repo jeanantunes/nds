@@ -378,14 +378,6 @@ public class CotaServiceImpl implements CotaService {
     @Transactional(readOnly = true)
     public List<EnderecoAssociacaoDTO> obterEnderecosPorIdCota(final Long idCota) {
         
-        final Cota cota = cotaRepository.buscarPorId(idCota);
-        
-        if(cota == null) {
-            throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
-        }
-        
-        final Long idPessoa = cota.getPessoa().getId();
-        
         final Set<Long> endRemover = new HashSet<Long>();
         
         final List<EnderecoAssociacaoDTO> listRetorno = new ArrayList<EnderecoAssociacaoDTO>();
@@ -399,15 +391,6 @@ public class CotaServiceImpl implements CotaService {
             for (final EnderecoAssociacaoDTO dto : listaEnderecolAssoc){
                 
                 endRemover.add(dto.getEndereco().getId());
-            }
-        }
-        else{
-            
-            final List<EnderecoAssociacaoDTO> lista = enderecoService.buscarEnderecosPorIdPessoa(idPessoa, endRemover);
-            
-            if (lista!= null && !lista.isEmpty()){
-                
-                listRetorno.addAll(lista);
             }
         }
         
@@ -534,18 +517,6 @@ public class CotaServiceImpl implements CotaService {
             
             enderecoCotaRepository.merge(enderecoCota);
         }
-    }
-    
-    /**
-     * ENDERECO
-     * 
-     * Remove lista de EnderecoCota
-     * 
-     * @param cota
-     * @param listaEnderecoAssociacao
-     */
-    private void removerEnderecosCota(final Cota cota, final List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
-        removerEnderecosCota(listaEnderecoAssociacao);
     }
     
     /**
@@ -1277,8 +1248,22 @@ public class CotaServiceImpl implements CotaService {
 		cotaDTO.setClassificacaoSelecionada(cota.getClassificacaoEspectativaFaturamento());
 		cotaDTO.setDataInclusao(cota.getInicioAtividade());
 		cotaDTO.setEmailNF((cota.getParametrosCotaNotaFiscalEletronica()!= null) ? cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() : "");
-		cotaDTO.setExigeNFE((cota.getParametrosCotaNotaFiscalEletronica() != null && cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null) ? cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() : false);
-		cotaDTO.setContribuinteICMS((cota.getParametrosCotaNotaFiscalEletronica() != null && cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() != null) ? cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() : false);
+		
+		FlagPendenteAtivacao flagContribuinte = flagPendenteAtivacaoRepository.obterPor(Flag.COTA_CONTRIBUINTE_ICMS, cotaDTO.getIdCota());
+		FlagPendenteAtivacao flagExigeNFe = flagPendenteAtivacaoRepository.obterPor(Flag.COTA_EXIGE_NF_E, cotaDTO.getIdCota());
+		
+		if(flagExigeNFe != null) {
+			cotaDTO.setExigeNFE(flagExigeNFe.isValor());
+		} else {
+			cotaDTO.setExigeNFE((cota.getParametrosCotaNotaFiscalEletronica() != null && cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null) ? cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() : false);
+		}
+		
+		if(flagContribuinte != null) {
+			cotaDTO.setContribuinteICMS(flagContribuinte.isValor());
+		} else {
+			cotaDTO.setContribuinteICMS((cota.getParametrosCotaNotaFiscalEletronica() != null && cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() != null) ? cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() : false);
+		}
+		
 		cotaDTO.setStatus(cota.getSituacaoCadastro());
 		
 		if (cota.getTipoDistribuicaoCota() != null) {

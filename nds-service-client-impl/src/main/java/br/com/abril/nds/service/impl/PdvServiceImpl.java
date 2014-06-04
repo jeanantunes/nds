@@ -290,7 +290,7 @@ public class PdvServiceImpl implements PdvService {
         if(listaEnderecolAssoc == null || listaEnderecolAssoc.isEmpty()){
         
 	        List<EnderecoAssociacaoDTO> lista = this.enderecoService
-	                .buscarEnderecosPorIdPessoa(idPessoa, endRemover);
+	                .buscarEnderecosPorPessoaCotaPDVs(idPessoa, endRemover);
 	
 	        if (lista != null && !lista.isEmpty()) {
 	

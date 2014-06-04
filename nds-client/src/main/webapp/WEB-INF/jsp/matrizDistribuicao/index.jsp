@@ -138,12 +138,12 @@ var lancamentosSelecionados = [];
 							</span>
 		         	  		
 		         	  		<span class="bt_arq">
-								<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+								<a href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 							    	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 						   	 	</a>
 						   	</span>
 							<span class="bt_arq">
-								<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+								<a href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 							    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0"/>
 						    	</a>
 							</span>

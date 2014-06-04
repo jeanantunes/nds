@@ -22,7 +22,7 @@
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 	
-		<property name="url" value="jdbc:mysql://localhost:3306/nds-client" />
+		<property name="url" value="jdbc:mysql://localhost:3306/nds-santos-lab2" />
 		<property name="username" value="root" />
 		<property name="password" value="root" />
     </bean> 

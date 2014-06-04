@@ -561,8 +561,14 @@ public class MatrizLancamentoController extends BaseController {
          *  Parcial 1 – Lacto 01/04/2014 e recolhimento 01/05/2014, 
          *  o lançto poderá ser postergado somente até o dia 24/04/2014 (ou seja 01/05/2014 – 7 dias).
          */
+    	
         List<String> listaMensagens = new ArrayList<String>();
         
+    	if (produtosLancamento == null) {
+    		
+    		return listaMensagens;
+    	}
+    	
         for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
             
             if (!this.isParcial(produtoLancamento)) {
