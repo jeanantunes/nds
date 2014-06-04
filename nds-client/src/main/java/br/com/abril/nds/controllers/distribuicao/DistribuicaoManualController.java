@@ -16,6 +16,8 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.EstudoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
@@ -68,7 +70,7 @@ public class DistribuicaoManualController extends BaseController {
 		CotaDTO cotaDTO = new CotaDTO();
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		if (cota == null) {
-		    throw new Exception("Não foi encontrada nenhuma cota com este número.");
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrada nenhuma cota com este número.");
 		} else {
 		    cotaDTO.setNumeroCota(cota.getNumeroCota());
 		    cotaDTO.setIdCota(cota.getId());
