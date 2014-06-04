@@ -470,7 +470,7 @@ table.dadosTab { margin-left: 370px;}
 			<legend>Cotas que não entraram no estudo</legend>
 			<table class="cotasEstudoGrid" id="cotasNaoSelec"></table>
 			<div style="float: right; margin-top: 5px; margin-right: 60px;">
-				<strong>Saldo:</strong> <span id="saldoReparteNaoSelec">999</span>
+				<strong>Saldo:</strong> <span id="saldoReparteNaoSelec">0</span>
 			</div>
 		</fieldset>
 	</div>
@@ -619,7 +619,7 @@ table.dadosTab { margin-left: 370px;}
                     </td>
                     <td width="174">&nbsp;</td>
                     <td width="71" align="center">
-                    	<span class="reparteCota" id="reparteCota">999</span></td>
+                    	<span class="reparteCota" id="reparteCota">0</span></td>
                     <td width="43">&nbsp;</td>
                 </tr>
                 <tr>
