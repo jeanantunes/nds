@@ -591,8 +591,7 @@ var analiseParcialController = $.extend(true, {
             
             cell.reparteSugerido = input;
             
-            cell.nome = analiseParcialController.linkNomeCota.replace('#nomeCota', cell.nome)
-                            .replace('#numeroCota', cell.cota);
+            cell.nome = analiseParcialController.linkNomeCota.replace('#nomeCota', cell.nome).replace('#numeroCota', cell.cota);
 
             if (typeof cell.classificacao === 'undefined') {
                 cell.classificacao = '';
@@ -600,7 +599,7 @@ var analiseParcialController = $.extend(true, {
             if (cell.cotaNova == true) {
                 cell.cota += '<span class="asteriscoCotaNova"></span>';
             }
-            if (cell.npdv > 1) {
+            if (cell.npdv > 1 && cell.contemRepartePorPDV == true) {
                 cell.npdv = '<a tabindex="-1" class="editaRepartePorPDV" numeroCota="'+ numCota +'">'+ cell.npdv +'</a>';
             }
             if (cell.leg === 'S') {
@@ -1707,33 +1706,12 @@ $(".pdvCotaGrid_AP", analiseParcialController.workspace).flexigrid({
             reparte:''
         };
 
-        var isReparteDefinido = false;
-        
-        for (var i=0; i<result.rows.length; i++) {
-            
-        	var cell = result.rows[i].cell;
-            
-            if(result.rows[i].cell.reparte != undefined){
-            	isReparteDefinido = true;
-            }
-
-        }
-        
         for (var i=0; i<result.rows.length; i++) {
             
         	var cell = result.rows[i].cell;
             result.rows[i].cell = $.extend({}, defaultCell, cell);
             
-            if(isReparteDefinido){
-            	result.rows[i].cell.reparte = "<input class='repartePDV' value='"+result.rows[i].cell.reparte+"' name='repartePDV' id='repartePDV"+i+"' onchange='analiseParcialController.atualizaRepartePDV();' >"
-            }else{
-            	if(cell.principal){
-            		var reparte = $('#reparteCota').text();
-            		result.rows[i].cell.reparte = "<input class='repartePDV' value='"+reparte+"' name='repartePDV' id='repartePDV"+i+"' onchange='analiseParcialController.atualizaRepartePDV();' >"
-            	}else{
-            		result.rows[i].cell.reparte= "<input class='repartePDV' value='' name='repartePDV' id='repartePDV"+i+"' onchange='analiseParcialController.atualizaRepartePDV();' >"
-            	}
-            }
+        	result.rows[i].cell.reparte = "<input class='repartePDV' value='"+(result.rows[i].cell.repartePDV || '0')+"' name='repartePDV' id='repartePDV"+i+"' onchange='analiseParcialController.atualizaRepartePDV();' >"
         }
 
         return result;
