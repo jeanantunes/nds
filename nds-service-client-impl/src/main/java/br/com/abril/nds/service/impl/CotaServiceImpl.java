@@ -370,14 +370,6 @@ public class CotaServiceImpl implements CotaService {
     @Transactional(readOnly = true)
     public List<EnderecoAssociacaoDTO> obterEnderecosPorIdCota(final Long idCota) {
         
-        final Cota cota = cotaRepository.buscarPorId(idCota);
-        
-        if(cota == null) {
-            throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
-        }
-        
-        final Long idPessoa = cota.getPessoa().getId();
-        
         final Set<Long> endRemover = new HashSet<Long>();
         
         final List<EnderecoAssociacaoDTO> listRetorno = new ArrayList<EnderecoAssociacaoDTO>();
@@ -392,13 +384,6 @@ public class CotaServiceImpl implements CotaService {
                 
                 endRemover.add(dto.getEndereco().getId());
             }
-        }
-        
-        final List<EnderecoAssociacaoDTO> lista = enderecoService.buscarEnderecosPorIdPessoa(idPessoa, endRemover);
-        
-        if (lista!= null && !lista.isEmpty()){
-            
-            listRetorno.addAll(lista);
         }
         
         return listRetorno;

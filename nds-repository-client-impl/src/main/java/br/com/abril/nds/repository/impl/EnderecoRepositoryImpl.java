@@ -118,7 +118,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Endereco> buscarEnderecosPessoa(Long idPessoa, Set<Long> idsIgnorar) {
-		StringBuilder hql = new StringBuilder("select endereco ");
+		StringBuilder hql = new StringBuilder("select distinct endereco ");
 		hql.append(" from Endereco endereco ")
 		   .append(" where endereco.pessoa.id = :idPessoa ");
 		
@@ -141,17 +141,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
     public List<Endereco> buscarEnderecosPorPessoaCotaPDVs(Long idPessoa, Set<Long> idsIgnorar){
 	    
 	    StringBuilder hql = new StringBuilder(
-                "select e.ID as id, e.BAIRRO as bairro, e.CEP as cep, e.CODIGO_CIDADE_IBGE as codigoCidadeIBGE, e.CIDADE as cidade, e.COMPLEMENTO as complemento, e.TIPO_LOGRADOURO as tipoLogradouro, e.LOGRADOURO as logradouro, e.NUMERO as numero, e.UF as uf, e.CODIGO_UF as codigoUf ");
-        hql.append(" from ENDERECO e ")
-           .append(" join PESSOA p on e.PESSOA_ID = p.ID ")
-           .append(" where p.ID = :idPessoa ");
-        
-        if (idsIgnorar != null && !idsIgnorar.isEmpty()){
-            hql.append(" and e.ID not in (:idsIgnorar) ");
-        }
-        
-        hql.append(" UNION ")
-           .append(" select e.ID as id, e.BAIRRO as bairro, e.CEP as cep, e.CODIGO_CIDADE_IBGE as codigoCidadeIBGE, e.CIDADE as cidade, e.COMPLEMENTO as complemento, e.TIPO_LOGRADOURO as tipoLogradouro, e.LOGRADOURO as logradouro, e.NUMERO as numero, e.UF as uf, e.CODIGO_UF as codigoUf ")
+                " select e.ID as id, e.BAIRRO as bairro, e.CEP as cep, e.CODIGO_CIDADE_IBGE as codigoCidadeIBGE, e.CIDADE as cidade, e.COMPLEMENTO as complemento, e.TIPO_LOGRADOURO as tipoLogradouro, e.LOGRADOURO as logradouro, e.NUMERO as numero, e.UF as uf, e.CODIGO_UF as codigoUf ")
            .append(" from PESSOA p ")
            .append(" join COTA c on c.PESSOA_ID = p.ID ")
            .append(" join ENDERECO_COTA ed on ed.COTA_ID = c.ID ")
