@@ -1730,7 +1730,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					novaDivida.getId(),
 					banco!=null?banco.getAgencia():0,
 					banco!=null?banco.getConta():0,
-					banco!=null?banco.getCarteira():0);
+					banco != null && banco.getCarteira() != null ? banco.getCarteira() : null);
 			
 			cobranca.setFornecedor(fornecedor);
 			cobranca.setNossoNumero(nossoNumero);
