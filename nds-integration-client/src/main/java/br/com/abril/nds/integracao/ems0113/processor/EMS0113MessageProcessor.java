@@ -96,6 +96,12 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 			ndsiLoggerFactory.getLogger().logInfo(message
 					, EventoExecucaoEnum.INF_DADO_ALTERADO
 					, "Desconto logística incluido com sucesso. Tipo Desconto: "+ descontoLogistica.getTipoDesconto());
+		}else{
+			
+			ndsiLoggerFactory.getLogger().logInfo(message
+					, EventoExecucaoEnum.INF_DADO_ALTERADO
+					, "Desconto logística já existe. Tipo Desconto: "+ descontoLogistica.getTipoDesconto());
+			
 		}
 	}
 
