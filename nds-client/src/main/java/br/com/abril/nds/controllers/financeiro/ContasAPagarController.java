@@ -23,6 +23,7 @@ import br.com.abril.nds.client.vo.ContasAPagarTotalDistribVO;
 import br.com.abril.nds.client.vo.ContasApagarConsultaPorDistribuidorVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
+import br.com.abril.nds.dto.ContasAPagarDistribDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
@@ -41,6 +42,7 @@ import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.FileExporter;
@@ -308,6 +310,39 @@ public class ContasAPagarController extends BaseController {
 		result.use(Results.nothing());
 	}
 	
+	@Path("/exportPesquisarDetalheConsignado")
+	public void exportPesquisarDetalheConsignado(FileType fileType) throws IOException {
+    
+	    FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_DETALHE_CONSIGNADO);
+	    filtro.setPaginacaoVO(null);
+	    
+	    ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> dto = contasAPagarService.pesquisarDetalheConsignado(filtro);
+	    
+	    List <ContasAPagarConsignadoVO> listVO = new ArrayList<ContasAPagarConsignadoVO>();
+	    
+	    for(ContasAPagarConsignadoDTO dt : dto.getGrid()){
+	        
+	        listVO.add(new ContasAPagarConsignadoVO(dt));
+	    }
+	    
+	    //adiciona totais
+	    listVO.add(new ContasAPagarConsignadoVO());
+	    for (ContasAPagarDistribDTO sum : dto.getTotalDistrib()){
+	        
+	        ContasAPagarConsignadoVO s = new ContasAPagarConsignadoVO();
+	        s.setFornecedor(sum.getNome());
+	        s.setValorComDesconto(CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(sum.getTotal())));
+	        
+	        listVO.add(s);
+	    }
+	    
+	    FileExporter.to("detalhe-consignado", fileType).inHTTPResponse(getNDSFileHeader(), null,
+                    listVO, ContasAPagarConsignadoVO.class,
+                    this.httpServletResponse);
+	    
+	    result.use(Results.nothing());
+	}
+	
 	@Path("/exportPesquisarDetalheEncalhe")
 	public void exportPesquisarDetalheEncalhe(FileType fileType) throws IOException {
 		
@@ -322,6 +357,17 @@ public class ContasAPagarController extends BaseController {
 			
 			listVO.add(new ContasAPagarEncalheVO(dt));
 		}
+		
+		//adiciona totais
+        listVO.add(new ContasAPagarEncalheVO());
+        for (ContasAPagarDistribDTO sum : dto.getTotalDistrib()){
+            
+            ContasAPagarEncalheVO s = new ContasAPagarEncalheVO();
+            s.setFornecedor(sum.getNome());
+            s.setValor(CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(sum.getTotal())));
+            
+            listVO.add(s);
+        }
 		
 		FileExporter.to("detalhe-encalhe", fileType).inHTTPResponse(getNDSFileHeader(), null, 
 						listVO, ContasAPagarEncalheVO.class, 
@@ -344,6 +390,17 @@ public class ContasAPagarController extends BaseController {
 		for (ContasAPagarFaltasSobrasDTO to : dto.getGrid()) {
 			listVO.add(new ContasAPagarFaltasSobrasVO(to));
 		}
+		
+		//adiciona totais
+        listVO.add(new ContasAPagarFaltasSobrasVO());
+        for (ContasAPagarDistribDTO sum : dto.getTotalDistrib()){
+            
+            ContasAPagarFaltasSobrasVO s = new ContasAPagarFaltasSobrasVO();
+            s.setFornecedor(sum.getNome());
+            s.setValor(CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(sum.getTotal())));
+            
+            listVO.add(s);
+        }
 		
 		FileExporter.to("detalhe-faltas-sobras", fileType).inHTTPResponse(getNDSFileHeader(), null, 
 				listVO, ContasAPagarFaltasSobrasVO.class, this.httpServletResponse);
