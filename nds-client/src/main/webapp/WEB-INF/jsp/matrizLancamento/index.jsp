@@ -139,7 +139,7 @@ balanceamentoLancamento.inicializar();
 			  			
 			  			 <span class="bt_arq">
 							<!-- ARQUIVO -->
-							<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+							<a href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 							    <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 						    </a>
 						</span>
@@ -147,7 +147,7 @@ balanceamentoLancamento.inicializar();
 					
 						<span class="bt_arq">
 							<!-- IMPRIMIR -->	
-							<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+							<a href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 							    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						    </a>
 						</span>
