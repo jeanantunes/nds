@@ -86,6 +86,8 @@ public class InterfaceExecutor {
 	private static ApplicationContext applicationContext;
 	
     private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
+    
+    private static String HA_ARQUIVOS = "Arquivos a serem processados para este distribuidor";
 
     private static String NAO_HA_IMAGENS = "Não há imagens a serem processados";
 
@@ -312,6 +314,8 @@ public class InterfaceExecutor {
 			if (arquivos == null || arquivos.isEmpty()) {
 				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, NAO_HA_ARQUIVOS);
 				continue;
+			}else{
+				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, HA_ARQUIVOS);
 			}
 			
 			CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
@@ -323,7 +327,7 @@ public class InterfaceExecutor {
 				try {
 					
 					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, logExecucao.getDataInicio(), nomeUsuario,interfaceExecucao);
-					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.SUCESSO, null);
+					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.SUCESSO, "Inseridos no couchDB");
 					arquivo.delete();
 					
 				} catch (Exception e) {
