@@ -36,7 +36,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" plp.NUMERO_PERIODO as periodo, ")
 		.append(" prodEdic.PRECO_VENDA as precoVenda,")
 		.append(" tpClassProd.DESCRICAO as classificacao,")
-		.append(" prod.PACOTE_PADRAO as pctPadrao,")
+		.append(" prodEdic.PACOTE_PADRAO as pctPadrao,")
 		.append(" pessoa.NOME_FANTASIA as nomeFornecedor,")
 		.append(" estoqueProd.QTDE_JURAMENTADO as juram,")
 		.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
