@@ -43,15 +43,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao, Date dataRecolhimento, Integer numeroCota);
 	
-	/**
-	 * Obtém o produtoEdicao através do código SM do mesmo produtoEdicao que esta amarrado a seu lancamento.
-	 * 
-	 * @param sequenciaMatriz
-	 * @param dataRecolhimentoDistribuidor
-	 * 
-	 * @return ProdutoEdicao
-	 */
-	public ProdutoEdicao obterProdutoEdicaoPorSequenciaMatriz(Integer sequenciaMatriz, Date dataRecolhimentoDistribuidor);
 	
 	/**
 	 * Obtém produtos edição de acordo com o nome do produto.
