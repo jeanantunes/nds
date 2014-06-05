@@ -27,8 +27,7 @@ public class FollowupChamadaoServiceImpl implements FollowupChamadaoService {
 
 	@Override
 	@Transactional
-	public List<ConsultaFollowupChamadaoDTO>  obterConsignados(
-			FiltroFollowupChamadaoDTO filtro) {
+	public List<ConsultaFollowupChamadaoDTO>  obterConsignados(FiltroFollowupChamadaoDTO filtro) {
 
 		if(filtro == null) 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Chamadao: Follow Up: Filtro não deve ser nulo.");

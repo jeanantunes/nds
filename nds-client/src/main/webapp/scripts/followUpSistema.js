@@ -90,7 +90,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 600,
 			height : 255
 		}));
 
