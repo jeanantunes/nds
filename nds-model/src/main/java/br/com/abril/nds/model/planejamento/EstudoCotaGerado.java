@@ -48,7 +48,7 @@ public class EstudoCotaGerado implements Serializable {
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
-	
+
 	@Column(name = "REPARTE_MINIMO")
 	private BigInteger reparteMinimo;
 

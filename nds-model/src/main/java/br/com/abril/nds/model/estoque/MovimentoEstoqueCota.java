@@ -78,9 +78,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@JoinColumn(name = "MOVIMENTO_FINANCEIRO_COTA_ID")
 	private MovimentoFinanceiroCota movimentoFinanceiroCota;
 	
-	@Column(name = "NOTA_FISCAL_EMITIDA")
-	private boolean notaFiscalEmitida;
-	
 	@ManyToOne(optional=true)
 	@JoinColumns({
 		@JoinColumn(name="NOTA_ENVIO_ITEM_NOTA_ENVIO_ID", referencedColumnName="NOTA_ENVIO_ID"),
@@ -240,14 +237,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.movimentoEstoqueCotaEstorno = movimentoEstoqueCotaEstorno;
 	}
 
-	public boolean isNotaFiscalEmitida() {
-		return notaFiscalEmitida;
-	}
-
-	public void setNotaFiscalEmitida(boolean notaFiscalEmitida) {
-		this.notaFiscalEmitida = notaFiscalEmitida;
-	}
-	
 	public ItemNotaEnvio getItemNotaEnvio() {
 		return itemNotaEnvio;
 	}

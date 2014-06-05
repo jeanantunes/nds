@@ -17,7 +17,7 @@ public class FornecedorExemplaresDTO implements Serializable {
 		
 	}
 	
-	public FornecedorExemplaresDTO(Long idFornecedor, Integer numeroFornecedor, String nomeFornecedor, BigInteger exemplares, BigDecimal total, BigDecimal totalDesconto, boolean inativo) {
+	public FornecedorExemplaresDTO(Long idFornecedor, Long numeroFornecedor, String nomeFornecedor, BigInteger exemplares, BigDecimal total, BigDecimal totalDesconto, boolean inativo) {
 		super();
 		this.idFornecedor = idFornecedor;
 		this.numeroFornecedor = numeroFornecedor;
@@ -31,7 +31,7 @@ public class FornecedorExemplaresDTO implements Serializable {
 	private Long idFornecedor;
 	
 	@Export(label="Fornecedor", alignment=Alignment.LEFT)
-	private Integer numeroFornecedor;
+	private Long numeroFornecedor;
 	
 	@Export(label="Nome", alignment=Alignment.LEFT)
 	private String nomeFornecedor;
@@ -119,11 +119,11 @@ public class FornecedorExemplaresDTO implements Serializable {
 		return exemplares;
 	}
 
-	public Integer getNumeroFornecedor() {
+	public Long getNumeroFornecedor() {
 		return numeroFornecedor;
 	}
 
-	public void setNumeroFornecedor(Integer numeroFornecedor) {
+	public void setNumeroFornecedor(Long numeroFornecedor) {
 		this.numeroFornecedor = numeroFornecedor;
 	}
 }

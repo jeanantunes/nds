@@ -27,6 +27,9 @@ public abstract class AbstractMovimentoEstoque extends Movimento {
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	protected ProdutoEdicao produtoEdicao;
 	
+	@Column(name = "NOTA_FISCAL_EMITIDA")
+	private boolean notaFiscalEmitida;
+	
 	@Column(name="ORIGEM",columnDefinition="VARCHAR(50) default 'MANUAL'", insertable = false, updatable = true)
 	@Enumerated(EnumType.STRING)
 	private Origem origem;
@@ -47,6 +50,14 @@ public abstract class AbstractMovimentoEstoque extends Movimento {
 		this.produtoEdicao = produtoEdicao;
 	}
 
+	public boolean isNotaFiscalEmitida() {
+		return notaFiscalEmitida;
+	}
+
+	public void setNotaFiscalEmitida(boolean notaFiscalEmitida) {
+		this.notaFiscalEmitida = notaFiscalEmitida;
+	}
+	
 	public Origem getOrigem() {
 		return origem;
 	}
