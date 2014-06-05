@@ -239,7 +239,10 @@
 		<fieldset style="width:895px!important; margin-top:10px;">
 	    	<legend><span id="contasAPagar_legend_popupConsignado"></span></legend>
 	        <table class="contasAPagar-consignadoGrid"></table>
-	    
+	        
+	        <span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarDetalheConsignado?fileType=XLS">Arquivo</a></span>
+			<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarDetalheConsignado?fileType=PDF">Imprimir</a></span>
+	        
 	        <table id="contasAPagar_table_popupConsignado" width="180" border="0" cellspacing="2" cellpadding="2" style="float:right; margin-top: 7px;"></table>
 	        <table width="109" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">
 				<tr><td><strong>Total R$:</strong></td></tr>

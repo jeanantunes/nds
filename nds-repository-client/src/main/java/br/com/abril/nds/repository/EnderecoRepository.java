@@ -58,5 +58,6 @@ public interface EnderecoRepository extends Repository<Endereco, Long> {
 	List<String> obterBairrosPDVSemRoteirizacao(String uf, String cidade);
 	
 	List<String> obterBairrosPDVBoxEspecial(String uf, String cidade);
-	
+
+    List<Endereco> buscarEnderecosPorPessoaCotaPDVs(Long idPessoa, Set<Long> idsIgnorar);
 }

@@ -1681,7 +1681,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			if (novaDivida.getId() == null){
 				
-				this.dividaRepository.adicionar(novaDivida);
+				novaDivida.setId(this.dividaRepository.adicionar(novaDivida));
+				
 			} else {
 				
 				this.dividaRepository.alterar(novaDivida);
@@ -1729,7 +1730,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					novaDivida.getId(),
 					banco!=null?banco.getAgencia():0,
 					banco!=null?banco.getConta():0,
-					banco!=null?banco.getCarteira():0);
+					banco != null && banco.getCarteira() != null ? banco.getCarteira() : null);
 			
 			cobranca.setFornecedor(fornecedor);
 			cobranca.setNossoNumero(nossoNumero);

@@ -79,7 +79,7 @@ public class AnaliseParcialController extends BaseController {
 
     @Autowired
     private DistribuicaoVendaMediaRepository distribuicaoVendaMediaRepository;
-
+    
     @Autowired
     private HttpSession session;
 
@@ -95,7 +95,7 @@ public class AnaliseParcialController extends BaseController {
     private static final String EDICOES_BASE_SESSION_ATTRIBUTE = "";
 
     @Path("/")
-    public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado,String dataLancamentoEdicao) {
+    public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado, String dataLancamentoEdicao) {
 
         EstudoCotaGerado estudoCota = analiseParcialService.buscarPorId(id);
         Lancamento lancamento = lancamentoService.obterPorId(estudoCota.getEstudo().getLancamentoID());
@@ -155,12 +155,14 @@ public class AnaliseParcialController extends BaseController {
 
     @Path("/carregarDetalhesPdv")
     public void carregarDetalhesPdv(Integer numeroCota, Long estudoId) {
-        List<PdvDTO> lista = analiseParcialService.carregarDetalhesPdv(numeroCota, estudoId);
-
+        
+    	List<PdvDTO> lista = analiseParcialService.carregarDetalhesPdv(numeroCota, estudoId);
+        
         TableModel<CellModelKeyValue<PdvDTO>> table = new TableModel<>();
         table.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
         table.setPage(1);
         table.setTotal(lista.size());
+        
         result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
 
@@ -266,8 +268,10 @@ public class AnaliseParcialController extends BaseController {
     public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado, String legendaCota) {
         analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte, reparteDigitado);
         
-        if((legendaCota.equalsIgnoreCase("FX")) || (legendaCota.equalsIgnoreCase("MX"))){
-        	analiseParcialService.atualizarFixacaoOuMix(estudoId, numeroCota, reparteDigitado, legendaCota);
+        if(ClassificacaoCota.ReparteFixado.getCodigo().equalsIgnoreCase(legendaCota) || 
+                ClassificacaoCota.CotaMix.getCodigo().equalsIgnoreCase(legendaCota)){
+        	
+            analiseParcialService.atualizarFixacaoOuMix(estudoId, numeroCota, reparteDigitado, legendaCota);
         }
         
         result.nothing();
@@ -315,7 +319,9 @@ public class AnaliseParcialController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
         }
 
-        FileExporter.to("Analise do Estudo", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista, AnaliseParcialDTO.class, this.httpResponse);
+        FileExporter.to(
+                "Analise do Estudo", fileType).inHTTPResponse(
+                        this.getNDSFileHeader(), null, lista, AnaliseParcialDTO.class, this.httpResponse);
 
         result.nothing();
     }
@@ -366,7 +372,7 @@ public class AnaliseParcialController extends BaseController {
     		}
     	} 
 
-    	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getReparteDistribuir().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)){
+    	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)){
     		throw new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é maior que estoque disponível!");
     	}
     	

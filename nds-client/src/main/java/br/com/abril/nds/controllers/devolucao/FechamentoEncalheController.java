@@ -799,7 +799,21 @@ public class FechamentoEncalheController extends BaseController {
 		}
 	}
 
-	private String resolveSort(String sortname) {
+	private void validarObrigatoriedadeQuantidadeFisica(List<FechamentoFisicoLogicoDTO> listaEncalhe, boolean isAllFechamentos) {
+        
+	    if (!isAllFechamentos) {
+	    
+    	    for (FechamentoFisicoLogicoDTO dto : listaEncalhe) {
+    	        
+    	        if (!Boolean.valueOf(dto.getReplicar()) && dto.getFisico() == null) {
+    	            
+    	            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "É necessário informar o valor físico para todas as edições!"));
+    	        }
+    	    }
+	    }
+    }
+
+    private String resolveSort(String sortname) {
 
 		if (sortname != null && sortname.endsWith("Formatado")) {
 			
@@ -862,6 +876,8 @@ public class FechamentoEncalheController extends BaseController {
 				this.mergeItensFechamento(
 						this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0), listaFechamento);
 
+		this.validarObrigatoriedadeQuantidadeFisica(listaFechamento, isAllFechamentos);
+		
 		if (listaFechamento !=null && !listaFechamento.isEmpty()) {
 			
 			gravaFechamentoEncalhe(listaFechamento, listaNaoReplicados, isAllFechamentos, dataEncalhe, fornecedorId, boxId);

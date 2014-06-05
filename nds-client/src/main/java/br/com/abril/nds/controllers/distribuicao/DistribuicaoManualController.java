@@ -16,8 +16,11 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.EstudoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -67,7 +70,7 @@ public class DistribuicaoManualController extends BaseController {
 		CotaDTO cotaDTO = new CotaDTO();
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		if (cota == null) {
-		    throw new Exception("Não foi encontrada nenhuma cota com este número.");
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrada nenhuma cota com este número.");
 		} else {
 		    cotaDTO.setNumeroCota(cota.getNumeroCota());
 		    cotaDTO.setIdCota(cota.getId());
@@ -112,7 +115,7 @@ public class DistribuicaoManualController extends BaseController {
 		    estudoCota.setQtdeEfetiva(cotaDTO.getQtdeEfetiva());
 		    estudoCota.setReparte(cotaDTO.getQtdeEfetiva());
 		    estudoCota.setReparteInicial(cotaDTO.getQtdeEfetiva());
-		    estudoCota.setClassificacao("IN");
+		    estudoCota.setClassificacao(ClassificacaoCota.InclusaoManualCotas.getCodigo());
 		    estudoCota.setTipoEstudo(TipoEstudoCota.NORMAL);
 		    estudo.getEstudoCotas().add(estudoCota);
 		}

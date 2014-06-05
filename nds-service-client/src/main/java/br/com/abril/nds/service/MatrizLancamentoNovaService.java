@@ -64,7 +64,7 @@ public interface MatrizLancamentoNovaService {
     
     boolean isProdutoConfirmado(ProdutoLancamentoDTO produtoLancamento);
     
-    boolean isDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);
+    boolean isDataConfirmada(Date dataLancamento);
     
     Map<Date, List<ProdutoLancamentoDTO>> salvarMatrizLancamento(Date dataSalvar, List<Long> idsFornecedores,
             Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento, Usuario usuario);
