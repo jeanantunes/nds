@@ -37,6 +37,45 @@ public class ConferenciaEncalheRepositoryImpl extends
 		super(ConferenciaEncalhe.class);
 	}
 	
+	@Override
+	public List<Long> obterIdConferenciasExcluidas(Long idControleConfEncalheCota, List<Long> listaIdProdutoEdicaoConferidos) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT CONF.ID	AS id ");
+		
+		sql.append(" FROM CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ");
+		
+		sql.append(" INNER JOIN CONFERENCIA_ENCALHE CONF ON ");
+		sql.append(" (CONF.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID)	");
+		
+		if(listaIdProdutoEdicaoConferidos!=null && !listaIdProdutoEdicaoConferidos.isEmpty()) {
+			sql.append(" INNER JOIN PRODUTO_EDICAO PRODEDICAO ON 	");
+			sql.append(" (PRODEDICAO.ID = CONF.PRODUTO_EDICAO_ID)	");
+		}
+		
+		sql.append(" WHERE CCEC.ID = :idControleConfEncalheCota		");
+		
+		if(listaIdProdutoEdicaoConferidos!=null && !listaIdProdutoEdicaoConferidos.isEmpty()) {
+			sql.append(" AND PRODEDICAO.ID NOT IN (:listaIdProdutoEdicaoConferidos)");
+		}
+		
+		sql.append(" GROUP BY CONF.ID ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		((SQLQuery)query).addScalar("id", StandardBasicTypes.LONG);
+		
+		query.setParameter("idControleConfEncalheCota", idControleConfEncalheCota);
+		
+		if(listaIdProdutoEdicaoConferidos!=null && !listaIdProdutoEdicaoConferidos.isEmpty()) {
+			query.setParameterList("listaIdProdutoEdicaoConferidos", listaIdProdutoEdicaoConferidos);
+		}
+		
+		return query.list();
+		
+	}
+	
 	public BigInteger obterQtdeEncalhe(Long idConferenciaEncalhe) {
 		
 

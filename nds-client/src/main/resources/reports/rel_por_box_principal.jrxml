@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
+	<property name="ireport.zoom" value="1.5000000000000027"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
+	<style name="rel_ftext" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="rel_ftext_centralizado" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="rel_stext_centralizado" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
+	<style name="Estilo Zebrado" backcolor="#CCCCCC" fontName="Arial" fontSize="8">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#CCCCCC"/>
+		</conditionalStyle>
+	</style>
+	<style name="Estilo Zebrado_centralizado" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#CCCCCC"/>
+		</conditionalStyle>
+	</style>
+	<style name="Estilo Zebrado_produto" mode="Opaque" backcolor="#FFFFFF" hAlign="Left" vAlign="Middle" fontName="Arial" fontSize="8">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%4)==0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#D6D6D6" hAlign="Left" vAlign="Middle"/>
+		</conditionalStyle>
+	</style>
+	<style name="Estilo Zebrado_centralizado_produto" mode="Opaque" backcolor="#D3D3D3" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%4)==0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#D6D6D6"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="IMAGEM" class="java.io.InputStream"/>
+	<parameter name="NOME_RELATORIO" class="java.lang.String"/>
+	<parameter name="NOME_DISTRIBUIDOR" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="key" class="java.lang.String"/>
+	<field name="value" class="java.lang.Object"/>
+	<title>
+		<band height="77">
+			<subreport isUsingCache="false">
+				<reportElement uuid="38d457a7-61d9-4786-809a-7218de450b1c" isPrintRepeatedValues="false" x="0" y="0" width="555" height="77"/>
+				<subreportParameter name="IMAGEM">
+					<subreportParameterExpression><![CDATA[$P{IMAGEM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DISTRIBUIDOR">
+					<subreportParameterExpression><![CDATA[$P{NOME_DISTRIBUIDOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_RELATORIO">
+					<subreportParameterExpression><![CDATA[$P{NOME_RELATORIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_box_header.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="32">
+			<rectangle>
+				<reportElement uuid="62ea056b-46a3-433e-8cdc-fbbeea1db507" mode="Opaque" x="200" y="0" width="355" height="32" forecolor="#000000" backcolor="#D3D3D3"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="c56c496e-b10f-4be8-b907-5e33b367e002" mode="Opaque" x="0" y="0" width="200" height="32" forecolor="#000000" backcolor="#D3D3D3"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="23164f68-7f84-4942-b135-df827212aba1" style="rel_stext" x="347" y="0" width="62" height="32"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[BOX]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7b84863d-2ef8-4f92-a5c0-d403aade3aab" style="rel_stext" x="11" y="17" width="89" height="12"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código de Barras]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="95f72014-327b-4ab3-8b19-987ee00fe1f7" style="rel_stext" x="11" y="3" width="70" height="12"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Publicações]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4e8c18b7-96d0-4e27-8335-61d4fa457945" style="rel_stext" x="133" y="3" width="46" height="12"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Edição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="24ea37ba-25f0-4ab1-8adb-d2bd2dfec837" style="rel_stext" x="133" y="17" width="46" height="12"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Preço Capa]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="40" splitType="Prevent">
+			<rectangle>
+				<reportElement uuid="5f594942-d99c-4719-a28c-4e05fce0db7a" stretchType="RelativeToBandHeight" x="0" y="0" width="200" height="40" backcolor="#CCCCCC"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="e6b1ef58-6ff0-48ae-8846-f2e3fb5b81d1" stretchType="RelativeToBandHeight" x="0" y="0" width="200" height="40" backcolor="#E6E6E6">
+					<printWhenExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<elementGroup>
+				<subreport>
+					<reportElement uuid="53626115-02d0-44cc-acff-0d0856b1f7c9" positionType="Float" isPrintRepeatedValues="false" x="200" y="0" width="305" height="40"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
+  (  (java.util.Map<Integer,Integer>)
+    ((br.com.abril.nds.dto.ProdutoMapaDTO)$F{value}).getBoxQtde()).entrySet()
+    )]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rel_por_box_subbox.jasper"]]></subreportExpression>
+				</subreport>
+				<textField>
+					<reportElement uuid="10b95e22-6cb8-476a-b5ee-47b3aa9310f4" style="Estilo Zebrado_centralizado_produto" mode="Transparent" x="100" y="0" width="100" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Left" markup="none">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[((br.com.abril.nds.dto.ProdutoMapaDTO)$F{value}).getNumeroEdicao()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="6c109143-ca15-4efa-93a2-1b79ba93ba1a" style="Estilo Zebrado_produto" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="20" width="100" height="20"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + ((br.com.abril.nds.dto.ProdutoMapaDTO)$F{value}).getCodigoDeBarras()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="c70fcb52-bcef-4da1-a113-9496e6851a25" style="Estilo Zebrado_centralizado_produto" stretchType="RelativeToBandHeight" mode="Transparent" x="100" y="20" width="100" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["R$ " + ((br.com.abril.nds.dto.ProdutoMapaDTO)$F{value}).getPrecoCapa()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="ab5de485-ea02-439d-a4f4-1d9eaa51a03a" style="rel_ftext" stretchType="RelativeToBandHeight" mode="Opaque" x="506" y="20" width="49" height="20" backcolor="#E6E6E6"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[((br.com.abril.nds.dto.ProdutoMapaDTO)$F{value}).getTotalReparte()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="a7c46de1-ff13-4989-9913-015d9f6ff6b0" style="Estilo Zebrado_produto" mode="Transparent" x="0" y="0" width="100" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Left" markup="none">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + ((br.com.abril.nds.dto.ProdutoMapaDTO)$F{value}).getNomeProduto()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="1f3ebf3b-9e56-489b-ad4a-4e3f0a2c69df" style="rel_stext" x="506" y="0" width="49" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Reparte]]></text>
+				</staticText>
+			</elementGroup>
+		</band>
+	</detail>
+</jasperReport>

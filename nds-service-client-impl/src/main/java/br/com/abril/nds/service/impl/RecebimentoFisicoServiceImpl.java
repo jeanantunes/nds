@@ -320,8 +320,6 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 
 		List<String> mensagens = new ArrayList<>();
 		
-		final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
-		
 		for (RecebimentoFisicoDTO item : listaItensNota) {
 
 			ProdutoEdicao produtoEdicao = this.produtoEdicaoService.buscarPorID(item.getIdProdutoEdicao());
@@ -351,8 +349,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 				
 				mensagens.add(" [Cod.:" + produtoEdicao.getProduto().getCodigo() 
 							 + " Ed.: " + produtoEdicao.getNumeroEdicao() + "]"
-							 + " - Cadastro: " + percentualProduto.multiply(ONE_HUNDRED).setScale(2, RoundingMode.HALF_EVEN) + "%"
-							 + " / Nota: "  + item.getPercentualDesconto().multiply(ONE_HUNDRED).setScale(2, RoundingMode.HALF_EVEN) + "%");
+							 + " - Cadastro: " + percentualProduto.setScale(2, RoundingMode.HALF_EVEN) + "%"
+							 + " / Nota: "  + item.getPercentualDesconto().setScale(2, RoundingMode.HALF_EVEN) + "%");
 			}
 		}
 		

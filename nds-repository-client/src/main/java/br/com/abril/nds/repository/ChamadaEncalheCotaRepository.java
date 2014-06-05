@@ -14,6 +14,17 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheCota,Long> {
 	
 	/**
+	 * Retorna o id do registro de ChamadaEncalheCota.
+	 * 
+	 * @param idCota
+	 * @param idProdutoEdicao
+	 * @param dataRecolhimento
+	 * 
+	 * @return Long
+	 */
+	public Long obterIdChamadaEncalheCotaNaData(Long idCota, Long idProdutoEdicao, Date dataRecolhimento);
+	
+	/**
 	 * Obtém obtém o reparte referente a chamada encalhe relacionadas a um 
 	 * numeroCota e dataRecolhimento.  
 	 * 

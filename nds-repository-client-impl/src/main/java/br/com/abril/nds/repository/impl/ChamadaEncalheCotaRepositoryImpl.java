@@ -431,7 +431,35 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		return obterUltimaChamadaEncalheCota(cota, idProdutoEdicao,postergado, null);
 
 	}
-
+	
+	public Long obterIdChamadaEncalheCotaNaData(Long idCota, Long idProdutoEdicao, Date dataRecolhimento) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select CEC.ID as idChamadaEncalheCota ");
+		
+		sql.append(" from CHAMADA_ENCALHE_COTA CEC ");
+		sql.append(" INNER JOIN CHAMADA_ENCALHE AS CE ON (CEC.CHAMADA_ENCALHE_ID = CE.ID) ");
+		
+		sql.append(" where");
+		
+		sql.append(" CE.DATA_RECOLHIMENTO = :dataRecolhimento AND ");
+		sql.append(" CEC.COTA_ID = :idCota AND ");
+		sql.append(" CE.PRODUTO_EDICAO_ID = :idProdutoEdicao AND ");
+		sql.append(" CEC.POSTERGADO = false ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		((SQLQuery) query).addScalar("idChamadaEncalheCota", StandardBasicTypes.LONG);
+		
+		query.setParameter("idCota", idCota);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+		
+		return (Long) query.uniqueResult();
+		
+	}
+	
 	private ChamadaEncalheCota obterUltimaChamadaEncalheCota(Cota cota, Long idProdutoEdicao, boolean postergado,
 															 Date dataOperacao) {
 		

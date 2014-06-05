@@ -1,8 +1,8 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
-import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -31,22 +31,6 @@ public class ContasAPagarConsultaProdutoVO implements Serializable{
 		
 		private String produtoEdicaoID;
 		
-		
-		
-
-
-		public ContasAPagarConsultaProdutoVO(ContasAPagarConsultaProdutoDTO dto) {
-			this.codigo=dto.getCodigo();
-			this.editor=dto.getEditor();
-			this.fornecedor=dto.getFornecedor();
-			this.precoCapa = CurrencyUtil.formatarValor(dto.getPrecoCapa());
-			this.produto=dto.getProduto();
-			this.edicao=dto.getEdicao().toString();
-			this.produtoEdicaoID=dto.getProdutoEdicaoID().toString();
-			
-			
-		}
-
 		public String getCodigo() {
 			return codigo;
 		}
@@ -67,8 +51,8 @@ public class ContasAPagarConsultaProdutoVO implements Serializable{
 			return edicao;
 		}
 
-		public void setEdicao(String edicao) {
-			this.edicao = edicao;
+		public void setEdicao(Long edicao) {
+			this.edicao = edicao != null ? edicao.toString() : null;
 		}
 
 		public String getFornecedor() {
@@ -91,12 +75,12 @@ public class ContasAPagarConsultaProdutoVO implements Serializable{
 			return produtoEdicaoID;
 		}
 
-		public void setProdutoEdicaoID(String produtoEdicaoID) {
-			this.produtoEdicaoID = produtoEdicaoID;
+		public void setProdutoEdicaoID(Long produtoEdicaoID) {
+			this.produtoEdicaoID = produtoEdicaoID != null ? produtoEdicaoID.toString() : null;
 		}
 
-		public void setPrecoCapa(String precoCapa) {
-			this.precoCapa = precoCapa;
+		public void setPrecoCapa(BigDecimal precoCapa) {
+			this.precoCapa = CurrencyUtil.formatarValor(precoCapa);
 		}
 
 		public String getPrecoCapa() {

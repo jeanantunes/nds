@@ -120,7 +120,7 @@ var furoProdutoController = $.extend(true, {
 	
 	confirmar : function() {
 		
-		var dataConfirmarFuro = {'produtoLancamento.novaDataLancamento': $("#novaData", furoProdutoController.workspace).val()};
+		var dataConfirmarFuro = {'novaDataLancamento': $("#novaData", furoProdutoController.workspace).val()};
 		
 		var data = {codigoProduto:$("#codigoProdutoHidden", furoProdutoController.workspace).val(),
 				  idProdutoEdicao:$("#produtoEdicaoHidden", furoProdutoController.workspace).val(),
@@ -128,7 +128,7 @@ var furoProdutoController = $.extend(true, {
 				  idLancamento:$("#lancamentoHidden", furoProdutoController.workspace).val()};
 		
 		$.postJSON(
-				contextPath + "/matrizLancamento/perguntarDataConfirmadaOuNao",
+				contextPath + "/matrizLancamento/validarDataReprogramacao",
 				dataConfirmarFuro,
 				function(retorno) {
 

@@ -5,7 +5,6 @@ import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -40,7 +39,6 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 	public void finalizarConferenciaEncalheAsync(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
-			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario,
 			boolean indConferenciaContingencia,
 			BigDecimal reparte) {
@@ -50,7 +48,6 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 			conferenciaEncalheService.finalizarConferenciaEncalhe(
 					controleConfEncalheCota, 
 					listaConferenciaEncalhe, 
-					listaIdConferenciaEncalheParaExclusao,
 					usuario,
 					indConferenciaContingencia, 
 					reparte);
@@ -64,6 +61,8 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 			
 			conferenciaEncalheService.sinalizarErroProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota(), e);
 			
+			e.printStackTrace();
+			
 		}
 		
 	}
@@ -75,7 +74,6 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 	public void salvarConferenciaEncalhe(
 			final ControleConferenciaEncalheCota controleConfEncalheCota, 
 			final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
-			final Set<Long> listaIdConferenciaEncalheParaExclusao,
 			final Usuario usuario, 
 			final boolean indConferenciaContingencia) {
 		
@@ -84,7 +82,6 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 			conferenciaEncalheService.salvarDadosConferenciaEncalhe(
 					controleConfEncalheCota, 
 					listaConferenciaEncalhe, 
-					listaIdConferenciaEncalheParaExclusao, 
 					usuario, 
 					indConferenciaContingencia);
 		
@@ -94,6 +91,8 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 		} catch(Exception e){
 			
 			conferenciaEncalheService.sinalizarErroProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota(), e);
+			
+			e.printStackTrace();
 			
 		} 
 		

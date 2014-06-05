@@ -1658,10 +1658,10 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
     
     @Override
     @Transactional
-    public boolean isDataConfirmada(final ProdutoLancamentoDTO produtoLancamentoDTO) {
+    public boolean isDataConfirmada(final Date dataLancamento) {
         
         final List<ProdutoLancamentoDTO> listaverificadaConfirmada = lancamentoRepository
-                .verificarDataConfirmada(produtoLancamentoDTO);
+                .verificarDataConfirmada(dataLancamento);
         
         if (listaverificadaConfirmada.isEmpty()) {
             

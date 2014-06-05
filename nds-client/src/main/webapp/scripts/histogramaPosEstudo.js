@@ -60,20 +60,19 @@ var histogramaPosEstudoController = $.extend(true, {
 		// Analise do estudo - EMS 2031
 		$('#analiseEstudo').click(function() {
 
-			var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo +
-			    '&modoAnalise='+ histogramaPosEstudoController.modoAnalise;
+			var reparteOrigemCopia = $("#copiarEstudo-copia-reparte", MatrizDistribuicao.workspace).text();
+			
+			if(reparteOrigemCopia != '' || reparteOrigemCopia != undefined){
+				var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo +
+				'&modoAnalise='+ histogramaPosEstudoController.modoAnalise +'&reparteCopiado=' +reparteOrigemCopia;
+			}else{
+				var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo +
+				'&modoAnalise='+ histogramaPosEstudoController.modoAnalise;
+			}
+			
+			reparteOrigemCopia = '';
+
 			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
-
-			/*
-			$('#workspace').tabs('addTab', 'Análise de Estudos', contextPath + '/distribuicao/analiseEstudo');
-			$('#workspace').tabs({load : function(event, ui) {
-
-				$("#idEstudo").val(histogramaPosEstudoController.matrizSelecionado.estudo);
-				analiseEstudoController.carregarEstudos();
-
-				$('#workspace').tabs({load : function(event, ui) {}});
-			}});
-			*/
 		});
 
 		// RECALCULAR ESTUDO - EMS 2025 - Distribuição Venda Média
@@ -664,6 +663,9 @@ var histogramaPosEstudoController = $.extend(true, {
 			null,
 			function() {
 				$("#workspace").tabs("remove", indexAba);
+				removeTabByTitle('Distribuição Venda Média');
+				removeTabByTitle('Distribuição Manual');
+				matrizDistribuicao.mostraTelaMatrizDistribuicao();
 			}
 		);
 	},
@@ -675,7 +677,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual);
 		
 		$(this).tipsy('hide');
-		removeTabByTitle('Distribuição Venda Média');
+		/*removeTabByTitle('Distribuição Venda Média');*/
 		selectTabTitle('Matriz Distribuição');
 		
 	}

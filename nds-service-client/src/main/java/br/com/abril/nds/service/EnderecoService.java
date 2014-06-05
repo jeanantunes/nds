@@ -66,5 +66,6 @@ public interface EnderecoService {
 	List<String> obterBairrosPDVBoxEspecial(String uf, String cidade);
 	
 	List<ItemDTO<String, String>> buscarMunicipioAssociadasCota();
-	
+
+    List<EnderecoAssociacaoDTO> buscarEnderecosPorPessoaCotaPDVs(Long idPessoa, Set<Long> idsIgnorar);
 }

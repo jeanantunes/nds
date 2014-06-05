@@ -253,18 +253,21 @@ var PDV =  $.extend(true, {
 				
 		carregarAbaGeradorFluxo: function (result){
 			
-			var parametros = [];
-			
-			$.each(result.pdvDTO.geradorFluxoSecundario, function(index, valor) {
+			if(result.pdvDTO.geradorFluxoPrincipal != null){
 				
-				parametros.push({name:'codigos['+ index +']', value: valor});
-		  	});
-			
-			if(parametros.length >  0){
+				var parametros = [];
 				
-				PDV.carregarGeradorFluxoSecundario(parametros);
+				$.each(result.pdvDTO.geradorFluxoSecundario, function(index, valor) {
+					
+					parametros.push({name:'codigos['+ index +']', value: valor});
+			  	});
+				
+				if (parametros.length > 0) {
+					PDV.carregarGeradorFluxoSecundario(parametros);
+				}
 				
 				parametros.push({name:'codigos['+ (parametros.length) +']', value:result.pdvDTO.geradorFluxoPrincipal});
+				
 				PDV.carregarGeradorFluxoNotIn(parametros);
 				
 				if(result.pdvDTO.principal== false){
@@ -272,7 +275,6 @@ var PDV =  $.extend(true, {
 				}else{
 					$("#geradorFluxo").show();
 				}
-					
 				
 				var parametro = [ {name:"codigos",value:result.pdvDTO.geradorFluxoPrincipal}, 
 				                  {name:"modoTela", value: PDV.modoTela.value}, 

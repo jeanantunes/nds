@@ -1847,8 +1847,8 @@ public class LancamentoRepositoryImpl extends
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ProdutoLancamentoDTO> verificarDataConfirmada(
-			ProdutoLancamentoDTO produtoLancamentoDTO) {
+	public List<ProdutoLancamentoDTO> verificarDataConfirmada(Date dataLancamento) {
+	    
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" SELECT distinct lancamento.status as status");
@@ -1856,7 +1856,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" WHERE lancamento.dataLancamentoDistribuidor = :data ");
 
 		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("data", produtoLancamentoDTO.getNovaDataLancamento());
+		query.setParameter("data", dataLancamento);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ProdutoLancamentoDTO.class));

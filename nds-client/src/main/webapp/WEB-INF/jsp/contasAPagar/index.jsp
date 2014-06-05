@@ -19,13 +19,13 @@
     <div class="area">
 
 		<span class="bt_arq">
-			<a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorDistribuidor?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+			<a href="javascript:;" onclick="contasAPagarController.exportarPesquisaPrincipal('XLS');" rel="tipsy" title="Gerar Arquivo">
 				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 			</a>
 		</span>
 		
 		<span class="bt_arq">
-		    <a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorDistribuidor?fileType=PDF" rel="tipsy" title="Imprimir">
+		    <a href="javascript:;" onclick="contasAPagarController.exportarPesquisaPrincipal('PDF');" rel="tipsy" title="Imprimir">
 			    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 			</a>
 		</span>
@@ -79,11 +79,20 @@
 		            
 	            </td>
 	            <td width="46">Per&iacute;odo:</td>
-	            <td width="107"><input type="text" name="filtro.dataDe" id="contasAPagar_Filtro_De" style="width:80px;"/></td>
+	            <td width="107">
+	            	<input type="text" name="filtro.dataDe" id="contasAPagar_Filtro_De" style="width:80px;"
+	            		value="${dataDe}" onchange="contasAPagarController.limparCampoSemanaCE();"/>
+	            </td>
 	            <td width="28">At&eacute;:</td>
-	            <td width="107"><input type="text" name="filtro.dataAte" id="contasAPagar_Filtro_Ate" style="width:80px;"/></td>
+	            <td width="107">
+	            	<input type="text" name="filtro.dataAte" id="contasAPagar_Filtro_Ate" style="width:80px;"
+	            		value="${dataAte}" onchange="contasAPagarController.limparCampoSemanaCE();"/>
+	            </td>
 	            <td width="67">Semana CE:</td>
-	            <td width="71"><input type="text" name="filtro.ce" id="contasAPagar_Filtro_Ce" style="width:50px;" maxlength="6"/></td>
+	            <td width="71">
+	            	<input type="text" name="filtro.ce" id="contasAPagar_Filtro_Ce" style="width:50px;" maxlength="6"
+	            		value="${numeroSemana}" onchange="contasAPagarController.calcularPeriodoCE();"/>
+	            </td>
 	           
 	            <td width="147">
 
@@ -139,7 +148,7 @@
 	<div id="dialog-pesq-produto-contasAPagar" title="Pesquisar Produtos" style="display:none;">
 		<fieldset style="width:550px!important;">
 			<legend>Pesquisar Produtos</legend>
-			<form id="contasAPagarPesquisaProdutoEdicaoForm">
+			
      		<table width="530" border="0" cellspacing="0" cellpadding="0">
        			<tr>
        				<td width="50">C&oacute;digo</td>
@@ -152,7 +161,7 @@
 					<td width="20"><span class="bt_pesquisar filtroBusca"><a href="javascript:;" onclick="contasAPagarController.pesquisarProdutoEdicao()"></a></span></td>
 				</tr>
        		</table>
-			</form>
+			
    		</fieldset>
 		
 		<br clear="all"/>
@@ -230,11 +239,11 @@
 		<fieldset style="width:895px!important; margin-top:10px;">
 	    	<legend><span id="contasAPagar_legend_popupConsignado"></span></legend>
 	        <table class="contasAPagar-consignadoGrid"></table>
-	    
+	        
 	        <span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarDetalheConsignado?fileType=XLS">Arquivo</a></span>
 			<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarDetalheConsignado?fileType=PDF">Imprimir</a></span>
-	    
-	       	<table id="contasAPagar_table_popupConsignado" width="180" border="0" cellspacing="2" cellpadding="2" style="float:right; margin-top: 7px;"></table>
+	        
+	        <table id="contasAPagar_table_popupConsignado" width="180" border="0" cellspacing="2" cellpadding="2" style="float:right; margin-top: 7px;"></table>
 	        <table width="109" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">
 				<tr><td><strong>Total R$:</strong></td></tr>
 			</table>
@@ -281,4 +290,14 @@
 	</div>
 </form>
 
+<form id="form-diferencas">
+	<div id="dialog-diferencas" title="Diferen&ccedil;as" style="display: none;">
+		<fieldset>
+			<legend>
+				<span id="legend_diferencas"></span>
+			</legend>
+			<table id="grid_diferencas"></table>
+		</fieldset>
+	</div>
+</form>
 </body>
