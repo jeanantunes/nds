@@ -11,11 +11,12 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalFatura;
+import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 
 
 public class FaturaBuilder {
 	
-	public static void montarFaturaNotaFiscal (NotaFiscal notaFiscal, List<MovimentoEstoqueCota> movimentosEstoqueCota){
+	public static void montarFaturaNotaFiscal (NotaFiscal notaFiscal, List<? extends AbstractMovimentoEstoque> movimentosEstoque){
 		
 		List<NotaFiscalFatura> faturas = new ArrayList<NotaFiscalFatura>();
 		
@@ -29,8 +30,10 @@ public class FaturaBuilder {
 			}*/
 		}
 		
-		for(MovimentoEstoqueCota movimento : movimentosEstoqueCota) {
-			fatura.setValor(movimento.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimento.getQtde())));
+		for(AbstractMovimentoEstoque movimento : movimentosEstoque) {
+			if(movimento instanceof MovimentoEstoqueCota) {
+				fatura.setValor(((MovimentoEstoqueCota) movimento).getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimento.getQtde())));
+			}
 			fatura.setVencimento(movimento.getData());
 			fatura.setNumero("");
 			faturas.add(fatura);

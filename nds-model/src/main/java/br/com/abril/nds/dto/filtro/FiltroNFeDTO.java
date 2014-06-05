@@ -35,6 +35,8 @@ public class FiltroNFeDTO implements Serializable {
 	
 	private Long idCota;
 	
+	private Long idFornecedor;
+	
 	private List<Long> listIdFornecedor; 
 	
 	private SituacaoCadastro situacaoCadastro;
@@ -111,6 +113,14 @@ public class FiltroNFeDTO implements Serializable {
 
 	public void setIdCota(Long idCota) {
 		this.idCota = idCota;
+	}
+
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
 	}
 
 	public List<Long> getListIdFornecedor() {

@@ -20,7 +20,9 @@ import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
@@ -620,6 +622,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		StringBuilder hql = new StringBuilder("select ")
 		.append(" fornecedor.id AS idFornecedor, ")
+		.append(" fornecedor.id as numeroFornecedor, ")
 		.append(" fornecedor.codigoInterface as numeroFornecedor, ")
 		.append(" pj.razaoSocial as nomeFornecedor, ")
 		.append(" SUM(estoqueProduto.qtdeDevolucaoEncalhe) as exemplares, ")
@@ -839,6 +842,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" mfff.fornecedor.id as idFornecedor, ");
+		hql.append(" mfff.fornecedor.id as numeroFornecedor, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, '') as nomeFornecedor,");
 		hql.append(" SUM(mfff.qtde) as exemplares ");
 
@@ -980,6 +984,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		// OBTER FORNECEDOR EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" fornecedor.id as idFornecedor, ");
+		hql.append(" fornecedor.id as numeroFornecedor, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, '') as nomeFornecedor,");
 		hql.append(" SUM(me.qtde) as exemplares, ");
 		hql.append(" SUM(coalesce(produtoEdicao.precoVenda, 0) * me.qtde) as total, "); 
@@ -1082,6 +1087,28 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		return query;	
+	}
+
+	@Override
+	public List<MovimentoEstoque> obterMovimentosEstoqueFornecedor(FiltroNFeDTO filtro) {
+		
+		// OBTER COTA EXEMPLARES SUMARIZADOS
+		StringBuilder hql = new StringBuilder("SELECT me ");
+		Query query = queryConsultaMENfeParameters(queryConsultaMENfe(filtro, hql, false, false, false), filtro);
+
+		return query.list();
+		
+	}
+
+	@Override
+	public List<Fornecedor> obterConjuntoFornecedoresNotafiscal(FiltroNFeDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" distinct fornecedor ");
+		Query query = queryConsultaMENfeParameters(queryConsultaMENfe(filtro, hql, false, false, false), filtro);
+
+		return query.list();
+		
 	}
 
 }
