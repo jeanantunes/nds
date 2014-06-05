@@ -23,7 +23,6 @@ import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.TipoClassificacaoEstudoCota;
@@ -125,7 +124,7 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 				estudoCota.setReparteInicial(estudoCota.getReparte());
 				
 				if (StringUtil.isEmpty(estudoCota.getClassificacao())) {
-					estudoCota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
+					estudoCota.setClassificacao("");
 				}
 				
 				if(estudoCota.getTipoEstudo() == null)
