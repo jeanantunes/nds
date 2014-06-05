@@ -782,13 +782,17 @@ public class NFeServiceImpl implements NFeService {
 		for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
 			tributoAliquota.put(tributo.getNomeTributo(), tributo);
 		}
-		
-		
+				
 		NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor, filtro);
+		
 		NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor, filtro);
+		
 		EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, distribuidor);
+		
 		NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, distribuidor, parametrosSistema);
+		
 		NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
+		
 		for (final Cota cota : cotas) {
 			
 			// FIX arrumar endereco
@@ -836,7 +840,8 @@ public class NFeServiceImpl implements NFeService {
 		
 		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
-				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)
+						|| dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS)) {
 					for (CotaExemplaresDTO cota : cotas) {
 						if((cota.isContribuinteICMS() != null && cota.isContribuinteICMS()) || (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() )){
 							cotasContribuinteEmitente.add(cota);
@@ -851,7 +856,18 @@ public class NFeServiceImpl implements NFeService {
 	@Override
 	@Transactional
 	public Long consultaCotaExemplareSumarizadoQtd(final FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
-		return notaFiscalService.consultaCotaExemplaresSumarizadoQtd(filtro, naturezaOperacao);
+		
+		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
+		
+		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+			
+			return notaFiscalService.consultaCotaExemplaresSumarizadoQtd(filtro, naturezaOperacao);
+		} else {
+			
+			filtro.setPaginacaoVO(null);			
+			return (long) this.listaRegimeEspecial(filtro, naturezaOperacao, distribuidor).size();	
+		}
+		
 	}
 
 	@Override

@@ -3,8 +3,11 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroNaturezaOperacaoDTO;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
@@ -349,4 +352,30 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		
 		return (NaturezaOperacao) query.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
+
+		StringBuilder sql = new StringBuilder("")
+		.append("SELECT id as `key`, descricao as value ") 
+		.append("FROM natureza_operacao no ")
+		.append("WHERE no.TIPO_ATIVIDADE = (select TIPO_ATIVIDADE from distribuidor) ");
+
+		if(tipoDestinatario != null) {
+			sql.append("AND no.TIPO_DESTINATARIO = :tipoDestinatario ");
+		}
+
+		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
+
+		if(tipoDestinatario != null) {
+			sqlQuery.setParameter("tipoDestinatario", tipoDestinatario.name());
+		}
+
+		sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
+
+		return sqlQuery.list();
+
+	}
+	
 }

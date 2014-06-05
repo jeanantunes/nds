@@ -76,5 +76,7 @@ public interface NaturezaOperacaoService {
 	 * @return
 	 */
 	NaturezaOperacao obterNaturezaOperacaoVendaConsignado(TipoDestinatario tipoDestinatario);
+
+	List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario);
 	
 }

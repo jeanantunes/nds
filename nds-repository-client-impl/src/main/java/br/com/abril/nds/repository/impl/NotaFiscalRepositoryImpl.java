@@ -6,7 +6,6 @@ import javax.sql.DataSource;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
-import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
@@ -25,7 +23,6 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
-import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -567,31 +564,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		return query;	
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
-
-		StringBuilder sql = new StringBuilder("")
-		.append("SELECT id as `key`, descricao as value ") 
-		.append("FROM natureza_operacao no ")
-		.append("WHERE no.TIPO_ATIVIDADE = (select TIPO_ATIVIDADE from distribuidor) ");
-
-		if(tipoDestinatario != null) {
-			sql.append("AND no.TIPO_DESTINATARIO = :tipoDestinatario ");
-		}
-
-		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
-
-		if(tipoDestinatario != null) {
-			sqlQuery.setParameter("tipoDestinatario", tipoDestinatario.name());
-		}
-
-		sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
-
-		return sqlQuery.list();
-
 	}
 
 	@Override
