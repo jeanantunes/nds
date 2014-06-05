@@ -549,7 +549,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			EstudoCotaGerado cota = new EstudoCotaGerado();
 		    BeanUtils.copyProperties(estudoCota, cota, new String[] {"id", "estudo", "classificacao", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
 		    cota.setEstudo(estudo);
-		    cota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
+		    cota.setClassificacao("");
 			    
 		    if (cota.getReparte() == null) {
 		    	cota.setReparte(BigInteger.ZERO);
@@ -764,7 +764,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		for (EstudoCotaGerado cota : cotas) {
 			soma = soma.add(cota.getReparte());
 			if (!vo.isFixacao() && cota.getClassificacao().equals("FX")) {
-				cota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
+				cota.setClassificacao("");
 			}
 		}
 		reparteDistribuir = vo.getReparteDistribuido().subtract(soma);

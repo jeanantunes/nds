@@ -922,7 +922,6 @@ var mixCotaProdutoController = $.extend(true, {
 		});
 	},
 	
-
 	//funcao que executa chamada postJSON que busca dados do mix 
 	editarRepartePorPdv:function (id, reparteMinimo, reparteMaximo, idCota, idProduto){
 	
@@ -1108,9 +1107,6 @@ var mixCotaProdutoController = $.extend(true, {
 		if (data.result){
 			data.rows = data.result[1].rows;
 		}
-//		var i;
-		
-//		var reparteInicial = $("#reparteOriginal").text();
 		
 		if(data.rows.length==1){
 			exibirMensagem("WARNING", ["Operação não pode ser realizada. A cota possui somente 01 PDV."]);
@@ -1118,44 +1114,28 @@ var mixCotaProdutoController = $.extend(true, {
 			return;
 		}
 		
-//		
-//		for (i = 0 ; i < data.rows.length; i++) {
-//
-//			if((data.rows[i].cell.principal == true) && (data.rows[i+1].cell.reparte==0){ 
-//				data.rows[i].cell["reparte"]="<input type='text' maxlength='5' size='7' class='reparteGridinput' name='"+data.rows[i].cell.id+"' value=\'"+ reparteInicial  +"\'/>";
-//			}else{
-//				data.rows[i].cell["reparte"]=mixCotaProdutoController.getInputReparte(data.rows[i].cell);
-//			}
-//			
-//		}
+		var isReparteDefinido = false;
+		var qtdReparteDivididoPorPDV = 0;
 		
+		for (var i=0; i<data.rows.length; i++){
+			if(data.rows[i].cell.reparte > 0){
+				qtdReparteDivididoPorPDV++;
+			}
+		}
 		
-    var isReparteDefinido = false;
-        
+		if(qtdReparteDivididoPorPDV > 1){
+			isReparteDefinido = true;
+		}
+		
         for (var i=0; i<data.rows.length; i++) {
             
         	var cell = data.rows[i].cell;
             
-            if(cell.reparte != undefined){
-            	isReparteDefinido = true;
-            }
-
-        }
-        
-        for (var i=0; i<data.rows.length; i++) {
-            
-        	var cell = data.rows[i].cell;
-            
-            if(isReparteDefinido){
-            	cell.reparte = '<input class="reparteGridinput" name="'+data.rows[i].cell.id+'" value="#">'.replace(/#/, cell.reparte);
-            }else{
-            	if(cell.principal){
-            		var reparte = $('#reparteOriginal').text();
-            		cell.reparte = '<input class="reparteGridinput" name="'+data.rows[i].cell.id+'" value="#">'.replace(/#/, reparte);
-            	}else{
-            		cell.reparte= '<input class="reparteGridinput" name="'+data.rows[i].cell.id+'" value="">'
-            	}
-            }
+        	if(isReparteDefinido){
+        		cell.reparte = '<input class="reparteGridinput" name="'+data.rows[i].cell.id+'" value="#">'.replace(/#/, data.rows[i].cell.reparte);
+        	}else{
+        		cell.reparte = '<input class="reparteGridinput" name="'+data.rows[i].cell.id+'" value="#">'.replace(/#/, 0);
+        	}
         }
 		
 		$('.pdvCotaGrid').show();
