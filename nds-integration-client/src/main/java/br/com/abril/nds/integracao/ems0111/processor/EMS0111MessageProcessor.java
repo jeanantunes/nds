@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
-import br.com.abril.nds.integracao.data.helper.LancamentoDataHelper;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0111Input;
@@ -129,13 +128,20 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		/**
 		 * Modificado devido ser incoerente a realizar busca por um campo e persistir outro junto com a o Eduardo "PunkRock" Castro em 05/12
 		 */
-//		final Date dataGeracaoArquivo = input.getDataGeracaoArquivo();
 		final Date dataGeracaoArquivo = input.getDataLancamento();
 
-		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
-				produtoEdicao, dataGeracaoArquivo);
+		Lancamento lancamento =
+	        this.getLancamentoPrevistoMaisProximo(produtoEdicao, dataGeracaoArquivo);
+		
 		if (lancamento == null ) {
-			
+		
+		    lancamento =
+	            this.getLancamentoPrevistoMaisProximo(
+                    produtoEdicao, distribuidorRepository.obterDataOperacaoDistribuidor());
+		}
+	    
+		if (lancamento == null ) {
+		    
 			// Cadastrar novo lançamento
 			lancamento = new Lancamento();
 			
@@ -412,7 +418,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 
 		criteria.add(Restrictions.ge("dataLancamentoPrevista", dataGeracaoArquivo));
 		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
-		criteria.add(Restrictions.eq("tipoLancamento", TipoLancamento.LANCAMENTO));
+		criteria.add(Restrictions.in("status", new StatusLancamento[] {StatusLancamento.CONFIRMADO, StatusLancamento.PLANEJADO}));
 		criteria.addOrder(Order.asc("dataLancamentoPrevista"));
 		
 		criteria.setFetchSize(1);

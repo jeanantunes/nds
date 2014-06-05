@@ -1681,7 +1681,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			if (novaDivida.getId() == null){
 				
-				this.dividaRepository.adicionar(novaDivida);
+				novaDivida.setId(this.dividaRepository.adicionar(novaDivida));
+				
 			} else {
 				
 				this.dividaRepository.alterar(novaDivida);
