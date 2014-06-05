@@ -24,6 +24,7 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
+import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.RepartePDVDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
@@ -33,7 +34,9 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
+import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
@@ -50,7 +53,11 @@ import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.InformacoesProdutoService;
+import br.com.abril.nds.service.MixCotaProdutoService;
+import br.com.abril.nds.service.PdvService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.UsuarioService;
 
@@ -80,9 +87,18 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     @Autowired
     private ProdutoEdicaoRepository produtoEdicaoRepository;
+    
+    @Autowired
+    private ProdutoService produtoServc;
 
     @Autowired
     private InformacoesProdutoService infoProdService;
+    
+    @Autowired
+    private FixacaoReparteService fixacaoReparteService;
+
+    @Autowired
+    private MixCotaProdutoService mixCotaService;
     
     @Autowired
 	private EstudoService estudoService;
@@ -96,6 +112,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Autowired 
     private UsuarioService usuarioService;
     
+    @Autowired
+    private PdvService pdvService;
     
     private Map<String, String> mapClassificacaoCota;
 
@@ -210,6 +228,60 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>(edicoesProdutosDTOMap.values()));
             }
         }
+    	
+    	for (AnaliseParcialDTO itemCota : lista) {
+			
+    		if(itemCota.getNpdv().compareTo(BigInteger.ONE) > 0){
+				
+				Integer qtdRepartePDVDefinido = 0;
+				
+				EstudoGerado estGerado = estudoGerado.buscarPorId(queryDTO.getEstudoId());
+				Cota cota = cotaRepository.obterPorNumerDaCota(itemCota.getCota());
+				
+				switch (itemCota.getLeg()) {
+				case "MX":
+					
+					MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaProduto(cota.getId(), estGerado.getProdutoEdicao().getTipoClassificacaoProduto().getId(), estGerado.getProdutoEdicao().getProduto().getCodigoICD());
+					
+					for (RepartePDV pdvMix : mixCotaProduto.getRepartesPDV()) {
+						if(pdvMix.getReparte() != null && pdvMix.getReparte() > 0){
+							++qtdRepartePDVDefinido;
+						}
+					}
+					
+					break;
+
+				case "FX":
+					
+					FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCotaClassificacao(cota, estGerado.getProdutoEdicao().getProduto().getCodigoICD(), estGerado.getProdutoEdicao().getTipoClassificacaoProduto());
+					
+					for (FixacaoRepartePdv fixacaoPDV : fixacaoReparte.getRepartesPDV()) {
+						if(fixacaoPDV.getRepartePdv() != null && fixacaoPDV.getRepartePdv() > 0){
+							++qtdRepartePDVDefinido;
+						}
+					}
+					
+					break;
+					
+				default:
+					List<PdvDTO> pdvs = pdvService.obterPDVs(itemCota.getCota());
+					for (PdvDTO pdv : pdvs) {
+						if(pdv.getReparte() != null && pdv.getReparte() > 0){
+							++qtdRepartePDVDefinido;
+						}
+					}
+					
+					break;
+				}
+				
+				if(qtdRepartePDVDefinido > 1){
+					itemCota.setContemRepartePorPDV(true);
+				}
+				
+			}
+    		
+		}
+    	
         return lista;
     }
     
@@ -280,7 +352,39 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Override
     @Transactional
     public List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo) {
-        return analiseParcialRepository.carregarDetalhesPdv(numeroCota, idEstudo);
+        
+    	List<PdvDTO> lista = analiseParcialRepository.carregarDetalhesPdv(numeroCota, idEstudo);
+    	
+    	EstudoCotaGerado estCotaGerado = estudoService.obterEstudoCotaGerado(numeroCota, idEstudo);
+    	
+    	if(estCotaGerado.getClassificacao().equalsIgnoreCase("FX")){
+
+    		FixacaoReparte fixacaoReparte = fixacaoReparteService.buscarPorProdutoCotaClassificacao(estCotaGerado.getCota(), estCotaGerado.getEstudo().getProdutoEdicao().getProduto().getCodigoICD(), estCotaGerado.getEstudo().getProdutoEdicao().getTipoClassificacaoProduto());
+    		
+    		for (FixacaoRepartePdv fixPdv : fixacaoReparte.getRepartesPDV()) {
+				for (PdvDTO pdv : lista) {
+					if(pdv.getId().equals(fixPdv.getPdv().getId())){
+						pdv.setRepartePDV(fixPdv.getRepartePdv());
+					}
+				}
+			}
+    		
+    	}else{
+    		if(estCotaGerado.getClassificacao().equalsIgnoreCase("MX")){
+
+    			MixCotaProduto mixCotaProduto = mixCotaService.obterMixPorCotaProduto(estCotaGerado.getCota().getId(), estCotaGerado.getEstudo().getProdutoEdicao().getTipoClassificacaoProduto().getId(), estCotaGerado.getEstudo().getProdutoEdicao().getProduto().getCodigoICD());	
+				
+    			for (RepartePDV mixPdv : mixCotaProduto.getRepartesPDV()) {
+    				for (PdvDTO pdv : lista) {
+    					if(pdv.getId().equals(mixPdv.getPdv().getId())){
+    						pdv.setRepartePDV(mixPdv.getReparte());
+    					}
+    				}
+    			}
+    		}
+    	}
+    	
+    	return lista;
     }
 
     @Override

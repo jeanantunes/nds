@@ -1,6 +1,5 @@
 package br.com.abril.nds.service;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
@@ -10,6 +9,7 @@ import br.com.abril.nds.dto.MixProdutoDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorProdutoDTO;
+import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 
 
 public interface MixCotaProdutoService {
@@ -40,4 +40,6 @@ public interface MixCotaProdutoService {
 	public String obterValidacaoLinha(MixCotaProdutoDTO mixCotaProdutoDTO);
 
 	public void updateReparteMixCotaProduto(Long novoValorReparte, String tipoCampo, Long idMix);
+
+	public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long tipoClassifProdId, String codigoICD);
 }

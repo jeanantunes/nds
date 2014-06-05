@@ -689,11 +689,21 @@ var fixacaoReparteController = $.extend(true, {
 		if (data.result){
 			data.rows = data.result[1].rows;
 		}
-		var i;
-		for (i = 0 ; i < data.rows.length; i++) {
-            data.rows[i].cell["endereco"] = data.rows[i].cell["endereco"] || '';
-            data.rows[i].cell["reparte"] = fixacaoReparteController.getInputReparte(data.rows[i].cell);
+		
+		var isReparteDefinido = false;
+		
+		for (var i = 0 ; i < data.rows.length; i++) {
+            
+            if(data.rows[i].cell.reparte != undefined){
+            	isReparteDefinido = true;
+            }
 		}
+		
+		for (var i = 0 ; i < data.rows.length; i++) {
+            data.rows[i].cell["endereco"] = data.rows[i].cell["endereco"] || '';
+            data.rows[i].cell["reparte"] = fixacaoReparteController.getInputReparte(data.rows[i].cell, isReparteDefinido);
+		}
+		
 		if (data.result){
 			return data.result[1];
 		}
@@ -710,9 +720,17 @@ var fixacaoReparteController = $.extend(true, {
 	},
 
 	//funcao que retorna input de reparte a grid de reparte por pdv
-	getInputReparte:function(cell){
-		return "<input type='text' class='reparteGridinput'  onkeydown='onlyNumeric(event);' maxlength='5' size='6'  name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
+	getInputReparte:function(cell, isReparteDefinido){
 		
+		if(isReparteDefinido){
+			return "<input type='text' class='reparteGridinput'  onkeydown='onlyNumeric(event);' maxlength='5' size='6'  name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
+        }else{
+        	if(cell.principal){
+        		return "<input type='text' class='reparteGridinput'  onkeydown='onlyNumeric(event);' maxlength='5' size='6'  name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
+        	}else{
+        		return "<input type='text' class='reparteGridinput'  onkeydown='onlyNumeric(event);' maxlength='5' size='6'  name='"+cell.id+"' value=\'"+ (0)  +"\'/>";
+        	}
+        }
 	},
 	//funcao de exibicao de grid
 	escondeGridCota:function(){
@@ -880,6 +898,10 @@ var fixacaoReparteController = $.extend(true, {
 		//Abre modal Nova Fixação
 		novo:function () {
             var porCota = false;
+            
+            $('#radioQtdeEdicoes').attr("checked",true);
+			$('.qtdEd').show();
+			$('.intervalo').hide();
 
 			if($("input:radio:checked", fixacaoReparteController.workspace).val() == 'Produto'){
                 if ($('#filtroClassificacaoFixacao').val() == '-1') {
@@ -927,6 +949,7 @@ var fixacaoReparteController = $.extend(true, {
 
 
 		},
+		
 		//Executada em caso de sucesso durante tentativa de chamada postJSON para adicionar fixação
 		executarSuccessCallBack:function(result){
 			if($('#selectModal').css('display')=='inline-block'){
