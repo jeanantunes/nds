@@ -959,7 +959,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             
             for (final MovimentosEstoqueEncalheDTO item : movimentosEstoqueCota) {
                 
-                movimentoEstoqueCotaRepository.updateById(item.getIdCota(), StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
+                movimentoEstoqueCotaRepository.updateById(item.getIdMovimentoEstoqueCota(), StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
             }
         }
         
