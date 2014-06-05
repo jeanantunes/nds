@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Tributacao;
 import br.com.abril.nds.model.cadastro.Tributacao.TributacaoTipoOperacao;
 import br.com.abril.nds.model.cadastro.TributoAliquota;
@@ -121,18 +122,32 @@ public class ItemNotaFiscalBuilder  {
 		produtoServico.setUnidade(movimentoEstoque.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 		
 		BigDecimal valorTotalBruto = BigDecimal.ZERO;
+		BigDecimal valorUnitario = BigDecimal.ZERO;
+		BigDecimal valorDesconto = BigDecimal.ZERO;
 		if(movimentoEstoque instanceof MovimentoEstoqueCota) {
 			valorTotalBruto = CurrencyUtil.arredondarValorParaDuasCasas(((MovimentoEstoqueCota) movimentoEstoque).getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoque.getQtde())));
+			valorTotalBruto = valorUnitario = CurrencyUtil.arredondarValorParaQuatroCasas(((MovimentoEstoqueCota) movimentoEstoque).getValoresAplicados().getPrecoComDesconto());
+			valorDesconto = ((MovimentoEstoqueCota) movimentoEstoque).getValoresAplicados().getValorDesconto();
+		} else if(movimentoEstoque instanceof MovimentoEstoque) {
+			
+			BigDecimal precoVenda = ((MovimentoEstoque) movimentoEstoque).getProdutoEdicao().getPrecoVenda();
+			BigDecimal precoComDesconto = BigDecimal.ZERO;
+			
+			if(((MovimentoEstoque) movimentoEstoque).getProdutoEdicao().getOrigem().equals(Origem.MANUAL)) {
+				valorDesconto = ((MovimentoEstoque) movimentoEstoque).getProdutoEdicao().getDesconto();
+			} 
+			
+			precoComDesconto = precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100)));
+			
+			valorTotalBruto = CurrencyUtil.arredondarValorParaDuasCasas(precoComDesconto.multiply(new BigDecimal(movimentoEstoque.getQtde())));
+			valorUnitario = CurrencyUtil.arredondarValorParaQuatroCasas(precoComDesconto);
+		} else {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de movimento não suportado para geração da NF-e.");
 		}
 		produtoServico.setValorTotalBruto(valorTotalBruto);
-		
-		BigDecimal valorUnitario = BigDecimal.ZERO;
-		if(movimentoEstoque instanceof MovimentoEstoqueCota) {
-			valorTotalBruto = valorUnitario = CurrencyUtil.arredondarValorParaQuatroCasas(((MovimentoEstoqueCota) movimentoEstoque).getValoresAplicados().getPrecoComDesconto());
-		}
 		produtoServico.setValorUnitario(valorUnitario);
 		
-		//produtoServico.setValorDesconto(BigDecimal.ZERO);
+		produtoServico.setValorDesconto(BigDecimal.ZERO);
 		
 		//FIXME: Ajustar os produtos para sinalizarem a inclusao do frete na nf
 		produtoServico.setValorFreteCompoeValorNF(false);
