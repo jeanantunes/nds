@@ -47,6 +47,7 @@ public class AnaliseParcialDTO implements Serializable {
     private BigInteger reparteEstudoOrigemCopia;
     private Boolean ajustado;
     private BigInteger quantidadeAjuste;
+    private Boolean contemRepartePorPDV = false;
     
     public String getDescricaoLegenda() {
         return descricaoLegenda;
@@ -317,4 +318,13 @@ public class AnaliseParcialDTO implements Serializable {
 	public void setQuantidadeAjuste(BigInteger quantidadeAjuste) {
 		this.quantidadeAjuste = quantidadeAjuste;
 	}
+
+	public Boolean getContemRepartePorPDV() {
+		return contemRepartePorPDV;
+	}
+
+	public void setContemRepartePorPDV(Boolean contemRepartePorPDV) {
+		this.contemRepartePorPDV = contemRepartePorPDV;
+	}
+	
 }

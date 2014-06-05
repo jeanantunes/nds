@@ -137,6 +137,7 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		hql.append(" left join pdv.segmentacao as segmento ");
 		hql.append(" left join pdv.geradorFluxoPDV as geradorFluxoPrincipalPDV ");
 		hql.append(" left join geradorFluxoPrincipalPDV.principal as tipoGeradorFluxoPrincipal ");
+		hql.append(" left join geradorFluxoPrincipalPDV.secundarios as tipoGeradorFluxoSecundarios ");
 		hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
 		hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
 		
@@ -171,9 +172,9 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		}
 		
 		if (paramGeradorFluxoSecundarioId > 0) {
-			//TODO
-			//hql.append(" or geradorFluxoPDV.principal = :geradorFluxoSecundario");
-			//parameters.put("geradorFluxoSecundario", paramGeradorFluxoSecundario);
+			
+			hql.append(" and tipoGeradorFluxoSecundarios.id = :geradorFluxoSecundarioId");
+			parameters.put("geradorFluxoSecundarioId", paramGeradorFluxoSecundarioId);
 		}
 		
 		if (paramCotasAtivas) {

@@ -29,7 +29,7 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		hql.append("pessoa.nome as nomeJornaleiro, ");
 		hql.append("conf.data as dataEntrada, ");		
 		hql.append("notaCota.statusNotaFiscal as tipoPendencia, ");		
-		hql.append("((conf.qtdeInformada * conf.precoCapaInformado) -  (conf.qtde * conf.precoCapaInformado)) as valorDiferenca, ");
+		hql.append("((conf.qtdeInformada * conf.precoComDesconto) -  (conf.qtde * conf.precoComDesconto)) as valorDiferenca, ");
 		hql.append(" concat(telefone.ddd, ' ', telefone.numero)  as numeroTelefone ");		
 		
 		hql.append(getSqlFromEWhereNotaPendente(filtro));
@@ -63,9 +63,8 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" LEFT JOIN controleCota.conferenciasEncalhe as conf ");
 		hql.append(" LEFT JOIN pessoa.telefones as telefone ");
 		
-		hql.append(" where no.tipoOperacao = 'ENTRADA' ");
-		
-		hql.append(" and ((conf.qtdeInformada * conf.precoCapaInformado) -  (conf.qtde * notaCota.valorInformado)) != 0 ");
+		hql.append(" where no.tipoOperacao in ('ENTRADA',  'SAIDA')");
+		hql.append(" and ((conf.qtdeInformada * conf.precoComDesconto) - (conf.qtde * notaCota.valorInformado)) <> 0 ");
 		
 		return hql.toString();
 	}

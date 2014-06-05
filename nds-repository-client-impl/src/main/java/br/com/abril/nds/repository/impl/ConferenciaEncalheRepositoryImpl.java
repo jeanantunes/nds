@@ -613,6 +613,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" WHERE ");
 		hql.append(" CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = :idControleConferenciaEncalheCota   ");
+		hql.append(" AND CH_ENCALHE_COTA.PROCESSO_UTILIZA_NFE = :processoUtilizaNfe  ");
 		hql.append(" ORDER BY dataRecolhimento desc,  codigoSM ");
 		
 		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
@@ -648,6 +649,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
+		
+		query.setParameter("processoUtilizaNfe", true);
 		
 		query.setParameterList("statusEmRecolhimento", Arrays.asList(
 				StatusLancamento.BALANCEADO_RECOLHIMENTO.name(),

@@ -2917,6 +2917,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		conferenciaEncalhe.setPrecoCapaInformado(conferenciaEncalheDTO.getPrecoCapaInformado());
 		
+		conferenciaEncalhe.setPrecoComDesconto(conferenciaEncalheDTO.getPrecoComDesconto());
+		
 		conferenciaEncalhe.setQtde(conferenciaEncalheDTO.getQtdExemplar());
 		
 		conferenciaEncalhe.setData(dataCriacao);

@@ -34,13 +34,13 @@ var followUpSistemaController = $.extend(true, {
 			}, {
 				display : 'Data Programado',
 				name : 'dataProgramadoChamadao',
-				width : 85,
+				width : 120,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Ação',
 				name : 'acao',
-				width : 120,
+				width : 40,
 				sortable : true,
 				align : 'center'
 			}],
@@ -90,7 +90,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 600,
 			height : 255
 		}));
 
@@ -165,19 +165,19 @@ var followUpSistemaController = $.extend(true, {
 			}, {
 				display : 'Nome',
 				name : 'nomeJornaleiro',
-				width : 190,
+				width : 250,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Per&iacuteodo',
 				name : 'periodoStatus',
-				width : 120,
+				width : 170,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Status',
+				display : 'Status Atual',
 				name : 'statusAtual',
-				width : 80,
+				width : 83,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -189,7 +189,7 @@ var followUpSistemaController = $.extend(true, {
 			}, {
 				display : 'Ação',
 				name : 'acao',
-				width : 155,
+				width : 40,
 				sortable : true,
 				align : 'center'
 			}],
@@ -391,7 +391,7 @@ var followUpSistemaController = $.extend(true, {
 			if (!row.cell.dataProgramadoChamadao || row.cell.dataProgramadoChamadao == ''){
 				
 				var linkExcluir = '<a href="javascript:;" onclick="$(\'#workspace\').tabs(\'addTab\', \'Chamadão\', ' + url + ')"  style="cursor:pointer">' +
-								   	 '<img title="Excluir Desconto" src="' + contextPath + '/images/ico_reprogramar.gif" hspace="5" border="0px" />Programar' +
+								   	 '<img title="Programar" src="' + contextPath + '/images/ico_reprogramar.gif" hspace="5" border="0px" />' +
 								   '</a>';
 				
 				row.cell.acao = linkExcluir;
@@ -417,7 +417,7 @@ var followUpSistemaController = $.extend(true, {
 			url = '\'financeiro/manutencaoStatusCota/popularGridFollowUp?numeroCota='+row.cell.numeroCota + '\'';
 			
 			var linkExcluir = '<a href="javascript:;" onclick="$(\'#workspace\').tabs(\'addTab\', \'Manutenção de Status Cota\', ' + url + ')"  style="cursor:pointer">' +
-							   	 '<img title="Excluir Desconto" src="' + contextPath + '/images/ico_negociar.png" hspace="5" border="0px" />Manutenção Status' +
+							   	 '<img title="Manutenção Status" src="' + contextPath + '/images/ico_negociar.png" hspace="5" border="0px" />' +
 							   '</a>';
 			
 			row.cell.acao = linkExcluir;

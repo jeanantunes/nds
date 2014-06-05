@@ -460,4 +460,10 @@ public class EstudoServiceImpl implements EstudoService {
 		return estudoPDV;
     }
 
+	@Override
+	@Transactional
+	public EstudoCotaGerado obterEstudoCotaGerado(Integer numeroCota, Long estudoId) {
+		return estudoCotaGeradoRepository.obterEstudoCotaGerado(numeroCota, estudoId);
+	}
+
 }

@@ -250,5 +250,19 @@ public class EstudoCotaGeradoRepositoryImpl extends AbstractRepositoryModel<Estu
 		
 		query.executeUpdate();
 	}
+
+	@Override
+	public EstudoCotaGerado obterEstudoCotaGerado(Integer numeroCota, Long estudoId) {
+		String hql = " from EstudoCotaGerado estudoCota "
+				   + " where estudoCota.estudo.id = :estudo " 
+				   + " and estudoCota.cota.numeroCota = :numeroCota ";
+		
+		Query query = super.getSession().createQuery(hql);
+		query.setParameter("estudo", estudoId);
+		query.setParameter("numeroCota", numeroCota);
+		query.setMaxResults(1);
+		
+		return (EstudoCotaGerado) query.uniqueResult();
+	}
     
 }

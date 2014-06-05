@@ -11,7 +11,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface EntradaNFETerceirosService {
 	
-	List<ConsultaEntradaNFETerceirosRecebidasDTO> buscarNFNotasRecebidas(FiltroEntradaNFETerceiros filtro, boolean limitar);
+	List<ConsultaEntradaNFETerceirosRecebidasDTO> consultarNotasRecebidas(FiltroEntradaNFETerceiros filtro, boolean limitar);
 	
 	Integer buscarTodasNFNotas(FiltroEntradaNFETerceiros filtro);
 	
