@@ -1,4 +1,4 @@
-package br.com.abril.nds.client.job;
+package br.com.abril.nds.service.job;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;

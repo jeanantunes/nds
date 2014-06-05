@@ -404,6 +404,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
         List<CotaQueNaoEntrouNoEstudoDTO> cotaQueNaoEntrouNoEstudoDTOList = analiseParcialRepository.buscarCotasQueNaoEntraramNoEstudo(queryDTO);
         for (CotaQueNaoEntrouNoEstudoDTO cotaQueNaoEntrouNoEstudoDTO : cotaQueNaoEntrouNoEstudoDTOList) {
+        	
+        	if(cotaQueNaoEntrouNoEstudoDTO.getMotivo().equals("") || cotaQueNaoEntrouNoEstudoDTO.getMotivo() == null){
+        		cotaQueNaoEntrouNoEstudoDTO.setMotivo("SH");
+        	}
+        	
             cotaQueNaoEntrouNoEstudoDTO.setSiglaMotivo(cotaQueNaoEntrouNoEstudoDTO.getMotivo());
             cotaQueNaoEntrouNoEstudoDTO.setMotivo(traduzClassificacaoCota(cotaQueNaoEntrouNoEstudoDTO.getMotivo()));
         }

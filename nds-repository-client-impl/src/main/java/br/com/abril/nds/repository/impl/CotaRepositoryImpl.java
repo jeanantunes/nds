@@ -114,9 +114,28 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
      * Construtor.
      */
     public CotaRepositoryImpl() {
-        
         super(Cota.class);
     }
+    
+    public Cota selectForUpdate(Long numeroCota) {
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" SELECT C.* ");
+		
+		hql.append(" FROM COTA C ");
+		
+		hql.append(" WHERE C.NUMERO_COTA = :numeroCota FOR UPDATE ");
+		
+		Query query = this.getSession().createSQLQuery(hql.toString());
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		((org.hibernate.SQLQuery)query).addEntity(Cota.class);
+		
+		return (Cota) query.uniqueResult();
+		
+	}
     
     @Override
     public Cota obterPorNumeroDaCota(final Integer numeroCota) {
