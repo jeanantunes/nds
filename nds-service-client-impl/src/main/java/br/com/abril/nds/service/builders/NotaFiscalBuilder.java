@@ -244,7 +244,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormatoImpressao(FormatoImpressao.valueOf(parametrosSistema.get("NFE_INFORMACOES_FORMATO_IMPRESSAO").getValor()));
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setModeloDocumentoFiscal("55");
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setModeloDocumentoFiscal(parametrosSistema.get("NFE_INFORMACOES_MODELO_DOCUMENTO").getValor());
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.valueOf(parametrosSistema.get("NFE_INFORMACOES_TIPO_EMISSOR").getValor()));
@@ -302,7 +302,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormatoImpressao(FormatoImpressao.valueOf(parametrosSistema.get("NFE_INFORMACOES_FORMATO_IMPRESSAO").getValor()));
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setModeloDocumentoFiscal(parametrosSistema.get("MODELO_DOCUMENTO_FISCAL").getValor());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setModeloDocumentoFiscal(parametrosSistema.get("NFE_INFORMACOES_MODELO_DOCUMENTO").getValor());
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.valueOf(parametrosSistema.get("NFE_INFORMACOES_TIPO_EMISSOR").getValor()));
@@ -310,7 +310,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDataEmissao(new Date());
 		
 		//FIXME: Ajustar codigo de UF do cadastro
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoUf(Long.valueOf(distribuidor.getEnderecoDistribuidor().getEndereco().getCodigoUf())); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoUf());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoUf(35L); //Long.valueOf(distribuidor.getEnderecoDistribuidor().getEndereco().getCodigoUf())); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoUf());
 		
 		//FIXME: Ajustar codigo de municipio do cadastro
 		if(distribuidor.getEnderecoDistribuidor().isPrincipal()){

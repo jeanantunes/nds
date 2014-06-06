@@ -5,6 +5,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -115,32 +116,26 @@ public class EmitenteDestinatarioBuilder {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());
 		
-		for (Endereco endereco : distribuidor.getJuridica().getEnderecos()) {
+		if(distribuidor.getJuridica().getEnderecos() != null 
+				&& !distribuidor.getJuridica().getEnderecos().isEmpty()) {
 			
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(endereco.getLogradouro());
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(endereco.getNumero());
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(endereco.getComplemento());
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(endereco.getBairro());
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCep(endereco.getCep());
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(endereco.getCidade());
-			//FIXME: Ajustar para trazer o codigo do municipio
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(Long.valueOf(endereco.getCodigoCidadeIBGE()));
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setUf(endereco.getUf());
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(Long.valueOf(endereco.getCodigoUf()));
-			//FIXME: Ajustar os campos codigo e nome do pais
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoPais(1058L);
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setPais("Brasil");
-			
-			if(endereco.getCodigoUf() != null) {
+			for (Endereco endereco : distribuidor.getJuridica().getEnderecos()) {
 				
-				//FIXME: ajustar o codigo do estado
-				Long codigoUF = Long.parseLong(endereco.getCodigoUf());
-				codigoUF = 35L;
-				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(codigoUF);
+				montarEndereco(notaFiscal, endereco);
+				
+				break;
+			}
+		} else {
+			
+			EnderecoDistribuidor enderecoDistribuidor =  distribuidor.getEnderecoDistribuidor();
+			if(enderecoDistribuidor != null && enderecoDistribuidor.getEndereco() != null) {
+				montarEndereco(notaFiscal, enderecoDistribuidor.getEndereco());
+			} else {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Problemas com o Endereço do distribuidor.");
 			}
 			
-			break;
 		}
+		
 		
 		for (Telefone telefone : distribuidor.getJuridica().getTelefones()) {
 			
@@ -149,6 +144,30 @@ public class EmitenteDestinatarioBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setDDD(telefone.getDdd());
 			
 			break;
+		}
+	}
+
+	private static void montarEndereco(NotaFiscal notaFiscal, Endereco endereco) {
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(endereco.getLogradouro());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(endereco.getNumero());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(endereco.getComplemento());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(endereco.getBairro());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCep(endereco.getCep());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(endereco.getCidade());
+		//FIXME: Ajustar para trazer o codigo do municipio
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(Long.valueOf(endereco.getCodigoCidadeIBGE()));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setUf(endereco.getUf());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(Long.valueOf(endereco.getCodigoUf()));
+		//FIXME: Ajustar os campos codigo e nome do pais
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoPais(1058L);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setPais("Brasil");
+		
+		if(endereco.getCodigoUf() != null) {
+			
+			//FIXME: ajustar o codigo do estado
+			Long codigoUF = Long.parseLong(endereco.getCodigoUf());
+			codigoUF = 35L;
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(codigoUF);
 		}
 	}
 
