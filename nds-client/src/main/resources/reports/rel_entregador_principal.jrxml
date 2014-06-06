@@ -59,48 +59,48 @@
 					<reportElement uuid="c780f357-5df9-45c4-9b10-7c954c294203" x="0" y="0" width="555" height="20" backcolor="#D3D3D3"/>
 				</rectangle>
 				<textField>
-					<reportElement uuid="fcc533b5-8f2b-44a6-98a1-93ea85faf1a2" style="rel_ftext" x="24" y="0" width="25" height="20"/>
+					<reportElement uuid="fcc533b5-8f2b-44a6-98a1-93ea85faf1a2" x="24" y="0" width="25" height="20"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[((br.com.abril.nds.dto.EntregadorDTO)$F{key}).getCodigoBox()]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy">
-					<reportElement uuid="8c161b0d-f761-419a-ade1-e13a88f4fbfa" style="rel_ftext" x="440" y="0" width="100" height="20"/>
+					<reportElement uuid="8c161b0d-f761-419a-ade1-e13a88f4fbfa" x="440" y="0" width="100" height="20"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="049587f7-3810-4fd2-85b5-30e3f211e1a9" style="rel_ftext" x="265" y="0" width="100" height="20"/>
+					<reportElement uuid="049587f7-3810-4fd2-85b5-30e3f211e1a9" x="265" y="0" width="100" height="20"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[((br.com.abril.nds.dto.EntregadorDTO)$F{key}).getDescricaoRota()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="c7ba4828-5849-4dc6-9146-9bb5a6e7ad78" style="rel_stext" x="395" y="0" width="60" height="20"/>
+					<reportElement uuid="c7ba4828-5849-4dc6-9146-9bb5a6e7ad78" x="395" y="0" width="60" height="20"/>
 					<textElement/>
 					<text><![CDATA[Data:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement uuid="d5a30688-b094-4596-9df9-f057e4d54d72" style="rel_stext" x="0" y="0" width="24" height="20"/>
+					<reportElement uuid="d5a30688-b094-4596-9df9-f057e4d54d72" x="0" y="0" width="24" height="20"/>
 					<textElement>
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[Box:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement uuid="77bfddaa-72df-4617-9e30-fc373398d037" style="rel_stext" x="51" y="0" width="51" height="20"/>
+					<reportElement uuid="77bfddaa-72df-4617-9e30-fc373398d037" x="51" y="0" width="51" height="20"/>
 					<textElement>
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[Roteiro:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement uuid="2ba246e9-8d4a-48c8-b260-ae83caa9d8c2" style="rel_stext" x="237" y="0" width="28" height="20"/>
+					<reportElement uuid="2ba246e9-8d4a-48c8-b260-ae83caa9d8c2" x="237" y="0" width="28" height="20"/>
 					<textElement>
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[Rota:]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="ae0addf5-5df5-47c0-8196-a8d66e84bcdf" style="rel_ftext" x="102" y="0" width="135" height="20"/>
+					<reportElement uuid="ae0addf5-5df5-47c0-8196-a8d66e84bcdf" x="102" y="0" width="135" height="20"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[((br.com.abril.nds.dto.EntregadorDTO)$F{key}).getDescricaoRoteiro()]]></textFieldExpression>
 				</textField>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box_subbox" columnCount="8" printOrder="Horizontal" pageWidth="408" pageHeight="306" orientation="Landscape" columnWidth="51" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="cbea841f-93cd-4abd-a1db-6f08806c45de">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box_subbox" columnCount="6" printOrder="Horizontal" pageWidth="306" pageHeight="306" orientation="Landscape" columnWidth="51" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="cbea841f-93cd-4abd-a1db-6f08806c45de">
 	<property name="ireport.zoom" value="2.1435888100000016"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -62,18 +62,6 @@
 			</rectangle>
 			<rectangle>
 				<reportElement uuid="751d6092-ba58-489c-a860-4d187131e44e" x="102" y="0" width="51" height="20"/>
-			</rectangle>
-			<rectangle>
-				<reportElement uuid="f5cd6d74-1a16-4a47-a5c2-388fe7e31261" x="306" y="0" width="51" height="20"/>
-			</rectangle>
-			<rectangle>
-				<reportElement uuid="b34eba0b-a7a3-4b17-88c7-7e89967fab7c" x="306" y="20" width="51" height="20" backcolor="#FFFFFF"/>
-			</rectangle>
-			<rectangle>
-				<reportElement uuid="f5cd6d74-1a16-4a47-a5c2-388fe7e31261" x="357" y="0" width="51" height="20"/>
-			</rectangle>
-			<rectangle>
-				<reportElement uuid="b34eba0b-a7a3-4b17-88c7-7e89967fab7c" x="357" y="20" width="51" height="20" backcolor="#FFFFFF"/>
 			</rectangle>
 		</band>
 	</background>
