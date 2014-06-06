@@ -1442,19 +1442,23 @@ public class ConferenciaEncalheController extends BaseController {
 				
 			for (final ConferenciaEncalheDTO dto : listaConferencia){
 				
-				if (dto.getIdConferenciaEncalhe().equals(idConferencia)){
-					
-					dto.setQtdInformada(BigInteger.valueOf(qtdInformada));
-					
-					if (valorCapaInformado != null){
-						
-						dto.setPrecoCapaInformado(valorCapaInformado);
-					}
-					
-					conf = dto;
-					
-					break;
-				}
+			    if(dto.isProcessoUtilizaNfe()){
+			        
+			        if (dto.getIdConferenciaEncalhe().equals(idConferencia)){
+			            
+			            dto.setQtdInformada(BigInteger.valueOf(qtdInformada));
+			            
+			            if (valorCapaInformado != null){
+			                
+			                dto.setPrecoCapaInformado(valorCapaInformado);
+			            }
+			            
+			            conf = dto;
+			            
+			            break;
+			        }
+			    }
+			    
 			}
 		}
 		
@@ -1945,20 +1949,22 @@ public class ConferenciaEncalheController extends BaseController {
             notaFiscal.setValorDesconto(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
             
             for(final ConferenciaEncalheDTO conferenciaEncalhe : this.getListaConferenciaEncalheFromSession()) {
-
-                final ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-                produtoEdicao.setId(conferenciaEncalhe.getIdProdutoEdicao());
-                
-                final ItemNotaFiscalEntrada itemNotaFiscalEntrada = new ItemNotaFiscalEntrada();
-                itemNotaFiscalEntrada.setQtde(conferenciaEncalhe.getQtdInformada());
-                itemNotaFiscalEntrada.setProdutoEdicao(produtoEdicao);
-                itemNotaFiscalEntrada.setTipoLancamento(TipoLancamento.LANCAMENTO);
-                itemNotaFiscalEntrada.setDataRecolhimento(conferenciaEncalhe.getDataRecolhimento());
-                itemNotaFiscalEntrada.setDataLancamento(conferenciaEncalhe.getDataLancamento());
-                itemNotaFiscalEntrada.setNotaFiscal(notaFiscal);
-                itemNotaFiscalEntrada.setDesconto(conferenciaEncalhe.getPrecoComDesconto());
-                itens.add(itemNotaFiscalEntrada);
-                
+                if(conferenciaEncalhe.isProcessoUtilizaNfe()){
+                    
+                    final ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+                    produtoEdicao.setId(conferenciaEncalhe.getIdProdutoEdicao());
+                    
+                    final ItemNotaFiscalEntrada itemNotaFiscalEntrada = new ItemNotaFiscalEntrada();
+                    itemNotaFiscalEntrada.setQtde(conferenciaEncalhe.getQtdInformada());
+                    itemNotaFiscalEntrada.setProdutoEdicao(produtoEdicao);
+                    itemNotaFiscalEntrada.setTipoLancamento(TipoLancamento.LANCAMENTO);
+                    itemNotaFiscalEntrada.setDataRecolhimento(conferenciaEncalhe.getDataRecolhimento());
+                    itemNotaFiscalEntrada.setDataLancamento(conferenciaEncalhe.getDataLancamento());
+                    itemNotaFiscalEntrada.setNotaFiscal(notaFiscal);
+                    itemNotaFiscalEntrada.setDesconto(conferenciaEncalhe.getPrecoComDesconto());
+                    itens.add(itemNotaFiscalEntrada);
+                    
+                }
             }
             notaFiscal.setItens(itens);
             notaFiscalEntradaCotas.add(notaFiscal);
@@ -2436,7 +2442,7 @@ public class ConferenciaEncalheController extends BaseController {
 						
 						valorTotal = valorTotal.add(precoCapa.subtract(desconto).multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada())));
 						
-						valorTotalNota = valorTotalNota.add(precoCapa.subtract(desconto).multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada())));
+						valorTotalNota = valorTotalNota.add(precoComDesconto.multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada())));
 						
 						valorEncalhe = valorEncalhe.add(precoComDesconto.multiply(qtdExemplar));
 						
@@ -2487,6 +2493,7 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("valorTotal",  valorTotal.setScale(4, RoundingMode.HALF_UP));
 			dados.put("valorTotalNota", valorTotalNota);
 			dados.put("valorPagarAtualizado",  CurrencyUtil.arredondarValorParaQuatroCasas(valorPagarAtualizado));
+			
 			dados.put("idconf", info.getIdControleConferenciaEncalheCota());
 		}
 		
