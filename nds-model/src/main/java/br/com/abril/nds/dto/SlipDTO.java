@@ -36,6 +36,10 @@ public class SlipDTO {
 	
 	private String codigoBox;
 	
+	private String descricaoRoteiro;
+	
+	private String descricaoRota;
+	
 	private Long numSlip;
 	
 	private String nomeUsuario;
@@ -254,6 +258,34 @@ public class SlipDTO {
 	 */
 	public void setCodigoBox(String codigoBox) {
 		this.codigoBox = codigoBox;
+	}
+
+	/**
+	 * @return the descricaoRoteiro
+	 */
+	public String getDescricaoRoteiro() {
+		return descricaoRoteiro;
+	}
+
+	/**
+	 * @param descricaoRoteiro the descricaoRoteiro to set
+	 */
+	public void setDescricaoRoteiro(String descricaoRoteiro) {
+		this.descricaoRoteiro = descricaoRoteiro;
+	}
+
+	/**
+	 * @return the descricaoRota
+	 */
+	public String getDescricaoRota() {
+		return descricaoRota;
+	}
+
+	/**
+	 * @param descricaoRota the descricaoRota to set
+	 */
+	public void setDescricaoRota(String descricaoRota) {
+		this.descricaoRota = descricaoRota;
 	}
 
 	/**
