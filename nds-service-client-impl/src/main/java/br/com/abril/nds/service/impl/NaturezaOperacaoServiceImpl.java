@@ -81,6 +81,13 @@ public class NaturezaOperacaoServiceImpl implements NaturezaOperacaoService {
 	
 	@Override
 	@Transactional
+	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
+		
+		return this.naturezaOperacaoRepository.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
+	}
+	
+	@Override
+	@Transactional
 	public List<NaturezaOperacao> obterNaturezasOperacoes(TipoAtividade tipoAtividade){
 		
 		if (tipoAtividade == null) {

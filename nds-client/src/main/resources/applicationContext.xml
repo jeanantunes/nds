@@ -23,7 +23,9 @@
 		<constructor-arg ref="dataSource" />	
 	</bean>
 
-	<task:annotation-driven />
+	<task:annotation-driven executor="myExecutor"/>
+	
+	<task:executor id="myExecutor" pool-size="5"/>
 	
 	<util:properties id="properties" location="classpath:nds-client.properties" />		
 	<util:properties id="queries" location="classpath:/query.properties" />

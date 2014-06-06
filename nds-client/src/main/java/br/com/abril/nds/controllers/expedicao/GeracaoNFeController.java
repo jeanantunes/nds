@@ -151,7 +151,7 @@ public class GeracaoNFeController extends BaseController {
 	@Post
 	public void obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
 		
-		List<ItemDTO<Long, String>> naturezasOperacoes = notaFiscalService.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
+		List<ItemDTO<Long, String>> naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
 	
 		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
 	}
