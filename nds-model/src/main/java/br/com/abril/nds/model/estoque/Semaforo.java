@@ -34,8 +34,8 @@ public class Semaforo implements Serializable {
 	private StatusProcessoEncalhe statusProcessoEncalhe;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name="DATA_ATUALIZACAO")
-	private Date dataAtualizacao;
+	@Column(name="DATA_OPERACAO")
+	private Date dataOperacao;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DATA_INICIO")
@@ -68,12 +68,12 @@ public class Semaforo implements Serializable {
 		this.statusProcessoEncalhe = statusProcessoEncalhe;
 	}
 
-	public Date getDataAtualizacao() {
-		return dataAtualizacao;
+	public Date getDataOperacao() {
+		return dataOperacao;
 	}
 
-	public void setDataAtualizacao(Date dataAtualizacao) {
-		this.dataAtualizacao = dataAtualizacao;
+	public void setDataOperacao(Date dataAtualizacao) {
+		this.dataOperacao = dataAtualizacao;
 	}
 
 	public String getErrorLog() {
