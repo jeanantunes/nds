@@ -29,6 +29,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MonitorNFEService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ProcessoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -81,6 +82,9 @@ public class PainelMonitorNFEController extends BaseController {
 	@Autowired
 	private NotaFiscalService notaFiscalService;
 	
+	@Autowired
+	private NaturezaOperacaoService naturezaOperacaoService;
+	
 	private static final String LISTA_NFE = "listaNFE";
 	
 	private static final String NFES_PARA_IMPRESSAO_DANFES= "nfesParaImpressaoDanfes";
@@ -117,7 +121,7 @@ public class PainelMonitorNFEController extends BaseController {
 	@Post
 	public void obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
 		
-		List<ItemDTO<Long, String>> naturezasOperacoes = notaFiscalService.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
+		List<ItemDTO<Long, String>> naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
 	
 		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
 	}
