@@ -72,8 +72,8 @@ public class Semaforo implements Serializable {
 		return dataOperacao;
 	}
 
-	public void setDataOperacao(Date dataAtualizacao) {
-		this.dataOperacao = dataAtualizacao;
+	public void setDataOperacao(Date dataOperacao) {
+		this.dataOperacao = dataOperacao;
 	}
 
 	public String getErrorLog() {
