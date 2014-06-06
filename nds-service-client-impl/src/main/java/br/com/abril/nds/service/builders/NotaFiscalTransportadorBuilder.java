@@ -43,7 +43,11 @@ public class NotaFiscalTransportadorBuilder {
 		if(transportadores == null || transportadores.isEmpty()) {
 			
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setDocumento("");	
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setNome("");	
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setNome("");
+			
+			if(endereco == null){
+				endereco = new NotaFiscalEndereco();
+			}
 			endereco.setBairro("");
 			endereco.setLogradouro("");
 			endereco.setCep("");
