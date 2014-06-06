@@ -65,7 +65,7 @@ public class ImpressaoNFEController extends BaseController {
 	private FornecedorService fornecedorService;
 
 	@Autowired
-	private NaturezaOperacaoService tipoNotaFiscalService;
+	private NaturezaOperacaoService naturezaOperacaoService;
 
 	@Autowired
 	private NFeService nfeService; 
@@ -105,7 +105,7 @@ public class ImpressaoNFEController extends BaseController {
 	@Post
 	public void obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
 		
-		List<ItemDTO<Long, String>> naturezasOperacoes = notaFiscalService.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
+		List<ItemDTO<Long, String>> naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
 	
 		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
 	}
