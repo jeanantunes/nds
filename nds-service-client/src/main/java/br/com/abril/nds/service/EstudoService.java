@@ -51,4 +51,6 @@ public interface EstudoService {
     EstudoPDV gerarEstudoPDV(final EstudoGerado estudo, final Cota cota,final PDV pdv, final BigInteger reparte);
 
 	EstudoCotaGerado obterEstudoCotaGerado(Integer numeroCota, Long estudoId);
+
+	void criarRepartePorPDV(Long id);
 }
