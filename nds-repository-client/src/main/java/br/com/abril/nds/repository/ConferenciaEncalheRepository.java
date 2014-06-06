@@ -16,6 +16,19 @@ import br.com.abril.nds.util.ItemAutoComplete;
 public interface ConferenciaEncalheRepository extends Repository<ConferenciaEncalhe, Long> { 
 	
 	/**
+	 * Retorna uma lista de Id's de ConferenciaEncalhe que 
+	 * associados ao idControleConferenciaEncalheCota cujos 
+	 * produtoEdicao associados a estes não estejam na 
+	 * listaIdProdutoEdicaoConferidos.  
+	 * 
+	 * @param idControleConfEncalheCota
+	 * @param listaIdProdutoEdicaoConferidos
+	 * 
+	 * @return List - Long
+	 */
+	public List<Long> obterIdConferenciasExcluidas(Long idControleConfEncalheCota, List<Long> listaIdProdutoEdicaoConferidos);
+	
+	/**
 	 * Obtém a quantidade de itens da conferencia de encalhe.
 	 * 
 	 * @param idConferenciaEncalhe

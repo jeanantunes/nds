@@ -403,6 +403,10 @@
 	
 	this.atualizarBoxRota = function(isCotaDefined) {		
 
+		if (!T.get('codigoCota')){
+			isCotaDefined = false;
+		}
+		
 		var data = [];
 		
 		if(isCotaDefined)

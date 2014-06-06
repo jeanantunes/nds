@@ -225,26 +225,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return query.list();
 	}
 
-	@Override
-	public ProdutoEdicao obterProdutoEdicaoPorSequenciaMatriz(final Integer sequenciaMatriz, final Date dataRecolhimentoDistribuidor) {
-
-		final StringBuilder hql = new StringBuilder();
-
-		hql.append(" select chamadaEncalhe.produtoEdicao from ChamadaEncalhe chamadaEncalhe ");
-
-		hql.append(" where chamadaEncalhe.sequencia = :sequenciaMatriz ");
-
-		hql.append(" and chamadaEncalhe.dataRecolhimento = :dataRecolhimentoDistribuidor ");
-
-		final Query query = getSession().createQuery(hql.toString());
-
-		query.setParameter("sequenciaMatriz", sequenciaMatriz);
-
-		query.setParameter("dataRecolhimentoDistribuidor", dataRecolhimentoDistribuidor);
-
-		return (ProdutoEdicao) query.uniqueResult();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#obterCodigoMatrizPorProdutoEdicao(java.lang.Long, java.util.Date)

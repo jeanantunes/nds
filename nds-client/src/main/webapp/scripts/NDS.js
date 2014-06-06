@@ -459,12 +459,17 @@ function playSound(audioFile) {
  * @param errorCallBackFunction - função de callback para retorno em caso de erro
  * @param data - dados a serem enviados no formato 'dado1=x&dado2=y'
  */
-function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, dataType, method, isFromDialog,idDialog) {
-	
+function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, dataType, method, isFromDialog,idDialog, global) {
+	console.log(arguments);
+	if(global == undefined){
+		global =  true;
+	}
+
 	$.ajax({
 		type: method,
 		url: url,
 		data: data,
+		global:global,
 		async: true,
 		timeout: 18000000, //5 horas
 		dataType: dataType,
@@ -568,41 +573,41 @@ $(document).ready(function() {
 	
 	jQuery.extend({
 		
-	    put_: function(url, data, callback, errorCallback, type, isFromDialog) {
+	    put_: function(url, data, callback, errorCallback, type, isFromDialog,global) {
 	    	
-	        return ajaxRequest(url, data, callback, errorCallback, type, 'PUT', isFromDialog,idDialog);
+	        return ajaxRequest(url, data, callback, errorCallback, type, 'PUT', isFromDialog,idDialog,global);
 	    },
-	    delete_: function(url, data, callback, errorCallback, type, isFromDialog,idDialog) {
+	    delete_: function(url, data, callback, errorCallback, type, isFromDialog,idDialog,global) {
 	    	
-	    	return ajaxRequest(url, data, callback, errorCallback, type, 'DELETE', isFromDialog,idDialog);
+	    	return ajaxRequest(url, data, callback, errorCallback, type, 'DELETE', isFromDialog,idDialog,global);
 	    },
-	    post_: function(url, data, callback, errorCallback, type, isFromDialog,idDialog) {
+	    post_: function(url, data, callback, errorCallback, type, isFromDialog,idDialog,global) {
 	    	
-	    	return ajaxRequest(url, data, callback, errorCallback, type, 'POST', isFromDialog,idDialog);
+	    	return ajaxRequest(url, data, callback, errorCallback, type, 'POST', isFromDialog,idDialog,global);
 	    },
-	    get_: function(url, data, callback, errorCallback, type, isFromDialog,idDialog) {
+	    get_: function(url, data, callback, errorCallback, type, isFromDialog,idDialog,global) {
 	    	
-	    	return ajaxRequest(url, data, callback, errorCallback, type, 'GET', isFromDialog,idDialog);
+	    	return ajaxRequest(url, data, callback, errorCallback, type, 'GET', isFromDialog,idDialog,global);
 	    }
 	});
 	
 	jQuery.extend({
 		
-	    putJSON: function(url, data, callback, errorCallback, isFromDialog,idDialog) {
+	    putJSON: function(url, data, callback, errorCallback, isFromDialog,idDialog,global) {
 	    	
-	        return jQuery.put_(url, data, callback, errorCallback, 'json', isFromDialog,idDialog);
+	        return jQuery.put_(url, data, callback, errorCallback, 'json', isFromDialog,idDialog,global);
 	    },
-	    deleteJSON: function(url, data, callback, errorCallback, isFromDialog,idDialog) {
+	    deleteJSON: function(url, data, callback, errorCallback, isFromDialog,idDialog,global) {
 	    	
-	        return jQuery.delete_(url, data, callback, errorCallback, 'json', isFromDialog,idDialog);
+	        return jQuery.delete_(url, data, callback, errorCallback, 'json', isFromDialog,idDialog,global);
 	    },
-	    postJSON: function(url, data, callback, errorCallback, isFromDialog,idDialog) {
+	    postJSON: function(url, data, callback, errorCallback, isFromDialog,idDialog,global) {
 	    	
-	        return jQuery.post_(url, data, callback, errorCallback, 'json', isFromDialog,idDialog);
+	        return jQuery.post_(url, data, callback, errorCallback, 'json', isFromDialog,idDialog,global);
 	    },
-	    getJSON: function(url, data, callback, errorCallback, isFromDialog,idDialog) {
+	    getJSON: function(url, data, callback, errorCallback, isFromDialog,idDialog,global) {
 	    	
-	        return jQuery.get_(url, data, callback, errorCallback, 'json', isFromDialog,idDialog);
+	        return jQuery.get_(url, data, callback, errorCallback, 'json', isFromDialog,idDialog,global);
 	    }
 	});
 });
