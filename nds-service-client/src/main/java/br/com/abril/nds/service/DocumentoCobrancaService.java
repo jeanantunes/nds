@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
+import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
@@ -76,4 +77,39 @@ public interface DocumentoCobrancaService {
 	 * @return byte[]
 	 */
     byte[] gerarReciboCobranca(String nossoNumero);
+
+    /**
+     * SLIP DTO
+     * 
+     * Gera Slip da Cobrança
+     * 
+     * @param nossoNumero
+     * @param incluirNumeroSlip
+     * @param tpArquivo
+     * @return SlipDTO
+     */
+	SlipDTO gerarSlipDTOCobranca(Long idControleConferenciaEncalheCota,boolean incluirNumeroSlip);
+
+	/**
+     * SLIP DTO
+     * 
+     * Gera lista de SlipDTO por lista de controle de conferencia de encalhe
+     * 
+     * @param idsControleConferenciaEncalheCota
+     * @param incluirNumeroSlip
+     * @return SlipDTO
+     */
+	List<SlipDTO> gerarListaSlipDTOCobranca(List<Long> idsControleConferenciaEncalheCota,boolean incluirNumeroSlip);
+
+	/**
+     * SLIP
+     * 
+     * Gera lista de Slip da Cobranças
+     * 
+     * @param slipDTO
+     * @param tpArquivo
+     * @return List<byte[]>
+     */
+	List<byte[]> gerarListaSlipCobranca(List<SlipDTO> listaSlipDTO, TipoArquivo tpArquivo);
+	
 }
