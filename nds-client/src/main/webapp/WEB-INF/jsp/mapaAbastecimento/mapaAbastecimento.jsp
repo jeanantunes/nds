@@ -190,7 +190,7 @@
 			  
 <!-- Código Cota -->              
 <input id="codigoCota" disabled="disabled" type="text" style="width:80px; float:left; margin-right:5px;"
-			onchange="pesquisaCotaMapaAbastecimento.pesquisarPorNumeroCota('#codigoCota', '#nomeCota',false,function(){MA.atualizarBoxRota(true)});" 
+			onchange="pesquisaCotaMapaAbastecimento.pesquisarPorNumeroCota('#codigoCota', '#nomeCota',false,function(){MA.atualizarBoxRota(true)});MA.atualizarBoxRota(true);" 
 			onblur="pesquisaCotaMapaAbastecimento.pesquisarPorNumeroCota('#codigoCota', '#nomeCota',false,function(){MA.atualizarBoxRota(true)});"/>
 
 			  

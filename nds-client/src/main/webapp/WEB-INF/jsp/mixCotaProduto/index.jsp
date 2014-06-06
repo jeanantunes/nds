@@ -285,6 +285,12 @@
 	<p>A soma dos valores dos repartes definidos est&aacute; maior que o valor de reparte m&aacute;ximo. Deseja prosseguir?</p>
 	</div>
 	
+	<!-- DIALOG ALTERACAO REPARTE MIN / MAX -->
+	<div id="dialog-confirma-alteracao-reparte" title="Confirma alteração Reparte" style="display:none;">
+	<p>Ao alterar o reparte Mínimo/Máximo, os repartes por PDV serão excluídos; Com isso deverão ser cadastrados novamente.</p>
+	<p> Deseja prosseguir? </p>
+	</div>
+	
 	<!-- DIALOG NOVO MIX POR COTA -->	
 	<div id="dialog-incluir-mix-cota" style="display:none;" title="Adicionar">
 	<table id="tableNovoCota" border="0" cellspacing="1" cellpadding="1" >
