@@ -286,7 +286,7 @@
 	</div>
 	
 	<!-- DIALOG ALTERACAO REPARTE MIN / MAX -->
-	<div id="dialog-confirma-alteracao-reparte" title="Confirma altera��o Reparte" style="display:none;">
+	<div id="dialog-confirma-alteracao-reparte" title="Confirma alteração Reparte" style="display:none;">
 	<p>Ao alterar o reparte Mínimo/Máximo, os repartes por PDV serão excluídos; Com isso deverão ser cadastrados novamente.</p>
 	<p> Deseja prosseguir? </p>
 	</div>
