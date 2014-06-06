@@ -8,9 +8,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
@@ -155,7 +156,6 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         
         query.setParameterList("tipoDiferencaFaltas", Arrays.asList(TipoDiferenca.FALTA_DE,
         															TipoDiferenca.FALTA_EM,
-        															TipoDiferenca.FALTA_EM_DIRECIONADA_COTA,
         															TipoDiferenca.PERDA_DE,
         															TipoDiferenca.PERDA_EM));
         
