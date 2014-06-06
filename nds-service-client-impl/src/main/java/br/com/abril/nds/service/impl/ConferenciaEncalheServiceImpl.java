@@ -1696,7 +1696,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		semaforo.setUsuario(usuario);
 		semaforo.setStatusProcessoEncalhe(StatusProcessoEncalhe.INICIADO);
-		semaforo.setDataAtualizacao(dataOperacao);
+		semaforo.setDataOperacao(dataOperacao);
 		semaforo.setErrorLog(null);
 		semaforo.setDataInicio(new Date());
 		semaforo.setDataFim(null);
@@ -1735,7 +1735,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		} 
 		
 		semaforo.setStatusProcessoEncalhe(StatusProcessoEncalhe.FINALIZADO);
-		semaforo.setDataAtualizacao(dataOperacao);
+		semaforo.setDataOperacao(dataOperacao);
 		semaforo.setErrorLog(null);
 		semaforo.setDataFim(new Date());
 		
@@ -1770,7 +1770,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		} 
 		
 		semaforo.setStatusProcessoEncalhe(StatusProcessoEncalhe.INTERROMPIDO);
-		semaforo.setDataAtualizacao(dataOperacao);
+		semaforo.setDataOperacao(dataOperacao);
 		semaforo.setDataFim(new Date());
 		
 		String logMessage = obterDescricaoErro(e);
