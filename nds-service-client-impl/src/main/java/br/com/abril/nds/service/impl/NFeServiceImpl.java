@@ -808,12 +808,8 @@ public class NFeServiceImpl implements NFeService {
 		
 		notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 		
-		//FIXME: Ajustar o transportador Principal
-		if(transportadores == null || transportadores.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Não foi .");
-		} else {			
-			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
-		}
+		NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
+		
 		
 		notasFiscais.add(notaFiscal);
 	}
