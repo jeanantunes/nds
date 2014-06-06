@@ -1116,6 +1116,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         dto.setFase(produto.getFase());
         dto.setPacotePadrao(produto.getPacotePadrao());
         dto.setPeso(produto.getPeso());
+        dto.setFormaComercializacao(produto.getFormaComercializacao());
         
         String nomeFornecedor = "";
         if (produto.getFornecedor() != null

@@ -516,5 +516,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 
     void updateByCotaAndDataOpAndGrupos(Long idCota, Date dataOperacao, List<String> grupoMovimentoFinaceiros,
             String motivo, StatusEstoqueFinanceiro financeiroNaoProcessado);
+    
+    List<MovimentoEstoqueCota> obterMovimentosComProdutoContaFirme(final Long idLancamento);
 	
 }

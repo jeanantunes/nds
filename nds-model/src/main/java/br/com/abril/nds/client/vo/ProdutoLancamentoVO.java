@@ -72,6 +72,8 @@ public class ProdutoLancamentoVO  implements Serializable {
 	
 	private boolean possuiFuro;
 	
+	private boolean produtoContaFirme;
+	
 	
 	/**
 	 * @return the id
@@ -365,9 +367,11 @@ public class ProdutoLancamentoVO  implements Serializable {
 		this.cancelado = cancelado;
 	}
 
+	public boolean isProdutoContaFirme() {
+		return produtoContaFirme;
+	}
 
-
-	
-
-
+	public void setProdutoContaFirme(boolean produtoContaFirme) {
+		this.produtoContaFirme = produtoContaFirme;
+	}
 }
