@@ -129,8 +129,7 @@ public class FollowupController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>> efetuarConsultaChamadao(
-			FiltroFollowupChamadaoDTO filtro) {
+	private TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>> efetuarConsultaChamadao(FiltroFollowupChamadaoDTO filtro) {
 		
 		List<ConsultaFollowupChamadaoDTO> listadechamadao = this.followupchamadaoService.obterConsignados(filtro);
 		
@@ -179,8 +178,7 @@ public class FollowupController extends BaseController {
 		session.setAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE, filtroNegociacao);
 	}
 
-	private TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> efetuarConsultaDadosNegociacao(
-			FiltroFollowupNegociacaoDTO filtroNegociacao) {
+	private TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> efetuarConsultaDadosNegociacao(FiltroFollowupNegociacaoDTO filtroNegociacao) {
 		
 		Long totalRegistros = this.followupnegociacaoService.obterQuantidadeNegociacaoFollowup(filtroNegociacao);
 		
