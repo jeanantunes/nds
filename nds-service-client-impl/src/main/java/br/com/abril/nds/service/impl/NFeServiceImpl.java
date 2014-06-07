@@ -54,6 +54,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoFiscal;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.NotaFiscalTipoEmissaoRegimeEspecial;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
@@ -539,42 +540,66 @@ public class NFeServiceImpl implements NFeService {
 	private void gerarNotasConsolidadas(FiltroNFeDTO filtro, List<NotaFiscal> notas,
 			Distribuidor distribuidor, NaturezaOperacao naturezaOperacao,
 			Map<String, ParametroSistema> parametrosSistema, List<Cota> cotas) {
+		
 		boolean notasGeradas = false;
+		
 		List<Cota> cotasContribuinteEmitente = new ArrayList<Cota>();
+		
+		List<Cota> cotasNaoContribuinteEmitente = new ArrayList<Cota>();
+		
 		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+			
 			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+				
+				for (Cota cota : cotas) {
+					
+					if(cota.getParametrosCotaNotaFiscalEletronica() != null 
+							&& (cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() != null 
+							&& cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) 
+							|| (cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null 
+							&& cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica())) {
+						
+						cotasContribuinteEmitente.add(cota);
+					} else {
+						
+						cotasNaoContribuinteEmitente.add(cota);
+					}
+				}
+				
 				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
 					
-					for (Cota cota : cotas) {
+					if(cotasContribuinteEmitente.isEmpty()) {
 						
-						if(cota.getParametrosCotaNotaFiscalEletronica() != null 
-								&& (cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() != null 
-								&& cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) 
-								|| (cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null 
-								&& cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica())) {
-							
-							cotasContribuinteEmitente.add(cota);
-						}
-					}
-					
-					if(cotasContribuinteEmitente.isEmpty()){
 						throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
 					} else {
+						
 						this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasContribuinteEmitente);
 						notasGeradas = true;
 						break;
 					}
+				} else if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS)
+						&& filtro.getNotaFiscalTipoEmissao() != null
+							&& !filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {		
+					
+					this.gerarNotaFiscalUnificada(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasNaoContribuinteEmitente);
+					notasGeradas = true;
+					if(filtro.getNotaFiscalTipoEmissao() != null
+							&& filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
+						break;
+					}
+				} else if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_POR_DESTINATARIO)
+						&& filtro.getNotaFiscalTipoEmissao() != null
+							&& !filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {
+					
+					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasNaoContribuinteEmitente);
+					notasGeradas = true;
+					if(filtro.getNotaFiscalTipoEmissao() != null
+							&& filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
+						break;
+					}
 				}
 				
-				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS)) {			
-					this.gerarNotaFiscalUnificada(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema);
-					notasGeradas = true;
-					break;
-				} else {
-					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotas);
-					notasGeradas = true;
-					break;
-				}
+				this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasContribuinteEmitente);
 				
 			}
 		}
@@ -766,7 +791,8 @@ public class NFeServiceImpl implements NFeService {
 		}
 	}
 
-	private void gerarNotaFiscalUnificada(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao, Map<String, ParametroSistema> parametrosSistema) {
+	private void gerarNotaFiscalUnificada(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais, Distribuidor distribuidor, 
+			NaturezaOperacao naturezaOperacao, Map<String, ParametroSistema> parametrosSistema, List<Cota> cotas) {
 		
 		// obter as cotas que estão na tela pelo id das cotas
 		final NotaFiscal notaFiscal = new NotaFiscal();
@@ -774,7 +800,6 @@ public class NFeServiceImpl implements NFeService {
 		naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
 		naturezaOperacaoRepository.merge(naturezaOperacao);
 		
-		List<Cota> cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscal(filtro);
 		notaFiscal.setUsuario(usuarioService.getUsuarioLogado());
 		
 		Map<String, TributoAliquota> tributoAliquota = new HashMap<String, TributoAliquota>();
@@ -836,10 +861,19 @@ public class NFeServiceImpl implements NFeService {
 		
 		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
-				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)
-						|| dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS)) {
+				if(filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {
 					for (CotaExemplaresDTO cota : cotas) {
-						if((cota.isContribuinteICMS() != null && cota.isContribuinteICMS()) || (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() )){
+						if((cota.isContribuinteICMS() != null && cota.isContribuinteICMS()) 
+								|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() )) {
+							
+							cotasContribuinteEmitente.add(cota);
+						}
+					}
+				} else if(filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
+					for (CotaExemplaresDTO cota : cotas) {
+						if((cota.isContribuinteICMS() == null || !cota.isContribuinteICMS()) 
+								&& (cota.isExigeNotaFiscalEletronica() == null && !cota.isExigeNotaFiscalEletronica() )) {
+							
 							cotasContribuinteEmitente.add(cota);
 						}
 					}

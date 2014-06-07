@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroNaturezaOperacaoDTO;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
@@ -78,5 +79,7 @@ public interface NaturezaOperacaoService {
 	NaturezaOperacao obterNaturezaOperacaoVendaConsignado(TipoDestinatario tipoDestinatario);
 
 	List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario);
+
+	NotaFiscalTipoEmissaoEnum verificarRegimeEspecialNaturezaOperacao(Long naturezaOperacaoId);
 	
 }

@@ -45,8 +45,7 @@ public class CotaBloqueadaController extends BaseController {
 	public void index() {
 		
 	}
-
-
+	
 	private Map<Integer, String> obterCotasEmConferenciaEncalhe(){
 		
 		synchronized (this.session.getServletContext()) {
