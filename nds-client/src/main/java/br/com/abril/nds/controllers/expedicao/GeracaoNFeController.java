@@ -187,6 +187,10 @@ public class GeracaoNFeController extends BaseController {
 	@Transactional
 	public void pesquisar(final FiltroNFeDTO filtro, NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissaoRegimeEspecial, final String sortname, final String sortorder, final int rp, final int page) {
 		
+		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao() < 0) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione uma Natureza de Operação.");
+		}
+		
 		//FIXME: vRaptor nao instanciou dentro do filtro 
 		filtro.setNotaFiscalTipoEmissao(notaFiscalTipoEmissaoRegimeEspecial);
 		

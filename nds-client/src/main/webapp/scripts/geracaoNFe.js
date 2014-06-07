@@ -398,6 +398,11 @@ var geracaoNFeController = $.extend({
 	 */
 	pesquisar : function() {
 		
+		if($("#geracaoNfe-filtro-naturezaOperacao").val() < 0) {
+			exibirMensagem('WARNING', ['Selecione uma Natureza de Operação.']);
+			return;
+		}
+		
 		var params = [];
 		
 		params.push({name:"filtro.idNaturezaOperacao" , value: $("#geracaoNfe-filtro-naturezaOperacao").val()});
