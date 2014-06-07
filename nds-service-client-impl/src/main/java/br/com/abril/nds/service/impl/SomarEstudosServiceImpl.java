@@ -17,6 +17,7 @@ import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.SomarEstudosService;
 
 @Service
@@ -33,6 +34,9 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 
 	@Autowired
 	private DistribuicaoRepository distribuicaoRepository;
+	
+	@Autowired
+	private EstudoService estudoService;
 
 
 	@Override
@@ -105,6 +109,9 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 			
 			estudoGeradoRepository.alterar(estudo);
 			estudoGeradoRepository.remover(estudoBase);
+			
+			estudoService.criarRepartePorPDV(estudo.getId());
+			
 		}
 		
 	}

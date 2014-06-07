@@ -32,11 +32,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CobrancaImpressaoDTO;
+import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.ItemSlipVendaEncalheDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.dto.SlipDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoSlip;
@@ -64,6 +66,8 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
+import br.com.abril.nds.repository.RotaRepository;
+import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
@@ -71,7 +75,9 @@ import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
+import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -92,6 +98,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     
     @Autowired
     private CobrancaRepository cobrancaRepository;
+    
+    @Autowired
+    private RotaRepository rotaRepository;
     
     @Autowired
     private BoletoService boletoService;
@@ -125,6 +134,15 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private RotaService rotaService;
+    
+    @Autowired
+    private RoteiroService roteiroService;
+    
+    @Autowired
+    private RoteirizacaoRepository roteirizacaoRepository;
     
     /**
      * BOLETO/COBRANCA
@@ -744,7 +762,36 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return dataOperacaoConferencia.getTime();
     }
     
-	                                        /**
+    /**
+     * Obtem Informações de Roteirizacao da cota diferende de Box Especial
+     * 
+     * @param numeroCota
+     * @return ConsultaRoteirizacaoDTO
+     */
+    private ConsultaRoteirizacaoDTO getConsultaRoteirizacaoDTO(Integer numeroCota){
+    	
+        FiltroConsultaRoteirizacaoDTO filtro = new FiltroConsultaRoteirizacaoDTO();
+        
+        filtro.setNumeroCota(numeroCota);
+        
+        List<ConsultaRoteirizacaoDTO> listaRoteirizacaoDTO = this.roteirizacaoRepository.buscarRoteirizacao(filtro); 
+        
+        ConsultaRoteirizacaoDTO roteirizacaoDTO = null;
+        
+        for (ConsultaRoteirizacaoDTO item : listaRoteirizacaoDTO){
+        	
+        	if (!item.getNomeBox().equals("Especial")){
+        		
+        		roteirizacaoDTO = item;
+        		
+        		return roteirizacaoDTO;
+        	}
+        }
+        
+        return roteirizacaoDTO;
+    }
+    
+	/**
      * SLIP
      * 
      * Obtem todos os dados da impressão do Slip
@@ -769,13 +816,22 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         final Integer numeroCota 		= controleConferenciaEncalheCota.getCota().getNumeroCota();
         
         final String nomeCota 		= controleConferenciaEncalheCota.getCota().getPessoa().getNome();
-        final Date dataConferencia 	= this.obterDataOperacaoConferencia(controleConferenciaEncalheCota.getDataFim(), controleConferenciaEncalheCota.getDataOperacao());
-        final Integer codigoBox 		= controleConferenciaEncalheCota.getBox().getCodigo();
-        final Long numeroSlip 		= controleConferenciaEncalheCota.getNumeroSlip();
         
+        final Date dataConferencia 	= this.obterDataOperacaoConferencia(controleConferenciaEncalheCota.getDataFim(), controleConferenciaEncalheCota.getDataOperacao());
+
+        ConsultaRoteirizacaoDTO rDto = this.getConsultaRoteirizacaoDTO(numeroCota);
+        
+        final String descricaoRota = rDto!=null?rDto.getDescricaoRota():"";
+        
+        final String descricaoRoteiro = rDto!=null?rDto.getDescricaoRoteiro():"";
+
+        final String descricaoBox = rDto!=null?rDto.getNomeBox():"";
+
+        final Long numeroSlip 		= controleConferenciaEncalheCota.getNumeroSlip();
+
         BigInteger qtdeTotalProdutos 	   = null;
         BigDecimal valorTotalEncalhe 	   = null;
-        final BigDecimal valorTotalPagar 		   = BigDecimal.ZERO;
+        final BigDecimal valorTotalPagar   = BigDecimal.ZERO;
         
         BigDecimal valorTotalReparte = conferenciaEncalheService.obterValorTotalReparte(numeroCota, Arrays.asList(dataOperacao));
         final BigDecimal valorTotalDesconto = conferenciaEncalheService.obterValorTotalDesconto(numeroCota, dataOperacao);
@@ -817,7 +873,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         slipDTO.setNumeroCota(numeroCota);
         slipDTO.setNomeCota(nomeCota);
         slipDTO.setDataConferencia(dataConferencia);
-        slipDTO.setCodigoBox(codigoBox.toString());
+        slipDTO.setCodigoBox(descricaoBox);
+        slipDTO.setDescricaoRoteiro(descricaoRoteiro);
+        slipDTO.setDescricaoRota(descricaoRota);
         slipDTO.setTotalProdutoDia(qtdeTotalProdutos);
         slipDTO.setTotalProdutos(qtdeTotalProdutos);
         slipDTO.setValorEncalheDia(valorTotalEncalhe);
@@ -844,6 +902,8 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         parametersSlip.put("NOME_COTA", slipDTO.getNomeCota());
         parametersSlip.put("NUM_SLIP", numeroSlip.toString());
         parametersSlip.put("CODIGO_BOX", slipDTO.getCodigoBox());
+        parametersSlip.put("CODIGO_ROTEIRO", slipDTO.getDescricaoRoteiro());
+        parametersSlip.put("CODIGO_ROTA", slipDTO.getDescricaoRota());
         parametersSlip.put("DATA_CONFERENCIA", slipDTO.getDataConferencia());
         parametersSlip.put("CE_JORNALEIRO", slipDTO.getCeJornaleiro());
         parametersSlip.put("TOTAL_PRODUTOS", slipDTO.getTotalProdutos());
@@ -1180,7 +1240,90 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return gerarSlipTxtMatricial(slipDTO);
     }
     
-	                                        /**
+    /**
+     * SLIP DTO
+     * 
+     * Gera Slip da Cobrança
+     * 
+     * @param nossoNumero
+     * @param incluirNumeroSlip
+     * @return SlipDTO
+     */
+    @Override
+    @Transactional
+    public SlipDTO gerarSlipDTOCobranca(final Long idControleConferenciaEncalheCota,
+						                final boolean incluirNumeroSlip) {
+        
+    	 final SlipDTO slipDTO = setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
+         
+         if(slipDTO.getListaComposicaoCobrancaDTO().isEmpty()){
+             
+             slipDTO.getListaComposicaoCobrancaDTO().add(new DebitoCreditoCotaDTO());
+         }
+        
+        return slipDTO;
+    }    
+    
+    /**
+     * SLIP DTO
+     * 
+     * Gera lista de SlipDTO por lista de controle de conferencia de encalhe
+     * 
+     * @param idsControleConferenciaEncalheCota
+     * @param incluirNumeroSlip
+     * @return SlipDTO
+     */
+    @Override
+    @Transactional
+    public List<SlipDTO> gerarListaSlipDTOCobranca(final List<Long> idsControleConferenciaEncalheCota,
+						                           final boolean incluirNumeroSlip) {
+        
+    	List<SlipDTO> listaSlipDTO = new ArrayList<SlipDTO>();
+    	
+    	for (Long idContrlConf : idsControleConferenciaEncalheCota){
+    	     
+    		final SlipDTO slipDTO = this.gerarSlipDTOCobranca(idContrlConf, incluirNumeroSlip);
+    		
+    		listaSlipDTO.add(slipDTO);
+    	}
+
+        return listaSlipDTO;
+    }    
+    
+    /**
+     * SLIP
+     * 
+     * Gera lista de Slip da Cobranças
+     * 
+     * @param slipDTO
+     * @param tpArquivo
+     * @return List<byte[]>
+     */
+    @Override
+    @Transactional
+    public List<byte[]> gerarListaSlipCobranca(final List<SlipDTO> listaSlipDTO, final TipoArquivo tpArquivo) {
+        
+    	List<byte[]> arquivos = new ArrayList<byte[]>();
+    	
+        for (SlipDTO sDTO : listaSlipDTO){
+
+        	switch (tpArquivo) {
+            
+	            case PDF:
+	                
+	            	byte[] arq = this.gerarSlipPDF(sDTO);
+	            	
+	                arquivos.add(arq);
+	            default:
+	                
+	            	continue;
+            }
+        }
+        
+        return arquivos;
+    }
+    
+    /**
      * SLIP
      * 
      * Gera Slip da Cobrança
@@ -1193,15 +1336,10 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     @Override
     @Transactional
     public byte[] gerarSlipCobranca(final Long idControleConferenciaEncalheCota,
-            final boolean incluirNumeroSlip,
-            final TipoArquivo tpArquivo) {
+						            final boolean incluirNumeroSlip,
+						            final TipoArquivo tpArquivo) {
         
-        final SlipDTO slipDTO = setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
-        
-        if(slipDTO.getListaComposicaoCobrancaDTO().isEmpty()){
-            
-            slipDTO.getListaComposicaoCobrancaDTO().add(new DebitoCreditoCotaDTO());
-        }
+        final SlipDTO slipDTO = this.gerarSlipDTOCobranca(idControleConferenciaEncalheCota, incluirNumeroSlip);
         
         switch (tpArquivo) {
         
@@ -1214,7 +1352,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         }
     }
     
-	                                        /**
+	/**
      * SLIP
      * 
      * Gera Slip da Cobrança
@@ -1264,8 +1402,6 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             return null;
         }
     }
-    
-    
     
     /**
      * RECIBO
