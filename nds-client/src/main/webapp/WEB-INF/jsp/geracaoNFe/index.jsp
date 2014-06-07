@@ -89,15 +89,25 @@ $(function(){
 							<option value="${fornecedor.key }">${fornecedor.value }</option>
 						</c:forEach>
 				</select></td>
-				<td width="80"></td>
-				<td width="212"></td>
+				<td width="80"><span style="display:none;" class="emissaoRegimeEspecial">Emitir: </span></td>
+				<td width="210">
+					<div style="display:none;" class="emissaoRegimeEspecial">
+					<select
+						id="geracaoNfe-filtro-selectRegimeEspecialConsolidado"
+						name="selectRegimeEspecialConsolidado" style="display:none; width: 200px;">
+							<option value="COTA_CONTRIBUINTE_EXIGE_NFE">Cota Contribuinte / Exige NF-e</option>
+							<option value="CONSOLIDADO">Consolidado</option>
+							<option value="Ambos">Ambos</option>
+					</select>
+				</div>
+				</td>
 			</tr>
 			<tr>
 				<td width="100">Nat. de Opera&ccedil;&atilde;o:</td>
 				<td width="195"><select id="geracaoNfe-filtro-naturezaOperacao"
-					name="naturezaOperacao"
+					name="naturezaOperacao" onchange="geracaoNFeController.verificarRegimeEspecialNaturezaOperacao(this)"
 					style="width: 250px; font-size: 11px !important">
-						<option value="">Todos</option>
+						<option value="-1">Selecione...</option>
 
 				</select></td>
 				<td width="95">Data Movimento:</td>

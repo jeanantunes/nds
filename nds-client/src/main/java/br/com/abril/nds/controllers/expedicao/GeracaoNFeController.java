@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -157,6 +158,22 @@ public class GeracaoNFeController extends BaseController {
 	}
 	
 	@Post
+	public void verificarRegimeEspecialNaturezaOperacao(Long naturezaOperacaoId) {
+		
+		NotaFiscalTipoEmissaoEnum tipoEmissao = null;
+		if(naturezaOperacaoId != null && naturezaOperacaoId > 0) {
+			
+			tipoEmissao = naturezaOperacaoService.verificarRegimeEspecialNaturezaOperacao(naturezaOperacaoId);
+		}
+	
+		if(tipoEmissao != null) {
+			result.use(Results.json()).from(tipoEmissao, "tipoEmissaoRegimeEspecial").serialize();
+		} else {
+			result.use(Results.json()).from("", "tipoEmissaoRegimeEspecial").serialize();
+		}
+	}
+	
+	@Post
 	@Transactional
 	public void pesquisar(final FiltroNFeDTO filtro, final String sortname, final String sortorder, final int rp, final int page) {
 		
@@ -173,21 +190,22 @@ public class GeracaoNFeController extends BaseController {
 		final NaturezaOperacao naturezaOperacao = this.naturezaOperacaoService.obterNaturezaOperacaoPorId(filtro.getIdNaturezaOperacao());
 		
 		switch (naturezaOperacao.getTipoDestinatario()) {
-		case COTA:
-			cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);			
-			totalRegistros = nfeService.consultaCotaExemplareSumarizadoQtd(filtro, naturezaOperacao);
+		
+			case COTA:
+				cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);			
+				totalRegistros = nfeService.consultaCotaExemplareSumarizadoQtd(filtro, naturezaOperacao);			
+				break;
+				
+			case DISTRIBUIDOR:
+				cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);			
+				totalRegistros = nfeService.consultaCotaExemplareSumarizadoQtd(filtro, naturezaOperacao);
+				break;
+				
+			case FORNECEDOR:			
+				fornecedorExemplaresDTOs = nfeService.consultaFornecedorExemplarSumarizado(filtro, naturezaOperacao);
+				totalRegistros = nfeService.consultaFornecedorExemplaresSumarizadosQtd(filtro, naturezaOperacao);
+				break;
 			
-			break;
-			
-		case DISTRIBUIDOR:
-			cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);			
-			totalRegistros = nfeService.consultaCotaExemplareSumarizadoQtd(filtro, naturezaOperacao);
-			break;
-			
-		case FORNECEDOR:			
-			fornecedorExemplaresDTOs = nfeService.consultaFornecedorExemplarSumarizado(filtro, naturezaOperacao);
-			totalRegistros = nfeService.consultaFornecedorExemplaresSumarizadosQtd(filtro, naturezaOperacao);
-			break;
 		}
 		
 		if(naturezaOperacao.getTipoDestinatario().equals(TipoDestinatario.FORNECEDOR)) {

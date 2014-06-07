@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroNaturezaOperacaoDTO;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
@@ -184,13 +187,33 @@ public class NaturezaOperacaoServiceImpl implements NaturezaOperacaoService {
 	}
 
 	@Override
+	@Transactional
 	public NaturezaOperacao obterNaturezaOperacaoDevolucaoSimbolica(TipoDestinatario tipoDestinatario) {
 		return naturezaOperacaoRepository.obterNaturezaOperacaoDevolucaoSimbolica(distribuidorRepository.obter().getTipoAtividade(), tipoDestinatario);
 	}
 
 	@Override
+	@Transactional
 	public NaturezaOperacao obterNaturezaOperacaoVendaConsignado(TipoDestinatario tipoDestinatario) {
 		return naturezaOperacaoRepository.obterNaturezaOperacaoVendaConsignado(distribuidorRepository.obter().getTipoAtividade(), tipoDestinatario);
+	}
+
+	@Override
+	@Transactional
+	public NotaFiscalTipoEmissaoEnum verificarRegimeEspecialNaturezaOperacao(Long naturezaOperacaoId) {
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		NaturezaOperacao naturezaOperacao = naturezaOperacaoRepository.buscarPorId(naturezaOperacaoId);
+		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+			if(dtnf.getNaturezaOperacao() != null && !dtnf.getNaturezaOperacao().isEmpty()) {
+				if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+					return dtnf.getTipoEmissao().getTipoEmissao();
+				}
+			}
+		}		
+		
+		return null;
 	}
 
 }

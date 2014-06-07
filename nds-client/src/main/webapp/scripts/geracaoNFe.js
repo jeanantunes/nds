@@ -45,6 +45,11 @@ var geracaoNFeController = $.extend({
 			
 			$("#geracaoNfe-filtro-naturezaOperacao").empty();
 			
+			$('#geracaoNfe-filtro-naturezaOperacao').append($('<option>', { 
+		        value: '-1',
+		        text : 'Selecione...'
+		    }));
+			
 			$.each(data.rows, function (i, row) {
 			    $('#geracaoNfe-filtro-naturezaOperacao').append($('<option>', { 
 			        value: row.cell.key,
@@ -87,6 +92,13 @@ var geracaoNFeController = $.extend({
 			selectedList : 6,
 		});
 		$("#geracaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+		
+		$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect({
+			multiple : false,
+			selectedList : 1,
+			minWidth : 212,
+		});
+		$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("disable");
 		
 		$("#geracaoNfe-filtro-selectFornecedores").multiselect({
 			selectedList : 6
@@ -398,6 +410,7 @@ var geracaoNFeController = $.extend({
 		params.push({name:"filtro.dataEmissao" , value: $("#geracaoNfe-filtro-dataEmissao").val()});
 		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-selectRoteiro").val()});
 		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-selectRota").val()});
+		params.push({name:"filtro.notaFiscalTipoEmissao" , value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
 		
 		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
 			$.each($("#geracaoNfe-filtro-selectFornecedores").val(), function(index, v) {
@@ -647,6 +660,11 @@ var geracaoNFeController = $.extend({
 			
 			$("#geracaoNfe-filtro-naturezaOperacao").empty();
 			
+			$('#geracaoNfe-filtro-naturezaOperacao').append($('<option>', { 
+		        value: '-1',
+		        text : 'Selecione...'
+		    }));
+			
 			$.each(data.rows, function (i, row) {
 			    $('#geracaoNfe-filtro-naturezaOperacao').append($('<option>', { 
 			        value: row.cell.key,
@@ -654,8 +672,34 @@ var geracaoNFeController = $.extend({
 			    }));
 			});
 			
+			geracaoNFeController.verificarRegimeEspecialNaturezaOperacao($('#geracaoNfe-filtro-naturezaOperacao'));
+			
 		});
 		
+	},
+	
+	verificarRegimeEspecialNaturezaOperacao : function(el) {
+		params = [];
+		params.push({name: 'naturezaOperacaoId', value: el.value});
+		$.postJSON(this.path + 'verificarRegimeEspecialNaturezaOperacao', params, function(data) {
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
+
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+			}
+			
+			if(data.tipoEmissaoRegimeEspecial == 'CONSOLIDA_EMISSAO_POR_DESTINATARIO'
+				|| data.tipoEmissaoRegimeEspecial == 'CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS') {
+				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("enable");
+				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("show");
+				$(".emissaoRegimeEspecial").show();
+			} else {
+				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("disable");
+				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("hide");
+				$(".emissaoRegimeEspecial").hide();
+			}
+		});
 	},
 	
 	/**

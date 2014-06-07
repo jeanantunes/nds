@@ -50,5 +50,5 @@ public interface NaturezaOperacaoRepository extends Repository<NaturezaOperacao,
 	NaturezaOperacao obterNaturezaOperacaoVendaConsignado(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario);
 
 	List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario);
-	
+
 }

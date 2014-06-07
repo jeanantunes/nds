@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoRegimeEspecial;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -36,6 +37,8 @@ public class FiltroNFeDTO implements Serializable {
 	private Long idCota;
 	
 	private Long idFornecedor;
+	
+	private NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissao;
 	
 	private List<Long> listIdFornecedor; 
 	
@@ -121,6 +124,14 @@ public class FiltroNFeDTO implements Serializable {
 
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
+	}
+
+	public NotaFiscalTipoEmissaoRegimeEspecial getNotaFiscalTipoEmissao() {
+		return notaFiscalTipoEmissao;
+	}
+
+	public void setNotaFiscalTipoEmissao(NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissao) {
+		this.notaFiscalTipoEmissao = notaFiscalTipoEmissao;
 	}
 
 	public List<Long> getListIdFornecedor() {
