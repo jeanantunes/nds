@@ -95,9 +95,9 @@ $(function(){
 					<select
 						id="geracaoNfe-filtro-selectRegimeEspecialConsolidado"
 						name="selectRegimeEspecialConsolidado" style="display:none; width: 200px;">
-							<option value="COTA_CONTRIBUINTE_EXIGE_NFE">Cota Contribuinte / Exige NF-e</option>
-							<option value="CONSOLIDADO">Consolidado</option>
-							<option value="Ambos">Ambos</option>
+						<c:forEach items="${tiposEmissaoRegimeEspecial}" var="tipoEmissaoRegimeEspecial">
+							<option value="${tipoEmissaoRegimeEspecial}">${tipoEmissaoRegimeEspecial.descricao }</option>
+						</c:forEach>
 					</select>
 				</div>
 				</td>

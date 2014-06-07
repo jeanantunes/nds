@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.NotaFiscalTipoEmissaoRegimeEspecial;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
@@ -98,6 +99,7 @@ public class GeracaoNFeController extends BaseController {
 		this.iniciarComboRota();
 		this.obterTiposDestinatarios();
 		this.iniciarComboBox();
+		this.iniciarTiposEmissaoRegimeEspecial();
 		
 	}
 
@@ -112,6 +114,13 @@ public class GeracaoNFeController extends BaseController {
 	private void obterTodosFornecedoresAtivos() {
 		result.include("fornecedores", fornecedorService.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
 	}
+	
+	private void iniciarTiposEmissaoRegimeEspecial() {
+		result.include("tiposEmissaoRegimeEspecial", NotaFiscalTipoEmissaoRegimeEspecial.values());
+	}
+	
+	
+	
 	
 	/**
      * Inicia o combo Box
@@ -137,6 +146,7 @@ public class GeracaoNFeController extends BaseController {
 	}
 
 	private void iniciarComboRota() {
+		
 		List<Rota> rotas = this.roteirizacaoService.buscarRota(null, null);
 		
 		List<ItemDTO<Long, String>> listRota = new ArrayList<ItemDTO<Long,String>>();
@@ -175,7 +185,10 @@ public class GeracaoNFeController extends BaseController {
 	
 	@Post
 	@Transactional
-	public void pesquisar(final FiltroNFeDTO filtro, final String sortname, final String sortorder, final int rp, final int page) {
+	public void pesquisar(final FiltroNFeDTO filtro, NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissaoRegimeEspecial, final String sortname, final String sortorder, final int rp, final int page) {
+		
+		//FIXME: vRaptor nao instanciou dentro do filtro 
+		filtro.setNotaFiscalTipoEmissao(notaFiscalTipoEmissaoRegimeEspecial);
 		
 		List<CotaExemplaresDTO> cotaExemplaresDTOs = null;
 		List<FornecedorExemplaresDTO> fornecedorExemplaresDTOs = null;

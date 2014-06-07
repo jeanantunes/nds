@@ -18,12 +18,6 @@ public class NotaFiscalTipoEmissao {
 		CONSOLIDA_EMISSAO_POR_DESTINATARIO
 	}
 	
-	public enum NotaFiscalTipoEmissaoRegimeEspecial {
-		COTA_CONTRIBUINTE_EXIGE_NFE,
-		CONSOLIDADO,
-		AMBOS
-	}
-	
 	@Id
 	@GeneratedValue
 	private Long id;
