@@ -88,9 +88,12 @@ public class ItemNotaFiscalBuilder  {
 			}
 		}
 		
-		// popular os itens das notas fiscais
-		// notaFiscalItem.setNotaFiscal(notaFiscal2);
-		notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().add(detalheNotaFiscal);
+		if(detalheNotaFiscal != null && detalheNotaFiscal.getProdutoServico() != null){ 
+			// popular os itens das notas fiscais
+			// notaFiscalItem.setNotaFiscal(notaFiscal2);
+			notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().add(detalheNotaFiscal);
+		}
+		
 		
 	}
 
