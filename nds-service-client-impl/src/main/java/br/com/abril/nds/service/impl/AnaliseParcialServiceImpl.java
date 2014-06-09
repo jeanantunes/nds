@@ -241,6 +241,10 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 				switch (itemCota.getLeg()) {
 				case "MX":
 					
+					if(estGerado.getProdutoEdicao().getTipoClassificacaoProduto() == null){
+						break;
+					}
+					
 					MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaProduto(cota.getId(), estGerado.getProdutoEdicao().getTipoClassificacaoProduto().getId(), estGerado.getProdutoEdicao().getProduto().getCodigoICD());
 					
 					for (RepartePDV pdvMix : mixCotaProduto.getRepartesPDV()) {
@@ -252,6 +256,10 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 					break;
 
 				case "FX":
+					
+					if(estGerado.getProdutoEdicao().getTipoClassificacaoProduto() == null){
+						break;
+					}
 					
 					FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCotaClassificacao(cota, estGerado.getProdutoEdicao().getProduto().getCodigoICD(), estGerado.getProdutoEdicao().getTipoClassificacaoProduto());
 					
