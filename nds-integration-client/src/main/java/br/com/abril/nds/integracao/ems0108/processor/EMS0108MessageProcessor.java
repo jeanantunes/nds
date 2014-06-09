@@ -77,6 +77,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		
 		messageAux = message;
 		
+		/*
 		ndsiLoggerFactory.getLogger().logError(
 				message,
 				EventoExecucaoEnum.HIERARQUIA,
@@ -84,7 +85,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			);
 		
 		System.out.println("Inicio da verificacao");
-		
+		*/
 		// Verifica se existe Produto		
 		Produto produto = recuperaProduto(input.getCodigoPublicacao());
 		if (null == produto) {
@@ -100,19 +101,19 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			}
 		}*/
 		
-		
+		/*
 		ndsiLoggerFactory.getLogger().logError(
 				message,
 				EventoExecucaoEnum.HIERARQUIA,
 				String.format( "Inicio do Registro de Lancamento" )
 			);
-		
-		System.out.println("Inicio do Registro de Lancamento");
+		*/
+		//System.out.println("Inicio do Registro de Lancamento");
 		
 		// regra para Registro de Lancamento 		
 		regraLancamento(message, input, produto);
 		
-		
+		/*
 		ndsiLoggerFactory.getLogger().logError(
 				message,
 				EventoExecucaoEnum.HIERARQUIA,
@@ -120,7 +121,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			);
 		
 		System.out.println("Inicio do Registro de Recolhimento");
-		
+		*/
 		// regra para Registro de Recolhimento 
 		regraRecolhimento(message, input);		
 		
@@ -134,7 +135,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logError(
 						message,
 						EventoExecucaoEnum.HIERARQUIA,
-                        String.format("Produto %1$s Edicao %2$s não cadastrada.", input.getCodigoPublicacao(), input
+                        String.format("Produto %1$s Edição %2$s não cadastrada.", input.getCodigoPublicacao(), input
                                 .getEdicaoRecolhimento().toString())
 					);
 				return;
@@ -149,7 +150,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 					ndsiLoggerFactory.getLogger().logError(
 							message,
 							EventoExecucaoEnum.ERRO_INFRA,
-							String.format( "Erro ao converter data %1$s Produto %2$s Edicao %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
+							String.format( "Erro ao converter data %1$s Produto %2$s Edicão %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
 					return;
 				}
                 lancamento = this.recuperarRecolhimento(produtoEdicaoRecolhimento, dataLancamentoRecolhimentoProduto);
@@ -224,57 +225,73 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 	private void regraLancamento(Message message, EMS0108Input input,
 			Produto produto) {
-		
+		/*
 		ndsiLoggerFactory.getLogger().logError(
 				message,
 				EventoExecucaoEnum.HIERARQUIA,
 				String.format( "regraLancamento(1) " )
 			);
-		
+		*/
 		if (!input.getEdicaoLancamento().equals(0L)) {
 			ProdutoEdicao produtoEdicaoLancamento = this.recuperarProdutoEdicao(input.getCodigoPublicacao(), input.getEdicaoLancamento());		
 			if (null == produtoEdicaoLancamento) {
 				produtoEdicaoLancamento = inserirProdutoEdicao(input, produto);
 				
+				/*
 				ndsiLoggerFactory.getLogger().logError(
 						message,
 						EventoExecucaoEnum.HIERARQUIA,
 						String.format( "regraLancamento(2) " )
 					);
-				
+				*/
 				// no caso de inserir uma nova edicao atualiza o peso do produto aaa
+				if(input.getPesoProduto()!=null && input.getPesoProduto().intValue()!=0){
+				ndsiLoggerFactory.getLogger().logError(
+						message,
+						EventoExecucaoEnum.HIERARQUIA,
+	                    String.format("Alteração de Peso"
+	                    		    + " de "+produto.getPeso()
+	                    		    + " para "+input.getPesoProduto()
+	                    		    + " Produto "+input.getCodigoPublicacao())
+					);
 				produto.setPeso(input.getPesoProduto());
+				}
 				
+				/*
 				ndsiLoggerFactory.getLogger().logError(
 						message,
 						EventoExecucaoEnum.HIERARQUIA,
 						String.format( "regraLancamento(3)" )
 					);
+				*/
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						String.format( "Produto %1$s Edicao %2$s cadastrada. ", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString() )
+						String.format( "Produto %1$s Edição %2$s cadastrada. ", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString() )
 					);
 				
 				this.getSession().merge(produto);
 				
+				/*
 				ndsiLoggerFactory.getLogger().logError(
 						message,
 						EventoExecucaoEnum.HIERARQUIA,
 						String.format( "regraLancamento(4) merge" )
 					);
-				
+				*/
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						String.format( "Produto %1$s Edicao %2$s cadastrada. ", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString() )
 					);
 			} else {
+				/*
 				ndsiLoggerFactory.getLogger().logError(
 						message,
 						EventoExecucaoEnum.HIERARQUIA,
 						String.format( "regraLancamento(5) atualizarProdutoEdicao" )
 					);
+				*/
 				produtoEdicaoLancamento = atualizarProdutoEdicao(input, produto, produtoEdicaoLancamento);
 			}
 			
@@ -297,7 +314,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 					ndsiLoggerFactory.getLogger().logError(
 							message,
 							EventoExecucaoEnum.ERRO_INFRA,
-							String.format( "Erro ao converter data %1$s Produto %2$s Edicao %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
+							String.format( "Erro ao converter data %1$s Produto %2$s Edição %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
 					return;
 				}
 				
@@ -311,7 +328,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logWarning(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						String.format( "Foi criado um lancamento para o Produto %1$s Edicao %2$s. Na data de lancamento %3$s", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString(), dataMovimento)
+						String.format( "Foi criado um lançamento para o Produto %1$s Edição %2$s. Na data de lançamento %3$s", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString(), dataMovimento)
 					);				
 			} else {
                 Date dataLancamentoRecolhimentoProduto = null;
@@ -323,7 +340,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
                     ndsiLoggerFactory.getLogger().logError(
                             message,
                             EventoExecucaoEnum.ERRO_INFRA,
-                            String.format("Erro ao converter data %1$s Produto %2$s Edicao %3$s.", input
+                            String.format("Erro ao converter data %1$s Produto %2$s Edição %3$s.", input
                                     .getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input
                                     .getEdicaoRecolhimento().toString()));
                 }
@@ -348,7 +365,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 							ndsiLoggerFactory.getLogger().logError(
 									message,
 									EventoExecucaoEnum.INF_DADO_ALTERADO,
-									String.format("Erro ao processar as parcias para o Produto %1$s Edicao %2$s. " + e.getMessage(),
+									String.format("Erro ao processar as Parcias para o Produto %1$s Edição %2$s " + e.getMessage(),
 												  input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString() ));
 							return;
 						}
@@ -505,51 +522,59 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logError(
 					messageAux,
 					EventoExecucaoEnum.HIERARQUIA,
-					String.format( "atualizarProdutoEdicao - Produto:"+produto.getCodigo()+" com Periodicidade nula." )
+					String.format( "Atualizar Produto Edicão. Produto:"+produto.getCodigo()+" com Periodicidade nula." )
 				);
 		  produto.setPeriodicidade(getPeriodicidade(1));
 		}
-		
+		/*
 		ndsiLoggerFactory.getLogger().logError(
 				messageAux,
 				EventoExecucaoEnum.HIERARQUIA,
 				String.format( "atualizarProdutoEdicao(3) " )
 			);
+		*/
 		produto.setTributacaoFiscal(getTributacaoFiscal(input.getTributacaoFiscal()));
 		
+		/*
 		ndsiLoggerFactory.getLogger().logError(
 				messageAux,
 				EventoExecucaoEnum.HIERARQUIA,
 				String.format( "atualizarProdutoEdicao(4) " )
 			);
+		*/
 		this.getSession().persist(produto);
-		
+		/*
 		ndsiLoggerFactory.getLogger().logError(
 				messageAux,
 				EventoExecucaoEnum.HIERARQUIA,
 				String.format( "atualizarProdutoEdicao(5) " )
 			);
+			*/
 		if(input.getPEB()!=null){
 		  produtoEdicao.setPeb(input.getPEB());
 		}else {
 			produtoEdicao.setPeb(1);
 		}
+		/*
 		ndsiLoggerFactory.getLogger().logError(
 				messageAux,
 				EventoExecucaoEnum.HIERARQUIA,
 				String.format( "atualizarProdutoEdicao(6) " )
 			);
+			*/
 		if(input.getPacotePadrao()!=null){
 		produtoEdicao.setPacotePadrao(input.getPacotePadrao());
 		}else {
 			produtoEdicao.setPacotePadrao(1);
 		}
 
+		/*
 		ndsiLoggerFactory.getLogger().logError(
 				messageAux,
 				EventoExecucaoEnum.HIERARQUIA,
 				String.format( "atualizarProdutoEdicao(7) " )
 			);
+		*/
 		
 		DescontoLogistica descontoLogistica;
 		
@@ -557,7 +582,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		
 		Integer tipoDesconto = input.getTipoDesconto();
 		
-		if(tipoDesconto == null){
+		if(tipoDesconto == null || tipoDesconto==0){
 		 
 		    tipoDesconto = 1;
 		}
@@ -567,28 +592,35 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
                                                                        fornecedor.getId(),
                                                                        input.getDataMovimento());
 		
+		/*
 		ndsiLoggerFactory.getLogger().logError(
 				messageAux,
 				EventoExecucaoEnum.HIERARQUIA,
 				String.format( "atualizarProdutoEdicao(8) " )
 			);
+		*/
 		
 		if(input.getPercentualDesconto()!=null){
 		  produtoEdicao.setDesconto(input.getPercentualDesconto());
 		}else {
 			produtoEdicao.setDesconto(new BigDecimal(1));
 		}
+		/*
 		ndsiLoggerFactory.getLogger().logError(
 				messageAux,
 				EventoExecucaoEnum.HIERARQUIA,
 				String.format( "atualizarProdutoEdicao(9) " )
 			);
+		*/
 		produtoEdicao.setDescricaoDesconto(descontoLogistica.getDescricao());
+		
+		/*
 		ndsiLoggerFactory.getLogger().logError(
 				messageAux,
 				EventoExecucaoEnum.HIERARQUIA,
 				String.format( "atualizarProdutoEdicao(10) " )
 			);
+		*/
 		this.getSession().persist(produtoEdicao);
 		
 		return produtoEdicao;
