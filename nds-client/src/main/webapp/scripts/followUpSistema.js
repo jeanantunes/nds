@@ -643,14 +643,14 @@ var followUpSistemaController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					entradaNFETerceirosController.cadastrarNota(idControleConferenciaEncalheCota);
+					followUpSistemaController.cadastrarNota(idControleConferenciaEncalheCota);
 					$( this ).dialog( "close" );					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
 			},
-			form: $("#dialog-nfe", this.workspace).parents("form")
+			form: $("#followup-dialog-nfe", this.workspace).parents("form")
 		});
 	},
 	
@@ -705,5 +705,27 @@ var followUpSistemaController = $.extend(true, {
 			modal: true
 		});	
 	},
+	
+	cadastrarNota : function(idControleConferenciaEncalheCota){		
+
+		$.postJSON(
+				this.path +'cadastrarNota',
+				[
+					{ name: "nota.numero", value: $('#followupNumeroNotaCadastroNota', this.workspace).val() },
+					{ name: "nota.serie", value: $('#followupSerieNotaCadastroNota', this.workspace).val() },
+					{ name: "nota.chaveAcesso", value: $('#followupChaveAcessoCadastroNota', this.workspace).val() },
+					{ name: "nota.valorNF", value: $('#followupValorNotaCadastroNota', this.workspace).val() },
+					{ name: "numeroCota", value: $('#followupCotaCadastroNota', this.workspace).val() },
+					{ name: "idControleConferenciaEncalheCota", value: idControleConferenciaEncalheCota }
+				],
+				function(result) {
+					if (result.listaMensagens) {
+						exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					}
+				},
+				null, true
+			);
+	},
+	
 }, BaseController);
 //@ sourceURL=followUpSistema.js

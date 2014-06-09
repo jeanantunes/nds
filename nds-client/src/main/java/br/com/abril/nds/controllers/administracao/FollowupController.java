@@ -28,6 +28,7 @@ import br.com.abril.nds.dto.filtro.FiltroFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupStatusCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FollowupCadastroParcialService;
 import br.com.abril.nds.service.FollowupCadastroService;
@@ -36,6 +37,7 @@ import br.com.abril.nds.service.FollowupDistribuicaoService;
 import br.com.abril.nds.service.FollowupNegociacaoService;
 import br.com.abril.nds.service.FollowupPendenciaNFeService;
 import br.com.abril.nds.service.FollowupStatusCotaService;
+import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -97,6 +99,9 @@ public class FollowupController extends BaseController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private NotaFiscalEntradaService notaFiscalEntradaService;
 	
 	private static final String FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "filtroFollowupConsignados";
 	private static final String FILTRO_FOLLOWUP_PENDENCIA_NFE_SESSION_ATTRIBUTE = "filtroFollowupPendenciaNFE";
@@ -388,9 +393,8 @@ public class FollowupController extends BaseController {
 	
 	
 	private TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> efetuarConsultaDadosPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
-		
-		
-		TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>>();
+
+	    TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>>();
 		
 		Long totalRegistros = followuppendencianfeService.totalPendenciaNFEEncalhe(filtro);
 		
@@ -467,7 +471,6 @@ public class FollowupController extends BaseController {
 		
 	/**
 	 * Imprime Negociacao
-	 * 
 	 * @param fileType
 	 * @throws IOException
 	 */
@@ -489,8 +492,7 @@ public class FollowupController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-		FileExporter.to("FollowUp_dados_negociacao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroNegociacao, 
-				lista, ConsultaFollowupNegociacaoDTO.class, this.httpResponse);
+		FileExporter.to("FollowUp_dados_negociacao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroNegociacao, lista, ConsultaFollowupNegociacaoDTO.class, this.httpResponse);
 		
 		result.nothing();
 	}
@@ -543,8 +545,7 @@ public class FollowupController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-		FileExporter.to("FollowUp_pendencias_nfe", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
-				listasdependencias, ConsultaFollowupPendenciaNFeDTO.class, this.httpResponse);
+		FileExporter.to("FollowUp_pendencias_nfe", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listasdependencias, ConsultaFollowupPendenciaNFeDTO.class, this.httpResponse);
 		
 		result.nothing();
 	}
@@ -638,6 +639,18 @@ public class FollowupController extends BaseController {
 		result.nothing();
 	}
 
+	@Post
+    @Path("/cadastrarNota")
+    @Rules(Permissao.ROLE_NFE_ENTRADA_NFE_FOLLWOUP_ALTERACAO)  
+    public void cadastrarNota(final NotaFiscalEntradaCota nota, final Integer numeroCota, final Long idControleConferenciaEncalheCota){
+        this.notaFiscalEntradaService.inserirNotaFiscal(nota, numeroCota, idControleConferenciaEncalheCota);
+
+        final ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro efetuado com sucesso.");
+        
+        result.use(Results.json()).from(validacao, "result").recursive().serialize();
+        
+    }
+	
 	/**
 	 * Remove os valores da paginação
 	 * 

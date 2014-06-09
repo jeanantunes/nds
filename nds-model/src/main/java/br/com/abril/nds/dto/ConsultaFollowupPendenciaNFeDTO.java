@@ -36,6 +36,16 @@ public class ConsultaFollowupPendenciaNFeDTO implements Serializable {
    	
    	private String valorDiferencaFormatado;
    	
+   	private Long idNotaFiscalEntrada;
+	
+	private Long numeroNfe;
+	
+	private String serie;
+	
+	private String chaveAcesso;
+	
+	private Long idControleConferenciaEncalheCota;
+   	
    	public ConsultaFollowupPendenciaNFeDTO() {}
 
 	public ConsultaFollowupPendenciaNFeDTO( Integer numeroCota, String nomeJornaleiro,	

@@ -21,16 +21,20 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ConsultaFollowupPendenciaNFeDTO> obterConsignadosParaChamadao(FiltroFollowupPendenciaNFeDTO filtro) {
+	public List<ConsultaFollowupPendenciaNFeDTO> obterPendencias(FiltroFollowupPendenciaNFeDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT cota.numeroCota as numeroCota, ");
-		hql.append("pessoa.nome as nomeJornaleiro, ");
-		hql.append("conf.data as dataEntrada, ");		
-		hql.append("notaCota.statusNotaFiscal as tipoPendencia, ");		
-		hql.append("((conf.qtdeInformada * conf.precoComDesconto) -  (conf.qtde * conf.precoComDesconto)) as valorDiferenca, ");
-		hql.append(" concat(telefone.ddd, ' ', telefone.numero)  as numeroTelefone ");		
+		hql.append(" SELECT cota.numeroCota as numeroCota, ");
+		hql.append(" pessoa.nome as nomeJornaleiro, ");
+		hql.append(" conf.data as dataEntrada, ");		
+		hql.append(" notaCota.statusNotaFiscal as tipoPendencia, ");		
+		hql.append(" ((conf.qtdeInformada * conf.precoComDesconto) -  (conf.qtde * conf.precoComDesconto)) as valorDiferenca, ");
+		hql.append(" concat(telefone.ddd, ' ', telefone.numero)  as numeroTelefone ");
+		hql.append(" notaCota.serie as serie, ");
+		hql.append(" notaCota.chaveAcesso as chaveAcesso, ");
+		hql.append(" notaCota.numero as numeroNfe, ");
+		hql.append(" notaCota.id as idNotaFiscalEntrada, ");
 		
 		hql.append(getSqlFromEWhereNotaPendente(filtro));
 		
