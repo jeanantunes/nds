@@ -48,9 +48,7 @@ public class ConsultaFollowupPendenciaNFeDTO implements Serializable {
    	
    	public ConsultaFollowupPendenciaNFeDTO() {}
 
-	public ConsultaFollowupPendenciaNFeDTO( Integer numeroCota, String nomeJornaleiro,	
-			StatusNotaFiscalEntrada tipoPendencia, String dataEntrada,
-   	    BigDecimal valorDiferenca, String numeroTelefone ) {
+	public ConsultaFollowupPendenciaNFeDTO(Integer numeroCota, String nomeJornaleiro, StatusNotaFiscalEntrada tipoPendencia, String dataEntrada, BigDecimal valorDiferenca, String numeroTelefone ) {
         this.numeroCota = numeroCota;	
         this.nomeJornaleiro = nomeJornaleiro;	
         this.tipoPendencia = tipoPendencia;	
@@ -114,5 +112,55 @@ public class ConsultaFollowupPendenciaNFeDTO implements Serializable {
 	public void setNumeroTelefone(String numeroTelefone) {
 		this.numeroTelefone = numeroTelefone;
 	}
+
+	public Long getIdNotaFiscalEntrada() {
+		return idNotaFiscalEntrada;
+	}
+
+	public void setIdNotaFiscalEntrada(Long idNotaFiscalEntrada) {
+		this.idNotaFiscalEntrada = idNotaFiscalEntrada;
+	}
+
+	public Long getNumeroNfe() {
+		return numeroNfe;
+	}
+
+	public void setNumeroNfe(Long numeroNfe) {
+		this.numeroNfe = numeroNfe;
+	}
+
+	public String getSerie() {
+		return serie;
+	}
+
+	public void setSerie(String serie) {
+		this.serie = serie;
+	}
+
+	public String getChaveAcesso() {
+		return chaveAcesso;
+	}
+
+	public void setChaveAcesso(String chaveAcesso) {
+		this.chaveAcesso = chaveAcesso;
+	}
+
+	public Long getIdControleConferenciaEncalheCota() {
+		return idControleConferenciaEncalheCota;
+	}
+
+	public void setIdControleConferenciaEncalheCota(
+			Long idControleConferenciaEncalheCota) {
+		this.idControleConferenciaEncalheCota = idControleConferenciaEncalheCota;
+	}
+
+	public void setDataEntrada(String dataEntrada) {
+		this.dataEntrada = dataEntrada;
+	}
+
+	public void setValorDiferencaFormatado(String valorDiferencaFormatado) {
+		this.valorDiferencaFormatado = valorDiferencaFormatado;
+	}
+	
 	
 }
