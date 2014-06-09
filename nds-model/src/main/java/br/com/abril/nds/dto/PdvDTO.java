@@ -98,6 +98,9 @@ public class PdvDTO implements Serializable {
     
     private Integer reparte;
     
+//    private Integer repartePDV;
+    
+    
 	/**
 	 * @return the expositor
 	 */
@@ -646,7 +649,13 @@ public class PdvDTO implements Serializable {
 	public void setReparte(Integer reparte) {
 		this.reparte = reparte;
 	}
-	
-	
-	
+
+//	public Integer getRepartePDV() {
+//		return repartePDV;
+//	}
+//
+//	public void setRepartePDV(Integer repartePDV) {
+//		this.repartePDV = repartePDV;
+//	}
+
 }

@@ -412,6 +412,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	
 	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
         estudoService.gravarDadosVendaMedia(estudo.getId(), distribuicaoVendaMedia);
+        
+    estudoService.criarRepartePorPDV(estudo.getId());
+        
 	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
 
 	List<Object> response = new ArrayList<>();

@@ -48,6 +48,16 @@ import br.com.abril.nds.util.Intervalo;
  */
 public interface CotaRepository extends Repository<Cota, Long> {
     
+	/**
+	 * Realiza um select for update no registro de cota
+	 * 
+	 * @param numeroCota
+	 * 
+	 * @return Cota
+	 */
+    public Cota selectForUpdate(Long numeroCota);
+
+	
     /**
      * Obtém uma Cota pelo seu número.
      * 

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -27,6 +26,14 @@ import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 import br.com.abril.nds.util.ItemAutoComplete;
 
 public interface ConferenciaEncalheService {
+
+	public void sinalizarFimProcessoEncalhe(Integer numeroCota);
+
+	public void sinalizarErroProcessoEncalhe(Integer numeroCota, Exception e);
+	
+	public void validarCotaProcessandoEncalhe(Integer numeroCota);
+
+	public void criarBackupConferenciaEncalhe(Usuario usuario, Cota cota, final List<ConferenciaEncalheDTO> listaConferenciaEncalhe);
 	
 	/**
 	 * Obtém mapa tendo como chave idFornecedor e valor 
@@ -186,18 +193,6 @@ public interface ConferenciaEncalheService {
 	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long id) throws EncalheRecolhimentoParcialException;
 	
 	/**
-	 * Obtém dados do produtoEdicao através do código SM do mesmo se houver chamada de encalhe.
-	 * 
-	 * @param numeroCota
-	 * @param sm
-	 * 
-	 * @return ProdutoEdicaoDTO
-	 * 
-	 * @throws EncalheRecolhimentoParcialException
-	 */
-	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws EncalheRecolhimentoParcialException;
-	
-	/**
 	 * Obtém detalhes do item de conferencia de encalhe.
 	 * 
 	 * @param numeroCota
@@ -213,7 +208,6 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @param controleConfEncalheCota
 	 * @param listaConferenciaEncalhe
-	 * @param listaIdConferenciaEncalheParaExclusao
 	 * @param usuario
 	 * @param indConferenciaContingencia
 	 * 
@@ -225,7 +219,6 @@ public interface ConferenciaEncalheService {
 	public Long salvarDadosConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
-			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario,
 			boolean indConferenciaContingencia) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException;
 	
@@ -238,15 +231,15 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @param controleConfEncalheCota
 	 * @param listaConferenciaEncalhe
-	 * @param listaIdConferenciaEncalheParaExclusao
 	 * @param usuario
 	 * @param indConferenciaContingencia
 	 * @param reparte
+	 * 
+	 * @return DadosDocumentacaoConfEncalheCotaDTO
 	 */
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
-			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario,
 			boolean indConferenciaContingencia,
 			BigDecimal reparte) throws GerarCobrancaValidacaoException;

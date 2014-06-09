@@ -723,8 +723,17 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		mix.setDataHora(GregorianCalendar.getInstance().getTime());
 		mix.setUsuario(usuarioService.getUsuarioLogado());
 		
+		for(RepartePDV pdvMix : mix.getRepartesPDV()){
+			pdvMix.setReparte(0);
+		}
+		
 		this.mixCotaProdutoRepository.alterar(mix);
 			
 		
+	}
+
+	@Override
+	public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long tipoClassifProdId, String codigoICD) {
+		return mixCotaProdutoRepository.obterMixPorCotaProduto(cotaId, tipoClassifProdId, codigoICD);
 	}
 }

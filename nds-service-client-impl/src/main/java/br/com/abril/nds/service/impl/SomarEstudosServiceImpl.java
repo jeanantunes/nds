@@ -1,9 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +17,7 @@ import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.SomarEstudosService;
 
 @Service
@@ -35,6 +34,9 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 
 	@Autowired
 	private DistribuicaoRepository distribuicaoRepository;
+	
+	@Autowired
+	private EstudoService estudoService;
 
 
 	@Override
@@ -53,12 +55,9 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 		
 		if (estudoBase.getEstudoCotas() != null && !estudoBase.getEstudoCotas().isEmpty()) {
 			
-			Iterator<EstudoCotaGerado> it =  estudoBase.getEstudoCotas().iterator(); 
-			
-			while (it.hasNext()) {
+			for (EstudoCotaGerado estudoCota : estudoBase.getEstudoCotas()) {
 				
-				EstudoCotaGerado estudoCota = it.next();
-				Cota cota = estudoCota.getCota();
+				final Cota cota = estudoCota.getCota();
 				
 				if(cota != null) {
 					
@@ -72,17 +71,11 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 			return; 
 		}
 		
-		
-		
 		EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudo);
 		
 		if (estudo.getEstudoCotas() != null && !estudo.getEstudoCotas().isEmpty()) {
 			
-			Iterator<EstudoCotaGerado> it =  estudo.getEstudoCotas().iterator(); 
-			
-			while (it.hasNext()) {
-				
-				EstudoCotaGerado estudoCota = it.next();
+			for (EstudoCotaGerado estudoCota : estudo.getEstudoCotas()) {
 				
 				if (estudoCota.getCota() != null) {
 					
@@ -100,22 +93,25 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 				}
 			}
 		
-			Iterator<Entry<Long,EstudoCotaGerado>> itMap = mapEstudoCota.entrySet().iterator();
-			
-			while (itMap.hasNext()) {
+			for (EstudoCotaGerado estudoCota : mapEstudoCota.values()) {
 				
-				EstudoCotaGerado estudoCota = itMap.next().getValue();
 				estudoCota.setEstudo(estudo);
 				estudoCota.setQtdeEfetiva(estudoCota.getReparte());
 				estudoCota.setQtdePrevista(estudoCota.getReparte());
 				estudoCotaGeradoRepository.alterar(estudoCota);
+				
+				estudoBase.getEstudoCotas().remove(estudoCota);
 			}
 			
 			if(estudo.getQtdeReparte()!=null && estudoBase.getQtdeReparte()!=null){
 				estudo.setQtdeReparte(estudo.getQtdeReparte().add(estudoBase.getQtdeReparte()));				
 			}
+			
 			estudoGeradoRepository.alterar(estudo);
 			estudoGeradoRepository.remover(estudoBase);
+			
+			estudoService.criarRepartePorPDV(estudo.getId());
+			
 		}
 		
 	}

@@ -47,7 +47,7 @@ public class GeraDividaDTO implements Serializable{
 	@Export(label = "Emissão", alignment = Alignment.CENTER)
 	private Date dataEmissao;
 	
-	@Export(label = "Valor", alignment = Alignment.RIGHT, columnType =ColumType.DECIMAL)
+	@Export(label = "Valor", alignment = Alignment.RIGHT, columnType =ColumType.MOEDA)
 	private BigDecimal valor;
 	
 	@Export(label = "Tipo")

@@ -27,6 +27,10 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
+import br.com.abril.nds.model.distribuicao.FixacaoReparte;
+import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
+import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
@@ -40,7 +44,9 @@ import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoPDVRepository;
 import br.com.abril.nds.repository.EstudoRepository;
+import br.com.abril.nds.repository.FixacaoReparteRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.util.BigIntegerUtil;
@@ -81,6 +87,12 @@ public class EstudoServiceImpl implements EstudoService {
     
     @Autowired
     private EstudoPDVRepository estudoPDVRepository;
+    
+    @Autowired
+    private MixCotaProdutoRepository mixCotaProdRepository;
+    
+    @Autowired
+    private FixacaoReparteRepository fixacaoReparteRepository;
 
 	@Transactional(readOnly = true)
 	@Override
@@ -434,7 +446,7 @@ public class EstudoServiceImpl implements EstudoService {
     
     @Override
     @Transactional
-    public EstudoPDV gerarEstudoPDV(final EstudoGerado estudo, final Cota cota,final PDV pdv, final BigInteger reparte) {
+    public EstudoPDV gerarEstudoPDV(final EstudoGerado estudo, final Cota cota, final PDV pdv, final BigInteger reparte) {
 		
     	EstudoPDV estudoPDV = this.gerarEstudoPDV(estudo, cota,pdv);
     	
@@ -459,5 +471,85 @@ public class EstudoServiceImpl implements EstudoService {
 		
 		return estudoPDV;
     }
+
+	@Override
+	@Transactional
+	public EstudoCotaGerado obterEstudoCotaGerado(Integer numeroCota, Long estudoId) {
+		return estudoCotaGeradoRepository.obterEstudoCotaGerado(numeroCota, estudoId);
+	}
+
+	@Override
+	@Transactional
+	public void criarRepartePorPDV(Long id) {
+		
+		EstudoGerado estudo = estudoGeradoRepository.buscarPorId(id);
+		Integer qtdRepartePDVDefinido = 0;
+		
+		for (EstudoCotaGerado estudoCota : estudo.getEstudoCotas()) {
+			
+			if(estudoCota.getQuantidadePDVS() > 1){
+
+				switch (estudoCota.getClassificacao()) {
+				
+				case "FX":
+
+					FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCotaClassificacao(estudoCota.getCota(), estudo.getProdutoEdicao().getProduto().getCodigoICD(), estudo.getProdutoEdicao().getTipoClassificacaoProduto());
+					
+					for (FixacaoRepartePdv fixacaoPDV : fixacaoReparte.getRepartesPDV()) {
+						if(fixacaoPDV.getRepartePdv() != null && fixacaoPDV.getRepartePdv() > 0){
+							++qtdRepartePDVDefinido;
+						}
+					}
+					
+					if(qtdRepartePDVDefinido > 1){
+						
+						for (FixacaoRepartePdv fixPdv : fixacaoReparte.getRepartesPDV()) {
+							for (PDV pdv : estudoCota.getCota().getPdvs()) {
+								if(pdv.getId().equals(fixPdv.getPdv().getId())){
+									
+									BigInteger reparte = BigIntegerUtil.valueOfInteger(fixPdv.getRepartePdv());
+
+									this.gerarEstudoPDV(estudoCota.getEstudo(), estudoCota.getCota(), pdv, reparte);
+									
+								}
+							}
+						}
+						
+					}
+					
+					break;
+					
+				case "MX":
+					
+					MixCotaProduto mixCotaProduto = mixCotaProdRepository.obterMixPorCotaProduto(estudoCota.getCota().getId(), estudo.getProdutoEdicao().getTipoClassificacaoProduto().getId(), estudo.getProdutoEdicao().getProduto().getCodigoICD());
+					
+					for (RepartePDV pdvMix : mixCotaProduto.getRepartesPDV()) {
+						if(pdvMix.getReparte() != null && pdvMix.getReparte() > 0){
+							++qtdRepartePDVDefinido;
+						}
+					}
+					
+					if(qtdRepartePDVDefinido > 1){
+	
+						for (RepartePDV pdvMix : mixCotaProduto.getRepartesPDV()) {
+						
+							for (PDV pdv : estudoCota.getCota().getPdvs()) {
+								
+								if(pdv.getId().equals(pdvMix.getPdv().getId())){
+									BigInteger reparte = BigIntegerUtil.valueOfInteger(pdvMix.getReparte());
+									this.gerarEstudoPDV(estudoCota.getEstudo(), estudoCota.getCota(), pdv, reparte);
+								}
+								
+							}
+						}
+					}
+					break;
+				}
+				
+			}
+			
+		}
+		
+	}
 
 }

@@ -191,6 +191,7 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 		
 		filtroDetalhe=(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO)  session.getAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE);
 		if(filtroDetalhe!=null){
+			filtroDetalhe.setPaginacao(null);
 			resultadoPesquisaDetalhe = caracteristicaDistribuicaoService.buscarComFiltroCompleto(filtroDetalhe) ;
 			clazz = CaracteristicaDistribuicaoDTO.class;
             FileExporter.to("caracteristica_distribuicao", fileType).inHTTPResponse(this.getNDSFileHeader(), null,
