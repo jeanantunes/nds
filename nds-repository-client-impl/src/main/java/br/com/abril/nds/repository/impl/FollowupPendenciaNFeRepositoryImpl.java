@@ -21,20 +21,24 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ConsultaFollowupPendenciaNFeDTO> obterConsignadosParaChamadao(FiltroFollowupPendenciaNFeDTO filtro) {
+	public List<ConsultaFollowupPendenciaNFeDTO> obterPendencias(FiltroFollowupPendenciaNFeDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT cota.numeroCota as numeroCota, ");
-		hql.append("pessoa.nome as nomeJornaleiro, ");
-		hql.append("conf.data as dataEntrada, ");		
-		hql.append("notaCota.statusNotaFiscal as tipoPendencia, ");		
-		hql.append("((conf.qtdeInformada * conf.precoComDesconto) -  (conf.qtde * conf.precoComDesconto)) as valorDiferenca, ");
-		hql.append(" concat(telefone.ddd, ' ', telefone.numero)  as numeroTelefone ");		
+		hql.append(" SELECT cota.numeroCota as numeroCota, ");
+		hql.append(" pessoa.nome as nomeJornaleiro, ");
+		hql.append(" conf.data as dataEntrada, ");		
+		hql.append(" notaCota.statusNotaFiscal as tipoPendencia, ");		
+		hql.append(" ((conf.qtdeInformada * conf.precoComDesconto) -  (conf.qtde * conf.precoComDesconto)) as valorDiferenca, ");
+		hql.append(" concat(telefone.ddd, ' ', telefone.numero)  as numeroTelefone ");
+		hql.append(" notaCota.serie as serie, ");
+		hql.append(" notaCota.chaveAcesso as chaveAcesso, ");
+		hql.append(" notaCota.numero as numeroNfe, ");
+		hql.append(" notaCota.id as idNotaFiscalEntrada, ");
 		
 		hql.append(getSqlFromEWhereNotaPendente(filtro));
 		
-		hql.append(getOrderByNotasPendentes(filtro));
+		hql.append(getOrderByNotasPendentes(filtro, false, false, false));
 
 		Query query =  getSession().createQuery(hql.toString());		
 		
@@ -69,20 +73,46 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		return hql.toString();
 	}
 	
-	private String getOrderByNotasPendentes(FiltroFollowupPendenciaNFeDTO filtro){
+	private String getOrderByNotasPendentes(FiltroFollowupPendenciaNFeDTO filtro, boolean isCount, boolean isPagination, boolean isGroup){
 		
 		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
 			return "";
 		}
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" order by cota.numeroCota, nomeJornaleiro ");
+		hql.append(" order by cota.numeroCota ");
 		
 		if (filtro.getPaginacao().getOrdenacao() != null) {
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());
 		}
 		
+		
+		if(!isGroup){
+			hql.append(" GROUP BY cota.numeroCota");
+		} else {
+			hql.append(" GROUP BY cota ");
+		}
+
+		if(!isCount && !isPagination){
+			if(filtro.getPaginacao()!=null && filtro.getPaginacao().getSortOrder() != null && filtro.getPaginacao().getSortColumn() != null) {
+				hql.append(" ORDER BY  ").append(filtro.getPaginacao().getSortColumn()).append(" ").append(filtro.getPaginacao().getSortOrder());
+			}
+		}
+		
 		return hql.toString();
+	}
+
+	@Override
+	public Long totalPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT COUNT(cota.id) ");
+		hql.append(getSqlFromEWhereNotaPendente(filtro));
+		hql.append(getOrderByNotasPendentes(filtro, true, true, false));
+
+		Query query =  getSession().createQuery(hql.toString());		
+		
+		return (long) query.list().size();
 	}
 
 }

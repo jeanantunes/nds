@@ -366,8 +366,11 @@ public enum Permissao {
 	ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR("Parâmetros Distribuidor",	 						 	   	Permissao.ROLE_ADMINISTRACAO, ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO, true, null),
 	
 	ROLE_ADMINISTRACAO_HELP_ALTERACAO("Help",									          					Permissao.ROLE_ADMINISTRACAO, true),
-	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   	Permissao.ROLE_ADMINISTRACAO, ROLE_ADMINISTRACAO_HELP_ALTERACAO, false, null);
+	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   	Permissao.ROLE_ADMINISTRACAO, ROLE_ADMINISTRACAO_HELP_ALTERACAO, false, null),
 
+	ROLE_NFE_ENTRADA_NFE_FOLLWOUP_ALTERACAO("Entrada de NF-e Followup",										Permissao.ROLE_NFE, true),
+	ROLE_NFE_ENTRADA_NFE_FOLLWOUP("Entrada de NF-e Followup",											   	Permissao.ROLE_NFE, ROLE_NFE_ENTRADA_NFE_FOLLWOUP_ALTERACAO, true, null);
+	
 	private String descricao;
 	private Permissao permissaoPai;
 	private Permissao permissaoAlteracao;

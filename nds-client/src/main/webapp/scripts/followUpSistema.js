@@ -472,13 +472,13 @@ var followUpSistemaController = $.extend(true, {
 				row.cell.numeroTelefone = " - ";
 			}
 			
-			var linkLancamento = '<a isEdicao="true" href="javascript:;"  onclick="entradaNFETerceirosController.popup_nfe(\''+
-			row.cell.numeroCota+'\',\''+row.cell.nome+'\',\''+row.cell.idControleConferenciaEncalheCota+
+			var linkLancamento = '<a isEdicao="true" href="javascript:;"  onclick="followUpSistemaController.popup_nfe(\''+
+			row.cell.numeroCota+'\',\''+row.cell.nomeJornaleiro+'\',\''+row.cell.idControleConferenciaEncalheCota+
 			'\');" style="cursor:pointer">' +
 		   	'<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_lancamento.png" hspace="5" border="0px" />' +
 		    '</a>';
 			
-			var linkCadastro = '<a isEdicao="true" href="javascript:;" onclick="entradaNFETerceirosController.popup_dadosNotaFiscal(\''+row.cell.numeroNfe +'\',\''
+			var linkCadastro = '<a isEdicao="true" href="javascript:;" onclick="followUpSistemaController.popup_dadosNotaFiscal(\''+row.cell.numeroNfe +'\',\''
 				+ row.cell.dataEncalhe +'\',\''
 				+ row.cell.chaveAcesso +'\',\''
 				+ row.cell.serie +'\',\''
@@ -613,6 +613,47 @@ var followUpSistemaController = $.extend(true, {
 		
 	},
 	
+	popup_nfe : function(numeroCota, nome, idControleConferenciaEncalheCota){
+		
+		$('#followupSerieNotaCadastroNota', this.workspace).val('');
+		$('#followupChaveAcessoCadastroNota', this.workspace).val('');
+		$('#followupValorNotaCadastroNota', this.workspace).val('');
+		$('#followupNumeroNotaCadastroNota', this.workspace).val('');
+		
+		if(numeroCota != '0'){
+			$('#followupCotaCadastroNota', this.workspace).val(numeroCota);
+			$('#followupNomeCotaCadastroNota', this.workspace).attr('readonly', true);
+			$('#followupNomeCotaCadastroNota', this.workspace).val(nome);			
+		}else{
+			$('#followupCotaCadastroNota', this.workspace).val('');
+			$('#followupCotaCadastroNota', this.workspace).attr('readonly', false);
+			$('#followupNomeCotaCadastroNota', this.workspace).val('');
+		}
+		$('#followupNomeCotaCadastroNota', this.workspace).attr('readonly', true);
+		
+		$('#followupValorNotaCadastroNota', this.workspace).priceFormat({
+			centsSeparator: ',',
+		    thousandsSeparator: '.'
+		});
+
+		$( "#followup-dialog-nfe", this.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:'auto',
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					followUpSistemaController.cadastrarNota(idControleConferenciaEncalheCota);
+					$( this ).dialog( "close" );					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#followup-dialog-nfe", this.workspace).parents("form")
+		});
+	},
+	
 	
 	executarRequisicao : function(tab){
 		
@@ -639,10 +680,52 @@ var followUpSistemaController = $.extend(true, {
 			followUpSistemaController.tabParcial();
 			break;
 		}
-	}
+	},
 	
+	
+	popup_dadosNotaFiscal : function(numeroNfe, dataEncalhe, chaveAcesso, serie, valorNota, idControleConferenciaEncalheCota, statusNotaFiscalEntrada) {
+		
+		$('#followupNumeroNotaFiscalPopUp', this.workspace).text(numeroNfe);
+		$('#followupDataNotaFiscalPopUp', this.workspace).text(dataEncalhe);
+		$('#followupChaveAcessoNotaFiscalPopUp', this.workspace).text(chaveAcesso);
+		$('#followupSerieNotaFiscalPopUp', this.workspace).text(serie);
+		$('#followupValorNotaFiscalPopUp', this.workspace).text(valorNota);
+		
+		$(".pesquisarProdutosNotaGrid", followUpSistemaController.workspace).flexOptions({
+			url: contextPath + "/nfe/entradaNFETerceiros/pesquisarItensPorNota",
+			params: [{name:"idControleConferencia", value:idControleConferenciaEncalheCota}],
+			dataType : 'json'
+		});
+
+		$(".pesquisarProdutosNotaGrid", followUpSistemaController.workspace).flexReload();
+		$( "#followup-dialog-dadosNotaFiscal", this.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:860,
+			modal: true
+		});	
+	},
+	
+	cadastrarNota : function(idControleConferenciaEncalheCota){		
+
+		$.postJSON(
+				this.path +'cadastrarNota',
+				[
+					{ name: "nota.numero", value: $('#followupNumeroNotaCadastroNota', this.workspace).val() },
+					{ name: "nota.serie", value: $('#followupSerieNotaCadastroNota', this.workspace).val() },
+					{ name: "nota.chaveAcesso", value: $('#followupChaveAcessoCadastroNota', this.workspace).val() },
+					{ name: "nota.valorNF", value: $('#followupValorNotaCadastroNota', this.workspace).val() },
+					{ name: "numeroCota", value: $('#followupCotaCadastroNota', this.workspace).val() },
+					{ name: "idControleConferenciaEncalheCota", value: idControleConferenciaEncalheCota }
+				],
+				function(result) {
+					if (result.listaMensagens) {
+						exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					}
+				},
+				null, true
+			);
+	},
 	
 }, BaseController);
-
-
 //@ sourceURL=followUpSistema.js
