@@ -118,7 +118,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 					ndsiLoggerFactory.getLogger().logInfo(
 							message,
 							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualizacao do Codigo do Editor para: "
+							"Atualização do Codigo do Editor para "
 									+ input.getCodigoDoEditor());
 				}
 				
@@ -131,14 +131,14 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 					ndsiLoggerFactory.getLogger().logWarning(
 							message,
 							EventoExecucaoEnum.RELACIONAMENTO,
-							String.format( "Editor %1$s não encontrado para o produto: %2$s ", input.getCodigoDoEditor().toString(), input.getCodigoDaPublicacao() )
+							String.format( "Editor %1$s não encontrado para o Produto %2$s ", input.getCodigoDoEditor().toString(), input.getCodigoDaPublicacao() )
 						);
 				} else {
 					produto.setEditor(ed);
 					ndsiLoggerFactory.getLogger().logInfo(
 							message,
 							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualizacao do Codigo do Editor para: "
+							"Atualização do Codigo do Editor para "
 									+ input.getCodigoDoEditor());
 					
 				}				
@@ -148,7 +148,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Pacote Padrao para: "
+						"Atualização do Pacote Padrão para "
 								+ input.getPacotePadrao());
 
 			}
@@ -158,7 +158,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Nome Comercial para: "
+						"Atualização do Nome Comercial para "
 								+ input.getNomeComercial());
 			}
 
@@ -167,7 +167,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Status para: "
+						"Atualização do Status para "
 								+ input.getPacotePadrao());
 
 			}
@@ -194,7 +194,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logWarning(
 						message,
 						EventoExecucaoEnum.RELACIONAMENTO,
-						String.format( "Tipo de Produto %1$s não encontrado para o produto: %2$s ", input.getTipoDePublicacao().toString(), input.getCodigoDaPublicacao() )
+						String.format( "Tipo de Produto %1$s não encontrado para o Produto %2$s ", input.getTipoDePublicacao().toString(), input.getCodigoDaPublicacao() )
 					);
 			} else {
 				produto.setTipoProduto(tp);	
@@ -205,7 +205,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logWarning(
 						message,
 						EventoExecucaoEnum.RELACIONAMENTO,
-						String.format( "Editor %1$s não encontrado para o produto: %2$s ", input.getCodigoDoEditor().toString(), input.getCodigoDaPublicacao() )
+						String.format( "Editor %1$s não encontrado para o Produto %2$s ", input.getCodigoDoEditor().toString(), input.getCodigoDaPublicacao() )
 					);
 			} else {
 				produto.setEditor(ed);	
