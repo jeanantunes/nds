@@ -34,7 +34,7 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(getSqlFromEWhereNotaPendente(filtro));
 		
-		hql.append(getOrderByNotasPendentes(filtro));
+		hql.append(getOrderByNotasPendentes(filtro, false, false, false));
 
 		Query query =  getSession().createQuery(hql.toString());		
 		
@@ -69,20 +69,46 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		return hql.toString();
 	}
 	
-	private String getOrderByNotasPendentes(FiltroFollowupPendenciaNFeDTO filtro){
+	private String getOrderByNotasPendentes(FiltroFollowupPendenciaNFeDTO filtro, boolean isCount, boolean isPagination, boolean isGroup){
 		
 		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
 			return "";
 		}
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" order by cota.numeroCota, nomeJornaleiro ");
+		hql.append(" order by cota.numeroCota ");
 		
 		if (filtro.getPaginacao().getOrdenacao() != null) {
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());
 		}
 		
+		
+		if(!isGroup){
+			hql.append(" GROUP BY cota.numeroCota");
+		} else {
+			hql.append(" GROUP BY cota ");
+		}
+
+		if(!isCount && !isPagination){
+			if(filtro.getPaginacao()!=null && filtro.getPaginacao().getSortOrder() != null && filtro.getPaginacao().getSortColumn() != null) {
+				hql.append(" ORDER BY  ").append(filtro.getPaginacao().getSortColumn()).append(" ").append(filtro.getPaginacao().getSortOrder());
+			}
+		}
+		
 		return hql.toString();
+	}
+
+	@Override
+	public Long totalPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT COUNT(cota.id) ");
+		hql.append(getSqlFromEWhereNotaPendente(filtro));
+		hql.append(getOrderByNotasPendentes(filtro, true, true, false));
+
+		Query query =  getSession().createQuery(hql.toString());		
+		
+		return (long) query.list().size();
 	}
 
 }

@@ -8,4 +8,6 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 
 public interface FollowupPendenciaNFeRepository extends Repository<NotaFiscalEntrada,Long> {
     List<ConsultaFollowupPendenciaNFeDTO> obterConsignadosParaChamadao(FiltroFollowupPendenciaNFeDTO filtro);
+
+	Long totalPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro);
 }
