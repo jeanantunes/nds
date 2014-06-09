@@ -107,7 +107,7 @@ public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, Initia
 			
 			logger.debug(" Elemento <{}> assinado e inserido em <{}>.", elementToSign.getTagName(), parentElement.getTagName());
 		} catch (Exception e) {
-			throw new IllegalArgumentException(" Impossivel construir assinatura, ", e);
+			throw new IllegalArgumentException("Impossivel construir assinatura digital:", e);
 		}
 	}
 	
