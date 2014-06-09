@@ -389,21 +389,22 @@ public class FollowupController extends BaseController {
 	
 	private TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> efetuarConsultaDadosPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
 		
-		List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.obterPendencias(filtro);
 		
 		TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>>();
 		
-		Integer totalRegistros = listasdependencias.size();
+		Long totalRegistros = followuppendencianfeService.totalPendenciaNFEEncalhe(filtro);
 		
 		if(totalRegistros == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Pendencias NF-e Encalhe: Não foram encontrados resultados para Follow Up.");
 		}
+		
+		List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.obterPendencias(filtro);
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listasdependencias));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(15);
+		tableModel.setTotal(totalRegistros.intValue());
 		
 		return tableModel;
 	}

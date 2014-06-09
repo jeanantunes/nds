@@ -21,8 +21,13 @@ public class FollowupPendenciaNFeServiceImpl implements
 	@Override
 	@Transactional
 	public List<ConsultaFollowupPendenciaNFeDTO> obterPendencias(FiltroFollowupPendenciaNFeDTO filtro) {
-		 
 		return this.followupPendenciaNFeRepository.obterConsignadosParaChamadao(filtro);
+	}
+
+	@Override
+	@Transactional
+	public Long totalPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
+		return this.followupPendenciaNFeRepository.totalPendenciaNFEEncalhe(filtro);
 	}
 
 }
