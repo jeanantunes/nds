@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.CaracteristicaDistribuicaoDTO;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.repository.CaracteristicaDistribuicaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -74,7 +75,10 @@ CaracteristicaDistribuicaoRepository {
         .append(" ped.NUMERO_EDICAO as 'numeroEdicao', ")
         .append(" coalesce(tipoclas.descricao, '') as 'classificacao', ")
         .append(" coalesce(ped.PRECO_VENDA, 0) as 'precoCapa', ")
-        .append(" coalesce(lan.REPARTE,0) - (select sum(QTDE_INFORMADA) from conferencia_encalhe ce where ce.PRODUTO_EDICAO_ID=ped.ID) as 'venda', ")
+        .append(" coalesce(lan.REPARTE,0) - ")
+        .append(" 	(select sum(me.QTDE) from movimento_estoque me join tipo_movimento tm on tm.ID = me.TIPO_MOVIMENTO_ID ")
+        .append(" 	where me.PRODUTO_EDICAO_ID=ped.ID and tm.GRUPO_MOVIMENTO_ESTOQUE = :grupoEncalhe) ")
+        .append(" as 'venda', ")
         .append(" coalesce(lan.REPARTE,0) as 'reparte', ")
         .append(" lan.DATA_LCTO_DISTRIBUIDOR  as 'dataLancamento', ")
         .append(" lan.DATA_REC_DISTRIB as 'dataRecolhimento', ")
@@ -154,6 +158,7 @@ CaracteristicaDistribuicaoRepository {
         sql.append(this.ordenarConsultaCaracteristicaDistribuicaoDetalhe(filtro));
         
         final Query  query = getSession().createSQLQuery(sql.toString());
+        query.setParameter("grupoEncalhe", GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE.name());
         query.setResultTransformer(new AliasToBeanResultTransformer(CaracteristicaDistribuicaoDTO.class));
         configurarPaginacaoPesquisaDetalhe(filtro,query);
         
