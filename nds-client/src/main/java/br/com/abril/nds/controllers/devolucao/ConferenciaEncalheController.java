@@ -700,32 +700,25 @@ public class ConferenciaEncalheController extends BaseController {
 		this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
 	}
 
-	            /**
+	/**
      * Obtém o objeto do tipo ConferenciaEncalheDTO que esta na lista de
-     * conferencia em session com idProdutoEdicao ou codigoSM igual ao passado
+     * conferencia em session com idProdutoEdicao igual ao passado
      * por parâmetro.
      * 
      * @param idProdutoEdicao
-     * @param sm
      * 
      * @return ConferenciaEncalheDTO
      */
-	private ConferenciaEncalheDTO getConferenciaEncalheDTOFromSession(final Long idProdutoEdicao, final Integer sm) {
+	private ConferenciaEncalheDTO getConferenciaEncalheDTOFromSession(final Long idProdutoEdicao) {
 		
 		final List<ConferenciaEncalheDTO> listaConfSessao = this.getListaConferenciaEncalheFromSession();
 		
-		if(idProdutoEdicao != null) {
-			for (final ConferenciaEncalheDTO dto : listaConfSessao){
-				if (idProdutoEdicao.equals(dto.getIdProdutoEdicao())){
-					return  dto;
-				}
+		for (final ConferenciaEncalheDTO dto : listaConfSessao){
+			
+			if (idProdutoEdicao.equals(dto.getIdProdutoEdicao())){
+				return  dto;
 			}
-		} else if( sm != null) {
-			for (final ConferenciaEncalheDTO dto : listaConfSessao){
-				if (sm.equals(dto.getCodigoSM())){
-					return  dto;
-				}
-			}
+			
 		}
 		
 		return null;
@@ -779,7 +772,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 			if (idProdutoEdicaoAnterior != null){
 				
-				conferenciaEncalheDTO = getConferenciaEncalheDTOFromSession(idProdutoEdicaoAnterior, null);
+				conferenciaEncalheDTO = getConferenciaEncalheDTOFromSession(idProdutoEdicaoAnterior);
 				
 				produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(numeroCota, idProdutoEdicaoAnterior);
 			} 
@@ -797,7 +790,7 @@ public class ConferenciaEncalheController extends BaseController {
 		BigInteger qtdeEncalhe = processarQtdeExemplar(produtoEdicao.isContagemPacote(), produtoEdicao.getId(), produtoEdicao.getPacotePadrao(), quantidade);
 		
 		if (conferenciaEncalheDTO == null) {
-			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, false, false);
+			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, false);
 		} else {
 			conferenciaEncalheDTO.setQtdExemplar(qtdeEncalhe);
 		}
@@ -808,12 +801,12 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	/**
-	 * Verifica item tepetido na lista de conferencia, e altera quantidade quando encontrado
+	 * Verifica item repetido na lista de conferencia, e altera quantidade quando encontrado
+	 * 
 	 * @param idProdutoEdicao
 	 * @param qtd
-	 * @return List<ConferenciaEncalheDTO>
 	 */
-	private List<ConferenciaEncalheDTO> atualizarProdutoRepetido(final long idProdutoEdicao, final BigInteger qtd, final boolean indConferenciaContingencia){
+	private void atualizarProdutoRepetido(final long idProdutoEdicao, final BigInteger qtd, final boolean indConferenciaContingencia){
 		
 		final List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
 		
@@ -832,7 +825,6 @@ public class ConferenciaEncalheController extends BaseController {
 			}
 		}
 		
-		return listaConferencia;
 	}
 	
 	/**
@@ -872,7 +864,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
         final boolean supervisor = usuarioService.isSupervisor();
 
-        ConferenciaEncalheDTO conferenciaEncalheDTOSessao = getConferenciaEncalheDTOFromSession(idProdutoEdicao, null);
+        ConferenciaEncalheDTO conferenciaEncalheDTOSessao = getConferenciaEncalheDTOFromSession(idProdutoEdicao);
 
 		if (conferenciaEncalheDTOSessao == null){
 			
@@ -880,7 +872,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			final BigInteger qtdeEncalhe = obterQuantidadeEncalheDaString(quantidade);
 			
-			conferenciaEncalheDTOSessao = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, true, indConferenciaContingencia);
+			conferenciaEncalheDTOSessao = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, true);
 			
 		}
 
@@ -910,10 +902,8 @@ public class ConferenciaEncalheController extends BaseController {
 			
             throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade é obrigatório.");
 		}
-		
-		ProdutoEdicaoDTO produtoEdicao = this.getProdutoEdicaoDTO(produtoEdicaoId);
 
-		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = getConferenciaEncalheDTOFromSession(produtoEdicaoId, null);
+		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = getConferenciaEncalheDTOFromSession(produtoEdicaoId);
 
 		if (conferenciaEncalheDTOSessao != null){
 			
@@ -921,13 +911,15 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			conferenciaEncalheDTOSessao.setQtdExemplar(qtdeEncalhe);
 
-			this.setListaConferenciaEncalheToSession(this.atualizarProdutoRepetido(produtoEdicaoId, qtdeEncalhe, indConferenciaContingencia));
+			this.atualizarProdutoRepetido(produtoEdicaoId, qtdeEncalhe, indConferenciaContingencia);
 			
 		} else {
 			
+			ProdutoEdicaoDTO produtoEdicao = this.getProdutoEdicaoDTO(produtoEdicaoId);
+			
 			final BigInteger qtdeEncalhe = this.obterQuantidadeEncalheDaString(qtdExemplares);
 			
-			conferenciaEncalheDTOSessao = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, true, indConferenciaContingencia);
+			conferenciaEncalheDTOSessao = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, true);
 			
 		}
 
@@ -940,6 +932,49 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.carregarListaConferencia(null, false, false);
 	}
+	
+	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	public void adicionarProdutoEdicaoConferidoDiretamente(final Long produtoEdicaoId, final String qtdExemplares) {
+		
+		if (produtoEdicaoId == null){
+            throw new ValidacaoException(TipoMensagem.WARNING, "Produto é obrigatório.");
+		}
+		
+		if (qtdExemplares == null){
+            throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade é obrigatório.");
+		}
+
+		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = getConferenciaEncalheDTOFromSession(produtoEdicaoId);
+
+		if (conferenciaEncalheDTOSessao != null){
+			
+			final BigInteger qtdeEncalhe = processarQtdeExemplar(
+					conferenciaEncalheDTOSessao.getIsContagemPacote(), 
+					produtoEdicaoId, conferenciaEncalheDTOSessao.getPacotePadrao(), qtdExemplares);
+			
+			conferenciaEncalheDTOSessao.setQtdExemplar(qtdeEncalhe);
+
+			this.atualizarProdutoRepetido(produtoEdicaoId, qtdeEncalhe, false);
+			
+		} else {
+			
+			ProdutoEdicaoDTO produtoEdicao = this.getProdutoEdicaoDTO(produtoEdicaoId);
+			
+			final BigInteger qtdeEncalhe = processarQtdeExemplar(
+					produtoEdicao.isContagemPacote(), 
+					produtoEdicaoId, produtoEdicao.getPacotePadrao(), qtdExemplares);
+			
+			conferenciaEncalheDTOSessao = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, true);
+			
+		}
+		
+		indicarStatusConferenciaEncalheCotaAlterado();
+		
+		this.carregarListaConferencia(null, false, false);
+		
+	}
+	
 	
 	/**
 	 * Valida se a quantidade informada excede a quantidade especificada no reparte
@@ -1166,7 +1201,7 @@ public class ConferenciaEncalheController extends BaseController {
                 }
                 
                 final ConferenciaEncalheDTO dto = 
-                        this.criarConferenciaEncalhe(pDto, new BigInteger(qtdExemplares), false, indConferenciaContingencia);
+                        this.criarConferenciaEncalhe(pDto, new BigInteger(qtdExemplares), false);
                 
                 isVendaNegativaProduto = this.validarVendaNegativaProduto(
                         qtdExemplares,indConferenciaContingencia, dto, supervisor);
@@ -2303,7 +2338,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	}
 
 	private ConferenciaEncalheDTO criarConferenciaEncalhe(final ProdutoEdicaoDTO produtoEdicao, BigInteger quantidade, 
-														  final boolean adicionarGrid, final boolean indConferenciaContingencia) {
+														  final boolean adicionarGrid) {
 		
 		final Integer numeroCota = getNumeroCotaFromSession();
 		
@@ -2421,6 +2456,8 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		if (lista == null){
 			
 			lista = new ArrayList<ConferenciaEncalheDTO>();
+			
+			info.setListaConferenciaEncalhe(lista);
 		}
 		
 		return lista;
