@@ -360,23 +360,13 @@ public class AnaliseParcialController extends BaseController {
     @Path("/verificacoesParaLiberarEstudo")
     public void verificacoesAntesDeLiberarEstudo (Long estudoId){
     	
-    	List<EstudoCotaGerado> listEstudoCotas = analiseParcialService.obterEstudosCotaGerado(estudoId);
+    	ValidacaoException validacao = analiseParcialService.validarLiberacaoDeEstudo(estudoId);
     	
-    	EstudoGerado estudoGerado = estudoService.obterEstudo(estudoId);
-    	
-    	BigDecimal reparteFisicoOuPrevisto = analiseParcialService.reparteFisicoOuPrevistoLancamento(estudoId);
-    	
-    	for (EstudoCotaGerado estudoCota : listEstudoCotas) {
-    		if(BigIntegerUtil.isMenorQueZero(estudoCota.getReparte())){
-    			throw new ValidacaoException(TipoMensagem.WARNING,"Há cota(s) com reparte(s) negativo(s), por favor ajustá-la(s)!");
-    		}
-    	} 
-
-    	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)){
-    		throw new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é maior que estoque disponível!");
+    	if(validacao.getValidacao().getTipoMensagem()==TipoMensagem.WARNING){
+    		throw new ValidacaoException(validacao.getValidacao().getTipoMensagem(), validacao.getValidacao().getListaMensagens());
+    	}else{
+    		result.use(Results.json()).from(validacao.getValidacao().getTipoMensagem(), validacao.getValidacao().getListaMensagens().get(0)).recursive().serialize();    		
     	}
-    	
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();    		
     	
     }
 }
