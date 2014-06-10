@@ -1176,7 +1176,9 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" fornecedor.id as idFornecedor, ");
 		sql.append(" pessoa.NOME_FANTASIA as nomeFantasia, ");
 
-		sql.append(" produtoEdicao.peb as peb ");
+		sql.append(" produtoEdicao.peb as peb, ");
+		
+		sql.append(" if(produto.FORMA_COMERCIALIZACAO != 'CONSIGNADO',true,false) as produtoContaFirme ");
 
 		sql.append(montarClausulaFromConsultaBalanceamentoLancamento());
 
@@ -1275,7 +1277,8 @@ public class LancamentoRepositoryImpl extends
 				.addScalar("distribuicao", StandardBasicTypes.BIG_INTEGER)
 				.addScalar("idFornecedor", StandardBasicTypes.LONG)
 				.addScalar("peb", StandardBasicTypes.LONG)
-				.addScalar("nomeFantasia");
+				.addScalar("nomeFantasia")
+				.addScalar("produtoContaFirme", StandardBasicTypes.BOOLEAN);
 					
 
 		this.aplicarParametros(query,dataPesquisada, periodoDistribuicao, fornecedores);
@@ -1722,7 +1725,8 @@ public class LancamentoRepositoryImpl extends
 				+ " lancamento.dataLancamentoDistribuidor as dataDistribuidor, "
 				+ " lancamento.reparte as reparte, "
 				+ " lancamento.tipoLancamento as tipoLancamento, "
-				+ " periodoLancamentoParcial.numeroPeriodo as numeroPeriodo "
+				+ " periodoLancamentoParcial.numeroPeriodo as numeroPeriodo, "
+				+ " produto.formaComercializacao as formaComercializacaoProduto"
 				+ " from Lancamento lancamento "
 				+ " join lancamento.produtoEdicao produtoEdicao "
 				+ " join produtoEdicao.produto produto "

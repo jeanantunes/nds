@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.abril.nds.dto.EstudoCotaDTO;
+import br.com.abril.nds.dto.ExpedicaoDTO;
+import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
@@ -33,7 +35,7 @@ public interface MovimentoEstoqueService {
 	
     void transferirEstoqueProdutoChamadaoParaRecolhimento(Long idProdutoEdicao, Usuario usuario);
     
-	void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista, Date dataDistribuidor, Long idProduto,Long idProdutoEdicao, Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,TipoMovimentoEstoque tipoMovimentoJuramentado);
+    List<MovimentoEstoqueCotaDTO> gerarMovimentoEstoqueDeExpedicao(LancamentoDTO lancamento, ExpedicaoDTO expedicao);
 	
 	MovimentoEstoque gerarMovimentoEstoqueJuramentado(final Long idItemRecebimentoFisico, final Long idProdutoEdicao, final Long idUsuario, final BigInteger quantidade,final TipoMovimentoEstoque tipoMovimentoEstoque, MovimentoEstoqueCota movimentoEstoqueCota);
 	
