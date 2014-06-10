@@ -864,7 +864,9 @@ public class NFeServiceImpl implements NFeService {
 		
 		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
-				if(filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {
+				
+				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)
+						|| filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {
 					for (CotaExemplaresDTO cota : cotas) {
 						if((cota.isContribuinteICMS() != null && cota.isContribuinteICMS()) 
 								|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() )) {
@@ -877,11 +879,22 @@ public class NFeServiceImpl implements NFeService {
 						if((cota.isContribuinteICMS() == null || !cota.isContribuinteICMS()) 
 								&& (cota.isExigeNotaFiscalEletronica() == null || !cota.isExigeNotaFiscalEletronica() )) {
 							
+							cota.setNotaFiscalConsolidada(true);
 							cotasContribuinteEmitente.add(cota);
 						}
 					}
 				} else if(filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.AMBOS)) {
-					cotasContribuinteEmitente.addAll(cotas);
+					for (CotaExemplaresDTO cota : cotas) {
+						if((cota.isContribuinteICMS() == null || !cota.isContribuinteICMS()) 
+								&& (cota.isExigeNotaFiscalEletronica() == null || !cota.isExigeNotaFiscalEletronica() )) {
+							
+							cota.setNotaFiscalConsolidada(true);
+							cotasContribuinteEmitente.add(cota);
+						} else {
+							cotasContribuinteEmitente.add(cota);
+						}
+					}
+					//cotasContribuinteEmitente.addAll(cotas);
 					break;
 				}
 			}
