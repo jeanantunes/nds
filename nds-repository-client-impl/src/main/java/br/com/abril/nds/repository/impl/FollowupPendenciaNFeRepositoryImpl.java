@@ -21,7 +21,7 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ConsultaFollowupPendenciaNFeDTO> obterPendencias(FiltroFollowupPendenciaNFeDTO filtro) {
+	public List<ConsultaFollowupPendenciaNFeDTO> consultaPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -111,7 +111,7 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 	}
 
 	@Override
-	public Long totalPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
+	public Long qtdeRegistrosPendencias(FiltroFollowupPendenciaNFeDTO filtro) {
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT COUNT(cota.id) ");
