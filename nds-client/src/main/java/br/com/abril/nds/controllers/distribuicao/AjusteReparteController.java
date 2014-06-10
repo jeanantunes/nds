@@ -90,7 +90,7 @@ public class AjusteReparteController extends BaseController {
 
 		validarInsercaoPorSegmento(ajustes, segmentos);
 		
-		evitarCotaRepetidaSegmento(ajusteDTO);
+		evitarCotaRepetida(ajusteDTO);
 		
         // Testar essa inserção deste IF if(seg...)
 		
@@ -305,17 +305,7 @@ public class AjusteReparteController extends BaseController {
 		List<AjusteReparteDTO> ajustesJaCadastrados = ajusteService.buscarCotasEmAjuste(null);
 
 		for (AjusteReparteDTO ajusteJaCadastrado : ajustesJaCadastrados) {
-			if ((ajusteJaCadastrado.getNumeroCota()) == (ajusteDTO.getNumeroCota())) {
-                throw new ValidacaoException(TipoMensagem.ERROR, "Cota em Ajuste, já cadastrada.");
-			}
-		}
-	}
-	
-	private void evitarCotaRepetidaSegmento(AjusteReparteDTO ajusteDTO) {
-		List<AjusteReparteDTO> ajustesJaCadastrados = ajusteService.buscarCotasEmAjuste(null);
-
-		for (AjusteReparteDTO ajusteJaCadastrado : ajustesJaCadastrados) {
-			if (((ajusteJaCadastrado.getNumeroCota()) == (ajusteDTO.getNumeroCota())) && ((ajusteJaCadastrado.getFormaAjusteAplicado()) != (ajusteDTO.getFormaAjuste().toString())) ) {
+			if ((ajusteJaCadastrado.getNumeroCota()).equals(ajusteDTO.getNumeroCota())) {
                 throw new ValidacaoException(TipoMensagem.ERROR, "Cota em Ajuste, já cadastrada.");
 			}
 		}

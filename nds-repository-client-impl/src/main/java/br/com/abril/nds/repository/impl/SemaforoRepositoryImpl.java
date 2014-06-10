@@ -1,5 +1,8 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
+import java.util.List;
+
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -31,7 +34,23 @@ public class SemaforoRepositoryImpl extends
 		((org.hibernate.SQLQuery) query).addEntity(Semaforo.class);
 
 		return (Semaforo) query.uniqueResult();
-
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Semaforo> obterSemaforosAtualizadosEm(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select semaforo from Semaforo semaforo ");
+		hql.append(" join fetch semaforo.usuario ");
+		hql.append(" where semaforo.dataOperacao = :data ");
+		hql.append(" order by semaforo.dataInicio desc ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		return query.list();
 	}
 
 }
