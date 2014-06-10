@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
+import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
@@ -16,6 +17,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 
@@ -77,4 +79,7 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 
 	List<Fornecedor> obterConjuntoFornecedoresNotafiscal(FiltroNFeDTO filtro);
 	
+	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(Long idConferenciaCota,String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults);
+	
+	Integer qtdeNota(Long idConferenciaCota);
 }

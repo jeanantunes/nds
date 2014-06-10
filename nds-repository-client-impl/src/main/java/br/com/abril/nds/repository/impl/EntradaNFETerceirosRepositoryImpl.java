@@ -352,80 +352,6 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		return hql.toString();
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(Long idConferenciaCota, String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append("SELECT produto.codigo as codigoProduto, ");
-		hql.append("produto.nome as nomeProduto, ");		
-		hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");
-		hql.append("conf.qtdeInformada as qtdInformada, ");
-		hql.append("conf.qtde as qtdRecebida, ");
-		hql.append("conf.precoCapaInformado as precoCapa, ");
-		hql.append(" (item.desconto) as desconto, ");
-		hql.append(" (conf.precoCapaInformado - (conf.precoCapaInformado * (item.desconto) / 100)) AS precoDesconto, ");
-		hql.append(" (conf.precoCapaInformado - (conf.precoCapaInformado * (item.desconto) / 100) * conf.qtdeInformada) AS totalDoItem, ");
-		hql.append("conf.data as dataConferenciaEncalhe, ");
-		hql.append("chamadaEncalhe.dataRecolhimento as dataChamadaEncalhe ");
-		
-		hql.append(getHqlFromEWhereItensPendentes());
-		
-		Query query =  getSession().createQuery(hql.toString());
-		
-		query.setParameter("idConferenciaCota", idConferenciaCota);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ItemNotaFiscalPendenteDTO.class));
-		
-		if(firstResult != null) {
-			query.setFirstResult(firstResult);
-		}
-		
-		if(maxResults != null) { 
-			query.setMaxResults(maxResults);			
-		}
-		
-		return query.list();		 
-		
-	}
-	
-	private String getHqlFromEWhereItensPendentes() {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" from ItemNotaFiscalEntrada as item ");
-		hql.append(" JOIN item.notaFiscal as nf ");
-		hql.append(" JOIN nf.controleConferenciaEncalheCota as confCota ");
-		hql.append(" JOIN item.produtoEdicao as produtoEdicao ");
-		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
-		hql.append(" LEFT JOIN produto.fornecedores as fornecedores ");
-		hql.append(" left join confCota.conferenciasEncalhe as conf  ");
-		hql.append(" left join conf.chamadaEncalheCota as chamadaCota  ");
-		hql.append(" left join chamadaCota.chamadaEncalhe chamadaEncalhe  ");
-		
-		hql.append(" WHERE ");
-		
-		hql.append(" confCota.id = :idConferenciaCota ");
-		
-		return hql.toString();
-	}
-	
-	@Override
-	public Integer buscarTodasItensPorNota(Long idConferenciaCota) {
-		
-		StringBuilder hql = new StringBuilder();
-		hql.append(" select count(item.id) ");			
-		hql.append(getHqlFromEWhereItensPendentes());		
-		Query query =  getSession().createQuery(hql.toString());
-		
-		query.setParameter("idConferenciaCota", idConferenciaCota);
-		Long totalRegistros = (Long) query.uniqueResult();
-		
-		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
-		 
-	}
-
 	@Override
 	public Integer qtdeNotasRecebidas(FiltroEntradaNFETerceiros filtro) {
 		StringBuilder hql = new StringBuilder();
@@ -440,5 +366,4 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 	}
-	
 }

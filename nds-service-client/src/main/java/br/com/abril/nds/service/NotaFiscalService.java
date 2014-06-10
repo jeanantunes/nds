@@ -10,6 +10,7 @@ import java.util.Map;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
+import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
@@ -21,6 +22,7 @@ import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * Inteface do serviço de Nota Fiscal.
@@ -148,5 +150,8 @@ public interface NotaFiscalService {
 	List<FornecedorExemplaresDTO> consultaFornecedorExemplaresSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
 	
 	Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
-		
+	
+	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(Long idConferenciaCota,String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults);
+
+	Integer qtdeNota(Long idConferenciaCota);
 }

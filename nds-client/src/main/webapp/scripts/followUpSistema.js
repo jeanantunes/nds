@@ -1,7 +1,20 @@
 var followUpSistemaController = $.extend(true, {
 	
 	init : function () {
+		this.tabs();
+		this.distribuicaoGrid();
+		this.pendencias();
+		this.atualizacaoCadastral();
+		this.negociacao();
+		this.atualizacaoCadastralParcial();
+		this.initPesqProdutosNotaGrid();
+	},
+
+	tabs : function () {
 		$( "#tab-followup", followUpSistemaController.workspace ).tabs();
+	},
+	
+	chamadao : function (){
 
 		$(".chamadaoGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
 			//url : contextPath + '/followup/pesquisaDadosChamadao',
@@ -53,8 +66,9 @@ var followUpSistemaController = $.extend(true, {
 			width : 950,
 			height : 255
 	    }));
-
-
+	},
+	
+	distribuicaoGrid : function () {
 		$(".distribuicaoGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
 			//url : contextPath + '/followup/pesquisaDistribuicaoCotasAjustes',
 	        preProcess:  followUpSistemaController.exPreProcFollowupDistribuicao, 
@@ -93,7 +107,9 @@ var followUpSistemaController = $.extend(true, {
 			width : 600,
 			height : 255
 		}));
-
+	},
+	
+	pendencias : function () {
 
 		$(".pendenciasGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
 			//url : contextPath + '/followup/pesquisaDadosPendenciaNFEEncalhe',
@@ -151,10 +167,12 @@ var followUpSistemaController = $.extend(true, {
 			width : 950,
 			height : 255
 		}));
-
+	},
+	
+	alteracaoStatus : function (){
 		$(".alteracaoStatusGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
 			//url : contextPath + '/followup/pesquisaDadosStatusCota',
-	        preProcess:  followUpSistemaController.exPreProcFollowupStatusCota, 
+			preProcess:  followUpSistemaController.exPreProcFollowupStatusCota, 
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
@@ -202,10 +220,13 @@ var followUpSistemaController = $.extend(true, {
 			width : 950,
 			height : 255
 		}));
-
+	},
+	
+	atualizacaoCadastral : function () {
+		
 		$(".atualizacaoCadastralGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
 			//url : contextPath + '/followup/pesquisaDadosCadastrais',
-	        preProcess:  followUpSistemaController.exPreProcFollowupCadastro, 
+			preProcess:  followUpSistemaController.exPreProcFollowupCadastro, 
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
@@ -253,7 +274,9 @@ var followUpSistemaController = $.extend(true, {
 			width : 950,
 			height : 255
 		}));
-
+	},
+	
+	negociacao : function() {
 		$(".negociacaoGrid", followUpSistemaController.workspace).flexigrid({
 			url : contextPath + '/followup/pesquisaDadosNegociacao',
 	        preProcess:  followUpSistemaController.exPreProcFollowupNegociacao, 
@@ -311,7 +334,9 @@ var followUpSistemaController = $.extend(true, {
 			width : 950,
 			height : 255
 		});
-		
+	},
+	
+	atualizacaoCadastralParcial : function() {
 		$(".atualizacaoCadastralParcialGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
 			//url : contextPath + '/followup/pesquisaDadosCadastroParcial',
 	        preProcess:  followUpSistemaController.exPreProcFollowupCadastroParcial, 
@@ -344,9 +369,9 @@ var followUpSistemaController = $.extend(true, {
 			width : 950,
 			height : 255
 		}));
-		
 	},
-		
+	
+	
 	exPreProcFollowupNegociacao : function (resultado) {
 	
 		$.each(resultado.rows, function(index, negociacao) {
@@ -692,7 +717,7 @@ var followUpSistemaController = $.extend(true, {
 		$('#followupValorNotaFiscalPopUp', this.workspace).text(valorNota);
 		
 		$(".pesquisarProdutosNotaGrid", followUpSistemaController.workspace).flexOptions({
-			url: contextPath + "/nfe/entradaNFETerceiros/pesquisarItensPorNota",
+			url: contextPath + "/followup/pesquisarItensPorNota",
 			params: [{name:"idControleConferencia", value:idControleConferenciaEncalheCota}],
 			dataType : 'json'
 		});
@@ -725,6 +750,72 @@ var followUpSistemaController = $.extend(true, {
 				},
 				null, true
 			);
+	},
+	
+	initPesqProdutosNotaGrid : function() {
+		$(".pesquisarProdutosNotaGrid", this.workspace).flexigrid({
+			preProcess: this.executarPreProcessamentoProdutosNotaFiscal,
+			dataType : 'json',
+				colModel : [ {
+					display : 'Código',
+					name : 'codigoProduto',
+					width : 50,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Produto',
+					name : 'nomeProduto',
+					width : 120,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Edição',
+					name : 'numeroEdicao',
+					width : 50,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Dia',
+					name : 'dia',
+					width : 70,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Qtde. Info',
+					name : 'qtdInformada',
+					width : 60,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Qtde. Recebida',
+					name : 'qtdRecebida',
+					width : 90,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Preço Capa R$',
+					name : 'precoCapaFormatado',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Preço Desc R$',
+					name : 'precoDescontoFormatado',
+					width : 80,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Total R$',
+					name : 'totalDoItemFormatado',
+					width : 80,
+					sortable : true,
+					align : 'right'
+				}],
+				sortname : "codigoProduto",
+				sortorder : "asc",
+				width : 810,
+				height : 250
+			});
 	},
 	
 }, BaseController);

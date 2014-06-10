@@ -32,9 +32,10 @@ import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntradaNFETerceirosService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.NotaFiscalEntradaService;
-import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
+import br.com.abril.nds.service.NotaFiscalEntradaService;
+import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -74,6 +75,9 @@ public class EntradaNFETerceirosController extends BaseController {
 	
 	@Autowired
 	private NotaFiscalEntradaService notaFiscalEntradaService;
+	
+	@Autowired
+    private NotaFiscalService notaFiscalService;
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
@@ -241,7 +245,7 @@ public class EntradaNFETerceirosController extends BaseController {
 	@Path("/pesquisarItensPorNota")
 	public void pesquisarItensPorNota(final long idControleConferencia, final String sortorder, final String sortname, final int page, final int rp){
 		
-		final Integer total = this.entradaNFETerceirosService.buscarTodasItensPorNota(idControleConferencia);
+		final Integer total = this.notaFiscalService.qtdeNota(idControleConferencia);
 		
 		if (total <= 0) {		
 
@@ -249,7 +253,7 @@ public class EntradaNFETerceirosController extends BaseController {
 			
 		}
 		
-		final List<ItemNotaFiscalPendenteDTO> listItemNota = this.entradaNFETerceirosService.buscarItensPorNota(idControleConferencia, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page * rp - rp, rp);
+		final List<ItemNotaFiscalPendenteDTO> listItemNota = this.notaFiscalService.buscarItensPorNota(idControleConferencia, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page * rp - rp, rp);
 		
 		result.use(FlexiGridJson.class).from(listItemNota).page(page).total(total).serialize();
 		
