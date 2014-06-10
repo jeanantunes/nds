@@ -661,8 +661,8 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 					? tipoMovimentoEntregador : tipoMovimentoTransportador;
 		
 		movimentoFinanceiroCotaService
-			.gerarMovimentoFinanceiroDebitoDistribuicaoEntregaCota(
-					tipoMovimento, usuario, cota, dataVencimento, dataOperacao, valorDebito);		
+			.gerarMovimentoFinanceiroDebitoCota(
+					tipoMovimento, usuario, cota, dataVencimento, dataOperacao, valorDebito, null);		
 	}
 	
 	/*

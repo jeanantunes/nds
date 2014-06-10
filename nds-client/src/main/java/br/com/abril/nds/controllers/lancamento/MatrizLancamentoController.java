@@ -560,6 +560,8 @@ public class MatrizLancamentoController extends BaseController {
          *  
          *  Parcial 1 – Lacto 01/04/2014 e recolhimento 01/05/2014, 
          *  o lançto poderá ser postergado somente até o dia 24/04/2014 (ou seja 01/05/2014 – 7 dias).
+         *  
+         *  Para produtos com forma de comercialização CONTA FIRME não deve ser validado, pois o mesmo não possui recolhimento
          */
     	
         List<String> listaMensagens = new ArrayList<String>();
@@ -571,6 +573,10 @@ public class MatrizLancamentoController extends BaseController {
     	
         for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
             
+        	if(produtoLancamento.isProdutoContaFirme()){
+        		continue;
+        	}
+        	
             if (!this.isParcial(produtoLancamento)) {
                 
                 if (this.isPEBMenor7Dias(novadata, listaMensagens, produtoLancamento)) {
@@ -611,6 +617,8 @@ public class MatrizLancamentoController extends BaseController {
     	 *  
 		 *  Parcial 1 – Lacto 01/04/2014 e recolhimento 01/05/2014, 
 		 *  o lançto poderá ser postergado somente até o dia 24/04/2014 (ou seja 01/05/2014 – 7 dias).
+		 *  
+		 *  Para produtos com forma de comercialização CONTA FIRME não deve ser validado, pois o mesmo não possui recolhimento
     	 */
     	List<String> listaMensagens = new ArrayList<String>();
     	List<ProdutoLancamentoVO> produtosLancamentoAux = new ArrayList<ProdutoLancamentoVO>();
@@ -618,6 +626,10 @@ public class MatrizLancamentoController extends BaseController {
     	
         for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
             
+        	if(produtoLancamento.isProdutoContaFirme()){
+        		continue;
+        	}
+        	
             if (this.isParcial(produtoLancamento)
                     || (!this.isParcial(produtoLancamento) && !reprogramarProdutosPEBMenor7Dias)) {
                 
@@ -857,7 +869,7 @@ public class MatrizLancamentoController extends BaseController {
      * @param novaData - nova data de recolhimento
      */
     private List<String> validarDataReprogramacao(final List<ProdutoLancamentoVO> produtosLancamento, final Date novaData) {
-        
+    	
         //matrizLancamentoService.verificaDataOperacao(novaData);
         
         matrizLancamentoService.validarDiaSemanaDistribuicaoFornecedores(novaData);
@@ -871,6 +883,10 @@ public class MatrizLancamentoController extends BaseController {
         
         for (final ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
             
+        	if(produtoLancamento.isProdutoContaFirme()){
+        		continue;
+        	}
+        	
         	msg = matrizLancamentoService.verificaDataOperacao(novaData,produtoLancamento.getFornecedorId(),OperacaoDistribuidor.DISTRIBUICAO,produtoLancamento);
         	
         	if(!msg.equals("")){
@@ -1378,6 +1394,8 @@ public class MatrizLancamentoController extends BaseController {
             
             produtoBalanceamentoVO.setCancelado(false);
         }
+        
+        produtoBalanceamentoVO.setProdutoContaFirme(produtoLancamentoDTO.isProdutoContaFirme());
         
         return produtoBalanceamentoVO;
     }

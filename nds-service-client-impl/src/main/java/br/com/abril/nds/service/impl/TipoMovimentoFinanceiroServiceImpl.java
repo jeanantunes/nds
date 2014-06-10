@@ -54,4 +54,11 @@ public class TipoMovimentoFinanceiroServiceImpl implements TipoMovimentoFinancei
 		
 		return this.tipoMovimentoFinanceiroRepository.obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(grupo,operacao);
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public TipoMovimentoFinanceiro buscarPorGrupoMovimento(GrupoMovimentoFinaceiro grupoMovimento) {
+		
+		return tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(grupoMovimento);
+	}
 }

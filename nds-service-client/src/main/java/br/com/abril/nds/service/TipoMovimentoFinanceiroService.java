@@ -19,4 +19,6 @@ public interface TipoMovimentoFinanceiroService {
 	 * @return TipoMovimentoFinanceiro
 	 */
 	TipoMovimentoFinanceiro obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(GrupoMovimentoFinaceiro grupo, OperacaoFinaceira operacao);
+
+	TipoMovimentoFinanceiro buscarPorGrupoMovimento(GrupoMovimentoFinaceiro grupoMovimento);
 }

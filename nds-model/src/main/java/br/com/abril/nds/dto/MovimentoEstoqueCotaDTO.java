@@ -24,6 +24,8 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	
 	private List<RateioDTO> rateios;
 	
+	private Long idFornecedor;
+	
 	
 	/***/
 	private boolean aprovadoAutomaticamente;
@@ -326,5 +328,15 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	public void setValorDesconto(BigDecimal valorDesconto) {
 		this.valorDesconto = valorDesconto;
 	}
+
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
+	}
+	
+	
 	
 }

@@ -97,12 +97,12 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 				if (produto == null) {
 					produto = this.criarProdutoComInputDeEdicao(message);
 				}
-
+					
 				edicao = this.criarProdutoEdicaoConformeInput(produto, message);
 				
 				if (edicao != null) {
 				    
-				    this.criarLancamento(edicao, message);				    
+				    this.criarLancamento(edicao, message, produto.getFormaComercializacao());				    
 				}
 
 			} else {
@@ -119,7 +119,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		}
 	}
 	
-	private void criarLancamento(ProdutoEdicao edicao, Message message) {
+	private void criarLancamento(ProdutoEdicao edicao, Message message, FormaComercializacao formaComercializacaoDoProduto) {
 
 	    EMS0110FilialInput input = (EMS0110FilialInput) message.getBody();
 	    
@@ -137,8 +137,17 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
         lancamento.setNumeroLancamento(1);
         lancamento.setDataLancamentoPrevista(dataLancamento);
         lancamento.setDataLancamentoDistribuidor(dataLancamento);
-        lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
-        lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+        
+        //Se a forma de recolhimento do produto for Conta Firme a data de recolhimento deve se igual a data de lançamento,
+        //pois esse produto não vai ter recolhimento, e não ira no processo de consignação.
+        if(FormaComercializacao.CONTA_FIRME.equals(formaComercializacaoDoProduto)){
+        	lancamento.setDataRecolhimentoPrevista(dataLancamento);
+            lancamento.setDataRecolhimentoDistribuidor(dataLancamento);
+        }
+        else{
+        	lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
+            lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+        }
         
         lancamento.setProdutoEdicao(edicao);
         lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);

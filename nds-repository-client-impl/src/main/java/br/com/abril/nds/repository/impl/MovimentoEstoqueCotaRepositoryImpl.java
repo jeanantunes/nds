@@ -3729,4 +3729,22 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             .executeUpdate();
     }
     
+    @Override
+    public List<MovimentoEstoqueCota> obterMovimentosComProdutoContaFirme(final Long idLancamento){
+    	
+    	StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" select m from MovimentoEstoqueCota m join m.lancamento lancamento join m.tipoMovimento tipoMovimento  ");
+    	hql.append(" where lancamento.id =:idLancamento ");
+    	hql.append(" and tipoMovimento.grupoMovimentoEstoque =:grupoMovimentoEstoque ");
+    	hql.append(" and m.movimentoEstoqueCotaFuro is null ");
+    	
+    	Query query = getSession().createQuery(hql.toString());
+    	
+    	query.setParameter("idLancamento", idLancamento);
+    	query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE_CONTA_FIRME);
+    	
+    	return query.list();
+    }
+    
 }

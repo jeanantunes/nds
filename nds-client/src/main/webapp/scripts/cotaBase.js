@@ -268,6 +268,17 @@ var cotaBaseController = $.extend(true, {
 			return true;
 		});
 	});
+	
+	$("#indiceAjuste", cotaBaseController.workspace).blur(function(e) {
+		
+		var valorCampo = this.value.replace("_","").replace(".","").replace("_","").trim();
+		
+		if(valorCampo.length === 1) {
+			
+			this.value = valorCampo + "." + 0;
+		}
+	});
+	
 	},
 	
 	executarPreProcessamentoDetalhesGrid : function(resultado){
