@@ -305,6 +305,10 @@ var geracaoNFeController = $.extend({
 					data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_inativo.gif" border="0" />';
 				
 				} else {
+					if(data.rows[index].cell["notaFiscalConsolidada"]) {
+						data.rows[index].cell["numeroCota"] = '<span style="color: red;">'+ data.rows[index].cell["numeroCota"] +' *</span>';
+					}
+					
 					data.rows[index].cell["situacaoCadastro"] = "";
 				}
 				data.rows[index].cell["total"] = floatToPrice(data.rows[index].cell["total"]);
@@ -649,6 +653,10 @@ var geracaoNFeController = $.extend({
 	},
 	
 	verificarTipoDestinatario : function(element) {
+		
+		$('input[name^="tipoDestinatario"]:not(:checked)').removeAttr('checked');
+		$(element).attr('checked', true);
+		
 		if(element.value != "FORNECEDOR") {
 			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
 			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
@@ -680,7 +688,10 @@ var geracaoNFeController = $.extend({
 			    }));
 			});
 			
-			geracaoNFeController.verificarRegimeEspecialNaturezaOperacao($('#geracaoNfe-filtro-naturezaOperacao'));
+			if($('input[name^="tipoDestinatario"]:checked').val() == 'COTA') {
+				console.log('comecando a configurar pela cota');
+				geracaoNFeController.verificarRegimeEspecialNaturezaOperacao($('#geracaoNfe-filtro-naturezaOperacao'));
+			}
 			
 		});
 		
@@ -697,16 +708,20 @@ var geracaoNFeController = $.extend({
 				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 			}
 			
-			if($('input[name^="tipoDestinatario"]').val() == 'COTA'
+			if($('input[name^="tipoDestinatario"]:checked').val() == 'COTA'
 					&& (data.tipoEmissaoRegimeEspecial == 'CONSOLIDA_EMISSAO_POR_DESTINATARIO'
 						|| data.tipoEmissaoRegimeEspecial == 'CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS')) {
+				
 				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("enable");
 				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("show");
 				$(".emissaoRegimeEspecial").show();
+				
 			} else {
+				
 				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("disable");
 				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("hide");
 				$(".emissaoRegimeEspecial").hide();
+				
 			}
 		});
 	},

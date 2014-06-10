@@ -29,13 +29,9 @@
 	
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
 	
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 	<bean id="jobFactoryBean" class="br.com.abril.nds.client.quartz.AutowiringSpringBeanJobFactory">
 		<property name="enableQuartzTasks" value="false"/>
 	</bean>
->>>>>>> 01782e204a9336a5059111471ed9fd5c2f3b629b
 	
 	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
     	<property name="configLocation" value="classpath:quartz.properties"/>
@@ -86,17 +82,4 @@
 	</bean>
 	<!-- /FTF -->
 	
-	<!-- /Web Services -->	
-<<<<<<< HEAD
-	
-	<bean id="jobFactoryBean" class="br.com.abril.nds.client.quartz.AutowiringSpringBeanJobFactory"></bean>
-	
-	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-    	<property name="configLocation" value="classpath:quartz.properties"/>
-        <property name="jobFactory" ref="jobFactoryBean"/>
-	</bean>
-	
-=======
-
->>>>>>> 01782e204a9336a5059111471ed9fd5c2f3b629b
 </beans>
