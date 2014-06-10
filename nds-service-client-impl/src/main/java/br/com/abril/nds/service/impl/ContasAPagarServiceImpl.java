@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ContasAPagarConsultaProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarGridPrincipalFornecedorVO;
-import br.com.abril.nds.client.vo.ContasApagarConsultaPorDistribuidorVO;
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
 import br.com.abril.nds.dto.ContasAPagarDistribDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
@@ -133,7 +132,7 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 		
 		final ContasAPagarGridPrincipalFornecedorVO retorno = new ContasAPagarGridPrincipalFornecedorVO();
 		
-		retorno.setGrid(this.pesquisarContasPorDistribuidor(filtro));
+		retorno.setGrid(this.contasAPagarRepository.pesquisarPorDistribuidor(filtro));
 		retorno.setTotalGrid(this.contasAPagarRepository.pesquisarPorDistribuidorCount(filtro));
 		
 		BigDecimal totalBruto = this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(filtro, false);
@@ -165,15 +164,6 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 		
 		return retorno;
 	}
-
-	@Transactional
-	@Override
-	public List<ContasApagarConsultaPorDistribuidorVO> pesquisarContasPorDistribuidor(FiltroContasAPagarDTO filtro) {
-        
-	    this.validarFiltro(filtro);
-	    
-        return this.contasAPagarRepository.pesquisarPorDistribuidor(filtro);
-    }
 
     private void validarFiltro(FiltroContasAPagarDTO filtro) {
 		
