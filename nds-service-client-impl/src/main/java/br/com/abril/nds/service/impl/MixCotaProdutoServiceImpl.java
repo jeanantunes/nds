@@ -723,6 +723,10 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		mix.setDataHora(GregorianCalendar.getInstance().getTime());
 		mix.setUsuario(usuarioService.getUsuarioLogado());
 		
+		for(RepartePDV pdvMix : mix.getRepartesPDV()){
+			pdvMix.setReparte(0);
+		}
+		
 		this.mixCotaProdutoRepository.alterar(mix);
 			
 		

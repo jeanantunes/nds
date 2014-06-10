@@ -1711,7 +1711,7 @@ $(".pdvCotaGrid_AP", analiseParcialController.workspace).flexigrid({
         	var cell = result.rows[i].cell;
             result.rows[i].cell = $.extend({}, defaultCell, cell);
             
-        	result.rows[i].cell.reparte = "<input class='repartePDV' value='"+(result.rows[i].cell.repartePDV || '0')+"' name='repartePDV' id='repartePDV"+i+"' onchange='analiseParcialController.atualizaRepartePDV();' >"
+        	result.rows[i].cell.reparte = "<input class='repartePDV' value='"+(result.rows[i].cell.reparte || '0')+"' name='repartePDV' id='repartePDV"+i+"' onchange='analiseParcialController.atualizaRepartePDV();' >"
         }
 
         return result;

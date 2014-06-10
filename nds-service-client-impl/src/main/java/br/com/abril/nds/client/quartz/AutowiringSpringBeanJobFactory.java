@@ -10,6 +10,12 @@ public final class AutowiringSpringBeanJobFactory
 	extends SpringBeanJobFactory implements ApplicationContextAware {
 
 	private transient AutowireCapableBeanFactory beanFactory;
+	
+    private boolean enableQuartzTasks;
+
+	public void setEnableQuartzTasks(boolean enableQuartzTasks) {
+		this.enableQuartzTasks = enableQuartzTasks;
+	}
 
 	public void setApplicationContext(final ApplicationContext context) {
 		
@@ -18,6 +24,10 @@ public final class AutowiringSpringBeanJobFactory
 
 	@Override
 	protected Object createJobInstance(final TriggerFiredBundle bundle) throws Exception {
+		
+		if(!enableQuartzTasks) {
+			return new Object();
+		}
 		
 		final Object job = super.createJobInstance(bundle);
 		
