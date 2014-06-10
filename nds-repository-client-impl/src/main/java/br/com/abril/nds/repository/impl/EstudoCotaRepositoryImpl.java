@@ -77,10 +77,12 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 			.append(" CASE WHEN (cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS = true or cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica = true) ")
 			.append(" 	THEN true ELSE false END as cotaContribuinteExigeNotaFiscal, ")
 			.append(" cota.tipoCota as tipoCota ")
+			.append(" fornecedor.id as idFornecedorPadraoCota ")
 			.append(" from EstudoCota estudoCota ")
 			.append(" join estudoCota.estudo estudo ")
 			.append(" join estudoCota.cota cota ")
 			.append(" join estudo.produtoEdicao produtoEdicao ")
+			.append(" left join cota.parametroCobranca.fornecedorPadrao fornecedor ")
 			.append(" where estudo.lancamentoID = :idLancamento ") 
 			.append(" and produtoEdicao.id = :idProdutoEdicao ");
 		

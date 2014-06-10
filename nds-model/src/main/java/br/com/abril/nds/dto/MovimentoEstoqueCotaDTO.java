@@ -24,6 +24,8 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	
 	private List<RateioDTO> rateios;
 	
+	private Long idFornecedor;
+	
 	
 	/***/
 	private boolean aprovadoAutomaticamente;
@@ -344,6 +346,14 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 
 	public void setCotaContribuinteExigeNF(boolean cotaContribuinteExigeNF) {
 		this.cotaContribuinteExigeNF = cotaContribuinteExigeNF;
+	}
+
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
 	}
 	
 }

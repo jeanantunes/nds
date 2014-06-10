@@ -29,7 +29,15 @@
 	
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
 	
+	<bean id="jobFactoryBean" class="br.com.abril.nds.client.quartz.AutowiringSpringBeanJobFactory">
+		<property name="enableQuartzTasks" value="false"/>
+	</bean>
 	
+	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    	<property name="configLocation" value="classpath:quartz.properties"/>
+        <property name="jobFactory" ref="jobFactoryBean"/>
+	</bean>
+		
 	<!-- 
 	    Beans de assinatura 
 	-->
@@ -75,5 +83,5 @@
 	<!-- /FTF -->
 	
 	<!-- /Web Services -->	
-	
+
 </beans>

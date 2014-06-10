@@ -94,6 +94,8 @@ public class ProdutoLancamentoDTO implements Serializable {
   	
   	private String nomeFantasia;
   	
+  	private boolean produtoContaFirme;
+  	
   	
 	public Date getDataRecolhimentoDistribuidor() {
 		return dataRecolhimentoDistribuidor;
@@ -582,6 +584,16 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
+	}
+	
+	
+
+	public boolean isProdutoContaFirme() {
+		return produtoContaFirme;
+	}
+
+	public void setProdutoContaFirme(boolean produtoContaFirme) {
+		this.produtoContaFirme = produtoContaFirme;
 	}
 
 	/* (non-Javadoc)

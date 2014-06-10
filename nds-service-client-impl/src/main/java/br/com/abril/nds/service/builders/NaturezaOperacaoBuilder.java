@@ -31,9 +31,9 @@ public class NaturezaOperacaoBuilder {
 			cfop = naturezaOperacao.getCfopExterior();
 		}
 		
-		if(naturezaOperacao.getDescricao().length() > 57 ){
+		if(naturezaOperacao.getDescricao().length() > 57 ) {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDescricaoNaturezaOperacao(naturezaOperacao.getDescricao().substring(0, 58));
-		}else{
+		} else {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDescricaoNaturezaOperacao(naturezaOperacao.getDescricao());
 		}
 		

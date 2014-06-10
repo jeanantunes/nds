@@ -5,6 +5,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+
 /**
  * 
  * Objeto para transportar dados referentes a expedição de lançamentos de produtos.  
@@ -34,7 +37,36 @@ public class ExpedicaoDTO implements Serializable {
 	private Long qntProduto;
 	private String razaoSocial;
 	
+	private Long idLancamento;
+	private Long idUsuario; 
+	private Date dataOperacao;
+	private TipoMovimentoEstoque tipoMovimentoEstoque; 
+	private TipoMovimentoEstoque tipoMovimentoEstoqueCota;
+	private TipoMovimentoEstoque tipoMovimentoEstoqueJuramentado;
+	private TipoMovimentoFinanceiro tipoMovimentoDebito;
+	private Date dataVencimentoDebito;
+	private Long idFornecedorPadraoDistribuidor;
+	
 	public ExpedicaoDTO() {}
+	
+	public ExpedicaoDTO( final Long idLancamento,
+						 final Long idUsuario,
+						 final Date dataOperacao,
+						 final TipoMovimentoEstoque tipoMovimentoEstoque,
+						 final TipoMovimentoEstoque tipoMovimentoEstoqueCota,
+						 final TipoMovimentoEstoque tipoMovimentoEstoqueJuramentado,
+						 final Date dataVencimentoDebito,
+						 final Long idFornecedorPadraoDistribuidor) {
+		
+		this.idLancamento = idLancamento;
+		this.idUsuario = idUsuario; 
+		this.dataOperacao = dataOperacao;
+		this.tipoMovimentoEstoque = tipoMovimentoEstoque; 
+		this.tipoMovimentoEstoqueCota = tipoMovimentoEstoqueCota;
+		this.tipoMovimentoEstoqueJuramentado = tipoMovimentoEstoqueJuramentado;
+		this.dataVencimentoDebito = dataVencimentoDebito;
+		this.idFornecedorPadraoDistribuidor = idFornecedorPadraoDistribuidor;
+	}
 
 	/**
 	 * @return the codigoProduto
@@ -245,4 +277,54 @@ public class ExpedicaoDTO implements Serializable {
 		this.desconto = desconto;
 	}
 
+	public Long getIdLancamento() {
+		return idLancamento;
+	}
+
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+
+	public Date getDataOperacao() {
+		return dataOperacao;
+	}
+
+	public TipoMovimentoEstoque getTipoMovimentoEstoque() {
+		return tipoMovimentoEstoque;
+	}
+
+	public TipoMovimentoEstoque getTipoMovimentoEstoqueCota() {
+		return tipoMovimentoEstoqueCota;
+	}
+
+	public TipoMovimentoEstoque getTipoMovimentoEstoqueJuramentado() {
+		return tipoMovimentoEstoqueJuramentado;
+	}
+
+	public TipoMovimentoFinanceiro getTipoMovimentoDebito() {
+		return tipoMovimentoDebito;
+	}
+
+	public Date getDataVencimentoDebito() {
+		return dataVencimentoDebito;
+	}
+
+	public Long getIdFornecedorPadraoDistribuidor() {
+		return idFornecedorPadraoDistribuidor;
+	}
+
+	public void setTipoMovimentoEstoque(TipoMovimentoEstoque tipoMovimentoEstoque) {
+		this.tipoMovimentoEstoque = tipoMovimentoEstoque;
+	}
+
+	public void setTipoMovimentoEstoqueCota(
+			TipoMovimentoEstoque tipoMovimentoEstoqueCota) {
+		this.tipoMovimentoEstoqueCota = tipoMovimentoEstoqueCota;
+	}
+
+	public void setTipoMovimentoDebito(TipoMovimentoFinanceiro tipoMovimentoDebito) {
+		this.tipoMovimentoDebito = tipoMovimentoDebito;
+	}
+	
+	
 }

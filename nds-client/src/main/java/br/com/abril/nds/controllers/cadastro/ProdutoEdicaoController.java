@@ -31,6 +31,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -306,8 +307,16 @@ public class ProdutoEdicaoController extends BaseController {
 			ProdutoEdicaoDTO produtoEdicaoDTO, ModoTela modoTela,boolean istrac29) {
 			
 		produtoEdicaoDTO.setModoTela(modoTela);
-		produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataRecolhimentoReal());
-
+		
+		if(FormaComercializacao.CONTA_FIRME.equals(produtoEdicaoDTO.getFormaComercializacao())){
+			
+			produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataLancamentoPrevisto());
+			produtoEdicaoDTO.setDataRecolhimentoPrevisto(produtoEdicaoDTO.getDataLancamentoPrevisto());
+		}
+		else{			
+			produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataRecolhimentoReal());
+		}
+			
 		ValidacaoVO vo = null;
 		 
 		try {
@@ -620,11 +629,14 @@ public class ProdutoEdicaoController extends BaseController {
 				listaMensagens.add("Campo 'Data de Recolhimento Previsto' não está em um formato válido.(ex: '21/01/2001')");
 			}
 			
-			if(dto.getDataRecolhimentoPrevisto() != null 
-			        && dto.getDataRecolhimentoPrevisto()!=null
-			        &&!validarDataLancamentoMenorRecolhimento(dto))
-                listaMensagens.add(" Campo 'Data de Lançamento Previsto' deve ser menor do que o campo 'Data de Recolhimento Previsto' ");
-			
+			if(!FormaComercializacao.CONTA_FIRME.equals(dto.getFormaComercializacao())){
+				
+				if(dto.getDataRecolhimentoPrevisto() != null 
+				        && dto.getDataRecolhimentoPrevisto()!=null
+				        &&!validarDataLancamentoMenorRecolhimento(dto))
+	                listaMensagens.add(" Campo 'Data de Lançamento Previsto' deve ser menor do que o campo 'Data de Recolhimento Previsto' ");
+				
+			}
 			
 			if (!dto.isParcial() && dto.getRepartePrevisto() == null) {
                 listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Previsto'!");

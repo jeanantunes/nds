@@ -881,11 +881,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             lancamento.setReparte(dto.getRepartePrevisto());
         }
         
-        if (lancamento.getId() == null && !TipoLancamento.LANCAMENTO.equals(dto.getTipoLancamento())) {
-
+        final boolean tipoDeLancamentoRedistribuicao = TipoLancamento.REDISTRIBUICAO.equals(dto.getTipoLancamento());
+        
+        final boolean produtoEdicaoSemLancamento = (produtoEdicao.getLancamentos() == null || produtoEdicao.getLancamentos().isEmpty());  
+        
+        if(tipoDeLancamentoRedistribuicao && produtoEdicaoSemLancamento){
+        	
         	throw new ValidacaoException(TipoMensagem.WARNING, "O tipo de distribuição deve ser \"Lançamento\"");
         }
-
+        
         lancamento.setTipoLancamento(dto.getTipoLancamento());
         lancamento.setRepartePromocional(repartePromocional);
         lancamento.setUsuario(usuario);
@@ -1116,6 +1120,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         dto.setFase(produto.getFase());
         dto.setPacotePadrao(produto.getPacotePadrao());
         dto.setPeso(produto.getPeso());
+        dto.setFormaComercializacao(produto.getFormaComercializacao());
         
         String nomeFornecedor = "";
         if (produto.getFornecedor() != null

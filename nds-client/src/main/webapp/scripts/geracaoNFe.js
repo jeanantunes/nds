@@ -571,6 +571,7 @@ var geracaoNFeController = $.extend({
 		params.push({name:"filtro.idNaturezaOperacao" , value: $("#geracaoNfe-filtro-naturezaOperacao").val()});
 		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-listRoteiro").val()});
 		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-listRota").val()});
+		params.push({name:"notaFiscalTipoEmissaoRegimeEspecial", value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
 		
 		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
 			$.each($("#geracaoNfe-filtro-selectFornecedores").val(), function(index, v) {

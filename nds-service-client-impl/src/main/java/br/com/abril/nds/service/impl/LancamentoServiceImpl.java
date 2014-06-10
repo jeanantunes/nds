@@ -18,15 +18,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
+import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -38,12 +44,16 @@ import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
+import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -85,6 +95,18 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private CalendarioService calendarioService;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
+	
+	@Autowired
+	private TipoMovimentoService tipoMovimentoService;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroService tipoMovimentoFinanceiroService;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
 	
 	@Value("${data_cabalistica}")
     private String dataCabalistica;
@@ -172,11 +194,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 
 	@Override
 	@Transactional
-	public String confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, 
-									 TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,
-									 TipoMovimentoEstoque tipoMovimentoJuramentado) {
+	public String confirmarExpedicao(final ExpedicaoDTO expedicaoDTO) {
 		
-		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
+		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(expedicaoDTO.getIdLancamento());
 		
 		if (TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())) {
             
@@ -189,31 +209,62 @@ public class LancamentoServiceImpl implements LancamentoService {
         }
 		
 		Expedicao expedicao = new Expedicao();
-		expedicao.setDataExpedicao(dataOperacao);
-		expedicao.setResponsavel(new Usuario(idUsuario));
+		
+		expedicao.setDataExpedicao(expedicaoDTO.getDataOperacao());
+		expedicao.setResponsavel(new Usuario(expedicaoDTO.getIdUsuario()));
+		
 		Long idExpedicao = expedicaoRepository.adicionar(expedicao);
 		
 		expedicao.setId(idExpedicao);
 		
-		lancamentoRepository.alterarLancamento(idLancamento, dataOperacao, StatusLancamento.EXPEDIDO, expedicao);
+		final boolean produtoContaFirme = (FormaComercializacao.CONTA_FIRME.equals(lancamento.getFormaComercializacaoProduto()));
 		
-//		HistoricoLancamento historico = new HistoricoLancamento();
-//		historico.setDataEdicao(dataOperacao);
-//		historico.setLancamento(new Lancamento(idLancamento));
-//		
-//		historico.setResponsavel(new Usuario(idUsuario));
-//		historico.setStatusNovo(StatusLancamento.EXPEDIDO);
-//		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
-		
-        // TODO: geração de historico desativada devido a criação de trigger
-        // para realizar essa geração.
-		//historicoLancamentoRepository.adicionar(historico);
-		
-		
-		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento.getDataPrevista(), lancamento.getDataDistribuidor(), 
-				lancamento.getIdProduto(), lancamento.getIdProdutoEdicao(), idLancamento, idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota, tipoMovimentoJuramentado);
+		if(produtoContaFirme){
+			
+			this.atribuirTiposMovimentoParaProdutoContaFirme(expedicaoDTO);
+			
+			lancamentoRepository.alterarLancamento(
+					expedicaoDTO.getIdLancamento(), expedicaoDTO.getDataOperacao(), StatusLancamento.RECOLHIDO, expedicao);
+			
+			this.processarMovimentosDeEstoqueEFinanceiroParaProdutoContaFirme(expedicaoDTO,lancamento);
+		}
+		else{
+			
+			lancamentoRepository.alterarLancamento(
+					expedicaoDTO.getIdLancamento(), expedicaoDTO.getDataOperacao(), StatusLancamento.EXPEDIDO, expedicao);
+			
+			movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento, expedicaoDTO);
+		}
 		
 		return null;
+	}
+
+	private void atribuirTiposMovimentoParaProdutoContaFirme(final ExpedicaoDTO expedicaoDTO) {
+		
+		final TipoMovimentoEstoque envioJornaleiroProdutoContaFirme  =
+				tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_PRODUTO_CONTA_FIRME);
+		
+		final TipoMovimentoEstoque recebimentoReparteProdutoContaFirme =
+				tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE_CONTA_FIRME);
+		
+		final TipoMovimentoFinanceiro tipoMovimentoDebito =
+				tipoMovimentoFinanceiroService.buscarPorGrupoMovimento(GrupoMovimentoFinaceiro.DEBITO);
+		
+		expedicaoDTO.setTipoMovimentoDebito(tipoMovimentoDebito);
+		expedicaoDTO.setTipoMovimentoEstoque(envioJornaleiroProdutoContaFirme);
+		expedicaoDTO.setTipoMovimentoEstoqueCota(recebimentoReparteProdutoContaFirme);
+	}
+
+	private void processarMovimentosDeEstoqueEFinanceiroParaProdutoContaFirme(final ExpedicaoDTO expedicaoDTO,final LancamentoDTO lancamento) {
+		
+		List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota = 
+				movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento,expedicaoDTO);
+		
+		if(movimentosEstoqueCota!= null && !movimentosEstoqueCota.isEmpty()){
+			
+			movimentoFinanceiroCotaService.
+				processarDebitosParaCotasNoProcessoDeExpedicaoDeProdutoContaFirme(expedicaoDTO, movimentosEstoqueCota);
+		}
 	}
 
 	private String tratarRedistribuicao(LancamentoDTO lancamento) {
