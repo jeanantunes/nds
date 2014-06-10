@@ -1005,7 +1005,7 @@ public class ParametroCobrancaCotaController extends BaseController {
     	Distribuidor d = this.distribuidorService.obter();
     	
         PoliticaSuspensao pl = d.getPoliticaSuspensao();
-        
+
         ParametroCobrancaCotaDTO pDTO = new ParametroCobrancaCotaDTO();
         
         pDTO.setSugereSuspensao(d.isSugereSuspensao());
