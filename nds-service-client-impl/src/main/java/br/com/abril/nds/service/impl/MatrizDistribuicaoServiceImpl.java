@@ -764,7 +764,6 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		for (EstudoCotaGerado cota : cotas) {
 			soma = soma.add(cota.getReparte());
 			if (!vo.isFixacao() && cota.getClassificacao().equals("FX")) {
-//				cota.setClassificacao("");
 				cota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
 			}
 		}
