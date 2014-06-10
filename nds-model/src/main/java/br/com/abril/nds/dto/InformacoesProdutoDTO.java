@@ -203,9 +203,10 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public String getDatalanc() {
 		return datalanc;
 	}
-	public void setDatalanc(String datalanc) {
-		this.datalanc = datalanc;
+	public void setDatalanc(Date datalanc) {
+		this.datalanc = DateUtil.formatarDataPTBR(datalanc);
 	}
+	
 	public String getDataRecb() {
 		return dataRecb;
 	}

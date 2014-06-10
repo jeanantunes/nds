@@ -216,8 +216,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaDTO.setIdCota(cota.getId());
 			
 			parametroCobrancaDTO.setNumCota(cota.getNumeroCota());
-			
-			
+
 			parametroCobrancaDTO.setContrato(cota.isPossuiContrato());
 			
 			parametroCobrancaDTO.setTipoCota(cota.getTipoCota());
@@ -270,7 +269,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaDTO.setDevolveEncalhe(cota.isDevolveEncalhe()!=null?cota.isDevolveEncalhe():true);
 			
 			parametroCobrancaDTO.setParametroDistribuidor(parametroDistribuidor);
-			
 			
 			if (cota.isSugereSuspensaoDistribuidor()){
 				
