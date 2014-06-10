@@ -19,6 +19,7 @@ import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.SomarEstudosService;
+import br.com.abril.nds.util.BigIntegerUtil;
 
 @Service
 public class SomarEstudosServiceImpl implements SomarEstudosService {
@@ -51,22 +52,22 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 		Long idEstudo = distribuicaoVO.getIdEstudo().longValue();
 		EstudoGerado estudoBase = estudoGeradoRepository.buscarPorId(idEstudoBase);
 		
-		Map<Long,EstudoCotaGerado> mapEstudoCota = new HashMap<Long,EstudoCotaGerado>();
+		Map<Long,EstudoCotaGerado> mapEstudoCotaBase = new HashMap<Long,EstudoCotaGerado>();
 		
 		if (estudoBase.getEstudoCotas() != null && !estudoBase.getEstudoCotas().isEmpty()) {
 			
-			for (EstudoCotaGerado estudoCota : estudoBase.getEstudoCotas()) {
+			for (EstudoCotaGerado estudoCotaBase : estudoBase.getEstudoCotas()) {
 				
-				final Cota cota = estudoCota.getCota();
+				final Cota cota = estudoCotaBase.getCota();
 				
-				if(cota != null) {
+				if((cota != null) && (BigIntegerUtil.isMaiorQueZero(estudoCotaBase.getReparte()))) {
 					
-					mapEstudoCota.put(cota.getId(), estudoCota);
+					mapEstudoCotaBase.put(cota.getId(), estudoCotaBase);
 				}
 			}
 		}
 		
-		if (mapEstudoCota.isEmpty()) {
+		if (mapEstudoCotaBase.isEmpty()) {
 			
 			return; 
 		}
@@ -81,19 +82,19 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 					
 					Long idCota = estudoCota.getCota().getId();
 					
-					if (mapEstudoCota.containsKey(idCota)) {
+					if (mapEstudoCotaBase.containsKey(idCota)) {
 					  	
-						EstudoCotaGerado estudoCotaBase = mapEstudoCota.remove(idCota);
+						EstudoCotaGerado estudoCotaBase = mapEstudoCotaBase.get(idCota);
 						
 						if (estudoCotaBase.getReparte() != null && estudoCota.getReparte() != null) {
-							
 							estudoCota.setReparte(estudoCota.getReparte().add(estudoCotaBase.getReparte()));
+							mapEstudoCotaBase.remove(idCota);
 						}
 					}
 				}
 			}
 		
-			for (EstudoCotaGerado estudoCota : mapEstudoCota.values()) {
+			for (EstudoCotaGerado estudoCota : mapEstudoCotaBase.values()) {
 				
 				estudoCota.setEstudo(estudo);
 				estudoCota.setQtdeEfetiva(estudoCota.getReparte());
