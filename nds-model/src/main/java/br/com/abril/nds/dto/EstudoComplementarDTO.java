@@ -5,7 +5,13 @@ import java.math.BigInteger;
 
 public class EstudoComplementarDTO  implements Serializable{
 	
-	 private long idEstudo;
+	 /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
+	private long idEstudo;
 	 private long idEstudoComplementar;
 	 private long idProduto;
 	 private String nomeProduto;
@@ -20,6 +26,7 @@ public class EstudoComplementarDTO  implements Serializable{
 	 private BigInteger QtdeReparte;
 	 private Long numeroEdicao;
 	 private String codigoProduto;
+	 private String tipoSegmentoProduto;
 	 
 	public long getIdEstudo() {
 		return idEstudo;
@@ -105,8 +112,11 @@ public class EstudoComplementarDTO  implements Serializable{
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
 	}
-	 
-	 
-	 
+	public String getTipoSegmentoProduto() {
+		return tipoSegmentoProduto;
+	}
+	public void setTipoSegmentoProduto(String tipoSegmentoProduto) {
+		this.tipoSegmentoProduto = tipoSegmentoProduto;
+	}
 	 
 }

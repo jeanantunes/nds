@@ -493,6 +493,7 @@ public class EstudoServiceImpl implements EstudoService {
 				
 				case "FX":
 
+//					Testar esse método, pois foi alterada a anotação do hibernate na classe EstudoCotaGerado 
 					FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCotaClassificacao(estudoCota.getCota(), estudo.getProdutoEdicao().getProduto().getCodigoICD(), estudo.getProdutoEdicao().getTipoClassificacaoProduto());
 					
 					for (FixacaoRepartePdv fixacaoPDV : fixacaoReparte.getRepartesPDV()) {

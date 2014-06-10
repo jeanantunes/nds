@@ -63,8 +63,8 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 
     @Override
     @Transactional(readOnly = true)
-    public EstudoComplementarDTO obterEstudoComplementarPorIdEstudoBase(
-	    long idEstudoBase) {
+    public EstudoComplementarDTO obterEstudoComplementarPorIdEstudoBase(long idEstudoBase) {
+	
 	EstudoComplementarDTO estudoComplDto = null;
 	EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudoBase);
 
@@ -93,6 +93,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	estudoComplDto.setIdPublicacao(pe.getNumeroEdicao());
 	estudoComplDto.setIdPEB(pe.getProduto().getPeb());
 	estudoComplDto.setNomeFornecedor( pe.getProduto().getFornecedor().getJuridica().getNomeFantasia()==null?"":pe.getProduto().getFornecedor().getJuridica().getNomeFantasia());
+	estudoComplDto.setTipoSegmentoProduto(estudo.getProdutoEdicao().getProduto().getTipoSegmentoProduto().getDescricao()!=null?estudo.getProdutoEdicao().getProduto().getTipoSegmentoProduto().getDescricao():"");
 
 	Set<Lancamento> lancamentos = pe.getLancamentos();
 
