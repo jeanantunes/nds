@@ -30,6 +30,11 @@ public enum GrupoMovimentoEstoque  {
 	 * Envio de reparte à cota pelo distribuidor
 	 */
 	ENVIO_JORNALEIRO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
+	
+	/**
+	 * Envio de reparte do tipo conta firme à cota pelo distribuidor
+	 */
+	ENVIO_JORNALEIRO_PRODUTO_CONTA_FIRME(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 
 	/**
 	 * Ocorre durante o a funcionalidade "Fechamento Encalhe" (Fechamento Estoque Físico X Lógico)
@@ -160,6 +165,11 @@ public enum GrupoMovimentoEstoque  {
 	 * Recebimento do reparte cota
 	 */
 	RECEBIMENTO_REPARTE(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO),
+	
+	/**
+	 * Recebimento do reparte do tipo conta firme pela cota
+	 */
+	RECEBIMENTO_REPARTE_CONTA_FIRME(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO),
 	
 	/**
 	 * Envio do encalhe cota

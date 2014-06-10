@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
+import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -40,15 +40,11 @@ public interface LancamentoService {
 	
 	        /**
      * Confirma expedição de lançamento
+	         * @param expedicaoDTO TODO
      * 
-     * @param idLancamento - Código do lançamento
-     * @param idUsuario - Código do usuario
-     * @param tipoMovimentoCota
-     * @param tipoMovimento
-     * @param dataOperacao
      * @return String
      */
-	String confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,TipoMovimentoEstoque tipoMovimentoJuramentado);
+	String confirmarExpedicao(ExpedicaoDTO expedicaoDTO);
 	
 	Lancamento obterPorId(Long idLancamento);
 	

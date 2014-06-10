@@ -1,7 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -609,5 +607,11 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
                 politicaCobrancaRepository.obterTiposCobrancaDistribuidor();
         
         return tiposCobranca;
+    }
+    
+    @Override
+    public Fornecedor obterFornecedorPadrao() {
+    	
+    	return politicaCobrancaRepository.obterFornecedorPadrao();
     }
 }

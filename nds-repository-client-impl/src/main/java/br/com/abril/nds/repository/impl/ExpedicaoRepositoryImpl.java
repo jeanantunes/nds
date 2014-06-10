@@ -255,7 +255,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
 		
-		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		query.setParameterList("grupoMovimentoEstoque", Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(),
+																  	  GrupoMovimentoEstoque.RECEBIMENTO_REPARTE_CONTA_FIRME.name()));
 		
 		query.setParameterList("statusAposExpedido", 
 							   Arrays.asList(StatusLancamento.EXPEDIDO.name(),
@@ -431,7 +432,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				  .append(" LEFT OUTER JOIN BOX box ON cota.BOX_ID=box.ID ")
 				  .append(" WHERE lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ")
 				  .append(" AND lancamento.STATUS IN ( :statusAposExpedido ) ")
-				  .append(" AND tp.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ")
+				  .append(" AND tp.GRUPO_MOVIMENTO_ESTOQUE IN( :grupoMovimentoEstoque )")
 				  .append(" AND mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 				  
 		

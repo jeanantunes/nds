@@ -764,7 +764,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		for (EstudoCotaGerado cota : cotas) {
 			soma = soma.add(cota.getReparte());
 			if (!vo.isFixacao() && cota.getClassificacao().equals("FX")) {
-				cota.setClassificacao("");
+				cota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
 			}
 		}
 		reparteDistribuir = vo.getReparteDistribuido().subtract(soma);
@@ -815,15 +815,26 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			if (cota.getReparte() == null) {
 				cota.setQtdePrevista(null);
 				cota.setQtdeEfetiva(null);
+				
+				if((cota.getClassificacao() == null) || (cota.getClassificacao().equalsIgnoreCase(""))){
+					cota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
+				}
+				
 			} else if (cota.getReparte().compareTo(BigInteger.ZERO) == 0) {
 				cota.setQtdePrevista(null);
 				cota.setQtdeEfetiva(null);
 				cota.setReparte(null);
+				
+				if((cota.getClassificacao() == null) || (cota.getClassificacao().equalsIgnoreCase(""))){
+					cota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
+				}
+				
 			} else {
 				cota.setQtdeEfetiva(cota.getReparte());
 				cota.setQtdePrevista(cota.getReparte());
 				cota.setReparteInicial(cota.getReparte());
 			}
+			
 			estudoCotaGeradoRepository.adicionar(cota);
 		}
 
@@ -831,10 +842,16 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			if (cota.getReparte() == null) {
 				cota.setQtdePrevista(null);
 				cota.setQtdeEfetiva(null);
+				
+				if((cota.getClassificacao() == null) || (cota.getClassificacao().equalsIgnoreCase(""))){
+					cota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
+				}
+				
 			}
 			if (!vo.isFixacao() && cota.getClassificacao().equals("FX")) {
-				cota.setClassificacao("");
+				cota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
 			}
+			
 			estudoCotaGeradoRepository.adicionar(cota);
 		}
 		estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>(cotas));

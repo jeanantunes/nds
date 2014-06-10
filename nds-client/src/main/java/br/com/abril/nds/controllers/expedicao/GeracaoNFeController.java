@@ -285,10 +285,17 @@ public class GeracaoNFeController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_NFE_GERACAO_NFE_ALTERACAO)
-	public void gerarNotasFiscais(FiltroNFeDTO filtro, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
+	public void gerarNotasFiscais(FiltroNFeDTO filtro, NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissaoRegimeEspecial, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
 		
 		try {
 
+			if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao() < 0) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Selecione uma Natureza de Operação.");
+			}
+			
+			//FIXME: vRaptor nao instanciou dentro do filtro 
+			filtro.setNotaFiscalTipoEmissao(notaFiscalTipoEmissaoRegimeEspecial);
+			
 			this.nfeService.gerarNotaFiscal(filtro);
 			
 		} catch (Exception e) {

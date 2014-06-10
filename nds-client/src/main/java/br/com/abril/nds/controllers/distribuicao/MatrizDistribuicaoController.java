@@ -277,7 +277,7 @@ public class MatrizDistribuicaoController extends BaseController {
         produtoDistribuicaoVO.setNomeProduto(infoDTO.getNomeProduto());
         produtoDistribuicaoVO.setNumeroEdicao(new BigInteger(infoDTO.getNumeroEdicao().toString()));
         produtoDistribuicaoVO.setClassificacao(infoDTO.getTipoClassificacaoProdutoDescricao());
-        produtoDistribuicaoVO.setDataLancto(infoDTO.getDataLcto());
+        produtoDistribuicaoVO.setDataLancto(infoDTO.getDatalanc());
         produtoDistribuicaoVO.setReparte(new BigDecimal(infoDTO.getReparteDistribuido()));
         produtoDistribuicaoVO.setEstudoLiberado(infoDTO.getEstudoLiberado());
         produtoDistribuicaoVO.setQtdeReparteEstudo(infoDTO.getQtdeReparteEstudo());

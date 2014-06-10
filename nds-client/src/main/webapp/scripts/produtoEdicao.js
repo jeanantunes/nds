@@ -858,6 +858,17 @@ var produtoEdicaoController =$.extend(true,  {
 							}
 							
 							$("#produtoEdicaoController-idFornecedor").val(result.idFornecedor);
+							
+							$("#produtoEdicaoController-formaComercializacao", this.workspace).val(result.formaComercializacao);
+							
+							var isProdutoContaFirme = (result.formaComercializacao === "CONTA_FIRME");
+							
+							if(isProdutoContaFirme){
+								$("#fildSet-data-recolhimento", this.workspace).hide();
+							}
+							else{
+								$("#fildSet-data-recolhimento", this.workspace).show();
+							}
 						}
 					},
 					null,

@@ -366,5 +366,4 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 	}
-	
 }

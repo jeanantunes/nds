@@ -15,6 +15,7 @@ public class EstudoCotaDTO implements Serializable {
 	private BigInteger qtdeEfetiva;
 	
 	private Long idCota;
+	private Long idFornecedorPadraoCota;
 	
 	private TipoEstudoCota tipoEstudo;
 	
@@ -82,6 +83,14 @@ public class EstudoCotaDTO implements Serializable {
 
 	public void setCotaContribuinteExigeNotaFiscal(boolean cotaContribuinteExigeNotaFiscal) {
 		this.cotaContribuinteExigeNotaFiscal = cotaContribuinteExigeNotaFiscal;
+	}
+		
+	public Long getIdFornecedorPadraoCota() {
+		return idFornecedorPadraoCota;
+	}
+
+	public void setIdFornecedorPadraoCota(Long idFornecedorPadraoCota) {
+		this.idFornecedorPadraoCota = idFornecedorPadraoCota;
 	}
 	
 }

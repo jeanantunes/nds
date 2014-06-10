@@ -24,6 +24,7 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscalTipoEmissaoRegimeEspecial;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -457,6 +458,18 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" AND mec.movimentoEstoqueCotaEstorno is null ")
 		.append(" AND mec.movimentoEstoqueCotaFuro is null ")
 		.append(" AND mec.notaFiscalEmitida = false ");
+		
+		if(filtro.getNotaFiscalTipoEmissao() != null) {
+			if(filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {
+				
+				hql.append(" AND (cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS = true ")
+					.append("	OR cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica = true)");
+			} else if(filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
+				
+				hql.append(" AND (cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS = false ")
+					.append("	AND cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica = false)");
+			}
+		}
 
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null) {

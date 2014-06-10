@@ -19,6 +19,7 @@ import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0111Input;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
@@ -177,10 +178,21 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			lancamento.setDataCriacao(new Date());// confirmado
 			
-			lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
+			final boolean produtoContaFirme = (FormaComercializacao.CONTA_FIRME.equals(produtoEdicao.getProduto().getFormaComercializacao()));
 			
-			lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
-			
+			if(produtoContaFirme){
+				
+				lancamento.setDataRecolhimentoDistribuidor(input.getDataLancamento());// confirmado
+				
+				lancamento.setDataRecolhimentoPrevista(input.getDataLancamento());// confirmado 
+			}
+			else{
+				
+				lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
+				
+				lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
+			}
+
 			try {
 				//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
 				Date dataOriginal = input.getDataLancamento();

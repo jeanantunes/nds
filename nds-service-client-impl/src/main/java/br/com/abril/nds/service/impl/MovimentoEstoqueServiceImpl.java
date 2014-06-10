@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EstudoCotaDTO;
+import br.com.abril.nds.dto.ExpedicaoDTO;
+import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
@@ -201,10 +203,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     
     @Override
     @Transactional
-    public void gerarMovimentoEstoqueDeExpedicao(final Date dataPrevista, final Date dataDistribuidor, final Long idProduto, final Long idProdutoEdicao,
-            final Long idLancamento, final Long idUsuario, final Date dataOperacao, final TipoMovimentoEstoque tipoMovimento, final TipoMovimentoEstoque tipoMovimentoCota,final TipoMovimentoEstoque tipoMovimentoJuramentado) {
+    public List<MovimentoEstoqueCotaDTO> gerarMovimentoEstoqueDeExpedicao(final LancamentoDTO lancamento, final ExpedicaoDTO expedicao) {
         
-        final List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(idLancamento, idProdutoEdicao);
+        final List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(lancamento.getId(), lancamento.getIdProdutoEdicao());
         
         Distribuidor distribuidor = distribuidorService.obter();
         
@@ -212,16 +213,22 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         BigInteger totalParcialJuramentado = BigInteger.ZERO;
         
-        final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(dataDistribuidor);
+        final Map<String, DescontoDTO> descontos = 
+        		descontoService.obterDescontosMapPorLancamentoProdutoEdicao(lancamento.getDataDistribuidor());
         
-        final DescontoProximosLancamentos descontoProximosLancamentos = descontoProximosLancamentosRepository.obterDescontoProximosLancamentosPor(idProduto, dataDistribuidor);
+        final DescontoProximosLancamentos descontoProximosLancamentos = 
+        		descontoProximosLancamentosRepository.obterDescontoProximosLancamentosPor(lancamento.getIdProduto(), lancamento.getDataDistribuidor());
         
         final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota = new ArrayList<MovimentoEstoqueCotaDTO>();
         
-        ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-
+        ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(lancamento.getIdProdutoEdicao());
+        
         tratarIncrementoProximoLancamento(descontos,descontoProximosLancamentos, null, 
-                produtoEdicao.getProduto().getFornecedor().getId(), idProdutoEdicao, idProduto);
+                produtoEdicao.getProduto().getFornecedor().getId(), lancamento.getIdProdutoEdicao(), lancamento.getIdProduto());
+        
+        final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCotaComProdutoContaFirme = new ArrayList<>();
+        
+        final boolean produtoContaFirme = (FormaComercializacao.CONTA_FIRME.equals(produtoEdicao.getProduto().getFormaComercializacao()));
         
         for (final EstudoCotaDTO estudoCota : listaEstudoCota) {
             
@@ -237,12 +244,21 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             ).validate();
 
             tratarIncrementoProximoLancamento(descontos,descontoProximosLancamentos, estudoCota.getIdCota(), 
-                    produtoEdicao.getProduto().getFornecedor().getId(), idProdutoEdicao, idProduto);
+                    produtoEdicao.getProduto().getFornecedor().getId(), lancamento.getIdProdutoEdicao(), lancamento.getIdProduto());
             
             final MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
-                    distribuidor, dataPrevista, produtoEdicao,
-                    idUsuario, tipoMovimentoCota, dataDistribuidor,
-                    dataOperacao, idLancamento, descontos, false, estudoCota);
+                    distribuidor, lancamento.getDataPrevista(), produtoEdicao,
+                    expedicao.getIdUsuario(), expedicao.getTipoMovimentoEstoqueCota(), lancamento.getDataDistribuidor(),
+                    expedicao.getDataOperacao(), lancamento.getId(), descontos, false, estudoCota);
+            
+            mec.setIdFornecedor(estudoCota.getIdFornecedorPadraoCota());
+            
+            if(produtoContaFirme){
+            	
+            	mec.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO.name());
+            	
+            	movimentosEstoqueCotaComProdutoContaFirme.add(mec);
+            }
             
             if(TipoEstudoCota.NORMAL.equals(estudoCota.getTipoEstudo())){
                 
@@ -257,14 +273,20 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         }
         
         if(total.compareTo(BigInteger.ZERO) > 0){
-            gerarMovimentoEstoque(idProdutoEdicao, idUsuario, total, tipoMovimento, dataDistribuidor, false);
+            gerarMovimentoEstoque(
+            		lancamento.getIdProdutoEdicao(), expedicao.getIdUsuario(), total, 
+            		expedicao.getTipoMovimentoEstoque(),lancamento.getDataDistribuidor(), false);
         }
         
         if(totalParcialJuramentado.compareTo(BigInteger.ZERO) > 0){
-            gerarMovimentoEstoque(idProdutoEdicao, idUsuario, totalParcialJuramentado, tipoMovimentoJuramentado, dataDistribuidor, false);
+            gerarMovimentoEstoque(
+            		lancamento.getIdProdutoEdicao(), expedicao.getIdUsuario(), totalParcialJuramentado,
+            		expedicao.getTipoMovimentoEstoqueJuramentado(), lancamento.getDataDistribuidor(), false);
         }
         
         movimentoEstoqueCotaRepository.adicionarEmLoteDTO(movimentosEstoqueCota);
+        
+        return movimentosEstoqueCotaComProdutoContaFirme;
         
     }
 
