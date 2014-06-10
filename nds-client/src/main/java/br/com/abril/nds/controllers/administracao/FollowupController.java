@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.ConsultaFollowupDistribuicaoDTO;
 import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
 import br.com.abril.nds.dto.ConsultaFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.ConsultaFollowupStatusCotaDTO;
+import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupChamadaoDTO;
@@ -30,6 +31,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FollowupCadastroParcialService;
 import br.com.abril.nds.service.FollowupCadastroService;
 import br.com.abril.nds.service.FollowupChamadaoService;
@@ -38,6 +40,7 @@ import br.com.abril.nds.service.FollowupNegociacaoService;
 import br.com.abril.nds.service.FollowupPendenciaNFeService;
 import br.com.abril.nds.service.FollowupStatusCotaService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
+import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -54,6 +57,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * Classe responsável pelo controle das ações referentes à tela de Follow Up do
@@ -102,6 +106,10 @@ public class FollowupController extends BaseController {
 	
 	@Autowired
 	private NotaFiscalEntradaService notaFiscalEntradaService;
+	
+	@Autowired
+    private NotaFiscalService notaFiscalService;
+    
 	
 	private static final String FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "filtroFollowupConsignados";
 	private static final String FILTRO_FOLLOWUP_PENDENCIA_NFE_SESSION_ATTRIBUTE = "filtroFollowupPendenciaNFE";
@@ -648,6 +656,23 @@ public class FollowupController extends BaseController {
         final ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro efetuado com sucesso.");
         
         result.use(Results.json()).from(validacao, "result").recursive().serialize();
+        
+    }
+	
+	@Path("/pesquisarItensPorNota")
+    public void pesquisarItensPorNota(final long idControleConferencia, final String sortorder, final String sortname, final int page, final int rp){
+        
+        final Integer total = this.notaFiscalService.qtdeNota(idControleConferencia);
+        
+        if (total <= 0) {       
+
+            throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+            
+        }
+        
+        final List<ItemNotaFiscalPendenteDTO> listItemNota = this.notaFiscalService.buscarItensPorNota(idControleConferencia, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page * rp - rp, rp);
+        
+        result.use(FlexiGridJson.class).from(listItemNota).page(page).total(total).serialize();
         
     }
 	

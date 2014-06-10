@@ -46,6 +46,10 @@ public class ConsultaFollowupPendenciaNFeDTO implements Serializable {
 	
 	private Long idControleConferenciaEncalheCota;
    	
+	private String dataEncalhe;
+	
+	private BigDecimal valorNota;
+	
    	public ConsultaFollowupPendenciaNFeDTO() {}
 
 	public ConsultaFollowupPendenciaNFeDTO(Integer numeroCota, String nomeJornaleiro, StatusNotaFiscalEntrada tipoPendencia, String dataEntrada, BigDecimal valorDiferenca, String numeroTelefone ) {
@@ -86,7 +90,7 @@ public class ConsultaFollowupPendenciaNFeDTO implements Serializable {
 	}
 
 	public void setDataEntrada(Date dataEntrada) {
-		this.dataEntrada = DateUtil.formatarData(dataEntrada, Constantes.DATE_PATTERN_PT_BR) ;;
+		this.dataEntrada = DateUtil.formatarData(dataEntrada, Constantes.DATE_PATTERN_PT_BR);
 	}
 
 	public BigDecimal getValorDiferenca() {
@@ -153,14 +157,25 @@ public class ConsultaFollowupPendenciaNFeDTO implements Serializable {
 			Long idControleConferenciaEncalheCota) {
 		this.idControleConferenciaEncalheCota = idControleConferenciaEncalheCota;
 	}
-
-	public void setDataEntrada(String dataEntrada) {
-		this.dataEntrada = dataEntrada;
-	}
-
+	
 	public void setValorDiferencaFormatado(String valorDiferencaFormatado) {
 		this.valorDiferencaFormatado = valorDiferencaFormatado;
 	}
 	
+	public String getDataEncalhe() {
+		return dataEncalhe;
+	}
+
+	public void setDataEncalhe(Date dataEncalhe) {
+		this.dataEncalhe = DateUtil.formatarData(dataEncalhe, Constantes.DATE_PATTERN_PT_BR);
+	}
+	
+	public BigDecimal getValorNota() {
+		return valorNota;		
+	}
+	
+	public void setValorNota(BigDecimal valorNota) {
+		this.valorNota = CurrencyUtil.arredondarValorParaDuasCasas(valorNota);
+	}
 	
 }

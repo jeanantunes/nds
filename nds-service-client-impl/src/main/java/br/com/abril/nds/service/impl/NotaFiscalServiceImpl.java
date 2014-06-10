@@ -47,6 +47,7 @@ import org.w3c.dom.NodeList;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
+import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
@@ -115,9 +116,11 @@ import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.TributacaoService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.inf.portalfiscal.nfe.util.Util;
 import br.inf.portalfiscal.nfe.util.XmlDomUtils;
 
@@ -418,8 +421,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param tipoNotaFiscal
 	 * @return
 	 */
-	private boolean isRemessaMercadoriaConsignacao(
-			NaturezaOperacao tipoNotaFiscal) {
+	private boolean isRemessaMercadoriaConsignacao(NaturezaOperacao tipoNotaFiscal) {
 		/*
 		 * return tipoNotaFiscal.getGrupoNotaFiscal() ==
 		 * GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO &&
@@ -2054,4 +2056,23 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 	}
 
+	@Override
+	@Transactional
+	public List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(Long idConferenciaCota, String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults) {		
+		List<ItemNotaFiscalPendenteDTO> listaRetorno =  this.notaFiscalRepository.buscarItensPorNota(idConferenciaCota, orderBy, ordenacao, firstResult, maxResults);
+		
+		for(ItemNotaFiscalPendenteDTO dto: listaRetorno){
+			Long qtdDiferencaDias = DateUtil.obterDiferencaDias(dto.getDataConferenciaEncalhe(), dto.getDataChamadaEncalhe()) + 1;			
+			dto.setDia(qtdDiferencaDias.toString() + "°");		
+			
+		}
+		return listaRetorno;
+	}
+	
+	@Override
+	@Transactional
+	public Integer qtdeNota(Long idConferenciaCota) {		
+		return this.notaFiscalRepository.qtdeNota(idConferenciaCota);
+	}
+	
 }

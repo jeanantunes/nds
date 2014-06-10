@@ -34,7 +34,15 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" notaCota.serie as serie, ");
 		hql.append(" notaCota.chaveAcesso as chaveAcesso, ");
 		hql.append(" notaCota.numero as numeroNfe, ");
-		hql.append(" notaCota.id as idNotaFiscalEntrada ");
+		hql.append(" notaCota.id as idNotaFiscalEntrada, ");
+		hql.append("        ( ");
+		hql.append("             SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");
+		hql.append("             FROM ControleConferenciaEncalheCota controleConferenciaEncalheCotaNF ");
+		hql.append("               LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
+		hql.append("             WHERE controleConferenciaEncalheCotaNF = controleCota ");
+		hql.append("        ) as valorNota, ");
+		hql.append(" controleCota.dataOperacao as dataEncalhe, ");
+		hql.append(" controleCota.id as idControleConferenciaEncalheCota ");
 		
 		hql.append(getSqlFromEWhereNotaPendente(filtro));
 		
