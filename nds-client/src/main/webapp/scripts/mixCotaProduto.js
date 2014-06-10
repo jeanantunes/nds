@@ -272,7 +272,7 @@ var mixCotaProdutoController = $.extend(true, {
 		return data;
 	},	
 	
-	updateReparteMinMax:function(input,tipoCampo,idMix,lastValue){
+	updateReparteMinMax:function(input, tipoCampo, idMix, lastValue){
 		
 			
 		var listaNovoReparte = new Array();
@@ -305,20 +305,37 @@ var mixCotaProdutoController = $.extend(true, {
 			  });
 		 
 		 
-		$.postJSON(contextPath + '/distribuicao/mixCotaProduto/updateReparteMixCotaProduto', listaNovoReparte  , function(){
+		 $("#dialog-confirma-alteracao-reparte").dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
 
-			if($("#radio").attr('checked') == 'checked'){
-				$(".mixCotasGrid").flexReload();
-			}
-			else{
-				$(".mixProdutosGrid").flexReload();
-			}
-			
-		}, function(){
-			input.value=lastValue;
-			
-			
-		});
+						$.postJSON(contextPath + '/distribuicao/mixCotaProduto/updateReparteMixCotaProduto', listaNovoReparte  , function(){
+							
+							if($("#radio").attr('checked') == 'checked'){
+								$(".mixCotasGrid").flexReload();
+							}
+							else{
+								$(".mixProdutosGrid").flexReload();
+							}
+							
+						}, function(){
+							input.value=lastValue;
+						});
+						
+						$(this).dialog("close");
+					},
+					"Cancelar": function() {
+						input.value=lastValue;
+						$(this).dialog("close");
+					}
+				},
+			});
+		 
+		 
 		
 		
 	},

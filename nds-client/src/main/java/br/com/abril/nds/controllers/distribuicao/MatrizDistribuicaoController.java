@@ -38,6 +38,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
@@ -105,6 +106,9 @@ public class MatrizDistribuicaoController extends BaseController {
 
     @Autowired
     private ProdutoService produtoService;
+    
+    @Autowired
+    private EstudoService estudoService;
 
     @Autowired
     private ProdutoEdicaoAlgoritimoService produtoEdicaoAlgoritimoService;
@@ -288,6 +292,9 @@ public class MatrizDistribuicaoController extends BaseController {
         Long idEstudo = matrizDistribuicaoService.confirmarCopiarProporcionalDeEstudo(copiaProporcionalDeDistribuicaoVO);
         BigInteger idLancamento = BigInteger.valueOf(copiaProporcionalDeDistribuicaoVO.getIdLancamento());
         removeItemListaDeItensDuplicadosNaSessao(idLancamento, copiaProporcionalDeDistribuicaoVO.getIdCopia());
+        
+        estudoService.criarRepartePorPDV(idEstudo);
+        
         result.use(Results.json()).from(idEstudo, "result").recursive().serialize();
     }
 
