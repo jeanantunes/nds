@@ -200,7 +200,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 		ndsiLoggerFactory.getLogger().logInfo(message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
-				"Atualizacao da Cota " + cota.getNumeroCota());
+				"Atualização da Cota " + cota.getNumeroCota());
 
 		cota.setNumeroCota(input.getCodCota());
 		cota.setPossuiContrato(false);
@@ -240,7 +240,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"O arquivo nao contem dados de endereco para a cota "
+					"O Arquivo não Contém dados de Endereço para a Cota "
 							+ cota.getNumeroCota());
 		}
 
@@ -318,7 +318,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Telefone Cota "
+						"Atualização do Telefone Cota "
 								+ telefoneCota.getId());
 
 
@@ -333,7 +333,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"O arquivo nao contem dados de telefone para a cota "
+					"O Arquivo não Contém dados de Telefone para a Cota "
 							+ cota.getNumeroCota());
 		}
 	}
@@ -418,7 +418,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"O arquivo nao contem dados de endereco para a cota "
+					"O Arquivo não Contém dados de Endereço para a Cota "
 							+ cota.getNumeroCota());
 		}
 
@@ -441,7 +441,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"O arquivo nao contem dados de telefone para a cota "
+					"O Arquivo nao Contém dados de Telefone para a Cota "
 							+ cota.getNumeroCota());
 		}
 	}
@@ -523,7 +523,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 						ndsiLoggerFactory.getLogger().logWarning(
 								message,
 								EventoExecucaoEnum.RELACIONAMENTO,
-								"Endereço atualizado para cota: " + cota.getNumeroCota() + " / Logradouro: "+ logradouro +", "+ input.getNumLogradouro());
+								"Endereço atualizado para Cota " + cota.getNumeroCota() + " / Logradouro: "+ logradouro +", "+ input.getNumLogradouro());
 						
 						persistiuEndereco = true;
 					}
@@ -544,7 +544,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 						ndsiLoggerFactory.getLogger().logWarning(
 								message,
 								EventoExecucaoEnum.RELACIONAMENTO,
-								"Endereço atualizado para cota: " + cota.getNumeroCota() + " / Logradouro: "+ logradouro +", "+ input.getNumLogradouro());
+								"Endereço atualizado para Cota " + cota.getNumeroCota() + " / Logradouro: "+ logradouro +", "+ input.getNumLogradouro());
 						
 						persistiuEndereco = true;
 						

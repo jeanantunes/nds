@@ -53,6 +53,8 @@ public abstract class NdsiRunner {
 		
 			getRouteTemplate(args[0]).execute(username, codigoDistribuidorFC);
 		}
+		
+		System.exit(0);
 	}
 	
 	private static RouteTemplate getRouteTemplate(String className) {

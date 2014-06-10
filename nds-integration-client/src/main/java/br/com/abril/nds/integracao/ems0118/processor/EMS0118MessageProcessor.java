@@ -69,12 +69,19 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 			double precoCusto = preco * fator;
 
 			// Atualiza valor de custo
-			produtoEdicao.setPrecoCusto(new BigDecimal(precoCusto).setScale(2, RoundingMode.HALF_DOWN));		
+					
+			if(precoCusto>0){
 			
-			this.ndsiLoggerFactory.getLogger().logInfo(
+				this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualizado Preço. Produto: " + input.getCodigoPublicacao() + " Edição " + input.getEdicao() );
+					"Atualização do Preço"
+					+" de "+produtoEdicao.getPrecoCusto()
+					+" para "+new BigDecimal(precoCusto).setScale(2, RoundingMode.HALF_DOWN)
+					+" Produto " + input.getCodigoPublicacao() + " Edição " + input.getEdicao() );
+			
+				produtoEdicao.setPrecoCusto(new BigDecimal(precoCusto).setScale(2, RoundingMode.HALF_DOWN));
+			}
 		} else {
 			// NAO ENCONTROU Produto/Edicao, DEVE LOGAR
 			ndsiLoggerFactory.getLogger().logError(

@@ -40,6 +40,7 @@ import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -135,7 +136,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
 		   .append(" and   lancamento.dataLancamentoDistribuidor = :dataLancamento ")
 		   .append(" and   ( lancamento.status = :balanceadoLancamento or ")
-		   .append(" lancamento.status = :expedido ) ");   
+		   .append(" lancamento.status = :expedido or (lancamento.status = :recolhidoProdutoContaFirme and produto.formaComercializacao =:produtoContaFimre) ) ");   
 		
 		   if (furado) {
 			   hql.append(" and   lancamento.status                     != :statusFuro");
@@ -147,6 +148,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameter("dataLancamento", dataLancamento);
 		query.setParameter("balanceadoLancamento", StatusLancamento.BALANCEADO);
 		query.setParameter("expedido", StatusLancamento.EXPEDIDO);
+		query.setParameter("recolhidoProdutoContaFirme", StatusLancamento.RECOLHIDO);
+		query.setParameter("produtoContaFimre",FormaComercializacao.CONTA_FIRME);
 		
 		if (furado) {
 			query.setParameter("statusFuro", StatusLancamento.FURO);
