@@ -6,6 +6,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
@@ -80,4 +81,6 @@ public interface PoliticaCobrancaService {
 	List<TipoCobranca> obterTiposCobrancaDistribuidor();
 
 	List<PoliticaCobranca> obterDadosPoliticaCobranca(TipoCobranca tipoCobranca);
+
+	Fornecedor obterFornecedorPadrao();
 }

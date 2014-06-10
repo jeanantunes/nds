@@ -72,11 +72,13 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		String hql = " select estudoCota.id as id, " 
 				   + " estudoCota.qtdeEfetiva as qtdeEfetiva, "
 				   + " cota.id as idCota, "
-				   + " estudoCota.tipoEstudo as tipoEstudo "  
+				   + " estudoCota.tipoEstudo as tipoEstudo ,"
+				   +"  fornecedor.id as idFornecedorPadraoCota "
 				   + " from EstudoCota estudoCota "
 				   + " join estudoCota.estudo estudo "
 				   + " join estudoCota.cota cota "
 				   + " join estudo.produtoEdicao produtoEdicao "
+				   + " left join cota.parametroCobranca.fornecedorPadrao fornecedor "
 				   + " where estudo.lancamentoID = :idLancamento " 
 				   + " and produtoEdicao.id = :idProdutoEdicao";
 		

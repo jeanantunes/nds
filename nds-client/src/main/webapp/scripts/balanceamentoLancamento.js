@@ -216,7 +216,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			novaDataOriginal:				row.cell.novaDataLancamento,
 			statusLancamento:				row.cell.statusLancamento,
 			fornecedorId:					row.cell.fornecedorId,
-			descricaoLancamento:			row.cell.descricaoLancamento
+			descricaoLancamento:			row.cell.descricaoLancamento,
+			produtoContaFirme:				row.cell.produtoContaFirme
 		});
 		
 		var colunaProduto = balanceamento.getColunaProduto(row.cell.idProdutoEdicao,
@@ -338,7 +339,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		data.push({name : 'produtosLancamento.dataRecolhimentoDistribuidor', 	value : T.lancamentosPaginacao[index].dataRecolhimentoDistribuidor});
 		data.push({name : 'produtosLancamento.nomeProduto', 					value : T.lancamentosPaginacao[index].nomeProduto});
 		data.push({name : 'produtosLancamento.numeroEdicao', 					value : T.lancamentosPaginacao[index].numeroEdicao});
-
+		data.push({name : 'produtosLancamento.produtoContaFirme', 				value : T.lancamentosPaginacao[index].produtoContaFirme});
 		data.push({name : 'novaDataLancamento', value: T.lancamentosPaginacao[index].novaDataLancamento});
 		
 		$.postJSON(
@@ -457,7 +458,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		data.push({name: 'produtoLancamento.dataRecolhimentoDistribuidor', 	value: T.lancamentosPaginacao[index].dataRecolhimentoDistribuidor});
 		data.push({name: 'produtoLancamento.fornecedorId', 			   		value: T.lancamentosPaginacao[index].fornecedorId});
 		data.push({name: 'produtoLancamento.descricaoLancamento', 			value: T.lancamentosPaginacao[index].descricaoLancamento});
-		
+		data.push({name: 'produtoLancamento.produtoContaFirme', 			value: T.lancamentosPaginacao[index].produtoContaFirme});
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
 				data,
@@ -510,6 +511,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoDistribuidor',	value: lancamentoSelecionado.dataRecolhimentoDistribuidor});
 			data.push({name: 'produtosLancamento[' + index + '].fornecedorId'			 , 		value: lancamentoSelecionado.fornecedorId});
 			data.push({name: 'produtosLancamento[' + index + '].descricaoLancamento', 			value: lancamentoSelecionado.descricaoLancamento});
+			data.push({name: 'produtosLancamento[' + index + '].produtoContaFirme', 			value: lancamentoSelecionado.produtoContaFirme});
 		});
 		
 		$.postJSON(
@@ -610,6 +612,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoDistribuidor', 	value: lancamentoSelecionado.dataRecolhimentoDistribuidor});
 			data.push({name: 'produtosLancamento[' + index + '].fornecedorId'			 , 		value: lancamentoSelecionado.fornecedorId});
 			data.push({name: 'produtosLancamento[' + index + '].descricaoLancamento', 			value: lancamentoSelecionado.descricaoLancamento});
+			data.push({name: 'produtosLancamento[' + index + '].produtoContaFirme', 			value: lancamentoSelecionado.produtoContaFirme});
 		});
 		
 		$.postJSON(
@@ -642,6 +645,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoDistribuidor',	value: lancamentoSelecionado.dataRecolhimentoDistribuidor});
 			data.push({name: 'produtosLancamento[' + index + '].fornecedorId'			 , 		value: lancamentoSelecionado.fornecedorId});
 			data.push({name: 'produtosLancamento[' + index + '].descricaoLancamento', 			value: lancamentoSelecionado.descricaoLancamento});
+			data.push({name: 'produtosLancamento[' + index + '].produtoContaFirme', 			value: lancamentoSelecionado.produtoContaFirme});
 		});
 		
 		$.postJSON(

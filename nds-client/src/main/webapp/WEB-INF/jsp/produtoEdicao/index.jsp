@@ -106,6 +106,10 @@ fieldset {
 			id="produtoEdicaoController-istrac29" /> <input type="hidden"
 			name="produtoEdicaoDTO.idFornecedor"
 			id="produtoEdicaoController-idFornecedor" />
+			
+			<input type="hidden" id="produtoEdicaoController-formaComercializacao"
+			name="produtoEdicaoDTO.formaComercializacao" value="" />
+			
 
 		<div id="produtoEdicaoController-dialog-novo"
 			title="Incluir Nova Edi&ccedil;&atilde;o">
@@ -359,7 +363,7 @@ fieldset {
 							</table>
 						</fieldset>
 						<fieldset
-							style="width: 653px !important; margin-bottom: 2px; float: left;">
+							style="width: 653px !important; margin-bottom: 2px; float: left;" id="fildSet-data-recolhimento">
 							<legend>Data Recolhimento</legend>
 							<table border="0" cellSpacing="1" cellPadding="1" width="562">
 								<tbody>
@@ -595,7 +599,7 @@ fieldset {
 
 		<input type="hidden" id="produtoEdicaoController-codigoProduto"
 			name="codigoProduto" value="" />
-
+			
 		<legend>Pesquisar Produto</legend>
 
 		<table width="950" border="0" cellpadding="2" cellspacing="1"
