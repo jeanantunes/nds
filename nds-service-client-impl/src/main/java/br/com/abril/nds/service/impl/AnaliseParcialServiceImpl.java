@@ -24,7 +24,6 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
-import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.RepartePDVDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
@@ -60,6 +59,8 @@ import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.util.BigIntegerUtil;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class AnaliseParcialServiceImpl implements AnaliseParcialService {
@@ -331,30 +332,27 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Transactional
     public void atualizaReparte(Long estudoId, Long numeroCota, Long reparte, Long reparteDigitado) {
     	
-    	this.validarDistribuicaoPorMultiplo(estudoId, reparteDigitado);
+    	EstudoGerado estudoGerado = estudoService.obterEstudo(estudoId);
+    	
+    	if(estudoGerado.getDistribuicaoPorMultiplos() != null && estudoGerado.getDistribuicaoPorMultiplos() == 1){
+    		this.validarDistribuicaoPorMultiplo(estudoId, reparteDigitado, estudoGerado);
+    	}
     	
         analiseParcialRepository.atualizaReparteCota(estudoId, numeroCota, reparte);
         analiseParcialRepository.atualizaReparteEstudo(estudoId, reparte);
     }
     
     @Transactional
-    private void validarDistribuicaoPorMultiplo(Long estudoId, Long reparteDigitado) {
-    	
-    	EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(estudoId);
-    	
-    	if (estudoGerado.getDistribuicaoPorMultiplos() != null
-    			&& estudoGerado.getDistribuicaoPorMultiplos() == 1) {
+    private void validarDistribuicaoPorMultiplo(Long estudoId, Long reparteDigitado, EstudoGerado estudo) {
     		
-    		BigInteger multiplo = new BigInteger(estudoGerado.getPacotePadrao().toString());
-    		
-    		BigInteger novoReparte = new BigInteger(reparteDigitado.toString());
-    		
-    		if (!novoReparte.mod(multiplo).equals(BigInteger.ZERO)) {
-    			
-    			throw new ValidacaoException(
-    				TipoMensagem.WARNING, "Reparte deve ser múltiplo de " + multiplo);
-    		}
-    	}
+		BigInteger multiplo = new BigInteger(estudo.getPacotePadrao().toString());
+		
+		BigInteger novoReparte = new BigInteger(reparteDigitado.toString());
+		
+		if (!novoReparte.mod(multiplo).equals(BigInteger.ZERO)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Reparte deve ser múltiplo de " + multiplo);
+		}
     }
 
     @Override
@@ -399,11 +397,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Transactional
     public void liberar(Long id, List<CotaLiberacaoEstudo> cotas) {
     	
-    	for (CotaLiberacaoEstudo cota : cotas) {
-    		
-    		this.validarDistribuicaoPorMultiplo(id, cota.getReparte().longValue());
-    	}
+    	EstudoGerado estudoGerado = estudoService.obterEstudo(id);
     	
+    	if(estudoGerado.getDistribuicaoPorMultiplos() != null && estudoGerado.getDistribuicaoPorMultiplos()==1){
+    		for (CotaLiberacaoEstudo cota : cotas) {
+    			this.validarDistribuicaoPorMultiplo(id, cota.getReparte().longValue(), estudoGerado);
+    		}
+    	}
     	estudoService.liberar(id);
     }
 
@@ -607,5 +607,36 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         	
         }
         
+	}
+	
+	@Transactional
+	@Override
+	public ValidacaoException validarLiberacaoDeEstudo(Long estudoId) {
+
+		ValidacaoException validacao = null;
+		
+    	EstudoGerado estudoGerado = estudoGeradoRepository.buscarPorId(estudoId);
+    	
+    	BigDecimal reparteFisicoOuPrevisto = reparteFisicoOuPrevistoLancamento(estudoId);
+    	
+    	
+    	for (EstudoCotaGerado estudoCota : estudoGerado.getEstudoCotas()) {
+    		if(BigIntegerUtil.isMenorQueZero(estudoCota.getReparte())){
+    			validacao = new ValidacaoException(TipoMensagem.WARNING,"Há cota(s) com reparte(s) negativo(s), por favor ajustá-la(s)!");
+    			break;
+    		}
+    	} 
+
+    	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)){
+    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é maior que estoque disponível!");
+    	}
+    	
+    	
+    	if(validacao == null){
+    		validacao = new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso.");
+    	}
+		
+		return validacao;
+		
 	}
 }
