@@ -7,7 +7,7 @@ import br.com.abril.nds.dto.filtro.FiltroFollowupPendenciaNFeDTO;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 
 public interface FollowupPendenciaNFeRepository extends Repository<NotaFiscalEntrada,Long> {
-    List<ConsultaFollowupPendenciaNFeDTO> obterPendencias(FiltroFollowupPendenciaNFeDTO filtro);
+    List<ConsultaFollowupPendenciaNFeDTO> consultaPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro);
 
-	Long totalPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro);
+	Long qtdeRegistrosPendencias(FiltroFollowupPendenciaNFeDTO filtro);
 }

@@ -4,7 +4,6 @@ import java.util.List;
 
 import br.com.abril.nds.client.vo.ContasAPagarConsultaProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarGridPrincipalFornecedorVO;
-import br.com.abril.nds.client.vo.ContasApagarConsultaPorDistribuidorVO;
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
@@ -36,7 +35,4 @@ public interface ContasAPagarService {
 
 	/** Pesquisa de faltas e sobras (link na grid da pesquisa por fornecedores, coluna faltas e sobras)  */
 	ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> pesquisarDetalheFaltasSobras(FiltroContasAPagarDTO filtro);
-
-    List<ContasApagarConsultaPorDistribuidorVO> pesquisarContasPorDistribuidor(FiltroContasAPagarDTO filtro);
 }
-

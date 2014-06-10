@@ -8,14 +8,12 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosPendentesDTO;
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
-import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EntradaNFETerceirosRepository;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<NotaFiscalEntrada, Long> implements EntradaNFETerceirosRepository {
@@ -241,13 +239,8 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append("               LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
 		hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota ");
 		hql.append("        ) as valorNota, ");
-		hql.append("        (conferenciasEncalhe.qtde * conferenciasEncalhe.precoCapaInformado ) as valorReal, ");
-		hql.append("        ((conferenciasEncalhe.qtdeInformada * conferenciasEncalhe.precoCapaInformado) - ( ");
-		hql.append("             SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");
-		hql.append("             FROM ControleConferenciaEncalheCota controleConferenciaEncalheCotaNF ");
-		hql.append("               LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
-		hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota ");
-		hql.append("        )) as diferenca, ");
+		hql.append(" (conferenciasEncalhe.qtde * conferenciasEncalhe.precoComDesconto ) as valorReal, ");
+		hql.append(" ((notaFiscalEntradaCotas.valorDesconto) -  (conferenciasEncalhe.qtde * conferenciasEncalhe.precoComDesconto)) as diferenca, ");
 		hql.append("        'Pendente' as status, ");
 		hql.append(" controleConferenciaEncalheCota.id  as idControleConferenciaEncalheCota ");
 		
