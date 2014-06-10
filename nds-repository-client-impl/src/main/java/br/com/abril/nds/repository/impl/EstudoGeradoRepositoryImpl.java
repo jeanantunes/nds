@@ -236,7 +236,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append(" SELECT ");
 		sql.append(" case when estp.QTDE is null ");
 		sql.append(" 	then ");
-		sql.append("  		case when plp.NUMERO_PERIODO = 1 ");
+		sql.append("  		case when plp.NUMERO_PERIODO=1 ");
 		sql.append(" 			 then ");
 		sql.append(" 				((lc.REPARTE)-lc.REPARTE_PROMOCIONAL)  ");
 		sql.append("			else lc.REPARTE ");
