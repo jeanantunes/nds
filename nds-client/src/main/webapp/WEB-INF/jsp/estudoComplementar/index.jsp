@@ -250,6 +250,8 @@ function somarDistribuicao(){
                 <td width="100" id="publicacaoEdicao" ></td>
                 <td width="70"><strong>PEB:</strong></td>
                 <td width="100" id="publicacaoPEB"></td>
+                <td width="70"><strong>Segmento:</strong></td>
+                <td width="100" id="EC-segmento"></td>
               </tr>
               <tr>
                 <td><strong>Classificação:</strong></td>

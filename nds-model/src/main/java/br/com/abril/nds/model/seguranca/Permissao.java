@@ -217,8 +217,8 @@ public enum Permissao {
 	ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO("Conferência de Encalhe", 						  	Permissao.ROLE_RECOLHIMENTO, true),
 	ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA("Conferência de Encalhe", 						  		   	Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO, true, null),
 
-	ROLE_RECOLHIMENTO_SEMAFORO_ALTERACAO("Semaforo", 														Permissao.ROLE_RECOLHIMENTO, true),
-	ROLE_RECOLHIMENTO_SEMAFORO("Semaforo", 						  		   									Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_SEMAFORO_ALTERACAO, true, null),
+	ROLE_RECOLHIMENTO_SEMAFORO_ALTERACAO("Status Processos de Encalhe", 														Permissao.ROLE_RECOLHIMENTO, true),
+	ROLE_RECOLHIMENTO_SEMAFORO("Status Processos de Encalhe", 						  		   									Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_SEMAFORO_ALTERACAO, true, null),
 	
 	ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO("Venda de Encalhe / Suplementar",								Permissao.ROLE_RECOLHIMENTO, true),
 	ROLE_RECOLHIMENTO_VENDA_ENCALHE("Venda de Encalhe / Suplementar",									   	Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO, true, null),
