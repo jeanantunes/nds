@@ -19,6 +19,8 @@ public class BaseEstudoVO {
 	private BigInteger reparteLancamento;
 	private Long numeroEdicao;
 	private String codigoProduto;
+	private String segmentoDoProduto;
+	
 	
 	public long getIdEstudo() {
 		return idEstudo;
@@ -132,5 +134,12 @@ public class BaseEstudoVO {
 		this.codigoProduto = codigoProduto;
 	}
 
+	public String getSegmentoDoProduto() {
+		return segmentoDoProduto;
+	}
+
+	public void setSegmentoDoProduto(String segmentoDoProduto) {
+		this.segmentoDoProduto = segmentoDoProduto;
+	}
 	
 }
