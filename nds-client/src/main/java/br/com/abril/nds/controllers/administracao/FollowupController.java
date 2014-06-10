@@ -351,7 +351,7 @@ public class FollowupController extends BaseController {
 		
 		this.tratarFiltroPendenciaNFE(filtroPendenciaNFEEncalhe);
 		
-		TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = efetuarConsultaDadosPendenciaNFEEncalhe(filtroPendenciaNFEEncalhe);
+		TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = consultaPendenciaNFEEncalhe(filtroPendenciaNFEEncalhe);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();		
 	}
@@ -395,25 +395,26 @@ public class FollowupController extends BaseController {
 	
 	
 	
-	private TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> efetuarConsultaDadosPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
+	private TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> consultaPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
 
 	    TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>>();
 		
-		Long totalRegistros = followuppendencianfeService.totalPendenciaNFEEncalhe(filtro);
+		Long qtdeRegistrosPendencias = followuppendencianfeService.qtdeRegistrosPendencias(filtro);
 		
-		if(totalRegistros == 0){
+		if(qtdeRegistrosPendencias == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Pendencias NF-e Encalhe: Não foram encontrados resultados para Follow Up.");
 		}
 		
-		List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.obterPendencias(filtro);
+		List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.consultaPendenciaNFEEncalhe(filtro);
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listasdependencias));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(totalRegistros.intValue());
+		tableModel.setTotal(qtdeRegistrosPendencias.intValue());
 		
 		return tableModel;
+		
 	}
 
 	private void recuperarParametros(FiltroFollowupChamadaoDTO filtro) {
@@ -542,7 +543,7 @@ public class FollowupController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao imprimir arquivo");
 		}
 		
-		List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.obterPendencias(filtro);
+		List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.consultaPendenciaNFEEncalhe(filtro);
 		
 		if(listasdependencias.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
