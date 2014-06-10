@@ -36,7 +36,6 @@ import br.com.abril.nds.service.FollowupDistribuicaoService;
 import br.com.abril.nds.service.FollowupNegociacaoService;
 import br.com.abril.nds.service.FollowupPendenciaNFeService;
 import br.com.abril.nds.service.FollowupStatusCotaService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -90,10 +89,6 @@ public class FollowupController extends BaseController {
 	
 	@Autowired
 	private FollowupDistribuicaoService followupDistribuicaoService;
-	
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	private HttpServletResponse httpResponse;

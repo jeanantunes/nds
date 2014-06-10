@@ -248,8 +248,10 @@ $(function(){
 			
 					<tr>
 						<td width="126" style="width: 114px; ">Sugere Suspensão:</td>
+
 						<td width="24"><input id="sugereSuspensaoCota"
 							name="sugereSuspensaoCota" type="checkbox" value="" onclick="parametroCobrancaCotaController.exibe_form_suspencao(this.checked);" /></td>
+
 						<td colspan="3">
 							<div class="form-suspensao-hidden2-class">
 								<table width="100%" border="0" cellspacing="0" cellpadding="0">
