@@ -74,10 +74,10 @@ CaracteristicaDistribuicaoRepository {
         .append(" ped.NUMERO_EDICAO as 'numeroEdicao', ")
         .append(" coalesce(tipoclas.descricao, '') as 'classificacao', ")
         .append(" coalesce(ped.PRECO_VENDA, 0) as 'precoCapa', ")
-        .append(" coalesce(est.QTDE, 0) as 'venda', ")
+        .append(" coalesce(lan.REPARTE,0) - (select sum(QTDE_INFORMADA) from conferencia_encalhe ce where ce.PRODUTO_EDICAO_ID=ped.ID) as 'venda', ")
         .append(" coalesce(lan.REPARTE,0) as 'reparte', ")
-        .append(" lan.DATA_LCTO_PREVISTA  as 'dataLancamento', ")
-        .append(" lan.DATA_REC_PREVISTA as 'dataRecolhimento', ")
+        .append(" lan.DATA_LCTO_DISTRIBUIDOR  as 'dataLancamento', ")
+        .append(" lan.DATA_REC_DISTRIB as 'dataRecolhimento', ")
         .append(" tiposeg.DESCRICAO as 'segmento' ")
         
         .append(" from produto pro ")
