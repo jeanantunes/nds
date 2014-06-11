@@ -456,7 +456,7 @@ var contasAPagarController = $.extend(true, {
 				
 				element.cell.diferenca = 
 					'<a href="javascript:;" onclick="contasAPagarController.exibirDiferencas('
-					.concat(element.cell.codigo)
+					.concat("'").concat(element.cell.codigo).concat("'")
 					.concat(",")
 					.concat(element.cell.edicao)
 					.concat(",")
@@ -552,23 +552,36 @@ var contasAPagarController = $.extend(true, {
 						$("#contasAPagar_table_popupFaltasSobras", contasAPagarController.workspace).get(0), result.totalDistrib);
 				$(".contasAPagar_faltasSobrasGrid", contasAPagarController.workspace).flexAddData(
 						{rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+				
+				$("#contasAPagar_legend_popupFaltasSobras", contasAPagarController.workspace).html(data);
+				
+				$("#contasAPagar_popupFaltasSobras", contasAPagarController.workspace).dialog({
+					resizable: false,
+					height:460,
+					width:860,
+					modal: true,
+					buttons: {
+						"Fechar": function() {
+							$( this ).dialog( "close" );
+							$(".grids", contasAPagarController.workspace).show();
+						}
+					},
+					form: $("#form-contasAPagar_popupFaltasSobras", contasAPagarController.workspace)
+				});
 			}
 		);
-		
-		$("#contasAPagar_legend_popupFaltasSobras", this.workspace).html(data);
+	},
 	
-		$("#contasAPagar_popupFaltasSobras", this.workspace).dialog({
-			resizable: false,
-			height:460,
-			width:860,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					$(".grids", contasAPagarController.workspace).show();
-				}
+	preProcessFaltasSobras : function(data){
+		
+		$.each(data.rows, function(index, item){
+			
+			if (!item.cell.box){
+				item.cell.box = '';
 			}
 		});
+		
+		return data;
 	},
 	
 	limparCampoSemanaCE : function(){
@@ -1033,6 +1046,7 @@ var contasAPagarController = $.extend(true, {
 	
 	initGridFaltasSobras : function () {
 		$(".contasAPagar_faltasSobrasGrid", contasAPagarController.workspace).flexigrid({
+			preProcess : contasAPagarController.preProcessFaltasSobras,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
