@@ -347,6 +347,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 
 	@Override
 	public Integer qtdeNotasRecebidas(FiltroEntradaNFETerceiros filtro) {
+		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select count(notaFiscalEntrada.numero) ");
 		hql.append(getSqlFromEWhereNotaEntrada(filtro));			
@@ -354,6 +355,23 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		Query query =  getSession().createQuery(hql.toString());
 		
 		setarParametrosQuery(filtro, query, true);
+		
+		Long totalRegistros = (Long) query.uniqueResult();
+		
+		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
+	}
+	
+	@Override
+	public Integer qtdeNotasPendentesRecebimento(FiltroEntradaNFETerceiros filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select count(cota) ");
+		
+		hql.append(getSqlFromEWhereNotaPendenteRecebimento(filtro, false));
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		buscarParametros(filtro, query, true);
 		
 		Long totalRegistros = (Long) query.uniqueResult();
 		
