@@ -421,7 +421,10 @@ var geracaoNFeController = $.extend({
 		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-selectRota").val()});
 		// FIXME: Verificar o motivo do vRaptor nao instanciar
 		// Por limitacao do vRaptor, nao instancia dentro do filtro
-		params.push({name:"notaFiscalTipoEmissaoRegimeEspecial", value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
+		if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
+			
+			params.push({name:"notaFiscalTipoEmissaoRegimeEspecial", value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
+		}
 		
 		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
 			$.each($("#geracaoNfe-filtro-selectFornecedores").val(), function(index, v) {
@@ -688,9 +691,12 @@ var geracaoNFeController = $.extend({
 			    }));
 			});
 			
-			if($('input[name^="tipoDestinatario"]:checked').val() == 'COTA') {
-				console.log('comecando a configurar pela cota');
+			if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
 				geracaoNFeController.verificarRegimeEspecialNaturezaOperacao($('#geracaoNfe-filtro-naturezaOperacao'));
+			} else {
+				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("disable");
+				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("hide");
+				$(".emissaoRegimeEspecial").hide();
 			}
 			
 		});
@@ -708,7 +714,7 @@ var geracaoNFeController = $.extend({
 				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 			}
 			
-			if($('input[name^="tipoDestinatario"]:checked').val() == 'COTA'
+			if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR' 
 					&& (data.tipoEmissaoRegimeEspecial == 'CONSOLIDA_EMISSAO_POR_DESTINATARIO'
 						|| data.tipoEmissaoRegimeEspecial == 'CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS')) {
 				
