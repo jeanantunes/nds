@@ -1747,16 +1747,19 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
         final List<String> msgs = new ArrayList<String>();
         
         if (codigoProduto == null || codigoProduto.isEmpty()){
-            
             msgs.add("Código de Produto inválido");
         }
         
         if (numeroEdicao == null){
-            
+            msgs.add("Número edição inválido");
         }
         
         if (data == null){
-            
+            msgs.add("Data inválida");
+        }
+        
+        if (!msgs.isEmpty()){
+            throw new ValidacaoException(TipoMensagem.WARNING, msgs);
         }
         
         return this.diferencaEstoqueRepository.pesquisarDiferncas(codigoProduto, numeroEdicao, data);
