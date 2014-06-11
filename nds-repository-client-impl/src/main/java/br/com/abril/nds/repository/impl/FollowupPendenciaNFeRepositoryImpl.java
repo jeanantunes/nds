@@ -46,7 +46,7 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(getSqlFromEWhereNotaPendente(filtro));
 		
-		hql.append(getOrderByNotasPendentes(filtro, true, false, true));
+		hql.append(getOrderByNotasPendentes(filtro, false, false, true));
 
 		Query query =  getSession().createQuery(hql.toString());		
 		
@@ -74,9 +74,9 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN controleCota.conferenciasEncalhe as conf ");
 		hql.append(" LEFT JOIN pessoa.telefones as telefone ");
-		
 		hql.append(" where no.tipoOperacao in ('ENTRADA',  'SAIDA')");
 		hql.append(" and ((conf.qtdeInformada * conf.precoComDesconto) - (conf.qtde * notaCota.valorInformado)) <> 0 ");
+		hql.append(" GROUP BY cota.numeroCota");
 		
 		return hql.toString();
 	}
@@ -93,12 +93,11 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		if (filtro.getPaginacao().getOrdenacao() != null) {
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());
 		}
-		
-		
+				
 		if(!isGroup){
 			hql.append(" GROUP BY cota.numeroCota");
 		} else {
-			hql.append(" GROUP BY cota.id, conf.data, notaCota ");
+			hql.append(" GROUP BY cota ");
 		}
 
 		if(!isCount && !isPagination){
