@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -15,17 +16,22 @@ import javax.sql.DataSource;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.ProcessamentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
@@ -2053,5 +2059,72 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
                 .setParameter("dataOperacao", dataOperacao)
                 .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
                 .executeUpdate();
+    }
+    
+    
+    public void adicionarEmLoteDTO(final List<MovimentoFinanceiroCotaDTO> movimentoFinanceiroCota) {
+        
+        if (movimentoFinanceiroCota == null || movimentoFinanceiroCota.isEmpty()) {
+            return;
+        }
+        
+        final Session session = this.getSession();
+        
+        session.doWork(new Work() {
+            @Override
+            public void execute(final Connection conn) throws SQLException {
+                
+                final NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+                 
+                final StringBuilder sqlQry = new StringBuilder()
+                .append("insert ")
+                .append("into MOVIMENTO_FINANCEIRO_COTA ")
+                .append("(APROVADO_AUTOMATICAMENTE,")
+                .append("DATA_APROVACAO,")
+                .append("MOTIVO,")
+                .append("STATUS,")
+                .append("DATA,")
+                .append("DATA_CRIACAO,")
+                .append("APROVADOR_ID,")
+                .append("TIPO_MOVIMENTO_ID,")
+                .append("USUARIO_ID,")
+                .append("PARCELAS,")
+                .append("PRAZO,")
+                .append("VALOR,")
+                .append("LANCAMENTO_MANUAL,")
+                .append("OBSERVACAO,")
+                .append("BAIXA_COBRANCA_ID,")
+                .append("COTA_ID,")
+                .append("DATA_INTEGRACAO,")
+                .append("STATUS_INTEGRACAO,")
+                .append("FORNECEDOR_ID, ID)")
+                .append("values ")
+                .append("( :aprovacaoAutomatica,")
+                .append(" :dataAprovacao,")
+                .append(" :motivo,")
+                .append(" :status,")
+                .append(" :dataVencimento,")
+                .append(" :dataCriacao,")
+                .append(" :usuarioAprovadorId,")
+                .append(" :idTipoMovimento,")
+                .append(" :idUsuario,")
+                .append(" :parcelas,")
+                .append(" :prazo,")
+                .append(" :valor,")
+                .append(" :lancamentoManual,")
+                .append(" :observacao,")
+                .append(" :idBaixaCobranca,")
+                .append(" :idCota,")
+                .append(" :dataIntegracao,")
+                .append(" :statusIntegracao,")
+                .append(" :idFornecedor, -1 )");
+                
+                final SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(movimentoFinanceiroCota.toArray());
+                
+                namedParameterJdbcTemplate.batchUpdate(sqlQry.toString(), params);
+                
+            }
+        });
+        
     }
 }

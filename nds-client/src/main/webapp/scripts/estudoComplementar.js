@@ -101,6 +101,10 @@ var estudoComplementarController =$.extend(true,  {
 	         		 exibirMensagem("SUCCESS", ["Estudo Complementar Gerado"]);
 	         		 
 	         		 $('#idEstudoComplementar').html(data);
+	         		 
+	         		if(typeof(matrizDistribuicao)=="object"){
+	            		matrizDistribuicao.carregarGrid();
+	         		}
 	 	         }
 		     }
 		 });
@@ -135,6 +139,7 @@ consultarEstudo:function (obj) {
 					$('#publicacaoDataLncto').html(json.baseEstudoVO.dataLncto);
 					$('#publicacaoDataRclto').html(json.baseEstudoVO.dataRclto);
 					$('#publicacaoClassificacao').html(json.baseEstudoVO.nomeClassificacao);
+					$('#EC-segmento').html(json.baseEstudoVO.segmentoDoProduto);
 				}
 			}
 		});
@@ -159,6 +164,7 @@ consultarEstudo:function (obj) {
 		$('#reparteLancamento').val("");
 		$('#tipoSelecao').val('selected');
 		$('#reparteCota').val(2);
+		$('#EC-segmento').val('');
 		
     }
 },

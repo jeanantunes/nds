@@ -191,9 +191,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 	@Override
 	public void setIdLancamentoNoEstudo(Long idLancamento, Long idEstudo) {
 
-		Query query = 
-				this.getSession().createQuery(
-						"update EstudoGerado set LANCAMENTO_ID = :idLancamento where id = :idEstudo ");
+		Query query = this.getSession().createQuery("update EstudoGerado set LANCAMENTO_ID = :idLancamento where id = :idEstudo ");
 		
 		query.setParameter("idLancamento", idLancamento);
 		query.setParameter("idEstudo", idEstudo);
@@ -208,10 +206,10 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		
 		hql.append(" select count(*) from estudo_cota_gerado ec where ec.ESTUDO_ID=")
 				.append( estudoBase.toString()) 
-				.append(" and ec.COTA_ID in (  ")
+				.append(" and ec.reparte>0 and ec.COTA_ID in (  ")
 			.append(" 	select ec2.COTA_ID from estudo_cota_gerado ec2 where ec2.ESTUDO_ID = ")
 					.append( estudoSomado.toString())	 
-					.append( ")" );
+					.append( " AND ec.reparte>0)" );
 		
 		Query query =	this.getSession().createSQLQuery(hql.toString());
 		
@@ -238,7 +236,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append(" SELECT ");
 		sql.append(" case when estp.QTDE is null ");
 		sql.append(" 	then ");
-		sql.append("  		case when plp.NUMERO_PERIODO = 1 ");
+		sql.append("  		case when plp.NUMERO_PERIODO=1 ");
 		sql.append(" 			 then ");
 		sql.append(" 				((lc.REPARTE)-lc.REPARTE_PROMOCIONAL)  ");
 		sql.append("			else lc.REPARTE ");

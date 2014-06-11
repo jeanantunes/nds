@@ -9,6 +9,7 @@ import com.google.common.base.Strings;
 
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Sexo;
@@ -166,6 +167,8 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private Double percentualVenda;
 	private Long reparteEstudo;
 	private Long tipoSegmentoProdutoId;
+	
+	private FormaComercializacao formaComercializacao;
 	
 	public ProdutoEdicaoDTO() {};
 	
@@ -1044,5 +1047,15 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public void setContagemPacote(boolean contagemPacote) {
 		this.contagemPacote = contagemPacote;
 	}
+
+	public FormaComercializacao getFormaComercializacao() {
+		return formaComercializacao;
+	}
+
+	public void setFormaComercializacao(FormaComercializacao formaComercializacao) {
+		this.formaComercializacao = formaComercializacao;
+	}
+	
+	
     
 }

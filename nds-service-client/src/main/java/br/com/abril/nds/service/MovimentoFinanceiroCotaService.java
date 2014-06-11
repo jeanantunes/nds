@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.abril.nds.client.vo.ProcessamentoFinanceiroCotaVO;
+import br.com.abril.nds.dto.ExpedicaoDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
@@ -177,10 +179,17 @@ public interface MovimentoFinanceiroCotaService {
      * @param dataVencimento
      * @param dataOperacao
      * @param valorDebito
+     * @param observacaoMovimento TODO
      */
-    void gerarMovimentoFinanceiroDebitoDistribuicaoEntregaCota(final TipoMovimentoFinanceiro tipoMovimento,
-													  		  final Usuario usuario,final Cota cota,
-													  		  final Date dataVencimento,
-													  		  final Date dataOperacao,
-													  		  final BigDecimal valorDebito);
+    void gerarMovimentoFinanceiroDebitoCota(final TipoMovimentoFinanceiro tipoMovimento,
+								  		  final Usuario usuario,final Cota cota,
+								  		  final Date dataVencimento,
+								  		  final Date dataOperacao,
+								  		  final BigDecimal valorDebito, String observacaoMovimento);
+    
+    void processarCreditosParaCotasNoProcessoDeFuroDeProdutoContaFirme(final Long idLancamento, 
+															 		   final Long idUsuario);
+    
+    void processarDebitosParaCotasNoProcessoDeExpedicaoDeProdutoContaFirme(final ExpedicaoDTO expedicaoDTO, 
+			  															   final List<MovimentoEstoqueCotaDTO>movimentosEstoqueCota);
 }

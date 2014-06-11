@@ -44,6 +44,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" produto.percentualAbrangencia AS percentualAbrangencia, ");
 		hql.append(" (select t.descricao from TipoClassificacaoProduto t where t.id=prodEdicao.tipoClassificacaoProduto.id) as tipoClassificacaoProdutoDescricao, ");
 		hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
+		hql.append(" lancamento.dataLancamentoDistribuidor AS datalanc, ");
 		hql.append(" lancamento.dataRecolhimentoPrevista AS dataRcto, ");
 		hql.append(" CASE ");
 		hql.append(" WHEN estudoG.dataAlteracao = null THEN estudoG.dataCadastro ");
