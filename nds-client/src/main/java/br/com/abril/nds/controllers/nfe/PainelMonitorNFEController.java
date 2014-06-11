@@ -135,7 +135,7 @@ public class PainelMonitorNFEController extends BaseController {
 		
 		filtro.setPaginacao(paginacao);
 		
-		InfoNfeDTO info = monitorNFEService.pesquisarNFe(filtro);
+		InfoNfeDTO info = this.monitorNFEService.pesquisarNotaFiscal(filtro);
 		
 		List<NfeDTO> listaResultado = info.getListaNfeDTO();
 		
@@ -246,7 +246,7 @@ public class PainelMonitorNFEController extends BaseController {
 	@Get
 	public void exportar(final FiltroMonitorNfeDTO filtro, FileType fileType) throws IOException {
 
-		InfoNfeDTO infoNfe = monitorNFEService.pesquisarNFe(filtro);
+		InfoNfeDTO infoNfe = monitorNFEService.pesquisarNotaFiscal(filtro);
 		
 		List<NfeVO> listaNfeVO = getListaNfeVO(infoNfe.getListaNfeDTO());
 		
