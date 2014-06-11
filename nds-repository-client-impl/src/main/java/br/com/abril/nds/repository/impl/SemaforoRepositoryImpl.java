@@ -44,7 +44,7 @@ public class SemaforoRepositoryImpl extends
 		hql.append(" select semaforo from Semaforo semaforo ");
 		hql.append(" join fetch semaforo.usuario ");
 		hql.append(" where semaforo.dataOperacao = :data ");
-		hql.append(" order by semaforo.dataInicio desc ");
+		hql.append(" order by semaforo.dataFim desc ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
