@@ -34,6 +34,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.EstudoComplementarService;
 import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.LancamentoService;
 
 
 @Service
@@ -57,6 +58,9 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 
     @Autowired
     private InformacoesProdutoRepository informacoesProdutoRepository;
+    
+    @Autowired
+    private LancamentoService lancamentoService;
     
     @Autowired
     private EstudoService estudoService;
@@ -130,10 +134,13 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
             throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi encontrada nos parâmetros para gerar o estudo complementar.");
         }
 
+        EstudoGerado estudo = estudoGeradoRepository.buscarPorId(estudoComplementarVO.getCodigoEstudo());
+        
+        validarEdicaoEProduto(estudoComplementarVO, estudo);
+        
         BigInteger reparte = BigInteger.valueOf(estudoComplementarVO.getReparteCota());
         BigInteger qtdDistribuido = BigInteger.valueOf(estudoComplementarVO.getReparteDistribuicao());
 
-        EstudoGerado estudo = estudoGeradoRepository.buscarPorId(estudoComplementarVO.getCodigoEstudo());
 
         EstudoGerado estudo1 = new EstudoGerado();
         BeanUtils.copyProperties(estudo, estudo1, new String[] {"id", "lancamentos", "estudoCotas"});
@@ -191,6 +198,17 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 
         return idEstudo;
     }
+
+	private void validarEdicaoEProduto(EstudoComplementarVO estudoComplementarVO, EstudoGerado estudo) {
+		
+		Lancamento lancParaEstudo = lancamentoService.buscarPorId(estudoComplementarVO.getIdLancamento());
+        
+        if((lancParaEstudo.getProdutoEdicao().getNumeroEdicao() != estudo.getProdutoEdicao().getNumeroEdicao()) || 
+        		(lancParaEstudo.getProdutoEdicao().getProduto().getCodigo() != estudo.getProdutoEdicao().getProduto().getCodigo())){
+        	
+        	throw new ValidacaoException(TipoMensagem.WARNING, "O estudo utilizado como base, não é da mesma edição/produto do estudo a ser criado.");
+        }
+	}
 
     private List<EstudoCotaGerado> ordenarCotas(List<EstudoCotaGerado> estudoCotas, EstudoComplementarVO estudoComplementarVO) {
 	Map<Long, EstudoCotaGerado> mapCotas = new HashMap<>();

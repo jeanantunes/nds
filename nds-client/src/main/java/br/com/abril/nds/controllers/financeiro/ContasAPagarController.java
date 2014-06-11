@@ -402,7 +402,7 @@ public class ContasAPagarController extends BaseController {
 	@Path("/exportPesquisarDetalheFaltasSobras")
 	public void exportPesquisarDetalheFaltasSobras(FileType fileType) throws IOException {
 		
-		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_CONTAS_A_PAGAR);
+		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_DETALHE_FALTAS_SOBRAS);
 		filtro.setPaginacaoVO(null);
 		
 		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = contasAPagarService.pesquisarDetalheFaltasSobras(filtro);
