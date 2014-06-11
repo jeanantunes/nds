@@ -46,7 +46,7 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(getSqlFromEWhereNotaPendente(filtro));
 		
-		hql.append(getOrderByNotasPendentes(filtro, false, false, false));
+		hql.append(getOrderByNotasPendentes(filtro, true, false, true));
 
 		Query query =  getSession().createQuery(hql.toString());		
 		
@@ -98,7 +98,7 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		if(!isGroup){
 			hql.append(" GROUP BY cota.numeroCota");
 		} else {
-			hql.append(" GROUP BY cota ");
+			hql.append(" GROUP BY cota.id, conf.data, notaCota ");
 		}
 
 		if(!isCount && !isPagination){

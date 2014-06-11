@@ -45,6 +45,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 			height : 250
 		});
 		
+		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).datepicker({
+			showOn : "button",
+			buttonImage : contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly : true,
+			dateFormat: "dd/mm/yy"
+		});
+		
 		//hack para message dialog com tamanho fixo
 		$(".message-dialog-encalhe > div", ConferenciaEncalheCont.workspace).css('width', '93%');
 		
@@ -1064,6 +1071,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			} else {
 				_class = "class_linha_2 _dadosConfEncalheFinalizar";
 			}
+			
 			if(value.processoUtilizaNfe){
 					
 						innerTable += "<tr class='" + _class + "'>";
@@ -1305,6 +1313,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			ConferenciaEncalheCont.carregarGridItensNotaFiscal(modeloConferenciaEncalhe);
 			
 			$('input[id*="qtdeInformadaFinalizarConf"]', ConferenciaEncalheCont.workspace).numeric();
+			$('input[id*="precoCapaFinalizarConf"]', ConferenciaEncalhe.workspace).numeric();
 			$('input[id*="precoComDescontoFinalizarConf"]', ConferenciaEncalheCont.workspace).numeric();
 		}
 		
