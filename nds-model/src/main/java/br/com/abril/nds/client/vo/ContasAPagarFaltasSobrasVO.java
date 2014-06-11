@@ -49,7 +49,7 @@ public class ContasAPagarFaltasSobrasVO {
 		this.edicao = dto.getEdicao().toString();
 		this.precoCapa = CurrencyUtil.formatarValor(dto.getPrecoCapa());
 		this.precoComDesconto = CurrencyUtil.formatarValor(dto.getPrecoComDesconto());
-		this.box = dto.getBox().toString();
+		this.box = dto.getBox() == null ? null : dto.getBox().toString();
 		this.exemplares = dto.getExemplares().toString();
 		this.fornecedor = dto.getFornecedor();
 		this.valor = CurrencyUtil.formatarValor(dto.getValor());

@@ -9,13 +9,13 @@ var estudoComplementarController =$.extend(true,  {
 			isMultiplo = false;
 		
 		if (tipoSelecao==0){
-			alert("Favor Selecionar Tipo Base");
+			exibirMensagem("WARNING", ["Selecione o tipo de base."]);
 			$('#tipoSelecao').focus();
 			return;
 		}
 		
 		if(codigoEstudo==""){
-			alert("Favor informar no. estudo base");
+			exibirMensagem("WARNING", ["Informe o número do estudo base."]);
 			$('#codigoEstudo').focus();
 			return;
 		}
@@ -24,12 +24,12 @@ var estudoComplementarController =$.extend(true,  {
 		
 		if ($('#checkboxDistMult').attr("checked")==undefined){
 			if ($('#reparteCota').val()<0){
-					alert("Reparte Cota negativo!!");
-					return
+				exibirMensagem("WARNING", ["Reparte cota negativo."]);
+				return
 			}
 
 			if ($('#reparteCota').val()=="" || $('#reparteCota').val()==0){
-				exibirMensagem("WARNING", ["Favor informar valor de reparte por Cota"]);
+				exibirMensagem("WARNING", ["Informe o valor de reparte por Cota."]);
 				return;
 			}
 		}else {
@@ -38,38 +38,37 @@ var estudoComplementarController =$.extend(true,  {
 		}
 		
 		if ($('#reparteLancamento').val()<0){
-			alert("Reparte Lancamento negativo!!");
+			exibirMensagem("WARNING", ["Reparte Lancamento negativo."]);
 			return
 		}
 		
 		if ($('#reparteLancamento').val()=="" || $('#reparteLancamento').val()==0){
-
-			exibirMensagem("WARNING", ["Favor informar valor Lancamento"]);
+			exibirMensagem("WARNING", ["Informe o valor de Lancamento"]);
 			return;
 		}
 
 		var reparteLancamento =$('#reparteLancamento').val();
 
 		if ($('#reparteDistribuicao').val()<0){
-			alert("Reparte Distribuido negativo!!");
+			exibirMensagem("WARNING", ["Reparte Distribuido negativo!"]);
 			return
 		}
 		
 		if ($('#reparteDistribuicao').val()==0 || $('#ReparteDistribuicao').val()==""){
-			exibirMensagem("WARNING", ["Favor informar valor reparte distribuição"]);
+			exibirMensagem("WARNING", ["Informe o valor de reparte para distribuição."]);
 			return;
 		}
 		var reparteDistribuicao = $('#reparteDistribuicao').val();
 		if ($('#checkboxDistMult').attr("checked")!=undefined){
 			if ($('#distrMult').val=="0" || $('#distrMult').val==""){
-				exibirMensagem("WARNING", ["Favor informar fator de distribuição multipla"]);
+				exibirMensagem("WARNING", ["Informe o fator de distribuição multipla."]);
 				return;
 				
 			}	
 		}
 
 		if ($('#reparteSobra').val()<0){
-			alert("Sobra negativa!!");
+			exibirMensagem("WARNING", ["A sobra negativa."]);
 			return
 		}
 		
