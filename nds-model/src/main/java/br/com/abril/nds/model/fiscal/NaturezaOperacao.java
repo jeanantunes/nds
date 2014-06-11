@@ -75,11 +75,17 @@ public class NaturezaOperacao implements Serializable {
 	            inverseJoinColumns=@JoinColumn(name="PROCESSO", referencedColumnName="id"))
 	private Set<Processo> processo;
 
-	@Column(name = "NOTA_FISCAL_VENDA_CONSIGNADO", nullable = true)
+	@Column(name = "NOTA_FISCAL_VENDA_CONSIGNADO")
 	private boolean notaFiscalVendaConsignado;
 	
-	@Column(name = "NOTA_FISCAL_DEVOLUCAO_SIMBOLICA", nullable = true)
+	@Column(name = "NOTA_FISCAL_DEVOLUCAO_SIMBOLICA")
 	private boolean notaFiscalDevolucaoSimbolica;
+	
+	@Column(name = "GERAR_COTA_CONTRIBUINTE_EXIGE_NFE")
+	private boolean gerarCotaContribuinteExigeNFe;
+	
+	@Column(name = "GERAR_COTA_NAO_EXIGE_NFE")
+	private boolean gerarCotaNaoExigeNFe;
 	
 	@OneToMany
 	@JoinTable(
@@ -174,6 +180,22 @@ public class NaturezaOperacao implements Serializable {
 
 	public void setNotaFiscalDevolucaoSimbolica(boolean notaFiscalDevolucaoSimbolica) {
 		this.notaFiscalDevolucaoSimbolica = notaFiscalDevolucaoSimbolica;
+	}
+
+	public boolean isGerarCotaContribuinteExigeNFe() {
+		return gerarCotaContribuinteExigeNFe;
+	}
+
+	public void setGerarCotaContribuinteExigeNFe(boolean gerarCotaContribuinteExigeNFe) {
+		this.gerarCotaContribuinteExigeNFe = gerarCotaContribuinteExigeNFe;
+	}
+
+	public boolean isGerarCotaNaoExigeNFe() {
+		return gerarCotaNaoExigeNFe;
+	}
+
+	public void setGerarCotaNaoExigeNFe(boolean gerarCotaNaoExigeNFe) {
+		this.gerarCotaNaoExigeNFe = gerarCotaNaoExigeNFe;
 	}
 
 	public void setTipoOperacao(TipoOperacao tipoOperacao) {

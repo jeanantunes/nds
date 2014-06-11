@@ -273,7 +273,7 @@
 </form>
 
 <form id="form-contasAPagar_popupFaltasSobras">
-	<div id="contasAPagar_popupFaltasSobras" title="Venda de Encalhe" style="display:none;">
+	<div id="contasAPagar_popupFaltasSobras" title="Faltas e Sobras" style="display:none;">
 		<fieldset style="width:800px!important;">
 	    	<legend><span id="contasAPagar_legend_popupFaltasSobras"></span></legend>
 	        

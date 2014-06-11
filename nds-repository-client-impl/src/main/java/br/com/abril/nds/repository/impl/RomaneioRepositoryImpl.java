@@ -113,19 +113,24 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	private String getSqlFromEWhereRomaneio(FiltroRomaneioDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
-	
-		hql.append(" from COTA cota_ "); 
-		hql.append(" left join BOX box_ on cota_.BOX_ID=box_.ID ");
-		hql.append(" join PDV pdvs_ on cota_.ID=pdvs_.COTA_ID ");
-		hql.append(" join LANCAMENTO lancamento_ cross ");
+
+		hql.append(" from LANCAMENTO lancamento_ "); 
+
 		hql.append(" join ESTUDO estudo_ on estudo_.ID  = lancamento_.ESTUDO_ID ");
 		hql.append(" join ESTUDO_COTA estudo_cota_ on estudo_.ID  = estudo_cota_.ESTUDO_ID ");
+		
+		hql.append(" join COTA cota_ on cota_.ID=estudo_cota_.COTA_ID ");
+		hql.append(" left join BOX box_ on cota_.BOX_ID=box_.ID ");
+		hql.append(" join PDV pdvs_ on cota_.ID=pdvs_.COTA_ID ");
+		
+
 		hql.append(" join ESTUDO_GERADO estudoGerado_ on estudoGerado_.ID = estudo_.ID ");
 		hql.append(" join ESTUDO_PDV estudoPDV_ on estudoPDV_.ESTUDO_ID = estudoGerado_.ID and estudoPDV_.COTA_ID = cota_.ID ");
 		hql.append(" join ROTA_PDV rotas_ on estudoPDV_.PDV_ID=rotas_.PDV_ID ");
 		hql.append(" join ROTA rota_ on rotas_.ROTA_ID=rota_.ID ");
-		hql.append(" join ROTEIRO roteiro_ on rota_.ROTEIRO_ID=roteiro_.ID cross ");
-		hql.append(" join NOTA_ENVIO notaenvio_ ");
+		hql.append(" join ROTEIRO roteiro_ on rota_.ROTEIRO_ID=roteiro_.ID  ");
+		
+		hql.append(" join NOTA_ENVIO notaenvio_ on notaenvio_.NUMERO_COTA=cota_.NUMERO_COTA ");
 		hql.append(" join NOTA_ENVIO_ITEM itemNotaEnvio_ on notaenvio_.numero=itemNotaEnvio_.NOTA_ENVIO_ID ");
 		hql.append(" join ENDERECO_PDV enderecoPDV_ on enderecoPDV_.PDV_ID = estudoPDV_.PDV_ID ");
 		hql.append(" join ENDERECO endereco_ on endereco_.ID = enderecoPDV_.ENDERECO_ID ");
