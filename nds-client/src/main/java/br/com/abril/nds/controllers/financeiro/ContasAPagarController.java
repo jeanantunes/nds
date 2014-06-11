@@ -279,11 +279,33 @@ public class ContasAPagarController extends BaseController {
 	@Path("/exportPesquisarPorDistribuidor")
 	public void exportPesquisarPorDistribuidor(FileType fileType) throws IOException {
 		
-		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) this.session.getAttribute(FILTRO_CONTAS_A_PAGAR);
+		final FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) this.session.getAttribute(FILTRO_CONTAS_A_PAGAR);
 		filtro.setPaginacaoVO(null);
 		
+		final ContasAPagarGridPrincipalFornecedorVO vo = 
+		        this.contasAPagarService.pesquisarPorDistribuidor(filtro);
+		
+		//adiciona totais
+		ContasApagarConsultaPorDistribuidorVO total = new ContasApagarConsultaPorDistribuidorVO();
+		vo.getGrid().add(total);
+		
+		total = new ContasApagarConsultaPorDistribuidorVO();
+		total.setData("Total Bruto");
+		total.setConsignado(vo.getTotalBruto());
+		vo.getGrid().add(total);
+		
+		total = new ContasApagarConsultaPorDistribuidorVO();
+        total.setData("Total Desconto");
+        total.setConsignado(vo.getTotalDesconto());
+        vo.getGrid().add(total);
+        
+        total = new ContasApagarConsultaPorDistribuidorVO();
+        total.setData("Saldo a Pagar");
+        total.setConsignado(vo.getSaldo());
+        vo.getGrid().add(total);
+		
 		FileExporter.to("contas-a-pagar",fileType).inHTTPResponse(getNDSFileHeader(), null, 
-		                this.contasAPagarService.pesquisarContasPorDistribuidor(filtro), 
+		                vo.getGrid(), 
 		                ContasApagarConsultaPorDistribuidorVO.class, 
 						this.httpServletResponse);
 		
@@ -380,7 +402,7 @@ public class ContasAPagarController extends BaseController {
 	@Path("/exportPesquisarDetalheFaltasSobras")
 	public void exportPesquisarDetalheFaltasSobras(FileType fileType) throws IOException {
 		
-		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_CONTAS_A_PAGAR);
+		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_DETALHE_FALTAS_SOBRAS);
 		filtro.setPaginacaoVO(null);
 		
 		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = contasAPagarService.pesquisarDetalheFaltasSobras(filtro);
