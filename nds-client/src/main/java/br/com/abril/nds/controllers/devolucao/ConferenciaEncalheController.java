@@ -442,13 +442,10 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	/**
-<<<<<<< HEAD
      * Obtém no banco de dados as informações da conferencia de encalhe da cota em questão e setta em session.
-=======
      * Obtém no banco de dados as informações da conferencia de encalhe da cota
      * em questão e setta em session.
      * 
->>>>>>> 1423864f4a83a3e9554cf87ce91c52c0df48b0dc
      * @param numeroCota
      * @param indConferenciaContingencia
      */
@@ -1326,18 +1323,13 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		final Box boxEncalhe = new Box();
 		boxEncalhe.setId(conferenciaEncalheSessionScopeAttr.getIdBoxLogado());
-		
 		controleConfEncalheCota.setBox(boxEncalhe);
 		
-		
-		final List<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = 
-				obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
+		final List<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
 		
 		this.salvarConferenciaCota(controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
-                "result").recursive()
-                .serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
 	}
 	
 	
@@ -1600,6 +1592,7 @@ public class ConferenciaEncalheController extends BaseController {
 		if (horaInicio != null) {
 		
 			final ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
+			
 			controleConfEncalheCota.setDataInicio(horaInicio);
 			
 			final InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
@@ -1623,7 +1616,9 @@ public class ConferenciaEncalheController extends BaseController {
             	
 				controleConfEncalheCota.setUsuario(this.usuarioService.getUsuarioLogado());
 			}
+            
 			final Long idBox = conferenciaEncalheSessionScopeAttr.getIdBoxLogado();
+			
 			final Box boxEncalhe = this.boxService.buscarPorId(idBox);
 			
 			controleConfEncalheCota.setBox(boxEncalhe);
@@ -1708,21 +1703,21 @@ public class ConferenciaEncalheController extends BaseController {
 			this.result.use(CustomMapJson.class).put("result", dados).serialize();
 			
 		} else {
-			
-			this.result.use(Results.json()).from(
-                    new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada."), "result")
-                    .recursive().serialize();
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada."), "result").recursive().serialize();
 		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
     private void carregarNotasFiscais(final ControleConferenciaEncalheCota controleConfEncalheCota, final InfoConferenciaEncalheCota info) {
-        final Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
+        
+	    final Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
         
         NaturezaOperacao tipoNotaFiscal = this.nFeService.regimeEspecialParaCota(info.getCota());
         
         final List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
+        
         NotaFiscalEntradaCota notaFiscal = null;
+        
         final List<ItemNotaFiscalEntrada> itens = new ArrayList<ItemNotaFiscalEntrada>();
         
         if(dadosNotaFiscal!=null) {
@@ -1743,6 +1738,7 @@ public class ConferenciaEncalheController extends BaseController {
             notaFiscal.setValorDesconto(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
             
             for(final ConferenciaEncalheDTO conferenciaEncalhe : this.getListaConferenciaEncalheFromSession()) {
+                
                 if(conferenciaEncalhe.isProcessoUtilizaNfe()){
                     
                     final ProdutoEdicao produtoEdicao = new ProdutoEdicao();
@@ -1760,6 +1756,7 @@ public class ConferenciaEncalheController extends BaseController {
                     
                 }
             }
+            
             notaFiscal.setItens(itens);
             notaFiscalEntradaCotas.add(notaFiscal);
             controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
@@ -1784,7 +1781,7 @@ public class ConferenciaEncalheController extends BaseController {
 			for (final ProdutoEdicao produtoEdicao : listaProdutoEdicao){
 				
 				listaProdutos.add(
-						new ItemAutoComplete(
+					new ItemAutoComplete(
 								produtoEdicao.getProduto().getCodigo() + " - " + produtoEdicao.getProduto().getNome() + " - " + produtoEdicao.getNumeroEdicao(), 
 								null,
 								new Object[]{produtoEdicao.getProduto().getCodigo(), produtoEdicao.getId()}));

@@ -536,8 +536,10 @@ public class FollowupController extends BaseController {
 	 */
 	@Get
 	public void imprimirPendenciasNFe(FileType fileType) throws IOException {
-		FiltroFollowupPendenciaNFeDTO filtro = (FiltroFollowupPendenciaNFeDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
-		if (filtro != null) {
+		
+	    FiltroFollowupPendenciaNFeDTO filtro = (FiltroFollowupPendenciaNFeDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
+		
+	    if (filtro != null) {
 			removePaginacao(filtro.getPaginacao());
 		} else {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao imprimir arquivo");
@@ -561,9 +563,10 @@ public class FollowupController extends BaseController {
 	 * @throws IOException
 	 */
 	@Get
-	public void imprimirAlteracaoStatusCota(FileType fileType)
-			throws IOException {
+	public void imprimirAlteracaoStatusCota(FileType fileType) throws IOException {
+	    
 		FiltroFollowupStatusCotaDTO filtro = (FiltroFollowupStatusCotaDTO) session.getAttribute(FILTRO_FOLLOWUP_STATUS_COTA_SESSION_ATTRIBUTE);
+		
 		if (filtro != null) {
 			removePaginacao(filtro.getPaginacao());
 		} else {

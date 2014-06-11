@@ -1135,7 +1135,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 	}
 	
-private String getHqlFromEWhereItensPendentes() {
+	private String getHqlFromEWhereItensPendentes() {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -1152,6 +1152,8 @@ private String getHqlFromEWhereItensPendentes() {
 		hql.append(" WHERE ");
 		
 		hql.append(" confCota.id = :idConferenciaCota ");
+		
+		hql.append(" GROUP BY confCota.id ");
 		
 		return hql.toString();
 	}

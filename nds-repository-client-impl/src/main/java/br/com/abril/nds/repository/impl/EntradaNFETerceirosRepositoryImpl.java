@@ -323,7 +323,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		}
 		
 		if(isGroup){			
-			// hql.append(" group by cota.id ");
+			hql.append(" group by cota.id, controleConferenciaEncalheCota.dataOperacao ");
 		}
 		
 		return hql.toString();

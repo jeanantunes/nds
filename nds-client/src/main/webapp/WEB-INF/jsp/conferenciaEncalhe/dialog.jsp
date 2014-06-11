@@ -202,7 +202,7 @@
 				<td style="width: 101px; text-align: center;" id="somatorioQtdRecebida"></td>
 				<td style="width: 80px;"></td>
 				<td style="width: 80px;"></td>
-				<td style="width: 60px; text-align: right;" id="somatorioTotal"></td>
+				<td style="width: 60px; text-align: right;" id="somatorioTotalFinalNfe"></td>
 				<td style="width: 30px;"></td>
 		  	</tr>
 		</table>
