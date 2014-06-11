@@ -60,7 +60,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	
 	
 	@Transactional
-	public InfoNfeDTO pesquisarNFe(FiltroMonitorNfeDTO filtro) {
+	public InfoNfeDTO pesquisarNotaFiscal(FiltroMonitorNfeDTO filtro) {
 		
 		InfoNfeDTO info = new InfoNfeDTO();
 		

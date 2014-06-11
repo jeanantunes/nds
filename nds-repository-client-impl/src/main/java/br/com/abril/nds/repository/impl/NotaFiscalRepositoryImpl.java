@@ -98,10 +98,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
 		}
-
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(NfeDTO.class));
-
-
+		
 		return query.list();
 
 	}

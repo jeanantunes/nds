@@ -189,7 +189,7 @@ public class EntradaNFETerceirosController extends BaseController {
 
 		List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.consultaNotasPendentesRecebimento(filtro, true);
 
-		Integer tamanhoListaNotasPendentes = this.entradaNFETerceirosService.buscarTodasNFNotas(filtro);
+		Integer quantidade = this.entradaNFETerceirosService.qtdeNotasPendentesRecebimento(filtro);
 		
 		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>>();
 		
@@ -201,7 +201,7 @@ public class EntradaNFETerceirosController extends BaseController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(tamanhoListaNotasPendentes);
+		tableModel.setTotal(quantidade);
 		
 		return tableModel;
 	}
@@ -216,12 +216,12 @@ public class EntradaNFETerceirosController extends BaseController {
         
         this.tratarFiltro(filtro);
         
-        final TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = efetuarConsultaNotasPendentesEmissao(filtro);
+        final TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = consultaNotasPendentesEmissao(filtro);
         
         result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
     }
 	
-	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> efetuarConsultaNotasPendentesEmissao(final FiltroEntradaNFETerceiros filtro) {
+	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> consultaNotasPendentesEmissao(final FiltroEntradaNFETerceiros filtro) {
 
         List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.consultaNotasPendentesRecebimento(filtro, true);
 
