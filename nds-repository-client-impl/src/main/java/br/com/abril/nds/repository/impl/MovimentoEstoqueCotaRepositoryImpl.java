@@ -1054,10 +1054,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             subSqlValoresDesconto.append("   COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
             subSqlValoresDesconto.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * ");
             subSqlValoresDesconto.append("   DESCONTO.VALOR/100)) ");
+            subSqlValoresDesconto.append("   WHEN PRODUTO_EDICAO.DESCONTO IS NOT NULL THEN ");
+            subSqlValoresDesconto.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+            subSqlValoresDesconto.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * PRODUTO_EDICAO.DESCONTO/100)) ");
             subSqlValoresDesconto.append("   ELSE 0");
             subSqlValoresDesconto.append("   END AS precoComDesconto, ");
             
-            subSqlValoresDesconto.append("	COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO, DESCONTO.VALOR, 0) as valorDesconto, ");
+            subSqlValoresDesconto.append("	COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO, DESCONTO.VALOR,PRODUTO_EDICAO.DESCONTO, 0) as valorDesconto, ");
             
             subSqlValoresDesconto.append("  (CASE WHEN DESCONTO_LOGISTICA.ID IS NOT NULL THEN ( ");
             subSqlValoresDesconto.append("	COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
@@ -1067,6 +1070,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             subSqlValoresDesconto.append("	COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
             subSqlValoresDesconto.append("	(COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
             subSqlValoresDesconto.append("  COALESCE(DESCONTO.VALOR/100, 1)))");
+            
+            subSqlValoresDesconto.append("  WHEN PRODUTO_EDICAO.DESCONTO IS NOT NULL THEN  ( ");
+            subSqlValoresDesconto.append("	COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+            subSqlValoresDesconto.append("	(COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
+            subSqlValoresDesconto.append("  COALESCE(PRODUTO_EDICAO.DESCONTO/100, 1)))");
+            
             subSqlValoresDesconto.append("  ELSE COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) END");
             subSqlValoresDesconto.append("	) as valorComDesconto, ");
         }
