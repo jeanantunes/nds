@@ -76,7 +76,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 			.append(" CASE WHEN cota.devolveEncalhe is not null THEN cota.devolveEncalhe ELSE false END as devolveEncalhe, ")
 			.append(" CASE WHEN (cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS = true or cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica = true) ")
 			.append(" 	THEN true ELSE false END as cotaContribuinteExigeNotaFiscal, ")
-			.append(" cota.tipoCota as tipoCota ")
+			.append(" cota.tipoCota as tipoCota, ")
 			.append(" fornecedor.id as idFornecedorPadraoCota ")
 			.append(" from EstudoCota estudoCota ")
 			.append(" join estudoCota.estudo estudo ")
@@ -96,7 +96,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	
 	@Override
 	public EstudoCota obterEstudoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota) {
-			
+
 		String hql = " from EstudoCota estudoCota "
 				   + " where estudoCota.estudo.dataLancamento= :dataLancamento " 
 				   + " and estudoCota.estudo.produtoEdicao.id= :idProdutoEdicao " 
