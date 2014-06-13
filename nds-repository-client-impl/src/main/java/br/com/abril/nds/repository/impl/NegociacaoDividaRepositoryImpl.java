@@ -194,16 +194,18 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			.append(" cota.numeroCota as numeroCota, ")
 			
 			.append(" case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end  as nomeJornaleiro,")
+
 			
 			.append("(").append(this.obterSubSelectTipoCobranca()).append(")").append(" as tipoCobranca , ")
 			
-			.append("(").append(this.obterSubSelectDataVencimentoParcela(" negociacao.id ")).append(")").append(" as dataVencimento, ")
+			.append("(").append(this.obterSubSelectDataOperacao(" negociacao.id ")).append(")").append(" as dataVencimento, ")
 			
 			.append("(").append(this.obterSubSelectValorParcela()).append(")").append(" as valorParcela, ")
 			
 			.append("(").append(this.obrterSubSelectNumeroParcelaAtual()).append(")").append(" as numeroParcelaAtual ,")
 			
 			.append("(").append(this.obterSubSelectCountParcelas()).append(")").append(" as quantidadeParcelas ");
+
 		
 		hql.append(this.obterSqlFromConsultaNegociacao());
 		
@@ -325,15 +327,24 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" and cobrancaPendente.statusCobranca = 'PAGO' ")
 			
-			.append(" and parcelaPendente.dataVencimento = ( ").append(obterSubSelectDataVencimentoParcela(nomeParametroNegociacao)).append(" ) ");
+			.append(" and parcelaPendente.dataVencimento = ( ").append(obterSubSelectDataOperacao(nomeParametroNegociacao)).append(" ) ");
 		
 		return hql.toString();
 	}
 
-	private String obterSubSelectDataVencimentoParcela(String nomeParametroNegociacao){
+	private String obterSubSelectDataOperacao(String nomeParametroNegociacao){
 		
 		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select distrib.dataOperacao from Distribuidor distrib");
+
+		return hql.toString();
+	}
+	
+    private String obterSubSelectDataVencimentoUltimaParcela(String nomeParametroNegociacao){
 		
+		StringBuilder hql = new StringBuilder();
+
 		hql.append(" select max(parcelaData.dataVencimento) ")
 			
 			.append(" from Cobranca cobrancaData ")
@@ -348,10 +359,8 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" join parcelaData.negociacao negociacaoData ")
 			
-			.append(" where negociacaoData.id = "+nomeParametroNegociacao+" ")
-			
-			.append(" and cobrancaData.statusCobranca = 'PAGO' ");
-		
+			.append(" where negociacaoData.id = "+nomeParametroNegociacao+" ");
+
 		return hql.toString();
 	}
 		
@@ -375,13 +384,10 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" where negociacaoValor.id= negociacao.id ")
 			
-			.append(" and cobrancaValor.statusCobranca = 'PAGO' ")
-			
-			.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataVencimentoParcela(" negociacao.id ")).append(" ) ");
-		
+			.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataOperacao(" negociacao.id ")).append(" ) ");
+
 		return hql.toString();
 	}
-	
 	
 	private String obterSubSelectTipoCobranca(){
 		
@@ -403,13 +409,10 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" where negociacaoValor.id= negociacao.id ")
 			
-			.append(" and cobrancaValor.statusCobranca = 'PAGO' ")
-			
-			.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataVencimentoParcela(" negociacao.id ")).append(" ) ");
+			.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataOperacao(" negociacao.id ")).append(" ) ");
 		
 		return hql.toString();
 	}
-	
 	
 	private String obterSubSelectCountParcelas(){
 		
@@ -446,7 +449,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" where negociacaoNumeroParcela.id = negociacao.id ")
 			
-			.append(" and parcelaNumeroParcela.dataVencimento <= (").append(obterSubSelectDataVencimentoParcela(" negociacao.id ")).append(" ) ");
+			.append(" and parcelaNumeroParcela.dataVencimento <= (").append(obterSubSelectDataOperacao(" negociacao.id ")).append(" ) ");
 			
 		return hql.toString();
 	}
@@ -498,7 +501,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 
 				.append(" and cobrancaValor.statusCobranca = :statusCobranca ")
 
-				.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataVencimentoParcela(" :idNegociacao ")).append(" ) ")
+				.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataOperacao(" :idNegociacao ")).append(" ) ")
 				
 				.append(" and EXISTS (").append(this.subSelectUtimaParcelaPendenteAprovacao(" :idNegociacao ")).append(")");
 

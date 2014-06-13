@@ -169,7 +169,7 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
 		}
 
-		sql.append("	ORDER BY BOX.ID, ROTEIRO.ORDEM, ROTA.ORDEM ");
+		sql.append("	ORDER BY BOX.CODIGO, BOX.ID, ROTA.DESCRICAO_ROTA, ROTA.ID, ROTEIRO.DESCRICAO_ROTEIRO, ROTEIRO.ID ");
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
