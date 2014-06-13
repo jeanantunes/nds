@@ -553,9 +553,11 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		for(final ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
 		
-			conferencia.setQtdInformada(conferencia.getQtdExemplar());
-			conferencia.setPrecoCapaInformado(conferencia.getPrecoCapa());
-			
+		    if(conferencia.isProcessoUtilizaNfe()){		        
+		        conferencia.setQtdInformada(conferencia.getQtdExemplar());
+		        conferencia.setPrecoCapaInformado(conferencia.getPrecoCapa());
+		    }
+		    
 		}
 		
 	}
@@ -572,13 +574,14 @@ public class ConferenciaEncalheController extends BaseController {
 			if (info.getListaConferenciaEncalhe() != null && !info.getListaConferenciaEncalhe().isEmpty()){
 			
 				for (final ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
-					
-					if (conferenciaEncalheDTO.getQtdInformada() != null){
-						qtdInformada = qtdInformada.add(conferenciaEncalheDTO.getQtdInformada());
-					}
-					
-					if (conferenciaEncalheDTO.getQtdExemplar() != null){
-						qtdRecebida = qtdRecebida.add(conferenciaEncalheDTO.getQtdExemplar());
+					if(conferenciaEncalheDTO.isProcessoUtilizaNfe()){
+					    if (conferenciaEncalheDTO.getQtdInformada() != null){
+					        qtdInformada = qtdInformada.add(conferenciaEncalheDTO.getQtdInformada());
+					    }
+					    
+					    if (conferenciaEncalheDTO.getQtdExemplar() != null){
+					        qtdRecebida = qtdRecebida.add(conferenciaEncalheDTO.getQtdExemplar());
+					    }
 					}
 				}
 			}
@@ -777,8 +780,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		try {
 			
-			produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(this.getNumeroCotaFromSession(), 
-					                                                                   idProdutoEdicao);
+			produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(this.getNumeroCotaFromSession(), idProdutoEdicao);
 		} catch (final EncalheRecolhimentoParcialException e) {
 			
             LOGGER.error("Não existe chamada de encalhe para produto parcial na data operação: " + e.getMessage(), e);
@@ -2353,7 +2355,9 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			List<Lancamento> lancamentos = null;
 			if(chamadaEncalheCota != null && chamadaEncalheCota.getChamadaEncalhe() != null) {
-				lancamentos = new ArrayList<>(chamadaEncalheCota.getChamadaEncalhe().getLancamentos());
+			    conferenciaEncalheDTO.setProcessoUtilizaNfe(chamadaEncalheCota.isProcessoUtilizaNfe());
+			    
+			    lancamentos = new ArrayList<>(chamadaEncalheCota.getChamadaEncalhe().getLancamentos());
 			}
 			
 			if(lancamentos != null && !lancamentos.isEmpty()) {
