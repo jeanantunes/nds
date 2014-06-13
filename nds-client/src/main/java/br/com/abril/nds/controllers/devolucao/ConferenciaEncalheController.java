@@ -7,13 +7,9 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -113,6 +109,10 @@ public class ConferenciaEncalheController extends BaseController {
 	private static final String DATAS_ENCALHE_CONFERIVEIS = "DATAS_ENCALHE_CONFERIVEIS";
 	
 	private static final String IND_COTA_EMITE_NFE = "IND_COTA_EMITE_NFE";
+	
+	private static final String VENDA_NEGATIVA_AUTORIZADA_NA_CONFERENCIA = "vendaNegativaAutorizadaNaConferencia";
+	
+	private static final String IND_USUARIO_SUPERVISOR = "indUsuarioSupervisorParaConferenciaEncalhe";
 	
 	            /*
      * Conferência de encalhe da cota que foi iniciada porém ainda não foi
@@ -516,8 +516,30 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void carregarListaConferencia(Integer numeroCota, final boolean indObtemDadosFromBD,  final boolean indConferenciaContingencia){
+	public void carregarListaConferencia(
+			Integer numeroCota, 
+			final boolean indObtemDadosFromBD,  
+			final boolean indConferenciaContingencia){
 		
+		final Map<String, Object> dados = obterMapaConferenciaEncalhe(
+				numeroCota, indObtemDadosFromBD, indConferenciaContingencia);
+		
+		result.use(CustomJson.class).from(dados).serialize();
+	}
+
+	/**
+	 * Retorna um mapa com os dados apresentados na 
+	 * conferencia de encalhe.
+	 * 
+	 * @param numeroCota
+	 * @param indObtemDadosFromBD
+	 * @param indConferenciaContingencia
+	 * 
+	 * @return Map
+	 */
+	private Map<String, Object> obterMapaConferenciaEncalhe(Integer numeroCota,
+			final boolean indObtemDadosFromBD,
+			final boolean indConferenciaContingencia) {
 		if (numeroCota == null) {
 			
 			numeroCota = this.getNumeroCotaFromSession();
@@ -545,7 +567,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		}
 		
-		carregarValorInformadoInicial(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
+		carregarValorInformadoInicial();
 		
 		final Map<String, Object> dados = new HashMap<String, Object>();
 		
@@ -599,10 +621,9 @@ public class ConferenciaEncalheController extends BaseController {
 			
 		}
 		
-		
 		this.calcularTotais(dados);
 		
-		result.use(CustomJson.class).from(dados).serialize();
+		return dados;
 	}
 	
 	/**
@@ -610,7 +631,9 @@ public class ConferenciaEncalheController extends BaseController {
 	 * (referentes ao itens de nota) com os mesmos valores de 
 	 * qtdExemplar e precoCapaInformado. 
 	 */
-	private void carregarValorInformadoInicial(final List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+	private void carregarValorInformadoInicial() {
+		
+		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = getListaConferenciaEncalheFromSession();
 		
 		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
 			return;
@@ -814,8 +837,6 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			if (ceDTO.getIdProdutoEdicao().equals(idProdutoEdicao)){
 				
-				this.validarExcedeReparte(ceDTO.getQtdInformada().add(qtd), ceDTO, indConferenciaContingencia);
-				
 				ceDTO.setQtdExemplar(ceDTO.getQtdInformada().add(qtd));
 				
 				final BigDecimal preco = (ceDTO.getPrecoComDesconto() != null) ? ceDTO.getPrecoComDesconto() : 
@@ -933,6 +954,40 @@ public class ConferenciaEncalheController extends BaseController {
 		this.carregarListaConferencia(null, false, false);
 	}
 	
+	private void desautorizarVendaNegativa() {
+		session.setAttribute(VENDA_NEGATIVA_AUTORIZADA_NA_CONFERENCIA, null);
+	}
+	
+	private boolean isUsuarioSupervisor() {
+	
+		Boolean indUsuarioSupervisor = (Boolean) this.session.getAttribute(IND_USUARIO_SUPERVISOR);
+		
+		if(indUsuarioSupervisor == null) {
+			indUsuarioSupervisor = usuarioService.isSupervisor();
+			this.session.setAttribute(IND_USUARIO_SUPERVISOR, indUsuarioSupervisor);
+		}
+		
+		return indUsuarioSupervisor;
+	
+	}
+	
+	private boolean isVendaNegativaAutorizada(Long idProdutoEdicaoVerificar) {
+		
+		if(isUsuarioSupervisor()) {
+			return true;
+		}
+		
+		Long idProdutoEdicao = (Long) session.getAttribute(VENDA_NEGATIVA_AUTORIZADA_NA_CONFERENCIA);
+		
+		if(idProdutoEdicao == null) {
+			return false;
+		}
+		
+		return idProdutoEdicao.equals(idProdutoEdicaoVerificar); 
+		
+	}
+	
+	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void adicionarProdutoEdicaoConferidoDiretamente(final Long produtoEdicaoId, final String qtdExemplares) {
@@ -944,18 +999,43 @@ public class ConferenciaEncalheController extends BaseController {
 		if (qtdExemplares == null){
             throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade é obrigatório.");
 		}
-
+		
 		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = getConferenciaEncalheDTOFromSession(produtoEdicaoId);
-
+		
+		String msgInformativa = null;
+		
 		if (conferenciaEncalheDTOSessao != null){
 			
-			final BigInteger qtdeEncalhe = processarQtdeExemplar(
+			final BigInteger novaQtdeEncalhe = processarQtdeExemplar(
 					conferenciaEncalheDTOSessao.getIsContagemPacote(), 
 					produtoEdicaoId, conferenciaEncalheDTOSessao.getPacotePadrao(), qtdExemplares);
 			
-			conferenciaEncalheDTOSessao.setQtdExemplar(qtdeEncalhe);
+			BigInteger qtdeEncalheTotal = novaQtdeEncalhe.add(conferenciaEncalheDTOSessao.getQtdExemplar());
+			
+			if(isEncalheExcedendoReparte(qtdeEncalheTotal, conferenciaEncalheDTOSessao, false)) {
+				
+				if(isVendaNegativaAutorizada(produtoEdicaoId)) {
+					msgInformativa = "Realizando venda negativa do produto edicão.";
+				} else {
+					
+					Map<String, Object> erroSupervisor = new HashMap<String, Object>();
+					erroSupervisor.put("msgErroSupervisor", "Venda negativa! É necessario autenticar o supervisor");
+					erroSupervisor.put("idProdutoEdicao", produtoEdicaoId);
+					result.use(CustomJson.class).from(erroSupervisor).serialize();
+					return;
+					
+				}
+				
+			}
 
-			this.atualizarProdutoRepetido(produtoEdicaoId, qtdeEncalhe, false);
+			conferenciaEncalheDTOSessao.setQtdExemplar(qtdeEncalheTotal);
+			conferenciaEncalheDTOSessao.setQtdInformada(qtdeEncalheTotal);
+			 
+			final BigDecimal precoCapa = conferenciaEncalheDTOSessao.getPrecoCapa() == null ? BigDecimal.ZERO : conferenciaEncalheDTOSessao.getPrecoCapa();
+			final BigDecimal desconto = conferenciaEncalheDTOSessao.getDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTOSessao.getDesconto();
+			final BigDecimal qtdExemplar = conferenciaEncalheDTOSessao.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTOSessao.getQtdExemplar()); 
+			
+			conferenciaEncalheDTOSessao.setValorTotal(precoCapa.subtract(desconto).multiply( qtdExemplar ));
 			
 		} else {
 			
@@ -965,15 +1045,114 @@ public class ConferenciaEncalheController extends BaseController {
 					produtoEdicao.isContagemPacote(), 
 					produtoEdicaoId, produtoEdicao.getPacotePadrao(), qtdExemplares);
 			
-			conferenciaEncalheDTOSessao = this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, true);
+			ConferenciaEncalheDTO conf = new ConferenciaEncalheDTO();
+			
+			conf.setQtdExemplar(qtdeEncalhe); 
+			conf.setIdConferenciaEncalhe(null);
+			conf.setIdProdutoEdicao(produtoEdicaoId);
+			
+			if(isEncalheExcedendoReparte(qtdeEncalhe, conf, false)) {
+				
+				if(isVendaNegativaAutorizada(produtoEdicaoId)) {
+				
+					msgInformativa = "Realizando venda negativa do produto edicão.";
+				
+				} else {
+
+					Map<String, Object> erroSupervisor = new HashMap<String, Object>();
+					erroSupervisor.put("msgErroSupervisor", "Venda negativa! É necessario autenticar o supervisor");
+					erroSupervisor.put("idProdutoEdicao", produtoEdicaoId);
+					result.use(CustomJson.class).from(erroSupervisor).serialize();
+					return;
+
+				}
+
+			}
+			
+			this.criarConferenciaEncalhe(produtoEdicao, qtdeEncalhe, true);
 			
 		}
 		
+		desautorizarVendaNegativa();
+		
 		indicarStatusConferenciaEncalheCotaAlterado();
 		
-		this.carregarListaConferencia(null, false, false);
+		Map<String, Object> dadosConferenciaEncalhe = obterMapaConferenciaEncalhe(null, false, false);
+		
+		if(msgInformativa!=null) {
+			dadosConferenciaEncalhe.put("msgInformativa", msgInformativa);
+		}
+		
+		result.use(CustomJson.class).from(dadosConferenciaEncalhe).serialize();
 		
 	}
+	
+	/**
+	 * Método que busca uma lista de produto edicao
+	 * cujo código de barras seja semelhante ao informado.
+	 * 
+	 * Caso for encontrado apenas um produto edicao com código de
+	 * barras semelhante ao informado o produto edição em questão
+	 * sera adicionado a lista de conferencia diretamente.
+	 * 
+	 * @param codigoBarra
+	 * @param qtdExemplares
+	 */
+	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	public void encalharProdutoEdicaoPorCodigoDeBarras(
+			final String codigoBarra,
+			final String qtdExemplares) {
+		
+		if (codigoBarra == null || codigoBarra.trim().isEmpty()) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido.");
+		}
+
+		final List<ItemAutoComplete> listaProdutos = 
+				this.conferenciaEncalheService.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(getNumeroCotaFromSession(), codigoBarra); 
+
+		if (listaProdutos == null || listaProdutos.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
+		}
+		
+		if(listaProdutos.size()==1) {
+			
+			Long idProdutoEdicao = (Long) listaProdutos.get(0).getChave();
+			
+			adicionarProdutoEdicaoConferidoDiretamente(idProdutoEdicao, qtdExemplares);
+			
+			return;
+		}
+
+		this.result.use(Results.json()).from(listaProdutos, "produtosEdicao").recursive().serialize();
+		
+	}
+	
+	
+	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	public void autorizarVendaNegativa(
+			final Long produtoEdicaoId,
+			final String qtdExemplares,
+			final String usuario, 
+			final String senha) {
+
+		final  boolean permitir = this.usuarioService.verificarUsuarioSupervisor(usuario, senha);
+		
+		if (!permitir) {
+			
+			String msgErroSupervisor = "Usuário/senha inválido(s) ou usuário não é supervisor";
+			result.use(Results.json()).from(msgErroSupervisor, "msgErroSupervisor").serialize();
+			return;
+					
+		}
+		
+		this.session.setAttribute(VENDA_NEGATIVA_AUTORIZADA_NA_CONFERENCIA, produtoEdicaoId);
+		
+		adicionarProdutoEdicaoConferidoDiretamente(produtoEdicaoId, qtdExemplares);
+		
+	}	
+	
 	
 	
 	/**
@@ -981,7 +1160,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 * @param qtdExemplares
 	 * @param dto
 	 */
-	private boolean validarExcedeReparte(final BigInteger qtdExemplares, final ConferenciaEncalheDTO dto, final boolean indConferenciaContingencia){
+	private boolean isEncalheExcedendoReparte(final BigInteger qtdExemplares, final ConferenciaEncalheDTO dto, final boolean indConferenciaContingencia){
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTONaoValidado = null;
 		
@@ -1084,8 +1263,6 @@ public class ConferenciaEncalheController extends BaseController {
 						qtdExemplares = qtdExemplares.multiply(BigInteger.valueOf(dto.getPacotePadrao()));
 					}
 					
-					this.validarExcedeReparte(qtdExemplares, dto, indConferenciaContingencia);
-					
 					dto.setQtdExemplar(qtdExemplares);
 					dto.setQtdInformada(qtdExemplares);
 					
@@ -1156,7 +1333,7 @@ public class ConferenciaEncalheController extends BaseController {
 			 
 		 	 BigInteger qtdeEncalhe =  this.obterQuantidadeEncalhe(qtdExemplares,dto);
 		 	
-		     if (this.validarExcedeReparte(qtdeEncalhe, dto, false)) {
+		     if (this.isEncalheExcedendoReparte(qtdeEncalhe, dto, false)) {
 		         
 		         this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.",
 		                 "result").serialize();
@@ -1282,7 +1459,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		BigInteger qtdeEncalhe = this.obterQuantidadeEncalhe(qtdExemplares,dto);
 		
-		if (this.validarExcedeReparte(qtdeEncalhe, dto, indConferenciaContingencia)) {
+		if (this.isEncalheExcedendoReparte(qtdeEncalhe, dto, indConferenciaContingencia)) {
 		    
 		    Object[] ret = new Object[2];
 		    

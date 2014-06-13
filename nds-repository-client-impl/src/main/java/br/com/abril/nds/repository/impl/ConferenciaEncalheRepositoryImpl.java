@@ -547,6 +547,11 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		Query query =  this.getSession().createSQLQuery(sql.toString());
 
+		((SQLQuery) query).addScalar("chave", StandardBasicTypes.LONG);
+		((SQLQuery) query).addScalar("value", StandardBasicTypes.STRING);
+		((SQLQuery) query).addScalar("label", StandardBasicTypes.STRING);
+		
+		
 		query.setParameter("codigoBarras", codigoBarras.toUpperCase() + "%");
 		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		query.setParameter("numeroCota", numeroCota);

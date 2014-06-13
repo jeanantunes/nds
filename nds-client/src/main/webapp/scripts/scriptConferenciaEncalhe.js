@@ -124,8 +124,6 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#pesq_prod", ConferenciaEncalhe.workspace).autocomplete({source: []});
 		
-		$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({source: []}); 
-		
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -259,9 +257,13 @@ var ConferenciaEncalhe = $.extend(true, {
 		    }
 		});
 		
-		this.bindkeypressCodigoBarras();
 		
 		this.bindkeypressCodigoSM();
+		
+		$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({source: []}); 
+		
+		PesquisaConferenciaEncalhe.bindkeypressCodigoBarras();
+
 		
 		ConferenciaEncalhe.removerAtalhos();
 		$(".atalhosCE", ConferenciaEncalhe.workspace).hide();
@@ -278,18 +280,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		}
 	},
 	
-	bindkeypressCodigoBarras : function(){
 	
-		$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).keypress(function(e) {
-			
-			if (e.keyCode == 13) {
-				
-				ConferenciaEncalhe.autoCompletarPorCodigoDeBarras();
-			}
-			
-		});
-	},
-
 	bindkeypressCodigoSM : function(){
 		
 		$('#sm', ConferenciaEncalhe.workspace).keypress(function(e) {
