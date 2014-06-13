@@ -406,8 +406,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                         
                         final BigInteger exemplaresDevolucaoConferencia = Util.nvl(encalhe.getExemplaresDevolucao(), BigInteger.ZERO);
                         
-                        encalhe.setExemplaresDevolucao(exemplaresDevolucaoConferencia
-                                .subtract(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao()));
+                        encalhe.setExemplaresDevolucao(exemplaresDevolucaoConferencia);
                         
                         encalhe.setExemplaresVendaEncalhe(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao());
                     }

@@ -35,6 +35,8 @@ public interface DocumentoCobrancaService {
 	 * @param tipoCobranca
 	 */
 	byte[] gerarDocumentoCobranca(List<GeraDividaDTO> dividas,TipoCobranca tipoCobranca);
+	
+	byte[] gerarDocumentoCobrancaComSlip(final List<GeraDividaDTO> dividas, final TipoCobranca tipoCobranca);
 
 	/**
 	 * SLIP

@@ -217,6 +217,8 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 			
 			List<SlipDTO> listaSlipDTOOrdenada = this.ordenarListaSlipDTO(listaSlipDTO);
 			
+			listaSlipDTO = null;
+			
 			List<byte[]> arquivos = new ArrayList<byte[]>();
 
 			arquivos = this.documentoCobrancaService.gerarListaSlipCobranca(listaSlipDTOOrdenada, TipoArquivo.PDF);
