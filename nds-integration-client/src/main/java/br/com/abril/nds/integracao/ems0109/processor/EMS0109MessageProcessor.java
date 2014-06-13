@@ -166,6 +166,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
     private TipoSegmentoProduto findTipoSegmentoProdutoPorNome(String nome) {
 	    Criteria criteria = this.getSession().createCriteria(TipoSegmentoProduto.class);
 	    criteria.add(Restrictions.like("descricao", nome));
+	    //FIXME remover assim que as arquivos pub vierem com a descricao do segmento completa
+	    criteria.setMaxResults(1);
+	    
 	    return (TipoSegmentoProduto) criteria.uniqueResult();
 	}
 	

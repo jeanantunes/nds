@@ -53,6 +53,8 @@ public interface BoletoService {
 			 		  Banco banco, Date dataPagamento);
 	
 	byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException, ValidationException;
+	
+	byte[] gerarImpressaoBoleto(Boleto boleto) throws IOException, ValidationException;
 
 	void enviarBoletoEmail(String nossoNumero);
 	

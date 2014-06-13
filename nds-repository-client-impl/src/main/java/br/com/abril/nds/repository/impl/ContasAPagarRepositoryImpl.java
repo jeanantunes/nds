@@ -155,7 +155,12 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			
     			if (desconto){
     				
-    				hql.append(" (m.qtde * (prEd2.precoVenda - (prEd2.precoVenda * coalesce(fornecedor2.margemDistribuidor, 0) / 100))) ");
+    			    hql.append(" (m.qtde * (prEd2.precoVenda - (prEd2.precoVenda * ( ")
+    				   .append(" case when prEd2.origem = :origemInterface ")
+    				   .append(" then (coalesce(descLogPrEd2.percentualDesconto, descLogPr2.percentualDesconto, 0) / 100) ")
+                       .append(" else (coalesce(prEd2.desconto, pr2.desconto, 0) /100) ")
+                       .append(" end) ")
+                       .append(" ))) ");
     			} else {
     				
     				hql.append(" (m.qtde * prEd2.precoVenda) ");
@@ -165,7 +170,9 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			    .append(" from MovimentoEstoque m ")
     			   .append(" join m.tipoMovimento tpMov ")
     			   .append(" join m.produtoEdicao prEd2 ")
+    			   .append(" join prEd2.descontoLogistica descLogPrEd2")
     			   .append(" join prEd2.produto pr2 ")
+    			   .append(" join pr2.descontoLogistica descLogPr2 ")
     			   .append(" join pr2.fornecedores fornecedor2 ")
     			   .append(" where m.data = l.dataRecolhimentoDistribuidor ")
     			   .append(" and m.qtde is not null ");
@@ -180,8 +187,13 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     		   	   .append("coalesce((select sum( ");
     			
     			if (desconto){
-    				
-    				hql.append(" (m2.qtde * (prEd3.precoVenda * coalesce(fornecedor3.margemDistribuidor, 0) / 100)) ");
+    			    
+    				hql.append(" (m2.qtde * (prEd3.precoVenda - (prEd3.precoVenda * (  ")
+    				   .append(" case when prEd3.origem = :origemInterface ")
+    				   .append(" then (coalesce(descLogPrEd3.percentualDesconto, descLogPr3.percentualDesconto, 0) / 100) ")
+    				   .append(" else (coalesce(prEd3.desconto, pr3.desconto, 0) /100) ")
+    				   .append(" end) ")
+    				   .append(" ))) ");
     			} else {
     				
     				hql.append(" (m2.qtde * prEd3.precoVenda) ");
@@ -191,7 +203,9 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			   .append(" from MovimentoEstoque m2 ")
     			   .append(" join m2.tipoMovimento tpMov ")
     			   .append(" join m2.produtoEdicao prEd3 ")
+    			   .append(" join prEd3.descontoLogistica descLogPrEd3 ")
     			   .append(" join prEd3.produto pr3 ")
+    			   .append(" join pr3.descontoLogistica descLogPr3 ")
     			   .append(" join pr3.fornecedores fornecedor3 ")
     			   .append(" where m2.data = l.dataRecolhimentoDistribuidor ");
     			
@@ -207,11 +221,16 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			hql.append(" as suplementacao, ");
     			
     			//FaltasSobras
-    			hql.append("coalesce((select sum( ");
+    			hql.append("sum(coalesce((select sum( ");
     			
     			if (desconto){
     				
-    				hql.append(" (dif.qtde * (prEd4.precoVenda * coalesce(fornecedor4.margemDistribuidor, 0) / 100)) ");
+    				hql.append(" (dif.qtde * (prEd4.precoVenda - (prEd4.precoVenda * ( ")
+    				   .append(" case when prEd4.origem = :origemInterface ")
+    				   .append(" then (coalesce(descLogPrEd4.percentualDesconto, descLogPr4.percentualDesconto, 0) / 100) ")
+    				   .append(" else (coalesce(prEd4.desconto, pr4.desconto, 0) /100) ")
+    				   .append(" end) ")
+    				   .append(" ))) ");
     			} else {
     				
     				hql.append(" (dif.qtde * prEd4.precoVenda) ");
@@ -221,9 +240,11 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			   .append(" from LancamentoDiferenca ld2 ")
     			   .append(" join ld2.diferenca dif ")
     			   .append(" join dif.produtoEdicao prEd4 ")
+    			   .append(" join prEd4.descontoLogistica descLogPrEd4 ")
     			   .append(" join prEd4.produto pr4 ")
+    			   .append(" join pr4.descontoLogistica descLogPr4 ")
     			   .append(" join pr4.fornecedores fornecedor4 ")
-    			   .append(" where ld2.dataProcessamento = l.dataRecolhimentoDistribuidor ");
+    			   .append(" where dif.dataMovimento = l.dataRecolhimentoDistribuidor ");
     			   
     			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
     			    
@@ -238,8 +259,13 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     		       .append("coalesce((select sum( ");
     			
     			if (desconto){
-    				
-    				hql.append(" (dif.qtde * (prEd5.precoVenda * coalesce(fornecedor5.margemDistribuidor, 0) / 100)) ");
+    			    
+    				hql.append(" (dif.qtde * (prEd5.precoVenda - (prEd5.precoVenda * ( ")
+    				   .append(" case when prEd5.origem = :origemInterface ")
+    				   .append(" then (coalesce(descLogPrEd5.percentualDesconto, descLogPr5.percentualDesconto, 0) / 100) ")
+    				   .append(" else (coalesce(prEd5.desconto, pr5.desconto, 0) /100) ")
+    				   .append(" end) ")
+    				   .append(" ))) ");
     			} else {
     				
     				hql.append(" (dif.qtde * prEd5.precoVenda) ");
@@ -249,9 +275,11 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			   .append(" from LancamentoDiferenca ld ")
     			   .append(" join ld.diferenca dif ")
     			   .append(" join dif.produtoEdicao prEd5 ")
+    			   .append(" join prEd5.descontoLogistica descLogPrEd5 ")
     			   .append(" join prEd5.produto pr5 ")
+    			   .append(" join pr5.descontoLogistica descLogPr5 ")
     			   .append(" join pr5.fornecedores fornecedor5 ")
-    			   .append(" where ld.dataProcessamento = l.dataRecolhimentoDistribuidor ");
+    			   .append(" where dif.dataMovimento = l.dataRecolhimentoDistribuidor ");
     			
     			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
     			    
@@ -261,7 +289,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			hql.append(" and dif.qtde is not null ")
     		       .append(" and prEd5.precoVenda is not null")
     		       .append(" and (dif.tipoDiferenca = :tipoDiferencaFaltaEm or dif.tipoDiferenca = :tipoDiferencaFaltaDe)")
-    		       .append(" group by dif.tipoDiferenca) ,0) ");
+    		       .append(" group by dif.tipoDiferenca) ,0)) ");
     			
     			hql.append(" as faltasSobras, ");
     			
@@ -270,7 +298,12 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			
     			if (desconto){
     				
-    				hql.append(" (dif.qtde * (prEd6.precoVenda * coalesce(fornecedor6.margemDistribuidor, 0) / 100 )) ");
+    			    hql.append(" (dif.qtde * (prEd6.precoVenda - (prEd6.precoVenda * ( ")
+    			       .append(" case when prEd6.origem = :origemInterface ")
+    			       .append(" then (coalesce(descLogPrEd6.percentualDesconto, descLogPr6.percentualDesconto, 0) / 100) ")
+    			       .append(" else (coalesce(prEd6.desconto, pr6.desconto, 0) /100) ")
+    			       .append(" end) ")
+    			       .append(" ))) ");
     			} else {
     				
     				hql.append(" (dif.qtde * prEd6.precoVenda) ");
@@ -280,7 +313,9 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			   .append(" from LancamentoDiferenca ld3 ")
     			   .append(" join ld3.diferenca dif ")
     			   .append(" join dif.produtoEdicao prEd6 ")
+    			   .append(" join prEd6.descontoLogistica descLogPrEd6 ")
     			   .append(" join prEd6.produto pr6 ")
+    			   .append(" join pr6.descontoLogistica descLogPr6 ")
     			   .append(" join pr6.fornecedores fornecedor6 ")
     			   .append(" where ld3.dataProcessamento = l.dataRecolhimentoDistribuidor ");
     			
@@ -298,7 +333,12 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			
     			if (desconto){
     				
-    				hql.append(" (dif.qtde * (prEd7.precoVenda * coalesce(fornecedor7.margemDistribuidor, 0) / 100 )) ");
+    			    hql.append(" (dif.qtde * (prEd7.precoVenda - (prEd7.precoVenda * ( ")
+    			       .append(" case when prEd7.origem = :origemInterface ")
+    			       .append(" then (coalesce(descLogPrEd7.percentualDesconto, descLogPr7.percentualDesconto, 0) / 100) ")
+    			       .append(" else (coalesce(prEd7.desconto, pr7.desconto, 0) /100) ")
+    			       .append(" end) ")
+    			       .append(" ))) ");
     			} else {
     				
     				hql.append(" (dif.qtde * prEd7.precoVenda) ");
@@ -308,7 +348,9 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			   .append(" from LancamentoDiferenca ld4 ")
     			   .append(" join ld4.diferenca dif ")
     			   .append(" join dif.produtoEdicao prEd7 ")
+    			   .append(" join prEd7.descontoLogistica descLogPrEd7 ")
     			   .append(" join prEd7.produto pr7 ")
+    			   .append(" join pr7.descontoLogistica descLogPr7 ")
     			   .append(" join pr7.fornecedores fornecedor7 ")
     			   .append(" where ld4.dataProcessamento = l.dataRecolhimentoDistribuidor ");
     			
@@ -877,30 +919,42 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	@Override
 	public List<ContasAPagarFaltasSobrasDTO> pesquisarDetalheFaltasSobras(FiltroContasAPagarDTO filtro){
 		
-		StringBuilder hql = new StringBuilder();
+	    StringBuilder hql = new StringBuilder();
 		hql.append("select ")
-		   .append("    produto2.codigo, ")
+		   .append("    produto2.codigo as codigo, ")
 		   .append("    produto2.nomeComercial as produto, ")
 		   .append("    produtoEdicao.numeroEdicao as edicao, ")
 		   .append(" 	produtoEdicao.precoVenda as precoCapa, ")
-		   .append(" 	produtoEdicao.precoVenda - (produtoEdicao.precoVenda * coalesce(fo.margemDistribuidor,0) / 100) as precoComDesconto, ")
-		   .append("	boxDetalhe.codigo as box, ")
+		   .append(" 	produtoEdicao.precoVenda - (produtoEdicao.precoVenda * ")
+		   .append("    case when produtoEdicao.origem = :origemInterface ")
+		   .append("    then (coalesce(descLogPrEd.percentualDesconto, descLogPr.percentualDesconto, 0) / 100) ")
+		   .append("    else (coalesce(produtoEdicao.desconto, produto2.desconto, 0) /100) end ")
+		   .append("    ) as precoComDesconto,")
+		   .append("	box.codigo as box, ")
 		   .append("	diferenca.qtde as exemplares, ")
 		   .append(" 	coalesce(pessoa.razaoSocial, '') as fornecedor, ")
-		   .append(" 	(produtoEdicao.precoVenda - (produtoEdicao.precoVenda * coalesce(fo.margemDistribuidor,0) / 100)) as valor ")
+		   .append("    diferenca.qtde * (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * ")
+           .append("    case when produtoEdicao.origem = :origemInterface ")
+           .append("    then (coalesce(descLogPrEd.percentualDesconto, descLogPr.percentualDesconto, 0) / 100) ")
+           .append("    else (coalesce(produtoEdicao.desconto, produto2.desconto, 0) /100) end) ")
+           .append("    ) as valor ")
 		   .append(" from ")
 		   .append(" 	LancamentoDiferenca l ")
 		   .append(" 	join l.diferenca diferenca ")
 		   .append("	join diferenca.produtoEdicao produtoEdicao ")
-		   .append("	join diferenca.rateios rateioDiferenca ")
-		   .append("	join rateioDiferenca.cota cota ")
-		   .append("	join cota.box boxDetalhe ")
+		   .append("    join produtoEdicao.lancamentos lanc ")
+		   .append("    join produtoEdicao.descontoLogistica descLogPrEd ")
 		   .append("	join produtoEdicao.produto produto2 ")
+		   .append("    join produto2.descontoLogistica descLogPr ")
 		   .append("	join produto2.fornecedores fo ")
 		   .append("	join fo.juridica pessoa ")
-		   .append(" where l.dataProcessamento = :data ")
+		   .append("    left join l.movimentosEstoqueCota mec ")
+		   .append("    left join mec.cota cota ")
+		   .append("    left join cota.box box ")
+		   .append(" where lanc.dataRecolhimentoDistribuidor = :data ")
 		   .append(" 	and diferenca.qtde is not null ")
-		   .append(" 	and produtoEdicao.precoVenda is not null ");
+		   .append(" 	and produtoEdicao.precoVenda is not null ")
+		   .append("    and lanc.status in (:statusLancamento) ");
 		
 		if (filtro.getProduto() != null && !filtro.getProduto().isEmpty()){
 			
@@ -927,6 +981,15 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", filtro.getDataDetalhe());
+		query.setParameter("origemInterface", Origem.INTERFACE);
+		
+		query.setParameterList("statusLancamento",
+                Arrays.asList(
+                        StatusLancamento.RECOLHIDO,
+                        StatusLancamento.EM_RECOLHIMENTO,
+                        StatusLancamento.FECHADO
+                )
+        );
 		
 		if (filtro.getProduto() != null && !filtro.getProduto().isEmpty()){
 			
@@ -937,6 +1000,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			
 			query.setParameter("numeroEdicao", filtro.getEdicao());
 		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarFaltasSobrasDTO.class));
 		
 		return query.list();
 	}
