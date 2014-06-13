@@ -1826,7 +1826,12 @@ public class BoletoServiceImpl implements BoletoService {
     @Transactional
     public byte[] gerarImpressaoBoleto(final String nossoNumero) throws IOException, ValidationException {
         
-        final Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null,false);
+        return this.gerarImpressaoBoleto(boletoRepository.obterPorNossoNumero(nossoNumero,null,false));
+    }
+    
+    @Override
+    @Transactional
+    public byte[] gerarImpressaoBoleto(final Boleto boleto) throws IOException, ValidationException {
         
         if (boleto == null){
             
@@ -1842,12 +1847,12 @@ public class BoletoServiceImpl implements BoletoService {
         byte[] b = null;
         
         try{
-        	
+            
             b = geradorBoleto.getBytePdf();
         }
         catch(Exception e){
-        	
-        	throw new ValidacaoException(TipoMensagem.ERROR, e.getCause().getMessage()+". Para o banco ["+boleto.getBanco().getNome()+"]");
+            
+            throw new ValidacaoException(TipoMensagem.ERROR, e.getCause().getMessage()+". Para o banco ["+boleto.getBanco().getNome()+"]");
         }
         
         cobrancaRepository.atualizarVias(boleto);
