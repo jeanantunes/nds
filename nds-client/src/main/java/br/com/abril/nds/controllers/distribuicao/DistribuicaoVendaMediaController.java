@@ -406,9 +406,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	
 	try {
 		produto.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento));
-		} catch (Exception e) {
-            throw new Exception("Data de lançamento em formato incorreto.");
-		}
+	} catch (Exception e) {
+        throw new Exception("Data de lançamento em formato incorreto.");
+	}
 	
 	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
         estudoService.gravarDadosVendaMedia(estudo.getId(), distribuicaoVendaMedia);

@@ -34,7 +34,9 @@ public class PDFUtil {
 			List<InputStream> pdfs = new ArrayList<InputStream>();
 
 			for (byte[] byteFile : arquivos) {
-				pdfs.add(new ByteArrayInputStream(byteFile));
+				if (byteFile != null){
+			        pdfs.add(new ByteArrayInputStream(byteFile));
+				}
 			}
 			
 			return PDFUtil.concatPDFs(pdfs, true, null);
