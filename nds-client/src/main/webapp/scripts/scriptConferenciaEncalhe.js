@@ -2097,8 +2097,6 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	inicializarAutoCompleteSugestaoProdutoEdicao : function() {
 		
-		
-		
 		$("#pesq_prod", ConferenciaEncalhe.workspace).autocomplete({
 			source: function(request, response) {
 				

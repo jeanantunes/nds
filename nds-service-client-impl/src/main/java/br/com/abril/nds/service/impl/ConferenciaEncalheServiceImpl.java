@@ -1417,6 +1417,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			if( chamadaEncalheCota != null) {
 				
 				final ChamadaEncalhe chamadaEncalhe = chamadaEncalheCota.getChamadaEncalhe();
+				
+				chamadaEncalhe.getChamadaEncalheCotas();
+				
 				produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 				produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
 				produtoEdicaoDTO.setReparte(chamadaEncalheCota.getQtdePrevista());
