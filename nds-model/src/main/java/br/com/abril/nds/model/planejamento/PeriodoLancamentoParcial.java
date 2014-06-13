@@ -247,6 +247,11 @@ public class PeriodoLancamentoParcial implements Serializable {
 		if (proximoPeriodo != null) {
 
 			Lancamento lancamento = proximoPeriodo.getPrimeiroLancamento();
+			
+			if (lancamento == null) {
+
+				return;
+			}
 
 			lancamento.setDataLancamentoPrevista(novaDataLancamento);
 			lancamento.setDataLancamentoDistribuidor(novaDataLancamento);
