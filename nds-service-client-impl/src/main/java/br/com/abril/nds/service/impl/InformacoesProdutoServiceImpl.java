@@ -1,19 +1,16 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.mapping.Array;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import br.com.abril.nds.dto.BonificacaoDTO;
 import br.com.abril.nds.dto.BonificacaoJsonDTO;
-import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
@@ -32,8 +29,11 @@ import br.com.abril.nds.repository.ProdutoBaseSugeridaRepository;
 import br.com.abril.nds.repository.RegiaoRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.service.InformacoesProdutoService;
+import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Util;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class InformacoesProdutoServiceImpl implements InformacoesProdutoService  {
@@ -109,8 +109,8 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 						
 						InfoProdutosItemRegiaoEspecificaDTO retorno = new InfoProdutosItemRegiaoEspecificaDTO();
 						
-						retorno.setBonificacao(item.getBonificacao().intValue());
-						retorno.setQtdReparteMin(item.getReparteMinimo().intValue());
+						retorno.setBonificacao(new BigDecimal(Util.nvl(item.getBonificacao(),0D)));
+						retorno.setQtdReparteMin(Util.nvl(item.getReparteMinimo(),0D).intValue());
 						retorno.setNomeItemRegiao(this.obterNomeDaRegiao(item.getElemento()));
 						
 						itensRetorno.add(retorno);
