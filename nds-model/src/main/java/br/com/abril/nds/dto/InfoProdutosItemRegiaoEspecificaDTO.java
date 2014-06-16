@@ -1,10 +1,8 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 
 import br.com.abril.nds.dto.filtro.FiltroDTO;
-import br.com.abril.nds.util.ComponentesPDV;
 
 /*
  * Classe utilizada no detalhamento do produto. 

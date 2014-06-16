@@ -411,7 +411,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	}
 	
 	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
-        estudoService.gravarDadosVendaMedia(estudo.getId(), distribuicaoVendaMedia);
+    estudoService.gravarDadosVendaMedia(estudo.getId(), distribuicaoVendaMedia);
         
     estudoService.criarRepartePorPDV(estudo.getId());
         

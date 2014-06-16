@@ -117,8 +117,16 @@ public class EstudoServiceImpl implements EstudoService {
 
 	@Override
 	@Transactional
-	public ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId) {
-		return estudoGeradoRepository.obterResumoEstudo(estudoId);
+	public ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId, Long codigoProduto, Long numeroEdicao) {
+		
+		ResumoEstudoHistogramaPosAnaliseDTO analiseDTO = estudoGeradoRepository.obterResumoEstudo(estudoId);
+		
+		if(codigoProduto!= null && numeroEdicao!= null){
+			final Integer reparte = lancamentoService.obterRepartePromocionalEdicao(codigoProduto, numeroEdicao);
+			analiseDTO.setQtdRepartePromocional(BigIntegerUtil.valueOfInteger(reparte));
+		}
+		
+		return analiseDTO;
 	}
 
 	@Override
