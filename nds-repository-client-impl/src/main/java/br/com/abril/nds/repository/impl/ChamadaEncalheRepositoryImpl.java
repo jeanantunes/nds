@@ -683,41 +683,43 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		StringBuffer hql  = new StringBuffer();
 		
+		String operacaoDiferenciada = " case when (select count(c.id) from GrupoCota gc join gc.cotas c where c.id=cota.id) = 0 then %s "
+									+ " when chamadaEncalhe.dataRecolhimento between :dataDe AND :dataAte then true "
+									+ " else false end as apresentaQuantidadeEncalhe, ";
+
 		if(	datasControleFechamentoEncalhe!=null &&
 			!datasControleFechamentoEncalhe.isEmpty() && 
 			datasControleConferenciaEncalheCotaFinalizada!=null &&
 			!datasControleConferenciaEncalheCotaFinalizada.isEmpty()) {
 			
-			hql.append(" case when ( chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe)  ");
-			hql.append(" or chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) )  ");
-			hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
+			String caseFechamento = " case when ( chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe) "
+								  + " or chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) )  "
+								  + " then true else false end ";
 			
-			return hql;
+			return hql.append(String.format(operacaoDiferenciada,caseFechamento));
 				
 		}
 
 		if(	datasControleFechamentoEncalhe!=null &&
 			!datasControleFechamentoEncalhe.isEmpty()) {
 			
-			hql.append(" case when chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe)  ");
-			hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
+			String caseFechamento = " case when chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe)  "
+								  + " then true else false end ";
 			
-			return hql;
-				
+			return hql.append(String.format(operacaoDiferenciada,caseFechamento));				
 		}
 		
 		if(	datasControleConferenciaEncalheCotaFinalizada!=null &&
 			!datasControleConferenciaEncalheCotaFinalizada.isEmpty()) {
 				
-				hql.append(" case when chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) ");
-				hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
+			String caseFechamento = " case when chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) "
+								  + " then true else false end  ";
 				
-				return hql;
+			return hql.append(String.format(operacaoDiferenciada,caseFechamento));
 					
 		}
 		
-		return hql;
-		
+		return hql;	
 	}
 	
 	@SuppressWarnings("unchecked")

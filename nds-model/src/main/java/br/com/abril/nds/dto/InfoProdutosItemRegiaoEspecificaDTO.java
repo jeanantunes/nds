@@ -1,10 +1,9 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 
 import br.com.abril.nds.dto.filtro.FiltroDTO;
-import br.com.abril.nds.util.ComponentesPDV;
 
 /*
  * Classe utilizada no detalhamento do produto. 
@@ -19,7 +18,7 @@ public class InfoProdutosItemRegiaoEspecificaDTO extends FiltroDTO implements Se
 	
 	private String nomeItemRegiao;
 	private Integer qtdReparteMin;
-	private Integer bonificacao;
+	private BigDecimal bonificacao;
 	
 	public String getNomeItemRegiao() {
 		return nomeItemRegiao;
@@ -33,10 +32,10 @@ public class InfoProdutosItemRegiaoEspecificaDTO extends FiltroDTO implements Se
 	public void setQtdReparteMin(Integer qtdReparteMin) {
 		this.qtdReparteMin = qtdReparteMin;
 	}
-	public Integer getBonificacao() {
+	public BigDecimal getBonificacao() {
 		return bonificacao;
 	}
-	public void setBonificacao(Integer bonificacao) {
+	public void setBonificacao(BigDecimal bonificacao) {
 		this.bonificacao = bonificacao;
 	}
 }
