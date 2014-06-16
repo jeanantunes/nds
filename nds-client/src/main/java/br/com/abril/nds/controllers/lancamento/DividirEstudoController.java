@@ -22,10 +22,13 @@ import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -33,7 +36,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/dividirEstudo")
@@ -55,6 +57,12 @@ public class DividirEstudoController extends BaseController {
 
     @Autowired
     private EstudoService estudoService;
+    
+    @Autowired
+    private AnaliseParcialService analiseParcialService;
+    
+    @Autowired
+    private MatrizDistribuicaoService matrizDistribuicaoService;
     
     @Autowired
     private EstudoProdutoEdicaoBaseService estudoProdutoEdicaoBaseService;
@@ -183,6 +191,10 @@ public class DividirEstudoController extends BaseController {
 //		primeiroEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
 		primeiroEstudo.setQtdeReparte(divisaoEstudo.getRepartePrimeiroEstudo());
 		primeiroEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoPrimeiroEstudo, Constantes.DATE_PATTERN_PT_BR));
+		primeiroEstudo.setDataAlteracao(null);
+		primeiroEstudo.setDataCadastro(new Date());
+		primeiroEstudo.setUsuario(getUsuarioLogado());
+		primeiroEstudo.setTipoGeracaoEstudo(TipoGeracaoEstudo.DIVISAO);
  
 		EstudoGerado segundoEstudo = (EstudoGerado) SerializationUtils.clone(estudoOriginal);
 		segundoEstudo.setId(null);
@@ -190,13 +202,20 @@ public class DividirEstudoController extends BaseController {
 //		segundoEstudo.setReparteDistribuir(divisaoEstudo.getReparteSegundoEstudo());
 		segundoEstudo.setQtdeReparte(divisaoEstudo.getReparteSegundoEstudo());
 		segundoEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoSegundoEstudo, Constantes.DATE_PATTERN_PT_BR));
-
+		segundoEstudo.setDataAlteracao(null);
+		segundoEstudo.setDataCadastro(new Date());
+		segundoEstudo.setUsuario(getUsuarioLogado());
+		segundoEstudo.setTipoGeracaoEstudo(TipoGeracaoEstudo.DIVISAO);
+		
 		listEstudo = new ArrayList<EstudoGerado>();
 		listEstudo.add(primeiroEstudo);
 		listEstudo.add(segundoEstudo);
 
 		listIdEstudoAdiconado = this.estudoService.salvarDivisao(estudoOriginal, listEstudo,divisaoEstudo);
 
+		this.matrizDistribuicaoService.atualizarPercentualAbrangencia(listIdEstudoAdiconado.get(0));
+		this.matrizDistribuicaoService.atualizarPercentualAbrangencia(listIdEstudoAdiconado.get(1));
+		
 		for (Long estudoDividido : listIdEstudoAdiconado) {
 			this.estudoProdutoEdicaoBaseService.copiarEdicoesBase(estudoOriginal.getId(),estudoDividido);
 		}
