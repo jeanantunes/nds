@@ -759,7 +759,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		ConferenciaEncalhe.setarValoresPesquisados();
 	},
 	
-	preProcessarConsultaConferenciaEncalhe : function(result) {
+	preProcessarConsultaConferenciaEncalhe : function(result, indNaoAlteraFoco) {
 		
 		if (result.mensagens){
 			
@@ -903,20 +903,25 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#nomeCota", ConferenciaEncalhe.workspace).text(result.razaoSocial);
 		$("#statusCota", ConferenciaEncalhe.workspace).text(result.situacao);
 		
+		
+		if(!indNaoAlteraFoco) {
 
-		if( $("#vlrCE", ConferenciaEncalhe.workspace).length != 0 ){
+			if( $("#vlrCE", ConferenciaEncalhe.workspace).length != 0 ){
+				
+				focusSelectRefField($("#vlrCE", ConferenciaEncalhe.workspace));
 			
-			focusSelectRefField($("#vlrCE", ConferenciaEncalhe.workspace));
-		
-		} else if( $("#qtdCE", ConferenciaEncalhe.workspace).length != 0 ) {
+			} else if( $("#qtdCE", ConferenciaEncalhe.workspace).length != 0 ) {
+				
+				focusSelectRefField($("#qtdCE", ConferenciaEncalhe.workspace));
 			
-			focusSelectRefField($("#qtdCE", ConferenciaEncalhe.workspace));
-		
-		} else {
-			
-			focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+			} else {
+				
+				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				
+			}
 			
 		}
+		
 		
 		bloquearItensEdicao(ConferenciaEncalhe.workspace);
 	},

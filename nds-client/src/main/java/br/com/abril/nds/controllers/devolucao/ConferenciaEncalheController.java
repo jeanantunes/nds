@@ -1002,6 +1002,7 @@ public class ConferenciaEncalheController extends BaseController {
 					Map<String, Object> erroSupervisor = new HashMap<String, Object>();
 					erroSupervisor.put("msgErroSupervisor", "Venda negativa! É necessario autenticar o supervisor");
 					erroSupervisor.put("idProdutoEdicao", produtoEdicaoId);
+					erroSupervisor.put("qtdExemplares", qtdExemplares);
 					result.use(CustomJson.class).from(erroSupervisor).serialize();
 					return;
 					
@@ -1043,6 +1044,7 @@ public class ConferenciaEncalheController extends BaseController {
 					Map<String, Object> erroSupervisor = new HashMap<String, Object>();
 					erroSupervisor.put("msgErroSupervisor", "Venda negativa! É necessario autenticar o supervisor");
 					erroSupervisor.put("idProdutoEdicao", produtoEdicaoId);
+					erroSupervisor.put("qtdExemplares", qtdExemplares);
 					result.use(CustomJson.class).from(erroSupervisor).serialize();
 					return;
 
@@ -1105,7 +1107,12 @@ public class ConferenciaEncalheController extends BaseController {
 			return;
 		}
 
-		this.result.use(Results.json()).from(listaProdutos, "produtosEdicao").recursive().serialize();
+		Map<String, Object> data = new HashMap<String, Object>();
+		
+		data.put("produtosEdicao", listaProdutos);
+		data.put("qtdExemplares", qtdExemplares);
+		
+		this.result.use(CustomJson.class).from(data).serialize();
 		
 	}
 	

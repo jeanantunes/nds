@@ -1,10 +1,10 @@
 var PesquisaConferenciaEncalhe = {
     
-	autorizarVendaNegativa : function(idProdutoEdicao){
+	autorizarVendaNegativa : function(idProdutoEdicao, qtdExemplares){
 		
 		var params = [
 		    {name: "produtoEdicaoId", value: idProdutoEdicao}, 
-		    {name: "qtdExemplares", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()},          
+		    {name: "qtdExemplares", value: qtdExemplares},          
 			{name:"usuario", value:$("#inputUsuarioSup", ConferenciaEncalhe.workspace).val()},
 			{name:"senha",value:$("#inputSenha", ConferenciaEncalhe.workspace).val()}
 		];
@@ -39,7 +39,7 @@ var PesquisaConferenciaEncalhe = {
 		);
 	},	
 		
-	abrirDialogAutenticacaoSupervisor : function(idProdutoEdicao, msgErroSupervisor) {
+	abrirDialogAutenticacaoSupervisor : function(idProdutoEdicao, qtdExemplares, msgErroSupervisor) {
 		
 		$("#msgSupervisor", ConferenciaEncalhe.workspace).text(msgErroSupervisor);
 		
@@ -52,27 +52,18 @@ var PesquisaConferenciaEncalhe = {
 				
 				"Ok": function() {
 					
-					PesquisaConferenciaEncalhe.autorizarVendaNegativa(idProdutoEdicao);
+					PesquisaConferenciaEncalhe.autorizarVendaNegativa(idProdutoEdicao, qtdExemplares);
 					
 				},
 				
 				"Cancelar": function() {
-						
-					ConferenciaEncalhe.limparDadosProduto(true);
 					
 					$(this).dialog("close");
 				}
 			},
 			
-			form: $("#dialog-autenticar-supervisor", this.workspace).parents("form"),
+			form: $("#dialog-autenticar-supervisor", this.workspace).parents("form")
 			
-			close: function(){
-					ConferenciaEncalhe.limparDadosProduto(true);
-				
-			},
-			open: function(){
-				focusSelectRefField($("#inputUsuarioSup", ConferenciaEncalhe.workspace));
-			}
 		});		
 		
 	},
@@ -89,7 +80,7 @@ var PesquisaConferenciaEncalhe = {
 		});
 	},
     
-	autoCompletarCodigoDeBarras : function(result, codBarra) {
+	autoCompletarCodigoDeBarras : function(result, codBarra, qtdExemplares) {
         
 		$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({
 			
@@ -97,18 +88,27 @@ var PesquisaConferenciaEncalhe = {
 			
 			select: function(event, ui){			
 				
-				var idProdutoEdicao = ui.item.chave.$;	
+				var idProdutoEdicao = ui.item.chave;	
 				
 				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({
 					source: []
 				});
 
 				var data = [{name: "produtoEdicaoId", value: idProdutoEdicao}, 
-				            {name: "qtdExemplares", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()}];
-                
+				            {name: "qtdExemplares", value: qtdExemplares}];
+				
                 PesquisaConferenciaEncalhe.adicionarProdutoConferido(data);
+                
+                ConferenciaEncalhe.limparDadosProduto(true);
 				
 			},
+			
+			close: function() {
+				
+				ConferenciaEncalhe.limparDadosProduto(true);
+			
+			},
+			
 			delay : 0,
 		});	
 		
@@ -124,7 +124,7 @@ var PesquisaConferenciaEncalhe = {
 			
 				if(result.msgErroSupervisor){
 					
-					PesquisaConferenciaEncalhe.abrirDialogAutenticacaoSupervisor(result.idProdutoEdicao, result.msgErroSupervisor);
+					PesquisaConferenciaEncalhe.abrirDialogAutenticacaoSupervisor(result.idProdutoEdicao, result.qtdExemplares, result.msgErroSupervisor);
 					
 					return;
 					
@@ -134,18 +134,7 @@ var PesquisaConferenciaEncalhe = {
 				
 				}
 			
-				ConferenciaEncalhe.limparDadosProduto(true);
-			
-				ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result);	
-				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
-				
-			},
-			function(){
-				
-				ConferenciaEncalhe.limparDadosProduto(true);
-				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result, true);	
 				
 			});
 		
@@ -155,22 +144,25 @@ var PesquisaConferenciaEncalhe = {
 	pesquisarPorCodigoDeBarras: function() {
 
 		var codBarra = $("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val().trim();
-		
         
-        var data = [{name: "codigoBarra", value: codBarra}, 
-				            {name: "qtdExemplares", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()}];
-
+		var qtdExemplares = $("#qtdeExemplar", ConferenciaEncalhe.workspace).val();
+		
+		ConferenciaEncalhe.limparDadosProduto(true);
+		
+		var data = [{name: "codigoBarra", value: codBarra}, 
+				            {name: "qtdExemplares", value: qtdExemplares}];
+        
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/encalharProdutoEdicaoPorCodigoDeBarras", data,
 			
 			function(result){
 				
 			    if (result.produtosEdicao){				
 			    	
-			    	PesquisaConferenciaEncalhe.autoCompletarCodigoDeBarras(result.produtosEdicao, codBarra);
+			    	PesquisaConferenciaEncalhe.autoCompletarCodigoDeBarras(result.produtosEdicao, codBarra, result.qtdExemplares);
 					
 				} else if(result.msgErroSupervisor){
 
-					PesquisaConferenciaEncalhe.abrirDialogAutenticacaoSupervisor(result.idProdutoEdicao, result.msgErroSupervisor);
+					PesquisaConferenciaEncalhe.abrirDialogAutenticacaoSupervisor(result.idProdutoEdicao, result.qtdExemplares, result.msgErroSupervisor);
 					
 				} else {
 					
@@ -178,9 +170,7 @@ var PesquisaConferenciaEncalhe = {
 						source: []
 					});
         		    
-        		    ConferenciaEncalhe.limparDadosProduto(true);
-        		    
-					ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result);
+					ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result, true);
 
 					if(result.msgInformativa) {
 						exibirMensagem('WARNING', [result.msgInformativa]);
@@ -202,8 +192,6 @@ var PesquisaConferenciaEncalhe = {
 		});
 			
 		$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
-		
-		focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 		
 	}
 	
