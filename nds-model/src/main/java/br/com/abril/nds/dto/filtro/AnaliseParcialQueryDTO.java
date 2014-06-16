@@ -22,6 +22,8 @@ public class AnaliseParcialQueryDTO {
 	private List<EdicoesProdutosDTO> edicoesBase;
 	private String numeroCotaStr;
 	private Date dataLancamentoEdicao;
+	private Integer numeroParcial;
+	
 	/**
 	 * Id do estudo que foi copiado na tela de copia proporcional de estudo
 	 */
@@ -231,6 +233,16 @@ public class AnaliseParcialQueryDTO {
 	public void setDataLancamentoEdicao(Date dataLancamentoEdicao) {
 		this.dataLancamentoEdicao = dataLancamentoEdicao;
 	}
+
+    
+    public Integer getNumeroParcial() {
+        return numeroParcial;
+    }
+
+    
+    public void setNumeroParcial(Integer numeroParcial) {
+        this.numeroParcial = numeroParcial;
+    }
 
 	
 	

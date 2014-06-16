@@ -2,6 +2,7 @@ package br.com.abril.nds.model.planejamento;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
@@ -76,12 +77,12 @@ public class EstudoGerado implements Serializable {
 	
 	/** Data de cadastro do Estudo no sistema. */
 	@Column(name = "DATA_CADASTRO", nullable = false)
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	protected Date dataCadastro;
 	
 	/** Data de alteração do Estudo no sistema. */
 	@Column(name = "DATA_ALTERACAO")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	protected Date dataAlteracao;
 
 	@Column(name = "REPARTE_DISTRIBUIR")
@@ -112,6 +113,13 @@ public class EstudoGerado implements Serializable {
     
     @Column(name = "REPARTE_MINIMO")
     private BigInteger reparteMinimo;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TIPO_GERACAO_ESTUDO", nullable = false)
+    private TipoGeracaoEstudo tipoGeracaoEstudo;
+    
+    @Column(name = "ABRANGENCIA")
+    private BigDecimal abrangencia;
 
     public BigInteger getQtdeReparte() {
 		return qtdeReparte;
@@ -211,11 +219,11 @@ public class EstudoGerado implements Serializable {
 		this.pacotePadrao = pacotePadrao;
 	}
 
-	public Usuario getUsuarioId() {
+	public Usuario getUsuario() {
 		return usuario;
 	}
 
-	public void setUsuarioId(Usuario usuarioId) {
+	public void setUsuario(Usuario usuarioId) {
 		this.usuario = usuarioId;
 	}
 
@@ -287,6 +295,22 @@ public class EstudoGerado implements Serializable {
 	public void setReparteMinimo(BigInteger reparteMinimo) {
 		this.reparteMinimo = reparteMinimo;
 	}
+
+    public TipoGeracaoEstudo getTipoGeracaoEstudo() {
+        return tipoGeracaoEstudo;
+    }
+
+    public void setTipoGeracaoEstudo(TipoGeracaoEstudo tipoGeracaoEstudo) {
+        this.tipoGeracaoEstudo = tipoGeracaoEstudo;
+    }
+    
+    public BigDecimal getAbrangencia() {
+        return abrangencia;
+    }
+    
+    public void setAbrangencia(BigDecimal abrangencia) {
+        this.abrangencia = abrangencia;
+    }
     
 	@Override
 	public int hashCode() {
@@ -337,4 +361,3 @@ public class EstudoGerado implements Serializable {
 		return true;
 	}
 }
-

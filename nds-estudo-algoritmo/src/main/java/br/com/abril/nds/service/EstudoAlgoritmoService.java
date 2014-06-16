@@ -30,6 +30,7 @@ import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
+import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.process.ajustefinalreparte.AjusteFinalReparte;
 import br.com.abril.nds.process.ajustereparte.AjusteReparte;
@@ -251,6 +252,7 @@ public class EstudoAlgoritmoService {
         estudo.setProdutoEdicaoEstudo(produto);
         estudo.setReparteDistribuir(reparte);
         estudo.setReparteDistribuirInicial(reparte);
+        estudo.setTipoGeracao(TipoGeracaoEstudo.VENDA_MEDIA.toString());
         
         estudo.setDistribuicaoPorMultiplos(0); // valor default
         estudo.setPacotePadrao(new BigDecimal(produto.getPacotePadrao()).toBigInteger()); // valor
@@ -286,6 +288,7 @@ public class EstudoAlgoritmoService {
                 ed.setPeriodo(base.getPeriodo());
                 ed.setParcial(base.isParcial());
                 ed.setEdicaoAberta(definicaoBasesDAO.traduzStatus(base.getStatus()));
+                ed.setDataLancamento(base.getDataLancamento());
                 edicoesBase.add(ed);
             }
             estudo.setEdicoesBase(edicoesBase);

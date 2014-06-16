@@ -34,6 +34,7 @@ import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusEstudo;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuicaoRepository;
@@ -44,9 +45,11 @@ import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
@@ -84,7 +87,13 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	@Autowired
 	private EstudoService estudoService;
-
+	
+	@Autowired
+    private UsuarioService usuarioService;
+	
+	@Autowired
+	private AnaliseParcialService analiseParcialService;
+	
 	private static final int MAX_DUPLICACOES_PERMITIDA = 3;
 
 	@Override
@@ -523,7 +532,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
         EstudoGerado estudoCopia = new EstudoGerado();
         
         BeanUtils.copyProperties(estudo, estudoCopia, new String[] { "id", "lancamentoID", "lancamentos",
-                "estudoCotas", "dataLancamento" });
+                "estudoCotas", "dataLancamento", "dataAlteracao"});
         
         estudoCopia.setDataAlteracao(new Date());
         estudoCopia.setLiberado(false);
@@ -533,6 +542,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
         estudoCopia.setIdEstudoOrigemCopia(estudo.getId());
         estudoCopia.setDataLancamento(lancamento.getDataLancamentoPrevista());
         estudoCopia.setReparteDistribuir(lancamento.getReparte());
+        estudoCopia.setUsuario(this.usuarioService.getUsuarioLogado());
+        estudoCopia.setDataCadastro(new Date());
+        estudoCopia.setTipoGeracaoEstudo(TipoGeracaoEstudo.COPIA_PROPORCIONAL);
         
         Long id = this.estudoGeradoRepository.adicionar(estudoCopia);
         
@@ -856,6 +868,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		}
 		estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>(cotas));
 		estudoCotaGeradoRepository.inserirProdutoBase(estudoCopia);
+		
+		this.atualizarPercentualAbrangencia(estudoCopia.getId());
+		
 		return estudoCopia;
 	}
 
@@ -885,4 +900,16 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				.obterMatrizDistribuicaoPorEstudo(id);
 		return obterMatrizDistribuicaoPorEstudo;
 	}
+	
+	@Override
+    @Transactional
+    public void atualizarPercentualAbrangencia(Long estudoId) {
+
+	    EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(estudoId);
+	    
+	    estudoGerado.setAbrangencia(this.analiseParcialService.calcularPercentualAbrangencia(estudoId));
+	    
+	    this.estudoGeradoRepository.alterar(estudoGerado);
+    }
+	
 }

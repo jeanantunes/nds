@@ -139,7 +139,6 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append("     LEFT JOIN periodo_lancamento_parcial plp ON plp.id = l.periodo_lancamento_parcial_id ");
         sql.append("     JOIN produto p ON p.id = pe.produto_id ");
         sql.append("     LEFT JOIN tipo_classificacao_produto tcp ON tcp.id = pe.tipo_classificacao_produto_id ");
-        sql.append("     LEFT JOIN estoque_produto estqProd ON estqProd.PRODUTO_EDICAO_ID = pe.ID ");
         
         sql.append("     LEFT JOIN movimento_estoque_cota mecReparte on mecReparte.LANCAMENTO_ID = l.id ");
 
