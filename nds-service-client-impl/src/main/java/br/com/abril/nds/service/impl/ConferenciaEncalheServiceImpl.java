@@ -3585,4 +3585,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 
+	@Override
+	public void excluirNotasFiscaisPorReabertura(Integer numeroCota,
+			boolean indObtemDadosFromBD, boolean indConferenciaContingencia) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
