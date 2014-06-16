@@ -693,6 +693,10 @@ public class LancamentoServiceImpl implements LancamentoService {
 		}
 		
 	}
-
-
+	
+	@Transactional(readOnly=true)
+	public Integer obterRepartePromocionalEdicao(final Long codigoProduto,final Long numeroEdicao){
+		
+		return lancamentoRepository.obterRepartePromocionalEdicao(codigoProduto, numeroEdicao);
+	}
 }

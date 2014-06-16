@@ -2649,12 +2649,12 @@ public class LancamentoRepositoryImpl extends
     	hql.append(" and b.sm    in (select dia_semana  ");
     	hql.append(" from distribuicao_fornecedor  ");
     	hql.append(" where operacao_distribuidor = 'DISTRIBUICAO'  ");
-    	hql.append(" and fornecedor_id in (:idFornecedor))  ");
-    	hql.append(" order by dt  ");
+    	//hql.append(" and fornecedor_id in (:idFornecedor)  ");
+    	hql.append(" ) order by dt  ");
     	
         Query query = getSession().createSQLQuery(hql.toString());
         
-        query.setParameterList("idFornecedor", idFornecedor);
+        //query.setParameterList("idFornecedor", idFornecedor);
 
     	return query.list();
     }
@@ -2671,5 +2671,29 @@ public class LancamentoRepositoryImpl extends
 		
 		return (Lancamento) query.uniqueResult();
 	}
+    
+    public Integer obterRepartePromocionalEdicao(final Long codigoProduto, final Long numeroEdicao ){
+    	
+    	final StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" select lancamento.repartePromocional from Lancamento lancamento ")
+	    	.append(" join lancamento.produtoEdicao produtoEdicao ")
+	    	.append(" join produtoEdicao.produto produto ")
+	    	.append(" where produto.codigo=:codigoProduto")
+	    	.append(" and produtoEdicao.numeroEdicao=:numeroEdicao")
+	    	.append(" and lancamento.numeroLancamento=:numeroLancamento ");
+	    	
+    	Query query = getSession().createQuery(hql.toString());
+    	
+    	query.setParameter("codigoProduto", codigoProduto.toString());
+    	query.setParameter("numeroEdicao", numeroEdicao);
+    	query.setParameter("numeroLancamento", BigInteger.ONE.intValue());
+    	
+    	query.setMaxResults(1);
+    	
+    	BigInteger retorno  = (BigInteger) query.uniqueResult(); 
+    	
+    	return (retorno==null) ?null : retorno.intValue();
+    }
     
 }

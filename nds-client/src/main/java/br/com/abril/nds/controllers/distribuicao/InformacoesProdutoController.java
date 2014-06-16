@@ -26,7 +26,11 @@ import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.InformacoesProdutoService;
@@ -228,10 +232,10 @@ public class InformacoesProdutoController extends BaseController {
 	
 	@Post
 	@Path("/buscarReparteSobra")
-	public void buscarReparteSobra(Long idEstudo){
+	public void buscarReparteSobra(Long idEstudo,Long codigoProduto, Long numeroEdicao){
 
-		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(idEstudo);
-		
+		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(idEstudo, codigoProduto, numeroEdicao);
+			
 		validarDadosReparteEstudo(resumo);
 		
 		result.use(Results.json()).from(resumo, "result").serialize();
@@ -272,6 +276,10 @@ public class InformacoesProdutoController extends BaseController {
 		//sobra
 		if(resumo.getQtdSobraEstudo()==null)
 			resumo.setQtdSobraEstudo(new BigDecimal(0));
+		
+		//reparte promocional
+		if(resumo.getQtdRepartePromocional()==null)
+			resumo.setQtdRepartePromocional(new BigInteger("0"));
 		
 	}
 	
