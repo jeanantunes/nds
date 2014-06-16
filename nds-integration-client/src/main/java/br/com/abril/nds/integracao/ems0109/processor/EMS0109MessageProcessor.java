@@ -258,8 +258,17 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		);
 		
 		
-		
-		produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
+		if(input.getSegmento()!=null && !input.getSegmento().trim().equals("")){
+		 produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
+		}else{
+			
+		 TipoSegmentoProduto tipoSegmentoProduto = new TipoSegmentoProduto();
+		 
+		 //FIXME Caso venha nulo , que nao pode vir, set OUTROS na descricao
+		 tipoSegmentoProduto.setId(new Long(9));
+		 tipoSegmentoProduto.setDescricao("OUTROS");
+		 produto.setTipoSegmentoProduto(tipoSegmentoProduto);	
+		}
 		
 		String codigoSituacaoTributaria = input.getCodigoSituacaoTributaria();
 		produto.setTributacaoFiscal(this.getTributacaoFiscal(codigoSituacaoTributaria));
@@ -594,6 +603,10 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
                     );
         
                     produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
+		}else{
+			//FIXME , Não poderia vir como nulo na carga do .pub
+			tipoSegmentoProduto.setId(new Long(9));
+			tipoSegmentoProduto.setDescricao("OUTROS");
 		}
 		
 		Fornecedor produtoFornecedor = produto.getFornecedor();
