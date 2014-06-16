@@ -423,7 +423,10 @@ var geracaoNFeController = $.extend({
 		// Por limitacao do vRaptor, nao instancia dentro do filtro
 		if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
 			
-			params.push({name:"notaFiscalTipoEmissaoRegimeEspecial", value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
+			if($(".emissaoRegimeEspecial").is(":visible")) {
+				
+				params.push({name:"notaFiscalTipoEmissaoRegimeEspecial", value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
+			}
 		}
 		
 		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
@@ -578,7 +581,13 @@ var geracaoNFeController = $.extend({
 		params.push({name:"filtro.idNaturezaOperacao" , value: $("#geracaoNfe-filtro-naturezaOperacao").val()});
 		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-listRoteiro").val()});
 		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-listRota").val()});
-		params.push({name:"notaFiscalTipoEmissaoRegimeEspecial", value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
+		
+		if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
+			
+			if($(".emissaoRegimeEspecial").is(":visible")) {
+				params.push({name:"notaFiscalTipoEmissaoRegimeEspecial", value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
+			}
+		}
 		
 		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
 			$.each($("#geracaoNfe-filtro-selectFornecedores").val(), function(index, v) {
