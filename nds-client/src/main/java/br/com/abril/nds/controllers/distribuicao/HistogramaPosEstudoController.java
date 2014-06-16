@@ -152,7 +152,7 @@ public class HistogramaPosEstudoController extends BaseController{
 	
 	@Post
 	public void carregarDadosFieldSetResumoEstudo(long estudoId){
-		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(estudoId);
+		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(estudoId, null, null);
 		
 		result.use(Results.json()).withoutRoot().from(resumo).recursive().serialize();
 	}
