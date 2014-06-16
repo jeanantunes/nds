@@ -12,7 +12,7 @@ public class HistogramaPosEstudoFaixaReparteTest {
 		FileSystemXmlApplicationContext applicationContext = new FileSystemXmlApplicationContext("../nds-client/src/main/resources/applicationContext-local.xml");
 
 		EstudoService service = applicationContext.getBean(EstudoService.class);
-		ResumoEstudoHistogramaPosAnaliseDTO dto = service.obterResumoEstudo(80222l);
+		ResumoEstudoHistogramaPosAnaliseDTO dto = service.obterResumoEstudo(80222l, null, null);
 		
 //		EstudoProdutoEdicaoBaseService estudoProdutoEdicaoBaseService = applicationContext.getBean(EstudoProdutoEdicaoBaseService.class);
 //		List<EdicaoBaseEstudoDTO> dto = estudoProdutoEdicaoBaseService.obterEdicoesBase(81075l);
