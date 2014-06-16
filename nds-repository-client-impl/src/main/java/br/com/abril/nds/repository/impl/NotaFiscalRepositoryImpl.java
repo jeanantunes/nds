@@ -456,7 +456,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" WHERE mec.data BETWEEN :dataInicial AND :dataFinal ")
 		.append(" AND mec.movimentoEstoqueCotaEstorno is null ")
 		.append(" AND mec.movimentoEstoqueCotaFuro is null ")
-		.append(" AND mec.notaFiscalEmitida = false ");
+		.append(" AND mec.notaFiscalEmitida = false ")
+		.append(" AND mec.qtde <> 0 ");
 		
 		if(filtro.getNotaFiscalTipoEmissao() != null) {
 			if(filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {
