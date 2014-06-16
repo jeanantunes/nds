@@ -188,5 +188,7 @@ public interface LancamentoService {
 	
 	Date obterDataLancamentoValido(Date dataLancamento,Long idFornecedor);
 	
+	Integer obterRepartePromocionalEdicao(final Long codigoProduto, final Long numeroEdicao);
+	
 }
  

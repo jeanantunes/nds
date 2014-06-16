@@ -423,4 +423,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	Lancamento obterParaAtualizar(Long id);
 	
+	Integer obterRepartePromocionalEdicao(final Long codigoProduto, final Long numeroEdicao );
+	
 }

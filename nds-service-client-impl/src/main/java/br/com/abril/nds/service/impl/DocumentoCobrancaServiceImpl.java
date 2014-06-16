@@ -1313,7 +1313,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     	     
     		final SlipDTO slipDTO = this.gerarSlipDTOCobranca(idContrlConf, incluirNumeroSlip);
     		
-    		listaSlipDTO.add(slipDTO);
+    		listaSlipDTO.add(slipDTO);	
     	}
 
         return listaSlipDTO;

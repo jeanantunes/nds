@@ -122,8 +122,6 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#pesq_prod", ConferenciaEncalhe.workspace).autocomplete({source: []});
 		
-		$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({source: []}); 
-		
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -267,9 +265,13 @@ var ConferenciaEncalhe = $.extend(true, {
 		    }
 		});
 		
-		this.bindkeypressCodigoBarras();
 		
 		this.bindkeypressCodigoSM();
+		
+		$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({source: []}); 
+		
+		PesquisaConferenciaEncalhe.bindkeypressCodigoBarras();
+
 		
 		ConferenciaEncalhe.removerAtalhos();
 		$(".atalhosCE", ConferenciaEncalhe.workspace).hide();
@@ -286,18 +288,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		}
 	},
 	
-	bindkeypressCodigoBarras : function(){
 	
-		$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).keypress(function(e) {
-			
-			if (e.keyCode == 13) {
-				
-				ConferenciaEncalhe.autoCompletarPorCodigoDeBarras();
-			}
-			
-		});
-	},
-
 	bindkeypressCodigoSM : function(){
 		
 		$('#sm', ConferenciaEncalhe.workspace).keypress(function(e) {
@@ -446,7 +437,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		}
 		else if ($("#cod_barras_conf_encalhe").val() != ""){
 			
-			ConferenciaEncalhe.autoCompletarPorCodigoDeBarras();					
+			PesquisaConferenciaEncalhe.pesquisarPorCodigoDeBarras();
 		}
 		else{
 				
@@ -787,7 +778,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		ConferenciaEncalhe.setarValoresPesquisados();
 	},
 	
-	preProcessarConsultaConferenciaEncalhe : function(result) {
+	preProcessarConsultaConferenciaEncalhe : function(result, indNaoAlteraFoco) {
 		
 		if (result.mensagens){
 			
@@ -930,20 +921,25 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#nomeCota", ConferenciaEncalhe.workspace).text(result.razaoSocial);
 		$("#statusCota", ConferenciaEncalhe.workspace).text(result.situacao);
 		
+		
+		if(!indNaoAlteraFoco) {
 
-		if( $("#vlrCE", ConferenciaEncalhe.workspace).length != 0 ){
+			if( $("#vlrCE", ConferenciaEncalhe.workspace).length != 0 ){
+				
+				focusSelectRefField($("#vlrCE", ConferenciaEncalhe.workspace));
 			
-			focusSelectRefField($("#vlrCE", ConferenciaEncalhe.workspace));
-		
-		} else if( $("#qtdCE", ConferenciaEncalhe.workspace).length != 0 ) {
+			} else if( $("#qtdCE", ConferenciaEncalhe.workspace).length != 0 ) {
+				
+				focusSelectRefField($("#qtdCE", ConferenciaEncalhe.workspace));
 			
-			focusSelectRefField($("#qtdCE", ConferenciaEncalhe.workspace));
-		
-		} else {
-			
-			focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+			} else {
+				
+				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				
+			}
 			
 		}
+		
 		
 		bloquearItensEdicao(ConferenciaEncalhe.workspace);
 	},
@@ -1986,66 +1982,6 @@ var ConferenciaEncalhe = $.extend(true, {
 			form: $("#dialog-salvar", this.workspace).parents("form")
 		});
 
-	},
-	
-	autoCompletarPorCodigoDeBarras: function() {
-
-		var codBarra = $("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val().trim();
-		
-		var data = 
-			[{name: 'numeroCota', value: $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
-			 {name: 'codigoBarra', value: codBarra}];
-
-		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/autoCompleteProdutoEdicaoCodigoDeBarras", data,
-			function(result){
-				//EXIBE AUTOCOMPLETE SOMENTE SE HOUVER MAIS DE UM RESULTADO
-			    if (result.length > 1){				
-			    	
-					$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({
-						
-						source: result,
-						
-						select: function(event, ui){			
-							
-							ConferenciaEncalhe.ultimoIdProdutoEdicao = ui.item.chave.$;	
-							
-							ConferenciaEncalhe.getProdutoEdicao();
-							
-							$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({
-								source: []
-							});
-
-						},
-						delay : 0,
-					});	
-					
-					$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete("search", codBarra);
-					
-				}else{
-			    	
-			    	ConferenciaEncalhe.ultimoIdProdutoEdicao = result[0].chave.$;
-			    	
-        		    ConferenciaEncalhe.getProdutoEdicao();
-        		    
-        		    $("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({
-						source: []
-					});
-        		    
-			    }    
-			}, 
-			function() {
-		
-				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("1");
-				
-				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({
-					source: []
-				});
-					
-				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
-				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
-			}, null, null, false
-		);
 	},
 	
 	autoCompletarPorCodigoSM: function() {

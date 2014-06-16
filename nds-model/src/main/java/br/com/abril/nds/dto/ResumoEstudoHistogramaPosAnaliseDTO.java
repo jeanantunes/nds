@@ -10,7 +10,8 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 					   qtdCotasRecebemReparte,
 					   qtdCotasAdicionadasPelaComplementarAutomatica,
 					   qtdReparteMinimoSugerido,
-					   qtdReparteMinimoEstudo;
+					   qtdReparteMinimoEstudo,
+					   qtdRepartePromocional;
 			
 	private BigDecimal 
 					   abrangenciaEstudo,
@@ -137,5 +138,15 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 	public void setEncalheMedioCota(BigDecimal encalheMedioCota) {
 		this.reparteMedioCota = encalheMedioCota;
 	}
+
+	public BigInteger getQtdRepartePromocional() {
+		return qtdRepartePromocional;
+	}
+
+	public void setQtdRepartePromocional(BigInteger qtdRepartePromocional) {
+		this.qtdRepartePromocional = qtdRepartePromocional;
+	}
+	
+	
 	
 }

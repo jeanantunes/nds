@@ -353,9 +353,14 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					String.format( "Produto sem Segmento. Produto "+input.getCodProd()+" Edição "+input.getEdicaoProd(), input.getCodProd(), input.getEdicaoProd() )
 				);
 			
+			//FIXME Não deveria vir Segmento como nulo
+			produto.setTipoSegmentoProduto(getTipoSegmento("OUTROS"));
+			
+			
+		}else{
+			produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
 		}
 
-		produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
 		
 		String codigoSituacaoTributaria = input.getCodSitTributaria();
 		produto.setTributacaoFiscal(this.getTributacaoFiscal(codigoSituacaoTributaria));
@@ -534,6 +539,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
                 (input.getSegmento() != null && !input.getSegmento().trim().equals("") && !Objects.equal(
                         tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
             
+        	if(produto!=null && produto.getTipoSegmentoProduto()!=null && produto.getTipoSegmentoProduto().getDescricao()!=null){
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
                     "Alteração do Tipo de Segmento"
@@ -541,6 +547,17 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
                     +" para " + input.getSegmento()
                     +" Produto "+ input.getCodProd()
 					+" Edição "+ input.getEdicaoProd());
+        	}else{
+        		
+        		this.ndsiLoggerFactory.getLogger().logInfo(message,
+                        EventoExecucaoEnum.INF_DADO_ALTERADO,
+                        "Alteração do Tipo de Segmento"
+                        +" de Nulo "
+                        +" para " + input.getSegmento()
+                        +" Produto "+ input.getCodProd()
+    					+" Edição "+ input.getEdicaoProd());
+        		
+        	}
             
             produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
         }
@@ -603,6 +620,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	                EventoExecucaoEnum.HIERARQUIA,
 	                "Classificação ("+input.getClassificacao()+") não existe. Produto "+input.getCodProd()+" Edição "+ input.getEdicaoProd());
 			
+			//FIXME Classificação não deveria vir como nula.
+			edicao.setTipoClassificacaoProduto(getTipoClassificacaoProduto("NORMAL"));
 		}
 		
 		boolean isParcial = false;

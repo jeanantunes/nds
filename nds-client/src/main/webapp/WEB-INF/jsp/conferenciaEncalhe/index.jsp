@@ -13,6 +13,8 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
 	
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/scriptConferenciaEncalhe.js'></script>
+
+	<script type="text/javascript" src='<c:url value="/"/>/scripts/pesquisaConferenciaEncalhe.js'></script>
 	
 	
 	
