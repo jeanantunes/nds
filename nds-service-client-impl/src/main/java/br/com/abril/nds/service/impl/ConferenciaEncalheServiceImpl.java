@@ -2304,23 +2304,27 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 			atualizarMovimentoEstoqueCota(idMovimentoEstoqueCota, conferenciaEncalheDTO, cota);
 			
-			MovimentoFechamentoFiscalCota movimentoFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCota(chamadaEncalheCota);
+			List<MovimentoFechamentoFiscalCota> movimentosFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCota(chamadaEncalheCota);
 		
-			if(movimentoFechamentoFiscalCota != null) {
+			if(movimentosFechamentoFiscalCota != null && !movimentosFechamentoFiscalCota.isEmpty()) {
 				
-				for(OrigemItemMovFechamentoFiscal omff : movimentoFechamentoFiscalCota.getOrigemMovimentoFechamentoFiscal()) {
+				for(MovimentoFechamentoFiscalCota mffc : movimentosFechamentoFiscalCota) {
 					
-					if(((OrigemItemMovFechamentoFiscalMEC) omff).getMovimento().getId().equals(idMovimentoEstoqueCota)) {
+					for(OrigemItemMovFechamentoFiscal omff : mffc.getOrigemMovimentoFechamentoFiscal()) {
 						
-						movimentoFechamentoFiscalCota.setNotaFiscalLiberadaEmissao(false);
-						movimentoFechamentoFiscalCota.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
-						movimentoFechamentoFiscalCota.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
-						movimentoFechamentoFiscalCota.setTipoDestinatario(TipoDestinatario.COTA);
-						movimentoFechamentoFiscalCota.setCota(movimentoEstoqueCota.getCota());
-						movimentoFechamentoFiscalCota.setChamadaEncalheCota(chamadaEncalheCota);
-						movimentoFechamentoFiscalCota.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
+						if(((OrigemItemMovFechamentoFiscalMEC) omff).getMovimento().getId().equals(idMovimentoEstoqueCota)) {
+							
+							mffc.setNotaFiscalLiberadaEmissao(false);
+							mffc.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
+							mffc.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
+							mffc.setTipoDestinatario(TipoDestinatario.COTA);
+							mffc.setCota(movimentoEstoqueCota.getCota());
+							mffc.setChamadaEncalheCota(chamadaEncalheCota);
+							mffc.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
+						}
 					}
 				}
+				
 			} else {
 				
 				List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
