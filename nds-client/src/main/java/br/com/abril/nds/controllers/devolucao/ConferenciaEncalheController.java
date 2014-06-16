@@ -680,25 +680,6 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void autoCompleteProdutoEdicaoCodigoDeBarras(final Integer numeroCota, final String codigoBarra) {
-		
-		if (codigoBarra == null || codigoBarra.trim().isEmpty()) {
-
-            throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido.");
-		}
-
-		final List<ItemAutoComplete> listaProdutos = 
-				this.conferenciaEncalheService.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarra); 
-
-		if (listaProdutos == null || listaProdutos.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
-		}
-
-		this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
-	}
-	
-	@Post
 	public void autoCompleteProdutoEdicaoCodigoSM(final Integer numeroCota, final Integer sm) {
 		
 		if (sm == null) {

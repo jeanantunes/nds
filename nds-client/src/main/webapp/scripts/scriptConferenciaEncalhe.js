@@ -429,7 +429,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		}
 		else if ($("#cod_barras_conf_encalhe").val() != ""){
 			
-			ConferenciaEncalhe.autoCompletarPorCodigoDeBarras();					
+			PesquisaConferenciaEncalhe.pesquisarPorCodigoDeBarras();
 		}
 		else{
 				
@@ -1940,66 +1940,6 @@ var ConferenciaEncalhe = $.extend(true, {
 			form: $("#dialog-salvar", this.workspace).parents("form")
 		});
 
-	},
-	
-	autoCompletarPorCodigoDeBarras: function() {
-
-		var codBarra = $("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val().trim();
-		
-		var data = 
-			[{name: 'numeroCota', value: $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
-			 {name: 'codigoBarra', value: codBarra}];
-
-		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/autoCompleteProdutoEdicaoCodigoDeBarras", data,
-			function(result){
-				//EXIBE AUTOCOMPLETE SOMENTE SE HOUVER MAIS DE UM RESULTADO
-			    if (result.length > 1){				
-			    	
-					$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({
-						
-						source: result,
-						
-						select: function(event, ui){			
-							
-							ConferenciaEncalhe.ultimoIdProdutoEdicao = ui.item.chave.$;	
-							
-							ConferenciaEncalhe.getProdutoEdicao();
-							
-							$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({
-								source: []
-							});
-
-						},
-						delay : 0,
-					});	
-					
-					$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete("search", codBarra);
-					
-				}else{
-			    	
-			    	ConferenciaEncalhe.ultimoIdProdutoEdicao = result[0].chave.$;
-			    	
-        		    ConferenciaEncalhe.getProdutoEdicao();
-        		    
-        		    $("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({
-						source: []
-					});
-        		    
-			    }    
-			}, 
-			function() {
-		
-				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("1");
-				
-				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({
-					source: []
-				});
-					
-				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
-				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
-			}, null, null, false
-		);
 	},
 	
 	autoCompletarPorCodigoSM: function() {
