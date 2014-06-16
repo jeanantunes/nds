@@ -207,7 +207,7 @@ var impressaoBoletosController = $.extend(true, {
 		
 		var file = contextPath + '/financeiro/impressaoBoletos/';
 		
-		if("BOLETO" == result){
+		if("BOLETO" == result || "BOLETO_SLIP" == result){
 			
 			$('#download-iframe', impressaoBoletosController.workspace).attr('src', file + 'imprimirBoletosEmMassa');
 		}

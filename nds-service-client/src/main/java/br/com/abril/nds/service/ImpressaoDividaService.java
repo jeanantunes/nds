@@ -20,7 +20,7 @@ public interface ImpressaoDividaService {
 	 * @param filtro
 	 * @return byte[]
 	 */
-	byte[] gerarArquivoImpressao(FiltroDividaGeradaDTO filtro);
+	byte[] gerarArquivoImpressao(FiltroDividaGeradaDTO filtro, boolean comSlip);
 	
 	/**
 	 * Envia uma divida por e-mail

@@ -40,7 +40,7 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	
 	@Transactional
 	@Override
-	public byte[] gerarArquivoImpressao(FiltroDividaGeradaDTO filtro) {
+	public byte[] gerarArquivoImpressao(final FiltroDividaGeradaDTO filtro, final boolean comSlip) {
 		
 		filtro.setColunaOrdenacao(FiltroDividaGeradaDTO.ColunaOrdenacao.ROTEIRIZACAO);
 		
@@ -57,7 +57,13 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 		if(dividas.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há dívidas a serem impressas.");
 		
-		return documentoCobrancaService.gerarDocumentoCobranca(dividas, filtro.getTipoCobranca());
+		if (comSlip){
+		
+		    return documentoCobrancaService.gerarDocumentoCobrancaComSlip(dividas, filtro.getTipoCobranca());
+		} else {
+		    
+		    return documentoCobrancaService.gerarDocumentoCobranca(dividas, filtro.getTipoCobranca());
+		}
 	}
 
 	@Transactional

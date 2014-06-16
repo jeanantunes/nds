@@ -613,7 +613,7 @@ var analiseParcialController = $.extend(true, {
             }
 
             for (var j = 0; j < 6; j++) {
-                if (typeof cell.edicoesBase[j] === 'undefined' || typeof cell.edicoesBase[j].reparte === 'undefined' || cell.edicoesBase[j].reparte == 0) {
+                if (typeof cell.edicoesBase[j] === 'undefined' || typeof cell.edicoesBase[j].reparte === 'undefined') {
                     cell['reparte'+ (j + 1)] = '';
                     cell['venda'+ (j + 1)] = '';
                 } else {
@@ -1048,6 +1048,7 @@ var analiseParcialController = $.extend(true, {
         parameters.push({name: 'numeroEdicao', value: $('#numeroEdicao').val()});
         parameters.push({name: 'estudoOrigem', value: estudoOrigem});
         parameters.push({name: 'dataLancamentoEdicao', value: $('#dataLancamentoEdicao').val()});
+        parameters.push({name: 'numeroParcial', value: $('#numeroPeriodo').val()});
         
         if(typeof(histogramaPosEstudo_cotasRepMenorVenda)!="undefined"){
         	parameters.push({name: "numeroCotaStr", value: histogramaPosEstudo_cotasRepMenorVenda});

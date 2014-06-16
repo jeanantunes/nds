@@ -60,10 +60,11 @@ import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.BigIntegerUtil;
-import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class AnaliseParcialServiceImpl implements AnaliseParcialService {
+
+    private static final int QTDE_PARCIAIS_BASE = 3;
 
     @Autowired
     private EstudoPDVRepository estudoPDVRepository;
@@ -129,7 +130,10 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Override
     @Transactional
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId) {
-        return analiseParcialRepository.carregarEdicoesBaseEstudo(estudoId);
+        
+        //TODO: informar numeroPeriodoBase
+        
+        return analiseParcialRepository.carregarEdicoesBaseEstudoParcial(estudoId, 4);
     }
 
     @Override
@@ -139,19 +143,40 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	List<AnaliseParcialDTO> lista = analiseParcialRepository.buscaAnaliseParcialPorEstudo(queryDTO);
         
     	if (queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")) {
-            queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId()));
+    	    
+            //TODO: informar numeroPeriodoBase
+    	    
+            queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudoParcial(queryDTO.getEstudoId(), 4));
+            
             for (AnaliseParcialDTO item : lista) {
                 item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
                 List<EdicoesProdutosDTO> temp = new ArrayList<>();
-                int contadorParciais = 0;
-                for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
+                int contadorParciais = 1;
+                
+                List<EdicoesProdutosDTO> edicoesProdutoPorCota =
+                    this.getEdicoesProdutoPorCota(queryDTO.getEdicoesBase(), item.getCota());
+                
+                for (EdicoesProdutosDTO edicoesProdutosDTO : edicoesProdutoPorCota) {
                     if (edicoesProdutosDTO.isParcial()) {
-                        temp.addAll(analiseParcialRepository.getEdicoesBaseParciais((long) item.getCota(), edicoesProdutosDTO.getEdicao().longValue(), edicoesProdutosDTO.getCodigoProduto(), Long.valueOf(edicoesProdutosDTO.getPeriodo())));
-                        if (++contadorParciais > 2) {
+//TODO:                        temp.addAll(analiseParcialRepository.getEdicoesBaseParciais((long) item.getCota(), edicoesProdutosDTO.getEdicao().longValue(), edicoesProdutosDTO.getCodigoProduto(), Long.valueOf(edicoesProdutosDTO.getPeriodo())));
+                        temp.add(edicoesProdutosDTO);
+                        
+                        if (contadorParciais++ >= QTDE_PARCIAIS_BASE) {
                             break;
                         }
                     }
                 }
+                
+                this.completarParciaisBase(temp, QTDE_PARCIAIS_BASE);
+                
+                EdicoesProdutosDTO edicoesProdutosAcumulado = 
+                        this.getReparteVendaAcumulado(edicoesProdutoPorCota);
+                
+                if (edicoesProdutosAcumulado != null) {
+                
+                    temp.add(edicoesProdutosAcumulado);
+                }
+                
                 item.setEdicoesBase(temp);
             }
         } else {
@@ -292,6 +317,53 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 		}
     	
         return lista;
+    }
+
+    private void completarParciaisBase(List<EdicoesProdutosDTO> temp, int quantidadeParciaisBase) {
+        
+        for (int i = temp.size(); i < quantidadeParciaisBase; i++) {
+            
+            temp.add(new EdicoesProdutosDTO());
+        }
+    }
+    
+    private EdicoesProdutosDTO getReparteVendaAcumulado(List<EdicoesProdutosDTO> edicoesProdutoPorCota) {
+        
+        if (edicoesProdutoPorCota.isEmpty()) {
+            
+            return null;
+        }
+        
+        BigInteger reparte = BigInteger.ZERO;
+        BigInteger venda = BigInteger.ZERO;
+        
+        for (EdicoesProdutosDTO edicoesProdutosDTO : edicoesProdutoPorCota) {
+            
+            reparte = BigIntegerUtil.soma(reparte, edicoesProdutosDTO.getReparte());
+            venda = BigIntegerUtil.soma(venda, edicoesProdutosDTO.getVenda());
+        }
+
+        EdicoesProdutosDTO edicoesProdutosAcumulado = new EdicoesProdutosDTO();
+        
+        edicoesProdutosAcumulado.setReparte(BigDecimal.valueOf(reparte.doubleValue()));
+        edicoesProdutosAcumulado.setVenda(BigDecimal.valueOf(venda.doubleValue()));
+        
+        return edicoesProdutosAcumulado;
+    }
+
+    public List<EdicoesProdutosDTO> getEdicoesProdutoPorCota(List<EdicoesProdutosDTO> edicoesProdutosDTO, Integer numeroCota) {
+        
+        List<EdicoesProdutosDTO> edicoesProdutoPorCota = new ArrayList<>();
+        
+        for (EdicoesProdutosDTO edicaoProdutoDTO : edicoesProdutosDTO) {
+            
+            if (edicaoProdutoDTO.getNumeroCota().equals(numeroCota)) {
+                
+                edicoesProdutoPorCota.add(edicaoProdutoDTO);
+            }
+        }
+        
+        return edicoesProdutoPorCota;
     }
     
     @Transactional

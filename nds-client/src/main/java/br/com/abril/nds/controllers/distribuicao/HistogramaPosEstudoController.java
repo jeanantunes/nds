@@ -25,10 +25,13 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.HistogramaPosEstudoFaixaReparteService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoBaseSugeridaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -82,13 +85,21 @@ public class HistogramaPosEstudoController extends BaseController{
     
     public static final String MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE = "mapa_analise_estudo";
 
+    private LancamentoService lancamentoService;
+
     @Path("/index")
-	public void histogramaPosEstudo(String codigoProduto, String edicao) {
-	    if (codigoProduto != null && !codigoProduto.isEmpty() && edicao != null && !edicao.isEmpty()) {
-			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
+	public void histogramaPosEstudo(Long idLancamento) {
+	    
+        if (idLancamento != null) {
+			
+            Lancamento lancamento = lancamentoService.obterPorId(idLancamento);
+            
 			String modoAnalise = "NORMAL";
 			
-			if (produtoEdicao.isParcial()) {
+			PeriodoLancamentoParcial periodo = lancamento.getPeriodoLancamentoParcial();
+			
+			if (periodo != null && periodo.getNumeroPeriodo() > 1) {
+			
 			    modoAnalise = "PARCIAL";
 			}
 			
@@ -152,7 +163,7 @@ public class HistogramaPosEstudoController extends BaseController{
 	
 	@Post
 	public void carregarDadosFieldSetResumoEstudo(long estudoId){
-		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(estudoId);
+		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(estudoId, null, null);
 		
 		result.use(Results.json()).withoutRoot().from(resumo).recursive().serialize();
 	}

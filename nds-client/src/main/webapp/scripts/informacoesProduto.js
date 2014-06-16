@@ -84,7 +84,7 @@ $(".produtosInfosGrid").flexigrid({
 		},{
 			display : 'Algoritmo',
 			name : 'algoritmo',
-			width : 50,
+			width : 90,
 			sortable : true,
 			align : 'center'
 		},{
@@ -257,6 +257,10 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			var numeroEstudo = '<a href="javascript:;" onclick="informacoesProdutoController.recuperarNumeroEstudo(' + row.cell.estudo + ')">' + row.cell.estudo +'</a>';
 			row.cell.estudo = numeroEstudo;
 			
+			row.cell.periodo = (row.cell.periodo) ? row.cell.periodo : "";
+			
+			row.cell.tipoClassificacaoProdutoDescricao = (row.cell.tipoClassificacaoProdutoDescricao) ? row.cell.tipoClassificacaoProdutoDescricao : "";
+			
 			//Validando campos vazios
 			informacoesProdutoController.validarCamposVaziosGrid(row);
 			
@@ -377,10 +381,6 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			row.cell.percentualAbrangencia = "";
 		}
 		
-		if(row.cell.venda == 0){
-			row.cell.venda = "";
-		}
-		
 		if(row.cell.reparteDistribuido == 0){
 			row.cell.reparteDistribuido = "";
 		}
@@ -423,7 +423,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			open: informacoesProdutoController.caracteristicasProduto(codProd, numeroEdicao),
 			open: informacoesProdutoController.openDetalhe(codProd, numeroEdicao), //CAPA
 //			open: informacoesProdutoController.detalhes_ReparteDistribuido(codProd),
-			open: informacoesProdutoController.detalhes_estudo(estudo),
+			open: informacoesProdutoController.detalhes_estudo(estudo,codProd, numeroEdicao),
 			open: informacoesProdutoController.detalhes_venda(codProd, numeroEdicao),
 			
 			buttons: {
@@ -489,7 +489,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		
 		var precoCapa = "#precoCapa";
 		informacoesProdutoController.validarCamposVazios(result.precoVenda, precoCapa);
-//		informacoesProdutoController.formatarCasasDecimais(result.precoVenda, precoCapa);
+		$(precoCapa).val(floatToPrice($(precoCapa).val()));
 		
 		var pctPadrao = "#pctPadrao";
 		informacoesProdutoController.validarCamposVazios(result.pacotePadrao, pctPadrao);
@@ -524,11 +524,13 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		} 
 	},
 	
-	detalhes_estudo : function (estudo){
+	detalhes_estudo : function (estudo,codProd, numeroEdicao){
 		
 		$.postJSON(contextPath + "/distribuicao/informacoesProduto/buscarReparteSobra",
 				{
 			"idEstudo":estudo,
+			"codigoProduto":codProd,
+			"numeroEdicao":numeroEdicao
 				},
 				function(result) {
 					informacoesProdutoController.dadosReparteSobra(result);

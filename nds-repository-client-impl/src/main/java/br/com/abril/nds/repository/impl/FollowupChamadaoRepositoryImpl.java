@@ -71,7 +71,7 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		
 		hql.append("  join cota.pessoa pessoa ");
 		
-		hql.append("  join cota.historicos historico WITH historico.novaSituacao = 'SUSPENSO' ");
+		hql.append("  join cota.historicos historico ");
 		
 		hql.append("  join cota.chamadaEncalheCotas cec ");
 		
@@ -85,29 +85,51 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		
 		hql.append("  join produtoEdicao.lancamentos lancamento ");
 		
-		hql.append(" WHERE cota.situacaoCadastro = 'SUSPENSO' ");
+		hql.append(" WHERE ce.tipoChamadaEncalhe = 'CHAMADAO' ");
+
+		hql.append(" AND (  " );
 		
-		hql.append(" AND ce.tipoChamadaEncalhe = 'CHAMADAO' ");
+		hql.append("         (cota.situacaoCadastro <> 'SUSPENSO' )" );
 		
-		hql.append(" AND lancamento.status not in (:statusLancamentoExcluidos) ");
+		hql.append("         OR " );
 		
-		hql.append(" AND ce.dataRecolhimento >= (select dist.dataOperacao from Distribuidor dist) ");
+		hql.append("         ( " );
+		
+		hql.append("             historico.novaSituacao = 'SUSPENSO' " );
+		
+		hql.append("             AND cota.situacaoCadastro = 'SUSPENSO' ");
+		
+		hql.append("             AND lancamento.status not in (:statusLancamentoExcluidos) ");
+		
+		hql.append("             AND ce.dataRecolhimento >= (select dist.dataOperacao from Distribuidor dist) ");
 		
 		if(filtro.getQuantidadeDiasSuspenso() >= 0) {
 			
 			hql.append("            AND ( datediff((select dist.dataOperacao from Distribuidor dist), historico.dataInicioValidade) >= :diasSuspensaoDistribuidor ) ");
 		}
-		
-		hql.append(" GROUP BY cota.numeroCota, pessoa.nome ");
 
-		hql.append(" HAVING (");
+		hql.append("         ) " );
 		
+		hql.append("     ) " );
+		
+		
+
+		hql.append(" GROUP BY cota.numeroCota, pessoa.nome ");
+		
+		
+
 		if(filtro.getValorConsignadoLimite() != null){
 			
-		    hql.append("            ( sum(movimentos.valoresAplicados.precoComDesconto * (estoqueProdCota.qtdeRecebida - estoqueProdCota.qtdeDevolvida)) <= :valorConsignadoDistribuidor ) ");
+			hql.append("         HAVING (");
+			
+			//hql.append("                    (cota.situacaoCadastro <> 'SUSPENSO' ) OR " );
+			
+		    hql.append("                    ( sum(movimentos.valoresAplicados.precoComDesconto * (estoqueProdCota.qtdeRecebida - estoqueProdCota.qtdeDevolvida)) >= :valorConsignadoDistribuidor ) ");
+		
+		    hql.append("                 ) ");
 		}
-
-		hql.append("        ) ");
+		
+		
 
 		hql.append(" ORDER BY ce.dataRecolhimento desc ");
 
@@ -134,5 +156,5 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		
 		return param;
    }	
-   
+  
 }

@@ -181,7 +181,7 @@ public class AnaliseParcialController extends BaseController {
 
     @Path("/init")
     public void init(Long id, String sortname, String sortorder, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
-                     Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao) {
+                     Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao, Integer numeroParcial) {
 
         AnaliseParcialQueryDTO filtroQueryDTO = new AnaliseParcialQueryDTO();
         filtroQueryDTO.setSortName(sortname);
@@ -200,6 +200,7 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setNumeroCotaStr(numeroCotaStr);
         filtroQueryDTO.setEstudoOrigem(estudoOrigem);
         filtroQueryDTO.setDataLancamentoEdicao(DateUtil.parseDataPTBR(dataLancamentoEdicao));
+        filtroQueryDTO.setNumeroParcial(numeroParcial);
         
 
         List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);
