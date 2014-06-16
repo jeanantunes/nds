@@ -473,6 +473,11 @@ public class ConferenciaEncalheController extends BaseController {
 		result.use(CustomJson.class).from(dados).serialize();
 	}
 
+	@Post
+    public void excluirNotasFiscaisPorReabertura(Integer numeroCota, final boolean indObtemDadosFromBD, final boolean indConferenciaContingencia) {
+        this.excluirNotasFiscaisPorReabertura(numeroCota, indObtemDadosFromBD, indConferenciaContingencia);
+    }
+	
 	/**
 	 * Retorna um mapa com os dados apresentados na 
 	 * conferencia de encalhe.

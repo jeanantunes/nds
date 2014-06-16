@@ -229,6 +229,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 								
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
 								
+								ConferenciaEncalheCont.excluirNotasFiscaisPorReabertura(data);
+								
 								ConferenciaEncalheCont.carregarListaConferencia(data);
 								
 								ConferenciaEncalheCont.numeroCotaEditavel(true);

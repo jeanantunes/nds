@@ -274,5 +274,7 @@ public interface ConferenciaEncalheService {
 	BigDecimal obterValorTotalReparte(Integer numeroCota, List<Date> datas);
 	
 	Cota validarCotaParaInicioConferenciaEncalhe(final Integer numeroCota);
+
+	public void excluirNotasFiscaisPorReabertura(Integer numeroCota, boolean indObtemDadosFromBD, boolean indConferenciaContingencia);
 	
 }
