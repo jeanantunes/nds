@@ -585,7 +585,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
                 
             case BOLETO_EM_BRANCO:
                 
-                return null;
+                retorno = boletoService.gerarImpressaoBoleto(nossoNumero);
+                
+                if (retorno == null){
+                    
+                    retorno = this.boletoService.gerarImpressaoBoletoEmBranco(nossoNumero);
+                }
+                
+                break;
                 
             default:
                 
