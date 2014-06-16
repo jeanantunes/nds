@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.InformacoesVendaEPerceDeVendaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.InformacoesProdutoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -309,27 +310,26 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" select ");
-		sql.append("     sum(estqPC.QTDE_RECEBIDA - estqPC.QTDE_DEVOLVIDA) as totalVenda, ");
-		sql.append("     ((sum(estqPC.QTDE_RECEBIDA - estqPC.QTDE_DEVOLVIDA)/ ");
-		sql.append("     (select ");
-		sql.append("      	sum(reparte) from lancamento ");
-		sql.append("      	JOIN produto_edicao prodEdic on prodEdic.ID = lancamento.PRODUTO_EDICAO_ID ");
-		sql.append("      	JOIN PRODUTO ON prodEdic.PRODUTO_ID=PRODUTO.ID ");
-		sql.append("      where produto.CODIGO = :COD_PRODUTO and ");
-		sql.append("      	prodEdic.NUMERO_EDICAO in (:NUM_EDICAO) ");
-		sql.append("      )))*100 as porcentagemDeVenda ");
-		sql.append("   from movimento_estoque_cota");
-		sql.append("   	  inner join estoque_produto_cota estqPC ");
-		sql.append("      	ON movimento_estoque_cota.ESTOQUE_PROD_COTA_ID = estqPC.ID ");
-		sql.append("where estqPC.PRODUTO_EDICAO_ID in ( ");
-		sql.append("   	    select prodEdic.ID from produto_edicao prodEdic ");
-		sql.append("      		inner join produto prod ON prodEdic.PRODUTO_ID = prod.ID ");
-		sql.append("     	where prod.CODIGO = :COD_PRODUTO and prodEdic.NUMERO_EDICAO = :NUM_EDICAO )");
-		
+		sql.append(" sum(if(tipoMovimento.OPERACAO_ESTOQUE ='ENTRADA',movCota.QTDE,movCota.QTDE*-1)) as totalVenda, ");
+		sql.append(" (	sum(if(tipoMovimento.OPERACAO_ESTOQUE ='ENTRADA',movCota.QTDE,movCota.QTDE*-1)) ");
+		sql.append(" 	/	 ");
+		sql.append(" 	sum(if(tipoMovimento.OPERACAO_ESTOQUE ='ENTRADA',movCota.QTDE,0)) ");
+		sql.append(" )	* 100 ");
+		sql.append(" as porcentagemDeVenda ");
+		sql.append(" from movimento_estoque_cota movCota ");
+		sql.append(" join tipo_movimento tipoMovimento on tipoMovimento.ID = movCota.TIPO_MOVIMENTO_ID ");
+		sql.append(" join lancamento lancamento on lancamento.ID = movCota.LANCAMENTO_ID ");
+		sql.append(" join produto_edicao produtoEdicao on produtoEdicao.ID = lancamento.PRODUTO_EDICAO_ID ");
+		sql.append(" join produto produto on produto.ID = produtoEdicao.PRODUTO_ID ");
+		sql.append(" where lancamento.STATUS = :statusFechado ");
+		sql.append(" and produtoEdicao.NUMERO_EDICAO =:NUM_EDICAO  ");
+		sql.append(" and produto.CODIGO =:COD_PRODUTO  ");
+				
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("COD_PRODUTO", codProduto);
 		query.setParameter("NUM_EDICAO", numEdicao);
+		query.setParameter("statusFechado", StatusLancamento.FECHADO.name());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesVendaEPerceDeVendaDTO.class));
 		 

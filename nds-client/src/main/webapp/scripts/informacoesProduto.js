@@ -423,7 +423,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			open: informacoesProdutoController.caracteristicasProduto(codProd, numeroEdicao),
 			open: informacoesProdutoController.openDetalhe(codProd, numeroEdicao), //CAPA
 //			open: informacoesProdutoController.detalhes_ReparteDistribuido(codProd),
-			open: informacoesProdutoController.detalhes_estudo(estudo),
+			open: informacoesProdutoController.detalhes_estudo(estudo,codProd, numeroEdicao),
 			open: informacoesProdutoController.detalhes_venda(codProd, numeroEdicao),
 			
 			buttons: {
@@ -489,7 +489,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		
 		var precoCapa = "#precoCapa";
 		informacoesProdutoController.validarCamposVazios(result.precoVenda, precoCapa);
-//		informacoesProdutoController.formatarCasasDecimais(result.precoVenda, precoCapa);
+		$(precoCapa).val(floatToPrice($(precoCapa).val()));
 		
 		var pctPadrao = "#pctPadrao";
 		informacoesProdutoController.validarCamposVazios(result.pacotePadrao, pctPadrao);
@@ -524,11 +524,13 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		} 
 	},
 	
-	detalhes_estudo : function (estudo){
+	detalhes_estudo : function (estudo,codProd, numeroEdicao){
 		
 		$.postJSON(contextPath + "/distribuicao/informacoesProduto/buscarReparteSobra",
 				{
 			"idEstudo":estudo,
+			"codigoProduto":codProd,
+			"numeroEdicao":numeroEdicao
 				},
 				function(result) {
 					informacoesProdutoController.dadosReparteSobra(result);

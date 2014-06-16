@@ -32,7 +32,7 @@ public interface EstudoService {
 	
 	Estudo atualizarEstudo(Long estudoId, BigInteger reparteAtualizar);
 
-	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId);
+	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId, Long codigoProduto, Long numeroEdicao);
 	
 	void excluirEstudo(long id);
 	
