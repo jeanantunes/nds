@@ -118,7 +118,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("       (SELECT COUNT(id) FROM estudo_cota_gerado WHERE classificacao IN ('CP') and estudo_id = :estudoId ) AS qtdCotasAdicionadasPelaComplementarAutomatica, ");
 		sql.append(" 	   IFNULL((SELECT estg.reparte_minimo as repMin FROM estudo_gerado estg WHERE id = :estudoId ),0) AS qtdReparteMinimoEstudo, ");
 		sql.append("	   (SELECT estrat.reparte_minimo FROM estrategia estrat JOIN estudo_gerado estudo ON estudo.PRODUTO_EDICAO_ID = estrat.PRODUTO_EDICAO_ID WHERE estudo.ID = :estudoId) AS qtdReparteMinimoSugerido, ");
-		sql.append("	   (SELECT abrangencia FROM estrategia JOIN estudo_gerado estudo ON estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID WHERE estudo.ID = :estudoId) AS abrangenciaSugerida, ");
+		sql.append("	   (SELECT estrategia.abrangencia FROM estrategia JOIN estudo_gerado estudo ON estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID WHERE estudo.ID = :estudoId) AS abrangenciaSugerida, ");
 		sql.append(" 	   (SELECT COUNT( DISTINCT (CASE WHEN qtde_recebida - qtde_devolvida > 0 THEN cota_id ELSE null END)) FROM estoque_produto_cota");
 		sql.append(" 		 	WHERE estoque_produto_cota.produto_edicao_id IN (SELECT produto_edicao_id FROM estudo_produto_edicao_base WHERE estudo_id = :estudoId)");
 		sql.append(" 		 	AND estoque_produto_cota.cota_id IN (SELECT cota_id FROM estudo_cota_gerado WHERE estudo_id = :estudoId)) AS qtdCotasQueVenderam");

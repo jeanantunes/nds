@@ -84,7 +84,7 @@ $(".produtosInfosGrid").flexigrid({
 		},{
 			display : 'Algoritmo',
 			name : 'algoritmo',
-			width : 50,
+			width : 90,
 			sortable : true,
 			align : 'center'
 		},{
@@ -257,6 +257,10 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			var numeroEstudo = '<a href="javascript:;" onclick="informacoesProdutoController.recuperarNumeroEstudo(' + row.cell.estudo + ')">' + row.cell.estudo +'</a>';
 			row.cell.estudo = numeroEstudo;
 			
+			row.cell.periodo = (row.cell.periodo) ? row.cell.periodo : "";
+			
+			row.cell.tipoClassificacaoProdutoDescricao = (row.cell.tipoClassificacaoProdutoDescricao) ? row.cell.tipoClassificacaoProdutoDescricao : "";
+			
 			//Validando campos vazios
 			informacoesProdutoController.validarCamposVaziosGrid(row);
 			
@@ -375,10 +379,6 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 
 		if(row.cell.percentualAbrangencia == undefined){
 			row.cell.percentualAbrangencia = "";
-		}
-		
-		if(row.cell.venda == 0){
-			row.cell.venda = "";
 		}
 		
 		if(row.cell.reparteDistribuido == 0){
