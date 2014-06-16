@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.hibernate.Criteria;
@@ -27,12 +29,13 @@ public class MovimentoFechamentoFiscalRepositoryImpl extends AbstractRepositoryM
     }
 
 	@Override
-	public MovimentoFechamentoFiscalCota buscarPorChamadaEncalheCota(ChamadaEncalheCota chamadaEncalheCota) {
+	@SuppressWarnings("unchecked")
+	public List<MovimentoFechamentoFiscalCota> buscarPorChamadaEncalheCota(ChamadaEncalheCota chamadaEncalheCota) {
 		
 		Criteria criteria = getSession().createCriteria(MovimentoFechamentoFiscalCota.class);
 		criteria.add(Restrictions.eq("chamadaEncalheCota", chamadaEncalheCota));
 		
-		return (MovimentoFechamentoFiscalCota) criteria.uniqueResult();
+		return (List<MovimentoFechamentoFiscalCota>) criteria.list();
 	}
 
 	@Override
