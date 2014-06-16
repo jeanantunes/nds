@@ -659,22 +659,22 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		}
 		
 		
-		var codProduto = $('#codigoProduto').val();
+		var codProduto = $('#codigoProduto',this.workspace).val();
 		
 		if(codProduto == ""){
-			codProduto = $('#codigoProduto').text();
+			codProduto = $('#codigoProduto',this.workspace).text();
 		}
 		
-		numEdicao = $('#numeroEdicao').val()
+		numEdicao = $('#numeroEdicao',this.workspace).val();
 		
 		if(numEdicao == ""){
-			var numEdicao = $('#numeroEdicao').html()
+			var numEdicao = $('#numeroEdicao', this.workspace).html();
 		}
 		
 		data.push({name : "codigoProduto", value : codProduto});
 		data.push({name : "numeroEdicao", value : numEdicao});
-		data.push({name : "idLancamento", value : $('#idLancamento').val()});
-		data.push({name : "dataLancamento", value: $('#dataLancamento').html()});
+		data.push({name : "idLancamento", value : $('#idLancamento',this.workspace).val()});
+		data.push({name : "dataLancamento", value: $('#dataLancamento',this.workspace).html()});
         //TODO adicionar numero periodo caso o idLancamento nao s
 
 		$.postJSON(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(result) {

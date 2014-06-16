@@ -7,7 +7,7 @@ var distribuicaoManual = $.extend(true, {
 	hiddenStatusCota : '<input type="hidden" id="statusCotaGrid#index" value="#valor"/>',
 	inputNomeCota : '<div><input type="text" class="inputNomeCotaGrid" id="nomeCotaGrid#index" value="#valor" onblur="distribuicaoManual.checaSeRemoveu(\'#nomeCotaGrid#index\', #index)"></div>',
 	inputPercEstoque : '<div class="textoGridCota" id="percEstoqueGrid#index" >#valor</div>',
-	inputReparte : '<div><input type="text" class="inputGridCota" id="reparteGrid#index" name="reparteGrid" value="#valor" onchange="distribuicaoManual.calcularPercEstoque(#index)" class="inputGridCota" /></div>',
+	inputReparte : '<div><input type="text" class="inputGridCota" id="reparteGrid#index" name="reparteGrid" value="#valor" onkeypress="distribuicaoManual.keyupFunction(event, #index)" onchange="distribuicaoManual.calcularPercEstoque(#index)" class="inputGridCota" /></div>',
 	inputNumeroCota : '<div><input type="text" class="inputGridCota" id="numeroCotaGrid#index" name="numeroCotaGrid" value="#valor" onchange="distribuicaoManual.pesquisarCota(\'#numeroCotaGrid#index\', #index)" /></div>',
 	idLancamento : 0,
 	isSolicitarSenhaReparte : true,
@@ -106,6 +106,14 @@ var distribuicaoManual = $.extend(true, {
 			}
 		}
 		return soma;
+	},
+	
+	keyupFunction : function(event, index){
+		
+		if (event && event.keyCode == 13){
+			$("#numeroCotaGrid"+(index+1)).focus();
+			this.calcularPercEstoque(index);
+		}
 	},
 	
 	calcularPercEstoque : function(index) {

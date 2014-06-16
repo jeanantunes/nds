@@ -57,12 +57,14 @@ import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
@@ -88,6 +90,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ImpressaoMatricialUtil;
 import br.com.abril.nds.util.JasperUtil;
+import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.StringUtil;
 
 @Service
@@ -143,6 +146,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     
     @Autowired
     private RoteirizacaoRepository roteirizacaoRepository;
+    
+    @Autowired
+    private BoletoRepository boletoRepository;
     
     /**
      * BOLETO/COBRANCA
@@ -214,6 +220,29 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         }
         
         return arquivo;
+    }
+    
+    @Transactional
+    @Override
+    public byte[] gerarDocumentoCobrancaComSlip(final List<GeraDividaDTO> dividas, final TipoCobranca tipoCobranca) {
+        
+        final List<String> listNossoNumero = getNossoNumeros(dividas);
+        final List<byte[]> arquivos = new ArrayList<byte[]>();
+        
+        try {
+            for (String nossoNumero : listNossoNumero){
+                
+                final Boleto boleto = this.boletoRepository.obterPorNossoNumero(nossoNumero,null,false);
+                
+                arquivos.add(this.boletoService.gerarImpressaoBoleto(boleto));
+                arquivos.add(this.gerarSlipCobranca(boleto, true, TipoArquivo.PDF));
+            }
+        } catch (Exception e) {
+            
+            throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage() + " ao gerar arquivo de cobrança + Slip");
+        }
+        
+        return PDFUtil.mergePDFs(arquivos);
     }
     
 	                                        /**
@@ -1368,7 +1397,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             final boolean incluirNumeroSlip,
             final TipoArquivo tpArquivo) {
         
-        final Cobranca cobranca = cobrancaRepository.obterCobrancaPorNossoNumero(nossoNumero);
+        return this.gerarSlipCobranca(
+                this.cobrancaRepository.obterCobrancaPorNossoNumero(nossoNumero), 
+                incluirNumeroSlip, tpArquivo);
+    }
+    
+    private byte[] gerarSlipCobranca(final Cobranca cobranca,
+            final boolean incluirNumeroSlip,
+            final TipoArquivo tpArquivo) {
         
         if (cobranca == null){
             
