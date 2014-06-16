@@ -288,6 +288,7 @@ public class EstudoAlgoritmoService {
                 ed.setPeriodo(base.getPeriodo());
                 ed.setParcial(base.isParcial());
                 ed.setEdicaoAberta(definicaoBasesDAO.traduzStatus(base.getStatus()));
+                ed.setDataLancamento(base.getDataLancamento());
                 edicoesBase.add(ed);
             }
             estudo.setEdicoesBase(edicoesBase);
