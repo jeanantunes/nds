@@ -306,7 +306,6 @@ public class NFeServiceImpl implements NFeService {
 		return dataRecolhimento;
 	}
 	
-	
 	@Override
 	@Transactional
 	public synchronized List<CotaExemplaresDTO> busca(final Intervalo<Integer> intervaloBox,
@@ -1015,6 +1014,8 @@ public class NFeServiceImpl implements NFeService {
 	        } else {
             	return this.naturezaOperacaoRepository.obterNaturezaOperacao(distribuidor.getTipoAtividade(), TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA, false, false);
             }
+
         }		
 	}
+    
 }

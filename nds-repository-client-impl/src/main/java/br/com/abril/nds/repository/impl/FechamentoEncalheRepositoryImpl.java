@@ -483,7 +483,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     
     @Override
     public Integer obterTotalCotasAusentes(final Date dataEncalhe, final Integer diaRecolhimento,
-            final boolean isSomenteCotasSemAcao, final String sortorder, final String sortname, final int page, final int rp) {
+            final boolean isSomenteCotasSemAcao, final String sortorder, final String sortname, final int page, final int rp,
+            Integer numeroCota) {
         
         final StringBuilder sql = new StringBuilder();
         
@@ -491,11 +492,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         sql.append(" ( ");
         
-        sql.append(getSqlCotaAusenteComChamadaEncalhe(true, isSomenteCotasSemAcao).toString());
+        sql.append(getSqlCotaAusenteComChamadaEncalhe(true, isSomenteCotasSemAcao, numeroCota).toString());
         
         sql.append(" union all ");
         
-        sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, false).toString());
+        sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, false, numeroCota).toString());
         
         sql.append(" ) as ausentes	");
         
@@ -515,13 +516,19 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
         
+        if (numeroCota != null){
+            
+            query.setParameter("numeroCota", numeroCota);
+        }
+        
         final BigInteger qtde = (BigInteger) query.uniqueResult();
         
         return qtde != null ? qtde.intValue() : 0;
         
     }
     
-    private StringBuilder getSqlCotaAusenteComChamadaEncalhe(final boolean indCount, final boolean isSomenteCotasSemAcao) {
+    private StringBuilder getSqlCotaAusenteComChamadaEncalhe(final boolean indCount, final boolean isSomenteCotasSemAcao,
+            Integer numeroCota) {
         
         final StringBuilder sql = new StringBuilder();
         
@@ -623,6 +630,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             sql.append(" and ( chamadaEncalheCota.FECHADO = false or chamadaEncalheCota.FECHADO is null ) 		");
             
             sql.append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ");
+        }
+        
+        if (numeroCota != null){
+            
+            sql.append(" and cota.NUMERO_COTA = :numeroCota ");
         }
         
         sql.append("	group by                                      ");
@@ -757,7 +769,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     
     
     private StringBuilder getSqlCotaAusenteSemChamadaEncalhe(final boolean indCount,
-            final boolean ignorarUnificacao) {
+            final boolean ignorarUnificacao, Integer numeroCota) {
         
         final StringBuilder sqlMovimentoFinaceiroCotaNaoConsolidado = new StringBuilder();
         
@@ -891,6 +903,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("						 chamadaEncalhe.DATA_RECOLHIMENTO = :dataEncalhe )                 ");
         sql.append("		)                                                                                  ");
         
+        if (numeroCota != null){
+            
+            sql.append("and cota.NUMERO_COTA = :numeroCota ");
+        }
+        
         sql.append("	group by    ");
         
         sql.append("    cota.ID, indMFCNaoConsolidado ");
@@ -907,11 +924,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         final StringBuilder sql = new StringBuilder();
         
-        sql.append(getSqlCotaAusenteComChamadaEncalhe(false, isSomenteCotasSemAcao).toString());
+        sql.append(getSqlCotaAusenteComChamadaEncalhe(false, isSomenteCotasSemAcao, null).toString());
         
         sql.append(" union all ");
         
-        sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, false).toString());
+        sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, false, null).toString());
         
         if("acao".equals(sortname)) {
             
@@ -1440,7 +1457,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         sql.append(getSqlCotaAusenteComChamadaEncalheSemPostergado(true, isSomenteCotasSemAcao, ignorarUnificacao).toString());
         sql.append(" union all ");
-        sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, ignorarUnificacao).toString());
+        sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, ignorarUnificacao, null).toString());
         
         sql.append(" ) as ausentes	");
         
