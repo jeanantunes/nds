@@ -227,9 +227,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 						buttons : {
 							"Sim" : function() {
 								
-								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
-								
 								ConferenciaEncalheCont.excluirNotasFiscaisPorReabertura(data);
+								
+								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
 								
 								ConferenciaEncalheCont.carregarListaConferencia(data);
 								

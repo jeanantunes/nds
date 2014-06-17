@@ -376,7 +376,7 @@ public class ConferenciaEncalheController extends BaseController {
 	public void iniciarConferenciaEncalhe(final Integer numeroCota){
 		
 		limparDadosSessao();
-
+		this.removerTravaConferenciaEncalheCotaUsuario();
 		final Cota cota = this.conferenciaEncalheService.validarCotaParaInicioConferenciaEncalhe(numeroCota);
 		
 		if (conferenciaEncalheSessionScopeAttr.getIdBoxLogado() == null){
@@ -402,16 +402,13 @@ public class ConferenciaEncalheController extends BaseController {
 				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
 			
 			} else {
-				this.result.use(CustomMapJson.class)
-				    .put("IND_COTA_RECOLHE_NA_DATA", "N")
-				    .put("msg", "Cota não possui recolhimento planejado para a data de operação atual.").serialize();
+				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg", "Cota não possui recolhimento planejado para a data de operação atual.").serialize();
 			}
 		}
 		
 		this.session.setAttribute(NUMERO_COTA, numeroCota);
         this.session.setAttribute(COTA, cota);
         this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
-        
 		
 	}
 	
@@ -474,8 +471,13 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 
 	@Post
-    public void excluirNotasFiscaisPorReabertura(Integer numeroCota, final boolean indObtemDadosFromBD, final boolean indConferenciaContingencia) {
-        this.excluirNotasFiscaisPorReabertura(numeroCota, indObtemDadosFromBD, indConferenciaContingencia);
+    public void excluirNotasFiscaisPorReabertura(final Integer numeroCota, final boolean indConferenciaContingencia) {
+	    
+	    final InfoConferenciaEncalheCota infoConfereciaEncalheCota = conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota, indConferenciaContingencia);
+	    
+	    System.out.println(infoConfereciaEncalheCota);
+	    
+        this.conferenciaEncalheService.excluirNotasFiscaisPorReabertura(infoConfereciaEncalheCota);
     }
 	
 	/**
@@ -488,9 +490,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 * 
 	 * @return Map
 	 */
-	private Map<String, Object> obterMapaConferenciaEncalhe(Integer numeroCota,
-			final boolean indObtemDadosFromBD,
-			final boolean indConferenciaContingencia) {
+	private Map<String, Object> obterMapaConferenciaEncalhe(Integer numeroCota, final boolean indObtemDadosFromBD, final boolean indConferenciaContingencia) {
 
 		final Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
