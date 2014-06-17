@@ -1174,8 +1174,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 
-		final ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
-				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
+		final ControleConferenciaEncalheCota controleConferenciaEncalheCota = controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
 		
 		final InfoConferenciaEncalheCota infoConfereciaEncalheCota = new InfoConferenciaEncalheCota();
 		
@@ -1870,6 +1869,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		conferenciaEncalheBackup.setPrecoCapa(conferenciaEncalheDTO.getPrecoCapa());
 		
 		conferenciaEncalheBackup.setPrecoComDesconto(conferenciaEncalheDTO.getPrecoComDesconto());
+		
+		conferenciaEncalheBackup.setProcessoUtilizaNfe(conferenciaEncalheDTO.isProcessoUtilizaNfe());
 		
 		conferenciaEncalheBackupRepository.adicionar(conferenciaEncalheBackup);
 		
