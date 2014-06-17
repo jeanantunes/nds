@@ -509,7 +509,9 @@ public class NFeServiceImpl implements NFeService {
         for(final ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
             
             codigoProduto 		= itemNotaEnvio.getCodigoProduto().toString();
-            descricaoProduto 	= itemNotaEnvio.getPublicacao();
+            descricaoProduto 	= (itemNotaEnvio.getFuroProduto()==null)
+            		? itemNotaEnvio.getPublicacao()
+            				:itemNotaEnvio.getPublicacao()+" * ";
             produtoEdicao		= itemNotaEnvio.getProdutoEdicao().getNumeroEdicao();
             
             valorUnitarioProduto = itemNotaEnvio.getPrecoCapa();
