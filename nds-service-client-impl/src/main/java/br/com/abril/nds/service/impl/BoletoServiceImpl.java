@@ -62,6 +62,7 @@ import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoAntecipado;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.CobrancaBoletoEmBranco;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
@@ -80,6 +81,7 @@ import br.com.abril.nds.repository.BoletoAntecipadoRepository;
 import br.com.abril.nds.repository.BoletoEmailRepository;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
+import br.com.abril.nds.repository.CobrancaBoletoEmBrancoRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -205,6 +207,9 @@ public class BoletoServiceImpl implements BoletoService {
     
     @Autowired
     private NegociacaoDividaService negociacaoDividaService;
+    
+    @Autowired
+    private CobrancaBoletoEmBrancoRepository cobrancaBoletoEmBrancoRepository;
 	                                        /**
      * Método responsável por obter boletos por numero da cota
      * 
@@ -1933,18 +1938,34 @@ public class BoletoServiceImpl implements BoletoService {
         
         final BoletoAntecipado boletoAntecipado = boletoAntecipadoRepository.obterBoletoAntecipadoPorNossoNumero(nossoNumero);
         
-        if (boletoAntecipado == null){
+        if (boletoAntecipado != null){
+            
+            final GeradorBoleto geradorBoleto = new GeradorBoleto(this.geraCorpoBoletoEmBranco(nossoNumero));
+            
+            final byte[] b = geradorBoleto.getBytePdf();
+            
+            boletoAntecipado.setVias(boletoAntecipado.getVias() + 1);
+            
+            boletoAntecipadoRepository.merge(boletoAntecipado);
+            
+            return b;
+        }
+        
+        final CobrancaBoletoEmBranco boletoEmBranco = this.cobrancaBoletoEmBrancoRepository.obterPorNossoNumero(nossoNumero);
+        
+        if (boletoEmBranco == null){
             
             return null;
         }
         
-        final GeradorBoleto geradorBoleto = new GeradorBoleto(this.geraCorpoBoletoEmBranco(nossoNumero));
+        final GeradorBoleto geradorBoleto = new GeradorBoleto(this.geraCorpoBoletoEmBranco(boletoEmBranco.getCota(), 
+                boletoEmBranco.getDataEmissao(), boletoEmBranco.getDataVencimento(), 
+                boletoEmBranco.getBanco(), boletoEmBranco.getValor(), BigDecimal.ZERO, BigDecimal.ZERO, 
+                nossoNumero, boletoEmBranco.getDigitoNossoNumero()));
         
         final byte[] b = geradorBoleto.getBytePdf();
         
-        boletoAntecipado.setVias(boletoAntecipado.getVias() + 1);
-        
-        boletoAntecipadoRepository.merge(boletoAntecipado);
+        cobrancaRepository.incrementarVia(nossoNumero);
         
         return b;
     }
@@ -2382,7 +2403,7 @@ public class BoletoServiceImpl implements BoletoService {
                                 numeroBancoBoletoAntecipado + bbDTO.getIdBoletoAntecipado(),
                                 banco!=null?banco.getAgencia():0,
                                         banco!=null?banco.getConta():0,
-                                                banco!=null?banco.getCarteira():0);
+                                                banco != null && banco.getCarteira() != null ? banco.getCarteira() : 0);
         
         final String digitoNossoNumero = Util.calcularDigitoVerificador(nossoNumero,
                 banco!=null?banco.getCodigoCedente():"0",

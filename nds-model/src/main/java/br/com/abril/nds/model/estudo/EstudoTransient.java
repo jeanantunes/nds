@@ -53,6 +53,10 @@ public class EstudoTransient extends EstudoGerado {
     
     private Date dataLancamento;
 
+    private Long usuarioId;
+
+    private String tipoGeracao;
+    
     public EstudoTransient() {
 	excedenteDistribuir = BigDecimal.ZERO;
 	usarFixacao = true;
@@ -190,6 +194,7 @@ public class EstudoTransient extends EstudoGerado {
 
     public void setUsuario(Usuario usuario) {
 	this.usuario = usuario;
+	this.usuarioId = usuario.getId();
     }
 
     public LinkedList<CotaEstudo> getCotasExcluidas() {
@@ -287,6 +292,22 @@ public class EstudoTransient extends EstudoGerado {
 	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
 	}
+    
+    public Long getUsuarioId() {
+        return usuarioId;
+    }
+    
+    public void setUsuarioId(Long usuarioId) {
+        this.usuarioId = usuarioId;
+    }
+
+    public String getTipoGeracao() {
+        return tipoGeracao;
+    }
+
+    public void setTipoGeracao(String tipoGeracao) {
+        this.tipoGeracao = tipoGeracao;
+    }
 
     @Override
     public String toString() {
