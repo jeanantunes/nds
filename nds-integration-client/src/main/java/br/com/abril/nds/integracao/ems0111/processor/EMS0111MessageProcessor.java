@@ -131,14 +131,17 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		 */
 		final Date dataGeracaoArquivo = input.getDataLancamento();
 
+		StatusLancamento[] statusLancamento =
+	        new StatusLancamento[] {StatusLancamento.CONFIRMADO, StatusLancamento.PLANEJADO};
+		
 		Lancamento lancamento =
-	        this.getLancamentoPrevistoMaisProximo(produtoEdicao, dataGeracaoArquivo);
+	        this.getLancamentoPrevistoMaisProximo(produtoEdicao, dataGeracaoArquivo, statusLancamento);
 		
 		if (lancamento == null ) {
 		
 		    lancamento =
 	            this.getLancamentoPrevistoMaisProximo(
-                    produtoEdicao, distribuidorRepository.obterDataOperacaoDistribuidor());
+                    produtoEdicao, distribuidorRepository.obterDataOperacaoDistribuidor(), null);
 		}
 	    
 		if (lancamento == null ) {
@@ -241,6 +244,19 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			return;
 			
 		} else {
+		    
+		    boolean alterarData;
+		    
+		    if (!lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)
+		            && !lancamento.getStatus().equals(StatusLancamento.PLANEJADO)) {
+		        
+		        alterarData = false;
+		        
+		    } else {
+		        
+		        alterarData = true;
+		    }
+		    
 			lancamento.setAlteradoInteface(true);
 			/*
 			 * Atualizar Lançamento:
@@ -283,77 +299,80 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				lancamento.setRepartePromocional(repartePromocional);
 			}
 			
-			final Date dataLancamento = input.getDataLancamento();
+			if (alterarData) {
 			
-			
-			// Remover a hora, minuto, segundo e milissegundo para comparação:
-			final Date dtLancamentoAtual = this.normalizarDataSemHora(
-					lancamento.getDataLancamentoPrevista());
-			Date dtLancamentoNovo = lancamentoService.obterDataLancamentoValido(this.normalizarDataSemHora(dataLancamento),new Long(produtoEdicao.getProduto().getFornecedor().getId()));
-			if (null != dtLancamentoAtual && !dtLancamentoAtual.equals(dtLancamentoNovo)) {
-				this.ndsiLoggerFactory.getLogger().logInfo(message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração da DATA LANCAMENTO PREVISTO"
-								+ " de " + DateUtil.formatarDataPTBR(dtLancamentoAtual)
-								+ " para " + DateUtil.formatarDataPTBR(dtLancamentoNovo)
-								+ " Produto "+codigoProduto
-								+ " Edição " + edicao);
-				lancamento.setDataLancamentoPrevista(dtLancamentoNovo);
-				
-				boolean erroRetornoParciais =
-					this.tratarParciais(lancamento, message, codigoProduto, edicao);
-				
-				if (erroRetornoParciais) {
-					return;
-				}
-				/*
-				this.ndsiLoggerFactory.getLogger().logError(message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração do Lancamento para Produto "
-								+ codigoProduto
-								+ " Edição " + edicao);
-				*/
-			}
-			
-			// Atualizar lançamento Distribuidor:
-			final StatusLancamento status = (lancamento.getReparte().compareTo(BigInteger.ZERO) == 0) ? StatusLancamento.CANCELADO : lancamento.getStatus();
-			
-			boolean isStatusAlteracaoDataLancamento = ( (StatusLancamento.PLANEJADO.equals(status)) || (StatusLancamento.CONFIRMADO.equals(status)) || (StatusLancamento.FURO.equals(status)) ); 
-			
-			final Date dtLancamentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataLancamentoDistribuidor());
-			
-			if (null != dtLancamentoDistribuidor && !	dtLancamentoDistribuidor.equals(dtLancamentoNovo) && isStatusAlteracaoDataLancamento) {
-				
-				//if(dtLancamentoNovo.before(distribuidorService.obterDataOperacaoDistribuidor())){
-				
-					try { 
-					 //dtLancamentoNovo = getDiaMatrizAberta(dtLancamentoNovo, lancamento.getDataRecolhimentoDistribuidor(),message,codigoProduto,edicao);
-					 dtLancamentoNovo = lancamentoService.obterDataLancamentoValido(input.getDataLancamento(), produtoEdicao.getProduto().getFornecedor().getId());
-				    } catch (Exception e) {
-					  return;
-				    }
-				//}
-				// Alterado por solicitacao da trac 185
-				
-				if(!simpleDateFormat.format(dtLancamentoNovo).equals(simpleDateFormat.format(dtLancamentoDistribuidor))){
-				
-					this.ndsiLoggerFactory.getLogger().logInfo(message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração da DATA LANCAMENTO DISTRIBUIDOR"						
-						+ " de " + simpleDateFormat.format(dtLancamentoDistribuidor)
-								+ " para " + DateUtil.formatarDataPTBR(dtLancamentoNovo)
-								+ " Produto "+codigoProduto
-								+ " Edição " + edicao);
-				}
-				
-				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
-				
-				boolean erroRetornoParciais =
-					this.tratarParciais(lancamento, message, codigoProduto, edicao);
-				
-				if (erroRetornoParciais) {
-					return;
-				}
+    			final Date dataLancamento = input.getDataLancamento();
+    			
+    			
+    			// Remover a hora, minuto, segundo e milissegundo para comparação:
+    			final Date dtLancamentoAtual = this.normalizarDataSemHora(
+    					lancamento.getDataLancamentoPrevista());
+    			Date dtLancamentoNovo = lancamentoService.obterDataLancamentoValido(this.normalizarDataSemHora(dataLancamento),new Long(produtoEdicao.getProduto().getFornecedor().getId()));
+    			if (null != dtLancamentoAtual && !dtLancamentoAtual.equals(dtLancamentoNovo)) {
+    				this.ndsiLoggerFactory.getLogger().logInfo(message,
+    						EventoExecucaoEnum.INF_DADO_ALTERADO,
+    						"Alteração da DATA LANCAMENTO PREVISTO"
+    								+ " de " + DateUtil.formatarDataPTBR(dtLancamentoAtual)
+    								+ " para " + DateUtil.formatarDataPTBR(dtLancamentoNovo)
+    								+ " Produto "+codigoProduto
+    								+ " Edição " + edicao);
+    				lancamento.setDataLancamentoPrevista(dtLancamentoNovo);
+    				
+    				boolean erroRetornoParciais =
+    					this.tratarParciais(lancamento, message, codigoProduto, edicao);
+    				
+    				if (erroRetornoParciais) {
+    					return;
+    				}
+    				/*
+    				this.ndsiLoggerFactory.getLogger().logError(message,
+    						EventoExecucaoEnum.INF_DADO_ALTERADO,
+    						"Alteração do Lancamento para Produto "
+    								+ codigoProduto
+    								+ " Edição " + edicao);
+    				*/
+    			}
+    			
+    			// Atualizar lançamento Distribuidor:
+    			final StatusLancamento status = (lancamento.getReparte().compareTo(BigInteger.ZERO) == 0) ? StatusLancamento.CANCELADO : lancamento.getStatus();
+    			
+    			boolean isStatusAlteracaoDataLancamento = ( (StatusLancamento.PLANEJADO.equals(status)) || (StatusLancamento.CONFIRMADO.equals(status)) || (StatusLancamento.FURO.equals(status)) ); 
+    			
+    			final Date dtLancamentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataLancamentoDistribuidor());
+    			
+    			if (null != dtLancamentoDistribuidor && !	dtLancamentoDistribuidor.equals(dtLancamentoNovo) && isStatusAlteracaoDataLancamento) {
+    				
+    				//if(dtLancamentoNovo.before(distribuidorService.obterDataOperacaoDistribuidor())){
+    				
+    					try { 
+    					 //dtLancamentoNovo = getDiaMatrizAberta(dtLancamentoNovo, lancamento.getDataRecolhimentoDistribuidor(),message,codigoProduto,edicao);
+    					 dtLancamentoNovo = lancamentoService.obterDataLancamentoValido(input.getDataLancamento(), produtoEdicao.getProduto().getFornecedor().getId());
+    				    } catch (Exception e) {
+    					  return;
+    				    }
+    				//}
+    				// Alterado por solicitacao da trac 185
+    				
+    				if(!simpleDateFormat.format(dtLancamentoNovo).equals(simpleDateFormat.format(dtLancamentoDistribuidor))){
+    				
+    					this.ndsiLoggerFactory.getLogger().logInfo(message,
+    						EventoExecucaoEnum.INF_DADO_ALTERADO,
+    						"Alteração da DATA LANCAMENTO DISTRIBUIDOR"						
+    						+ " de " + simpleDateFormat.format(dtLancamentoDistribuidor)
+    								+ " para " + DateUtil.formatarDataPTBR(dtLancamentoNovo)
+    								+ " Produto "+codigoProduto
+    								+ " Edição " + edicao);
+    				}
+    				
+    				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
+    				
+    				boolean erroRetornoParciais =
+    					this.tratarParciais(lancamento, message, codigoProduto, edicao);
+    				
+    				if (erroRetornoParciais) {
+    					return;
+    				}
+    			}
 			}
 		}
 	}
@@ -420,17 +439,23 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	 *  
 	 * @param produtoEdicao
 	 * @param dataGeracaoArquivo Data de Geração do Arquivo.
+	 * @param statusLancamento
 	 * 
 	 * @return
 	 */
 	private Lancamento getLancamentoPrevistoMaisProximo(
-			ProdutoEdicao produtoEdicao, Date dataGeracaoArquivo) {
+			ProdutoEdicao produtoEdicao, Date dataGeracaoArquivo, StatusLancamento[] statusLancamento) {
 		
 		Criteria criteria = this.getSession().createCriteria(Lancamento.class);
 
 		criteria.add(Restrictions.ge("dataLancamentoPrevista", dataGeracaoArquivo));
 		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
-		criteria.add(Restrictions.in("status", new StatusLancamento[] {StatusLancamento.CONFIRMADO, StatusLancamento.PLANEJADO}));
+		
+		if (statusLancamento != null) {
+		    
+		    criteria.add(Restrictions.in("status", statusLancamento));
+		}
+		
 		criteria.addOrder(Order.asc("dataLancamentoPrevista"));
 		
 		criteria.setFetchSize(1);
