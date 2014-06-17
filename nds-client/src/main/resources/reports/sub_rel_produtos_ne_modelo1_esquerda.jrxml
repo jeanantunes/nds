@@ -128,6 +128,13 @@
 				<line>
 					<reportElement uuid="807a5072-aeb6-467b-92a1-f63397257107" x="236" y="82" width="100" height="1"/>
 				</line>
+				<staticText>
+					<reportElement uuid="2737531d-b136-450d-aa2b-e817f9e1ea7a" x="0" y="0" width="100" height="12"/>
+					<textElement>
+						<font fontName="Arial" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[(*) Furo de Lançamento ]]></text>
+				</staticText>
 			</band>
 		</groupFooter>
 	</group>

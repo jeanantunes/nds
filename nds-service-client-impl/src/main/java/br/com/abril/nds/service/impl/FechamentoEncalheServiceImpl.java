@@ -710,12 +710,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Override
     @Transactional(readOnly = true)
-    public Integer buscarTotalCotasAusentes(final Date dataEncalhe, final boolean isSomenteCotasSemAcao) {
+    public Integer buscarTotalCotasAusentes(final Date dataEncalhe, final boolean isSomenteCotasSemAcao, 
+            Integer numeroCota) {
         
         final Integer diaRecolhimento = obterDiaRecolhimento(dataEncalhe);
         
         return fechamentoEncalheRepository.obterTotalCotasAusentes(dataEncalhe, diaRecolhimento, isSomenteCotasSemAcao,
-                null, null, 0, 0);
+                null, null, 0, 0, numeroCota);
     }
     
     @Override
