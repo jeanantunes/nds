@@ -32,5 +32,7 @@ public interface MatrizDistribuicaoService {
     public ProdutoDistribuicaoVO obterMatrizDistribuicaoPorEstudo(BigInteger id);
 
     public void removeEstudo(Long idEstudo);
+    
+    public void atualizarPercentualAbrangencia(Long estudoId);
 
     }

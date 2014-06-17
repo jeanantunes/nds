@@ -7,8 +7,10 @@ import java.util.Date;
 
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -29,10 +31,10 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private PeriodicidadeProduto periodo;
 	
     @Export(label = "Preço R$", alignment = Alignment.LEFT, exhibitionOrder = 4)
-	private BigDecimal preco;
+	private String preco;
 	
 	@Export(label = "Status", alignment=Alignment.LEFT, exhibitionOrder = 5)
-	private TipoLancamento status;
+	private StatusLancamento status;
 
 	@Export(label = "Reparte", alignment=Alignment.LEFT, exhibitionOrder = 6)
 	private BigInteger reparteDistribuido;
@@ -41,7 +43,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private BigInteger venda;
 
     @Export(label = "Abrangência", alignment = Alignment.LEFT, exhibitionOrder = 8)
-	private Double percentualAbrangencia;
+	private BigDecimal percentualAbrangencia;
 	
 	@Export(label = "Data Lcto", alignment=Alignment.LEFT, exhibitionOrder = 9)
 	private String dataLcto;
@@ -109,26 +111,26 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public void setPeriodo(PeriodicidadeProduto periodo) {
 		this.periodo = periodo;
 	}
-	public BigDecimal getPreco() {
+	public String getPreco() {
 		return preco;
 	}
 	public void setPreco(BigDecimal preco) {
-		this.preco = preco;
+		this.preco = CurrencyUtil.formatarValor(preco);
 	}
-	public TipoLancamento getStatus() {
+	public StatusLancamento getStatus() {
 		return status;
 	}
-	public void setStatus(TipoLancamento status) {
+	public void setStatus(StatusLancamento status) {
 		this.status = status;
 	}
 	public String getAlgoritmo() {
 		return algoritmo;
 	}
-	public void setAlgoritmo(String algoritmo) {
-		if ((algoritmo == null) || (algoritmo.equals(""))){
+	public void setAlgoritmo(TipoGeracaoEstudo tipoGeracaoEstudo) {
+		if ((tipoGeracaoEstudo == null) || (tipoGeracaoEstudo.equals(""))){
 			this.algoritmo = "";
 		}else{
-			this.algoritmo = algoritmo;
+			this.algoritmo = tipoGeracaoEstudo.getDescricao();
 		}
 	}
 	public BigInteger getReparteDistribuido() {
@@ -152,10 +154,10 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 			this.venda = venda;
 		}
 	}
-	public Double getPercentualAbrangencia() {
+	public BigDecimal getPercentualAbrangencia() {
 		return percentualAbrangencia;
 	}
-	public void setPercentualAbrangencia(Double percentualAbrangencia) {
+	public void setPercentualAbrangencia(BigDecimal percentualAbrangencia) {
 			this.percentualAbrangencia = percentualAbrangencia;
 	}
 	public String getDataLcto() {

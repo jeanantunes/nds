@@ -25,9 +25,11 @@ import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
+import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.caelum.vraptor.Path;
@@ -54,6 +56,9 @@ public class DistribuicaoManualController extends BaseController {
 
     @Autowired
     private LancamentoService lancamentoService;
+    
+    @Autowired
+    private MatrizDistribuicaoService matrizDistribuicaoService;
     
 	@Autowired
 	private HttpSession session;
@@ -101,6 +106,8 @@ public class DistribuicaoManualController extends BaseController {
 		estudo.setDataCadastro(new Date());
 		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 		estudo.setLiberado(false);
+		estudo.setUsuario(getUsuarioLogado());
+		estudo.setTipoGeracaoEstudo(TipoGeracaoEstudo.MANUAL);
 		
 		try {
 		    estudo.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(estudoDTO.getDataLancamento()));
@@ -123,6 +130,8 @@ public class DistribuicaoManualController extends BaseController {
 		estudoService.setIdLancamentoNoEstudo(estudoDTO.getLancamentoId(), estudo.getId());
 		
 		removeItensDuplicadosMatrizDistribuicao();
+		
+		this.matrizDistribuicaoService.atualizarPercentualAbrangencia(estudo.getId());
 		
 		result.use(Results.json()).from(estudo.getId(), "result").serialize();
     }

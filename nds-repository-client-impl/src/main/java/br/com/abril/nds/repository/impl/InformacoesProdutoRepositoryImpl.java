@@ -38,11 +38,11 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" produto.codigoICD AS codigoICD, ");
 		hql.append(" prodEdicao.numeroEdicao AS numeroEdicao, ");
 		hql.append(" produto.nome AS nomeProduto, ");
-		hql.append(" produto.periodicidade AS periodo, ");
+		hql.append(" periodoLancamentoParcial.numeroPeriodo AS periodo, ");
 		hql.append(" prodEdicao.precoVenda AS preco, ");
-		hql.append(" lancamento.tipoLancamento AS status, ");
+		hql.append(" lancamento.status AS status, ");
 		hql.append(" prodEdicao.reparteDistribuido AS reparteDistribuido, ");
-		hql.append(" produto.percentualAbrangencia AS percentualAbrangencia, ");
+		hql.append(" estudoG.abrangencia AS percentualAbrangencia, ");
 		hql.append(" (select t.descricao from TipoClassificacaoProduto t where t.id=prodEdicao.tipoClassificacaoProduto.id) as tipoClassificacaoProdutoDescricao, ");
 		hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
 		hql.append(" lancamento.dataLancamentoDistribuidor AS datalanc, ");
@@ -54,29 +54,27 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" estudoG.liberado AS estudoLiberado, ");
 		hql.append(" estudoG.qtdeReparte AS qtdeReparteEstudo, ");
 
-		hql.append(" (select min(estCota.reparteMinimo)    					" + 
-				   "	from EstudoCotaGerado estCota  							" +
-				   "  	inner join estCota.estudo as estRM                  " + 
-				   "	where estRM.id in (estudoG.id)) as reparteMinimo,   ");
+		hql.append(" coalesce(estudoG.reparteMinimo, 0) as reparteMinimo, ");
 		
-		hql.append(" algortm.descricao AS algoritmo, "); 
+		hql.append(" estudoG.tipoGeracaoEstudo AS algoritmo, ");
 		hql.append(" usuarioEstudo.nome AS nomeUsuario, ");
 		
-		hql.append(" (select sum(estqPC.qtdeRecebida - estqPC.qtdeDevolvida) as totalVenda           " + 
-				"			  from MovimentoEstoqueCota movEC                                        " + 
-				"		      inner join movEC.estoqueProdutoCota AS estqPC                          " + 
-				"				  where estqPC.produtoEdicao = prodEdicao.id) AS venda               ");                                                                
+		hql.append(" (select coalesce(sum(case when (tipo.operacaoEstoque = 'ENTRADA') then mec.qtde else (mec.qtde * -1) end), 0)  ");
+		hql.append(" from MovimentoEstoqueCota mec ");
+		hql.append(" join mec.produtoEdicao pe ");
+		hql.append(" join mec.lancamento lanc ");
+		hql.append(" join mec.tipoMovimento tipo ");
+		hql.append(" where pe.id = prodEdicao.id) AS venda ");
 
-		hql.append(" FROM ProdutoEdicao AS prodEdicao ");
+		hql.append(" FROM Lancamento AS lancamento ");
 		
-		hql.append(" left join prodEdicao.produto AS produto ");
-		hql.append(" left join prodEdicao.lancamentos AS lancamento ");
-		hql.append(" left join produto.algoritmo AS algortm, ");
+		hql.append(" join lancamento.produtoEdicao AS prodEdicao ");
+		hql.append(" join prodEdicao.produto AS produto ");
+		hql.append(" left join lancamento.periodoLancamentoParcial AS periodoLancamentoParcial, ");
 		hql.append(" EstudoGerado as estudoG ");
-		hql.append(" left join estudoG.produtoEdicao ");
 		hql.append(" left join estudoG.usuario as usuarioEstudo ");
 		hql.append(" WHERE ");
-		hql.append(" estudoG.produtoEdicao = prodEdicao ");
+		hql.append(" estudoG.lancamentoID = lancamento.id ");
 		
 		List<String> whereClauseList = new ArrayList<>();
 		
@@ -102,8 +100,8 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		
 		hql.append(StringUtils.join(whereClauseList, " AND "));
 		
+		hql.append(" group BY prodEdicao.id ");
 		
-		hql.append(" group BY estudoG.id ");
 		hql.append(this.ordenarConsultaBuscarProdutos(filtro));
 		
 		Query query = super.getSession().createQuery(hql.toString());
@@ -256,6 +254,8 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesCaracteristicasProdDTO.class));		
 
+		query.setMaxResults(1);
+		
 		return (InformacoesCaracteristicasProdDTO) query.uniqueResult();
 	}
 	

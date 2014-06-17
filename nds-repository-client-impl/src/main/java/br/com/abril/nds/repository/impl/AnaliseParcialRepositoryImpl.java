@@ -262,27 +262,48 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     
     @Override
     @Transactional(readOnly = true)
-    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId) {
+    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase) {
 
         StringBuilder sql = new StringBuilder();
-        sql.append("select distinct ");
-        sql.append("       pe.id produtoEdicaoId, ");
-        sql.append("       p.codigo codigoProduto, ");
-        sql.append("       p.nome nomeProduto, ");
-        sql.append("       pe.numero_edicao edicao, ");
-        sql.append("       plp.numero_periodo periodo, ");
-        sql.append("       tcp.id idTipoClassificacao, ");
-        sql.append("       (case when l.tipo_lancamento = 'PARCIAL' then 1 else 0 end) parcial, ");
-        sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then 0 else 1 end) edicaoAberta ");
-        sql.append("  from estudo_produto_edicao_base epe ");
-        sql.append("  join produto_edicao pe on pe.id = epe.produto_edicao_id ");
-        sql.append("  join produto p on p.id = pe.produto_id ");
-        sql.append("  join lancamento l on l.produto_edicao_id = pe.id ");
-        sql.append("  join periodo_lancamento_parcial plp on plp.lancamento_parcial_id = l.id ");
-        sql.append("  left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
-        sql.append(" where epe.estudo_id = :estudoId ");
-        sql.append("  order by l.data_lcto_distribuidor desc ");
-        sql.append("  , pe.numero_edicao desc, plp.numero_periodo desc ");
+        
+        sql.append(" select pe.id produtoEdicaoId, ");
+        sql.append("        p.codigo codigoProduto, ");
+        sql.append("        p.nome nomeProduto, ");
+        sql.append("        pe.numero_edicao edicao, ");
+        sql.append("        plp.numero_periodo periodo, ");
+        sql.append("        tcp.id idTipoClassificacao, ");
+        sql.append("        (case when plp.id is not null then 1 else 0 end) parcial, ");
+        
+        sql.append("        coalesce( ");
+        sql.append("            sum(mecReparte.QTDE) - ");
+        sql.append("            (select sum(mecEncalhe.qtde) ");
+        sql.append("                from lancamento lanc ");
+        sql.append("                LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
+        sql.append("                LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID ");
+        sql.append("                LEFT JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ");
+        sql.append("                LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
+        sql.append("                LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
+        sql.append("                WHERE lanc.id = l.id) ");
+        sql.append("        , 0) as venda, ");
+        
+        sql.append("        coalesce(sum(mecReparte.QTDE), 0) as reparte, ");
+        sql.append("        (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then 0 else 1 end) edicaoAberta, ");
+        sql.append("        c.numero_cota numeroCota ");
+        sql.append(" from estudo_gerado eg ");
+        sql.append("   join estudo_cota_gerado ecg on ecg.estudo_id = eg.id ");
+        sql.append("   join cota c on c.id = ecg.cota_id ");
+        sql.append("   join produto_edicao pe on pe.id = eg.produto_edicao_id ");
+        sql.append("   join produto p on p.id = pe.produto_id ");
+        sql.append("   join lancamento l on l.PRODUTO_EDICAO_ID = pe.ID ");
+        sql.append("   join periodo_lancamento_parcial plp on plp.ID = l.PERIODO_LANCAMENTO_PARCIAL_ID ");
+        sql.append("   left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
+        sql.append("   left join movimento_estoque_cota mecReparte on mecReparte.lancamento_id = l.id ");
+        sql.append(" where eg.id = :estudoId ");
+        sql.append("   and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
+        sql.append(" group by plp.NUMERO_PERIODO, ecg.cota_id ");
+        sql.append(" order by l.data_lcto_distribuidor desc, ");
+        sql.append("   pe.numero_edicao desc, ");
+        sql.append("   plp.numero_periodo desc ");
 
         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
@@ -292,8 +313,14 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("periodo", StandardBasicTypes.STRING)
                 .addScalar("idTipoClassificacao", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("parcial", StandardBasicTypes.BOOLEAN)
-                .addScalar("edicaoAberta", StandardBasicTypes.BOOLEAN);
+                .addScalar("edicaoAberta", StandardBasicTypes.BOOLEAN)
+                .addScalar("venda", StandardBasicTypes.BIG_DECIMAL)
+                .addScalar("reparte", StandardBasicTypes.BIG_DECIMAL)
+                .addScalar("numeroCota", StandardBasicTypes.INTEGER);
+        
         query.setParameter("estudoId", estudoId);
+        query.setParameter("numeroPeriodoBase", numeroPeriodoBase);
+        
         query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 
         return query.list();
@@ -653,11 +680,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("         plp.numero_periodo numeroPeriodo ");
         sql.append(" from lancamento l ");
         sql.append(" join produto_edicao pe on pe.id = l.produto_edicao_id and pe.id = :id ");
-        sql.append(" join movimento_estoque_cota mec on mec.lancamento_id = l.id and mec.tipo_movimento_id in (13, 26, 32) ");
+        sql.append(" left join movimento_estoque_cota mec on mec.lancamento_id = l.id and mec.tipo_movimento_id in (13, 26, 32) ");
         if (numeroPeriodo == null) {
             sql.append(" left ");
         }
-        sql.append(" join periodo_lancamento_parcial plp on plp.lancamento_parcial_id = l.id and plp.numero_periodo = :numeroPeriodo");
+        sql.append(" join periodo_lancamento_parcial plp on plp.id = l.periodo_lancamento_parcial_id and plp.numero_periodo = :numeroPeriodo");
         sql.append(" group by pe.id, pe.numero_edicao, plp.numero_periodo ");
         sql.append(" order by plp.numero_periodo desc ");
 

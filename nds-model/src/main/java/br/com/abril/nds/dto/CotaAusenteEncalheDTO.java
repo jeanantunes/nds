@@ -54,6 +54,10 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	public CotaAusenteEncalheDTO() {
 		
 	}
+	
+	public CotaAusenteEncalheDTO(Long idCota) {
+		this.idCota=idCota;
+	}
 
 	/**
 	 * @return the numeroCota
@@ -228,6 +232,29 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	public void setOperacaoDiferenciada(boolean operacaoDiferenciada) {
 		this.operacaoDiferenciada = operacaoDiferenciada;
 	}
-	
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((idCota == null) ? 0 : idCota.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CotaAusenteEncalheDTO other = (CotaAusenteEncalheDTO) obj;
+		if (idCota == null) {
+			if (other.idCota != null)
+				return false;
+		} else if (!idCota.equals(other.idCota))
+			return false;
+		return true;
+	}
 }

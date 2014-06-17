@@ -253,6 +253,7 @@ public class CotaDAO {
 	params.put("produto_edicao_id", edicao.getId());
 	if (edicao.isParcial()) {
 	    params.put("numero_periodo", edicao.getPeriodo());
+	    params.put("dtLancamento", edicao.getDataLancamento());
 	}
 	List<CotaEstudo> historicoCotas = jdbcTemplate.query(edicao.isParcial() ? queryHistoricoCotaParcial : queryHistoricoCota, params, new RowMapper<CotaEstudo>() {
 	    @Override
