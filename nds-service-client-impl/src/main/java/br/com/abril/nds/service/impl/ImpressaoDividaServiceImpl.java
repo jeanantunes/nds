@@ -50,7 +50,7 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	    if (comSlip){
     	    
     	    final Integer qtdCotasAusentes = this.fechamentoEncalheService.buscarTotalCotasAusentes(
-    	            filtro.getDataMovimento(), true);
+    	            filtro.getDataMovimento(), true, filtro.getNumeroCota());
     	    
     	    if (qtdCotasAusentes != null && qtdCotasAusentes > 0){
     	        
