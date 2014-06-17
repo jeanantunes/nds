@@ -272,7 +272,7 @@ public class FechamentoEncalheController extends BaseController {
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
 			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, page, rp);
 		
-		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao);
+		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, null);
 		
 		if (listaCotasAusenteEncalhe == null || listaCotasAusenteEncalhe.isEmpty()) {
 			
@@ -296,7 +296,7 @@ public class FechamentoEncalheController extends BaseController {
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
 			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, page, rp);
 		
-		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao);
+		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao,null);
 		
 		if (listaCotasAusenteEncalhe == null || listaCotasAusenteEncalhe.isEmpty()) {
 			
