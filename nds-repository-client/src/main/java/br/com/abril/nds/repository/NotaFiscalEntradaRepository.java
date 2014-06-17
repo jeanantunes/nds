@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
+import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaFiscalEntradaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
@@ -29,7 +30,5 @@ public interface NotaFiscalEntradaRepository extends Repository<NotaFiscalEntrad
 
 	List<ItemDTO<Long, String>> obterListaFornecedorNotaFiscal(List<Long> listaIdNotaFiscal);
 
-	boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio,
-			Long idPessoaJuridica, Date dataEmissao);
-	
+	boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio, Long idPessoaJuridica, Date dataEmissao);
 }

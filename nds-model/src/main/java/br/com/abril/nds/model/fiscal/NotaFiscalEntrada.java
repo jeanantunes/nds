@@ -58,7 +58,7 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	@JoinColumn(name = "CFOP_ID")
 	protected CFOP cfop;
 	
-	@OneToMany(mappedBy = "notaFiscal", cascade={CascadeType.ALL})
+	@OneToMany(mappedBy="notaFiscal", cascade={CascadeType.ALL})
 	protected List<ItemNotaFiscalEntrada> itens = new ArrayList<ItemNotaFiscalEntrada>();	
 	
 	@Column(name = "DATA_RECEBIMENTO")

@@ -141,6 +141,7 @@ import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
+import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -299,6 +300,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Autowired
 	private ConferenciaEncalheBackupRepository conferenciaEncalheBackupRepository;
 	
+
+	@Autowired
+	private NotaFiscalEntradaService notaFiscalEntradaService;
 	
 	private final int PRIMEIRO_DIA_RECOLHIMENTO = 1;
 	
@@ -3586,6 +3590,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Override
 	@Transactional
 	public void excluirNotasFiscaisPorReabertura(final InfoConferenciaEncalheCota infoConfereciaEncalheCota) {
-		this.conferenciaEncalheRepository.excluirNotasFiscaisPorReabertura(infoConfereciaEncalheCota);
+		this.notaFiscalEntradaService.excluirNotasFiscaisPorReabertura(infoConfereciaEncalheCota);
 	}
 }

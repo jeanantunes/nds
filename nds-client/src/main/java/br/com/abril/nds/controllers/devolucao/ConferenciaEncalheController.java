@@ -471,13 +471,21 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 
 	@Post
-    public void excluirNotasFiscaisPorReabertura(final Integer numeroCota, final boolean indConferenciaContingencia) {
+    public void excluirNotasFiscaisPorReabertura(Integer numeroCota, final boolean indObtemDadosFromBD, final boolean indConferenciaContingencia) {
 	    
-	    final InfoConferenciaEncalheCota infoConfereciaEncalheCota = conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota, indConferenciaContingencia);
-	    
-	    System.out.println(infoConfereciaEncalheCota);
-	    
+	    InfoConferenciaEncalheCota infoConfereciaEncalheCota = this.getInfoConferenciaSession();
+        
+        if (infoConfereciaEncalheCota == null || indObtemDadosFromBD){
+            infoConfereciaEncalheCota = conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota, indConferenciaContingencia);
+        }
+        
         this.conferenciaEncalheService.excluirNotasFiscaisPorReabertura(infoConfereciaEncalheCota);
+	    
+        infoConfereciaEncalheCota.setNfeDigitada(false);
+        
+        this.session.setAttribute(INFO_CONFERENCIA, infoConfereciaEncalheCota);
+        
+        this.result.use(CustomJson.class).from("OK").serialize();
     }
 	
 	/**
@@ -583,12 +591,8 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 		
 		for(final ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
-		
-		    if(conferencia.isProcessoUtilizaNfe()){		        
-		        conferencia.setQtdInformada(conferencia.getQtdExemplar());
-		        conferencia.setPrecoCapaInformado(conferencia.getPrecoCapa());
-		    }
-		    
+	        conferencia.setQtdInformada(conferencia.getQtdExemplar());
+	        conferencia.setPrecoCapaInformado(conferencia.getPrecoCapa());
 		}
 		
 	}
@@ -1963,7 +1967,6 @@ public class ConferenciaEncalheController extends BaseController {
             notaFiscal.setValorInformado(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
             notaFiscal.setValorBruto(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
             notaFiscal.setValorDesconto(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
-            
             for(final ConferenciaEncalheDTO conferenciaEncalhe : this.getListaConferenciaEncalheFromSession()) {
                 
                 if(conferenciaEncalhe.isProcessoUtilizaNfe()){

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -72,7 +73,7 @@ public class ItemNotaFiscalEntrada implements Serializable {
 	@Column(name = "QTDE", nullable = false)
 	private BigInteger qtde;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(cascade={CascadeType.ALL})
 	@JoinColumn(name = "NOTA_FISCAL_ID")
 	private NotaFiscalEntrada notaFiscal;
 	

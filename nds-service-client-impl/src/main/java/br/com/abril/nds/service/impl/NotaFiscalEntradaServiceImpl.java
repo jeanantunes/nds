@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
+import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaFiscalEntradaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
@@ -278,10 +279,18 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	}
 
 	@Override
-	public boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio,
-			Long idPessoaJuridica, Date dataEmissao) {
+	@Transactional
+	public boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio, Long idPessoaJuridica, Date dataEmissao) {
 		
-		return this.notaFiscalEntradaRepository.existeNotaFiscalEntradaFornecedor(numeroNotaEnvio,
-				idPessoaJuridica, dataEmissao);
+		return this.notaFiscalEntradaRepository.existeNotaFiscalEntradaFornecedor(numeroNotaEnvio, idPessoaJuridica, dataEmissao);
+	}
+	
+	@Override
+	@Transactional
+	public void excluirNotasFiscaisPorReabertura(final InfoConferenciaEncalheCota infoConfereciaEncalheCota) {
+		if(infoConfereciaEncalheCota.getNotaFiscalEntradaCota() != null) {
+			this.notaFiscalEntradaRepository.remover(infoConfereciaEncalheCota.getNotaFiscalEntradaCota());			
+		}
+		
 	}
 }
