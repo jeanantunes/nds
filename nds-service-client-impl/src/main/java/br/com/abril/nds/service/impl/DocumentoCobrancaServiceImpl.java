@@ -1007,7 +1007,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         parametersSlip.put("VALOR_TOTAL_DESCONTO", slipDTO.getValorTotalDesconto());
         
-        parametersSlip.put("VALOR_TOTAL_PAGAR", totalPagar);
+        parametersSlip.put("VALOR_TOTAL_PAGAR", CurrencyUtil.formatarValor(totalPagar));
         
         parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", distribuidorService.obterRazaoSocialDistribuidor());
         
