@@ -30,9 +30,7 @@ import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.util.ItemAutoComplete;
 
 @Repository
-public class ConferenciaEncalheRepositoryImpl extends
-		AbstractRepositoryModel<ConferenciaEncalhe, Long> implements
-		ConferenciaEncalheRepository {
+public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<ConferenciaEncalhe, Long> implements ConferenciaEncalheRepository {
 
 	public ConferenciaEncalheRepositoryImpl() {
 		super(ConferenciaEncalhe.class);
@@ -823,13 +821,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		BigInteger qtd = (BigInteger) query.uniqueResult();
 		return (boolean) (qtd != null && qtd.longValue() > 0);
-	}
-
-	@Override
-	public void excluirNotasFiscaisPorReabertura(final InfoConferenciaEncalheCota infoConfereciaEncalheCota) {
-		
-		Query query = getSession().createQuery("DELETE FROM ItemNotaFiscalEntrada this_  WHERE this_.cota.id = :idCota");
-		query.setParameter("idCota", infoConfereciaEncalheCota.getIdControleConferenciaEncalheCota()).executeUpdate();
 	}
 	
 }

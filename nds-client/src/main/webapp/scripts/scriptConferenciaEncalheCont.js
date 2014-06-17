@@ -495,6 +495,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			}
 		);
 	},
+	
 	indDistribuidorAceitaJuramentado:null, preProcessarConsultaConferenciaEncalhe : function(result){
 		
 		if (result.mensagens){
@@ -1626,6 +1627,17 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
 		$("#valorNotaFiscal", ConferenciaEncalheCont.workspace).val("");
 		$("#chaveAcessoNFE", ConferenciaEncalheCont.workspace).val("");
+	},
+	
+	excluirNotasFiscaisPorReabertura : function(data) {
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/excluirNotasFiscaisPorReabertura', data,
+			function(result){
+				if (result.mensagens){
+					exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+					return;
+				}
+			}
+		);
 	},
 	
 	/**

@@ -23,8 +23,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
 
 @Repository
-public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<NotaFiscalEntrada, Long> implements
-		NotaFiscalEntradaRepository {
+public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<NotaFiscalEntrada, Long> implements NotaFiscalEntradaRepository {
 
 	public NotaFiscalEntradaRepositoryImpl() {
 		super(NotaFiscalEntrada.class);
@@ -514,6 +513,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		return (Long) query.uniqueResult() > 0;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> pesquisarItensNotaExpedidos(Long idNota) {
 		
@@ -538,19 +538,5 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		
 		return query.list();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }
