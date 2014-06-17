@@ -829,9 +829,9 @@ var fechamentoEncalheController = $.extend(true, {
 					$.each(fechamentoEncalheController.arrayCotasAusentesSession, function(index, value){
 						if(value == row.cell.idCota){
 							if(row.cell.postergado == true || row.cell.postergado == "true") {
-								checkBox = '<input checked="checked" isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" disabled="disabled" />';
+								checkBox = '<input checked="checked" isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this)" value="' + row.cell.idCota + '" disabled="disabled" />';
 							} else {
-								checkBox = '<input checked="checked" isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" />';
+								checkBox = '<input checked="checked" isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this)" value="' + row.cell.idCota + '" />';
 							}
 
 							checked = true;
@@ -840,9 +840,9 @@ var fechamentoEncalheController = $.extend(true, {
 					
 					if(!checked){
 						if(row.cell.postergado == true || row.cell.postergado == "true") {
-							checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" disabled="disabled" />';
+							checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this)" value="' + row.cell.idCota + '" disabled="disabled" />';
 						} else {
-							checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" />';
+							checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this)" value="' + row.cell.idCota + '" />';
 						}
 						
 					}
@@ -873,8 +873,10 @@ var fechamentoEncalheController = $.extend(true, {
 		return resultado;
 	},
 
-	preencherArrayCotasAusentes : function(idCota, checked){
+	preencherArrayCotasAusentes : function(idCota, element){
 		setTimeout (function () {
+			
+			var checked = $(element).attr("checked");
 			
 			//Inverte a lógica de envio, passa enviar os idCotas de exclusão na Controller
 			if(fechamentoEncalheController.checkMarcarTodosCotasAusentes && !checked){

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip_pdf_subreport_resumo_cobranca" pageWidth="496" pageHeight="802" columnWidth="496" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="6f786b87-78b8-469b-98e1-bc55240bac75">
 	<property name="ireport.zoom" value="1.7715610000000015"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="114"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="VALOR_TOTAL_PAGAR" class="java.math.BigDecimal"/>
+	<parameter name="VALOR_TOTAL_PAGAR" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -49,7 +49,7 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{VALOR_TOTAL_PAGAR}.setScale(2,java.math.RoundingMode.HALF_UP)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{VALOR_TOTAL_PAGAR}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
