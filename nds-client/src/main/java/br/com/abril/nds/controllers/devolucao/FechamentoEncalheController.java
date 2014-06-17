@@ -396,26 +396,16 @@ public class FechamentoEncalheController extends BaseController {
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas postergadas com sucesso!"), "result").recursive().serialize();
 	}
 		
-//	private void removerCotasAusentesLista(List<CotaAusenteEncalheDTO> listaCotasAusentes, List<Long> idsCotas) {
-//		
-//		ArrayList<CotaAusenteEncalheDTO> newRefListaCotasAusentes = new ArrayList<CotaAusenteEncalheDTO>(listaCotasAusentes);
-//		
-//		if(idsCotas != null) {
-//			
-//			for(Long idCota : idsCotas) {
-//				for(int i=0; i < listaCotasAusentes.size(); i++) {
-//					CotaAusenteEncalheDTO dto = newRefListaCotasAusentes.get(i);
-//					
-//					if(dto != null && dto.getIdCota().equals(idCota)) {
-//						newRefListaCotasAusentes.add(listaCotasAusentes.get(i));
-//					}
-//				}
-//			}
-//			
-//			listaCotasAusentes.removeAll(newRefListaCotasAusentes);
-//		}
-//		
-//	}
+	private void removerCotasAusentesLista(List<CotaAusenteEncalheDTO> listaCotasAusentes, List<Long> idsCotas) {
+		
+		if(idsCotas != null) {
+			
+			for(Long idCota : idsCotas) {
+
+				listaCotasAusentes.remove(new CotaAusenteEncalheDTO(idCota));
+			}
+		}
+	}
 	
 	@Post
 	public void veificarCobrancaGerada(List<Long> idsCotas, boolean cobrarTodasCotas){
@@ -453,11 +443,11 @@ public class FechamentoEncalheController extends BaseController {
 			
 			if (cobrarTodasCotas) {
 				
-				//idsCotas a serem retirados da lista
-				//removerCotasAusentesLista(listaCotaAusenteEncalhe, idsCotas);
-				
 				List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
 						this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
+				
+				//idsCotas a serem retirados da lista
+				removerCotasAusentesLista(listaCotaAusenteEncalhe, idsCotas);
 				
 				this.realizarCobrancaTodasCotas(dataOperacao, listaCotaAusenteEncalhe);				
 			

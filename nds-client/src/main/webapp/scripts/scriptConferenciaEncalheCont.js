@@ -749,7 +749,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 
 					$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
 				}
-			}
+			}, null, null, false
 		);
 	},
 	
@@ -814,7 +814,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					ConferenciaEncalheCont.atualizarValores(index);
 				}
-			}
+			}, null, null, null, false
 		);
 	},
 	
