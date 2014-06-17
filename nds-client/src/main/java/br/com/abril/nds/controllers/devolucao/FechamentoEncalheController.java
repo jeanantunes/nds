@@ -326,11 +326,7 @@ public class FechamentoEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data de encalhe informada na pesquisa");
 		}
 		
-		Date dataPostergacao = chamadaAntecipadaEncalheService.obterProximaDataEncalhe(dataEncalhe);
-			
-		if (dataPostergacao == null) {
-			dataPostergacao = DateUtil.adicionarDias(dataEncalhe, 1);
-		}
+		Date dataPostergacao = DateUtil.adicionarDias(dataEncalhe, 1);
 		
 		dataPostergacao = 
 			this.calendarioService.adicionarDiasRetornarDiaUtil(dataPostergacao, 0);
@@ -342,7 +338,9 @@ public class FechamentoEncalheController extends BaseController {
 			this.result.use(Results.json()).from(dataFormatada, "result").recursive().serialize();
 			
 		} else {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data util de encalhe encontrada");
+		
 		}
 		
 	}
