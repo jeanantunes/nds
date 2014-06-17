@@ -204,14 +204,17 @@ public class NaturezaOperacaoServiceImpl implements NaturezaOperacaoService {
 		
 		Distribuidor distribuidor = distribuidorRepository.obter();
 		
-		NaturezaOperacao naturezaOperacao = naturezaOperacaoRepository.buscarPorId(naturezaOperacaoId);
-		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
-			if(dtnf.getNaturezaOperacao() != null && !dtnf.getNaturezaOperacao().isEmpty()) {
-				if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
-					return dtnf.getTipoEmissao().getTipoEmissao();
+		if(distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+			
+			NaturezaOperacao naturezaOperacao = naturezaOperacaoRepository.buscarPorId(naturezaOperacaoId);
+			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+				if(dtnf.getNaturezaOperacao() != null && !dtnf.getNaturezaOperacao().isEmpty()) {
+					if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+						return dtnf.getTipoEmissao().getTipoEmissao();
+					}
 				}
-			}
-		}		
+			}		
+		}
 		
 		return null;
 	}
