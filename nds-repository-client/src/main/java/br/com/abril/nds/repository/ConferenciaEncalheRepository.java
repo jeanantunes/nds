@@ -8,6 +8,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -135,4 +136,6 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 			BigInteger qtdeInformada, BigDecimal precoCapaInformado, Long idMovimentoEstoqueCota, Long idMovimentoEstoque, BigInteger qtde);
 
 	public boolean obterProcessoUtilizaNfeConferenciaEncalheCota(Integer numeroCota, Date dataOperacao);
+
+	public void excluirNotasFiscaisPorReabertura(final InfoConferenciaEncalheCota infoConfereciaEncalheCota);
 }

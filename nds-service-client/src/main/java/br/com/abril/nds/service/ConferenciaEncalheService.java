@@ -275,6 +275,6 @@ public interface ConferenciaEncalheService {
 	
 	Cota validarCotaParaInicioConferenciaEncalhe(final Integer numeroCota);
 
-	public void excluirNotasFiscaisPorReabertura(Integer numeroCota, boolean indObtemDadosFromBD, boolean indConferenciaContingencia);
+	public void excluirNotasFiscaisPorReabertura(final InfoConferenciaEncalheCota infoConfereciaEncalheCota);
 	
 }

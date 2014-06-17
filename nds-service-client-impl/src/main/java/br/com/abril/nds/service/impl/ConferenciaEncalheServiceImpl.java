@@ -1255,15 +1255,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		boolean existeBackupConferenciaEncalhe = conferenciaEncalheBackupRepository.existemConferenciasEncalheBackupNaData(numeroCota, dataOperacao);
 		
+		List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = null;
 		if(existeBackupConferenciaEncalhe) {
-			
 			info.setListaConferenciaEncalhe(conferenciaEncalheBackupRepository.obterDadosConferenciasEncalheBackup(numeroCota, dataOperacao));
-			
 			return;
-			
 		}
 		
-		List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = null;
 		
 		if(idControleConfEncalheCota != null) {
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConfEncalheCota);
@@ -1848,8 +1845,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		conferenciaEncalheBackup.setIdConferenciaOriginal(conferenciaEncalheDTO.getIdConferenciaEncalhe());
 		
-		
-		
 		conferenciaEncalheBackup.setDiaRecolhimento(conferenciaEncalheDTO.getDia());
 		
 		conferenciaEncalheBackup.setDataCriacao(dataCriacao);
@@ -1859,17 +1854,19 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		conferenciaEncalheBackup.setObservacao(conferenciaEncalheDTO.getObservacao());
 		
 		conferenciaEncalheBackup.setCota(cota);
-
+		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		
 		produtoEdicao.setId(conferenciaEncalheDTO.getIdProdutoEdicao());
+		
 		conferenciaEncalheBackup.setProdutoEdicao(produtoEdicao);
-
+		
 		conferenciaEncalheBackup.setQtde(conferenciaEncalheDTO.getQtdExemplar());
 		
 		conferenciaEncalheBackup.setQtdeInformada(conferenciaEncalheDTO.getQtdInformada());
 		
 		conferenciaEncalheBackup.setPrecoCapaInformado(conferenciaEncalheDTO.getPrecoCapaInformado());
-
+		
 		conferenciaEncalheBackup.setPrecoCapa(conferenciaEncalheDTO.getPrecoCapa());
 		
 		conferenciaEncalheBackup.setPrecoComDesconto(conferenciaEncalheDTO.getPrecoComDesconto());
@@ -3586,10 +3583,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 
 	@Override
-	public void excluirNotasFiscaisPorReabertura(Integer numeroCota,
-			boolean indObtemDadosFromBD, boolean indConferenciaContingencia) {
-		// TODO Auto-generated method stub
-		
+	@Transactional
+	public void excluirNotasFiscaisPorReabertura(final InfoConferenciaEncalheCota infoConfereciaEncalheCota) {
+		this.conferenciaEncalheRepository.excluirNotasFiscaisPorReabertura(infoConfereciaEncalheCota);
 	}
-
 }

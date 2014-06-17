@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
@@ -38,6 +39,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<Long> obterIdConferenciasExcluidas(Long idControleConfEncalheCota, List<Long> listaIdProdutoEdicaoConferidos) {
 		
 		StringBuilder sql = new StringBuilder();
@@ -792,7 +794,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 	}
 
-
 	@Override
 	public boolean obterProcessoUtilizaNfeConferenciaEncalheCota(Integer numeroCota, Date dataOperacao) {
 		
@@ -822,6 +823,13 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		BigInteger qtd = (BigInteger) query.uniqueResult();
 		return (boolean) (qtd != null && qtd.longValue() > 0);
+	}
+
+	@Override
+	public void excluirNotasFiscaisPorReabertura(final InfoConferenciaEncalheCota infoConfereciaEncalheCota) {
+		
+		Query query = getSession().createQuery("DELETE FROM ItemNotaFiscalEntrada this_  WHERE this_.cota.id = :idCota");
+		query.setParameter("idCota", infoConfereciaEncalheCota.getIdControleConferenciaEncalheCota()).executeUpdate();
 	}
 	
 }
