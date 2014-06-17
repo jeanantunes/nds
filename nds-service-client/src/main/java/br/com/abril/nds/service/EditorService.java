@@ -22,4 +22,7 @@ public interface EditorService {
     public Editor obterEditorPorFornecedor(Long idFornecedor);
 
     public Long criarEditorFornecedor(Long codigoFornecedor);
+
+	public List<Editor> obterEditoresPorNomePessoa(String nomeEditor);
+	
 }

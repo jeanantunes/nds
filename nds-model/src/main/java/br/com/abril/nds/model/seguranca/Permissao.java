@@ -28,6 +28,9 @@ public enum Permissao {
 	ROLE_CADASTRO_COTA_ALTERACAO("Cota", 													   				Permissao.ROLE_CADASTRO, true),
 	ROLE_CADASTRO_COTA("Cota", 																		  	   	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_COTA_ALTERACAO, true, null),
 	
+	ROLE_CADASTRO_EDITOR_ALTERACAO("Editor",												   				Permissao.ROLE_CADASTRO, true),
+	ROLE_CADASTRO_EDITOR("Editor", 																	  	   	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_EDITOR_ALTERACAO, true, null),
+	
 	ROLE_CADASTRO_COTA_BASE_ALTERACAO("Cota Base",											   				Permissao.ROLE_CADASTRO, true),
 	ROLE_CADASTRO_COTA_BASE("Cota Base",															  	   	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_COTA_BASE_ALTERACAO, true, null),
 	

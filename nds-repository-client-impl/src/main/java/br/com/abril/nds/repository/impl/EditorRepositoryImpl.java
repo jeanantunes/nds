@@ -2,7 +2,10 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
@@ -74,4 +77,18 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
         
         return (Editor) query.uniqueResult();
     }
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Editor> obterEditoresPorNomePessoa(String nomeEditor) {
+		
+		final Criteria criteria = super.getSession().createCriteria(Editor.class);
+        
+        criteria.createAlias("pessoaJuridica", "pessoa");
+        
+        criteria.add(Restrictions.or(Restrictions.ilike("pessoa.razaoSocial", nomeEditor, MatchMode.ANYWHERE), 
+        		Restrictions.ilike("pessoa.nomeFantasia", nomeEditor, MatchMode.ANYWHERE)));
+        
+        return criteria.list();
+	}
 }

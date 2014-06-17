@@ -9,9 +9,11 @@ import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
+import br.com.abril.nds.dto.TipoDescontoEditorDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -179,5 +181,9 @@ public interface DescontoService {
             Long produtoEdicaoId, Long produtoId);
 
     Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao();
+
+	List<TipoDescontoEditorDTO> buscarTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro);
+
+	Integer buscarQuantidadeTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro);
 
 }

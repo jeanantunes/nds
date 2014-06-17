@@ -4,13 +4,15 @@ var tipoDescontoController = $.extend(true,  {
 	
 	pesquisar:function () {
 		
-		if(tipoDescontoController.tipoDescontoSelecionado == 'GERAL'){
+		if(tipoDescontoController.tipoDescontoSelecionado == 'GERAL') {
 			tipoDescontoController.pesquisarDescontoGeral();						
-		}else if(tipoDescontoController.tipoDescontoSelecionado == 'ESPECIFICO'){
+		} else if(tipoDescontoController.tipoDescontoSelecionado == 'ESPECIFICO') {
 			tipoDescontoController.pesquisarDescontoEspecifico();
-		}else if (tipoDescontoController.tipoDescontoSelecionado == 'PRODUTO') {
+		} else if(tipoDescontoController.tipoDescontoSelecionado == 'EDITOR') {
+			tipoDescontoController.pesquisarDescontoEditor();
+		} else if (tipoDescontoController.tipoDescontoSelecionado == 'PRODUTO') {
 			tipoDescontoController.pesquisarDescontoProduto();
-		}else{
+		} else {
 			exibirMensagem("WARNING", ['Informe um tipo de desconto para pesquisa!'], "");
 		}	
 	},
@@ -43,6 +45,23 @@ var tipoDescontoController = $.extend(true,  {
 		$(".tiposDescEspecificoGrid",this.workspace).flexReload();
 	},
 	
+	pesquisarDescontoEditor: function() {
+		 
+		var codigoEditor = $("#numEditorPesquisa",this.workspace).val();
+		var nomeEditor = $("#descricaoEditorPesquisa",this.workspace).val();
+		
+		$(".tiposDescEditorGrid",this.workspace).flexOptions({
+			url: contextPath + "/financeiro/tipoDescontoCota/pesquisarDescontoEditor",
+			params: [
+					 {name:'codigoEditor', value:codigoEditor},
+			         {name:'nomeEditor', value:nomeEditor}
+			         ],
+		    newp: 1,
+		});
+		
+		$(".tiposDescEditorGrid",this.workspace).flexReload();
+	},
+	
 	pesquisarDescontoProduto:function(){
 		var codigo = $("#codigoPesquisa",this.workspace).val();
 		var produto = $("#produtoPesquisa",this.workspace).val();
@@ -62,6 +81,7 @@ var tipoDescontoController = $.extend(true,  {
 	mostra_geral:function(){
 		this.preMostra("GERAL");
 		$( '.especifico' ,this.workspace).hide();
+		$( '.editor' ,this.workspace).hide();
 		$( '.produto' ,this.workspace).hide();
 		
 		tipoDescontoController.exibirExportacao(false);
@@ -72,6 +92,17 @@ var tipoDescontoController = $.extend(true,  {
 		this.preMostra("ESPECIFICO");
 		$( '.especifico' ,this.workspace).show();
 		$( '.produto' ,this.workspace).hide();
+		$( '.editor' ,this.workspace).hide();
+		
+		tipoDescontoController.exibirExportacao(false);		
+		$(".grids",this.workspace).show();
+	},
+	
+	mostra_editor:function(){
+		this.preMostra("EDITOR");
+		$( '.editor' ,this.workspace).show();
+		$( '.produto' ,this.workspace).hide();
+		$( '.especifico' ,this.workspace).hide();
 		
 		tipoDescontoController.exibirExportacao(false);		
 		$(".grids",this.workspace).show();
@@ -80,6 +111,7 @@ var tipoDescontoController = $.extend(true,  {
 	mostra_produto:function(){
 		this.preMostra("PRODUTO");
 		$( '.especifico' ,this.workspace).hide();
+		$( '.editor' ,this.workspace).hide();
 		$( '.produto' ,this.workspace).show();
 		
 		tipoDescontoController.exibirExportacao(false);
@@ -135,11 +167,13 @@ var tipoDescontoController = $.extend(true,  {
 			
 			tipoDescontoController.exibirExportacao(false);
 			
-			if(tipoDescontoController.tipoDescontoSelecionado == "PRODUTO"){
+			if(tipoDescontoController.tipoDescontoSelecionado == "PRODUTO") {
 				tipoDescontoController.mostra_produto();
-			}else if (tipoDescontoController.tipoDescontoSelecionado == "GERAL"){
+			} else if (tipoDescontoController.tipoDescontoSelecionado == "GERAL") {
 				tipoDescontoController.mostra_geral();
-			}else{
+			} else if (tipoDescontoController.tipoDescontoSelecionado == "EDITOR") {
+				tipoDescontoController.mostra_editor();
+			} else {
 				tipoDescontoController.mostra_especifico();
 			}
 
@@ -162,7 +196,7 @@ var tipoDescontoController = $.extend(true,  {
 					row.cell.nomeProduto = '<a title="Desconto aplicado em todas as cotas."> ' + row.cell.nomeProduto + '</a>';
 				}	
 								
-			} else{
+			} else {
 				
 				if(row.cell.fornecedor=="Diversos"){
 					var linkFornecedores = '<a href="javascript:;" onclick="tipoDescontoController.carregarFornecedoresAssociadosADesconto('+ row.cell.idTipoDesconto +');">Diversos</a>';
@@ -202,7 +236,7 @@ var tipoDescontoController = $.extend(true,  {
 						id:"id_confirmar_exclusao",text:"Confirmar",
 						click: function() {
 		
-							tipoDescontoController.excluirDesconto(idDesconto,tipoDescontoController.tipoDescontoSelecionado);
+							tipoDescontoController.excluirDesconto(idDesconto, tipoDescontoController.tipoDescontoSelecionado);
 									
 							$( this ).dialog( "close" );
 						}
@@ -249,7 +283,7 @@ var tipoDescontoController = $.extend(true,  {
 	
 	carregarFornecedoresAssociadosADesconto:function(idDesconto){
 		
-		var param = [{name:"idDesconto",value:idDesconto},{name:"tipoDesconto",value:tipoDescontoController.tipoDescontoSelecionado}];
+		var param = [{name:"idDesconto",value:idDesconto},{name:"tipoDesconto", value:tipoDescontoController.tipoDescontoSelecionado}];
 		
 		$(".lstFornecedoresGrid",this.workspace).flexOptions({
 			url: contextPath +"/financeiro/tipoDescontoCota/obterFornecedoresAssociadosDesconto",
@@ -280,7 +314,7 @@ var tipoDescontoController = $.extend(true,  {
 		});	      
 	},
 	
-	init:function(){
+	init: function() {
 		$("#produto",this.workspace).autocomplete({source: ""});		
 		
 			$(".lstFornecedoresGrid",this.workspace).flexigrid({
@@ -299,3 +333,5 @@ var tipoDescontoController = $.extend(true,  {
 			});
 	}
 }, BaseController);
+
+//@ sourceURL=cadastroTipoDesconto.js
