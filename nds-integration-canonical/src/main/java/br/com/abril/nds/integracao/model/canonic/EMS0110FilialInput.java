@@ -267,7 +267,8 @@ public class EMS0110FilialInput extends EMS0110Input implements Serializable {
         return classificacao;
     }
     
-    @Field(offset = 719, length=25)
+    // offset = 719, length=25)
+    @Field(offset = 599, length=2)
     public String getSegmento() {
         return segmento;
     }

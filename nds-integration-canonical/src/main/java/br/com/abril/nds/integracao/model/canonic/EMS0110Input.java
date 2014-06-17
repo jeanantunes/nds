@@ -592,7 +592,8 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
         this.classificacao = classificacao;
     }
     
-    @Field(offset = 701, length=25)
+    //offset = 701, length=25
+    @Field(offset = 581, length=2)
     public String getSegmento() {
         return segmento;
     }
