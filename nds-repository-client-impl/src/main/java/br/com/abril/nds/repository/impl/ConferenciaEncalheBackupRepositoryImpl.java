@@ -164,7 +164,7 @@ public class ConferenciaEncalheBackupRepositoryImpl extends AbstractRepositoryMo
 		((SQLQuery)query).addScalar("pacotePadrao");
 		((SQLQuery)query).addScalar("observacao");
 		((SQLQuery)query).addScalar("juramentada");
-		
+		((SQLQuery)query).addScalar("processoUtilizaNfe", StandardBasicTypes.BOOLEAN);
 		
 		query.setParameter("grupoProdutoCromo", GrupoProduto.CROMO.name());
 		
