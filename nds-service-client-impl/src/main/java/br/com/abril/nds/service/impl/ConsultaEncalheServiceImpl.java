@@ -175,35 +175,6 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		return info;
 	}
 	
-	/**
-	 * Ordena lista de Slip ordenada por Box Especial (Vazio)
-	 * 
-	 * @param listaSlipDTO
-	 * @return List<SlipDTO>
-	 */
-	private List<SlipDTO> ordenarListaSlipDTO(List<SlipDTO> listaSlipDTO){
-		
-		List<SlipDTO> listaSlipDTOEspecial = new ArrayList<SlipDTO>();
-		
-		List<SlipDTO> listaSlipDTONormal = new ArrayList<SlipDTO>();
-		
-		for(SlipDTO sDTO : listaSlipDTO) {
-			
-			if (sDTO.getCodigoBox().equals("")){
-				
-				listaSlipDTOEspecial.add(sDTO);
-			}
-			else{
-				
-				listaSlipDTONormal.add(sDTO);
-			}
-		}
-		
-		listaSlipDTONormal.addAll(listaSlipDTOEspecial);
-		
-		return listaSlipDTONormal;
-	}
-	
 	@Transactional
 	public byte[] gerarDocumentosConferenciaEncalhe(FiltroConsultaEncalheDTO filtro) {
 		
@@ -213,15 +184,16 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		if (listaConferenciaEncalheCotas != null) {
 
-			List<SlipDTO> listaSlipDTO = this.documentoCobrancaService.gerarListaSlipDTOCobranca(listaConferenciaEncalheCotas, false);
-			
-			List<SlipDTO> listaSlipDTOOrdenada = this.ordenarListaSlipDTO(listaSlipDTO);
-			
-			listaSlipDTO = null;
-			
 			List<byte[]> arquivos = new ArrayList<byte[]>();
-
-			arquivos = this.documentoCobrancaService.gerarListaSlipCobranca(listaSlipDTOOrdenada, TipoArquivo.PDF);
+			
+			byte[] arquivo;
+			
+			for (Long idControleConferenciaEncalheCota: listaConferenciaEncalheCotas){
+				
+				arquivo = this.documentoCobrancaService.gerarSlipCobranca(idControleConferenciaEncalheCota, false, TipoArquivo.PDF);
+				
+				arquivos.add(arquivo);	
+			}
 
 			if (arquivos.size() == 1) {
 			

@@ -272,7 +272,7 @@ public class FechamentoEncalheController extends BaseController {
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
 			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, page, rp);
 		
-		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao);
+		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, null);
 		
 		if (listaCotasAusenteEncalhe == null || listaCotasAusenteEncalhe.isEmpty()) {
 			
@@ -296,7 +296,7 @@ public class FechamentoEncalheController extends BaseController {
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
 			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, page, rp);
 		
-		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao);
+		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao,null);
 		
 		if (listaCotasAusenteEncalhe == null || listaCotasAusenteEncalhe.isEmpty()) {
 			
@@ -326,11 +326,7 @@ public class FechamentoEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data de encalhe informada na pesquisa");
 		}
 		
-		Date dataPostergacao = chamadaAntecipadaEncalheService.obterProximaDataEncalhe(dataEncalhe);
-			
-		if (dataPostergacao == null) {
-			dataPostergacao = DateUtil.adicionarDias(dataEncalhe, 1);
-		}
+		Date dataPostergacao = DateUtil.adicionarDias(dataEncalhe, 1);
 		
 		dataPostergacao = 
 			this.calendarioService.adicionarDiasRetornarDiaUtil(dataPostergacao, 0);
@@ -342,7 +338,9 @@ public class FechamentoEncalheController extends BaseController {
 			this.result.use(Results.json()).from(dataFormatada, "result").recursive().serialize();
 			
 		} else {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data util de encalhe encontrada");
+		
 		}
 		
 	}

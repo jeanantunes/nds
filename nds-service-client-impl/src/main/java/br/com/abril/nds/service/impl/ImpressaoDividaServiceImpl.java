@@ -15,6 +15,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.service.DocumentoCobrancaService;
+import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
 
@@ -31,6 +32,9 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
 	
+	@Autowired
+	private FechamentoEncalheService fechamentoEncalheService;
+	
 	@Transactional
 	@Override
 	public byte[] gerarArquivoImpressao(String nossoNumero) {
@@ -42,6 +46,19 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	@Override
 	public byte[] gerarArquivoImpressao(final FiltroDividaGeradaDTO filtro, final boolean comSlip) {
 		
+	    //caso a impressão inclua boleto e slip deve-se verifcar se as cotas ausentes foram cobradas
+	    if (comSlip){
+    	    
+    	    final Integer qtdCotasAusentes = this.fechamentoEncalheService.buscarTotalCotasAusentes(
+    	            filtro.getDataMovimento(), true, filtro.getNumeroCota());
+    	    
+    	    if (qtdCotasAusentes != null && qtdCotasAusentes > 0){
+    	        
+    	        throw new ValidacaoException(TipoMensagem.WARNING, 
+    	                "Não é possível gerar a impressão. Ainda existem cotas pendentes de geração de cobrança.");
+    	    }
+	    }
+	    
 		filtro.setColunaOrdenacao(FiltroDividaGeradaDTO.ColunaOrdenacao.ROTEIRIZACAO);
 		
 		List<GeraDividaDTO> dividas = null;

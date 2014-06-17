@@ -26,6 +26,7 @@ import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
+import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
 import br.com.abril.nds.repository.EstudoComplementarRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
@@ -35,7 +36,8 @@ import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.EstudoComplementarService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
-
+import br.com.abril.nds.service.MatrizDistribuicaoService;
+import br.com.abril.nds.service.UsuarioService;
 
 @Service
 public class EstudoComplementarServiceImpl implements EstudoComplementarService {
@@ -64,6 +66,12 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
     
     @Autowired
     private EstudoService estudoService;
+    
+    @Autowired
+    private UsuarioService usuarioService;
+    
+    @Autowired
+    private MatrizDistribuicaoService matrizDistribuicaoService;
 
     @Override
     @Transactional(readOnly = true)
@@ -143,16 +151,19 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 
 
         EstudoGerado estudo1 = new EstudoGerado();
-        BeanUtils.copyProperties(estudo, estudo1, new String[] {"id", "lancamentos", "estudoCotas"});
+        BeanUtils.copyProperties(estudo, estudo1, new String[] {"id", "lancamentos", "estudoCotas", "dataAlteracao"});
         estudo1.setLiberado(false);
         estudo1.setProdutoEdicao(new ProdutoEdicao(estudoComplementarVO.getIdProdutoEdicao()));
         estudo1.setQtdeReparte(qtdDistribuido);
         estudo1.setReparteDistribuir(qtdDistribuido);
         estudo1.setSobra(estudo1.getQtdeReparte().subtract(estudo1.getReparteDistribuir()));
+        estudo1.setDataCadastro(new Date());
+        estudo1.setUsuario(this.usuarioService.getUsuarioLogado());
+        estudo1.setTipoGeracaoEstudo(TipoGeracaoEstudo.DIVISAO);
 
         // Gera Novo Estudo
         Long idEstudo = estudoGeradoRepository.adicionar(estudo1);
-
+        
         List<EstudoCotaGerado> cotas = new ArrayList<>();
 
         for (EstudoCotaGerado cota : estudoCotas) {
@@ -196,6 +207,8 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
             estudoCotaGeradoRepository.adicionar(cota); 
         }
 
+        this.matrizDistribuicaoService.atualizarPercentualAbrangencia(idEstudo);
+        
         return idEstudo;
     }
 
