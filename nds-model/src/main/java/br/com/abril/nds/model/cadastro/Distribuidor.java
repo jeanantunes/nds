@@ -842,7 +842,7 @@ public class Distribuidor {
 	}
 
 	public boolean isPossuiRegimeEspecialDispensaInterna() {
-		return possuiRegimeEspecialDispensaInterna;
+		return (possuiRegimeEspecialDispensaInterna && dataLimiteVigenciaRegimeEspecial != null ? dataLimiteVigenciaRegimeEspecial.after(new Date()) : false);
 	}
 
 	public void setPossuiRegimeEspecialDispensaInterna(
