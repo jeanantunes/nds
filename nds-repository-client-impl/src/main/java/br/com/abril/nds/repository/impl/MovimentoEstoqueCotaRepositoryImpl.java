@@ -3738,7 +3738,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             .executeUpdate();
     }
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public List<MovimentoEstoqueCota> obterMovimentosComProdutoContaFirme(final Long idLancamento){
     	
     	StringBuilder hql = new StringBuilder();
