@@ -830,14 +830,21 @@ var produtoEdicaoController =$.extend(true,  {
 								$("#produtoEdicaoController-lancamentoExcluido", this.workspace).val(false);
 							}
 							
-							/*
-							if (result.origem == "INTERFACE") {
+							
+							if (result.origemInterface) {
 								
-								$("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
+								if(result.classificacao && result.classificacao.length > 0 ){
+
+									$("#produtoEdicaoController-comboClassificacao",this.workspace).attr("disabled", true);
+								}
+								else{
+									$("#produtoEdicaoController-comboClassificacao",this.workspace).removeAttr("disabled");
+								}
+								
 							}else{
-								$("#produtoEdicaoController-dataLancamento").attr("disabled", true);
+								$("#produtoEdicaoController-comboClassificacao",this.workspace).removeAttr("disabled");
 							}
-							*/
+							
 
 							if (redistribuicao) {
 								
