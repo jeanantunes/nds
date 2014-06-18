@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" columnCount="2" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="1.6500000000000052"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="24"/>
 	<property name="ireport.y" value="0"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
@@ -121,7 +121,7 @@
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="f3efccca-169b-4491-8199-2a67189c892f" style="rel_stext" mode="Opaque" x="204" y="0" width="74" height="20" backcolor="#D3D3D3"/>
+				<reportElement uuid="f3efccca-169b-4491-8199-2a67189c892f" style="rel_stext" mode="Opaque" x="204" y="0" width="72" height="20" backcolor="#D3D3D3"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -163,19 +163,6 @@
 				<textFieldExpression><![CDATA[$F{sm}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="c1792b33-8a89-4f99-abae-9d7c1dfebeaf" style="Estilo Zebrado" stretchType="RelativeToTallestObject" x="0" y="0" width="90" height="20"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<paragraph leftIndent="3"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
-			</textField>
-			<textField>
 				<reportElement uuid="f5889966-cfbe-44e5-b80b-47fb6034e5b3" style="Estilo Zebrado_centralizado" x="164" y="0" width="40" height="20"/>
 				<box>
 					<topPen lineWidth="1.0"/>
@@ -189,7 +176,7 @@
 				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="cd9bd93c-0e08-4fe3-b943-eb3b0692722b" style="Estilo Zebrado_centralizado" mode="Opaque" x="204" y="0" width="74" height="20" backcolor="#D3D3D3"/>
+				<reportElement uuid="cd9bd93c-0e08-4fe3-b943-eb3b0692722b" style="Estilo Zebrado_centralizado" mode="Opaque" x="204" y="0" width="72" height="20" backcolor="#D3D3D3"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -201,6 +188,19 @@
 					<paragraph leftIndent="3"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{materialPromocional}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c1792b33-8a89-4f99-abae-9d7c1dfebeaf" style="Estilo Zebrado" stretchType="RelativeToTallestObject" x="0" y="0" width="90" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

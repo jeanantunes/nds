@@ -36,7 +36,7 @@
 		<band height="69" splitType="Stretch">
 			<elementGroup>
 				<rectangle>
-					<reportElement uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5" x="0" y="0" width="555" height="20" backcolor="#D3D3D3"/>
+					<reportElement uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5" x="0" y="0" width="550" height="20" backcolor="#D3D3D3"/>
 				</rectangle>
 				<staticText>
 					<reportElement uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38" style="rel_stext" x="5" y="0" width="57" height="20"/>
@@ -61,7 +61,7 @@
 			</elementGroup>
 			<elementGroup>
 				<subreport>
-					<reportElement uuid="2880eb6e-6d13-4c92-8ed9-dc100a95f75c" key="" isPrintRepeatedValues="false" x="0" y="24" width="555" height="40"/>
+					<reportElement uuid="2880eb6e-6d13-4c92-8ed9-dc100a95f75c" key="" isPrintRepeatedValues="false" x="0" y="24" width="550" height="40"/>
 					<subreportParameter name="SUBREPORT_DIR">
 						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -87,7 +87,7 @@
 				<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getCodigoBarras()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="697e1b29-83c8-4862-948e-323e2eb91863" style="rel_ftext" x="498" y="0" width="57" height="20"/>
+				<reportElement uuid="697e1b29-83c8-4862-948e-323e2eb91863" style="rel_ftext" x="498" y="0" width="52" height="20"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getPrecoCapaFormatado()]]></textFieldExpression>
 			</textField>
