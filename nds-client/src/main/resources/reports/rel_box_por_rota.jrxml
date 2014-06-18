@@ -77,7 +77,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="6"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[" " + $F{nomeProduto}]]></textFieldExpression>
 				</textField>
@@ -89,8 +89,8 @@
 						<bottomPen lineWidth="1.0"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top">
-						<font size="6"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[" " + $F{codigoDeBarras}]]></textFieldExpression>
 				</textField>
@@ -103,7 +103,7 @@
 						<rightPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="6"/>
+						<font size="8"/>
 						<paragraph leftIndent="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
@@ -116,8 +116,8 @@
 						<bottomPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top">
-						<font size="6" isBold="true"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
 						<paragraph leftIndent="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["R$" + $F{precoCapa}]]></textFieldExpression>
@@ -130,8 +130,8 @@
 						<bottomPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="8"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{totalReparte}]]></textFieldExpression>
 				</textField>
@@ -144,7 +144,7 @@
 						<rightPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="6"/>
+						<font size="8"/>
 					</textElement>
 					<text><![CDATA[Reparte]]></text>
 				</staticText>
