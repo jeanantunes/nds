@@ -957,8 +957,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				}
 			}
 			
-			formaCobranca.getFornecedores().size();
-			
 			formasCobrancaDTO.add(formaCobranca);
 		}
 	}
