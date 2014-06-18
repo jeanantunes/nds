@@ -191,7 +191,7 @@
 	<br />
 	
 	<span class="bt_add">
-		<a isEdicao="true" href="javascript:;" onclick="ConferenciaEncalheCont.adicionarEncalhe();">Incluir Novo</a>
+		<a isEdicao="true" href="javascript:;" onclick="ConferenciaEncalheCont.adicionarEncalhe(true);">Incluir Novo</a>
 	</span>
 	
 	<br />
