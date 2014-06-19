@@ -52,10 +52,11 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * e relacionados a um registro de ControleConferenciaEncalheCota.
 	 * 
 	 * @param idControleConferenciaEncalheCota
+	 * @param processoUtilizaNFe
 	 * 
 	 * @return List- ConferenciaEncalheDTO
 	 */
-	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota);
+	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota, Boolean processoUtilizaNFe);
 
 	
 	/**

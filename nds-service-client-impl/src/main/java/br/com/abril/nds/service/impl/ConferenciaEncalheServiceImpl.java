@@ -1186,7 +1186,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(controleConferenciaEncalheCota != null) {
 			
-			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(controleConferenciaEncalheCota.getId());
+			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(controleConferenciaEncalheCota.getId(), null);
 			
 			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
 			
@@ -1266,7 +1266,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		
 		if(idControleConfEncalheCota != null) {
-			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConfEncalheCota);
+			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConfEncalheCota, null);
 			info.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
 		} 
 		
