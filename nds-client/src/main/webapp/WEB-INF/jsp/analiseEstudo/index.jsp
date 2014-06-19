@@ -3,6 +3,8 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/histogramaPosEstudo.js"></script>
+
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/matrizDistribuicao.js"></script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -18,7 +20,7 @@ $(function(){
 });
 </script>
 
-<div id="histogramaPosEstudoContent" />
+<div id="histogramaPosEstudoContent">
 
 <div id="AnaliseEstudoMainContent">
 
