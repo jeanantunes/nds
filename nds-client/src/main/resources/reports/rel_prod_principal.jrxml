@@ -11,10 +11,10 @@
 	</style>
 	<style name="rel_stext_centralizado" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
 	<style name="rel_ftext_centralizado" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
-	<style name="Estilo Zebrado" backcolor="#F5F5F5" fontName="Arial" fontSize="8">
+	<style name="Estilo Zebrado" backcolor="#F5F5F5" hAlign="Left" fontName="Arial" fontSize="8">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
-			<style mode="Opaque" backcolor="#F5F5F5"/>
+			<style mode="Opaque" backcolor="#F5F5F5" hAlign="Left"/>
 		</conditionalStyle>
 	</style>
 	<style name="Estilo Zebrado_centralizado" backcolor="#F5F5F5" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8">
@@ -118,7 +118,9 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="3"/>
+				</textElement>
 				<textFieldExpression><![CDATA[((br.com.abril.nds.dto.ProdutoMapaCotaDTO)$F{value}).getNomeProduto()]]></textFieldExpression>
 			</textField>
 			<textField>

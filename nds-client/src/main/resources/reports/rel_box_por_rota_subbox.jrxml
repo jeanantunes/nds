@@ -19,7 +19,11 @@
 	</style>
 	<style name="Estilo Zebrado_centralizado" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8">
 		<conditionalStyle>
-			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
+			<conditionExpression><![CDATA[new Boolean(
+    (($V{REPORT_COUNT}.intValue()%2)==0)
+&&
+    $F{value}.equals(0) == true
+)]]></conditionExpression>
 			<style mode="Opaque" backcolor="#CCCCCC"/>
 		</conditionalStyle>
 	</style>
@@ -93,7 +97,7 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="6" isStrikeThrough="false"/>
+					<font size="8" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{key}]]></textFieldExpression>
 			</textField>

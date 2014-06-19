@@ -971,6 +971,8 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" lancamento.dataRecolhimentoDistribuidor between :dataInicioRecolhimento and :dataFimRecolhimento ");
 
 		hql.append(" and lancamento.status = :statusLancamento ");
+		
+		hql.append(" and lancamento.tipoLancamento = :tipoLanc ");
 
 		if (idFornecedor != null) {
 			hql.append(" and fornecedor.id = :idFornecedor ");
@@ -989,6 +991,8 @@ public class LancamentoRepositoryImpl extends
 
 		query.setParameter("statusLancamento",
 				StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		
+		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
 
 		return hql.toString();
 
@@ -1025,6 +1029,8 @@ public class LancamentoRepositoryImpl extends
 
 		query.setParameter("statusLancamento",
 				StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		
+		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
 
 		return (Long) query.uniqueResult();
 

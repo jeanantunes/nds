@@ -273,9 +273,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 					
 					MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaProduto(cota.getId(), estGerado.getProdutoEdicao().getTipoClassificacaoProduto().getId(), estGerado.getProdutoEdicao().getProduto().getCodigoICD());
 					
-					for (RepartePDV pdvMix : mixCotaProduto.getRepartesPDV()) {
-						if(pdvMix.getReparte() != null && pdvMix.getReparte() > 0){
-							++qtdRepartePDVDefinido;
+					if(mixCotaProduto != null){
+						for (RepartePDV pdvMix : mixCotaProduto.getRepartesPDV()) {
+							if(pdvMix.getReparte() != null && pdvMix.getReparte() > 0){
+								++qtdRepartePDVDefinido;
+							}
 						}
 					}
 					
@@ -289,9 +291,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 					
 					FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCotaClassificacao(cota, estGerado.getProdutoEdicao().getProduto().getCodigoICD(), estGerado.getProdutoEdicao().getTipoClassificacaoProduto());
 					
-					for (FixacaoRepartePdv fixacaoPDV : fixacaoReparte.getRepartesPDV()) {
-						if(fixacaoPDV.getRepartePdv() != null && fixacaoPDV.getRepartePdv() > 0){
-							++qtdRepartePDVDefinido;
+					if(fixacaoReparte != null){
+						for (FixacaoRepartePdv fixacaoPDV : fixacaoReparte.getRepartesPDV()) {
+							if(fixacaoPDV.getRepartePdv() != null && fixacaoPDV.getRepartePdv() > 0){
+								++qtdRepartePDVDefinido;
+							}
 						}
 					}
 					
