@@ -658,16 +658,21 @@ var histogramaPosEstudoController = $.extend(true, {
 	
 	desbloquearAnaliseEstudo : function(indexAba) {
 		
-		$.postJSON(
-				contextPath + "/distribuicao/analiseEstudo/desbloquear",
-			null,
-			function() {
-				$("#workspace").tabs("remove", indexAba);
-				removeTabByTitle('Distribuição Venda Média');
-				removeTabByTitle('Distribuição Manual');
-				matrizDistribuicao.mostraTelaMatrizDistribuicao();
-			}
-		);
+		if(typeof matrizDistribuicao != "undefined"){
+			$.postJSON(
+					contextPath + "/distribuicao/analiseEstudo/desbloquear",
+					null,
+					function() {
+						$("#workspace").tabs("remove", indexAba);
+						removeTabByTitle('Distribuição Venda Média');
+						removeTabByTitle('Distribuição Manual');
+						matrizDistribuicao.mostraTelaMatrizDistribuicao();
+					}
+			);
+		}else{
+			$("#workspace").tabs("remove", indexAba);
+		}
+		
 	},
 	
 	voltar : function() {

@@ -13,7 +13,7 @@ $(function() {
 	});
 
 function popup_novo() {
-	$("#edicaoProdCadastradosGrid").flexAddData({
+	$("#edicaoProdCadastradosGrid", distribuicaoVendaMedia.workspace).flexAddData({
 			rows : [],
 			page : 1,
 			total : 1

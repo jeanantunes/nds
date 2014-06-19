@@ -506,6 +506,8 @@ public class NFeServiceImpl implements NFeService {
             
         });
         
+        boolean temLancamentoComFuroDeProduto = false;
+        
         for(final ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
             
             codigoProduto 		= itemNotaEnvio.getCodigoProduto().toString();
@@ -532,7 +534,13 @@ public class NFeServiceImpl implements NFeService {
             
             listaItemImpressaoNfe.add(item);
             
+            if(itemNotaEnvio.getFuroProduto()!= null){
+            	temLancamentoComFuroDeProduto = true;
+            }
+            
         }
+        
+        nfeImpressao.setItensComFuroLancamento(temLancamentoComFuroDeProduto);
         
         nfeImpressao.setItensImpressaoNfe(listaItemImpressaoNfe);
         

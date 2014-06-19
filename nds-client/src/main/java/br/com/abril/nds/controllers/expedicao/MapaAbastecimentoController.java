@@ -27,7 +27,8 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
-import br.com.abril.nds.dto.ProdutoEdicaoMapaDTO;
+import br.com.abril.nds.dto.ProdutoMapaDTO;
+import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -442,7 +443,13 @@ public class MapaAbastecimentoController extends BaseController {
 			        
 				} else {
 				    
-				    dados = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro).entrySet();
+				    final Map<String, ProdutoMapaDTO> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
+				    
+				    for (String key : mapa.keySet()){
+		                completaTabelaMapaBox(mapa, key);
+		            }
+				    
+				    dados = mapa.entrySet();
 				    
 				    nomeRelatorio = "Mapa de Abastecimento por Box";
 				    
@@ -463,8 +470,15 @@ public class MapaAbastecimentoController extends BaseController {
 			        
 			    } else {
 			        
-			        dados = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro).entrySet();
+			        Map<String, Map<String, ProdutoMapaRotaDTO>> mapa = 
+			                mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
                     
+			        for (String key : mapa.keySet()) {
+			            completaTabelaMapaRota(mapa.get(key), key);
+			        }
+			        
+			        dados = mapa.entrySet();
+			        
                     nomeRelatorio = "Mapa de Abastecimento por Rota";
                     
                     path += "rel_box_por_rota_principal.jasper";
@@ -552,7 +566,61 @@ public class MapaAbastecimentoController extends BaseController {
         this.result.use(Results.nothing());
 	}
 
-	public void impressaoFalha(String mensagemErro){
+	private void completaTabelaMapaRota(Map<String, ProdutoMapaRotaDTO> map, String key) {
+	    
+	    // Número de colunas
+        final int nColunas = 6;
+
+        for (ProdutoMapaRotaDTO produto : map.values()) {
+            
+            // Tamanho do Map
+            int tamanhoQtde = produto.getRotasQtde().size();
+            
+            // Testa se existem mais de 6 registros no Map
+            if (tamanhoQtde > nColunas) {
+                // Faz subtrações até sobrar menos que 6
+                do {
+                    tamanhoQtde -= nColunas;
+                } while (tamanhoQtde > nColunas);
+                // Cria uma Map<String, Integer> com valores para completar a
+                // tabela
+                Map<String, Integer> completaValores = new HashMap<>();
+                for (int i = 1; i <= (6 - tamanhoQtde); i++) {
+                    completaValores.put("|1" + i, 0);
+                }
+                // Adiciona os dados a tabela
+                produto.getRotasQtde().putAll(completaValores);
+            }
+        }
+    }
+
+    private void completaTabelaMapaBox(Map<String, ProdutoMapaDTO> mapa, String key) {
+	    
+	    //Número de colunas
+	    final int nColunas = 6;
+
+        //Tamanho do Map
+        int tamanhoQtde = mapa.get(key).getBoxQtde().size();
+
+        //Testa se existem mais de 6 registros no Map
+        if(tamanhoQtde > nColunas){
+            //Faz subtrações até sobrar menos que 6
+            do {
+                tamanhoQtde -= nColunas;
+            } while (tamanhoQtde > nColunas);
+
+            //Cria uma Map<Integer, Integer> com valores para completar a tabela
+            Map<Integer, Integer> completaValores= new HashMap<Integer, Integer>();
+            
+            for(int i = 1 ; i <= (6 - tamanhoQtde) ; i++){
+                completaValores.put((20000 * i), (20000 * i));
+            }
+            //Adiciona os dados a tabela
+            mapa.get(key).getBoxQtde().putAll(completaValores);
+        }
+    }
+
+    public void impressaoFalha(String mensagemErro){
 		result.include(mensagemErro);	
 	}
 
