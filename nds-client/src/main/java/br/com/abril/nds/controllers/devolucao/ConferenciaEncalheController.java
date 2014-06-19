@@ -483,16 +483,27 @@ public class ConferenciaEncalheController extends BaseController {
 	    
         infoConfereciaEncalheCota.setNfeDigitada(false);
         
+        if(verificarItensExistenteProcessoUtilizaNFe(infoConfereciaEncalheCota)){            
+            this.result.use(CustomMapJson.class).put("RET_NFE_DIGITADA", true).serialize();
+        }
+        
         this.session.setAttribute(INFO_CONFERENCIA, infoConfereciaEncalheCota);
-        
-        this.result.use(CustomMapJson.class).put("RET_NFE_DIGITADA", true).serialize();
-        
+                
         this.session.setAttribute(NUMERO_COTA, numeroCota);
         
-        this.result.use(CustomJson.class).from("OK").serialize();
     }
 	
-	/**
+	private boolean verificarItensExistenteProcessoUtilizaNFe(InfoConferenciaEncalheCota infoConfereciaEncalheCota) {
+        
+        for(ConferenciaEncalheDTO conf : infoConfereciaEncalheCota.getListaConferenciaEncalhe()){
+            if(conf.isProcessoUtilizaNfe()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
 	 * Retorna um mapa com os dados apresentados na 
 	 * conferencia de encalhe.
 	 * 
