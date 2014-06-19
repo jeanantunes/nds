@@ -51,9 +51,9 @@
 	            <td>Cotas:</td>
 	            <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
 	              <tr>
-	                <td width="10%"><input type="radio" name="cotas" id="radioTodasCotas" value="radio" onchange="descontoEditorController.esconderGridCota();" /></td>
+	                <td width="10%"><input type="radio" name="cotas" id="radioEditorTodasCotas" value="radio" onchange="descontoEditorController.esconderGridCota();" /></td>
 	                <td width="29%">Todas</td>
-	                <td width="8%"><input type="radio" name="cotas" id="radioCotasEspecificas" value="radio" onchange="descontoEditorController.mostrarGridCota();" /></td>
+	                <td width="8%"><input type="radio" name="cotas" id="radioEditorCotasEspecificas" value="radio" onchange="descontoEditorController.mostrarGridCota();" /></td>
 	                <td width="53%">Específica</td>
 	              </tr>
 	            </table></td>

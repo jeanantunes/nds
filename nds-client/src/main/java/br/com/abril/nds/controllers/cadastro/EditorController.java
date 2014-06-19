@@ -73,7 +73,7 @@ public class EditorController extends BaseController {
 		
 		if(codigoEditor == null) {
 			
-            throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota deve ser informado!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "O código do Editor deve ser informado!");
 		}
 		
 		Editor editor = this.editorService.obterEditorPorCodigo(codigoEditor);

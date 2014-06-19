@@ -14,6 +14,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
+import br.com.abril.nds.dto.DescontoEditorDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
@@ -101,10 +102,10 @@ public class TipoDescontoCotaController extends BaseController {
 	}
 	
 	@Post("/novoDescontoEditor")
-	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_EDITOR_ALTERACAO)
-	public void novoDescontoEditor(Integer numeroCota, BigDecimal desconto, List<Long> fornecedores) {
+	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA_ALTERACAO)
+	public void novoDescontoEditor(DescontoEditorDTO descontoDTO, List<Long> cotas) {
 
-		descontoService.incluirDescontoCota(desconto, fornecedores, numeroCota, getUsuarioLogado());
+		descontoService.incluirDescontoEditor(descontoDTO, cotas, getUsuarioLogado());
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro de Tipo de Desconto realizado com sucesso"),"result").recursive().serialize();
 
 	}

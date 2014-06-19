@@ -21,6 +21,7 @@ var descontoEditorController = $.extend(true,{
 						id:"id_confirmar_editor", text:"Confirmar",
 						click: function() {
 							descontoEditorController.novoDescontoEditor();
+							$( this ).dialog( "close" );
 						}
 				},{
 					id:"id_close_editor", text:"Cancelar",
@@ -51,47 +52,57 @@ var descontoEditorController = $.extend(true,{
 	
 	novoDescontoEditor: function() {
 		
-		var numEditor = $("#numEditor", this.workspace).val();
-		var descontoEditor = $("#descontoEditor", this.workspace).justPercent("stringValue");
-		
-		var fornecedores = new Array();
-		
-		$("#selectFornecedorSelecionado_option_editor option",this.workspace).each(function (index) {
-			 fornecedores.push($(this).val());
-		});
-		
-		var param = {numeroEditor: numEditor, desconto: descontoEditor};		
-		param = serializeArrayToPost('fornecedores', fornecedores, param);
-		
-		$.postJSON(contextPath +"/financeiro/tipoDescontoCota/novoDescontoEditor", param,				   
-				function(result) {
-			           
-						 if (result.tipoMensagem && result.tipoMensagem != "SUCCESS" && result.listaMensagens) {			      
-							   exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalDescontoEditor");
-					       }
-						   else{
-							   tipoDescontoController.fecharDialogs();
-							   exibirMensagem(result.tipoMensagem, result.listaMensagens, "");
-							   $(".tiposDescEditorGrid", this.workspace).flexReload();
-						   }
+		var data = descontoEditorController.obterParametrosNovoDescontoEditor();
+
+		console.log(data);
+		$.postJSON(contextPath+"/financeiro/tipoDescontoCota/novoDescontoEditor",
+				   data,
+				   function(result) {
+
+					   $( "#dialog-editor",this.workspace ).dialog( "close" );
+
+					   var tipoMensagem = result.tipoMensagem;
+					   var listaMensagens = result.listaMensagens;
+					   if (tipoMensagem && listaMensagens) {
+					       exibirMensagem(tipoMensagem, listaMensagens);
+				       }
+					   
+					   tipoDescontoController.pesquisarDescontoProduto();
 	               },
 				   null,
-				   true,"idModalDescontoEditor");
+				   true);
+		
+		descontoEditorController.clearModalDescontoEditor();
 		
 		$(".tiposDescEditorGrid",this.workspace).flexReload();
 	},
 	
-	pesquisarEditorSuccessCallBack:function() {
+	obterParametrosNovoDescontoEditor: function() {
 		
-		$.each($('.trCotasEditor input[id^="cotaEditorInput"]', this.workspace), function(k, v) {
-
-			if(($(v).attr('id') != 'cotaEditorInput'+ linhaAtual) && ($(v).val() == $('#cotaEditorInput'+ linhaAtual).val())) {
-				
-				exibirMensagemDialog("WARNING", ['Já existe essa Cota na lista!'], "idModalDescontoEditor");
-				cotaRepetida = true;
-				return false;
+		var data = new Array();
+		
+		var codigoEditor = $("#codigoEditor",this.workspace).val();
+		var descontoEditor = $("#descontoEditor",this.workspace).justPercent("stringValue");
+		var hasCotaEspecifica = document.getElementById("radioEditorCotasEspecificas",this.workspace).checked;
+		var isTodasCotas = document.getElementById("radioEditorTodasCotas",this.workspace).checked;
+		
+		data.push({name:'descontoDTO.codigoEditor' , value: codigoEditor});
+		data.push({name:'descontoDTO.descontoEditor' , value: descontoEditor});
+		data.push({name:'descontoDTO.hasCotaEspecifica' , value: hasCotaEspecifica});
+		data.push({name:'descontoDTO.isTodasCotas' , value: isTodasCotas});
+		
+		$("input[id^=cotaEditorInput]",this.workspace).each(function(index, value) {
+			if ($(this).val()) {
+				data.push({name:'descontoDTO.cotas' , value: $(this).val()});
 			}
 		});
+		
+		return data;
+	},
+	
+	pesquisarEditorSuccessCallBack:function() {
+		
+		
 		
 	},
 
@@ -126,11 +137,25 @@ var descontoEditorController = $.extend(true,{
 		$('.especificaCota',this.workspace).show();
 	},
 
-	esconderGridCota:function(){
+	esconderGridCota: function() {
 		
 		$('.especificaCota',this.workspace).hide();
 		
-		descontoProdutoController.resetGridCota();
+		descontoEditorController.resetGridCota();
+	},
+	
+	resetGridCota: function() {
+		
+		$.each($('.trCotasEditor input[id^="cotaEditorInput"]', this.workspace), function(k, v) {
+
+			if(($(v).attr('id') != 'cotaEditorInput1')) {
+				
+				$('#trCotaEditor'+ $(v).attr('id').substring("cotaEditorInput".length)).remove();
+			}
+		});
+		
+		$("#cotaEditorInput1", this.workspace).val('');
+		$("#nomeCotaEditorInput1", this.workspace).val('');
 	},
 	
 	adicionarLinhaCota: function(linhaAtual) {

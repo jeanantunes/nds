@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.component.DescontoComponent;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
+import br.com.abril.nds.dto.DescontoEditorDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
@@ -1491,14 +1492,20 @@ public class DescontoServiceImpl implements DescontoService {
 
 	@Override
 	public List<TipoDescontoEditorDTO> buscarTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new ValidacaoException(TipoMensagem.ERROR, "Não implementado ainda.");
 	}
 
 	@Override
 	public Integer buscarQuantidadeTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new ValidacaoException(TipoMensagem.ERROR, "Não implementado ainda.");
+	}
+
+	@Override
+	public void incluirDescontoEditor(DescontoEditorDTO descontoDTO, List<Long> cotas, Usuario usuarioLogado) {
+		
+		throw new ValidacaoException(TipoMensagem.ERROR, "Não implementado ainda.");		
 	}
 
 }
