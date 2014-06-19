@@ -5,10 +5,10 @@ var descontoEditorController = $.extend(true,{
 		$("#selectFornecedorSelecionado_option_editor",this.workspace).clear();
 		$("#selectFornecedor_option_editor",this.workspace).clear();
 		
-		$("#numCotaEditor",this.workspace).val("");
+		$("#numEditor",this.workspace).val("");
 		$("#descontoEditor",this.workspace).val("");
 		$("#descontoEditor",this.workspace).justPercent("floatValue");
-		$("#descricaoCotaEditor",this.workspace).val("");
+		$("#descricaoEditor",this.workspace).val("");
 		
 		$( "#dialog-editor",this.workspace ).dialog({
 			resizable: false,
@@ -33,7 +33,7 @@ var descontoEditorController = $.extend(true,{
 	
 	novoDescontoEditor: function() {
 		
-		var cotaEspecifica = $("#numCotaEditor", this.workspace).val();
+		var numEditor = $("#numEditor", this.workspace).val();
 		var descontoEditor = $("#descontoEditor", this.workspace).justPercent("stringValue");
 		
 		var fornecedores = new Array();
@@ -42,7 +42,7 @@ var descontoEditorController = $.extend(true,{
 			 fornecedores.push($(this).val());
 		});
 		
-		var param = {numeroCota: cotaEspecifica, desconto: descontoEditor};		
+		var param = {numeroEditor: numEditor, desconto: descontoEditor};		
 		param = serializeArrayToPost('fornecedores', fornecedores, param);
 		
 		$.postJSON(contextPath +"/financeiro/tipoDescontoCota/novoDescontoEditor", param,				   
@@ -63,22 +63,18 @@ var descontoEditorController = $.extend(true,{
 		$(".tiposDescEditorGrid",this.workspace).flexReload();
 	},
 	
-	pesquisarCotaSuccessCallBack:function(){
-		
-		var cotaEspecifica = $("#numCotaEditor",this.workspace).val();
-		
-		descontoEditorController.carregarFornecedoresCota("#selectFornecedor_option_editor", cotaEspecifica);
+	pesquisarEditorSuccessCallBack:function() {
 		
 	},
 
-	carregarFornecedoresCota:function(idComboFornecedores,numeroCota){
+	carregarCotas: function(idComboCotas, numeroEditor) {
 		
-		$.postJSON(contextPath + "/financeiro/tipoDescontoCota/obterFornecedoresCota",
-				[{name:"numeroCota",value:numeroCota}], 
-				function(result){
+		$.postJSON(contextPath + "/cadastro/cota/obterCotas",
+				[{name:"numeroEditor",value:numeroEditor}], 
+				function(result) {
 					
-					if(result){
-						var comboClassificacao =  montarComboBox(result, false);
+					if(result) {
+						var comboClassificacao = montarComboBox(result, false);
 						
 						$(idComboFornecedores,this.workspace).html(comboClassificacao);
 					}
@@ -90,19 +86,30 @@ var descontoEditorController = $.extend(true,{
 		);
 	},
 	
-	pesquisarCotaErrorCallBack:function(){
+	pesquisarEditorErrorCallBack: function() {
 		
-		exibirMensagemDialog("WARNING", [' Cota não encontrada!'], "idModalDescontoEditor");
+		exibirMensagemDialog("WARNING", [' Editor não encontrado!'], "idModalDescontoEditor");
 		
-		$("#selectFornecedorSelecionado_option_editor",this.workspace).clear();
-		$("#selectFornecedor_option_editor",this.workspace).clear();
+		$("#selectCotaSelecionado_option_editor", this.workspace).clear();
+		$("#selectCota_option_editor", this.workspace).clear();
+	},
+	
+	mostrarGridCota:function(){
+		$('.especificaCota',this.workspace).show();
+	},
+
+	esconderGridCota:function(){
+		
+		$('.especificaCota',this.workspace).hide();
+		
+		descontoProdutoController.resetGridCota();
 	},
 	
 	init: function() {
 		
-		$("select[name='selectFornecedorSelecionado_editor']",this.workspace).multiSelect("select[name='selectFornecedor_editor']", {trigger: "#linkFornecedorVoltarTodos_editor"});
+		$("select[name='selectCotaSelecionado_editor']",this.workspace).multiSelect("select[name='selectCota_editor']", {trigger: "#linkCotaVoltarTodos_editor"});
 		
-		$("select[name='selectFornecedor_editor']",this.workspace).multiSelect("select[name='selectFornecedorSelecionado_editor']", {trigger: "#linkFornecedorEnviarTodos_editor"});
+		$("select[name='selectCota_editor']",this.workspace).multiSelect("select[name='selectCotaSelecionado_editor']", {trigger: "#linkCotaEnviarTodos_editor"});
 		
 		$("#descontoEditor", this.workspace).justPercent();
 		
@@ -164,4 +171,4 @@ var descontoEditorController = $.extend(true,{
 		});		
 	}
 }, BaseController);
-//@ sourceURL=tipoDescontoCota.js
+//@ sourceURL=cadastroTipoDescontoEditor.js

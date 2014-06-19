@@ -1,85 +1,92 @@
+<form action="" id="dialog-cotas_form">
+	<div id="dialog-cotas" title="Cotas" style="display:none;">
+		<fieldset style="width:350px!important;">
+	    	<legend>Cotas</legend>
+	        <table class="lstCotaGrid"></table>
+	    </fieldset>
+	</div>
+</form>
 
-<div id="dialog-editor" title="Novo Tipo de Desconto Editor" style="display:none;"> 
+<form action="" id="formTipoDescontoProduto">
 
-<jsp:include page="../messagesDialog.jsp">
-	
-	<jsp:param value="idModalDescontoEditor" name="messageDialog"/>
+	<div id="dialog-editor" title="Novo Tipo de Desconto Produto" style="display:none;">
 
-</jsp:include>
-   
-<table width="480" border="0" align="center" cellpadding="2" cellspacing="2">
-  
-  <tr class="especialidades">
-    <td colspan="4" valign="top">
-    	<fieldset style="width:500px;">
-    		<legend>Selecione a Cota</legend>
-    		<label style="width:auto!important;">Cota:</label>
-    		<input name="numCotaEditor" 
-           		   id="numCotaEditor" 
+	<jsp:include page="../messagesDialog.jsp" />    
+
+	  <table width="394" border="0" cellpadding="2" cellspacing="1" class="filtro" style="font-size:8pt">
+	          <tr>
+	            <td width="100">Editor:</td>
+	            <td width="100">
+	            	<input name="numEditor" 
+           		   id="numEditor" 
            		   type="text"
            		   maxlength="11"
            		   style="width:70px;float:left;"
-           		   onchange="pesquisaEditorTipoDescontoCota.pesquisarPorNumeroCota('#numCotaEditor', '#descricaoCotaEditor',true,
-           	  											descontoCotaController.pesquisarCotaSuccessCallBack, 
-           	  											descontoCotaController.pesquisarCotaErrorCallBack);" />
-           	  											
-    		<label style="width:auto!important;">Nome:</label>
-    		<input  name="descricaoCotaEditor" 
-		      		 id="descricaoCotaEditor" 
-		      		 type="text" 
-		      		 class="nome_jornaleiro" 
-		      		 maxlength="255"
-		      		 style="width:200px;float:left;"
-		      		 onkeyup="pesquisaEditorTipoDescontoCota.autoCompletarPorNome('#descricaoEditor');" 
-		      		 onblur="pesquisaEditorTipoDescontoCota.pesquisarPorNomeCota('#numEditor', '#descricaoEditor',true,
+           		   onchange="pesquisaEditorTipoDescontoCota.pesquisarPorNumeroEditor('#numEditor', '#descricaoEditor',true,
+           	  											descontoEditorController.pesquisarEditorSuccessCallBack, 
+           	  											descontoEditorController.pesquisarEditorErrorCallBack);" />
+	            </td>
+	          </tr>
+	          <tr>
+	            <td>Nome:</td>
+	            <td>
+	            	<input  name="descricaoEditor" 
+			      		 id="descricaoEditor" 
+			      		 type="text" 
+			      		 class="nome_jornaleiro" 
+			      		 maxlength="255"
+			      		 style="width:200px;float:left;"
+			      		 onkeyup="pesquisaEditorTipoDescontoCota.autoCompletarPorNome('#descricaoEditor');" 
+			      		 onblur="pesquisaEditorTipoDescontoCota.pesquisarPorNumeroEditor('#numEditor', '#descricaoEditor',true,
 										      			descontoEditorController.pesquisarEditorSuccessCallBack,
 										      			descontoEditorController.pesquisarEditorErrorCallBack);" />
+	            </td>
+	          </tr>
 
-    		
-    	</fieldset>
-    </td>
-  </tr>
-  
-  <tr class="especialidades">
-    	
-    	<td width="202" valign="top">
-    		<fieldset>
-      			<legend>Selecione os Fornecedores</legend>
-      			<select style="height:130px; width:200px;" id="selectFornecedor_option_editor" multiple="multiple" size="10" name="selectFornecedor_editor">
-      				<option></option>
-			    </select>
-    		</fieldset>
-    	</td>
-    
-	    <td width="56" align="center">
-			<a id="linkFornecedorEnviarTodos_editor" href="javascript:;"><img height="30" width="39" src="${pageContext.request.contextPath}/images/seta_vai_todos.png" border="0"></a>
-			<br><br>
-			<a id="linkFornecedorVoltarTodos_editor" href="javascript:;"><img height="30" width="39" src="${pageContext.request.contextPath}/images/seta_volta_todos.png" border="0"></a>
-			<br>
-		</td>
-    
-	    <td width="202" valign="top">
-		    <fieldset>
-		      <legend>Fornecedores selecionados</legend>
-		      <select style="height:130px; width:200px;" id="selectFornecedorSelecionado_option_editor" multiple="multiple" size="10" name="selectFornecedorSelecionado_editor">
-			  </select>
-		      <br>
-		    </fieldset>
-	    </td>
-  </tr>
-  
-  <tr class="especialidades">
-    <td colspan="3" valign="top">
-    
-    <fieldset style="width:500px;">
-    	<legend>Informe o Percentual de Desconto</legend>
-    	Desconto: <input type="text" name="descontoEditor" id="descontoEditor" style="width:60px; margin-left:10px; margin-right:10px;"/> %
-    </fieldset>
-   
-   </td>
-   
-  </tr>
-  
-</table>       
+			  <tr>
+	            <td>Desconto %:</td>
+	            <td><input type="text" name="descontoEditor" id="descontoEditor" style="width:100px;"/></td>
+	          </tr>
+	          <tr>
+	            <td>Cotas:</td>
+	            <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+	              <tr>
+	                <td width="10%"><input type="radio" name="cotas" id="radioTodasCotas" value="radio" onchange="descontoEditorController.esconderGridCota();" /></td>
+	                <td width="29%">Todas</td>
+	                <td width="8%"><input type="radio" name="cotas" id="radioCotasEspecificas" value="radio" onchange="descontoEditorController.mostrarGridCota();" /></td>
+	                <td width="53%">Específica</td>
+	              </tr>
+	            </table></td>
+	          </tr>
+	    </table>       
 
-</div>
+
+			<div id="fieldCota" class="especificaCota" style="display:none;">
+
+				<fieldset style="width:395px!important;">
+					<legend>Cotas</legend>
+					<div style="overflow: auto; height: 240px;">
+		    			<table border="0" cellspacing="1" cellpadding="1" class="especificaCota" id="gridCotas" style="display:none;width:100%" >
+
+							<tr class="header_table">
+				                <td width="34%">Cota</td>
+				                <td width="66%">Nome</td>
+							</tr>
+							<tr id="trCota1">
+								<td>
+									<input type="text" name="cotaInput" id="cotaInput1" style="width:120px;" maxlength="255"
+										onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNumeroCota('#cotaInput1', '#nomeInput1', true);"/>
+								</td>
+								<td>
+									<input type="text" name="nomeInput" id="nomeInput1" style="width:245px;" maxlength="255"
+										onkeyup="pesquisaCotaTipoDescontoCota.autoCompletarPorNome('#nomeInput1');" 
+										onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#cotaInput1', '#nomeInput1',descontoProdutoController.adicionarLinhaCota(1));"/>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</fieldset>
+			</div>  
+
+	</div>
+</form>

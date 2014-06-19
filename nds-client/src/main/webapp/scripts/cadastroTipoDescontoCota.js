@@ -98,7 +98,7 @@ var descontoCotaController = $.extend(true,{
 		$("#selectFornecedor_option_especifico",this.workspace).clear();
 	},
 	
-	init: function(){
+	init: function() {
 		
 		$("select[name='selectFornecedorSelecionado_especifico']",this.workspace).multiSelect("select[name='selectFornecedor_especifico']", {trigger: "#linkFornecedorVoltarTodos_especifico"});
 		

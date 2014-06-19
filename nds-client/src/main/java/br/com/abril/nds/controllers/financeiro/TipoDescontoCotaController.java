@@ -151,7 +151,7 @@ public class TipoDescontoCotaController extends BaseController {
 
 		List<TipoDescontoEditorDTO> listaDescontoEditor = descontoService.buscarTipoDescontoEditor(filtro);
 
-		if (listaDescontoEditor.isEmpty()) {
+		if (listaDescontoEditor == null || listaDescontoEditor.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} 
 
@@ -357,7 +357,7 @@ public class TipoDescontoCotaController extends BaseController {
 
 		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroTipoDescontoEditorDTO.OrdenacaoColunaConsulta.values(), sortname));
 
-		FiltroTipoDescontoCotaDTO filtroSessao = (FiltroTipoDescontoCotaDTO) 
+		FiltroTipoDescontoEditorDTO filtroSessao = (FiltroTipoDescontoEditorDTO) 
 				this.session.getAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE);
 
 		if (filtroSessao != null && !filtroSessao.equals(filtro)) {

@@ -89,10 +89,29 @@
 		id="dialog_consulta_tipo_desconto_form">
 		<div class="areaBts">
 			<div class="area">
+				<div id="panelBtsGERAL" style="display: none;">
+					<span class="bt_novos"> <a isEdicao="true"
+						href="javascript:;"
+						onclick="descontoDistribuidorController.popup_geral();"
+						rel="tipsy" title="Incluir Novo"> <img
+							src="${pageContext.request.contextPath}/images/ico_salvar.gif"
+							hspace="5" border="0" />
+					</a>
+					</span>
+				</div>
 				<div id="panelBtsESPECIFICO" style="display: none;">
 					<span class="bt_novos"> <a isEdicao="true"
 						href="javascript:;"
 						onclick="descontoCotaController.popup_especifico();"
+						rel="tipsy" title="Incluir Novo"> <img
+							src="${pageContext.request.contextPath}/images/ico_salvar.gif"
+							hspace="5" border="0" />
+					</a>
+				</div>
+				<div id="panelBtsEDITOR" style="display: none;">
+					<span class="bt_novos"> <a isEdicao="true"
+						href="javascript:;"
+						onclick="descontoEditorController.popup_editor();"
 						rel="tipsy" title="Incluir Novo"> <img
 							src="${pageContext.request.contextPath}/images/ico_salvar.gif"
 							hspace="5" border="0" />
@@ -108,18 +127,6 @@
 					</a>
 					</span>
 				</div>
-				<div id="panelBtsGERAL" style="display: none;">
-					<span class="bt_novos"> <a isEdicao="true"
-						href="javascript:;"
-						onclick="descontoDistribuidorController.popup_geral();"
-						rel="tipsy" title="Incluir Novo"> <img
-							src="${pageContext.request.contextPath}/images/ico_salvar.gif"
-							hspace="5" border="0" />
-					</a>
-					</span>
-				</div>
-				
-				
 				
 				<div id="idExportacaoESPECIFICO" style="display: none;">
 					</span> <span class="bt_arq"> <a

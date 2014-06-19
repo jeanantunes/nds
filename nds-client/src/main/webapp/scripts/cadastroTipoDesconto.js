@@ -314,6 +314,17 @@ var tipoDescontoController = $.extend(true,  {
 		});	      
 	},
 	
+	mostrarGridCota:function() {
+		$('.especificaCota',this.workspace).show();
+	},
+
+	esconderGridCota:function() {
+		
+		$('.especificaCota',this.workspace).hide();
+		
+		descontoProdutoController.resetGridCota();
+	},
+	
 	init: function() {
 		$("#produto",this.workspace).autocomplete({source: ""});		
 		
