@@ -8,6 +8,7 @@
 		<pen lineWidth="0.25"/>
 	</style>
 	<parameter name="NUMERO_NOTA_ENVIO" class="java.lang.String"/>
+	<parameter name="LANCAMENTO_COM_FURO" class="java.lang.Boolean"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -110,7 +111,9 @@
 					<reportElement uuid="fd5ce177-a820-4423-883c-39e2c1f61123" x="475" y="46" width="100" height="1"/>
 				</line>
 				<staticText>
-					<reportElement uuid="8bd78fff-e088-45e5-85c1-b7a7a4a9cd7a" x="0" y="0" width="117" height="15"/>
+					<reportElement uuid="8bd78fff-e088-45e5-85c1-b7a7a4a9cd7a" x="0" y="0" width="117" height="15">
+						<printWhenExpression><![CDATA[$P{LANCAMENTO_COM_FURO} == true]]></printWhenExpression>
+					</reportElement>
 					<textElement>
 						<font fontName="Arial" size="8" isBold="true"/>
 					</textElement>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" columnCount="2" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="275" columnSpacing="5" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
-	<property name="ireport.zoom" value="1.3636363636363673"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" columnCount="2" pageWidth="594" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
+	<property name="ireport.zoom" value="1.9965000000000062"/>
+	<property name="ireport.x" value="149"/>
+	<property name="ireport.y" value="49"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
 	</style>
@@ -88,7 +88,7 @@
 				<text><![CDATA[Preço Capa R$]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="cb2c0d92-3b8f-4751-b2ad-65208cf408b7" style="rel_stext_centralizado" mode="Opaque" x="238" y="0" width="37" height="30" backcolor="#D3D3D3"/>
+				<reportElement uuid="cb2c0d92-3b8f-4751-b2ad-65208cf408b7" style="rel_stext_centralizado" mode="Opaque" x="238" y="0" width="39" height="30" backcolor="#D3D3D3"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -157,7 +157,7 @@
 	<detail>
 		<band height="100" splitType="Immediate">
 			<subreport>
-				<reportElement uuid="cd7c149f-8b3c-40f3-aae8-fc54dde2d604" positionType="Float" x="0" y="0" width="555" height="100"/>
+				<reportElement uuid="cd7c149f-8b3c-40f3-aae8-fc54dde2d604" positionType="Float" x="0" y="0" width="277" height="100"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
     ((java.util.LinkedHashMap)$F{produtos}).values()
 )]]></dataSourceExpression>

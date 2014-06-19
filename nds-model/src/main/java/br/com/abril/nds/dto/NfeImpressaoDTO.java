@@ -167,6 +167,8 @@ public class NfeImpressaoDTO implements Serializable{
 	
 	private Date dataLancamento;
 	
+	private boolean itensComFuroLancamento;
+	
 	public Integer getNumeroCota() {
 		return numeroCota;
 	}
@@ -807,5 +809,15 @@ public class NfeImpressaoDTO implements Serializable{
 	public void setDataLancamentoDeAte(String dataLancamentoDeAte) {
 		this.dataLancamentoDeAte = dataLancamentoDeAte;
 	}
+
+	public boolean isItensComFuroLancamento() {
+		return itensComFuroLancamento;
+	}
+
+	public void setItensComFuroLancamento(boolean itensComFuroLancamento) {
+		this.itensComFuroLancamento = itensComFuroLancamento;
+	}
+	
+	
 	
 }

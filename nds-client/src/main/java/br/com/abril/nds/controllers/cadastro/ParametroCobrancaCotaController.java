@@ -558,10 +558,11 @@ public class ParametroCobrancaCotaController extends BaseController {
             formaCobranca.setTipoFormaCobranca(TipoFormaCobranca.valueOf(tipoFormaCobranca));
         }
         
-        if ((listaIdsFornecedores!=null)&&(listaIdsFornecedores.size()>0)){
-            formaCobranca.setFornecedoresId(listaIdsFornecedores);
+        if ((listaIdsFornecedores==null)|| (listaIdsFornecedores.isEmpty())){
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedores  não foram informados.");
         }
         
+        formaCobranca.setFornecedoresId(listaIdsFornecedores);
 
         parametroCobrancaCotaService.validarFormaCobranca(formaCobranca);
         

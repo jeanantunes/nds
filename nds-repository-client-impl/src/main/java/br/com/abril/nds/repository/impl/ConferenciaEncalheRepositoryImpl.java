@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
-import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
@@ -574,7 +573,7 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaConferenciaEncalheDTO(java.lang.Long, java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota) {
+	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota, Boolean processoUtilizaNFe) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -657,7 +656,12 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		
 		hql.append(" WHERE ");
 		hql.append(" CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = :idControleConferenciaEncalheCota   ");
-		hql.append(" AND CH_ENCALHE_COTA.PROCESSO_UTILIZA_NFE = :processoUtilizaNfe  ");
+		
+		if(processoUtilizaNFe != null) {
+			
+			hql.append(" AND CH_ENCALHE_COTA.PROCESSO_UTILIZA_NFE = :processoUtilizaNfe  ");
+		}
+		
 		hql.append(" ORDER BY dataRecolhimento desc,  codigoSM ");
 		
 		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
@@ -689,12 +693,23 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		((SQLQuery)query).addScalar("precoComDesconto");
 		((SQLQuery)query).addScalar("valorTotal");
 		((SQLQuery)query).addScalar("dataConferencia");
-		((SQLQuery)query).addScalar("processoUtilizaNfe", StandardBasicTypes.BOOLEAN);
+		if(processoUtilizaNFe != null) {
+			
+			((SQLQuery)query).addScalar("processoUtilizaNfe", StandardBasicTypes.BOOLEAN);
+		}
 
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
 		
-		query.setParameter("processoUtilizaNfe", true);
+		if(processoUtilizaNFe != null) {
+			if(processoUtilizaNFe) {
+				
+				query.setParameter("processoUtilizaNfe", true);
+			} else {
+				
+				query.setParameter("processoUtilizaNfe", false);
+			}
+		}
 		
 		query.setParameterList("statusEmRecolhimento", Arrays.asList(
 				StatusLancamento.BALANCEADO_RECOLHIMENTO.name(),
