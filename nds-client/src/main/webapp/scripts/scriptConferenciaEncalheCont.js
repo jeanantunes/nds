@@ -1632,6 +1632,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 	excluirNotasFiscaisPorReabertura : function(data) {
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/excluirNotasFiscaisPorReabertura', data,
 			function(result){
+				
+				if (typeof result.RET_NFE_DIGITADA != 'undefined' && result.RET_NFE_DIGITADA){
+					ConferenciaEncalheCont.popup_notaFiscal();
+				}
+				
 				if (result.mensagens){
 					exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 					return;
