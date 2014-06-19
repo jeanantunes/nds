@@ -725,7 +725,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 
 					$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
 				}
-			}
+			}, null, null, false
 		);
 	},
 	
@@ -790,11 +790,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					ConferenciaEncalheCont.atualizarValores(index);
 				}
-			}
+			}, null, null, null, false
 		);
 	},
 	
-	autenticarSupervisor : function(index, callback, paramCallback){
+	autenticarSupervisor : function(index, callback, paramCallback, keepDialog){
 		
 		var paramUsuario = {
 			usuario:$("#inputUsuarioSup", ConferenciaEncalheCont.workspace).val(),
@@ -838,7 +838,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				}
 				
 				if (callback){
-					callback(paramCallback);
+					callback(paramCallback, keepDialog);
 				}
 				
 				$("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog("close");
@@ -921,7 +921,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	},
 
-	adicionarEncalhe: function(){	
+	adicionarEncalhe: function(keepDialog){	
 
 		var _this = this;
 		
@@ -957,7 +957,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					if (result[0]){
 						
 						exibirMensagem('WARNING', [result[1]]);
-						_this._adicionarNovoProduto(data);
+						_this._adicionarNovoProduto(data, keepDialog);
 					} else {
 						
 						$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result[1]);
@@ -971,7 +971,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								"Ok": function() {
 									
 									ConferenciaEncalheCont.resetValue = false;
-									ConferenciaEncalheCont.autenticarSupervisor(null, _this._adicionarNovoProduto, data);
+									ConferenciaEncalheCont.autenticarSupervisor(null, _this._adicionarNovoProduto, data, keepDialog);
 									
 								},
 								"Cancelar": function() {
@@ -985,13 +985,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 				} else {
 					
-					_this._adicionarNovoProduto(data);
+					_this._adicionarNovoProduto(data, keepDialog);
 				}
 			}
 		);
 	},
 	
-	_adicionarNovoProduto : function(params){
+	_adicionarNovoProduto : function(params, keepDialog){
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', params,
 			function(result){
@@ -1000,7 +1000,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				ConferenciaEncalheCont.limparCamposNovoEncalhe();
 				
-				$("#dialog-encalhe", ConferenciaEncalheCont.workspace).dialog("close");
+				if(!keepDialog) {
+					$("#dialog-encalhe", ConferenciaEncalheCont.workspace).dialog("close");
+				}
 				
 				$("#lstProdutos", ConferenciaEncalheCont.workspace).focus();
 				

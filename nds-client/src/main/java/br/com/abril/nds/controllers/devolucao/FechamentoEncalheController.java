@@ -272,7 +272,7 @@ public class FechamentoEncalheController extends BaseController {
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
 			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, page, rp);
 		
-		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao);
+		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, null);
 		
 		if (listaCotasAusenteEncalhe == null || listaCotasAusenteEncalhe.isEmpty()) {
 			
@@ -296,7 +296,7 @@ public class FechamentoEncalheController extends BaseController {
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
 			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, page, rp);
 		
-		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao);
+		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao,null);
 		
 		if (listaCotasAusenteEncalhe == null || listaCotasAusenteEncalhe.isEmpty()) {
 			
@@ -326,11 +326,7 @@ public class FechamentoEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data de encalhe informada na pesquisa");
 		}
 		
-		Date dataPostergacao = chamadaAntecipadaEncalheService.obterProximaDataEncalhe(dataEncalhe);
-			
-		if (dataPostergacao == null) {
-			dataPostergacao = DateUtil.adicionarDias(dataEncalhe, 1);
-		}
+		Date dataPostergacao = DateUtil.adicionarDias(dataEncalhe, 1);
 		
 		dataPostergacao = 
 			this.calendarioService.adicionarDiasRetornarDiaUtil(dataPostergacao, 0);
@@ -342,7 +338,9 @@ public class FechamentoEncalheController extends BaseController {
 			this.result.use(Results.json()).from(dataFormatada, "result").recursive().serialize();
 			
 		} else {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data util de encalhe encontrada");
+		
 		}
 		
 	}
@@ -398,26 +396,16 @@ public class FechamentoEncalheController extends BaseController {
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas postergadas com sucesso!"), "result").recursive().serialize();
 	}
 		
-//	private void removerCotasAusentesLista(List<CotaAusenteEncalheDTO> listaCotasAusentes, List<Long> idsCotas) {
-//		
-//		ArrayList<CotaAusenteEncalheDTO> newRefListaCotasAusentes = new ArrayList<CotaAusenteEncalheDTO>(listaCotasAusentes);
-//		
-//		if(idsCotas != null) {
-//			
-//			for(Long idCota : idsCotas) {
-//				for(int i=0; i < listaCotasAusentes.size(); i++) {
-//					CotaAusenteEncalheDTO dto = newRefListaCotasAusentes.get(i);
-//					
-//					if(dto != null && dto.getIdCota().equals(idCota)) {
-//						newRefListaCotasAusentes.add(listaCotasAusentes.get(i));
-//					}
-//				}
-//			}
-//			
-//			listaCotasAusentes.removeAll(newRefListaCotasAusentes);
-//		}
-//		
-//	}
+	private void removerCotasAusentesLista(List<CotaAusenteEncalheDTO> listaCotasAusentes, List<Long> idsCotas) {
+		
+		if(idsCotas != null) {
+			
+			for(Long idCota : idsCotas) {
+
+				listaCotasAusentes.remove(new CotaAusenteEncalheDTO(idCota));
+			}
+		}
+	}
 	
 	@Post
 	public void veificarCobrancaGerada(List<Long> idsCotas, boolean cobrarTodasCotas){
@@ -455,11 +443,11 @@ public class FechamentoEncalheController extends BaseController {
 			
 			if (cobrarTodasCotas) {
 				
-				//idsCotas a serem retirados da lista
-				//removerCotasAusentesLista(listaCotaAusenteEncalhe, idsCotas);
-				
 				List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
 						this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
+				
+				//idsCotas a serem retirados da lista
+				removerCotasAusentesLista(listaCotaAusenteEncalhe, idsCotas);
 				
 				this.realizarCobrancaTodasCotas(dataOperacao, listaCotaAusenteEncalhe);				
 			
