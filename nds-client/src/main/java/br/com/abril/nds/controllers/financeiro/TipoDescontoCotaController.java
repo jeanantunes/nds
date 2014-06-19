@@ -99,6 +99,15 @@ public class TipoDescontoCotaController extends BaseController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro de Tipo de Desconto realizado com sucesso"),"result").recursive().serialize();
 
 	}
+	
+	@Post("/novoDescontoEditor")
+	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_EDITOR_ALTERACAO)
+	public void novoDescontoEditor(Integer numeroCota, BigDecimal desconto, List<Long> fornecedores) {
+
+		descontoService.incluirDescontoCota(desconto, fornecedores, numeroCota, getUsuarioLogado());
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro de Tipo de Desconto realizado com sucesso"),"result").recursive().serialize();
+
+	}
 
 	@Post
 	@Path("/novoDescontoProduto")
