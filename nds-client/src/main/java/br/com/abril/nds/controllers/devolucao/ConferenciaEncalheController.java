@@ -376,7 +376,7 @@ public class ConferenciaEncalheController extends BaseController {
 	public void iniciarConferenciaEncalhe(final Integer numeroCota){
 		
 		limparDadosSessao();
-		this.removerTravaConferenciaEncalheCotaUsuario();
+		// this.removerTravaConferenciaEncalheCotaUsuario();
 		final Cota cota = this.conferenciaEncalheService.validarCotaParaInicioConferenciaEncalhe(numeroCota);
 		
 		if (conferenciaEncalheSessionScopeAttr.getIdBoxLogado() == null){
@@ -484,6 +484,10 @@ public class ConferenciaEncalheController extends BaseController {
         infoConfereciaEncalheCota.setNfeDigitada(false);
         
         this.session.setAttribute(INFO_CONFERENCIA, infoConfereciaEncalheCota);
+        
+        this.result.use(CustomMapJson.class).put("RET_NFE_DIGITADA", true).serialize();
+        
+        this.session.setAttribute(NUMERO_COTA, numeroCota);
         
         this.result.use(CustomJson.class).from("OK").serialize();
     }
