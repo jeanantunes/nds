@@ -532,9 +532,12 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 							window.event.preventDefault();
 							
-							ConferenciaEncalhe.carregarListaConferencia(data);
+							ConferenciaEncalhe.excluirNotasFiscaisPorReabertura(data);
 							
 							$("#dialog-reabertura", ConferenciaEncalhe.workspace).dialog("close");
+							
+							ConferenciaEncalhe.carregarListaConferencia(data);
+							
 							
 							ConferenciaEncalhe.modalAberta = false;
 							
@@ -2211,6 +2214,22 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 	},
 
+	excluirNotasFiscaisPorReabertura : function(data) {
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/excluirNotasFiscaisPorReabertura', data,
+			function(result){
+				
+				if (typeof result.RET_NFE_DIGITADA != 'undefined' && result.RET_NFE_DIGITADA){
+					ConferenciaEncalhe.popup_notaFiscal();
+				}
+				
+				if (result.mensagens){
+					exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+					return;
+				}
+			}
+		);
+	},
+	
 }, BaseController);
 
 function confirmarVeificacaoCobrancaGerada(){

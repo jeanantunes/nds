@@ -376,7 +376,7 @@ public class ConferenciaEncalheController extends BaseController {
 	public void iniciarConferenciaEncalhe(final Integer numeroCota){
 		
 		limparDadosSessao();
-		// this.removerTravaConferenciaEncalheCotaUsuario();
+		
 		final Cota cota = this.conferenciaEncalheService.validarCotaParaInicioConferenciaEncalhe(numeroCota);
 		
 		if (conferenciaEncalheSessionScopeAttr.getIdBoxLogado() == null){
@@ -491,6 +491,7 @@ public class ConferenciaEncalheController extends BaseController {
                 
         this.session.setAttribute(NUMERO_COTA, numeroCota);
         
+        this.result.use(Results.json()).from("OK.").recursive().serialize();
     }
 	
 	private boolean verificarItensExistenteProcessoUtilizaNFe(InfoConferenciaEncalheCota infoConfereciaEncalheCota) {

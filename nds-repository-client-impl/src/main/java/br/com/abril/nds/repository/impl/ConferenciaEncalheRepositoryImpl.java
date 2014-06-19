@@ -693,12 +693,8 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		((SQLQuery)query).addScalar("precoComDesconto");
 		((SQLQuery)query).addScalar("valorTotal");
 		((SQLQuery)query).addScalar("dataConferencia");
-		if(processoUtilizaNFe != null) {
-			
-			((SQLQuery)query).addScalar("processoUtilizaNfe", StandardBasicTypes.BOOLEAN);
-		}
+		((SQLQuery)query).addScalar("processoUtilizaNfe", StandardBasicTypes.BOOLEAN);
 
-		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
 		
 		if(processoUtilizaNFe != null) {
