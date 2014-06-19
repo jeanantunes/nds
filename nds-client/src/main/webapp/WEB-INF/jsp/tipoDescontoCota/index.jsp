@@ -36,7 +36,7 @@
 		tipoDescontoController.init();
 		descontoDistribuidorController.init();
 		descontoCotaController.init();
-		descontoEditorController.init();
+		descontoEditorController.init(pesquisaCotaTipoDescontoCota);
 		descontoProdutoController.init(pesquisaCotaTipoDescontoCota);
 		bloquearItensEdicao(tipoDescontoController.workspace);
 	});
@@ -216,7 +216,7 @@
 								type="text" class="nome_jornaleiro" maxlength="255"
 								style="width: 200px; float: left;"
 								onkeyup="pesquisaCotaTipoDescontoCota.autoCompletarPorNome('#descricaoCotaPesquisa');"
-								onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
+								onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#numCotaPesquisa', '#descricaoCotaPesquisa', false,
 													      			null,
 													      			null);" />
 
@@ -225,9 +225,9 @@
 						<div class="editor" style="display: none">
 
 							<label style="width: auto !important;">Editor:</label> <input
-								name="numEditorPesquisa" id="numEditorPesquisa" type="text"
+								name="codigoEditorPesquisa" id="codigoEditorPesquisa" type="text"
 								maxlength="11" style="width: 70px; float: left;"
-								onchange="pesquisaEditorTipoDescontoCota.pesquisarPorNumeroEditor('#numEditorPesquisa', '#descricaoEditorPesquisa',false,
+								onchange="pesquisaEditorTipoDescontoCota.pesquisarPorCodigoEditor('#codigoEditorPesquisa', '#descricaoEditorPesquisa', false,
 			           	  											null, 
 			           	  											null);" />
 							<label style="width: auto !important;">Nome:</label> <input
@@ -235,7 +235,7 @@
 								type="text" class="nome_jornaleiro" maxlength="255"
 								style="width: 200px; float: left;"
 								onkeyup="pesquisaEditorTipoDescontoCota.autoCompletarPorNome('#descricaoEditorPesquisa');"
-								onblur="pesquisaEditorTipoDescontoCota.pesquisarPorNomeEditor('#numEditorPesquisa', '#descricaoEditorPesquisa',false,
+								onblur="pesquisaEditorTipoDescontoCota.pesquisarPorNomeEditor('#codigoEditorPesquisa', '#descricaoEditorPesquisa', false,
 													      			null,
 													      			null);" />
 

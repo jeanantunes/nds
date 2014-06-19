@@ -5,17 +5,17 @@ function PesquisaEditor(workspace) {
 	this.workspace = workspace;
 		
 	//Pesquisa por número do editor
-	this.pesquisarPorNumeroEditor = function(idCampoNumeroEditor, idCampoNomeEditor, isFromModal, successCallBack, errorCallBack,checkValidateResult) {
+	this.pesquisarPorCodigoEditor = function(idCampocodigoEditor, idCampoNomeEditor, isFromModal, successCallBack, errorCallBack,checkValidateResult) {
 		
-		var numeroEditor = $(idCampoNumeroEditor, pesquisaEditor.workspace).val();
+		var codigoEditor = $(idCampocodigoEditor, pesquisaEditor.workspace).val();
 
-		numeroEditor = $.trim(numeroEditor);
+		codigoEditor = $.trim(codigoEditor);
 		
 		$(idCampoNomeEditor, pesquisaEditor.workspace).val("");
 		
-		if (numeroEditor && numeroEditor.length > 0) {
+		if (codigoEditor && codigoEditor.length > 0) {
 			
-			$.postJSON(contextPath + "/cadastro/editor/pesquisarPorNumero", { numeroEditor:numeroEditor },
+			$.postJSON(contextPath + "/cadastro/editor/pesquisarPorCodigo", { codigoEditor:codigoEditor },
 				function(result) {
 						
 						if(checkValidateResult && pesquisaEditor.validateResult){
@@ -25,10 +25,10 @@ function PesquisaEditor(workspace) {
 							}
 							
 						}
-					pesquisaEditor.pesquisarPorNumeroSuccessCallBack(result, idCampoNomeEditor, successCallBack); 
+					pesquisaEditor.pesquisarPorCodigoSuccessCallBack(result, idCampoNomeEditor, successCallBack); 
 				},
 				function() {
-					pesquisaEditor.pesquisarPorNumeroErrorCallBack(idCampoNumeroEditor, errorCallBack); 
+					pesquisaEditor.pesquisarPorCodigoErrorCallBack(idCampocodigoEditor, errorCallBack); 
 				}, 
 				isFromModal
 			);
@@ -40,19 +40,19 @@ function PesquisaEditor(workspace) {
 		}
 	},
 	
-	this.pesquisarNomeEditor = function(idCampoNomeEditor, idCampoNumeroEditor, isFromModal, successCallBack, errorCallBack) {
+	this.pesquisarNomeEditor = function(idCampoNomeEditor, idCampocodigoEditor, isFromModal, successCallBack, errorCallBack) {
 		
 		var nomeEditor = $(idCampoNomeEditor, pesquisaEditor.workspace).val();
 
 		nomeEditor = $.trim(nomeEditor);
 		
-		$(idCampoNumeroEditor, pesquisaEditor.workspace).val("");
+		$(idCampocodigoEditor, pesquisaEditor.workspace).val("");
 		
 		if (nomeEditor && nomeEditor.length > 0) {
 			
 			$.postJSON(contextPath + "/cadastro/editor/pesquisarPorNome", {nomeEditor:nomeEditor},
 				function(result) { 
-					pesquisaEditor.pesquisarPorNomeSuccessCallBack(result, idCampoNumeroEditor, successCallBack); 
+					pesquisaEditor.pesquisarPorNomeSuccessCallBack(result, idCampocodigoEditor, successCallBack); 
 				},
 				function() {
 					pesquisaEditor.pesquisarPorNomeErrorCallBack(idCampoNomeEditor, errorCallBack); 
@@ -68,7 +68,7 @@ function PesquisaEditor(workspace) {
 	},
 	
 	//Success callback para pesquisa por número do editor
-	this.pesquisarPorNumeroSuccessCallBack = function(result, idCampoNomeEditor, successCallBack) {
+	this.pesquisarPorCodigoSuccessCallBack = function(result, idCampoNomeEditor, successCallBack) {
 
 		pesquisaEditor.pesquisaRealizada = true;
 		
@@ -82,11 +82,11 @@ function PesquisaEditor(workspace) {
 	
 	
 	//Error callback para pesquisa por número do editor
-	this.pesquisarPorNumeroErrorCallBack = function(idCampoNumeroEditor, errorCallBack) {
+	this.pesquisarPorCodigoErrorCallBack = function(idCampocodigoEditor, errorCallBack) {
 		
-		$(idCampoNumeroEditor, pesquisaEditor.workspace).val("");
+		$(idCampocodigoEditor, pesquisaEditor.workspace).val("");
 		
-		$(idCampoNumeroEditor, pesquisaEditor.workspace).focus();
+		$(idCampocodigoEditor, pesquisaEditor.workspace).focus();
 		
 		if (errorCallBack) {
 			
@@ -123,7 +123,7 @@ function PesquisaEditor(workspace) {
 	
 	this.pesquisaRealizada = false,
 	
-	this.numeroEditorSelecionado = null,
+	this.codigoEditorSelecionado = null,
 	
 	this.intervalo = null,
 	
@@ -139,12 +139,12 @@ function PesquisaEditor(workspace) {
 				pesquisaEditor.descricaoAtribuida = true;
 				
 				if (ui.item){
-					pesquisaEditor.numeroEditorSelecionado = ui.item.chave.numero;
+					pesquisaEditor.codigoEditorSelecionado = ui.item.chave.numero;
 				}
 			},
 			select : function(event, ui) {
 				pesquisaEditor.descricaoAtribuida = true;
-				pesquisaEditor.numeroEditorSelecionado = ui.item.chave.numero;
+				pesquisaEditor.codigoEditorSelecionado = ui.item.chave.numero;
 			},
 			minLength: tamanhoInicial,
 			delay : 0,
@@ -152,7 +152,7 @@ function PesquisaEditor(workspace) {
 	},
 	
 	//Pesquisar por nome do editor
-	this.pesquisarPorNomeEditor = function(idCampoNumeroEditor, idCampoNomeEditor, isFromModal, successCallBack, errorCallBack,checkValidateResult) {
+	this.pesquisarPorNomeEditor = function(idCampocodigoEditor, idCampoNomeEditor, isFromModal, successCallBack, errorCallBack,checkValidateResult) {
 		
 		setTimeout(function() { clearInterval(pesquisaEditor.intervalo); }, 10 * 1000);
 		
@@ -167,14 +167,14 @@ function PesquisaEditor(workspace) {
 					return;
 				}
 				
-				pesquisaEditor.pesquisarPorNomeEditorAposIntervalo(idCampoNumeroEditor, idCampoNomeEditor, isFromModal, successCallBack, errorCallBack,checkValidateResult);
+				pesquisaEditor.pesquisarPorNomeEditorAposIntervalo(idCampocodigoEditor, idCampoNomeEditor, isFromModal, successCallBack, errorCallBack,checkValidateResult);
 			}
 			
 		}, 100);
 	},
 	
 	//Pesquisa por nome do editor após o intervalo
-	this.pesquisarPorNomeEditorAposIntervalo = function(idCampoNumeroEditor, idCampoNomeEditor, isFromModal, successCallBack, errorCallBack,checkValidateResult) {
+	this.pesquisarPorNomeEditorAposIntervalo = function(idCampocodigoEditor, idCampoNomeEditor, isFromModal, successCallBack, errorCallBack,checkValidateResult) {
 		
 		clearInterval(pesquisaEditor.intervalo);
 		
@@ -182,7 +182,7 @@ function PesquisaEditor(workspace) {
 		
 		nomeEditor = $.trim(nomeEditor);
 		
-		$(idCampoNumeroEditor, pesquisaEditor.workspace).val("");
+		$(idCampocodigoEditor, pesquisaEditor.workspace).val("");
 		
 		if (nomeEditor && nomeEditor.length > 0) {
 			$.postJSON(
@@ -192,18 +192,18 @@ function PesquisaEditor(workspace) {
 
 					if (result.length > 1){
 
-						if (pesquisaEditor.numeroEditorSelecionado){
+						if (pesquisaEditor.codigoEditorSelecionado){
 							
 							pesquisaEditor.pesquisaRealizada = true;
 							
-							$(idCampoNumeroEditor, pesquisaEditor.workspace).val(pesquisaEditor.numeroEditorSelecionado);
+							$(idCampocodigoEditor, pesquisaEditor.workspace).val(pesquisaEditor.codigoEditorSelecionado);
 						}
 					}
 					else if(result.numero){
 
 						pesquisaEditor.pesquisaRealizada = true;
 						
-						$(idCampoNumeroEditor, pesquisaEditor.workspace).val(result.numero);
+						$(idCampocodigoEditor, pesquisaEditor.workspace).val(result.numero);
 						
 						if(checkValidateResult && pesquisaEditor.validateResult){
 							var msgArray = pesquisaEditor.validateResult(result);
@@ -215,7 +215,7 @@ function PesquisaEditor(workspace) {
 					}
 					else{
 					
-					    pesquisaEditor.pesquisarPorNomeSuccessCallBack(result, idCampoNumeroEditor, idCampoNomeEditor, successCallBack);
+					    pesquisaEditor.pesquisarPorNomeSuccessCallBack(result, idCampocodigoEditor, idCampoNomeEditor, successCallBack);
 					}
 				},
 				function() {
@@ -232,11 +232,11 @@ function PesquisaEditor(workspace) {
 	},
 	
 	//Success callback para pesquisa por nome do editor
-	this.pesquisarPorNomeSuccessCallBack = function(result, idCampoNumeroEditor, idCampoNomeEditor, successCallBack) {
+	this.pesquisarPorNomeSuccessCallBack = function(result, idCampocodigoEditor, idCampoNomeEditor, successCallBack) {
 		
 		if (result != "") {
 			
-			$(idCampoNumeroEditor, pesquisaEditor.workspace).val(result.idEditor);
+			$(idCampocodigoEditor, pesquisaEditor.workspace).val(result.codigo);
 			$(idCampoNomeEditor, pesquisaEditor.workspace).val(result.nome);
 			
 			if (successCallBack) {
@@ -259,12 +259,12 @@ function PesquisaEditor(workspace) {
 	},
 	
 	//Obtém um editor pelo número
-	this.obterPorNumeroEditor = function(numeroEditor, isFromModal, successCallback, errorCallBack) {
+	this.obterPorcodigoEditor = function(codigoEditor, isFromModal, successCallback, errorCallBack) {
 		
-		if (numeroEditor && numeroEditor.length > 0) {
+		if (codigoEditor && codigoEditor.length > 0) {
 
-			$.postJSON(contextPath + "/cadastro/editor/pesquisarPorNumero",
-				{numeroEditor:numeroEditor},
+			$.postJSON(contextPath + "/cadastro/editor/pesquisarPorCodigo",
+				{codigoEditor:codigoEditor},
 				function(result) { 
 					successCallback(result); 
 				},

@@ -58,28 +58,29 @@ public class EditorController extends BaseController {
 	 * @param codigo
 	 */
 	@Post
-	public void pesquisarPorNumeroAutoComplete(String codigo) {
+	public void pesquisarPorCodigoAutoComplete(String codigo) {
 		
-		pesquisarPorNumero(Long.valueOf(codigo));
+		pesquisarPorCodigo(Long.valueOf(codigo));
 	}
 	
-	                /**
+	/**
      * Efetua consulta de cota pelo número informado
      * 
      * @param numeroCota - número da cota
      */
 	@Post
-	public void pesquisarPorNumero(Long numeroEditor) {
+	public void pesquisarPorCodigo(Long codigoEditor) {
 		
-		if(numeroEditor == null) {
+		if(codigoEditor == null) {
+			
             throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota deve ser informado!");
 		}
 		
-		Editor editor = this.editorService.obterEditorPorId(numeroEditor);
+		Editor editor = this.editorService.obterEditorPorCodigo(codigoEditor);
 
 		if (editor == null) {
 
-            throw new ValidacaoException(TipoMensagem.WARNING, "Editor \"" + numeroEditor + "\" não encontrado!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Editor \"" + codigoEditor + "\" não encontrado!");
 			
 		} else {
 			

@@ -9,7 +9,7 @@
 
 <form action="" id="formTipoDescontoProduto">
 
-	<div id="dialog-editor" title="Novo Tipo de Desconto Produto" style="display:none;">
+	<div id="dialog-editor" title="Novo Tipo de Desconto Editor" style="display:none;">
 
 	<jsp:include page="../messagesDialog.jsp" />    
 
@@ -17,12 +17,12 @@
 	          <tr>
 	            <td width="100">Editor:</td>
 	            <td width="100">
-	            	<input name="numEditor" 
-           		   id="numEditor" 
+	            	<input name="codigoEditor" 
+           		   id="codigoEditor" 
            		   type="text"
            		   maxlength="11"
            		   style="width:70px;float:left;"
-           		   onchange="pesquisaEditorTipoDescontoCota.pesquisarPorNumeroEditor('#numEditor', '#descricaoEditor',true,
+           		   onchange="pesquisaEditorTipoDescontoCota.pesquisarPorCodigoEditor('#codigoEditor', '#descricaoEditor',true,
            	  											descontoEditorController.pesquisarEditorSuccessCallBack, 
            	  											descontoEditorController.pesquisarEditorErrorCallBack);" />
 	            </td>
@@ -37,7 +37,7 @@
 			      		 maxlength="255"
 			      		 style="width:200px;float:left;"
 			      		 onkeyup="pesquisaEditorTipoDescontoCota.autoCompletarPorNome('#descricaoEditor');" 
-			      		 onblur="pesquisaEditorTipoDescontoCota.pesquisarPorNumeroEditor('#numEditor', '#descricaoEditor',true,
+			      		 onblur="pesquisaEditorTipoDescontoCota.pesquisarPorCodigoEditor('#codigoEditor', '#descricaoEditor',true,
 										      			descontoEditorController.pesquisarEditorSuccessCallBack,
 										      			descontoEditorController.pesquisarEditorErrorCallBack);" />
 	            </td>
@@ -66,21 +66,21 @@
 				<fieldset style="width:395px!important;">
 					<legend>Cotas</legend>
 					<div style="overflow: auto; height: 240px;">
-		    			<table border="0" cellspacing="1" cellpadding="1" class="especificaCota" id="gridCotas" style="display:none;width:100%" >
+		    			<table border="0" cellspacing="1" cellpadding="1" class="especificaCota" id="gridCotasEditor" style="display:none;width:100%" >
 
 							<tr class="header_table">
 				                <td width="34%">Cota</td>
 				                <td width="66%">Nome</td>
 							</tr>
-							<tr id="trCota1">
+							<tr class="trCotasEditor" id="trCotaEditor1">
 								<td>
-									<input type="text" name="cotaInput" id="cotaInput1" style="width:120px;" maxlength="255"
-										onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNumeroCota('#cotaInput1', '#nomeInput1', true);"/>
+									<input type="text" name="cotaEditorInput" id="cotaEditorInput1" style="width:120px;" maxlength="255"
+										onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNumeroCota('#cotaEditorInput1', '#nomeCotaEditorInput1', true);"/>
 								</td>
 								<td>
-									<input type="text" name="nomeInput" id="nomeInput1" style="width:245px;" maxlength="255"
-										onkeyup="pesquisaCotaTipoDescontoCota.autoCompletarPorNome('#nomeInput1');" 
-										onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#cotaInput1', '#nomeInput1',descontoProdutoController.adicionarLinhaCota(1));"/>
+									<input type="text" name="nomeCotaEditorInput" id="nomeCotaEditorInput1" style="width:245px;" maxlength="255"
+										onkeyup="pesquisaCotaTipoDescontoCota.autoCompletarPorNome('#nomeCotaEditorInput1');" 
+										onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#cotaEditorInput1', '#nomeCotaEditorInput1', descontoEditorController.adicionarLinhaCota(1));"/>
 								</td>
 							</tr>
 						</table>

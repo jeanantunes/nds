@@ -1,11 +1,13 @@
 var descontoEditorController = $.extend(true,{
 		
-	popup_editor:function() {		
+	pesquisaCota: null,
+	
+	popup_editor: function() {		
 		 
 		$("#selectFornecedorSelecionado_option_editor",this.workspace).clear();
 		$("#selectFornecedor_option_editor",this.workspace).clear();
 		
-		$("#numEditor",this.workspace).val("");
+		$("#codigoEditor",this.workspace).val("");
 		$("#descontoEditor",this.workspace).val("");
 		$("#descontoEditor",this.workspace).justPercent("floatValue");
 		$("#descricaoEditor",this.workspace).val("");
@@ -23,12 +25,28 @@ var descontoEditorController = $.extend(true,{
 				},{
 					id:"id_close_editor", text:"Cancelar",
 					click: function() {
+						descontoEditorController.clearModalDescontoEditor();
 						$( this ).dialog( "close" );
 					}
 				}
 			],
 			form: $("#dialog-editor", this.workspace).parents("form")
 		});		      
+	},
+	
+	clearModalDescontoEditor: function() {
+		
+		$.each($('.trCotasEditor input[id^="cotaEditorInput"]', this.workspace), function(k, v) {
+
+			if(($(v).attr('id') != 'cotaEditorInput1')) {
+				
+				$('#trCotaEditor'+ $(v).attr('id').substring("cotaEditorInput".length)).remove();
+			}
+		});
+		
+		$("#cotaEditorInput1", this.workspace).val('');
+		$("#nomeCotaEditorInput1", this.workspace).val('');
+		
 	},
 	
 	novoDescontoEditor: function() {
@@ -64,6 +82,16 @@ var descontoEditorController = $.extend(true,{
 	},
 	
 	pesquisarEditorSuccessCallBack:function() {
+		
+		$.each($('.trCotasEditor input[id^="cotaEditorInput"]', this.workspace), function(k, v) {
+
+			if(($(v).attr('id') != 'cotaEditorInput'+ linhaAtual) && ($(v).val() == $('#cotaEditorInput'+ linhaAtual).val())) {
+				
+				exibirMensagemDialog("WARNING", ['Já existe essa Cota na lista!'], "idModalDescontoEditor");
+				cotaRepetida = true;
+				return false;
+			}
+		});
 		
 	},
 
@@ -105,7 +133,55 @@ var descontoEditorController = $.extend(true,{
 		descontoProdutoController.resetGridCota();
 	},
 	
-	init: function() {
+	adicionarLinhaCota: function(linhaAtual) {
+		
+		var cotaRepetida = false;
+		$.each($('.trCotasEditor input[id^="cotaEditorInput"]', this.workspace), function(k, v) {
+
+			if(($(v).attr('id') != 'cotaEditorInput'+ linhaAtual) && ($(v).val() == $('#cotaEditorInput'+ linhaAtual).val())) {
+				
+				exibirMensagemDialog("WARNING", ['Já existe essa Cota na lista!'], "idModalDescontoEditor");
+				cotaRepetida = true;
+				return false;
+			}
+		});
+		
+		if(cotaRepetida) {
+			
+			$("#cotaEditorInput"+ linhaAtual, this.workspace).val('');
+			$("#nomeCotaEditorInput"+ linhaAtual, this.workspace).val('');
+			
+			$("#cotaEditorInput"+ linhaAtual, this.workspace).focus();
+			
+			$("#cotaEditorInput"+ linhaAtual, this.workspace).numeric();
+			
+			return false;
+		}
+		
+		if ($('#trCotaEditor' + (linhaAtual + 1),this.workspace).length == 0 && $('#cotaEditorInput' + (linhaAtual),this.workspace).val() != "") {
+			
+			var tr = $('<tr class="trCotasEditor" id="trCotaEditor'+ (linhaAtual + 1) +'" style="'+ ((linhaAtual + 1) % 2 == 0 ? "background: #F5F5F5;" : "") +'">' +
+					'<td><input type="text" name="cotaEditorInput" maxlength="255" id="cotaEditorInput'+ (linhaAtual + 1) +'" onblur="descontoEditorController.pesquisaCota.pesquisarPorNumeroCota(cotaEditorInput'+ (linhaAtual + 1) +', nomeCotaEditorInput'+ (linhaAtual + 1) +', true,function(){descontoEditorController.adicionarLinhaCota('+ (linhaAtual + 1) +')});" style="width:120px;" /></td>' +
+					'<td>'+
+						 '<input type="text" name="nomeCotaEditorInput" maxlength="255" id="nomeCotaEditorInput'+ (linhaAtual + 1) +'" style="width:245px;" '+
+							 ' onkeyup="descontoEditorController.pesquisaCota.autoCompletarPorNome(nomeCotaEditorInput'+ (linhaAtual + 1) +');" ' +
+							 ' onblur="descontoEditorController.pesquisaCota.pesquisarPorNomeCota(cotaEditorInput'+ (linhaAtual + 1) +', nomeCotaEditorInput'+ (linhaAtual + 1) +', true, function(){descontoEditorController.adicionarLinhaCota('+ (linhaAtual + 1) +');});" ' +
+						 '/>'+
+					'</td>' +
+					'</tr>'
+			);
+			
+			$("#gridCotasEditor",this.workspace).append(tr);
+			
+			$("#cotaEditorInput" + (linhaAtual + 1),this.workspace).focus();
+			
+			$("#cotaEditorInput"+ (linhaAtual + 1),this.workspace).numeric();
+		}
+	},
+	
+	init: function(pesquisaCota) {
+		
+		this.pesquisaCota = pesquisaCota;
 		
 		$("select[name='selectCotaSelecionado_editor']",this.workspace).multiSelect("select[name='selectCota_editor']", {trigger: "#linkCotaVoltarTodos_editor"});
 		

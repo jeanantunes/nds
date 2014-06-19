@@ -460,7 +460,7 @@ function playSound(audioFile) {
  * @param data - dados a serem enviados no formato 'dado1=x&dado2=y'
  */
 function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, dataType, method, isFromDialog,idDialog, global) {
-	console.log(arguments);
+
 	if(global == undefined){
 		global =  true;
 	}

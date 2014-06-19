@@ -69,4 +69,10 @@ public class EditorServiceImpl implements EditorService {
 		return editorRepository.obterEditoresPorNomePessoa(nomeEditor);
 	}
 
+	@Override
+	public Editor obterEditorPorCodigo(Long codigoEditor) {
+		
+		return editorRepository.obterPorCodigo(codigoEditor);
+	}
+
 }
