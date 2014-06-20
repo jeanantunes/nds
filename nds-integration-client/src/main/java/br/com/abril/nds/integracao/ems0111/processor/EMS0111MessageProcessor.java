@@ -137,14 +137,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		Lancamento lancamento =
 	        this.getLancamentoPrevistoMaisProximo(produtoEdicao, dataGeracaoArquivo, statusLancamento);
 		
-		if (lancamento == null ) {
-		
-		    lancamento =
-	            this.getLancamentoPrevistoMaisProximo(
-                    produtoEdicao, distribuidorRepository.obterDataOperacaoDistribuidor(), null);
-		}
+
 	    
-		if (lancamento == null ) {
+		if (lancamento == null) {
 		    
 			// Cadastrar novo lançamento
 			lancamento = new Lancamento();
@@ -243,7 +238,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			return;
 			
-		} else {
+		} else if(lancamento.getStatus().equals(StatusLancamento.CONFIRMADO) 
+			   || lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
+			   || lancamento.getStatus().equals(StatusLancamento.BALANCEADO)
+			   || lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO)
+			   || lancamento.getStatus().equals(StatusLancamento.FURO)){
 		    
 		    boolean alterarData;
 		    
@@ -448,13 +447,12 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		
 		Criteria criteria = this.getSession().createCriteria(Lancamento.class);
 
-		criteria.add(Restrictions.ge("dataLancamentoPrevista", dataGeracaoArquivo));
+		//FIXME Verificar great than
+		//criteria.add(Restrictions.ge("dataLancamentoPrevista",dataGeracaoArquivo));
 		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
 		
-		if (statusLancamento != null) {
-		    
-		    criteria.add(Restrictions.in("status", statusLancamento));
-		}
+		//criteria.add(Restrictions.in("status", statusLancamento));
+		
 		
 		criteria.addOrder(Order.asc("dataLancamentoPrevista"));
 		
