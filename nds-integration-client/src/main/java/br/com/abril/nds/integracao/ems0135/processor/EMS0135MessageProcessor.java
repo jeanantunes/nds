@@ -238,8 +238,9 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
             
             if (produtoEdicao == null) {
                 
-                Produto produto = this.produtoRepository.obterProdutoPorCodigoProdinLike(codigoProduto);
-                
+                //Produto produto = this.produtoRepository.obterProdutoPorCodigoProdinLike(codigoProduto);
+            	Produto produto = this.produtoRepository.obterProdutoPorCodigoProdin(codigoProduto);
+            	
                 if (produto == null) {
                     
                     TipoProduto tipoProduto = this.tipoProdutoRepository.buscarPorId(1L);
