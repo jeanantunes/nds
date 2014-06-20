@@ -383,11 +383,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.HIERARQUIA,
-					String.format( "Produto com Segmento INDEFINIDO. Produto "+input.getCodProd()+" Edição "+input.getEdicaoProd(), input.getCodProd(), input.getEdicaoProd() )
+					String.format( "Produto com Segmento INDEFINIDO, Será atribuido 'OUTROS'. Produto "+input.getCodProd()+" Edição "+input.getEdicaoProd(), input.getCodProd(), input.getEdicaoProd() )
 				);
 			
 			//FIXME Não deveria vir Segmento como nulo
-			produto.setTipoSegmentoProduto(getTipoSegmento(new Long(0)));
+			produto.setTipoSegmentoProduto(getTipoSegmento(new Long(9)));
 			
 			
 		}else{
@@ -588,11 +588,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
                         EventoExecucaoEnum.INF_DADO_ALTERADO,
                         "Alteração do Tipo de Segmento"
                         +" de Nulo "
-                        +" para " + getTipoSegmento(new Long(0)).getDescricao()
+                        +" para " + getTipoSegmento(new Long(9)).getDescricao()
                         +" Produto "+ input.getCodProd()
     					+" Edição "+ input.getEdicaoProd());
         		
-        		produto.setTipoSegmentoProduto(getTipoSegmento(new Long(0)));
+        		produto.setTipoSegmentoProduto(getTipoSegmento(new Long(9)));
         		
         	}
             
@@ -825,7 +825,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
                     "Alteração de Segmentação"
                     +" de INDEFINIDO" 
-                    +" para " + getTipoSegmento(new Long (input.getSegmento()))
+                    +" para " + getTipoSegmento(new Long (input.getSegmento())).getDescricao()
                     +" Produto "+ input.getCodProd()
 					+" Edição "+ input.getEdicaoProd());
             
@@ -991,6 +991,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			
 			if(validarCodigoBarras){
 				
+				if(edicao!=null && edicao.getCodigoDeBarras()!=null && input.getCodBarra()!=null && new Long(edicao.getCodigoDeBarras()).longValue()!=new Long(input.getCodBarra()).longValue())
 				this.ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
