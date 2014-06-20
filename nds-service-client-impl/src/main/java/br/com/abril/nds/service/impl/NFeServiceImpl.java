@@ -4,9 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +32,7 @@ import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
+import br.com.abril.nds.dto.ItemImpressaoNfe;
 import br.com.abril.nds.dto.NfeImpressaoDTO;
 import br.com.abril.nds.dto.NfeImpressaoWrapper;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
@@ -46,6 +50,7 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.TributoAliquota;
+import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
@@ -1014,6 +1019,69 @@ public class NFeServiceImpl implements NFeService {
 	            } 
 	        } else {
             	return this.naturezaOperacaoRepository.obterNaturezaOperacao(distribuidor.getTipoAtividade(), TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA, false, false);
+	        }
+		}	
+    }
+    
+    private void carregarNEDadosItens(final NfeImpressaoDTO nfeImpressao, final NotaEnvio notaEnvio) {
+        
+        final List<ItemImpressaoNfe> listaItemImpressaoNfe = new ArrayList<ItemImpressaoNfe>();
+        
+        final List<ItemNotaEnvio> itensNotaEnvio =  notaEnvio.getListaItemNotaEnvio();
+        
+        String codigoProduto 		= "";
+        String descricaoProduto 	= "";
+        Long produtoEdicao 			= null;
+        BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
+        BigDecimal valorTotalProduto 	= BigDecimal.ZERO;
+        BigDecimal valorDescontoProduto = BigDecimal.ZERO;
+        
+        Collections.sort(itensNotaEnvio, new Comparator<ItemNotaEnvio>(){
+            @Override
+            public int compare(final ItemNotaEnvio o1, final ItemNotaEnvio o2) {
+                if (o1 != null && o2 != null) {
+                    if(o1 != null && o1.getSequenciaMatrizLancamento() != null && o2 != null && o2.getSequenciaMatrizLancamento() != null) {
+                        return o1.getSequenciaMatrizLancamento().compareTo(o2.getSequenciaMatrizLancamento());
+                    } else if ((o1.getProdutoEdicao() != null && o1.getProdutoEdicao().getProduto() != null)
+                            && (o2.getProdutoEdicao() != null && o2.getProdutoEdicao().getProduto() != null)) {
+                        o1.getProdutoEdicao().getProduto().getNome().compareTo(o2.getProdutoEdicao().getProduto().getNome());
+                    }
+                }
+                return 0;
+            }
+            
+        });
+        
+        boolean temLancamentoComFuroDeProduto = false;
+        
+        for(final ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
+            
+            codigoProduto 		= itemNotaEnvio.getCodigoProduto().toString();
+            descricaoProduto 	= (itemNotaEnvio.getFuroProduto()==null)
+            		? itemNotaEnvio.getPublicacao()
+            				:itemNotaEnvio.getPublicacao()+" (1) ";
+            produtoEdicao		= itemNotaEnvio.getProdutoEdicao().getNumeroEdicao();
+            
+            valorUnitarioProduto = itemNotaEnvio.getPrecoCapa();
+            valorDescontoProduto = itemNotaEnvio.getDesconto().divide(new BigDecimal("100"));
+            valorTotalProduto	 = itemNotaEnvio.getPrecoCapa().multiply(new BigDecimal(itemNotaEnvio.getReparte()));
+            
+            final ItemImpressaoNfe item = new ItemImpressaoNfe();
+            
+            item.setCodigoProduto(codigoProduto);
+            item.setDescricaoProduto(descricaoProduto);
+            item.setProdutoEdicao(produtoEdicao);
+            item.setQuantidadeProduto(new BigDecimal(itemNotaEnvio.getReparte().toString()));
+            item.setValorUnitarioProduto(valorUnitarioProduto);
+            item.setValorTotalProduto(valorTotalProduto);
+            item.setValorDescontoProduto(valorTotalProduto.subtract(valorTotalProduto.multiply(valorDescontoProduto)));
+            item.setSequencia(itemNotaEnvio.getSequenciaMatrizLancamento());
+            item.setCodigoBarra(itemNotaEnvio.getProdutoEdicao().getCodigoDeBarras());
+            
+            listaItemImpressaoNfe.add(item);
+            
+            if(itemNotaEnvio.getFuroProduto()!= null){
+            	temLancamentoComFuroDeProduto = true;
             }
 
         }		

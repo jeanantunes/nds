@@ -283,7 +283,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		if(input.getSegmento()!=null && !input.getSegmento().trim().equals("")){
 		 produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
 		}else{
-		 produto.setTipoSegmentoProduto(getTipoSegmento(new Long(0)));	
+		 produto.setTipoSegmentoProduto(getTipoSegmento(new Long(9)));	
 		}
 		
 		String codigoSituacaoTributaria = input.getCodigoSituacaoTributaria();

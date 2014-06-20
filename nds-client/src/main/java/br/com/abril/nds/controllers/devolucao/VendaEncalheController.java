@@ -499,6 +499,7 @@ public class VendaEncalheController extends BaseController {
 		vendaEncalheVO.setNomeUsuario((dto.getUsuario()!= null)? dto.getUsuario().getNome():"");
 		vendaEncalheVO.setTipoVenda(dto.getTipoVendaEncalhe());
 		vendaEncalheVO.setFormaComercializacao(dto.getFormaVenda());
+		vendaEncalheVO.setProdutoContaFirme(dto.isProdutoContaFirme());
 	
 		return vendaEncalheVO;
 	}

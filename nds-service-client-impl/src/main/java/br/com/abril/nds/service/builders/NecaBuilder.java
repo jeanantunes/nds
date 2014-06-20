@@ -244,62 +244,64 @@ public class NecaBuilder  implements Serializable {
 	
 	public static void carregarNEDadosItens(NfeImpressaoDTO nfeImpressao, NotaEnvio notaEnvio) {
 
-		List<ItemImpressaoNfe> listaItemImpressaoNfe = new ArrayList<ItemImpressaoNfe>();
+		final List<ItemImpressaoNfe> listaItemImpressaoNfe = new ArrayList<ItemImpressaoNfe>();
+        
+        final List<ItemNotaEnvio> itensNotaEnvio =  notaEnvio.getListaItemNotaEnvio();
+        
+        boolean temLancamentoComFuroDeProduto = false;
+        String codigoProduto 		= "";
+        String descricaoProduto 	= "";
+        Long produtoEdicao 			= null;
+        BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
+        BigDecimal valorTotalProduto 	= BigDecimal.ZERO;
+        BigDecimal valorDescontoProduto = BigDecimal.ZERO;
+        
+        Collections.sort(itensNotaEnvio, new Comparator<ItemNotaEnvio>(){
+            @Override
+            public int compare(final ItemNotaEnvio o1, final ItemNotaEnvio o2) {
+                if (o1 != null && o2 != null) {
+                    if(o1 != null && o1.getSequenciaMatrizLancamento() != null && o2 != null && o2.getSequenciaMatrizLancamento() != null) {
+                        return o1.getSequenciaMatrizLancamento().compareTo(o2.getSequenciaMatrizLancamento());
+                    } else if ((o1.getProdutoEdicao() != null && o1.getProdutoEdicao().getProduto() != null)
+                            && (o2.getProdutoEdicao() != null && o2.getProdutoEdicao().getProduto() != null)) {
+                        o1.getProdutoEdicao().getProduto().getNome().compareTo(o2.getProdutoEdicao().getProduto().getNome());
+                    }
+                }
+                return 0;
+            }
+            
+        });
+        
+        
+        for(final ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
+            
+            codigoProduto 		= itemNotaEnvio.getCodigoProduto().toString();
+            descricaoProduto 	= (itemNotaEnvio.getFuroProduto()==null) ? itemNotaEnvio.getPublicacao() :itemNotaEnvio.getPublicacao()+" (1) ";
+            produtoEdicao		= itemNotaEnvio.getProdutoEdicao().getNumeroEdicao();
+            
+            valorUnitarioProduto = itemNotaEnvio.getPrecoCapa();
+            valorDescontoProduto = itemNotaEnvio.getDesconto().divide(new BigDecimal("100"));
+            valorTotalProduto	 = itemNotaEnvio.getPrecoCapa().multiply(new BigDecimal(itemNotaEnvio.getReparte()));
+            
+            final ItemImpressaoNfe item = new ItemImpressaoNfe();
+            
+            item.setCodigoProduto(codigoProduto);
+            item.setDescricaoProduto(descricaoProduto);
+            item.setProdutoEdicao(produtoEdicao);
+            item.setQuantidadeProduto(new BigDecimal(itemNotaEnvio.getReparte().toString()));
+            item.setValorUnitarioProduto(valorUnitarioProduto);
+            item.setValorTotalProduto(valorTotalProduto);
+            item.setValorDescontoProduto(valorTotalProduto.subtract(valorTotalProduto.multiply(valorDescontoProduto)));
+            item.setSequencia(itemNotaEnvio.getSequenciaMatrizLancamento());
+            item.setCodigoBarra(itemNotaEnvio.getProdutoEdicao().getCodigoDeBarras());
+            
+            listaItemImpressaoNfe.add(item);
+            
+            if(itemNotaEnvio.getFuroProduto()!= null){
+            	temLancamentoComFuroDeProduto = true;
+            }
 
-		List<ItemNotaEnvio> itensNotaEnvio =  notaEnvio.getListaItemNotaEnvio();
-
-		String codigoProduto 		= "";
-		String descricaoProduto 	= "";
-		Long produtoEdicao 			= null;
-		BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
-		BigDecimal valorTotalProduto 	= BigDecimal.ZERO;
-		BigDecimal valorDescontoProduto = BigDecimal.ZERO;
-		
-		Collections.sort(itensNotaEnvio, new Comparator<ItemNotaEnvio>(){
-			@Override
-			public int compare(ItemNotaEnvio o1, ItemNotaEnvio o2) {
-			    
-			    	if(o1 != null && o1.getSequenciaMatrizLancamento() != null && o2 != null && o2.getSequenciaMatrizLancamento() != null) {
-			    		
-			    	    return o1.getSequenciaMatrizLancamento().compareTo(o2.getSequenciaMatrizLancamento());
-			    	    
-			    	} else if ((o1 != null && o1.getProdutoEdicao() != null && o1.getProdutoEdicao().getProduto() != null)
-			    		&& (o2 != null && o2.getProdutoEdicao() != null && o2.getProdutoEdicao().getProduto() != null)) {
-    					
-			    		return o1.getProdutoEdicao().getProduto().getNome().compareTo(o2.getProdutoEdicao().getProduto().getNome());
-    					 
-    				}
-    							    	
-			    	return 0;
-			}
-			
-		});
-
-		for(ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
-
-			codigoProduto 		= itemNotaEnvio.getCodigoProduto().toString();
-			descricaoProduto 	= itemNotaEnvio.getPublicacao();
-			produtoEdicao		= itemNotaEnvio.getProdutoEdicao().getNumeroEdicao();
-
-			valorUnitarioProduto = itemNotaEnvio.getPrecoCapa();
-			valorDescontoProduto = itemNotaEnvio.getDesconto().divide(new BigDecimal("100"));
-			valorTotalProduto	 = itemNotaEnvio.getPrecoCapa().multiply(new BigDecimal(itemNotaEnvio.getReparte()));
-
-			ItemImpressaoNfe item = new ItemImpressaoNfe();
-
-			item.setCodigoProduto(codigoProduto);
-			item.setDescricaoProduto(descricaoProduto);
-			item.setProdutoEdicao(produtoEdicao);
-			item.setQuantidadeProduto(new BigDecimal(itemNotaEnvio.getReparte().toString()));
-			item.setValorUnitarioProduto(valorUnitarioProduto);
-			item.setValorTotalProduto(valorTotalProduto);
-			item.setValorDescontoProduto(valorTotalProduto.subtract(valorTotalProduto.multiply(valorDescontoProduto)));
-			item.setSequencia(itemNotaEnvio.getSequenciaMatrizLancamento());
-			item.setCodigoBarra(itemNotaEnvio.getProdutoEdicao().getCodigoDeBarras());
-
-			listaItemImpressaoNfe.add(item);
-
-		}
+        }
 
 		nfeImpressao.setItensImpressaoNfe(listaItemImpressaoNfe);
 

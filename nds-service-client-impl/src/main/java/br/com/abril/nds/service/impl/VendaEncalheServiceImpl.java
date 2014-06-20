@@ -1406,6 +1406,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			
 			BigInteger qntProduto = this.getQntProdutoEstoque(tipoVendaEncalhe, estoqueProduto);
 			
+			final boolean produtoComFormaComercializacaoContaFirme = 
+					FormaComercializacao.CONTA_FIRME.equals(produtoEdicao.getProduto().getFormaComercializacao());
+			
 			if(qntProduto!= null && qntProduto.compareTo(BigInteger.ZERO)>0){
 			    
 				vendaEncalheDTO.setQntDisponivelProduto(qntProduto);
@@ -1423,8 +1426,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				
 				vendaEncalheDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));				
 				vendaEncalheDTO.setCodigoBarras(produtoEdicao.getCodigoDeBarras());
-				vendaEncalheDTO.setFormaVenda(this.obterFormaComercializacaoVenda(produtoEdicao,tipoVendaEncalhe));
+				vendaEncalheDTO.setFormaVenda(this.obterFormaComercializacaoVenda(produtoEdicao,tipoVendaEncalhe,produtoComFormaComercializacaoContaFirme));
 				vendaEncalheDTO.setTipoVendaEncalhe(tipoVendaEncalhe);
+				vendaEncalheDTO.setProdutoContaFirme(produtoComFormaComercializacaoContaFirme);
 			}
 			else{
 				throw new ValidacaoException(TipoMensagem.WARNING,"Não existe produto disponível em estoque para venda!");
@@ -1434,7 +1438,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return vendaEncalheDTO;
 	}
 
-	private FormaComercializacao obterFormaComercializacaoVenda(ProdutoEdicao produtoEdicao,TipoVendaEncalhe tipoVendaEncalhe) {
+	private FormaComercializacao obterFormaComercializacaoVenda(ProdutoEdicao produtoEdicao,TipoVendaEncalhe tipoVendaEncalhe, boolean produtoComFormaComercializacaoContaFirme) {
 		
 		FormaComercializacao formaComercializacao = null;
 		
@@ -1442,6 +1446,10 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		int qtdDiasEncalheAtrasadoAceitavel = this.distribuidorService.qtdDiasEncalheAtrasadoAceitavel();
 		
 		if(TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVendaEncalhe)){
+			
+			if(produtoComFormaComercializacaoContaFirme){
+				return FormaComercializacao.CONTA_FIRME;
+			}
 			
 			if (isVendaSuplementarConsignadoCota(produtoEdicao, dataOperacao, qtdDiasEncalheAtrasadoAceitavel)){
 				
