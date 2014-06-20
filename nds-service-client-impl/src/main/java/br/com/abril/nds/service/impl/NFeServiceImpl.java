@@ -772,6 +772,7 @@ public class NFeServiceImpl implements NFeService {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoRegimeTributario);
 			}
 			
+			/*
 			int parametro = Integer.valueOf(parametrosSistema.get("NFE_LIMITAR_QTDE_ITENS").getValor());
 			
 			if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > parametro){
@@ -784,7 +785,7 @@ public class NFeServiceImpl implements NFeService {
 					listaItens.add(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal());
 				}
 			}
-			
+			*/
 			//FIXME: Ajustar o valor do campo para valores parametrizados
 			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
