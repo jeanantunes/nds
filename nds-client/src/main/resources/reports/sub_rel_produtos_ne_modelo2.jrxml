@@ -117,7 +117,7 @@
 					<textElement>
 						<font fontName="Arial" size="8" isBold="true"/>
 					</textElement>
-					<text><![CDATA[(*) Furo de Lançamento]]></text>
+					<text><![CDATA[(1) Furo de Lançamento]]></text>
 				</staticText>
 			</band>
 		</groupFooter>
