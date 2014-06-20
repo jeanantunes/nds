@@ -63,6 +63,16 @@ public class VendaEncalheVO implements Serializable {
 	
 	private FormaComercializacao formaComercializacao;
 	
+	private boolean produtoContaFirme;
+	
+	public boolean isProdutoContaFirme() {
+		return produtoContaFirme;
+	}
+
+	public void setProdutoContaFirme(boolean produtoContaFirme) {
+		this.produtoContaFirme = produtoContaFirme;
+	}
+
 	/**
 	 * @return the tipoVenda
 	 */
