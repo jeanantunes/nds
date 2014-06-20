@@ -131,6 +131,9 @@
 					<textFieldExpression><![CDATA[$F{precoCapa}]]></textFieldExpression>
 				</textField>
 			</elementGroup>
+			<break>
+				<reportElement uuid="d8452fb3-6e2e-4115-add4-8f8a1379cf51" x="0" y="99" width="100" height="1"/>
+			</break>
 		</band>
 	</detail>
 </jasperReport>
