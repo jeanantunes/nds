@@ -131,6 +131,9 @@ var produtoEdicaoController =$.extend(true,  {
 		$("#produtoEdicaoController-repartePrevisto").numeric();
 		$("#produtoEdicaoController-expectativaVenda").numeric();
 		$("#produtoEdicaoController-repartePromocional").numeric();
+		$("#produtoEdicaoController-codigoDeBarras",this.workspace).numeric();
+		
+		
 
 		$("#produtoEdicaoController-pPrecoDe", this.workspace).priceFormat({
 			centsSeparator: ',',
