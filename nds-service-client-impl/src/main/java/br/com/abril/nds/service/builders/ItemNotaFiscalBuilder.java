@@ -140,7 +140,7 @@ public class ItemNotaFiscalBuilder  {
 				valorDesconto = ((MovimentoEstoque) movimentoEstoque).getProdutoEdicao().getDesconto();
 			} 
 			
-			precoComDesconto = precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100)));
+			precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100))));
 			
 			valorTotalBruto = CurrencyUtil.arredondarValorParaDuasCasas(precoComDesconto.multiply(new BigDecimal(movimentoEstoque.getQtde())));
 			valorUnitario = CurrencyUtil.arredondarValorParaQuatroCasas(precoComDesconto);
