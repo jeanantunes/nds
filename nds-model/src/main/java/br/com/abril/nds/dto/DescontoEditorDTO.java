@@ -21,7 +21,7 @@ public class DescontoEditorDTO implements Serializable {
 	
 	private Boolean isTodasCotas;
 	
-	private BigDecimal descontoProduto;
+	private BigDecimal valorDesconto;
 	
 	private List<Integer> cotas;
 	
@@ -59,12 +59,12 @@ public class DescontoEditorDTO implements Serializable {
 		this.isTodasCotas = isTodasCotas;
 	}
 
-	public BigDecimal getDescontoProduto() {
-		return descontoProduto;
+	public BigDecimal getValorDesconto() {
+		return valorDesconto;
 	}
 
-	public void setDescontoProduto(BigDecimal descontoProduto) {
-		this.descontoProduto = descontoProduto;
+	public void setValorDesconto(BigDecimal valorDesconto) {
+		this.valorDesconto = valorDesconto;
 	}
 
 	public List<Integer> getCotas() {
