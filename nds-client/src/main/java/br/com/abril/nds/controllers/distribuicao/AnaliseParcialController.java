@@ -136,7 +136,8 @@ public class AnaliseParcialController extends BaseController {
     public void historicoEdicoesBase(List<AnaliseEstudoDetalhesDTO> produtoEdicaoList) {
         List<AnaliseEstudoDetalhesDTO> list = analiseParcialService.historicoEdicoesBase(produtoEdicaoList);
 
-        result.use(Results.json()).withoutRoot().from(list).recursive().serialize();
+        //result.use(Results.json()).withoutRoot().from(list).recursive().serialize();
+        result.use(Results.json()).from(list, "list").recursive().serialize();
     }
 
     @Path("/abrirAnaliseFaixa")
