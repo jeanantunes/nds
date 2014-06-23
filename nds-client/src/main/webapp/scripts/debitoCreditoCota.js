@@ -298,8 +298,8 @@ var debitoCreditoCotaController = $.extend(true, {
 
 				debitoCreditoCotaController.popularGridDebitosCreditos();
 
-				$(dialogId).dialog( "close" );
-				$(".grids").show();
+				$(dialogId,debitoCreditoCotaController.workspace).dialog( "close" );
+				$(".grids",debitoCreditoCotaController.workspace).show();
 				
 				exibirMensagem(
 					result.tipoMensagem, 

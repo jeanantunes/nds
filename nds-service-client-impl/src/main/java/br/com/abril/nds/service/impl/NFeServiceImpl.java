@@ -739,8 +739,11 @@ public class NFeServiceImpl implements NFeService {
 	@Override
 	@Transactional
 	public void gerarNotasFiscaisCotas(final FiltroNFeDTO filtro,
-			final List<NotaFiscal> notasFiscais, final Distribuidor distribuidor, final NaturezaOperacao naturezaOperacao, 
-			final Map<String, ParametroSistema> parametrosSistema, final List<Cota> cotas) {
+			final List<NotaFiscal> notasFiscais, 
+			final Distribuidor distribuidor, 
+			final NaturezaOperacao naturezaOperacao, 
+			final Map<String, ParametroSistema> parametrosSistema, 
+			final List<Cota> cotas) {
 		
 		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
 		
@@ -842,7 +845,6 @@ public class NFeServiceImpl implements NFeService {
 		notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 		
 		NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
-		
 		
 		notasFiscais.add(notaFiscal);
 	}
