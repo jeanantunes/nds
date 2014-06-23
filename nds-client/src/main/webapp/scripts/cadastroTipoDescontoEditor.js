@@ -20,6 +20,27 @@ var descontoEditorController = $.extend(true,{
 			buttons: [{
 						id:"id_confirmar_editor", text:"Confirmar",
 						click: function() {
+							
+							var mensagens = [];
+							if($("#codigoEditor", this.workspace).val()  == '') {
+								
+								mensagens.push('Valor incorreto para o campo Editor!');
+							}
+							if($("#descontoEditor", this.workspace).val() == '' || parseInt($("#descontoEditor", this.workspace).val()) <= 0) {
+								
+								mensagens.push('Valor incorreto para o campo Desconto do Editor!');
+							} 
+							if($('input[type="radio"][name="radioCotasEditor"]:checked').val() == undefined) {
+								
+								mensagens.push('Valor incorreto para o campo Todas / Específica!');
+							}
+							
+							if(mensagens.length > 0) {
+								
+								exibirMensagem("WARNING", mensagens, "");
+								return false;
+							}
+							
 							descontoEditorController.novoDescontoEditor();
 							$( this ).dialog( "close" );
 						}
@@ -54,7 +75,6 @@ var descontoEditorController = $.extend(true,{
 		
 		var data = descontoEditorController.obterParametrosNovoDescontoEditor();
 
-		console.log(data);
 		$.postJSON(contextPath+"/financeiro/tipoDescontoCota/novoDescontoEditor",
 				   data,
 				   function(result) {
@@ -87,7 +107,7 @@ var descontoEditorController = $.extend(true,{
 		var isTodasCotas = document.getElementById("radioEditorTodasCotas",this.workspace).checked;
 		
 		data.push({name:'descontoDTO.codigoEditor' , value: codigoEditor});
-		data.push({name:'descontoDTO.descontoEditor' , value: descontoEditor});
+		data.push({name:'descontoDTO.valorDesconto' , value: descontoEditor});
 		data.push({name:'descontoDTO.hasCotaEspecifica' , value: hasCotaEspecifica});
 		data.push({name:'descontoDTO.isTodasCotas' , value: isTodasCotas});
 		

@@ -37,9 +37,9 @@
 			      		 maxlength="255"
 			      		 style="width:200px;float:left;"
 			      		 onkeyup="pesquisaEditorTipoDescontoCota.autoCompletarPorNome('#descricaoEditor');" 
-			      		 onblur="pesquisaEditorTipoDescontoCota.pesquisarPorCodigoEditor('#codigoEditor', '#descricaoEditor',true,
-										      			descontoEditorController.pesquisarEditorSuccessCallBack,
-										      			descontoEditorController.pesquisarEditorErrorCallBack);" />
+			      		 onblur="pesquisaEditorTipoDescontoCota.pesquisarPorNomeEditor('#codigoEditor', '#descricaoEditor', false,
+				      			null,
+				      			null);" />
 	            </td>
 	          </tr>
 
@@ -51,10 +51,10 @@
 	            <td>Cotas:</td>
 	            <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
 	              <tr>
-	                <td width="10%"><input type="radio" name="cotas" id="radioEditorTodasCotas" value="radio" onchange="descontoEditorController.esconderGridCota();" /></td>
+	                <td width="10%"><input type="radio" name="radioCotasEditor" id="radioEditorTodasCotas" value="radio" onchange="descontoEditorController.esconderGridCota();" /></td>
 	                <td width="29%">Todas</td>
-	                <td width="8%"><input type="radio" name="cotas" id="radioEditorCotasEspecificas" value="radio" onchange="descontoEditorController.mostrarGridCota();" /></td>
-	                <td width="53%">Específica</td>
+	                <td width="8%"><input type="radio" name="radioCotasEditor" id="radioEditorCotasEspecificas" value="radio" onchange="descontoEditorController.mostrarGridCota();" /></td>
+	                <td width="53%">EspecÃ­fica</td>
 	              </tr>
 	            </table></td>
 	          </tr>
