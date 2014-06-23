@@ -378,7 +378,8 @@ function mostraIntervalo(){
 	<div id="modalUploadArquivo" title="Adicionar em Lote" style="display:none;">
 	 <form id="formUploadLoteFixacao"  action="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao"  method="post"  enctype="multipart/form-data">
 			<p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
-			<p ><span class="bt_novos"><a href="${pageContext.request.contextPath}/modelos/modelo_fixacao_reparte.xls" rel="tipsy" title="Download Modelo"><img align="center" src="images/ico_excel.png" hspace="5" border="0" /></a></span></p>
+			<p ><span class="bt_novos"><a href="${pageContext.request.contextPath}/modelos/modelo_fixacao_reparte.xls" rel="tipsy" title="Download Modelo">
+			<img align="center" src="images/ico_excel.png" hspace="5" border="0" /> Modelo de exemplo</a></span></p>
 			<br><br><br>
 			<hr>
 			<p>Selecione um arquivo para upload:</p>

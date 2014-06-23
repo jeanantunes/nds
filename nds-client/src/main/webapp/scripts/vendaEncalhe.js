@@ -602,9 +602,14 @@ var VENDA_PRODUTO = {
 		return '<input type="text" id="tipoVenda'+index+'" name="tipoVenda" value="'+valor+'" disabled="disabled" />';
 	},
 	
-	getInputFormaVenda:function(tipoVenda, index, formaDefault, descFormaDefault){
+	getInputFormaVenda:function(tipoVenda, index, formaDefault, descFormaDefault,isProdutoContaFirme){
 		
 		if (tipoVenda == 'SUPLEMENTAR'){
+			
+			if(isProdutoContaFirme){
+				
+				return '<input type="text" id="formaVenda'+index+'" name="formaVenda" value="'+ (descFormaDefault ? descFormaDefault : '') +'" disabled="disabled" />';
+			}
 			
 			var disabled = '';
 			
@@ -741,7 +746,7 @@ var VENDA_PRODUTO = {
 				
 				var parent = $("#formaVenda"+index, VENDA_PRODUTO.workspace).parent();
 				$("#formaVenda"+index, VENDA_PRODUTO.workspace).remove();
-				parent.append(VENDA_PRODUTO.getInputFormaVenda(resultado.tipoVenda, index, resultado.formaComercializacao, resultado.formaVenda));
+				parent.append(VENDA_PRODUTO.getInputFormaVenda(resultado.tipoVenda, index, resultado.formaComercializacao, resultado.formaVenda,resultado.produtoContaFirme));
 				
 				$("#numEdicao"+index, VENDA_PRODUTO.workspace).attr("disabled",null);
 				$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).attr("disabled",null);
