@@ -163,6 +163,17 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 	}
 	
+    private TipoSegmentoProduto findTipoSegmentoProdutoPorId(Long id) {
+	    Criteria criteria = this.getSession().createCriteria(TipoSegmentoProduto.class);
+	    criteria.add(Restrictions.idEq(id));
+	    //FIXME remover assim que as arquivos pub vierem com a descricao do segmento completa
+	    criteria.setMaxResults(1);
+	    
+	    return (TipoSegmentoProduto) criteria.uniqueResult();
+	}
+    
+    //Deprecated
+    /*
     private TipoSegmentoProduto findTipoSegmentoProdutoPorNome(String nome) {
 	    Criteria criteria = this.getSession().createCriteria(TipoSegmentoProduto.class);
 	    criteria.add(Restrictions.like("descricao", nome));
@@ -171,13 +182,24 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	    
 	    return (TipoSegmentoProduto) criteria.uniqueResult();
 	}
-	
+	*/
 	private TipoSegmentoProduto criarNovoSegmento(String nome) {
 	    TipoSegmentoProduto tipoSegmentoProduto = new TipoSegmentoProduto();
 	    tipoSegmentoProduto.setDescricao(nome);
 	    return (TipoSegmentoProduto) this.getSession().merge(tipoSegmentoProduto);
 	}
 	
+	//Deprecated
+	private TipoSegmentoProduto getTipoSegmento(Long id) {
+	    TipoSegmentoProduto tipoSegmentoProduto = null;
+	   
+	    tipoSegmentoProduto = findTipoSegmentoProdutoPorId(id);
+        
+	    return tipoSegmentoProduto;
+	}
+	
+	//Deprecated
+	/*
 	private TipoSegmentoProduto getTipoSegmento(String nome) {
 	    TipoSegmentoProduto tipoSegmentoProduto = null;
 	   
@@ -191,7 +213,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
         }
 	    return tipoSegmentoProduto;
 	}
-	
+	*/
 	private void criarProdutoConformeInput(Message message, Editor editor,
 			TipoProduto tipoProduto) {
 		EMS0109Input input = (EMS0109Input) message.getBody();
@@ -259,15 +281,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		
 		
 		if(input.getSegmento()!=null && !input.getSegmento().trim().equals("")){
-		 produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
+		 produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
 		}else{
-			
-		 TipoSegmentoProduto tipoSegmentoProduto = new TipoSegmentoProduto();
-		 
-		 //FIXME Caso venha nulo , que nao pode vir, set OUTROS na descricao
-		 tipoSegmentoProduto.setId(new Long(9));
-		 tipoSegmentoProduto.setDescricao("OUTROS");
-		 produto.setTipoSegmentoProduto(tipoSegmentoProduto);	
+		 produto.setTipoSegmentoProduto(getTipoSegmento(new Long(9)));	
 		}
 		
 		String codigoSituacaoTributaria = input.getCodigoSituacaoTributaria();
@@ -602,11 +618,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
                     +" Produto " + produto.getCodigo()
                     );
         
-                    produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
-		}else{
-			//FIXME , Não poderia vir como nulo na carga do .pub
-			tipoSegmentoProduto.setId(new Long(9));
-			tipoSegmentoProduto.setDescricao("OUTROS");
+                    produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
 		}
 		
 		Fornecedor produtoFornecedor = produto.getFornecedor();

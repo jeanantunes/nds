@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ne_modelo2" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="591" leftMargin="2" rightMargin="2" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="b891bc34-8c93-407c-bb03-65e0637d3d27">
 	<property name="ireport.zoom" value="3.630000000000017"/>
-	<property name="ireport.x" value="1577"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="7"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
@@ -286,6 +286,7 @@
 	<field name="dataLancamentoDeAte" class="java.lang.String">
 		<fieldDescription><![CDATA[dataLancamentoDeAte]]></fieldDescription>
 	</field>
+	<field name="itensComFuroLancamento" class="java.lang.Boolean"/>
 	<pageHeader>
 		<band height="136">
 			<frame>
@@ -646,6 +647,9 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 		<band height="27">
 			<subreport>
 				<reportElement uuid="08981531-330c-444c-ab0b-0ff865c95b54" x="0" y="0" width="591" height="27"/>
+				<subreportParameter name="LANCAMENTO_COM_FURO">
+					<subreportParameterExpression><![CDATA[$F{itensComFuroLancamento}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensImpressaoNfe})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_rel_produtos_ne_modelo2.jasper"]]></subreportExpression>
 			</subreport>

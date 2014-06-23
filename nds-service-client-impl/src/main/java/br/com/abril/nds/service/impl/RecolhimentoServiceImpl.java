@@ -197,7 +197,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 			 for(ProdutoRecolhimentoDTO prDTO :listaProdutos){
 				
-				if(prDTO!=null && dataMatriz!=null && prDTO.getDataRecolhimentoPrevista().after(dataMatriz)){
+				if(prDTO!=null && dataMatriz!=null && prDTO.getDataRecolhimentoPrevista().after(dataMatriz) 
+						&& prDTO.getStatusLancamento().compareTo(StatusLancamento.EXPEDIDO)==0
+						){
 					//remove e insere no dia certo 
 
 					if(copiaMatriz.containsKey(prDTO.getDataRecolhimentoPrevista())){
