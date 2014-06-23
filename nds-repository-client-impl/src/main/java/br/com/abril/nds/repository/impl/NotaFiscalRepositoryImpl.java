@@ -975,7 +975,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, '') as nomeFornecedor,");
 		hql.append(" SUM(me.qtde) as exemplares, ");
 		hql.append(" SUM(coalesce(produtoEdicao.precoVenda, 0) * me.qtde) as total, "); 
-		hql.append(" SUM(coalesce(descontoLogisticaPE.percentualDesconto, descontoLogistica.percentualDesconto, produtoEdicao.desconto, produto.desconto, 0) * me.qtde) as totalDesconto "); 
+		hql.append(" SUM((produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (coalesce(descontoLogisticaPE.percentualDesconto, descontoLogistica.percentualDesconto, produtoEdicao.desconto, produto.desconto, 0)  / 100))) * me.qtde) as totalDesconto "); 
 		
 		Query query = queryConsultaMENfeParameters(queryConsultaMENfe(filtro, hql, false, false, false), filtro);
 		
@@ -1018,7 +1018,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" LEFT JOIN produto.descontoLogistica descontoLogistica ")
 		.append(" JOIN produto.fornecedores fornecedor")
 		.append(" JOIN fornecedor.juridica pessoa ")
-		.append(" WHERE me.data BETWEEN :dataInicial AND :dataFinal ");
+		.append(" WHERE 1=1 ")
+		.append(" AND me.data BETWEEN :dataInicial AND :dataFinal ")
+		.append(" AND me.notaFiscalEmitida = :notaFiscalEmitida ");
 
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null) {
@@ -1063,6 +1065,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			query.setParameter("dataFinal", filtro.getDataFinal());
 		}
 
+		query.setParameter("notaFiscalEmitida", false);
+		
 		// tipo da Natureza de Operacao
 		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao().longValue() > 0) {
 			query.setParameter("idNaturezaOperacao", filtro.getIdNaturezaOperacao());
@@ -1072,7 +1076,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getListIdFornecedor() !=null && !filtro.getListIdFornecedor().isEmpty()) {
 			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
-
+		
 		return query;	
 	}
 
