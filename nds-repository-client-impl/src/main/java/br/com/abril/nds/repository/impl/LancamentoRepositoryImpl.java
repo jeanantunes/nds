@@ -324,7 +324,10 @@ public class LancamentoRepositoryImpl extends
 		}
 
 		hql.append(" lancamento.status=:statusBalanceado ");
-
+		hql.append(" AND produtoEdicao.ativo = :ativo ");
+		
+		parametros.put("ativo", true);
+		
 		// hql.append(" and ( (itemRecebido.id is null and produtoEdicao.parcial=true) or (itemRecebido.id is not null)) ");
 
 		parametros.put("statusBalanceado", StatusLancamento.BALANCEADO);
@@ -1249,6 +1252,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" select lb.DATA_LCTO_DISTRIBUIDOR ");
 		sql.append(" from lancamento lb where lb.status in (:statusLancamentoDataMenorFinalExpedido) ");
 		sql.append(" and lb.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal))) ");
+		sql.append(" and produtoEdicao.ATIVO = 1 ");
 		
 		return sql.toString();
 	}
