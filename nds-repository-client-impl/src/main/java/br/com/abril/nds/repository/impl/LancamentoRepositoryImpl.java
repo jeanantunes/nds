@@ -915,13 +915,12 @@ public class LancamentoRepositoryImpl extends
 			query.setParameter("idFornecedor", idFornecedor);
 		}
 
-		query.setParameter("dataInicioRecolhimento",
-				dataInicioRecolhimento.getTime());
+		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
-		query.setParameter("statusLancamento",
-				StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		query.setParameter("statusLancamento", StatusLancamento.BALANCEADO_RECOLHIMENTO);
 		query.setParameter("origemInterface", Origem.INTERFACE);
-
+		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
+		
 		if (maxResults != null) {
 			query.setMaxResults(maxResults);
 		}
