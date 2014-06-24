@@ -214,8 +214,6 @@ public interface ParametroCobrancaCotaService {
 	 */
 	void excluirParametroCobrancaCota(Long formaCobrancaId);
 
-    void verificarDataAlteracaoTipoCota(Long idCota);
-
     void validarFormaCobranca(FormaCobrancaDTO formaCobranca);
 
     /**

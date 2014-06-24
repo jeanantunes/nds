@@ -37,9 +37,6 @@ public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepositoryModel
 		return query.list();
 		
 	}
-	
-	
-	
 
 	@Override
 	public ParametroCobrancaCota obterParametroCobrancaCotaPorCota(Integer numeroCota) {
@@ -69,18 +66,4 @@ public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepositoryModel
 		
 		return (boolean) query.uniqueResult();
 	}
-
-    @Override
-    public boolean verificarDataAlteracaoTipoCota(Long idCota, Date dataOperacao) {
-        
-        Query query = this.getSession().createQuery(
-                " select case when c.alteracaoTipoCota = :data then true else false end " +
-                " from Cota c " +
-                " where c.id = :idCota ");
-        
-        query.setParameter("idCota", idCota);
-        query.setParameter("data", dataOperacao);
-        
-        return (Boolean)query.uniqueResult();
-    }
 }
