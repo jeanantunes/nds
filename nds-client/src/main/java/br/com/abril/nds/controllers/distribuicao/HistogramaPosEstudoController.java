@@ -85,6 +85,7 @@ public class HistogramaPosEstudoController extends BaseController{
     
     public static final String MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE = "mapa_analise_estudo";
 
+    @Autowired
     private LancamentoService lancamentoService;
 
     @Path("/index")
