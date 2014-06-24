@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,9 +105,9 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 				estudoBase.getEstudoCotas().remove(estudoCota);
 			}
 			
-			if(estudo.getQtdeReparte()!=null && estudoBase.getQtdeReparte()!=null){
-				estudo.setQtdeReparte(estudo.getQtdeReparte().add(estudoBase.getQtdeReparte()));				
-			}
+			estudo.setQtdeReparte((estudo.getQtdeReparte()!=null ? estudo.getQtdeReparte() : BigInteger.ZERO).add(estudoBase.getQtdeReparte()!=null ? estudoBase.getQtdeReparte() : BigInteger.ZERO));
+			
+			estudo.setSobra((estudo.getSobra()!=null ? estudo.getSobra() : BigInteger.ZERO).add(estudoBase.getSobra()!=null ? estudoBase.getSobra() : BigInteger.ZERO));
 			
 			estudoGeradoRepository.alterar(estudo);
 			estudoGeradoRepository.remover(estudoBase);
