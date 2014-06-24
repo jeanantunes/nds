@@ -79,7 +79,6 @@ public class AnaliseEstudoDTO implements Serializable {
 	}
 	public void setPeriodoProduto(PeriodicidadeProduto periodoProduto) {
 		this.periodoProduto = periodoProduto;
-		this.codPeriodoProd = periodoProduto.getOrdem();
 	}
 	public Integer getCodPeriodoProd() {
 		return codPeriodoProd;
