@@ -1607,7 +1607,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					$('#workspace').tabs({load : function(event, ui) {}});
 				}});
 				
-				var parametros = '?idLancamento='+ selecionado.lancamento;
+				var parametros = '?idLancamento='+ selecionado.idLancamento;
 				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo'+ parametros);
 			}
 			
