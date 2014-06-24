@@ -633,44 +633,23 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 * 
 	 * @param tipoCota
 	 * @param devolveEncalhe
-	 * @param dataLctoDistribuidor
-	 * @param dataAlteracaoTipoCota
 	 * @return boolean
 	 */
 	private boolean isDevolveEncalhe(final TipoCota tipoCota, 
-			                         Boolean devolveEncalhe, 
-			                         final Date dataLctoDistribuidor, 
-			                         final Date dataAlteracaoTipoCota){
+			                         Boolean devolveEncalhe){
 		
 		devolveEncalhe = (devolveEncalhe==null?true:devolveEncalhe);
 		
-		switch (tipoCota){
-		
-		    case A_VISTA:
+		if (tipoCota.equals(TipoCota.A_VISTA)){
 			    
-		    	if (devolveEncalhe){
+		    if (devolveEncalhe){
 		    		
-		    		return true;
-		    	}
+		    	return true;
+		    }
+		    else{
 		    	
-                if ((dataAlteracaoTipoCota == null) || (dataLctoDistribuidor.compareTo(dataAlteracaoTipoCota) > 0 )){
-		    		
-		    		return false;
-		    	}
-		    	
-		    break;
-		
-		    case CONSIGNADO:
-                
-		    	if ((dataAlteracaoTipoCota != null) && (dataLctoDistribuidor.compareTo(dataAlteracaoTipoCota) <= 0 )){
-		    		
-		    		if (!devolveEncalhe){
-			    		
-			    		return false;
-			    	}
-		    	}
-		    	
-		    break;
+		    	return false;
+		    }
 		}
 
 		return true;
@@ -693,9 +672,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		boolean criarCahamadaEncalheCota = this.isDevolveEncalhe(cota.getTipoCota(), 
-				                                                 cota.isDevolveEncalhe(), 
-												                 dataLctoDistribuidor, 
-												                 cota.getAlteracaoTipoCota());
+				                                                 cota.isDevolveEncalhe());
 		
 		if (!criarCahamadaEncalheCota){
 		
