@@ -724,8 +724,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     @Override
     public int obterQuantidadeProcessamentoFinanceiroCota(final Integer numeroCota, final Date data) {
         
-        return movimentoFinanceiroCotaRepository.obterQuantidadeProcessamentoFinanceiroCota(numeroCota, data)
-                .intValue();
+        return movimentoFinanceiroCotaRepository.obterQuantidadeProcessamentoFinanceiroCota(numeroCota).intValue();
     }
     
     /**
@@ -1460,11 +1459,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         										 usuario,
         										 movimentosEstoqueCotaOperacaoEnvioReparte);
         
-        // COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO
-        // CONSIGNADA ATÉ FECHAMENTO DO DIA
-        final boolean isAlteracaoTipoCotaNaDataAtual = cotaService.isCotaAlteradaNaData(cota, dataOperacao);
-        
-        if (TipoCota.CONSIGNADO.equals(tipoCota) || isAlteracaoTipoCotaNaDataAtual) {
+        if (TipoCota.CONSIGNADO.equals(tipoCota)) {
             
             // GERA MOVIMENTO FINANCEIRO DOS MOVIMENTOS DE ESTOQUE DE
             // ENCALHE(CREDITO) PARA COTA DO TIPO CONSIGNADO

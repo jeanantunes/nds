@@ -569,12 +569,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("        CHAMADA_ENCALHE_COTA chamadaEncalheCota                         ");
         sql.append("            on chamadaEncalheCota.COTA_ID=cota.ID                       ");
         
-        sql.append("            and ( "); 
-        sql.append("                  (cota.TIPO_COTA <> :tipoCotaAVista) or "); 
-        sql.append("                  (cota.ALTERACAO_TIPO_COTA is not null and "); 
-        sql.append("                   cota.ALTERACAO_TIPO_COTA = (select DATA_OPERACAO from DISTRIBUIDOR)"); 
-        sql.append("                  ) "); 
-        sql.append("                ) ");
+        sql.append("            and ( cota.TIPO_COTA <> :tipoCotaAVista ) ");
         				
         sql.append("	inner join                                                          ");
         sql.append("        CHAMADA_ENCALHE chamadaEncalhe                                  ");
@@ -684,12 +679,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("        CHAMADA_ENCALHE_COTA chamadaEncalheCota                         ");
         sql.append("            on chamadaEncalheCota.COTA_ID=cota.ID                       ");
         
-        sql.append("            and ( "); 
-        sql.append("                  (cota.TIPO_COTA <> :tipoCotaAVista) or "); 
-        sql.append("                  (cota.ALTERACAO_TIPO_COTA is not null and "); 
-        sql.append("                   cota.ALTERACAO_TIPO_COTA = (select DATA_OPERACAO from DISTRIBUIDOR)"); 
-        sql.append("                  ) "); 
-        sql.append("                ) ");
+        sql.append("            and ( cota.TIPO_COTA <> :tipoCotaAVista ) ");
         
         sql.append("	inner join                                                          ");
         sql.append("        CHAMADA_ENCALHE chamadaEncalhe                                  ");
@@ -827,12 +817,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("        PESSOA pessoa                                       ");
         sql.append("            on cota.PESSOA_ID=pessoa.ID                     ");
         
-        sql.append("            and ( "); 
-        sql.append("                  (cota.TIPO_COTA <> :tipoCotaAVista) or "); 
-        sql.append("                  (cota.ALTERACAO_TIPO_COTA is not null and "); 
-        sql.append("                   cota.ALTERACAO_TIPO_COTA = (select DATA_OPERACAO from DISTRIBUIDOR)"); 
-        sql.append("                  ) "); 
-        sql.append("                ) ");
+        sql.append("            and ( cota.TIPO_COTA <> :tipoCotaAVista ) ");
         
         sql.append("	inner join                                              ");
         sql.append("        BOX box                                             ");

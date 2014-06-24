@@ -191,11 +191,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
-		
 		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
-		
-		parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 
 		if(filtro.getPaginacao()!=null && limitar){
 			
@@ -234,68 +230,21 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		return (List<ConsultaConsignadoCotaDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
 	}
 	
-	private StringBuilder getSqlTuplasCotaAVista(){
-	    return getSqlTuplasCotaAVista(true, true);
-	}
-	
 	/**
 	 * Obtem tuplas de cotas do tipo à vista ou consignado para a consulta de consignado
 	 * 
 	 * @return StringBuilder
 	 */
-	private StringBuilder getSqlTuplasCotaAVista(boolean addCotaVista, boolean addOutrasCotas){
+	private StringBuilder getSqlTuplasCotaAVista(boolean addOutrasCotas){
 		
-	    
-	    
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("AND (");
 
 		if(addOutrasCotas) {
+			
 		    sql.append("        ((c.TIPO_COTA = :tipoCotaConsignado) AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro)) ");
-		}
-		
-		if(addCotaVista && addOutrasCotas)
-		    sql.append(" OR ");
-		
-		if(addCotaVista) {
-		
-    		sql.append("        ( ");
-    		
-    		sql.append("          (c.TIPO_COTA = :tipoCotaAVista) AND ");
-    		
-    		sql.append("          (   ");
-    		
-    		sql.append("              ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA <= c.ALTERACAO_TIPO_COTA) AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro)) OR ");
-    		
-    		sql.append("              (");
-    		
-    		sql.append("                  ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA > c.ALTERACAO_TIPO_COTA)) AND ");
-    		
-    		sql.append("                  (");
-    		
-    		sql.append("                      (c.DEVOLVE_ENCALHE IS NULL) OR ");
-    		
-    		sql.append("                      (c.DEVOLVE_ENCALHE = TRUE) ");
-    		
-    		sql.append("                  )");
-    		
-    		sql.append("              ) ");
-    		
-    		sql.append("          ) AND ");
-    		
-    		sql.append("          MEC.ID NOT IN (SELECT CONFE.MOVIMENTO_ESTOQUE_COTA_ID ");
-    		
-    		sql.append("          		         FROM CONFERENCIA_ENCALHE CONFE ");
-    		
-    		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ON CCEC.ID = CONFE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID ");
-    		
-    		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE CCE ON CCE.ID = CCEC.CTRL_CONF_ENCALHE_ID ");
-    		
-    		sql.append("          		         WHERE CCE.STATUS = :statusConferenciaEncalhe ) ");
-    		
-    		sql.append("        ) ");
-		}
+		}   
 
 		sql.append("    )");
 		
@@ -359,9 +308,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		}
 		
 		if(filtro.getAddCotaVista() == null || filtro.getAddOutrasCotas() == null)
-		    sql.append(this.getSqlTuplasCotaAVista());
+		    sql.append(this.getSqlTuplasCotaAVista(true));
 		else {
-		    sql.append(this.getSqlTuplasCotaAVista(filtro.getAddCotaVista(), filtro.getAddOutrasCotas()));
+		    sql.append(this.getSqlTuplasCotaAVista(filtro.getAddOutrasCotas()));
 		}
 	}
 
@@ -419,7 +368,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			sql.append(" AND c.ID = :idCota ");
 		}
 		
-		sql.append(this.getSqlTuplasCotaAVista());
+		sql.append(this.getSqlTuplasCotaAVista(true));
 
 		sql.append(" GROUP BY pe.ID, c.id ");
 
@@ -456,11 +405,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
-		
 		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
-		
-		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaPeloFornecedorDTO.class));
@@ -519,7 +464,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			sql.append(" AND c.ID = :idCota ");
 		}
 
-		sql.append(this.getSqlTuplasCotaAVista());
+		sql.append(this.getSqlTuplasCotaAVista(true));
 
 		sql.append(" GROUP BY pe.ID, c.id ");
 
@@ -543,11 +488,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
-		
 		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
-		
-		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 		
 		((SQLQuery) query).addScalar("contador", StandardBasicTypes.LONG);
 
@@ -607,11 +548,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
-		
 		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
-		
-		parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 
 		@SuppressWarnings("rawtypes")
 		RowMapper cotaRowMapper = new RowMapper() {
@@ -711,11 +648,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
-		
 		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
-		
-		parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 		
 		parameters.put("dataOperacao", filtro.getDataOperacao());
 

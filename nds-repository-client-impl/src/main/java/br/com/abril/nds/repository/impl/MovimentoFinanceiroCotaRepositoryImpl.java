@@ -1246,11 +1246,10 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	/**
 	 * Obtem Quantidade de Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
 	 * @param numeroCota
-	 * @param data
 	 * @return Long
 	 */
 	@Override
-	public Long obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota, Date data){
+	public Long obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota){
 	    
 	    StringBuilder hql = new StringBuilder("select ");
 	    
@@ -1258,9 +1257,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	
 	       .append(" from Cota c ")
 	       
-	       .append(" where c.tipoCota = :tipoCota ")
-	    
-	       .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
+	       .append(" where c.tipoCota = :tipoCota ");
 	    
 	    if (numeroCota != null){
 	      
@@ -1275,8 +1272,6 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	    }
 	    
 	    query.setParameter("tipoCota", TipoCota.A_VISTA);
-	    
-	    query.setParameter("data", data);
 	    
 	    return (Long) query.uniqueResult();
 	}
@@ -1302,9 +1297,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	    
 	       .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
 	    
-	       .append("  and c3.id = ").append(paramIdCota)
-	       
-	       .append("  and (c3.alteracaoTipoCota is null or c3.alteracaoTipoCota < mfc.data)");
+	       .append("  and c3.id = ").append(paramIdCota);
     	
 		return hql.toString();
 	}
@@ -1330,9 +1323,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       
 	      .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
 	       
-	      .append("  and c4.id = ").append(paramIdCota)
-	       
-	      .append("  and (c4.alteracaoTipoCota is null or c4.alteracaoTipoCota < mfc.data)");
+	      .append("  and c4.id = ").append(paramIdCota);
     	
 		return hql.toString();
 	}
@@ -1358,9 +1349,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       
 	      .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
 	       
-	      .append("  and c4.id = ").append(paramIdCota)
-	       
-	      .append("  and (c4.alteracaoTipoCota is not null and c4.alteracaoTipoCota >= mfc.data)");
+	      .append("  and c4.id = ").append(paramIdCota);
     	
 		return hql.toString();
 	}
@@ -1386,9 +1375,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       
 	      .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
 	       
-	      .append("  and c4.id = ").append(paramIdCota)
-	       
-	      .append("  and (c4.alteracaoTipoCota is not null and c4.alteracaoTipoCota >= mfc.data)");
+	      .append("  and c4.id = ").append(paramIdCota);
     	
 		return hql.toString();
 	}
@@ -1405,8 +1392,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota, 
-	                                                                             Date data, 
+	public List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota,
+			                                                                     Date data,
 	                                                                             String sortorder, 
 	                                                                             String sortname,
 	                                                                             int initialResult, 
@@ -1568,9 +1555,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       
 	       .append(" join c.pessoa p ")
 	       
-	       .append(" where c.tipoCota = :tipoCota ")
-	    
-	       .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
+	       .append(" where c.tipoCota = :tipoCota ");
 	    
 	    if (numeroCota != null){
 	      
@@ -1845,9 +1830,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	      
 	      .append(" join c.pessoa p ")
 	      
-	      .append(" where c.tipoCota = :tipoCota ")
-	   
-	      .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
+	      .append(" where c.tipoCota = :tipoCota ");
 
 	   if (numeroCota != null){
 		   
@@ -1864,8 +1847,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	/**
 	 * Define parametros da query de consulta de processamento financeiro de cotas À Vista
 	 * @param query
-	 * @param data
 	 * @param numeroCota
+	 * @param data
 	 */
 	private void setParametrosProcessamentoFinanceiroCota(Query query, Integer numeroCota, Date data){
 		
