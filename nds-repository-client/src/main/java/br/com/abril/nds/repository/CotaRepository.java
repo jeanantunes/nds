@@ -28,6 +28,7 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
@@ -319,6 +320,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
     
     Cota buscarCotaPorID(Long id);
     
+    GrupoCota obterOperacaoVigenteCota(Long idCota, Date dataInicio, Date dataFim);
 	    /**
      * 
      * Obtém todas as cotas que possuem a média de reparte dentro do range
