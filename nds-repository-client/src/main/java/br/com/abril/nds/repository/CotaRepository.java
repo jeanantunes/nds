@@ -395,10 +395,9 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * Obtem Cotas do tipo À Vista, com data de alteração de status menor que a
      * data atual
      * 
-     * @param data
      * @return List<Cota>
      */
-    List<Cota> obterCotasTipoAVista(Date data);
+    List<Cota> obterCotasTipoAVista();
     
     Long countCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte);
     

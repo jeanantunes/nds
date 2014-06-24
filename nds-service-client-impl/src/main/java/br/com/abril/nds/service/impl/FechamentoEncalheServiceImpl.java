@@ -848,13 +848,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         negociacaoDividaService.abaterNegociacaoPorComissao(idCota, reparte, BigDecimal.ZERO, usuario);
         
-        // COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO
-        // CONSIGNADA ATÉ FECHAMENTO DO DIA
-        final boolean isAlteracaoTipoCotaNaDataAtual = cotaService.isCotaAlteradaNaData(cota, dataOperacao);
+        this.gerarMovimentosFinanceiros(cota, dataOperacao, usuario);
         
-        this.gerarMovimentosFinanceiros(cota, dataOperacao, usuario, isAlteracaoTipoCotaNaDataAtual);
-        
-        if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual) {
+        if (cota.getTipoCota().equals(TipoCota.CONSIGNADO)) {
            
         	// se a cota for unificadora ou unificada não pode gerar cobrança
             // nesse ponto
@@ -903,10 +899,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     private void gerarMovimentosFinanceiros(final Cota cota, 
     		                                final Date dataOperacao,
-    		                                final Usuario usuario, 
-    		                                final boolean isAlteracaoTipoCotaNaDataAtual) {
+    		                                final Usuario usuario) {
         
-        if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual) {
+        if (cota.getTipoCota().equals(TipoCota.CONSIGNADO)) {
             
             // CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE
             // REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE

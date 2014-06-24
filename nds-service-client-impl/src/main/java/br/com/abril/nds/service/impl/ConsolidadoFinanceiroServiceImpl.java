@@ -66,10 +66,7 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		
 		Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 		
-		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || 
-		    ((cota.getTipoCota().equals(TipoCota.A_VISTA)) && 
-		     (cota.getAlteracaoTipoCota()!=null && 
-		      filtro.getDataConsolidado().compareTo(cota.getAlteracaoTipoCota()) < 0))){
+		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO)){
 			
 			consignadoDTO = consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaConsignado(filtro);
 		}
