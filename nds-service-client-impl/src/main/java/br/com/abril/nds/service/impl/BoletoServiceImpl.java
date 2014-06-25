@@ -384,9 +384,9 @@ public class BoletoServiceImpl implements BoletoService {
         }
     }
     
-    private boolean isCotaInativa(final Cota cota){
+    private boolean isCotaAtiva(final Cota cota){
         
-        return cota.getSituacaoCadastro()!=null?cota.getSituacaoCadastro().equals(SituacaoCadastro.INATIVO):false;
+        return cota.getSituacaoCadastro()!=null?cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO):false;
     }
     
     /**
@@ -436,7 +436,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         for (final Cobranca boleto : boletosNaoPagos) {
             
-            if (this.isCotaInativa(boleto.getCota())){
+            if (!this.isCotaAtiva(boleto.getCota())){
                 
                 continue;
             }
@@ -448,8 +448,6 @@ public class BoletoServiceImpl implements BoletoService {
             final Divida divida = boleto.getDivida();
             
             try {
-                
-                this.validarAcumuloDivida(divida, numeroMaximoAcumulosDistribuidor);
                 
                 divida.setStatus(StatusDivida.PENDENTE_INADIMPLENCIA);
                 dividaRepository.alterar(divida);
@@ -614,17 +612,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         return acumuloDividasService.atualizarAcumuloDivida(acumuloDivida);
     }
-    
-    private void validarAcumuloDivida(final Divida divida, final Integer numeroMaximoAcumulosDistribuidor) {
-        
-        final Integer numeroMaximoAcumuloCota = acumuloDividasService.obterNumeroMaximoAcumuloCota(divida.getCota().getId()).intValue();
-        
-        if (numeroMaximoAcumuloCota >= (numeroMaximoAcumulosDistribuidor !=null ? numeroMaximoAcumulosDistribuidor: 0)) {
-            
-            throw new IllegalArgumentException("Acumulo excedeu o limite do distribuidor.");
-        }
-    }
-    
+
     @Override
     @Transactional
     public void baixarBoleto(final TipoBaixaCobranca tipoBaixaCobranca, final PagamentoDTO pagamento, final Usuario usuario,
