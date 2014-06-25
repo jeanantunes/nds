@@ -144,15 +144,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			// Cadastrar novo lançamento
 			lancamento = new Lancamento();
 			
-			// Cálcular data de recolhimento
-			Calendar calRecolhimento = Calendar.getInstance();
-			calRecolhimento.setTime(input.getDataLancamento());
-			int peb = produtoEdicao.getPeb() == 0 ? produtoEdicao.getProduto().getPeb() : produtoEdicao.getPeb();
-			if (peb == 0) {
-				peb = 15;
-			}
-			calRecolhimento.add(Calendar.DAY_OF_MONTH, peb);
-			final Date dataRecolhimento = calRecolhimento.getTime();
+			final Date dataRecolhimento = this.atualizaPeb(input.getDataLancamento(), produtoEdicao);
 
 			// Data da Operação do sistema:
 			final Date dataOperacao = distribuidorService.obter().getDataOperacao();
@@ -316,6 +308,31 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
     								+ " Produto "+codigoProduto
     								+ " Edição " + edicao);
     				lancamento.setDataLancamentoPrevista(dtLancamentoNovo);
+    				
+    				
+    				Date dataRecolhimento = this.atualizaPeb(input.getDataLancamento(), produtoEdicao);
+    				
+    				if(lancamento.getDataRecolhimentoDistribuidor()!=null){
+    				this.ndsiLoggerFactory.getLogger().logInfo(message,
+    						EventoExecucaoEnum.INF_DADO_ALTERADO,
+    						"Alteração da DATA RECOLHIMENTO PREVISTO/DISTRIBUIDOR"
+    								+ " de " + DateUtil.formatarDataPTBR(lancamento.getDataRecolhimentoDistribuidor())
+    								+ " para " + DateUtil.formatarDataPTBR(dataRecolhimento)
+    								+ " Produto "+codigoProduto
+    								+ " Edição " + edicao);
+    				}else{
+        				this.ndsiLoggerFactory.getLogger().logInfo(message,
+        						EventoExecucaoEnum.INF_DADO_ALTERADO,
+        						"Alteração da DATA RECOLHIMENTO PREVISTO/DISTRIBUIDOR"
+        								+ " de Nulo"
+        								+ " para " + DateUtil.formatarDataPTBR(dataRecolhimento)
+        								+ " Produto "+codigoProduto
+        								+ " Edição " + edicao);
+    				}
+    				
+    				lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
+    				
+    				lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
     				
     				boolean erroRetornoParciais =
     					this.tratarParciais(lancamento, message, codigoProduto, edicao);
@@ -494,6 +511,18 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	@Override
 	public void posProcess(Object tempVar) {
 		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
+	}
+	
+	private Date atualizaPeb(Date dataLancamento,ProdutoEdicao produtoEdicao){
+		// Cálcular data de recolhimento
+		Calendar calRecolhimento = Calendar.getInstance();
+		calRecolhimento.setTime(dataLancamento);
+		int peb = produtoEdicao.getPeb() == 0 ? produtoEdicao.getProduto().getPeb() : produtoEdicao.getPeb();
+		if (peb == 0) {
+			peb = 15;
+		}
+		calRecolhimento.add(Calendar.DAY_OF_MONTH, peb);
+		return calRecolhimento.getTime();
 	}
 	
 }
