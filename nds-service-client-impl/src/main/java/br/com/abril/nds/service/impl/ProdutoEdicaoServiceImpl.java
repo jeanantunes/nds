@@ -51,6 +51,7 @@ import br.com.abril.nds.model.cadastro.SegmentacaoProduto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
@@ -64,6 +65,7 @@ import br.com.abril.nds.repository.BrindeRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
@@ -170,6 +172,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     @Autowired
     private TipoSegmentoProdutoService tipoSegmentoProdutoService;
+    
+    @Autowired
+    private ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
     
     @Value("${data_cabalistica}")
     private String dataCabalistica;
@@ -955,9 +960,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                     return validacaoMap;
                 }
                 
-                if(lancamento.getRecebimentos() != null && !lancamento.getRecebimentos().isEmpty() ) {
+                List<ItemNotaFiscalEntrada> itens = this.itemNotaFiscalEntradaRepository.obterItensPorProdutoEdicao(produtoEdicao.getId());
+                
+                boolean produtoComNota = itens != null && !itens.isEmpty(); 
+                
+                if(produtoComNota) {
                     
-                    validacaoMap.put("edicaoComNota", "Esta edição possui nota emitida e não pode ser excluida!");
+                    validacaoMap.put("edicaoComNota", "Já existe uma nota fiscal recebida para esta edição e não pode ser excluida!");
                     
                     return validacaoMap;
                 }

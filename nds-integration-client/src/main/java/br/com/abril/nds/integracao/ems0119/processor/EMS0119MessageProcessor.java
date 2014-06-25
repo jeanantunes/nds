@@ -15,6 +15,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
@@ -171,6 +172,9 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 								+ input.getPacotePadrao());
 
 			}
+			
+			produto.setTipoSegmentoProduto(new TipoSegmentoProduto(9l));
+			
 			this.getSession().merge(produto);
 
 		} else {
@@ -219,6 +223,8 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				produto.addFornecedor(fornecedor);
 			}
 
+			//Tipo Segmento Default. ID Fixo.
+			produto.setTipoSegmentoProduto(new TipoSegmentoProduto(9l));
 			
 			if ((null != tp) && (null != ed)) {
 				this.getSession().persist(produto);
