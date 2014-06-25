@@ -289,8 +289,8 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                 produtoEdicao.setParcial(true);
                 produtoEdicao.setAtivo(true);
                 produtoEdicao.setOrigem(Origem.PRODUTO_SEM_CADASTRO);
-                produtoEdicao.setPrecoPrevisto(new BigDecimal(inputItem.getPreco()));
-                produtoEdicao.setPrecoVenda(produtoEdicao.getPrecoPrevisto());
+                produtoEdicao.setPrecoPrevisto(inputItem.getPreco() == null ? BigDecimal.ZERO : new BigDecimal(inputItem.getPreco()));
+                produtoEdicao.setPrecoVenda(tratarValorNulo(produtoEdicao.getPrecoPrevisto()));
                 this.getSession().persist(produtoEdicao);
                 
                 Date dataAtual = new Date();
@@ -352,6 +352,10 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
         
         return nfEntrada;
     }
+    
+    private BigDecimal tratarValorNulo(BigDecimal valor) {
+		return valor == null ? BigDecimal.ZERO : valor;
+	}
     
     private TipoProduto obterTipoProduto(String nomeTipoProduto) {
         List<TipoProduto> listaTipoProduto = this.tipoProdutoRepository.busca(nomeTipoProduto, null, null, null, null, null, 0, 1);

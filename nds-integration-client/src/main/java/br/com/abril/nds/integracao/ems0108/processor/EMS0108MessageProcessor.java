@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -754,6 +755,8 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		produtoEdicao.setNumeroEdicao(input.getEdicaoLancamento());
 		produtoEdicao.setPeso(input.getPesoProduto());
 		produtoEdicao.setCodigoDeBarras(input.getCodigoBarrasFisicoProduto());
+		//Tipo Classificação Default - ID Fixo.
+		produtoEdicao.setTipoClassificacaoProduto(new TipoClassificacaoProduto(16L));
 		
 		ndsiLoggerFactory.getLogger().logError(
 				messageAux,
