@@ -152,7 +152,7 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		
 		sql.append("	inner join ROTEIRIZACAO on (ROTEIRIZACAO.ID = ROTEIRO.ROTEIRIZACAO_ID) ");
 		
-		sql.append("	left join BOX on (BOX.ID = ROTEIRIZACAO.BOX_ID) ");
+		sql.append("	inner join BOX on (BOX.ID = ROTEIRIZACAO.BOX_ID) ");
 		
 
 		sql.append("	where	");
@@ -169,7 +169,7 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
 		}
 
-		sql.append("	ORDER BY BOX.CODIGO, BOX.ID, ROTA.DESCRICAO_ROTA, ROTA.ID, ROTEIRO.DESCRICAO_ROTEIRO, ROTEIRO.ID ");
+		sql.append("	ORDER BY BOX.CODIGO,ROTEIRO.ORDEM , ROTA.ORDEM, ROTA_PDV.ORDEM  ");
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);

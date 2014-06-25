@@ -419,14 +419,6 @@ public interface CotaService {
      * @return boolean
      */
 	boolean salvarCaracteristicasFinanceirasEspecificasCota(final ParametroCobrancaCotaDTO parametroCobranca);
-
-	/**
-     * Verifica se a cota teve seu tipo alterado na data informada
-     * @param cota
-     * @param data
-     * @return boolean
-     */
-	boolean isCotaAlteradaNaData(Cota cota, Date data);
 	
 	List<CotaDTO> buscarCotasHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 
