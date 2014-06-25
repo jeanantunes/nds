@@ -239,14 +239,14 @@ var descontoEditorController = $.extend(true,{
 			onSuccess: function(){bloquearItensEdicao(tipoDescontoController.workspace);},
 			dataType : 'json',
 			colModel : [ {
-				display : 'Cota',
-				name : 'numeroCota',
+				display : 'Editor',
+				name : 'codigoEditor',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Nome',
-				name : 'nomeCota',
+				name : 'nomeEditor',
 				width : 200,
 				sortable : true,
 				align : 'left'
@@ -257,8 +257,8 @@ var descontoEditorController = $.extend(true,{
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Fornecedor(es)',
-				name : 'fornecedor',
+				display : 'Cota(s)',
+				name : 'cotas',
 				width : 180,
 				sortable : true,
 				align : 'left'
@@ -281,7 +281,7 @@ var descontoEditorController = $.extend(true,{
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "numeroCota",
+			sortname : "nomeEditor",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,

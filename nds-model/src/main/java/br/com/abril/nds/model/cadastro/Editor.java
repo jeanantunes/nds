@@ -13,10 +13,13 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
+
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 
 @Entity
 @Table(name = "EDITOR")
@@ -66,6 +69,10 @@ public class Editor implements Serializable {
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@JoinColumn(name = "JURIDICA_ID")
 	private PessoaJuridica pessoaJuridica;
+	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto desconto;
 	
 	public Editor(){}
 	
@@ -214,6 +221,14 @@ public class Editor implements Serializable {
 
 	public void setOrigemInterface(Boolean origemInterface) {
 		this.origemInterface = origemInterface;
+	}
+
+	public Desconto getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(Desconto desconto) {
+		this.desconto = desconto;
 	}
 
 }

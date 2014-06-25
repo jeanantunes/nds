@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,11 +9,16 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.TipoDescontoEditorDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoEditorDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
@@ -209,7 +215,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	@Override
 	public Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Desconto desconto, Fornecedor fornecedor, Cota cota,ProdutoEdicao produtoEdicao) {
 		
-		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(desconto, fornecedor, cota, produtoEdicao,tipoDesconto);
+		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(desconto, fornecedor, cota, produtoEdicao, tipoDesconto);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -283,6 +289,104 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 		getSession().flush();
 		getSession().clear();
 		
+	}
+
+	@Override
+	public DescontoCotaProdutoExcessao buscarDescontoCotaEditorExcessao(TipoDesconto tipoDesconto, Desconto desconto, Cota cota, Editor editor) {
+		
+		Criteria criteria = getSession().createCriteria(DescontoCotaProdutoExcessao.class);
+		
+		if (editor == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Parâmetro Editor inválido!");
+		}
+		
+		if (cota == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Parâmetro Cota inválido!");
+		}
+		
+		if(desconto != null) {
+			criteria.add(Restrictions.eq("desconto", desconto));
+		}
+		
+		criteria.add(Restrictions.eq("editor", editor));
+		criteria.add(Restrictions.eq("cota", cota));
+		criteria.add(Restrictions.eq("tipoDesconto", TipoDesconto.EDITOR));
+		
+		criteria.setFetchMode("cota", FetchMode.JOIN);
+		
+		return (DescontoCotaProdutoExcessao) criteria.uniqueResult();
+		
+	}
+
+	@Override
+	public Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Desconto desconto, Editor editor, Cota cota) {
+		
+		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(desconto, null, cota, null, tipoDesconto);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<TipoDescontoEditorDTO> buscarTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT dados.DESCONTO_ID as descontoId, ")
+			.append(" d.VALOR as desconto, ")
+			.append(" EDITOR_ID as editorId, ")
+			.append(" e.CODIGO as codigoEditor, ")
+			.append(" coalesce(p.nome_fantasia, p.razao_social, p.nome, '') as nomeEditor, ")
+			.append(" dados.USUARIO_ID as idTipoDesconto, ")
+			.append(" count(COTA_ID) as qtdCotas ");
+		
+		queryFromTipoDescontoEditor(hql);
+		
+		hql.append(" GROUP BY dados.DESCONTO_ID ");
+		
+		Query q = getSession().createSQLQuery(hql.toString());
+
+		if (filtro.getPaginacao() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+			q.setFirstResult( filtro.getPaginacao().getQtdResultadosPorPagina() * ( (filtro.getPaginacao().getPaginaAtual() - 1 )))
+			.setMaxResults( filtro.getPaginacao().getQtdResultadosPorPagina() );
+		}
+
+		q.setResultTransformer(Transformers.aliasToBean(TipoDescontoEditorDTO.class));
+		
+		return (List<TipoDescontoEditorDTO>) q.list();
+	}
+
+	@Override
+	public Integer buscarQuantidadeTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT COUNT(0) FROM ")
+			.append(" ( ")
+			.append(" SELECT dados.DESCONTO_ID ");
+		
+		queryFromTipoDescontoEditor(hql);
+		
+		hql.append(" GROUP BY dados.DESCONTO_ID ")
+			.append(" ) rs1 ");
+		
+		
+		Query q = getSession().createSQLQuery(hql.toString());
+		
+		return ((BigInteger) q.uniqueResult()).intValue();
+		
+	}
+	
+	private void queryFromTipoDescontoEditor(StringBuilder hql) {
+		
+		hql.append("FROM ")
+			.append(" ( ")
+			.append("	SELECT DESCONTO_ID, EDITOR_ID, hdcpe.USUARIO_ID, COTA_ID ")
+			.append("	FROM HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe ")	 
+			.append("	where editor_id is not null ")
+			.append(" ) as dados ")  
+			.append(" JOIN DESCONTO d on (dados.DESCONTO_ID=d.ID) ")
+			.append(" JOIN USUARIO u on (dados.USUARIO_ID=u.ID) ")
+			.append(" LEFT OUTER JOIN EDITOR e on (dados.EDITOR_ID=e.ID) ")
+			.append(" LEFT JOIN PESSOA p on p.id = e.JURIDICA_ID ");
 	}
 
 }

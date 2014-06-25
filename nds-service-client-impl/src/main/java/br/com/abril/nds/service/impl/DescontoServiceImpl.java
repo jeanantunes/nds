@@ -33,6 +33,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -56,6 +57,7 @@ import br.com.abril.nds.repository.DescontoProdutoRepository;
 import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
 import br.com.abril.nds.repository.DescontoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EditorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.HistoricoDescontoCotaProdutoRepository;
 import br.com.abril.nds.repository.HistoricoDescontoFornecedorRepository;
@@ -105,6 +107,9 @@ public class DescontoServiceImpl implements DescontoService {
 
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	private EditorRepository editorRepository;
 
 	@Autowired
 	private DescontoComponent descontoComponent;
@@ -848,7 +853,7 @@ public class DescontoServiceImpl implements DescontoService {
 			
 	}
 
-	                                        /*
+	/*
      * Valida a entrada de dados para inclusão de desconto por produto.
      * @param desconto - dados do desconto de produto
      */
@@ -1491,21 +1496,130 @@ public class DescontoServiceImpl implements DescontoService {
     }
 
 	@Override
+	@Transactional
 	public List<TipoDescontoEditorDTO> buscarTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro) {
 		
-		throw new ValidacaoException(TipoMensagem.ERROR, "Não implementado ainda.");
+		List<TipoDescontoEditorDTO> historicoDesconto = descontoProdutoEdicaoExcessaoRepository.buscarTipoDescontoEditor(filtro);
+		
+		return historicoDesconto;
+		
 	}
 
 	@Override
+	@Transactional
 	public Integer buscarQuantidadeTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro) {
 		
-		throw new ValidacaoException(TipoMensagem.ERROR, "Não implementado ainda.");
+		return descontoProdutoEdicaoExcessaoRepository.buscarQuantidadeTipoDescontoEditor(filtro);
+		
 	}
 
 	@Override
-	public void incluirDescontoEditor(DescontoEditorDTO descontoDTO, List<Long> cotas, Usuario usuarioLogado) {
+	@Transactional
+	public void incluirDescontoEditor(DescontoEditorDTO descontoDTO, List<Long> cotas, Usuario usuario) {
 		
-		throw new ValidacaoException(TipoMensagem.ERROR, "Não implementado ainda.");		
+		validarDescontoEditor(descontoDTO);
+
+		Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
+		
+		/*
+		 * Cria um desconto a ser utilizado em um ou mais fornecedores
+		 */
+		Desconto desconto =  new Desconto();
+		desconto.setDataAlteracao(dataAtual);
+		desconto.setUsado(false);
+		desconto.setUsuario(usuario);
+		desconto.setValor(descontoDTO.getValorDesconto());
+		desconto.setTipoDesconto(TipoDesconto.EDITOR);
+		
+		Long idDesconto = descontoRepository.adicionar(desconto);
+		
+		desconto = descontoRepository.buscarPorId(idDesconto);
+		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+
+		Editor editor = editorRepository.obterPorCodigo(descontoDTO.getCodigoEditor());
+
+		if(descontoDTO.getHasCotaEspecifica() != null && descontoDTO.getHasCotaEspecifica()) {
+			
+			/*
+			 * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
+			 */
+			for(Integer numeroCota : descontoDTO.getCotas()) {
+				
+				Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota.intValue());
+				
+				DescontoCotaProdutoExcessao dcpe = 
+						descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaEditorExcessao(TipoDesconto.EDITOR, null, cota, editor);
+				
+				if(dcpe != null) {
+					
+					dcpe.setDesconto(desconto);
+				} else {
+					
+					dcpe = new DescontoCotaProdutoExcessao();
+					dcpe.setDistribuidor(distribuidor);
+					dcpe.setCota(cota);
+					dcpe.setEditor(editor);
+					dcpe.setUsuario(usuario);
+					dcpe.setDesconto(desconto);
+				}
+				
+				dcpe.setTipoDesconto(TipoDesconto.EDITOR);
+				descontoProdutoEdicaoExcessaoRepository.merge(dcpe);	
+				
+				HistoricoDescontoCotaProdutoExcessao hdcp = new HistoricoDescontoCotaProdutoExcessao();
+				hdcp.setDataAlteracao(new Date());
+				hdcp.setDesconto(desconto);
+				hdcp.setDistribuidor(distribuidor);
+				hdcp.setCota(cota);
+				hdcp.setEditor(editor);
+				hdcp.setUsuario(usuario);
+				hdcp.setValor(desconto.getValor());
+				
+				historicoDescontoCotaProdutoRepository.merge(hdcp);
+			}
+			
+		} else {
+			
+			editor.setDesconto(desconto);
+			editorRepository.merge(editor);
+		}
+		
+//		throw new ValidacaoException(TipoMensagem.ERROR, "Não implementado ainda.");		
+	}
+	
+	/*
+     * Valida a entrada de dados para inclusão de desconto por produto.
+     * @param desconto - dados do desconto de produto
+     */
+	private void validarDescontoEditor(DescontoEditorDTO desconto) {
+
+		List<String> mensagens = new ArrayList<String>();
+
+		if (desconto.getCodigoEditor() == null || desconto.getCodigoEditor().equals("")) {
+			
+            mensagens.add("O campo Código deve ser preenchido!");
+		}
+
+		if (desconto.getValorDesconto() == null || desconto.getValorDesconto().intValue() <= 0) {
+
+			mensagens.add("O campo Desconto deve ser preenchido!");
+		}
+
+		if (!desconto.getHasCotaEspecifica() && !desconto.getIsTodasCotas()) {
+
+			mensagens.add("O campo de cotas deve ser preenchido!");
+		}
+
+		if (desconto.getHasCotaEspecifica() && desconto.getCotas() == null) {
+
+			mensagens.add("Ao menos uma cota deve ser selecionada!");
+		}
+
+		if (!mensagens.isEmpty()) {
+
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
 	}
 
 }

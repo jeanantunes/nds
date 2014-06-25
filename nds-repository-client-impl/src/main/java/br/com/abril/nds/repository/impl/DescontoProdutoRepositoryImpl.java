@@ -40,8 +40,8 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<TipoDescontoProdutoDTO> buscarTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();

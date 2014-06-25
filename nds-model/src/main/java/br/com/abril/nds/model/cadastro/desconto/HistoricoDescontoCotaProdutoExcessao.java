@@ -17,6 +17,7 @@ import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -48,6 +49,10 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "EDITOR_ID")
+	private Editor editor;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "PRODUTO_ID")
@@ -125,6 +130,14 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 
 	public void setCota(Cota cota) {
 		this.cota = cota;
+	}
+
+	public Editor getEditor() {
+		return editor;
+	}
+
+	public void setEditor(Editor editor) {
+		this.editor = editor;
 	}
 
 	public Produto getProduto() {

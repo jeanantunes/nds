@@ -20,6 +20,7 @@ import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -27,7 +28,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
 @Table(name = "DESCONTO_COTA_PRODUTO_EXCESSOES",
-	   uniqueConstraints= {@UniqueConstraint(columnNames = {"FORNECEDOR_ID", "COTA_ID", "PRODUTO_ID", "PRODUTO_EDICAO_ID"})})
+	   uniqueConstraints= {@UniqueConstraint(columnNames = {"FORNECEDOR_ID", "COTA_ID", "EDITOR_ID", "PRODUTO_ID", "PRODUTO_EDICAO_ID"})})
 @SequenceGenerator(name="DESCONTO_COTA_PRODUTO_EXC_SEQ", initialValue = 1, allocationSize = 1)
 public class DescontoCotaProdutoExcessao implements Serializable {
 
@@ -57,6 +58,10 @@ public class DescontoCotaProdutoExcessao implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "EDITOR_ID")
+	private Editor editor;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "PRODUTO_ID")
@@ -123,6 +128,14 @@ public class DescontoCotaProdutoExcessao implements Serializable {
 
 	public void setCota(Cota cota) {
 		this.cota = cota;
+	}
+
+	public Editor getEditor() {
+		return editor;
+	}
+
+	public void setEditor(Editor editor) {
+		this.editor = editor;
 	}
 
 	public Produto getProduto() {
