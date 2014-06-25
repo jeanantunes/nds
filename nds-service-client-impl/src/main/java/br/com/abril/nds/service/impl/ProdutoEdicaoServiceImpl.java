@@ -959,7 +959,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                     return validacaoMap;
                 }
                 
-                boolean produtoComNota = !this.itemNotaFiscalEntradaRepository.obterItensPorProdutoEdicao(produtoEdicao.getId()).isEmpty(); 
+                List<ItemNotaFiscalEntrada> itens = this.itemNotaFiscalEntradaRepository.obterItensPorProdutoEdicao(produtoEdicao.getId());
+                
+                boolean produtoComNota = itens != null && !itens.isEmpty(); 
                 
                 if(produtoComNota) {
                     
