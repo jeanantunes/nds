@@ -18,6 +18,6 @@ public interface ItemNotaFiscalEntradaRepository extends Repository<ItemNotaFisc
 
 	public abstract List<ItemNotaFiscalEntrada> obtemPorControleConferenciaEncalheCota(long idControleConferencia,
 			String  orderBy, Ordenacao ordenacao, Integer firstResult, Integer maxResults);
-
 	
+	List<ItemNotaFiscalEntrada> obterItensPorProdutoEdicao(Long idProdutoEdicao);
 }

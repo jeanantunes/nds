@@ -64,6 +64,7 @@ import br.com.abril.nds.repository.BrindeRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
@@ -170,6 +171,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     @Autowired
     private TipoSegmentoProdutoService tipoSegmentoProdutoService;
+    
+    @Autowired
+    private ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
     
     @Value("${data_cabalistica}")
     private String dataCabalistica;
@@ -955,9 +959,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                     return validacaoMap;
                 }
                 
-                if(lancamento.getRecebimentos() != null && !lancamento.getRecebimentos().isEmpty() ) {
+                boolean produtoComNota = !this.itemNotaFiscalEntradaRepository.obterItensPorProdutoEdicao(produtoEdicao.getId()).isEmpty(); 
+                
+                if(produtoComNota) {
                     
-                    validacaoMap.put("edicaoComNota", "Esta edição possui nota emitida e não pode ser excluida!");
+                    validacaoMap.put("edicaoComNota", "Já existe uma nota fiscal recebida para esta edição e não pode ser excluida!");
                     
                     return validacaoMap;
                 }

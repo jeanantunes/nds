@@ -145,5 +145,15 @@ public class ItemNotaFiscalEntradaRepositoryImpl extends
 		return (Long) criteria.uniqueResult();
 		
 	}
-	
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ItemNotaFiscalEntrada> obterItensPorProdutoEdicao(Long idProdutoEdicao) {
+		
+		Criteria criteria = this.getSession().createCriteria(ItemNotaFiscalEntrada.class);
+		
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+		
+		return criteria.list();
+	}	
 }
