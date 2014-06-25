@@ -19,6 +19,19 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		super(NotaFiscalEntrada.class);		 
 	}
 
+	@Override
+	public Long qtdeRegistrosPendencias(FiltroFollowupPendenciaNFeDTO filtro) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT COUNT(cota.id) ");
+		hql.append(getSqlFromEWhereNotaPendente(filtro));
+		hql.append(getOrderByNotasPendentes(filtro, true, true));
+
+		Query query =  getSession().createQuery(hql.toString());		
+		
+		return (long) query.list().size();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaFollowupPendenciaNFeDTO> consultaPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
@@ -29,8 +42,6 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" pessoa.nome as nomeJornaleiro, ");
 		hql.append(" conf.data as dataEntrada, ");		
 		hql.append(" notaCota.statusNotaFiscal as tipoPendencia, ");
-		// hql.append(" ((notaCota.valorDesconto) -  (conf.qtde * conf.precoComDesconto)) as valorDiferenca, ");
-		// hql.append("((conf.qtdeInformada * conf.precoCapaInformado) -  (conf.qtde * conf.precoCapaInformado)) as valorDiferenca, ");
 		hql.append(" ( ");
 		hql.append("  	(conf.precoComDesconto) - (SELECT SUM(notaFiscalEntradaCota.valorDesconto) ");
 		hql.append("  	FROM ControleConferenciaEncalheCota controleConferenciaDesconto ");
@@ -82,7 +93,14 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" LEFT JOIN controleCota.conferenciasEncalhe as conf ");
 		hql.append(" LEFT JOIN pessoa.telefones as telefone ");
 		hql.append(" where no.tipoOperacao in ('ENTRADA',  'SAIDA')");
-		hql.append(" and ((conf.qtdeInformada * conf.precoComDesconto) - (conf.qtde * notaCota.valorInformado)) <> 0 ");
+		// hql.append(" and ((conf.qtdeInformada * conf.precoComDesconto) - (conf.qtde * notaCota.valorInformado)) <> 0 ");
+		hql.append(" AND ");
+		hql.append(" ( ");
+		hql.append("  	(conf.precoComDesconto) - (SELECT SUM(notaFiscalEntradaCota.valorDesconto) ");
+		hql.append("  	FROM ControleConferenciaEncalheCota controleConferenciaDesconto ");
+		hql.append("  	LEFT JOIN controleConferenciaDesconto.notaFiscalEntradaCota as notaFiscalEntradaCota ");
+		hql.append("  	WHERE controleConferenciaDesconto = controleCota ");
+		hql.append("  ) <> 0 ) ");
 		
 		hql.append(" GROUP BY cota.numeroCota");
 		
@@ -112,16 +130,4 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		return hql.toString();
 	}
 
-	@Override
-	public Long qtdeRegistrosPendencias(FiltroFollowupPendenciaNFeDTO filtro) {
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append("SELECT COUNT(cota.id) ");
-		hql.append(getSqlFromEWhereNotaPendente(filtro));
-		hql.append(getOrderByNotasPendentes(filtro, true, true));
-
-		Query query =  getSession().createQuery(hql.toString());		
-		
-		return (long) query.list().size();
-	}
 }
