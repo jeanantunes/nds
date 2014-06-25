@@ -529,7 +529,22 @@ public class Lancamento implements Serializable {
 	public void validarPEB() {
 		
 		if (DateUtil.obterDiferencaDias(this.dataLancamentoDistribuidor, this.dataRecolhimentoDistribuidor) < PEB_MINIMA_LANCAMENTO) {
-			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Não podem haver períodos com peb menor que %s dias.", PEB_MINIMA_LANCAMENTO));
+			
+			List<String> mensagens = new ArrayList<String>();
+			
+			mensagens.add(String.format(
+				"Produto %s Cod.:%s / Ed.:%s inconsistente.",
+				this.produtoEdicao.getProduto().getNome(),
+				this.produtoEdicao.getProduto().getCodigo(),
+				this.produtoEdicao.getNumeroEdicao()
+			)); 
+			
+			mensagens.add(String.format(
+				"Não podem haver períodos com peb menor que %s dias.", 
+				PEB_MINIMA_LANCAMENTO)
+			);
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,mensagens);
 		}
 	}
 
