@@ -727,8 +727,19 @@ var followUpSistemaController = $.extend(true, {
 			resizable: false,
 			height:'auto',
 			width:860,
-			modal: true
-		});	
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					followUpSistemaController.cadastrarNota(idControleConferenciaEncalheCota);
+					$( this ).dialog( "close" );					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#followup-dialog-dadosNotaFiscal", this.workspace).parents("form")
+		});
+		
 	},
 	
 	cadastrarNota : function(idControleConferenciaEncalheCota){		

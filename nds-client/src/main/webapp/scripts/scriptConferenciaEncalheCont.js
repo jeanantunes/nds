@@ -481,8 +481,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 			function(result) {
 				
-				if(result.processoUtilizaNfe != undefined && result.processoUtilizaNfe
-						&& result.nfeDigitada != undefined && !result.nfeDigitada) {
+				if(result.processoUtilizaNfe != undefined && result.processoUtilizaNfe && result.nfeDigitada != undefined && !result.nfeDigitada) {
 				
 					ConferenciaEncalheCont.processoUtilizaNfe = true;
 					ConferenciaEncalheCont.popup_notaFiscal();
@@ -1306,8 +1305,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 			$("#valorTotalNotaFiscalExibir", ConferenciaEncalheCont.workspace).text(parseFloat(notaFiscal.valorProdutos).toFixed(2));
 			$("#chaveAcessoExibir", ConferenciaEncalheCont.workspace).text(notaFiscal.chaveAcesso);
 		}
-		
-		
 		
 		var modeloConferenciaEncalhe = result.listaConferenciaEncalhe;
 		
