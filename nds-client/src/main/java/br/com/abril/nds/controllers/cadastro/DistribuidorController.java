@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -53,7 +55,7 @@ public class DistribuidorController extends BaseController {
     
     @Get
     @Path("/obterDataDaSemana")
-    public void obterDataDaSemanaNoAno(final Integer numeroSemana, final Integer anoBase) {
+    public void obterDataDaSemanaNoAno(String numeroSemana, String anoBase) {
         
         final DiaSemana diaSemana = distribuidorService.inicioSemanaRecolhimento();
         
@@ -62,8 +64,19 @@ public class DistribuidorController extends BaseController {
             throw new RuntimeException("Dados do distribuidor inexistentes: inicio semana");
         }
         
+        if (anoBase == null){
+            
+            if (numeroSemana == null || numeroSemana.length() < 6){
+                
+                throw new ValidacaoException(TipoMensagem.WARNING, "Semana informada inválida.");
+            }
+            
+            anoBase = numeroSemana.substring(0, 4);
+            numeroSemana = numeroSemana.substring(4);
+        }
+        
         final Date data =
-                SemanaUtil.obterDataDaSemanaNoAno(numeroSemana, diaSemana.getCodigoDiaSemana(), anoBase);
+                SemanaUtil.obterDataDaSemanaNoAno(Integer.parseInt(numeroSemana), diaSemana.getCodigoDiaSemana(), Integer.parseInt(anoBase));
         
         String dataFormatada = "";
         

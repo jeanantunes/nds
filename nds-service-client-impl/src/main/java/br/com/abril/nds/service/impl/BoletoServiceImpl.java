@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.xml.bind.ValidationException;
 
@@ -34,6 +37,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.TipoEdicao;
@@ -46,6 +50,7 @@ import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -2282,8 +2287,10 @@ public class BoletoServiceImpl implements BoletoService {
         }
 
         final Integer fatorVencimento = this.obterFatorVencimentoFormaCobranca(fc);
+        
+        GrupoCota grupoDaCota = this.cotaRepository.obterOperacaoVigenteCota(ceDTO.getIdCota(), dataRecolhimentoCEDe, dataRecolhimentoCEAte);
 
-        final Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+        final Date dataOperacao = this.obterDataParaCalculoVencimentoBoletoEmBranco(grupoDaCota.getDiasRecolhimento(),dataRecolhimentoCEDe);
         
         final Date dataVencimento = gerarCobrancaService.obterDataVencimentoCobrancaCota(dataOperacao, fatorVencimento, null);
         
@@ -2306,6 +2313,41 @@ public class BoletoServiceImpl implements BoletoService {
                                                 dataRecolhimentoCEAte);
         
         return bbDTO;
+    }
+    
+    private Date obterDataParaCalculoVencimentoBoletoEmBranco(Set<DiaSemana> diasRecolhimento, Date dataRecolhimentoDe) {
+    	
+    	SortedSet<DiaSemana> dias = new TreeSet<>(new Comparator<DiaSemana>() {
+
+			@Override
+			public int compare(DiaSemana o1, DiaSemana o2) {
+				return Integer.compare(o1.getCodigoDiaSemana(), o2.getCodigoDiaSemana());
+			}        	
+		});
+        	
+    	dias.addAll(diasRecolhimento);
+    	
+        DiaSemana menorDiaSemana = dias.first();
+        
+        Calendar calDe = Calendar.getInstance();
+        calDe.setTime(dataRecolhimentoDe);
+        
+        int diferencaDias = menorDiaSemana.getCodigoDiaSemana() - calDe.get(Calendar.DAY_OF_WEEK);
+        
+        if (diferencaDias >= 0) {
+
+        	calDe.add(Calendar.DAY_OF_MONTH, diferencaDias);
+        	
+            return calDe.getTime();
+        
+        } else {
+        	
+        	final int quantidadeDiasSemana = 7;
+        	
+			calDe.add(Calendar.DAY_OF_MONTH, quantidadeDiasSemana - (diferencaDias*-1));
+        	
+            return calDe.getTime();
+        }
     }
     
     /**

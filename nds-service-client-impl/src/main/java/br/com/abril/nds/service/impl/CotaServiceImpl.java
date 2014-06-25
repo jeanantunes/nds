@@ -1479,7 +1479,6 @@ public class CotaServiceImpl implements CotaService {
             cota = new Cota();
             cota.setInicioAtividade(dataOperacao);
             cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
-            cota.setTipoCota(TipoCota.CONSIGNADO);
             incluirPDV = true;
             newCota = true;
         }
@@ -3111,11 +3110,9 @@ public class CotaServiceImpl implements CotaService {
     	
         final Cota cota = this.obterPorId(parametroCobranca.getIdCota());
         
-        if (!cota.getTipoCota().equals(parametroCobranca.getTipoCota())){
+        if (cota.getTipoCota()==null || !cota.getTipoCota().equals(parametroCobranca.getTipoCota())){
             
             cota.setTipoCota(parametroCobranca.getTipoCota());
-            
-            cota.setAlteracaoTipoCota(distribuidorService.obterDataOperacaoDistribuidor());
             
             alterado = true;
         }
@@ -3153,22 +3150,6 @@ public class CotaServiceImpl implements CotaService {
         }
         
         return alterado;
-    }
-    
-    /**
-     * Verifica se a cota teve seu tipo alterado na data informada
-     * @param cota
-     * @param data
-     * @return boolean
-     */
-    @Override
-    @Transactional
-    public boolean isCotaAlteradaNaData(final Cota cota, final Date data){
-        
-        final boolean isAlteracaoTipoCotaNaDataAtual = cota.getAlteracaoTipoCota()!=null &&
-                cota.getAlteracaoTipoCota().compareTo(data)==0;
-        
-        return isAlteracaoTipoCotaNaDataAtual;
     }
     
     @Override

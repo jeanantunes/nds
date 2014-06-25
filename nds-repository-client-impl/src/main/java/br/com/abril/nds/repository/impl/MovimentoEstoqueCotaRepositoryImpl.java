@@ -117,8 +117,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro)) ")
         
-        .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota >= mec.data) ")
-        
         .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
         
         .append("  and mec.status = :statusAprovacao ")
@@ -210,8 +208,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         .append("  and mec.data <= :data")
         
-        .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < mec.data)")
-        
         .append("  and mecF is null ");
         
         return hql.toString();
@@ -243,9 +239,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         .append("  and c2.id = ").append(paramIdCota)
         
-        .append("  and mec.data <= :data")
-        
-        .append("  and (c2.alteracaoTipoCota is null or c2.alteracaoTipoCota < mec.data)");
+        .append("  and mec.data <= :data");
         
         return hql.toString();
     }
@@ -668,22 +662,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" sum( ");
         
-        sql.append("     case when tipoCota = 'A_VISTA' AND diaRecolhimento = 1 then ");
+        sql.append("     case when tipoCota = 'A_VISTA' and diaRecolhimento = 1 then 0 else ");
         
-        sql.append("         case when alteracaoTipoCota >= dataMovimentoEstoque then ");
+        sql.append("         case when diaRecolhimento = 1 then ");
         
-        sql.append("             ( ");
-        sql.append(indUtilizaPrecoCapa ? "  a.precoVenda " : " a.precoComDesconto ");
-        sql.append(" * a.reparte) ");
+        sql.append(          indUtilizaPrecoCapa ? " a.precoVenda " : " a.precoComDesconto ");
         
-        sql.append("         else 0 end ");
+        sql.append("         * a.reparte else 0 end ");
         
-        sql.append("     when diaRecolhimento = 1 then ( ");
-        sql.append(indUtilizaPrecoCapa ? "  a.precoVenda " : " a.precoComDesconto ");
-        sql.append(" * a.reparte) else 0 end ");
+        sql.append("     end ");
         
         sql.append("    ) as totalReparte, ");
-        
         
         sql.append(" sum( ");
         sql.append(indUtilizaPrecoCapa ? "  a.precoVenda " : " a.precoComDesconto ");
@@ -1134,8 +1123,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             sql.append(" coalesce(CONFERENCIA_ENCALHE.DIA_RECOLHIMENTO,1) AS diaRecolhimento, ");
             
             sql.append(" cota.TIPO_COTA as tipoCota, ");
-            
-            sql.append(" cota.ALTERACAO_TIPO_COTA as alteracaoTipoCota, ");
             
             sql.append(" MEC_REPARTE.DATA as dataMovimentoEstoque ");
             

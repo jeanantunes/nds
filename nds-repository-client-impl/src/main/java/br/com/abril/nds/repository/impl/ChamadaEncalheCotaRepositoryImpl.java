@@ -222,11 +222,9 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		sql.append("     ( ");
 		
-		sql.append("      CASE WHEN COTA.TIPO_COTA = 'A_VISTA' THEN CASE WHEN COTA.ALTERACAO_TIPO_COTA >= ").append(subSelectDataMovimento).append(" THEN ");
+		sql.append("      CASE WHEN COTA.TIPO_COTA = 'A_VISTA' THEN ");
 		
-        sql.append("         ( " +sqlValor+ " ) ");
-		
-		sql.append("      ELSE 0 END ELSE ");
+        sql.append("      0 ELSE ");
 		
 		sql.append("         ( " +sqlValor+ " ) ");
 		

@@ -1762,6 +1762,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return logMessage;
 	}
 	
+	@Transactional
 	public void sinalizarErroProcessoEncalhe(Integer numeroCota, Exception e) {
 		
 		Semaforo semaforo = semaforoRepository.buscarPorId(numeroCota);
@@ -2040,16 +2041,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}	
 		
 		final Set<String> nossoNumeroCollection = new HashSet<String>();
-		
-        // COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO
-        // CONSIGNADA ATÉ FECHAMENTO DO DIA
-        final boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(controleConferenciaEncalheCota.getCota(), 
-        		                                                                             controleConferenciaEncalheCota.getDataOperacao());
         
         final List<Date> datasRecolhimento = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(controleConferenciaEncalheCota.getCota().getNumeroCota(), 
         		                                                                                          controleConferenciaEncalheCota.getDataOperacao());
         
-		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
+		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO)){
 			
 			
 			//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
@@ -2136,11 +2132,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-        // COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO
-        // CONSIGNADA ATÉ FECHAMENTO DO DIA
-        final boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(cota,dataOperacao);
-		
-		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
+		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO)){
 			
 			final List<MovimentoFinanceiroCota> movimentosFinanceiroCota = 
 					movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);

@@ -41,6 +41,7 @@ import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -48,6 +49,7 @@ import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoPDVRepository;
 import br.com.abril.nds.repository.FixacaoReparteRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
@@ -117,6 +119,9 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Autowired
     private PdvService pdvService;
     
+    @Autowired
+    private LancamentoRepository lancamentoRepository;
+    
     private Map<String, String> mapClassificacaoCota;
 
     @Override
@@ -131,9 +136,16 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Transactional
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId) {
         
-        //TODO: informar numeroPeriodoBase
+        EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(estudoId);
         
-        return analiseParcialRepository.carregarEdicoesBaseEstudoParcial(estudoId, 4);
+        Long lancamentoId = estudoGerado.getLancamentoID();
+        
+        Lancamento lancamento = this.lancamentoRepository.buscarPorId(lancamentoId);
+        
+        Integer numeroPeriodoBase =
+            lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo();
+        
+        return analiseParcialRepository.carregarEdicoesBaseEstudoParcial(estudoId, numeroPeriodoBase);
     }
 
     @Override
@@ -146,7 +158,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	    
             //TODO: informar numeroPeriodoBase
     	    
-            queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudoParcial(queryDTO.getEstudoId(), 4));
+            queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudoParcial(queryDTO.getEstudoId(), queryDTO.getNumeroParcial()));
             
             for (AnaliseParcialDTO item : lista) {
                 item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));

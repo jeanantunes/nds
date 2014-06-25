@@ -641,7 +641,14 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#valorMinimo", this.workspace).val( resultado.valorMinimo );
 		$("#qtdDividasAbertoCota", this.workspace).val(resultado.qtdDividasAberto);
 		$("#vrDividasAbertoCota", this.workspace).val( resultado.vrDividasAberto );
+		
 		$("#tipoCota", this.workspace).val(resultado.tipoCota);
+		
+		if (resultado.tipoCota){
+			
+			$("#tipoCota").attr("disabled", "disabled");
+		}
+		
 		$("#devolveEncalhe", this.workspace).val(resultado.devolveEncalhe?0:1);
 		
 		//$("#unificaCobranca", this.workspace).val(resultado.unificaCobranca?0:1);
@@ -1545,7 +1552,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$('#parametroCobrancaFormUpload', this.workspace).submit();
 	},
 	
-	
 	//INCLUSÃO DE NOVA UNIFICAÇÃO SEM SAIR DO POPUP
 	incluirNovaUnificacao : function(){
 		parametroCobrancaCotaController.postarFormaCobranca(false,true);
@@ -1567,24 +1573,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 			
 			$('#selectDevolveEncalhe', this.workspace).hide();
 		}
-	},
-	
-	verificaDataAlteracaoTipoCota : function(element){
-		
-		var data = [{name: 'idCota', value: $("#_idCota", this.workspace).val()}];
-		$.postJSON(contextPath + "/cota/parametroCobrancaCota/verificarDataAlteracaoTipoCota",
-			data,
-			function(result){
-				
-				parametroCobrancaCotaController.exibeDevolveEncalhe(element.value);
-			},
-			function(){
-				
-				element.value = element.oldValue;
-			},
-			null,
-			false
-		);
 	}
 	
 }, BaseController);
