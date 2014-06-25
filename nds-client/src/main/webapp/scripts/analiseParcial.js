@@ -703,32 +703,6 @@ var analiseParcialController = $.extend(true, {
                 $this.closest('tr').find('td[abbr="leg"] div').addClass('asterisco');
             }
         });
-
-        var totalAcumuladoParcialReparte = 0;
-        var totalAcumuladoParcialVenda = 0;
-        //carrega % de venda
-        $('#baseEstudoGridParcial tr').each(function(){
-            var $tr = $(this);
-            var totalReparte = $tr.find('td[abbr^="reparte"]:not([abbr="reparteSugerido"]) div').map(function(){return $(this).text()*1;}).toArray().reduce(function(a,b){return a+b;});
-            var totalVenda = $tr.find('td[abbr^="venda"] div').map(function(){return $(this).text()*1;}).toArray().reduce(function(a,b){return a+b;});
-            var perc = Math.round((totalVenda / totalReparte) * 10000) / 100;
-            perc = isNaN(perc)?0:perc;
-            $tr.find('td[abbr="cota"]').attr('percentualVenda', perc);
-            
-            if (analiseParcialController.tipoExibicao == 'PARCIAL') {
-                if (totalReparte != 0) {
-                    $tr.find('td[abbr^="reparte4"] div').text(totalReparte);
-                    $tr.find('td[abbr^="venda4"] div').text(totalVenda);
-                }
-                totalAcumuladoParcialReparte += totalReparte;
-                totalAcumuladoParcialVenda += totalVenda;
-            }
-        });
-        
-        if (analiseParcialController.tipoExibicao == 'PARCIAL') {
-            $('#total_reparte4').text(totalAcumuladoParcialReparte);
-            $('#total_venda4').text(totalAcumuladoParcialVenda);
-        }
     },
 
     modeloNormal : function (estudoOrigem) {

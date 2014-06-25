@@ -156,8 +156,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         
     	if (queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")) {
     	    
-            //TODO: informar numeroPeriodoBase
-    	    
             queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudoParcial(queryDTO.getEstudoId(), queryDTO.getNumeroParcial()));
             
             for (AnaliseParcialDTO item : lista) {
@@ -170,7 +168,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 
                 for (EdicoesProdutosDTO edicoesProdutosDTO : edicoesProdutoPorCota) {
                     if (edicoesProdutosDTO.isParcial()) {
-//TODO:                        temp.addAll(analiseParcialRepository.getEdicoesBaseParciais((long) item.getCota(), edicoesProdutosDTO.getEdicao().longValue(), edicoesProdutosDTO.getCodigoProduto(), Long.valueOf(edicoesProdutosDTO.getPeriodo())));
+
                         temp.add(edicoesProdutosDTO);
                         
                         if (contadorParciais++ >= QTDE_PARCIAIS_BASE) {
