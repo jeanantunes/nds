@@ -110,7 +110,7 @@ public class Cota implements Serializable {
 	private ParametroCobrancaCota parametroCobranca;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_COTA", columnDefinition = "VARCHAR(255)", nullable=false)
+	@Column(name = "TIPO_COTA", columnDefinition = "VARCHAR(255)")
 	private TipoCota tipoCota;
 	
 	@Column(name = "DEVOLVE_ENCALHE")
@@ -197,10 +197,6 @@ public class Cota implements Serializable {
 	 */
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
-	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "ALTERACAO_TIPO_COTA")
-	private Date alteracaoTipoCota;
 	
 	@Column(name = "VALOR_MINIMO_COBRANCA", precision=18, scale=4)
 	private BigDecimal valorMinimoCobranca;
@@ -641,38 +637,24 @@ public class Cota implements Serializable {
 		return rankingSegmento;
 	}
 
-
 	public void setRankingSegmento(List<RankingSegmento> rankingSegmento) {
 		this.rankingSegmento = rankingSegmento;
 	}
-
 
 	public List<EstoqueProdutoCota> getEstoqueProdutoCota() {
 		return estoqueProdutoCota;
 	}
 
-
 	public void setEstoqueProdutoCota(List<EstoqueProdutoCota> estoqueProdutoCota) {
 		this.estoqueProdutoCota = estoqueProdutoCota;
 	}
-
 
 	public Integer getRecebeRecolheParciais() {
 		return recebeRecolheParciais;
 	}
 
-
 	public void setRecebeRecolheParciais(Integer recebeRecolheParciais) {
 		this.recebeRecolheParciais = recebeRecolheParciais;
-	}
-	
-
-	public Date getAlteracaoTipoCota() {
-		return alteracaoTipoCota;
-	}
-
-	public void setAlteracaoTipoCota(Date alteracaoTipoCota) {
-		this.alteracaoTipoCota = alteracaoTipoCota;
 	}
 
 	public BigDecimal getValorMinimoCobranca() {

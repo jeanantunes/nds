@@ -120,6 +120,11 @@ var analiseEstudoController = $.extend(true, {
                     row.cell.numeroEstudo +',event);"> <option selected="selected">Selecione...</option> <option value="normal">Normal</option>';
             }
             row.cell.telaAnalise = analise;
+            
+            if (!row.cell.codPeriodoProd) {
+            	
+            	row.cell.codPeriodoProd = "";
+            }
         });
 
         $(".grids", analiseEstudoController.workspace).show();

@@ -180,10 +180,9 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
    /**
     * Obtem Quantidade de Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
     * @param numeroCota
-    * @param data
     * @return Long
     */
-    Long obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota, Date data);
+    Long obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota);
 	
    /**
     * Obtem Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
@@ -195,8 +194,8 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
     * @param maxResults
     * @return List<ProcessamentoFinanceiroCotaDTO>
     */
-    List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota, 
-	                                                                      Date data, 
+    List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota,
+    		                                                              Date data,
 	                                                                      String sortorder, 
 	                                                                      String sortname,
 	                                                                      int initialResult, 

@@ -16,6 +16,7 @@ import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -64,6 +65,7 @@ import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.ModalidadeCobranca;
 import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -2445,6 +2447,31 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         return (Cota) query.uniqueResult();
     }
     
+    @Override
+    public GrupoCota obterOperacaoVigenteCota(Long idCota, Date dataInicio, Date dataFim) {
+
+    	Criteria criteria = this.getSession().createCriteria(GrupoCota.class);
+    	
+    	criteria.createAlias("cotas", "cota");
+    	
+    	Criterion vigenciaRestriction = Restrictions.and(
+			Restrictions.ge("dataInicioVigencia", dataInicio),
+			Restrictions.or(
+				Restrictions.isNull("dataFimVigencia"),
+				Restrictions.le("dataFimVigencia", dataFim)
+			)
+		);
+    	
+    	criteria.add(Restrictions.eq("cota.id", idCota));
+    	criteria.add(vigenciaRestriction);
+
+    	criteria.addOrder(Order.asc("diasRecolhimento"));
+    	
+    	criteria.setMaxResults(1);
+    	
+    	return (GrupoCota) criteria.uniqueResult();
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public List<CotaDTO> buscarCotasQuePossuemRangeReparte(final BigInteger qtdReparteInicial,
@@ -3181,26 +3208,21 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
      * Obtem Cotas do tipo À Vista, com data de alteração de status menor que a
      * data atual
      * 
-     * @param data
      * @return List<Cota>
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<Cota> obterCotasTipoAVista(final Date data) {
+    public List<Cota> obterCotasTipoAVista() {
         
         final StringBuilder hql = new StringBuilder("select c ")
         
         .append(" from Cota c ")
         
-        .append(" where c.tipoCota = :tipoCota ")
-        
-        .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
+        .append(" where c.tipoCota = :tipoCota ");
         
         final Query query = this.getSession().createQuery(hql.toString());
         
         query.setParameter("tipoCota", TipoCota.A_VISTA);
-        
-        query.setParameter("data", data);
         
         return query.list();
     }
