@@ -929,11 +929,17 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         final Map<String, String> validacaoMap = new HashMap<String, String>();
         
         final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+        
         if (produtoEdicao == null) {
             
             validacaoMap.put("edicaoInexistente", "Por favor, selecione uma Edição existente!");
         } else {
+        
+            if (Origem.INTERFACE.equals(produtoEdicao.getOrigem())) {
             
+            	validacaoMap.put("origemInterface", "Não é possível excluir edição de origem interface.");
+            }
+
             final Set<Lancamento> lancamentos = produtoEdicao.getLancamentos();
             
             for (final Lancamento lancamento : lancamentos) {

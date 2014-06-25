@@ -6,8 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -18,12 +16,14 @@ import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CapaService;
+import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -49,9 +49,7 @@ import br.com.caelum.vraptor.Result;
 @Path(value = "/devolucao/informeEncalhe")
 @Rules(Permissao.ROLE_RECOLHIMENTO_CONSULTA_INFORME_ENCALHE)
 public class ConsultaInformeEncalheController extends BaseController {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaInformeEncalheController.class);
-    
+        
     @Autowired
     private Result result;
     
@@ -69,6 +67,9 @@ public class ConsultaInformeEncalheController extends BaseController {
     
     @Autowired
     private CalendarioService calendarioService;
+    
+    @Autowired
+    private DistribuicaoFornecedorService distribuicaoFornecedorService;
     
     private final DiaSemana inicioDaSemana;
     
@@ -161,7 +162,7 @@ public class ConsultaInformeEncalheController extends BaseController {
     
     
     @Post
-    public void relatorioInformeEncalhe(final Long idFornecedor, final Integer semanaRecolhimento,
+    public void relatorioInformeEncalhe(final Long idFornecedor, Integer semanaRecolhimento,
             final Calendar dataRecolhimento,
             final TipoImpressaoInformeEncalheDTO tipoImpressao, final String sortorder){
         
@@ -187,10 +188,12 @@ public class ConsultaInformeEncalheController extends BaseController {
         if (semanaRecolhimento != null) {
             dataInicioRecolhimento = Calendar.getInstance();
             
+            semanaRecolhimento = Integer.parseInt(semanaRecolhimento.toString().substring(4));
+            
             if (semanaRecolhimento > dataInicioRecolhimento
                     .getMaximum(Calendar.WEEK_OF_YEAR)) {
                 throw new ValidacaoException(new ValidacaoVO(
-TipoMensagem.WARNING, "Semana inválida."));
+                        TipoMensagem.WARNING, "Semana inválida."));
             }
             
             dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
@@ -202,7 +205,26 @@ TipoMensagem.WARNING, "Semana inválida."));
             
         } else if (dataRecolhimento != null) {
             dataInicioRecolhimento = dataRecolhimento;
-            dataFimRecolhimento = dataRecolhimento;
+            dataFimRecolhimento = Calendar.getInstance();
+            
+            List<Integer> diasRec = 
+                    this.distribuicaoFornecedorService.obterCodigosDiaDistribuicaoFornecedor(
+                            idFornecedor, OperacaoDistribuidor.RECOLHIMENTO);
+            
+            
+            Date dataFim = calendarioService.adicionarDiasUteis(dataInicioRecolhimento.getTime(), 1);
+            Calendar c = Calendar.getInstance();
+            c.setTime(dataFim);
+            
+            if (diasRec != null && !diasRec.isEmpty()){
+                while (!diasRec.contains(c.get(Calendar.DAY_OF_WEEK))){
+                    
+                    dataFim = calendarioService.adicionarDiasUteis(c.getTime(), 1);
+                    c.setTime(dataFim);
+                }
+            }
+            
+            dataFimRecolhimento.setTime(dataFim);
         }
         
         final List<InformeEncalheDTO> dados = lancamentoService
@@ -218,6 +240,12 @@ TipoMensagem.WARNING, "Semana inválida."));
                     .get(Calendar.DAY_OF_WEEK)));
         }
         result.include("diaMesFimRecolhimento", maxDiaSemanaRecolhimento);
+        
+        if (semanaRecolhimento != null){
+            
+            dataFimRecolhimento = null;
+        }
+        
         if (dataFimRecolhimento != null) {
             result.include("dataFimRecolhimento", new SimpleDateFormat("dd/MM").format(dataFimRecolhimento.getTime()));
             result.include("diaSemanaFimRecolhimento", SemanaUtil.obterDiaSemana(dataFimRecolhimento

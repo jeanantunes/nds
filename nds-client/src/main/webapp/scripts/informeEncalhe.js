@@ -52,6 +52,10 @@ InformeEncalhe.prototype.initGrid = function() {
 							if (!value.cell.chamadaCapa) {
 								value.cell.chamadaCapa = '';
 							}
+							
+							if (!value.cell.codigoDeBarras){
+								value.cell.codigoDeBarras = '';
+							}
 						});
 						return data;
 					}
