@@ -24,6 +24,14 @@ public class TipoClassificacaoProduto implements Serializable {
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
 	
+	public TipoClassificacaoProduto() {
+		
+	}
+	
+	public TipoClassificacaoProduto(Long id) {
+		this.id = id;
+	}
+
 	public Long getId() {
 		return id;
 	}
