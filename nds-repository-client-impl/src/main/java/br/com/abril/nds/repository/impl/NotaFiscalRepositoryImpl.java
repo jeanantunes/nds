@@ -868,6 +868,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	 * @return
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<MovimentoFechamentoFiscal> obterMovimentosFechamentosFiscaisFornecedor(FiltroNFeDTO filtro) {
 		
 		// ITENS DA NOTA FISCAL
@@ -1081,6 +1082,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoque> obterMovimentosEstoqueFornecedor(FiltroNFeDTO filtro) {
 		
 		// OBTER COTA EXEMPLARES SUMARIZADOS
@@ -1092,6 +1094,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<Fornecedor> obterConjuntoFornecedoresNotafiscal(FiltroNFeDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder("SELECT ");
@@ -1108,17 +1111,17 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT produto.codigo as codigoProduto, ");
-		hql.append("produto.nome as nomeProduto, ");		
-		hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");
-		hql.append("conf.qtdeInformada as qtdInformada, ");
-		hql.append("conf.qtde as qtdRecebida, ");
-		hql.append("conf.precoCapaInformado as precoCapa, ");
-		hql.append(" (item.desconto) as desconto, ");
-		hql.append(" (conf.precoCapaInformado - (conf.precoCapaInformado * (item.desconto) / 100)) AS precoDesconto, ");
-		hql.append(" (conf.precoCapaInformado - (conf.precoCapaInformado * (item.desconto) / 100) * conf.qtdeInformada) AS totalDoItem, ");
-		hql.append("conf.data as dataConferenciaEncalhe, ");
-		hql.append("chamadaEncalhe.dataRecolhimento as dataChamadaEncalhe ");
+		hql.append(" SELECT produto.codigo as codigoProduto, ");
+		hql.append(" produto.nome as nomeProduto, ");		
+		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
+		hql.append(" conf.qtdeInformada as qtdInformada, ");
+		hql.append(" conf.qtde as qtdRecebida, ");
+		hql.append(" conf.precoCapaInformado as precoCapa, ");
+		hql.append(" item.desconto as desconto, ");
+		hql.append(" item.desconto AS precoDesconto, ");
+		hql.append(" item.desconto * conf.qtdeInformada AS totalDoItem, ");
+		hql.append(" conf.data as dataConferenciaEncalhe, ");
+		hql.append(" chamadaEncalhe.dataRecolhimento as dataChamadaEncalhe ");
 		
 		hql.append(getHqlFromEWhereItensPendentes());
 		

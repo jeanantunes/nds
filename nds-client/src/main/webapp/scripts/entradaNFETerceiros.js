@@ -315,8 +315,7 @@ var entradaNFETerceirosController = $.extend(true, {
 			resizable: false,
 			height:'auto',
 			width:860,
-			modal: true
-			/*
+			modal: true,
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
@@ -328,7 +327,7 @@ var entradaNFETerceirosController = $.extend(true, {
 				}
 			},
 			form: $("#dialog-dadosNotaFiscal", this.workspace).parents("form")
-			 */     
+			     
 		});	
 	},
 	
