@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaFollowupChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupChamadaoDTO;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.FollowupChamadaoRepository;
@@ -100,35 +102,43 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		
 		hql.append("       HSC.DATA_EDICAO as dataHistoricoEdicao, ");
 		
-		hql.append("       SUM(MEC.PRECO_COM_DESCONTO * (EPC.QTDE_RECEBIDA - EPC.QTDE_DEVOLVIDA)) as valorTotalConsignado,  ");
+		hql.append("       (MEC.PRECO_COM_DESCONTO * MEC.QTDE) as valorTotalConsignado,  ");
 		
 		hql.append("       DATEDIFF((SELECT DIST.DATA_OPERACAO FROM DISTRIBUIDOR DIST), HSC.DATA_INICIO_VALIDADE) as qtdDiasSuspensao ");
 		
 		return hql;
     }
-	
+
 	private StringBuilder getFromChamadao(){
 		
         StringBuilder hql = new StringBuilder();	
 
-		hql.append(" FROM ESTOQUE_PRODUTO_COTA EPC ");
+		hql.append(" FROM CHAMADA_ENCALHE_COTA CEC ");
 		
-		hql.append("  INNER JOIN MOVIMENTO_ESTOQUE_COTA MEC ON MEC.ESTOQUE_PROD_COTA_ID = EPC.ID ");
+		hql.append("  INNER JOIN COTA C ON C.ID = CEC.COTA_ID ");
 		
-		hql.append("  INNER JOIN COTA C ON C.ID = EPC.COTA_ID ");
-		
-		hql.append("  INNER JOIN PESSOA P ON P.ID = C.PESSOA_ID ");
+        hql.append("  INNER JOIN PESSOA P ON P.ID = C.PESSOA_ID ");
 		
 		hql.append("  INNER JOIN HISTORICO_SITUACAO_COTA HSC ON HSC.COTA_ID = C.ID ");
 		
-		hql.append("  INNER JOIN CHAMADA_ENCALHE_COTA CEC ON CEC.COTA_ID = C.ID ");
+        hql.append("  INNER JOIN CHAMADA_ENCALHE CE ON CE.ID = CEC.CHAMADA_ENCALHE_ID ");
+        
+        hql.append("  INNER JOIN PRODUTO_EDICAO PE ON PE.ID = CE.PRODUTO_EDICAO_ID ");
+
+		hql.append("  INNER JOIN CHAMADA_ENCALHE_LANCAMENTO CEL ON CEL.CHAMADA_ENCALHE_ID = CE.ID ");
 		
-		hql.append("  INNER JOIN CHAMADA_ENCALHE CE ON CE.ID = CEC.CHAMADA_ENCALHE_ID ");
+		hql.append("  INNER JOIN LANCAMENTO L ON L.ID = CEL.LANCAMENTO_ID AND L.PRODUTO_EDICAO_ID = PE.ID ");
 		
-		hql.append("  INNER JOIN PRODUTO_EDICAO PE ON PE.ID = EPC.PRODUTO_EDICAO_ID ");
+		hql.append("  INNER JOIN MOVIMENTO_ESTOQUE_COTA MEC ON MEC.LANCAMENTO_ID = L.ID ");
 		
-		hql.append("  INNER JOIN LANCAMENTO L ON L.PRODUTO_EDICAO_ID = PE.ID ");
+		hql.append("                                        AND MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
 		
+		hql.append("                                        AND MEC.COTA_ID = C.ID ");
+		
+		hql.append("                                        AND (MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) ");
+
+		hql.append("  INNER JOIN TIPO_MOVIMENTO TM ON TM.ID = MEC.TIPO_MOVIMENTO_ID AND TM.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovRecebimentoReparte ");
+
 		return hql;
 	}
 
@@ -139,6 +149,8 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		hql.append(" WHERE CE.TIPO_CHAMADA_ENCALHE = 'CHAMADAO' ");
 
 		hql.append(" AND C.SITUACAO_CADASTRO <> 'SUSPENSO' " );
+		
+		hql.append(" AND L.STATUS IN (:statusLancamento) ");
 
 		return hql.toString();
    }
@@ -153,7 +165,7 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		
 		hql.append(" AND C.SITUACAO_CADASTRO = 'SUSPENSO' ");
 		
-		hql.append(" AND L.STATUS NOT IN (:statusLancamentoExcluidos) ");
+		hql.append(" AND L.STATUS IN (:statusLancamento) ");
 		
 		hql.append(" AND CE.DATA_RECOLHIMENTO >= (SELECT DIST.DATA_OPERACAO FROM DISTRIBUIDOR DIST) ");
 		
@@ -166,7 +178,7 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 			
 			hql.append(" HAVING (");
 			
-		    hql.append("          SUM(MEC.PRECO_COM_DESCONTO * (EPC.QTDE_RECEBIDA - EPC.QTDE_DEVOLVIDA)) >= :valorConsignadoDistribuidor ");
+		    hql.append("          SUM(MEC.PRECO_COM_DESCONTO * (MEC.QTDE)) >= :valorConsignadoDistribuidor ");
 		
 		    hql.append("        ) ");
 		}	
@@ -177,10 +189,8 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
    private HashMap<String,Object> aplicarParametros(FiltroFollowupChamadaoDTO filtro) {
 		HashMap<String,Object> param = new HashMap<String, Object>();
 		
-		param.put("statusLancamentoExcluidos", Arrays.asList(StatusLancamento.FECHADO, 
-				                                             StatusLancamento.RECOLHIDO, 
-				                                             StatusLancamento.CANCELADO, 
-				                                             StatusLancamento.FURO));
+		param.put("statusLancamento", Arrays.asList(StatusLancamento.EXPEDIDO.name(), 
+				                                    StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name()));
 		
 		if(filtro.getValorConsignadoLimite() != null){
 			
@@ -191,6 +201,10 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 			
 		    param.put("diasSuspensaoDistribuidor", filtro.getQuantidadeDiasSuspenso());
 		}
+		
+		param.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
+		
+		param.put("grupoMovRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());		
 		
 		return param;
    }	

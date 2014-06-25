@@ -64,14 +64,14 @@
 				<staticText>
 					<reportElement uuid="d4ab0151-4bd5-4310-811f-6579540fddbd" x="25" y="17" width="110" height="14"/>
 					<textElement textAlignment="Right">
-						<font size="6" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Reparte (exemplares)]]></text>
 				</staticText>
 				<textField pattern="">
 					<reportElement uuid="a79dc8dc-354e-4b27-a68a-ba6c7758f0e6" x="140" y="17" width="96" height="14"/>
 					<textElement textAlignment="Right">
-						<font size="6"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_TOTAL_REPARTE}]]></textFieldExpression>
 				</textField>
@@ -81,14 +81,14 @@
 				<staticText>
 					<reportElement uuid="2242fc18-b232-437c-b6d1-df4b6056d333" x="25" y="35" width="110" height="14"/>
 					<textElement textAlignment="Right">
-						<font size="6" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Valor Reparte R$]]></text>
 				</staticText>
 				<textField pattern="#,##0.00;-#,##0.00">
 					<reportElement uuid="6e1e985c-565b-4987-ac44-9efc9ee9d72f" x="138" y="35" width="98" height="14"/>
 					<textElement textAlignment="Right">
-						<font size="6"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_PRODUTO}]]></textFieldExpression>
 				</textField>
@@ -98,14 +98,14 @@
 				<staticText>
 					<reportElement uuid="85f01710-a7e8-4e87-9140-c343a3b1cbec" x="25" y="53" width="110" height="14"/>
 					<textElement textAlignment="Right">
-						<font size="6" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[DESCONTO R$]]></text>
 				</staticText>
 				<textField pattern="#,##0.00;-#,##0.00">
 					<reportElement uuid="9be4d358-0371-47a0-9453-72c2eef90419" x="140" y="53" width="96" height="14"/>
 					<textElement textAlignment="Right">
-						<font size="6"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{SUM_VALOR_TOTAL_PRODUTO}.doubleValue() - $V{SUM_VALOR_TOTAL_COM_DESCONTO}.doubleValue())]]></textFieldExpression>
 				</textField>
@@ -115,14 +115,14 @@
 				<staticText>
 					<reportElement uuid="818badb0-416c-4f2a-b48b-3b89fbda4729" x="25" y="71" width="110" height="14"/>
 					<textElement textAlignment="Right">
-						<font size="6" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Valor Reparte Líquido R$]]></text>
 				</staticText>
 				<textField pattern="#,##0.00;-#,##0.00">
 					<reportElement uuid="af37e9ae-f208-4250-81b6-c46ab51b711a" x="140" y="71" width="96" height="14"/>
 					<textElement textAlignment="Right">
-						<font size="6"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_COM_DESCONTO}]]></textFieldExpression>
 				</textField>

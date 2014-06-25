@@ -827,18 +827,21 @@ public class NFeServiceImpl implements NFeService {
 		
 		NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 		
+		final List<MovimentoEstoqueCota> movimentosEstoqueCota = new ArrayList<>();
+		
 		for (final Cota cota : cotas) {
 			
-			// FIX arrumar endereco
-			// obter os movimentos de cada cota
 			filtro.setIdCota(cota.getId());
-			final List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro);
-			for (final MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
-				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
-			}
-			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
-			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
+			movimentosEstoqueCota.addAll(this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro));
 		}
+		
+		for (final MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
+			
+			ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
+		}
+		
+		FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
+		NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 		
 		notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 		
