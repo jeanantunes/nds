@@ -53,6 +53,12 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" nf.chaveAcesso as chaveAcesso, ");
 		hql.append(" nf.numero as numeroNfe, ");
 		hql.append(" nf.id as idNotaFiscalEntrada, ");
+		hql.append(" ( ");
+		hql.append("  SELECT SUM(notaFiscalEntradaCota.valorDesconto) ");
+		hql.append("  	FROM ControleConferenciaEncalheCota controleConferenciaDesconto ");
+		hql.append("  	LEFT JOIN controleConferenciaDesconto.notaFiscalEntradaCota as notaFiscalEntradaCota ");
+		hql.append("  	WHERE controleConferenciaDesconto.processoUtilizaNfe = true and controleConferenciaDesconto = confCota ");
+		hql.append("  ) as valorNota, ");
 		hql.append(" confCota.dataOperacao as dataEncalhe, ");
 		hql.append(" confCota.id as idControleConferenciaEncalheCota ");
 		
