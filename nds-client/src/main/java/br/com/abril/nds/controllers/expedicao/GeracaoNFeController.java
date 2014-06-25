@@ -119,9 +119,6 @@ public class GeracaoNFeController extends BaseController {
 		result.include("tiposEmissaoRegimeEspecial", NotaFiscalTipoEmissaoRegimeEspecial.values());
 	}
 	
-	
-	
-	
 	/**
      * Inicia o combo Box
      */
