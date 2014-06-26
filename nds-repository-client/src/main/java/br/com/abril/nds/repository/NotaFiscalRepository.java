@@ -47,7 +47,9 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 	 */
 	List<CotaExemplaresDTO> consultaCotaExemplaresMECSumarizados(FiltroNFeDTO filtro);
 	
-	List<Cota> obterConjuntoCotasNotafiscal(FiltroNFeDTO filtro);
+	List<Cota> obterConjuntoCotasNotafiscalMEC(FiltroNFeDTO filtro);
+	
+	List<Cota> obterConjuntoCotasNotafiscalMFF(FiltroNFeDTO filtro);
 
 	Long consultaCotaExemplaresMECSumarizadosQtd(FiltroNFeDTO filtro);
 	

@@ -408,7 +408,24 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Cota> obterConjuntoCotasNotafiscal(FiltroNFeDTO filtro) {
+	public List<Cota> obterConjuntoCotasNotafiscalMFF(FiltroNFeDTO filtro) {
+
+		// OBTER TODAS AS COTAS DA TELA
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" mffc.cota ");
+		Query query = queryConsultaCotaMFFNfeParameters(queryConsultaCotaMFFNfe(filtro, hql, false, false, false), filtro);
+
+		return query.list();
+	}
+	
+	/**
+	 * Obter conjunto de cotas
+	 * @param FiltroNFeDTO
+	 * @return List ids
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Cota> obterConjuntoCotasNotafiscalMEC(FiltroNFeDTO filtro) {
 
 		// OBTER TODAS AS COTAS DA TELA
 		StringBuilder hql = new StringBuilder("SELECT ");
@@ -689,7 +706,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	public List<MovimentoFechamentoFiscal> obterMovimentosFechamentosFiscaisCota(FiltroNFeDTO filtro) {
 		
 		// ITENS DA NOTA FISCAL
-		StringBuilder hql = new StringBuilder("SELECT mfff");
+		StringBuilder hql = new StringBuilder("SELECT mffc");
 		Query query = queryConsultaCotaMFFNfeParameters(queryConsultaCotaMFFNfe(filtro, hql, false, false, true), filtro);
 
 		return query.list();
@@ -716,9 +733,23 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN produtoEdicao.produto produto ")
 		.append(" JOIN produto.fornecedores fornecedor")
 		.append(" WHERE mffc.data BETWEEN :dataInicial AND :dataFinal ")
-		.append(" AND mffc.notaFiscalLiberadaEmissao = :true ")
-		.append(" AND mffc.notaFiscalVendaEmitida = :false ")
-		.append(" AND mffc.notaFiscalDevolucaoSimbolicaEmitida = :false ");
+		.append(" AND mffc.notaFiscalLiberadaEmissao = :true ");
+		
+		if(filtro.getNotaFiscalDevolucaoSimbolica() != null && filtro.getNotaFiscalVendaConsignado()) {
+			
+			hql.append(" AND mffc.notaFiscalVendaEmitida = :true ");
+		} else {
+			
+			hql.append(" AND mffc.notaFiscalVendaEmitida = :false ");
+		}
+		
+		if(filtro.getNotaFiscalDevolucaoSimbolica() != null && filtro.getNotaFiscalDevolucaoSimbolica()) {
+			
+			hql.append(" AND mffc.notaFiscalDevolucaoSimbolicaEmitida = :true ");
+		} else {
+			
+			hql.append(" AND mffc.notaFiscalDevolucaoSimbolicaEmitida = :false ");
+		}
 
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null) {

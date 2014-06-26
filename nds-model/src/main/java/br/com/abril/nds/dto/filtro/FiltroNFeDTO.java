@@ -22,6 +22,10 @@ public class FiltroNFeDTO implements Serializable {
 	
 	private Integer intervalorCotaFinal;
 	
+	private Boolean notaFiscalDevolucaoSimbolica;
+	
+	private Boolean notaFiscalVendaConsignado;
+	
 	private Date dataInicial;
 	
 	private Date dataFinal; 
@@ -76,6 +80,31 @@ public class FiltroNFeDTO implements Serializable {
 
 	public void setIntervalorCotaFinal(Integer intervalorCotaFinal) {
 		this.intervalorCotaFinal = intervalorCotaFinal;
+	}
+
+	public Boolean getNotaFiscalDevolucaoSimbolica() {
+		return notaFiscalDevolucaoSimbolica;
+	}
+
+	public void setNotaFiscalDevolucaoSimbolica(Boolean notaFiscalDevolucaoSimbolica) {
+		this.notaFiscalDevolucaoSimbolica = notaFiscalDevolucaoSimbolica;
+	}
+
+	public Boolean getNotaFiscalVendaConsignado() {
+		return notaFiscalVendaConsignado;
+	}
+
+	public void setNotaFiscalVendaConsignado(Boolean notaFiscalVendaConsignado) {
+		this.notaFiscalVendaConsignado = notaFiscalVendaConsignado;
+	}
+
+	public NotaFiscalTipoEmissaoRegimeEspecial getNotaFiscalTipoEmissaoRegimeEspecial() {
+		return notaFiscalTipoEmissaoRegimeEspecial;
+	}
+
+	public void setNotaFiscalTipoEmissaoRegimeEspecial(
+			NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissaoRegimeEspecial) {
+		this.notaFiscalTipoEmissaoRegimeEspecial = notaFiscalTipoEmissaoRegimeEspecial;
 	}
 
 	public Date getDataInicial() {

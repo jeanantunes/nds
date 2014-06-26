@@ -8,7 +8,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 
 @Entity
@@ -30,10 +29,6 @@ public class MovimentoFechamentoFiscalCota extends MovimentoFechamentoFiscal {
 	@OneToOne
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
-	
-	@OneToOne
-	@JoinColumn(name = "PRODUTO_EDICAO_ID")
-	private ProdutoEdicao produtoEdicao;
 	
 	@OneToOne
 	@JoinColumn(name = "CHAMADA_ENCALHE_COTA_ID")
@@ -61,14 +56,6 @@ public class MovimentoFechamentoFiscalCota extends MovimentoFechamentoFiscal {
 
 	public void setCota(Cota cota) {
 		this.cota = cota;
-	}
-
-	public ProdutoEdicao getProdutoEdicao() {
-		return produtoEdicao;
-	}
-
-	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
-		this.produtoEdicao = produtoEdicao;
 	}
 
 	public ChamadaEncalheCota getChamadaEncalheCota() {

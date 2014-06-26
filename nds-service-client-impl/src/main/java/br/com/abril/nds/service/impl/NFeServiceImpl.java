@@ -410,8 +410,21 @@ public class NFeServiceImpl implements NFeService {
 			case COTA:
 			case DISTRIBUIDOR:
 				
-				// obter as cotas que estão na tela pelo id das cotas
-				List<Cota> cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscal(filtro);
+				if (filtro.getDataInicial() == null || filtro.getDataFinal() == null) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "O intervalo de datas não pode ser nula!");
+				}
+				
+				List<TipoMovimento> itensMovimentosFiscais = notaFiscalService.obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
+				
+				List<Cota> cotas = null;
+				if(itensMovimentosFiscais.size() > 0) {
+					
+					cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscalMFF(filtro);
+				} else {
+				
+					cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscalMEC(filtro);
+				}
+				
 				
 				if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
 					
@@ -837,7 +850,7 @@ public class NFeServiceImpl implements NFeService {
 			filtro.setIdCota(cota.getId());
 			if(itensMovimentosFiscais.size() > 0) {
 				
-				movimentosFechamentoFiscal.addAll(this.notaFiscalRepository.obterMovimentosFechamentosFiscaisFornecedor(filtro));
+				movimentosFechamentoFiscal.addAll(this.notaFiscalRepository.obterMovimentosFechamentosFiscaisCota(filtro));
 			} else {
 				
 				movimentosEstoqueCota.addAll(this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro));
