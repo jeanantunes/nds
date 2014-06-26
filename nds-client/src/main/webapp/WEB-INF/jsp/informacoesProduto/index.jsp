@@ -165,8 +165,8 @@ $(function(){
       </fieldset>
 
 
-		<fieldset style="width:250px; margin-top:5px; margin-left:10px; float:left;  margin-right:0px!important;">
-                    <legend>Itens da Região - Específicas </legend>
+		<fieldset style="width:400px; margin-top:5px; margin-left:10px; float:left;  margin-right:0px!important;">
+                    <legend>Bonificações</legend>
                     <table class="itensRegioesEspecificasGrid"></table>
         </fieldset>
     </td>

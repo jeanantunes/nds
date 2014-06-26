@@ -192,10 +192,10 @@
 	            <tr>
 	              	<td><strong>Fornecedor:</strong></td>
 	              	<td><span id="contasAPagar_popupTipo_fornecedor"></span></td>
-	              	<td><strong>Data Lan&ccedil;amento:</strong></td>
-	              	<td><span id="contasAPagar_popupTipo_dataLcto"></span></td>
-	              	<td><strong>Data Final:</strong></td>
-	              	<td><span id="contasAPagar_popupTipo_dataFinal"></span></td>
+	              	<td></td>
+	              	<td></td>
+	              	<td></td>
+	              	<td></td>
 	            </tr>
 			</table>
 	    </fieldset>

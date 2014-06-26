@@ -417,11 +417,8 @@ public class MapaAbastecimentoController extends BaseController {
 		final Map<String, Object> parameters = new HashMap<String, Object>();
         
         parameters.put("SUBREPORT_DIR", diretorio.toURI().getPath());
-        parameters.put("IMAGEM", 
-                //JasperUtil.getImagemRelatorio(
-                        this.parametrosDistribuidorService.getLogotipoDistribuidor());
-        parameters.put("NOME_DISTRIBUIDOR", 
-                this.distribuidorService.obterRazaoSocialDistribuidor());
+        parameters.put("IMAGEM", this.parametrosDistribuidorService.getLogotipoDistribuidor());
+        parameters.put("NOME_DISTRIBUIDOR", this.distribuidorService.obterRazaoSocialDistribuidor());
         
 		@SuppressWarnings("rawtypes")
         Collection dados = null;

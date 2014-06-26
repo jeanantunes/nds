@@ -214,10 +214,13 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 			
 		    if (mapFornecedorTotal.containsKey(consignado.getFornecedor())){
 		        
-		        valor = valor.add(consignado.getValorComDesconto());
+		        if (valor != null){
+		            
+		            valor = valor.add(consignado.getValorComDesconto() == null ? BigDecimal.ZERO : consignado.getValorComDesconto());
+		        }
 		    } else {
 		        
-		        valor = consignado.getValorComDesconto();
+		        valor = consignado.getValorComDesconto() == null ? BigDecimal.ZERO : consignado.getValorComDesconto();
 		    }
 		    
 			mapFornecedorTotal.put(consignado.getFornecedor(), valor);
