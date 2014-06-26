@@ -588,8 +588,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             } else {
                 detalhesDTO = analiseParcialRepository.buscarDetalhesAnalise(dto.getIdProdutoEdicao());
             }
-            BeanUtils.copyProperties(detalhesDTO, dto, new String[]{"idProdutoEdicao", "parcial", "numeroPeriodo", "ordemExibicao"});
-            list.add(dto);
+            
+            if(detalhesDTO != null){
+            	BeanUtils.copyProperties(detalhesDTO, dto, new String[]{"idProdutoEdicao", "parcial", "numeroPeriodo", "ordemExibicao"});
+            	list.add(dto);
+            }
         }
 
         Collections.sort(list, new Comparator<AnaliseEstudoDetalhesDTO>() {

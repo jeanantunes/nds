@@ -356,7 +356,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
             item.setQtde(new BigInteger(inputItem.getQtdExemplar().toString()));
             item.setNotaFiscal(nfEntrada);
             item.setProdutoEdicao(produtoEdicao);
-            item.setPreco(BigDecimal.valueOf(inputItem.getPreco()));
+            item.setPreco(this.tratarValorNulo(produtoEdicao.getPrecoVenda()));
             item.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
             
             Lancamento lancamento = obterLancamentoProdutoEdicao(produtoEdicao.getId());

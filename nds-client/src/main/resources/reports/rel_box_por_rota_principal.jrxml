@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
-	<property name="ireport.zoom" value="1.815000000000003"/>
-	<property name="ireport.x" value="75"/>
+	<property name="ireport.zoom" value="1.8150000000000035"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
@@ -50,14 +50,31 @@
 		</band>
 	</title>
 	<detail>
-		<band height="70" splitType="Immediate">
-			<break>
-				<reportElement uuid="b9708c8b-41f0-4452-af43-97b401746b5d" x="0" y="0" width="100" height="1"/>
-			</break>
+		<band height="85" splitType="Immediate">
 			<elementGroup>
 				<rectangle>
-					<reportElement uuid="f3f15cb4-d877-4935-b63b-18f666907f77" mode="Opaque" x="0" y="1" width="180" height="26" backcolor="#D3D3D3"/>
+					<reportElement uuid="b09d7e29-f67d-46eb-97f1-6fc25bc65835" mode="Opaque" x="175" y="1" width="380" height="26" backcolor="#D3D3D3"/>
 				</rectangle>
+				<rectangle>
+					<reportElement uuid="f3f15cb4-d877-4935-b63b-18f666907f77" mode="Opaque" x="0" y="1" width="175" height="26" backcolor="#D3D3D3"/>
+				</rectangle>
+				<subreport>
+					<reportElement uuid="30d6a793-d7f5-4150-b401-f33f2559fb77" stretchType="RelativeToTallestObject" x="0" y="27" width="555" height="58" isPrintWhenDetailOverflows="true"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
+    ((java.util.LinkedHashMap)$F{value}).values()
+)]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_box_por_rota.jasper"]]></subreportExpression>
+				</subreport>
+				<textField>
+					<reportElement uuid="8b4279a4-581f-40c4-ac49-0e71410f9be7" style="rel_stext" x="180" y="3" width="375" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{key}]]></textFieldExpression>
+				</textField>
 				<staticText>
 					<reportElement uuid="dd24b1d1-7e80-49f5-b8da-afa91ad39836" style="rel_stext" x="7" y="14" width="100" height="13" backcolor="#CCCCCC"/>
 					<textElement>
@@ -72,9 +89,6 @@
 					</textElement>
 					<text><![CDATA[Preço Capa]]></text>
 				</staticText>
-				<rectangle>
-					<reportElement uuid="b09d7e29-f67d-46eb-97f1-6fc25bc65835" mode="Opaque" x="180" y="1" width="375" height="26" backcolor="#D3D3D3"/>
-				</rectangle>
 				<staticText>
 					<reportElement uuid="410df182-c31b-41c3-b52f-2cbb642d877d" style="rel_stext" x="7" y="1" width="80" height="13"/>
 					<textElement>
@@ -82,16 +96,6 @@
 					</textElement>
 					<text><![CDATA[Publicações]]></text>
 				</staticText>
-				<subreport>
-					<reportElement uuid="30d6a793-d7f5-4150-b401-f33f2559fb77" x="0" y="27" width="555" height="40"/>
-					<subreportParameter name="SUBREPORT_DIR">
-						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
-					</subreportParameter>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
-    ((java.util.LinkedHashMap)$F{value}).values()
-)]]></dataSourceExpression>
-					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_box_por_rota.jasper"]]></subreportExpression>
-				</subreport>
 				<staticText>
 					<reportElement uuid="41484ed9-099c-4c83-adca-e8ceec2dc5fe" style="rel_stext" x="100" y="1" width="52" height="13" backcolor="#CCCCCC"/>
 					<textElement>
@@ -99,14 +103,10 @@
 					</textElement>
 					<text><![CDATA[Edição]]></text>
 				</staticText>
-				<textField>
-					<reportElement uuid="8b4279a4-581f-40c4-ac49-0e71410f9be7" style="rel_stext" x="320" y="7" width="100" height="13"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{key}]]></textFieldExpression>
-				</textField>
 			</elementGroup>
+			<break>
+				<reportElement uuid="b9708c8b-41f0-4452-af43-97b401746b5d" x="0" y="0" width="100" height="1"/>
+			</break>
 		</band>
 	</detail>
 </jasperReport>

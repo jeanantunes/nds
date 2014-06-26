@@ -59,11 +59,11 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 		ProdutoEdicao produtoEdicao = (ProdutoEdicao) consulta.uniqueResult();
 		if (null != produtoEdicao) {
 			// Atualiza valor de venda (PREÇO CAPA)
-			produtoEdicao.setPrecoVenda(tratarValorNulo(input.getPreco()));
-			produtoEdicao.setPrecoPrevisto(tratarValorNulo(input.getPreco()));
+			produtoEdicao.setPrecoVenda(tratarValoresNulo(produtoEdicao.getPrecoVenda(),input.getPreco()));
+			produtoEdicao.setPrecoPrevisto(tratarValoresNulo(produtoEdicao.getPrecoPrevisto(), input.getPreco()));
 
 			// Define valor de custo
-			double preco = tratarValorNulo(input.getPreco()).doubleValue();
+			double preco = produtoEdicao.getPrecoVenda().doubleValue();
 			double fator = distribuidor.getFatorDesconto().doubleValue();
 			fator = 1 - fator / 100;
 			double precoCusto = preco * fator;
@@ -96,8 +96,15 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 
 	}
 
-	private BigDecimal tratarValorNulo(BigDecimal valor) {
-		return valor == null ? BigDecimal.ZERO : valor;
+	private BigDecimal tratarValoresNulo(BigDecimal valor1, BigDecimal valor2) {
+		
+		if (valor1 != null) {
+			return valor1;
+		} else if (valor2 != null) {
+			return valor2;
+		}
+		
+		return valor1 == null ? valor2 != null ? valor2 : BigDecimal.ZERO : valor1;
 	}
 	
 	@Override
