@@ -151,7 +151,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		}
 
 		if (filtro.getListIdFornecedor() != null && !filtro.getListIdFornecedor().isEmpty()) {
-			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
+			// query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
 
 		if(filtro.getDataInicial() != null && filtro.getDataFinal() != null){
@@ -220,10 +220,10 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append(" SELECT cota.numeroCota as numeroCota, ");
 		hql.append("        coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nome, ");		
 		hql.append("        controleConferenciaEncalheCota.dataOperacao as dataEncalhe, ");
-		hql.append("        notaFiscalEntradaCotas.serie as serie, ");
-		hql.append("        notaFiscalEntradaCotas.chaveAcesso as chaveAcesso, ");
-		hql.append("        notaFiscalEntradaCotas.numero as numeroNfe, ");
-		hql.append("        notaFiscalEntradaCotas.id as idNotaFiscalEntrada, ");
+		hql.append("        nf.serie as serie, ");
+		hql.append("        nf.chaveAcesso as chaveAcesso, ");
+		hql.append("        nf.numero as numeroNfe, ");
+		hql.append("        nf.id as idNotaFiscalEntrada, ");
 		hql.append("        CASE WHEN ");
 		hql.append("        ( ");
 		hql.append("             SELECT COUNT(notaFiscalEntradaCota) ");
@@ -239,8 +239,14 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append("               LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
 		hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota ");
 		hql.append("        ) as valorNota, ");
-		hql.append(" (conferenciasEncalhe.qtde * conferenciasEncalhe.precoComDesconto ) as valorReal, ");
-		hql.append(" ((notaFiscalEntradaCotas.valorDesconto) -  (conferenciasEncalhe.qtde * conferenciasEncalhe.precoComDesconto)) as diferenca, ");
+		hql.append("  item.preco as valorReal, ");
+		// hql.append(" ((notaFiscalEntradaCotas.valorDesconto) -  (conferenciasEncalhe.qtde * conferenciasEncalhe.precoComDesconto)) as diferenca, ");
+		hql.append(" ( ");
+		hql.append("  	item.preco - (SELECT SUM(notaFiscalEntradaCota.valorDesconto) ");
+		hql.append("  	FROM ControleConferenciaEncalheCota controleConferenciaDesconto ");
+		hql.append("  	LEFT JOIN controleConferenciaDesconto.notaFiscalEntradaCota as notaFiscalEntradaCota ");
+		hql.append("  	WHERE controleConferenciaDesconto.processoUtilizaNfe = true and controleConferenciaDesconto = controleConferenciaEncalheCota ");
+		hql.append("  )) as diferenca, ");
 		hql.append("        'Pendente' as status, ");
 		hql.append(" controleConferenciaEncalheCota.id  as idControleConferenciaEncalheCota ");
 		
@@ -268,27 +274,22 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		
 		StringBuilder hql = new StringBuilder();
 	
-		hql.append(" from ControleConferenciaEncalheCota as controleConferenciaEncalheCota ");
-		hql.append(" LEFT JOIN controleConferenciaEncalheCota.notaFiscalEntradaCota as notaFiscalEntradaCotas ");
-		hql.append(" LEFT JOIN notaFiscalEntradaCotas.naturezaOperacao as no ");
+		hql.append(" from ItemNotaFiscalEntrada as item ");
+		hql.append(" LEFT JOIN item.notaFiscal as nf ");
+		hql.append(" LEFT JOIN nf.controleConferenciaEncalheCota as controleConferenciaEncalheCota ");
+		hql.append(" LEFT JOIN nf.fornecedor as fornecedor ");
+		hql.append(" LEFT JOIN fornecedor.juridica as fornecedorPessoa ");
 		hql.append(" LEFT JOIN controleConferenciaEncalheCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
-		hql.append(" LEFT JOIN controleConferenciaEncalheCota.conferenciasEncalhe as conferenciasEncalhe");
-		hql.append(" LEFT JOIN conferenciasEncalhe.produtoEdicao as produtoEdicao");
-		hql.append(" LEFT JOIN produtoEdicao.produto as produto");
-		hql.append(" LEFT JOIN produto.fornecedores as fornecedor");
-		
-		hql.append(" where ( ");
-		hql.append("            SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");
-		hql.append("            FROM ControleConferenciaEncalheCota controleConferenciaEncalheCotaNF ");
-		hql.append("              LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
-		hql.append("            WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota ");
-		hql.append("       ) < ( ");
-		hql.append("            SELECT SUM(conferenciasEncalheNF.qtde * conferenciasEncalheNF.precoCapaInformado) ");
-		hql.append("            FROM ControleConferenciaEncalheCota controleConferenciaEncalheCotaNF ");
-		hql.append("              LEFT JOIN controleConferenciaEncalheCotaNF.conferenciasEncalhe as conferenciasEncalheNF ");
-		hql.append("            WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota ");
-		hql.append("       ) ");
+		hql.append(" LEFT JOIN pessoa.telefones as telefone ");
+		hql.append(" where ");
+		hql.append(" ( ");
+		hql.append("  	item.preco > (SELECT SUM(notaFiscalEntradaCota.valorDesconto) ");
+		hql.append("  	FROM ControleConferenciaEncalheCota controleConferenciaDesconto ");
+		hql.append("  	LEFT JOIN controleConferenciaDesconto.notaFiscalEntradaCota as notaFiscalEntradaCota ");
+		hql.append("  	WHERE controleConferenciaDesconto.processoUtilizaNfe = true and controleConferenciaDesconto = controleConferenciaEncalheCota ");
+		hql.append("  )) ");
+		hql.append(" and controleConferenciaEncalheCota.processoUtilizaNfe = true ");
 		
 		if (filtro.getTipoNota() != null && !FiltroEntradaNFETerceiros.TipoNota.TODAS.equals(filtro.getTipoNota())) {
 			hql.append("   and ( ");
@@ -319,7 +320,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		
 		if(filtro.getListIdFornecedor() != null && !filtro.getListIdFornecedor().isEmpty()){
 			
-			hql.append(" and fornecedor in (:fornecedor) ");
+			// hql.append(" and fornecedor in (:fornecedor) ");
 		}
 		
 		if(isGroup){			

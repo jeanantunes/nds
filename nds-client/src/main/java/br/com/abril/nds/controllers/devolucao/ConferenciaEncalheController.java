@@ -1999,7 +1999,8 @@ public class ConferenciaEncalheController extends BaseController {
                     itemNotaFiscalEntrada.setDataRecolhimento(conferenciaEncalhe.getDataRecolhimento());
                     itemNotaFiscalEntrada.setDataLancamento(conferenciaEncalhe.getDataLancamento());
                     itemNotaFiscalEntrada.setNotaFiscal(notaFiscal);
-                    itemNotaFiscalEntrada.setDesconto(conferenciaEncalhe.getPrecoComDesconto());
+                    itemNotaFiscalEntrada.setPreco(conferenciaEncalhe.getPrecoComDesconto());
+                    itemNotaFiscalEntrada.setOrigem(Origem.MANUAL);
                     itens.add(itemNotaFiscalEntrada);
                     
                 }
