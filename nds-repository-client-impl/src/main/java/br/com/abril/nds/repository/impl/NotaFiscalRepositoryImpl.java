@@ -1118,8 +1118,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" conf.qtde as qtdRecebida, ");
 		hql.append(" conf.precoCapaInformado as precoCapa, ");
 		hql.append(" item.desconto as desconto, ");
-		hql.append(" item.desconto AS precoDesconto, ");
-		hql.append(" item.desconto * conf.qtdeInformada AS totalDoItem, ");
+		hql.append(" item.preco AS precoDesconto, ");
+		hql.append(" item.preco * conf.qtdeInformada AS totalDoItem, ");
 		hql.append(" conf.data as dataConferenciaEncalhe, ");
 		hql.append(" chamadaEncalhe.dataRecolhimento as dataChamadaEncalhe ");
 		
@@ -1150,17 +1150,16 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" from ItemNotaFiscalEntrada as item ");
 		hql.append(" JOIN item.notaFiscal as nf ");
 		hql.append(" JOIN nf.controleConferenciaEncalheCota as confCota ");
+		hql.append(" JOIN confCota.cota as cota ");
 		hql.append(" JOIN item.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN produto.fornecedores as fornecedores ");
-		hql.append(" left join confCota.conferenciasEncalhe as conf  ");
-		hql.append(" left join conf.chamadaEncalheCota as chamadaCota  ");
-		hql.append(" left join chamadaCota.chamadaEncalhe chamadaEncalhe  ");
-		
+		hql.append(" LEFT JOIN confCota.conferenciasEncalhe as conf  ");
+		hql.append(" LEFT JOIN conf.chamadaEncalheCota as chamadaCota  ");
+		hql.append(" LEFT JOIN chamadaCota.chamadaEncalhe chamadaEncalhe  ");
 		hql.append(" WHERE ");
-		
 		hql.append(" confCota.id = :idConferenciaCota ");
-		
+		hql.append(" and chamadaEncalhe.produtoEdicao.id = produtoEdicao.id ");
 		hql.append(" GROUP BY confCota.id ");
 		
 		return hql.toString();
