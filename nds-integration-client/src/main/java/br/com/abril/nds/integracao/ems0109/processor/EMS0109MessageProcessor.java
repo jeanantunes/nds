@@ -386,6 +386,14 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			 
 		}else{
 			produto.setDescontoLogistica(descontoLogistica);
+			
+            this.ndsiLoggerFactory.getLogger().logInfo(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteração do Desconto Logística"
+					+" de "+ produto.getDescontoLogistica()
+					+" para "+ descontoLogistica.getTipoDesconto().intValue()
+					+ " Produto "+produto.getCodigo());
 		}
 
 		
