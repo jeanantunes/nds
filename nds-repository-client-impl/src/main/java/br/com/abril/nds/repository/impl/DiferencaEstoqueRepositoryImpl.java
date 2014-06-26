@@ -709,10 +709,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
                 "from DIFERENCA d " +
                 "  join PRODUTO_EDICAO pe ON (pe.ID = d.PRODUTO_EDICAO_ID) " +
                 "  join PRODUTO p ON (p.ID = pe.PRODUTO_ID) " +
+                "  join LANCAMENTO l ON (l.PRODUTO_EDICAO_ID = pe.ID) " +
                 "where " +
                 "  (p.CODIGO = :codigoProduto OR p.CODIGO_ICD = :codigoICD OR p.CODIGO = :codigoProdin) " +
                 "  AND pe.NUMERO_EDICAO = :numeroEdicao " +
-                "  AND d.DATA_MOVIMENTACAO = :data " +
+                "  AND l.DATA_REC_DISTRIB = :data " +
                 "GROUP BY d.ID ");
         
         query.setParameter("codigoProduto", leftPad(codigoProduto, 8, "0"));

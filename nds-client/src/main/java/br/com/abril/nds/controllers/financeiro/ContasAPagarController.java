@@ -118,7 +118,11 @@ public class ContasAPagarController extends BaseController {
 
 	@Path("/pesquisarProduto.json")
 	public void pesquisarProduto(FiltroContasAPagarDTO filtro, String sortname, String sortorder) {
-		filtro.setPaginacaoVO(new PaginacaoVO(sortname, sortorder));
+		
+	    if (sortname != null && sortorder != null){
+	    
+	        filtro.setPaginacaoVO(new PaginacaoVO(sortname, sortorder));
+	    }
 		List<ContasAPagarConsultaProdutoVO> produtos = contasAPagarService.pesquisarProdutos(filtro);
 		
 		result.use(FlexiGridJson.class).from(produtos).total(produtos.size()).serialize();
