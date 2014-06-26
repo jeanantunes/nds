@@ -30,7 +30,6 @@ import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
-import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
@@ -39,7 +38,6 @@ import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
-import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -136,7 +134,8 @@ public class AnaliseParcialController extends BaseController {
     public void historicoEdicoesBase(List<AnaliseEstudoDetalhesDTO> produtoEdicaoList) {
         List<AnaliseEstudoDetalhesDTO> list = analiseParcialService.historicoEdicoesBase(produtoEdicaoList);
 
-        result.use(Results.json()).withoutRoot().from(list).recursive().serialize();
+        //result.use(Results.json()).withoutRoot().from(list).recursive().serialize();
+        result.use(Results.json()).from(list, "list").recursive().serialize();
     }
 
     @Path("/abrirAnaliseFaixa")

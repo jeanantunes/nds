@@ -286,7 +286,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("                WHERE lanc.id = l.id) ");
         sql.append("        , 0) as venda, ");
         
-        sql.append("        coalesce(sum(mecReparte.QTDE), 0) as reparte, ");
+        sql.append("        coalesce((select sum(mec.qtde) from movimento_estoque_cota mec where mec.LANCAMENTO_ID = l.ID and mec.COTA_ID = c.ID), 0) as reparte, ");
         sql.append("        (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then 0 else 1 end) edicaoAberta, ");
         sql.append("        c.numero_cota numeroCota ");
         sql.append(" from estudo_gerado eg ");
