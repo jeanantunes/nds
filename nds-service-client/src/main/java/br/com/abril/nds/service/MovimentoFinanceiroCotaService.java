@@ -49,7 +49,7 @@ public interface MovimentoFinanceiroCotaService {
 	MovimentoFinanceiroCota obterMovimentoFinanceiroCotaPorId(Long idMovimento);
 	
 	BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
-
+	
 	void processarRegistrohistoricoFinanceiro(
 			HistoricoFinanceiroInput vendaInput, Date dataOperacao);
 
