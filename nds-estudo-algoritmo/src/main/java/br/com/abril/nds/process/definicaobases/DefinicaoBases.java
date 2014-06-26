@@ -23,7 +23,6 @@ import br.com.abril.nds.service.EstudoAlgoritmoService;
  * Processo Anterior: N/A Próximo Processo: {@link SomarFixacoes}
  * </p>
  */
-@SuppressWarnings("JavadocReference")
 @Component
 public class DefinicaoBases extends ProcessoAbstrato {
     

@@ -184,7 +184,6 @@ public class DistribuicaoVendaMediaController extends BaseController {
         if (estudoTemp.getEdicoesBase() != null && !estudoTemp.getEdicoesBase().isEmpty()){
     		for (ProdutoEdicaoEstudo base : estudoTemp.getEdicoesBase()) {
     		    if (base.isParcial()) {
-//    		        selecionados.addAll(distribuicaoVendaMediaService.pesquisarEdicoesParciais(base.getProduto().getCodigo(), base.getPeriodo(), base.getNumeroEdicao()));
     		        selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false));
     		    } else {
     		        selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao(), 
