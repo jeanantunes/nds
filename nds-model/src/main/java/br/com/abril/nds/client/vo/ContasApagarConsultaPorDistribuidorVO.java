@@ -18,8 +18,8 @@ public class ContasApagarConsultaPorDistribuidorVO {
 	@Export(label = "Consignado R$", alignment=Alignment.RIGHT, exhibitionOrder = 2)
 	private String consignado;
 	
-	@Export(label = "Suplementação R$", alignment=Alignment.RIGHT, exhibitionOrder = 3)
-	private String suplementacao;
+	@Export(label = "Estoque", alignment=Alignment.RIGHT, exhibitionOrder = 3)
+	private String estoque;
 	
 	@Export(label = "Encalhe R$", alignment=Alignment.RIGHT, exhibitionOrder = 4)
 	private String encalhe;
@@ -42,7 +42,7 @@ public class ContasApagarConsultaPorDistribuidorVO {
 	
 	
 	public ContasApagarConsultaPorDistribuidorVO(Date dataMovimento, BigDecimal consignado, BigDecimal encalhe, 
-            BigDecimal suplementacao, BigDecimal faltasSobras, BigDecimal perdasGanhos){
+            BigDecimal estoque, BigDecimal faltasSobras, BigDecimal perdasGanhos){
         
         this.data = DateUtil.formatarDataPTBR(dataMovimento);
         this.consignado = CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(consignado));
@@ -60,7 +60,7 @@ public class ContasApagarConsultaPorDistribuidorVO {
         
         this.venda = CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(consignado.subtract(encalhe)));
         
-        this.suplementacao = CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(suplementacao));
+        this.estoque = CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(estoque));
         
         this.faltasSobras = CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(faltasSobras));
         
@@ -86,11 +86,11 @@ public class ContasApagarConsultaPorDistribuidorVO {
 	public void setConsignado(String consignado) {
 		this.consignado = consignado;
 	}
-	public String getSuplementacao() {
-		return suplementacao;
+	public String getEstoque() {
+		return estoque;
 	}
-	public void setSuplementacao(String suplementacao) {
-		this.suplementacao = suplementacao;
+	public void setEstoque(String estoque) {
+		this.estoque = estoque;
 	}
 	public String getEncalhe() {
 		return encalhe;
