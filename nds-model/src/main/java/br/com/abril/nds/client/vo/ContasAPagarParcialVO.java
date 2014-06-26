@@ -54,14 +54,14 @@ public class ContasAPagarParcialVO {
 		
 		this.lcto = DateUtil.formatarDataPTBR(dto.getLcto());
 		this.rclt = DateUtil.formatarDataPTBR(dto.getRclt());
-		this.reparte = dto.getReparte().toString();
-		this.suplementacao = dto.getSuplementacao().toString();
-		this.encalhe = dto.getEncalhe().toString();
-		this.venda = dto.getVenda().toString();
+		this.reparte = dto.getReparte() == null ? "0" : dto.getReparte().toString();
+		this.suplementacao = dto.getSuplementacao() == null ? "0" : dto.getSuplementacao().toString();
+		this.encalhe = dto.getEncalhe() == null ? "0" : dto.getEncalhe().toString();
+		this.venda = dto.getVenda() == null ? "0" : dto.getVenda().toString();
 		this.pctVenda = CurrencyUtil.formatarValor(dto.getPctVenda());
-		this.vendaCe = dto.getVendaCe().toString();
-		this.reparteAcum = dto.getReparteAcum().toString();
-		this.vendaAcum = dto.getVendaAcum().toString();
+		this.vendaCe = dto.getVendaCe() == null ? "0" : dto.getVendaCe().toString();
+		this.reparteAcum = dto.getReparteAcum() == null ? "0" : dto.getReparteAcum().toString();
+		this.vendaAcum = dto.getVendaAcum() == null ? "0" : dto.getVendaAcum().toString();
 		this.pctVendaAcum = CurrencyUtil.formatarValor(dto.getPctVendaAcum());
 		this.nfe = dto.getNfe();
 	}

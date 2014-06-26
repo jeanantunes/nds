@@ -16,7 +16,7 @@ public class ContasApagarConsultaPorProdutoDTO implements Serializable{
 	private Long edicao;
 	private boolean tipo;
 	private BigInteger reparte;
-	private BigInteger suplementacao;
+	private BigInteger estoque;
 	private BigInteger encalhe;
 	private BigInteger venda;
 	private BigInteger faltasSobras;
@@ -48,7 +48,7 @@ public class ContasApagarConsultaPorProdutoDTO implements Serializable{
 	 * @param saldoAPagar
 	 */
 	public ContasApagarConsultaPorProdutoDTO(Long produtoEdicaoId, Date rctl, String codigo,
-			String produto, Long edicao, boolean tipo, BigInteger reparte, BigInteger suplementacao, 
+			String produto, Long edicao, boolean tipo, BigInteger reparte, String fornecedor, BigInteger estoque, 
 			BigInteger encalhe,BigInteger faltasSobras, BigInteger debitosCreditos, BigInteger venda, BigDecimal saldoAPagar) {
 		
 		super();
@@ -60,7 +60,8 @@ public class ContasApagarConsultaPorProdutoDTO implements Serializable{
 		this.edicao = edicao;
 		this.tipo = tipo;
 		this.reparte = reparte!=null?reparte:BigInteger.ZERO;
-		this.suplementacao = suplementacao!=null?suplementacao:BigInteger.ZERO;
+		this.fornecedor = fornecedor;
+		this.estoque = estoque!=null?estoque:BigInteger.ZERO;
 		this.encalhe = encalhe!=null?encalhe:BigInteger.ZERO;
 		this.faltasSobras = faltasSobras!=null?faltasSobras:BigInteger.ZERO;
 		this.debitosCreditos = debitosCreditos!=null?debitosCreditos:BigInteger.ZERO;
@@ -110,11 +111,11 @@ public class ContasApagarConsultaPorProdutoDTO implements Serializable{
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
-	public BigInteger getSuplementacao() {
-		return suplementacao;
+	public BigInteger getEstoque() {
+		return estoque;
 	}
-	public void setSuplementacao(BigInteger suplementacao) {
-		this.suplementacao = suplementacao;
+	public void setEstoque(BigInteger estoque) {
+		this.estoque = estoque;
 	}
 	public BigInteger getEncalhe() {
 		return encalhe;

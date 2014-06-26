@@ -1903,12 +1903,21 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append("select m.valor as valor, ")
+		
 		   .append(" m.data as data, ")
+		   
 		   .append(" (case when m.tipoMovimento.grupoMovimentoFinaceiro = 'ENVIO_ENCALHE' then 'Encalhe' ")
-		   .append(" when m.tipoMovimento.grupoMovimentoFinaceiro = 'RECEBIMENTO_REPARTE' then 'Reparte' ")
-		   .append(" else m.tipoMovimento.descricao end) || (case when m.observacao is not null then (' - ' || m.observacao) else '' end) as descricao ")
+		   .append("       when m.tipoMovimento.grupoMovimentoFinaceiro = 'RECEBIMENTO_REPARTE' then 'Reparte' ")
+		   .append("       else m.tipoMovimento.descricao end) || (case when m.observacao is not null then (' - ' || m.observacao) else '' end) ")
+		   .append("       || (case when pj.razaoSocial is null then '' else (' - ' || pj.razaoSocial) end) as descricao ")
+		   
 		   .append(" from MovimentoFinanceiroCota m ")
-		   .append(" join m.cota cota ");
+		   
+		   .append(" join m.cota cota ")
+		   
+		   .append(" join m.fornecedor f ")
+		
+		   .append(" join f.juridica pj ");
 		
 		if (idConsolidado != null){
 			
@@ -1916,6 +1925,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		}
 		
 		hql.append(" where cota.numeroCota = :numeroCota ")
+		
 		   .append(" and m.tipoMovimento.id in (:tiposMovimento) ");
 		
 		if (data != null){
@@ -1929,7 +1939,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(MovimentoFinanceiroDTO.class));
+		
 		query.setParameter("numeroCota", numeroCota);
 		
 		if (data != null){

@@ -26,6 +26,7 @@ import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -394,8 +395,8 @@ public class HistoricoVendaController extends BaseController {
 			}
 			break;
 		case COTAS_A_VISTA:
-		    resultList.add(new ItemDTO("CONSIGNADO", "Consignado"));
-		    resultList.add(new ItemDTO("A_VISTA", "Cotas à Vista"));
+		    resultList.add(new ItemDTO(TipoCota.CONSIGNADO.name(), TipoCota.CONSIGNADO.getDescTipoCota()));
+		    resultList.add(new ItemDTO(TipoCota.A_VISTA.name(), TipoCota.A_VISTA.getDescTipoCota()));
 			break;
 		case COTAS_NOVAS_RETIVADAS :
 		    resultList.add(new ItemDTO(1, "Sim"));

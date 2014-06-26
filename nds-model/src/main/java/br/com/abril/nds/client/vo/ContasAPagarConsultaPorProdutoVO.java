@@ -31,8 +31,8 @@ public class ContasAPagarConsultaPorProdutoVO {
 	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 6)
 	private String reparte;
 	
-	@Export(label = "Suplementação", alignment=Alignment.CENTER, exhibitionOrder = 7)
-	private String suplementacao;
+	@Export(label = "Estoque", alignment=Alignment.CENTER, exhibitionOrder = 7)
+	private String estoque;
 	
 	@Export(label = "Encalhe", alignment=Alignment.CENTER, exhibitionOrder = 8)
 	private String encalhe;
@@ -67,7 +67,7 @@ public class ContasAPagarConsultaPorProdutoVO {
 		this.setEdicao(dto.getEdicao().toString());
 		this.setTipo(dto.isTipo() ? "P" : "N");
 		this.setReparte(dto.getReparte().toString());
-		this.setSuplementacao(dto.getSuplementacao().toString());
+		this.setEstoque(dto.getEstoque().toString());
 		this.setEncalhe(dto.getEncalhe().toString());
 		this.setVenda(dto.getVenda().toString());
 		this.setFaltasSobras(dto.getFaltasSobras().toString());
@@ -120,11 +120,11 @@ public class ContasAPagarConsultaPorProdutoVO {
 	public void setReparte(String reparte) {
 		this.reparte = reparte;
 	}
-	public String getSuplementacao() {
-		return suplementacao;
+	public String getEstoque() {
+		return estoque;
 	}
-	public void setSuplementacao(String suplementacao) {
-		this.suplementacao = suplementacao;
+	public void setEstoque(String estoque) {
+		this.estoque = estoque;
 	}
 	public String getEncalhe() {
 		return encalhe;

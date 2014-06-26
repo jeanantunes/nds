@@ -2,7 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
-import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
+import br.com.abril.nds.dto.InfoProdutosBonificacaoDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.InformacoesVendaEPerceDeVendaDTO;
@@ -12,7 +12,7 @@ public interface InformacoesProdutoRepository extends Repository<InformacoesProd
 
 	List<InformacoesProdutoDTO> buscarProdutos (FiltroInformacoesProdutoDTO dto);
 	
-	List<InfoProdutosItemRegiaoEspecificaDTO> buscarItensRegiao (Long idEstudo);
+	List<InfoProdutosBonificacaoDTO> buscarItensRegiao (Long idEstudo);
 	
 	InformacoesCaracteristicasProdDTO buscarCaracteristicas (String codProduto, Long numEdicao);
 	
