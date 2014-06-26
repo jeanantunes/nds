@@ -866,9 +866,10 @@ public class NFeServiceImpl implements NFeService {
 	}
 
 	private List<CotaExemplaresDTO> listaRegimeEspecial(final FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao, Distribuidor distribuidor) {
+		
 		List<CotaExemplaresDTO> cotasContribuinteEmitente = new ArrayList<CotaExemplaresDTO>();
 		
-		List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplaresSumarizados(filtro, null);
+		List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);
 		
 		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
