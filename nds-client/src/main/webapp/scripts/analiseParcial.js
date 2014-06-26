@@ -643,47 +643,6 @@ var analiseParcialController = $.extend(true, {
         );
     },
 
-    carregaDetalhesEdicoesBase: function () {
-        if (analiseParcialController.edicoesBase.length > 0) {
-            var param = [];
-            $.each(analiseParcialController.edicoesBase, function (key, value) {
-                
-            	if (value.produtoEdicaoId !== undefined) {
-            		
-            		param.push({name: 'produtoEdicaoList['+key+'].idProdutoEdicao', value: value.produtoEdicaoId});
-                    param.push({name: 'produtoEdicaoList['+key+'].parcial', value: analiseParcialController.tipoExibicao == 'PARCIAL'});
-                    if (typeof value.ordemExibicao != 'undefined') {
-                        param.push({name: 'produtoEdicaoList['+key+'].ordemExibicao', value: value.ordemExibicao});
-                    }
-                    if (typeof value.periodo != 'undefined') {
-                        param.push({name: 'produtoEdicaoList['+key+'].numeroPeriodo', value: value.periodo});
-                    }
-            	}
-            });
-            $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/historicoEdicoesBase', param, function (result) {
-                var $rows = $('#tabelaDetalheAnalise tr');
-                var rowCodigoProduto = $rows.eq(0).find('td');
-                var rowNomeProduto = $rows.eq(1).find('td');
-                var rowNumeroEdicao = $rows.eq(2).find('td');
-                var rowDataLancamento = $rows.eq(3).find('td');
-                var rowReparte = $rows.eq(4).find('td');
-                var rowVenda = $rows.eq(5).find('td');
-                $.each(analiseParcialController.edicoesBase, function (key, value) {
-                	
-                	if (value.codigoProduto) {
-                	
-	                    rowCodigoProduto.eq(key+1).text(value.codigoProduto);
-	                    rowNomeProduto.eq(key+1).text(value.nomeProduto);
-	                    rowNumeroEdicao.eq(key+1).text(value.edicao + (result[key].parcial ? ' / Período: ' + result[key].numeroPeriodo : ''));
-	                    rowDataLancamento.eq(key+1).text(result[key].dataLancamentoFormatada);
-	                    rowReparte.eq(key+1).text(result[key].reparte*1 || 0);
-	                    rowVenda.eq(key+1).text(result[key].venda*1 || 0);
-                	}
-                });
-            });
-        }
-    },
-
     onSuccessReloadGrid : function() {
         //limpa espaços da grid
         $('table#baseEstudoGridParcial tr td div').filter(function(){return $.trim($(this).html()) === '&nbsp;';}).text('');
@@ -691,7 +650,6 @@ var analiseParcialController = $.extend(true, {
         analiseParcialController.somarTotais();
         analiseParcialController.atualizaEdicoesBaseHeader();
         analiseParcialController.atualizaAbrangencia();
-        analiseParcialController.carregaDetalhesEdicoesBase();
 
         //insere asterisco para marcações de reparteSugerido != reparteEstudo
         $('table#baseEstudoGridParcial tr td[abbr="reparteSugerido"] div input').each(function(){
