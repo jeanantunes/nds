@@ -41,6 +41,7 @@ import br.com.abril.nds.service.EstrategiaService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoEdicaoAlgoritimoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -116,6 +117,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
     @Autowired
     private EstudoProdutoEdicaoBaseRepository estudoProdutoEdicaoBaseRepository;
+    
+    @Autowired
+    private MatrizDistribuicaoService matrizDistribuicaoService;
     
     private static final int QTD_MAX_PRODUTO_EDICAO = 6;
 
@@ -411,6 +415,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		}
 	
 	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
+	
+	this.matrizDistribuicaoService.atualizarPercentualAbrangencia(estudo.getId());
+	
     estudoService.gravarDadosVendaMedia(estudo.getId(), distribuicaoVendaMedia);
         
     estudoService.criarRepartePorPDV(estudo.getId());

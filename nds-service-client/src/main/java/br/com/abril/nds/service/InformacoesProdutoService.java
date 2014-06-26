@@ -3,7 +3,7 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
-import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
+import br.com.abril.nds.dto.InfoProdutosBonificacaoDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.InformacoesVendaEPerceDeVendaDTO;
@@ -21,7 +21,7 @@ public interface InformacoesProdutoService {
 	
 	InformacoesCaracteristicasProdDTO buscarCaracteristicas (String codProduto, Long numEdicao);
 	
-	List<InfoProdutosItemRegiaoEspecificaDTO> buscarItemRegiao (Long idEstudos);
+	List<InfoProdutosBonificacaoDTO> buscarItemRegiao (Long idEstudos);
 	
 	List<ProdutoBaseSugeridaDTO> buscarBaseSugerida(Long idEstudo);
 	
