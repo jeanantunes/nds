@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
-import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
+import br.com.abril.nds.dto.InfoProdutosBonificacaoDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.InformacoesVendaEPerceDeVendaDTO;
@@ -190,17 +190,17 @@ public class InformacoesProdutoController extends BaseController {
 	@Path("/buscarItemRegiao")
 	public void buscarItemRegiao (Long idEstudo){
 		
-		TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> tableModel = gridItemRegiao(idEstudo);
+		TableModel<CellModelKeyValue<InfoProdutosBonificacaoDTO>> tableModel = gridItemRegiao(idEstudo);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	
 	}
 	
-	private TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> gridItemRegiao (Long idEstudo) {
+	private TableModel<CellModelKeyValue<InfoProdutosBonificacaoDTO>> gridItemRegiao (Long idEstudo) {
 		
-		List<InfoProdutosItemRegiaoEspecificaDTO> itensRegiao = infoProdService.buscarItemRegiao(idEstudo);
+		List<InfoProdutosBonificacaoDTO> itensRegiao = infoProdService.buscarItemRegiao(idEstudo);
 		
-		TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> tableModel = new TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>>();
+		TableModel<CellModelKeyValue<InfoProdutosBonificacaoDTO>> tableModel = new TableModel<CellModelKeyValue<InfoProdutosBonificacaoDTO>>();
 	
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itensRegiao));
 	

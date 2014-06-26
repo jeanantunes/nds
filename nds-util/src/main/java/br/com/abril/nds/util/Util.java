@@ -64,6 +64,19 @@ public abstract class Util {
         return null;
     }
     
+    public static <E extends Enum<E>> E getEnumByEnumName(final E[] values, final String enumName) {
+        
+        for (final E enumConstant : values) {
+            
+            if (enumConstant.name().equals(enumName)) {
+                
+                return enumConstant;
+            }
+        }
+        
+        return null;
+    }
+    
     public static boolean isAjaxRequest(final HttpServletRequest request) {
         
         if (request == null) {

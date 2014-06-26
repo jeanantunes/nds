@@ -59,17 +59,4 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
         return distribuicaoVendaMediaRepository.pesquisar(codigoProduto, nomeProduto, edicao, idClassificacao, usarICD);
     }
 
-    /**
-     * @param codigoProduto
-     * @param periodo
-     * @param edicao
-     * @return
-     * @see br.com.abril.nds.repository.DistribuicaoVendaMediaRepository#pesquisarEdicoesParciais(java.lang.String,
-     *      java.lang.Integer, java.lang.Long)
-     */
-    @Override
-    public List<ProdutoEdicaoVendaMediaDTO> pesquisarEdicoesParciais(String codigoProduto, Integer periodo, Long edicao) {
-        return distribuicaoVendaMediaRepository.pesquisarEdicoesParciais(codigoProduto, periodo, edicao);
-    }
-    
 }

@@ -1047,7 +1047,7 @@ var PDV =  $.extend(true, {
 			
 			$("#idImagem", this.workspace).attr("src",  contextPath + "/images/pdv/no_image.jpeg");
 			$("#uploadedFile", this.workspace).val('');
-			$("#selectStatus", this.workspace).val(""); 
+			$("#selectStatusPDV", this.workspace).val(""); 
 			$("#nomePDV", this.workspace).val("");
 			$("#dataInicio", this.workspace).val( $('#dataAtual',this.workspace).val() );
 			$("#contatoPDV", this.workspace).val("");

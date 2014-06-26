@@ -173,7 +173,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	}
     
     //Deprecated
-    /*
+    
     private TipoSegmentoProduto findTipoSegmentoProdutoPorNome(String nome) {
 	    Criteria criteria = this.getSession().createCriteria(TipoSegmentoProduto.class);
 	    criteria.add(Restrictions.like("descricao", nome));
@@ -182,7 +182,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	    
 	    return (TipoSegmentoProduto) criteria.uniqueResult();
 	}
-	*/
+	
 	private TipoSegmentoProduto criarNovoSegmento(String nome) {
 	    TipoSegmentoProduto tipoSegmentoProduto = new TipoSegmentoProduto();
 	    tipoSegmentoProduto.setDescricao(nome);
@@ -199,7 +199,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	}
 	
 	//Deprecated
-	/*
+	
 	private TipoSegmentoProduto getTipoSegmento(String nome) {
 	    TipoSegmentoProduto tipoSegmentoProduto = null;
 	   
@@ -213,7 +213,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
         }
 	    return tipoSegmentoProduto;
 	}
-	*/
+	
 	private void criarProdutoConformeInput(Message message, Editor editor,
 			TipoProduto tipoProduto) {
 		EMS0109Input input = (EMS0109Input) message.getBody();
@@ -281,7 +281,11 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		
 		
 		if(input.getSegmento()!=null && !input.getSegmento().trim().equals("")){
-		 produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
+	     try {
+		   produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
+	     }catch(NumberFormatException ex){
+	      produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
+	     }
 		}else{
 		 produto.setTipoSegmentoProduto(getTipoSegmento(new Long(9)));	
 		}
@@ -317,7 +321,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	public void validarTipoDesconto(Message message, String tipoDesconto, String codigoPublicacao){
 		if(tipoDesconto == null || tipoDesconto == "00" || tipoDesconto == "" || tipoDesconto == "0"){
             String assunto = "Erro na Interface 109 PUB - Tipo Desconto não consta no arquivo";
-            String msg = "Tipo Desconto não consta no arquivo .PUB de publicações vindo PRODIN, Código de Publicação  "
+            String msg = "Tipo Desconto "+tipoDesconto+" não consta no arquivo .PUB de publicações vindo PRODIN, Código de Publicação  "
                     + codigoPublicacao;
 			sendEmailInterface(assunto, msg, message);
             this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.HIERARQUIA, msg);
@@ -380,6 +384,16 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.ERRO_INFRA,
 					"Desconto Logística não encontrado. "+tipoDescontoInt);
 			 
+		}else{
+			produto.setDescontoLogistica(descontoLogistica);
+			
+            this.ndsiLoggerFactory.getLogger().logInfo(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteração do Desconto Logística"
+					+" de "+ produto.getDescontoLogistica()
+					+" para "+ descontoLogistica.getTipoDesconto().intValue()
+					+ " Produto "+produto.getCodigo());
 		}
 
 		
@@ -618,7 +632,11 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
                     +" Produto " + produto.getCodigo()
                     );
         
-                    produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
+            try {
+     		   produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
+     	     }catch(NumberFormatException ex){
+     	      produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
+     	     }
 		}
 		
 		Fornecedor produtoFornecedor = produto.getFornecedor();

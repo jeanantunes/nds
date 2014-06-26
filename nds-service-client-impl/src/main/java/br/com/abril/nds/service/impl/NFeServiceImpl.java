@@ -66,6 +66,7 @@ import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.integracao.ParametroSistema;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -409,8 +410,21 @@ public class NFeServiceImpl implements NFeService {
 			case COTA:
 			case DISTRIBUIDOR:
 				
-				// obter as cotas que estão na tela pelo id das cotas
-				List<Cota> cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscal(filtro);
+				if (filtro.getDataInicial() == null || filtro.getDataFinal() == null) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "O intervalo de datas não pode ser nula!");
+				}
+				
+				List<TipoMovimento> itensMovimentosFiscais = notaFiscalService.obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
+				
+				List<Cota> cotas = null;
+				if(itensMovimentosFiscais.size() > 0) {
+					
+					cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscalMFF(filtro);
+				} else {
+				
+					cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscalMEC(filtro);
+				}
+				
 				
 				if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
 					
@@ -827,17 +841,34 @@ public class NFeServiceImpl implements NFeService {
 		
 		NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 		
+		final List<MovimentoFechamentoFiscal> movimentosFechamentoFiscal = new ArrayList<>();
 		final List<MovimentoEstoqueCota> movimentosEstoqueCota = new ArrayList<>();
 		
+		List<TipoMovimento> itensMovimentosFiscais = notaFiscalService.obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
 		for (final Cota cota : cotas) {
 			
 			filtro.setIdCota(cota.getId());
-			movimentosEstoqueCota.addAll(this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro));
+			if(itensMovimentosFiscais.size() > 0) {
+				
+				movimentosFechamentoFiscal.addAll(this.notaFiscalRepository.obterMovimentosFechamentosFiscaisCota(filtro));
+			} else {
+				
+				movimentosEstoqueCota.addAll(this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro));
+			}
 		}
 		
-		for (final MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
+		if(itensMovimentosFiscais.size() > 0) {
 			
-			ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
+			for (final MovimentoFechamentoFiscal movimentoFechamentoFiscal : movimentosFechamentoFiscal) {
+				
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoFechamentoFiscal, tributoAliquota);
+			}
+		} else {
+			
+			for (final MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
+				
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
+			}
 		}
 		
 		FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
@@ -866,9 +897,10 @@ public class NFeServiceImpl implements NFeService {
 	}
 
 	private List<CotaExemplaresDTO> listaRegimeEspecial(final FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao, Distribuidor distribuidor) {
+		
 		List<CotaExemplaresDTO> cotasContribuinteEmitente = new ArrayList<CotaExemplaresDTO>();
 		
-		List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplaresSumarizados(filtro, null);
+		List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);
 		
 		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {

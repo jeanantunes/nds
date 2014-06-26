@@ -1916,14 +1916,32 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		validarFiltrosNFe(filtro);
 		
+		if(naturezaOperacao == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Natureza de Operação incorreta.");
+		}
+		
+		
 		List<TipoMovimento> itensMovimentosFiscais = obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
 		
 		if(itensMovimentosFiscais.size() > 0) {
+			
+			ajustarFiltroNaturezaDevSimbolicaVenda(filtro, naturezaOperacao);
 			
 			return this.notaFiscalRepository.consultaCotaExemplaresMFFSumarizados(filtro);
 		} else {
 		
 			return this.notaFiscalRepository.consultaCotaExemplaresMECSumarizados(filtro);
+		}
+	}
+
+	private void ajustarFiltroNaturezaDevSimbolicaVenda(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
+		
+		if(naturezaOperacao.isNotaFiscalDevolucaoSimbolica()) {
+			
+			filtro.setNotaFiscalDevolucaoSimbolica(true);
+		} else if(naturezaOperacao.isNotaFiscalVendaConsignado()) {
+			
+			filtro.setNotaFiscalVendaConsignado(true);
 		}
 	}
 
@@ -1936,6 +1954,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		List<TipoMovimento> itensMovimentosFiscais = obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
 		
 		if(itensMovimentosFiscais.size() > 0) {
+			
+			ajustarFiltroNaturezaDevSimbolicaVenda(filtro, naturezaOperacao);
 			
 			return this.notaFiscalRepository.consultaCotaExemplaresMFFSumarizadosQtd(filtro);
 		} else {
@@ -1955,6 +1975,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		if(itensMovimentosFiscais.size() > 0) {
 			
+			ajustarFiltroNaturezaDevSimbolicaVenda(filtro, naturezaOperacao);
+			
 			return this.notaFiscalRepository.consultaFornecedorExemplaresMFFSumarizados(filtro);
 		} else {
 		
@@ -1972,6 +1994,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		List<TipoMovimento> itensMovimentosFiscais = obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
 		
 		if(itensMovimentosFiscais.size() > 0) {
+			
+			ajustarFiltroNaturezaDevSimbolicaVenda(filtro, naturezaOperacao);
 			
 			return this.notaFiscalRepository.consultaFornecedorExemplaresMFFSumarizadosQtd(filtro);
 		} else {
@@ -2038,7 +2062,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return doc;
 	}
 	
-	private List<TipoMovimento> obterMovimentosFiscaisNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
+	@Override
+	@Transactional
+	public List<TipoMovimento> obterMovimentosFiscaisNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
 		List<TipoMovimento> itensMovimentosFiscais = new ArrayList<>();
 		if(naturezaOperacao != null) {
 			for(TipoMovimento tm : naturezaOperacao.getTipoMovimento()) {

@@ -10,12 +10,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-
 @Entity
-@DiscriminatorValue(value = "MOVIMENTO_ESTOQUE_COTA")
+@DiscriminatorValue(value = "MOVIMENTO_FECHAMENTO_FISCAL_FORNECEDOR")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OrigemItemNotaFiscalMovimentoEstoqueCota extends OrigemItemNotaFiscal {
+public class OrigemItemNotaFiscalMovimentoFechamentoFiscalFornecedor extends OrigemItemNotaFiscal {
 
 	/**
 	 * 
@@ -24,19 +22,20 @@ public class OrigemItemNotaFiscalMovimentoEstoqueCota extends OrigemItemNotaFisc
 	
 	@XmlTransient
 	@Transient
-	OrigemItem origem = OrigemItem.MOVIMENTO_ESTOQUE_COTA;
+	OrigemItem origem = OrigemItem.MOVIMENTO_FECHAMENTO_FISCAL_FORNECEDOR;
 	
 	@XmlTransient
 	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="ORIGEM_ID")
-	private MovimentoEstoqueCota movimentoEstoqueCota;
+	private MovimentoFechamentoFiscalFornecedor movimentoFechamentoFiscalFornecedor;
 	
-	public MovimentoEstoqueCota getMovimentoEstoqueCota() {
-		return movimentoEstoqueCota;
+	public MovimentoFechamentoFiscalFornecedor getMovimentoFechamentoFiscalFornecedor() {
+		return movimentoFechamentoFiscalFornecedor;
 	}
 
-	public void setMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota) {
-		this.movimentoEstoqueCota = movimentoEstoqueCota;
+	public void setMovimentoFechamentoFiscalFornecedor(
+			MovimentoFechamentoFiscalFornecedor movimentoFechamentoFiscalFornecedor) {
+		this.movimentoFechamentoFiscalFornecedor = movimentoFechamentoFiscalFornecedor;
 	}
 
 	public OrigemItem getOrigem() {

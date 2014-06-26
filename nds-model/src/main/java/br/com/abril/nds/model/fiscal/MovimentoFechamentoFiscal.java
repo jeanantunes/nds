@@ -24,6 +24,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 
@@ -57,6 +58,10 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 	
 	@Column(name = "NOTA_FISCAL_LIBERADA_EMISSAO")
 	private boolean notaFiscalLiberadaEmissao;
+	
+	@OneToOne
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
+	private ProdutoEdicao produtoEdicao;
 	
 	@Column(name = "QTDE")
 	private BigInteger qtde;
@@ -124,7 +129,15 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 			boolean notaFiscalDevolucaoSimbolicaEmitida) {
 		this.notaFiscalDevolucaoSimbolicaEmitida = notaFiscalDevolucaoSimbolicaEmitida;
 	}
+	
+	public ProdutoEdicao getProdutoEdicao() {
+		return produtoEdicao;
+	}
 
+	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
+		this.produtoEdicao = produtoEdicao;
+	}
+	
 	public BigInteger getQtde() {
 		return qtde;
 	}

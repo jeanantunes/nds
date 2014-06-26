@@ -1687,7 +1687,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Semaforo semaforo = semaforoRepository.selectForUpdate(numeroCota);
 		
-		if(semaforo!=null && StatusProcessoEncalhe.INICIADO.equals(semaforo.getStatusProcessoEncalhe())){
+		if(semaforo != null && StatusProcessoEncalhe.INICIADO.equals(semaforo.getStatusProcessoEncalhe())) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "A cota " + numeroCota + " ainda esta sendo processada!");
 		}
 		
@@ -2229,8 +2229,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						controleConferenciaEncalheCota,
 						numeroCota,
 						dataCriacao,
-						dataRecolhimentoReferencia,
-						usuario);
+						dataOperacao,
+						dataRecolhimentoReferencia, usuario);
 				
 			} else {
 				
@@ -2242,8 +2242,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						controleConferenciaEncalheCota,
 						numeroCota,
 						dataCriacao,
-						dataRecolhimentoReferencia,
-						usuario);
+						dataOperacao,
+						dataRecolhimentoReferencia, usuario);
 				
 			}
 			
@@ -2262,6 +2262,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param controleConferenciaEncalheCota
 	 * @param numeroCota
 	 * @param dataCriacao
+	 * @param dataOperacao TODO
 	 * @param dataRecolhimentoReferencia
 	 * @param usuario
 	 */
@@ -2273,8 +2274,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final ControleConferenciaEncalheCota controleConferenciaEncalheCota,
 			final Integer numeroCota,
 			final Date dataCriacao,
-			final Date dataRecolhimentoReferencia,
-			final Usuario usuario) {
+			final Date dataOperacao,
+			final Date dataRecolhimentoReferencia, final Usuario usuario) {
 		
 	
 		
@@ -2310,7 +2311,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 							
 							mffc.setNotaFiscalLiberadaEmissao(false);
 							mffc.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
-							mffc.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
+							mffc.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(conferenciaEncalheDTO.getQtdInformada()));
 							mffc.setTipoDestinatario(TipoDestinatario.COTA);
 							mffc.setCota(movimentoEstoqueCota.getCota());
 							mffc.setChamadaEncalheCota(chamadaEncalheCota);
@@ -2326,7 +2327,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mffc, movimentoEstoqueCota));
 				mffc.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
 				mffc.setNotaFiscalLiberadaEmissao(false);
-				mffc.setData(dataCriacao);
+				mffc.setData(dataOperacao);
 				mffc.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.ENTRADA));
 				mffc.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
 				mffc.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
@@ -2437,6 +2438,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param controleConferenciaEncalheCota
 	 * @param numeroCota
 	 * @param dataCriacao
+	 * @param dataOperacao TODO
 	 * @param dataRecolhimentoReferencia
 	 * @param usuario
 	 */
@@ -2448,8 +2450,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final ControleConferenciaEncalheCota controleConferenciaEncalheCota,
 			final Integer numeroCota,
 			final Date dataCriacao,
-			final Date dataRecolhimentoReferencia,
-			final Usuario usuario){
+			final Date dataOperacao,
+			final Date dataRecolhimentoReferencia, final Usuario usuario){
 		
 		ChamadaEncalheCota chamadaEncalheCota = null;
 				
@@ -2508,8 +2510,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		mff.setCota(movimentoEstoqueCota.getCota());
 		mff.setChamadaEncalheCota(chamadaEncalheCota);
 		mff.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
-		mff.setData(dataCriacao);
-		mff.setTipoMovimento(movimentoEstoqueCota.getTipoMovimento());
+		mff.setData(dataOperacao);
+		mff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.ENTRADA));
 		
 		movimentoFechamentoFiscalRepository.adicionar(mff);
 	}
