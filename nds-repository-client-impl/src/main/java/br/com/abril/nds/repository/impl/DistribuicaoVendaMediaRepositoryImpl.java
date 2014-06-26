@@ -45,9 +45,9 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("       t.numero_periodo periodo, ");
 		sql.append("       t.parcial parcial, ");
 		sql.append("       t.dataLancamento, ");
-		sql.append("       round(sum(t.reparte) - sum(t.encalhe)) / sum(t.reparte) * 100 percentualVenda, ");
-		sql.append("       t.reparte, ");
-		sql.append("       t.reparte - t.encalhe venda, ");
+		sql.append("       coalesce(round(sum(t.reparte) - sum(t.encalhe)) / sum(t.reparte) * 100, 0) percentualVenda, ");
+		sql.append("       cast(t.reparte as unsigned int) AS reparte, ");
+		sql.append("       cast((t.reparte - t.encalhe) as unsigned int) venda, ");
 		sql.append("       t.status, ");
 		sql.append("       t.classificacao ");
 		sql.append("  from (select pe.id, ");
@@ -67,7 +67,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("          from movimento_estoque_cota mec ");
 		sql.append("          join tipo_movimento tm ON tm.id = mec.tipo_movimento_id ");
 		sql.append("          join lancamento l ON l.id = mec.lancamento_id ");
-		sql.append("          join periodo_lancamento_parcial plp ON plp.lancamento_parcial_id = l.id ");
+		sql.append("          join periodo_lancamento_parcial plp ON l.PERIODO_LANCAMENTO_PARCIAL_ID = plp.id ");
 		sql.append("          join produto_edicao pe on pe.id = mec.produto_edicao_id ");
 		sql.append("          join produto p on p.id = pe.produto_id ");
 		sql.append("          join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
