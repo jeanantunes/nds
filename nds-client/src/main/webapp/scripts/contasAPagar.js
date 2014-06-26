@@ -136,6 +136,7 @@ var contasAPagarController = $.extend(true, {
 		});
 		
 		params['filtro.primeiraCarga'] = true;
+		params['rp'] = 15;
 		
 		$.postJSON(
 			url,
@@ -312,8 +313,7 @@ var contasAPagarController = $.extend(true, {
 				 	+ value.cell.produto         + "', '"
 				 	+ value.cell.edicao          + "', '"
 				 	+ value.cell.fornecedor      + "', '" 
-				 	+ value.cell.rctl	         + "', '" 
-				 	+ value.cell.dataFinal       + "'";
+				 	+ value.cell.rctl	         + "'";
 				
 				value.cell.tipo = '<a href="javascript:;" onclick="contasAPagarController.popup_detalhes(' + params + ');" title="Detalhe Consignado">' + value.cell.tipo + '</a>';
 			}
@@ -373,28 +373,26 @@ var contasAPagarController = $.extend(true, {
 	},
 	
 	
-	popup_detalhes : function (produtoEdicaoId, codigo, produto, edicao, fornecedor, dataLcto, dataFinal) {
+	popup_detalhes : function (produtoEdicaoId, codigo, produto, edicao, fornecedor, dataLcto) {
 		
 		// popula cabecalho
 		$("#contasAPagar_popupTipo_codigo", this.workspace).html(codigo);
 		$("#contasAPagar_popupTipo_produto", this.workspace).html(produto);
 		$("#contasAPagar_popupTipo_edicao", this.workspace).html(edicao);
 		$("#contasAPagar_popupTipo_fornecedor", this.workspace).html(fornecedor);
-		$("#contasAPagar_popupTipo_dataLcto", this.workspace).html(dataLcto);
-		$("#contasAPagar_popupTipo_dataFinal", this.workspace).html(dataFinal);
 		
 		$.postJSON(
 			contasAPagarController.path + 'pesquisarParcial.json',
-			[{name:'filtro.produto', value:codigo}, {name:'filtro.dataDetalhe', value:dataLcto}],
+			[{name:'filtro.produto', value:codigo}, {name:'filtro.dataDetalhe', value:dataLcto}, {name:'page', value:1}],
 			function(result) {
 				
 				$(".contasAPagar_parciaispopGrid", contasAPagarController.workspace).flexAddData(
-						{rows: toFlexiGridObject(result.grid), page : result.page, total : result.total});
+						{rows: (result.rows), page : result.page, total : result.total});
 				
 				$("#dialog-contasAPagar-tipo", contasAPagarController.workspace).dialog({
 					resizable: false,
-					height:500,
-					width:950,
+					height:535,
+					width:955,
 					modal: true,
 					buttons: {
 						"Fechar": function() {
@@ -653,7 +651,7 @@ var contasAPagarController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "codigo",
+			sortname : "edicao",
 			sortorder : "asc",
 			width : 550,
 			height : 200
@@ -679,8 +677,8 @@ var contasAPagarController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Suplementação R$',
-				name : 'suplementacao',
+				display : 'Estoque R$',
+				name : 'estoque',
 				width : 100,
 				sortable : true,
 				align : 'right'
@@ -697,7 +695,7 @@ var contasAPagarController = $.extend(true, {
 				sortable : true,
 				align : 'right',
 			}, {
-				display : 'Faltas Sobras R$',
+				display : 'Faltas/Sobras R$',
 				name : 'faltasSobras',
 				width : 110,
 				sortable : true,
@@ -768,8 +766,8 @@ var contasAPagarController = $.extend(true, {
 				sortable : true,
 				align : 'center',
 			}, {
-				display : 'Suplementação',
-				name : 'suplementacao',
+				display : 'Estoque',
+				name : 'estoque',
 				width : 80,
 				sortable : true,
 				align : 'center'

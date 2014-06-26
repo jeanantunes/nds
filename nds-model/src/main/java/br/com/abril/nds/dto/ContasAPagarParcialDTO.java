@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 public class ContasAPagarParcialDTO implements Serializable {
@@ -10,14 +11,14 @@ public class ContasAPagarParcialDTO implements Serializable {
 	
 	private Date lcto;
 	private Date rclt;
-	private Integer reparte;
-	private Integer suplementacao;
-	private Integer encalhe;
-	private Integer venda;
+	private BigInteger reparte;
+	private BigInteger suplementacao;
+	private BigInteger encalhe;
+	private BigInteger venda;
 	private BigDecimal pctVenda;
-	private Integer vendaCe;
-	private Integer reparteAcum;
-	private Integer vendaAcum;
+	private BigInteger vendaCe;
+	private BigInteger reparteAcum;
+	private BigInteger vendaAcum;
 	private BigDecimal pctVendaAcum;
 	private String nfe;
 	private Long idLancamento;
@@ -34,28 +35,28 @@ public class ContasAPagarParcialDTO implements Serializable {
 	public void setRclt(Date rclt) {
 		this.rclt = rclt;
 	}
-	public Integer getReparte() {
+	public BigInteger getReparte() {
 		return reparte;
 	}
-	public void setReparte(Integer reparte) {
+	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
-	public Integer getSuplementacao() {
+	public BigInteger getSuplementacao() {
 		return suplementacao;
 	}
-	public void setSuplementacao(Integer suplementacao) {
+	public void setSuplementacao(BigInteger suplementacao) {
 		this.suplementacao = suplementacao;
 	}
-	public Integer getEncalhe() {
+	public BigInteger getEncalhe() {
 		return encalhe;
 	}
-	public void setEncalhe(Integer encalhe) {
+	public void setEncalhe(BigInteger encalhe) {
 		this.encalhe = encalhe;
 	}
-	public Integer getVenda() {
+	public BigInteger getVenda() {
 		return venda;
 	}
-	public void setVenda(Integer venda) {
+	public void setVenda(BigInteger venda) {
 		this.venda = venda;
 	}
 	public BigDecimal getPctVenda() {
@@ -64,22 +65,22 @@ public class ContasAPagarParcialDTO implements Serializable {
 	public void setPctVenda(BigDecimal pctVenda) {
 		this.pctVenda = pctVenda;
 	}
-	public Integer getVendaCe() {
+	public BigInteger getVendaCe() {
 		return vendaCe;
 	}
-	public void setVendaCe(Integer vendaCe) {
+	public void setVendaCe(BigInteger vendaCe) {
 		this.vendaCe = vendaCe;
 	}
-	public Integer getReparteAcum() {
+	public BigInteger getReparteAcum() {
 		return reparteAcum;
 	}
-	public void setReparteAcum(Integer reparteAcum) {
+	public void setReparteAcum(BigInteger reparteAcum) {
 		this.reparteAcum = reparteAcum;
 	}
-	public Integer getVendaAcum() {
+	public BigInteger getVendaAcum() {
 		return vendaAcum;
 	}
-	public void setVendaAcum(Integer vendaAcum) {
+	public void setVendaAcum(BigInteger vendaAcum) {
 		this.vendaAcum = vendaAcum;
 	}
 	public BigDecimal getPctVendaAcum() {
