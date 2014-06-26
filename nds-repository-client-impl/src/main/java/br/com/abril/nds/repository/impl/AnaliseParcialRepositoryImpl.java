@@ -34,7 +34,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         super(EstudoCotaGerado.class);
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     @Transactional(readOnly = true)
     public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
 
@@ -220,7 +221,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         return query.list();
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId, Date date) {
 
@@ -260,7 +262,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         return query.list();
     }
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase) {
 
@@ -326,7 +329,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         return query.list();
     }
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> carregarPublicacaoDoEstudo(Long estudoId) {
 
@@ -361,7 +365,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     }
     
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> buscaHistoricoDeVendaParaCota(Long numeroCota, List<Long> listProdutoEdicaoId) {
         StringBuilder sql = new StringBuilder();
@@ -385,7 +390,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         return query.list();
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> getEdicoesBaseParciais(Long numeroCota, Long numeroEdicao, String codigoProduto, Long periodo) {
         StringBuilder sql = new StringBuilder();
@@ -512,7 +518,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         query.executeUpdate();
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     @Transactional(readOnly = true)
     public List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo) {
        
@@ -547,7 +554,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         return query.list();
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     @Transactional(readOnly = true)
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
         StringBuilder sql = new StringBuilder();
