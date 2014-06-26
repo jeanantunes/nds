@@ -43,7 +43,7 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" confCota.dataOperacao as dataEntrada, ");		
 		hql.append(" nf.statusNotaFiscal as tipoPendencia, ");
 		hql.append(" ( ");
-		hql.append("  	item.desconto- (SELECT SUM(notaFiscalEntradaCota.valorDesconto) ");
+		hql.append("  	item.preco - (SELECT SUM(notaFiscalEntradaCota.valorDesconto) ");
 		hql.append("  	FROM ControleConferenciaEncalheCota controleConferenciaDesconto ");
 		hql.append("  	LEFT JOIN controleConferenciaDesconto.notaFiscalEntradaCota as notaFiscalEntradaCota ");
 		hql.append("  	WHERE controleConferenciaDesconto.processoUtilizaNfe = true and controleConferenciaDesconto = confCota ");
@@ -94,7 +94,7 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" where confCota.processoUtilizaNfe = true ");
 		hql.append(" and ");
 		hql.append(" ( ");
-		hql.append("  	item.desconto- (SELECT SUM(notaFiscalEntradaCota.valorDesconto) ");
+		hql.append("  	item.preco - (SELECT SUM(notaFiscalEntradaCota.valorDesconto) ");
 		hql.append("  	FROM ControleConferenciaEncalheCota controleConferenciaDesconto ");
 		hql.append("  	LEFT JOIN controleConferenciaDesconto.notaFiscalEntradaCota as notaFiscalEntradaCota ");
 		hql.append("  	WHERE controleConferenciaDesconto.processoUtilizaNfe = true and controleConferenciaDesconto = confCota ");
