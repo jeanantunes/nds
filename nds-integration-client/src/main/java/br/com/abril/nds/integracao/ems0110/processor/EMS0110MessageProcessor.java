@@ -1093,6 +1093,34 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			edicao.setCodigoDeBarraCorporativo(input.getCodigoBarrasCorporativo());
 		}
 		
+		Long idFornecedor = edicao.getProduto().getFornecedor().getId();
+		 
+		DescontoLogistica descontoLogistica = this.descontoLogisticaService.obterDescontoLogisticaVigente(
+				Integer.parseInt( input.getTipoDesconto()),idFornecedor,
+		        DateUtil.parseData(input.getDataGeracaoArq(), FORMATO_DATA));
+		
+		if(descontoLogistica==null){
+			
+			if(input.getTipoDesconto()!=null && !input.getTipoDesconto().trim().equals("") && !input.getTipoDesconto().trim().equals("0")&& !input.getTipoDesconto().trim().equals("00")){
+            this.ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.ERRO_INFRA,
+					"Desconto Logística não encontrado. "+Integer.parseInt( input.getTipoDesconto()));
+			}
+			 
+		}else{
+			edicao.setDescontoLogistica(descontoLogistica);
+			
+            this.ndsiLoggerFactory.getLogger().logInfo(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteração do Desconto Logística"
+					+" de "+ produto.getDescontoLogistica()
+					+" para "+ descontoLogistica.getTipoDesconto().intValue()
+					+ " Produto "+produto.getCodigo()
+					+ " Edição "+input.getEdicaoProd());
+		}
+		
 		//this.getSession().merge(produto);
 		this.getSession().merge(edicao);
 	}
