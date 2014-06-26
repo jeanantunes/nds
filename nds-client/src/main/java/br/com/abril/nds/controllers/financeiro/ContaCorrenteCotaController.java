@@ -361,11 +361,34 @@ public class ContaCorrenteCotaController extends BaseController {
         return filtro;
     }
     
+    /**
+     * Trata valores negativos para a exportação
+     * 
+     * @param listaItensContaCorrenteCota
+     */
+    private void tratarValoresNegativos(List<ContaCorrenteCotaVO> listaItensContaCorrenteCota){
+    	
+    	for (ContaCorrenteCotaVO item : listaItensContaCorrenteCota){
+    		
+    		item.setPendente(item.getPendente().abs());
+    		
+    		item.setEncargos(item.getEncargos().abs());
+    		
+    		item.setDebitoCredito(item.getDebitoCredito().abs());
+    		
+    		item.setValorPostergado(item.getValorPostergado().abs());
+    		
+    		item.setTotal(item.getTotal().abs());
+    	}
+    }
+    
     public void exportar(FileType fileType) throws IOException {
         
         FiltroViewContaCorrenteCotaDTO filtro = this.obterFiltroExportacao();
         
         List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = consolidadoFinanceiroService.obterContaCorrente(filtro);
+        
+        this.tratarValoresNegativos(listaItensContaCorrenteCota);
         
         FileExporter.to("conta-corrente-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,
                 listaItensContaCorrenteCota, ContaCorrenteCotaVO.class, this.httpServletResponse);
