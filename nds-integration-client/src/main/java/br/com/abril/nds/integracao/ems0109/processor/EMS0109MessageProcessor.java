@@ -321,7 +321,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	public void validarTipoDesconto(Message message, String tipoDesconto, String codigoPublicacao){
 		if(tipoDesconto == null || tipoDesconto == "00" || tipoDesconto == "" || tipoDesconto == "0"){
             String assunto = "Erro na Interface 109 PUB - Tipo Desconto não consta no arquivo";
-            String msg = "Tipo Desconto não consta no arquivo .PUB de publicações vindo PRODIN, Código de Publicação  "
+            String msg = "Tipo Desconto "+tipoDesconto+" não consta no arquivo .PUB de publicações vindo PRODIN, Código de Publicação  "
                     + codigoPublicacao;
 			sendEmailInterface(assunto, msg, message);
             this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.HIERARQUIA, msg);
@@ -384,6 +384,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.ERRO_INFRA,
 					"Desconto Logística não encontrado. "+tipoDescontoInt);
 			 
+		}else{
+			produto.setDescontoLogistica(descontoLogistica);
 		}
 
 		

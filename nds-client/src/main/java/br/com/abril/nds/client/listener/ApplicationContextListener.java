@@ -88,7 +88,7 @@ public class ApplicationContextListener implements ServletContextListener {
 //			this.agendaExclusaoFixacaoReparte();
 //			this.agendaExclusaoRegiao();
 			
-			this.agendarAtualizacaoEstoqueProdutoConf(scheduler);
+			//this.agendarAtualizacaoEstoqueProdutoConf(scheduler);
 			
 			scheduler.start();
 			
