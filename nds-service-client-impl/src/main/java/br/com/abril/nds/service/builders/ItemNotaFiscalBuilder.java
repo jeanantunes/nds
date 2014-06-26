@@ -20,6 +20,8 @@ import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
@@ -89,21 +91,6 @@ public class ItemNotaFiscalBuilder  {
 						
 						montarItem(movimentoEstoqueCota, dnf, notaFiscal, tributoAliquota);
 					}
-					
-				/*
-				for(OrigemItemNotaFiscal oinf : dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
-					
-					MovimentoEstoqueCota mec = ((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).getMovimentoEstoqueCota();
-					if(mec.getProdutoEdicao().getId().equals(movimentoEstoqueCota.getProdutoEdicao().getId())) {
-						
-						notFound = false;
-						
-						montarItem(movimentoEstoqueCota, dnf, notaFiscal, tributoAliquota);
-						
-					}
-					
-				}
-				*/
 					
 				}
 			}
@@ -396,12 +383,129 @@ public class ItemNotaFiscalBuilder  {
 	}
 
 	public static void montaItemNotaFiscal(NotaFiscal notaFiscal,
-			MovimentoFechamentoFiscal movimentoFechamentoFiscal,
-			Map<String, TributoAliquota> tributoRegimeTributario) {
-		// TODO Auto-generated method stub
+			MovimentoFechamentoFiscal movimentoFechamentoFiscal, Map<String, TributoAliquota> tributoAliquota) {
+
+		if(!((movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota)
+				|| (movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor))) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Movimento Fiscal não suportado!");
+		}
+		
+		DetalheNotaFiscal detalheNotaFiscal = null;
+		if(notaFiscal == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Objeto nulo.");
+		} else {
+			if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal() == null) {
+				notaFiscal.getNotaFiscalInformacoes().setDetalhesNotaFiscal(new ArrayList<DetalheNotaFiscal>());
+			}
+		}
+		
+		if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() == 0) {
+			
+			detalheNotaFiscal = new DetalheNotaFiscal();
+			detalheNotaFiscal = montarItem(movimentoFechamentoFiscal, new DetalheNotaFiscal(), notaFiscal, tributoAliquota);
+			
+		} else {
+			
+			boolean notFound = true;
+			for(DetalheNotaFiscal dnf : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
+				
+				if(dnf.getProdutoServico() == null) {
+					
+					throw new ValidacaoException(TipoMensagem.ERROR, "Item de nota fiscal nulo.");
+				}
+				
+				if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota) {
+					if(((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getProdutoEdicao().getId().equals(dnf.getProdutoServico().getProdutoEdicao().getId())) {
+						
+						notFound = false;
+						break;
+					}
+				} else if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor) {
+					
+					if(((MovimentoFechamentoFiscalFornecedor) movimentoFechamentoFiscal).getProdutoEdicao().getId().equals(dnf.getProdutoServico().getProdutoEdicao().getId())) {
+						
+						notFound = false;
+						break;
+					}					
+				}
+				
+			}
+			
+			if(notFound) {
+				
+				detalheNotaFiscal = new DetalheNotaFiscal();
+				detalheNotaFiscal = montarItem(movimentoFechamentoFiscal, detalheNotaFiscal, notaFiscal, tributoAliquota);
+				
+			} else {
+				
+				for(DetalheNotaFiscal dnf : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
+					
+					if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota) {
+						
+						if(((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getProdutoEdicao().getId().equals(dnf.getProdutoServico().getProdutoEdicao().getId())) {
+							
+							montarItem(((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal), dnf, notaFiscal, tributoAliquota);
+						}
+					} else if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor) {
+						
+						if(((MovimentoFechamentoFiscalFornecedor) movimentoFechamentoFiscal).getProdutoEdicao().getId().equals(dnf.getProdutoServico().getProdutoEdicao().getId())) {
+							
+							montarItem(movimentoFechamentoFiscal, dnf, notaFiscal, tributoAliquota);
+						}					
+					}
+					
+				}
+			}
+		}
+		
+		if(detalheNotaFiscal != null && detalheNotaFiscal.getProdutoServico() != null){ 
+			// popular os itens das notas fiscais
+			// notaFiscalItem.setNotaFiscal(notaFiscal2);
+			notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().add(detalheNotaFiscal);
+		}
 		
 	}
 	
+	private static DetalheNotaFiscal montarItem(MovimentoFechamentoFiscal movimentoFechamentoFiscal,
+			DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal, Map<String, TributoAliquota> tributoAliquota) {
+		
+		ProdutoServico produtoServico = null;
+		if(detalheNotaFiscal.getProdutoServico() == null) {
+			
+			Long codigoBarras = null;
+			try {
+				
+				if(((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getProdutoEdicao().getCodigoDeBarras() == null) {
+					
+					codigoBarras = Long.parseLong(StringUtils.leftPad("0", 13, '0').substring(0, 13));
+				} else {
+					
+					String cb = ((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getProdutoEdicao().getCodigoDeBarras();
+					codigoBarras = Long.parseLong(StringUtils.leftPad(cb, 13, '0').substring(0, 13));
+				}
+				
+			} catch (Exception e) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido: "+ ((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getProdutoEdicao().getProduto().getCodigo() +" / "+ ((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getProdutoEdicao().getNumeroEdicao());
+			}
+			
+			produtoServico = new ProdutoServico();
+			produtoServico.setCodigoBarras(codigoBarras);
+			produtoServico.setNcm(((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
+			produtoServico.setUnidade(((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
+			produtoServico.setCodigoProduto(((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getProdutoEdicao().getProduto().getCodigo());
+			produtoServico.setDescricaoProduto(((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal) .getProdutoEdicao().getProduto().getNome());
+			produtoServico.setValorTotalBruto(BigDecimal.ZERO);
+			produtoServico.setQuantidade(BigInteger.ZERO);
+		} else {
+			
+			produtoServico = detalheNotaFiscal.getProdutoServico();
+		}
+		
+		return detalheNotaFiscal;
+	}
+
 	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, MovimentoEstoque movimentoEstoque, Map<String, TributoAliquota> tributoAliquota) {
 
 		final DetalheNotaFiscal detalheNotaFiscal = new DetalheNotaFiscal();

@@ -82,4 +82,6 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(Long idConferenciaCota,String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults);
 	
 	Integer qtdeNota(Long idConferenciaCota);
+
+	List<MovimentoFechamentoFiscal> obterMovimentosFechamentosFiscaisCota(FiltroNFeDTO filtro);
 }

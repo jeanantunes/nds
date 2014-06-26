@@ -66,6 +66,7 @@ import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.integracao.ParametroSistema;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -827,17 +828,34 @@ public class NFeServiceImpl implements NFeService {
 		
 		NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 		
+		final List<MovimentoFechamentoFiscal> movimentosFechamentoFiscal = new ArrayList<>();
 		final List<MovimentoEstoqueCota> movimentosEstoqueCota = new ArrayList<>();
 		
+		List<TipoMovimento> itensMovimentosFiscais = notaFiscalService.obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
 		for (final Cota cota : cotas) {
 			
 			filtro.setIdCota(cota.getId());
-			movimentosEstoqueCota.addAll(this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro));
+			if(itensMovimentosFiscais.size() > 0) {
+				
+				movimentosFechamentoFiscal.addAll(this.notaFiscalRepository.obterMovimentosFechamentosFiscaisFornecedor(filtro));
+			} else {
+				
+				movimentosEstoqueCota.addAll(this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro));
+			}
 		}
 		
-		for (final MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
+		if(itensMovimentosFiscais.size() > 0) {
 			
-			ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
+			for (final MovimentoFechamentoFiscal movimentoFechamentoFiscal : movimentosFechamentoFiscal) {
+				
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoFechamentoFiscal, tributoAliquota);
+			}
+		} else {
+			
+			for (final MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
+				
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
+			}
 		}
 		
 		FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);

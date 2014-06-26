@@ -678,6 +678,23 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return hql;
 	}
 
+	/**
+	 * Obter os itens da nota com base nos movimentos de fechamento fiscal
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<MovimentoFechamentoFiscal> obterMovimentosFechamentosFiscaisCota(FiltroNFeDTO filtro) {
+		
+		// ITENS DA NOTA FISCAL
+		StringBuilder hql = new StringBuilder("SELECT mfff");
+		Query query = queryConsultaCotaMFFNfeParameters(queryConsultaCotaMFFNfe(filtro, hql, false, false, true), filtro);
+
+		return query.list();
+	}
+	
 	private StringBuilder queryConsultaCotaMFFNfe(FiltroNFeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
 
 		hql.append(" FROM MovimentoFechamentoFiscalCota mffc ")

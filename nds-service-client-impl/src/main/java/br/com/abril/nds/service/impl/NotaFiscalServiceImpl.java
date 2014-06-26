@@ -2038,7 +2038,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return doc;
 	}
 	
-	private List<TipoMovimento> obterMovimentosFiscaisNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
+	@Override
+	@Transactional
+	public List<TipoMovimento> obterMovimentosFiscaisNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
 		List<TipoMovimento> itensMovimentosFiscais = new ArrayList<>();
 		if(naturezaOperacao != null) {
 			for(TipoMovimento tm : naturezaOperacao.getTipoMovimento()) {

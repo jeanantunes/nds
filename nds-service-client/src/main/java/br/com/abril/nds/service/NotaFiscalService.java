@@ -21,6 +21,7 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -140,8 +141,7 @@ public interface NotaFiscalService {
 			Set<Processo> processos, Condicao condicao);
 
 	*/
-	public abstract void exportarNotasFiscais(Long... idNotaFiscals)
-			throws FileNotFoundException, IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException;
+	void exportarNotasFiscais(Long... idNotaFiscals) throws FileNotFoundException, IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException;
 
 	List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
 
@@ -150,6 +150,8 @@ public interface NotaFiscalService {
 	List<FornecedorExemplaresDTO> consultaFornecedorExemplaresSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
 	
 	Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
+	
+	List<TipoMovimento> obterMovimentosFiscaisNaturezaOperacao(NaturezaOperacao naturezaOperacao);
 	
 	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(Long idConferenciaCota,String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults);
 
