@@ -34,6 +34,7 @@ import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -116,6 +117,7 @@ import br.com.abril.nds.util.CorpoBoleto;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.NomeBanco;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.Util;
@@ -1489,7 +1491,7 @@ public class BoletoServiceImpl implements BoletoService {
 											                 digitoNossoNumero,
 											                 valorLiquido,
 											                 valorDebitos,
-											                 valorCreditos,
+											                 BigDecimal.ZERO,
 											                 banco,
 											                 dataEmissao,
 											                 dataVencimento,
@@ -1500,6 +1502,8 @@ public class BoletoServiceImpl implements BoletoService {
 											                 cota.getNumeroCota(),
 											                 aceitaPagamentoVencido,
 											                 true);
+        
+        corpoBoleto.setTituloDeducao(valorCreditos);
         
         return corpoBoleto;
     }
@@ -2246,11 +2250,12 @@ public class BoletoServiceImpl implements BoletoService {
         
         final BigDecimal valorTotalLiquidoCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrTotalLiquido()).setScale(2, RoundingMode.HALF_UP);
         
-        final BigDecimal valorDebitos = BigDecimal.ZERO;
+        final Intervalo<Date> intervalo = new Intervalo<Date>(dataRecolhimentoCEDe, dataRecolhimentoCEAte);
         
-        final BigDecimal valorCreditos = BigDecimal.ZERO;
+        final BigDecimal valorDebitos = this.obterDebitosCota(ceDTO.getNumCota(), intervalo);
         
-        
+        final BigDecimal valorCreditos = this.obterCreditosCota(ceDTO.getNumCota(), intervalo);
+
         final BigDecimal valorTotalBoletoEmBranco = valorTotalLiquidoCE.add(valorDebitos.subtract(valorCreditos)).setScale(2, RoundingMode.HALF_UP);
         
         boolean valorMinimoAtingido = this.formaCobrancaService.isValorMinimoAtingido(ceDTO.getIdCota(), valorTotalBoletoEmBranco);
@@ -2301,6 +2306,32 @@ public class BoletoServiceImpl implements BoletoService {
                                                 dataRecolhimentoCEAte);
         
         return bbDTO;
+    }
+    
+    private BigDecimal obterCreditosCota(Integer numeroCota, Intervalo<Date> intervalo) {
+    	
+    	return this.obterValoresFinanceiroCota(numeroCota, intervalo, GrupoMovimentoFinaceiro.CREDITO);
+    }
+    
+    private BigDecimal obterDebitosCota(Integer numeroCota, Intervalo<Date> intervalo) {
+    	
+    	return this.obterValoresFinanceiroCota(numeroCota, intervalo, GrupoMovimentoFinaceiro.DEBITO);
+    }
+    
+    private BigDecimal obterValoresFinanceiroCota(Integer numeroCota, Intervalo<Date> intervalo, GrupoMovimentoFinaceiro grupo) {
+
+    	FiltroDebitoCreditoDTO filtro = new FiltroDebitoCreditoDTO();
+    	
+    	filtro.setGrupoMovimentosFinanceirosDebitosCreditos(Arrays.asList(grupo));
+    	
+    	filtro.setDataVencimentoInicio(intervalo.getDe());
+    	filtro.setDataVencimentoFim(intervalo.getAte());
+    	
+    	filtro.setNumeroCota(numeroCota);
+    	
+    	BigDecimal sum = this.movimentoFinanceiroCotaService.obterSomatorioValorMovimentosFinanceiroCota(filtro);
+    	
+    	return sum == null ? BigDecimal.ZERO : sum;
     }
     
     private Date obterDataParaCalculoVencimentoBoletoEmBranco(Set<DiaSemana> diasRecolhimento, Date dataRecolhimentoDe) {
