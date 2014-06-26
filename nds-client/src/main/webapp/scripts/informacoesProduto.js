@@ -202,8 +202,14 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	preProcess : informacoesProdutoController.executarPreProcessItemRegiao,
 	dataType : 'json',
 		colModel : [ {
+			display : 'Componente',
+			name : 'componente',
+			width : 150,
+			sortable : true,
+			align : 'left'
+		},{
 			display : 'Nome Item',
-			name : 'nomeItemRegiao',
+			name : 'nomeItem',
 			width : 150,
 			sortable : true,
 			align : 'left'
@@ -220,7 +226,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			sortable : true,
 			align : 'right'
 		}],
-		width : 250,
+		width : 400,
 		height : 80
 	});
 
@@ -373,16 +379,8 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	validarCamposVaziosGrid : function (row){
 		
-		if(row.cell.reparteMinimo == 0){
-		   row.cell.reparteMinimo = "";
-		}
-
 		if(row.cell.percentualAbrangencia == undefined){
 			row.cell.percentualAbrangencia = "";
-		}
-		
-		if(row.cell.reparteDistribuido == 0){
-			row.cell.reparteDistribuido = "";
 		}
 		
 		if(row.cell.status == undefined){

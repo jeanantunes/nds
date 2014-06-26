@@ -5,26 +5,26 @@ import java.math.BigDecimal;
 
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 
-/*
- * Classe utilizada no detalhamento do produto. 
- * 
- * Funcionalidade: Item da região específica.
- * 
- */
-
-public class InfoProdutosItemRegiaoEspecificaDTO extends FiltroDTO implements Serializable {
+public class InfoProdutosBonificacaoDTO extends FiltroDTO implements Serializable {
 
 	private static final long serialVersionUID = 2038396512399852785L;
 	
-	private String nomeItemRegiao;
+	private String componente;
+	private String nomeItem;
 	private Integer qtdReparteMin;
 	private BigDecimal bonificacao;
 	
-	public String getNomeItemRegiao() {
-		return nomeItemRegiao;
+    public String getComponente() {
+        return componente;
+    }
+    public void setComponente(String componente) {
+        this.componente = componente;
+    }
+    public String getNomeItem() {
+		return nomeItem;
 	}
-	public void setNomeItemRegiao(String nomeItemRegiao) {
-		this.nomeItemRegiao = nomeItemRegiao;
+	public void setNomeItem(String nomeItem) {
+		this.nomeItem = nomeItem;
 	}
 	public Integer getQtdReparteMin() {
 		return qtdReparteMin;
