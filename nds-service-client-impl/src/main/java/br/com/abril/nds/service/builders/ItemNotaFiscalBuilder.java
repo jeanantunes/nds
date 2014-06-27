@@ -147,9 +147,9 @@ public class ItemNotaFiscalBuilder  {
 		BigDecimal valorDesconto = BigDecimal.ZERO;
 		if(movimentoEstoque instanceof MovimentoEstoqueCota) {
 			
-			valorUnitario = CurrencyUtil.arredondarValorParaQuatroCasas(((MovimentoEstoqueCota) movimentoEstoque).getValoresAplicados().getPrecoComDesconto());
+			valorUnitario = ((MovimentoEstoqueCota) movimentoEstoque).getValoresAplicados().getPrecoComDesconto();
 			valorDesconto = ((MovimentoEstoqueCota) movimentoEstoque).getValoresAplicados().getValorDesconto();
-			valorTotalBruto = CurrencyUtil.arredondarValorParaQuatroCasas(((MovimentoEstoqueCota) movimentoEstoque).getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoque.getQtde())));
+			valorTotalBruto = ((MovimentoEstoqueCota) movimentoEstoque).getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoque.getQtde()));
 			
 		} else if(movimentoEstoque instanceof MovimentoEstoque) {
 			
@@ -161,14 +161,14 @@ public class ItemNotaFiscalBuilder  {
 			} 
 			
 			precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100))));			
-			valorUnitario = CurrencyUtil.arredondarValorParaQuatroCasas(precoComDesconto);
-			valorTotalBruto = CurrencyUtil.arredondarValorParaQuatroCasas(precoComDesconto.multiply(new BigDecimal(movimentoEstoque.getQtde())));
+			valorUnitario = precoComDesconto;
+			valorTotalBruto = precoComDesconto.multiply(new BigDecimal(movimentoEstoque.getQtde()));
 		} else {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de movimento não suportado para geração da NF-e.");
 		}
 		
 		produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()));
-		produtoServico.setValorUnitario(CurrencyUtil.arredondarValorParaDuasCasas(valorUnitario));
+		produtoServico.setValorUnitario(valorUnitario);
 		produtoServico.setValorTotalBruto(produtoServico.getValorTotalBruto().add(CurrencyUtil.arredondarValorParaDuasCasas(valorTotalBruto)));
 		
 		produtoServico.setValorDesconto(BigDecimal.ZERO);
@@ -505,9 +505,9 @@ public class ItemNotaFiscalBuilder  {
 		BigDecimal valorDesconto = BigDecimal.ZERO;
 		if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota) {
 			
-			valorTotalBruto = CurrencyUtil.arredondarValorParaDuasCasas(((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoFechamentoFiscal.getQtde())));
-			valorUnitario = CurrencyUtil.arredondarValorParaQuatroCasas(((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getValoresAplicados().getPrecoComDesconto());
+			valorUnitario = ((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getValoresAplicados().getPrecoComDesconto();
 			valorDesconto = ((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getValoresAplicados().getValorDesconto();
+			valorTotalBruto = ((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoFechamentoFiscal.getQtde()));
 			
 		} else if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor) {
 			
@@ -518,13 +518,13 @@ public class ItemNotaFiscalBuilder  {
 				valorDesconto = movimentoFechamentoFiscal.getProdutoEdicao().getDesconto();
 			} 
 			
-			precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100))));
-			
-			valorTotalBruto = CurrencyUtil.arredondarValorParaDuasCasas(precoComDesconto.multiply(new BigDecimal(movimentoFechamentoFiscal.getQtde())));
-			valorUnitario = CurrencyUtil.arredondarValorParaQuatroCasas(precoComDesconto);
+			precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100))));			
+			valorUnitario = precoComDesconto;
+			valorTotalBruto = precoComDesconto.multiply(new BigDecimal(movimentoFechamentoFiscal.getQtde()));
 		} else {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de movimento não suportado para geração da NF-e.");
 		}
+		
 		produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoFechamentoFiscal.getQtde()));
 		produtoServico.setValorTotalBruto(produtoServico.getValorTotalBruto().add(valorTotalBruto));
 		produtoServico.setValorUnitario(valorUnitario);

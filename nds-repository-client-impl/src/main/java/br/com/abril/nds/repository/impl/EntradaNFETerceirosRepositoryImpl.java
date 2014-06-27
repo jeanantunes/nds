@@ -40,7 +40,6 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append("               LEFT JOIN notaFiscalEntradaCotaCCE.naturezaOperacao as tipoNotaFiscalNF ");
 		hql.append("             WHERE controleConferenciaEncalheCota = controleConferenciaEncalheCotaNF  ");
 		hql.append("               AND tipoNotaFiscalNF.tipoOperacao = :tipoOperacaoEntrada ");
-		// hql.append("               AND tipoNotaFiscalNF.grupoNotaFiscal = :complementar ");
 		hql.append("        ) = 0 THEN 'Entrada' ELSE 'Complementar' END  as tipoNotaFiscal, ");
 		hql.append("        COALESCE(fornecedorPessoa.razaoSocial, cotaPessoa.razaoSocial, cotaPessoa.nome) as nome, ");		
 		hql.append("        notaFiscalEntrada.valorBruto as valorNota, ");		
