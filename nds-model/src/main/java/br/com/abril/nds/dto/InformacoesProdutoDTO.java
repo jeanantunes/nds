@@ -6,7 +6,6 @@ import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.dto.filtro.FiltroDTO;
-import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -28,7 +27,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private String nomeProduto;
 	
     @Export(label = "Período", alignment = Alignment.LEFT, exhibitionOrder = 3)
-	private PeriodicidadeProduto periodo;
+	private Integer periodo;
 	
     @Export(label = "Preço R$", alignment = Alignment.LEFT, exhibitionOrder = 4)
 	private String preco;
@@ -105,10 +104,10 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
-	public PeriodicidadeProduto getPeriodo() {
+	public Integer getPeriodo() {
 		return periodo;
 	}
-	public void setPeriodo(PeriodicidadeProduto periodo) {
+	public void setPeriodo(Integer periodo) {
 		this.periodo = periodo;
 	}
 	public String getPreco() {
