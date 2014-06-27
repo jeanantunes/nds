@@ -117,8 +117,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     			hql.append(" coalesce((select sum( ");
     			
     			final String qtdsEncalhe = 
-    			        "(coalesce(estProd.qtdeDevolucaoEncalhe,0) + coalesce(estProd.qtdeDevolucaoEncalhe,0) + " +
-    			        "coalesce(estProd.qtdeJuramentado,0) + coalesce(estProd.qtdeDanificado,0) - coalesce(estProd.qtdePerda,0) + coalesce(estProd.qtdeGanho,0))";
+    			        "(coalesce(estProd.qtdeDevolucaoEncalhe,0) + coalesce(estProd.qtdeJuramentado,0) + " +
+    			        " coalesce(estProd.qtdeDanificado,0) - coalesce(estProd.qtdePerda,0) + coalesce(estProd.qtdeGanho,0))";
     			
     			if (desconto){
                     
@@ -520,30 +520,12 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	
     private String queryPorProduto(FiltroContasAPagarDTO filtro){
 
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 		
-		String parametroData = " l.dataRecolhimentoDistribuidor ";
+		final String parametroData = " l.dataRecolhimentoDistribuidor ";
 			
-		hql.append("       (select  ")
-		.append(" sum(estProd.qtde + coalesce(estProd.qtdeSuplementar,0)) ")
-    
-    .append(" ")
-       .append(" from EstoqueProduto estProd ")
-       .append(" join estProd.produtoEdicao prEd2 ")
-       .append(" join prEd2.lancamentos lanc ")
-       .append(" left join prEd2.descontoLogistica descLogPrEd2")
-       .append(" join prEd2.produto pr2 ")
-       .append(" left join pr2.descontoLogistica descLogPr2 ")
-       .append(" left join pr2.fornecedores fornecedor2 ")
-       .append(" where lanc.dataRecolhimentoDistribuidor = ").append(parametroData)
-		   .append("       ) as suplementacao, ")
-		   
-		   
-   .append(" (select sum((coalesce(estProd.qtdeDevolucaoEncalhe,0) + coalesce(estProd.qtdeDevolucaoEncalhe,0) + " +
-           "coalesce(estProd.qtdeJuramentado,0) + coalesce(estProd.qtdeDanificado,0) - coalesce(estProd.qtdePerda,0) + coalesce(estProd.qtdeGanho,0)))  ")
-   
-		   
-		   
+		hql.append(" (select  ")
+		   .append(" sum(estProd.qtde + coalesce(estProd.qtdeSuplementar,0)) ")
 		   .append(" from EstoqueProduto estProd ")
            .append(" join estProd.produtoEdicao prEd2 ")
            .append(" join prEd2.lancamentos lanc ")
@@ -552,10 +534,23 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
            .append(" left join pr2.descontoLogistica descLogPr2 ")
            .append(" left join pr2.fornecedores fornecedor2 ")
            .append(" where lanc.dataRecolhimentoDistribuidor = ").append(parametroData)
+           .append(" and prEd2.id = produtoEdicao.id ")
+           .append(" ) as suplementacao, ")
+           
+		   .append(" (select sum((coalesce(estProd.qtdeDevolucaoEncalhe,0) + coalesce(estProd.qtdeJuramentado,0) + ")
+           .append(" coalesce(estProd.qtdeDanificado,0) - coalesce(estProd.qtdePerda,0) + coalesce(estProd.qtdeGanho,0))) ")
+           .append(" from EstoqueProduto estProd ")
+           .append(" join estProd.produtoEdicao prEd2 ")
+           .append(" join prEd2.lancamentos lanc ")
+           .append(" left join prEd2.descontoLogistica descLogPrEd2")
+           .append(" join prEd2.produto pr2 ")
+           .append(" left join pr2.descontoLogistica descLogPr2 ")
+           .append(" left join pr2.fornecedores fornecedor2 ")
+           .append(" where lanc.dataRecolhimentoDistribuidor = ").append(parametroData)
+           .append(" and prEd2.id = produtoEdicao.id ")
            .append(" and lanc.status in (:statusLancamento)) as encalhe, ")
            
-
-		   .append("	   (COALESCE((select sum(ld2.diferenca.qtde) ")
+           .append("	   (COALESCE((select sum(ld2.diferenca.qtde) ")
 		   .append("                  from LancamentoDiferenca ld2 ")	   
 		   .append(" 		 		  where ld2.dataProcessamento = ").append(parametroData)
 		   .append(" 		          and ld2.diferenca.qtde is not null ")
@@ -789,8 +784,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	public List<ContasAPagarEncalheDTO> pesquisarDetalheEncalhe(FiltroContasAPagarDTO filtro){
 		
 	    final String qtdsEncalhe = 
-                "coalesce(estProd.qtdeDevolucaoEncalhe,0) + coalesce(estProd.qtdeDevolucaoEncalhe,0) + " +
-                "coalesce(estProd.qtdeJuramentado,0) + coalesce(estProd.qtdeDanificado,0) - coalesce(estProd.qtdePerda,0) + coalesce(estProd.qtdeGanho,0)";
+                " coalesce(estProd.qtdeDevolucaoEncalhe,0) + coalesce(estProd.qtdeJuramentado,0) + " +
+                " coalesce(estProd.qtdeDanificado,0) - coalesce(estProd.qtdePerda,0) + coalesce(estProd.qtdeGanho,0)";
 	    
 		StringBuilder hql = new StringBuilder();
 		hql.append("select ")
@@ -1116,8 +1111,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			//porém, para a tela de contas a pagar não existe documentação que explique que intervalo seja esse.
 			//A query abaixo vai considerar TUDO que estiver lançado antes da data informada no filtro
 			
-			hql.append(" 	lp.lancamentoInicial as lcto, ")
-			   .append(" 	lp.recolhimentoFinal as rclt, ")
+			hql.append(" 	l.dataLancamentoDistribuidor as lcto, ")
+			   .append(" 	l.dataRecolhimentoDistribuidor as rclt, ")
 			   .append(" 	l.reparte as reparte, ")
 			   .append("	l.id as idLancamento, ")
 			   //suplementacao
