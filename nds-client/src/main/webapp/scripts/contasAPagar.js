@@ -396,10 +396,11 @@ var contasAPagarController = $.extend(true, {
 					modal: true,
 					buttons: {
 						"Fechar": function() {
-							$( contasAPagarController ).dialog( "close" );
+							$( this ).dialog( "close" );
 						
 						},
-					 }
+					 },
+					 form: $("#form-contasAPagar-tipo", contasAPagarController.workspace)
 				});
 			}
 		);
@@ -1136,6 +1137,17 @@ var contasAPagarController = $.extend(true, {
 			
 			window.open(contasAPagarController.path + "exportPesquisarPorDistribuidor?fileType=" + tipoArquivo, "_blank");
 		}
+	},
+	
+	exportPesquisarParcial : function(tipoArquivo){
+		
+		window.open(
+			contasAPagarController.path + "exportPesquisarParcial?fileType=" + tipoArquivo +
+				encodeURI("&codigoProduto=" + $("#contasAPagar_popupTipo_codigo", contasAPagarController.workspace).text() +
+				"&nomeProduto=" + $("#contasAPagar_popupTipo_produto", contasAPagarController.workspace).text() +
+				"&edicao=" + $("#contasAPagar_popupTipo_edicao", contasAPagarController.workspace).text() +
+				"&nomeFornecedor=" + $("#contasAPagar_popupTipo_fornecedor", contasAPagarController.workspace).text()), 
+			"_blank");
 	}
 	
 }, BaseController);

@@ -212,8 +212,12 @@
 		<br clear="all" />
 		<br />
 	
-				<span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarParcial?fileType=XLS">Arquivo</a></span>
-				<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarParcial?fileType=PDF">Imprimir</a></span>
+				<span class="bt_arquivo">
+					<a href="javascript:;" onclick="contasAPagarController.exportPesquisarParcial('XLS');">Arquivo</a>
+				</span>
+				<span class="bt_imprimir">
+					<a href="javascript:;" onclick="contasAPagarController.exportPesquisarParcial('PDF');">Imprimir</a>
+				</span>
 	</div>
 </form>
       
