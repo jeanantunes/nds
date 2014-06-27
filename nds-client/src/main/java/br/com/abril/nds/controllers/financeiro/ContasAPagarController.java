@@ -317,7 +317,7 @@ public class ContasAPagarController extends BaseController {
 	}
 	
 	@Path("/exportPesquisarParcial")
-	public void exportPesquisarParcial(FileType fileType) throws IOException {
+	public void exportPesquisarParcial(FileType fileType, String codigoProduto, String nomeProduto, String edicao, String nomeFornecedor) throws IOException {
 		
 		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) this.session.getAttribute(FILTRO_DETALHE_PARCIAL);
 		filtro.setPaginacaoVO(null);
@@ -329,7 +329,12 @@ public class ContasAPagarController extends BaseController {
 			listVO.add(new ContasAPagarParcialVO(dto));
 		}
 		
-		FileExporter.to("detalhe-parcial", fileType).inHTTPResponse(getNDSFileHeader(), null, 
+		filtro.setCodigoProduto(codigoProduto);
+		filtro.setNomeProduto(nomeProduto);
+		filtro.setEdicaoProduto(edicao);
+		filtro.setNomeFornecedor(nomeFornecedor);
+		
+		FileExporter.to("detalhe-parcial", fileType).inHTTPResponse(getNDSFileHeader(), filtro, 
 						listVO, ContasAPagarParcialVO.class, 
 						this.httpServletResponse);
 		

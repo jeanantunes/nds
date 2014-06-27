@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO.OrdenacaoColunaDe
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -374,6 +376,32 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		return (Boleto) criteria.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+    @Override
+    public List<Boleto> obterPorNossoNumero(Collection<String> nossoNumero) {
+	    
+	    StringBuilder hql = new StringBuilder("select b from Boleto b ");
+	    hql.append(" JOIN b.cota cota ")
+           .append(" left JOIN cota.box box ")
+           .append(" left JOIN cota.pdvs pdv ")
+           .append(" left JOIN cota.pessoa pessoa ")
+           .append(" left JOIN cota.parametroCobranca parametroCobranca ")
+           .append(" left JOIN pdv.rotas rotaPdv  ")
+           .append(" left JOIN rotaPdv.rota rota  ")
+           .append(" left JOIN rota.roteiro roteiro ")
+           .append(" where b.nossoNumero in (:nossoNumero) ")
+           .append(" and roteiro.tipoRoteiro != :tipoRoteiroEspecial ")
+           .append(" ORDER BY box.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem ");
+	    
+	    final Query query = this.getSession().createQuery(hql.toString());
+        
+	    query.setParameterList("nossoNumero", nossoNumero);
+	    
+	    query.setParameter("tipoRoteiroEspecial", TipoRoteiro.ESPECIAL);
+	    
+        return query.list();
+    }
 	
 	@Override
 	public Boleto obterPorNossoNumeroCompleto(String nossoNumeroCompleto, Boolean dividaAcumulada) {
