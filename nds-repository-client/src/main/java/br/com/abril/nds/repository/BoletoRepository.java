@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -197,5 +198,7 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	List<Cobranca> obterBoletosNaoPagos(Date data);
 	
 	Long verificaEnvioDeEmail(String nossoNumero);
+
+    List<Boleto> obterPorNossoNumero(Collection<String> nossoNumero);
 	
 }

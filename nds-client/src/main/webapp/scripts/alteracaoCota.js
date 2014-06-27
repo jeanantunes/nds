@@ -93,7 +93,7 @@ var alteracaoCotaController = $.extend(true, {
 			}
 					 
 		});
-    	
+
     	$(document).ready(function() {
     		
     		showCamposSuspensao($("#idIsSugereSuspensaoModal").attr("checked") == "checked");
@@ -224,12 +224,24 @@ var alteracaoCotaController = $.extend(true, {
 		
 	},
 	
+	serializeForm: function(formId) {
+		var serialized = $("#"+formId+" :input[value][value!=''][value!='-1']", this.workspace).serializeArray();
+		
+		$.each(serialized, function(index, value) {
+			if (!isNaN(value.value)) {
+				value.value = value.value.replace(".", ",");
+			}
+		});
+		
+		return serialized;
+	},
+	
 	pesquisar : function() {
 		alteracaoCotaController.verificarCheck();
 		$("#totalCotasSelecionadas", this.workspace).html(0);
 		$("#alteracaoCotaCheckAll", this.workspace).attr("checked",false);
 		
-		var params = $("#pesquisarForm :input[value][value!=''][value!='-1']", this.workspace).serializeArray();
+		var params = this.serializeForm("pesquisarForm");
 		
 				
 		$(".alteracaoGrid", this.workspace).flexOptions({
