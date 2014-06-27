@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,10 +18,13 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.EstudoDTO;
+import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
@@ -32,10 +37,13 @@ import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.upload.XlsUploaderUtils;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 @Path("/distribuicaoManual")
@@ -135,6 +143,49 @@ public class DistribuicaoManualController extends BaseController {
 		
 		result.use(Results.json()).from(estudo.getId(), "result").serialize();
     }
+    
+    @Post
+	@Path("/uploadArquivoLoteDistbManual")
+	public void uploadArquivoEmLote(UploadedFile excelFileFixacao) throws FileNotFoundException, IOException{
+    	
+    	
+    	
+    	
+    	
+//		List<FixacaoReparteDTO> listaRegistrosInvalidosExcel=null;
+//		List<FixacaoReparteDTO> listaFixacaoExcel = XlsUploaderUtils.getBeanListFromXls(FixacaoReparteDTO.class, excelFileFixacao);
+//
+//		if (!isListaVazia(listaFixacaoExcel)) {
+//			
+//			listaRegistrosInvalidosExcel = obterListaInvalidos(listaFixacaoExcel);
+//			listaFixacaoExcel.removeAll(listaRegistrosInvalidosExcel);
+//			
+//			for (FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel) {
+//				FixacaoReparte fixacaoReparte = fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
+//				if(fixacaoReparte.getCotaFixada().getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
+//                    getErrosUpload().add(
+//                            "- Fixação inserida, status da Cota: " + SituacaoCadastro.SUSPENSO.toString() + ". (Cota["
+//                                + fixacaoReparteDTO.getCotaFixadaString() + "] Produto["
+//                                + fixacaoReparteDTO.getProdutoFixado() + "]).");
+//				}
+//			}
+//			
+//			if (listaRegistrosInvalidosExcel.isEmpty() && getErrosUpload().isEmpty()) {
+//				result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
+//			} else {
+//				result.use(Results.json()).from(
+//						new ValidacaoVO(TipoMensagem.WARNING, getMsgErroUpload()), 
+//						"result").recursive().serialize();
+//			}
+//			
+//		} else {
+//			result.use(Results.json()).from(
+//new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),
+//					"result").recursive().serialize();
+//		}
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),"result").recursive().serialize();
+	}
     
     private void removeItensDuplicadosMatrizDistribuicao() {
     	

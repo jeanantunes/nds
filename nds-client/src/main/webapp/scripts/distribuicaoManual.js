@@ -560,7 +560,65 @@ var distribuicaoManual = $.extend(true, {
 			// Deve ir direto para EMS 2031
 			matrizDistribuicao.redirectToTelaAnalise($('#estudo').html());
 		}
+	},
+	
+	// ###-- Ajustes para SANTOS --##
+	
+	// click do botao adicionar em lote		
+	add_lote : function() {
+		$("#modalUploadArquivo-DistbManual").dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+//					fixacaoReparteController.executarSubmitArquivo();
+					distribuicaoManual.executarSubmitArquivo();
+				},
+				"Cancelar": function() {
+					$("#excelFileDistbManual").val("");
+					$(this).dialog("close");
+				}
+			},
+		});
+	},
+	
+	executarSubmitArquivo:function(){
+		var fileName = $("#excelFileDistbManual").val();
+		var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+	       
+		if(ext!="xls" & ext!="xlsx"){
+			exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+			$(this).val('');
+			return;
+		}else{
+    	  
+			$("#formUploadLoteFixacao").ajaxSubmit({
+	     		   
+				success: function(responseText, statusText, xhr, $form)  { 
+		    	  
+					var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+		            var tipoMensagem = mensagens.tipoMensagem;
+			        var listaMensagens = mensagens.listaMensagens;
+	
+			        if (tipoMensagem && listaMensagens) {
+			        	
+			        	if (tipoMensagem != 'SUCCESS') {
+			        		exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
+		        		}
+			        	
+		                $("#dialog-lote").dialog( "close" );
+		                exibirMensagem(tipoMensagem, listaMensagens); 
+			        }
+			   }, 
+	     	
+		       type: 'POST',
+		       dataType: 'json',
+     	   });
+       }
 	}
+	// ##-- --##
 	
 });
 
