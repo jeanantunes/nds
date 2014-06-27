@@ -14,7 +14,6 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
@@ -263,7 +262,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     }
     
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase) {
 
@@ -432,28 +431,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 
         return query.list();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public AnaliseEstudoDetalhesDTO buscarDetalhesAnalise(Long produtoEdicao) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("  select pe.numero_edicao numeroEdicao, ");
-        sql.append("               l.data_lcto_distribuidor dataLancamento, ");
-        sql.append("               sum(epc.qtde_recebida) reparte, ");
-        sql.append("               sum(epc.qtde_recebida - epc.qtde_devolvida) venda, ");
-        sql.append("               sum(epc.qtde_devolvida) encalhe ");
-        sql.append("		  from produto_edicao pe ");
-        sql.append("          join lancamento l on l.produto_edicao_id = pe.id ");
-        sql.append("		  left join estoque_produto_cota epc on epc.produto_edicao_id = pe.id ");
-        sql.append("         where pe.id = :produtoId ");
-        sql.append("		 group by pe.numero_edicao ");
-        sql.append("		 order by pe.numero_edicao desc ");
-
-        Query query = getSession().createSQLQuery(sql.toString());
-        query.setParameter("produtoId", produtoEdicao);
-        query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseEstudoDetalhesDTO.class));
-        return (AnaliseEstudoDetalhesDTO) query.uniqueResult();
     }
 
     @Override
@@ -674,36 +651,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         return query.list();
     }
-
-    @Override
-    @Transactional
-    public AnaliseEstudoDetalhesDTO historicoEdicaoBase(Long id, Integer numeroPeriodo) {
-        StringBuilder sql = new StringBuilder();
-        sql.append(" select pe.numero_edicao numeroEdicao, ");
-        sql.append(" l.data_lcto_distribuidor dataLancamento, ");
-        sql.append(" sum(case when mec.tipo_movimento_id = 13 then mec.qtde end) reparte, ");
-        sql.append("         sum(case when mec.tipo_movimento_id = 13 then mec.qtde end) - ");
-        sql.append("         sum(case when mec.tipo_movimento_id = 26 or mec.tipo_movimento_id = 32 then mec.qtde end) venda, ");
-        sql.append("         sum(case when mec.tipo_movimento_id = 26 or mec.tipo_movimento_id = 32 then mec.qtde end) encalhe, ");
-        sql.append("         plp.numero_periodo numeroPeriodo ");
-        sql.append(" from lancamento l ");
-        sql.append(" join produto_edicao pe on pe.id = l.produto_edicao_id and pe.id = :id ");
-        sql.append(" left join movimento_estoque_cota mec on mec.lancamento_id = l.id and mec.tipo_movimento_id in (13, 26, 32) ");
-        if (numeroPeriodo == null) {
-            sql.append(" left ");
-        }
-        sql.append(" join periodo_lancamento_parcial plp on plp.id = l.periodo_lancamento_parcial_id and plp.numero_periodo = :numeroPeriodo");
-        sql.append(" group by pe.id, pe.numero_edicao, plp.numero_periodo ");
-        sql.append(" order by plp.numero_periodo desc ");
-
-        SQLQuery query = getSession().createSQLQuery(sql.toString());
-        query.setParameter("id", id);
-        query.setParameter("numeroPeriodo", numeroPeriodo);
-        query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseEstudoDetalhesDTO.class));
-
-        return (AnaliseEstudoDetalhesDTO) query.uniqueResult();
-    }
-
+    
 	@Override
 	public AnaliseParcialDTO buscarReparteDoEstudo(Long estudoOrigem,Integer numeroCota) {
 		String sql = "select estudo_cota.REPARTE as ultimoReparte from estudo_cota_gerado estudo_cota join cota ON estudo_cota.COTA_ID = cota.ID where estudo_id = :estudoID and cota.numero_cota= :numeroCota";
