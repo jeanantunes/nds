@@ -761,16 +761,16 @@ var parametroCobrancaController = $.extend(true,
 			var isUnificada = $("#unificada").val();
 			
 			if (isUnificada == 'N') {
-			
-				$("input[name='checkGroupFornecedores']").prop("checked", false);
-				
+
 				parametroCobrancaController.tratarSelecaoFornecedorPadrao();
 				
-				$("input[name='checkGroupFornecedores']").prop("disabled", true);
-				
+				parametroCobrancaController.habilitarTodosFornecedores();
+			
 			} else {
 				
-				parametroCobrancaController.habilitarTodosFornecedores();
+				$("input[name='checkGroupFornecedores']").prop("checked", false);
+				
+				$("input[name='checkGroupFornecedores']").prop("disabled", true);
 				
 				parametroCobrancaController.tratarSelecaoFornecedorPadrao();
 			}
@@ -787,7 +787,7 @@ var parametroCobrancaController = $.extend(true,
 				previous = this.value;
 			}).on('change', function() {
 				var isUnificada = $("#unificada").val();
-				if (isUnificada == 'S') 
+				if (isUnificada == 'N') 
 					parametroCobrancaController.habilitarTodosFornecedores();
 				else
 					$("input[name='checkGroupFornecedores']").prop("checked", false);
