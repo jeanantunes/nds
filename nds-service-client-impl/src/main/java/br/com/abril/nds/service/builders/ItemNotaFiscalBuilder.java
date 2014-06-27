@@ -147,9 +147,9 @@ public class ItemNotaFiscalBuilder  {
 		BigDecimal valorDesconto = BigDecimal.ZERO;
 		if(movimentoEstoque instanceof MovimentoEstoqueCota) {
 			
-			valorTotalBruto = CurrencyUtil.arredondarValorParaDuasCasas(((MovimentoEstoqueCota) movimentoEstoque).getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoque.getQtde())));
 			valorUnitario = CurrencyUtil.arredondarValorParaQuatroCasas(((MovimentoEstoqueCota) movimentoEstoque).getValoresAplicados().getPrecoComDesconto());
 			valorDesconto = ((MovimentoEstoqueCota) movimentoEstoque).getValoresAplicados().getValorDesconto();
+			valorTotalBruto = CurrencyUtil.arredondarValorParaQuatroCasas(((MovimentoEstoqueCota) movimentoEstoque).getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoque.getQtde())));
 			
 		} else if(movimentoEstoque instanceof MovimentoEstoque) {
 			
@@ -160,16 +160,16 @@ public class ItemNotaFiscalBuilder  {
 				valorDesconto = ((MovimentoEstoque) movimentoEstoque).getProdutoEdicao().getDesconto();
 			} 
 			
-			precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100))));
-			
-			valorTotalBruto = CurrencyUtil.arredondarValorParaDuasCasas(precoComDesconto.multiply(new BigDecimal(movimentoEstoque.getQtde())));
+			precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100))));			
 			valorUnitario = CurrencyUtil.arredondarValorParaQuatroCasas(precoComDesconto);
+			valorTotalBruto = CurrencyUtil.arredondarValorParaQuatroCasas(precoComDesconto.multiply(new BigDecimal(movimentoEstoque.getQtde())));
 		} else {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de movimento não suportado para geração da NF-e.");
 		}
+		
 		produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()));
-		produtoServico.setValorTotalBruto(produtoServico.getValorTotalBruto().add(valorTotalBruto));
-		produtoServico.setValorUnitario(valorUnitario);
+		produtoServico.setValorUnitario(CurrencyUtil.arredondarValorParaDuasCasas(valorUnitario));
+		produtoServico.setValorTotalBruto(produtoServico.getValorTotalBruto().add(CurrencyUtil.arredondarValorParaDuasCasas(valorTotalBruto)));
 		
 		produtoServico.setValorDesconto(BigDecimal.ZERO);
 		
