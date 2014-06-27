@@ -1681,8 +1681,6 @@ public class BoletoServiceImpl implements BoletoService {
         if (boletoEmBranco){
             
             valorDesconto = valorDesconto.compareTo(BigDecimal.ZERO)>0?valorDesconto:null;
-            
-            valorAcrescimo = valorAcrescimo.compareTo(BigDecimal.ZERO)>0?valorAcrescimo:null;
         }
         
         corpoBoleto.setTituloDesconto(valorDesconto);
