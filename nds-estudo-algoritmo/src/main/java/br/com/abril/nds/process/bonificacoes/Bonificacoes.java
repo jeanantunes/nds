@@ -89,7 +89,19 @@ public class Bonificacoes extends ProcessoAbstrato {
 			if (bonificacao.isTodasAsCotas() && bonificacao.getComponente() != null && bonificacao.getElemento() != null) {
 			    
 				String[] vetor = {bonificacao.getElemento()};
-			    
+				
+				int cotasClassificacaoVendaZeroOuSemHistorico = 0;
+				for (CotaEstudo cota : estudo.getCotasExcluidas()) {
+					if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico) &&	estudoAlgoritmoService.isCotaDentroDoComponenteElemento(bonificacao.getComponente(), vetor, cota)) {
+						cotasClassificacaoVendaZeroOuSemHistorico++;
+					}
+				}
+				
+				if(reparteMinimo.multiply(BigInteger.valueOf(cotasClassificacaoVendaZeroOuSemHistorico)).compareTo(estudo.getReparteDistribuir()) > 0) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "A soma do reparte mínimo das cotas excede o reparte total.");
+				}
+				
 				for (CotaEstudo cota : estudo.getCotasExcluidas()) {
 					if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico) &&	estudoAlgoritmoService.isCotaDentroDoComponenteElemento(bonificacao.getComponente(), vetor, cota)) {
 					    
