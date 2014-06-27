@@ -230,12 +230,28 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         final List<byte[]> arquivos = new ArrayList<byte[]>();
         
         try {
-            for (String nossoNumero : listNossoNumero){
+            
+            final List<Boleto> boletos = this.boletoRepository.obterPorNossoNumero(listNossoNumero);
+            
+            for (int index = 0 ; index < boletos.size() ; index++){
                 
-                final Boleto boleto = this.boletoRepository.obterPorNossoNumero(nossoNumero,null,false);
+                arquivos.add(this.boletoService.gerarImpressaoBoleto(boletos.get(index)));
                 
-                arquivos.add(this.boletoService.gerarImpressaoBoleto(boleto));
-                arquivos.add(this.gerarSlipCobranca(boleto, true, TipoArquivo.PDF));
+                final int proximoIndex = index + 1;
+                
+                boolean adicionarSlip = true;
+                
+                if (proximoIndex < boletos.size()){
+                    
+                    if (boletos.get(index).getCota().getNumeroCota().equals(boletos.get(proximoIndex).getCota().getNumeroCota())){
+                        adicionarSlip = false;
+                    }
+                }
+                
+                if (adicionarSlip){
+                    
+                    arquivos.add(this.gerarSlipCobranca(boletos.get(index), true, TipoArquivo.PDF));
+                }
             }
         } catch (Exception e) {
             
