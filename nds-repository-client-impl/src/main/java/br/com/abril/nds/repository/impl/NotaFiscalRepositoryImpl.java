@@ -738,7 +738,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getNotaFiscalDevolucaoSimbolica() != null && filtro.getNotaFiscalVendaConsignado()) {
 			
 			hql.append(" AND mffc.notaFiscalVendaEmitida = :true ");
-		} else {
+		} else if(filtro.getNotaFiscalDevolucaoSimbolica() != null && !filtro.getNotaFiscalVendaConsignado()) {
 			
 			hql.append(" AND mffc.notaFiscalVendaEmitida = :false ");
 		}
