@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
@@ -129,14 +128,7 @@ public class AnaliseParcialController extends BaseController {
         result.include("classificacaoCotaList", vetor);
         result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
     }
-
-    @Post
-    public void historicoEdicoesBase(List<AnaliseEstudoDetalhesDTO> produtoEdicaoList) {
-        List<AnaliseEstudoDetalhesDTO> list = analiseParcialService.historicoEdicoesBase(produtoEdicaoList);
-
-        result.use(Results.json()).from(list, "list").recursive().serialize();
-    }
-
+    
     @Path("/abrirAnaliseFaixa")
     public void abrirAnaliseFaixa(Long estudo, Long faixaDe, Long faixaAte) {
         AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
@@ -257,12 +249,7 @@ public class AnaliseParcialController extends BaseController {
         table.setTotal(50);
         result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
-
-    @Path("/carregarEdicoesBaseEstudo")
-    public void carregarEdicoesBaseEstudo(Long estudoId) {
-        result.use(Results.json()).from(analiseParcialService.carregarEdicoesBaseEstudo(estudoId), "edicoesBase").recursive().serialize();
-    }
-
+    
     @Path("/mudarReparte")
     public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado, String legendaCota) {
         analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte, reparteDigitado);

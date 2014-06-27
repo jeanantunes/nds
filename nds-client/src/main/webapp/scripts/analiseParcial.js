@@ -261,26 +261,7 @@ var analiseParcialController = $.extend(true, {
             $('#total_venda'+ j).text(totais[j].venda);
         }
     },
-
-    carregarEdicoesBaseEstudo : function(estudoId) {
-        var edicoesJaCarregadas = false;
-        for (var i = 0; i < 6; i++) {
-            if (typeof analiseParcialController.edicoesBase[i] !== 'undefined') {
-                edicoesJaCarregadas = true;
-                break;
-            }
-        }
-        if (!edicoesJaCarregadas) {
-            $.postJSON(analiseParcialController.path +'/distribuicao/analise/parcial/carregarEdicoesBaseEstudo',
-                    [{name: 'estudoId', value: estudoId}],
-                    function(resultado) {
-                        if (typeof resultado.edicoesBase !== 'undefined' && resultado.edicoesBase.length > 0) {
-                            analiseParcialController.edicoesBase = resultado.edicoesBase;
-                        }
-                    });
-        }
-    },
-
+    
     alterarVisualizacaoGrid : function() {
 
         $('#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0)').each(function () {
@@ -1011,7 +992,6 @@ var analiseParcialController = $.extend(true, {
             onSuccess: analiseParcialController.onSuccessReloadGrid
         });
 
-        analiseParcialController.carregarEdicoesBaseEstudo(_id);
 
         $('#liberar').click(function(event){
             if(analiseParcialController.verificacoesParaLiberarEstudo()) {
