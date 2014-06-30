@@ -100,7 +100,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		
 		hql.append(StringUtils.join(whereClauseList, " AND "));
 		
-		hql.append(" group BY prodEdicao.id ");
+		hql.append(" group BY estudoG.id ");
 		
 		hql.append(this.ordenarConsultaBuscarProdutos(filtro));
 		
