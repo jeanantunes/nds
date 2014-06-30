@@ -59,8 +59,8 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 		ProdutoEdicao produtoEdicao = (ProdutoEdicao) consulta.uniqueResult();
 		if (null != produtoEdicao) {
 			// Atualiza valor de venda (PREÇO CAPA)
-			produtoEdicao.setPrecoVenda(tratarValoresNulo(produtoEdicao.getPrecoVenda(),input.getPreco()));
-			produtoEdicao.setPrecoPrevisto(tratarValoresNulo(produtoEdicao.getPrecoPrevisto(), input.getPreco()));
+			produtoEdicao.setPrecoVenda(tratarValoresNulo(input.getPreco(),produtoEdicao.getPrecoVenda()));
+			produtoEdicao.setPrecoPrevisto(tratarValoresNulo( input.getPreco(),produtoEdicao.getPrecoPrevisto()));
 
 			// Define valor de custo
 			double preco = produtoEdicao.getPrecoVenda().doubleValue();
