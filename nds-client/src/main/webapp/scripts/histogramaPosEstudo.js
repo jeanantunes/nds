@@ -133,14 +133,14 @@ var histogramaPosEstudoController = $.extend(true, {
 
 							rowId = parseInt(index) + 1;
 
-							var regx = /\s{0,}[0-9]+\s{0,}a\s{0,}[0-9]+/;
+							var regx = /\s{0,}[0-9]+\s{0,}a\s{0,}[0-9|\.]+/;
 							var faixasArr = regx.exec(row.cell.faixaReparte)[0].split("a");
 
 							newRow = {
 								id : rowId,
 								cell : {
 									faixaReparteDe : parseInt(faixasArr[0]),
-									faixaReparteAte : createInput(rowId, parseInt(faixasArr[1])),
+									faixaReparteAte : createInput(rowId, faixasArr[1]),
 
 									acao : createImgExcluir(rowId)
 								}
