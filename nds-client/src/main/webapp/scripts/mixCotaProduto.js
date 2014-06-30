@@ -3,9 +3,6 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	init : function() {
 		
-		$('.porProduto').hide();
-		$('.porCota').hide();
-		$("#reparteOriginal").hide();
 		
 		$(".mixCotasGrid").flexigrid({
 			preProcess: function(data){return mixCotaProdutoController.executarPreprocessamentoGridCota(data);},
@@ -212,8 +209,19 @@ var mixCotaProdutoController = $.extend(true, {
 			height : 200
 		});
 		
-		},
+		$('.porProduto').hide();
+		$('.porCota').hide();
+		$("#reparteOriginal").hide();
 		
+		$('#nomeCotaMix').keyup(function (){
+			autoComplete.autoCompletarPorNome("/cadastro/cota/autoCompletarPorNome",'#codigoCotaMix', '#nomeCotaMix', "nomeCota", 3);
+		});
+		
+		$('#nomeProdutoMix').keyup(function (){
+			autoComplete.autoCompletarPorNome("/produto/autoCompletarPorNomeProdutoAutoComplete",'#codigoProdutoMix', '#nomeProdutoMix', "nome", 3);
+		});
+		
+	},
 		
 		
 	//funcao de pre-processamento do resultado da busca de fixacao por produto

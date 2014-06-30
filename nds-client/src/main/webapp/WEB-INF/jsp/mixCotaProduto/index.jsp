@@ -94,7 +94,7 @@
                 <td width="6%">C&oacute;digo:</td>
                 <td width="13%"><input type="text" name="codigoProduto" id="codigoProdutoMix"  onkeydown="onlyNumeric(event);" style="width:80px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProdutoMix','#nomeProdutoMix',false,undefined,undefined )"/></td>
                 <td width="7%">Produto:</td>
-                <td width="24%"><input type="text" name="nomeProduto" id="nomeProdutoMix" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#'+this.id);" style="width:200px;"/></td>
+                <td width="24%"><input type="text" name="nomeProduto" id="nomeProdutoMix" style="width:200px;"/></td>
                 <td width="11%">Classifica&ccedil;&atilde;o:</td>
                 <td width="25%">
 	                <select name="select" id="filtroClassificacaoMix" style="width:160px;">
@@ -383,9 +383,13 @@
 <script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="scripts/fixacaoReparte.js"></script>
 <script type="text/javascript" src="scripts/mixCotaProduto.js"></script>
+<script type="text/javascript" src="scripts/autoCompleteCampos.js"></script>
 <script type="text/javascript">
+
 var pesquisaProduto = new PesquisaProduto();
 var pesquisaCota = new PesquisaCota();
+
+var autoComplete = new AutoCompleteCampos();
 
 $(function(){
 	mixCotaProdutoController.init();
