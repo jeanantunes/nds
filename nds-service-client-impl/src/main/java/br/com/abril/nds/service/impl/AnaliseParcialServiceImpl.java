@@ -5,8 +5,6 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -18,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
@@ -42,6 +39,7 @@ import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -131,23 +129,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         estudo.setEstudo(estudoGeradoRepository.buscarPorId(id));
         return estudo;
     }
-
-    @Override
-    @Transactional
-    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId) {
-        
-        EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(estudoId);
-        
-        Long lancamentoId = estudoGerado.getLancamentoID();
-        
-        Lancamento lancamento = this.lancamentoRepository.buscarPorId(lancamentoId);
-        
-        Integer numeroPeriodoBase =
-            lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo();
-        
-        return analiseParcialRepository.carregarEdicoesBaseEstudoParcial(estudoId, numeroPeriodoBase);
-    }
-
+    
     @Override
     @Transactional
     public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
@@ -575,47 +557,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     public CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto) {
         return cotaRepository.buscarCotaPorNumero(numeroCota, codigoProduto);
     }
-
-    @Override
-    @Transactional
-    public List<AnaliseEstudoDetalhesDTO> historicoEdicoesBase(List<AnaliseEstudoDetalhesDTO> produtoEdicaoList) {
-        List<AnaliseEstudoDetalhesDTO> list = new LinkedList<>();
-
-        for (AnaliseEstudoDetalhesDTO dto : produtoEdicaoList) {
-            AnaliseEstudoDetalhesDTO detalhesDTO;
-            if (dto.isParcial()) {
-                detalhesDTO = analiseParcialRepository.historicoEdicaoBase(dto.getIdProdutoEdicao(), dto.getNumeroPeriodo());
-            } else {
-                detalhesDTO = analiseParcialRepository.buscarDetalhesAnalise(dto.getIdProdutoEdicao());
-            }
-            
-            if(detalhesDTO != null){
-            	BeanUtils.copyProperties(detalhesDTO, dto, new String[]{"idProdutoEdicao", "parcial", "numeroPeriodo", "ordemExibicao"});
-            	list.add(dto);
-            }
-        }
-
-        Collections.sort(list, new Comparator<AnaliseEstudoDetalhesDTO>() {
-            @Override
-            public int compare(AnaliseEstudoDetalhesDTO o1, AnaliseEstudoDetalhesDTO o2) {
-                if (o1.isParcial()) {
-                    if (o1.getDataLancamento() == null || o2.getDataLancamento() == null) {
-                        return 0;
-                    }
-                int dt = o2.getDataLancamento().compareTo(o1.getDataLancamento());
-                    if (dt != 0 || o1.getNumeroPeriodo() == null || o2.getNumeroPeriodo() == null) {
-                    return dt;
-                }
-                    return o2.getNumeroPeriodo().compareTo(o1.getNumeroPeriodo());
-                } else {
-                    return o1.getOrdemExibicao().compareTo(o2.getOrdemExibicao());
-                }
-            }
-        });
-
-        return list;
-    }
-
+    
     private String traduzClassificacaoCota(String motivo) {
         if (mapClassificacaoCota == null) {
             populaMapClassificacaoCota();

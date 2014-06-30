@@ -14,6 +14,7 @@ $(function() {
 	$('#voltarBaseAnalise').click(function(){
 		$("#baseAnalise").show();
   	 	$('#analiseHistoricoContent').hide();
+  	 	$("#analiseHistorico").show();
 	})
 	
 function mostraDados(){

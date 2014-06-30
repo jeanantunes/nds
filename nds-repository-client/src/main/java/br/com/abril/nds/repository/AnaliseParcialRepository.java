@@ -3,7 +3,6 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
@@ -19,14 +18,12 @@ public interface AnaliseParcialRepository {
 	void atualizaReparteCota(Long estudoId, Long numeroCota, Long reparteSubtraido);
 	void atualizaReparteEstudo(Long estudoId, Long reparteSubtraido);
 	void liberar(Long id);
-	AnaliseEstudoDetalhesDTO buscarDetalhesAnalise(Long produtoEdicao);
 	List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo);
 	List<EdicoesProdutosDTO> buscaHistoricoDeVendaParaCota(Long numeroCota, List<Long> listProdutoEdicaoId);
 	List<EdicoesProdutosDTO> getEdicoesBaseParciais(Long numeroCota, Long numeroEdicao, String codigoProduto, Long periodo);
 	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId, Date date);
 	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase);
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
-    AnaliseEstudoDetalhesDTO historicoEdicaoBase(Long id, Integer numeroPeriodo);
     public List<EdicoesProdutosDTO> carregarPublicacaoDoEstudo(Long estudoId);
     AnaliseParcialDTO buscarReparteDoEstudo(Long estudoOrigem, Integer numeroCota);
     Integer[] buscarCotasPorTipoDistribuicao(TipoDistribuicaoCota tipo);

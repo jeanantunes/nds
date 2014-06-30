@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip_pdf" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="591" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" whenResourceMissingType="Empty" uuid="a28e778e-1e14-484a-90d1-0799fff7d59c">
 	<property name="ireport.zoom" value="1.3660269107301448"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="115"/>
+	<property name="ireport.y" value="192"/>
 	<style name="zebrado" mode="Opaque" backcolor="#F0F0F0">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($V{COLUMN_COUNT}.intValue() % 2) == 0)]]></conditionExpression>
@@ -462,11 +462,11 @@
 					<subreportParameter name="LISTA_RESUMO_COBRANCA">
 						<subreportParameterExpression><![CDATA[$P{LISTA_RESUMO_COBRANCA}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="VALOR_TOTAL_PAGAR">
+						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_PAGAR}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="VALOR_TOTAL_DESCONTO">
 						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_DESCONTO}.toString()]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="VALOR_TOTAL_PAGAR">
-						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_PAGAR}.toString()]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="VALOR_TOTAL_SEM_DESCONTO">
 						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_SEM_DESCONTO}.toString()]]></subreportParameterExpression>

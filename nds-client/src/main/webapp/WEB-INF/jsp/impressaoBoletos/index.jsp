@@ -48,7 +48,7 @@
 					
 					<span class="bt_novos">
 						<a isEdicao="true" href="javascript:impressaoBoletosController.imprimirDividas('BOLETO_SLIP')" rel="tipsy" title="Imprimir Boletos e Slips">
-							<img src="${pageContext.request.contextPath}/images/ico_boletos.gif" hspace="5" border="0" />
+							<img src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0" />
 						</a>
 					</span>
 				</div>
