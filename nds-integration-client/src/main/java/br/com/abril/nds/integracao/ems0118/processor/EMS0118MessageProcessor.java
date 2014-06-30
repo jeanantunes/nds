@@ -81,6 +81,7 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 					+" Produto " + input.getCodigoPublicacao() + " Edição " + input.getEdicao() );
 			
 				produtoEdicao.setPrecoCusto(new BigDecimal(precoCusto).setScale(2, RoundingMode.HALF_DOWN));
+				this.getSession().merge(produtoEdicao);
 			}
 		} else {
 			// NAO ENCONTROU Produto/Edicao, DEVE LOGAR
