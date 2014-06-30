@@ -140,7 +140,7 @@ var histogramaPosEstudoController = $.extend(true, {
 								id : rowId,
 								cell : {
 									faixaReparteDe : parseInt(faixasArr[0]),
-									faixaReparteAte : createInput(rowId, faixasArr[1]),
+									faixaReparteAte : createInput(rowId, parseInt(faixasArr[1])),
 
 									acao : createImgExcluir(rowId)
 								}
