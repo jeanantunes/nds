@@ -4,12 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,7 +29,6 @@ import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
-import br.com.abril.nds.dto.ItemImpressaoNfe;
 import br.com.abril.nds.dto.NfeImpressaoDTO;
 import br.com.abril.nds.dto.NfeImpressaoWrapper;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
@@ -50,7 +46,6 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.TributoAliquota;
-import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
@@ -518,7 +513,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			notaFiscal.setUsuario(usuario);
 			
-			NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor, filtro);
+			NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor);
 			
 			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
 			
@@ -535,24 +530,25 @@ public class NFeServiceImpl implements NFeService {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoque, tributoRegimeTributario);
 			}
 			
-			int parametro = Integer.valueOf(parametrosSistema.get("NFE_LIMITAR_QTDE_ITENS").getValor());
+			List<NotaFiscal> notasFiscaisSubdivididas = subdividirNotasFiscaisPorLimiteItens(parametrosSistema, notaFiscal, naturezaOperacao, distribuidor, transportadores);
 			
-			if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > parametro){
-				List<List<DetalheNotaFiscal>> listaItens = new ArrayList<>();
+			if(notasFiscaisSubdivididas != null && !notasFiscaisSubdivididas.isEmpty()) {
 				
-				int tamanho = (int) notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() / parametro;
-				
-				for (int i = parametro+1; i % parametro != 0 && notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > i; i++) {
-					listaItens.subList(tamanho, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size());
-					listaItens.add(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal());
+				for(NotaFiscal notasFiscalSubdividida : notasFiscaisSubdivididas) {
+					
+					notasFiscalSubdividida.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+					FaturaBuilder.montarFaturaNotaFiscal(notasFiscalSubdividida);
+					NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notasFiscalSubdividida);
+					notasFiscais.add(notasFiscalSubdividida);
 				}
-			}
+			} else {
 			
-			//FIXME: Ajustar o valor do campo para valores parametrizados
-			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
-			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoque);
-			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
-			notasFiscais.add(notaFiscal);
+				//FIXME: Ajustar o valor do campo para valores parametrizados
+				notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+				FaturaBuilder.montarFaturaNotaFiscal(notaFiscal);
+				NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
+				notasFiscais.add(notaFiscal);
+			}
 		}	
 		
 	}
@@ -706,7 +702,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			notaFiscal.setUsuario(usuario);
 			
-			NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor, filtro);
+			NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor);
 			
 			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
 			
@@ -723,25 +719,107 @@ public class NFeServiceImpl implements NFeService {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoFechamentoFiscal, tributoRegimeTributario);
 			}
 			
-			int parametro = Integer.valueOf(parametrosSistema.get("NFE_LIMITAR_QTDE_ITENS").getValor());
+			List<NotaFiscal> notasFiscaisSubdivididas = subdividirNotasFiscaisPorLimiteItens(parametrosSistema, notaFiscal, naturezaOperacao, distribuidor, transportadores);
 			
-			if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > parametro){
-				List<List<DetalheNotaFiscal>> listaItens = new ArrayList<>();
+			if(notasFiscaisSubdivididas != null && !notasFiscaisSubdivididas.isEmpty()) {
 				
-				int tamanho = (int) notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() / parametro;
-				
-				for (int i = parametro+1; i % parametro != 0 && notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > i; i++) {
-					listaItens.subList(tamanho, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size());
-					listaItens.add(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal());
+				for(NotaFiscal notasFiscalSubdividida : notasFiscaisSubdivididas) {
+					
+					notasFiscalSubdividida.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+					FaturaBuilder.montarFaturaNotaFiscal(notasFiscalSubdividida);
+					NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notasFiscalSubdividida);
+					notasFiscais.add(notasFiscalSubdividida);
 				}
+			} else {
+				
+				notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+				FaturaBuilder.montarFaturaNotaFiscal(notaFiscal);
+				NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
+				notasFiscais.add(notaFiscal);
 			}
 			
-			//FIXME: Ajustar o valor do campo para valores parametrizados
-			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
-			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosFechamentosFiscais);
-			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
-			notasFiscais.add(notaFiscal);
 		}
+	}
+
+	private List<NotaFiscal> subdividirNotasFiscaisPorLimiteItens(final Map<String, ParametroSistema> parametrosSistema
+			, final NotaFiscal notaFiscal, NaturezaOperacao naturezaOperacao, Distribuidor distribuidor
+			, List<Transportador> transportadores) {
+		
+		int limiteQtdItens = Integer.valueOf(parametrosSistema.get("NFE_LIMITAR_QTDE_ITENS").getValor());
+		
+		if(limiteQtdItens == 0) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Parâmetro de Limite de Itens por NF-e configurado incorretamente.");
+		}
+		
+		List<NotaFiscal> notasFiscaisSubdivididas = new ArrayList<NotaFiscal>();
+		
+		if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > limiteQtdItens) {
+			
+			int qtdNotasSubdivididas = (int) notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() / limiteQtdItens;
+			
+			List<List<DetalheNotaFiscal>> listaSubdivididaItensNotas = new ArrayList<>();
+			
+			if(qtdNotasSubdivididas == 1) {
+				
+				listaSubdivididaItensNotas.add(new ArrayList<DetalheNotaFiscal>(
+						notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().subList(
+								limiteQtdItens + 1, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size())));
+				
+				List<DetalheNotaFiscal> itensForaPrimeiraNota = notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().subList(
+						limiteQtdItens + 1, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size());
+				
+				notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().removeAll(itensForaPrimeiraNota);
+				
+			} else if(qtdNotasSubdivididas > 1) {
+				
+				int lastIndex = 0;
+				for(int i=1; i < qtdNotasSubdivididas; i++) {
+					lastIndex = i;
+					listaSubdivididaItensNotas.add(new ArrayList<DetalheNotaFiscal>(
+							notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().subList(
+									limiteQtdItens * i, (limiteQtdItens * (i + 1)))));
+				}
+				
+				listaSubdivididaItensNotas.add(new ArrayList<DetalheNotaFiscal>(
+						notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().subList(
+								qtdNotasSubdivididas * lastIndex, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size())));
+				
+				List<DetalheNotaFiscal> itensPrimeiraNota = 
+						notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().subList(0, limiteQtdItens);
+				
+				notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().retainAll(itensPrimeiraNota);
+				
+			}
+			
+			notasFiscaisSubdivididas.add(notaFiscal);
+			
+			for(List<DetalheNotaFiscal> detalhesNotaFiscal : listaSubdivididaItensNotas) {
+				
+				final NotaFiscal notaFiscalSubdividida = new NotaFiscal();
+				naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
+				naturezaOperacaoRepository.merge(naturezaOperacao);
+				
+				final Usuario usuario = this.usuarioService.getUsuarioLogado();
+				
+				notaFiscal.setUsuario(usuario);
+				
+				NotaFiscalBuilder.popularDadosEmissor(notaFiscalSubdividida, distribuidor);
+				
+				NotaFiscalTransportadorBuilder.montarTransportador(notaFiscalSubdividida, naturezaOperacao, transportadores);
+				
+				NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscalSubdividida, parametrosSistema);
+				
+				notaFiscalSubdividida.getNotaFiscalInformacoes().setDetalhesNotaFiscal(detalhesNotaFiscal);
+				
+				notasFiscaisSubdivididas.add(notaFiscalSubdividida);
+				
+			}
+			
+			return notasFiscaisSubdivididas;
+		}
+		
+		return null;
 	}
 	
 	// metodo responsavel pelo dados do distribuidor da nota
@@ -777,7 +855,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			notaFiscal.setUsuario(usuario);
 			
-			NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor, filtro);
+			NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor);
 			
 			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
 			
@@ -794,26 +872,25 @@ public class NFeServiceImpl implements NFeService {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoRegimeTributario);
 			}
 			
+			List<NotaFiscal> notasFiscaisSubdivididas = subdividirNotasFiscaisPorLimiteItens(parametrosSistema, notaFiscal, naturezaOperacao, distribuidor, transportadores);
 			
-			int parametro = Integer.valueOf(parametrosSistema.get("NFE_LIMITAR_QTDE_ITENS").getValor());
-			
-			if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > parametro){
-				List<List<DetalheNotaFiscal>> listaItens = new ArrayList<>();
+			if(notasFiscaisSubdivididas != null && !notasFiscaisSubdivididas.isEmpty()) {
 				
-				int tamanho = (int) notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() / parametro;
-				
-				for (int i = parametro+1; i % parametro != 0 && notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > i; i++) {
-					listaItens.subList(tamanho, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size());
-					listaItens.add(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal());
+				for(NotaFiscal notasFiscalSubdividida : notasFiscaisSubdivididas) {
+					
+					notasFiscalSubdividida.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+					FaturaBuilder.montarFaturaNotaFiscal(notasFiscalSubdividida);
+					NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notasFiscalSubdividida);
+					notasFiscais.add(notasFiscalSubdividida);
 				}
+			} else {
+			
+				notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+				FaturaBuilder.montarFaturaNotaFiscal(notaFiscal);
+				NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
+				notasFiscais.add(notaFiscal);
 			}
-			
-			
-			//FIXME: Ajustar o valor do campo para valores parametrizados
-			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
-			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
-			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
-			notasFiscais.add(notaFiscal);
+
 		}
 	}
 
@@ -834,9 +911,9 @@ public class NFeServiceImpl implements NFeService {
 			tributoAliquota.put(tributo.getNomeTributo(), tributo);
 		}
 				
-		NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor, filtro);
+		NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor);
 		
-		NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor, filtro);
+		NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor);
 		
 		EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, distribuidor);
 		
@@ -874,7 +951,7 @@ public class NFeServiceImpl implements NFeService {
 			}
 		}
 		
-		FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
+		FaturaBuilder.montarFaturaNotaFiscal(notaFiscal);
 		NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 		
 		notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
@@ -1025,7 +1102,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			//FIXME: Ajustar o valor do campo para valores parametrizados
 			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
-			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
+			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal);
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 			notasFiscais.add(notaFiscal);
 		}
@@ -1060,69 +1137,5 @@ public class NFeServiceImpl implements NFeService {
 	        }
 		}	
     }
-    
-    private void carregarNEDadosItens(final NfeImpressaoDTO nfeImpressao, final NotaEnvio notaEnvio) {
-        
-        final List<ItemImpressaoNfe> listaItemImpressaoNfe = new ArrayList<ItemImpressaoNfe>();
-        
-        final List<ItemNotaEnvio> itensNotaEnvio =  notaEnvio.getListaItemNotaEnvio();
-        
-        String codigoProduto 		= "";
-        String descricaoProduto 	= "";
-        Long produtoEdicao 			= null;
-        BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
-        BigDecimal valorTotalProduto 	= BigDecimal.ZERO;
-        BigDecimal valorDescontoProduto = BigDecimal.ZERO;
-        
-        Collections.sort(itensNotaEnvio, new Comparator<ItemNotaEnvio>(){
-            @Override
-            public int compare(final ItemNotaEnvio o1, final ItemNotaEnvio o2) {
-                if (o1 != null && o2 != null) {
-                    if(o1 != null && o1.getSequenciaMatrizLancamento() != null && o2 != null && o2.getSequenciaMatrizLancamento() != null) {
-                        return o1.getSequenciaMatrizLancamento().compareTo(o2.getSequenciaMatrizLancamento());
-                    } else if ((o1.getProdutoEdicao() != null && o1.getProdutoEdicao().getProduto() != null)
-                            && (o2.getProdutoEdicao() != null && o2.getProdutoEdicao().getProduto() != null)) {
-                        o1.getProdutoEdicao().getProduto().getNome().compareTo(o2.getProdutoEdicao().getProduto().getNome());
-                    }
-                }
-                return 0;
-            }
-            
-        });
-        
-        boolean temLancamentoComFuroDeProduto = false;
-        
-        for(final ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
-            
-            codigoProduto 		= itemNotaEnvio.getCodigoProduto().toString();
-            descricaoProduto 	= (itemNotaEnvio.getFuroProduto()==null)
-            		? itemNotaEnvio.getPublicacao()
-            				:itemNotaEnvio.getPublicacao()+" (1) ";
-            produtoEdicao		= itemNotaEnvio.getProdutoEdicao().getNumeroEdicao();
-            
-            valorUnitarioProduto = itemNotaEnvio.getPrecoCapa();
-            valorDescontoProduto = itemNotaEnvio.getDesconto().divide(new BigDecimal("100"));
-            valorTotalProduto	 = itemNotaEnvio.getPrecoCapa().multiply(new BigDecimal(itemNotaEnvio.getReparte()));
-            
-            final ItemImpressaoNfe item = new ItemImpressaoNfe();
-            
-            item.setCodigoProduto(codigoProduto);
-            item.setDescricaoProduto(descricaoProduto);
-            item.setProdutoEdicao(produtoEdicao);
-            item.setQuantidadeProduto(new BigDecimal(itemNotaEnvio.getReparte().toString()));
-            item.setValorUnitarioProduto(valorUnitarioProduto);
-            item.setValorTotalProduto(valorTotalProduto);
-            item.setValorDescontoProduto(valorTotalProduto.subtract(valorTotalProduto.multiply(valorDescontoProduto)));
-            item.setSequencia(itemNotaEnvio.getSequenciaMatrizLancamento());
-            item.setCodigoBarra(itemNotaEnvio.getProdutoEdicao().getCodigoDeBarras());
-            
-            listaItemImpressaoNfe.add(item);
-            
-            if(itemNotaEnvio.getFuroProduto()!= null){
-            	temLancamentoComFuroDeProduto = true;
-            }
-
-        }		
-	}
     
 }
