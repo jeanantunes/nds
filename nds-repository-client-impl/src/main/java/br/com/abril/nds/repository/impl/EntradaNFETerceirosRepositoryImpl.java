@@ -495,5 +495,20 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		
 		return hql.toString();
 	}
-	
+
+	@Override
+	public Integer qtdeNotasPendentesEmissao(FiltroEntradaNFETerceiros filtro) {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select count(cota) ");
+		
+		hql.append(getSqlFromEWhereNotaPendenteEmissao(filtro, false));
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		buscarParametros(filtro, query, true);
+		
+		Long totalRegistros = (Long) query.uniqueResult();
+		
+		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
+	}
 }
