@@ -24,5 +24,7 @@ public interface EntradaNFETerceirosService {
 	Integer qtdeNotasRecebidas(FiltroEntradaNFETerceiros filtro);
 	
 	Integer qtdeNotasPendentesRecebimento(FiltroEntradaNFETerceiros filtro);
+
+	List<ConsultaEntradaNFETerceirosPendentesDTO> consultaNotasPendentesEmissao(FiltroEntradaNFETerceiros filtro, boolean b);
 	
 }

@@ -223,7 +223,7 @@ public class EntradaNFETerceirosController extends BaseController {
 	
 	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> consultaNotasPendentesEmissao(final FiltroEntradaNFETerceiros filtro) {
 
-        List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.consultaNotasPendentesRecebimento(filtro, true);
+        List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.consultaNotasPendentesEmissao(filtro, true);
 
         Integer tamanhoListaNotasPendentes = this.entradaNFETerceirosService.buscarTodasNFNotas(filtro);
         
@@ -248,9 +248,7 @@ public class EntradaNFETerceirosController extends BaseController {
 		final Integer total = this.notaFiscalService.qtdeNota(idControleConferencia);
 		
 		if (total <= 0) {		
-
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
-			
 		}
 		
 		final List<ItemNotaFiscalPendenteDTO> listItemNota = this.notaFiscalService.buscarItensPorNota(idControleConferencia, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page * rp - rp, rp);
@@ -264,6 +262,7 @@ public class EntradaNFETerceirosController extends BaseController {
 	@Path("/cadastrarNota")
 	@Rules(Permissao.ROLE_NFE_ENTRADA_NFE_TERCEIROS_ALTERACAO)	
 	public void cadastrarNota(final NotaFiscalEntradaCota nota, final Integer numeroCota, final Long idControleConferenciaEncalheCota){
+	    
 		this.notaFiscalEntradaService.inserirNotaFiscal(nota, numeroCota, idControleConferenciaEncalheCota);
 
 		final ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro efetuado com sucesso.");
@@ -285,9 +284,7 @@ public class EntradaNFETerceirosController extends BaseController {
 			filtro.setCota(null);
 		}
 		
-		if (filtro.getFornecedor() != null
-				&& filtro.getFornecedor().getId() != null
-				&& filtro.getFornecedor().getId() > 0) {
+		if (filtro.getFornecedor() != null  && filtro.getFornecedor().getId() != null && filtro.getFornecedor().getId() > 0) {
 			Fornecedor fornecedor = notaFiscalEntradaService.obterFornecedorPorID(filtro.getFornecedor().getId());
 			if (fornecedor != null) {
 				filtro.setFornecedor(fornecedor);
