@@ -5,6 +5,7 @@ var anaLiseHistogramaController = $.extend(true, {
 	voltarFiltro:function(){
 		$("#analiseHistogramaVendasContent", anaLiseHistogramaController.workspace).clear();
 		$("#histogramaVendasContent", anaLiseHistogramaController.workspace).show();
+		$('#histogramaVenda_botaoAnalise').show();
 	},
 	
 	createInput : function createInput(id, value){
