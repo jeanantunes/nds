@@ -1,10 +1,11 @@
 var anaLiseHistogramaController = $.extend(true, {
 	MIN_FAIXA : 0, 
-	MAX_FAIXA : 999999,
+	MAX_FAIXA : 9999999,
 	tempData:null,
 	voltarFiltro:function(){
 		$("#analiseHistogramaVendasContent", anaLiseHistogramaController.workspace).clear();
 		$("#histogramaVendasContent", anaLiseHistogramaController.workspace).show();
+		$('#histogramaVenda_botaoAnalise').show();
 	},
 	
 	createInput : function createInput(id, value){
@@ -517,6 +518,8 @@ var anaLiseHistogramaController = $.extend(true, {
 				$("#voltarBaseAnalise", anaLiseHistogramaController.workspace).click(function(){
 					$("#analiseHistogramaVendasContent", anaLiseHistogramaController.workspace).show();
 					$("#analiseHistoricoVendasContent", anaLiseHistogramaController.workspace).hide();
+					
+					
 				});
 				
 				$("#analiseHistoricoPopUpNomeProduto", anaLiseHistogramaController.workspace).clear();
