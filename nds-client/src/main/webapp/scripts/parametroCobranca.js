@@ -181,7 +181,7 @@ var parametroCobrancaController = $.extend(true,
 			
 			$.each(resultado.rows, function(index, row) {
 				
-				var linkEditar = '<a isEdicao="true" href="javascript:;" id="bt_alterar" onclick="parametroCobrancaController.popup_alterar(' + row.cell.idPolitica + ');" style="cursor:pointer; margin-right:10px;">' +
+				var linkEditar = '<a  href="javascript:;" id="bt_alterar" onclick="parametroCobrancaController.popup_alterar(' + row.cell.idPolitica + ');" style="cursor:pointer; margin-right:10px;">' +
 						     	  	'<img title="Aprovar" src="'+contextPath+'/images/ico_editar.gif" hspace="5" border="0px" />' +
 						  		  '</a>';
 				

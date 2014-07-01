@@ -83,7 +83,7 @@
 
 <div class="linha_separa_fields">&nbsp;</div>
  	
-<fieldset class="classFieldset">
+<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
   <legend> Pesquisar Mapa de Abastecimento</legend>
   <table width="980" border="0" cellpadding="2" cellspacing="1" class="filtro">
       <tr>

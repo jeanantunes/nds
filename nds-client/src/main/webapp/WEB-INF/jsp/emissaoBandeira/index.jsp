@@ -88,7 +88,7 @@
 				<b>Suspens&atilde;o < evento > com < status >.</b></p>
 	</div>
     	
-      <fieldset class="classFieldset">
+      <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    	    <legend> Consulta Bandeira</legend>
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>

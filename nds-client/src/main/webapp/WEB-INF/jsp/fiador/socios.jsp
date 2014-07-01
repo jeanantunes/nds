@@ -20,7 +20,7 @@
 	<br />
 	
 	<span class="bt_add">
-		<a href="javascript:fiadorController.adicionarSocio();" id="fiadorController-btnAddEditarSocio" rel="tipsy" title="Incluir Novo Sócio">
+		<a href="javascript:fiadorController.adicionarSocio();" isEdicao="true" id="fiadorController-btnAddEditarSocio" rel="tipsy" title="Incluir Novo Sócio">
 			<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/>
 		</a>
 	</span>

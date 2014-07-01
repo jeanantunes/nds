@@ -1533,7 +1533,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         final AnaliseHistogramaDTO totalizar = new AnaliseHistogramaDTO();
         totalizar.setFaixaDe(BigInteger.ZERO);
-        totalizar.setFaixaAte(new BigInteger("999999"));
+        totalizar.setFaixaAte(new BigInteger("9999999"));
         totalizar.setFaixaVenda("Total");
         totalizar.setRepTotal(reparteTotal);
         totalizar.setVdaTotal(vendaTotal);

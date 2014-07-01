@@ -74,7 +74,7 @@ function submitForm(f){
 <br clear="all"/>
     <br />
     
-    <fieldset class="classFieldset">
+    <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    	    <legend> Integra&ccedil;&atilde;o Fiscal P7</legend>
         <table border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr width="50">

@@ -276,7 +276,6 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	@Post
 	@Path("/carregarDadosProdutoEdicao.json")
-	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
     public void carregarDadosProdutoEdicao(FiltroProdutoDTO filtro, Long idProdutoEdicao, String situacaoProdutoEdicao,
             boolean redistribuicao) {
 		
@@ -303,6 +302,7 @@ public class ProdutoEdicaoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
 	public void salvar(UploadedFile imagemCapa,
 			ProdutoEdicaoDTO produtoEdicaoDTO, ModoTela modoTela,boolean istrac29) {
 			

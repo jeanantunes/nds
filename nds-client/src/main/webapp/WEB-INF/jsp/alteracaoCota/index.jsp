@@ -515,7 +515,7 @@
 	</div>
   	<div class="linha_separa_fields">&nbsp;</div>
 
-		<fieldset class="classFieldset">
+		<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    		<legend> Pesquisar         </legend>
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
         	<tr>

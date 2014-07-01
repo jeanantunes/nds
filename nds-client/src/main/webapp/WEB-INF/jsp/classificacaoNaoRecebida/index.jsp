@@ -87,7 +87,7 @@ $(function() {
 				<b>Classificação Não Recebida < evento > com < status >.</b></p>
 	</div-->
     	
-      <fieldset class="classFieldset" style="width: 953px!important;">
+      <fieldset class="classFieldset fieldFiltroItensNaoBloqueados" style="width: 953px!important;">
    	    <legend> Pesquisar Classifica&ccedil;&atilde;o N&atilde;o Recebida</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>

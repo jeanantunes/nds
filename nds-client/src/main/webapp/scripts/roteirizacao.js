@@ -2482,7 +2482,12 @@ var roteirizacao = $.extend(true, {
     },
 
     confirmarRoteirizacao : function() {
-        $.postJSON(contextPath + '/cadastro/roteirizacao/confirmarRoteirizacao',
+        
+     	if(!verificarPermissaoAcesso(roteirizacao.workspace)){
+    		return; 
+    	}
+    
+    	$.postJSON(contextPath + '/cadastro/roteirizacao/confirmarRoteirizacao',
             null,
             function(result) {
         		

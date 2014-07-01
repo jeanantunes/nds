@@ -641,6 +641,7 @@ public class CotaController extends BaseController {
 	 */
 	@Post
 	@Path("/salvarCotaCNPJ")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void salvarCotaPessoaJuridica(CotaDTO cotaDTO){
 
 		cotaDTO.setTipoPessoa(TipoPessoa.JURIDICA);
@@ -744,6 +745,7 @@ public class CotaController extends BaseController {
 	 */
 	@Post
 	@Path("/salvarCotaCPF")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void salvarCotaPessoaFisica(CotaDTO cotaDTO){
 		
 		cotaDTO.setTipoPessoa(TipoPessoa.FISICA);
@@ -821,7 +823,6 @@ public class CotaController extends BaseController {
      */
 	@Post
 	@Path("/editar")
-	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void editar(Long idCota){
 		
 		carregarDadosEnderecoETelefone(idCota);
@@ -857,6 +858,7 @@ public class CotaController extends BaseController {
 	 */
 	@Post
 	@Path("/salvarFornecedores")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void salvarFornecedores(List<Long> fornecedores, Long idCota){
 		
 		this.fornecedorService.salvarFornecedorCota(fornecedores, idCota);
@@ -892,6 +894,7 @@ public class CotaController extends BaseController {
      */
 	@Post
 	@Path("/salvarEnderecos")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void salvarEnderecos(Long idCota){
 	
 		validar();
@@ -918,6 +921,7 @@ public class CotaController extends BaseController {
 	 */
 	@Post
 	@Path("/salvarTelefones")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void salvarTelefones(Long idCota){
 		
 		validar();
@@ -1397,6 +1401,7 @@ public class CotaController extends BaseController {
      * @throws FileNotFoundException
      */
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void salvarDistribuicaoCota(DistribuicaoDTO distribuicao) throws FileNotFoundException, IOException {
 		
 		this.validarDadosDistribuicaoCotaSalvar(distribuicao);

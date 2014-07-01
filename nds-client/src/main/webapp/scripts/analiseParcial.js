@@ -13,8 +13,9 @@ var analiseParcialController = $.extend(true, {
         exibirMensagem(tipo, texto);
     },
 
-    mudarBaseVisualizacao : function() {
-        var objEdicoesBase = {};
+    mostrarModalBaseVisualizacao:function(){
+    	
+    	var objEdicoesBase = {};
         objEdicoesBase.page = 1;
         objEdicoesBase.total = 1;
         objEdicoesBase.rows = [];
@@ -94,6 +95,10 @@ var analiseParcialController = $.extend(true, {
                 }
             }
         });
+    },
+    
+    mudarBaseVisualizacao : function() {
+    	analiseParcialController.verificarPermissaoAcesso(analiseParcialController.mostrarModalBaseVisualizacao); 
     },
 
     buscarNomeProduto : function(elemento) {
@@ -1255,9 +1260,24 @@ var analiseParcialController = $.extend(true, {
             });
     },
 
+    verificarPermissaoAcesso:function(funcao){
+		
+		var	url = analiseParcialController.path + '/distribuicao/analise/parcial/validar';
+
+		$.postJSON(url,null,function(result) {
+			funcao();
+		},null,true);
+		
+	},
+    
     exibirCotasQueNaoEntraramNoEstudo : function() {
         
-        //limpa os campos ao abrir o pop-up
+    	analiseParcialController.verificarPermissaoAcesso(analiseParcialController.exibirModalCotasQueNaoEntraramNoEstudo);
+    },
+    
+    exibirModalCotasQueNaoEntraramNoEstudo:function(){
+    	
+    	 //limpa os campos ao abrir o pop-up
         $("#cotasQueNaoEntraramNoEstudo_cota").val('');
         $("#cotasQueNaoEntraramNoEstudo_nome").val('');
         $("#cotasQueNaoEntraramNoEstudo_motivo").val('');
