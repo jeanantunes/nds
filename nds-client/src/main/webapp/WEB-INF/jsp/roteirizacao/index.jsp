@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
@@ -37,7 +38,7 @@ $("#cotaPesquisa",roteirizacao.workspace).justInput(/[0-9]/);
 	</div>
 	
     <div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="fieldFiltro">
+      <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
    	    <legend> Pesquisar Rota / Roteiro</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>

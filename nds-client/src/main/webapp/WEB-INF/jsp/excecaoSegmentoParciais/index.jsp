@@ -138,7 +138,7 @@
       <b>Classificação Não Recebida < evento > com < status >.</b></p>
     </div>
 
-    <fieldset class="classFieldset">
+    <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
       <legend> Pesquisar Exceções de Segmentos e Parciais</legend>
 
 

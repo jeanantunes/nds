@@ -96,7 +96,7 @@ var fornecedorController = $.extend(true,{
 			
 			if(ENDERECO_FORNECEDOR.indBloqueiaCamposEdicaoFornecedor) {
 				
-				return  '<a href="javascript:;" onclick="ENDERECO_FORNECEDOR.editarEndereco(' 		 
+				return  '<a href="javascript:;" isEdicao="true" onclick="ENDERECO_FORNECEDOR.editarEndereco(' 		 
 				+ idEndereco 
 				+ ')" ' 															
 				+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar endereço">' 	
@@ -106,11 +106,11 @@ var fornecedorController = $.extend(true,{
 				
 			} else {
 				
-				return '<a href="javascript:;" onclick="ENDERECO_FORNECEDOR.editarEndereco(' + idEndereco + ')" ' +
+				return '<a href="javascript:;" isEdicao="true" onclick="ENDERECO_FORNECEDOR.editarEndereco(' + idEndereco + ')" ' +
 				' style="cursor:pointer;border:0px;margin:5px" title="Editar endereço">' +
 				'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 				'</a>' +
-				'<a href="javascript:;" onclick="ENDERECO_FORNECEDOR.confirmarExclusaoEndereco(' + idEndereco + ')" ' +
+				'<a href="javascript:;" isEdicao="true" onclick="ENDERECO_FORNECEDOR.confirmarExclusaoEndereco(' + idEndereco + ')" ' +
 				' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
 				'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 				'</a>';
@@ -467,7 +467,7 @@ var fornecedorController = $.extend(true,{
 
 				if(FORNECEDOR.indBloqueiaCamposEdicaoFornecedor) {
 
-					return '<a href="javascript:;" onclick="FORNECEDOR.editarTelefone('
+					return '<a href="javascript:;" isEdicao="true" onclick="FORNECEDOR.editarTelefone('
 					+ idTelefone
 					+ ')" '
 					+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar telefone">'
@@ -478,13 +478,13 @@ var fornecedorController = $.extend(true,{
 					
 				} else {
 					
-					return '<a href="javascript:;" onclick="FORNECEDOR.editarTelefone('
+					return '<a href="javascript:;" isEdicao="true" onclick="FORNECEDOR.editarTelefone('
 					+ idTelefone
 					+ ')" '
 					+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar telefone">'
 					+ '<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>'
 					+ '</a>'
-					+ '<a href="javascript:;" onclick="FORNECEDOR.removerTelefone('
+					+ '<a href="javascript:;" isEdicao="true" onclick="FORNECEDOR.removerTelefone('
 					+ idTelefone
 					+ ')" '
 					+ ' style="cursor:pointer;border:0px;margin:5px" title="Excluir telefone">'
@@ -499,7 +499,7 @@ var fornecedorController = $.extend(true,{
 
 				if (isHabilitado) {
 				
-					return '<a href="javascript:;" onclick="fornecedorController.editarFornecedor('
+					return '<a href="javascript:;"  onclick="fornecedorController.editarFornecedor('
 							+ idFornecedor 
 							+ ','
 							+ false
@@ -531,7 +531,12 @@ var fornecedorController = $.extend(true,{
 			},
 
 			confirmarExclusaoFornecedor:function (idFornecedor) {
-			
+				
+				if(!verificarPermissaoAcesso(fornecedorController.workspace)){
+					return;
+				}
+				
+				
 				$( "#fornecedorController-dialog-excluir", fornecedorController.workspace ).dialog({
 					resizable: false,
 					height:170,

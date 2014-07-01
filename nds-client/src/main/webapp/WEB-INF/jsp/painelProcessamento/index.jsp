@@ -69,7 +69,7 @@
 	  </div>
 	  <div class="linha_separa_fields">&nbsp;</div>
 
-      <fieldset class="fieldFiltro">
+      <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
        	  <legend>Painel de Processamentos</legend>
 		<div id="toggleFornecedores">
 

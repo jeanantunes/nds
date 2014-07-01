@@ -13,7 +13,7 @@ $(function(){
 </head>
 
 <body>
-
+	<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 	<form id="form-cancelar-cadastro-fornecedor">
 	<div id="dialog-cancelar-cadastro-fornecedor" title="Fornecedores" style="display: none;">
 		<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
@@ -45,7 +45,7 @@ $(function(){
 		</div>
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="fieldFiltro">
+      <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
    	    <legend> Pesquisar Fornecedor</legend>
    	    <form id="fornecedorController-formularioPesquisaFornecedores">
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">

@@ -174,7 +174,7 @@ fieldset label {
 	<div class="linha_separa_fields">&nbsp;</div>
 
 	<form id="form-pesquisa-nfe">
-		<fieldset class="fieldFiltro">
+		<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 			<legend> Pesquisa NF-e</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 				class="filtro">

@@ -17,9 +17,9 @@
 	    </td>
 	    
 	     <td width="69" align="center">
-			<a id="linkMapEnviarTodos" href="javascript:;"><img height="30" width="39" border="0" src="${pageContext.request.contextPath}/images/seta_vai_todos.png"></a>
+			<a id="linkMapEnviarTodos" isEdicao="true" href="javascript:;"><img height="30" width="39" border="0" src="${pageContext.request.contextPath}/images/seta_vai_todos.png"></a>
 			<br><br>
-			<a id="linkMapVoltarTodos" href="javascript:;"><img height="30" width="39" border="0" src="${pageContext.request.contextPath}/images/seta_volta_todos.png"></a>
+			<a id="linkMapVoltarTodos"  isEdicao="true" href="javascript:;"><img height="30" width="39" border="0" src="${pageContext.request.contextPath}/images/seta_volta_todos.png"></a>
 			<br>
 		</td>
 	    	

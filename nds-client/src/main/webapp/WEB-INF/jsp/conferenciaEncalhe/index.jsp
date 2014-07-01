@@ -87,7 +87,7 @@
 				</fieldset>
 			</div>
 		</div>
-		<fieldset class="fieldFiltro">
+		<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 
 			<legend> Pesquisar Encalhe</legend>
 

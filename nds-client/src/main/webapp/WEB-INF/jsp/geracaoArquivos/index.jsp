@@ -18,11 +18,13 @@ $(function(){
 
 </script>
 <form>
-
+	
+	 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+	
     <div class="areaBts">
 		<div class="area">
 		    <span class="bt_novos"
-			    title="Confirmar"><a id="btnGerar" href="javascript:;" rel="tipsy"><img
+			    title="Confirmar"><a id="btnGerar"  isEdicao="true" href="javascript:;" rel="tipsy"><img
 					border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif"></a>
 			</span>
 		</div>
@@ -30,7 +32,7 @@ $(function(){
     <br/>
     <br/>
 
-<fieldset class="classFieldset">
+<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 	<legend> Geração de Arquivos aos Jornaleiros</legend>
 	<table width="950" border="0" cellpadding="2" cellspacing="1"
 		class="filtro">

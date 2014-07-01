@@ -267,7 +267,7 @@
 			<div class="areaBts">
 				<div class="area">
 					<span class="bt_novos">
-						<a href="javascript:;" onclick="CadastroCalendario.popupNovoCadastroFeriado();" rel="tipsy" title="Incluir Novo Feriado">
+						<a href="javascript:;" isEdicao="true" onclick="CadastroCalendario.popupNovoCadastroFeriado();" rel="tipsy" title="Incluir Novo Feriado">
 							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
 						</a>
 					</span>
@@ -284,7 +284,7 @@
 				</div>
 			</div>
 			<div class="linha_separa_fields">&nbsp;</div>
-			<fieldset class="fieldFiltro"> 
+			<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados"> 
 				
 				<legend>Pesquisar</legend>
 				

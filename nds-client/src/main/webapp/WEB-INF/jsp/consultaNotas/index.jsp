@@ -88,7 +88,7 @@ fieldset label
 
 		<form name="formPesquisaNotas" id="formPesquisaNotas">
 			
-			<fieldset class="fieldFiltro" style="margin-top: 0px">
+			<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados" style="margin-top: 0px">
 				<legend> Pesquisar Nota </legend>
 				<table width="950" border="0" cellpadding="2" cellspacing="1"
 					   class="filtro">

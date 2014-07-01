@@ -229,21 +229,21 @@
 						<tr class="especialidades">
 							<td valign="top">
 								<span class="bt_novos">
-									<a href="javascript:;" onclick="transportadorController.popup_incluir_veiculo();" rel="tipsy" title="Incluir Novo Veículo">
+									<a href="javascript:;" isEdicao="true" onclick="transportadorController.popup_incluir_veiculo();" rel="tipsy" title="Incluir Novo Veículo">
 										<img src="${pageContext.request.contextPath}/images/ico_veiculo.gif" hspace="5" border="0" />
 									</a>
 								</span>
 							</td>
 							<td valign="top">
 								<span class="bt_novos">
-									<a href="javascript:;" onclick="transportadorController.popup_incluir_motorista();" rel="tipsy" title="Incluir Novo Motorista">
+									<a href="javascript:;" isEdicao="true" onclick="transportadorController.popup_incluir_motorista();" rel="tipsy" title="Incluir Novo Motorista">
 										<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0" />
 									</a>
 								</span>
 							</td>
 							<td valign="top">
 								<span class="bt_novos">
-									<a href="javascript:;" onclick="transportadorController.confirmarAssociacao();" rel="tipsy" title="Confirmar Associação">
+									<a href="javascript:;" isEdicao="true" onclick="transportadorController.confirmarAssociacao();" rel="tipsy" title="Confirmar Associação">
 										<img border="0" src="${pageContext.request.contextPath}/images/ico_check.gif">
 									</a>
 								</span>
@@ -265,14 +265,14 @@
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="transportadorController.limparCamposCadastroTransportador();transportadorController.popup_novo_transportador();" rel="tipsy" title="Incluir Novo Transportador">
+				<a href="javascript:;" isEdicao="true" onclick="transportadorController.limparCamposCadastroTransportador();transportadorController.popup_novo_transportador();" rel="tipsy" title="Incluir Novo Transportador">
 					<img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif"	hspace="5" border="0" />
 			</a>
 		</span>
 		</div>
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
-	<fieldset class="fieldFiltro">
+	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 		<legend> Pesquisar Transportador </legend>
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
