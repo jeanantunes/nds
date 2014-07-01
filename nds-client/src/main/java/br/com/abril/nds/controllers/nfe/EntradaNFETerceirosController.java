@@ -223,17 +223,17 @@ public class EntradaNFETerceirosController extends BaseController {
 	
 	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> consultaNotasPendentesEmissao(final FiltroEntradaNFETerceiros filtro) {
 
-        List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.consultaNotasPendentesEmissao(filtro, true);
+        List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentesEmissao = this.entradaNFETerceirosService.consultaNotasPendentesEmissao(filtro, true);
 
-        Integer tamanhoListaNotasPendentes = this.entradaNFETerceirosService.buscarTodasNFNotas(filtro);
+        Integer tamanhoListaNotasPendentes = this.entradaNFETerceirosService.qtdeNotasPendentesEmissao(filtro);
         
         TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>>();
         
-        if(listaNotasPendentes.size() == 0){
+        if(listaNotasPendentesEmissao.size() == 0){
             throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
         }
         
-        tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasPendentes));
+        tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasPendentesEmissao));
         
         tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
         
