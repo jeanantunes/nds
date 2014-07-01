@@ -39,7 +39,7 @@
 <div class="areaBts">
   <div class="area">
     <span class="bt_novos">
-      <a href="javascript:histogramaVendasController.realizarAnalise();" rel="tipsy" title="Analisar">
+      <a href="javascript:histogramaVendasController.realizarAnalise();" id="histogramaVenda_botaoAnalise" rel="tipsy" title="Analisar">
         <img src="images/ico_copia_distrib.gif" hspace="5" border="0" />
       </a>
     </span>
