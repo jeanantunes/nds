@@ -1920,7 +1920,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Natureza de Operação incorreta.");
 		}
 		
-		
 		List<TipoMovimento> itensMovimentosFiscais = obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
 		
 		if(itensMovimentosFiscais.size() > 0) {

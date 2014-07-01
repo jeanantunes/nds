@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.fiscal.nota.CNPJEmitente;
@@ -45,7 +44,7 @@ public class NotaFiscalBuilder implements Serializable {
 	@Autowired
 	private static ParametroSistemaRepository parametroSistemaRepository;
 	
-	public static void popularDadosEmissor(NotaFiscal notaFiscal, Distribuidor distribuidor, FiltroNFeDTO filtro) {
+	public static void popularDadosEmissor(NotaFiscal notaFiscal, Distribuidor distribuidor) {
 		
 		if(notaFiscal.getNotaFiscalInformacoes() == null) {
 			notaFiscal.setNotaFiscalInformacoes(new NotaFiscalInformacoes());
@@ -323,7 +322,7 @@ public class NotaFiscalBuilder implements Serializable {
 		
 	}
 	
-	public static void popularDadosTransportadora(NotaFiscal notaFiscal, Distribuidor distribuidor, FiltroNFeDTO filtro) {
+	public static void popularDadosTransportadora(NotaFiscal notaFiscal, Distribuidor distribuidor) {
 		
 		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte() == null) {
 			notaFiscal.getNotaFiscalInformacoes().setInformacaoTransporte(new InformacaoTransporte());

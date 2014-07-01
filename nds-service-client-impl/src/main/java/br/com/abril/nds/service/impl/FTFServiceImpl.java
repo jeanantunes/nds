@@ -327,10 +327,6 @@ public class FTFServiceImpl implements FTFService {
 		return cpfCnpj.length() == 14 ? 1 : 2;
 	}
 	
-	private String decodeCodTipoDocFrom(int type){
-		return type == 1 ? "CNPJ" : "CPF";
-	}
-	
 	@SuppressWarnings("resource")
 	public List<FTFRetornoRET> processarArquivosRet(final File...files){
 		

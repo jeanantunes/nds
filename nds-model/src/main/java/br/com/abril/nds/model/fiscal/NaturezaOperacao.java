@@ -87,6 +87,9 @@ public class NaturezaOperacao implements Serializable {
 	@Column(name = "GERAR_COTA_NAO_EXIGE_NFE")
 	private boolean gerarCotaNaoExigeNFe;
 	
+	@Column(name = "GERAR_NOTAS_REFERENCIADAS")
+	private boolean gerarNotasReferenciadas;
+	
 	@OneToMany
 	@JoinTable(
 	            name="NATUREZA_OPERACAO_TIPO_MOVIMENTO",
@@ -196,6 +199,14 @@ public class NaturezaOperacao implements Serializable {
 
 	public void setGerarCotaNaoExigeNFe(boolean gerarCotaNaoExigeNFe) {
 		this.gerarCotaNaoExigeNFe = gerarCotaNaoExigeNFe;
+	}
+
+	public boolean isGerarNotasReferenciadas() {
+		return gerarNotasReferenciadas;
+	}
+
+	public void setGerarNotasReferenciadas(boolean gerarNotasReferenciadas) {
+		this.gerarNotasReferenciadas = gerarNotasReferenciadas;
 	}
 
 	public void setTipoOperacao(TipoOperacao tipoOperacao) {
