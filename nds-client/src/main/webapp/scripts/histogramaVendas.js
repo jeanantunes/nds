@@ -240,6 +240,7 @@ var histogramaVendasController = $.extend(true, {
 					$("#histogramaVendasContent", histogramaVendasController.workspace).hide();
 					$('#analiseHistogramaVendasContent', histogramaVendasController.workspace).html(data);
 					anaLiseHistogramaController.iniciarGridAnalise();
+					$('#histogramaVenda_botaoAnalise').hide();
 					bloquearItensEdicao(histogramaVendasController.workspace);
 				}
 	    	}

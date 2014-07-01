@@ -480,8 +480,7 @@ public class NFeServiceImpl implements NFeService {
 		}
 		
 		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
-		if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor()))
-				&& TipoAtividade.PRESTADOR_FILIAL.equals(distribuidor.getTipoAtividade())) {
+		if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor())) && TipoAtividade.PRESTADOR_FILIAL.equals(distribuidor.getTipoAtividade())) {
 			
 			this.ftfService.gerarFtf(notas);
 			
@@ -495,8 +494,11 @@ public class NFeServiceImpl implements NFeService {
 		return notas;
 	}
 
-	private void gerarNotasFiscaisFornecedorMovimentoEstoque(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais, Distribuidor distribuidor
-			, NaturezaOperacao naturezaOperacao, Map<String, ParametroSistema> parametrosSistema, List<Fornecedor> fornecedores) {
+	private void gerarNotasFiscaisFornecedorMovimentoEstoque(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais, 
+			Distribuidor distribuidor, 
+			NaturezaOperacao naturezaOperacao, 
+			Map<String, ParametroSistema> parametrosSistema, 
+			List<Fornecedor> fornecedores) {
 		
 		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
 		
@@ -792,7 +794,7 @@ public class NFeServiceImpl implements NFeService {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoRegimeTributario);
 			}
 			
-			/*
+			
 			int parametro = Integer.valueOf(parametrosSistema.get("NFE_LIMITAR_QTDE_ITENS").getValor());
 			
 			if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > parametro){
@@ -805,7 +807,8 @@ public class NFeServiceImpl implements NFeService {
 					listaItens.add(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal());
 				}
 			}
-			*/
+			
+			
 			//FIXME: Ajustar o valor do campo para valores parametrizados
 			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
