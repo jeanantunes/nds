@@ -594,7 +594,9 @@ var distribuicaoManual = $.extend(true, {
 			return;
 		}else{
     	  
-			$("#formUploadLoteFixacao").ajaxSubmit({
+			/*
+			 * 
+			$("#formUploadLoteDistbManual").ajaxSubmit({
 	     		   
 				success: function(responseText, statusText, xhr, $form)  { 
 		    	  
@@ -608,7 +610,7 @@ var distribuicaoManual = $.extend(true, {
 			        		exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
 		        		}
 			        	
-		                $("#dialog-lote").dialog( "close" );
+		                $("#modalUploadArquivo-DistbManual").dialog( "close" );
 		                exibirMensagem(tipoMensagem, listaMensagens); 
 			        }
 			   }, 
@@ -616,6 +618,10 @@ var distribuicaoManual = $.extend(true, {
 		       type: 'POST',
 		       dataType: 'json',
      	   });
+			 */
+			
+			alert("AJAX");
+			
        }
 	}
 	// ##-- --##
