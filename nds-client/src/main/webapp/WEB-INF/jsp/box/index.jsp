@@ -97,7 +97,7 @@ $(function(){
 	
 	
 	
-	 <fieldset class="fieldFiltro">
+	 <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
    	    <legend> Pesquisar Box</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>

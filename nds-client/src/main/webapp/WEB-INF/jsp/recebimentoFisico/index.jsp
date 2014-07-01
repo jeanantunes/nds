@@ -287,7 +287,7 @@
 
 			<form id="pesquisa_recebimento_fisico_form">
 
-				<fieldset class="fieldFiltro">
+				<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 
 					<legend> Pesquisar Recebimento Físico</legend>
 

@@ -1,4 +1,4 @@
-<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
+
 <head>
 <script type="text/javascript" src="scripts/gruposPermissao.js"></script>
 <script type="text/javascript" src="scripts/usuariosPermissao.js"></script>
@@ -19,6 +19,7 @@
 </style>
 </head>
 <body>
+    <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
 	<form action="/administracao/gruposAcesso" id="excluir_regra_form">
 	<input type="hidden" value="grupoPermissao.id" />
 	<div id="dialog-excluir_grupo" title="Excluir Grupo" style="display:none;">
@@ -224,7 +225,7 @@
            		</div>
            </div>
            <div  class="linha_separa_fields">&nbsp;</div>
-	        <fieldset class="fieldFiltro" style="width:905px!important;">
+	        <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados" style="width:905px!important;">
 	   	    	<legend> Pesquisar Grupo</legend>
 	        	<table width="850" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		            <tr>
@@ -253,7 +254,7 @@
            </div>
            <div class="linha_separa_fields">&nbsp;</div>
             <form action="/administracao/gruposAcesso" id="pesquisar_usuario_form">
-	        <fieldset class="fieldFiltro" style="width:905px!important;">
+	        <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados" style="width:905px!important;">
 	   	    	<legend> Pesquisar Usuário</legend>
 	        	<table width="850" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		            <tr>
@@ -283,7 +284,7 @@
            		</div>
            </div>
            <div class="linha_separa_fields">&nbsp;</div>
-           	<fieldset class="fieldFiltro" style="width:905px!important;">
+           	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados" style="width:905px!important;">
 	   	    <legend> Pesquisar Regras</legend>
 	        	<table width="850" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	            	<tr>

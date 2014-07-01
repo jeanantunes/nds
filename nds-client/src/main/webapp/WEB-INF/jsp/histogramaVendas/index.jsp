@@ -58,7 +58,7 @@
   <div class="grids">
 
     <form id="pesquisaHistogramaVendas" name="pesquisaHistogramaVendas" method="post">
-      <fieldset class="classFieldset" style="width: 960px !important;">
+      <fieldset class="classFieldset fieldFiltroItensNaoBloqueados" style="width: 960px !important;">
         <legend>Pesquisar Histograma</legend>
         <table width="960" border="0" cellpadding="2" cellspacing="1">
           <tr>

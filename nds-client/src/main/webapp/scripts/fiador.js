@@ -142,6 +142,11 @@ var fiadorController = $.extend(true, {
 		},
 	
 		popup_excluir:function () {
+			
+			if(!verificarPermissaoAcesso(this.workspace )){
+				return;
+			}
+			
 			var _this = this;
 			$( "#fiadorController-dialog-excluir", fiadorController.workspace ).dialog({
 				resizable: false,
@@ -493,11 +498,21 @@ var fiadorController = $.extend(true, {
 						
 						$("#fiadorController-cnpjFiador", fiadorController.workspace).attr("disabled", true);
 					}
+					
+					if($('#permissaoAlteracao',fiadorController.workspace).val()=="false"){
+						$("#fiadorController-cadastroCnpj",fiadorController.workspace).find('input,select,textarea').prop('disabled', true);
+						$("#fiadorController-cadastroCpf",fiadorController.workspace).find('input,select,textarea').prop('disabled', true);
+					}
 				}
 			);
 		},
 		
 		excluirFiador:function (idFiador){
+			
+			if(!verificarPermissaoAcesso(this.workspace )){
+				return;
+			}
+			
 			$("#fiadorController-dialog-excluir-fiador", fiadorController.workspace).dialog({
 				resizable: false,
 				height:'auto',
@@ -826,7 +841,7 @@ var fiadorController = $.extend(true, {
 					' style="cursor:pointer;border:0px;margin:5px" title="Editar Socio">' +
 					'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 					'</a>' +
-					'<a href="javascript:;" onclick="fiadorController.removerSocio(' + idSocio + ')" ' +
+					'<a href="javascript:;" isEdicao="true" onclick="fiadorController.removerSocio(' + idSocio + ')" ' +
 					' style="cursor:pointer;border:0px;margin:5px" title="Excluir Socio">' +
 					'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 					'</a>';
@@ -969,6 +984,10 @@ var fiadorController = $.extend(true, {
 					$('#fiadorController-socio-cpfConjuge', fiadorController.workspace).attr("disabled", true);
 					
 					$("#fiadorController-btnAddEditarSocio", fiadorController.workspace).text("Editar");
+					
+					if($('#permissaoAlteracao',fiadorController.workspace).val()=="false"){
+						$("#fiadorController-tab-socios",fiadorController.workspace).find('input,select,textarea').prop('disabled', true);
+					}
 				},
 				null,
 				true
@@ -1069,10 +1088,10 @@ var fiadorController = $.extend(true, {
 		getActionsGarantia:function (idGarantia) {
 
 			return '<a href="javascript:;" onclick="fiadorController.editarGarantia(' + idGarantia + ')" ' +
-					' style="cursor:pointer;border:0px;margin:5px" title="Editar Garantia">' +
+					' style="cursor:pointer;border:0px;margin:5px" isEdicao="true" title="Editar Garantia">' +
 					'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/></a>' +
 					'<a href="javascript:;" onclick="fiadorController.removerGarantia(' + idGarantia + ')" ' +
-					' style="cursor:pointer;border:0px;margin:5px" title="Excluir Garantia">' +
+					' style="cursor:pointer;border:0px;margin:5px" isEdicao="true" title="Excluir Garantia">' +
 					'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/></a>';
 		},
 		
@@ -1191,7 +1210,7 @@ var fiadorController = $.extend(true, {
 		},
 		
 		getActionCotaCadastrada:function (referencia){
-			return '<a href="javascript:;" onclick="fiadorController.removerAssociacaoCota(' + referencia + ')" ' +
+			return '<a href="javascript:;" isEdicao="true" onclick="fiadorController.removerAssociacaoCota(' + referencia + ')" ' +
 			' style="cursor:pointer;border:0px;margin:5px" title="Excluir Associação">' +
 			'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 			'</a>';

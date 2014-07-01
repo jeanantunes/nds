@@ -79,7 +79,7 @@ var lancamentosSelecionados = [];
 				<div class="area">
 				<div id=btnsMatrizDistribuicao style="display: none;">
 							<span class="bt_novos">
-			         	  		<a id="linkExcluir" href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_exclusao_estudo();" rel="tipsy" title="Excluir Estudo"> 
+			         	  		<a id="linkExcluir" idEdicao="true" href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_exclusao_estudo();" rel="tipsy" title="Excluir Estudo"> 
 									<img id="imgExcluir" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"/>
  						        </a>
 		         	  		</span>
@@ -157,7 +157,7 @@ var lancamentosSelecionados = [];
 			<div class="linha_separa_fields">&nbsp;</div>
 		     
 			    <div id="telaPesquisaMatriz"> 
-			      <fieldset class="fieldFiltroMatriz">
+			      <fieldset class="fieldFiltroMatriz fieldFiltroItensNaoBloqueados">
 			   	    <legend>Pesquisar Matriz de Distribui&ccedil&atildeo
 		        </legend>
 		   	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">

@@ -13,7 +13,7 @@
 <div class="corpo">
 	<div class="container">
 		
-		<fieldset class="classFieldset" width="950">
+		<fieldset class="classFieldset fieldFiltroItensNaoBloqueados" width="950">
    	    <legend> Integração Fiscal P3 </legend>
    	    <form action="${pageContext.request.contextPath}/financeiro/p3/gerarP3" method="get" id="p3-form">
 		<table width="520" border="0" class="filtro">

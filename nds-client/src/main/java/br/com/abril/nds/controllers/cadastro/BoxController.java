@@ -103,7 +103,6 @@ public class BoxController extends BaseController {
     
     @Post
     @Path("/buscaPorId.json")
-    @Rules(Permissao.ROLE_CADASTRO_BOX_ALTERACAO)
     public void buscaPorId(final long id) {
         /*
          * if (boxService.hasAssociacao(id)) { throw new ValidacaoException(new

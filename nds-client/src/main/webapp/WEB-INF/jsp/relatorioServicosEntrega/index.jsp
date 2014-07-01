@@ -7,7 +7,7 @@
 	<form id="relatorioServicosEntregaForm">
 	<input type="hidden" name="filtro.idCota" id="relatorioServicosEntrega_idCota"/>
 	
-	<fieldset class="classFieldset">
+	<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    	    <legend>Pesquisar Transportador</legend>
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>

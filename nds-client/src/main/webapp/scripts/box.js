@@ -196,6 +196,11 @@ var boxController = $.extend(true, {
 		}, null, true);
 	},
 	excluir : function(id) {
+		
+		if(!verificarPermissaoAcesso(this.workspace)){
+			return;
+		}
+		
 		$("#dialog-excluir", this.workspace).dialog({
 			resizable : false,
 			height : 170,
