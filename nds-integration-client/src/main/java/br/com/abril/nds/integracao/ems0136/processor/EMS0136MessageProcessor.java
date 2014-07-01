@@ -13,9 +13,9 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.data.helper.LancamentoDataHelper;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.integracao.model.canonic.EMS0136Input;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.model.canonic.EMS0136Input;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
@@ -31,6 +31,7 @@ import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.DateUtil;
 
 @Component
 public class EMS0136MessageProcessor extends AbstractRepository implements
@@ -51,6 +52,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private LancamentoService lancamentoService;
 
+	private static final int PEB_MINIMA = 10;
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {}
 
@@ -75,12 +78,16 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	    	return;
 	    }
 		
-		this.atualizarProdutoEdicaoParcial(produtoEdicao);
+		if (!isRecolhimentoValido(input, lancamento)) {
+			return;
+		}
 		
+		this.atualizarProdutoEdicaoParcial(produtoEdicao);
+
 		lancamento = this.processarLancamento(input, produtoEdicao, lancamento);
+
 		
 		LancamentoParcial lancamentoParcial = this.obterLancamentoParciall(input,produtoEdicao);
-		
 		PeriodoLancamentoParcial periodo = this.obterPeriodoLancamentoParcial(input,lancamentoParcial);
 		
 		this.associarLancamentoAoPeriodo(periodo,lancamento);
@@ -90,6 +97,25 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		this.reajustarRedistribuicoes(periodo,input.getDataRecolhimento(), input.getDataLancamento());
 		
 		this.limparPeriodosSemAssociacaoParcial(periodo);
+	}
+	
+	private boolean isRecolhimentoValido(EMS0136Input input, Lancamento lancamento) {
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		Date dataLancamento = this.parciaisService.obterDataUtilMaisProxima(input.getDataLancamento());
+		Date dataRecolhimento = this.parciaisService.obterDataUtilMaisProxima(input.getDataRecolhimento());
+		
+		if (DateUtil.isDataInicialMaiorIgualDataFinal(dataOperacao, dataRecolhimento)) {
+			
+			return false;
+		}
+		
+		if (DateUtil.obterDiferencaDias(dataLancamento, dataRecolhimento) < PEB_MINIMA) {
+			
+			return false;
+		}
+
+		return true;
 	}
 
 	
@@ -141,8 +167,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	
 	private PeriodoLancamentoParcial atualizarPeriodo(PeriodoLancamentoParcial periodo, EMS0136Input input) {
 		
+		Integer numeroPeriodo = periodo.anterior() == null ? 1 : periodo.anterior().getNumeroPeriodo() + 1;
+		
 		periodo.setTipo(this.obterTipoLancamentoParcial(input));
-		periodo.setNumeroPeriodo(input.getNumeroPeriodo());
+		periodo.setNumeroPeriodo(numeroPeriodo);
 		periodo.setDataCriacao(new Date());
 		
 		return (PeriodoLancamentoParcial) this.getSession().merge(periodo);
@@ -240,14 +268,15 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	private PeriodoLancamentoParcial obterPeriodo(LancamentoParcial lancamentoParcial, EMS0136Input input) {
 		
 		Integer numeroPeriodo = input.getNumeroPeriodo();
+
+		PeriodoLancamentoParcial periodo = lancamentoParcial.getPeriodoPorNumero(numeroPeriodo);
+
+		if (periodo == null) {
+
+			return lancamentoParcial.obterPeriodoFinal();
+		}
 		
-		Criteria criteria = getSession().createCriteria(PeriodoLancamentoParcial.class);
-		criteria.add(Restrictions.eq("lancamentoParcial", lancamentoParcial));
-		criteria.add(Restrictions.eq("numeroPeriodo", numeroPeriodo));
-		
-		PeriodoLancamentoParcial pParcial = (PeriodoLancamentoParcial) criteria.uniqueResult();
-		
-		return pParcial;
+		return periodo;
 	}
 
 	private boolean validarStatusLancamento(Lancamento lancamento, Message message,EMS0136Input input) {
