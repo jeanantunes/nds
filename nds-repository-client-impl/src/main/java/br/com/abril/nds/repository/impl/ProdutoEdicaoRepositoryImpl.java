@@ -1269,12 +1269,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" produto.periodicidade as periodicidade, ");
 		hql.append(" lancamento.dataLancamentoPrevista as dataLancamento, ");
 		
-		hql.append("      round((SELECT sum(estqProdCota.qtdeRecebida) ");
+		hql.append("  round((SELECT sum(estqProdCota.qtdeRecebida) ");
 		hql.append("          FROM EstoqueProdutoCota estqProdCota ");
 		hql.append("          WHERE estqProdCota.produtoEdicao = produtoEdicao.id),0) as repartePrevisto, ");
 		
 		hql.append(" (CASE   ");
-		hql.append("  	WHEN lancamento.status = 'FECHADO' OR lancamento.status = 'RECOLHIDO' ");
+		hql.append("  	WHEN lancamento.status='FECHADO' OR lancamento.status='RECOLHIDO' ");
 		hql.append("  THEN ");
 		hql.append("  	  round((SELECT sum(estqProdCota.qtdeRecebida - estqProdCota.qtdeDevolvida) ");
 		hql.append("          FROM EstoqueProdutoCota estqProdCota ");
