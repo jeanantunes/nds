@@ -168,7 +168,20 @@ public class LancamentoParcial implements Serializable{
 		return this.getPeriodoPorNumero(numeroPeriodo, null);
 		
 	}	
+	
+	public PeriodoLancamentoParcial obterPeriodoFinal() {
 		
+		for (PeriodoLancamentoParcial periodoAtual : this.periodos) {
+
+			if (TipoLancamentoParcial.FINAL.equals(periodoAtual.getTipo())) {
+				
+				return periodoAtual;
+			}
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * Obtém um {@link PeriodoLancamentoParcial} através de seu {@link PeriodoLancamentoParcial#getNumeroPeriodo()} <br/>
 	 * Caso haja dois períodos com o mesmo número (momento da inclusão de um novo período) retornará o período diferente do argumento <br/>
