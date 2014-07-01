@@ -19,7 +19,7 @@ function analisar(){
 <div id="copiarEstudoTelaAnalise" />
 <div id="copiarEstudoContent">
 	
-  <fieldset class="fieldFiltro">
+  <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
   <legend>C&oacute;pia Proporcional de Estudo</legend>
         
   <table width="950" border="0" cellspacing="2" cellpadding="2">

@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 	
 	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/fiador.js"></script>
@@ -111,7 +112,7 @@
 	
 	<div class="linha_separa_fields">&nbsp;</div>
 	
-	<fieldset class="fieldFiltro">
+	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
    		<legend> Pesquisar Fiador</legend>
         	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>

@@ -77,7 +77,7 @@ $(function() {
 <div id="error-modal" title="Error" style="display: none;">
     Problema ao gerar arquivo solicitado...
 </div>
-<fieldset class="fieldFiltro">
+<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 	
 	<legend> Painel Monitor NF-e</legend>
 	<table width="100%" border="0" cellpadding="2" cellspacing="1" class="filtro">

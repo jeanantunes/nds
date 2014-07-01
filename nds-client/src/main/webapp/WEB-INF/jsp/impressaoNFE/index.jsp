@@ -36,7 +36,7 @@
 
 <div class="container">
 
-	<fieldset class="classFieldset">
+	<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 		<legend>Pesquisar NF-e</legend>
 		<table width="100%" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>

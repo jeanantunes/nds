@@ -59,7 +59,7 @@
         <strong>Antigos Proprietários</strong><br />
         <table class="antigosProprietariosGridCNPJ"></table>
         <span class="bt_novos" title="Alterar Titularidade" id="btnAlterarTitularidadeCNPJ">
-          <a href="javascript:;" style="opacity: 0.6">
+          <a href="javascript:;" style="opacity: 0.6" isEdicao="true">
             <img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" hspace="5" border="0" />Alterar Titularidade
           </a>
         </span>

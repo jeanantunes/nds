@@ -38,7 +38,7 @@
 			</div>
 		</div>
     <div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="fieldFiltro" title="Capataz, Entregador, Mula, Carreteiro">
+      <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados" title="Capataz, Entregador, Mula, Carreteiro">
    	    <legend> Pesquisar Entregador</legend>
    	    
    	    <form id="formularioPesquisaEntregadores">

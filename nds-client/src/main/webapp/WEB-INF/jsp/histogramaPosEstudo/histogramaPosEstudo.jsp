@@ -45,7 +45,7 @@ $(function(){
       </a>
     </span>
     <span class="bt_novos">
-      <a href="javascript:;" isEdicao="true" rel='tipsy' id="analiseEstudo" title='Análise'>
+      <a href="javascript:;" rel='tipsy' id="analiseEstudo" title='Análise'>
         <img src="images/ico_redistribuicao_complementar.gif" alt="Análise" hspace="5" border="0" />
 
       </a>

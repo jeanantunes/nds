@@ -19,7 +19,7 @@
 		<td>&nbsp;</td>
 		<td>
 			<span class="bt_novos">
-				<a href="javascript:fiadorController.adicionarEditarGarantia();" id="fiadorController-garantia-botaoAddEditarGarantia" rel="tipsy" title="Incluir Nova Garantia">
+				<a href="javascript:fiadorController.adicionarEditarGarantia();" isEdicao="true" id="fiadorController-garantia-botaoAddEditarGarantia" rel="tipsy" title="Incluir Nova Garantia">
 				    <img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/>
 				</a>
 			</span>

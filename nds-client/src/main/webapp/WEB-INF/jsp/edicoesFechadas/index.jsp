@@ -38,7 +38,7 @@
 		</div>
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
-   <fieldset class="fieldFiltro">
+   <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
     <legend>Pesquisar Edições Fechadas com Saldo</legend>
 	<table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
         <tr>

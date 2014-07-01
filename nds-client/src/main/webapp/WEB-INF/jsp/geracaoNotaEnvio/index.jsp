@@ -41,7 +41,7 @@
     </div>
     <div class="linha_separa_fields">&nbsp;</div>
     
-	<fieldset class="classFieldset">
+	<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    		
    		<legend> Geração de Nota de Envio</legend>
     	<form>

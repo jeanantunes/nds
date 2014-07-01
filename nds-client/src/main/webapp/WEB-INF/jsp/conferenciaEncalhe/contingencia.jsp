@@ -47,7 +47,7 @@
 				</fieldset>
 			</div>
 		</div>
-		<fieldset class="fieldFiltro">
+		<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 			<legend> Pesquisar Encalhe </legend>
 			<table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
 				<tr>

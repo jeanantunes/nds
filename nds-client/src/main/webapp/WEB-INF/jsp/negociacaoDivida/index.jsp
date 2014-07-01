@@ -12,7 +12,7 @@
 		<div class="area">
 			
     		<span class="bt_novos" style="display: none;">
-    			<a href="javascript:;" onclick="negociacaoDividaController.popup_formaPgto();" rel="tipsy"  title="Negociar" >
+    			<a href="javascript:;" isEdicao="true" onclick="negociacaoDividaController.popup_formaPgto();" rel="tipsy"  title="Negociar" >
     				<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif" />
 				</a>
 			</span>
@@ -35,7 +35,7 @@
 	<div class="linha_separa_fields">&nbsp;</div>
 
 	<form id="negociacaoDividaForm">
-		<fieldset class="fieldFiltro">
+		<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 			<legend> Negociar D&iacute;vidas</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 				class="filtro">

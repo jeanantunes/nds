@@ -2,6 +2,8 @@
 
 <input type="hidden" id="idProdutoEdicao"/>
 
+ <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+
 <div id="dialogNovasDiferencas" 
 	 title="Lançamento Faltas e Sobras - Produto"
 	 style="display: none;">

@@ -109,13 +109,13 @@ function Endereco(paramTela, paramMessage) {
 
         var title = this.readonly ? 'Visualizar Endereco' : 'Editar Endereço';
 
-		var retorno = '<a href="javascript:;" onclick="'+paramTela+'.editarEndereco(' + idEndereco + ')" ' +
+		var retorno = '<a href="javascript:;" isEdicao="true" onclick="'+paramTela+'.editarEndereco(' + idEndereco + ')" ' +
 				' style="cursor:pointer;border:0px;margin:5px" title="'+ title +'">' +
 				'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 				'</a>';
 
 		if (!this.readonly) {
-			retorno += '<a href="javascript:;" class="acaoExclusao" onclick="'+paramTela+'.confirmarExclusaoEndereco(' + idEndereco + ')" ' +
+			retorno += '<a href="javascript:;" isEdicao="true" class="acaoExclusao" onclick="'+paramTela+'.confirmarExclusaoEndereco(' + idEndereco + ')" ' +
 			' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
 			'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 			'</a>';

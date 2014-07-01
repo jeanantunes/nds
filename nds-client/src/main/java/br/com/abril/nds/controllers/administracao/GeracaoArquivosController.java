@@ -61,6 +61,7 @@ public class GeracaoArquivosController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
 	public void gerar(Date dataLctoPrevisto, String operacao) {
 
 		int qtdArquivosGerados = 0;

@@ -167,6 +167,10 @@ var lancamentoNovoController = $.extend(true, {
 	
 	popupNovasDiferencas : function() {
 		
+		if(!verificarPermissaoAcesso(lancamentoNovoController.workspace)){
+			return;
+		}
+		
 		lancamentoNovoController.resetarCamposTela();
 		
 		lancamentoNovoController.redirecionarProdutosEstoque = false;
