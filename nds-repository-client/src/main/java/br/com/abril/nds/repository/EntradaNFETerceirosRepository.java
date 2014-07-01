@@ -19,4 +19,6 @@ public interface EntradaNFETerceirosRepository extends Repository<NotaFiscalEntr
 
 	Integer qtdeNotasPendentesRecebimento(FiltroEntradaNFETerceiros filtro);
 
+	List<ConsultaEntradaNFETerceirosPendentesDTO> consultaNotasPendentesEmissao(FiltroEntradaNFETerceiros filtro, boolean limitar);
+
 }

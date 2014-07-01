@@ -377,4 +377,123 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConsultaEntradaNFETerceirosPendentesDTO> consultaNotasPendentesEmissao(FiltroEntradaNFETerceiros filtro, boolean limitar) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT cota.numeroCota as numeroCota, ");
+		hql.append("        coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nome, ");		
+		hql.append("        controleConferenciaEncalheCota.dataOperacao as dataEncalhe, ");
+		hql.append("        nf.serie as serie, ");
+		hql.append("        nf.chaveAcesso as chaveAcesso, ");
+		hql.append("        nf.numero as numeroNfe, ");
+		hql.append("        nf.id as idNotaFiscalEntrada, ");
+		hql.append("        CASE WHEN ");
+		hql.append("        ( ");
+		hql.append("             SELECT COUNT(notaFiscalEntradaCota) ");
+		hql.append("             FROM ControleConferenciaEncalheCota controleConferenciaEncalheCotaNF ");
+		hql.append("               LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
+		hql.append("               LEFT JOIN notaFiscalEntradaCota.naturezaOperacao as tipoNotaFiscal ");
+		hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota  ");
+		hql.append("               AND tipoNotaFiscal.tipoOperacao = :tipoOperacaoEntrada");
+		hql.append("        ) = 0 THEN 'Entrada' ELSE 'Complementar' END  as tipoNotaFiscal, ");
+		hql.append("        ( ");
+		hql.append("             SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");
+		hql.append("             FROM ControleConferenciaEncalheCota controleConferenciaEncalheCotaNF ");
+		hql.append("               LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
+		hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota ");
+		hql.append("        ) as valorNota, ");
+		hql.append("  item.preco as valorReal, ");
+		hql.append(" ( ");
+		hql.append("  	item.preco - (SELECT SUM(notaFiscalEntradaCota.valorDesconto) ");
+		hql.append("  	FROM ControleConferenciaEncalheCota controleConferenciaDesconto ");
+		hql.append("  	LEFT JOIN controleConferenciaDesconto.notaFiscalEntradaCota as notaFiscalEntradaCota ");
+		hql.append("  	WHERE controleConferenciaDesconto.processoUtilizaNfe = true and controleConferenciaDesconto = controleConferenciaEncalheCota ");
+		hql.append("  )) as diferenca, ");
+		hql.append("        'Pendente' as status, ");
+		hql.append(" controleConferenciaEncalheCota.id  as idControleConferenciaEncalheCota ");
+		
+		hql.append(getSqlFromEWhereNotaPendenteEmissao(filtro, true));
+		
+		hql.append(getOrderByNotasPendentes(filtro));
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		buscarParametros(filtro, query, false);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEntradaNFETerceirosPendentesDTO.class));
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) { 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		}
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) { 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());			
+		}
+		
+		return query.list();
+	}
+	
+	private String getSqlFromEWhereNotaPendenteEmissao(FiltroEntradaNFETerceiros filtro, boolean isGroup) {
+		
+		StringBuilder hql = new StringBuilder();
+	
+		hql.append(" from ItemNotaFiscalEntrada as item ");
+		hql.append(" LEFT JOIN item.notaFiscal as nf ");
+		hql.append(" LEFT JOIN nf.controleConferenciaEncalheCota as controleConferenciaEncalheCota ");
+		hql.append(" LEFT JOIN nf.fornecedor as fornecedor ");
+		hql.append(" LEFT JOIN fornecedor.juridica as fornecedorPessoa ");
+		hql.append(" LEFT JOIN controleConferenciaEncalheCota.cota as cota ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" LEFT JOIN pessoa.telefones as telefone ");
+		hql.append(" where ");
+		hql.append(" ( ");
+		hql.append("  	item.preco < (SELECT SUM(notaFiscalEntradaCota.valorDesconto) ");
+		hql.append("  	FROM ControleConferenciaEncalheCota controleConferenciaDesconto ");
+		hql.append("  	LEFT JOIN controleConferenciaDesconto.notaFiscalEntradaCota as notaFiscalEntradaCota ");
+		hql.append("  	WHERE controleConferenciaDesconto.processoUtilizaNfe = true and controleConferenciaDesconto = controleConferenciaEncalheCota ");
+		hql.append("  )) ");
+		hql.append(" and controleConferenciaEncalheCota.processoUtilizaNfe = true ");
+		
+		if (filtro.getTipoNota() != null && !FiltroEntradaNFETerceiros.TipoNota.TODAS.equals(filtro.getTipoNota())) {
+			hql.append("   and ( ");
+			hql.append("             SELECT COUNT(notaFiscalEntradaCota) ");
+			hql.append("             FROM ControleConferenciaEncalheCota controleConferenciaEncalheCotaNF ");
+			hql.append("               LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
+			hql.append("               LEFT JOIN notaFiscalEntradaCota.naturezaOperacao as tipoNotaFiscal ");
+			hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota  ");
+			hql.append("               AND tipoNotaFiscal.tipoOperacao = :tipoOperacaoEntrada ");
+			if(FiltroEntradaNFETerceiros.TipoNota.SAIDA.equals(filtro.getTipoNota())) {
+				hql.append("        ) > 0");
+			} else {
+				hql.append("        ) = 0");
+			}
+		}
+
+		if(filtro.getCota() != null) {			
+			hql.append( " and cota.id = :idCota ");			
+		}
+		
+		if(filtro.getTipoNota() != null && !FiltroEntradaNFETerceiros.TipoNota.TODAS.equals(filtro.getTipoNota())) {
+			// hql.append(" and no.tipoOperacao = :complementar ");
+		}
+		
+		if(filtro.getDataInicial() != null && filtro.getDataFinal() != null){
+			hql.append( " and date(controleConferenciaEncalheCota.dataOperacao) between :dataInicial and :dataFinal ");
+		}
+		
+		if(filtro.getListIdFornecedor() != null && !filtro.getListIdFornecedor().isEmpty()){
+			
+			// hql.append(" and fornecedor in (:fornecedor) ");
+		}
+		
+		if(isGroup){			
+			hql.append(" group by cota.id, controleConferenciaEncalheCota.dataOperacao ");
+		}
+		
+		return hql.toString();
+	}
+	
 }
