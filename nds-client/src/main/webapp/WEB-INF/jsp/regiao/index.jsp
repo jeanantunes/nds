@@ -520,7 +520,7 @@ function removeProdutoEscohido(idx){
 
 		<!-- COMBO DE REGIÕES -->
 
-		<fieldset class="classFieldset">
+		<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 			<legend>Pesquisar Região</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>

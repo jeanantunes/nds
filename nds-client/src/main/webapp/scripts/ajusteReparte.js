@@ -125,7 +125,7 @@ init : function() {
 
 		$.each(resultado.rows, function(index, row) {
 			
-			var editar = '<a href="javascript:;" isEdicao="true" onclick="ajusteReparteController.editarAjuste('+row.cell.idAjusteReparte+');" style="cursor:pointer">' +
+			var editar = '<a href="javascript:;"  onclick="ajusteReparteController.editarAjuste('+row.cell.idAjusteReparte+');" style="cursor:pointer">' +
 							   	 '<img title="Alterar" src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" />' +
 							   '</a>';
 			var excluir = '<a href="javascript:;" isEdicao="true" onclick="ajusteReparteController.excluirAjuste('+row.cell.idAjusteReparte+');" style="cursor:pointer">' +

@@ -72,7 +72,7 @@ $(function(){
     <div class="container">
       
       
-       <fieldset class="fieldFiltro">
+       <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
        	  <legend>Suspender Cotas</legend>
         <div class="grids" style="display:block;">
 			<table class="suspensaoGrid"></table>

@@ -61,7 +61,7 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 
 	<div class="linha_separa_fields">&nbsp;</div>
 
-		<fieldset class="classFieldset">
+		<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 			<legend> Relatório de Vendas</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
@@ -116,7 +116,7 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 
 		<div class="linha_separa_fields">&nbsp;</div>
 
-		<fieldset class="classFieldset" id="pesquisaAvancada" style="display: none;">
+		<fieldset class="classFieldset fieldFiltroItensNaoBloqueados" id="pesquisaAvancada" style="display: none;">
 			<legend>Busca Avançada</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>

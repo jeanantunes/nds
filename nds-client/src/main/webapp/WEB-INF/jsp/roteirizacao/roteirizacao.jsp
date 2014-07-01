@@ -165,25 +165,25 @@
         <tr>
             <td>
                 <span class="bt_novos" title="Novo">
-                	<a href="javascript:;" onclick="roteirizacao.abrirTelaNovoRoteiroRota();">
+                	<a href="javascript:;" isEdicao="true" onclick="roteirizacao.abrirTelaNovoRoteiroRota();">
                     	<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
                     	Novo
                     </a>
                 </span>
 
-                 <span class="bt_novos" title="Adicionar"><a href="javascript:;" onclick="roteirizacao.abrirTelaCotas();">
+                 <span class="bt_novos" title="Adicionar"><a href="javascript:;" isEdicao="true" onclick="roteirizacao.abrirTelaCotas();">
                     <img src="${pageContext.request.contextPath}//images/ico_add.gif" hspace="5" border="0"/>Adicionar</a>
                 </span>
 
-                <span class="bt_novos trans_cota" title="Transferência de Roteiro"><a href="javascript:;" onclick="roteirizacao.popup_tranferir();">
+                <span class="bt_novos trans_cota" title="Transferência de Roteiro"><a isEdicao="true" href="javascript:;" onclick="roteirizacao.popup_tranferir();">
                      <img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a>
                 </span>
 
-                <span class="bt_novos" title="Copiar Cota"><a href="javascript:;" onclick="roteirizacao.abrirPopupCopiarCotas();">
+                <span class="bt_novos" title="Copiar Cota"><a href="javascript:;" isEdicao="true" onclick="roteirizacao.abrirPopupCopiarCotas();">
                     <img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0"/>Copiar Cota</a>
                 </span>
 
-                <span class="bt_novos" title="Excluir"><a href="javascript:;" onclick="roteirizacao.popupExcluirRotaRoteiro();">
+                <span class="bt_novos" title="Excluir"><a href="javascript:;" isEdicao="true" onclick="roteirizacao.popupExcluirRotaRoteiro();">
                     <img src="${pageContext.request.contextPath}//images/ico_excluir.gif" hspace="5" border="0"/>Excluir</a>
                 </span>
             </td>

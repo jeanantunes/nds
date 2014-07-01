@@ -125,6 +125,9 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Override
     @Transactional
     public EstudoCotaGerado buscarPorId(Long id) {
+    	if(id== null){
+    		return null;
+    	}
     	EstudoCotaGerado estudo = new EstudoCotaGerado();
         estudo.setEstudo(estudoGeradoRepository.buscarPorId(id));
         return estudo;

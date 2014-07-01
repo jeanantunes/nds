@@ -42,7 +42,7 @@
 	<input type="hidden" name="filtro.tipoEstoque" id="visaoEstoque_filtro_tipoEstoque"/>
 	<input type="hidden" name="filtro.tipoEstoqueSelecionado" id="visaoEstoque_filtro_tipoEstoqueSelecionado"/>
 	
-	<fieldset class="classFieldset">
+	<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 		<legend> Pesquisar Estoque</legend>
 	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	    	<tr>

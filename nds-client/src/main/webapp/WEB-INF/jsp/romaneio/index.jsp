@@ -46,7 +46,7 @@
 	    
 			<br />
 			
-			<fieldset class="classFieldset">
+			<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 				<legend>Romaneios de Entrega</legend>
 	        		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	         			<tr>

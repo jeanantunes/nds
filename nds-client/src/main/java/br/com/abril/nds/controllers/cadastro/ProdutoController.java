@@ -476,7 +476,6 @@ public class ProdutoController extends BaseController {
      * Carrega os combos do modal de inclusão/edição do Produto.
      */
 	@Post
-	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
 	public void carregarDadosProduto() {
 		
 		List<Object> listaCombos = new ArrayList<Object>();
@@ -590,6 +589,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 	 * @param codigoTipoProduto
 	 */
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
 	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long idDesconto, 
 			Long codigoTipoProduto) {
 		
@@ -614,7 +614,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
      * @param id
      */
 	@Post
-	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
 	public void carregarProdutoParaEdicao(Long id) {
 		
 		if (id == null) {

@@ -72,7 +72,7 @@
     <br />
   	<div class="linha_separa_fields">&nbsp;</div>
     	
-      <fieldset class="classFieldset">
+      <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    	    <legend> Pesquisar Mix de Produto</legend>
         <table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
           <tr>

@@ -60,7 +60,7 @@
 	<br clear="all" />
 	<br />
 	<div class="container">
-		<fieldset class="classFieldset">
+		<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 			<legend>Pesquisar Cota</legend>
 			<form id="filtroPrincipal">
 				<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">

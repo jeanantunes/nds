@@ -398,7 +398,7 @@
 			</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
-		<fieldset class="fieldFiltro">
+		<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 			<legend>Pesquisar Parâmetros de Cobran&ccedil;a</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 				class="filtro">

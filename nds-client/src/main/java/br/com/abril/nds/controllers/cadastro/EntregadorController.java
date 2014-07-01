@@ -198,6 +198,8 @@ public class EntregadorController extends BaseController {
      * 
      * @param procuracaoEntregador
      */
+    
+    @Rules(Permissao.ROLE_CADASTRO_ENTREGADOR_ALTERACAO)
     public void cadastrarEntregadorPessoaFisica(final Long idEntregador,
             final Long codigoEntregador,
             final boolean isComissionado,
@@ -304,13 +306,14 @@ public class EntregadorController extends BaseController {
      * 
      * @param procuracaoEntregador
      */
+    @Rules(Permissao.ROLE_CADASTRO_ENTREGADOR_ALTERACAO)
     public void cadastrarEntregadorPessoaJuridica(final Long idEntregador,
             final Long codigoEntregador,
             final boolean isComissionado,
             final String percentualComissao,
             String cnpjEntregador,
             final PessoaJuridica pessoaJuridica) {
-        
+    	
         final Map<String, String> cnpj = new HashMap<String, String>();
         cnpj.put(CNPJ, cnpjEntregador);
         
@@ -441,7 +444,7 @@ public class EntregadorController extends BaseController {
      * 
      * @param idEntregador - Id do entregador a ser editado.
      */
-    @Rules(Permissao.ROLE_CADASTRO_ENTREGADOR_ALTERACAO)
+   // @Rules(Permissao.ROLE_CADASTRO_ENTREGADOR_ALTERACAO)
     public void editarEntregador(final Long idEntregador) {
         
         session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);

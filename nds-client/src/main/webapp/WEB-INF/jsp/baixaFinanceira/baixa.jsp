@@ -81,7 +81,7 @@
 
 	<div class="linha_separa_fields">&nbsp;</div>
 
-	<fieldset class="fieldFiltro">
+	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 		
 		<legend>Baixa Financeira</legend>
 		
