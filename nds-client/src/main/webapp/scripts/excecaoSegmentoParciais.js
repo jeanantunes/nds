@@ -705,6 +705,10 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	
 	excluirExcecaoProduto : function excluirExcecaoProduto(excecaoId){
 		
+		if(!verificarPermissaoAcesso(excecaoSegmentoParciaisController.workspace)){
+			return;
+		}
+		
 		var grids = excecaoSegmentoParciaisController.Grids;
 		
 		$( "#dialog-excluirExcecao" ).dialog({
@@ -755,6 +759,10 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	},
 	
 	excluirExcecaoCota : function excluirExcecaoCota(excecaoId){
+		
+		if(!verificarPermissaoAcesso(excecaoSegmentoParciaisController.workspace)){
+			return;
+		}
 		
 		var grids = excecaoSegmentoParciaisController.Grids;
 		

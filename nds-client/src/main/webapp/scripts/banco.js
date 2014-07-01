@@ -202,6 +202,9 @@ var bancoController = $.extend(true, {
 		
 		popup_excluir : function(idBanco) {
 			
+			if(!verificarPermissaoAcesso(this.workspace)){
+				return;
+			}
 			
 			$( "#dialog-excluir", this.workspace ).dialog({
 				resizable: false,

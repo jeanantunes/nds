@@ -38,7 +38,7 @@
 		</div>
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
-	<fieldset class="fieldFiltro">
+	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
    	
    	<legend> Integra&ccedil;&atilde;o do Arquivo de Retorno NF-e</legend>
     

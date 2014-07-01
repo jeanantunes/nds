@@ -80,7 +80,7 @@ $(function(){
 
 	<div class="linha_separa_fields">&nbsp;</div>
 
-	<fieldset class="fieldFiltro">
+	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 		
 		  <legend> Pesquisar Fornecedor</legend>
 		  

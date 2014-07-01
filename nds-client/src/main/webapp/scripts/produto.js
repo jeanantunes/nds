@@ -722,7 +722,7 @@ var produtoController = $.extend(true, {
 				row.cell.tipoContratoFornecedor = '';
 			}
 			
-			var linkAprovar = '<a href="javascript:;" isEdicao="true" onclick="produtoController.editarProduto(' + row.cell.id + ');" style="cursor:pointer">' +
+			var linkAprovar = '<a href="javascript:;"  onclick="produtoController.editarProduto(' + row.cell.id + ');" style="cursor:pointer">' +
 					     	  	'<img title="Editar" src="' + contextPath +'/images/ico_editar.gif" style="margin-right:10px" border="0px" />' +
 					  		  '</a>';
 			

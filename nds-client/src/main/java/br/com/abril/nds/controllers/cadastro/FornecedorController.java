@@ -185,6 +185,7 @@ public class FornecedorController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_FORNECEDOR_ALTERACAO)
 	public void cadastrarFornecedor(FornecedorDTO fornecedorDTO) {
 		
 		Origem origemFornecedor = obterOrigemFornecedor(fornecedorDTO);
@@ -405,7 +406,6 @@ public class FornecedorController extends BaseController {
 	}
 
 	@Post
-	@Rules(Permissao.ROLE_CADASTRO_FORNECEDOR_ALTERACAO)
 	public void editarFornecedor(Long idFornecedor) {
 		
 		if (idFornecedor == null) {

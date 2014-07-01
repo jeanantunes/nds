@@ -68,7 +68,7 @@ $(function(){
 	</div>
 </div>
 <div class="linha_separa_fields">&nbsp;</div>
-<fieldset class="fieldFiltro">
+<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 	<legend> Pesquisar NF-e</legend>
 	<form>
 		<table width="1000px" border="0" cellpadding="2" cellspacing="1"

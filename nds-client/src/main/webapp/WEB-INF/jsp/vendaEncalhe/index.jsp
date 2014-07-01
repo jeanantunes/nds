@@ -71,7 +71,7 @@ $(function(){
 </div>
 
 <div class="linha_separa_fields">&nbsp;</div>
-<fieldset class="fieldFiltro">
+<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
    	   
    	   <legend> Pesquisar Encalhe</legend>
         <table width="950" cellspacing="1" cellpadding="2" border="0" class="filtro">

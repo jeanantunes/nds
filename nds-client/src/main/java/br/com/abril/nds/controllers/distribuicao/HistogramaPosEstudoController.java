@@ -290,4 +290,10 @@ public class HistogramaPosEstudoController extends BaseController{
 		}
 	}
 	
+	@Post 
+	@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO_ALTERACAO)
+	public void validar(){
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+	}
+	
 }

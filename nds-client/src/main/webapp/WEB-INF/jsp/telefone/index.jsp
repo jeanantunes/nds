@@ -65,13 +65,13 @@
 
 					<div id="${param.tela}wrapperBtnAdicionarTelefoneHabilitado" >
 						<span class="bt_add">
-							<a href="javascript:;" onclick="${param.tela}.adicionarTelefone();" id="${param.tela}botaoAddEditar" rel="tipsy" title="Incluir Novo Telefone"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/></a>
+							<a href="javascript:;" isEdicao="true" onclick="${param.tela}.adicionarTelefone();" id="${param.tela}botaoAddEditar" rel="tipsy" title="Incluir Novo Telefone"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/></a>
 						</span>
 					</div>
 					
 					<div id="${param.tela}wrapperBtnAdicionarTelefoneDesabilitado" style="display: none">
 					  	<span class="bt_novos" style="opacity:0.4">
-					  		<a href="javascript:void(0)" onclick="javascript:void(0)" rel="tipsy" title="Incluir Novo Telefone"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/></a>
+					  		<a href="javascript:void(0)" isEdicao="true" onclick="javascript:void(0)" rel="tipsy" title="Incluir Novo Telefone"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/></a>
 					  	</span>
 				  	</div>
 				
@@ -87,6 +87,8 @@
  			<table id="${param.tela}telefonesGrid"></table>
 		</fieldset>
 		<br/>
+		
+		<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 		
 		<input type="hidden" id="${param.tela}referenciaHidden"/>
 </div>

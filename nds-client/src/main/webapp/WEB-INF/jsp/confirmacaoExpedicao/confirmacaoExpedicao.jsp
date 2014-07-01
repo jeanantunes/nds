@@ -52,7 +52,7 @@
 				</p>
 			</div>
 
-			<fieldset class="classFieldset">
+			<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 				<legend>Pesquisar Expedi&ccedil;&atilde;o</legend>
 				<table width="950" border="0" cellpadding="2" cellspacing="1"
 					class="filtro">

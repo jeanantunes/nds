@@ -404,7 +404,7 @@ fieldset {
 								<img src="${pageContext.request.contextPath}/images/ico_add.gif"
 								border="0" /> <b> Incluir Novo</b>
 						</a>
-						</span> <span class="bt_novos"> <a name="linkRedistribuicao"
+						</span> <span class="bt_novos"> <a name="linkRedistribuicao" isEdicao="true"
 							href="javascript:;" style="display: none;"
 							onclick="produtoEdicaoController.popupRedistribuicao();"> <img
 								src="${pageContext.request.contextPath}/images/ico_salvar.gif"
@@ -595,7 +595,7 @@ fieldset {
 
 	<!-- INICIO FILTRO PESQUISA -->
 
-	<fieldset class="fieldFiltro">
+	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 
 		<input type="hidden" id="produtoEdicaoController-codigoProduto"
 			name="codigoProduto" value="" />
