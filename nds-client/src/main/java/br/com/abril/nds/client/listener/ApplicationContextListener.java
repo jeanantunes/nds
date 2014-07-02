@@ -73,36 +73,36 @@ public class ApplicationContextListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 
-		//try {
+		try {
 			
-			//final WebApplicationContext springContext = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext());
+			final WebApplicationContext springContext = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext());
 			
-			//SchedulerFactoryBean schedulerFactoryBean =	springContext.getBean(SchedulerFactoryBean.class);
+			SchedulerFactoryBean schedulerFactoryBean =	springContext.getBean(SchedulerFactoryBean.class);
 			 
-			//Scheduler scheduler = schedulerFactoryBean.getScheduler();
+			Scheduler scheduler = schedulerFactoryBean.getScheduler();
 			
 //			this.agendarIntegracaoOperacionalDistribuidor(scheduler);
 //			this.agendaExeclusaoAjusteReparte(scheduler);
 //			this.agendarExclusaoDeEstudos(scheduler);
-			//this.agendarGeracaoRankings(scheduler);
+			this.agendarGeracaoRankings(scheduler);
 //			this.agendaExclusaoFixacaoReparte();
 //			this.agendaExclusaoRegiao();
 			
-			//this.agendarAtualizacaoEstoqueProdutoConf(scheduler);
+			this.agendarAtualizacaoEstoqueProdutoConf(scheduler);
 			
-			//scheduler.start();
+			scheduler.start();
 			
-		//} catch (SchedulerException e) {
+		} catch (SchedulerException e) {
 			
-           //LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", e);
+           LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", e);
 
-			//throw new RuntimeException(e);
-		//}
+			throw new RuntimeException(e);
+		}
 		
 	}
 
 	private void agendarAtualizacaoEstoqueProdutoConf(Scheduler scheduler) throws SchedulerException {
-	    /*
+	    
 	    final String groupName = "epcJobGroupName";
 	    final String identityTrigger = "epcTriggerIdentity";
 	    final String frequencia = "0 0/10 * * * ?";
@@ -120,7 +120,7 @@ public class ApplicationContextListener implements ServletContextListener {
                 .build();
 
         scheduler.scheduleJob(job, cronTrigger);
-        */
+        
     }
 
     /*
