@@ -6,16 +6,16 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import br.com.abril.nds.service.EstoqueProdutoService;
+//import br.com.abril.nds.service.EstoqueProdutoService;
 
 @DisallowConcurrentExecution
 public class AtualizaEstoqueJob implements Job {
     
     @Autowired
-    private EstoqueProdutoService estoqueProdutoService;
+    //private EstoqueProdutoService estoqueProdutoService;
     
     @Override
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        this.estoqueProdutoService.atualizarEstoqueProdutoCota();
+        //this.estoqueProdutoService.atualizarEstoqueProdutoCota();
     }
 }
