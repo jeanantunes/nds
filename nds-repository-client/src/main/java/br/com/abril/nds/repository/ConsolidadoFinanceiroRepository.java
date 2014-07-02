@@ -7,7 +7,6 @@ import java.util.List;
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
@@ -15,6 +14,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 
 public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoFinanceiroCota, Long> {
 	
@@ -56,8 +56,8 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	 */
 	List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaAVistaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro);
 
-    List<DebitoCreditoCotaDTO> buscarMovFinanPorCotaEData(
+    List<DebitoCreditoCota> buscarMovFinanPorCotaEData(
             Long idCota, List<Date> datas, Long idFornecedor);
 
-    List<DebitoCreditoCotaDTO> obterConsolidadosDataOperacaoSlip(Long idCota, Date dataOperacao);
+    List<DebitoCreditoCota> obterConsolidadosDataOperacaoSlip(Long idCota, Date dataOperacao);
 }

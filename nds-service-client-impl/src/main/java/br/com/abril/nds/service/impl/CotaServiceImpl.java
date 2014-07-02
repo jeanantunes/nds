@@ -1505,6 +1505,8 @@ public class CotaServiceImpl implements CotaService {
         
         cota.setTipoDistribuicaoCota(cotaDto.getTipoDistribuicaoCota());
         
+        this.atibuirDadosDistribuicaoDaCota(cota);
+        
         cota  = cotaRepository.merge(cota);
         
         if(newCota) {
@@ -1535,7 +1537,25 @@ public class CotaServiceImpl implements CotaService {
         return cota.getId();
     }
     
-    @Override
+    private void atibuirDadosDistribuicaoDaCota(final Cota cota) {
+		
+    	if(cota.getId()!= null){
+    		return;
+    	}
+    	
+    	if(cota.getParametroDistribuicao() == null){
+    		cota.setParametroDistribuicao(new ParametroDistribuicaoCota());
+    	}
+    	
+    	cota.getParametroDistribuicao().setRecebeRecolheParciais(true);;
+    	
+		if(TipoDistribuicaoCota.CONVENCIONAL.equals(cota.getParametroDistribuicao())){
+			
+			cota.getParametroDistribuicao().setRecebeComplementar(true);
+		}
+	}
+
+	@Override
     @Transactional
     public void atualizaTermoAdesao(final String numCota, final DescricaoTipoEntrega descricaoTipoEntrega) throws FileNotFoundException, IOException {
         

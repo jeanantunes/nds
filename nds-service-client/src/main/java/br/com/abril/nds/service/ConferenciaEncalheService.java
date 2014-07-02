@@ -8,7 +8,6 @@ import java.util.Map;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
@@ -18,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
@@ -70,7 +70,7 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @return List - ComposicaoCobrancaSlipDTO
 	 */
-	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
+	public List<DebitoCreditoCota> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
 	        ControleConferenciaEncalheCota controleConferenciaEncalheCota, Long idFornecedor);
 	
 	

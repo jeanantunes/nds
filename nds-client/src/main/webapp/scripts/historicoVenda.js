@@ -296,7 +296,7 @@ var historicoVendaController = $.extend(true, {
 						align : 'left'
 					},{
 						display : 'Período',
-						name : 'numeroPeriodicidade',
+						name : 'periodoString',
 						width : 40,
 						sortable : true,
 						align : 'center'
@@ -382,7 +382,7 @@ var historicoVendaController = $.extend(true, {
 						align : 'left'
 					},{
 						display : 'Período',
-						name : 'numeroPeriodicidade',
+						name : 'periodoString',
 						width : 40,
 						sortable : true,
 						align : 'center'

@@ -495,7 +495,7 @@ public class EstudoServiceImpl implements EstudoService {
 		
 		for (EstudoCotaGerado estudoCota : estudo.getEstudoCotas()) {
 			
-			if(estudoCota.getQuantidadePDVS() > 1){
+			if(estudoCota.getQuantidadePDVS() != null && estudoCota.getQuantidadePDVS() > 1){
 
 				switch (estudoCota.getClassificacao()) {
 				
