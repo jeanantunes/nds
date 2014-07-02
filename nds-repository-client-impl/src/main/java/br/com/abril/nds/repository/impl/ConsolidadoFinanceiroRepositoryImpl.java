@@ -19,7 +19,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
@@ -30,6 +29,7 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -1242,11 +1242,11 @@ ConsolidadoFinanceiroRepository {
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<DebitoCreditoCotaDTO> buscarMovFinanPorCotaEData(
+    public List<DebitoCreditoCota> buscarMovFinanPorCotaEData(
             final Long idCota, final List<Date> datas, final Long idFornecedor) {
         
         final StringBuilder hql = new StringBuilder("select new ");
-        hql.append(DebitoCreditoCotaDTO.class.getCanonicalName())
+        hql.append(DebitoCreditoCota.class.getCanonicalName())
            .append(" (movs.valor as valor, ")
            .append(" movs.observacao as observacoes, ")
            .append(" tpMov.operacaoFinaceira as tipoLancamento, ")
@@ -2008,7 +2008,7 @@ ConsolidadoFinanceiroRepository {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<DebitoCreditoCotaDTO> obterConsolidadosDataOperacaoSlip(Long idCota, Date dataOperacao) {
+    public List<DebitoCreditoCota> obterConsolidadosDataOperacaoSlip(Long idCota, Date dataOperacao) {
         
         final String hql = "select " +
         		" ABS(con.TOTAL) as valor, " +
@@ -2036,7 +2036,7 @@ ConsolidadoFinanceiroRepository {
                 Arrays.asList(StatusDivida.NEGOCIADA, StatusDivida.POSTERGADA));
         query.setParameter("statusInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA);
         
-        query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+        query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCota.class));
         
         return query.list();
     }

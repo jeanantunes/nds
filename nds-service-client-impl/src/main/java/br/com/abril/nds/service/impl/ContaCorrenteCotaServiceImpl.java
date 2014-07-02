@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
@@ -36,7 +36,7 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 	
 	@Override
 	@Transactional(readOnly=true)
-	public List<DebitoCreditoCotaDTO> consultarDebitoCreditoCota(Long idConsolidado, Date data,
+	public List<DebitoCreditoCota> consultarDebitoCreditoCota(Long idConsolidado, Date data,
 			Integer numeroCota, String sortorder, String sortname){
 		
 		if (idConsolidado != null){

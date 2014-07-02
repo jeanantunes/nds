@@ -27,7 +27,7 @@
 			</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
-		<fieldset class="fieldFiltro">
+		<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 		  
 		  <legend id="idFiledResumo"> Pesquisar Resumo Expedição</legend>
 		  

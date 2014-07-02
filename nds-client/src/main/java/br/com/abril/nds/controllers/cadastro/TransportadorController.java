@@ -195,6 +195,7 @@ public class TransportadorController extends BaseController {
 	
 	@SuppressWarnings("unchecked")
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO)
 	public void cadastrarTransportador(Transportador transportador){
 		
 		
@@ -480,7 +481,6 @@ public class TransportadorController extends BaseController {
 	}
 
 	@Post
-	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO)
 	public void editarTransportador(Long referencia){
 		
 		this.httpSession.setAttribute(ID_TRANSPORTADORA_EDICAO, referencia);
@@ -1255,7 +1255,6 @@ public class TransportadorController extends BaseController {
 	}
 	
 	@Post
-	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO)
 	public void carregarCotasAtendidas(String sortorder, String sortname){
 		
 		List<CotaAtendidaTransportadorVO> cotasAtendidas;

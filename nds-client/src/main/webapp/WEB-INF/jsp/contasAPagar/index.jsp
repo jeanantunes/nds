@@ -35,7 +35,7 @@
 <br/>
 <br/>
 
-<fieldset class="classFieldset">
+<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 	<legend> Pesquisar Contas a Pagar</legend>
 	<form id="contasAPagarForm">
 	<input type="hidden" name="filtro.dataDetalhe" id="contasAPagar_dataDetalhe"/>

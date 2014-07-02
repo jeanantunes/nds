@@ -35,7 +35,7 @@
 
 	<div class="container">
 
-		<fieldset class="classFieldset">
+		<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 			<legend>Pesquisar Área de Influência</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 					class="filtro">

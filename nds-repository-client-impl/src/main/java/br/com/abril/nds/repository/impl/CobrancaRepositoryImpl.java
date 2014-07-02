@@ -18,13 +18,13 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CobrancaRepository;
 
@@ -82,7 +82,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<DebitoCreditoCotaDTO> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota, Date data) {
+	public List<DebitoCreditoCota> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota, Date data) {
 		
 		StringBuffer sql = new StringBuffer();
 			
@@ -127,7 +127,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCota.class));
 		
 		query.setParameter("idCota", idCota);
 		

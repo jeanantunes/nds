@@ -185,7 +185,7 @@
 
 		<!-- Filtro de Pesquisa -->
 
-		<fieldset class="fieldFiltro" style="margin-top: 0px;">
+		<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados" style="margin-top: 0px;">
 
 			<legend>Pesquisar Balanceamento da Matriz de Recolhimento </legend>
 

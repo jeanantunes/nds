@@ -145,7 +145,7 @@ function Telefone(paramTela,message) {
 
         var title = this.readonly ? 'Visualizar Telefone' : 'Editar Telefone';
 
-        var retorno = '<a href="javascript:;" onclick="' + paramTela + '.editarTelefone('
+        var retorno = '<a href="javascript:;" isEdicao="true" onclick="' + paramTela + '.editarTelefone('
 				+ idTelefone
 				+ ')" '
 				+ ' style="cursor:pointer;border:0px;margin:5px" rel="tipsy" title="'+ title +'">'
@@ -156,7 +156,7 @@ function Telefone(paramTela,message) {
             retorno+='<a href="javascript:;" onclick="' + paramTela + '.removerTelefone('
                 + idTelefone
                 + ')" '
-                + ' style="cursor:pointer;border:0px;margin:5px" rel="tipsy" title="Excluir telefone">'
+                + ' style="cursor:pointer;border:0px;margin:5px" rel="tipsy" isEdicao="true" title="Excluir telefone">'
                 + '<img src="'+ contextPath +'/images/ico_excluir.gif" border="0px"/>'
                 + '</a>';
         }

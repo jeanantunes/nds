@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 <script type="text/javascript"
@@ -289,6 +290,7 @@ $(function(){
 
 <span id="FINANCEIRObtnNovaFormaPagamento" class="bt_novos"> <a
 	href="javascript:;"
+	isEdicao="true"
 	onclick="parametroCobrancaCotaController.popup_nova_unificacao();" rel="tipsy" title="Nova Forma de Pagamento">
 		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"
 		hspace="5" border="0" /> 
@@ -573,6 +575,7 @@ $(function(){
 
 			<br clear="all" /> <span id="popupNovaFormaPagamentoIncluirNova" class="bt_add"> <a
 				href="javascript:;"
+				isEdicao="true"
 				onclick="parametroCobrancaCotaController.incluirNovaUnificacao();">
 					Incluir Novo </a>
 			</span>

@@ -178,7 +178,7 @@ $(function(){
     <div class="container">
     
     <form id="formDePesquisa" >	
-	     <fieldset class="classFieldset">
+	     <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 	  	    <legend> Pesquisar Cotas</legend>
 	       <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	           <tr>

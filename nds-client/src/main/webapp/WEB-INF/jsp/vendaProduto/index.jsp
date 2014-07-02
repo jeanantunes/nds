@@ -1,4 +1,4 @@
-<head>
+f<head>
 
 <script type="text/javascript" src="scripts/endereco.js"></script>
 <script type="text/javascript" src="scripts/vendaProduto.js"></script>
@@ -68,7 +68,7 @@ $(function(){
     <br />
    
     <div class="container">    
-		<fieldset class="classFieldset">
+		<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 		  <legend> Pesquisar Produto</legend>
 		  <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		      <tr>

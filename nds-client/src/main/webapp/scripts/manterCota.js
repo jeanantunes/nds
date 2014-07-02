@@ -324,7 +324,11 @@ var MANTER_COTA = $.extend(true, {
     },
 
     exibirDialogExclusao:function (idCota){
-
+    	
+    	if(!verificarPermissaoAcesso(this.workspace)){
+			return;
+		}
+    	
         $("#dialog-excluirCota", this.workspace ).dialog({
             resizable: false,
             height:'auto',
@@ -716,7 +720,12 @@ var MANTER_COTA = $.extend(true, {
     },
 
     popupAlterarTitular : function() {
-        $( "#dialog-titular", this.workspace ).dialog({
+        
+    	if(!verificarPermissaoAcesso(MANTER_COTA._workspace)){
+    		return;
+    	}
+    	
+    	$( "#dialog-titular", this.workspace ).dialog({
             resizable: false,
             height:150,
             width:230,
@@ -1844,7 +1853,7 @@ var SOCIO_COTA = $.extend(true, {
             var acao  = '<a href="javascript:;" onclick="SOCIO_COTA.editarSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" /></a>';
 
             if (MANTER_COTA.isModoTelaCadastroCota()) {
-                acao += '<a href="javascript:;" onclick="SOCIO_COTA.removerSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" /></a>';
+                acao += '<a href="javascript:;" isEdicao="true" onclick="SOCIO_COTA.removerSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" /></a>';
             }
 
             value.cell.acao = acao;

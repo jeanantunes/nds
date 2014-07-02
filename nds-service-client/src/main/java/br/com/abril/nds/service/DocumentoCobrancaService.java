@@ -1,11 +1,13 @@
 package br.com.abril.nds.service;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
-import br.com.abril.nds.dto.SlipDTO;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.movimentacao.Slip;
 
 public interface DocumentoCobrancaService {
 
@@ -33,10 +35,12 @@ public interface DocumentoCobrancaService {
 	 * Gerar documento de Cobranca
 	 * @param dividas
 	 * @param tipoCobranca
+	 * @param politicasCobranca
 	 */
 	byte[] gerarDocumentoCobranca(List<GeraDividaDTO> dividas,TipoCobranca tipoCobranca);
 	
-	byte[] gerarDocumentoCobrancaComSlip(final List<GeraDividaDTO> dividas, final TipoCobranca tipoCobranca);
+	byte[] gerarDocumentoCobrancaComSlip(final List<GeraDividaDTO> dividas, final TipoCobranca tipoCobranca,
+	        final List<PoliticaCobranca> politicasCobranca, final Date data);
 
 	/**
 	 * SLIP
@@ -90,7 +94,7 @@ public interface DocumentoCobrancaService {
      * @param tpArquivo
      * @return SlipDTO
      */
-	SlipDTO gerarSlipDTOCobranca(Long idControleConferenciaEncalheCota,boolean incluirNumeroSlip);
+	Slip gerarSlipDTOCobranca(Long idControleConferenciaEncalheCota,boolean incluirNumeroSlip);
 
 	/**
      * SLIP DTO
@@ -101,7 +105,7 @@ public interface DocumentoCobrancaService {
      * @param incluirNumeroSlip
      * @return SlipDTO
      */
-	List<SlipDTO> gerarListaSlipDTOCobranca(List<Long> idsControleConferenciaEncalheCota,boolean incluirNumeroSlip);
+	List<Slip> gerarListaSlipDTOCobranca(List<Long> idsControleConferenciaEncalheCota,boolean incluirNumeroSlip);
 
 	/**
      * SLIP
@@ -112,6 +116,6 @@ public interface DocumentoCobrancaService {
      * @param tpArquivo
      * @return List<byte[]>
      */
-	List<byte[]> gerarListaSlipCobranca(List<SlipDTO> listaSlipDTO, TipoArquivo tpArquivo);
+	List<byte[]> gerarListaSlipCobranca(List<Slip> listaSlipDTO, TipoArquivo tpArquivo);
 	
 }

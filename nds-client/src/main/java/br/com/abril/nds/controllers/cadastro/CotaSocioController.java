@@ -5,12 +5,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.service.SocioCotaService;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -160,6 +162,7 @@ public class CotaSocioController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void incluirSocioCota(Long idCota, SocioCota socioCota) {
 		
 		validarInclusaoSocio(socioCota);
@@ -171,6 +174,7 @@ public class CotaSocioController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void removerSocioCota(Long idSocioCota) {
 		
 		this.socioCotaService.removerSocioCota(idSocioCota);
@@ -180,6 +184,7 @@ public class CotaSocioController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void confirmarSocioCota(Long idCota) {
 		
 		this.socioCotaService.confirmarCadastroSociosCota(idCota);

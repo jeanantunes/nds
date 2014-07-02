@@ -36,7 +36,7 @@ $(function(){
 
 <div class="corpo">
     <div class="container">
-      <fieldset class="classFieldset">
+      <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    	   
    	    <legend> Pesquisar </legend>
        

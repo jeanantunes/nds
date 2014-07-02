@@ -27,7 +27,6 @@ import br.com.abril.nds.client.vo.FooterTotalFornecedorVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.InfoTotalFornecedorDTO;
@@ -43,6 +42,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
@@ -628,7 +628,7 @@ public class ContaCorrenteCotaController extends BaseController {
     public void consultarDebitoCreditoCota(Long idConsolidado, Date data, Integer numeroCota, String sortname,
             String sortorder) {
         
-        List<DebitoCreditoCotaDTO> movs = this.contaCorrenteCotaService.consultarDebitoCreditoCota(idConsolidado, data,
+        List<DebitoCreditoCota> movs = this.contaCorrenteCotaService.consultarDebitoCreditoCota(idConsolidado, data,
                 numeroCota, sortorder, sortname);
         
         this.result.use(FlexiGridJson.class).from(movs).page(1).total(movs.size()).serialize();
@@ -637,11 +637,11 @@ public class ContaCorrenteCotaController extends BaseController {
     public void exportarDebitoCreditoCota(FileType fileType, Long idConsolidado, Date data, Integer numeroCota,
             String sortname, String sortorder) throws IOException {
         
-        List<DebitoCreditoCotaDTO> movs = this.contaCorrenteCotaService.consultarDebitoCreditoCota(idConsolidado, data,
+        List<DebitoCreditoCota> movs = this.contaCorrenteCotaService.consultarDebitoCreditoCota(idConsolidado, data,
                 numeroCota, sortorder, sortname);
         
         FileExporter.to("debito-credito", fileType).inHTTPResponse(this.getNDSFileHeader(),
-                this.obterFiltroExportacao(), movs, DebitoCreditoCotaDTO.class, this.httpServletResponse);
+                this.obterFiltroExportacao(), movs, DebitoCreditoCota.class, this.httpServletResponse);
         
         result.nothing();
     }

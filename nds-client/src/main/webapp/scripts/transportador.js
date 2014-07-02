@@ -116,7 +116,7 @@ var transportadorController = $.extend(true, {
 						
 						var idAssoc = value.id;
 						
-						var acao = '<a href="javascript:;" onclick="transportadorController.excluirAssociacao('+ idAssoc +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
+						var acao = '<a href="javascript:;" isEdicao="true" onclick="transportadorController.excluirAssociacao('+ idAssoc +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
 						
 						value.cell.acao = acao;
 						
@@ -204,8 +204,8 @@ var transportadorController = $.extend(true, {
 						
 						value.cell.sel = '<input type="radio" name="radioVeiculo" value="'+ idVeiculo +'"/>';
 						
-						var acao = '<a href="javascript:;" onclick="transportadorController.editarVeiculo('+ idVeiculo +');"><img src="'+ contextPath +'/images/ico_editar.gif" border="0" hspace="2" style="margin-right:10px" />';
-						acao +='</a> <a href="javascript:;" onclick="transportadorController.excluirVeiculo('+ idVeiculo +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
+						var acao = '<a href="javascript:;" isEdicao="true" onclick="transportadorController.editarVeiculo('+ idVeiculo +');"><img src="'+ contextPath +'/images/ico_editar.gif" border="0" hspace="2" style="margin-right:10px" />';
+						acao +='</a> <a href="javascript:;" isEdicao="true" onclick="transportadorController.excluirVeiculo('+ idVeiculo +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
 						
 						value.cell.acao = acao;
 					});
@@ -260,8 +260,8 @@ var transportadorController = $.extend(true, {
 						
 						value.cell.sel = '<input type="radio" name="radioMotorista" value="'+ idMotorista +'"/>';
 						
-						var acao = '<a href="javascript:;" onclick="transportadorController.editarMotorista('+ idMotorista +');"><img src="'+ contextPath +'/images/ico_editar.gif" border="0" hspace="2" />';
-						acao +='</a> <a href="javascript:;" onclick="transportadorController.excluirMotorista('+ idMotorista +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
+						var acao = '<a href="javascript:;" isEdicao="true" onclick="transportadorController.editarMotorista('+ idMotorista +');"><img src="'+ contextPath +'/images/ico_editar.gif" border="0" hspace="2" />';
+						acao +='</a> <a href="javascript:;" isEdicao="true" onclick="transportadorController.excluirMotorista('+ idMotorista +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
 						
 						value.cell.acao = acao;
 					});
@@ -441,9 +441,6 @@ var transportadorController = $.extend(true, {
 	
 	popup_novo_transportador : function(isEdicao) {
 		
-		if(!verificarPermissaoAcesso(transportadorController.workspace))
-			return;
-		
 		fecharModalCadastroTransp = false;
 		
 		$('#tabs', transportadorController.workspace).tabs('select', 0);
@@ -547,7 +544,11 @@ var transportadorController = $.extend(true, {
 	},
 
 	popup_excluir :function() {
-
+		
+		if(!verificarPermissaoAcesso(transportadorController.workspace )){
+			return;
+		}
+		
 		$("#dialog-excluir", transportadorController.workspace).dialog({
 			resizable : false,
 			height : 170,
@@ -634,6 +635,10 @@ var transportadorController = $.extend(true, {
 	},
 	
 	excluirVeiculo : function(idVeiculo){
+		
+		if(!verificarPermissaoAcesso(transportadorController.workspace)){
+			return;
+		}
 		
 		$("#dialog-excluir-veiculo", transportadorController.workspace).dialog({
 			resizable : false,
@@ -788,7 +793,11 @@ var transportadorController = $.extend(true, {
 	},
 	
 	excluirMotorista : function(idMotorista){
-			
+		
+		if(!verificarPermissaoAcesso(transportadorController.workspace )){
+			return;
+		}
+		
 		$("#dialog-excluir-motorista", transportadorController.workspace).dialog({
 			resizable : false,
 			height : 170,
@@ -908,6 +917,10 @@ var transportadorController = $.extend(true, {
 	},
 	
 	excluirTransportadora : function(idTransp){
+		
+		if(!verificarPermissaoAcesso(transportadorController.workspace )){
+			return;
+		}
 		
 		$("#dialog-excluir", transportadorController.workspace).dialog({
 			resizable : false,
@@ -1091,6 +1104,10 @@ var transportadorController = $.extend(true, {
 	},
 	
 	excluirAssociacao : function(referencia){
+		
+		if(!verificarPermissaoAcesso(transportadorController.workspace)){
+			return;
+		}
 		
 		$("#dialog-excluir-associacao", transportadorController.workspace).dialog({
 			resizable : false,

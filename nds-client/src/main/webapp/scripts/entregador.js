@@ -375,7 +375,11 @@ var entregadorController = $.extend(true, {
 	},
 
 	confirmarExclusaoEntregador: function(idEntregador) {
-
+		
+		if(!verificarPermissaoAcesso(this.workspace )){
+			return;
+		}
+		
 		$( "#dialog-excluir-entregador").dialog({
 			resizable: false,
 			height:170,
