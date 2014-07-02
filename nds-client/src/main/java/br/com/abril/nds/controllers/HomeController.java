@@ -147,6 +147,10 @@ public class HomeController {
         
         for (final Permissao p : permissoes) {
             
+        	if(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO.equals(p)){
+        		continue;
+        	}
+        	
             if (p.isPermissaoMenu() && !p.isPermissaoAlteracao()) {
                 organizaMenus(p, p.getPermissaoPai(), mapaMenus);
             }
