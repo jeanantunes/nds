@@ -479,11 +479,13 @@ public class NFeServiceImpl implements NFeService {
 			
 			this.ftfService.gerarFtf(notas);
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
+//			throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
 			
 		} else {
 			
 			this.notaFiscalService.exportarNotasFiscais(notas);
+//			throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
+			
 		}
 		
 		return notas;
@@ -917,6 +919,8 @@ public class NFeServiceImpl implements NFeService {
 		
 		EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, distribuidor);
 		
+		NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
+		
 		NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, distribuidor, parametrosSistema);
 		
 		NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
@@ -951,14 +955,24 @@ public class NFeServiceImpl implements NFeService {
 			}
 		}
 		
-		FaturaBuilder.montarFaturaNotaFiscal(notaFiscal);
-		NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
+		List<NotaFiscal> notasFiscaisSubdivididas = subdividirNotasFiscaisPorLimiteItens(parametrosSistema, notaFiscal, naturezaOperacao, distribuidor, transportadores);
 		
-		notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
-		
-		NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
-		
-		notasFiscais.add(notaFiscal);
+		if(notasFiscaisSubdivididas != null && !notasFiscaisSubdivididas.isEmpty()) {
+			
+			for(NotaFiscal notasFiscalSubdividida : notasFiscaisSubdivididas) {
+				
+				notasFiscalSubdividida.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+				FaturaBuilder.montarFaturaNotaFiscal(notasFiscalSubdividida);
+				NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notasFiscalSubdividida);
+				notasFiscais.add(notasFiscalSubdividida);
+			}
+		} else {
+			
+			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal);
+			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
+			notasFiscais.add(notaFiscal);
+		}
 	}
 	
 	@Override
