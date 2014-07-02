@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 
 public interface DebitoCreditoCotaService {
 
@@ -25,7 +25,7 @@ public interface DebitoCreditoCotaService {
 	 * 
 	 * @return List - DebitoCreditoDTO
 	 */
-	List<DebitoCreditoCotaDTO> obterListaResumoCobranca(Cota cota, Date dataOperacao);
+	List<DebitoCreditoCota> obterListaResumoCobranca(Cota cota, Date dataOperacao);
 	
 	MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroCotaDTO(DebitoCreditoDTO debitoCreditoDTO);
 	
@@ -83,7 +83,7 @@ public interface DebitoCreditoCotaService {
 	 * @param idFornecedor
 	 * @return List<DebitoCreditoCotaDTO>
 	 */
-	List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(Cota cota,
+	List<DebitoCreditoCota> obterListaDebitoCreditoCotaDTO(Cota cota,
 			List<Date> datas, Long idFornecedor);
 
 	/**

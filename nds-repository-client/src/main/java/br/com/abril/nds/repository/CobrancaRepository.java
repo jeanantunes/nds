@@ -6,11 +6,11 @@ import java.util.List;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 
 public interface CobrancaRepository extends Repository<Cobranca, Long>{
 
@@ -24,7 +24,7 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 * 
 	 * @return List - DebitoCreditoCotaDTO
 	 */
-	List<DebitoCreditoCotaDTO> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota, Date data);
+	List<DebitoCreditoCota> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota, Date data);
 	
 	/**
 	 * Obtem data em que houve a primeira inadimplencia com cobrança ainda em aberto

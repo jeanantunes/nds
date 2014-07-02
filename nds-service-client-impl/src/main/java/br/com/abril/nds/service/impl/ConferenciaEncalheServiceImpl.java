@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
@@ -90,6 +89,9 @@ import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
+import br.com.abril.nds.model.movimentacao.ProdutoEdicaoSlip;
+import br.com.abril.nds.model.movimentacao.Slip;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -126,6 +128,7 @@ import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.SemaforoRepository;
+import br.com.abril.nds.repository.SlipRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoMovimentoFiscalRepository;
@@ -300,9 +303,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Autowired
 	private ConferenciaEncalheBackupRepository conferenciaEncalheBackupRepository;
 	
-
 	@Autowired
 	private NotaFiscalEntradaService notaFiscalEntradaService;
+
+	@Autowired
+	private SlipRepository slipRepository;
 	
 	private final int PRIMEIRO_DIA_RECOLHIMENTO = 1;
 	
@@ -1230,8 +1235,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		infoConfereciaEncalheCota.setReparte(obterValorTotalReparte(numeroCota, datasRecolhimento));
 		
 		// impl Erik Scaranello
-		BigDecimal valorDebitoCreditoFinalizado = BigDecimal.ZERO;
-		for(final DebitoCreditoCotaDTO debitoCredito : infoConfereciaEncalheCota.getListaDebitoCreditoCota()) {
+		BigDecimal valorDebitoCreditoFinalizado = new BigDecimal(0);
+		for(final DebitoCreditoCota debitoCredito : infoConfereciaEncalheCota.getListaDebitoCreditoCota()) {
+
 			valorDebitoCreditoFinalizado = valorDebitoCreditoFinalizado.add(debitoCredito.getValor());
 		}
 		
@@ -1981,6 +1987,35 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		limparBackupAnterior(numeroCota, distribuidorService.obterDataOperacaoDistribuidor());
+		
+		//cria registros para possível geração posterior de slip + boleto em massa
+		Slip slip = this.slipRepository.obterPorNumeroCotaData(numeroCota, controleConfEncalheCota.getDataOperacao());
+		
+		//só existe 1 slip por cota por dia
+		if (slip != null){
+		    
+		    this.slipRepository.remover(slip);
+		}
+		
+		slip = this.documentoCobrancaService.gerarSlipDTOCobranca(controleConfEncalheCota.getId(), true);
+		
+		if (slip != null){
+		    
+		    for (DebitoCreditoCota d : slip.getListaComposicaoCobranca()){
+	            d.setSlip(slip);
+	            d.setComposicaoCobranca(true);
+	        }
+	        
+	        for (DebitoCreditoCota d : slip.getListaResumoCobranca()){
+	            d.setSlip(slip);
+	        }
+	        
+	        for (ProdutoEdicaoSlip d : slip.getListaProdutoEdicaoSlip()){
+	            d.setSlip(slip);
+	        }
+	        
+	        this.slipRepository.adicionar(slip);
+		}
 		
 		return documentoConferenciaEncalhe;
 		
@@ -3373,7 +3408,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
 		
-		final List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = 
+		final List<DebitoCreditoCota> listaDebitoCreditoCota = 
 				movimentoFinanceiroCotaRepository.
 				obterDebitoCreditoSumarizadosParaCotaDataOperacao(
 						numeroCota, 
@@ -3382,7 +3417,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		BigDecimal totalDebitoCredito = BigDecimal.ZERO;
 		
-		for(final DebitoCreditoCotaDTO debitoCreditoCota : listaDebitoCreditoCota) {
+		for(final DebitoCreditoCota debitoCreditoCota : listaDebitoCreditoCota) {
 			
 			if(debitoCreditoCota.getValor() == null) {
 				continue;
@@ -3413,7 +3448,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
      */
 	@Override
 	@Transactional(readOnly=true)
-	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
+	public List<DebitoCreditoCota> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
 	        final ControleConferenciaEncalheCota controleConferenciaEncalheCota,
 	        final Long idFornecedor){
 		

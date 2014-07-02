@@ -8,8 +8,8 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
-import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.ProdutoEdicaoSlip;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.util.ItemAutoComplete;
 
@@ -96,7 +96,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * 
 	 * @return List - ProdutoEdicaoSlipDTO
 	 */
-	public List<ProdutoEdicaoSlipDTO> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota);
+	public List<ProdutoEdicaoSlip> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota);
 
 	
 	/**
@@ -110,7 +110,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * 
 	 * @return List<ProdutoEdicaoSlipDTO>
 	 */
-	public List<ProdutoEdicaoSlipDTO> obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
+	public List<ProdutoEdicaoSlip> obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
 			Long idCota,
 			Date dataOperacao,
 			boolean indPostergado,

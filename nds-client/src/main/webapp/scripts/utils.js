@@ -630,6 +630,10 @@ function exibirAcessoNegado() {
 
 function verificarPermissaoAcesso(workspace) {
 	
+	if($('#permissaoAlteracao',workspace).val() == undefined){
+		return true;
+	}
+	
 	if($('#permissaoAlteracao',workspace).val()=="true")
 		return true;
 	
