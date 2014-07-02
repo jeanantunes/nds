@@ -6,6 +6,7 @@ import java.util.List;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 
 public class InfoConferenciaEncalheCota implements Serializable {
 	
@@ -25,7 +26,7 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	
 	private List<ConferenciaEncalheDTO> listaConferenciaEncalhe;
 	
-	private List<DebitoCreditoCotaDTO> listaDebitoCreditoCota;
+	private List<DebitoCreditoCota> listaDebitoCreditoCota;
 	
 	private NotaFiscalEntradaCota notaFiscalEntradaCota;
 	
@@ -92,12 +93,12 @@ public class InfoConferenciaEncalheCota implements Serializable {
 		this.listaConferenciaEncalhe = listaConferenciaEncalhe;
 	}
 
-	public List<DebitoCreditoCotaDTO> getListaDebitoCreditoCota() {
+	public List<DebitoCreditoCota> getListaDebitoCreditoCota() {
 		return listaDebitoCreditoCota;
 	}
 
 	public void setListaDebitoCreditoCota(
-			List<DebitoCreditoCotaDTO> listaDebitoCreditoCota) {
+			List<DebitoCreditoCota> listaDebitoCreditoCota) {
 		this.listaDebitoCreditoCota = listaDebitoCreditoCota;
 	}
 
