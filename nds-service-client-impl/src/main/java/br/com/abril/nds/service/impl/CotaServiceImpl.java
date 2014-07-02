@@ -1516,6 +1516,10 @@ public class CotaServiceImpl implements CotaService {
     
     private void atibuirDadosDistribuicaoDaCota(final Cota cota) {
 		
+    	if(cota.getId()!= null){
+    		return;
+    	}
+    	
     	if(cota.getParametroDistribuicao() == null){
     		cota.setParametroDistribuicao(new ParametroDistribuicaoCota());
     	}
