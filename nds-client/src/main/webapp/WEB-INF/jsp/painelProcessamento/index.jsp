@@ -5,7 +5,7 @@
 	$(function() {
 		$("#toggleFornecedores").buttonset();
 		$("input[name='radioToggle']").click(function() {
-			painelProcessamentoController.pesquisarInterfaces();
+			painelProcessamentoController.alterarProcessamento();
 		});
 		painelProcessamentoController.init("${pageContext.request.contextPath}");
 	});
@@ -78,8 +78,28 @@
 		
 		  <input type="radio" id="visao-fc" name="radioToggle" value="${codigoDistribuidor.fc}">
 		  <label for="visao-fc" style="width:100px">FC</label>
+		  
+		  <input type="radio" id="visao-processos" name="radioToggle" value="">
+		  <label for="visao-processos" style="width:100px">Processos</label>
 		
 		</div>
+		
+		<div class="linha_separa_fields">&nbsp;</div>
+		
+		<div id="divProcessamento" style="display: none;">
+			
+			<span class="bt_confirmar_novo" title="Gerar Ranking Segmento">
+           			<a onclick="painelProcessamentoController.gerarRankingSegmento();" href="javascript:;">
+           			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">Gerar Ranking Segmento</a>
+           	</span>
+			
+			<span class="bt_confirmar_novo" title="Gerar Ranking Faturamento">
+           			<a onclick="painelProcessamentoController.gerarRankingFaturamento();" href="javascript:;">
+           			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">Gerar Ranking Faturamento</a>
+           	</span>
+			
+		</div>
+		
           <div class="grids" style="display:block;">
         	<div id="tabPainel">
                 <div id="tabPainel-Interfaces">
