@@ -1266,8 +1266,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" produto.codigo as codigoProduto, ");
 		hql.append(" produto.nome as nomeProduto, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
-		hql.append(" produto.periodicidade as periodicidade, ");
-		hql.append(" lancamento.dataLancamentoPrevista as dataLancamento, ");
+		hql.append(" plp.numeroPeriodo as periodo, ");
+		
+		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		
 		hql.append("  round((SELECT sum(estqProdCota.qtdeRecebida) ");
 		hql.append("          FROM EstoqueProdutoCota estqProdCota ");
@@ -1293,6 +1294,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" JOIN produtoEdicao.lancamentos as lancamento ");
 		hql.append(" JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN produtoEdicao.tipoClassificacaoProduto as tipoClassificacaoProduto ");
+		hql.append(" LEFT JOIN lancamento.periodoLancamentoParcial as plp ");
 
 		hql.append(" WHERE ");
 
