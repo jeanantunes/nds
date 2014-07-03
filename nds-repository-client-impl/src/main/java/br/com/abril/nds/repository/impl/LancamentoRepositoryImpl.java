@@ -920,7 +920,10 @@ public class LancamentoRepositoryImpl extends
 
 		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
-		query.setParameter("statusLancamento", StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		query.setParameterList("statusLancamento",
+                Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, 
+                        StatusLancamento.EM_RECOLHIMENTO, 
+                        StatusLancamento.RECOLHIDO));
 		query.setParameter("origemInterface", Origem.INTERFACE);
 		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
 		
@@ -972,13 +975,15 @@ public class LancamentoRepositoryImpl extends
 
 		hql.append(" lancamento.dataRecolhimentoDistribuidor between :dataInicioRecolhimento and :dataFimRecolhimento ");
 
-		hql.append(" and lancamento.status = :statusLancamento ");
+		hql.append(" and lancamento.status in (:statusLancamento) ");
 		
 		hql.append(" and lancamento.tipoLancamento = :tipoLanc ");
 
 		if (idFornecedor != null) {
 			hql.append(" and fornecedor.id = :idFornecedor ");
 		}
+		
+		hql.append(" group by lancamento.id ");
 
 		Query query = getSession().createQuery(hql.toString());
 
@@ -991,8 +996,10 @@ public class LancamentoRepositoryImpl extends
 
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
 
-		query.setParameter("statusLancamento",
-				StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		query.setParameterList("statusLancamento",
+                Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, 
+                        StatusLancamento.EM_RECOLHIMENTO, 
+                        StatusLancamento.RECOLHIDO));
 		
 		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
 
@@ -1029,12 +1036,14 @@ public class LancamentoRepositoryImpl extends
 
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
 
-		query.setParameter("statusLancamento",
-				StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		query.setParameterList("statusLancamento",
+				Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, 
+				        StatusLancamento.EM_RECOLHIMENTO, 
+				        StatusLancamento.RECOLHIDO));
 		
 		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
 
-		return (Long) query.uniqueResult();
+		return Long.valueOf(query.list().size());
 
 	}
 
