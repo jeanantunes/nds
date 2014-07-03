@@ -65,6 +65,10 @@ public class NaturezaOperacao implements Serializable {
 	private TipoAtividade tipoAtividade;
 	
 	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_EMITENTE", nullable = false)
+	private TipoDestinatario tipoEmitente;
+	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_DESTINATARIO", nullable = false)
 	private TipoDestinatario tipoDestinatario;
 	
@@ -159,6 +163,14 @@ public class NaturezaOperacao implements Serializable {
 
 	public void setTipoAtividade(TipoAtividade tipoAtividade) {
 		this.tipoAtividade = tipoAtividade;
+	}
+
+	public TipoDestinatario getTipoEmitente() {
+		return tipoEmitente;
+	}
+
+	public void setTipoEmitente(TipoDestinatario tipoEmitente) {
+		this.tipoEmitente = tipoEmitente;
 	}
 
 	public TipoDestinatario getTipoDestinatario() {
