@@ -79,6 +79,10 @@ var semaforoController = $.extend(true, {
 			} else {
 				row.cell.status = "<img src= " + contextPath + "/images/ico_encerrado.png />";
 			}
+			
+			if (!row.cell.mensagem){
+				row.cell.mensagem = "";
+			}
 		});
 		
 		semaforoController.pollStatusProcessosEncalhe();
