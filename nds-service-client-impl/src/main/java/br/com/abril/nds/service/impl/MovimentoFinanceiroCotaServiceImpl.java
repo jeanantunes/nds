@@ -1043,25 +1043,28 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         
         List<MovimentosEstoqueEncalheDTO> mecs;
         
-        for (final MovimentosEstoqueEncalheDTO mec : movimentosEstoqueCota) {
-            
-            final Long fornecedor = mec.getIdFornecedor();
-            
-            if (fornecedor == null) {
+        if (movimentosEstoqueCota != null){
+            for (final MovimentosEstoqueEncalheDTO mec : movimentosEstoqueCota) {
                 
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Fornecedor não encontrado na geração de Movimento Financeiro para o Movimentos de Estoque ["
-                                + mec.getIdMovimentoEstoqueCota() + "]!");
+                final Long fornecedor = mec.getIdFornecedor();
+                
+                if (fornecedor == null) {
+                    
+                    throw new ValidacaoException(TipoMensagem.WARNING,
+                            "Fornecedor não encontrado na geração de Movimento Financeiro para o Movimentos de Estoque ["
+                                    + mec.getIdMovimentoEstoqueCota() + "]!");
+                }
+                
+                mecs = movEstAgrup.get(fornecedor);
+                
+                mecs = mecs == null ? new ArrayList<MovimentosEstoqueEncalheDTO>() : mecs;
+                
+                mecs.add(mec);
+                
+                movEstAgrup.put(fornecedor, mecs);
             }
-            
-            mecs = movEstAgrup.get(fornecedor);
-            
-            mecs = mecs == null ? new ArrayList<MovimentosEstoqueEncalheDTO>() : mecs;
-            
-            mecs.add(mec);
-            
-            movEstAgrup.put(fornecedor, mecs);
         }
+        
         return movEstAgrup;
     }
     
