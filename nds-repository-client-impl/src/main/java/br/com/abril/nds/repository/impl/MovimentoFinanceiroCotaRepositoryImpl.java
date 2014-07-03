@@ -218,7 +218,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		final StringBuilder sql = new StringBuilder();
 		
 		sql.append("select ");
-		sql.append("	tipomovime1_.OPERACAO_FINANCEIRA as tipoLancamento, ");
+		sql.append("	tipomovime1_.OPERACAO_FINANCEIRA as tipoLancamentoDescricao, ");
 		sql.append("	tipomovime1_.DESCRICAO as observacoes, ");
 		sql.append("	movimentof0_.VALOR as valor, ");
 		sql.append("	movimentof0_.DATA as dataLancamento, ");
@@ -289,7 +289,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
             query.setParameter("idFornecedor", idFornecedor);
         }
 		
-		query.addScalar("tipoLancamento", StandardBasicTypes.STRING);
+		query.addScalar("tipoLancamentoDescricao", StandardBasicTypes.STRING);
 		query.addScalar("descricao", StandardBasicTypes.STRING);
 		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("dataLancamento", StandardBasicTypes.DATE);

@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.type.StandardBasicTypes;
+
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.util.DateUtil;
@@ -116,6 +118,13 @@ public class DebitoCreditoCota {
         
         this.tipoLancamento = tipoLancamento;
     }
+
+    //usado em query, populado pelo hibernate
+    public void setTipoLancamentoDescricao(String tipoLancamentoDescricao) {
+        this.tipoLancamento = OperacaoFinaceira.valueOf(tipoLancamentoDescricao);
+    }
+
+    
     
     //usado em métodos que usam esse DTO
     public void setTipoLancamentoEnum(OperacaoFinaceira operacaoFinaceira) {
