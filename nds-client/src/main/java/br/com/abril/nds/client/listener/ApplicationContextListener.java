@@ -94,7 +94,7 @@ public class ApplicationContextListener implements ServletContextListener {
 			
 		} catch (SchedulerException e) {
 			
-            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", e);
+           LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", e);
 
 			throw new RuntimeException(e);
 		}
@@ -120,6 +120,7 @@ public class ApplicationContextListener implements ServletContextListener {
                 .build();
 
         scheduler.scheduleJob(job, cronTrigger);
+        
     }
 
     /*

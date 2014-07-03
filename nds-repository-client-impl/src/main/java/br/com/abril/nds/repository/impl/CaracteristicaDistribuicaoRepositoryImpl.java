@@ -75,11 +75,30 @@ CaracteristicaDistribuicaoRepository {
         .append(" ped.NUMERO_EDICAO as 'numeroEdicao', ")
         .append(" coalesce(tipoclas.descricao, '') as 'classificacao', ")
         .append(" coalesce(ped.PRECO_VENDA, 0) as 'precoCapa', ")
-        .append(" coalesce(lan.REPARTE,0) - ")
-        .append(" 	(select sum(me.QTDE) from movimento_estoque me join tipo_movimento tm on tm.ID = me.TIPO_MOVIMENTO_ID ")
-        .append(" 	where me.PRODUTO_EDICAO_ID=ped.ID and tm.GRUPO_MOVIMENTO_ESTOQUE = :grupoEncalhe) ")
-        .append(" as 'venda', ")
-        .append(" coalesce(lan.REPARTE,0) as 'reparte', ")
+        
+		.append("   round((select sum(epc.qtde_recebida)                                ")
+		.append("        from estoque_produto_cota epc,                                 ")
+		.append("             produto_edicao prodedic                                   ")
+		.append("       where epc.produto_edicao_id = prodedic.id                       ")
+		.append("             and epc.produto_edicao_id = ped.id),0) as 'reparte',      ")
+		.append("  case                                                                 ")
+		.append("     when lan.status = 'fechado' or lan.status = 'recolhido'           ")
+		.append("     then                                                              ")
+		.append("        round((select sum(epc.qtde_recebida- epc.qtde_devolvida)       ")
+		.append("              from estoque_produto_cota epc,                           ")
+		.append("                   produto_edicao prodedic                             ")
+		.append("             where epc.produto_edicao_id = prodedic.id                 ")
+		.append("                   and epc.produto_edicao_id = ped.id),0)              ")
+		.append("     else                                                              ")
+		.append("        round((select sum(epc.qtde_recebida)                           ")
+		.append("              from estoque_produto_cota epc,                           ")
+		.append("                   produto_edicao prodedic                             ")
+		.append("             where epc.produto_edicao_id = prodedic.id                 ")
+		.append("                   and epc.produto_edicao_id = ped.id),0)              ")
+		.append("  end                                                                  ")
+		.append("     as 'venda',                                                       ")
+        
+        
         .append(" lan.DATA_LCTO_DISTRIBUIDOR  as 'dataLancamento', ")
         .append(" lan.DATA_REC_DISTRIB as 'dataRecolhimento', ")
         .append(" tiposeg.DESCRICAO as 'segmento' ")
@@ -158,7 +177,6 @@ CaracteristicaDistribuicaoRepository {
         sql.append(this.ordenarConsultaCaracteristicaDistribuicaoDetalhe(filtro));
         
         final Query  query = getSession().createSQLQuery(sql.toString());
-        query.setParameter("grupoEncalhe", GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE.name());
         query.setResultTransformer(new AliasToBeanResultTransformer(CaracteristicaDistribuicaoDTO.class));
         configurarPaginacaoPesquisaDetalhe(filtro,query);
         

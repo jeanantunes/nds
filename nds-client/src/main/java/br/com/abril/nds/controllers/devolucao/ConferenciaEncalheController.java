@@ -26,7 +26,6 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
@@ -42,6 +41,7 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
@@ -2424,7 +2424,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 			
 			if (info.getListaDebitoCreditoCota() != null) {
 			
-				for (final DebitoCreditoCotaDTO debitoCreditoCotaDTO : info.getListaDebitoCreditoCota()){
+				for (final DebitoCreditoCota debitoCreditoCotaDTO : info.getListaDebitoCreditoCota()){
 					
 					if(debitoCreditoCotaDTO.getValor() == null) {
 						continue;
@@ -2594,11 +2594,11 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
      * 
      * @return TableModel<CellModelKeyValue<DebitoCreditoCotaVO>>
      */
-	private TableModel<CellModelKeyValue<DebitoCreditoCotaDTO>> 
-		obterTableModelDebitoCreditoCota(final List<DebitoCreditoCotaDTO> listaDebitoCreditoCota) {
+	private TableModel<CellModelKeyValue<DebitoCreditoCota>> 
+		obterTableModelDebitoCreditoCota(final List<DebitoCreditoCota> listaDebitoCreditoCota) {
 
-		final TableModel<CellModelKeyValue<DebitoCreditoCotaDTO>> tableModelDebitoCreditoCota = 
-				new TableModel<CellModelKeyValue<DebitoCreditoCotaDTO>>();
+		final TableModel<CellModelKeyValue<DebitoCreditoCota>> tableModelDebitoCreditoCota = 
+				new TableModel<CellModelKeyValue<DebitoCreditoCota>>();
 		
 		tableModelDebitoCreditoCota.setRows(CellModelKeyValue.toCellModelKeyValue(listaDebitoCreditoCota));
 		tableModelDebitoCreditoCota.setTotal((listaDebitoCreditoCota!= null) ? listaDebitoCreditoCota.size() : 0);

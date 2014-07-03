@@ -30,7 +30,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.ProcessamentoFinanceiroCotaDTO;
@@ -51,6 +50,7 @@ import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -74,7 +74,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(
+	public List<DebitoCreditoCota> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(
 	        final Integer numeroCota, final List<Date> datas, final Long idFornecedor) {
 		
 		final StringBuilder sql = new StringBuilder("");
@@ -142,7 +142,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
 
-				final DebitoCreditoCotaDTO dto = new DebitoCreditoCotaDTO();
+				final DebitoCreditoCota dto = new DebitoCreditoCota();
 				
 				dto.setValor(rs.getBigDecimal("valor"));
 				dto.setDataVencimento(rs.getDate("dataVencimento"));
@@ -154,7 +154,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			}
 		};
 
-		return (List<DebitoCreditoCotaDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
+		return (List<DebitoCreditoCota>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
 	}
 	
 	/**
@@ -212,13 +212,13 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(final Integer numeroCota, final List<Date> datas, 
+	public List<DebitoCreditoCota> obterDebitoCreditoCotaDataOperacao(final Integer numeroCota, final List<Date> datas, 
 			final List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados, final Long idFornecedor){
 		
 		final StringBuilder sql = new StringBuilder();
 		
 		sql.append("select ");
-		sql.append("	tipomovime1_.OPERACAO_FINANCEIRA as tipoLancamento, ");
+		sql.append("	tipomovime1_.OPERACAO_FINANCEIRA as tipoLancamentoDescricao, ");
 		sql.append("	tipomovime1_.DESCRICAO as observacoes, ");
 		sql.append("	movimentof0_.VALOR as valor, ");
 		sql.append("	movimentof0_.DATA as dataLancamento, ");
@@ -273,7 +273,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		sql.append("	movimentof0_.DATA ");
 		
 		final SQLQuery query = this.getSession().createSQLQuery(sql.toString());
-		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCota.class));
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
 		query.setParameter("numeroCota", numeroCota);
 		query.setParameterList("datas", datas);
@@ -289,13 +289,13 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
             query.setParameter("idFornecedor", idFornecedor);
         }
 		
-		query.addScalar("tipoLancamento", StandardBasicTypes.STRING);
+		query.addScalar("tipoLancamentoDescricao", StandardBasicTypes.STRING);
 		query.addScalar("descricao", StandardBasicTypes.STRING);
 		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("dataLancamento", StandardBasicTypes.DATE);
 		query.addScalar("observacoes", StandardBasicTypes.STRING);
 		
-		return (List<DebitoCreditoCotaDTO>) query.list();
+		return (List<DebitoCreditoCota>) query.list();
 	}
 	
 	private List<Long> getListaTiposMovimentoFinanceiroIgnorados(
@@ -309,7 +309,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DebitoCreditoCotaDTO> obterDebitoCreditoSumarizadosParaCotaDataOperacao(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
+	public List<DebitoCreditoCota> obterDebitoCreditoSumarizadosParaCotaDataOperacao(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
 		
 		StringBuilder hql = new StringBuilder(" select ");
 		
@@ -346,7 +346,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		hql.append(" group by mfc.tipoMovimento.operacaoFinaceira ");
 
-		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCota.class));
 		
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
 		
@@ -391,7 +391,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public  List<DebitoCreditoCotaDTO> obterDebitoCreditoPorPeriodoOperacao(FiltroConsultaEncalheDTO filtro, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
+	public  List<DebitoCreditoCota> obterDebitoCreditoPorPeriodoOperacao(FiltroConsultaEncalheDTO filtro, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
 		
 		StringBuilder hql = new StringBuilder(" select ");
 		
@@ -433,7 +433,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		hql.append(" order by mfc.data ");
 		
-		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCota.class));
 		
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
 
@@ -1130,7 +1130,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<DebitoCreditoCotaDTO> obterCreditoDebitoCota(Long idConsolidado, Date dataCriacao,
+	public List<DebitoCreditoCota> obterCreditoDebitoCota(Long idConsolidado, Date dataCriacao,
 			Integer numeroCota, List<TipoMovimentoFinanceiro> tiposMovimento, String sortorder, String sortname){
 		
 		StringBuilder hql = new StringBuilder("select ");
@@ -1192,7 +1192,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		query.setParameterList("tiposMovimento", tiposMovimento);
 		query.setParameter("numeroCota", numeroCota);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCota.class));
 		
 		return query.list();
 	}
