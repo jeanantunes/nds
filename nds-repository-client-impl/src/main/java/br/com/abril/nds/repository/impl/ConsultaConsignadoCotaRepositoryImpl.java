@@ -28,7 +28,6 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
-import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 
@@ -313,13 +312,16 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		    sql.append(this.getSqlTuplasCotaAVista(filtro.getAddOutrasCotas()));
 		}
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(
-			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
+	
+	/**
+	 * Monta query de busca de consignados da cota por fornecedor
+	 * 
+	 * @param filtro
+	 * @return StringBuilder
+	 */
+	private StringBuilder getQueryMovimentosCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro){
 		
-		StringBuilder sql = new StringBuilder();
+        StringBuilder sql = new StringBuilder();
 		
 		sql.append(" SELECT "); 
 		sql.append(" consignadoDistribuidor.numeroCota as numeroCota, ");
@@ -377,19 +379,16 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" ) AS consignadoDistribuidor ");
 		sql.append(" GROUP BY numeroCota, idFornecedor ");
 
-		if (filtro.getPaginacao() != null) {
-			if (filtro.getPaginacao().getSortColumn() != null) {
-				sql.append(" ORDER BY ");
-				sql.append(filtro.getPaginacao().getSortColumn());		
-			
-				if (filtro.getPaginacao().getOrdenacao() != null) {
-					sql.append(" ");
-					sql.append( filtro.getPaginacao().getOrdenacao().toString());
-				}
-			}
-		}
-		
-		Query query =  getSession().createSQLQuery(sql.toString());
+		return sql;
+	}
+
+	/**
+	 * Atribui parametros em query de consulta de consignados da cota por fornecedor
+	 * 
+	 * @param query
+	 * @param filtro
+	 */
+	private Query setParametrosBuscaMovimentoCotaPeloFornecedor(Query query, FiltroConsultaConsignadoCotaDTO filtro){
 		
 		if(filtro.getIdCota()!=null) {
 			query.setParameter("idCota", filtro.getIdCota());
@@ -406,6 +405,32 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
 		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
+
+		return query;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(
+			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
+		
+		StringBuilder sql = this.getQueryMovimentosCotaPeloFornecedor(filtro);
+
+		if (filtro.getPaginacao() != null) {
+			if (filtro.getPaginacao().getSortColumn() != null) {
+				sql.append(" ORDER BY ");
+				sql.append(filtro.getPaginacao().getSortColumn());		
+			
+				if (filtro.getPaginacao().getOrdenacao() != null) {
+					sql.append(" ");
+					sql.append( filtro.getPaginacao().getOrdenacao().toString());
+				}
+			}
+		}
+		
+		Query query =  getSession().createSQLQuery(sql.toString());
+
+		query = this.setParametrosBuscaMovimentoCotaPeloFornecedor(query, filtro);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaPeloFornecedorDTO.class));
@@ -427,7 +452,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		}
 		
 		return query.list();
-		 
 	}
 
 	@Override
@@ -576,7 +600,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
         
         return total;
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhado(FiltroConsultaConsignadoCotaDTO filtro) {
@@ -585,88 +609,27 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
         sql.append(" SELECT SUM(totalGeral.total) AS total, ");
         
-        sql.append(" totalGeral.fornecedorId as fornecedorId, ");
-        
         sql.append(" totalGeral.nomeFornecedor as nomeFornecedor ");
 		
 		sql.append(" FROM (  ");
 		
-        sql.append("       SELECT ");
-        
-        sql.append("       fornecedor8_.id as fornecedorId, ");
-        
-        sql.append("       PJ.RAZAO_SOCIAL AS nomeFornecedor, ");
-        
-        if (filtro.getIdCota() != null) {
-        
-	        sql.append("    (  COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) * SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ");
-	        sql.append("    ) AS total ");
-	        
-        } else {
-        	
-        	sql.append("    (  COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ");
-	        sql.append("    ) AS total ");
-        }
-        
-        this.setarFromWhereConsultaConsignado(sql, filtro);
+		sql.append( this.getQueryMovimentosCotaPeloFornecedor(filtro) );
 		
-		sql.append(" GROUP BY ");
+		sql.append("      ) as totalGeral ");
 		
-		sql.append(" PE.id, C.id ");
+		sql.append(" GROUP BY totalGeral.nomeFornecedor ");
 		
-		sql.append(" HAVING ");
-		sql.append(" SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END)" +
-				   "    -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END))<>0 "); 
+		Query query =  getSession().createSQLQuery(sql.toString());
 
-		sql.append(" ) AS totalGeral ");
+		query = this.setParametrosBuscaMovimentoCotaPeloFornecedor(query, filtro);
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(TotalConsultaConsignadoCotaDetalhado.class));
 		
-		sql.append(" GROUP BY totalGeral.fornecedorId ");
-
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		((SQLQuery) query).addScalar("total", StandardBasicTypes.BIG_DECIMAL);
 		
-		if (filtro.getIdCota()!=null) {
-			
-			parameters.put("idCota", filtro.getIdCota());
-		}
-
-		if (filtro.getIdFornecedor() != null ) {
-			
-			parameters.put("idFornecedor", filtro.getIdFornecedor());
-		}
+		((SQLQuery) query).addScalar("nomeFornecedor", StandardBasicTypes.STRING);
 		
-		if(filtro.getDataInicio() != null)
-		    parameters.put("dataInicio", filtro.getDataInicio());
-        
-        if(filtro.getDataFim() != null)
-            parameters.put("dataFim", filtro.getDataFim());
-
-        if(filtro.getTipoOperacao() != null)
-            parameters.put("tipoEstoque", filtro.getTipoOperacao().name());
-                
-		parameters.put("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
-
-		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
-		
-		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
-		
-		parameters.put("dataOperacao", filtro.getDataOperacao());
-
-		@SuppressWarnings("rawtypes")
-		RowMapper cotaRowMapper = new RowMapper() {
-
-			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
-
-				TotalConsultaConsignadoCotaDetalhado dto = new TotalConsultaConsignadoCotaDetalhado();
-				
-				dto.setNomeFornecedor(rs.getString("nomeFornecedor"));
-				dto.setTotal(rs.getBigDecimal("total"));
-				
-				return dto;
-			}
-		};
-		
-		return (List<TotalConsultaConsignadoCotaDetalhado>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
+		return (List<TotalConsultaConsignadoCotaDetalhado>) query.list();
 	}
-		
+	
 }

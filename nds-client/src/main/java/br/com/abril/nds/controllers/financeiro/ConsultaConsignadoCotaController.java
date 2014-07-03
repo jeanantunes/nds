@@ -6,12 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
@@ -51,6 +48,8 @@ public class ConsultaConsignadoCotaController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA = "filtroConsultaConsignadoCotaController";
 	
+	private static final String TOTAIS_GERAIS_CONSIGNADO_SESSION = "totaisGeraisConsignado";
+	
 	@Autowired
 	private Result result;
 	
@@ -84,7 +83,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 	@Post
 	@Path("/buscarTotalGeralCota")
 	public void buscarTotalGeralCota(FiltroConsultaConsignadoCotaDTO filtro){
-	    
+
 		if(filtro.getIdCota() != null){
 			cota = obterCota(filtro.getIdCota().intValue());
 			if(cota == null){
@@ -92,30 +91,41 @@ public class ConsultaConsignadoCotaController extends BaseController {
 			}
 			filtro.setIdCota(cota.getId());			
 		}
+
+		Map<String, Object> mapaResultado = this.obterTotaisGeraisSessao();
 		
-		Map<String, Object> mapaResultado = new HashMap<String, Object>();
+		FiltroConsultaConsignadoCotaDTO filtroSessao = (FiltroConsultaConsignadoCotaDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA);
 		
-		List<TotalConsultaConsignadoCotaDetalhado> totaisFornecedores = null;
-		
-		BigDecimal totalGeral = BigDecimal.ZERO;
-		
-		if (filtro.getIdFornecedor() == -1) {
+		if (mapaResultado == null || !filtroSessao.equals(filtro)){
 			
-			filtro.setIdFornecedor(null);
+			this.removerTotaisGeraisSessao();
+		
+			mapaResultado = new HashMap<String, Object>();
+
+			List<TotalConsultaConsignadoCotaDetalhado> totaisFornecedores = null;
 			
-			totaisFornecedores = 
-				this.consultaConsignadoCota.buscarTotalDetalhado(filtro);
+			BigDecimal totalGeral = BigDecimal.ZERO;
 			
-			for(TotalConsultaConsignadoCotaDetalhado tt : totaisFornecedores) {
-			    totalGeral = totalGeral.add(tt.getTotal());
+			if (filtro.getIdFornecedor() == -1) {
+				
+				filtro.setIdFornecedor(null);
+				
+				totaisFornecedores = 
+					this.consultaConsignadoCota.buscarTotalDetalhado(filtro);
+				
+				for(TotalConsultaConsignadoCotaDetalhado tt : totaisFornecedores) {
+				    totalGeral = totalGeral.add(tt.getTotal());
+				}
+				
+				mapaResultado.put("totaisFornecedores", totaisFornecedores);
+			} else {
+			    totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
 			}
 			
-			mapaResultado.put("totaisFornecedores", totaisFornecedores);
-		} else {
-		    totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
+			mapaResultado.put("totalGeral", CurrencyUtil.formatarValor(totalGeral));
+	
+			session.setAttribute(TOTAIS_GERAIS_CONSIGNADO_SESSION, mapaResultado);
 		}
-		
-		mapaResultado.put("totalGeral", CurrencyUtil.formatarValor(totalGeral));
 
 		this.result.use(CustomJson.class).put("result", mapaResultado).serialize();
 	}
@@ -269,7 +279,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
 		tableModel.setTotal(totalRegistros.intValue());
-		
+
 		return tableModel;
 	}
 	
@@ -371,8 +381,6 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		this.result.use(Results.json()).from(nomeCota, "result").recursive().serialize();
 	}
 	
-
-	
 	private void validarEntrada(FiltroConsultaConsignadoCotaDTO filtro) {		
 		
 		if(filtro.getIdCota() == null && filtro.getIdFornecedor() == 0){
@@ -385,4 +393,17 @@ public class ConsultaConsignadoCotaController extends BaseController {
 
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA, filtroAtual);
 	}
+
+    private Map<String, Object> obterTotaisGeraisSessao(){
+		
+		@SuppressWarnings("unchecked")
+		 Map<String, Object> totaisFornecedores = ( Map<String, Object>) session.getAttribute(TOTAIS_GERAIS_CONSIGNADO_SESSION);
+		
+		return totaisFornecedores;
+	} 
+    
+    private void removerTotaisGeraisSessao(){
+		
+		session.removeAttribute(TOTAIS_GERAIS_CONSIGNADO_SESSION);
+	} 
 }
