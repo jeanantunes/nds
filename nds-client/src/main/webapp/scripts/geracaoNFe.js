@@ -188,21 +188,36 @@ var geracaoNFeController = $.extend({
 	 */
 	imprimir : function(fileType) {
 		
-		var params = this.getParams();
-		var todas = $('#checkboxCheckAllCotasSuspensas', this.workspace).checked;
-		var cotasSuspensas = $(".checkboxCheckCotasSuspensas", this.workspace);
-		var listaCotasSuspensas = new Array;
+		var params = new Array();
 		
-		for (var index in cotasSuspensas) {
-			if (cotasSuspensas[index].checked) {
-				listaCotasSuspensas.push(cotasSuspensas[index].value);
+		params.push({name:"filtro.idNaturezaOperacao" , value: $("#geracaoNfe-filtro-naturezaOperacao").val()});
+		params.push({name:"filtro.dataInicial" , value: $("#geracaoNfe-filtro-movimentoDe").val()});
+		params.push({name:"filtro.dataFinal" , value: $("#geracaoNfe-filtro-movimentoAte").val()});
+		params.push({name:"filtro.intervaloBoxInicial" , value: $("#geracaoNfe-filtro-inputIntervaloBoxDe").val()});
+		params.push({name:"filtro.intervaloBoxFinal" , value: $("#geracaoNfe-filtro-inputIntervaloBoxAte").val()});
+		params.push({name:"filtro.intervalorCotaInicial" , value: $("#geracaoNfe-filtro-inputIntervaloCotaDe").val()});
+		params.push({name:"filtro.intervalorCotaFinal" , value: $("#geracaoNfe-filtro-inputIntervaloCotaAte").val()});
+		params.push({name:"filtro.dataEmissao" , value: $("#geracaoNfe-filtro-dataEmissao").val()});
+		params.push({name:"filtro.idNaturezaOperacao" , value: $("#geracaoNfe-filtro-naturezaOperacao").val()});
+		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-listRoteiro").val()});
+		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-listRota").val()});
+		
+		// Por limitacao do vRaptor, nao instancia dentro do filtro
+		if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
+			
+			if($(".emissaoRegimeEspecial").is(":visible")) {
+				
+				params.push({name:"notaFiscalTipoEmissaoRegimeEspecial", value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
 			}
 		}
 		
-		params = serializeArrayToPost('idCotasSuspensas', listaCotasSuspensas, params);
-		params['dataEmissao'] = $("#datepickerEmissao", this.workspace).val();
-		params['todasCotasSuspensa'] = todas;
-		params['fileType'] = fileType;
+		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
+			$.each($("#geracaoNfe-filtro-selectFornecedores").val(), function(index, v) {
+				params.push({name : "filtro.listIdFornecedor[]", value : v});
+			});
+		}
+		
+		params.push({name:'fileType', value: fileType});
 		
 		$.fileDownload(this.path + 'exportar', {
 			httpMethod : "POST",

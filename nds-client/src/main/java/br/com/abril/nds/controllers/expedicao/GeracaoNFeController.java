@@ -48,6 +48,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.restfulie.hypermedia.Transition;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -309,27 +310,40 @@ public class GeracaoNFeController extends BaseController {
 		return listaTipoNotaFiscal;
 	}
 	
-	public void exportar(Integer intervaloBoxDe, Integer intervaloBoxAte,
-			Integer intervaloCotaDe, Integer intervaloCotaAte,
-			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, Long tipoNotaFiscal,String sortname,
-			String sortorder,FileType fileType) throws IOException {
+	@Transactional
+	public void exportar(final FiltroNFeDTO filtro, NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissaoRegimeEspecial, final String sortname, final String sortorder, final int rp, final int page, FileType fileType) throws IOException {
 		
-		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
+	    List<CotaExemplaresDTO> cotaExemplaresDTOs = null;
+        List<FornecedorExemplaresDTO> fornecedorExemplaresDTOs = null;
+	    
+        filtro.setNotaFiscalTipoEmissao(notaFiscalTipoEmissaoRegimeEspecial);
+        
+	    final NaturezaOperacao naturezaOperacao = this.naturezaOperacaoService.obterNaturezaOperacaoPorId(filtro.getIdNaturezaOperacao());
+	    
+	    switch (naturezaOperacao.getTipoDestinatario()) {
+        
+            case COTA:
+                cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);            
+                break;
+                
+            case DISTRIBUIDOR:
+                cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);            
+                break;
+                
+            case FORNECEDOR:            
+                fornecedorExemplaresDTOs = nfeService.consultaFornecedorExemplarSumarizado(filtro, naturezaOperacao);
+                break;        
+	    }
+	    
+	    if(cotaExemplaresDTOs != null ){
+	        FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(this.getNDSFileHeader(), null, cotaExemplaresDTOs, CotaExemplaresDTO.class, this.httpServletResponse);
+	    } else if (fornecedorExemplaresDTOs != null) {
+	        FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(this.getNDSFileHeader(), null, fornecedorExemplaresDTOs, FornecedorExemplaresDTO.class, this.httpServletResponse);
+	    } else {
+	        throw new ValidacaoException(TipoMensagem.WARNING ,"Problema ao expostar as informções para excel.");
+	    } 
 		
-		Intervalo<Integer> intervalorCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
-		
-		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
-		
-		List<CotaExemplaresDTO> cotaExemplaresDTOs =	
-				nfeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, listIdFornecedor, 
-						tipoNotaFiscal, null, null, sortname, sortorder, null, null, null);
-		
-		FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null,
-				cotaExemplaresDTOs, CotaExemplaresDTO.class,
-				this.httpServletResponse);
-		
-		result.use(Results.nothing());
+	    result.use(Results.nothing());
 		
 	}
 }

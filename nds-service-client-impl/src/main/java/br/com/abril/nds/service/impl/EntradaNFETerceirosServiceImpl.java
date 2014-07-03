@@ -86,11 +86,13 @@ public class EntradaNFETerceirosServiceImpl implements EntradaNFETerceirosServic
 	}
 
 	@Override
+	@Transactional
 	public List<ConsultaEntradaNFETerceirosPendentesDTO> consultaNotasPendentesEmissao(FiltroEntradaNFETerceiros filtro, boolean limitar) {
 		return this.entradaNFETerceirosRepository.consultaNotasPendentesEmissao(filtro, limitar);
 	}
 
 	@Override
+	@Transactional
 	public Integer qtdeNotasPendentesEmissao(FiltroEntradaNFETerceiros filtro) {
 		return this.entradaNFETerceirosRepository.qtdeNotasPendentesEmissao(filtro);
 	}
