@@ -318,9 +318,7 @@
 										</tr>
 									</c:when>
 									<c:otherwise>
-										<c:if test="${dado != null && !dado.imagem}">
-											<tr><td style="line-height: 28px; border: 0px;">&nbsp;</td></tr>
-										</c:if>
+										
 									</c:otherwise>
 								</c:choose>
 							</c:when>
