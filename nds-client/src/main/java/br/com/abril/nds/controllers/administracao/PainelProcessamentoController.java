@@ -31,6 +31,8 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
+import br.com.abril.nds.service.RankingFaturamentoService;
+import br.com.abril.nds.service.RankingSegmentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -73,6 +75,12 @@ public class PainelProcessamentoController extends BaseController {
     
     @Autowired
     private InterfaceExecucaoService interfaceExecucaoService;
+    
+    @Autowired
+    private RankingSegmentoService rankingSegmentoService;
+    
+    @Autowired
+    private RankingFaturamentoService rankingFaturamentoService;
     
     @Autowired
     private DistribuidorService distribuidorService;
@@ -538,6 +546,26 @@ public class PainelProcessamentoController extends BaseController {
         .from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),
                 "result").recursive().serialize();
+    }
+    
+    @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
+    public void gerarRankingSegmento() {
+        
+        this.rankingSegmentoService.executeJobGerarRankingSegmento();
+        
+        result.use(Results.json()).from(
+            new ValidacaoVO(TipoMensagem.SUCCESS,
+                "Execução da geração de ranking de segmento foi realizada com sucesso"), "result").recursive().serialize();
+    }
+    
+    @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
+    public void gerarRankingFaturamento() {
+        
+        this.rankingFaturamentoService.executeJobGerarRankingFaturamento();
+        
+        result.use(Results.json()).from(
+            new ValidacaoVO(TipoMensagem.SUCCESS,
+                "Execução da geração de ranking de faturamento foi realizada com sucesso"), "result").recursive().serialize();
     }
     
 }

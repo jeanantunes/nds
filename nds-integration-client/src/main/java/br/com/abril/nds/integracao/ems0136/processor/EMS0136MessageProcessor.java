@@ -484,7 +484,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataLancamentoPrevista(dataLancamento);
 		lancamento.setDataLancamentoDistribuidor(dataLancamento);
-		//lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+		lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 		lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
 		
 		try {
