@@ -1021,13 +1021,9 @@ public class NFeServiceImpl implements NFeService {
 							cotasContribuinteEmitente.add(cota);
 						}
 					}
-				} else if(filtro.getNotaFiscalTipoEmissao() != null
-						&& filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.AMBOS)) {
+				} else if(filtro.getNotaFiscalTipoEmissao() != null && filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.AMBOS)) {
 					for (CotaExemplaresDTO cota : cotas) {
-						if(naturezaOperacao.isGerarCotaNaoExigeNFe() 
-								&& (cota.isContribuinteICMS() == null || !cota.isContribuinteICMS()) 
-								&& (cota.isExigeNotaFiscalEletronica() == null || !cota.isExigeNotaFiscalEletronica() )) {
-							
+						if(naturezaOperacao.isGerarCotaNaoExigeNFe() && (cota.isContribuinteICMS() == null || !cota.isContribuinteICMS()) && (cota.isExigeNotaFiscalEletronica() == null || !cota.isExigeNotaFiscalEletronica() )) {
 							cota.setNotaFiscalConsolidada(true);
 							cotasContribuinteEmitente.add(cota);
 						} else if(naturezaOperacao.isGerarCotaContribuinteExigeNFe() 
