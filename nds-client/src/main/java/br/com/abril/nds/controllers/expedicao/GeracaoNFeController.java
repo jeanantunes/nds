@@ -309,25 +309,17 @@ public class GeracaoNFeController extends BaseController {
 		return listaTipoNotaFiscal;
 	}
 	
-	public void exportar(Integer intervaloBoxDe, Integer intervaloBoxAte,
-			Integer intervaloCotaDe, Integer intervaloCotaAte,
-			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, Long tipoNotaFiscal,String sortname,
-			String sortorder,FileType fileType) throws IOException {
+	public void exportar(final FiltroNFeDTO filtro, final String sortname, final String sortorder, final int rp, final int page, FileType fileType) throws IOException {
 		
-		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
+		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(filtro.getIntervaloBoxInicial(), filtro.getIntervaloBoxFinal());
 		
-		Intervalo<Integer> intervalorCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
+		Intervalo<Integer> intervalorCota = new Intervalo<Integer>(filtro.getIntervalorCotaInicial(), filtro.getIntervalorCotaFinal());
 		
-		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
+		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(filtro.getDataInicial(), filtro.getDataFinal());
 		
-		List<CotaExemplaresDTO> cotaExemplaresDTOs =	
-				nfeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, listIdFornecedor, 
-						tipoNotaFiscal, null, null, sortname, sortorder, null, null, null);
+		List<CotaExemplaresDTO> cotaExemplaresDTOs = nfeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, filtro.getListIdFornecedor(), filtro.getIdNaturezaOperacao(), null, null, sortname, sortorder, null, null, null);
 		
-		FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null,
-				cotaExemplaresDTOs, CotaExemplaresDTO.class,
-				this.httpServletResponse);
+		FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null,cotaExemplaresDTOs, CotaExemplaresDTO.class, this.httpServletResponse);
 		
 		result.use(Results.nothing());
 		
