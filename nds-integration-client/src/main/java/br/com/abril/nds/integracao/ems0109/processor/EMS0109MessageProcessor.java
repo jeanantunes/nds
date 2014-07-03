@@ -208,7 +208,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	        tipoSegmentoProduto = findTipoSegmentoProdutoPorNome(nome);
             
             if(tipoSegmentoProduto == null) {
-                tipoSegmentoProduto = criarNovoSegmento(nome);
+                //tipoSegmentoProduto = criarNovoSegmento(nome);
+            	tipoSegmentoProduto = findTipoSegmentoProdutoPorNome("OUTROS");
             }
         }
 	    return tipoSegmentoProduto;
