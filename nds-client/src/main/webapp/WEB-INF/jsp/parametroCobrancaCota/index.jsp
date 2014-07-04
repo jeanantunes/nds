@@ -193,21 +193,16 @@ $(function(){
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Tipo de Cota:</td>
-				<td><select name="tipoCota" id="tipoCota" style="width: 150px;" onchange="parametroCobrancaCotaController.exibeDevolveEncalhe(this.value);"
-				onfocus="this.oldValue = this.value;">
-				        <option value="">Selecione</option>
-						<c:forEach varStatus="counter" var="itemTipoCota"
-							items="${listaTiposCota}">
-							<option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
-						</c:forEach>
-				</select></td>
-				
+
 				<td id="tituloDevolveEncalhe">Devolve Encalhe?</td>
 				<td id="selectDevolveEncalhe"><select name="devolveEncalhe" id="devolveEncalhe">
 						<option value="0">Sim</option>
 						<option value="1">Não</option>
 				</select></td>
+				
+				<td></td>
+				<td></td>
+				
 			</tr>
 			<!-- tr>
 				<td>Unifica Cobrança?</td>

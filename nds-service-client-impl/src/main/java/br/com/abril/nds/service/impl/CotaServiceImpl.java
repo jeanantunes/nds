@@ -1232,13 +1232,15 @@ public class CotaServiceImpl implements CotaService {
     @Transactional(readOnly = true)
     public CotaDTO obterDadosCadastraisCota(final Long idCota){
         
-        if (idCota == null){
+        if (idCota == null) {
+        	
             throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não deve ser nulo.");
         }
         
         final Cota cota  = cotaRepository.buscarPorId(idCota);
         
-        if (cota == null){
+        if (cota == null) {
+        	
             throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
 		}
 		
@@ -1496,6 +1498,8 @@ public class CotaServiceImpl implements CotaService {
         }
         
         cota.setNumeroCota(cotaDto.getNumeroCota());
+        
+        cota.setTipoCota(cotaDto.getTipoCotaFinanceiro());
         
         cota.setParametrosCotaNotaFiscalEletronica(getParamNFE(cota, cotaDto));
         
@@ -1799,6 +1803,10 @@ public class CotaServiceImpl implements CotaService {
         
         if(cotaDto.getTipoDistribuicaoCota() == null){
             mensagensValidacao.add("O preenchimento do campo [Tipo] é obrigatório!");
+        }
+        
+        if(cotaDto.getTipoCotaFinanceiro() == null){
+            mensagensValidacao.add("O preenchimento do campo [Forma de Pagamento] é obrigatório!");
         }
         
         if (!mensagensValidacao.isEmpty()){
@@ -3129,13 +3137,6 @@ public class CotaServiceImpl implements CotaService {
     	boolean alterado = false;
     	
         final Cota cota = this.obterPorId(parametroCobranca.getIdCota());
-        
-        if (cota.getTipoCota()==null || !cota.getTipoCota().equals(parametroCobranca.getTipoCota())){
-            
-            cota.setTipoCota(parametroCobranca.getTipoCota());
-            
-            alterado = true;
-        }
         
         BigDecimal valorMinimoCobranca = parametroCobranca.getValorMinimoBigDecimal();
         
