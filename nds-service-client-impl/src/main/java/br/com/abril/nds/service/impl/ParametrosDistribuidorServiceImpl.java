@@ -581,6 +581,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		enderecoDistribuidor.setDistribuidor(distribuidor);
 		enderecoDistribuidor.setTipoEndereco(enderecoVO.getTipoEndereco());
 		enderecoDistribuidor.setEndereco(endereco);
+		enderecoDistribuidor.setPrincipal(true);
 		
 		enderecoDistribuidorRepository.merge(enderecoDistribuidor);
 		
