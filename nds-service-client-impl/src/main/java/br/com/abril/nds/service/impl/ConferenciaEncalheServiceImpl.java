@@ -2374,9 +2374,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				if(cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica()
 						|| cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) {
 					
+					mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(true); 
 					mffc.setNotaFiscalDevolucaoSimbolicaEmitida(true);
 				} else {
 					
+					mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(false);
 					mffc.setNotaFiscalDevolucaoSimbolicaEmitida(false);
 				}
 	    			
@@ -2396,9 +2398,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					usuario,
 					chamadaEncalheCota);
 			
-			MovimentoFechamentoFiscalCota mff = popularItensFechamentoFiscal(dataCriacao, movimentoEstoqueCota, chamadaEncalheCota);
+			MovimentoFechamentoFiscalCota mffc = popularItensFechamentoFiscal(dataCriacao, movimentoEstoqueCota, chamadaEncalheCota);
     			
-    		movimentoFechamentoFiscalRepository.adicionar(mff);
+    		movimentoFechamentoFiscalRepository.adicionar(mffc);
 
 			idMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota).getId();
 		}
@@ -2446,7 +2448,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 
-	private MovimentoFechamentoFiscalCota popularItensFechamentoFiscal(final Date dataCriacao, MovimentoEstoqueCota movimentoEstoqueCota, ChamadaEncalheCota chamadaEncalheCota) {
+	private MovimentoFechamentoFiscalCota popularItensFechamentoFiscal(final Date dataCriacao
+			, MovimentoEstoqueCota movimentoEstoqueCota, ChamadaEncalheCota chamadaEncalheCota) {
+		
 		List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
 		MovimentoFechamentoFiscalCota mff = new MovimentoFechamentoFiscalCota();
 		listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mff, movimentoEstoqueCota));
@@ -2459,6 +2463,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		mff.setCota(movimentoEstoqueCota.getCota());
 		mff.setChamadaEncalheCota(chamadaEncalheCota);
 		mff.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
+		
 		return mff;
 	}
 	
