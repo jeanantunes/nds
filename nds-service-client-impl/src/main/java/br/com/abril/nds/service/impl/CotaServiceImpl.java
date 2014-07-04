@@ -1242,6 +1242,7 @@ public class CotaServiceImpl implements CotaService {
         cotaDTO.setEmailNF(cota.getParametrosCotaNotaFiscalEletronica() != null ? cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() : "");
         cotaDTO.setEmiteNFE(cota.getParametrosCotaNotaFiscalEletronica() != null ? cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() : false);
         cotaDTO.setStatus(cota.getSituacaoCadastro());
+        cotaDTO.setTipoCotaFinanceiro(cota.getTipoCota());
         
         if (cota.getTipoDistribuicaoCota() != null) {
             cotaDTO.setTipoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota().substring(0, 1));
@@ -1473,6 +1474,8 @@ public class CotaServiceImpl implements CotaService {
         }
         
         cota.setNumeroCota(cotaDto.getNumeroCota());
+        
+        cota.setTipoCota(cotaDto.getTipoCotaFinanceiro());
         
         cota.setParametrosCotaNotaFiscalEletronica(getParamNFE(cota, cotaDto));
         
@@ -1744,6 +1747,10 @@ public class CotaServiceImpl implements CotaService {
         
         if(cotaDto.getTipoDistribuicaoCota() == null){
             mensagensValidacao.add("O preenchimento do campo [Tipo] é obrigatório!");
+        }
+        
+        if(cotaDto.getTipoCotaFinanceiro() == null){
+            mensagensValidacao.add("O preenchimento do campo [Forma de Pagamento] é obrigatório!");
         }
         
         if (!mensagensValidacao.isEmpty()){
@@ -3068,13 +3075,6 @@ public class CotaServiceImpl implements CotaService {
     	boolean alterado = false;
     	
         final Cota cota = this.obterPorId(parametroCobranca.getIdCota());
-        
-        if (cota.getTipoCota()==null || !cota.getTipoCota().equals(parametroCobranca.getTipoCota())){
-            
-            cota.setTipoCota(parametroCobranca.getTipoCota());
-            
-            alterado = true;
-        }
         
         BigDecimal valorMinimoCobranca = parametroCobranca.getValorMinimoBigDecimal();
         

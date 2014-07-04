@@ -1226,6 +1226,13 @@ var COTA_CNPJ = $.extend(true, {
             $("#periodoCotaAte", this.workspace).val(result.fimPeriodo.$).disable();
         }
         
+        $("#tipoCotaFinanceiro", this.workspace).val(result.tipoCotaFinanceiro);
+        
+        if (result.tipoCotaFinanceiro){
+			
+			$("#tipoCotaFinanceiro", this.workspace).attr("disabled", "disabled");
+		}
+        
         COTA_CNPJ.gridAntigosProprietarios.init(result);
 
         if (result.status == "ATIVO" || result.status == "SUSPENSO") {
@@ -1454,6 +1461,13 @@ var COTA_CPF = $.extend(true, {
         if(result.fimPeriodo){
             $("#periodoCotaAteCPF", this.workspace).val(result.fimPeriodo.$).disable();
         }
+        
+        $("#tipoCotaFinanceiro", this.workspace).val(result.tipoCotaFinanceiro);
+
+        if (result.tipoCotaFinanceiro){
+			
+			$("#tipoCotaFinanceiro", this.workspace).attr("disabled", "disabled");
+		}
 
         COTA_CPF.gridAntigosProprietarios.init(result);
 
