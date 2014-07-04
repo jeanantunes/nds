@@ -254,7 +254,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
     
     private TipoSegmentoProduto getTipoSegmento(Long id) {
 
-    	if(id.intValue()==0){
+    	if(id==null||id.intValue()==0){
     		//Caso venha 0 do arquivo troca para OUTROS - 9
     		id = new Long(9); 
     	}
