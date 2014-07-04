@@ -47,10 +47,10 @@ import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
-import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
@@ -1961,7 +1961,7 @@ public class ConferenciaEncalheController extends BaseController {
         
 	    final Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
         
-        NaturezaOperacao tipoNotaFiscal = this.nFeService.regimeEspecialParaCota(info.getCota());
+        final NaturezaOperacao naturezaOperacao = this.nFeService.regimeEspecialParaCota(info.getCota());
         
         final List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
         
@@ -1979,12 +1979,14 @@ public class ConferenciaEncalheController extends BaseController {
             notaFiscal.setControleConferenciaEncalheCota(controleConfEncalheCota);
             notaFiscal.setCota(info.getCota());
             notaFiscal.setDataExpedicao(DateUtil.parseDataPTBR((String) dadosNotaFiscal.get("dataEmissao")));
-            notaFiscal.setNaturezaOperacao(tipoNotaFiscal);
+            notaFiscal.setNaturezaOperacao(naturezaOperacao);
+            
             notaFiscal.setOrigem(Origem.MANUAL);
             notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
             notaFiscal.setValorInformado(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
             notaFiscal.setValorBruto(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
             notaFiscal.setValorDesconto(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
+            
             for(final ConferenciaEncalheDTO conferenciaEncalhe : this.getListaConferenciaEncalheFromSession()) {
                 
                 if(conferenciaEncalhe.isProcessoUtilizaNfe()){
