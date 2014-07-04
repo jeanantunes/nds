@@ -642,13 +642,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#qtdDividasAbertoCota", this.workspace).val(resultado.qtdDividasAberto);
 		$("#vrDividasAbertoCota", this.workspace).val( resultado.vrDividasAberto );
 		
-		$("#tipoCota", this.workspace).val(resultado.tipoCota);
-		
-		if (resultado.tipoCota){
-			
-			$("#tipoCota").attr("disabled", "disabled");
-		}
-		
 		$("#devolveEncalhe", this.workspace).val(resultado.devolveEncalhe?0:1);
 		
 		//$("#unificaCobranca", this.workspace).val(resultado.unificaCobranca?0:1);
@@ -716,7 +709,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 		var qtdDividasAberto = $("#qtdDividasAbertoCota", this.workspace).val();
 		var vrDividasAberto = $("#vrDividasAbertoCota", this.workspace).val();
-		var tipoCota = $("#tipoCota", this.workspace).val();
 		var devolveEncalhe = $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
 		var fornecedorPadrao = $("#fornecedorPadrao", this.workspace).val();
 		//var unificaCobranca = $("#unificaCobranca", this.workspace).val() == 0 ? 1 : 0;
@@ -733,7 +725,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 				"parametroCobranca.valorMinimo": valorMinimo,   
 				"parametroCobranca.qtdDividasAberto": qtdDividasAberto,  
 				"parametroCobranca.vrDividasAberto": vrDividasAberto,
-				"parametroCobranca.tipoCota": tipoCota,
 				"parametroCobranca.devolveEncalhe": devolveEncalhe,
 				"parametroCobranca.idFornecedor": fornecedorPadrao};
 		
@@ -1213,7 +1204,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		var valorMinimo			= $("#valorMinimo", this.workspace).val();
 		var fatorVencimento		= $("#fatorVencimento", this.workspace).val();
-		var tipoCota 			= $("#tipoCota", this.workspace).val();
 		var devolveEncalhe		= $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
 		var fornecedorPadrao 	= $("#fornecedorPadrao", this.workspace).val();
 		//var unificaCobranca 	= $("#unificaCobranca", this.workspace).val() == 0 ? 1 : 0;
@@ -1306,7 +1296,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 						 "parametroCobranca.idCota": idCota,
 						 "parametroCobranca.valorMinimo": valorMinimo,
 						 "parametroCobranca.fatorVencimento": fatorVencimento,
-						 "parametroCobranca.tipoCota": tipoCota,
 						 "parametroCobranca.devolveEncalhe": devolveEncalhe,
 						 "parametroCobranca.idFornecedor": fornecedorPadrao,
 						 //"parametroCobranca.unificaCobranca": unificaCobranca,
