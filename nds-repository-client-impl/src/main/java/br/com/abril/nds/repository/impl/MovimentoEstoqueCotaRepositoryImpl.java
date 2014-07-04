@@ -55,6 +55,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -645,6 +646,59 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return qtde == null ? 0 : qtde;
     }
     
+    public BigDecimal obterSaldoEntradaNoConsignado(Date dataRecolhimento) {
+    	
+	    final StringBuilder sql = new StringBuilder();
+	    
+	    sql.append("SELECT");
+	    sql.append("	SUM(	");
+	    sql.append("		CASE WHEN REPARTES.DIARECOLHIMENTO <> 1 THEN 0        ");
+	    sql.append("		ELSE (REPARTES.PRECOVENDA * REPARTES.QTDREPARTE) END  ");
+	    sql.append("	) AS totalReparte ");
+	    sql.append("FROM ( ");
+	    sql.append(" SELECT ");
+	    sql.append("	SUM( IF(TM.OPERACAO_ESTOQUE='SAIDA', MEC.QTDE*-1, MEC.QTDE) ) AS QTDREPARTE,                              ");
+	    sql.append("	COALESCE(MEC.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) AS PRECOVENDA,                                   ");
+	    sql.append("	COALESCE(CONFERENCIA_ENCALHE.DIA_RECOLHIMENTO,1) AS DIARECOLHIMENTO                                       ");
+	    sql.append(" FROM                                                                                                          ");
+	    sql.append("	CHAMADA_ENCALHE                                                                                           ");
+	    sql.append("	INNER JOIN CHAMADA_ENCALHE_COTA ON ( CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_ID = CHAMADA_ENCALHE.ID )       ");
+	    sql.append("	INNER JOIN PRODUTO_EDICAO ON ( PRODUTO_EDICAO.ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID )                    ");
+	    sql.append("	INNER JOIN PRODUTO PRODUTO ON ( PRODUTO.ID = PRODUTO_EDICAO.PRODUTO_ID )                                  ");
+	    
+	    sql.append("	INNER JOIN MOVIMENTO_ESTOQUE_COTA MEC ON ( MEC.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID 	");
+	    sql.append("	AND MEC.PRODUTO_EDICAO_ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID ) 						");
+	    
+	    sql.append("	INNER JOIN TIPO_MOVIMENTO TM ON ( MEC.TIPO_MOVIMENTO_ID = TM.ID )                       ");
+	    sql.append("  	LEFT JOIN CONFERENCIA_ENCALHE ON (                                                      ");
+	    sql.append("		CONFERENCIA_ENCALHE.CHAMADA_ENCALHE_COTA_ID = CHAMADA_ENCALHE_COTA.ID               ");
+	    sql.append("        AND CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID       ");
+	    sql.append("    )                                                                                       ");
+	    sql.append("    INNER JOIN COTA ON COTA.ID = CHAMADA_ENCALHE_COTA.COTA_ID                               ");
+	    sql.append(" WHERE ");
+	    sql.append("	CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento    			");
+	    sql.append("    AND TM.GRUPO_MOVIMENTO_ESTOQUE <> :grupoMovimentoEstoqueEncalhe   	");
+	    sql.append("	AND CHAMADA_ENCALHE_COTA.POSTERGADO = false         ");
+	    sql.append("	AND MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL      ");
+	    sql.append("	AND MEC.LANCAMENTO_ID IS NOT NULL                   ");
+	    sql.append("	AND COTA.TIPO_COTA <> :tipoCota                     ");
+	    sql.append(" GROUP BY ");
+	    sql.append("	CHAMADA_ENCALHE.PRODUTO_EDICAO_ID,                  ");
+	    sql.append("	CHAMADA_ENCALHE.DATA_RECOLHIMENTO                   ");
+	    sql.append(") REPARTES                                              ");
+    	
+	    Query query = getSession().createSQLQuery(sql.toString());
+	    
+	    query.setParameter("dataRecolhimento", dataRecolhimento);
+	    query.setParameter("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
+	    query.setParameter("tipoCota", TipoCota.A_VISTA.name());
+	    
+	    ((SQLQuery) query).addScalar("totalReparte", StandardBasicTypes.BIG_DECIMAL);
+	    
+	    return (BigDecimal) query.uniqueResult();
+	    
+    }
+    
     @Override
     @SuppressWarnings("unchecked")
     public ConsultaEncalheDTO obterValorTotalReparteEncalheDataCotaFornecedor(final FiltroConsultaEncalheDTO filtro) {
@@ -659,19 +713,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         f.setPaginacao(null);
         
         sql.append("select ");
-        
+
         sql.append(" sum( ");
-        
-        sql.append("     case when tipoCota = 'A_VISTA' and diaRecolhimento = 1 then 0 else ");
-        
-        sql.append("         case when diaRecolhimento = 1 then ");
-        
+        sql.append("     case when a.tipoCota = 'A_VISTA' or a.diaRecolhimento <> 1 then 0 else ( ");
         sql.append(          indUtilizaPrecoCapa ? " a.precoVenda " : " a.precoComDesconto ");
-        
-        sql.append("         * a.reparte else 0 end ");
-        
+        sql.append("         * a.reparte ) ");
         sql.append("     end ");
-        
         sql.append("    ) as totalReparte, ");
         
         sql.append(" sum( ");
