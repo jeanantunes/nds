@@ -3639,7 +3639,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" and tipoMovimento.grupoMovimentoEstoque not in (:gruposMovimentoReparte) ");
         
-        sql.append(" and mec.statusEstoqueFinanceiro != :processado " );
+        sql.append(" and (mec.statusEstoqueFinanceiro is null or mec.statusEstoqueFinanceiro != :processado )" );
         
         sql.append(" group by mec.cota.id ");
         

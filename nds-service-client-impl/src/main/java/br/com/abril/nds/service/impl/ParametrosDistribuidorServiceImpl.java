@@ -577,9 +577,11 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		endereco.setCodigoCidadeIBGE(
 			(enderecoVO.getCodigoCidadeIBGE() == null) ? null : enderecoVO.getCodigoCidadeIBGE().intValue());
 		
+		enderecoDistribuidor.setPrincipal(true);
 		enderecoDistribuidor.setDistribuidor(distribuidor);
 		enderecoDistribuidor.setTipoEndereco(enderecoVO.getTipoEndereco());
 		enderecoDistribuidor.setEndereco(endereco);
+		enderecoDistribuidor.setPrincipal(true);
 		
 		enderecoDistribuidorRepository.merge(enderecoDistribuidor);
 		

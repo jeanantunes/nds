@@ -838,14 +838,17 @@ var produtoEdicaoController =$.extend(true,  {
 								
 								if(result.classificacao && result.classificacao.length > 0 ){
 
-									$("#produtoEdicaoController-comboClassificacao",this.workspace).attr("disabled", true);
+									$("#produtoEdicaoController-comboClassificacao option").not(":selected").attr("disabled", true);
+									
 								}
 								else{
-									$("#produtoEdicaoController-comboClassificacao",this.workspace).removeAttr("disabled");
+									
+									$("#produtoEdicaoController-comboClassificacao option").not(":selected").removeAttr("disabled");
 								}
 								
 							}else{
-								$("#produtoEdicaoController-comboClassificacao",this.workspace).removeAttr("disabled");
+								
+								$("#produtoEdicaoController-comboClassificacao option").not(":selected").removeAttr("disabled");
 							}
 							
 
