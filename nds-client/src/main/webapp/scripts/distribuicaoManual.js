@@ -560,7 +560,103 @@ var distribuicaoManual = $.extend(true, {
 			// Deve ir direto para EMS 2031
 			matrizDistribuicao.redirectToTelaAnalise($('#estudo').html());
 		}
+	},
+	
+	// ###-- Ajustes para SANTOS --##
+	
+	// Evento click do botao adicionar em lote		
+	add_lote : function() {
+		$("#modalUploadArquivo-DistbManual").dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					distribuicaoManual.executarSubmitArquivo();
+					$(this).dialog("close");
+				},
+				"Cancelar": function() {
+					$("#excelFileDistbManual").val("");
+					$(this).dialog("close");
+				}
+			},
+		});
+	},
+	
+	executarSubmitArquivo:function(){
+		var fileName = $("#excelFileDistbManual").val();
+		var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+	       
+		if(ext!="xls" & ext!="xlsx"){
+			exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+			$(this).val('');
+			return;
+		}else{
+			
+			$('#produtoEdicaoIdXLS').val($('#idProdutoEdicao').val());
+			$('#reparteDistribuirXLS').val($('#reparteInicial').val());
+			$('#reparteDistribuidoXLS').val($('#totalDistribuido').text());
+			$('#dataLancamentoXLS').val($('#dataLancamento').html());
+			$('#lancamentoIdXLS').val(distribuicaoManual.idLancamento);
+    	  
+			$("#formUploadLoteDistbManual").ajaxSubmit({
+				
+				success: function(responseText, statusText, xhr, $form)  { 
+
+					var mensagens;
+					
+					if(responseText.mensagens == undefined && responseText.result == undefined){
+						mensagens = responseText.long;
+					}else{
+						mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.long;
+					}
+					
+		            var tipoMensagem = mensagens.tipoMensagem != undefined ? mensagens.tipoMensagem : 'SUCCESS';
+			        var listaMensagens = mensagens.listaMensagens != undefined ? mensagens.listaMensagens : "Estudo gerado com sucesso";
+	
+			        if (tipoMensagem && listaMensagens) {
+			        	
+			        	if (tipoMensagem == 'SUCCESS') {
+
+		        			exibirMensagem(tipoMensagem, [""+listaMensagens]); 
+		        			
+		        			$('#estudo').html(responseText.long);
+
+		        			/*
+		        			if(typeof(matrizDistribuicao)=="object"){
+		        				matrizDistribuicao.carregarGrid();
+		        			}
+		        			
+		        			setTimeout(function() { 
+		        				var tabToSelect=-1;
+		        		        $("#workspace li.ui-state-default a").each(function(idx,comp){
+	        		              if($(comp).text()=='Distribuição Manual'){
+	        		                       tabToSelect=idx;
+	        		               }
+		        		        });
+		        		        
+		        		        if(tabToSelect>-1){
+	        		               $("#workspace").tabs("remove",tabToSelect);
+		        		        }
+		        				
+		        			}, 50);
+		        			*/
+		        			distribuicaoManual.voltar();
+		        		}else{
+		        			exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
+		        		}
+			        	
+		                $("#modalUploadArquivo-DistbManual").dialog( "close" );
+			        }
+			   },
+			   url:  contextPath +"/distribuicaoManual/uploadArquivoLoteDistbManual",				   
+		       type: 'POST',
+		       dataType: 'json',
+     	   });
+       }
 	}
+	// ##-- --##
 	
 });
 

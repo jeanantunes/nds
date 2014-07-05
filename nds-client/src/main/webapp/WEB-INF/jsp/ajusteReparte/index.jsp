@@ -85,16 +85,14 @@ $(function(){
 	</fieldset>
 </div>
 
-<div id="dialog-novo" title="Ajuste" style="display: none;">
+<div id="dialog-novo-ajusteReparte" title="Ajuste" style="display: none;">
 	<fieldset style="width: 585px !important;">
 		<legend>Ajuste de Reparte</legend>
 		<table width="575" border="0" cellspacing="1" cellpadding="2">
 			<tr>
 				<td width="25">Cota:</td>
 				<td width="99">
-					<input name="numeroCota" id="numeroCota" type="text" style="width: 60px; float: left; margin-right: 5px;" 
-						 	   onkeydown='onlyNumeric(event);'
-						 	   onchange="pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');"/>
+					<input name="numeroCota" id="numeroCota" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
 
 					<span class="classPesquisar">
 						<a href="javascript:;">&nbsp;</a>
