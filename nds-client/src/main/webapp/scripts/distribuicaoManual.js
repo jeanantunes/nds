@@ -564,7 +564,7 @@ var distribuicaoManual = $.extend(true, {
 	
 	// ###-- Ajustes para SANTOS --##
 	
-	// click do botao adicionar em lote		
+	// Evento click do botao adicionar em lote		
 	add_lote : function() {
 		$("#modalUploadArquivo-DistbManual").dialog({
 			resizable: false,
@@ -573,8 +573,8 @@ var distribuicaoManual = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-//					fixacaoReparteController.executarSubmitArquivo();
 					distribuicaoManual.executarSubmitArquivo();
+					$(this).dialog("close");
 				},
 				"Cancelar": function() {
 					$("#excelFileDistbManual").val("");
@@ -593,35 +593,67 @@ var distribuicaoManual = $.extend(true, {
 			$(this).val('');
 			return;
 		}else{
+			
+			$('#produtoEdicaoIdXLS').val($('#idProdutoEdicao').val());
+			$('#reparteDistribuirXLS').val($('#reparteInicial').val());
+			$('#reparteDistribuidoXLS').val($('#totalDistribuido').text());
+			$('#dataLancamentoXLS').val($('#dataLancamento').html());
+			$('#lancamentoIdXLS').val(distribuicaoManual.idLancamento);
     	  
-			/*
-			 * 
 			$("#formUploadLoteDistbManual").ajaxSubmit({
-	     		   
+				
 				success: function(responseText, statusText, xhr, $form)  { 
-		    	  
-					var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
-		            var tipoMensagem = mensagens.tipoMensagem;
-			        var listaMensagens = mensagens.listaMensagens;
+
+					var mensagens;
+					
+					if(responseText.mensagens == undefined && responseText.result == undefined){
+						mensagens = responseText.long;
+					}else{
+						mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.long;
+					}
+					
+		            var tipoMensagem = mensagens.tipoMensagem != undefined ? mensagens.tipoMensagem : 'SUCCESS';
+			        var listaMensagens = mensagens.listaMensagens != undefined ? mensagens.listaMensagens : "Estudo gerado com sucesso";
 	
 			        if (tipoMensagem && listaMensagens) {
 			        	
-			        	if (tipoMensagem != 'SUCCESS') {
-			        		exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
+			        	if (tipoMensagem == 'SUCCESS') {
+
+		        			exibirMensagem(tipoMensagem, [""+listaMensagens]); 
+		        			
+		        			$('#estudo').html(responseText.long);
+
+		        			/*
+		        			if(typeof(matrizDistribuicao)=="object"){
+		        				matrizDistribuicao.carregarGrid();
+		        			}
+		        			
+		        			setTimeout(function() { 
+		        				var tabToSelect=-1;
+		        		        $("#workspace li.ui-state-default a").each(function(idx,comp){
+	        		              if($(comp).text()=='Distribuição Manual'){
+	        		                       tabToSelect=idx;
+	        		               }
+		        		        });
+		        		        
+		        		        if(tabToSelect>-1){
+	        		               $("#workspace").tabs("remove",tabToSelect);
+		        		        }
+		        				
+		        			}, 50);
+		        			*/
+		        			distribuicaoManual.voltar();
+		        		}else{
+		        			exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
 		        		}
 			        	
 		                $("#modalUploadArquivo-DistbManual").dialog( "close" );
-		                exibirMensagem(tipoMensagem, listaMensagens); 
 			        }
-			   }, 
-	     	
+			   },
+			   url:  contextPath +"/distribuicaoManual/uploadArquivoLoteDistbManual",				   
 		       type: 'POST',
 		       dataType: 'json',
      	   });
-			 */
-			
-			alert("AJAX");
-			
        }
 	}
 	// ##-- --##

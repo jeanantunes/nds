@@ -1,6 +1,7 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/distribuicaoManual.js"></script>
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/scripts/usuario/usuario.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 
 <script type="text/javascript">
 	$(function() {
@@ -50,16 +51,28 @@
 	
 	<!-- DIALOG  UPLOAD -->		
 	<div id="modalUploadArquivo-DistbManual" title="Adicionar em Lote" style="display:none;">
-	 <form id="formUploadLoteDistbManual"  action="${pageContext.request.contextPath}/distribuicao/distribuicaoManual/uploadArquivoLoteDistbManual"  method="post"  enctype="multipart/form-data">
+	 <form id="formUploadLoteDistbManual"  method="post" enctype="multipart/form-data">
 			<p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
-			<p ><span class="bt_novos"><a href="${pageContext.request.contextPath}/modelos/modelo_fixacao_reparte.xls" rel="tipsy" title="Download Modelo">
+			<p ><span class="bt_novos"><a href="${pageContext.request.contextPath}/modelos/modelo_distribuicao_santos.xls" rel="tipsy" title="Download Modelo">
 			<img align="center" src="images/ico_excel.png" hspace="5" border="0" /> Modelo de exemplo</a></span></p>
 			<br><br><br>
 			<hr>
 			<p>Selecione um arquivo para upload:</p>
 			<br>
 			<p align="center"><input type="file" id="excelFileDistbManual" name="excelFileDistbManual" style="width:300px"/></p>
+			
+			<input type="hidden" name="estudoDTO.produtoEdicaoId" id="produtoEdicaoIdXLS" value=""/>
+			<input type="hidden" name="estudoDTO.reparteDistribuir" id="reparteDistribuirXLS" value=""/>
+			<input type="hidden" name="estudoDTO.reparteDistribuido" id="reparteDistribuidoXLS" value=""/>
+			<input type="hidden" name="estudoDTO.dataLancamento" id="dataLancamentoXLS" value=""/>
+			<input type="hidden" name="estudoDTO.lancamentoId" id="lancamentoIdXLS" value=""/>
+			
+			
 	  </form>
+	</div>
+	
+	<!-- DIALOG MSG UPLOAD -->		
+	<div id="dialog-msg-upload" title="Adicionar em Lote" style="display:none;">
 	</div>
 
 	<div class="corpo"> 

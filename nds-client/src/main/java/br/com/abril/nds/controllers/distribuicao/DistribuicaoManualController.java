@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
@@ -18,10 +19,12 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.EstudoDTO;
+import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
@@ -34,6 +37,7 @@ import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -142,45 +146,71 @@ public class DistribuicaoManualController extends BaseController {
     
     @Post
 	@Path("/uploadArquivoLoteDistbManual")
-	public void uploadArquivoEmLote(UploadedFile excelFileFixacao) throws FileNotFoundException, IOException{
+	public void uploadArquivoEmLote(UploadedFile excelFileDistbManual, EstudoDTO estudoDTO) throws FileNotFoundException, IOException{
     	
+    	List<EstudoCotaDTO> cotasParaDistribuicao = XlsUploaderUtils.getBeanListFromXls(EstudoCotaDTO.class, excelFileDistbManual);
     	
+    	parseNumCotaIdCotaParseDto(cotasParaDistribuicao, estudoDTO);
     	
-    	
-    	
-//		List<FixacaoReparteDTO> listaRegistrosInvalidosExcel=null;
-//		List<FixacaoReparteDTO> listaFixacaoExcel = XlsUploaderUtils.getBeanListFromXls(FixacaoReparteDTO.class, excelFileFixacao);
-//
-//		if (!isListaVazia(listaFixacaoExcel)) {
-//			
-//			listaRegistrosInvalidosExcel = obterListaInvalidos(listaFixacaoExcel);
-//			listaFixacaoExcel.removeAll(listaRegistrosInvalidosExcel);
-//			
-//			for (FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel) {
-//				FixacaoReparte fixacaoReparte = fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
-//				if(fixacaoReparte.getCotaFixada().getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
-//                    getErrosUpload().add(
-//                            "- Fixação inserida, status da Cota: " + SituacaoCadastro.SUSPENSO.toString() + ". (Cota["
-//                                + fixacaoReparteDTO.getCotaFixadaString() + "] Produto["
-//                                + fixacaoReparteDTO.getProdutoFixado() + "]).");
-//				}
-//			}
-//			
-//			if (listaRegistrosInvalidosExcel.isEmpty() && getErrosUpload().isEmpty()) {
-//				result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
-//			} else {
-//				result.use(Results.json()).from(
-//						new ValidacaoVO(TipoMensagem.WARNING, getMsgErroUpload()), 
-//						"result").recursive().serialize();
-//			}
-//			
-//		} else {
-//			result.use(Results.json()).from(
-//new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),
-//					"result").recursive().serialize();
-//		}
+    	if(!(cotasParaDistribuicao == null || cotasParaDistribuicao.isEmpty())){
+    		
+    		// validar status - Ativo, suspenso. Inibir Inativo e Pendente
+    		validarStatusCota(cotasParaDistribuicao);
+    		
+    		try {
+				this.gravarEstudo(estudoDTO, cotasParaDistribuicao);
+			} catch (Exception e) {
+				e.printStackTrace();
+				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar estudo."),"result").recursive().serialize();
+			}
+    		
+    	}else{
+    		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),"result").recursive().serialize();
+    	}
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),"result").recursive().serialize();
+	}
+
+	private void validarStatusCota(List<EstudoCotaDTO> cotasParaDistribuicao) {
+	
+		for (EstudoCotaDTO estudoCota : cotasParaDistribuicao) {
+			
+			switch (estudoCota.getCota().getSituacaoCadastro()){
+			
+			case INATIVO:
+				cotasParaDistribuicao.remove(estudoCota);
+			break;
+			
+			case PENDENTE:
+				cotasParaDistribuicao.remove(estudoCota);
+			break;
+			
+			default:
+			break;
+			}
+		}
+	}
+    
+	private void parseNumCotaIdCotaParseDto(List<EstudoCotaDTO> cotasParaDistribuicao, EstudoDTO estudoDTO) {
+		
+		Long sumReparteDistribuido = 0L;
+		
+		for (EstudoCotaDTO estudoCota : cotasParaDistribuicao) {
+			
+			 Cota cota = cotaService.obterPorNumeroDaCota(estudoCota.getNumeroCota().intValue());
+			
+			if(cota != null){
+				estudoCota.setIdCota(cota.getId());
+				estudoCota.setCota(cota);
+				
+				sumReparteDistribuido += estudoCota.getQtdeEfetiva().longValue();
+				
+			}else{
+				cotasParaDistribuicao.remove(estudoCota);
+			}
+		}
+		
+		estudoDTO.setReparteDistribuido(sumReparteDistribuido);
+		
 	}
     
     private void removeItensDuplicadosMatrizDistribuicao() {
