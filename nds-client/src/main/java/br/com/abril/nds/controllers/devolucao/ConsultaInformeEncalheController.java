@@ -227,8 +227,8 @@ public class ConsultaInformeEncalheController extends BaseController {
             dataFimRecolhimento.setTime(dataFim);
         }
         
-        final List<InformeEncalheDTO> dados = lancamentoService
-                .obterLancamentoInformeRecolhimento(idFornecedor,
+        final List<InformeEncalheDTO> dados = 
+                lancamentoService.obterLancamentoInformeRecolhimento(idFornecedor,
                         dataInicioRecolhimento, dataFimRecolhimento, sortname,
                         Ordenacao.valueOf(sortorder.toUpperCase()), null, null);
         
@@ -351,15 +351,17 @@ public class ConsultaInformeEncalheController extends BaseController {
         
         int qtdReg = 0;
         
-        final int quebra = 30;
+        int quebra = TipoImpressaoInformeEncalheDTO.Capas.PAR.equals(tipoImpressao.getCapas()) ? 35 : 41;
         
         int indexImg = 0;
         
-        final int qtdImg = 30;
+        final int qtdImg = 35;
         
         int imgAdd = 0;
         
         final List<InformeEncalheDTO> listaResult = new ArrayList<InformeEncalheDTO>();
+        
+        boolean primeiraPagina = true;
         
         for (final InformeEncalheDTO info : dados){
             
@@ -368,10 +370,18 @@ public class ConsultaInformeEncalheController extends BaseController {
             
             if (qtdReg == quebra){
                 
+                //pra aproveitar melhor o tamanho da pagina
+                if (primeiraPagina && !TipoImpressaoInformeEncalheDTO.Capas.PAR.equals(tipoImpressao.getCapas())){
+                    
+                    quebra += 5;
+                    primeiraPagina = false;
+                }
+                
                 qtdReg = 0;
                 
                 switch (tipoImpressao.getCapas()) {
                 
+                case FIM:
                 case NAO:
                     
                     final InformeEncalheDTO dto = new InformeEncalheDTO();

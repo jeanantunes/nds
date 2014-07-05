@@ -25,6 +25,19 @@
      <td><strong>Início de Atividade:</strong></td>
      <td><span id="dataInclusaoCPF"style="width:100px"></span></td>
    </tr>
+   
+   <tr>
+      <td>Forma de Pagamento:</td>
+	  <td><select name="cotaDTO.tipoCotaFinanceiro" id="tipoCotaFinanceiro" style="width: 150px;" onchange="parametroCobrancaCotaController.exibeDevolveEncalhe(this.value);"
+	  onfocus="this.oldValue = this.value;">
+	          <option value="">Selecione</option>
+			  <c:forEach varStatus="counter" var="itemTipoCota"
+				  items="${listaTiposCota}">
+				  <option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
+			  </c:forEach>
+	  </select></td><td></td><td></td>
+    </tr>
+   
    <tr>
      <td width="114">Nome:</td> 
      <td width="301"><input type="text" maxlength="250" name="cotaDTO.nomePessoa" id="nomePessoaCPF" style="width:230px " /></td>
@@ -114,6 +127,7 @@
      	<div id="selectClassificacaoCPF"></div>        
      </td>
    </tr>
+ 
 </table>
 
 <br clear="all" />
