@@ -573,8 +573,15 @@ var distribuicaoManual = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					distribuicaoManual.executarSubmitArquivo();
-					$(this).dialog("close");
+					var fileName = $("#excelFileDistbManual").val();
+					var ext = ext != ""? fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase() : "";
+				       
+					if(ext!="xls" && ext!="xlsx"){
+						exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+						$(this).dialog("close");
+					}else{
+						distribuicaoManual.executarSubmitArquivo();
+					}
 				},
 				"Cancelar": function() {
 					$("#excelFileDistbManual").val("");
@@ -585,76 +592,57 @@ var distribuicaoManual = $.extend(true, {
 	},
 	
 	executarSubmitArquivo:function(){
-		var fileName = $("#excelFileDistbManual").val();
-		var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
-	       
-		if(ext!="xls" & ext!="xlsx"){
-			exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
-			$(this).val('');
-			return;
-		}else{
+		
+		$('#produtoEdicaoIdXLS').val($('#idProdutoEdicao').val());
+		$('#reparteDistribuirXLS').val($('#reparteInicial').val());
+		$('#reparteDistribuidoXLS').val($('#totalDistribuido').text());
+		$('#dataLancamentoXLS').val($('#dataLancamento').html());
+		$('#lancamentoIdXLS').val(distribuicaoManual.idLancamento);
+	  
+		$("#formUploadLoteDistbManual").ajaxSubmit({
 			
-			$('#produtoEdicaoIdXLS').val($('#idProdutoEdicao').val());
-			$('#reparteDistribuirXLS').val($('#reparteInicial').val());
-			$('#reparteDistribuidoXLS').val($('#totalDistribuido').text());
-			$('#dataLancamentoXLS').val($('#dataLancamento').html());
-			$('#lancamentoIdXLS').val(distribuicaoManual.idLancamento);
-    	  
-			$("#formUploadLoteDistbManual").ajaxSubmit({
+			success: function(responseText, statusText, xhr, $form)  { 
+
+				var mensagens;
 				
-				success: function(responseText, statusText, xhr, $form)  { 
+				if(responseText.mensagens == undefined && responseText.result == undefined){
+					mensagens = responseText.long;
+				}else{
+					mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;
+				}
+				
+	            var tipoMensagem = mensagens.tipoMensagem != undefined ? mensagens.tipoMensagem : 'SUCCESS';
+		        var listaMensagens = mensagens.listaMensagens != undefined ? mensagens.listaMensagens : "Estudo gerado com sucesso";
 
-					var mensagens;
-					
-					if(responseText.mensagens == undefined && responseText.result == undefined){
-						mensagens = responseText.long;
-					}else{
-						mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.long;
-					}
-					
-		            var tipoMensagem = mensagens.tipoMensagem != undefined ? mensagens.tipoMensagem : 'SUCCESS';
-			        var listaMensagens = mensagens.listaMensagens != undefined ? mensagens.listaMensagens : "Estudo gerado com sucesso";
-	
-			        if (tipoMensagem && listaMensagens) {
-			        	
-			        	if (tipoMensagem == 'SUCCESS') {
+		        if (tipoMensagem && listaMensagens) {
+		        	
+		        	if (tipoMensagem == 'SUCCESS') {
 
-		        			exibirMensagem(tipoMensagem, [""+listaMensagens]); 
-		        			
-		        			$('#estudo').html(responseText.long);
-
-		        			/*
-		        			if(typeof(matrizDistribuicao)=="object"){
-		        				matrizDistribuicao.carregarGrid();
-		        			}
-		        			
-		        			setTimeout(function() { 
-		        				var tabToSelect=-1;
-		        		        $("#workspace li.ui-state-default a").each(function(idx,comp){
-	        		              if($(comp).text()=='Distribuição Manual'){
-	        		                       tabToSelect=idx;
-	        		               }
-		        		        });
-		        		        
-		        		        if(tabToSelect>-1){
-	        		               $("#workspace").tabs("remove",tabToSelect);
-		        		        }
-		        				
-		        			}, 50);
-		        			*/
-		        			distribuicaoManual.voltar();
-		        		}else{
-		        			exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
-		        		}
-			        	
-		                $("#modalUploadArquivo-DistbManual").dialog( "close" );
-			        }
-			   },
-			   url:  contextPath +"/distribuicaoManual/uploadArquivoLoteDistbManual",				   
-		       type: 'POST',
-		       dataType: 'json',
-     	   });
-       }
+	        			exibirMensagem(tipoMensagem, [""+listaMensagens]); 
+	        			
+	        			$('#estudo').html(responseText.long);
+	        			$("#distbManual_gerarEstudo").hide();
+	        			$("#distbManual_importacao").hide();
+	        			$("#distbManual_cancelar").hide();
+	        			$("#fieldDistribuicao-cotas").hide()
+	        			
+	        			if(typeof(matrizDistribuicao)=="object"){
+	        				matrizDistribuicao.carregarGrid();
+	        			}
+	        				        			
+	        		}else{
+	        			exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
+	        		}
+		        	
+	                $("#modalUploadArquivo-DistbManual").dialog( "close" );
+		        }
+		   },
+		   url:  contextPath +"/distribuicaoManual/uploadArquivoLoteDistbManual",				   
+	       type: 'POST',
+	       dataType: 'json',
+ 	   });
+		
+		$("#excelFileDistbManual").val("");
 	}
 	// ##-- --##
 	

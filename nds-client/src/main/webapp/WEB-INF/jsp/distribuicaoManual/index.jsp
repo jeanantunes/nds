@@ -90,7 +90,7 @@
 					</span> <b>Box < evento > com < status >.</b>
 				</p>
 			</div>
-			<fieldset class="classFieldset">
+			<fieldset class="classFieldset" >
 				<legend>Distribuição Manual</legend>
 
 				<table width="950" border="0" cellspacing="2" cellpadding="2">
@@ -132,7 +132,7 @@
 						</td>
 						<td style="width: 15px;">&nbsp;</td>
 						<td valign="top">
-							<fieldset style="width: 450px;">
+							<fieldset style="width: 450px;" id="fieldDistribuicao-cotas">
 								<legend>Distribuição Manual</legend>
 								<table class="estudosManuaisGrid"></table>
 								
@@ -161,7 +161,7 @@
 						alt="Voltar" hspace="5" border="0" />Voltar</a>
 				</span>
 				<span class="bt_novos">
-					<a href="javascript:;" onclick="distribuicaoManual.cancelar();">
+					<a href="javascript:;" id="distbManual_cancelar" onclick="distribuicaoManual.cancelar();">
 						<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
 						alt="Cancelar" hspace="5" border="0" />Cancelar</a>
 				</span>
@@ -176,7 +176,7 @@
 						alt="Confirmar" hspace="5" border="0" />Análise</a>
 				</span>
 				<span class="bt_novos">
-					<a href="javascript:;" onclick="distribuicaoManual.add_lote();">
+					<a href="javascript:;" id="distbManual_importacao" onclick="distribuicaoManual.add_lote();">
 						<img src="${pageContext.request.contextPath}/images/ico_excel.png"
 						alt="Confirmar" hspace="5" border="0" />Importar distribuição em lote -SANTOS-</a>
 				</span>

@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
@@ -19,12 +18,10 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.EstudoDTO;
-import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
@@ -158,41 +155,50 @@ public class DistribuicaoManualController extends BaseController {
     		validarStatusCota(cotasParaDistribuicao);
     		
     		try {
-				this.gravarEstudo(estudoDTO, cotasParaDistribuicao);
+    			if(cotasParaDistribuicao != null && cotasParaDistribuicao.size() > 0){
+    				this.gravarEstudo(estudoDTO, cotasParaDistribuicao);
+    			}else{
+    				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Estudo não realizado, não há cotas aptas a receberem reparte."),"result").recursive().serialize();
+    			}
 			} catch (Exception e) {
 				e.printStackTrace();
 				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar estudo."),"result").recursive().serialize();
 			}
     		
     	}else{
-    		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),"result").recursive().serialize();
+    		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Arquivo vazio ou fora do padrão."),"result").recursive().serialize();
     	}
 		
 	}
 
 	private void validarStatusCota(List<EstudoCotaDTO> cotasParaDistribuicao) {
-	
+		
+		List<EstudoCotaDTO> cotasInaptas = new ArrayList<>();
+		
 		for (EstudoCotaDTO estudoCota : cotasParaDistribuicao) {
 			
 			switch (estudoCota.getCota().getSituacaoCadastro()){
 			
 			case INATIVO:
-				cotasParaDistribuicao.remove(estudoCota);
+				cotasInaptas.add(estudoCota);
 			break;
 			
 			case PENDENTE:
-				cotasParaDistribuicao.remove(estudoCota);
+				cotasInaptas.add(estudoCota);
 			break;
 			
 			default:
 			break;
 			}
 		}
+		
+		cotasParaDistribuicao.removeAll(cotasInaptas);
 	}
     
 	private void parseNumCotaIdCotaParseDto(List<EstudoCotaDTO> cotasParaDistribuicao, EstudoDTO estudoDTO) {
 		
 		Long sumReparteDistribuido = 0L;
+		List<EstudoCotaDTO> cotasInaptas = new ArrayList<>();
 		
 		for (EstudoCotaDTO estudoCota : cotasParaDistribuicao) {
 			
@@ -205,10 +211,11 @@ public class DistribuicaoManualController extends BaseController {
 				sumReparteDistribuido += estudoCota.getQtdeEfetiva().longValue();
 				
 			}else{
-				cotasParaDistribuicao.remove(estudoCota);
+				cotasInaptas.add(estudoCota);
 			}
 		}
 		
+		cotasParaDistribuicao.removeAll(cotasInaptas);
 		estudoDTO.setReparteDistribuido(sumReparteDistribuido);
 		
 	}
