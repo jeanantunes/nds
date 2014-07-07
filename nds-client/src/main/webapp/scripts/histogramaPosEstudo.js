@@ -167,7 +167,7 @@ var histogramaPosEstudoController = $.extend(true, {
 							sortable : true,
 							align : 'right'
 						}, {
-							display : 'Vda Nominal',
+							display : 'Vda Total',
 							name : 'vendaNominalFormatado',
 							width : 65,
 							sortable : true,
