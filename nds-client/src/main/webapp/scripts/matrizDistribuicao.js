@@ -147,7 +147,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			 
 			 $(id).removeClass("erow");
 			 
-			 if (T.lancamentos[i].idCopia != null) {
+			 if ((T.lancamentos[i].idCopia != null) && (i!=0)) {
 				 
 				 for (var j=0; j < 12; j++) {
 					 $($(id).children()[j]).html("");
