@@ -253,7 +253,7 @@ var anaLiseHistogramaController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Vda Nominal',
+				display : 'Vda Total',
 				name : 'vdaTotal',
 				width : 65,
 				sortable : true,
