@@ -32,6 +32,7 @@ import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorPrecoDesconto;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorProduto;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorSequencia;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorTotalDevolucao;
+import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.fechamentoencalhe.GridFechamentoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
@@ -45,18 +46,22 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalheBox;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalheBoxPK;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
-import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -72,6 +77,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
+import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -105,6 +111,7 @@ import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -219,6 +226,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
 	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
+	
+	@Autowired
+	private ParametrosDistribuidorService parametrosDistribuidorService;
+	
+	@Autowired
+	private ControleConferenciaEncalheCotaRepository controleConferenciaEncalheCotaRepository;
     
     @Autowired
     private CalendarioService calendarioService;
@@ -907,8 +920,133 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             chamadaEncalheCota.setFechado(true);
             
             chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+            
+            MovimentoEstoqueCota movimentoEstoqueCota = gerarMovimentoEstoqueCotaVendaTotal(usuario, idCota, chamadaEncalheCota);
+		
+            MovimentoEstoque movimentoEstoque = gerarMovimentoEstoqueVendaTotal(usuario, cota, chamadaEncalheCota);
+            
+            gerarConferenciaEncalheCotaVendaTotal(dataOperacao, usuario, cota, chamadaEncalheCota, movimentoEstoqueCota, movimentoEstoque);
+            
         }
     }
+
+	private ControleConferenciaEncalheCota gerarConferenciaEncalheCotaVendaTotal(final Date dataOperacao, final Usuario usuario, final Cota cota,
+			final ChamadaEncalheCota chamadaEncalheCota, MovimentoEstoqueCota movimentoEstoqueCota,
+			MovimentoEstoque movimentoEstoque) {
+		
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(cota.getNumeroCota(), dataOperacao);
+		
+		if(controleConferenciaEncalheCota == null) {
+			
+			controleConferenciaEncalheCota = new ControleConferenciaEncalheCota();
+			controleConferenciaEncalheCota.setUsuario(usuario);
+			controleConferenciaEncalheCota.setCota(cota);
+			controleConferenciaEncalheCota.setDataOperacao(dataOperacao);
+			controleConferenciaEncalheCota.setStatus(StatusOperacao.CONCLUIDO);
+			
+			// Método não pode haver concorrência
+			synchronized (this) {
+				controleConferenciaEncalheCota.setControleConferenciaEncalhe(parametrosDistribuidorService.obterControleConferenciaEncalhe(dataOperacao));
+			}
+			
+			controleConferenciaEncalheCota.setDataFim(dataOperacao);
+			
+			controleConferenciaEncalheCotaRepository.adicionar(controleConferenciaEncalheCota);
+		}
+		
+		final Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(
+				dataOperacao, 
+				chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(),
+				chamadaEncalheCota.getCota().getNumeroCota(),
+				chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao().getId(), 
+		        null);
+		
+		final boolean juramentada = false;
+		
+		final ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
+
+		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
+		
+		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
+		
+		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
+		
+		conferenciaEncalhe.setMovimentoEstoque(movimentoEstoque);
+		
+		conferenciaEncalhe.setJuramentada(juramentada);
+		
+		conferenciaEncalhe.setObservacao("");
+		
+		conferenciaEncalhe.setQtdeInformada(chamadaEncalheCota.getQtdePrevista());
+		
+		conferenciaEncalhe.setPrecoCapaInformado(movimentoEstoqueCota.getValoresAplicados().getPrecoVenda());
+		
+		conferenciaEncalhe.setPrecoComDesconto(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
+		
+		conferenciaEncalhe.setQtde(chamadaEncalheCota.getQtdePrevista());
+		
+		conferenciaEncalhe.setData(new Date());
+		
+		conferenciaEncalhe.setDiaRecolhimento(diaRecolhimento);
+		
+		final ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		
+		produtoEdicao.setId(chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao().getId());
+		
+		conferenciaEncalhe.setProdutoEdicao(produtoEdicao);
+		
+		conferenciaEncalheRepository.adicionar(conferenciaEncalhe);
+		
+		return controleConferenciaEncalheCota;
+	}
+
+	private MovimentoEstoque gerarMovimentoEstoqueVendaTotal(final Usuario usuario, final Cota cota,
+			final ChamadaEncalheCota chamadaEncalheCota) {
+		final TipoMovimentoEstoque tipoMovimentoEstoque = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+		
+		final MovimentoEstoque movimentoEstoque = 
+				this.movimentoEstoqueService.gerarMovimentoEstoque(
+						chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao().getId(), usuario.getId(), 
+						chamadaEncalheCota.getQtdePrevista(), tipoMovimentoEstoque, false, cota);
+		return movimentoEstoque;
+	}
+
+	private MovimentoEstoqueCota gerarMovimentoEstoqueCotaVendaTotal(final Usuario usuario, final Long idCota,
+			final ChamadaEncalheCota chamadaEncalheCota) {
+		
+		final TipoMovimentoEstoque tipoMovimentoEstoqueCota = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		
+		ValoresAplicados valoresAplicados = 
+		        movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(
+		        		chamadaEncalheCota.getCota().getNumeroCota()
+		        		, chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao().getId()
+		        		, distribuidorService.obterDataOperacaoDistribuidor());
+		
+		if(valoresAplicados == null) {
+		    valoresAplicados = new ValoresAplicados(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+		}
+		
+		LancamentoDTO lancamentoDTO = new LancamentoDTO();
+		if(chamadaEncalheCota.getChamadaEncalhe() != null
+				&& chamadaEncalheCota.getChamadaEncalhe().getLancamentos() != null
+				&& !chamadaEncalheCota.getChamadaEncalhe().getLancamentos().isEmpty()) {
+			Lancamento lancamento = chamadaEncalheCota.getChamadaEncalhe().getLancamentos().iterator().next();
+			lancamentoDTO.setId(lancamento.getId());
+			lancamentoDTO.setDataDistribuidor(lancamento.getDataLancamentoDistribuidor());
+		}
+		
+		MovimentoEstoqueCota movimentoEstoqueCota = 
+				movimentoEstoqueService.gerarMovimentoCota(
+						lancamentoDTO.getDataDistribuidor(), 
+						chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao().getId(), 
+						idCota, 
+						usuario.getId(), 
+						chamadaEncalheCota.getQtdePrevista(), 
+						tipoMovimentoEstoqueCota,
+						this.distribuidorService.obterDataOperacaoDistribuidor(),
+						valoresAplicados);
+		return movimentoEstoqueCota;
+	}
     
     private void gerarMovimentosFinanceiros(final Cota cota, 
     		                                final Date dataOperacao,
@@ -1296,26 +1434,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                     StatusAprovacao.GANHO, Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
             
         }
-    }
-    
-    private NaturezaOperacao obterTipoNotaFiscal(final List<NaturezaOperacao> listaNaturezasOperacao, final Cota cota) {
-    	NaturezaOperacao tipoNotaFiscal = null;
-        
-        Boolean contribuinte = Boolean.FALSE;
-        
-        if (cota.getParametrosCotaNotaFiscalEletronica() != null
-                && cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null) {
-            
-            contribuinte = cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica();
-        }
-        
-        for (final NaturezaOperacao tipo : listaNaturezasOperacao) {
-            if (contribuinte) {
-                tipoNotaFiscal = tipo;
-                break;
-            }
-        }
-        return tipoNotaFiscal;
     }
     
     @Transactional
