@@ -48,7 +48,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.restfulie.hypermedia.Transition;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -310,7 +309,8 @@ public class GeracaoNFeController extends BaseController {
 		return listaTipoNotaFiscal;
 	}
 	
-	@Transactional
+	@Post
+    @Rules(Permissao.ROLE_NFE_GERACAO_NFE_ALTERACAO)
 	public void exportar(final FiltroNFeDTO filtro, NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissaoRegimeEspecial, final String sortname, final String sortorder, final int rp, final int page, FileType fileType) throws IOException {
 		
 	    List<CotaExemplaresDTO> cotaExemplaresDTOs = null;

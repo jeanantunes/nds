@@ -21,11 +21,10 @@ public class CFOPRepositoryImpl  extends AbstractRepositoryModel<CFOP, Long> imp
 
 	@Override
 	public CFOP obterPorCodigo(String codigo) {
-        Criteria criteria =  getSession().createCriteria(CFOP.class);	
+		Criteria criteria =  getSession().createCriteria(CFOP.class);	
 
 		criteria.add(Restrictions.eq("codigo", codigo));
-	
+		
 		return (CFOP) criteria.uniqueResult();
 	}
-	
 }

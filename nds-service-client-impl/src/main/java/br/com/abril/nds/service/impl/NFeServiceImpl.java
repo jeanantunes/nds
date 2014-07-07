@@ -1010,8 +1010,7 @@ public class NFeServiceImpl implements NFeService {
 							cotasContribuinteEmitente.add(cota);
 						}
 					}
-				} else if(filtro.getNotaFiscalTipoEmissao() != null
-						&& filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
+				} else if(filtro.getNotaFiscalTipoEmissao() != null && filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
 					for (CotaExemplaresDTO cota : cotas) {
 						if(naturezaOperacao.isGerarCotaNaoExigeNFe() 
 								&& (cota.isContribuinteICMS() == null || !cota.isContribuinteICMS()) 

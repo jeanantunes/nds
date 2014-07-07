@@ -28,7 +28,6 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntradaNFETerceirosService;
 import br.com.abril.nds.service.FornecedorService;
@@ -87,9 +86,6 @@ public class EntradaNFETerceirosController extends BaseController {
 	
 	@Autowired
 	private NaturezaOperacaoService tipoNotaFiscalService;
-	
-	@Autowired
-	private CFOPService cfopService;
 	
 	@Autowired
 	private CotaService cotaService;

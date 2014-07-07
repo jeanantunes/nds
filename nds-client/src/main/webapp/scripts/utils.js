@@ -1,3 +1,5 @@
+var disabledEnterModalConfirmar = [];
+
 //Sobrescrita da funcao toFixed para arredondamento no Chrome
 Number.prototype.round = function(digits) {
     digits = Math.floor(digits);
@@ -94,8 +96,18 @@ $(document).ready(function() {
 			//Considerar apenas bts Confirmação/Desistência pela abrangência sobre sistema.
 			if( refButtonsDialog.size() == 2 ) {
 
+				disableConfirmar = false;
+				if(disabledEnterModalConfirmar.length > 0) {
+					for(index in disabledEnterModalConfirmar) {
+						if($($('#'+ disabledEnterModalConfirmar[index]).parent().find('.ui-button')[0]).html().indexOf('Confirmar') > -1) {
+							disableConfirmar = true;
+							$($('#'+ disabledEnterModalConfirmar[index]).parent().find('.ui-button')[0]).blur();
+						}
+					}
+				}
+				
 				//Verifica se o segundo botão está selecionado / Caso sim não acionará Confirmação por ser Desistência selecionado
-				if(eventoJs.target != refButtonsDialog[1] && eventoJs.target != $('.pcontrol input:visible')[0]){
+ 				if(!disableConfirmar && eventoJs.target != refButtonsDialog[1] && eventoJs.target != $('.pcontrol input:visible')[0]){
 					refButtonsDialog.first().click(); /* Assuming the first one is the action button */
 				}
 				return true;

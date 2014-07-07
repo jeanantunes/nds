@@ -197,11 +197,11 @@ public class FechamentoEncalheController extends BaseController {
 		
 		if (aplicaRegraMudancaTipo && boxId == null){
 				
-				FiltroFechamentoEncalheDTO filtroRevomecao = new FiltroFechamentoEncalheDTO(); 
-				
-				filtroRevomecao.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
-				
-				fechamentoEncalheService.converteFechamentoDetalhadoEmConsolidado(filtroRevomecao);
+			FiltroFechamentoEncalheDTO filtroRevomecao = new FiltroFechamentoEncalheDTO(); 
+			
+			filtroRevomecao.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+			
+			fechamentoEncalheService.converteFechamentoDetalhadoEmConsolidado(filtroRevomecao);
 				
 		} 
 		

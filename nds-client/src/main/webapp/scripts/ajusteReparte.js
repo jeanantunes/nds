@@ -7,6 +7,18 @@ init : function() {
 		ajusteReparteController.filtroPorSegmento();
 	});
 	
+	disabledEnterModalConfirmar.push('dialog-novo-ajusteReparte');
+	
+	$('#numeroCota', ajusteReparteController.workspace).bind({
+		keyup: function(){
+			onlyNumeric(event);
+		},
+
+		change: function(){
+			pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');
+		}
+	});
+	
 	ajusteReparteController.mask();
 
 	$(".cotasAjusteGrid").flexigrid({
@@ -158,7 +170,7 @@ init : function() {
 		
 		$("#tableSegmentos").hide();
 		
-		$("#dialog-novo").dialog({
+		$("#dialog-novo-ajusteReparte").dialog({
 			resizable: false,
 			height:'auto',
 			width:630,
@@ -205,7 +217,7 @@ init : function() {
 								exibirMensagem(tipoMensagem, listaMensagens);
 							}
 			                 $(".cotasAjusteGrid").flexReload();
-			                 $("#dialog-novo").dialog("close");
+			                 $("#dialog-novo-ajusteReparte").dialog("close");
 					   },
 					   function(result) {
 							var tipoMensagem = result.tipoMensagem;
@@ -231,7 +243,7 @@ init : function() {
 								exibirMensagem(tipoMensagem, listaMensagens);
 							}
 			                 $(".cotasAjusteGrid").flexReload();
-			                 $("#dialog-novo").dialog("close");
+			                 $("#dialog-novo-ajusteReparte").dialog("close");
 					   },
 					   function(result) {
 							var tipoMensagem = result.tipoMensagem;

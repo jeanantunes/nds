@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.math.BigInteger;
 
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
+import br.com.abril.nds.util.upload.XlsMapper;
 
 public class EstudoCotaDTO implements Serializable {
 
@@ -12,11 +14,8 @@ public class EstudoCotaDTO implements Serializable {
 	
 	private Long id;
 	
-	private BigInteger qtdeEfetiva;
-	
 	private Long idCota;
 	private Long idFornecedorPadraoCota;
-	
 	private TipoEstudoCota tipoEstudo;
 	
 	private boolean devolveEncalhe;
@@ -25,6 +24,14 @@ public class EstudoCotaDTO implements Serializable {
 	
 	private boolean cotaContribuinteExigeNotaFiscal;
 
+	private Cota cota;
+	
+	@XlsMapper(value="cota")
+	private Integer numeroCota;
+	
+	@XlsMapper(value="reparte")
+	private BigInteger qtdeEfetiva;
+	
 	public Long getId() {
 		return id;
 	}
@@ -93,4 +100,19 @@ public class EstudoCotaDTO implements Serializable {
 		this.idFornecedorPadraoCota = idFornecedorPadraoCota;
 	}
 	
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
+	public Cota getCota() {
+		return cota;
+	}
+
+	public void setCota(Cota cota) {
+		this.cota = cota;
+	}
 }
