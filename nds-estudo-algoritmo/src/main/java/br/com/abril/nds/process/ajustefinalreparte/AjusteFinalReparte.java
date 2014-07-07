@@ -76,31 +76,37 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 	    }
 
 	    BigInteger reparte = BigInteger.ONE;
+	    
 	    if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
-		reparte = estudo.getPacotePadrao();
+	    	reparte = estudo.getPacotePadrao();
 	    }
+	   
 	    // distribuicao para TODAS as cotas em ordem decrescente de reparte
 	    while (estudo.getReservaAjuste().compareTo(reparte) >= 0) {
 
-		Comparator<CotaEstudo> orderCotaDesc = new Comparator<CotaEstudo>(){
-		    @Override
-		    public int compare(CotaEstudo c1, CotaEstudo c2) {
-			return c2.getReparteCalculado().compareTo(c1.getReparteCalculado());
-		    }
-		};
-
-		Collections.sort(estudo.getCotas(), orderCotaDesc);
-
-		for (CotaEstudo cota : estudo.getCotas()) {
-		    if (estudo.getReservaAjuste().compareTo(reparte) < 0) {
-			break;
-		    }
-		    if (estudo.getReservaAjuste().compareTo(reparte) >= 0 &&
-			    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-				    ClassificacaoCota.CotaMix)) {
-			setReparteCota(cota, estudo);
-		    }
-		}
+			Comparator<CotaEstudo> orderCotaDesc = new Comparator<CotaEstudo>(){
+			    @Override
+			    public int compare(CotaEstudo c1, CotaEstudo c2) {
+				return c2.getReparteCalculado().compareTo(c1.getReparteCalculado());
+			    }
+			};
+	
+			Collections.sort(estudo.getCotas(), orderCotaDesc);
+	
+			for (CotaEstudo cota : estudo.getCotas()) {
+			    if (estudo.getReservaAjuste().compareTo(reparte) < 0) {
+			    	break;
+			    }
+			    if (estudo.getReservaAjuste().compareTo(reparte) >= 0 &&
+				    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix)) {
+			    	setReparteCota(cota, estudo);
+			    }
+			}
+			
+			if(estudo.getCotas().isEmpty()){
+				break;
+			}
+		
 	    }
 	}
 	reparteComplementarPorCota.executar(estudo);
