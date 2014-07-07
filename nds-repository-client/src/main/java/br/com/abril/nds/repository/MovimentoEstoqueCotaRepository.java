@@ -34,6 +34,16 @@ import br.com.abril.nds.util.Intervalo;
 
 
 public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEstoqueCota, Long> {
+    
+	
+	/**
+	 * Obtém o valor total de entrada no consignado
+	 * 
+	 * @param dataRecolhimento
+	 * @return
+	 */
+	BigDecimal obterSaldoEntradaNoConsignado(Date dataRecolhimento);
+
 	
 	/**
 	 * FROM: Consignado da cota com chamada de encalhe ou produto conta firme

@@ -4,8 +4,8 @@
  <form name="formDadosBasicoCnpj" id="formDadosBasicoCnpj">
  <fieldset style="width:880px!important; margin:5px;">
  <legend>Dados Cadastrais</legend>
-  <table width="870" cellpadding="2" cellspacing="2" style="text-align:left;" border="0">
-  <tr>
+  <table width="870" cellpadding="2" cellspacing="2" style="text-align:left;">
+    <tr>
       <td><strong>Cota:</strong></td>
       <td><input name="cotaDTO.numeroCota" id="numeroCotaCNPJ" maxlength="16" type="text" style="width:100px" />
       	     <select name="cotaDTO.tipoDistribuicaoCota" id="cotaDTO.tipoDistribuicaoCNPJ" style="width:110px;" onchange="MANTER_COTA.verificaTipoCota(this);">
@@ -17,7 +17,20 @@
       </td>
       <td><strong>Início de Atividade:</strong></td>
       <td><span id="dataInclusao"style="width:100px"></span></td>
-  </tr>
+    </tr>
+  
+    <tr>
+      <td>Forma de Pagamento:</td>
+	  <td><select name="cotaDTO.tipoCotaFinanceiro" id="tipoCotaFinanceiro" style="width: 150px;" onchange="parametroCobrancaCotaController.exibeDevolveEncalhe(this.value);"
+	  onfocus="this.oldValue = this.value;">
+	          <option value="">Selecione</option>
+			  <c:forEach varStatus="counter" var="itemTipoCota"
+				  items="${listaTiposCota}">
+				  <option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
+			  </c:forEach>
+	  </select></td><td></td><td></td>
+    </tr>
+  
     <tr>
       <td>Razão Social:</td>
       <td><input type="text" style="width:230px " maxlength="250" name="cotaDTO.razaoSocial" id="razaoSocial"/></td>
@@ -51,6 +64,7 @@
       		<div id="selectClassificacao"></div>
       </td>
     </tr>
+    
 </table>
 
 <table width="870" border="0" cellspacing="1" cellpadding="1">
