@@ -701,11 +701,11 @@ var histogramaPosEstudoController = $.extend(true, {
 	
 	voltar : function() {
 		
+		$("#botaoVoltarMatrizDistribuicao").tipsy('hide');
 		var indexAbaAtual =  $('#workspace').tabs('option', 'selected');
 		
 		histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual);
 		
-		$(this).tipsy('hide');
 		/*removeTabByTitle('Distribuição Venda Média');*/
 		selectTabTitle('Matriz Distribuição');
 		
