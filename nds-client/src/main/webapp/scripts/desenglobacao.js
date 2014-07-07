@@ -53,6 +53,8 @@ var desenglobacaoController = $.extend(true, {
     init : function() {
     	
     	$('#formInserirEnglobada').hide();
+    	
+    	disabledEnterModalConfirmar.push('dialog-novo-desenglobacao');
 
         // ###### INICIO FILTRO DA TELA PRINCIPAL ######
 		
