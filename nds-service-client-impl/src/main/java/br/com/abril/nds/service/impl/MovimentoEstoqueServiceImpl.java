@@ -1259,7 +1259,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico, null);
     }
     
-    
     @Override
     @Transactional
     public MovimentoEstoqueCota gerarMovimentoCota(final Date dataLancamento, final Long idProdutoEdicao, final Long idCota,

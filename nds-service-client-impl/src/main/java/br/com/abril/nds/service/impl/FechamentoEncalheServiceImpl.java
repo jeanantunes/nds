@@ -985,7 +985,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			controleConferenciaEncalheCota = new ControleConferenciaEncalheCota();
 			controleConferenciaEncalheCota.setUsuario(usuario);
+			controleConferenciaEncalheCota.setBox(cota.getBox());
 			controleConferenciaEncalheCota.setCota(cota);
+			controleConferenciaEncalheCota.setDataInicio(new Date());
 			controleConferenciaEncalheCota.setDataOperacao(dataOperacao);
 			controleConferenciaEncalheCota.setStatus(StatusOperacao.CONCLUIDO);
 			
