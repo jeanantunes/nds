@@ -40,6 +40,11 @@ var impressaoNfeController = $.extend(true, {
 			
 			$("#impressaoNfe-filtro-naturezaOperacao").empty();
 			
+			$('#impressaoNfe-filtro-naturezaOperacao').append($('<option>', { 
+		        value: '-1',
+		        text : 'Selecione...'
+		    }));
+			
 			$.each(data.rows, function (i, row) {
 			    $('#impressaoNfe-filtro-naturezaOperacao').append($('<option>', { 
 			        value: row.cell.key,
@@ -102,6 +107,11 @@ var impressaoNfeController = $.extend(true, {
 			}
 			
 			$("#impressaoNfe-filtro-naturezaOperacao").empty();
+			
+			$('#impressaoNfe-filtro-naturezaOperacao').append($('<option>', { 
+		        value: '-1',
+		        text : 'Selecione...'
+		    }));
 			
 			$.each(data.rows, function (i, row) {
 			    $('#impressaoNfe-filtro-naturezaOperacao').append($('<option>', { 
