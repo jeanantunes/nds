@@ -4,7 +4,7 @@ var cadastroTipoNotaController = $.extend(true, {
 		var operacao = $("#operacaoID", this.worspace).val();
 		var tipoNota = $("#tipoNota", this.workspace).val();
 		$(".tiposNotasGrid", this.worspace).flexOptions({
-			url: contextPath + '/administracao/cadastroTipoNota/pesquisar',
+			url: contextPath + '/administracao/naturezaOperacao/pesquisar',
 			params: [
 		         {name:'operacao', value: operacao},
 		         {name:'tipoNota', value: tipoNota}
@@ -79,5 +79,4 @@ var cadastroTipoNotaController = $.extend(true, {
 		definirAcaoPesquisaTeclaEnter(this.worspace);
 	}		
 }, BaseController);
-
-
+//@sourceURL=naturezaOperacao.js

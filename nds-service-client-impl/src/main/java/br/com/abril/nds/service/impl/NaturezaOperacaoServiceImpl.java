@@ -16,6 +16,7 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -84,9 +85,9 @@ public class NaturezaOperacaoServiceImpl implements NaturezaOperacaoService {
 	
 	@Override
 	@Transactional
-	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
+	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorEmitenteDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario) {
 		
-		return this.naturezaOperacaoRepository.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
+		return this.naturezaOperacaoRepository.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario);
 	}
 	
 	@Override

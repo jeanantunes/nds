@@ -13,6 +13,7 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -355,19 +356,27 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
+	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorEmitenteDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario) {
 
 		StringBuilder sql = new StringBuilder("")
 		.append("SELECT id as `key`, descricao as value ") 
 		.append("FROM natureza_operacao no ")
 		.append("WHERE no.TIPO_ATIVIDADE = (select TIPO_ATIVIDADE from distribuidor) ");
 
+		if(tipoEmitente != null) {
+			sql.append("AND no.TIPO_EMITENTE = :tipoEmitente ");
+		}
+		
 		if(tipoDestinatario != null) {
 			sql.append("AND no.TIPO_DESTINATARIO = :tipoDestinatario ");
 		}
 
 		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
 
+		if(tipoEmitente != null) {
+			sqlQuery.setParameter("tipoEmitente", tipoEmitente.name());
+		}
+		
 		if(tipoDestinatario != null) {
 			sqlQuery.setParameter("tipoDestinatario", tipoDestinatario.name());
 		}

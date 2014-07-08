@@ -1,4 +1,4 @@
-<form action="/administracao/cadastroTipoNota" id="dialog-cotas_form">
+<form action="/administracao/naturezaOperacao" id="dialog-cotas_form">
 	<div id="dialog-cotas" title="Cotas" style="display:none;">
 		<fieldset style="width:350px!important;">
 	    	<legend>Cotas</legend>
@@ -7,7 +7,7 @@
 	</div>
 </form>
 
-<form action="/administracao/cadastroTipoNota" id="formTipoDescontoProduto">
+<form action="/administracao/naturezaOperacao" id="formTipoDescontoProduto">
 
 	<div id="dialog-produto" title="Novo Tipo de Desconto Produto" style="display:none;">
 
