@@ -57,7 +57,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		
 		hql.append(this.getSqlWhereBuscarEstudos(filtro));
 		
-		hql.append(" group by lancamento.id ");
+		hql.append(" group by estudo.id ");
 		
 		hql.append(this.ordenarConsultaAnaliseEstudo(filtro));
 		
