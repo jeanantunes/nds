@@ -28,8 +28,6 @@ public class ConsultaConsignadoCotaServiceImpl implements ConsultaConsignadoCota
 	@Transactional
 	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
 		
-		filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
-		
 		return this.consignadoCotaRepository.buscarConsignadoCota(filtro, limitar);
 	}
 
@@ -37,8 +35,6 @@ public class ConsultaConsignadoCotaServiceImpl implements ConsultaConsignadoCota
 	@Transactional
 	public Long buscarTodosMovimentosCotaPeloFornecedor(
 			FiltroConsultaConsignadoCotaDTO filtro) {		 
-		
-		filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		return this.consignadoCotaRepository.buscarTodosMovimentosCotaPeloFornecedor(filtro);
 	}
@@ -58,8 +54,6 @@ public class ConsultaConsignadoCotaServiceImpl implements ConsultaConsignadoCota
 	public BigDecimal buscarTotalGeralDaCota(
 			FiltroConsultaConsignadoCotaDTO filtro) {	
 		
-		filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
-		
 		return this.consignadoCotaRepository.buscarTotalGeralDaCota(filtro);
 	}
 
@@ -67,8 +61,6 @@ public class ConsultaConsignadoCotaServiceImpl implements ConsultaConsignadoCota
 	@Transactional
 	public List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhado(
 			FiltroConsultaConsignadoCotaDTO filtro) {
-		 
-		filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		return this.consignadoCotaRepository.buscarTotalDetalhado(filtro);
 	}
