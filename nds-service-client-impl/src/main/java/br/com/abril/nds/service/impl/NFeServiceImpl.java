@@ -59,7 +59,10 @@ import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
+import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
+import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -640,7 +643,7 @@ public class NFeServiceImpl implements NFeService {
 	}
 	
 	private void gerarNotasFiscaisFornecedorEstoque(FiltroNFeDTO filtro, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
-
+		
 		// obter as cotas que estão na tela pelo id das cotas
 		List<EstoqueProduto> estoques = this.notaFiscalRepository.obterConjuntoFornecedorNotafiscal(filtro);
 		
@@ -683,8 +686,16 @@ public class NFeServiceImpl implements NFeService {
 	@Override
 	@Transactional
 	public void gerarNotasFiscaisFornecedor(final FiltroNFeDTO filtro,
-			final List<NotaFiscal> notasFiscais, final Distribuidor distribuidor, final NaturezaOperacao naturezaOperacao, 
-			final Map<String, ParametroSistema> parametrosSistema, final List<Fornecedor> fornecedores) {
+			final List<NotaFiscal> notasFiscais, 
+			final Distribuidor distribuidor, 
+			final NaturezaOperacao naturezaOperacao, 
+			final Map<String, ParametroSistema> parametrosSistema, 
+			final List<Fornecedor> fornecedores) {
+		
+		
+		if(naturezaOperacao.isGerarNotasReferenciadas()){
+			final NotaFiscalReferenciada notaFiscal = new NotaFiscalReferenciada();
+		}
 		
 		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
 		
@@ -1146,5 +1157,30 @@ public class NFeServiceImpl implements NFeService {
 	        }
 		}	
     }
-    
+	
+	private NotaFiscalReferenciada notaFiscalReferenciada(NotaFiscal notaFiscal) {
+
+		NotaFiscalReferenciada notaReferenciada = null;
+
+		InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
+
+		if (informacaoEletronica != null) {
+
+			notaReferenciada = new NotaFiscalReferenciada();
+			notaReferenciada.setCodigoUF(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getCodigoUf());
+			// notaReferenciada.setCnpj(notaFiscal.getNotaFiscalInformacoes().getidentificacaoDestinatario.
+			notaReferenciada.setDataEmissao(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getDataEmissao());
+			notaReferenciada.setModelo(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getModeloDocumentoFiscal());
+			notaReferenciada.setNumeroDocumentoFiscal(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNumeroDocumentoFiscal());
+			notaReferenciada.setSerie(String.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getSerie()));
+			
+			NotaFiscalReferenciadaPK pk = new NotaFiscalReferenciadaPK();
+			pk.setChaveAcesso(informacaoEletronica.getChaveAcesso());
+			pk.setNotaFiscal(notaFiscal);
+
+			notaReferenciada.setPk(pk);
+		}
+
+		return notaReferenciada;
+	}
 }

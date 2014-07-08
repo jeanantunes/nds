@@ -2808,9 +2808,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				itemNotaFiscalEntrada.setProdutoEdicao(produtoEdicao);
 				itemNotaFiscalEntrada.setTipoLancamento(TipoLancamento.LANCAMENTO);
 				
-				final Date dataUltimoLancamento = lancamentoRepository.obterDataUltimoLancamento(
-						conferenciaEncalhe.getIdProdutoEdicao(), 
-						dataOperacao);
+				final Date dataUltimoLancamento = lancamentoRepository.obterDataUltimoLancamento(conferenciaEncalhe.getIdProdutoEdicao(), dataOperacao);
 				
 				itemNotaFiscalEntrada.setDataLancamento(dataUltimoLancamento);
 				

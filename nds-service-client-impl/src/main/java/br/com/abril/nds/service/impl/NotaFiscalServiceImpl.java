@@ -1890,8 +1890,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	@Override
 	@Transactional
-	public NotaFiscalReferenciada converterNotaFiscalToNotaFiscalReferenciada(
-			NotaFiscal notaFiscal) {
+	public NotaFiscalReferenciada converterNotaFiscalToNotaFiscalReferenciada(NotaFiscal notaFiscal) {
 
 		NotaFiscalReferenciada notaReferenciada = null;
 
@@ -1900,7 +1899,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		if (informacaoEletronica != null) {
 
 			NotaFiscalReferenciadaPK pk = new NotaFiscalReferenciadaPK();
-			pk.setChaveAcesso(new BigInteger(informacaoEletronica.getChaveAcesso()));
+			pk.setChaveAcesso(informacaoEletronica.getChaveAcesso());
 			pk.setNotaFiscal(notaFiscal);
 
 			notaReferenciada = new NotaFiscalReferenciada();
@@ -2027,15 +2026,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		cancNFeElement.setAttribute("versao", parametroSistemaService.buscarParametroSistemaGeral().getNfeInformacoesVersaoEmissor());
 
 		Element infCancElement = doc.createElement("infCanc");
-		infCancElement.setAttribute(
-				"Id",
-				new StringBuilder("ID").append(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso()).toString());
+		infCancElement.setAttribute("Id", new StringBuilder("ID").append(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso()).toString());
 		cancNFeElement.appendChild(infCancElement);
 
 		Element tpAmbElement = doc.createElement("tpAmb");
-		tpAmbElement.setTextContent(String.valueOf(notaFiscal
-				.getNotaFiscalInformacoes().getIdentificacao()
-				.getTipoAmbiente()));
+		tpAmbElement.setTextContent(String.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoAmbiente()));
 		infCancElement.appendChild(tpAmbElement);
 
 		Element xServElement = doc.createElement("xServ");
@@ -2043,19 +2038,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		infCancElement.appendChild(xServElement);
 
 		Element chNFeElement = doc.createElement("chNFe");
-		chNFeElement.setTextContent(notaFiscal.getNotaFiscalInformacoes()
-				.getInformacaoEletronica().getChaveAcesso().toString());
+		chNFeElement.setTextContent(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso().toString());
 		infCancElement.appendChild(chNFeElement);
 
 		Element nProtElement = doc.createElement("nProt");
-		nProtElement.setTextContent(notaFiscal.getNotaFiscalInformacoes()
-				.getInformacaoEletronica().getRetornoComunicacaoEletronica()
-				.getProtocolo().toString());
+		nProtElement.setTextContent(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica().getProtocolo().toString());
 		infCancElement.appendChild(nProtElement);
 
 		Element xJustElement = doc.createElement("xJust");
-		xJustElement.setTextContent(notaFiscal.getNotaFiscalInformacoes()
-				.getIdentificacao().getJustificativaEntradaContigencia());
+		xJustElement.setTextContent(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getJustificativaEntradaContigencia());
 		infCancElement.appendChild(xJustElement);
 
 		return doc;

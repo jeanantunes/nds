@@ -1,7 +1,6 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlElement;
 
 import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
 import br.com.abril.nds.util.TipoSecao;
@@ -45,7 +45,8 @@ public class NotaFiscalReferenciada implements Serializable {
 	 */
 	@Column(name="CODIGO_UF", nullable=false, length=2)
 	@NFEExport(secao = TipoSecao.B14, posicao = 0)
-	private Integer codigoUF;
+	@XmlElement(name="cUF")
+	private Long codigoUF;
 	
 	/**
 	 * AAMM
@@ -53,6 +54,7 @@ public class NotaFiscalReferenciada implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name="DATA_EMISSAO", nullable=false)
 	@NFEExport(secao = TipoSecao.B14, posicao = 1, mascara="yyMM")
+	@XmlElement(name="cAAMMUF")
 	private Date dataEmissao;
 	
 	/**
@@ -60,6 +62,7 @@ public class NotaFiscalReferenciada implements Serializable {
 	 */
 	@Column(name="CNPJ", nullable=false, length=14)
 	@NFEExport(secao = TipoSecao.B14, posicao = 2, tamanho = 14)
+	@XmlElement(name="CNPJ")
 	private String cnpj;
 	
 	/**
@@ -67,20 +70,23 @@ public class NotaFiscalReferenciada implements Serializable {
 	 */
 	@Column(name="MODELO_DOCUMENTO_FISCAL",length=2, nullable=false)
 	@NFEExport(secao = TipoSecao.B14, posicao = 3)
-	private Integer modelo;
+	@XmlElement(name="mod")
+	private String modelo;
 	
 	/**
 	 * serie
 	 */
 	@Column(name = "SERIE", length = 3, nullable = false)
 	@NFEExport(secao = TipoSecao.B14, posicao = 4)
-	private Integer serie;
+	@XmlElement(name="serie")
+	private String serie;
 	
 	/**
 	 * nNF
 	 */
 	@Column(name="NUMERO_DOCUMENTO_FISCAL", length=9, nullable=false)
 	@NFEExport(secao = TipoSecao.B14, posicao = 5)
+	@XmlElement(name="nNF")
 	private Long numeroDocumentoFiscal;
 	
 	
@@ -88,9 +94,8 @@ public class NotaFiscalReferenciada implements Serializable {
 	 * refCTe
 	 */
 	@Column(name="CHAVE_ACESSO_CTE", length=44, nullable=false)
-	private BigInteger chaveAcessoCTe;
-	
-	
+	@XmlElement(name="refCTe")
+	private String chaveAcessoCTe;
 	
 	public NotaFiscalReferenciada() {		
 		pk =  new NotaFiscalReferenciadaPK();
@@ -103,8 +108,7 @@ public class NotaFiscalReferenciada implements Serializable {
 	}
 	
 	
-	public NotaFiscalReferenciada(NotaFiscal notaFiscal,
-			BigInteger chaveAcesso){
+	public NotaFiscalReferenciada(NotaFiscal notaFiscal, String chaveAcesso){
 		pk =  new NotaFiscalReferenciadaPK(notaFiscal,chaveAcesso);
 	
 	}
@@ -126,14 +130,14 @@ public class NotaFiscalReferenciada implements Serializable {
 	/**
 	 * @return the codigoUF
 	 */
-	public Integer getCodigoUF() {
+	public Long getCodigoUF() {
 		return codigoUF;
 	}
 
 	/**
 	 * @param codigoUF the codigoUF to set
 	 */
-	public void setCodigoUF(Integer codigoUF) {
+	public void setCodigoUF(Long codigoUF) {
 		this.codigoUF = codigoUF;
 	}
 
@@ -168,28 +172,28 @@ public class NotaFiscalReferenciada implements Serializable {
 	/**
 	 * @return the modelo
 	 */
-	public Integer getModelo() {
+	public String getModelo() {
 		return modelo;
 	}
 
 	/**
 	 * @param modelo the modelo to set
 	 */
-	public void setModelo(Integer modelo) {
+	public void setModelo(String modelo) {
 		this.modelo = modelo;
 	}
 
 	/**
 	 * @return the serie
 	 */
-	public Integer getSerie() {
+	public String getSerie() {
 		return serie;
 	}
 
 	/**
 	 * @param serie the serie to set
 	 */
-	public void setSerie(Integer serie) {
+	public void setSerie(String serie) {
 		this.serie = serie;
 	}
 
@@ -211,7 +215,7 @@ public class NotaFiscalReferenciada implements Serializable {
 	/**
 	 * @return the chaveAcessoCTe
 	 */
-	public BigInteger getChaveAcessoCTe() {
+	public String getChaveAcessoCTe() {
 		return chaveAcessoCTe;
 	}
 
@@ -219,7 +223,7 @@ public class NotaFiscalReferenciada implements Serializable {
 	/**
 	 * @param chaveAcessoCTe the chaveAcessoCTe to set
 	 */
-	public void setChaveAcessoCTe(BigInteger chaveAcessoCTe) {
+	public void setChaveAcessoCTe(String chaveAcessoCTe) {
 		this.chaveAcessoCTe = chaveAcessoCTe;
 	}
 

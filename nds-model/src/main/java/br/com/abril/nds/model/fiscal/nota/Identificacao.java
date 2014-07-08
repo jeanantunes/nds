@@ -3,13 +3,12 @@ package br.com.abril.nds.model.fiscal.nota;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -26,7 +25,6 @@ import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Embeddable
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -491,10 +489,9 @@ public class Identificacao implements Serializable {
 	@Column(name = "HORA_SAIDA_ENTRADA", nullable = true)
 	private Date horaSaidaEntrada;
 	
-	
-	@OneToMany(mappedBy="pk.notaFiscal")
-	@NFEExportType
-	private List<NotaFiscalReferenciada> listReferenciadas;
+	@Embedded
+	@XmlElement(name="NFref")
+	private NotaFiscalReferenciadaWrapper notaFiscalReferenciada;
 	
 	/**
 	 * dhCont
@@ -632,18 +629,12 @@ public class Identificacao implements Serializable {
 		this.horaSaidaEntrada = horaSaidaEntrada;
 	}
 
-	/**
-	 * @return the listReferenciadas
-	 */
-	public List<NotaFiscalReferenciada> getListReferenciadas() {
-		return listReferenciadas;
+	public NotaFiscalReferenciadaWrapper getNotaFiscalReferenciada() {
+		return notaFiscalReferenciada;
 	}
 
-	/**
-	 * @param listReferenciadas the listReferenciadas to set
-	 */
-	public void setListReferenciadas(List<NotaFiscalReferenciada> listReferenciadas) {
-		this.listReferenciadas = listReferenciadas;
+	public void setNotaFiscalReferenciada(NotaFiscalReferenciadaWrapper notaFiscalReferenciada) {
+		this.notaFiscalReferenciada = notaFiscalReferenciada;
 	}
 
 	/**
