@@ -35,18 +35,23 @@ public class VerificarTotalFixacoes extends ProcessoAbstrato {
 	if (estudo.isUsarFixacao()) {
 	    BigInteger somaFixacao = BigInteger.ZERO;
 	    for (CotaEstudo cota : estudo.getCotasExcluidas()) {
-		if (cota.getReparteFixado() != null) {
-		    somaFixacao = somaFixacao.add(cota.getReparteFixado());
-		}
+			if (cota.getReparteFixado() != null) {
+			    somaFixacao = somaFixacao.add(cota.getReparteFixado());
+			}
 	    }
 	    BigDecimal maximoFixacao = null;
 	    if (estudo.getPercentualMaximoFixacao() != null) {
-		maximoFixacao = new BigDecimal(estudo.getReparteDistribuir()).multiply(
-			estudo.getPercentualMaximoFixacao().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+	    	maximoFixacao = new BigDecimal(estudo.getReparteDistribuir()).multiply(
+	    			estudo.getPercentualMaximoFixacao().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
 	    }
 	    if ((maximoFixacao != null) && (maximoFixacao.compareTo(new BigDecimal(somaFixacao)) < 0)) {
-		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A soma das fixações de reparte é maior que o percentual configurado na tela de parâmetros do distribuidor."));
+	    	throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A soma das fixações de reparte é maior que o percentual configurado na tela de parâmetros do distribuidor."));
 	    }
 	}
+	
+	if(estudo.getCotas().isEmpty()){
+		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não há cotas aptas a receberem reparte."));	
+	}
+	
     }
 }

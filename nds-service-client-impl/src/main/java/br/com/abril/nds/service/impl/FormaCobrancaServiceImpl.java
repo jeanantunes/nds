@@ -481,7 +481,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 			
 			if (cota.getValorMinimoCobranca() == null){
 			    
-			    throw new ValidacaoException(TipoMensagem.ERROR, "Cota não possui valor mínimo de cobrança cadastrado.");
+			    throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + cota.getNumeroCota() + " não possui valor mínimo de cobrança cadastrado.");
 			}
 			
 			boolean valorMinimoAtingido = this.isValorMinimoAtingido(cota.getValorMinimoCobranca(), valor);
