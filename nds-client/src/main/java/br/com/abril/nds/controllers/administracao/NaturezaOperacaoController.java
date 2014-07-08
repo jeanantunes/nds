@@ -19,6 +19,8 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.NaturezaOperacaoService;
@@ -38,12 +40,12 @@ import br.com.caelum.vraptor.Result;
  * Controller de Cadastro de Tipo de Notas
  */
 @Resource
-@Path("/administracao/cadastroTipoNota")
-@Rules(Permissao.ROLE_ADMINISTRACAO_TIPO_NOTA)
-public class CadastroTipoNotaController extends BaseController {
+@Path("/administracao/naturezaOperacao")
+@Rules(Permissao.ROLE_ADMINISTRACAO_NATUREZA_OPERACAO)
+public class NaturezaOperacaoController extends BaseController {
 
 	@Autowired
-	NaturezaOperacaoService tipoNotaFiscalService;
+	NaturezaOperacaoService naturezaOperacaoService;
 
 	@Autowired
 	DistribuidorService distribuidorService;
@@ -85,7 +87,7 @@ public class CadastroTipoNotaController extends BaseController {
 		
 		FiltroNaturezaOperacaoDTO filtro = obterFiltroParaExportacao();
 		
-		List<NaturezaOperacao> lista = tipoNotaFiscalService.consultarNaturezasOperacoes(filtro);
+		List<NaturezaOperacao> lista = naturezaOperacaoService.consultarNaturezasOperacoes(filtro);
 		
 		FileExporter.to("consulta-edicoes-fechadas-com-saldo", fileType)
 					.inHTTPResponse(this.getNDSFileHeader(), 
@@ -112,12 +114,12 @@ public class CadastroTipoNotaController extends BaseController {
 		
 		FiltroNaturezaOperacaoDTO filtro =  tratarFiltroSessao(operacao, tipoNota, sortname, sortorder, rp, page);
 		
-		List<NaturezaOperacao> lista = tipoNotaFiscalService.consultarNaturezasOperacoes(filtro);
+		List<NaturezaOperacao> lista = naturezaOperacaoService.consultarNaturezasOperacoes(filtro);
 		
 		if (lista == null || lista.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		
-		Integer quantidade = tipoNotaFiscalService.obterQuantidadeNaturezasOperacoes(filtro);
+		Integer quantidade = naturezaOperacaoService.obterQuantidadeNaturezasOperacoes(filtro);
 		
 		result.use(FlexiGridJson.class).from(getResultadoVO(lista,"<br></br>")).total(quantidade).page(page).serialize();
 	}
@@ -194,6 +196,14 @@ public class CadastroTipoNotaController extends BaseController {
 		}
 		
 		return listaResultado;
+	}
+	
+	@Post
+	public void obterNaturezasOperacoesPorEmitenteDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario) {
+		
+		List<ItemDTO<Long, String>> naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario);
+	
+		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
 	}
 	
 }
