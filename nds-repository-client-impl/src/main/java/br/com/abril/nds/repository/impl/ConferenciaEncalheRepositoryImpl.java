@@ -16,10 +16,10 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
-import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.ProdutoEdicaoSlip;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -37,7 +37,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		super(ConferenciaEncalhe.class);
 	}
 	
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	public List<Long> obterIdConferenciasExcluidas(Long idControleConfEncalheCota, List<Long> listaIdProdutoEdicaoConferidos) {
 		
 		StringBuilder sql = new StringBuilder();
@@ -132,7 +133,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicaoSlipDTO> obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
+	public List<ProdutoEdicaoSlip> obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
 			Long idCota,
 			Date dataOperacao,
 			boolean indPostergado,
@@ -188,7 +189,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append("  	ORDER BY CH_ENCALHE.DATA_RECOLHIMENTO ");
 		
-		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoSlipDTO.class));
+		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoSlip.class));
 		
 		((SQLQuery)query).addScalar("idChamadaEncalhe", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("nomeProduto");
@@ -221,7 +222,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterDadosSlipConferenciaEncalhe(java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicaoSlipDTO> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota) {
+	public List<ProdutoEdicaoSlip> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota) {
 
 		StringBuilder hql = new StringBuilder();
 		
@@ -257,7 +258,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" order by conferencia.chamadaEncalheCota.chamadaEncalhe.sequencia ");
 		
-		Query query =  this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoSlipDTO.class));
+		Query query =  this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoSlip.class));
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
 		

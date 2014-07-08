@@ -59,7 +59,6 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -276,7 +275,6 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	@Post
 	@Path("/carregarDadosProdutoEdicao.json")
-	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
     public void carregarDadosProdutoEdicao(FiltroProdutoDTO filtro, Long idProdutoEdicao, String situacaoProdutoEdicao,
             boolean redistribuicao) {
 		
@@ -303,6 +301,7 @@ public class ProdutoEdicaoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
 	public void salvar(UploadedFile imagemCapa,
 			ProdutoEdicaoDTO produtoEdicaoDTO, ModoTela modoTela,boolean istrac29) {
 			

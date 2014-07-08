@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.awt.Image;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -33,11 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CobrancaImpressaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.ItemSlipVendaEncalheDTO;
-import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
-import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -50,6 +48,7 @@ import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
@@ -63,13 +62,18 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
+import br.com.abril.nds.model.movimentacao.ProdutoEdicaoSlip;
+import br.com.abril.nds.model.movimentacao.Slip;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
+import br.com.abril.nds.repository.SlipRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
@@ -150,6 +154,12 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     @Autowired
     private BoletoRepository boletoRepository;
     
+    @Autowired
+    private DistribuidorRepository distribuidorRepository;
+    
+    @Autowired
+    private SlipRepository slipRepository;
+    
     /**
      * BOLETO/COBRANCA
      * 
@@ -224,18 +234,93 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     
     @Transactional
     @Override
-    public byte[] gerarDocumentoCobrancaComSlip(final List<GeraDividaDTO> dividas, final TipoCobranca tipoCobranca) {
+    public byte[] gerarDocumentoCobrancaComSlip(final List<GeraDividaDTO> dividas, final TipoCobranca tipoCobranca,
+            final List<PoliticaCobranca> politicasCobranca, final Date data) {
         
         final List<String> listNossoNumero = getNossoNumeros(dividas);
         final List<byte[]> arquivos = new ArrayList<byte[]>();
         
+        final Pessoa pessoaCedente = distribuidorRepository.juridica();
+        
+        final boolean aceitaPagamentoVencido = distribuidorRepository.aceitaBaixaPagamentoVencido();
+        
+        final Image logo = JasperUtil.getImagemRelatorio(getLogoDistribuidor());
+        
+        final String razaoSocialDistrib = this.distribuidorService.obterRazaoSocialDistribuidor();
+        
         try {
-            for (String nossoNumero : listNossoNumero){
+            
+            final List<Boleto> boletos = this.boletoRepository.obterPorNossoNumero(listNossoNumero);
+            
+            for (int index = 0 ; index < boletos.size() ; index++){
                 
-                final Boleto boleto = this.boletoRepository.obterPorNossoNumero(nossoNumero,null,false);
+                arquivos.add(
+                        this.boletoService.gerarImpressaoBoleto(
+                                boletos.get(index), 
+                                pessoaCedente,
+                                aceitaPagamentoVencido,
+                                politicasCobranca));
                 
-                arquivos.add(this.boletoService.gerarImpressaoBoleto(boleto));
-                arquivos.add(this.gerarSlipCobranca(boleto, true, TipoArquivo.PDF));
+                final int proximoIndex = index + 1;
+                
+                boolean adicionarSlip = true;
+                
+                if (proximoIndex < boletos.size()){
+                    
+                    if (boletos.get(index).getCota().getNumeroCota().equals(boletos.get(proximoIndex).getCota().getNumeroCota())){
+                        adicionarSlip = false;
+                    }
+                }
+                
+                if (adicionarSlip){
+                    
+                    final Slip slip = 
+                            this.slipRepository.obterPorNumeroCotaData(
+                                    boletos.get(index).getCota().getNumeroCota(),
+                                    data);
+                    
+                    if (slip != null){
+                    
+                        final Map<String, Object> parametersSlip = new HashMap<String, Object>();
+                        slip.setParametersSlip(parametersSlip);
+                        
+                        parametersSlip.put("NUMERO_COTA", slip.getNumeroCota());
+                        parametersSlip.put("NOME_COTA", slip.getNomeCota());
+                        parametersSlip.put("NUM_SLIP", slip.getNumSlip().toString());
+                        parametersSlip.put("CODIGO_BOX", slip.getCodigoBox());
+                        parametersSlip.put("CODIGO_ROTEIRO", slip.getDescricaoRoteiro());
+                        parametersSlip.put("CODIGO_ROTA", slip.getDescricaoRota());
+                        parametersSlip.put("DATA_CONFERENCIA", slip.getDataConferencia());
+                        parametersSlip.put("CE_JORNALEIRO", slip.getCeJornaleiro());
+                        parametersSlip.put("TOTAL_PRODUTOS", slip.getTotalProdutos());
+                        parametersSlip.put("VALOR_TOTAL_ENCA", slip.getValorTotalEncalhe() );
+                        parametersSlip.put("VALOR_PAGAMENTO_POSTERGADO", slip.getValorTotalPagar());
+                        parametersSlip.put("VALOR_PAGAMENTO_PENDENTE", slip.getPagamentoPendente());
+                        parametersSlip.put("VALOR_MULTA_MORA", slip.getValorTotalPagar());
+                        parametersSlip.put("VALOR_CREDITO_DIF", slip.getValorCreditoDif());
+                        parametersSlip.put("LOGOTIPO", logo);
+                        
+                        List<DebitoCreditoCota> debCre = this.slipRepository.obterComposicaoSlip(slip.getId(), true);
+                        slip.setListaComposicaoCobranca(debCre);
+                        parametersSlip.put("LISTA_COMPOSICAO_COBRANCA", debCre);
+                        
+                        debCre = this.slipRepository.obterComposicaoSlip(slip.getId(), false);
+                        slip.setListaResumoCobranca(debCre);
+                        parametersSlip.put("LISTA_RESUMO_COBRANCA", debCre);
+                        
+                        parametersSlip.put("VALOR_LIQUIDO_DEVIDO", slip.getValorLiquidoDevido());
+                        parametersSlip.put("VALOR_DEVIDO", slip.getValorTotalReparte());
+                        parametersSlip.put("VALOR_SLIP", slip.getValorSlip());
+                        parametersSlip.put("VALOR_TOTAL_SEM_DESCONTO", slip.getValorTotalSemDesconto());
+                        parametersSlip.put("VALOR_TOTAL_DESCONTO", slip.getValorTotalDesconto());
+                        parametersSlip.put("VALOR_TOTAL_PAGAR", 
+                                CurrencyUtil.formatarValor(
+                                        slip.getValorTotalPagar().setScale(2,java.math.RoundingMode.HALF_UP)));
+                        parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", razaoSocialDistrib);
+                        
+                        arquivos.add(this.gerarSlipPDF(slip));
+                    }
+                }
             }
         } catch (Exception e) {
             
@@ -698,7 +783,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      * @param listaProdutoEdicaoSlip
      */
     @SuppressWarnings("unchecked")
-    private void ordenarListaPorDia(final List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip) {
+    private void ordenarListaPorDia(final List<ProdutoEdicaoSlip> listaProdutoEdicaoSlip) {
         
         final ComparatorChain comparatorChain = new ComparatorChain();
         
@@ -707,8 +792,8 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         Collections.sort(listaProdutoEdicaoSlip, comparatorChain);
     }
     
-    private boolean exibirSubtotal(final List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip, final int i,
-            final ProdutoEdicaoSlipDTO itemLista) {
+    private boolean exibirSubtotal(final List<ProdutoEdicaoSlip> listaProdutoEdicaoSlip, final int i,
+            final ProdutoEdicaoSlip itemLista) {
         
         final boolean exibirSubtotal =
                 (i == listaProdutoEdicaoSlip.size() - 1)
@@ -723,7 +808,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      * Calcula totais dos produtos do Slip
      * @param listaProdutoEdicaoSlip
      */
-    private void calcularTotaisListaSlip(final List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip) {
+    private void calcularTotaisListaSlip(final List<ProdutoEdicaoSlip> listaProdutoEdicaoSlip) {
         
         boolean exiberSubtotal;
         BigInteger qtdeTotalProdutosDia = null;
@@ -731,7 +816,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         for(int i = 0; i < listaProdutoEdicaoSlip.size(); i++) {
             
-            final ProdutoEdicaoSlipDTO produtoSlip = listaProdutoEdicaoSlip.get(i);
+            final ProdutoEdicaoSlip produtoSlip = listaProdutoEdicaoSlip.get(i);
             
             qtdeTotalProdutosDia =
                     BigIntegerUtil.soma(qtdeTotalProdutosDia, produtoSlip.getEncalhe());
@@ -836,7 +921,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      * @param incluirNumeroSlip
      * @return SlipDTO
      */
-    private SlipDTO setParamsSlip(final Long idControleConferenciaEncalheCota, final boolean incluirNumeroSlip) {
+    private Slip setParamsSlip(final Long idControleConferenciaEncalheCota, final boolean incluirNumeroSlip) {
         
         final ControleConferenciaEncalheCota controleConferenciaEncalheCota = controleConferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
         
@@ -847,7 +932,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         final Date dataOperacao = controleConferenciaEncalheCota.getDataOperacao();
         
-        final List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip = conferenciaEncalheRepository.obterDadosSlipConferenciaEncalhe(idControleConferenciaEncalheCota);
+        final List<ProdutoEdicaoSlip> listaProdutoEdicaoSlip = conferenciaEncalheRepository.obterDadosSlipConferenciaEncalhe(idControleConferenciaEncalheCota);
         
         final Integer numeroCota 		= controleConferenciaEncalheCota.getCota().getNumeroCota();
         
@@ -875,7 +960,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         Integer dia=0;
         
-        for(final ProdutoEdicaoSlipDTO produtoEdicaoSlip : listaProdutoEdicaoSlip) {
+        for(final ProdutoEdicaoSlip produtoEdicaoSlip : listaProdutoEdicaoSlip) {
             
             qtdeTotalProdutos = BigIntegerUtil.soma(qtdeTotalProdutos, produtoEdicaoSlip.getEncalhe());
             
@@ -904,7 +989,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         final BigDecimal valorVenda = (valorTotalReparte.subtract(valorTotalEncalhe));
         
-        final SlipDTO slipDTO = new SlipDTO();
+        final Slip slipDTO = new Slip();
         
         slipDTO.setNumeroCota(numeroCota);
         slipDTO.setNomeCota(nomeCota);
@@ -925,11 +1010,13 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         slipDTO.setValorTotalPagar(valorTotalPagar);
         slipDTO.setNumSlip(numeroSlip);
-        slipDTO.setListaProdutoEdicaoSlipDTO(listaProdutoEdicaoSlip);
+        slipDTO.setListaProdutoEdicaoSlip(listaProdutoEdicaoSlip);
         
         final BigDecimal pagamentoPendente = slipDTO.getValorTotalPagar().compareTo(valorVenda)>0?slipDTO.getValorTotalPagar().subtract(valorVenda):BigDecimal.ZERO;
+        slipDTO.setPagamentoPendente(pagamentoPendente);
         
         final BigDecimal valorCreditoDif = valorVenda.compareTo(slipDTO.getValorTotalPagar())>0?valorVenda.subtract(slipDTO.getValorTotalPagar()):BigDecimal.ZERO;
+        slipDTO.setValorCreditoDif(valorCreditoDif);
         
         final Map<String, Object> parametersSlip = new HashMap<String, Object>();
         slipDTO.setParametersSlip(parametersSlip);
@@ -961,21 +1048,21 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             
         }
         
-        final List<DebitoCreditoCotaDTO> listaComposicaoCobranca =
+        final List<DebitoCreditoCota> listaComposicaoCobranca =
                 debitoCreditoCotaService.obterListaDebitoCreditoCotaDTO(controleConferenciaEncalheCota.getCota(), Arrays.asList(dataOperacao), null);
 
-        slipDTO.setListaComposicaoCobrancaDTO(listaComposicaoCobranca);
+        slipDTO.setListaComposicaoCobranca(listaComposicaoCobranca);
         parametersSlip.put("LISTA_COMPOSICAO_COBRANCA",listaComposicaoCobranca);
         
-        final List<DebitoCreditoCotaDTO> listaResumoCobranca = 
+        final List<DebitoCreditoCota> listaResumoCobranca = 
         		debitoCreditoCotaService.obterListaResumoCobranca(controleConferenciaEncalheCota.getCota(), dataOperacao);
-        slipDTO.setListaResumoCobrancaDTO(listaResumoCobranca);
+        slipDTO.setListaResumoCobranca(listaResumoCobranca);
         parametersSlip.put("LISTA_RESUMO_COBRANCA",listaResumoCobranca);
       
         
         BigDecimal totalComposicao = BigDecimal.ZERO;
         
-        for(final DebitoCreditoCotaDTO item : listaComposicaoCobranca){
+        for(final DebitoCreditoCota item : listaComposicaoCobranca){
             
             // TOTALIZAÇÃO DO SLIP CONSIDERANDO COMPOSIÇÃO DE COBRANÇA
             // débito para o distribuidor, não para a cota
@@ -1000,6 +1087,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         parametersSlip.put("VALOR_LIQUIDO_DEVIDO", slipDTO.getValorLiquidoDevido());
         
         parametersSlip.put("VALOR_DEVIDO", valorTotalReparte);
+        slipDTO.setValorTotalReparte(valorTotalReparte);
         
         parametersSlip.put("VALOR_SLIP", slipDTO.getValorSlip());
         
@@ -1023,7 +1111,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      * @return byte[]
      */
     @Transactional
-    public byte[] gerarSlipTxtMatricial(final SlipDTO slipDTO){
+    public byte[] gerarSlipTxtMatricial(final Slip slipDTO){
         
         final StringBuilder sb = new StringBuilder();
         final ImpressaoMatricialUtil e = new ImpressaoMatricialUtil(sb);
@@ -1049,12 +1137,12 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         boolean exibirSubtotal = false;
         
-        final List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip = slipDTO.getListaProdutoEdicaoSlipDTO();
+        final List<ProdutoEdicaoSlip> listaProdutoEdicaoSlip = slipDTO.getListaProdutoEdicaoSlip();
         
         for(int i = 0; i < listaProdutoEdicaoSlip.size(); i++) {
             
             
-            final ProdutoEdicaoSlipDTO itemLista = listaProdutoEdicaoSlip.get(i);
+            final ProdutoEdicaoSlip itemLista = listaProdutoEdicaoSlip.get(i);
             
             //Deve imprimir linha apenas caso haja ENCALHE
             if(itemLista.getEncalhe() == null || itemLista.getEncalhe().intValue() < 1) {
@@ -1178,7 +1266,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      * @param e
      * @param slipDTO
      */
-    private void adicionarComposicaoCobranca(final ImpressaoMatricialUtil e, final SlipDTO slipDTO) {
+    private void adicionarComposicaoCobranca(final ImpressaoMatricialUtil e, final Slip slipDTO) {
         
         e.adicionar("COMPOSICAO COBRANCA---------------------");
         
@@ -1190,9 +1278,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         e.quebrarLinhaEscape();
         
-        if(slipDTO.getListaComposicaoCobrancaDTO() != null){
+        if(slipDTO.getListaComposicaoCobranca() != null){
             
-            for(final DebitoCreditoCotaDTO composicao : slipDTO.getListaComposicaoCobrancaDTO())
+            for(final DebitoCreditoCota composicao : slipDTO.getListaComposicaoCobranca())
             {
                 String observacoes = StringUtil.limparString(composicao.getObservacoes());
                 observacoes = observacoes == null ? "" : observacoes;
@@ -1223,7 +1311,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      * @param slipDTO
      * @return byte[]
      */
-    private byte[] gerarSlipPDF(final SlipDTO slipDTO) {
+    private byte[] gerarSlipPDF(final Slip slipDTO) {
         
         final URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
         
@@ -1235,7 +1323,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             LOGGER.error(e.getMessage(), e);
         }
         
-        final JRDataSource jrDataSource = new JRBeanCollectionDataSource(slipDTO.getListaProdutoEdicaoSlipDTO());
+        final JRDataSource jrDataSource = new JRBeanCollectionDataSource(slipDTO.getListaProdutoEdicaoSlip());
         
         final URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip_pdf.jasper");
         
@@ -1271,7 +1359,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     @Transactional
     public byte[] gerarSlipCobrancaMatricial(final Long idControleConferenciaEncalheCota, final boolean incluirNumeroSlip) {
         
-        final SlipDTO slipDTO = setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
+        final Slip slipDTO = setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
         
         return gerarSlipTxtMatricial(slipDTO);
     }
@@ -1287,14 +1375,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      */
     @Override
     @Transactional
-    public SlipDTO gerarSlipDTOCobranca(final Long idControleConferenciaEncalheCota,
+    public Slip gerarSlipDTOCobranca(final Long idControleConferenciaEncalheCota,
 						                final boolean incluirNumeroSlip) {
         
-    	 final SlipDTO slipDTO = setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
+    	 final Slip slipDTO = setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
          
-         if(slipDTO.getListaComposicaoCobrancaDTO().isEmpty()){
+         if(slipDTO.getListaComposicaoCobranca().isEmpty()){
              
-             slipDTO.getListaComposicaoCobrancaDTO().add(new DebitoCreditoCotaDTO());
+             slipDTO.getListaComposicaoCobranca().add(new DebitoCreditoCota());
          }
         
         return slipDTO;
@@ -1311,14 +1399,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      */
     @Override
     @Transactional
-    public List<SlipDTO> gerarListaSlipDTOCobranca(final List<Long> idsControleConferenciaEncalheCota,
+    public List<Slip> gerarListaSlipDTOCobranca(final List<Long> idsControleConferenciaEncalheCota,
 						                           final boolean incluirNumeroSlip) {
         
-    	List<SlipDTO> listaSlipDTO = new ArrayList<SlipDTO>();
+    	List<Slip> listaSlipDTO = new ArrayList<Slip>();
     	
     	for (Long idContrlConf : idsControleConferenciaEncalheCota){
     	     
-    		final SlipDTO slipDTO = this.gerarSlipDTOCobranca(idContrlConf, incluirNumeroSlip);
+    		final Slip slipDTO = this.gerarSlipDTOCobranca(idContrlConf, incluirNumeroSlip);
     		
     		listaSlipDTO.add(slipDTO);	
     	}
@@ -1337,11 +1425,11 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      */
     @Override
     @Transactional
-    public List<byte[]> gerarListaSlipCobranca(final List<SlipDTO> listaSlipDTO, final TipoArquivo tpArquivo) {
+    public List<byte[]> gerarListaSlipCobranca(final List<Slip> listaSlipDTO, final TipoArquivo tpArquivo) {
         
     	List<byte[]> arquivos = new ArrayList<byte[]>();
     	
-        for (SlipDTO sDTO : listaSlipDTO){
+        for (Slip sDTO : listaSlipDTO){
 
         	switch (tpArquivo) {
             
@@ -1375,7 +1463,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 						            final boolean incluirNumeroSlip,
 						            final TipoArquivo tpArquivo) {
         
-        final SlipDTO slipDTO = this.gerarSlipDTOCobranca(idControleConferenciaEncalheCota, incluirNumeroSlip);
+        final Slip slipDTO = this.gerarSlipDTOCobranca(idControleConferenciaEncalheCota, incluirNumeroSlip);
         
         switch (tpArquivo) {
         
@@ -1428,11 +1516,11 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         final Long idControleConferenciaEncalheCota = controleConferenciaEncalheEncalheCota.getId();
         
-        final SlipDTO slipDTO = setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
+        final Slip slipDTO = setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
         
-        if(slipDTO.getListaComposicaoCobrancaDTO().isEmpty()){
+        if(slipDTO.getListaComposicaoCobranca().isEmpty()){
             
-            slipDTO.getListaComposicaoCobrancaDTO().add(new DebitoCreditoCotaDTO());
+            slipDTO.getListaComposicaoCobranca().add(new DebitoCreditoCota());
         }
         
         switch (tpArquivo) {

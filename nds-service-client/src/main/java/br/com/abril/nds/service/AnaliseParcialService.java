@@ -4,12 +4,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
-import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
-import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -24,7 +22,6 @@ public interface AnaliseParcialService {
 	void atualizaClassificacaoCota(Long estudoId, Long numeroCota, String classificacaoCota);
 	void atualizaReparte(Long estudoId, Long numeroCota, Long reparte, Long reparteDigitado);
 	void liberar(Long id, List<CotaLiberacaoEstudo> cotas);
-	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId);
 	List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo);
 	
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
@@ -34,8 +31,6 @@ public interface AnaliseParcialService {
     void defineRepartePorPDV(Long estudoId, Integer numeroCota, List<PdvDTO> reparteMap, String legenda, boolean manterFixa);
 
     CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto);
-
-    List<AnaliseEstudoDetalhesDTO> historicoEdicoesBase(List<AnaliseEstudoDetalhesDTO> idsProdutoEdicao);
 
     Integer[] buscarCotasPorTipoDistribuicao(TipoDistribuicaoCota tipo);
 

@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,10 +34,13 @@ import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.upload.XlsUploaderUtils;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 @Path("/distribuicaoManual")
@@ -135,6 +140,85 @@ public class DistribuicaoManualController extends BaseController {
 		
 		result.use(Results.json()).from(estudo.getId(), "result").serialize();
     }
+    
+    @Post
+	@Path("/uploadArquivoLoteDistbManual")
+	public void uploadArquivoEmLote(UploadedFile excelFileDistbManual, EstudoDTO estudoDTO) throws FileNotFoundException, IOException{
+    	
+    	List<EstudoCotaDTO> cotasParaDistribuicao = XlsUploaderUtils.getBeanListFromXls(EstudoCotaDTO.class, excelFileDistbManual);
+    	
+    	parseNumCotaIdCotaParseDto(cotasParaDistribuicao, estudoDTO);
+    	
+    	if(!(cotasParaDistribuicao == null || cotasParaDistribuicao.isEmpty())){
+    		
+    		// validar status - Ativo, suspenso. Inibir Inativo e Pendente
+    		validarStatusCota(cotasParaDistribuicao);
+    		
+    		try {
+    			if(cotasParaDistribuicao != null && cotasParaDistribuicao.size() > 0){
+    				this.gravarEstudo(estudoDTO, cotasParaDistribuicao);
+    			}else{
+    				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Estudo não realizado, não há cotas aptas a receberem reparte."),"result").recursive().serialize();
+    			}
+			} catch (Exception e) {
+				e.printStackTrace();
+				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar estudo."),"result").recursive().serialize();
+			}
+    		
+    	}else{
+    		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Arquivo vazio ou fora do padrão."),"result").recursive().serialize();
+    	}
+		
+	}
+
+	private void validarStatusCota(List<EstudoCotaDTO> cotasParaDistribuicao) {
+		
+		List<EstudoCotaDTO> cotasInaptas = new ArrayList<>();
+		
+		for (EstudoCotaDTO estudoCota : cotasParaDistribuicao) {
+			
+			switch (estudoCota.getCota().getSituacaoCadastro()){
+			
+			case INATIVO:
+				cotasInaptas.add(estudoCota);
+			break;
+			
+			case PENDENTE:
+				cotasInaptas.add(estudoCota);
+			break;
+			
+			default:
+			break;
+			}
+		}
+		
+		cotasParaDistribuicao.removeAll(cotasInaptas);
+	}
+    
+	private void parseNumCotaIdCotaParseDto(List<EstudoCotaDTO> cotasParaDistribuicao, EstudoDTO estudoDTO) {
+		
+		Long sumReparteDistribuido = 0L;
+		List<EstudoCotaDTO> cotasInaptas = new ArrayList<>();
+		
+		for (EstudoCotaDTO estudoCota : cotasParaDistribuicao) {
+			
+			 Cota cota = cotaService.obterPorNumeroDaCota(estudoCota.getNumeroCota().intValue());
+			
+			if(cota != null){
+				estudoCota.setIdCota(cota.getId());
+				estudoCota.setCota(cota);
+				
+				sumReparteDistribuido += estudoCota.getQtdeEfetiva().longValue();
+				
+			}else{
+				cotasInaptas.add(estudoCota);
+			}
+		}
+		
+		cotasParaDistribuicao.removeAll(cotasInaptas);
+		estudoDTO.setReparteDistribuido(sumReparteDistribuido);
+		
+	}
     
     private void removeItensDuplicadosMatrizDistribuicao() {
     	

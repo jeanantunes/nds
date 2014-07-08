@@ -9,7 +9,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
+import br.com.abril.nds.dto.InfoProdutosBonificacaoDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.InformacoesVendaEPerceDeVendaDTO;
@@ -41,7 +41,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" periodoLancamentoParcial.numeroPeriodo AS periodo, ");
 		hql.append(" prodEdicao.precoVenda AS preco, ");
 		hql.append(" lancamento.status AS status, ");
-		hql.append(" prodEdicao.reparteDistribuido AS reparteDistribuido, ");
+		hql.append(" estudoG.qtdeReparte AS reparteDistribuido, ");
 		hql.append(" estudoG.abrangencia AS percentualAbrangencia, ");
 		hql.append(" (select t.descricao from TipoClassificacaoProduto t where t.id=prodEdicao.tipoClassificacaoProduto.id) as tipoClassificacaoProdutoDescricao, ");
 		hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
@@ -100,7 +100,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		
 		hql.append(StringUtils.join(whereClauseList, " AND "));
 		
-		hql.append(" group BY prodEdicao.id ");
+		hql.append(" group BY estudoG.id ");
 		
 		hql.append(this.ordenarConsultaBuscarProdutos(filtro));
 		
@@ -261,7 +261,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<InfoProdutosItemRegiaoEspecificaDTO> buscarItensRegiao(Long idEstudo) {
+	public List<InfoProdutosBonificacaoDTO> buscarItensRegiao(Long idEstudo) {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -279,7 +279,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		query.setParameter("ESTUDO_ID", idEstudo);
 		query.setParameter("COMPONENTE", "REGIAO");
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(InfoProdutosItemRegiaoEspecificaDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(InfoProdutosBonificacaoDTO.class));
 		
 		return query.list();
 		

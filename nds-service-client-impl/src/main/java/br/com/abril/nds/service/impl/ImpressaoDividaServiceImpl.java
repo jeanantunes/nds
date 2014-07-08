@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -12,8 +13,10 @@ import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.DividaRepository;
+import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -34,6 +37,9 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	
 	@Autowired
 	private FechamentoEncalheService fechamentoEncalheService;
+	
+	@Autowired
+	private PoliticaCobrancaRepository politicaCobrancaRepository;
 	
 	@Transactional
 	@Override
@@ -74,9 +80,15 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 		if(dividas.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há dívidas a serem impressas.");
 		
+		final List<PoliticaCobranca> politicasCobranca = 
+                politicaCobrancaRepository.obterPoliticasCobranca(
+                        Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
+		
 		if (comSlip){
 		
-		    return documentoCobrancaService.gerarDocumentoCobrancaComSlip(dividas, filtro.getTipoCobranca());
+		    return documentoCobrancaService.gerarDocumentoCobrancaComSlip(
+		            dividas, filtro.getTipoCobranca(), politicasCobranca,
+		            filtro.getDataMovimento());
 		} else {
 		    
 		    return documentoCobrancaService.gerarDocumentoCobranca(dividas, filtro.getTipoCobranca());

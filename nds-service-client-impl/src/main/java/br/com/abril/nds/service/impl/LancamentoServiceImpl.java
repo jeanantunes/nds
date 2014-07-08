@@ -342,6 +342,17 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public StatusLancamento obterStatusDoPrimeiroLancamentoDaEdicao(Long idProdutoEdicao) {
+		
+		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
+		}
+		
+		return lancamentoRepository.obterStatusDoPrimeiroLancamentoDaEdicao(idProdutoEdicao);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota) {
 		
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
@@ -668,27 +679,28 @@ public class LancamentoServiceImpl implements LancamentoService {
 		}else if(dataLancamento.before(listaDatas.getFirst())){
 		  return listaDatas.getFirst();
 		}else{
-			
-		  for(int i =0;i<listaDatas.size();i++){
-			  if(i>0 && i<listaDatas.size() && dataLancamento.after(listaDatas.get(i-1)) 
-			   && dataLancamento.before(listaDatas.get(i+1))){
-				  
-				  anterior   = listaDatas.get(i-1);
-				  posterior  = listaDatas.get(i+1);
-				  
-				  qtAnterior = dataLancamento.getTime() - anterior.getTime();
-				  qtPosterior = posterior.getTime() - dataLancamento.getTime();
-				  
-				  if(qtAnterior<qtPosterior){
-					  return anterior;  
-				  }else{
-					  return posterior;
-				  }
-				  
-			  }else {
-				  dataLancamento =  listaDatas.getFirst();
-			  }
-		  }
+
+			for(int i =0;i<listaDatas.size();i++) {
+				if(i>0 && i<listaDatas.size() && dataLancamento.after(listaDatas.get(i-1)) 
+						&& dataLancamento.before(listaDatas.get(i+1))){
+
+					anterior   = listaDatas.get(i-1);
+					posterior  = listaDatas.get(i+1);
+
+					qtAnterior = dataLancamento.getTime() - anterior.getTime();
+					qtPosterior = posterior.getTime() - dataLancamento.getTime();
+
+					if(qtAnterior<qtPosterior){
+						return anterior;  
+					}else{
+						return posterior;
+					}
+
+				}
+			}
+
+			dataLancamento =  listaDatas.getFirst();
+
 		  return dataLancamento;
 		}
 		

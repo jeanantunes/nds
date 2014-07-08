@@ -34,6 +34,7 @@ import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -116,6 +117,7 @@ import br.com.abril.nds.util.CorpoBoleto;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.NomeBanco;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.Util;
@@ -384,9 +386,9 @@ public class BoletoServiceImpl implements BoletoService {
         }
     }
     
-    private boolean isCotaInativa(final Cota cota){
+    private boolean isCotaAtiva(final Cota cota){
         
-        return cota.getSituacaoCadastro()!=null?cota.getSituacaoCadastro().equals(SituacaoCadastro.INATIVO):false;
+        return cota.getSituacaoCadastro()!=null?cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO):false;
     }
     
     /**
@@ -436,7 +438,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         for (final Cobranca boleto : boletosNaoPagos) {
             
-            if (this.isCotaInativa(boleto.getCota())){
+            if (!this.isCotaAtiva(boleto.getCota())){
                 
                 continue;
             }
@@ -448,8 +450,6 @@ public class BoletoServiceImpl implements BoletoService {
             final Divida divida = boleto.getDivida();
             
             try {
-                
-                this.validarAcumuloDivida(divida, numeroMaximoAcumulosDistribuidor);
                 
                 divida.setStatus(StatusDivida.PENDENTE_INADIMPLENCIA);
                 dividaRepository.alterar(divida);
@@ -614,17 +614,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         return acumuloDividasService.atualizarAcumuloDivida(acumuloDivida);
     }
-    
-    private void validarAcumuloDivida(final Divida divida, final Integer numeroMaximoAcumulosDistribuidor) {
-        
-        final Integer numeroMaximoAcumuloCota = acumuloDividasService.obterNumeroMaximoAcumuloCota(divida.getCota().getId()).intValue();
-        
-        if (numeroMaximoAcumuloCota >= (numeroMaximoAcumulosDistribuidor !=null ? numeroMaximoAcumulosDistribuidor: 0)) {
-            
-            throw new IllegalArgumentException("Acumulo excedeu o limite do distribuidor.");
-        }
-    }
-    
+
     @Override
     @Transactional
     public void baixarBoleto(final TipoBaixaCobranca tipoBaixaCobranca, final PagamentoDTO pagamento, final Usuario usuario,
@@ -1310,7 +1300,8 @@ public class BoletoServiceImpl implements BoletoService {
         return movimentoFinanceiroCotaDTO;
     }
     
-    private CorpoBoleto gerarCorpoBoletoCota(final Boleto boleto, final Pessoa pessoaCedente, final boolean aceitaPagamentoVencido){
+    private CorpoBoleto gerarCorpoBoletoCota(final Boleto boleto, final Pessoa pessoaCedente, 
+            final boolean aceitaPagamentoVencido, final List<PoliticaCobranca> politicasCobranca){
         
         final String nossoNumero = boleto.getNossoNumero();
         final String digitoNossoNumero = boleto.getDigitoNossoNumero();
@@ -1348,8 +1339,18 @@ public class BoletoServiceImpl implements BoletoService {
                 boleto.getTipoCobranca(),
                 boleto.getCota().getNumeroCota(),
                 aceitaPagamentoVencido,
-                false);
+                false,
+                politicasCobranca);
+    }
+    
+    private CorpoBoleto gerarCorpoBoletoCota(final Boleto boleto, final Pessoa pessoaCedente, 
+            final boolean aceitaPagamentoVencido){
         
+        final List<PoliticaCobranca> politicasCobranca = 
+                politicaCobrancaRepository.obterPoliticasCobranca(
+                        Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
+        
+        return this.gerarCorpoBoletoCota(boleto, pessoaCedente, aceitaPagamentoVencido, politicasCobranca);
     }
     
     private CorpoBoleto gerarCorpoBoletoDistribuidor(final BoletoDistribuidor boleto, final Pessoa pessoaSacado, final boolean aceitaPagamentoVencido) {
@@ -1501,7 +1502,7 @@ public class BoletoServiceImpl implements BoletoService {
 											                 digitoNossoNumero,
 											                 valorLiquido,
 											                 valorDebitos,
-											                 valorCreditos,
+											                 BigDecimal.ZERO,
 											                 banco,
 											                 dataEmissao,
 											                 dataVencimento,
@@ -1513,9 +1514,36 @@ public class BoletoServiceImpl implements BoletoService {
 											                 aceitaPagamentoVencido,
 											                 true);
         
+        corpoBoleto.setTituloDeducao(valorCreditos);
+        
         return corpoBoleto;
     }
     
+    private CorpoBoleto geraCorpoBoleto(final String nossoNumero,
+            final String digitoNossoNumero,
+            BigDecimal valorDocumento,
+            BigDecimal valorAcrescimo,
+            BigDecimal valorDesconto,
+            final Banco banco,
+            final Date dataEmissao,
+            final Date dataVencimento,
+            final Pessoa pessoaCedente,
+            final Pessoa pessoaSacado,
+            final Endereco enderecoSacado,
+            final TipoCobranca tipoCobranca,
+            final Integer numeroCota,
+            final boolean aceitaPagamentoVencido,
+            final boolean boletoEmBranco){
+        
+        final List<PoliticaCobranca> politicasCobranca = 
+                politicaCobrancaRepository.obterPoliticasCobranca(
+                        Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
+        
+        return this.geraCorpoBoleto(nossoNumero, digitoNossoNumero, valorDocumento, 
+                valorAcrescimo, valorDesconto, banco, dataEmissao, dataVencimento, 
+                pessoaCedente, pessoaSacado, enderecoSacado, tipoCobranca, numeroCota, 
+                aceitaPagamentoVencido, boletoEmBranco, politicasCobranca);
+    }
 	                                        /**
      * Método responsável por gerar corpo do boleto com os atributos definidos
      * 
@@ -1550,7 +1578,8 @@ public class BoletoServiceImpl implements BoletoService {
             final TipoCobranca tipoCobranca,
             final Integer numeroCota,
             final boolean aceitaPagamentoVencido,
-            final boolean boletoEmBranco){
+            final boolean boletoEmBranco,
+            final List<PoliticaCobranca> politicasCobranca){
         
         valorDocumento = (valorDocumento == null) ? BigDecimal.ZERO : valorDocumento.abs();
         
@@ -1630,10 +1659,6 @@ public class BoletoServiceImpl implements BoletoService {
         
         corpoBoleto.setContaCarteira(banco.getCarteira());
         
-        final List<TipoCobranca> tiposCobranca = Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO);
-        
-        final List<PoliticaCobranca> politicasCobranca = politicaCobrancaRepository.obterPoliticasCobranca(tiposCobranca);
-        
         for (final PoliticaCobranca politicaCobranca : politicasCobranca) {
             
             final FormaCobranca formaCobranca = politicaCobranca.getFormaCobranca();
@@ -1689,8 +1714,6 @@ public class BoletoServiceImpl implements BoletoService {
         if (boletoEmBranco){
             
             valorDesconto = valorDesconto.compareTo(BigDecimal.ZERO)>0?valorDesconto:null;
-            
-            valorAcrescimo = valorAcrescimo.compareTo(BigDecimal.ZERO)>0?valorAcrescimo:null;
         }
         
         corpoBoleto.setTituloDesconto(valorDesconto);
@@ -1836,12 +1859,12 @@ public class BoletoServiceImpl implements BoletoService {
     @Transactional
     public byte[] gerarImpressaoBoleto(final String nossoNumero) throws IOException, ValidationException {
         
-        return this.gerarImpressaoBoleto(boletoRepository.obterPorNossoNumero(nossoNumero,null,false));
+        return this.gerarImpressaoBoleto(boletoRepository.obterPorNossoNumero(nossoNumero,null,false), null);
     }
     
     @Override
     @Transactional
-    public byte[] gerarImpressaoBoleto(final Boleto boleto) throws IOException, ValidationException {
+    public byte[] gerarImpressaoBoleto(final Boleto boleto, final List<PoliticaCobranca> politicasCobranca) throws IOException, ValidationException {
         
         if (boleto == null){
             
@@ -1852,7 +1875,18 @@ public class BoletoServiceImpl implements BoletoService {
         
         final boolean aceitaPagamentoVencido = distribuidorRepository.aceitaBaixaPagamentoVencido();
         
-        final GeradorBoleto geradorBoleto = new GeradorBoleto(this.gerarCorpoBoletoCota(boleto, pessoaCedente, aceitaPagamentoVencido));
+        return this.gerarImpressaoBoleto(boleto, pessoaCedente, aceitaPagamentoVencido, politicasCobranca);
+    }
+    
+    @Override
+    @Transactional
+    public byte[] gerarImpressaoBoleto(final Boleto boleto, Pessoa cedente, boolean aceitaPagamentoVencido,
+            final List<PoliticaCobranca> politicasCobranca) 
+            throws IOException, ValidationException {
+        
+        final GeradorBoleto geradorBoleto = 
+                new GeradorBoleto(
+                        this.gerarCorpoBoletoCota(boleto, cedente, aceitaPagamentoVencido, politicasCobranca));
         
         byte[] b = null;
         
@@ -2258,11 +2292,12 @@ public class BoletoServiceImpl implements BoletoService {
         
         final BigDecimal valorTotalLiquidoCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrTotalLiquido()).setScale(2, RoundingMode.HALF_UP);
         
-        final BigDecimal valorDebitos = BigDecimal.ZERO;
+        final Intervalo<Date> intervalo = new Intervalo<Date>(dataRecolhimentoCEDe, dataRecolhimentoCEAte);
         
-        final BigDecimal valorCreditos = BigDecimal.ZERO;
+        final BigDecimal valorDebitos = this.obterDebitosCota(ceDTO.getNumCota(), intervalo);
         
-        
+        final BigDecimal valorCreditos = this.obterCreditosCota(ceDTO.getNumCota(), intervalo);
+
         final BigDecimal valorTotalBoletoEmBranco = valorTotalLiquidoCE.add(valorDebitos.subtract(valorCreditos)).setScale(2, RoundingMode.HALF_UP);
         
         boolean valorMinimoAtingido = this.formaCobrancaService.isValorMinimoAtingido(ceDTO.getIdCota(), valorTotalBoletoEmBranco);
@@ -2313,6 +2348,32 @@ public class BoletoServiceImpl implements BoletoService {
                                                 dataRecolhimentoCEAte);
         
         return bbDTO;
+    }
+    
+    private BigDecimal obterCreditosCota(Integer numeroCota, Intervalo<Date> intervalo) {
+    	
+    	return this.obterValoresFinanceiroCota(numeroCota, intervalo, GrupoMovimentoFinaceiro.CREDITO);
+    }
+    
+    private BigDecimal obterDebitosCota(Integer numeroCota, Intervalo<Date> intervalo) {
+    	
+    	return this.obterValoresFinanceiroCota(numeroCota, intervalo, GrupoMovimentoFinaceiro.DEBITO);
+    }
+    
+    private BigDecimal obterValoresFinanceiroCota(Integer numeroCota, Intervalo<Date> intervalo, GrupoMovimentoFinaceiro grupo) {
+
+    	FiltroDebitoCreditoDTO filtro = new FiltroDebitoCreditoDTO();
+    	
+    	filtro.setGrupoMovimentosFinanceirosDebitosCreditos(Arrays.asList(grupo));
+    	
+    	filtro.setDataVencimentoInicio(intervalo.getDe());
+    	filtro.setDataVencimentoFim(intervalo.getAte());
+    	
+    	filtro.setNumeroCota(numeroCota);
+    	
+    	BigDecimal sum = this.movimentoFinanceiroCotaService.obterSomatorioValorMovimentosFinanceiroCota(filtro);
+    	
+    	return sum == null ? BigDecimal.ZERO : sum;
     }
     
     private Date obterDataParaCalculoVencimentoBoletoEmBranco(Set<DiaSemana> diasRecolhimento, Date dataRecolhimentoDe) {

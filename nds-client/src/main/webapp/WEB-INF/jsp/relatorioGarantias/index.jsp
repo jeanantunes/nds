@@ -34,7 +34,7 @@
 <!-- <div class="container"> -->
 
 <form id="relatorioGarantiasForm">
-     <fieldset class="classFieldset">
+     <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    	    <legend> Pesquisar Garantias</legend>
 	        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	            <tr>

@@ -97,6 +97,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private boolean permiteValeDesconto;
 	private boolean parcial;
 	private Integer periodo;
+	private String periodoString;
 	private Integer dia;
 	private Date dataRecolhimentoDistribuidor;
 	
@@ -925,6 +926,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public void setPeriodo(Integer periodo) {
 	    this.periodo = periodo;
+	    
+	    if(periodo != null){
+	    	this.periodoString = periodo.toString();
+	    }else{
+	    	this.periodoString = "";
+	    }
+	    
 	}
 
 	public Long getIdProduto() {
@@ -1055,7 +1063,12 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public void setFormaComercializacao(FormaComercializacao formaComercializacao) {
 		this.formaComercializacao = formaComercializacao;
 	}
-	
-	
-    
+
+	public String getPeriodoString() {
+		return periodoString;
+	}
+
+	public void setPeriodoString(String periodoString) {
+		this.periodoString = periodoString;
+	}
 }

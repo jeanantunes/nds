@@ -306,8 +306,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 produtoEdicao.setParcial(false);
                 produtoEdicao.setAtivo(true);
                 produtoEdicao.setOrigem(Origem.PRODUTO_SEM_CADASTRO);
-                produtoEdicao.setPrecoPrevisto(new BigDecimal(inputItem.getPreco()));
-                produtoEdicao.setPrecoVenda(produtoEdicao.getPrecoPrevisto());
+                produtoEdicao.setPrecoPrevisto(inputItem.getPreco() == null ? BigDecimal.ZERO : new BigDecimal(inputItem.getPreco()));
+                produtoEdicao.setPrecoVenda(tratarValorNulo(produtoEdicao.getPrecoPrevisto()));
                 produtoEdicao.setNomeComercial(inputItem.getNomeProduto());
                 
                 this.getSession().persist(produtoEdicao);
@@ -351,7 +351,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
             item.setQtde(new BigInteger(inputItem.getQtdExemplar().toString()));
             item.setNotaFiscal(nfEntrada);
             item.setProdutoEdicao(produtoEdicao);
-            item.setPreco(BigDecimal.valueOf(inputItem.getPreco()));
+            item.setPreco(this.tratarValorNulo(produtoEdicao.getPrecoVenda()));
             item.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
             
             Lancamento lancamento = obterLancamentoProdutoEdicao(produtoEdicao.getId());
@@ -404,6 +404,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         
         return nfEntrada;
     }
+    
+    private BigDecimal tratarValorNulo(BigDecimal valor) {
+		return valor == null ? BigDecimal.ZERO : valor;
+	}
     
     /**
      * Realiza os cálculos de valores da Nota Fiscal. Após os cálculos, salva os

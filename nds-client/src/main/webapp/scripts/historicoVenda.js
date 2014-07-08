@@ -139,6 +139,7 @@ var historicoVendaController = $.extend(true, {
 			$.post(url, params, function(data){
 			      if(data){ 
 			    	  $("#baseAnalise", historicoVendaController.workspace).hide();
+			    	  $("#analiseHistorico", historicoVendaController.workspace).hide();
 			    	  $('#analiseHistoricoContent', historicoVendaController.workspace).html(data);
 			    	  $('#analiseHistoricoContent', historicoVendaController.workspace).show();
 			    	  
@@ -295,7 +296,7 @@ var historicoVendaController = $.extend(true, {
 						align : 'left'
 					},{
 						display : 'Período',
-						name : 'numeroPeriodicidade',
+						name : 'periodoString',
 						width : 40,
 						sortable : true,
 						align : 'center'
@@ -381,7 +382,7 @@ var historicoVendaController = $.extend(true, {
 						align : 'left'
 					},{
 						display : 'Período',
-						name : 'numeroPeriodicidade',
+						name : 'periodoString',
 						width : 40,
 						sortable : true,
 						align : 'center'

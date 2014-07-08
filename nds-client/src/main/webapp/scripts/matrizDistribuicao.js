@@ -147,7 +147,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			 
 			 $(id).removeClass("erow");
 			 
-			 if (T.lancamentos[i].idCopia != null) {
+			 if ((T.lancamentos[i].idCopia != null) && (i!=0)) {
 				 
 				 for (var j=0; j < 12; j++) {
 					 $($(id).children()[j]).html("");
@@ -633,6 +633,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.popup_confirmar_duplicarLinha = function() {
 		
+		if(!verificarPermissaoAcesso(_workspace)){
+			return;
+		}
+		
 		$( "#dialog-confirm-duplicar", _workspace ).dialog({
 		    escondeHeader: false,
 			resizable: false,
@@ -736,6 +740,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	 */
 	this.popup_confirmar_exclusao_estudo = function() {
 		
+		if(!verificarPermissaoAcesso(_workspace)){
+			return;
+		}			
+					
 		$( "#dialog-confirm-exclusao", _workspace ).dialog({
 		    escondeHeader: false,
 			resizable: false,
@@ -771,6 +779,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	 * Exibe popup de confirmação de exclusão de estudo
 	 */
 	this.popup_confirmar_reabertura_estudo = function() {
+		
+		if(!verificarPermissaoAcesso(_workspace)){
+			return;
+		}	
 		
 		$( "#dialog-confirm-reabert", _workspace ).dialog({
 		    escondeHeader: false,
@@ -1505,6 +1517,11 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	},
 
 	this.mostrarOpcoes = function() {
+		
+		if(!verificarPermissaoAcesso(_workspace)){
+			return;
+		}	
+		
 		opcoesAberto = !opcoesAberto;
 		$( '.opcoesEstudos' ).toggle(opcoesAberto);		
 		$('.setaMuda').attr('src',(opcoesAberto)? contextPath + '/images/p7PM_dark_south_1.gif': contextPath + '/images/p7PM_dark_south.gif');
@@ -1620,6 +1637,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.gerarEstudoAutomatico = function() {
 	    
+		if(!verificarPermissaoAcesso(_workspace)){
+			return;
+		}
+		
 	    if (T.obeterQuantosItensMarcados() == 0) {
 	    	 exibirMensagem("ERROR", ["Selecione um item para esta opção."]);
 		     return;

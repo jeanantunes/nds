@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -29,6 +28,7 @@ import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
@@ -44,7 +44,6 @@ import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 
@@ -294,7 +293,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
    
     
     @Transactional(readOnly = true)
-    public List<DebitoCreditoCotaDTO> obterListaResumoCobranca(Cota cota, Date dataOperacao) {
+    public List<DebitoCreditoCota> obterListaResumoCobranca(Cota cota, Date dataOperacao) {
     
     	return this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacaoSlip(
     	        cota.getId(), dataOperacao);
@@ -308,10 +307,10 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(final Cota cota, final List<Date> datas,
+	public List<DebitoCreditoCota> obterListaDebitoCreditoCotaDTO(final Cota cota, final List<Date> datas,
 	        final Long idFornecedor){
 		
-		final List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
+		final List<DebitoCreditoCota> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCota>();
 		
 		if(datas == null || datas.isEmpty()) {
 			return listaDebitoCreditoCompleta;
@@ -326,7 +325,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		                        GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO));
 
 		//DEBITOS E CREDITOS DA COTA NA DATA DE OPERACAO
-		final List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaNaoConsolidado = 
+		final List<DebitoCreditoCota> listaDebitoCreditoCotaNaoConsolidado = 
 				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(cota.getNumeroCota(), 
 													datas, 
 													tiposMovimentoFinanceiroIgnorados,
@@ -335,7 +334,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		listaDebitoCreditoCompleta.addAll(listaDebitoCreditoCotaNaoConsolidado);
 		
 		//NEGOCIACOES AVULSAS DA COTA
-		final List<DebitoCreditoCotaDTO> listaDebitoNegociacaoNaoAvulsaMaisEncargos = 
+		final List<DebitoCreditoCota> listaDebitoNegociacaoNaoAvulsaMaisEncargos = 
 				movimentoFinanceiroCotaRepository.obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(
 				        cota.getNumeroCota(), datas, idFornecedor);
 		
@@ -345,7 +344,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		}
 
 		//DÉBIDO OU CRÉDITO DO CONSOLIDADO
-		final List<DebitoCreditoCotaDTO> outrosDebitoCreditoDoConsolidado =
+		final List<DebitoCreditoCota> outrosDebitoCreditoDoConsolidado =
 		        this.consolidadoFinanceiroRepository.buscarMovFinanPorCotaEData(
 		                cota.getId(), datas, idFornecedor);
 		
@@ -369,23 +368,10 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 												  Cota cota,
 												  List<Date> datas) {
 
-		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = this.obterListaDebitoCreditoCotaDTO(cota, datas, null);
+		List<DebitoCreditoCota> listaDebitoCreditoCompleta = this.obterListaDebitoCreditoCotaDTO(cota, datas, null);
 		
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCompleta);		
 	}
-	
-	/**
-	 * Obtém débito ou crédito do consolidado da cota
-	 * 
-	 * @param idCota
-	 * @param datas
-	 * 
-	 * @return DebitoCreditoCotaDTO
-	 */
-	private List<DebitoCreditoCotaDTO> obterOutrosDebitoCreditoDeConsolidado(Long idCota, List<Date> datas) {
-	    
-	    return this.consolidadoFinanceiroRepository.buscarMovFinanPorCotaEData(idCota, datas, null);
- 	}
 	
 	/**
 	 * Verifica se o Movimento Financeiro pode ser Editado

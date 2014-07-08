@@ -34,73 +34,6 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 
     @SuppressWarnings("unchecked")
 	@Override
-    public List<ProdutoEdicaoVendaMediaDTO> pesquisarEdicoesParciais(String codigoProduto, Integer periodo, Long edicao) {
-    	
-		StringBuilder sql = new StringBuilder();
-		sql.append("select t.id, ");
-		sql.append("       t.numero_edicao numeroEdicao, ");
-		sql.append("       t.idProduto, ");
-		sql.append("       t.codigo codigoProduto, ");
-		sql.append("       t.nome nome, ");
-		sql.append("       t.numero_periodo periodo, ");
-		sql.append("       t.parcial parcial, ");
-		sql.append("       t.dataLancamento, ");
-		sql.append("       round(sum(t.reparte) - sum(t.encalhe)) / sum(t.reparte) * 100 percentualVenda, ");
-		sql.append("       t.reparte, ");
-		sql.append("       t.reparte - t.encalhe venda, ");
-		sql.append("       t.status, ");
-		sql.append("       t.classificacao ");
-		sql.append("  from (select pe.id, ");
-		sql.append("               pe.numero_edicao, ");
-		sql.append("               p.codigo, ");
-		sql.append("               p.id idProduto, ");
-		sql.append("               p.nome, ");
-		sql.append("               plp.numero_periodo, ");
-		sql.append("               (case when plp.id is null then 0 else 1 end) parcial, ");
-		sql.append("               l.data_lcto_prevista dataLancamento, ");
-		sql.append("               sum(case when tm.grupo_movimento_estoque = 'ENVIO_JORNALEIRO' ");
-		sql.append("                   then mec.qtde else 0 end) reparte, ");
-		sql.append("               sum(case when tm.grupo_movimento_estoque = 'ENVIO_ENCALHE' ");
-		sql.append("                   then mec.qtde else 0 end) encalhe, ");
-		sql.append("               l.status status, ");
-		sql.append("               tcp.descricao classificacao ");
-		sql.append("          from movimento_estoque_cota mec ");
-		sql.append("          join tipo_movimento tm ON tm.id = mec.tipo_movimento_id ");
-		sql.append("          join lancamento l ON l.id = mec.lancamento_id ");
-		sql.append("          join periodo_lancamento_parcial plp ON plp.lancamento_parcial_id = l.id ");
-		sql.append("          join produto_edicao pe on pe.id = mec.produto_edicao_id ");
-		sql.append("          join produto p on p.id = pe.produto_id ");
-		sql.append("          join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
-		sql.append("         where l.status in ('EXPEDIDO', 'EM BALANC RECOLHIMENTO', 'BALANCEADO RECOLHIMENTO', 'EM RECOLHIMENTO', 'FECHADO') ");
-		
-		if (edicao != null) {
-		    sql.append("   and pe.numero_edicao = :numero_edicao ");
-		}
-		if (codigoProduto != null) {
-		    sql.append("   and p.codigo = :codigo_produto ");
-		}
-		if (periodo != null) {
-		    sql.append("   and plp.numero_periodo = :periodo ");
-		}
-		sql.append("         group by pe.numero_edicao, plp.numero_periodo) t group by t.id");
-		
-		Query query = getSession().createSQLQuery(sql.toString());
-		if (edicao != null) {
-		    query.setLong("numero_edicao", edicao);
-		}
-		if (codigoProduto != null) {
-		    query.setString("codigo_produto", codigoProduto);
-		}
-		if (periodo != null) {
-		    query.setInteger("periodo", periodo);
-		}
-		
-		query.setResultTransformer(Transformers.aliasToBean(ProdutoEdicaoVendaMediaDTO.class));
-		return query.list();
-    }
-    
-    @SuppressWarnings("unchecked")
-	@Override
     public List<ProdutoEdicaoVendaMediaDTO> pesquisar(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, boolean usarICD) {
 
 		StringBuilder sql = new StringBuilder();
@@ -121,9 +54,9 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append("     tcp.id idClassificacao, ");
         sql.append("     coalesce(tcp.descricao, '') classificacao, ");
     
-        sql.append("     cast(sum(mecReparte.QTDE) as unsigned int) AS reparte, ");
+        sql.append("     cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) as unsigned int) AS reparte, ");
     
-        sql.append("     cast(sum(mecReparte.QTDE) - ( ");
+        sql.append("     cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) - ( ");
         sql.append("        select sum(mecEncalhe.qtde) ");
         sql.append("        from lancamento lanc ");
         sql.append("        LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
@@ -134,14 +67,29 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append("        WHERE lanc.id = l.id ");
         sql.append("     ) as unsigned int) as venda ");
         
+//        sql.append("  cast((SELECT sum(estqProdCota.qtde_recebida) ");
+//		sql.append("          FROM estoque_produto_cota estqProdCota ");
+//		sql.append("          WHERE estqProdCota.produto_edicao_id = pe.id)as unsigned int) as reparte, ");
+//        
+//        sql.append(" cast((CASE   ");
+//		sql.append("  	WHEN l.status='FECHADO' OR l.status='RECOLHIDO' ");
+//		sql.append("  THEN ");
+//		sql.append("  	  round((SELECT sum(estqProdCota.qtde_recebida - estqProdCota.qtde_devolvida) ");
+//		sql.append("          FROM estoque_produto_cota estqProdCota ");
+//		sql.append("          WHERE estqProdCota.produto_edicao_id = pe.id),0) ");
+//		sql.append("  ELSE ");
+//		sql.append("      round((SELECT sum(estqProdCota.qtde_recebida) ");
+//		sql.append("          FROM estoque_produto_cota estqProdCota ");
+//		sql.append("          WHERE estqProdCota.produto_edicao_id = pe.id),0) ");
+//		sql.append("  END) as unsigned int) as venda ");
+		
         sql.append(" FROM lancamento l ");
         sql.append("     JOIN produto_edicao pe ON pe.id = l.produto_edicao_id ");
         sql.append("     LEFT JOIN periodo_lancamento_parcial plp ON plp.id = l.periodo_lancamento_parcial_id ");
         sql.append("     JOIN produto p ON p.id = pe.produto_id ");
         sql.append("     LEFT JOIN tipo_classificacao_produto tcp ON tcp.id = pe.tipo_classificacao_produto_id ");
-        
         sql.append("     LEFT JOIN movimento_estoque_cota mecReparte on mecReparte.LANCAMENTO_ID = l.id ");
-
+        sql.append("     LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
 
         sql.append(" where l.status in (:statusLancamento) ");
 		

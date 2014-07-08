@@ -12,9 +12,9 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
@@ -30,8 +30,8 @@ import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
-import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.EstudoService;
@@ -39,7 +39,6 @@ import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
-import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -131,14 +130,7 @@ public class AnaliseParcialController extends BaseController {
         result.include("classificacaoCotaList", vetor);
         result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
     }
-
-    @Post
-    public void historicoEdicoesBase(List<AnaliseEstudoDetalhesDTO> produtoEdicaoList) {
-        List<AnaliseEstudoDetalhesDTO> list = analiseParcialService.historicoEdicoesBase(produtoEdicaoList);
-
-        result.use(Results.json()).withoutRoot().from(list).recursive().serialize();
-    }
-
+    
     @Path("/abrirAnaliseFaixa")
     public void abrirAnaliseFaixa(Long estudo, Long faixaDe, Long faixaAte) {
         AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
@@ -228,6 +220,7 @@ public class AnaliseParcialController extends BaseController {
     }
     
     @Path("/restaurarBaseInicial")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS_ALTERACAO)
     public void restaurarBaseInicial() {
     	this.clearEdicoesBaseSession();
     	this.result.nothing();
@@ -239,6 +232,7 @@ public class AnaliseParcialController extends BaseController {
     }
     
     @Path("/cotasQueNaoEntraramNoEstudo/filtrar")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS_ALTERACAO)
     public void filtrar(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO, String sortname, String sortorder) {
 
         List<CotaQueNaoEntrouNoEstudoDTO> lista = new ArrayList<>();
@@ -259,12 +253,7 @@ public class AnaliseParcialController extends BaseController {
         table.setTotal(50);
         result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
-
-    @Path("/carregarEdicoesBaseEstudo")
-    public void carregarEdicoesBaseEstudo(Long estudoId) {
-        result.use(Results.json()).from(analiseParcialService.carregarEdicoesBaseEstudo(estudoId), "edicoesBase").recursive().serialize();
-    }
-
+    
     @Path("/mudarReparte")
     public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado, String legendaCota) {
         analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte, reparteDigitado);
@@ -295,6 +284,7 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Path("/liberar")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS_ALTERACAO)
     public void liberar(Long estudoId, List<CotaLiberacaoEstudo> cotas) {
     	
         analiseParcialService.liberar(estudoId, cotas);
@@ -359,6 +349,7 @@ public class AnaliseParcialController extends BaseController {
     
     @Post
     @Path("/verificacoesParaLiberarEstudo")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS_ALTERACAO)
     public void verificacoesAntesDeLiberarEstudo (Long estudoId){
     	
     	ValidacaoException validacao = analiseParcialService.validarLiberacaoDeEstudo(estudoId);
@@ -370,4 +361,10 @@ public class AnaliseParcialController extends BaseController {
     	}
     	
     }
+    
+	@Post 
+	@Rules(Permissao.ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS_ALTERACAO)
+	public void validar(){
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+	}
 }

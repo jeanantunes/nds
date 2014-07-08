@@ -23,7 +23,6 @@ import br.com.abril.nds.service.EstudoAlgoritmoService;
  * Processo Anterior: N/A Próximo Processo: {@link SomarFixacoes}
  * </p>
  */
-@SuppressWarnings("JavadocReference")
 @Component
 public class DefinicaoBases extends ProcessoAbstrato {
     
@@ -41,8 +40,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
     @Override
     public void executar(final EstudoTransient estudo)  {
         if ((estudo.getEdicoesBase() == null) || (estudo.getEdicoesBase().size() == 0)) {
-            LinkedList<ProdutoEdicaoEstudo> edicoesBase = estudoAlgoritmoService.getEdicoesBases(estudo
-                    .getProdutoEdicaoEstudo());
+            LinkedList<ProdutoEdicaoEstudo> edicoesBase = estudoAlgoritmoService.getEdicoesBases(estudo.getProdutoEdicaoEstudo());
             
             if (!edicoesBase.isEmpty()) {
                 edicoesBase = filtrarClassificacao(edicoesBase, estudo);

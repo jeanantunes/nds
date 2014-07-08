@@ -92,8 +92,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			row.venda = '';
 		}
 		
-		if (row.reparte && row.venda) {
-			
+		if ((row.reparte && row.venda) && (row.reparte != 0 && row.venda != 0)) {
 			row.percentualVenda = floatToPrice(row.venda * 100 / row.reparte); 
 		} else {
 			

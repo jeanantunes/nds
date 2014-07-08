@@ -43,6 +43,11 @@ var histogramaVendasController = $.extend(true, {
 				$.each(data.rows, function(index,row){
 					row.cell.reparte = parseInt(row.cell.reparte, 10);
 					row.cell.venda = parseInt(row.cell.venda, 10);
+					
+					if(row.cell.periodo == undefined){
+						row.cell.periodo = "";
+					}
+					
 				});
 				
 				if (data.mensagens) {
@@ -240,6 +245,7 @@ var histogramaVendasController = $.extend(true, {
 					$("#histogramaVendasContent", histogramaVendasController.workspace).hide();
 					$('#analiseHistogramaVendasContent', histogramaVendasController.workspace).html(data);
 					anaLiseHistogramaController.iniciarGridAnalise();
+					$('#histogramaVenda_botaoAnalise').hide();
 					bloquearItensEdicao(histogramaVendasController.workspace);
 				}
 	    	}

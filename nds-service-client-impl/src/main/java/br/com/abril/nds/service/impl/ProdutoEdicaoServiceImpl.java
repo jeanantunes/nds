@@ -51,6 +51,7 @@ import br.com.abril.nds.model.cadastro.SegmentacaoProduto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
@@ -64,6 +65,7 @@ import br.com.abril.nds.repository.BrindeRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
@@ -170,6 +172,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     @Autowired
     private TipoSegmentoProdutoService tipoSegmentoProdutoService;
+    
+    @Autowired
+    private ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
     
     @Value("${data_cabalistica}")
     private String dataCabalistica;
@@ -460,6 +465,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Número da edição ja cadastra. Escolha outro número.");
         }
         
+        this.validarAlteracaoDePrecoDeCapaDoProdutoEdicao(produtoEdicao, dto);
+        
         // 01 ) Salvar/Atualizar o ProdutoEdicao:
         produtoEdicao = this.salvarProdutoEdicao(dto, produtoEdicao);
         
@@ -496,6 +503,31 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);
         
+    }
+    
+    private void validarAlteracaoDePrecoDeCapaDoProdutoEdicao(final ProdutoEdicao produtoEdicao, final ProdutoEdicaoDTO produtoEdicaoDTO){
+    	
+    	if(produtoEdicao.getId() == null
+    			|| !Origem.MANUAL.equals(produtoEdicao.getOrigem())){
+    		return;
+    	}
+    	
+    	final StatusLancamento statusLancamento = lService.obterStatusDoPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
+    	
+    	if( !StatusLancamento.PLANEJADO.equals(statusLancamento)
+    			&& !StatusLancamento.CONFIRMADO.equals(statusLancamento)) {
+    		
+    		final boolean precoPrevistoDiferente = (produtoEdicao.getPrecoPrevisto().compareTo(produtoEdicaoDTO.getPrecoPrevisto())!=0);
+    		
+    		final boolean precoCustoDiferente = (produtoEdicao.getPrecoVenda().compareTo(produtoEdicaoDTO.getPrecoVenda())!=0);
+    		
+    		if(precoPrevistoDiferente || precoCustoDiferente ){
+    			
+    			throw new ValidacaoException(
+    					new ValidacaoVO(TipoMensagem.WARNING,
+    							"Para produtos com status diferente de Planejado e Confirmado, não é possível alterar os valores de Preço de Capa."));
+    		}
+    	}
     }
     
     private void validarRegimeRecolhimento(final ProdutoEdicaoDTO dto, final Lancamento lancamento, final ProdutoEdicao produtoEdicao) {
@@ -955,9 +987,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                     return validacaoMap;
                 }
                 
-                if(lancamento.getRecebimentos() != null && !lancamento.getRecebimentos().isEmpty() ) {
+                List<ItemNotaFiscalEntrada> itens = this.itemNotaFiscalEntradaRepository.obterItensPorProdutoEdicao(produtoEdicao.getId());
+                
+                boolean produtoComNota = itens != null && !itens.isEmpty(); 
+                
+                if(produtoComNota) {
                     
-                    validacaoMap.put("edicaoComNota", "Esta edição possui nota emitida e não pode ser excluida!");
+                    validacaoMap.put("edicaoComNota", "Já existe uma nota fiscal recebida para esta edição e não pode ser excluida!");
                     
                     return validacaoMap;
                 }
@@ -1524,7 +1560,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         final AnaliseHistogramaDTO totalizar = new AnaliseHistogramaDTO();
         totalizar.setFaixaDe(BigInteger.ZERO);
-        totalizar.setFaixaAte(new BigInteger("999999"));
+        totalizar.setFaixaAte(new BigInteger("9999999"));
         totalizar.setFaixaVenda("Total");
         totalizar.setRepTotal(reparteTotal);
         totalizar.setVdaTotal(vendaTotal);

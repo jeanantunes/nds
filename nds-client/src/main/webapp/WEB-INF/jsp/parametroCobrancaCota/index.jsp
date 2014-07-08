@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 <script type="text/javascript"
@@ -192,21 +193,16 @@ $(function(){
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Tipo de Cota:</td>
-				<td><select name="tipoCota" id="tipoCota" style="width: 150px;" onchange="parametroCobrancaCotaController.exibeDevolveEncalhe(this.value);"
-				onfocus="this.oldValue = this.value;">
-				        <option value="">Selecione</option>
-						<c:forEach varStatus="counter" var="itemTipoCota"
-							items="${listaTiposCota}">
-							<option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
-						</c:forEach>
-				</select></td>
-				
+
 				<td id="tituloDevolveEncalhe">Devolve Encalhe?</td>
 				<td id="selectDevolveEncalhe"><select name="devolveEncalhe" id="devolveEncalhe">
 						<option value="0">Sim</option>
 						<option value="1">Não</option>
 				</select></td>
+				
+				<td></td>
+				<td></td>
+				
 			</tr>
 			<!-- tr>
 				<td>Unifica Cobrança?</td>
@@ -289,6 +285,7 @@ $(function(){
 
 <span id="FINANCEIRObtnNovaFormaPagamento" class="bt_novos"> <a
 	href="javascript:;"
+	isEdicao="true"
 	onclick="parametroCobrancaCotaController.popup_nova_unificacao();" rel="tipsy" title="Nova Forma de Pagamento">
 		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"
 		hspace="5" border="0" /> 
@@ -573,6 +570,7 @@ $(function(){
 
 			<br clear="all" /> <span id="popupNovaFormaPagamentoIncluirNova" class="bt_add"> <a
 				href="javascript:;"
+				isEdicao="true"
 				onclick="parametroCobrancaCotaController.incluirNovaUnificacao();">
 					Incluir Novo </a>
 			</span>

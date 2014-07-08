@@ -1242,6 +1242,7 @@ public class CotaServiceImpl implements CotaService {
         cotaDTO.setEmailNF(cota.getParametrosCotaNotaFiscalEletronica() != null ? cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() : "");
         cotaDTO.setEmiteNFE(cota.getParametrosCotaNotaFiscalEletronica() != null ? cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() : false);
         cotaDTO.setStatus(cota.getSituacaoCadastro());
+        cotaDTO.setTipoCotaFinanceiro(cota.getTipoCota());
         
         if (cota.getTipoDistribuicaoCota() != null) {
             cotaDTO.setTipoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota().substring(0, 1));
@@ -1474,6 +1475,8 @@ public class CotaServiceImpl implements CotaService {
         
         cota.setNumeroCota(cotaDto.getNumeroCota());
         
+        cota.setTipoCota(cotaDto.getTipoCotaFinanceiro());
+        
         cota.setParametrosCotaNotaFiscalEletronica(getParamNFE(cota, cotaDto));
         
         cota.setClassificacaoEspectativaFaturamento(cotaDto.getClassificacaoSelecionada());
@@ -1481,6 +1484,8 @@ public class CotaServiceImpl implements CotaService {
         cota.setPessoa(persistePessoaCota(cota, cotaDto));
         
         cota.setTipoDistribuicaoCota(cotaDto.getTipoDistribuicaoCota());
+        
+        this.atibuirDadosDistribuicaoDaCota(cota);
         
         cota  = cotaRepository.merge(cota);
         
@@ -1512,7 +1517,25 @@ public class CotaServiceImpl implements CotaService {
         return cota.getId();
     }
     
-    @Override
+    private void atibuirDadosDistribuicaoDaCota(final Cota cota) {
+		
+    	if(cota.getId()!= null){
+    		return;
+    	}
+    	
+    	if(cota.getParametroDistribuicao() == null){
+    		cota.setParametroDistribuicao(new ParametroDistribuicaoCota());
+    	}
+    	
+    	cota.getParametroDistribuicao().setRecebeRecolheParciais(true);;
+    	
+		if(TipoDistribuicaoCota.CONVENCIONAL.equals(cota.getParametroDistribuicao())){
+			
+			cota.getParametroDistribuicao().setRecebeComplementar(true);
+		}
+	}
+
+	@Override
     @Transactional
     public void atualizaTermoAdesao(final String numCota, final DescricaoTipoEntrega descricaoTipoEntrega) throws FileNotFoundException, IOException {
         
@@ -1724,6 +1747,10 @@ public class CotaServiceImpl implements CotaService {
         
         if(cotaDto.getTipoDistribuicaoCota() == null){
             mensagensValidacao.add("O preenchimento do campo [Tipo] é obrigatório!");
+        }
+        
+        if(cotaDto.getTipoCotaFinanceiro() == null){
+            mensagensValidacao.add("O preenchimento do campo [Forma de Pagamento] é obrigatório!");
         }
         
         if (!mensagensValidacao.isEmpty()){
@@ -3048,13 +3075,6 @@ public class CotaServiceImpl implements CotaService {
     	boolean alterado = false;
     	
         final Cota cota = this.obterPorId(parametroCobranca.getIdCota());
-        
-        if (cota.getTipoCota()==null || !cota.getTipoCota().equals(parametroCobranca.getTipoCota())){
-            
-            cota.setTipoCota(parametroCobranca.getTipoCota());
-            
-            alterado = true;
-        }
         
         BigDecimal valorMinimoCobranca = parametroCobranca.getValorMinimoBigDecimal();
         

@@ -97,7 +97,7 @@ $(function(){
    
 <div class="container">
     
-	<fieldset class="classFieldset">
+	<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    		
    		<legend> Pesquisar Cotas Ausentes</legend>
         

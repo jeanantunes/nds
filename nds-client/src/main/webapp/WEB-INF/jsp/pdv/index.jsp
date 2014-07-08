@@ -4,7 +4,7 @@
  	<legend>PDVs Cadastrados</legend>	
 	<table class="PDVsGrid"></table>
 	<br />
-	<span class="bt_novos" id="PDVbtnNovo"><a href="javascript:;" onclick="PDV.poupNovoPDV();" rel="tipsy" title="Incluir Novo PDV"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" /></a></span>
+	<span class="bt_novos" id="PDVbtnNovo"><a href="javascript:;" isEdicao="true" onclick="PDV.poupNovoPDV();" rel="tipsy" title="Incluir Novo PDV"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" /></a></span>
 </fieldset>
 <br clear="all" />
 

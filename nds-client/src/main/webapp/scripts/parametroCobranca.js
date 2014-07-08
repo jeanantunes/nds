@@ -181,7 +181,7 @@ var parametroCobrancaController = $.extend(true,
 			
 			$.each(resultado.rows, function(index, row) {
 				
-				var linkEditar = '<a isEdicao="true" href="javascript:;" id="bt_alterar" onclick="parametroCobrancaController.popup_alterar(' + row.cell.idPolitica + ');" style="cursor:pointer; margin-right:10px;">' +
+				var linkEditar = '<a  href="javascript:;" id="bt_alterar" onclick="parametroCobrancaController.popup_alterar(' + row.cell.idPolitica + ');" style="cursor:pointer; margin-right:10px;">' +
 						     	  	'<img title="Aprovar" src="'+contextPath+'/images/ico_editar.gif" hspace="5" border="0px" />' +
 						  		  '</a>';
 				
@@ -761,16 +761,16 @@ var parametroCobrancaController = $.extend(true,
 			var isUnificada = $("#unificada").val();
 			
 			if (isUnificada == 'N') {
-			
-				$("input[name='checkGroupFornecedores']").prop("checked", false);
-				
+
 				parametroCobrancaController.tratarSelecaoFornecedorPadrao();
 				
-				$("input[name='checkGroupFornecedores']").prop("disabled", true);
-				
+				parametroCobrancaController.habilitarTodosFornecedores();
+			
 			} else {
 				
-				parametroCobrancaController.habilitarTodosFornecedores();
+				$("input[name='checkGroupFornecedores']").prop("checked", false);
+				
+				$("input[name='checkGroupFornecedores']").prop("disabled", true);
 				
 				parametroCobrancaController.tratarSelecaoFornecedorPadrao();
 			}
@@ -787,7 +787,7 @@ var parametroCobrancaController = $.extend(true,
 				previous = this.value;
 			}).on('change', function() {
 				var isUnificada = $("#unificada").val();
-				if (isUnificada == 'S') 
+				if (isUnificada == 'N') 
 					parametroCobrancaController.habilitarTodosFornecedores();
 				else
 					$("input[name='checkGroupFornecedores']").prop("checked", false);

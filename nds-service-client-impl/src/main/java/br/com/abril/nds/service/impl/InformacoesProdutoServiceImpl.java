@@ -12,15 +12,20 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.BonificacaoDTO;
 import br.com.abril.nds.dto.BonificacaoJsonDTO;
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
-import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
+import br.com.abril.nds.dto.InfoProdutosBonificacaoDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.InformacoesVendaEPerceDeVendaDTO;
 import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
+import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
 import br.com.abril.nds.repository.InformacoesProdutoRepository;
@@ -28,9 +33,9 @@ import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ProdutoBaseSugeridaRepository;
 import br.com.abril.nds.repository.RegiaoRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
+import br.com.abril.nds.repository.TipoGeradorFluxoPDVRepsitory;
+import br.com.abril.nds.repository.TipoPontoPDVRepository;
 import br.com.abril.nds.service.InformacoesProdutoService;
-import br.com.abril.nds.util.BigDecimalUtil;
-import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,6 +63,15 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 	
 	@Autowired
 	private RegiaoRepository regiaoRepository;
+	
+	@Autowired
+    private TipoPontoPDVRepository tipoPontoPDVRepository;
+	
+	@Autowired
+    private AreaInfluenciaPDVRepository areaInfluenciaPDVRepository;
+	
+	@Autowired
+    private TipoGeradorFluxoPDVRepsitory tipoGeradorFluxoPDVRepsitory;
 	
 	@Override
 	@Transactional
@@ -91,11 +105,11 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<InfoProdutosItemRegiaoEspecificaDTO> buscarItemRegiao(Long idEstudo) {
+	public List<InfoProdutosBonificacaoDTO> buscarItemRegiao(Long idEstudo) {
 		
 		EstudoGerado estudoGerado = estudoGeradoRepository.buscarPorId(idEstudo);
 		
-		List<InfoProdutosItemRegiaoEspecificaDTO> itensRetorno = new ArrayList<>();
+		List<InfoProdutosBonificacaoDTO> itensRetorno = new ArrayList<>();
 		
 		if(estudoGerado!= null){
 			
@@ -105,16 +119,67 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 				
 				for(BonificacaoDTO item : bonificacoes){
 					
-					if(ComponentesPDV.REGIAO.equals(item.getComponente())){
-						
-						InfoProdutosItemRegiaoEspecificaDTO retorno = new InfoProdutosItemRegiaoEspecificaDTO();
-						
-						retorno.setBonificacao(new BigDecimal(Util.nvl(item.getBonificacao(),0D)));
-						retorno.setQtdReparteMin(Util.nvl(item.getReparteMinimo(),0D).intValue());
-						retorno.setNomeItemRegiao(this.obterNomeDaRegiao(item.getElemento()));
-						
-						itensRetorno.add(retorno);
-					}
+                    InfoProdutosBonificacaoDTO retorno = new InfoProdutosBonificacaoDTO();
+				    
+                    retorno.setComponente(item.getComponente().getDescricao());
+                    retorno.setBonificacao(new BigDecimal(Util.nvl(item.getBonificacao(),0D)));
+                    retorno.setQtdReparteMin(Util.nvl(item.getReparteMinimo(),0D).intValue());
+                    
+				    switch (item.getComponente()) {
+			        
+				    case TIPO_PONTO_DE_VENDA:
+				        
+                        retorno.setNomeItem(this.obterNomeTipoPDV(item.getElemento()));
+				        
+			            break;
+			            
+			        case AREA_DE_INFLUENCIA:
+			            
+                        retorno.setNomeItem(this.obterNomeAreaInfluencia(item.getElemento()));
+			            
+			            break;
+
+			        case BAIRRO:
+			            
+			            retorno.setNomeItem(item.getElemento());
+
+			            break;
+			            
+			        case DISTRITO:
+
+			            retorno.setNomeItem(item.getElemento());
+			            
+			            break;
+			            
+			        case GERADOR_DE_FLUXO:
+
+			            retorno.setNomeItem(this.obterNomeTipoGeradoFluxo(item.getElemento()));
+
+			            break;
+			            
+			        case COTAS_A_VISTA:
+
+			            retorno.setNomeItem(this.obterDescricaoCotaAVista(item.getElemento()));
+			            
+			            break;
+			            
+			        case COTAS_NOVAS_RETIVADAS :
+
+			            retorno.setNomeItem(this.obterDescricaoCotasNovaReativadas(item.getElemento()));
+			            
+			            break;
+			            
+			        case REGIAO:
+			            
+                        retorno.setNomeItem(this.obterNomeDaRegiao(item.getElemento()));
+                        
+			            break;
+			            
+			        default:
+			            break;
+			        }
+				    
+                    itensRetorno.add(retorno);
 				}
 			}
 		}
@@ -134,6 +199,67 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 		
 		return null;
 	}
+	
+	private String  obterNomeTipoPDV(String item) {
+        
+        final Long idTipoPDV = Long.parseLong(item);
+        
+        TipoPontoPDV tipoPontoPDV = tipoPontoPDVRepository.buscarPorId(idTipoPDV);
+        
+        if(tipoPontoPDV != null){
+            return tipoPontoPDV.getDescricao();
+        }
+        
+        return null;
+    }
+	
+	private String  obterNomeAreaInfluencia(String item) {
+        
+        final Long idAreaInfluencia = Long.parseLong(item);
+        
+        AreaInfluenciaPDV areaInfluenciaPDV = areaInfluenciaPDVRepository.buscarPorId(idAreaInfluencia);
+        
+        if(areaInfluenciaPDV != null){
+            return areaInfluenciaPDV.getDescricao();
+        }
+        
+        return null;
+    }
+	
+	private String  obterNomeTipoGeradoFluxo(String item) {
+        
+        final Long idTipoGeradoFluxo = Long.parseLong(item);
+        
+        TipoGeradorFluxoPDV tipoGeradorFluxoPDV = tipoGeradorFluxoPDVRepsitory.buscarPorId(idTipoGeradoFluxo);
+        
+        if(tipoGeradorFluxoPDV != null){
+            return tipoGeradorFluxoPDV.getDescricao();
+        }
+        
+        return null;
+    }
+	
+	private String  obterDescricaoCotasNovaReativadas(String item) {
+        
+        final Integer idCotasNovasReativadas = Integer.parseInt(item);
+        
+        switch (idCotasNovasReativadas) {
+        
+        case 0:
+            return "Não";
+            
+        case 1:
+            return "Sim";
+            
+        default:
+            return null;
+        }
+    }
+	
+	private String  obterDescricaoCotaAVista(String item) {
+        
+        return Util.getEnumByEnumName(TipoCota.values(), item).getDescTipoCota();
+    }
 	
 	private List<BonificacaoDTO> obterBonificacoes(String jsonDadosVendaMedia){
 		

@@ -497,7 +497,7 @@ var produtoEdicaoController =$.extend(true,  {
 			var cProduto = '';
 			$.each(resultado.rows, function(index, row) {
 
-				var linkAprovar = '<a href="javascript:;" isEdicao="true" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ', \'' + row.cell.codigoProduto + '\', \'' + row.cell.statusSituacao + '\');" style="cursor:pointer; margin-right:10px;">' +
+				var linkAprovar = '<a href="javascript:;"  onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ', \'' + row.cell.codigoProduto + '\', \'' + row.cell.statusSituacao + '\');" style="cursor:pointer; margin-right:10px;">' +
 				'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" border="0px" />' +
 				'</a>';
 
@@ -838,14 +838,17 @@ var produtoEdicaoController =$.extend(true,  {
 								
 								if(result.classificacao && result.classificacao.length > 0 ){
 
-									$("#produtoEdicaoController-comboClassificacao",this.workspace).attr("disabled", true);
+									$("#produtoEdicaoController-comboClassificacao option").not(":selected").attr("disabled", true);
+									
 								}
 								else{
-									$("#produtoEdicaoController-comboClassificacao",this.workspace).removeAttr("disabled");
+									
+									$("#produtoEdicaoController-comboClassificacao option").not(":selected").removeAttr("disabled");
 								}
 								
 							}else{
-								$("#produtoEdicaoController-comboClassificacao",this.workspace).removeAttr("disabled");
+								
+								$("#produtoEdicaoController-comboClassificacao option").not(":selected").removeAttr("disabled");
 							}
 							
 

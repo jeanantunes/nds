@@ -35,7 +35,7 @@
 <br/>
 <br/>
 
-<fieldset class="classFieldset">
+<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 	<legend> Pesquisar Contas a Pagar</legend>
 	<form id="contasAPagarForm">
 	<input type="hidden" name="filtro.dataDetalhe" id="contasAPagar_dataDetalhe"/>
@@ -192,10 +192,10 @@
 	            <tr>
 	              	<td><strong>Fornecedor:</strong></td>
 	              	<td><span id="contasAPagar_popupTipo_fornecedor"></span></td>
-	              	<td><strong>Data Lan&ccedil;amento:</strong></td>
-	              	<td><span id="contasAPagar_popupTipo_dataLcto"></span></td>
-	              	<td><strong>Data Final:</strong></td>
-	              	<td><span id="contasAPagar_popupTipo_dataFinal"></span></td>
+	              	<td></td>
+	              	<td></td>
+	              	<td></td>
+	              	<td></td>
 	            </tr>
 			</table>
 	    </fieldset>
@@ -212,8 +212,12 @@
 		<br clear="all" />
 		<br />
 	
-				<span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarParcial?fileType=XLS">Arquivo</a></span>
-				<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarParcial?fileType=PDF">Imprimir</a></span>
+				<span class="bt_arquivo">
+					<a href="javascript:;" onclick="contasAPagarController.exportPesquisarParcial('XLS');">Arquivo</a>
+				</span>
+				<span class="bt_imprimir">
+					<a href="javascript:;" onclick="contasAPagarController.exportPesquisarParcial('PDF');">Imprimir</a>
+				</span>
 	</div>
 </form>
       

@@ -46,7 +46,7 @@ $(function(){
   <br />
 <div class="container">
     
-      <fieldset class="classFieldset">
+      <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    	    <legend> Pesquisar Informação do Produto</legend>
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
@@ -165,8 +165,8 @@ $(function(){
       </fieldset>
 
 
-		<fieldset style="width:250px; margin-top:5px; margin-left:10px; float:left;  margin-right:0px!important;">
-                    <legend>Itens da Região - Específicas </legend>
+		<fieldset style="width:400px; margin-top:5px; margin-left:10px; float:left;  margin-right:0px!important;">
+                    <legend>Bonificações</legend>
                     <table class="itensRegioesEspecificasGrid"></table>
         </fieldset>
     </td>
