@@ -40,7 +40,6 @@ var PainelMonitorNFE = $.extend(true, {
 		});
 		
 		$('#dataInicial', PainelMonitorNFE.workspace).mask("99/99/9999");	
-	
 		
 		$('#dataFinal', PainelMonitorNFE.workspace).datepicker({
 			showOn: "button",
@@ -54,7 +53,6 @@ var PainelMonitorNFE = $.extend(true, {
 		$(".grids", PainelMonitorNFE.workspace).hide();
 		
 	    $(".bt_arq", PainelMonitorNFE.workspace).hide();
-	    
 	    
 	    $(document).ready(function() {
 	    	if($("input:radio[name='painelNfe-radioTipoDoc']:checked").val()=="cnpj"){
@@ -80,6 +78,11 @@ var PainelMonitorNFE = $.extend(true, {
 			}
 			
 			$("#painelNfe-filtro-naturezaOperacao").empty();
+			
+			$('#painelNfe-filtro-naturezaOperacao').append($('<option>', { 
+		        value: '-1',
+		        text : 'Selecione...'
+		    }));
 			
 			$.each(data.rows, function (i, row) {
 			    $('#painelNfe-filtro-naturezaOperacao').append($('<option>', { 
@@ -401,6 +404,11 @@ var PainelMonitorNFE = $.extend(true, {
 			}
 			
 			$("#painelNfe-filtro-naturezaOperacao").empty();
+			
+			$('#painelNfe-filtro-naturezaOperacao').append($('<option>', { 
+		        value: '-1',
+		        text : 'Selecione...'
+		    }));
 			
 			$.each(data.rows, function (i, row) {
 			    $('#painelNfe-filtro-naturezaOperacao').append($('<option>', { 
