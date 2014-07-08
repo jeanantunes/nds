@@ -2145,6 +2145,27 @@ public class LancamentoRepositoryImpl extends
 
 		return lancamento;
 	}
+	
+	@Override
+	public StatusLancamento obterStatusDoPrimeiroLancamentoDaEdicao(Long idProdutoEdicao) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento.status ")
+				.append(" from Lancamento lancamento ")
+				.append(" where lancamento.id = ")
+				.append(" (select min(lancamentoMin.id) ")
+				.append(" from Lancamento lancamentoMin where lancamentoMin.produtoEdicao.id = :idProdutoEdicao) ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setMaxResults(1);
+
+		return (StatusLancamento) query.uniqueResult();
+	}
+
+	
 
 	@Override
 	public Integer obterUltimoNumeroLancamento(Long idProdutoEdicao,

@@ -126,22 +126,27 @@ public class EstudoAlgoritmoService {
     private JornaleirosNovos jornaleirosNovos;
     
     public static void calculate(final EstudoTransient estudo) {
-        // Somatória da venda média de todas as cotas e
+       
+    	// Somatória da venda média de todas as cotas e
         // Somatória de reparte das edições abertas de todas as cotas
-        estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
+    	estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
         estudo.setSomatoriaReparteEdicoesAbertas(BigDecimal.ZERO);
         estudo.setTotalPDVs(BigDecimal.ZERO);
+        
         for (final CotaEstudo cota : estudo.getCotas()) {
-            if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado,
+            
+        	if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado,
                     ClassificacaoCota.BancaSoComEdicaoBaseAberta, ClassificacaoCota.RedutorAutomatico)) {
                 estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
             }
             estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(
                     cota.getSomaReparteEdicoesAbertas()));
+            
             if (cota.getQuantidadePDVs() != null) {
                 estudo.setTotalPDVs(estudo.getTotalPDVs().add(cota.getQuantidadePDVs()));
             }
         }
+        
     }
     
     public static void somarVendaMedia(final EstudoTransient estudo) {

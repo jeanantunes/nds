@@ -190,5 +190,7 @@ public interface LancamentoService {
 	
 	Integer obterRepartePromocionalEdicao(final Long codigoProduto, final Long numeroEdicao);
 	
+	StatusLancamento obterStatusDoPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
+	
 }
  

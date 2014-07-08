@@ -40,7 +40,7 @@
 		<legend>Pesquisar NF-e</legend>
 		<table width="100%" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
-				<td width="91">Destinatário:</td>
+				<td width="100">Destinatário:</td>
    				<td width="180">
    					<c:forEach items="${tiposDestinatarios}" var="tipoDestinatario" varStatus="status" >
    						<input type="radio" name="tipoDestinatario" id="tipoDestinatario${status.index}" value="${tipoDestinatario}" <c:if test="${status.index == 0}">checked="checked"</c:if> onchange="impressaoNfeController.verificarTipoDestinatario(this);" /> ${tipoDestinatario.descricao}
@@ -57,7 +57,7 @@
 				<td width="212"></td>
 			</tr>
 			<tr>
-				<td width="91">Nat. de Opera&ccedil;&atilde;o:</td>
+				<td width="100">Nat. de Opera&ccedil;&atilde;o:</td>
    				<td width="204">
 					<select id="impressaoNfe-filtro-naturezaOperacao" name="naturezaOperacao" style="width:200px; font-size:11px!important" title="">
 						<option value="">Todos</option>

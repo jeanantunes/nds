@@ -105,7 +105,7 @@ public class ImpressaoNFEController extends BaseController {
 	@Post
 	public void obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
 		
-		List<ItemDTO<Long, String>> naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
+		List<ItemDTO<Long, String>> naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(null, tipoDestinatario);
 	
 		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
 	}
