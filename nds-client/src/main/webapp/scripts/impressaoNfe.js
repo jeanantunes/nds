@@ -27,8 +27,10 @@ var impressaoNfeController = $.extend(true, {
 	init : function() {
 		
 		params = [];
+		params.push({name: 'tipoEmitente', value: 'DISTRIBUIDOR'});
 		params.push({name: 'tipoDestinatario', value: 'COTA'});
-		$.postJSON(this.path + 'obterNaturezasOperacoesPorTipoDestinatario', params, function(data) {
+		
+		$.postJSON(contextPath + '/administracao/naturezaOperacao/obterNaturezasOperacoesPorEmitenteDestinatario', params, function(data) {
 			var tipoMensagem = data.tipoMensagem;
 			var listaMensagens = data.listaMensagens;
 
@@ -78,9 +80,20 @@ var impressaoNfeController = $.extend(true, {
 			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
 		}
 		
+		var emitente = '';
+		if(element.value == 'COTA') {
+			emitente = 'DISTRIBUIDOR';
+		} else if(element.value == 'DISTRIBUIDOR') {
+			emitente = 'COTA';
+		} else if(element.value == 'FORNECEDOR') {
+			emitente = 'DISTRIBUIDOR';
+		}
+		
 		params = [];
+		params.push({name: 'tipoEmitente', value: emitente});
 		params.push({name: 'tipoDestinatario', value: element.value});
-		$.postJSON(this.path + 'obterNaturezasOperacoesPorTipoDestinatario', params, function(data) {
+		
+		$.postJSON(contextPath + '/administracao/naturezaOperacao/obterNaturezasOperacoesPorEmitenteDestinatario', params, function(data) {
 			var tipoMensagem = data.tipoMensagem;
 			var listaMensagens = data.listaMensagens;
 
