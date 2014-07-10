@@ -6,7 +6,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
@@ -491,7 +490,7 @@ public class Identificacao implements Serializable {
 	
 	@Transient
 	@XmlElement(name="NFref")
-	private NotaFiscalReferenciadaWrapper notaFiscalReferenciada;
+	private NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWapper;
 	
 	/**
 	 * dhCont
@@ -630,11 +629,11 @@ public class Identificacao implements Serializable {
 	}
 
 	public NotaFiscalReferenciadaWrapper getNotaFiscalReferenciada() {
-		return notaFiscalReferenciada;
+		return notaFiscalReferenciadaWapper;
 	}
 
-	public void setNotaFiscalReferenciada(NotaFiscalReferenciadaWrapper notaFiscalReferenciada) {
-		this.notaFiscalReferenciada = notaFiscalReferenciada;
+	public void setNotaFiscalReferenciada(NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWapper) {
+		this.notaFiscalReferenciadaWapper = notaFiscalReferenciadaWapper;
 	}
 
 	/**

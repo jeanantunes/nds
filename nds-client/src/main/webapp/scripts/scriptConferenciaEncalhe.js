@@ -476,6 +476,10 @@ var ConferenciaEncalhe = $.extend(true, {
 		}));
 
 		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9',function() {
+			if(!permissaoAlteracao){
+				exibirAcessoNegado();
+				return;
+			}
 			if (!ConferenciaEncalhe.modalAberta){
 				
 				ConferenciaEncalhe.processandoConferenciaEncalhe = true;
