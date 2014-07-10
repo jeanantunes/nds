@@ -624,4 +624,36 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		return (List<TotalConsultaConsignadoCotaDetalhado>) query.list();
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhadoPorCota(
+			FiltroConsultaConsignadoCotaDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder();
+
+        sql.append(" SELECT SUM(totalGeral.totalDesconto) AS total, ");
+        
+        sql.append(" totalGeral.nomeFornecedor as nomeFornecedor ");
+		
+		sql.append(" FROM (  ");
+		
+		sql.append( this.getQueryMovimentosCotaPeloFornecedor(filtro) );
+		
+		sql.append("      ) as totalGeral ");
+		
+		sql.append(" GROUP BY totalGeral.nomeFornecedor ");
+		
+		Query query =  getSession().createSQLQuery(sql.toString());
+
+		query = this.setParametrosBuscaMovimentoCotaPeloFornecedor(query, filtro);
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(TotalConsultaConsignadoCotaDetalhado.class));
+		
+		((SQLQuery) query).addScalar("total", StandardBasicTypes.BIG_DECIMAL);
+		
+		((SQLQuery) query).addScalar("nomeFornecedor", StandardBasicTypes.STRING);
+		
+		return (List<TotalConsultaConsignadoCotaDetalhado>) query.list();
+	}
+	
 }
