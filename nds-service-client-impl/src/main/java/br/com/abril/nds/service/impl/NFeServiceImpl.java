@@ -1167,12 +1167,12 @@ public class NFeServiceImpl implements NFeService {
 		if (informacaoEletronica != null) {
 
 			notaReferenciada = new NotaFiscalReferenciada();
-			notaReferenciada.setCodigoUF(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getCodigoUf());
-			notaReferenciada.setCnpj(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getDocumento().getDocumento());
-			notaReferenciada.setDataEmissao(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getDataEmissao());
-			notaReferenciada.setModelo(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getModeloDocumentoFiscal());
-			notaReferenciada.setNumeroDocumentoFiscal(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNumeroDocumentoFiscal());
-			notaReferenciada.setSerie(String.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getSerie()));
+			notaReferenciada.getNotaFiscalReferenciadaNFE().setCodigoUF(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getCodigoUf());
+			notaReferenciada.getNotaFiscalReferenciadaNFE().setCnpj(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getDocumento().getDocumento());
+			notaReferenciada.getNotaFiscalReferenciadaNFE().setDataEmissao(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getDataEmissao());
+			notaReferenciada.getNotaFiscalReferenciadaNFE().setModelo(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getModeloDocumentoFiscal());
+			notaReferenciada.getNotaFiscalReferenciadaNFE().setNumeroDocumentoFiscal(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNumeroDocumentoFiscal());
+			notaReferenciada.getNotaFiscalReferenciadaNFE().setSerie(String.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getSerie()));
 			
 			NotaFiscalReferenciadaPK pk = new NotaFiscalReferenciadaPK();
 			pk.setChaveAcesso(informacaoEletronica.getChaveAcesso());
