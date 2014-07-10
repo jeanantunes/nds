@@ -514,9 +514,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     	
     	final StatusLancamento statusLancamento = lService.obterStatusDoPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
     	
-    	if( !StatusLancamento.PLANEJADO.equals(statusLancamento)
-    			&& !StatusLancamento.CONFIRMADO.equals(statusLancamento)) {
-    		
+    	final boolean statusEdicaoPermiteValidacao =
+    					(  StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(statusLancamento)
+    	    			|| StatusLancamento.EM_RECOLHIMENTO.equals(statusLancamento)
+    	    			|| StatusLancamento.RECOLHIDO.equals(statusLancamento)
+    	    			|| StatusLancamento.FECHADO.equals(statusLancamento));
+    	
+    	if(statusEdicaoPermiteValidacao){
+ 
     		final boolean precoPrevistoDiferente = (produtoEdicao.getPrecoPrevisto().compareTo(produtoEdicaoDTO.getPrecoPrevisto())!=0);
     		
     		final boolean precoCustoDiferente = (produtoEdicao.getPrecoVenda().compareTo(produtoEdicaoDTO.getPrecoVenda())!=0);
@@ -525,7 +530,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     			
     			throw new ValidacaoException(
     					new ValidacaoVO(TipoMensagem.WARNING,
-    							"Para produtos com status diferente de Planejado e Confirmado, não é possível alterar os valores de Preço de Capa."));
+    							"Para produtos com status Balanceado Recolhimento, Em Recolhimento, Recolhido e Fechado, não é possível alterar os valores de Preço de Capa."));
     		}
     	}
     }
