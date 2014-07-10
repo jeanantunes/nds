@@ -42,4 +42,6 @@ public interface MixCotaProdutoService {
 	public void updateReparteMixCotaProduto(Long novoValorReparte, String tipoCampo, Long idMix);
 
 	public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long tipoClassifProdId, String codigoICD);
+	
+	boolean verificarReparteMinMaxCotaProdutoMix(Integer numeroCota, String codigoProduto, Long qtd, Long tipoClassificacaoProduto);
 }
