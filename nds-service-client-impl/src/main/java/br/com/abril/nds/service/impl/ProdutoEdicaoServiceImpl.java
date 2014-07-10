@@ -465,6 +465,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Número da edição ja cadastra. Escolha outro número.");
         }
         
+        this.validarAlteracaoDePrecoDeCapaDoProdutoEdicao(produtoEdicao, dto);
+        
         // 01 ) Salvar/Atualizar o ProdutoEdicao:
         produtoEdicao = this.salvarProdutoEdicao(dto, produtoEdicao);
         
@@ -501,6 +503,31 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);
         
+    }
+    
+    private void validarAlteracaoDePrecoDeCapaDoProdutoEdicao(final ProdutoEdicao produtoEdicao, final ProdutoEdicaoDTO produtoEdicaoDTO){
+    	
+    	if(produtoEdicao.getId() == null
+    			|| !Origem.MANUAL.equals(produtoEdicao.getOrigem())){
+    		return;
+    	}
+    	
+    	final StatusLancamento statusLancamento = lService.obterStatusDoPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
+    	
+    	if( !StatusLancamento.PLANEJADO.equals(statusLancamento)
+    			&& !StatusLancamento.CONFIRMADO.equals(statusLancamento)) {
+    		
+    		final boolean precoPrevistoDiferente = (produtoEdicao.getPrecoPrevisto().compareTo(produtoEdicaoDTO.getPrecoPrevisto())!=0);
+    		
+    		final boolean precoCustoDiferente = (produtoEdicao.getPrecoVenda().compareTo(produtoEdicaoDTO.getPrecoVenda())!=0);
+    		
+    		if(precoPrevistoDiferente || precoCustoDiferente ){
+    			
+    			throw new ValidacaoException(
+    					new ValidacaoVO(TipoMensagem.WARNING,
+    							"Para produtos com status diferente de Planejado e Confirmado, não é possível alterar os valores de Preço de Capa."));
+    		}
+    	}
     }
     
     private void validarRegimeRecolhimento(final ProdutoEdicaoDTO dto, final Lancamento lancamento, final ProdutoEdicao produtoEdicao) {

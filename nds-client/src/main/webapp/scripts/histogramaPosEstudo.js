@@ -167,7 +167,7 @@ var histogramaPosEstudoController = $.extend(true, {
 							sortable : true,
 							align : 'right'
 						}, {
-							display : 'Vda Nominal',
+							display : 'Vda Total',
 							name : 'vendaNominalFormatado',
 							width : 65,
 							sortable : true,
@@ -701,11 +701,11 @@ var histogramaPosEstudoController = $.extend(true, {
 	
 	voltar : function() {
 		
+		$("#botaoVoltarMatrizDistribuicao").tipsy('hide');
 		var indexAbaAtual =  $('#workspace').tabs('option', 'selected');
 		
 		histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual);
 		
-		$(this).tipsy('hide');
 		/*removeTabByTitle('Distribuição Venda Média');*/
 		selectTabTitle('Matriz Distribuição');
 		
