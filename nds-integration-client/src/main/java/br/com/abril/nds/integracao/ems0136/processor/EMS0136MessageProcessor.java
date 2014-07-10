@@ -130,7 +130,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		}
 		else{
 			
-			this.atualizarDatasLancamento(lancamento, dataRecolhimento, dataLancamento);
+			this.atualizarDatasLancamento(lancamento, dataRecolhimento, dataLancamento,message);
 		}
 		
 		return lancamento;
