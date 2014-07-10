@@ -1262,7 +1262,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				align : 'left'
 			}, {
 				display : 'Recolhto',
-				name : 'dataRecolhimentoPrevista',
+				name : 'dataRecolhimentoDistribuidor',
 				width : 52,
 				sortable : true,
 				align : 'center'
