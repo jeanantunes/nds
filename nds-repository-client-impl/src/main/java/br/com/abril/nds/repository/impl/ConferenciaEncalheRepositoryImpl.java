@@ -228,6 +228,7 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		
 		hql.append(" conferencia.chamadaEncalheCota.chamadaEncalhe.id as idChamadaEncalhe, ");
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.produto.nome as nomeProduto,	");
+		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.produto.codigo as codigoProduto,	");
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.numeroEdicao as numeroEdicao,	");
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.id as idProdutoEdicao,			");
 		hql.append(" conferencia.diaRecolhimento as dia,								");
