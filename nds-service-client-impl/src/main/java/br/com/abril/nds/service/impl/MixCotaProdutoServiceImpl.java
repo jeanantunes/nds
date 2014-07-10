@@ -736,4 +736,13 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long tipoClassifProdId, String codigoICD) {
 		return mixCotaProdutoRepository.obterMixPorCotaProduto(cotaId, tipoClassifProdId, codigoICD);
 	}
+
+    @Override
+    @Transactional(readOnly=true)
+    public boolean verificarReparteMinMaxCotaProdutoMix(Integer numeroCota, 
+            String codigoProduto, Long qtd, Long tipoClassificacaoProduto) {
+        
+        return this.mixCotaProdutoRepository.verificarReparteMinMaxCotaProdutoMix(
+                numeroCota, codigoProduto, qtd, tipoClassificacaoProduto);
+    }
 }

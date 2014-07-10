@@ -204,10 +204,14 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 		});
 		
-		$('#codProduto', ConferenciaEncalhe.workspace).keypress(function(e) {
+		$('#codProduto', ConferenciaEncalhe.workspace).keydown(function(e) {
 			
-			$("#pesq_prod", ConferenciaEncalhe.workspace).val("");
+			var codPesquisado = $(this).val();
+			
+			$("#pesq_prod", ConferenciaEncalhe.workspace).val(codPesquisado);
+			
 			ConferenciaEncalhe.popup_pesquisar();
+			
 		});
 		
 		$('#observacao', ConferenciaEncalhe.workspace).keypress(function(e) {
