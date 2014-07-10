@@ -194,7 +194,7 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 	}
 
 	@Export(label = "Total $", alignment= Alignment.RIGHT, exhibitionOrder = 10, columnType = ColumType.MOEDA, widthPercent = 12.5f)
-	@Footer(label = "Totais", type = FooterType.SUM, columnType = ColumType.MOEDA)
+	@Footer(label = "Total", type = FooterType.SUM, columnType = ColumType.MOEDA)
 	public BigDecimal getTotal() {
 		return total;
 	}

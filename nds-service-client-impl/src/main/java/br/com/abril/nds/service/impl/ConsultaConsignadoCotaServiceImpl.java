@@ -62,6 +62,11 @@ public class ConsultaConsignadoCotaServiceImpl implements ConsultaConsignadoCota
 	public List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhado(
 			FiltroConsultaConsignadoCotaDTO filtro) {
 		
+		if(filtro.getIdCota() != null){
+			
+			return this.consignadoCotaRepository.buscarTotalDetalhadoPorCota(filtro);
+		}
+		
 		return this.consignadoCotaRepository.buscarTotalDetalhado(filtro);
 	}
 
