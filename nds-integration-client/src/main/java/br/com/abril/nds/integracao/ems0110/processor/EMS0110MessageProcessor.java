@@ -406,6 +406,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 		if (input.getSegmento() == null || input.getSegmento().trim().equals("")) {
 			
+			if(produto.getTipoSegmentoProduto()==null || produto.getTipoSegmentoProduto().getId().intValue()==0){
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.HIERARQUIA,
@@ -414,6 +415,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			
 			//FIXME Não deveria vir Segmento como nulo
 			produto.setTipoSegmentoProduto(getTipoSegmento(new Long(9)));
+			}
 			
 			
 		}else{
@@ -599,6 +601,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
                         tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
             
         	if(produto!=null && produto.getTipoSegmentoProduto()!=null && produto.getTipoSegmentoProduto().getDescricao()!=null){
+        		
+        	
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
                     "Alteração do Tipo de Segmento"

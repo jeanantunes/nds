@@ -84,10 +84,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		this.atualizarProdutoEdicaoParcial(produtoEdicao);
 
-		lancamento = this.processarLancamento(input, produtoEdicao, lancamento);
+		lancamento = this.processarLancamento(input, produtoEdicao, lancamento,message);
 
 		
-		LancamentoParcial lancamentoParcial = this.obterLancamentoParciall(input,produtoEdicao);
+		LancamentoParcial lancamentoParcial = this.obterLancamentoParciall(input,produtoEdicao,message);
 		PeriodoLancamentoParcial periodo = this.obterPeriodoLancamentoParcial(input,lancamentoParcial);
 		
 		this.associarLancamentoAoPeriodo(periodo,lancamento);
@@ -119,14 +119,14 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	}
 
 	
-	private Lancamento processarLancamento(EMS0136Input input,ProdutoEdicao produtoEdicao, Lancamento lancamento) {
+	private Lancamento processarLancamento(EMS0136Input input,ProdutoEdicao produtoEdicao, Lancamento lancamento,Message message) {
 		
 		Date dataLancamento = this.parciaisService.obterDataUtilMaisProxima(input.getDataLancamento());
 		Date dataRecolhimento = this.parciaisService.obterDataUtilMaisProxima(input.getDataRecolhimento());
 
 		if(lancamento == null){
 			
-			lancamento = this.criarNovoLancamento(dataRecolhimento, dataLancamento, produtoEdicao);
+			lancamento = this.criarNovoLancamento(dataRecolhimento, dataLancamento, produtoEdicao, message);
 		}
 		else{
 			
@@ -136,7 +136,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		return lancamento;
 	}
 
-	private LancamentoParcial obterLancamentoParciall(EMS0136Input input,ProdutoEdicao produtoEdicao) {
+	private LancamentoParcial obterLancamentoParciall(EMS0136Input input,ProdutoEdicao produtoEdicao,Message message) {
 		
 		LancamentoParcial lancamentoParcial = this.consultarLancalmentoParcial(produtoEdicao);
 		
@@ -145,7 +145,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		if(lancamentoParcial == null){
 			
-			lancamentoParcial = this.criarNovoLancamentoParcial(produtoEdicao, input, dataLancamento, dataRecolhimento);			
+			lancamentoParcial = this.criarNovoLancamentoParcial(produtoEdicao, input, dataLancamento, dataRecolhimento,message);			
 		}
 		
 		return lancamentoParcial;
@@ -408,7 +408,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		return (LancamentoParcial) parcial;
 	}
 	
-	private LancamentoParcial criarNovoLancamentoParcial(ProdutoEdicao produtoEdicao, EMS0136Input input, Date dataLancamento, Date dataRecolhimento){
+	private LancamentoParcial criarNovoLancamentoParcial(ProdutoEdicao produtoEdicao, EMS0136Input input, Date dataLancamento, Date dataRecolhimento,Message message){
 
 		LancamentoParcial parcial = new LancamentoParcial();
 		
@@ -477,22 +477,36 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		return lancamento;
 	}
 	
-	private Lancamento criarNovoLancamento(Date dataRecolhimento,Date dataLancamento,ProdutoEdicao produtoEdicao){
+	private Lancamento criarNovoLancamento(Date dataRecolhimento,Date dataLancamento,ProdutoEdicao produtoEdicao,Message message){
 
 		Lancamento lancamento = new Lancamento();
 
+		
+		try {
+			//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
+			dataLancamento = lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId());
+			dataRecolhimento = DateUtil.adicionarDias(dataLancamento, produtoEdicao.getPeb());
+			
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"Alteração das Datas de Lançamento e Recolhimento ("+dataLancamento+","+dataRecolhimento+")"
+					+"Produto "+ produtoEdicao.getProduto().getCodigo() + " Edição " + produtoEdicao.getNumeroEdicao());
+			
+		} catch (Exception e) {
+			
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"Erro na Alteração das Datas de Lançamento e Recolhimento ("+dataLancamento+","+dataRecolhimento+")"
+					+"Produto "+ produtoEdicao.getProduto().getCodigo() + " Edição " + produtoEdicao.getNumeroEdicao());
+		}
+		
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataLancamentoPrevista(dataLancamento);
 		lancamento.setDataLancamentoDistribuidor(dataLancamento);
 		lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 		lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
 		
-		try {
-			//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
-			lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId()));
-		} catch (Exception e) {
-		}
-		
+
 		lancamento.setProdutoEdicao(produtoEdicao);
 		lancamento.setDataStatus(new Date());
 		lancamento.setReparte(BigInteger.ZERO);
@@ -504,14 +518,39 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 					
 		lancamento = (Lancamento) this.getSession().merge(lancamento);
 		
+		this.ndsiLoggerFactory.getLogger().logError(message,
+				EventoExecucaoEnum.RELACIONAMENTO,
+				"Lançamento inserido com sucesso. Lançamento e Recolhimento ("+dataLancamento+","+dataRecolhimento+")"
+				+"Produto "+ produtoEdicao.getProduto().getCodigo() + " Edição " + produtoEdicao.getNumeroEdicao());
+		
 		return lancamento;
 	}
 	
-	private Lancamento atualizarDatasLancamento(Lancamento lancamento,Date dataRecolhimento, Date dataLancamento){
+	private Lancamento atualizarDatasLancamento(Lancamento lancamento,Date dataRecolhimento, Date dataLancamento,Message message){
 		
 		if ( lancamento.getStatus().equals(StatusLancamento.PLANEJADO) 
 				|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)
 						|| lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO)) {
+			
+			
+			try {
+				//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
+				dataLancamento = lancamentoService.obterDataLancamentoValido(dataLancamento, lancamento.getProdutoEdicao().getProduto().getFornecedor().getId());
+				dataRecolhimento = DateUtil.adicionarDias(dataLancamento, lancamento.getProdutoEdicao().getPeb());
+				
+				this.ndsiLoggerFactory.getLogger().logError(message,
+						EventoExecucaoEnum.RELACIONAMENTO,
+						"Alteração das Datas de Lançamento e Recolhimento ("+dataLancamento+","+dataRecolhimento+")"
+						+"Produto "+ lancamento.getProdutoEdicao().getProduto().getCodigo() + " Edição " + lancamento.getProdutoEdicao().getNumeroEdicao());
+				
+			} catch (Exception e) {
+				
+				this.ndsiLoggerFactory.getLogger().logError(message,
+						EventoExecucaoEnum.RELACIONAMENTO,
+						"Erro na Alteração das Datas de Lançamento e Recolhimento ("+dataLancamento+","+dataRecolhimento+")"
+						+"Produto "+ lancamento.getProdutoEdicao().getProduto().getCodigo() + " Edição " + lancamento.getProdutoEdicao().getNumeroEdicao());
+			}
+			
 			
 			lancamento.setDataLancamentoDistribuidor(dataLancamento);
 			lancamento.setDataLancamentoPrevista(dataLancamento);
@@ -523,6 +562,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			 lancamento.getStatus().equals(StatusLancamento.EXPEDIDO) ||
 			 lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)||
 			 lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO)) {
+			
+			dataRecolhimento = DateUtil.adicionarDias(dataLancamento, lancamento.getProdutoEdicao().getPeb());
 			
 			lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
 			lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
