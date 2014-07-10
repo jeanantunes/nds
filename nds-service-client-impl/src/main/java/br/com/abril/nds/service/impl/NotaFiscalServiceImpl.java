@@ -86,6 +86,7 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciadaWrapper;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
@@ -782,9 +783,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param listNotaFiscalReferenciada
 	 * @return
 	 */
-	private Identificacao carregaIdentificacao(
-			NaturezaOperacao naturezaOperacao, Date dataEmissao,
-			List<NotaFiscalReferenciada> listNotaFiscalReferenciada) {
+	private Identificacao carregaIdentificacao(NaturezaOperacao naturezaOperacao, Date dataEmissao, List<NotaFiscalReferenciada> listNotaFiscalReferenciada) {
 
 		Identificacao identificacao = new Identificacao();
 		identificacao.setDataEmissao(dataEmissao);
@@ -797,7 +796,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		identificacao.setFormaPagamento(FormaPagamento.A_VISTA);
 		identificacao.setTipoEmissao(TipoEmissao.NORMAL);
 
-		identificacao.setListReferenciadas(listNotaFiscalReferenciada);
+		if(identificacao.getNotaFiscalReferenciada() == null) {
+			NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWrapper = new NotaFiscalReferenciadaWrapper();
+			notaFiscalReferenciadaWrapper.setListReferenciadas(listNotaFiscalReferenciada);
+			identificacao.setNotaFiscalReferenciada(notaFiscalReferenciadaWrapper);
+		} else {
+			identificacao.getNotaFiscalReferenciada().setListReferenciadas(listNotaFiscalReferenciada);
+		}
+		
 		return identificacao;
 	}
 
