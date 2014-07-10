@@ -27,11 +27,11 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 	private BigInteger consignado;
 	
 	@Export(label = "Total $", alignment= Alignment.RIGHT, exhibitionOrder = 4, widthPercent = 12.5f, columnType = ColumType.MOEDA)
-	@Footer(label = "Totais", type = FooterType.SUM)
+	@Footer(label = "Total", type = FooterType.SUM,columnType = ColumType.MOEDA)
 	private BigDecimal total;
 	
 	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 5, widthPercent = 12.5f, columnType = ColumType.MOEDA_QUATRO_CASAS)
-	@Footer(type = FooterType.SUM)
+	@Footer(type = FooterType.SUM,columnType = ColumType.MOEDA_QUATRO_CASAS)
 	private BigDecimal totalDesconto;
 	
 	@Export(label = "Fornecedor" , alignment= Alignment.CENTER, exhibitionOrder = 6, widthPercent = 12.5f, columnType = ColumType.STRING)
