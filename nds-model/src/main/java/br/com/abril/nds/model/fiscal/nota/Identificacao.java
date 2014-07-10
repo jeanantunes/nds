@@ -489,7 +489,7 @@ public class Identificacao implements Serializable {
 	@Column(name = "HORA_SAIDA_ENTRADA", nullable = true)
 	private Date horaSaidaEntrada;
 	
-	@Embedded
+	@Transient
 	@XmlElement(name="NFref")
 	private NotaFiscalReferenciadaWrapper notaFiscalReferenciada;
 	

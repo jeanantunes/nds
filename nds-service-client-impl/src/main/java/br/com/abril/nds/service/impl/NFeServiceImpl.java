@@ -692,11 +692,6 @@ public class NFeServiceImpl implements NFeService {
 			final Map<String, ParametroSistema> parametrosSistema, 
 			final List<Fornecedor> fornecedores) {
 		
-		
-		if(naturezaOperacao.isGerarNotasReferenciadas()){
-			final NotaFiscalReferenciada notaFiscal = new NotaFiscalReferenciada();
-		}
-		
 		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
 		
 		final Map<String, TributoAliquota> tributoRegimeTributario = new HashMap<String, TributoAliquota>();
@@ -725,11 +720,17 @@ public class NFeServiceImpl implements NFeService {
 			
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
-			// obter os movimentos de cada cota
+			// obter os movimentos de fechamentos fiscais
 			filtro.setIdCota(fornecedor.getId());
+			
 			final List<MovimentoFechamentoFiscal> movimentosFechamentosFiscais = this.notaFiscalRepository.obterMovimentosFechamentosFiscaisFornecedor(filtro);
+			
 			for (MovimentoFechamentoFiscal movimentoFechamentoFiscal : movimentosFechamentosFiscais) {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoFechamentoFiscal, tributoRegimeTributario);
+			}
+			
+			if(naturezaOperacao.isGerarNotasReferenciadas()){
+				this.gerarNotaFiscalReferenciada(notaFiscal);
 			}
 			
 			List<NotaFiscal> notasFiscaisSubdivididas = subdividirNotasFiscaisPorLimiteItens(parametrosSistema, notaFiscal, naturezaOperacao, distribuidor, transportadores);
@@ -742,21 +743,26 @@ public class NFeServiceImpl implements NFeService {
 					FaturaBuilder.montarFaturaNotaFiscal(notasFiscalSubdividida);
 					NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notasFiscalSubdividida);
 					notasFiscais.add(notasFiscalSubdividida);
+					
 				}
+				
 			} else {
 				
 				notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 				FaturaBuilder.montarFaturaNotaFiscal(notaFiscal);
 				NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 				notasFiscais.add(notaFiscal);
+				
 			}
 			
 		}
 	}
 
-	private List<NotaFiscal> subdividirNotasFiscaisPorLimiteItens(final Map<String, ParametroSistema> parametrosSistema
-			, final NotaFiscal notaFiscal, NaturezaOperacao naturezaOperacao, Distribuidor distribuidor
-			, List<Transportador> transportadores) {
+	private List<NotaFiscal> subdividirNotasFiscaisPorLimiteItens(final Map<String, ParametroSistema> parametrosSistema, 
+			final NotaFiscal notaFiscal, 
+			NaturezaOperacao naturezaOperacao, 
+			Distribuidor distribuidor,
+			List<Transportador> transportadores) {
 		
 		int limiteQtdItens = Integer.valueOf(parametrosSistema.get("NFE_LIMITAR_QTDE_ITENS").getValor());
 		
@@ -775,12 +781,9 @@ public class NFeServiceImpl implements NFeService {
 			
 			if(qtdNotasSubdivididas == 1) {
 				
-				listaSubdivididaItensNotas.add(new ArrayList<DetalheNotaFiscal>(
-						notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().subList(
-								limiteQtdItens + 1, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size())));
+				listaSubdivididaItensNotas.add(new ArrayList<DetalheNotaFiscal>(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().subList(limiteQtdItens + 1, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size())));
 				
-				List<DetalheNotaFiscal> itensForaPrimeiraNota = notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().subList(
-						limiteQtdItens + 1, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size());
+				List<DetalheNotaFiscal> itensForaPrimeiraNota = notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().subList(limiteQtdItens + 1, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size());
 				
 				notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().removeAll(itensForaPrimeiraNota);
 				
@@ -794,12 +797,9 @@ public class NFeServiceImpl implements NFeService {
 									limiteQtdItens * i, (limiteQtdItens * (i + 1)))));
 				}
 				
-				listaSubdivididaItensNotas.add(new ArrayList<DetalheNotaFiscal>(
-						notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().subList(
-								qtdNotasSubdivididas * lastIndex, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size())));
+				listaSubdivididaItensNotas.add(new ArrayList<DetalheNotaFiscal>(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().subList(qtdNotasSubdivididas * lastIndex, notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size())));
 				
-				List<DetalheNotaFiscal> itensPrimeiraNota = 
-						notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().subList(0, limiteQtdItens);
+				List<DetalheNotaFiscal> itensPrimeiraNota = notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().subList(0, limiteQtdItens);
 				
 				notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().retainAll(itensPrimeiraNota);
 				
@@ -1158,7 +1158,7 @@ public class NFeServiceImpl implements NFeService {
 		}	
     }
 	
-	private NotaFiscalReferenciada notaFiscalReferenciada(NotaFiscal notaFiscal) {
+	private NotaFiscalReferenciada gerarNotaFiscalReferenciada(NotaFiscal notaFiscal) {
 
 		NotaFiscalReferenciada notaReferenciada = null;
 
@@ -1168,7 +1168,7 @@ public class NFeServiceImpl implements NFeService {
 
 			notaReferenciada = new NotaFiscalReferenciada();
 			notaReferenciada.setCodigoUF(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getCodigoUf());
-			// notaReferenciada.setCnpj(notaFiscal.getNotaFiscalInformacoes().getidentificacaoDestinatario.
+			notaReferenciada.setCnpj(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getDocumento().getDocumento());
 			notaReferenciada.setDataEmissao(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getDataEmissao());
 			notaReferenciada.setModelo(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getModeloDocumentoFiscal());
 			notaReferenciada.setNumeroDocumentoFiscal(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNumeroDocumentoFiscal());

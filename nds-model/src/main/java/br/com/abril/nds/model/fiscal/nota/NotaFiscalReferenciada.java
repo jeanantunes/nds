@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
 import br.com.abril.nds.util.TipoSecao;
@@ -38,6 +39,7 @@ public class NotaFiscalReferenciada implements Serializable {
 	
 	@EmbeddedId
 	@NFEExportType
+	@XmlTransient
 	private NotaFiscalReferenciadaPK pk;
 	
 	/**

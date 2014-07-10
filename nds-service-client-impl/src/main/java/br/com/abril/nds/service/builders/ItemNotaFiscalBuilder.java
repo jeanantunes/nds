@@ -373,30 +373,30 @@ public class ItemNotaFiscalBuilder  {
 		//FIXME: Ajustar o codigo Excessao do ipi
 		//produtoServico.setExtipi(0L);
 		String cfop = "";
-		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getPais()
-				.equals(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getPais())) {
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getPais().equals(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getPais())) {
 			
-			if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getUf()
-					.equals(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getUf())) {
+			if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getUf().equals(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getUf())) {
+				
 				cfop = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getCfopEstado();
+				
 			} else {
+				
 				cfop = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getCfopOutrosEstados();
+				
 			}
 			
 		} else {
 			
 			cfop = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getCfopExterior();
+			
 		}
 		
 		produtoServico.setCfop(Integer.valueOf(cfop));
 	}
 
-	public static void montaItemNotaFiscal(NotaFiscal notaFiscal,
-			MovimentoFechamentoFiscal movimentoFechamentoFiscal, Map<String, TributoAliquota> tributoAliquota) {
+	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, MovimentoFechamentoFiscal movimentoFechamentoFiscal, Map<String, TributoAliquota> tributoAliquota) {
 
-		if(!((movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota)
-				|| (movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor))) {
-			
+		if(!((movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota) || (movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor))) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Movimento Fiscal não suportado!");
 		}
 		
@@ -424,8 +424,7 @@ public class ItemNotaFiscalBuilder  {
 					throw new ValidacaoException(TipoMensagem.ERROR, "Item de nota fiscal nulo.");
 				}
 				
-				if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota
-						|| (movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor)) {
+				if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota || (movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor)) {
 					if(((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getProdutoEdicao().getId().equals(dnf.getProdutoServico().getProdutoEdicao().getId())) {
 						
 						notFound = false;
@@ -444,8 +443,7 @@ public class ItemNotaFiscalBuilder  {
 				
 				for(DetalheNotaFiscal dnf : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
 					
-					if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota
-							|| (movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor)) {
+					if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota || (movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor)) {
 						
 						if(movimentoFechamentoFiscal.getProdutoEdicao().getId().equals(dnf.getProdutoServico().getProdutoEdicao().getId())) {
 							

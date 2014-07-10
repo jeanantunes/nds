@@ -959,7 +959,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         final BigDecimal valorTotalSemDesconto = conferenciaEncalheService.obterValorTotalReparteSemDesconto(numeroCota, dataOperacao);
         
         Integer dia=0;
-        
+            
         for(final ProdutoEdicaoSlip produtoEdicaoSlip : listaProdutoEdicaoSlip) {
             
             qtdeTotalProdutos = BigIntegerUtil.soma(qtdeTotalProdutos, produtoEdicaoSlip.getEncalhe());
