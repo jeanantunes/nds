@@ -36,4 +36,6 @@ public interface MixCotaProdutoRepository extends
 	public BigInteger obterSomaReparteMinimoPorProdutoUsuario(Long produtoId, Long idUsuario);
 
 	public MixCotaProduto obterMixPorCotaICDCLassificacao(Long cotaid, String codigoICD, String classificacaoProduto);
+
+    boolean verificarReparteMinMaxCotaProdutoMix(Integer numeroCota, String codigoProduto, Long qtd, Long tipoClassificacaoProduto);
 }
