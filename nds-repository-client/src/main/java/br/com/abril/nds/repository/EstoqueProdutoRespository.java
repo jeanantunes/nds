@@ -35,4 +35,6 @@ public interface EstoqueProdutoRespository extends Repository<EstoqueProduto, Lo
 	
 	void atualizarEstoqueProduto(Long idProdutoEdicao, TipoEstoque tipoEstoque, BigInteger qtde);
 	
+	BigInteger buscarQtdeEstoqueParaTransferenciaParcial(Long idProdutoEdicao);
+	
 }
