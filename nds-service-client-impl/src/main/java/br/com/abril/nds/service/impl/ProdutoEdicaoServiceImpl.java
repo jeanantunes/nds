@@ -507,8 +507,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     private void validarAlteracaoDePrecoDeCapaDoProdutoEdicao(final ProdutoEdicao produtoEdicao, final ProdutoEdicaoDTO produtoEdicaoDTO){
     	
-    	if(produtoEdicao.getId() == null
-    			|| !Origem.MANUAL.equals(produtoEdicao.getOrigem())){
+    	if(produtoEdicao.getId() == null){
     		return;
     	}
     	
