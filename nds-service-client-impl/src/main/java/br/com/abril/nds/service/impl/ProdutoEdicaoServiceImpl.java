@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -513,13 +514,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     	
     	final StatusLancamento statusLancamento = lService.obterStatusDoPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
     	
-    	final boolean statusEdicaoPermiteValidacao =
-    					(  StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(statusLancamento)
-    	    			|| StatusLancamento.EM_RECOLHIMENTO.equals(statusLancamento)
-    	    			|| StatusLancamento.RECOLHIDO.equals(statusLancamento)
-    	    			|| StatusLancamento.FECHADO.equals(statusLancamento));
+    	final boolean permiteAlteracaoDePrecoSemValidacao =
+    					Arrays.asList(StatusLancamento.PLANEJADO,
+				    	    		StatusLancamento.CONFIRMADO,
+				    	    		StatusLancamento.FURO,
+				    	    		StatusLancamento.EM_BALANCEAMENTO,
+				    	    		StatusLancamento.BALANCEADO,
+				    	    		StatusLancamento.ESTUDO_FECHADO).contains(statusLancamento);
     	
-    	if(statusEdicaoPermiteValidacao){
+    	if(!permiteAlteracaoDePrecoSemValidacao){
  
     		final boolean precoPrevistoDiferente = (produtoEdicao.getPrecoPrevisto().compareTo(produtoEdicaoDTO.getPrecoPrevisto())!=0);
     		
@@ -529,7 +532,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     			
     			throw new ValidacaoException(
     					new ValidacaoVO(TipoMensagem.WARNING,
-    							"Para produtos com status Balanceado Recolhimento, Em Recolhimento, Recolhido e Fechado, não é possível alterar os valores de Preço de Capa."));
+    							"Não é permitido alterar os valores de Preço de Capa para produtos Expedidos."));
     		}
     	}
     }
