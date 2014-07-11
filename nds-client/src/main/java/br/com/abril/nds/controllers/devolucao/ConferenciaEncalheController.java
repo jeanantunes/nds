@@ -2570,11 +2570,8 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		
 		if (adicionarGrid){
 			
-			final List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
-			
-			lista.add(conferenciaEncalheDTO);
-			
-			this.setListaConferenciaEncalheToSession(lista);
+			this.getListaConferenciaEncalheFromSession().add(conferenciaEncalheDTO);
+		
 		}
 
 		final Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(dataOperacao, 

@@ -3364,7 +3364,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(final Integer numeroCota, final String codigoBarras) {
 
 		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras);
