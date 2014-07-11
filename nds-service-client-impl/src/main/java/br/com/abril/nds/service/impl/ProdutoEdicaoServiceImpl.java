@@ -507,6 +507,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     private void validarAlteracaoDePrecoDeCapaDoProdutoEdicao(final ProdutoEdicao produtoEdicao, final ProdutoEdicaoDTO produtoEdicaoDTO){
     	
+    	if(produtoEdicao.getId() == null){
+    		return;
+    	}
+    	
     	final StatusLancamento statusLancamento = lService.obterStatusDoPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
     	
     	final boolean statusEdicaoPermiteValidacao =
