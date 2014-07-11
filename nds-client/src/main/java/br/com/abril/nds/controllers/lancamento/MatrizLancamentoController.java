@@ -1618,7 +1618,9 @@ public class MatrizLancamentoController extends BaseController {
                     
                     if (produtoBalanceamento.getPeso() != null) {
                         
-                        pesoTotal += produtoBalanceamento.getPeso();
+                        pesoTotal +=
+                            produtoBalanceamento.getPeso()
+                                * produtoBalanceamento.getRepartePrevisto().longValue();
                     }
                     
                     if (produtoBalanceamento.getValorTotal() != null) {
