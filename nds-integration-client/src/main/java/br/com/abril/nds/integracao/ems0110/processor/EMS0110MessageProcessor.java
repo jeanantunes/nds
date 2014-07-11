@@ -602,7 +602,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             
         	if(produto!=null && produto.getTipoSegmentoProduto()!=null && produto.getTipoSegmentoProduto().getDescricao()!=null){
         		
-        	
+        	if((produto.getTipoSegmentoProduto().getId()==0 || produto.getTipoSegmentoProduto().getId()==9 ) &&
+        		(new Long(input.getSegmento()).intValue()!=0 && new Long(input.getSegmento()).intValue()!=9)){
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
                     "Alteração do Tipo de Segmento"
@@ -612,6 +613,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					+" Edição "+ input.getEdicaoProd());
             
                produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
+        	}
         	}else{
         		
         		this.ndsiLoggerFactory.getLogger().logInfo(message,
