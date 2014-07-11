@@ -1225,7 +1225,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(existeBackupConferenciaEncalhe) {
 			
-			info.setListaConferenciaEncalhe(conferenciaEncalheBackupRepository.obterDadosConferenciasEncalheBackup(numeroCota, dataOperacao));
+			List<ConferenciaEncalheDTO> conferencias = conferenciaEncalheBackupRepository.obterDadosConferenciasEncalheBackup(numeroCota, dataOperacao);
+			
+			if(conferencias!=null) {
+				info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>(conferencias));
+			}
 			
 			return;
 			
@@ -1234,12 +1238,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = null;
 		
 		if(idControleConfEncalheCota != null) {
+			
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConfEncalheCota);
-			info.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
+			
+			if(listaConferenciaEncalheDTO != null) {
+				info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>(listaConferenciaEncalheDTO));
+			}
+			
 		} 
 		
 		if(info.getListaConferenciaEncalhe() == null) {
-			info.setListaConferenciaEncalhe(new ArrayList<ConferenciaEncalheDTO>());
+			info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>());
 		}
 		
 		if(indConferenciaContingencia) {
@@ -1250,7 +1259,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				listaConferenciaEncalheContingencia = obterListaConferenciaEncalheContingencia(
 						dataOperacao, 
 						numeroCota, 
-						datasRecolhimento, info.getListaConferenciaEncalhe());
+						datasRecolhimento, new ArrayList<ConferenciaEncalheDTO>(info.getListaConferenciaEncalhe()));
 			}
 			
 			if(listaConferenciaEncalheContingencia!=null && !listaConferenciaEncalheContingencia.isEmpty()) {

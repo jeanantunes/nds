@@ -7,8 +7,10 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -509,8 +511,6 @@ public class ConferenciaEncalheController extends BaseController {
 	
 		this.session.setAttribute(INFO_CONFERENCIA, infoConfereciaEncalheCota);
 		
-		this.setListaConferenciaEncalheToSession(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
-		
 		indicarStatusConferenciaEncalheCotaSalvo();
 		
 	}
@@ -633,7 +633,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 */
 	private void carregarValorInformadoInicial() {
 		
-		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = getListaConferenciaEncalheFromSession();
+		Set<ConferenciaEncalheDTO> listaConferenciaEncalhe = getListaConferenciaEncalheFromSession();
 		
 		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
 			return;
@@ -715,7 +715,7 @@ public class ConferenciaEncalheController extends BaseController {
      */
 	private ConferenciaEncalheDTO getConferenciaEncalheDTOFromSession(final Long idProdutoEdicao) {
 		
-		final List<ConferenciaEncalheDTO> listaConfSessao = this.getListaConferenciaEncalheFromSession();
+		final Set<ConferenciaEncalheDTO> listaConfSessao = this.getListaConferenciaEncalheFromSession();
 		
 		for (final ConferenciaEncalheDTO dto : listaConfSessao){
 			
@@ -812,7 +812,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 */
 	private void atualizarProdutoRepetido(final long idProdutoEdicao, final BigInteger qtd, final boolean indConferenciaContingencia){
 		
-		final List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
+		final Set<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
 		
 		for (final ConferenciaEncalheDTO ceDTO : listaConferencia){
 			
@@ -1224,7 +1224,7 @@ public class ConferenciaEncalheController extends BaseController {
 			final BigDecimal valorCapa, 
 			final boolean indConferenciaContingencia) {
 		
-		final List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
+		final Set<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
 		
 		if(qtdExemplaresDaGrid == null) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de exemplares inválida.");
@@ -1346,7 +1346,7 @@ public class ConferenciaEncalheController extends BaseController {
             
         } else {
     		
-            final List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
+            final Set<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
             
             final boolean supervisor = usuarioService.isSupervisor();
             
@@ -1413,7 +1413,7 @@ public class ConferenciaEncalheController extends BaseController {
         }
 	}
 
-	private boolean verificarProdutoJaConferido(List<ConferenciaEncalheDTO> listaConferencia, Long produtoEdicaoId,
+	private boolean verificarProdutoJaConferido(Set<ConferenciaEncalheDTO> listaConferencia, Long produtoEdicaoId,
 	        Long idConferencia) {
         
 	    if (listaConferencia == null || listaConferencia.isEmpty()){
@@ -1499,7 +1499,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void alterarQtdeValorInformado(final Long idConferencia, final Long qtdInformada, final BigDecimal valorCapaInformado){
 		
-		final List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
+		final Set<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
 		
 		ConferenciaEncalheDTO conf = null;
 		
@@ -1544,15 +1544,15 @@ public class ConferenciaEncalheController extends BaseController {
 	 * @param indConferenciaContingencia
 	 */
 	private void salvarConferenciaCota(final ControleConferenciaEncalheCota controleConfEncalheCota,
-			                           final List<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave,
+			                           final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave,
 			                           final boolean indConferenciaContingencia){
 			
-		this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), controleConfEncalheCota.getCota(), listaConferenciaEncalheCotaToSave);
+		this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), controleConfEncalheCota.getCota(), new ArrayList<ConferenciaEncalheDTO>(listaConferenciaEncalheCotaToSave));
 		
 		limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 		
 		this.conferenciaEncalheAsyncComponent.salvarConferenciaEncalhe(controleConfEncalheCota, 
-		         listaConferenciaEncalheCotaToSave, 
+		         new ArrayList<ConferenciaEncalheDTO>(listaConferenciaEncalheCotaToSave), 
 		         this.getUsuarioLogado(),
 		         indConferenciaContingencia);
 		
@@ -1610,7 +1610,7 @@ public class ConferenciaEncalheController extends BaseController {
 		controleConfEncalheCota.setBox(boxEncalhe);
 		
 		
-		final List<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = 
+		final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = 
 				obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
 		
 		this.salvarConferenciaCota(controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
@@ -1841,7 +1841,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		this.result.use(Results.json()).from("").serialize();
 	}
 	
-	private void limparIdsTemporarios(final List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO) {
+	private void limparIdsTemporarios(final Set<ConferenciaEncalheDTO> listaConferenciaEncalheDTO) {
 		
 		for (final ConferenciaEncalheDTO dto : listaConferenciaEncalheDTO){
 			
@@ -1852,9 +1852,9 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		}		
 	}
 	
-	private List<ConferenciaEncalheDTO> obterCopiaListaConferenciaEncalheCota(final List<ConferenciaEncalheDTO> oldListaConferenciaEncalheCota) {
+	private Set<ConferenciaEncalheDTO> obterCopiaListaConferenciaEncalheCota(final Set<ConferenciaEncalheDTO> oldListaConferenciaEncalheCota) {
 		
-		final List<ConferenciaEncalheDTO> newListaConferenciaEncalheCota = new ArrayList<ConferenciaEncalheDTO>();
+		final Set<ConferenciaEncalheDTO> newListaConferenciaEncalheCota = new HashSet<ConferenciaEncalheDTO>();
 		
 		for(final ConferenciaEncalheDTO conf : oldListaConferenciaEncalheCota) {
 		
@@ -1927,16 +1927,16 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 			
 			controleConfEncalheCota.setBox(boxEncalhe);
 			
-			final List<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = 
+			final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = 
 					obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
 			
-			this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), controleConfEncalheCota.getCota(), listaConferenciaEncalheCotaToSave);
+			this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), controleConfEncalheCota.getCota(), new ArrayList<ConferenciaEncalheDTO>(listaConferenciaEncalheCotaToSave));
 
 			limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 			
 			this.conferenciaEncalheAsyncComponent.finalizarConferenciaEncalheAsync(
 					  controleConfEncalheCota, 
-					  listaConferenciaEncalheCotaToSave, 
+					  new ArrayList<ConferenciaEncalheDTO>(listaConferenciaEncalheCotaToSave), 
 					  this.getUsuarioLogado(),
 					  indConferenciaContingencia,
 					  info.getReparte());
@@ -1998,7 +1998,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	@Post
 	public void buscarDetalhesProduto(final Long idConferenciaEncalhe){
 		
-		final List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
+		final Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 		
 		for (final ConferenciaEncalheDTO dto : lista){
 			
@@ -2016,7 +2016,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void excluirConferencia(final Long idConferenciaEncalhe){
 		
-		final List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
+		final Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 		
 		for (final ConferenciaEncalheDTO dto : lista){
 			
@@ -2040,7 +2040,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void gravarObservacaoConferecnia(final Long idConferenciaEncalhe, final String observacao){
 		
-		final List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
+		final Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 		
 		for (final ConferenciaEncalheDTO dto : lista){
 			
@@ -2604,7 +2604,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		return tableModelDebitoCreditoCota;
 	}
 	
-	private List<ConferenciaEncalheDTO> getListaConferenciaEncalheFromSession() {
+	private Set<ConferenciaEncalheDTO> getListaConferenciaEncalheFromSession() {
 		
 		final InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 		
@@ -2613,28 +2613,13 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
             throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 		}
 		
-		List<ConferenciaEncalheDTO> lista = info.getListaConferenciaEncalhe();
+		Set<ConferenciaEncalheDTO> lista = info.getListaConferenciaEncalhe();
 		
 		if (lista == null){
-			
-			lista = new ArrayList<ConferenciaEncalheDTO>();
-			
-			info.setListaConferenciaEncalhe(lista);
+			info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>());
 		}
 		
-		return lista;
-	}
-
-	private void setListaConferenciaEncalheToSession(final List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO) {
-		
-		final InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
-		
-		if (info == null){
-			
-            throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
-		}
-		
-		info.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
+		return info.getListaConferenciaEncalhe();
 	}
 	
 	private Integer getNumeroCotaFromSession(){
