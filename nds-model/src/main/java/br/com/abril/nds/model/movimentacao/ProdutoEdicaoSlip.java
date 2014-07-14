@@ -36,6 +36,9 @@ public class ProdutoEdicaoSlip implements Serializable {
 	@JoinColumn(name="SLIP_ID")
 	private Slip slip;
 
+	@Column(name="CODIGO_PRODUTO")
+	private String codigoProduto;
+	
 	@Column(name="ID_CHAMADA_ENCALHE")
 	private Long idChamadaEncalhe;
 	
@@ -87,6 +90,16 @@ public class ProdutoEdicaoSlip implements Serializable {
 	@Column(name="DIA")
 	private Integer dia;
 	
+	
+	
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+
 	/**
 	 * Obtém nomeProduto
 	 *

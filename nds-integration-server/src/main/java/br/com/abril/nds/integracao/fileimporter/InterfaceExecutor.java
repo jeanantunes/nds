@@ -382,6 +382,8 @@ public class InterfaceExecutor {
 				try {
 					in = new FileInputStream(imagem);					
 					couchDbClient.saveAttachment(in, imagem.getName().replace(".jpeg", ".jpg"), "image/jpeg", doc.get_id(), doc.get_rev());
+					
+					imagem.delete();
 				} catch (FileNotFoundException e1) {
                     this.logarArquivo(StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
 				} finally {

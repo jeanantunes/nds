@@ -67,6 +67,7 @@ public class CotaDTO implements Serializable {
     private boolean alteracaoTitularidade;
     private TipoDistribuicaoCota tipoDistribuicaoCota;
     private String tipoCota;
+    private TipoCota tipoCotaFinanceiro;
     private BigDecimal percentualCotaBase = BigDecimal.ZERO;
     private BigDecimal qtdeRankingSegmento;
     private BigDecimal faturamento;
@@ -628,7 +629,15 @@ public class CotaDTO implements Serializable {
         this.tipoCota = tipoCota;
     }
 
-    public BigDecimal getPercentualCotaBase() {
+	public TipoCota getTipoCotaFinanceiro() {
+		return tipoCotaFinanceiro;
+	}
+
+	public void setTipoCotaFinanceiro(TipoCota tipoCotaFinanceiro) {
+		this.tipoCotaFinanceiro = tipoCotaFinanceiro;
+	}
+
+	public BigDecimal getPercentualCotaBase() {
         return percentualCotaBase;
     }
 

@@ -645,8 +645,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	        FiltroConsultaEncalheDTO filtroEntradaConsignado = new FiltroConsultaEncalheDTO(dataFechamento);
 	        filtroEntradaConsignado.setUtilizaPrecoCapa(true);
 	        
-	        resumoConsignado.setValorEntradas(
-	            this.movimentoEstoqueCotaRepository.obterValorTotalReparteEncalheDataCotaFornecedor(filtroEntradaConsignado).getReparte());
+	        resumoConsignado.setValorEntradas(this.movimentoEstoqueCotaRepository.obterSaldoEntradaNoConsignado(dataFechamento));
 
 	        resumoConsignado.setValorSaidas(
 	            this.movimentoEstoqueRepository.obterSaldoDistribuidor(

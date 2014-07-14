@@ -1,6 +1,6 @@
 var desenglobacaoController = $.extend(true, {
 
-	pesquisaCota:null,    
+	pesquisaCota:null,
 	
 	errorCallBack : function errorCallBack(){
 		$('#filtroDesenglobaNomePessoa,#statusCota,#filtroPrincipalNumeroCota,#filtroPrincipalNomePessoa,#filtroDesenglobaNumeroCota').val('');        
@@ -53,6 +53,8 @@ var desenglobacaoController = $.extend(true, {
     init : function() {
     	
     	$('#formInserirEnglobada').hide();
+    	
+    	disabledEnterModalConfirmar.push('dialog-novo-desenglobacao');
 
         // ###### INICIO FILTRO DA TELA PRINCIPAL ######
 		
@@ -119,6 +121,36 @@ var desenglobacaoController = $.extend(true, {
         $('#inserirEnglobadaNomePessoa').blur(function (){
             desenglobacaoController.pesquisaCota.pesquisarPorNomeCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBackCotasEnglobadas,true);
         });
+        
+        
+        
+        $('#percentualDesengloba').keydown(desenglobacaoController.evento);
+        
+        $('#inserirEnglobadaPorcentagemCota').keydown(desenglobacaoController.evento);
+        
+        $('#filtroDesenglobaNumeroCota').keydown(
+        		
+    		function (e){
+    			
+    			if (e.keyCode == 13){
+    				
+    				$('#filtroDesenglobaNomePessoa').focus();
+    			}
+    		}
+        );
+        
+        $('#inserirEnglobadaNumeroCota').keydown(
+        		
+    		function (e){
+    			
+    			if (e.keyCode == 13){
+    			    
+    				$('#inserirEnglobadaNomePessoa').focus();
+    			}
+    		}
+        );
+        
+        
 
         //###### FIM FILTRO DA POPUP INSERT ######
 
@@ -141,6 +173,7 @@ var desenglobacaoController = $.extend(true, {
         });
 
         $('#btnInserirCotaEnglobada').button().click(function(e){
+
         	desenglobacaoController.addCotaParaEnglobar(e);
         });
 
@@ -516,6 +549,14 @@ var desenglobacaoController = $.extend(true, {
             }
         });
     },
-    
+
+	evento : function(e){
+
+		if (e.keyCode == 13){
+		    
+			$('#btnInserirCotaEnglobada').button().click();
+		}
+	},
+
 }, BaseController);
 //@ sourceURL=desenglobacaoController.js

@@ -3,19 +3,27 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigInteger;
 
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
+import br.com.abril.nds.util.upload.XlsMapper;
 
 public class EstudoCotaDTO implements Serializable {
 
 	private static final long serialVersionUID = 1031571090326764200L;
 	
 	private Long id;
-	private BigInteger qtdeEfetiva;
 	private Long idCota;
 	private Long idFornecedorPadraoCota;
-	
 	private TipoEstudoCota tipoEstudo;
-
+	
+	private Cota cota;
+	
+	@XlsMapper(value="cota")
+	private Integer numeroCota;
+	
+	@XlsMapper(value="reparte")
+	private BigInteger qtdeEfetiva;
+	
 	public Long getId() {
 		return id;
 	}
@@ -59,8 +67,21 @@ public class EstudoCotaDTO implements Serializable {
 	public void setIdFornecedorPadraoCota(Long idFornecedorPadraoCota) {
 		this.idFornecedorPadraoCota = idFornecedorPadraoCota;
 	}
-	
-	
-	
+
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
+	public Cota getCota() {
+		return cota;
+	}
+
+	public void setCota(Cota cota) {
+		this.cota = cota;
+	}
 	
 }

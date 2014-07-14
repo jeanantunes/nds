@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -465,6 +466,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Número da edição ja cadastra. Escolha outro número.");
         }
         
+        this.validarAlteracaoDePrecoDeCapaDoProdutoEdicao(produtoEdicao, dto);
+        
         // 01 ) Salvar/Atualizar o ProdutoEdicao:
         produtoEdicao = this.salvarProdutoEdicao(dto, produtoEdicao);
         
@@ -501,6 +504,37 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);
         
+    }
+    
+    private void validarAlteracaoDePrecoDeCapaDoProdutoEdicao(final ProdutoEdicao produtoEdicao, final ProdutoEdicaoDTO produtoEdicaoDTO){
+    	
+    	if(produtoEdicao.getId() == null){
+    		return;
+    	}
+    	
+    	final StatusLancamento statusLancamento = lService.obterStatusDoPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
+    	
+    	final boolean permiteAlteracaoDePrecoSemValidacao =
+    					Arrays.asList(StatusLancamento.PLANEJADO,
+				    	    		StatusLancamento.CONFIRMADO,
+				    	    		StatusLancamento.FURO,
+				    	    		StatusLancamento.EM_BALANCEAMENTO,
+				    	    		StatusLancamento.BALANCEADO,
+				    	    		StatusLancamento.ESTUDO_FECHADO).contains(statusLancamento);
+    	
+    	if(!permiteAlteracaoDePrecoSemValidacao){
+ 
+    		final boolean precoPrevistoDiferente = (produtoEdicao.getPrecoPrevisto().compareTo(produtoEdicaoDTO.getPrecoPrevisto())!=0);
+    		
+    		final boolean precoCustoDiferente = (produtoEdicao.getPrecoVenda().compareTo(produtoEdicaoDTO.getPrecoVenda())!=0);
+    		
+    		if(precoPrevistoDiferente || precoCustoDiferente ){
+    			
+    			throw new ValidacaoException(
+    					new ValidacaoVO(TipoMensagem.WARNING,
+    							"Não é permitido alterar os valores de Preço de Capa para produtos Expedidos."));
+    		}
+    	}
     }
     
     private void validarRegimeRecolhimento(final ProdutoEdicaoDTO dto, final Lancamento lancamento, final ProdutoEdicao produtoEdicao) {
