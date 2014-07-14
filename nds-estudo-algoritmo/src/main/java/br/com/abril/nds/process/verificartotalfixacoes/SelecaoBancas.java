@@ -29,6 +29,7 @@ import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
+import br.com.abril.nds.util.BigDecimalUtil;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
@@ -308,7 +309,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
 	for (ProdutoEdicaoEstudo edicao : cota.getEdicoesRecebidas()) {
 	    totalEdicoes = totalEdicoes.add(BigDecimal.ONE);
-	    totalVenda   = totalVenda.add(edicao.getVenda());
+	    totalVenda   = BigDecimalUtil.isMaiorQueZero(edicao.getVenda()) ? totalVenda.add(edicao.getVenda()) : totalVenda.add(BigDecimal.ZERO);
 	    totalReparte = totalReparte.add(edicao.getReparte());
 	    if (edicao.isEdicaoAberta()) {
 		cota.setSomaReparteEdicoesAbertas(cota.getSomaReparteEdicoesAbertas().add(edicao.getReparte()));
