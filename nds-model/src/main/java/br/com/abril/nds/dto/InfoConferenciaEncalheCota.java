@@ -2,7 +2,9 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
@@ -24,7 +26,7 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	
 	private boolean indCotaOperacaoDiferenciada;
 	
-	private List<ConferenciaEncalheDTO> listaConferenciaEncalhe;
+	private Set<ConferenciaEncalheDTO> listaConferenciaEncalhe;
 	
 	private List<DebitoCreditoCota> listaDebitoCreditoCota;
 	
@@ -84,13 +86,13 @@ public class InfoConferenciaEncalheCota implements Serializable {
 		this.valorPagar = valorPagar;
 	}
 
-	public List<ConferenciaEncalheDTO> getListaConferenciaEncalhe() {
+	public Set<ConferenciaEncalheDTO> getListaConferenciaEncalhe() {
 		return listaConferenciaEncalhe;
 	}
 
 	public void setListaConferenciaEncalhe(
-			List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
-		this.listaConferenciaEncalhe = listaConferenciaEncalhe;
+			Set<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+		this.listaConferenciaEncalhe = new HashSet<ConferenciaEncalheDTO>(listaConferenciaEncalhe);
 	}
 
 	public List<DebitoCreditoCota> getListaDebitoCreditoCota() {
