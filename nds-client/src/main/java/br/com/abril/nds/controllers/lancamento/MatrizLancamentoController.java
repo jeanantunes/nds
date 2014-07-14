@@ -893,16 +893,16 @@ public class MatrizLancamentoController extends BaseController {
         	 listaMensagens.add(msg);
         	}
         	
-        	final String dataRecolhimentoPrevistaFormatada = produtoLancamento.getDataRecolhimentoPrevista();
+        	final String dataRecolhimentoDistribuidorFormatada = produtoLancamento.getDataRecolhimentoDistribuidor();
             
-            if (dataRecolhimentoPrevistaFormatada == null || dataRecolhimentoPrevistaFormatada.trim().isEmpty()) {
+            if (dataRecolhimentoDistribuidorFormatada == null || dataRecolhimentoDistribuidorFormatada.trim().isEmpty()) {
                 
                 continue;
             }
             
-            final Date dataRecolhimentoPrevista = DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimentoPrevista());
+            final Date dataRecolhimentoDistribuidor = DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimentoDistribuidor());
             
-            final Date dataLimiteReprogramacao = calendarioService.subtrairDiasUteisComOperacao(dataRecolhimentoPrevista,
+            final Date dataLimiteReprogramacao = calendarioService.subtrairDiasUteisComOperacao(dataRecolhimentoDistribuidor,
                     qtdDiasLimiteParaReprogLancamento);
             
             if (novaData.compareTo(dataLimiteReprogramacao) == 1) {
@@ -913,14 +913,14 @@ public class MatrizLancamentoController extends BaseController {
                 
                 produtos += "<tr>" + "<td><u>Produto:</u> " + produtoLancamento.getNomeProduto() + "</td>"
                     + "<td><u>Edição:</u> " + produtoLancamento.getNumeroEdicao() + "</td>"
-                        + "<td><u>Data recolhimento:</u> " + dataRecolhimentoPrevistaFormatada + "</td>" + "</tr>";
+                        + "<td><u>Data recolhimento:</u> " + dataRecolhimentoDistribuidorFormatada + "</td>" + "</tr>";
             }
         }
         
         if (!produtos.isEmpty()) {
             
             listaMensagens.add("A nova data de lançamento não deve ultrapassar "
-                    + "a data de recolhimento prevista menos a quantidade de dias limite ["
+                    + "a data de recolhimento menos a quantidade de dias limite ["
                     + qtdDiasLimiteParaReprogLancamento + "] para o(s) produto(s):");
             
             listaMensagens
@@ -1618,7 +1618,9 @@ public class MatrizLancamentoController extends BaseController {
                     
                     if (produtoBalanceamento.getPeso() != null) {
                         
-                        pesoTotal += produtoBalanceamento.getPeso();
+                        pesoTotal +=
+                            produtoBalanceamento.getPeso()
+                                * produtoBalanceamento.getRepartePrevisto().longValue();
                     }
                     
                     if (produtoBalanceamento.getValorTotal() != null) {

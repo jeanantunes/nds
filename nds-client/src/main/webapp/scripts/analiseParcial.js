@@ -413,31 +413,50 @@ var analiseParcialController = $.extend(true, {
         
         if (reparteAtual != reparteDigitado) {
             var legendaText = legenda_element.text();
-           
             if (legendaText.indexOf('FX') > -1 || legendaText.indexOf('MX') > -1) {
-             
-            	var message = 'É necessario confirmar esta ação com senha.';
             	
-            	usuarioController.supervisor.verificarRoleSupervisao({
-	            	optionalDialogMessage: message,
-	            	callbacks: {
-	    				usuarioSupervisorCallback: function() {
-	    					
-	    					if((qtdPdv > 1) && (isAtualizarRepartePDV)){
-	    						
-    							analiseParcialController.defineRepartePorPDV(numeroCota, nomeCota, reparteDigitado, legendaText);
-    							analiseParcialController.atualizarReparteCota(input_reparte_element, numeroCota, reparteSubtraido, reparteDigitado, reparteAtual, saldoReparte, legenda_element);
-    							
-	    	                }else{
-	    	                	analiseParcialController.atualizarReparteCota(input_reparte_element, numeroCota, reparteSubtraido, reparteDigitado, reparteAtual, saldoReparte, legenda_element);
-	    	                }
-	    				},
-	    				usuarioNaoSupervisorCallback: function(){
-	    					analiseParcialController.resetReparteSugerido(input, numeroCota);
-		        		}
-	    			}
-	            });
-                
+            	$.postJSON(
+            		analiseParcialController.path + '/distribuicao/analise/parcial/verificarMaxMinCotaMix',
+            		[{name:"numeroCota", value:numeroCota},
+            		 {name:"codigoProduto", value:"" + $("#codigoProduto").val() + ""},
+            		 {name:"qtdDigitado", value:reparteDigitado},
+            		 {name:"tipoClassificacaoProduto", value:$("#tipoClassificacaoProdutoId").val()}],
+            		 function(result){
+            			if (!result || !result.boolean){
+            				
+            				usuarioController.supervisor.verificarRoleSupervisao({
+        		            	optionalDialogMessage: 'É necessario confirmar esta ação com senha.',
+        		            	callbacks: {
+        		    				usuarioSupervisorCallback: function() {
+        		    					
+        		    					if((qtdPdv > 1) && (isAtualizarRepartePDV)){
+        		    						
+        	    							analiseParcialController.defineRepartePorPDV(
+        	    									numeroCota, nomeCota, reparteDigitado, legendaText);
+        	    							
+        	    							analiseParcialController.atualizarReparteCota(
+        	    									input_reparte_element, numeroCota, reparteSubtraido, 
+        	    									reparteDigitado, reparteAtual, saldoReparte, legenda_element);
+        	    							
+        		    	                }else{
+        		    	                	analiseParcialController.atualizarReparteCota(
+        		    	                			input_reparte_element, numeroCota, reparteSubtraido, 
+        		    	                			reparteDigitado, reparteAtual, saldoReparte, legenda_element);
+        		    	                }
+        		    				},
+        		    				usuarioNaoSupervisorCallback: function(){
+        		    					analiseParcialController.resetReparteSugerido(input, numeroCota);
+        			        		}
+        		    			}
+        		            });
+            			} else {
+            				
+            				analiseParcialController.atualizarReparteCota(
+            						input_reparte_element, numeroCota, reparteSubtraido, reparteDigitado, 
+            						reparteAtual, saldoReparte, legenda_element);
+            			}
+            		}
+            	);
             }else{
             	analiseParcialController.atualizarReparteCota(input_reparte_element, numeroCota, reparteSubtraido, reparteDigitado, reparteAtual, saldoReparte, legenda_element);
             }

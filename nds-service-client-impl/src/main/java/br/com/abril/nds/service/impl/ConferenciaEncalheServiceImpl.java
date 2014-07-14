@@ -1193,7 +1193,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(controleConferenciaEncalheCota.getId(), null);
 			
-			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
+			infoConfereciaEncalheCota.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>(listaConferenciaEncalheDTO));
 			
 			//Se um dos itens foi expedido com nota fiscal, a conferencia deve solicitar a entrada de nota
 			for(ConferenciaEncalheDTO ceDTO : listaConferenciaEncalheDTO) {
@@ -1266,18 +1266,29 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = null;
 		if(existeBackupConferenciaEncalhe) {
-			info.setListaConferenciaEncalhe(conferenciaEncalheBackupRepository.obterDadosConferenciasEncalheBackup(numeroCota, dataOperacao));
+			
+			List<ConferenciaEncalheDTO> conferencias = conferenciaEncalheBackupRepository.obterDadosConferenciasEncalheBackup(numeroCota, dataOperacao);
+			
+			if(conferencias!=null) {
+				info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>(conferencias));
+			}
+			
 			return;
 		}
 		
 		
 		if(idControleConfEncalheCota != null) {
+			
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConfEncalheCota, null);
-			info.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
+			
+			if(listaConferenciaEncalheDTO != null) {
+				info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>(listaConferenciaEncalheDTO));
+			}
+			
 		} 
 		
 		if(info.getListaConferenciaEncalhe() == null) {
-			info.setListaConferenciaEncalhe(new ArrayList<ConferenciaEncalheDTO>());
+			info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>());
 		}
 		
 		if(indConferenciaContingencia) {
@@ -1288,7 +1299,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				listaConferenciaEncalheContingencia = obterListaConferenciaEncalheContingencia(
 						dataOperacao, 
 						numeroCota, 
-						datasRecolhimento, info.getListaConferenciaEncalhe());
+						datasRecolhimento, new ArrayList<ConferenciaEncalheDTO>(info.getListaConferenciaEncalhe()));
 			}
 			
 			if(listaConferenciaEncalheContingencia!=null && !listaConferenciaEncalheContingencia.isEmpty()) {
@@ -3500,7 +3511,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(final Integer numeroCota, final String codigoBarras) {
 
 		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras);

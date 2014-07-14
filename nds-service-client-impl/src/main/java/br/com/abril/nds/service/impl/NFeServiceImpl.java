@@ -1182,5 +1182,6 @@ public class NFeServiceImpl implements NFeService {
 		}
 
 		return notaReferenciada;
+		
 	}
 }
