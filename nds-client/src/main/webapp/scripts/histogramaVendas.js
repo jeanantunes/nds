@@ -42,7 +42,7 @@ var histogramaVendasController = $.extend(true, {
 			preProcess: function (data){
 				$.each(data.rows, function(index,row){
 					row.cell.reparte = parseInt(row.cell.reparte, 10);
-					row.cell.venda = parseInt(row.cell.venda, 10);
+					row.cell.venda = row.cell.venda ? parseInt(row.cell.venda, 10) : '';
 					
 					if(row.cell.periodo == undefined){
 						row.cell.periodo = "";
