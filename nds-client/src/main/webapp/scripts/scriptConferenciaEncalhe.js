@@ -248,7 +248,10 @@ var ConferenciaEncalhe = $.extend(true, {
 		    	setTimeout (function () {$('#qtdeExemplar', ConferenciaEncalhe.workspace).select();}, 1);
 		    }else if (event.keyCode == 27){ //"ESC"
 		    	$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
+		    }else if (event.keyCode == 40){ //"Seta para baixo"
+		    	ConferenciaEncalhe.posicionarQtdExemplares();
 		    }
+
 		});
 		
 		$("#sm").keydown(function (event) {			
@@ -806,8 +809,10 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					valorExemplares = isNaN(valorExemplares) ? 0 : valorExemplares;
 					
+					
+					
 					var inputExemplares = '<input isEdicao="true" id="qtdExemplaresGrid_' + index + 
-						'" class="input-numericPacotePadrao" onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue;ConferenciaEncalhe.verificarPermissaoSuperVisor('+ 
+						'" onkeydown="ConferenciaEncalhe.posicionarQtdExemplares(event,'+index+');" class="input-numericPacotePadrao" onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue;ConferenciaEncalhe.verificarPermissaoSuperVisor('+ 
 						index +');" style="width:50px; text-align: center;" maxlength="255" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
@@ -1138,6 +1143,44 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#somatorioTotal", ConferenciaEncalhe.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 	},
 	
+	posicionarQtdExemplares : function(e, index) {
+		
+		var listaItemGrid = $("._dadosConfEncalhe", ConferenciaEncalhe.workspace);
+		
+		if(listaItemGrid) {
+			
+			if(index || index == 0) {
+				
+				if(e.keyCode == 38 && index > 0) {
+					
+					var proximoCampo = (index - 1); 
+					
+					$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').select();
+				
+				} else if (e.keyCode == 40) {
+					
+					var proximoCampo = (index + 1);
+					
+					$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').select();
+				
+				} 
+					
+				return;
+				
+			}
+			
+			$(listaItemGrid).each(function(index, element){
+				
+				$(element).find("[id^='qtdExemplaresGrid_']").select();
+				
+				return false;
+				
+			});
+			
+		}
+		
+	},
+	
 	atualizarValoresGridInteira : function(executarPosAtualizacaoGrid) {
 		
 		var listaItemGrid = $("._dadosConfEncalhe", ConferenciaEncalhe.workspace);
@@ -1327,6 +1370,11 @@ var ConferenciaEncalhe = $.extend(true, {
 										ConferenciaEncalhe.limparDadosProduto(true);
 									}
 								}
+								
+								setTimeout (function () {
+									$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).select();
+								}, 1);
+								
 							},
 							open: function(){
 								
