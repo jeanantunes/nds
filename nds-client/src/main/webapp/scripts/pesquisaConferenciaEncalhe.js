@@ -48,6 +48,13 @@ var PesquisaConferenciaEncalhe = {
 			height:'auto',
 			width:400,
 			modal: true,
+				
+			close: function() {
+				setTimeout (function () {
+					$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).select();
+				}, 1);
+			},
+			
 			buttons: {
 				
 				"Ok": function() {

@@ -67,5 +67,13 @@ public class ConferenciaEncalheServiceImplTest {
     			dataRef.compareTo(dataPrimeiroDiaRecolhimento) == 0 );
     	
     }
+    
+    @Test
+    public void test_obter_data_encalhe_possiveis() {
+    	
+    	
+    	
+    }
+    
 
 }
