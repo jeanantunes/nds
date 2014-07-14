@@ -835,10 +835,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"  	  round((SELECT sum(estqProdCota.qtde_recebida - estqProdCota.qtde_devolvida) " +
 				"          FROM ESTOQUE_PRODUTO_COTA estqProdCota " +
 				"          WHERE estqProdCota.produto_edicao_id = produtoedi1_.ID),0) " +
-				"  ELSE " +
-				"      round((SELECT sum(estqProdCota.qtde_recebida) " +
-				"          FROM ESTOQUE_PRODUTO_COTA estqProdCota " +
-				"          WHERE estqProdCota.produto_edicao_id = produtoedi1_.ID),0) " +
+				"  ELSE null " +
 				"  END) venda, " +
 				
 				" 	lancamento2_.DATA_REC_DISTRIB as dataRecolhimento, " +
@@ -1281,9 +1278,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("          FROM EstoqueProdutoCota estqProdCota ");
 		hql.append("          WHERE estqProdCota.produtoEdicao = produtoEdicao.id),0) ");
 		hql.append("  ELSE ");
-		hql.append("      round((SELECT sum(estqProdCota.qtdeRecebida) ");
-		hql.append("          FROM EstoqueProdutoCota estqProdCota ");
-		hql.append("          WHERE estqProdCota.produtoEdicao = produtoEdicao.id),0) ");
+		hql.append("      null ");
 		hql.append("  END) as qtdeVendas, ");
 		
 		hql.append(" lancamento.status as situacaoLancamento, ");
@@ -1419,13 +1414,16 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" SELECT ");
 
 		hql.append(" sum(estoqueProdutoCota.qtdeRecebida) as reparte, ");
-		hql.append(" sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as qtdeVendas ");
+		hql.append(" case when l.status in (:statusLancFechadoRecolhido) then ");
+		hql.append(" sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) ");
+		hql.append(" else null end as qtdeVendas ");
 
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" JOIN produtoEdicao.lancamentos l ");
 
 		hql.append(" WHERE ");
 		hql.append(" produto.codigo = :codigoProduto ");
@@ -1438,6 +1436,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		parameters.put("numeroCota", numeroCota);
 
 		hql.append(" GROUP BY estoqueProdutoCota.cota ");
+		
+		parameters.put("statusLancFechadoRecolhido", 
+		        Arrays.asList(
+		                StatusLancamento.FECHADO, StatusLancamento.RECOLHIDO));
 
 		final Query query = super.getSession().createQuery(hql.toString());
 

@@ -132,7 +132,14 @@ function FlexGridService() {
 					if(model.checked){
 						input += " checked";
 					}
-					input += " />";
+					
+					if (model.cellText && row.cell[model.cellText]){
+						
+						input += ">" + row.cell[model.cellText] + "</" + model.element + ">";
+					} else {
+						
+						input += " />";
+					}
 					
 					row.cell[model.columnName] = input;
 				});
