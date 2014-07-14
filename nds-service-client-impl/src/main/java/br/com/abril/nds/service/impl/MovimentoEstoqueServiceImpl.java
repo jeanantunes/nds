@@ -911,12 +911,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             final boolean isOperacaoEntrada = OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque());
             
+            BigInteger qntMovimento = movimentoEstoque.getQtde() == null ? BigInteger.ZERO : movimentoEstoque.getQtde();
+            
             switch (tipoEstoque) {
             
             case LANCAMENTO:
                 
-                novaQuantidade = isOperacaoEntrada ? estoqueProduto.getQtde().add(movimentoEstoque.getQtde()) :
-                    estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
+                novaQuantidade = isOperacaoEntrada ? estoqueProduto.getQtde().add(qntMovimento) :
+                    estoqueProduto.getQtde().subtract(qntMovimento);
                 
                 estoqueProduto.setQtde(novaQuantidade);
                 
@@ -926,16 +928,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 final BigInteger qtdeDanificado = estoqueProduto.getQtdeDanificado() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDanificado();
                 
-                novaQuantidade = isOperacaoEntrada ? qtdeDanificado.add(movimentoEstoque.getQtde()) :
-                    qtdeDanificado.subtract(movimentoEstoque.getQtde());
+                novaQuantidade = isOperacaoEntrada ? qtdeDanificado.add(qntMovimento) :
+                    qtdeDanificado.subtract(qntMovimento);
                 
                 estoqueProduto.setQtdeDanificado(novaQuantidade);
                 
                 break;
                 
             case DEVOLUCAO_ENCALHE:
-            	
-            	BigInteger qntMovimento = movimentoEstoque.getQtde();
             	
                 BigInteger qtdeEstoqueProdutoSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
                 
@@ -994,8 +994,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 final BigInteger qtdeDevolucaoFornecedor = Util.nvl(estoqueProduto.getQtdeDevolucaoFornecedor(),BigInteger.ZERO);
                 
                 novaQuantidade = isOperacaoEntrada 
-                		? qtdeDevolucaoFornecedor.add(movimentoEstoque.getQtde())
-                				:qtdeDevolucaoFornecedor.subtract(movimentoEstoque.getQtde());
+                		? qtdeDevolucaoFornecedor.add(qntMovimento)
+                				:qtdeDevolucaoFornecedor.subtract(qntMovimento);
                 
                 estoqueProduto.setQtdeDevolucaoFornecedor(novaQuantidade);
                 
@@ -1005,8 +1005,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 final BigInteger qtdeSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
                 
-                novaQuantidade = isOperacaoEntrada ? qtdeSuplementar.add(movimentoEstoque.getQtde()) :
-                    qtdeSuplementar.subtract(movimentoEstoque.getQtde());
+                novaQuantidade = isOperacaoEntrada ? qtdeSuplementar.add(qntMovimento) :
+                    qtdeSuplementar.subtract(qntMovimento);
                 
                 estoqueProduto.setQtdeSuplementar(novaQuantidade);
                 
@@ -1016,8 +1016,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 final BigInteger qtdeRecolhimento = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
                 
-                novaQuantidade = isOperacaoEntrada ? qtdeRecolhimento.add(movimentoEstoque.getQtde()) :
-                    qtdeRecolhimento.subtract(movimentoEstoque.getQtde());
+                novaQuantidade = isOperacaoEntrada ? qtdeRecolhimento.add(qntMovimento) :
+                    qtdeRecolhimento.subtract(qntMovimento);
                 
                 estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
                 
@@ -1028,8 +1028,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 final BigInteger qtde = estoqueProduto.getQtdeJuramentado() == null
                                             ? BigInteger.ZERO : estoqueProduto.getQtdeJuramentado();
                 
-                novaQuantidade = isOperacaoEntrada ? qtde.add(movimentoEstoque.getQtde()) :
-                    qtde.subtract(movimentoEstoque.getQtde());
+                novaQuantidade = isOperacaoEntrada ? qtde.add(qntMovimento) :
+                    qtde.subtract(qntMovimento);
                 
                 estoqueProduto.setQtdeJuramentado(novaQuantidade);
                 
@@ -1047,7 +1047,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                         estoqueProduto.setQtdeDevolucaoEncalhe(BigInteger.ZERO);
                     }
                     
-                    novaQuantidade = estoqueProduto.getQtdeDevolucaoEncalhe().subtract(movimentoEstoque.getQtde());
+                    novaQuantidade = estoqueProduto.getQtdeDevolucaoEncalhe().subtract(qntMovimento);
                     
                     estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
                 }
@@ -1061,12 +1061,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                         estoqueProduto.setQtde(BigInteger.ZERO);
                     }
                     
-                    novaQuantidade = estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
+                    novaQuantidade = estoqueProduto.getQtde().subtract(qntMovimento);
                     
                     estoqueProduto.setQtde(novaQuantidade);
                 }
                 
-                qtdePerda = qtdePerda.add( movimentoEstoque.getQtde());
+                qtdePerda = qtdePerda.add(qntMovimento);
             	
                 estoqueProduto.setQtdePerda(qtdePerda);
             	               	
@@ -1083,7 +1083,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                         estoqueProduto.setQtdeDevolucaoEncalhe(BigInteger.ZERO);
                     }
                     
-                    novaQuantidade = estoqueProduto.getQtdeDevolucaoEncalhe().add(movimentoEstoque.getQtde());
+                    novaQuantidade = estoqueProduto.getQtdeDevolucaoEncalhe().add(qntMovimento);
                     
                     estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
                 }
@@ -1097,12 +1097,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                         estoqueProduto.setQtde(BigInteger.ZERO);
                     }
                     
-                    novaQuantidade = estoqueProduto.getQtde().add(movimentoEstoque.getQtde());
+                    novaQuantidade = estoqueProduto.getQtde().add(qntMovimento);
                     
                     estoqueProduto.setQtde(novaQuantidade);
                 }
                 
-                qtdeGanho = qtdeGanho.add(movimentoEstoque.getQtde());
+                qtdeGanho = qtdeGanho.add(qntMovimento);
                 
                 estoqueProduto.setQtdeGanho(qtdeGanho);
                 

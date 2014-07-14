@@ -16,7 +16,9 @@
 	<context:component-scan base-package="br.com.abril.nds" />
 	
 	<!-- TOMCAT -->
-	<jee:jndi-lookup id="dataSource" jndi-name="${jndi-name}"/>
+	<jee:jndi-lookup id="dataSource" jndi-name="${jndi-name}">
+	    <jee:environment>zeroDateTimeBehavior=convertToNull</jee:environment>
+	</jee:jndi-lookup>
 	<jee:jndi-lookup  id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties" />
 	
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">

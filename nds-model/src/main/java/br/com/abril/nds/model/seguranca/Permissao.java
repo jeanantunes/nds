@@ -174,6 +174,8 @@ public enum Permissao {
 	ROLE_ESTOQUE_HELP_ALTERACAO("Help",							                                            Permissao.ROLE_ESTOQUE, true),
 	ROLE_ESTOQUE_HELP("Help",							                                                   	Permissao.ROLE_ESTOQUE, ROLE_ESTOQUE_HELP_ALTERACAO, true, null),
 	
+	ROLE_ESTOQUE_TRANSFERENCIA_PARCIAL_ALTERACAO("Transferência de Estoque de Parciais",					Permissao.ROLE_ESTOQUE, true),
+	ROLE_ESTOQUE_TRANSFERENCIA_PARCIAL("Transferência de Estoque de Parciais",								Permissao.ROLE_ESTOQUE, ROLE_ESTOQUE_TRANSFERENCIA_PARCIAL_ALTERACAO, true, null),
 	
 	ROLE_EXPEDICAO_ALTERACAO("Expedição",															  		null, true), 
 	ROLE_EXPEDICAO("Expedição",															  				   	null, ROLE_EXPEDICAO_ALTERACAO, true, null), 

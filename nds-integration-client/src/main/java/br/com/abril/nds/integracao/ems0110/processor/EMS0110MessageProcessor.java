@@ -344,7 +344,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             this.ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.ERRO_INFRA,
-					"Desconto Logística não encontrado. "+Integer.parseInt( input.getTipoDesconto()));
+					"Desconto Logística não encontrado. "+Integer.parseInt( input.getTipoDesconto())
+					+ " Produto "+produto.getCodigo());
 			}
 			 
 		}else{
