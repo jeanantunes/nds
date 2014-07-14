@@ -155,7 +155,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String dataLancamentoFormatada;
 	private BigInteger qtdeVendas;
 	private BigInteger reparte;
-	private String qtdVendasFormatada = "0";
+	private String qtdVendasFormatada;
 	
 	private String precoVendaFormatado;
 	private String precoPrevistoFormatado;
