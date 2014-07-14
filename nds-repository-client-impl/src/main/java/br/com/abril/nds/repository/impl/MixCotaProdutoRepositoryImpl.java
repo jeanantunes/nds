@@ -462,5 +462,25 @@ public class MixCotaProdutoRepositoryImpl extends
 			return uniqueResult;
 		}
 		
-		
+	@Override
+	public boolean verificarReparteMinMaxCotaProdutoMix(Integer numeroCota, String codigoProduto, 
+	        Long qtd, Long tipoClassificacaoProduto){
+	    
+	    final String hql = "select case when :qtd between m.reparteMinimo and m.reparteMaximo then true else false end " +
+	    		" from MixCotaProduto m, Produto p " +
+	    		" join m.cota cota " +
+	    		" join m.tipoClassificacaoProduto t " +
+	    		" where m.codigoICD = p.codigoICD " +
+	    		" and cota.numeroCota = :numeroCota " +
+	    		" and p.codigo = :codigoProduto " +
+	    		" and t.id = :tipoClassificacaoProduto ";
+	    
+	    final Query query = this.getSession().createQuery(hql);
+	    query.setParameter("numeroCota", numeroCota);
+	    query.setParameter("codigoProduto", codigoProduto);
+	    query.setParameter("qtd", qtd);
+	    query.setParameter("tipoClassificacaoProduto", tipoClassificacaoProduto);
+	    
+	    return (boolean) query.uniqueResult();
+	}
 }

@@ -338,4 +338,5 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	         this.estoqueProdutoFilaRepository.remover(epf);
 	     }
 	}
+	 
 }
