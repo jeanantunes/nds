@@ -2191,8 +2191,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	
         if (filtro.getPaginacao() == null){
             
-            hql.append(" order by lancamento.SEQUENCIA_MATRIZ, box.CODIGO, roteiro.ORDEM, rota.ORDEM, cota.NUMERO_COTA ");
+            hql.append(" order by codigoBox asc ");
+            
             return;
+            
         }
         
         final String sortOrder = filtro.getPaginacao().getOrdenacao().name();
