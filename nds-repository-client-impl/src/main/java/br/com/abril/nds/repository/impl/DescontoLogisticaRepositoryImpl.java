@@ -45,7 +45,7 @@ public class DescontoLogisticaRepositoryImpl extends AbstractRepositoryModel<Des
         
         criteria.add(Restrictions.eq("tipoDesconto", tipoDesconto));
         criteria.add(Restrictions.eq("fornecedor.id", idFornecedor));
-        criteria.add(Restrictions.ge("dataInicioVigencia", dataVigencia));
+        criteria.add(Restrictions.le("dataInicioVigencia", dataVigencia));
         
         criteria.addOrder(Order.desc("dataInicioVigencia"));
         
