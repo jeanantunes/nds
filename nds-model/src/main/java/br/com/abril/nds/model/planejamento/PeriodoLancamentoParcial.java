@@ -281,6 +281,39 @@ public class PeriodoLancamentoParcial implements Serializable {
 		}
 	}
 
+	public boolean before(PeriodoLancamentoParcial other) {
+		
+		if (other == null) {
+			
+			return true;
+		}
+		
+		return this.numeroPeriodo < other.getNumeroPeriodo();
+	}
+	
+	public boolean after(PeriodoLancamentoParcial other) {
+		
+		if (other == null) {
+			
+			return false;
+		}
+
+		return this.numeroPeriodo > other.getNumeroPeriodo();
+	}
+
+	public long peb() {
+
+		if (this.getPrimeiroLancamento() == null) {
+			
+			return 0l;
+		}
+		
+		Date dataLancamento = this.getPrimeiroLancamento().getDataLancamentoDistribuidor();
+		Date dataRecolhimento = this.getPrimeiroLancamento().getDataRecolhimentoDistribuidor();
+		
+		return DateUtil.obterDiferencaDias(dataLancamento, dataRecolhimento);
+	}
+	
 	/**
 	 * Incrementa o número atual do período.
 	 */

@@ -370,4 +370,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 			Integer numeroCota);
 
     public List<ItemDTO<String, String>> obterProdutosBalanceados(Date dataLancamento);
+    
+    BigDecimal obterPrecoProdutoEdicao(String codigoProduto, Long numeroEdicao);
 }
