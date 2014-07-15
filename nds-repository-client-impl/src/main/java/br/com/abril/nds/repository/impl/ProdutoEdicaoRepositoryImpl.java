@@ -1973,4 +1973,17 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         
         return query.list();
     }
+    
+    @Override
+    public BigDecimal obterPrecoProdutoEdicao(String codigoProduto, Long numeroEdicao){
+    	
+    	String hql = "select coalesce(pe.precoVenda,pe.precoPrevisto) from ProdutoEdicao pe where pe.numeroEdicao=:numeroEdicao and pe.produto.codigo=:codigo";
+    	
+    	Query query  = getSession().createQuery(hql);
+    	
+    	query.setParameter("numeroEdicao", numeroEdicao);
+    	query.setParameter("codigo",codigoProduto);
+    	
+    	return (BigDecimal) query.uniqueResult();
+    }
 }

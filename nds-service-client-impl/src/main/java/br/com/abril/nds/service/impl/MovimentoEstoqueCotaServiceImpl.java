@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -342,5 +343,12 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 														   Long idProdutoEdicao) {
 		
 		return this.movimentoEstoqueCotaRepository.obterDataUltimaMovimentacaoReparteExpedida(numeroCota, idProdutoEdicao);
+	}
+	
+	@Override
+	@Transactional
+	public void atualizarPrecoProdutoExpedido(final Long idProdutoEdicao, final BigDecimal precoProduto) {
+		
+		movimentoEstoqueCotaRepository.atualizarPrecoProdutoExpedido(idProdutoEdicao, precoProduto);
 	}
 }

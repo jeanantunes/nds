@@ -2733,6 +2733,17 @@ public class LancamentoRepositoryImpl extends
     	BigInteger retorno  = (BigInteger) query.uniqueResult(); 
     	
     	return (retorno==null) ?null : retorno.intValue();
+    } 
+   
+    @Override
+    public boolean existeLancamentoParaOsStatus(final Long idProdutoEdicao, final StatusLancamento... statusLancamento) {
+    	
+    	Query query = getSession().createQuery("select l.id from Lancamento l where l.produtoEdicao.id=:idProdutoEdicao and l.status in (:statusLancamento )");
+    	
+    	query.setParameterList("statusLancamento", statusLancamento);
+    	query.setParameter("idProdutoEdicao", idProdutoEdicao);
+    	
+    	return (!query.list().isEmpty());
     }
     
 }

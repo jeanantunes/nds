@@ -21,7 +21,7 @@ public interface EstudoGeradoRepository extends Repository<EstudoGerado, Long> {
 	
 	public EstudoGerado obterEstudoECotasPorIdEstudo(Long idEstudo);
 	
-	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long id);
+	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long id, boolean isEdicoesBaseEspecificas);
 	
 	public EstudoGerado obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO);
 	
