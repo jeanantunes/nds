@@ -272,11 +272,21 @@ var historicoVendaController = $.extend(true, {
 							functionName : "historicoVendaController.popUpCapaClose",
 							type : "onmouseout",
 						}]
+					},{
+						element : "span",
+						cellText : "qtdVendasFormatada",
+						columnName : "qtdVendasFormatada"
 					}
 				],
 				gridConfiguration : {
 					dataType: 'json',
 					colModel : [{
+						display : '',
+						name : 'sel',
+						width : 20,
+						sortable : true,
+						align : 'center'
+					},{
 						display : 'Código',
 						name : 'codigoProduto',
 						width : 40,
@@ -328,12 +338,6 @@ var historicoVendaController = $.extend(true, {
 						display : 'Capa',
 						name : 'chamadaCapa',
 						width : 30,
-						sortable : true,
-						align : 'center'
-					}, {
-						display : '',
-						name : 'sel',
-						width : 20,
 						sortable : true,
 						align : 'center'
 					}],

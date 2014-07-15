@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -55,7 +56,9 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append("     coalesce(tcp.descricao, '') classificacao, ");
     
         sql.append("     cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) as unsigned int) AS reparte, ");
-    
+        
+        sql.append("     case when l.STATUS IN (:statusLancFechadoRecolhido) then ");
+        
         sql.append("     cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) - ( ");
         sql.append("        select sum(mecEncalhe.qtde) ");
         sql.append("        from lancamento lanc ");
@@ -65,23 +68,9 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append("        LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
         sql.append("        LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
         sql.append("        WHERE lanc.id = l.id ");
-        sql.append("     ) as unsigned int) as venda ");
+        sql.append("     ) as unsigned int) ");
         
-//        sql.append("  cast((SELECT sum(estqProdCota.qtde_recebida) ");
-//		sql.append("          FROM estoque_produto_cota estqProdCota ");
-//		sql.append("          WHERE estqProdCota.produto_edicao_id = pe.id)as unsigned int) as reparte, ");
-//        
-//        sql.append(" cast((CASE   ");
-//		sql.append("  	WHEN l.status='FECHADO' OR l.status='RECOLHIDO' ");
-//		sql.append("  THEN ");
-//		sql.append("  	  round((SELECT sum(estqProdCota.qtde_recebida - estqProdCota.qtde_devolvida) ");
-//		sql.append("          FROM estoque_produto_cota estqProdCota ");
-//		sql.append("          WHERE estqProdCota.produto_edicao_id = pe.id),0) ");
-//		sql.append("  ELSE ");
-//		sql.append("      round((SELECT sum(estqProdCota.qtde_recebida) ");
-//		sql.append("          FROM estoque_produto_cota estqProdCota ");
-//		sql.append("          WHERE estqProdCota.produto_edicao_id = pe.id),0) ");
-//		sql.append("  END) as unsigned int) as venda ");
+        sql.append(" else null end as venda ");
 		
         sql.append(" FROM lancamento l ");
         sql.append("     JOIN produto_edicao pe ON pe.id = l.produto_edicao_id ");
@@ -132,6 +121,11 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         statusLancamento.add(StatusLancamento.FECHADO.name());
         
         query.setParameterList("statusLancamento", statusLancamento);
+        
+        query.setParameterList(
+                "statusLancFechadoRecolhido", 
+                Arrays.asList(
+                        StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name()));
 		
 		query.setResultTransformer(Transformers.aliasToBean(ProdutoEdicaoVendaMediaDTO.class));
 		return query.list();
