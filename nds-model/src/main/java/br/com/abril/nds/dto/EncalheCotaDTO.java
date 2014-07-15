@@ -15,8 +15,7 @@ public class EncalheCotaDTO implements Serializable {
 
 	private static final long serialVersionUID = 2186060384671120600L;
 	
-	@Export(label = "Sequência", fontSize=9, widthPercent=7)
-	private String sequencia;
+	private Long sequencia;
 	
 	@Export(label = "Código", fontSize=9)
 	private String codigoProduto;
@@ -115,12 +114,15 @@ public class EncalheCotaDTO implements Serializable {
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
-
-	public String getSequencia() {
-		return sequencia;
+	
+	//Retorna Object porque caso seja null tem que apresentar o descrito "Postergado", 
+	//e o campo não pode ser do tipo String devido a ordenação do mesmo.
+	@Export(label = "Sequência", fontSize=9, widthPercent=7)
+	public Object getSequencia() {
+		return (sequencia == null ? "Postergado" : sequencia);
 	}
 
-	public void setSequencia(String sequencia) {
+	public void setSequencia(Long sequencia) {
 		this.sequencia = sequencia;
 	}
 }

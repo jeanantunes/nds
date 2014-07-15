@@ -276,6 +276,9 @@ var contaCorrenteCotaController = $.extend(true, {
 		}else{			
 			$.each(data.rows, function(index, value) {
 				
+				if(!value.cell.sequencia){
+					value.cell.sequencia ="Postergado";
+				}
 				value.cell.precoCapa = formatMoneyValue(value.cell.precoCapa, 2);
 				value.cell.precoComDesconto = formatMoneyValue(value.cell.precoComDesconto);
 				value.cell.total = formatMoneyValue(value.cell.total);
