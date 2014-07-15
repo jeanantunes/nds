@@ -169,7 +169,7 @@ public class LancamentoParcial implements Serializable{
 		
 	}	
 	
-	public PeriodoLancamentoParcial obterPeriodoFinal() {
+	public PeriodoLancamentoParcial getPeriodoFinal() {
 		
 		for (PeriodoLancamentoParcial periodoAtual : this.periodos) {
 

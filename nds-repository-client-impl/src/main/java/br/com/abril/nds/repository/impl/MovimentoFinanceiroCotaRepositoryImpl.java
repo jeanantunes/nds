@@ -1137,7 +1137,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		boolean indWhere = false;
 		
 		hql.append(" m.data as dataLancamento, ")
-		   .append(" m.tipoMovimento.descricao as tipoMovimento, ")
+		   .append(" m.tipoMovimento.grupoMovimentoFinaceiro as tipoMovimento, ")
 		   .append(" m.valor as valor, ")
 		   .append(" m.observacao as observacoes ")
 		   .append(" from MovimentoFinanceiroCota m ")

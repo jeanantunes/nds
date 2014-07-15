@@ -35,6 +35,8 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,7 @@ import org.w3c.dom.NodeList;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
+import br.com.abril.nds.dto.ItemDanfe;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
@@ -2095,6 +2098,5 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional
 	public Integer qtdeNota(Long idConferenciaCota) {		
 		return this.notaFiscalRepository.qtdeNota(idConferenciaCota);
-	}
-	
+	}	
 }

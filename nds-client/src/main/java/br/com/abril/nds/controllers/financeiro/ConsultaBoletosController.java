@@ -283,7 +283,7 @@ public class ConsultaBoletosController extends BaseController {
 		}
 
 		this.httpResponse.setContentType("application/pdf");
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto" + nossoNumero + ".pdf");
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(b);

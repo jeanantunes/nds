@@ -72,14 +72,15 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		
 		View view = couchDbClient.view("importacao/porTipoDocumento");
 		
-		view.key(inputModel.getRouteInterface().getName());
+		view.startKey(inputModel.getRouteInterface().getName(), null);
+		view.endKey(inputModel.getRouteInterface().getName(), "");
 		view.limit(couchDbProperties.getBachSize());
 		view.includeDocs(true);
-		ViewResult<String, Void, ?> result = null;
+		ViewResult<Object[], Void, ?> result = null;
 		
 		try {
 			
-			result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
+			result = view.queryView(Object[].class, Void.class, classByTipoInterfaceEnum);
 			
 		} catch(org.lightcouch.NoDocumentException e){
 			//Nao ha informacoes a serem processadas
@@ -171,7 +172,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			view.includeDocs(true);
 			
 			try {
-				result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
+				result = view.queryView(Object[].class, Void.class, classByTipoInterfaceEnum);
 			} catch(org.lightcouch.NoDocumentException e) {
 				//Nao ha mais informacoes a serem processadas
 				break;
