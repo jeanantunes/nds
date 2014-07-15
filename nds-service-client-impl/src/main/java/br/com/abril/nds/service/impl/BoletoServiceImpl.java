@@ -1859,7 +1859,11 @@ public class BoletoServiceImpl implements BoletoService {
     @Transactional
     public byte[] gerarImpressaoBoleto(final String nossoNumero) throws IOException, ValidationException {
         
-        return this.gerarImpressaoBoleto(boletoRepository.obterPorNossoNumero(nossoNumero,null,false), null);
+        final List<PoliticaCobranca> politicasCobranca = 
+                politicaCobrancaRepository.obterPoliticasCobranca(
+                        Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
+        
+        return this.gerarImpressaoBoleto(boletoRepository.obterPorNossoNumero(nossoNumero,null,false), politicasCobranca);
     }
     
     @Override
