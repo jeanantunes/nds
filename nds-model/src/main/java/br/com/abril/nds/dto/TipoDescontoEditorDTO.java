@@ -23,7 +23,7 @@ public class TipoDescontoEditorDTO implements Serializable {
 	
 	private Date dataAlteracao;
 	
-	private Long usuarioId;
+	private BigInteger usuarioId;
 	
 	private String nomeUsuario;
 	
@@ -95,11 +95,11 @@ public class TipoDescontoEditorDTO implements Serializable {
 		this.dataAlteracao = dataAlteracao;
 	}
 
-	public Long getUsuarioId() {
+	public BigInteger getUsuarioId() {
 		return usuarioId;
 	}
 
-	public void setUsuarioId(Long usuarioId) {
+	public void setUsuarioId(BigInteger usuarioId) {
 		this.usuarioId = usuarioId;
 	}
 

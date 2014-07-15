@@ -335,12 +335,10 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			.append(" EDITOR_ID as editorId, ")
 			.append(" e.CODIGO as codigoEditor, ")
 			.append(" coalesce(p.nome_fantasia, p.razao_social, p.nome, '') as nomeEditor, ")
-			.append(" dados.USUARIO_ID as idTipoDesconto, ")
-			.append(" count(COTA_ID) as qtdCotas ");
+			.append(" dados.USUARIO_ID as usuarioId, ")
+			.append(" coalesce(count(COTA_ID), -1) as qtdCotas ");
 		
 		queryFromTipoDescontoEditor(hql);
-		
-		hql.append(" GROUP BY dados.DESCONTO_ID ");
 		
 		Query q = getSession().createSQLQuery(hql.toString());
 
@@ -365,9 +363,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 		
 		queryFromTipoDescontoEditor(hql);
 		
-		hql.append(" GROUP BY dados.DESCONTO_ID ")
-			.append(" ) rs1 ");
-		
+		hql.append(" ) rs1 ");
 		
 		Query q = getSession().createSQLQuery(hql.toString());
 		
@@ -382,11 +378,16 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			.append("	SELECT DESCONTO_ID, EDITOR_ID, hdcpe.USUARIO_ID, COTA_ID ")
 			.append("	FROM HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe ")	 
 			.append("	where editor_id is not null ")
+			.append(" UNION ")
+			.append(" 	SELECT DESCONTO_ID, e.ID as EDITOR_ID, 1 as USUARIO_ID, null as COTA_ID ")
+			.append(" 	from editor e ")
 			.append(" ) as dados ")  
 			.append(" JOIN DESCONTO d on (dados.DESCONTO_ID=d.ID) ")
 			.append(" JOIN USUARIO u on (dados.USUARIO_ID=u.ID) ")
 			.append(" LEFT OUTER JOIN EDITOR e on (dados.EDITOR_ID=e.ID) ")
-			.append(" LEFT JOIN PESSOA p on p.id = e.JURIDICA_ID ");
+			.append(" LEFT JOIN PESSOA p on p.id = e.JURIDICA_ID ")
+			.append(" GROUP BY dados.DESCONTO_ID ");
+				
 	}
 
 }

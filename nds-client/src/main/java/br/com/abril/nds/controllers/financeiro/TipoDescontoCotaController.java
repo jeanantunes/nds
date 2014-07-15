@@ -78,6 +78,8 @@ public class TipoDescontoCotaController extends BaseController {
 	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_SESSION_ATTRIBUTE = "filtroPesquisaPorGeral";
 
 	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "filtroPesquisaPorCota";
+	
+	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_EDITOR_SESSION_ATTRIBUTE = "filtroPesquisaPorEditor";
 
 	@Path("/")
 	public void index() {}
@@ -272,21 +274,25 @@ public class TipoDescontoCotaController extends BaseController {
 
 		FiltroDTO filtro = null;
 
-		if(FiltroTipoDescontoDTO.class.equals(clazz)){
+		if(FiltroTipoDescontoDTO.class.equals(clazz)) {
 
 			FiltroTipoDescontoDTO filtroSessao =
 					(FiltroTipoDescontoDTO) this.session.getAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_SESSION_ATTRIBUTE);
 
 			filtro = filtroSessao;				
-		}
-		else if (FiltroTipoDescontoCotaDTO.class.equals(clazz)){
+		} else if (FiltroTipoDescontoCotaDTO.class.equals(clazz)) {
 
 			FiltroTipoDescontoCotaDTO filtroSessao =
 					(FiltroTipoDescontoCotaDTO) this.session.getAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE);
 
 			filtro = filtroSessao;
-		}
-		else if (FiltroTipoDescontoProdutoDTO.class.equals(clazz)){
+		} else if (FiltroTipoDescontoEditorDTO.class.equals(clazz)) {
+
+			FiltroTipoDescontoEditorDTO filtroSessao =
+					(FiltroTipoDescontoEditorDTO) this.session.getAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_EDITOR_SESSION_ATTRIBUTE);
+
+			filtro = filtroSessao;
+		} else if (FiltroTipoDescontoProdutoDTO.class.equals(clazz)) {
 
 			FiltroTipoDescontoProdutoDTO filtroSessao =
 					(FiltroTipoDescontoProdutoDTO) this.session.getAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_PRODUTO_SESSION_ATTRIBUTE);
@@ -368,13 +374,13 @@ public class TipoDescontoCotaController extends BaseController {
 		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroTipoDescontoEditorDTO.OrdenacaoColunaConsulta.values(), sortname));
 
 		FiltroTipoDescontoEditorDTO filtroSessao = (FiltroTipoDescontoEditorDTO) 
-				this.session.getAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE);
+				this.session.getAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_EDITOR_SESSION_ATTRIBUTE);
 
 		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
 			filtro.getPaginacao().setPaginaAtual(1);
 		}
 
-		session.setAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE, filtro);
+		session.setAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_EDITOR_SESSION_ATTRIBUTE, filtro);
 
 		return filtro;
 	}

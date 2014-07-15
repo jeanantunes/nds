@@ -258,7 +258,7 @@ var descontoEditorController = $.extend(true,{
 				align : 'center'
 			}, {
 				display : 'Cota(s)',
-				name : 'cotas',
+				name : 'qtdCotas',
 				width : 180,
 				sortable : true,
 				align : 'left'
