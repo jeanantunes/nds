@@ -183,8 +183,8 @@ public class NaturezaOperacaoServiceImpl implements NaturezaOperacaoService {
 
 	@Override
 	@Transactional
-	public NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoOperacao tipoOperacao) {
-		return naturezaOperacaoRepository.obterNaturezaOperacao(tipoAtividade, tipoDestinatario, tipoOperacao, false, false);
+	public NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario, TipoOperacao tipoOperacao) {
+		return naturezaOperacaoRepository.obterNaturezaOperacao(tipoAtividade, tipoEmitente, tipoDestinatario, tipoOperacao, false, false, false);
 	}
 
 	@Override
