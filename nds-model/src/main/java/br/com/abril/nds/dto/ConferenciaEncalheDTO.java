@@ -7,7 +7,7 @@ import java.util.Date;
 
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 
-public class ConferenciaEncalheDTO implements Serializable {
+public class ConferenciaEncalheDTO implements Serializable, Comparable<ConferenciaEncalheDTO> {
 
 	private static final long serialVersionUID = -6012294358522142934L;
 	
@@ -372,5 +372,28 @@ public class ConferenciaEncalheDTO implements Serializable {
 		} else if (!idProdutoEdicao.equals(other.idProdutoEdicao))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(ConferenciaEncalheDTO o) {
+		
+		if(o == null) {
+			return 1;
+		}
+		
+		if(this.codigoSM == null && o.getCodigoSM() == null) {
+			return 0;
+		}
+		
+		if(this.codigoSM != null && o.getCodigoSM() == null) {
+			return 1;
+		}
+		
+		if(this.codigoSM == null && o.getCodigoSM() != null) {
+			return -1;
+		}
+		
+		return this.codigoSM.compareTo(o.getCodigoSM());
+		
 	}
 }

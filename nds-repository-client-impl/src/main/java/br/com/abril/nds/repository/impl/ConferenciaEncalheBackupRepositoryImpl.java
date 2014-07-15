@@ -129,6 +129,8 @@ public class ConferenciaEncalheBackupRepositoryImpl extends AbstractRepositoryMo
 		
 		sql.append(" COTA.NUMERO_COTA = :numeroCota ");
 		
+		sql.append(" ORDER BY CH_ENCALHE.DATA_RECOLHIMENTO, CH_ENCALHE.SEQUENCIA ");
+		
 		Query query = getSession().createSQLQuery(sql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		
 		((SQLQuery)query).addScalar("idConferenciaEncalhe", StandardBasicTypes.LONG);
