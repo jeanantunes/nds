@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 public class NotaFiscalDTO implements Serializable {
 	
@@ -20,6 +21,14 @@ public class NotaFiscalDTO implements Serializable {
 	
 	protected String chaveAcesso;
 
+	protected String modelo;
+	
+	protected String cnpj;
+	
+	protected Date dataEmissao;
+	
+	protected Long codigoUF;	
+	
 	public Long getId() {
 		return id;
 	}
@@ -74,5 +83,37 @@ public class NotaFiscalDTO implements Serializable {
 
 	public void setChaveAcesso(String chaveAcesso) {
 		this.chaveAcesso = chaveAcesso;
+	}
+
+	public String getModelo() {
+		return modelo;
+	}
+
+	public void setModelo(String modelo) {
+		this.modelo = modelo;
+	}
+
+	public String getCnpj() {
+		return cnpj;
+	}
+
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
+
+	public Date getDataEmissao() {
+		return dataEmissao;
+	}
+
+	public void setDataEmissao(Date dataEmissao) {
+		this.dataEmissao = dataEmissao;
+	}
+
+	public Long getCodigoUF() {
+		return codigoUF;
+	}
+
+	public void setCodigoUF(Long codigoUF) {
+		this.codigoUF = codigoUF;
 	}
 }

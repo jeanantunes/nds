@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.NfeDTO;
+import br.com.abril.nds.dto.NotaFiscalDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
@@ -1229,27 +1230,34 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<NotaFiscal> obterNotasPeloItensNotas(List<Long> listaIdsItens) {
+	public List<NotaFiscalDTO> obterNotasPeloItensNotas(List<Long> produtoEdicoesIds) {
 		
 		StringBuffer hql = new StringBuffer("");
 		
-		hql.append(" select nf ");		
-		hql.append(" from NotaFiscal nf ");
-		hql.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ");
-		hql.append(" JOIN nfi.detalhesNotaFiscal as det ");
+		hql.append(" select  ");
+		hql.append(" nfef.serie as serie,  ");
+		hql.append(" nfef.chaveAcesso  ");
+		hql.append(" nfef.cnpj as cnpj,  ");
+		hql.append(" nfef.modeloDocumentoFiscal as modelo,  ");
+		hql.append(" nfef.dataEmissao as dataEmissao ");
+		hql.append(" FROM NotaFiscalEntradaFornecedor as nfef ");
+		hql.append(" JOIN nfef.itens as itens ");
 		hql.append(" WHERE 1=1 ");
+		hql.append(" AND nfe.chaveAcesso is null");
+		hql.append(" AND det.id in (:produtoEdicoesIds) ");		
 		
-		if(listaIdsItens != null) {
-			hql.append(" AND det.id in (:idsItens) ");
+		if(produtoEdicoesIds != null) {
+			hql.append(" AND nfe.id in (:produtoEdicoesIds) ");
 		}
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		if(listaIdsItens != null) {
-			query.setParameterList("idsItens", listaIdsItens);
+		if(produtoEdicoesIds != null) {
+			query.setParameterList("produtoEdicoesIds", produtoEdicoesIds);
 		}
 		
-		return query.list();
+		query.setResultTransformer(new AliasToBeanResultTransformer(NotaFiscalDTO.class));
 		
+		return query.list();
 	}
 }
