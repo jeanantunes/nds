@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
+import br.com.abril.nds.dto.ItemDanfe;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
@@ -1227,4 +1228,27 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 		 
 	}
+	
+
+	public List<NotaFiscal> obterNotasPeloItens(Long idNotaFiscal) {
+		
+		StringBuffer hql = new StringBuffer("")
+		
+		.append(" select ")		
+		.append(" from NotaFiscal nf ")
+		
+		.append(" where ")
+		
+		.append(" item.notaFiscal.id = :idNotaFiscal ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ItemDanfe.class));
+		
+		query.setParameter("idNotaFiscal", idNotaFiscal);
+		
+		return query.list();
+		
+	}
+	
 }

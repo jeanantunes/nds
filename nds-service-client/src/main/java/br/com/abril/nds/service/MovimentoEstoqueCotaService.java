@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -50,4 +51,6 @@ public interface MovimentoEstoqueCotaService {
 	void envioConsignadoNotaCancelada(NotaFiscal notaFiscalCancelada);
 	
 	Date obterDataUltimaMovimentacaoReparteExpedida(Integer numeroCota, Long idProdutoEdicao);
+
+	void atualizarPrecoProdutoExpedido(final Long id,final BigDecimal precoProduto);
 }

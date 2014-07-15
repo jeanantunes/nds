@@ -14,10 +14,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
@@ -1225,8 +1225,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				controleConferenciaEncalheCota == null ? null : controleConferenciaEncalheCota.getId(), 
 				indConferenciaContingencia, 
 				datasRecolhimento);
-				
-		final Cota cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
+		
+		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		this.debitoCreditoCotaService.carregarDadosDebitoCreditoDaCota(infoConfereciaEncalheCota, cota, datasRecolhimento);
 		
@@ -1270,7 +1270,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			List<ConferenciaEncalheDTO> conferencias = conferenciaEncalheBackupRepository.obterDadosConferenciasEncalheBackup(numeroCota, dataOperacao);
 			
 			if(conferencias!=null) {
-				info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>(conferencias));
+				info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>(conferencias));
 			}
 			
 			return;
@@ -1282,13 +1282,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConfEncalheCota, null);
 			
 			if(listaConferenciaEncalheDTO != null) {
-				info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>(listaConferenciaEncalheDTO));
+				info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>(listaConferenciaEncalheDTO));
 			}
 			
 		} 
 		
 		if(info.getListaConferenciaEncalhe() == null) {
-			info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>());
+			info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>());
 		}
 		
 		if(indConferenciaContingencia) {
@@ -1937,7 +1937,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		this.abaterNegociacao(listaConferenciaEncalhe, cota.getId(), usuario);
 
-		Set<String> nossoNumeroCollection = new LinkedHashSet<String>();
+		Set<String> nossoNumeroCollection = new HashSet<String>();
 		
 		final DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 
