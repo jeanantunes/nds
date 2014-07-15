@@ -23,13 +23,13 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.CFOPRepository;
@@ -107,10 +107,6 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		
 		TipoAtividade tipoAtividade = this.distribuidorService.tipoAtividade();
 
-		GrupoNotaFiscal grupoNotaFiscal = GrupoNotaFiscal.NF_TERCEIRO;
-		
-		boolean isContribuinte = true;
-
 		notaFiscal.setCota(cota);
 		notaFiscal.setDataEmissao(new Date());
 		notaFiscal.setDataExpedicao(new Date());
@@ -124,18 +120,12 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 
 			ControleConferenciaEncalheCota conferenciaEncalheCota = this.conferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
 
-			if (conferenciaEncalheCota != null 
-					&& conferenciaEncalheCota.getNotaFiscalEntradaCota() != null 
-					&& !conferenciaEncalheCota.getNotaFiscalEntradaCota().isEmpty()) {
-				
-				grupoNotaFiscal = GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR;
-			}
-
 			notaFiscal.setControleConferenciaEncalheCota(conferenciaEncalheCota);
+			
 		}
 		
 		//FIXME: Ajustar a funcionalidade de NF-e de Terceiros 
-		NaturezaOperacao tipoNotaFiscal = this.naturezaOperacaoService.obterNaturezaOperacao(tipoAtividade, TipoDestinatario.FORNECEDOR, TipoOperacao.ENTRADA);
+		NaturezaOperacao tipoNotaFiscal = this.naturezaOperacaoService.obterNaturezaOperacao(tipoAtividade, TipoEmitente.COTA, TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA);
 
 		if (tipoNotaFiscal == null) {
 			

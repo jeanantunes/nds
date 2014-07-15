@@ -298,24 +298,28 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 	}
 
 	@Override
-	public NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario
-			, TipoOperacao tipoOperacao, boolean devolucaoSimbolica, boolean vendaConsignado) {
+	public NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoEmitente tipoEmitente
+			, TipoDestinatario tipoDestinatario, TipoOperacao tipoOperacao, boolean devolucaoSimbolica
+			, boolean vendaConsignado, Boolean gerarCotaNaoExigeNFe) {
 		
-		StringBuilder sql = new StringBuilder();
-		sql.append(" from NaturezaOperacao nat ")
-		   .append(" where nat.tipoAtividade = :tipoAtividade ")
-		   .append(" and nat.tipoDestinatario = :tipoDestinatario ")
-		   .append(" and nat.tipoOperacao = :tipoOperacao ")
-		   .append(" and nat.notaFiscalDevolucaoSimbolica = :devolucaoSimbolica ")
-		   .append(" and nat.notaFiscalVendaConsignado = :vendaConsignado ");
+		StringBuilder hql = new StringBuilder();
+		hql.append(" from NaturezaOperacao nat ")
+		   	.append(" where nat.tipoAtividade = :tipoAtividade ")
+		   	.append(" and nat.tipoDestinatario = :tipoDestinatario ")
+		   	.append(" and nat.tipoEmitente = :tipoEmitente ")
+		   	.append(" and nat.tipoOperacao = :tipoOperacao ")
+		   	.append(" and nat.notaFiscalDevolucaoSimbolica = :devolucaoSimbolica ")
+		   	.append(" and nat.notaFiscalVendaConsignado = :vendaConsignado ")
+			.append(" and nat.gerarCotaNaoExigeNFe = :gerarCotaNaoExigeNFe ");
 		
-		
-		Query query = getSession().createQuery(sql.toString());
+		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("tipoAtividade", tipoAtividade);
 		query.setParameter("tipoDestinatario", tipoDestinatario);
+		query.setParameter("tipoEmitente", tipoEmitente);
 		query.setParameter("tipoOperacao", tipoOperacao);
 		query.setParameter("devolucaoSimbolica", devolucaoSimbolica);
 		query.setParameter("vendaConsignado", vendaConsignado);
+		query.setParameter("gerarCotaNaoExigeNFe", (gerarCotaNaoExigeNFe != null && gerarCotaNaoExigeNFe) ? true : false);
 		
 		return (NaturezaOperacao) query.uniqueResult();
 	}
