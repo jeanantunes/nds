@@ -3,6 +3,7 @@ package br.com.abril.nds.model.fiscal.nota;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -46,7 +47,7 @@ public class NotaFiscalReferenciada implements Serializable {
 	@XmlElement(name="refCTe")
 	private String chaveAcessoCTe;
 
-	@EmbeddedId
+	@Embedded
 	@XmlTransient
 	private NotaFiscalReferenciadaNFE notaFiscalReferenciadaNFE;
 	

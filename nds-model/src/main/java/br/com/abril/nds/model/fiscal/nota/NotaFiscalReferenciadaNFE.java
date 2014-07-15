@@ -15,9 +15,9 @@ import javax.xml.bind.annotation.XmlType;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 
-@Embeddable
 @XmlType(name="refNF")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Embeddable
 public class NotaFiscalReferenciadaNFE implements Serializable {
 
 	private static final long serialVersionUID = 2312305291449744935L;

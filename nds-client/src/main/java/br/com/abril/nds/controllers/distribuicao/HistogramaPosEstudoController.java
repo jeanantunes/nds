@@ -51,7 +51,7 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO)
 public class HistogramaPosEstudoController extends BaseController{
 	
-	private String[] faixaReparteInicial = {"0-4","5-9","10-19","20-49","50-9999999"}; 
+	private final String[] faixaReparteInicial = {"0-4","5-9","10-19","20-49","50-9999999","0-999999999"}; 
 	
 	@Autowired
 	private Result result;
@@ -181,20 +181,28 @@ public class HistogramaPosEstudoController extends BaseController{
 		}
 		
 		List<Long> listaIdEdicaoBaseEstudo = histogramaPosEstudoFaixaReparteService.obterIdEdicoesBase(Long.valueOf(estudoId));
+
+		int lFaixas = faixaReparteInicial.length;
+		
+		Integer[][] faixasAgrupadas = new Integer[lFaixas][2];
+		
+		int i = 0;
 		
 		for (String faixas : faixaIterator) {
+			
 			int faixaDe = Integer.parseInt(faixas.split("-")[0]);
+			
 			int faixaAte = Integer.parseInt(faixas.split("-")[1]);
 			
-			HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(faixaDe, faixaAte, estudoId, listaIdEdicaoBaseEstudo);
+			faixasAgrupadas[i][0] = faixaDe;
 			
-			base.add(baseEstudoAnaliseFaixaReparteDTO);
+			faixasAgrupadas[i][1] = faixaAte;
+			
+			i++;
 		}
 		
-        // última faixa
-		HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(0, 999999999, estudoId, listaIdEdicaoBaseEstudo);
-		base.add(baseEstudoAnaliseFaixaReparteDTO);
-		
+		base = this.histogramaPosEstudoFaixaReparteService.obterListaHistogramaPosEstudo(faixasAgrupadas, estudoId, listaIdEdicaoBaseEstudo);
+
 		TableModel<CellModelKeyValue<HistogramaPosEstudoAnaliseFaixaReparteDTO>> tableModel = new TableModel<>();
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(base));

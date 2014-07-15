@@ -45,6 +45,7 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		return (EstoqueProduto) criteria.uniqueResult();
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Long selectForUpdate(Long idProdutoEdicao) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -294,6 +295,23 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		hql.append(" select e.qtde 				")
 		   .append(" from EstoqueProduto e 		")
 		   .append(" join e.produtoEdicao pe 	")
+		   .append(" where pe.id = :idProdutoEdicao ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (BigInteger) query.uniqueResult();
+	}
+	
+	@Override
+	public BigInteger buscarQtdeEstoqueParaTransferenciaParcial(Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select coalesce(e.qtde, 0) + coalesce(e.qtdeSuplementar, 0) + coalesce(e.qtdeDevolucaoEncalhe, 0) + coalesce(e.qtdeDanificado, 0) ")
+		   .append(" from EstoqueProduto e ")
+		   .append(" join e.produtoEdicao pe ")
 		   .append(" where pe.id = :idProdutoEdicao ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
