@@ -59,7 +59,7 @@ public interface NaturezaOperacaoService {
 	
 	NaturezaOperacao obterNaturezaOperacaoPorId(Long idNaturezaOperacao);
 
-	NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoOperacao tipoOperacao);
+	NaturezaOperacao obterNaturezaOperacao(TipoAtividade tipoAtividade, TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario, TipoOperacao tipoOperacao);
 
 	/**
 	 * Metodo especifico para obter a natureza de operacao de devolucao simbolica por destinatario
