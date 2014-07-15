@@ -5,12 +5,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpSession;
 
@@ -571,7 +572,10 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		final Map<String, Object> dados = new HashMap<String, Object>();
 		
-		dados.put("listaConferenciaEncalhe", infoConfereciaEncalheCota.getListaConferenciaEncalhe());
+		List<ConferenciaEncalheDTO> conferenciasOrdenadas = new ArrayList<ConferenciaEncalheDTO>(infoConfereciaEncalheCota.getListaConferenciaEncalhe()); 
+		Collections.sort(conferenciasOrdenadas);
+		
+		dados.put("listaConferenciaEncalhe", conferenciasOrdenadas);
 		
 		dados.put("listaDebitoCredito", this.obterTableModelDebitoCreditoCota(infoConfereciaEncalheCota.getListaDebitoCreditoCota()));
 		
@@ -1854,7 +1858,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	
 	private Set<ConferenciaEncalheDTO> obterCopiaListaConferenciaEncalheCota(final Set<ConferenciaEncalheDTO> oldListaConferenciaEncalheCota) {
 		
-		final Set<ConferenciaEncalheDTO> newListaConferenciaEncalheCota = new HashSet<ConferenciaEncalheDTO>();
+		final Set<ConferenciaEncalheDTO> newListaConferenciaEncalheCota = new TreeSet<ConferenciaEncalheDTO>();
 		
 		for(final ConferenciaEncalheDTO conf : oldListaConferenciaEncalheCota) {
 		
@@ -2616,7 +2620,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		Set<ConferenciaEncalheDTO> lista = info.getListaConferenciaEncalhe();
 		
 		if (lista == null){
-			info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>());
+			info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>());
 		}
 		
 		return info.getListaConferenciaEncalhe();
