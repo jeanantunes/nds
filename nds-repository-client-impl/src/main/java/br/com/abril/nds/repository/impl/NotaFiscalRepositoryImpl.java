@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
-import br.com.abril.nds.dto.ItemDanfe;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
@@ -1229,26 +1228,28 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		 
 	}
 	
-
-	public List<NotaFiscal> obterNotasPeloItens(Long idNotaFiscal) {
+	@SuppressWarnings("unchecked")
+	public List<NotaFiscal> obterNotasPeloItensNotas(List<Long> listaIdsItens) {
 		
-		StringBuffer hql = new StringBuffer("")
+		StringBuffer hql = new StringBuffer("");
 		
-		.append(" select ")		
-		.append(" from NotaFiscal nf ")
+		hql.append(" select nf ");		
+		hql.append(" from NotaFiscal nf ");
+		hql.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ");
+		hql.append(" JOIN nfi.detalhesNotaFiscal as det ");
+		hql.append(" WHERE 1=1 ");
 		
-		.append(" where ")
-		
-		.append(" item.notaFiscal.id = :idNotaFiscal ");
+		if(listaIdsItens != null) {
+			hql.append(" AND det.id in (:idsItens) ");
+		}
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ItemDanfe.class));
-		
-		query.setParameter("idNotaFiscal", idNotaFiscal);
+		if(listaIdsItens != null) {
+			query.setParameterList("idsItens", listaIdsItens);
+		}
 		
 		return query.list();
 		
 	}
-	
 }
