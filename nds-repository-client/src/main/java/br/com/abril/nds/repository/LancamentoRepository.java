@@ -426,5 +426,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	Integer obterRepartePromocionalEdicao(final Long codigoProduto, final Long numeroEdicao );
 	
 	StatusLancamento obterStatusDoPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
-	
+
+	boolean existeLancamentoParaOsStatus(final Long idProdutoEdicao,final StatusLancamento ...statusLancamento );
 }
