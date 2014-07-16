@@ -141,8 +141,7 @@ public class ProdutoEdicaoController extends BaseController {
 		result.include("listaClassificacao",comboClassificacao);
 		
         final List<Brinde> brindes = brindeService.obterBrindes();
-	    
-		result.use(Results.json()).from(brindes, "brindes").recursive().serialize();
+        result.include("brindes",brindes);
     }
 
 	@Post
