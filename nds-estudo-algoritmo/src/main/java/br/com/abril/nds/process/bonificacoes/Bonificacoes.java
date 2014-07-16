@@ -108,6 +108,7 @@ public class Bonificacoes extends ProcessoAbstrato {
 						if (reparteMinimo.compareTo(cota.getReparteMinimoFinal()) > 0) {
 					    	cota.setReparteMinimoFinal(reparteMinimo);
 					    	cota.setReparteCalculado(reparteMinimo, estudo);
+					    	cota.setClassificacao(ClassificacaoCota.BonificacaoParaCotas);
 					    }
 						
 					}

@@ -137,6 +137,22 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		Lancamento lancamento =
 	        this.getLancamentoPrevistoMaisProximo(produtoEdicao, dataGeracaoArquivo, statusLancamento);
 		
+		if(lancamento != null) {
+		BigInteger repartePromocional = BigInteger.valueOf(
+				input.getRepartePromocional());
+		if (null != lancamento.getRepartePromocional() && !lancamento.getRepartePromocional().equals(repartePromocional)) {
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteração do REPARTE PROMOCIONAL"
+							+ " de " + lancamento.getRepartePromocional() 
+							+ " para " + repartePromocional
+							+ " Produto "+codigoProduto
+							+ " Edição " + edicao);
+			lancamento.setRepartePromocional(repartePromocional);
+		}
+		
+		}
+		
 
 	    
 		if (lancamento == null) {
