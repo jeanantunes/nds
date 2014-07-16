@@ -105,8 +105,7 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		this.carregarDadosCombo();
 	}
-
-	                                                                                        /**
+                                                                                       /**
      * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
      */
 	private void carregarDadosCombo() {
@@ -116,7 +115,7 @@ public class ProdutoEdicaoController extends BaseController {
 			listaGrupoProduto.add(new ItemDTO<GrupoProduto,String>(item,item.getNome()));
 		}
 		result.include("listaGrupoProduto",listaGrupoProduto);
-		
+
 		final List<ItemDTO<StatusLancamento,String>> listaStatusLancamento =  new ArrayList<ItemDTO<StatusLancamento,String>>();
 		for (StatusLancamento statusLancamento : StatusLancamento.values()) {
 			
@@ -125,7 +124,7 @@ public class ProdutoEdicaoController extends BaseController {
 					statusLancamento, statusLancamento.getDescricao()));
 		}
 		result.include("listaStatusLancamento", listaStatusLancamento);
-		
+
 		final List<ItemDTO<Long,String>> listaTipoSegmentoProduto =  new ArrayList<ItemDTO<Long,String>>();
 		for (TipoSegmentoProduto tipoSegmentoProduto : tipoSegmentoProdutoService.obterTipoSegmentoProduto()) {
 			listaTipoSegmentoProduto.add(
@@ -133,18 +132,28 @@ public class ProdutoEdicaoController extends BaseController {
 							tipoSegmentoProduto.getId(), tipoSegmentoProduto.getDescricao()));
 		}
 		result.include("listaTipoSegmentoProduto", listaTipoSegmentoProduto);
-		
-		final List<Brinde> brindes = brindeService.obterBrindes();
-		result.include("brindes", brindes);
-		
+
 		final List<TipoClassificacaoProduto> classificacoes = tipoClassificacaoProdutoService.obterTodos();
 		final List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
 		for (TipoClassificacaoProduto tipoClassificacaoProduto : classificacoes) {
 			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
 		}
 		result.include("listaClassificacao",comboClassificacao);
+		
+        final List<Brinde> brindes = brindeService.obterBrindes();
+	    
+		result.use(Results.json()).from(brindes, "brindes").recursive().serialize();
     }
 
+	@Post
+	@Path("/obterComboBrindes.json")
+	public void obterComboBrindes(){
+	    
+		final List<Brinde> brindes = brindeService.obterBrindes();
+	    
+		result.use(Results.json()).from(brindes, "result").recursive().serialize();
+	}
+	
 	@Post
 	public void pesquisarProdutoCodBarra(String codBarra){
 		
