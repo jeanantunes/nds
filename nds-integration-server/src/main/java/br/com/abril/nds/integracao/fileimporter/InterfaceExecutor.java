@@ -109,6 +109,8 @@ public class InterfaceExecutor {
 	@Autowired
 	private ParametroDistribuidorRepository parametroDistribuidorRepository;
 	
+
+	
 	@Autowired
 	private FixedFormatManager ffm;
 	
@@ -182,7 +184,7 @@ public class InterfaceExecutor {
 		try {
 			// Executa interface
 			if (interfaceEnum.equals(InterfaceEnum.EMS0134)) {
-				this.executarInterfaceImagem();
+				this.executarInterfaceImagem(interfaceExecucao);
 			} else if (interfaceEnum.equals(InterfaceEnum.EMS0185)) {
 				this.executarInterfaceCorreios();
 			} else if (interfaceEnum.getTipoInterfaceEnum().equals(TipoInterfaceEnum.DB)) {
@@ -347,7 +349,7 @@ public class InterfaceExecutor {
 	 * Executa a interface de carga de imagens EMS0134.
 	 */
 	
-	private void executarInterfaceImagem() {
+	private void executarInterfaceImagem(InterfaceExecucao interfaceExecucao) {
 		
 		String diretorio = parametroSistemaRepository.getParametro("IMAGE_DIR");
 		CouchDbClient couchDbClient = this.getCouchDbClientInstance("capas");
@@ -358,14 +360,36 @@ public class InterfaceExecutor {
 		    }
 		});
 		
-		for (File imagem: imagens) {
+		File[] imagensAux = imagens.clone();
+		
+		LogExecucao logExecucao =  new LogExecucao();
+		logExecucao.setCodigoDistribuidor("0");
+		logExecucao.setDataInicio(new Date());
+		logExecucao.setDataFim(new Date());
+		logExecucao.setNomeLoginUsuario("admin");
+		logExecucao.setStatus(StatusExecucaoEnum.AVISO);
+		logExecucao.setInterfaceExecucao(interfaceExecucao);
+		
+		
+		
+
+		
+		//for (File imagem: imagens) {
+		for (int i =0; i< imagens.length; i++) {
 			
 			IntegracaoDocument doc = null;
-			String id = imagem.getName().substring(0, imagem.getName().indexOf(".")); 
+			String id = imagens[i].getName().substring(0, imagens[i].getName().indexOf(".")); 
 			
 			try {
 				
 				doc = couchDbClient.find(IntegracaoDocument.class, id);
+				
+				
+				if(imagensAux[i].delete()){
+					this.logarArquivo(logExecucao,"","",StatusExecucaoEnum.SUCESSO,"Imagem excluída com sucesso.");
+				}else{
+				    this.logarArquivo(logExecucao,"","",StatusExecucaoEnum.FALHA,"Erro na exclução da imagem.");
+				}
 			
 			} catch (NoDocumentException e) {
 				
@@ -380,21 +404,21 @@ public class InterfaceExecutor {
 			
 				FileInputStream in = null;
 				try {
-					in = new FileInputStream(imagem);	
+					in = new FileInputStream(imagens[i]);	
 					
-					couchDbClient.saveAttachment(in, imagem.getName().replace(".jpeg", ".jpg"), "image/jpeg", doc.get_id(), doc.get_rev());
+					couchDbClient.saveAttachment(in, imagens[i].getName().replace(".jpeg", ".jpg"), "image/jpeg", doc.get_id(), doc.get_rev());
 					
 					if (null != in) {
 						try {
 							
 							in.close();
 							
-							String nomeArquivo = imagem.getName();
+							String nomeArquivo = imagens[i].getName();
 							
-							if(imagem.delete()){
-								this.logarArquivo(StatusExecucaoEnum.AVISO, "Imagem excluída com sucesso."+nomeArquivo);
+							if(imagensAux[i].delete()){
+								this.logarArquivo(logExecucao,"","",StatusExecucaoEnum.SUCESSO,"Imagem excluída com sucesso.");
 							}else{
-							    this.logarArquivo(StatusExecucaoEnum.AVISO, "Erro na exclução da imagem."+nomeArquivo);
+							    this.logarArquivo(logExecucao,"","",StatusExecucaoEnum.FALHA,"Erro na exclução da imagem.");
 							}
 							
                         } catch (IOException ex) {
@@ -759,7 +783,7 @@ public class InterfaceExecutor {
 	}
 	
     private void logarArquivo(StatusExecucaoEnum status, String mensagem) {
-        this.logarArquivo(null, null, null, status, mensagem);
+        this.logarArquivo(null, "", "", status, mensagem);
     }
 	/**
 	 * Loga o processamento de um arquivo
@@ -771,6 +795,9 @@ public class InterfaceExecutor {
 			this.processadoComSucesso = false;
 		}
 		
+		if(distribuidor==null || distribuidor.trim().equals("")){
+			distribuidor = "0";
+		}
 		
 		LogExecucaoArquivo logExecucaoArquivo = new LogExecucaoArquivo();
 		logExecucaoArquivo.setLogExecucao(logExecucao);
@@ -778,6 +805,8 @@ public class InterfaceExecutor {
 		logExecucaoArquivo.setDistribuidor(Integer.valueOf(distribuidor));
 		logExecucaoArquivo.setStatus(status);
 		logExecucaoArquivo.setMensagem(StringUtils.abbreviate(mensagem, 500));
+		
+		this.logExecucaoRepository.inserir(logExecucao);
 		
 		this.logExecucaoArquivoRepository.inserir(logExecucaoArquivo);
 	}
