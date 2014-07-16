@@ -139,6 +139,10 @@ public class ProdutoEdicaoController extends BaseController {
 			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
 		}
 		result.include("listaClassificacao",comboClassificacao);
+		
+        final List<Brinde> brindes = brindeService.obterBrindes();
+	    
+		result.use(Results.json()).from(brindes, "brindes").recursive().serialize();
     }
 
 	@Post
