@@ -756,12 +756,8 @@ public class NFeServiceImpl implements NFeService {
 			
 		}
 		
-		/**
-		 * TODO fazer a associação da referenciada
-		 */ 
-		
 		if(naturezaOperacao.isGerarNotasReferenciadas()){
-			// this.gerarNotaFiscalReferenciada(notasFiscais);
+			this.gerarNotaFiscalReferenciada(notasFiscais);
 		}
 		
 	}
@@ -1166,7 +1162,9 @@ public class NFeServiceImpl implements NFeService {
 		}	
     }
 	
-	private NotaFiscalReferenciada gerarNotaFiscalReferenciada(List<NotaFiscal> notaFiscais) {
+	private void gerarNotaFiscalReferenciada(List<NotaFiscal> notaFiscais) {
+		
+		List<NotaFiscalReferenciada> listaNotaFiscalReferenciadas = new ArrayList<>();
 		
 		NotaFiscalReferenciada notaReferenciada = null;
 		
@@ -1180,10 +1178,9 @@ public class NFeServiceImpl implements NFeService {
 			
 			List<NotaFiscalDTO> notaFiscalDTOs = this.notaFiscalRepository.obterNotasPeloItensNotas(produtoEdicoesIds);
 
+			NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWrapper = new NotaFiscalReferenciadaWrapper();
 			for (NotaFiscalDTO notaFiscalDTO : notaFiscalDTOs) {
-				NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWrapper = new NotaFiscalReferenciadaWrapper();
 				notaReferenciada = new NotaFiscalReferenciada();
-				
 				if(notaReferenciada.getNotaFiscalReferenciadaNFE() != null){
 					NotaFiscalReferenciadaNFE notaFiscalReferenciadaNFE = new NotaFiscalReferenciadaNFE();
 					notaReferenciada.setNotaFiscalReferenciadaNFE(notaFiscalReferenciadaNFE);
@@ -1196,18 +1193,17 @@ public class NFeServiceImpl implements NFeService {
 				notaReferenciada.getNotaFiscalReferenciadaNFE().setModelo(notaFiscalDTO.getModelo());
 				notaReferenciada.getNotaFiscalReferenciadaNFE().setNumeroDocumentoFiscal(notaFiscalDTO.getNumero());
 				notaReferenciada.getNotaFiscalReferenciadaNFE().setSerie(notaFiscalDTO.getSerie());
-				// notaFiscalReferenciadaWrapper.setListReferenciadas(notaReferenciada);
-				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNotaFiscalReferenciada(notaFiscalReferenciadaWrapper);
 				
 				NotaFiscalReferenciadaPK pk = new NotaFiscalReferenciadaPK();
 				pk.setChaveAcesso(notaFiscalDTO.getChaveAcesso());
 				pk.setNotaFiscal(notaFiscal);
-
 				notaReferenciada.setPk(pk);
-
+				listaNotaFiscalReferenciadas.add(notaReferenciada);
+					
 			}
+			notaFiscalReferenciadaWrapper.setListReferenciadas(listaNotaFiscalReferenciadas);
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNotaFiscalReferenciada(notaFiscalReferenciadaWrapper);
 		}
 		
-		return notaReferenciada;
 	}
 }
