@@ -23,11 +23,11 @@ $(function() {
     }
   });
 
-function mostraDados(){
-	$('.detalhesDados').show();
+function mostraDados_analiseParcial(){
+	analiseParcialController.montarDadosDetalhesEdicoesBases();
 	}
-function escondeDados(){
-	$('.detalhesDados').hide();
+function escondeDados_analiseParcial(){
+	$('.detalhesDados-analiseParcial').hide();
 	}
 	
 </script>
@@ -44,9 +44,9 @@ function escondeDados(){
 .class_media{width:35px; color:#F00; font-weight:bold;}
 .class_vlrs{width:35px;}
 .class_vda{width:35px; color:#F00; font-weight:bold;}
-.detalhesDados{position:absolute; display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); width: 978px;}
+.detalhesDados-analiseParcial{position:absolute; display:none; background:#fff; margin-left: 265px; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); width: 978px;}
+
 <c:if test="${estudo.idEstudoOrigemCopia != null}">
-.detalhesDados{margin-left: 62px;}
 </c:if>
 #tabelaDetalheAnalise tr { line-height: normal; }
 .class_linha_impar {background:#f0f0f0; }
@@ -114,66 +114,26 @@ table.dadosTab { margin-left: 370px;}
                 <a href="javascript:;" class="ui-icon ui-icon-close">&nbsp;</a></span>
 				<b>Base de Estudo < evento > com < status >.</b></p>
 	</div>
-
-    	<div class="detalhesDados">
-            <div style="float: right;"><a href="javascript:;" onclick="escondeDados();"><img src="images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" /></a></div>
-            <table border="0" cellpadding="2" cellspacing="2" class="dadosTab" id="tabelaDetalheAnalise">
-                <tr class="class_linha_impar">
-                    <td><strong>Código:</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="class_linha_par">
-                    <td><strong>Produto:</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="class_linha_impar" id="edicoes">
-                    <td><strong>Edição:</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="class_linha_par" id="dataLancamentos">
-                    <td><strong>Data Lançamento:</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="class_linha_impar" id="repartes">
-                    <td><strong>Reparte:</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="class_linha_par" id="vendas">
-                    <td><strong>Venda:</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
+		
+    	<div class="detalhesDados-analiseParcial" style="margin-left: 0px;">
+            
+            <div style="float: right;">
+            	<a href="javascript:;" onclick="escondeDados_analiseParcial();">
+            		<img src="images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" />
+            	</a>
+           	</div>
+           	
+            <table border="0" cellpadding="2" cellspacing="2" style="margin-left: 265px;" class="dadosTab" id="tabelaDetalheAnalise">
+                <tr class="class_linha_impar" id="analiseParcialPopUpCodProduto"></tr>
+                <tr class="class_linha_par" id="analiseParcialPopUpNomeProduto"></tr>
+                <tr class="class_linha_impar" id="analiseParcialPopUpNumeroEdicao"></tr>
+                <tr class="class_linha_par" id="analiseParcialPopUpDatalancamento"></tr>
+                <tr class="class_linha_impar" id="analiseParcialPopUpReparte"></tr>
+                <tr class="class_linha_par" id="analiseParcialPopUpVenda"></tr>
   	        </table>
+  	        
         </div>
+        
 		<fieldset class="classFieldset">
 			<legend> Pesquisar </legend>
 			<input type="hidden" id="produtoEdicaoId" value="${estudo.produtoEdicao.id}" />
@@ -268,7 +228,7 @@ table.dadosTab { margin-left: 370px;}
 					    </span>
                     </td>
 					<td align="center">
-                        <a href="javascript:;" onclick="mostraDados();">
+                        <a href="javascript:;" onclick="mostraDados_analiseParcial();">
                             <img src="${pageContext.request.contextPath}/images/ico_boletos.gif" title="Exibir Detalhes" width="19" height="15" border="0" />
                         </a>
                     </td>

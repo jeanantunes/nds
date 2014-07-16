@@ -3319,7 +3319,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     }
     
     @Override
-    public CotaDTO buscarCotaPorNumero(final Integer numeroCota, final String codigoProduto) {
+    public CotaDTO buscarCotaPorNumero(final Integer numeroCota, final String codigoProduto, final Long idClassifProdEdicao) {
         
         final StringBuilder sql = new StringBuilder();
         sql.append(" select ");
@@ -3341,18 +3341,20 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append("  fx.qtde_exemplares fxQuantidadeExemplares ");
         sql.append(" from cota");
         sql.append("   left join pessoa pe on pe.id = cota.pessoa_id");
-        sql.append("   left join produto p on p.codigo = :codigoProduto");
+        sql.append("   left join produto p on p.codigo_icd = :codigoProduto");
         sql.append("   left join ranking_segmento rks on rks.cota_id = cota.id and p.tipo_segmento_produto_id = rks.tipo_segmento_produto_id ");
         sql.append("   left join ranking_faturamento rkf on rkf.cota_id = cota.id ");
-        sql.append("   left join mix_cota_produto mix on mix.id_cota = cota.id and p.codigo_icd = mix.codigo_icd");
+        sql.append("   left join mix_cota_produto mix on mix.id_cota = cota.id and p.codigo_icd = mix.codigo_icd and mix.TIPO_CLASSIFICACAO_PRODUTO_ID = :idClassificacao ");
         sql.append("   left join usuario u on u.id = mix.id_usuario ");
-        sql.append("   left join fixacao_reparte fx on fx.id_cota = cota.id and p.codigo_icd = fx.codigo_icd ");
+        sql.append("   left join fixacao_reparte fx on fx.id_cota = cota.id and p.codigo_icd = fx.codigo_icd and fx.ID_CLASSIFICACAO_EDICAO = :idClassificacao ");
         sql.append(" where cota.numero_cota = :numeroCota ");
+        sql.append(" Group By cota.numero_cota ");
         
         final SQLQuery query = getSession().createSQLQuery(sql.toString());
         
         query.setParameter("codigoProduto", codigoProduto);
         query.setParameter("numeroCota", numeroCota);
+        query.setParameter("idClassificacao", idClassifProdEdicao);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
         return (CotaDTO) query.uniqueResult();
