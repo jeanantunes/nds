@@ -23,4 +23,7 @@ public interface ConsultaConsignadoCotaRepository extends Repository<MovimentoEs
 
     public BigDecimal buscarTotalDetalhadoSomado(FiltroConsultaConsignadoCotaDTO filtro);
 
+	public List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhadoPorCota(
+			FiltroConsultaConsignadoCotaDTO filtro);
+
 }

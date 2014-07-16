@@ -48,6 +48,7 @@ import br.com.abril.nds.repository.FixacaoReparteRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.HistogramaPosEstudoFaixaReparteService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -75,15 +76,15 @@ public class EstudoServiceImpl implements EstudoService {
 
 	@Autowired
 	private EstudoCotaGeradoRepository estudoCotaGeradoRepository;
-	
-	@Autowired
-	private EstudoCotaRepository estudoCotaRepository;
 
     @Autowired
     private LancamentoRepository lancamentoRepository;
     
     @Autowired
     private LancamentoService lancamentoService;
+    
+    @Autowired
+    private HistogramaPosEstudoFaixaReparteService histogramaPosEstudoFaixaReparteService;
     
     @Autowired
     private EstudoPDVRepository estudoPDVRepository;
@@ -115,11 +116,28 @@ public class EstudoServiceImpl implements EstudoService {
 	    estudoGeradoRepository.adicionar(estudo);
 	}
 
+	/**
+	 * Verifica se existem edicões bases para estudo
+	 * 
+	 * @param estudoId
+	 * @return boolean
+	 */
+	private boolean isEdicoesBaseEstudo(Long estudoId){
+		
+        List<Long> listaIdEdicaoBaseEstudo = histogramaPosEstudoFaixaReparteService.obterIdEdicoesBase(Long.valueOf(estudoId));
+		
+		boolean isEdicoesBase = (listaIdEdicaoBaseEstudo !=null && !listaIdEdicaoBaseEstudo.isEmpty());
+		
+		return isEdicoesBase;
+	}
+	
 	@Override
 	@Transactional
 	public ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId, Long codigoProduto, Long numeroEdicao) {
 		
-		ResumoEstudoHistogramaPosAnaliseDTO analiseDTO = estudoGeradoRepository.obterResumoEstudo(estudoId);
+		boolean isEdicoesBase = this.isEdicoesBaseEstudo(estudoId);
+		
+		ResumoEstudoHistogramaPosAnaliseDTO analiseDTO = estudoGeradoRepository.obterResumoEstudo(estudoId, isEdicoesBase);
 		
 		if(codigoProduto!= null && numeroEdicao!= null){
 			final Integer reparte = lancamentoService.obterRepartePromocionalEdicao(codigoProduto, numeroEdicao);
@@ -265,6 +283,7 @@ public class EstudoServiceImpl implements EstudoService {
 		estudo.setReparteDistribuir(quantidadeReparte);
 		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 		estudo.setLancamentoID(lancamentoId);
+		estudo.setLiberado(false);
 		
 		return estudoGeradoRepository.merge(estudo);
 	}

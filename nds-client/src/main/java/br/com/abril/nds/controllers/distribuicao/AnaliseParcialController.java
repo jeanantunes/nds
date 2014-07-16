@@ -36,6 +36,7 @@ import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
@@ -90,6 +91,9 @@ public class AnaliseParcialController extends BaseController {
     
     @Autowired
     private EstudoService estudoService;
+    
+    @Autowired
+    private MixCotaProdutoService mixCotaProdutoService;
     
     private static final String EDICOES_BASE_SESSION_ATTRIBUTE = "";
 
@@ -366,5 +370,15 @@ public class AnaliseParcialController extends BaseController {
 	@Rules(Permissao.ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS_ALTERACAO)
 	public void validar(){
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS_ALTERACAO)
+	public void verificarMaxMinCotaMix(Integer numeroCota, String codigoProduto, Long qtdDigitado, Long tipoClassificacaoProduto){
+	    
+	    this.result.use(Results.json()).from(
+	            this.mixCotaProdutoService.verificarReparteMinMaxCotaProdutoMix(
+	                    numeroCota, codigoProduto, qtdDigitado, tipoClassificacaoProduto), 
+	            "result").serialize();
 	}
 }

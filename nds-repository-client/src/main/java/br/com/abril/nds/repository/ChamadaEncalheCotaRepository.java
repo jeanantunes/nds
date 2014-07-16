@@ -36,23 +36,6 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @return BigDecimal
 	 */
 	public BigDecimal obterReparteDaChamaEncalheCota(Integer numeroCota, List<Date> datas, Boolean conferido, Boolean postergado);
-	 
-	/**
-	 * Obtém obtém o reparte referente a chamada encalhe relacionadas a um 
-	 * numeroCota e período de dataRecolhimento.  
-	 * 
-	 * @param cotaId
-	 * @param dataOperacaoDe
-	 * @param dataOperacaoAte
-	 * @param postergado
-	 * 
-	 * @return BigDecimal
-	 */
-	public BigDecimal obterReparteDaChamaEncalheCotaNoPeriodo(
-			Long cotaId, 
-			Date dataOperacaoDe,
-			Date dataOperacaoAte,
-			Boolean postergado);
 	
 	
 	/**

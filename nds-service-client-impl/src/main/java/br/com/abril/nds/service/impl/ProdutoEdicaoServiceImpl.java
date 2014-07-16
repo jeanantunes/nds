@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -79,6 +80,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -175,6 +177,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     @Autowired
     private ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
+    
+    @Autowired
+    private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
     
     @Value("${data_cabalistica}")
     private String dataCabalistica;
@@ -465,6 +470,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Número da edição ja cadastra. Escolha outro número.");
         }
         
+        this.validarAlteracaoDePrecoDeCapaDoProdutoEdicao(produtoEdicao, dto);
+        
         // 01 ) Salvar/Atualizar o ProdutoEdicao:
         produtoEdicao = this.salvarProdutoEdicao(dto, produtoEdicao);
         
@@ -501,6 +508,37 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);
         
+    }
+    
+    private void validarAlteracaoDePrecoDeCapaDoProdutoEdicao(final ProdutoEdicao produtoEdicao, final ProdutoEdicaoDTO produtoEdicaoDTO){
+    	
+    	if(produtoEdicao.getId() == null){
+    		return;
+    	}
+    	
+    	final StatusLancamento statusLancamento = lService.obterStatusDoPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
+    	
+    	final boolean permiteAlteracaoDePrecoSemValidacao =
+    					Arrays.asList(StatusLancamento.PLANEJADO,
+				    	    		StatusLancamento.CONFIRMADO,
+				    	    		StatusLancamento.FURO,
+				    	    		StatusLancamento.EM_BALANCEAMENTO,
+				    	    		StatusLancamento.BALANCEADO,
+				    	    		StatusLancamento.ESTUDO_FECHADO).contains(statusLancamento);
+    	
+    	if(!permiteAlteracaoDePrecoSemValidacao){
+ 
+    		final boolean precoPrevistoDiferente = (produtoEdicao.getPrecoPrevisto().compareTo(produtoEdicaoDTO.getPrecoPrevisto())!=0);
+    		
+    		final boolean precoCustoDiferente = (produtoEdicao.getPrecoVenda().compareTo(produtoEdicaoDTO.getPrecoVenda())!=0);
+    		
+    		if(precoPrevistoDiferente || precoCustoDiferente ){
+    			
+    			throw new ValidacaoException(
+    					new ValidacaoVO(TipoMensagem.WARNING,
+    							"Não é permitido alterar os valores de Preço de Capa para produtos com status de [" + statusLancamento.getDescricao()+"]"));
+    		}
+    	}
     }
     
     private void validarRegimeRecolhimento(final ProdutoEdicaoDTO dto, final Lancamento lancamento, final ProdutoEdicao produtoEdicao) {
@@ -1724,5 +1762,61 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         return this.produtoEdicaoRepository.obterProdutosBalanceados(dataLancamento);
     }
     
+    @Override
+    @Transactional(readOnly=true)
+    public BigDecimal obterPrecoEdicaoParaAlteracao(final String codigoProduto, final Long numeroEdicao){
+    	
+    	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto,numeroEdicao);
+    	
+    	if(produtoEdicao == null){
+    		return null;
+    	}
+    	
+    	this.validarLancamentoParaAlteracaoPreco(produtoEdicao.getId());
+    	
+    	return produtoEdicao.getPrecoVenda();
+    }
+    
+    @Override
+    @Transactional
+    public void executarAlteracaoPrecoCapa(final String codigo,final Long numeroEdicao,final BigDecimal precoProduto) {
+    	
+    	if((codigo == null || codigo.isEmpty()) || numeroEdicao == null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe uma publicação para alteração."));
+		}
+		
+		if(precoProduto == null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe um valor para o campo [Novo Preço]."));
+		}
+		
+		ProdutoEdicao produtoEdicao = 
+				produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo,numeroEdicao);
+	
+		if(produtoEdicao == null ){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe uma publicação existente para alteração."));
+		}
+		
+		this.validarLancamentoParaAlteracaoPreco(produtoEdicao.getId());
+		
+		produtoEdicao.setPrecoVenda(precoProduto);
+		produtoEdicaoRepository.merge(produtoEdicao);
+		
+		movimentoEstoqueCotaService.atualizarPrecoProdutoExpedido(produtoEdicao.getId(),precoProduto);
+    }
+
+	private void validarLancamentoParaAlteracaoPreco(final Long idProdutoEdicao) {
+		
+		final boolean publicacaoEditavel = 
+				lancamentoRepository.existeLancamentoParaOsStatus(idProdutoEdicao,
+						StatusLancamento.EXPEDIDO,StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+		
+		if(!publicacaoEditavel){
+			
+			final StatusLancamento statusLancamento = lService.obterStatusDoPrimeiroLancamentoDaEdicao(idProdutoEdicao);
+			
+			throw new  ValidacaoException(TipoMensagem.WARNING, 
+					"O status do lançamento [" +statusLancamento.getDescricao() +"] não permite alteração de preço. ");
+		}
+	}
 }
 

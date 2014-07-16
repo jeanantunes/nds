@@ -214,6 +214,9 @@ fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 
 .bt_integrar a{padding-left:30px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_integrar a:hover{color:#00649F; text-decoration:underline;}
 
+.bt_transf{background:url(../images/ico_negociar.png) no-repeat left center; width:110px;  line-height:39px; float:left;}
+.bt_transf a{padding-left:30px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_transf a:hover{color:#00649F; text-decoration:underline;}
 
 .class_linha_1{background:#f0f0f0; line-height:39px;}
 .class_linha_2{background:#f8f8f8; line-height:39px;	}

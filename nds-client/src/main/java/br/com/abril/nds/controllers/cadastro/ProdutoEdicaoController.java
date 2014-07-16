@@ -29,15 +29,11 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
-import br.com.abril.nds.model.cadastro.ClasseSocial;
-import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.Sexo;
-import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -59,7 +55,6 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -103,23 +98,7 @@ public class ProdutoEdicaoController extends BaseController {
 	@Autowired
 	private ProdutoService prodService;
 	
-	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
-	  
-	private static List<ItemDTO<Sexo,String>> listaSexo =  new ArrayList<ItemDTO<Sexo,String>>();
-	
-	private static List<ItemDTO<FaixaEtaria,String>> listaFaixaEtaria =  new ArrayList<ItemDTO<FaixaEtaria,String>>();
-
-	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
-
-	private static List<ItemDTO<GrupoProduto,String>> listaGrupoProduto =  new ArrayList<ItemDTO<GrupoProduto,String>>();
-	
-	private static List<ItemDTO<StatusLancamento,String>> listaStatusLancamento =  new ArrayList<ItemDTO<StatusLancamento,String>>();
-
-	private static List<ItemDTO<Long,String>> listaTipoSegmentoProduto =  new ArrayList<ItemDTO<Long,String>>();
-
-	private static List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
-	
-    /** Traz a página inicial. */
+	/** Traz a página inicial. */
 	@Get
 	@Path("/")
 	public void index() {
@@ -131,63 +110,35 @@ public class ProdutoEdicaoController extends BaseController {
      * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
      */
 	private void carregarDadosCombo() {
-		
-		listaClasseSocial.clear();
-		for(ClasseSocial item:ClasseSocial.values()){
-			listaClasseSocial.add(new ItemDTO<ClasseSocial,String>(item,item.getDescClasseSocial()));
-		}
-		result.include("listaClasseSocial",listaClasseSocial);
-		
-		listaSexo.clear();
-		for(Sexo item:Sexo.values()){
-			listaSexo.add(new ItemDTO<Sexo,String>(item,item.name()));
-		}
-		result.include("listaSexo",listaSexo);	
-		
-		listaFaixaEtaria.clear();
-		for(FaixaEtaria item:FaixaEtaria.values()){
-			listaFaixaEtaria.add(new ItemDTO<FaixaEtaria,String>(item,item.getDescFaixaEtaria()));
-		}
-		result.include("listaFaixaEtaria",listaFaixaEtaria);	
-		
-		listaTemaProduto.clear();
-		for(TemaProduto item:TemaProduto.values()){
-			listaTemaProduto.add(new ItemDTO<TemaProduto,String>(item,item.getDescTemaProduto()));
-		}
-		result.include("listaTemaProduto",listaTemaProduto);	
-		
-		listaGrupoProduto.clear();
+	    
+		final List<ItemDTO<GrupoProduto,String>> listaGrupoProduto = new ArrayList<ItemDTO<GrupoProduto,String>>();
 		for(GrupoProduto item:GrupoProduto.values()){
 			listaGrupoProduto.add(new ItemDTO<GrupoProduto,String>(item,item.getNome()));
 		}
 		result.include("listaGrupoProduto",listaGrupoProduto);
 		
-		listaStatusLancamento.clear();
-		
+		final List<ItemDTO<StatusLancamento,String>> listaStatusLancamento =  new ArrayList<ItemDTO<StatusLancamento,String>>();
 		for (StatusLancamento statusLancamento : StatusLancamento.values()) {
 			
 			listaStatusLancamento.add(
 				new ItemDTO<StatusLancamento, String>(
 					statusLancamento, statusLancamento.getDescricao()));
 		}
-		
 		result.include("listaStatusLancamento", listaStatusLancamento);
 		
-		listaTipoSegmentoProduto.clear();
+		final List<ItemDTO<Long,String>> listaTipoSegmentoProduto =  new ArrayList<ItemDTO<Long,String>>();
 		for (TipoSegmentoProduto tipoSegmentoProduto : tipoSegmentoProdutoService.obterTipoSegmentoProduto()) {
 			listaTipoSegmentoProduto.add(
 					new ItemDTO<Long, String>(
 							tipoSegmentoProduto.getId(), tipoSegmentoProduto.getDescricao()));
 		}
-		
 		result.include("listaTipoSegmentoProduto", listaTipoSegmentoProduto);
 		
-		List<Brinde> brindes = brindeService.obterBrindes();
+		final List<Brinde> brindes = brindeService.obterBrindes();
 		result.include("brindes", brindes);
 		
-		List<TipoClassificacaoProduto> classificacoes = tipoClassificacaoProdutoService.obterTodos();
-		
-		comboClassificacao.clear();
+		final List<TipoClassificacaoProduto> classificacoes = tipoClassificacaoProdutoService.obterTodos();
+		final List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
 		for (TipoClassificacaoProduto tipoClassificacaoProduto : classificacoes) {
 			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
 		}

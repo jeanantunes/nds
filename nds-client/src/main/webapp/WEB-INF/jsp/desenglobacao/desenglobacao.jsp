@@ -138,8 +138,9 @@
 				</table>
 			</div>
 		</fieldset>
+		
 		<div>
-			<button id="btnInserirCotaEnglobada">Inserir</button>
+			<button id="btnInserirCotaEnglobada" type="button">Inserir</button>
 		</div>
 
 		<fieldset style="float: left; width: 600px !important; margin-top: 10px;">

@@ -29,6 +29,7 @@ import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -482,7 +483,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     }
     
     @Override
-    public Integer obterTotalCotasAusentes(final Date dataEncalhe, final Integer diaRecolhimento,
+    public Integer obterTotalCotasAusentes(final Date dataEncalhe, final DiaSemana diaRecolhimento,
             final boolean isSomenteCotasSemAcao, final String sortorder, final String sortname, final int page, final int rp,
             Integer numeroCota) {
         
@@ -512,7 +513,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
         
-        query.setParameter("diaRecolhimento", diaRecolhimento);
+        query.setParameter("diaRecolhimento", diaRecolhimento.name());
         
         query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
         
@@ -904,7 +905,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     
     @Override
     @SuppressWarnings("unchecked")
-    public List<CotaAusenteEncalheDTO> obterCotasAusentes(final Date dataEncalhe, final Integer diaRecolhimento,
+    public List<CotaAusenteEncalheDTO> obterCotasAusentes(final Date dataEncalhe, final DiaSemana diaRecolhimento,
             final boolean isSomenteCotasSemAcao, final String sortorder, String sortname, final int page, final int rp) {
         
         final StringBuilder sql = new StringBuilder();
@@ -958,7 +959,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
         
-        query.setParameter("diaRecolhimento", diaRecolhimento);
+        query.setParameter("diaRecolhimento", diaRecolhimento.name());
         
         query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
         
@@ -1368,7 +1369,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         hql.append("controleConferenciaEncalhe.data as dataRecolhimento, ");
         
-        hql.append("conferenciaEncalhe.juramentada as juramentada ");
+        hql.append("(case when conferenciaEncalhe.juramentada is null then false else conferenciaEncalhe.juramentada end) as juramentada ");
         
         hql.append("from ConferenciaEncalhe as conferenciaEncalhe ");
         hql.append("join conferenciaEncalhe.produtoEdicao as produtoEdicao ");
@@ -1431,7 +1432,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     }
     
     @Override
-    public Integer obterTotalCotasAusentesSemPostergado(final Date dataEncalhe, final Integer diaRecolhimento, final boolean isSomenteCotasSemAcao,
+    public Integer obterTotalCotasAusentesSemPostergado(final Date dataEncalhe, final DiaSemana diaRecolhimento, final boolean isSomenteCotasSemAcao,
             final String sortorder, final String sortname, final int page, final int rp, final boolean ignorarUnificacao) {
         
         final StringBuilder sql = new StringBuilder();
@@ -1460,7 +1461,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
         
-        query.setParameter("diaRecolhimento", diaRecolhimento);
+        query.setParameter("diaRecolhimento", diaRecolhimento.name());
         
         query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
         

@@ -229,4 +229,7 @@ public interface ProdutoEdicaoService {
 
     List<ItemDTO<String, String>> obterProdutosBalanceados(Date dataLancamento);
 	
+    BigDecimal obterPrecoEdicaoParaAlteracao(final String codigoProduto,final Long numeroEdicao);
+
+	void executarAlteracaoPrecoCapa(final String codigo,final Long numeroEdicao,final BigDecimal precoProduto);
 }
