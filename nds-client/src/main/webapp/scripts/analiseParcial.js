@@ -417,15 +417,20 @@ var analiseParcialController = $.extend(true, {
         if (reparteAtual != reparteDigitado) {
             var legendaText = legenda_element.text();
             if (legendaText.indexOf('FX') > -1 || legendaText.indexOf('MX') > -1) {
-
+            	
+            	var codProd = $("#codigoProduto", analiseParcialController.workspace).text() || $("#codigoProduto", analiseParcialController.workspace).val();
+            	
             	$.postJSON(
             		analiseParcialController.path + '/distribuicao/analise/parcial/verificarMaxMinCotaMix',
             		[{name:"numeroCota", value:numeroCota},
-            		 {name:"codigoProduto", value:"" + $("#codigoProduto").val() + ""},
+            		 {name:"codigoProduto", value:"" + codProd + ""},
             		 {name:"qtdDigitado", value:reparteDigitado},
             		 {name:"tipoClassificacaoProduto", value:$("#tipoClassificacaoProdutoId").val()}],
             		 function(result){
-            			if (!result || !result.boolean){
+            			
+            			isAtualizarRepartePDV = result[1];
+            			
+            			if (!result[0]){
             				
             				usuarioController.supervisor.verificarRoleSupervisao({
         		            	optionalDialogMessage: 'É necessario confirmar esta ação com senha.',
