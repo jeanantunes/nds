@@ -574,7 +574,7 @@ var distribuicaoManual = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					var fileName = $("#excelFileDistbManual").val();
-					var ext = ext != ""? fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase() : "";
+					var ext = fileName != ""? fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase() : "";
 				       
 					if(ext!="xls" && ext!="xlsx"){
 						exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
