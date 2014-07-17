@@ -95,7 +95,7 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 			
 			repartePDV.setMixCotaProduto(mixCotaProduto);
 			repartePDV.setPdv(pdv);
-			repartePDV.setReparte(repartePDVDTO.getReparte().intValue());
+			repartePDV.setReparte(repartePDVDTO.getReparte() == null ? 0 : repartePDVDTO.getReparte());
 			repartePDV.setProduto(produto);
 			
 			soma += repartePDV.getReparte();
@@ -142,4 +142,11 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 		fixacaoReparte.setUsuario(usuarioLogado);
 		fixacaoReparteRepository.alterar(fixacaoReparte);
 	}
+
+    @Override
+    @Transactional(readOnly=true)
+    public boolean verificarRepartePdv(final Integer numeroCota, final String codigoProduto) {
+        
+        return this.repartePDVRepository.verificarRepartePdv(numeroCota, codigoProduto);
+    }
 }
