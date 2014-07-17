@@ -5,7 +5,9 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -49,8 +51,25 @@ public class MovimentoFechamentoFiscalRepositoryImpl extends AbstractRepositoryM
 		criteria.add(Restrictions.eq("notaFiscalDevolucaoSimbolicaEmitida", false));
 		criteria.add(Restrictions.eq("notaFiscalLiberadaEmissao", true));
 		
-		return (MovimentoFechamentoFiscalFornecedor) criteria.uniqueResult();
+		return (MovimentoFechamentoFiscalFornecedor) criteria.uniqueResult();		
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Long> obterMECIdsPelosMovFechamentosFiscaisCota(List<Long> idsMFFC) {
 		
+		StringBuilder sql = new StringBuilder(" SELECT ")
+			.append(" MOVIMENTO_ID as mecId ")
+			.append(" from MOVIMENTO_FECHAMENTO_FISCAL_ORIGEM_ITEM mffoi ")
+			.append(" where MOVIMENTO_FECHAMENTO_FISCAL_ID in (:idsMFFC)");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameterList("idsMFFC", idsMFFC);
+		
+		query.addScalar("mecId", StandardBasicTypes.LONG);
+		
+		return query.list();		
 	}
     
 }

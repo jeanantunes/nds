@@ -14,5 +14,7 @@ public interface MovimentoFechamentoFiscalRepository extends Repository<Moviment
 	List<MovimentoFechamentoFiscalCota> buscarPorChamadaEncalheCota(ChamadaEncalheCota chamadaEncalheCota);
 
 	MovimentoFechamentoFiscalFornecedor buscarPorProdutoEdicaoTipoMovimentoEstoque(ProdutoEdicao produtoEdicao, TipoMovimentoEstoque tipoMovimentoEstoque);
+
+	List<Long> obterMECIdsPelosMovFechamentosFiscaisCota(List<Long> idsMFFC);
 	
 }
