@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
@@ -47,9 +48,9 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	
 	List<Cota> buscarCotaChamadaEncalhe(Date dataEncalhe);
 	
-    Integer obterTotalCotasAusentes(Date dataEncalhe, Integer diaRecolhimento, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp, Integer numeroCota);
+    Integer obterTotalCotasAusentes(Date dataEncalhe, DiaSemana diaRecolhimento, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp, Integer numeroCota);
 
-    List<CotaAusenteEncalheDTO> obterCotasAusentes(Date dataEncalhe, Integer diaRecolhimento, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
+    List<CotaAusenteEncalheDTO> obterCotasAusentes(Date dataEncalhe, DiaSemana diaRecolhimento, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
     
     int buscarQuantidadeConferenciaEncalheNovo(FiltroFechamentoEncalheDTO filtro);
     
@@ -72,7 +73,7 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	List<FechamentoFisicoLogicoDTO> buscarMovimentoEstoqueCotaVendaProduto(
 			FiltroFechamentoEncalheDTO filtro, ArrayList<Long> listaDeCodigosProduto);
 
-	Integer obterTotalCotasAusentesSemPostergado(Date dataEncalhe, Integer diaRecolhimento, boolean isSomenteCotasSemAcao,
+	Integer obterTotalCotasAusentesSemPostergado(Date dataEncalhe, DiaSemana diaRecolhimento, boolean isSomenteCotasSemAcao,
 			String sortorder, String sortname, int page, int rp, boolean ignorarUnificacao);
 	
 	boolean verificarExistenciaFechamentoEncalheConsolidado(Date dataEncalhe);

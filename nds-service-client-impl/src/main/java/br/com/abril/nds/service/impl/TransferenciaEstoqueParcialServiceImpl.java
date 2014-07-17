@@ -95,18 +95,19 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 		
 		efetuarMovimentacaoTransferencia(
 			produtoEdicaoOrigem.getEstoqueProduto(), 
-				produtoEdicaoDestino.getEstoqueProduto(), idUsuario);
+				produtoEdicaoDestino.getId(), idUsuario);
 	}
 	
 	private void efetuarMovimentacaoTransferencia(EstoqueProduto estoqueProdutoOrigem,
-												  EstoqueProduto estoqueProdutoDestino,
+											 	  Long idProdutoEdicaoDestino,
 												  Long idUsuario) {
 		
 		Long idProdutoEdicaoOrigem = estoqueProdutoOrigem.getProdutoEdicao().getId();
-		Long idProdutoEdicaoDestino = estoqueProdutoDestino.getProdutoEdicao().getId();
-		
+
 		BigInteger qtdeEstoqueParaTransferencia =
 			this.estoqueProdutoRespository.buscarQtdeEstoqueParaTransferenciaParcial(idProdutoEdicaoOrigem);
+		
+		validarQuantidadeTransferencia(qtdeEstoqueParaTransferencia);
 		
 		movimentarEstoque(
 			idProdutoEdicaoOrigem, estoqueProdutoOrigem.getQtde(), 
@@ -127,6 +128,14 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 		movimentarEstoque(
 			idProdutoEdicaoDestino, qtdeEstoqueParaTransferencia, 
 				GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_ESTOQUE_PARCIAIS, idUsuario);
+	}
+	
+	private void validarQuantidadeTransferencia(BigInteger qtdTransferencia) {
+		
+		if (qtdTransferencia == BigInteger.ZERO) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edição de origem sem estoque cadastrado.");
+		}
 	}
 	
 	private void movimentarEstoque(Long idProdutoEdicaoOrigem,
@@ -167,6 +176,11 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 		if (produtoEdicaoDestino == null) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto/Edição de Destino não encontrado.");
+		}
+		
+		if (produtoEdicaoOrigem.getEstoqueProduto() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto/Edição de Origem sem estoque cadastrado.");
 		}
 		
 		if (!produtoEdicaoDestino.isParcial()) {

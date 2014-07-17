@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.filtro.FiltroEdicaoBaseDistribuicaoVendaMedia;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 
@@ -81,6 +82,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append("     LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
 
         sql.append(" where l.status in (:statusLancamento) ");
+        sql.append(" and l.TIPO_LANCAMENTO = :tipoLancamento ");
 		
 		if (filtro.getEdicao() != null) {
 		    sql.append("   and pe.numero_edicao = :numero_edicao ");
@@ -126,6 +128,8 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
                 "statusLancFechadoRecolhido", 
                 Arrays.asList(
                         StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name()));
+        
+        query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO.name());
 		
 		query.setResultTransformer(Transformers.aliasToBean(ProdutoEdicaoVendaMediaDTO.class));
 		return query.list();

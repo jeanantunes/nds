@@ -38,6 +38,7 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
@@ -639,8 +640,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         final Integer diaRecolhimento = obterDiaRecolhimento(dataEncalhe);
         
+        DiaSemana diaSemanaRecolhimento = DiaSemana.getByCodigoDiaSemana(diaRecolhimento);
+        
         final List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = fechamentoEncalheRepository.obterCotasAusentes(
-                dataEncalhe, diaRecolhimento, isSomenteCotasSemAcao, sortorder, sortname, startSearch, rp);
+                dataEncalhe, diaSemanaRecolhimento, isSomenteCotasSemAcao, sortorder, sortname, startSearch, rp);
         
         if (!isSomenteCotasSemAcao) {
             
@@ -702,7 +705,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         final Integer diaRecolhimento = obterDiaRecolhimento(dataEncalhe);
         
-        return fechamentoEncalheRepository.obterTotalCotasAusentes(dataEncalhe, diaRecolhimento, isSomenteCotasSemAcao,
+        DiaSemana diaSemanaRecolhimento = DiaSemana.getByCodigoDiaSemana(diaRecolhimento);
+        
+        return fechamentoEncalheRepository.obterTotalCotasAusentes(dataEncalhe, diaSemanaRecolhimento, isSomenteCotasSemAcao,
                 null, null, 0, 0, numeroCota);
     }
     
@@ -1656,7 +1661,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         final Integer diaRecolhimento = obterDiaRecolhimento(dataEncalhe);
         
-        return fechamentoEncalheRepository.obterTotalCotasAusentesSemPostergado(dataEncalhe, diaRecolhimento,
+        DiaSemana diaSemanaRecolhimento = DiaSemana.getByCodigoDiaSemana(diaRecolhimento);
+        
+        return fechamentoEncalheRepository.obterTotalCotasAusentesSemPostergado(dataEncalhe, diaSemanaRecolhimento,
                 isSomenteCotasSemAcao, null, null, 0, 0, ignorarUnificacao);
     }
 }
