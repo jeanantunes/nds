@@ -584,7 +584,6 @@ var distribuicaoManual = $.extend(true, {
 					$(this).dialog("destroy");
 				},
 				"Cancelar": function() {
-//					$("#excelFileDistbManual").val("");
 					$(this).dialog("destroy");
 				}
 			},
@@ -641,8 +640,6 @@ var distribuicaoManual = $.extend(true, {
 	       type: 'POST',
 	       dataType: 'json',
  	   });
-		
-//		$("#excelFileDistbManual").val("");
 	}
 	// ##-- --##
 	
