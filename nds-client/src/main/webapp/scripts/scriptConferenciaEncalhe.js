@@ -837,7 +837,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					
 					var inputExemplares = '<input isEdicao="true" id="qtdExemplaresGrid_' + index + 
-						'" onkeydown="ConferenciaEncalhe.posicionarQtdExemplares(event,'+index+');" class="input-numericPacotePadrao" onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue;ConferenciaEncalhe.verificarPermissaoSuperVisor('+ 
+						'" onkeydown="ConferenciaEncalhe.posicionarQtdExemplares(event,'+index+');" class="input-numericPacotePadrao" onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue;ConferenciaEncalhe.validarValorZero('+ 
 						index +');" style="width:50px; text-align: center;" maxlength="255" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
@@ -884,7 +884,7 @@ var ConferenciaEncalhe = $.extend(true, {
 						if(parcialNaoFinal == true && !cotaAVista) {
 							
 							inputCheckBoxJuramentada = '<input isEdicao="true" type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
-							+ ' onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue; ConferenciaEncalhe.verificarPermissaoSuperVisor('+ 
+							+ ' onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue; ConferenciaEncalhe.validarValorZero('+ 
 							index +');" id="checkGroupJuramentada_' + index + '"/>';
 							
 						} else {
@@ -1300,6 +1300,30 @@ var ConferenciaEncalhe = $.extend(true, {
 			}, null, null, false
 		
 		);
+	},
+	
+	validarValorZero:function(index){
+		
+		var valorExemplar;
+		var campo;
+		
+		if (index || index == 0){
+			
+			valorExemplar  = $("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val();
+			campo = $("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace);
+		} else {
+			
+			valorExemplar =  $("#qtdeExemplar", ConferenciaEncalhe.workspace).val();
+			campo = $("#qtdeExemplar", ConferenciaEncalhe.workspace).val();
+		}
+		
+		if(valorExemplar <= 0){
+			exibirMensagem("WARNING", ["Quantidade de itens conferidos no encalhe deve ser maior que zero."]);
+			campo.val(ConferenciaEncalhe.valorAnteriorInput);
+			return;
+		}
+		
+		ConferenciaEncalhe.verificarPermissaoSuperVisor(index);
 	},
 	
 	verificarPermissaoSuperVisor : function(index){

@@ -2201,7 +2201,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	
         if (filtro.getPaginacao() == null){
             
-            hql.append(" order by codigoBox asc ");
+            hql.append(" order by nomeProduto asc ");
             
             return;
             
@@ -2804,7 +2804,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		sum(estudoCota.REPARTE * produtoEdicao.PRECO_VENDA) as totalBox, ");
         hql.append(" 		lancamento.SEQUENCIA_MATRIZ as sequenciaMatriz, ");
         hql.append(" 		lancamento.REPARTE_PROMOCIONAL as materialPromocional, ");
-        hql.append("		box.id as boxId ");
+        hql.append("		box.id as boxId, ");
+        hql.append("		box.CODIGO as codigoBox ");
         
         
         filtro.setUseSM(true);
@@ -2839,6 +2840,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.addScalar("totalBox", StandardBasicTypes.BIG_DECIMAL);
         query.addScalar("sequenciaMatriz", StandardBasicTypes.INTEGER);
         query.addScalar("materialPromocional", StandardBasicTypes.BIG_INTEGER);
+        query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
         

@@ -102,12 +102,13 @@ public interface ConferenciaEncalheService {
 	 * @param cota
 	 * @param dataOperacao
 	 * @param indConferenciaContingencia
+	 * @param validarExemplarZero TODO
 	 */
 	public boolean validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
 			Cota cota, 
 			Date dataOperacao, 
-			boolean indConferenciaContingencia);
+			boolean indConferenciaContingencia, boolean validarExemplarZero);
 	
 	
 	/**
