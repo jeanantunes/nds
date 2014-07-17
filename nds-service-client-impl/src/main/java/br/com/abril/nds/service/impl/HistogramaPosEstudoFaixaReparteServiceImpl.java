@@ -30,6 +30,7 @@ public class HistogramaPosEstudoFaixaReparteServiceImpl implements HistogramaPos
 	}
 
 	@Override
+	@Transactional
 	public List<HistogramaPosEstudoAnaliseFaixaReparteDTO> obterListaHistogramaPosEstudo(Integer[][] faixas, 
 			                                                                             Integer estudoId, 
 			                                                                             List<Long> listaIdEdicaoBase) {

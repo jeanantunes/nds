@@ -52,7 +52,39 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 		this.precoCapa = precoCapa;
 		this.total = total;
 	}
-	
+
+	/**
+	 * @param codigoProduto
+	 * @param nomeProduto
+	 * @param numeroEdicao
+	 * @param reparte
+	 * @param precoCapa
+	 * @param codigoBox
+	 * @param idProdutoEdicao
+	 * @param materialPromocional
+	 * @param sequenciaMatriz
+	 * @param totalBox
+	 * @param codigoBarra
+	 */
+	public ProdutoAbastecimentoDTO(String codigoProduto, String nomeProduto,
+			Long numeroEdicao, Integer reparte, String precoCapa,
+			Integer codigoBox, Long idProdutoEdicao,
+			Integer materialPromocional, Integer sequenciaMatriz,
+			String totalBox, String codigoBarra) {
+		super();
+		this.codigoProduto = codigoProduto;
+		this.nomeProduto = nomeProduto;
+		this.numeroEdicao = numeroEdicao;
+		this.reparte = reparte;
+		this.precoCapa = precoCapa;
+		this.codigoBox = codigoBox;
+		this.idProdutoEdicao = idProdutoEdicao;
+		this.materialPromocional = materialPromocional;
+		this.sequenciaMatriz = sequenciaMatriz;
+		this.totalBox = totalBox;
+		this.codigoBarra = codigoBarra;
+	}
+
 	/**
 	* @return the codigoProduto
 	*/
