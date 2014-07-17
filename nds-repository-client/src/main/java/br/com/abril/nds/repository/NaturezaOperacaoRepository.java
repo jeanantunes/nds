@@ -50,6 +50,6 @@ public interface NaturezaOperacaoRepository extends Repository<NaturezaOperacao,
 
 	NaturezaOperacao obterNaturezaOperacaoVendaConsignado(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario);
 
-	List<ItemDTO<Long, String>> obterNaturezasOperacoesPorEmitenteDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario);
+	List<ItemDTO<Long, String>> obterNaturezasOperacoesPorEmitenteDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario, boolean vendaConsignado, Boolean gerarCotaNaoExigeNFe);
 
 }

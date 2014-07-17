@@ -26,7 +26,6 @@ import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
@@ -119,14 +118,6 @@ public class PainelMonitorNFEController extends BaseController {
 	}
 	
 	@Post
-	public void obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
-		
-		List<ItemDTO<Long, String>> naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(null, tipoDestinatario);
-	
-		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
-	}
-	
-	@Post
 	@Path("/pesquisar")
 	public void pesquisar(FiltroMonitorNfeDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
@@ -156,7 +147,6 @@ public class PainelMonitorNFEController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
-	
 	
 	public void prepararDanfeUnicaImpressao(Integer lineIdImpressaoDanfe) {
 		
@@ -305,9 +295,7 @@ public class PainelMonitorNFEController extends BaseController {
 	
 	/**
 	 * Obtém a descrição a partir da chave do enum TipoEmissaoNfe
-	 * 
 	 * @param chave
-	 * 
 	 * @return String - descricao
 	 */
 	private String obterDescricaoTipoEmissaoNfe(String chave) {
