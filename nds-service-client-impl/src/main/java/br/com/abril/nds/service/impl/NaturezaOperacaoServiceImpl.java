@@ -85,9 +85,9 @@ public class NaturezaOperacaoServiceImpl implements NaturezaOperacaoService {
 	
 	@Override
 	@Transactional
-	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorEmitenteDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario) {
+	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorEmitenteDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario, boolean vendaConsignado, Boolean gerarCotaNaoExigeNFe) {
 		
-		return this.naturezaOperacaoRepository.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario);
+		return this.naturezaOperacaoRepository.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario, vendaConsignado, gerarCotaNaoExigeNFe);
 	}
 	
 	@Override

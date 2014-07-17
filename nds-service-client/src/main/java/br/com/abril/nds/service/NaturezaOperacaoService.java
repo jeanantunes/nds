@@ -79,7 +79,7 @@ public interface NaturezaOperacaoService {
 	 */
 	NaturezaOperacao obterNaturezaOperacaoVendaConsignado(TipoDestinatario tipoDestinatario);
 
-	List<ItemDTO<Long, String>> obterNaturezasOperacoesPorEmitenteDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario);
+	List<ItemDTO<Long, String>> obterNaturezasOperacoesPorEmitenteDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario, boolean vendaConsignado, Boolean gerarCotaNaoExigeNFe);
 
 	NotaFiscalTipoEmissaoEnum verificarRegimeEspecialNaturezaOperacao(Long naturezaOperacaoId);
 	

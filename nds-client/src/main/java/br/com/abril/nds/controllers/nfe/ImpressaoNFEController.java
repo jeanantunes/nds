@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
+import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
@@ -103,10 +104,16 @@ public class ImpressaoNFEController extends BaseController {
 	}
 
 	@Post
-	public void obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
-		
-		List<ItemDTO<Long, String>> naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(null, tipoDestinatario);
-	
+	public void obterNaturezasOperacoesPorTipoDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario) {
+	    
+	    List<ItemDTO<Long, String>> naturezasOperacoes = null;
+	    
+	    if(TipoEmitente.COTA.equals(tipoEmitente) &&  TipoDestinatario.DISTRIBUIDOR.equals(tipoDestinatario)){
+            naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario, false, true);
+        } else{
+            naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario, false, null);
+        }
+	    
 		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
 	}
 	

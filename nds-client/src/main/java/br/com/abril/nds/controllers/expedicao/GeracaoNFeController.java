@@ -247,8 +247,7 @@ public class GeracaoNFeController extends BaseController {
 		
 		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(filtro.getDataInicial(), filtro.getDataFinal());
 		
-		List<CotaExemplaresDTO> cotaExemplaresDTOs = 
-				nfeService.busca(intervaloBox, intervaloCota, intervaloDateMovimento, listIdFornecedor, 
+		List<CotaExemplaresDTO> cotaExemplaresDTOs = nfeService.busca(intervaloBox, intervaloCota, intervaloDateMovimento, listIdFornecedor, 
 						tipoNotaFiscal, null, null, sortname, sortorder, rp, page, SituacaoCadastro.SUSPENSO);
 		
 		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(cotaExemplaresDTOs.size()).serialize();

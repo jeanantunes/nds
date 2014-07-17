@@ -20,8 +20,7 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 
 @Repository
-public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<NaturezaOperacao, Long> 
-										  implements NaturezaOperacaoRepository {
+public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<NaturezaOperacao, Long> implements NaturezaOperacaoRepository {
 
 	public NaturezaOperacaoRepositoryImpl() {
 		super(NaturezaOperacao.class);
@@ -358,15 +357,16 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		return (NaturezaOperacao) query.uniqueResult();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorEmitenteDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario) {
+	@SuppressWarnings("unchecked")
+	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorEmitenteDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario, boolean vendaConsignado, Boolean gerarCotaNaoExigeNFe) {
 
 		StringBuilder sql = new StringBuilder("")
 		.append("SELECT id as `key`, descricao as value ") 
 		.append("FROM natureza_operacao no ")
 		.append("WHERE no.TIPO_ATIVIDADE = (select TIPO_ATIVIDADE from distribuidor) ");
-
+		
+		
 		if(tipoEmitente != null) {
 			sql.append("AND no.TIPO_EMITENTE = :tipoEmitente ");
 		}
@@ -375,6 +375,8 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 			sql.append("AND no.TIPO_DESTINATARIO = :tipoDestinatario ");
 		}
 
+		sql.append(" and (no.NOTA_FISCAL_VENDA_CONSIGNADO = :vendaConsignado OR no.GERAR_COTA_NAO_EXIGE_NFE = :gerarCotaNaoExigeNFe) ");
+		
 		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
 
 		if(tipoEmitente != null) {
@@ -385,10 +387,13 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 			sqlQuery.setParameter("tipoDestinatario", tipoDestinatario.name());
 		}
 
+		sqlQuery.setParameter("vendaConsignado", vendaConsignado);
+		sqlQuery.setParameter("gerarCotaNaoExigeNFe", (gerarCotaNaoExigeNFe != null && gerarCotaNaoExigeNFe) ? true : false);
+		
 		sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
 
 		return sqlQuery.list();
 
 	}
-	
 }
+	

@@ -201,7 +201,13 @@ public class NaturezaOperacaoController extends BaseController {
 	@Post
 	public void obterNaturezasOperacoesPorEmitenteDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario) {
 		
-		List<ItemDTO<Long, String>> naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario);
+	    List<ItemDTO<Long, String>> naturezasOperacoes = null;
+	    
+	    if(TipoEmitente.COTA.equals(tipoEmitente) &&  TipoDestinatario.DISTRIBUIDOR.equals(tipoDestinatario)){
+	        naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario, true, true);
+	    } else{
+	        naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario, false, true);
+	    }
 	
 		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
 	}
