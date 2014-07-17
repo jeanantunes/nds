@@ -105,7 +105,7 @@ ConsolidadoFinanceiroRepository {
         .append("        coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi7_.PRECO_VENDA) as precoComDesconto, ")
         .append("        sum(movimentos4_.QTDE) * coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi7_.PRECO_VENDA) as total,")
         .append("        sum(movimentos4_.QTDE) as encalhe,  ")
-        .append("        coalesce(chamadaEncalhe.sequencia, 'Postergado') as sequencia ")
+        .append("        chamadaEncalhe.sequencia as sequencia ")
         .append("from ")
         .append("        CONSOLIDADO_FINANCEIRO_COTA consolidad0_  ")
         .append("left outer join ")
@@ -179,7 +179,7 @@ ConsolidadoFinanceiroRepository {
         .append("        coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi5_.PRECO_VENDA) as precoComDesconto, ")
         .append("        sum(movimentos2_.QTDE) * coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi5_.PRECO_VENDA) as total,")
         .append("        sum(movimentos2_.QTDE) as encalhe,  ")
-        .append("        coalesce(chamadaEncalhe.sequencia, 'Postergado') as sequencia ")
+        .append("        chamadaEncalhe.sequencia as sequencia ")
         .append("from ")
         .append("        MOVIMENTO_FINANCEIRO_COTA movimentof0_  ")
         .append("left outer join ")
@@ -310,7 +310,7 @@ ConsolidadoFinanceiroRepository {
         query.addScalar("precoComDesconto", StandardBasicTypes.BIG_DECIMAL);
         query.addScalar("total", StandardBasicTypes.BIG_DECIMAL);
         query.addScalar("encalhe", StandardBasicTypes.BIG_INTEGER);
-        query.addScalar("sequencia", StandardBasicTypes.STRING);
+        query.addScalar("sequencia", StandardBasicTypes.LONG);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(EncalheCotaDTO.class));
         
@@ -2039,5 +2039,5 @@ ConsolidadoFinanceiroRepository {
         query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCota.class));
         
         return query.list();
-    }
+    }  
 }

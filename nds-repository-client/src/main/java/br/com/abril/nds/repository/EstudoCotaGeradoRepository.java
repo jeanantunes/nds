@@ -57,4 +57,6 @@ public interface EstudoCotaGeradoRepository extends Repository<EstudoCotaGerado,
 	void removerEstudosCotaPorEstudos(List<Long> listIdEstudos);
 
 	EstudoCotaGerado obterEstudoCotaGerado(Integer numeroCota, Long estudoId);
+	
+	void removerEstudoCotaGerado(Long idEstudoCotaGerado);
 }

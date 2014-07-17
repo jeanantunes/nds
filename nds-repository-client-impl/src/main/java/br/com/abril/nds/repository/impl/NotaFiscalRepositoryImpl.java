@@ -13,9 +13,9 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
-import br.com.abril.nds.dto.ItemDanfe;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.NfeDTO;
+import br.com.abril.nds.dto.NotaFiscalDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
@@ -1229,26 +1229,35 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		 
 	}
 	
-
-	public List<NotaFiscal> obterNotasPeloItens(Long idNotaFiscal) {
+	@SuppressWarnings("unchecked")
+	public List<NotaFiscalDTO> obterNotasPeloItensNotas(List<Long> produtoEdicoesIds) {
 		
-		StringBuffer hql = new StringBuffer("")
+		StringBuffer hql = new StringBuffer("");
 		
-		.append(" select ")		
-		.append(" from NotaFiscal nf ")
+		hql.append(" select  ");
+		hql.append(" nfef.serie as serie,  ");
+		hql.append(" nfef.chaveAcesso  ");
+		hql.append(" nfef.cnpj as cnpj,  ");
+		hql.append(" nfef.modeloDocumentoFiscal as modelo,  ");
+		hql.append(" nfef.dataEmissao as dataEmissao ");
+		hql.append(" FROM NotaFiscalEntradaFornecedor as nfef ");
+		hql.append(" JOIN nfef.itens as itens ");
+		hql.append(" WHERE 1=1 ");
+		hql.append(" AND nfe.chaveAcesso is null");
+		hql.append(" AND det.id in (:produtoEdicoesIds) ");		
 		
-		.append(" where ")
-		
-		.append(" item.notaFiscal.id = :idNotaFiscal ");
+		if(produtoEdicoesIds != null) {
+			hql.append(" AND nfe.id in (:produtoEdicoesIds) ");
+		}
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ItemDanfe.class));
+		if(produtoEdicoesIds != null) {
+			query.setParameterList("produtoEdicoesIds", produtoEdicoesIds);
+		}
 		
-		query.setParameter("idNotaFiscal", idNotaFiscal);
+		query.setResultTransformer(new AliasToBeanResultTransformer(NotaFiscalDTO.class));
 		
 		return query.list();
-		
 	}
-	
 }

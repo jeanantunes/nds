@@ -547,16 +547,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Override
 	@Transactional
-	public synchronized void exportarNotasFiscais(Long... idNotaFiscals)
-			throws FileNotFoundException, IOException,
-			IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException {
+	public synchronized void exportarNotasFiscais(Long... idNotaFiscals) throws FileNotFoundException, IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
-		List<NotaFiscal> notasFiscaisParaExportacao = new ArrayList<NotaFiscal>(
-				idNotaFiscals.length);
+		List<NotaFiscal> notasFiscaisParaExportacao = new ArrayList<NotaFiscal>(idNotaFiscals.length);
+		
 		for (Long id : idNotaFiscals) {
-			notasFiscaisParaExportacao
-					.add(notaFiscalRepository.buscarPorId(id));
+			notasFiscaisParaExportacao.add(notaFiscalRepository.buscarPorId(id));
 		}
 
 		exportarNotasFiscais(notasFiscaisParaExportacao);
@@ -973,36 +969,35 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @return
 	 */
 	private ProdutoServico carregaProdutoServico(Fornecedor fornecedor,
-			long idProdutoEdicao, BigInteger quantidade, int cfop,
-			TipoOperacao tipoOperacao, String ufOrigem, String ufDestino,
-			int naturezaOperacao, String codigoNaturezaOperacao,
-			Date dataVigencia, BigDecimal valorItem, String raizCNPJ,
+			long idProdutoEdicao, 
+			BigInteger quantidade, 
+			int cfop,
+			TipoOperacao tipoOperacao, 
+			String ufOrigem, String ufDestino,
+			int naturezaOperacao, 
+			String codigoNaturezaOperacao,
+			Date dataVigencia, 
+			BigDecimal valorItem, 
+			String raizCNPJ,
 			String cstICMS) {
-		ProdutoEdicao produtoEdicao = produtoEdicaoRepository
-				.buscarPorId(idProdutoEdicao);
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		if (produtoEdicao == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edição "
-					+ idProdutoEdicao + " não encontrado!");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edição "+ idProdutoEdicao + " não encontrado!");
 		}
 
 		ProdutoServico produtoServico = new ProdutoServico();
 
-		produtoServico.setCodigoBarras(Long.valueOf(produtoEdicao
-				.getCodigoDeBarras()));
+		produtoServico.setCodigoBarras(Long.valueOf(produtoEdicao.getCodigoDeBarras()));
 		produtoServico.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
-		produtoServico.setDescricaoProduto(produtoEdicao.getProduto()
-				.getNomeComercial());
-		produtoServico.setNcm(produtoEdicao.getProduto().getTipoProduto()
-				.getNcm().getCodigo());
+		produtoServico.setDescricaoProduto(produtoEdicao.getProduto().getNomeComercial());
+		produtoServico.setNcm(produtoEdicao.getProduto().getTipoProduto().getNcm().getCodigo());
 		produtoServico.setProdutoEdicao(produtoEdicao);
 		produtoServico.setQuantidade(quantidade);
 
 		if (produtoEdicao.getDescontoLogistica() != null) {
 
-			BigDecimal valorDesconto = valorItem.multiply(
-					produtoEdicao.getDescontoLogistica()
-							.getPercentualDesconto()).divide(
-					new BigDecimal(100));
+			BigDecimal valorDesconto = valorItem.multiply(produtoEdicao.getDescontoLogistica().getPercentualDesconto()).divide(new BigDecimal(100));
 
 			produtoServico.setValorUnitario(valorItem.subtract(valorDesconto));
 
@@ -1011,12 +1006,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			valorItem = produtoServico.getValorUnitario();
 		} else if (produtoEdicao.getProduto().getDescontoLogistica() != null) {
 
-			BigDecimal valorDesconto = valorItem
-					.multiply(
-							produtoEdicao.getProduto().getDescontoLogistica()
-									.getPercentualDesconto())
-					.divide(new BigDecimal(100))
-					.setScale(2, RoundingMode.HALF_EVEN);
+			BigDecimal valorDesconto = valorItem.multiply(produtoEdicao.getProduto().getDescontoLogistica().getPercentualDesconto()).divide(new BigDecimal(100)).setScale(2, RoundingMode.HALF_EVEN);
 
 			produtoServico.setValorUnitario(valorItem.subtract(valorDesconto));
 
@@ -1030,19 +1020,21 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			produtoServico.setValorDesconto(BigDecimal.ZERO);
 		}
 
-		produtoServico.setUnidade(produtoEdicao.getProduto().getTipoProduto()
-				.getNcm().getUnidadeMedida());
+		produtoServico.setUnidade(produtoEdicao.getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 
 		produtoServico.setCfop(cfop);
-		produtoServico.setValorTotalBruto(valorItem.multiply(new BigDecimal(
-				quantidade)));
+		produtoServico.setValorTotalBruto(valorItem.multiply(new BigDecimal(quantidade)));
 
-		EncargoFinanceiroProduto encargoFinanceiroProduto = tributacaoService
-				.calcularTributoProduto(raizCNPJ, tipoOperacao, ufOrigem,
-						ufDestino, naturezaOperacao, codigoNaturezaOperacao,
-						produtoEdicao.getProduto().getTipoProduto()
-								.getCodigoNBM(), dataVigencia, cstICMS,
-						valorItem);
+		EncargoFinanceiroProduto encargoFinanceiroProduto = tributacaoService.calcularTributoProduto(raizCNPJ, 
+				tipoOperacao, 
+				ufOrigem,
+				ufDestino, 
+				naturezaOperacao, 
+				codigoNaturezaOperacao,
+				produtoEdicao.getProduto().getTipoProduto().getCodigoNBM(), 
+				dataVigencia, 
+				cstICMS,
+				valorItem);
 
 		// produtoServico.setEncargoFinanceiro(encargoFinanceiroProduto);
 
@@ -1080,18 +1072,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		ProdutoServico produtoServico = new ProdutoServico();
 
-		produtoServico.setCodigoBarras(Long.valueOf(produtoEdicao
-				.getCodigoDeBarras()));
+		produtoServico.setCodigoBarras(Long.valueOf(produtoEdicao.getCodigoDeBarras()));
 		produtoServico.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
-		produtoServico.setDescricaoProduto(produtoEdicao.getProduto()
-				.getNomeComercial());
-		produtoServico.setNcm(produtoEdicao.getProduto().getTipoProduto()
-				.getNcm().getCodigo());
+		produtoServico.setDescricaoProduto(produtoEdicao.getProduto().getNomeComercial());
+		produtoServico.setNcm(produtoEdicao.getProduto().getTipoProduto().getNcm().getCodigo());
 		produtoServico.setProdutoEdicao(produtoEdicao);
 		produtoServico.setQuantidade(quantidade);
 		produtoServico.setValorUnitario(valorItem);
-		produtoServico.setUnidade(produtoEdicao.getProduto().getTipoProduto()
-				.getNcm().getUnidadeMedida());
+		produtoServico.setUnidade(produtoEdicao.getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 
 		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 		// BigDecimal percentualDesconto =
@@ -1099,303 +1087,33 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		// produtoEdicao);
 		DescontoDTO descontoDTO = null;
 		try {
-			descontoDTO = descontoService.obterDescontoPor(descontos,
-					cota.getId(), produtoEdicao.getProduto().getFornecedor()
-							.getId(), produtoEdicao.getProduto().getId(),
+			descontoDTO = descontoService.obterDescontoPor(descontos, 
+					cota.getId(), 
+					produtoEdicao.getProduto().getFornecedor().getId(), 
+					produtoEdicao.getProduto().getId(),
 					produtoEdicao.getId());
+			
 		} catch (Exception e) {
 
 		}
 
-		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(
-				precoVenda, (descontoDTO != null ? descontoDTO.getValor()
-						: BigDecimal.ZERO));
+		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, (descontoDTO != null ? descontoDTO.getValor() : BigDecimal.ZERO));
 
 		produtoServico.setValorDesconto(valorDesconto);
 
 		produtoServico.setCfop(cfop);
-		produtoServico.setValorTotalBruto(valorItem.multiply(new BigDecimal(
-				quantidade)));
+		produtoServico.setValorTotalBruto(valorItem.multiply(new BigDecimal(quantidade)));
 
-		EncargoFinanceiroProduto encargoFinanceiroProduto = tributacaoService
-				.calcularTributoProduto(raizCNPJ, tipoOperacao, ufOrigem,
-						ufDestino, naturezaOperacao, codigoNaturezaOperacao,
-						produtoEdicao.getProduto().getTipoProduto()
-								.getCodigoNBM(), dataVigencia, cstICMS,
-						valorItem);
+		EncargoFinanceiroProduto encargoFinanceiroProduto = tributacaoService.calcularTributoProduto(raizCNPJ, 
+				tipoOperacao, ufOrigem,
+				ufDestino, naturezaOperacao, codigoNaturezaOperacao,
+				produtoEdicao.getProduto().getTipoProduto().getCodigoNBM(), dataVigencia, cstICMS, valorItem);
 
 		// produtoServico.setEncargoFinanceiro(encargoFinanceiroProduto);
 
 		return produtoServico;
 	}
-
-	/*
-	 * 
-	 * @Override
-	 * 
-	 * @Transactional public Long emitiNotaFiscal(long idTipoNotaFiscal, Date
-	 * dataEmissao, Fornecedor fornecedor, List<ItemNotaFiscalSaida>
-	 * listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional
-	 * informacaoAdicional, List<NotaFiscalReferenciada>
-	 * listNotaFiscalReferenciada, Set<Processo> processos, Condicao condicao){
-	 * 
-	 * NotaFiscal notaFiscal = new NotaFiscal();
-	 * 
-	 * NaturezaOperacao tipoNotaFiscal = tipoNotaFiscalRepository
-	 * .buscarPorId(idTipoNotaFiscal);
-	 * 
-	 * if (tipoNotaFiscal == null) { throw new
-	 * ValidacaoException(TipoMensagem.ERROR, "Tipo da Nota Fiscal " +
-	 * idTipoNotaFiscal + " não encontrada!"); }
-	 * 
-	 * notaFiscal.setIdentificacao(carregaIdentificacao(tipoNotaFiscal,
-	 * dataEmissao, listNotaFiscalReferenciada));
-	 * notaFiscal.setIdentificacaoDestinatario(carregaDestinatario(fornecedor));
-	 * notaFiscal.setIdentificacaoEmitente(carregaEmitente());
-	 * 
-	 * String raizCNPJ =
-	 * notaFiscal.getIdentificacaoEmitente().getDocumento().substring(0, 7);
-	 * String ufOrigem =
-	 * notaFiscal.getIdentificacaoEmitente().getEndereco().getUf(); String
-	 * ufDestino =
-	 * notaFiscal.getIdentificacaoDestinatario().getEndereco().getUf();
-	 * 
-	 * notaFiscal.setProdutosServicos(new
-	 * ArrayList<ProdutoServico>(listItemNotaFiscal.size())); int cfop;
-	 * 
-	 * if (ufOrigem.equals(ufDestino)) { if (tipoNotaFiscal.getCfopEstado() ==
-	 * null) { throw new ValidacaoException(TipoMensagem.ERROR,
-	 * "CFOP do estado para tipo nota fiscal " + idTipoNotaFiscal +
-	 * " não encontrada!"); }
-	 * 
-	 * cfop = Integer.valueOf(tipoNotaFiscal.getCfopEstado()); } else {
-	 * 
-	 * if (tipoNotaFiscal.getCfopOutrosEstados() == null) { throw new
-	 * ValidacaoException(TipoMensagem.ERROR,
-	 * "CFOP para outros estados para tipo nota fiscal " + idTipoNotaFiscal +
-	 * " não encontrada!"); } cfop =
-	 * Integer.valueOf(tipoNotaFiscal.getCfopOutrosEstados()); }
-	 * 
-	 * InformacaoValoresTotais informacaoValoresTotais = new
-	 * InformacaoValoresTotais();
-	 * notaFiscal.setInformacaoValoresTotais(informacaoValoresTotais);
-	 * 
-	 * notaFiscal.setInformacaoTransporte(transporte);
-	 * 
-	 * notaFiscal.setInformacaoAdicional(informacaoAdicional);
-	 * 
-	 * notaFiscal
-	 * .setStatusProcessamentoInterno(StatusProcessamentoInterno.GERADA);
-	 * 
-	 * notaFiscal.setProcessos(processos);
-	 * 
-	 * notaFiscalRepository.adicionar(notaFiscal);
-	 * 
-	 * int sequencia = 1; for (ItemNotaFiscalSaida itemNotaFiscal :
-	 * listItemNotaFiscal) {
-	 * 
-	 * ProdutoServico produtoServico = null; //carregaProdutoServico(fornecedor,
-	 * // itemNotaFiscal.getIdProdutoEdicao(), //
-	 * itemNotaFiscal.getQuantidade(), cfop, //
-	 * tipoNotaFiscal.getTipoOperacao(), ufOrigem, ufDestino, //
-	 * tipoNotaFiscal.getNopCodigo().intValue(), //
-	 * tipoNotaFiscal.getNopDescricao(), dataEmissao, //
-	 * itemNotaFiscal.getValorUnitario(), raizCNPJ, //
-	 * itemNotaFiscal.getCstICMS());
-	 * 
-	 * produtoServico.setProdutoServicoPK(new ProdutoServicoPK(notaFiscal,
-	 * sequencia++));
-	 * 
-	 * InformacaoAdicional info =
-	 * produtoServico.getProdutoServicoPK().getNotaFiscal
-	 * ().getInformacaoAdicional();
-	 * 
-	 * if (info == null){
-	 * 
-	 * info = new InformacaoAdicional();
-	 * produtoServico.getProdutoServicoPK().getNotaFiscal
-	 * ().setInformacaoAdicional(info); }
-	 * 
-	 * info.setInformacoesComplementares(itemNotaFiscal.getInfoComplementar());
-	 * 
-	 * EncargoFinanceiro encargoFinanceiro = produtoServico
-	 * .getEncargoFinanceiro();
-	 * 
-	 * informacaoValoresTotais.setValorProdutos(BigDecimalUtil.soma(
-	 * informacaoValoresTotais.getValorProdutos(),
-	 * produtoServico.getValorTotalBruto()));
-	 * 
-	 * informacaoValoresTotais.setValorNotaFiscal(informacaoValoresTotais.
-	 * getValorProdutos());
-	 * 
-	 * if (encargoFinanceiro instanceof EncargoFinanceiroProduto) {
-	 * EncargoFinanceiroProduto encargoFinanceiroProduto =
-	 * (EncargoFinanceiroProduto) encargoFinanceiro; ICMS icms =
-	 * encargoFinanceiroProduto.getIcms();
-	 * 
-	 * informacaoValoresTotais.setValorBaseCalculoICMS(BigDecimalUtil.soma(
-	 * informacaoValoresTotais.getValorBaseCalculoICMS(),
-	 * icms.getValorBaseCalculo()));
-	 * 
-	 * informacaoValoresTotais .setValorICMS(BigDecimalUtil.soma(
-	 * informacaoValoresTotais.getValorICMS(), icms.getValor()));
-	 * 
-	 * IPI ipi = encargoFinanceiroProduto.getIpi();
-	 * 
-	 * informacaoValoresTotais.setValorIPI(BigDecimalUtil.soma(
-	 * informacaoValoresTotais.getValorIPI(), ipi.getValor()));
-	 * 
-	 * COFINS cofins = encargoFinanceiroProduto.getCofins();
-	 * 
-	 * informacaoValoresTotais.setValorCOFINS(BigDecimalUtil.soma(
-	 * informacaoValoresTotais.getValorCOFINS(), cofins.getValor()));
-	 * 
-	 * } encargoFinanceiro.setProdutoServico(produtoServico);
-	 * encargoFinanceiroRepository.adicionar(encargoFinanceiro);
-	 * produtoServicoRepository.adicionar(produtoServico);
-	 * notaFiscal.getProdutosServicos().add(produtoServico); }
-	 * notaFiscalRepository.merge(notaFiscal); return notaFiscal.getId();
-	 * 
-	 * }
-	 */
-
-	/*
-	 * 
-	 * 
-	 * @Override
-	 * 
-	 * @Transactional(readOnly=true) 
-	 * public Long emitiNotaFiscal(long
-	 * idTipoNotaFiscal, Date dataEmissao, Cota cota, List<ItemNotaFiscalSaida>
-	 * listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional
-	 * informacaoAdicional, List<NotaFiscalReferenciada>
-	 * listNotaFiscalReferenciada, Set<Processo> processos, Condicao condicao) {
-	 * 
-	 * NotaFiscal notaFiscal = new NotaFiscal();
-	 * 
-	 * NaturezaOperacao tipoNotaFiscal = tipoNotaFiscalRepository
-	 * .buscarPorId(idTipoNotaFiscal);
-	 * 
-	 * if (tipoNotaFiscal == null) { throw new
-	 * ValidacaoException(TipoMensagem.ERROR, "Tipo da Nota Fiscal " +
-	 * idTipoNotaFiscal + " não encontrada!"); }
-	 * 
-	 * notaFiscal.setIdentificacao(carregaIdentificacao(tipoNotaFiscal,
-	 * dataEmissao, listNotaFiscalReferenciada));
-	 * notaFiscal.setIdentificacaoDestinatario(carregaDestinatario(cota));
-	 * notaFiscal.setIdentificacaoEmitente(carregaEmitente());
-	 * 
-	 * String raizCNPJ =
-	 * Util.removerMascaraCnpj(notaFiscal.getIdentificacaoEmitente
-	 * ().getDocumento()) .substring(0, 7); String ufOrigem =
-	 * notaFiscal.getIdentificacaoEmitente().getEndereco() .getUf(); String
-	 * ufDestino = notaFiscal.getIdentificacaoDestinatario()
-	 * .getEndereco().getUf();
-	 * 
-	 * notaFiscal.setProdutosServicos(new ArrayList<ProdutoServico>(
-	 * listItemNotaFiscal.size())); int cfop;
-	 * 
-	 * if (ufOrigem.equals(ufDestino)) { if (tipoNotaFiscal.getCfopEstado() ==
-	 * null) { throw new ValidacaoException(TipoMensagem.ERROR,
-	 * "CFOP do estado para tipo nota fiscal " + idTipoNotaFiscal +
-	 * " não encontrada!"); }
-	 * 
-	 * cfop = Integer.valueOf(tipoNotaFiscal.getCfopEstado()); } else {
-	 * 
-	 * if (tipoNotaFiscal.getCfopOutrosEstados() == null) { throw new
-	 * ValidacaoException(TipoMensagem.ERROR,
-	 * "CFOP para outros estados para tipo nota fiscal " + idTipoNotaFiscal +
-	 * " não encontrada!"); } cfop =
-	 * Integer.valueOf(tipoNotaFiscal.getCfopOutrosEstados()); }
-	 * 
-	 * InformacaoValoresTotais informacaoValoresTotais = new
-	 * InformacaoValoresTotais();
-	 * notaFiscal.setInformacaoValoresTotais(informacaoValoresTotais);
-	 * 
-	 * notaFiscal.setInformacaoTransporte(transporte);
-	 * 
-	 * notaFiscal.setInformacaoAdicional(informacaoAdicional);
-	 * 
-	 * notaFiscal
-	 * .setStatusProcessamentoInterno(StatusProcessamentoInterno.GERADA);
-	 * 
-	 * notaFiscal.setProcessos(processos);
-	 * 
-	 * int tamanhoCampoMapeado = 60;
-	 * 
-	 * // try { // tamanhoCampoMapeado = (int)
-	 * Column.class.getField("length").get( //
-	 * notaFiscal.getIdentificacao().getDescricaoNaturezaOperacao()); // // }
-	 * catch (IllegalArgumentException | IllegalAccessException // |
-	 * NoSuchFieldException | SecurityException e) { // //
-	 * LOGGER.warn(e.getLocalizedMessage(), e); // LOGGER.error(e.getMessage(),
-	 * e); // }
-	 * 
-	 * if (notaFiscal.getIdentificacao().getDescricaoNaturezaOperacao().length()
-	 * > tamanhoCampoMapeado){
-	 * notaFiscal.getIdentificacao().setDescricaoNaturezaOperacao(
-	 * notaFiscal.getIdentificacao().getDescricaoNaturezaOperacao().substring(0,
-	 * tamanhoCampoMapeado)); }
-	 * 
-	 * notaFiscalRepository.adicionar(notaFiscal);
-	 * 
-	 * Map<String, DescontoDTO> descontos =
-	 * descontoService.obterDescontosMapPorLancamentoProdutoEdicao();
-	 * 
-	 * int sequencia = 1; for (ItemNotaFiscalSaida itemNotaFiscal :
-	 * listItemNotaFiscal) {
-	 * 
-	 * ProdutoServico produtoServico = null; // carregaProdutoServico(cota, //
-	 * itemNotaFiscal.getIdProdutoEdicao(), // itemNotaFiscal.getQuantidade(),
-	 * cfop, // tipoNotaFiscal.getTipoOperacao(), ufOrigem, ufDestino, //
-	 * tipoNotaFiscal.getNopCodigo().intValue(), //
-	 * tipoNotaFiscal.getNopDescricao(), dataEmissao, //
-	 * itemNotaFiscal.getValorUnitario(), raizCNPJ, //
-	 * itemNotaFiscal.getCstICMS(), descontos);
-	 * 
-	 * produtoServico.setProdutoServicoPK(new ProdutoServicoPK(notaFiscal,
-	 * sequencia++));
-	 * 
-	 * EncargoFinanceiro encargoFinanceiro = produtoServico
-	 * .getEncargoFinanceiro();
-	 * 
-	 * informacaoValoresTotais.setValorProdutos(BigDecimalUtil.soma(
-	 * informacaoValoresTotais.getValorProdutos(),
-	 * produtoServico.getValorTotalBruto()));
-	 * 
-	 * informacaoValoresTotais.setValorNotaFiscal(informacaoValoresTotais.
-	 * getValorProdutos());
-	 * 
-	 * if (encargoFinanceiro instanceof EncargoFinanceiroProduto) {
-	 * EncargoFinanceiroProduto encargoFinanceiroProduto =
-	 * (EncargoFinanceiroProduto) encargoFinanceiro; ICMS icms =
-	 * encargoFinanceiroProduto.getIcms();
-	 * 
-	 * informacaoValoresTotais.setValorBaseCalculoICMS(BigDecimalUtil.soma(
-	 * informacaoValoresTotais.getValorBaseCalculoICMS(),
-	 * icms.getValorBaseCalculo()));
-	 * 
-	 * informacaoValoresTotais .setValorICMS(BigDecimalUtil.soma(
-	 * informacaoValoresTotais.getValorICMS(), icms.getValor()));
-	 * 
-	 * IPI ipi = encargoFinanceiroProduto.getIpi();
-	 * 
-	 * informacaoValoresTotais.setValorIPI(BigDecimalUtil.soma(
-	 * informacaoValoresTotais.getValorIPI(), ipi.getValor()));
-	 * 
-	 * COFINS cofins = encargoFinanceiroProduto.getCofins();
-	 * 
-	 * informacaoValoresTotais.setValorCOFINS(BigDecimalUtil.soma(
-	 * informacaoValoresTotais.getValorCOFINS(), cofins.getValor()));
-	 * 
-	 * } encargoFinanceiro.setProdutoServico(produtoServico);
-	 * encargoFinanceiroRepository.adicionar(encargoFinanceiro);
-	 * produtoServicoRepository.adicionar(produtoServico);
-	 * notaFiscal.getProdutosServicos().add(produtoServico); }
-	 * notaFiscalRepository.merge(notaFiscal); return notaFiscal.getId();
-	 * 
-	 * }
-	 */
+	
 
 	/**
 	 * (non-Javadoc)

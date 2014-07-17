@@ -107,8 +107,7 @@ public class ItemNotaFiscalBuilder  {
 		
 	}
 
-	private static DetalheNotaFiscal montarItem(AbstractMovimentoEstoque movimentoEstoque,
-			DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal, Map<String, TributoAliquota> tributoAliquota) {
+	private static DetalheNotaFiscal montarItem(AbstractMovimentoEstoque movimentoEstoque, DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal, Map<String, TributoAliquota> tributoAliquota) {
 		
 		ProdutoServico produtoServico = null;
 		if(detalheNotaFiscal.getProdutoServico() == null) {
@@ -169,7 +168,7 @@ public class ItemNotaFiscalBuilder  {
 		
 		produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()));
 		produtoServico.setValorUnitario(valorUnitario);
-		produtoServico.setValorTotalBruto(produtoServico.getValorTotalBruto().add(CurrencyUtil.arredondarValorParaDuasCasas(valorTotalBruto)));
+		produtoServico.setValorTotalBruto(CurrencyUtil.arredondarValorParaDuasCasas(produtoServico.getValorTotalBruto().add(valorTotalBruto)));
 		
 		produtoServico.setValorDesconto(BigDecimal.ZERO);
 		
@@ -225,12 +224,14 @@ public class ItemNotaFiscalBuilder  {
 	private static void aplicarTributacaoItem(DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal,
 			Map<String, TributoAliquota> tributoAliquota, ProdutoServico produtoServico,
 			Map<String, Tributacao> tributacaoProduto) {
+		
 		Tributacao icmsProduto = tributacaoProduto.get("ICMS");
 		if(icmsProduto != null) {
 			produtoServico.setCst(icmsProduto.getCstA().toString() + icmsProduto.getCst().toString());
 			produtoServico.setValorAliquotaICMS(CurrencyUtil.arredondarValorParaDuasCasas(icmsProduto.getValorAliquota()));
 			Class<?> clazz;
 			ICMS icms = null;
+			
 			try {
 				clazz = Class.forName("br.com.abril.nds.model.fiscal.nota.ICMS"+ icmsProduto.getCst().toString());
 				icms = (ICMS) clazz.newInstance();
@@ -282,10 +283,7 @@ public class ItemNotaFiscalBuilder  {
 			ipi.getIPITrib().setValorIPI(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
 			detalheNotaFiscal.getImpostos().setIpi(ipi);
 		} else {
-			StringBuilder sb = new StringBuilder().append("IPI não encontrado para o Produto: ")
-					.append(produtoServico.getCodigoProduto())
-					.append(" / ")
-					.append(produtoServico.getProdutoEdicao().getNumeroEdicao());
+			StringBuilder sb = new StringBuilder().append("IPI não encontrado para o Produto: ").append(produtoServico.getCodigoProduto()).append(" / ").append(produtoServico.getProdutoEdicao().getNumeroEdicao());
 			
 			LOGGER.error(sb.toString() );
 			throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
@@ -457,7 +455,6 @@ public class ItemNotaFiscalBuilder  {
 		
 		if(detalheNotaFiscal != null && detalheNotaFiscal.getProdutoServico() != null){ 
 			// popular os itens das notas fiscais
-			// notaFiscalItem.setNotaFiscal(notaFiscal2);
 			notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().add(detalheNotaFiscal);
 		}
 		
@@ -524,7 +521,7 @@ public class ItemNotaFiscalBuilder  {
 		}
 		
 		produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoFechamentoFiscal.getQtde()));
-		produtoServico.setValorTotalBruto(produtoServico.getValorTotalBruto().add(valorTotalBruto));
+		produtoServico.setValorTotalBruto(CurrencyUtil.arredondarValorParaDuasCasas(produtoServico.getValorTotalBruto().add(valorTotalBruto)));
 		produtoServico.setValorUnitario(valorUnitario);
 		
 		produtoServico.setValorDesconto(BigDecimal.ZERO);
@@ -644,5 +641,4 @@ public class ItemNotaFiscalBuilder  {
 		notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().add(detalheNotaFiscal);
 		
 	}
-	
 }

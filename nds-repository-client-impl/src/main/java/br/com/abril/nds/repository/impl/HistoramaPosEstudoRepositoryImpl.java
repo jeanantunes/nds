@@ -23,11 +23,13 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 	@Override
 	public HistogramaPosEstudoAnaliseFaixaReparteDTO obterHistogramaPosEstudo(int faixaDe, int faixaAte, Integer estudoId, List<Long> listaIdEdicaoBase) {
 		
-        String parametroEdicoesBase = " ";
+		boolean isEdicoesBaseEspecificas = (listaIdEdicaoBase !=null && !listaIdEdicaoBase.isEmpty());
 		
-        if (listaIdEdicaoBase !=null && !listaIdEdicaoBase.isEmpty()){
+        String tuplaSqlEdicoesBase = " ";
+		
+        if (isEdicoesBaseEspecificas){
 		    
-        	parametroEdicoesBase = " AND EPE.PRODUTO_EDICAO_ID IN (:EDICOES_BASES) ";
+        	tuplaSqlEdicoesBase = " AND EPE.PRODUTO_EDICAO_ID IN (:EDICOES_BASES) ";
 		}
         
 		StringBuilder sql = new StringBuilder();
@@ -38,23 +40,29 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		
 		sql.append("	   AVG(REPARTE) reparteMedio, ");
 		
-		sql.append("       SUM(VENDA_MEDIA) vendaNominal, ");
+		if (isEdicoesBaseEspecificas){
 		
-		sql.append("	   SUM(VENDA_MEDIA) / COUNT(DISTINCT NUMERO_COTA) vendaMedia, ");
+		    sql.append("   SUM(VENDA_MEDIA) vendaNominal, ");
+		
+		    sql.append("   SUM(VENDA_MEDIA) / COUNT(DISTINCT NUMERO_COTA) vendaMedia, ");
+		}
 		
 		sql.append("       COUNT(DISTINCT NUMERO_COTA) qtdCotas, ");
 		
 		sql.append("	   SUM(RECEBIDO) qtdRecebida, ");
 		
-		sql.append("	   (SUM(VENDA_MEDIA) / SUM(REPARTE)) * 100 vendaPercent, ");
+		if (isEdicoesBaseEspecificas){
 		
-		sql.append("	   (SUM(REPARTE) - SUM(VENDA_MEDIA)) / COUNT(*) encalheMedio, ");
+		    sql.append("   (SUM(VENDA_MEDIA) / SUM(REPARTE)) * 100 vendaPercent, ");
 		
-		sql.append("       COUNT(IS_REPARTE_MENOR_VENDA) qtdCotaPossuemReparteMenorVenda,  ");
+		    sql.append("   (SUM(REPARTE) - SUM(VENDA_MEDIA)) / COUNT(*) encalheMedio, ");
+		
+		    sql.append("   COUNT(IS_REPARTE_MENOR_VENDA) qtdCotaPossuemReparteMenorVenda,  ");
+		}
 		
 		sql.append("       (SUM(REPARTE) / (SELECT SUM(REPARTE) FROM estudo_cota_gerado WHERE ESTUDO_ID = :ESTUDO_ID) * 100) participacaoReparte, ");
 		
-		sql.append("  		group_concat(IS_REPARTE_MENOR_VENDA) numeroCotasStr ");
+		sql.append("  	   group_concat(IS_REPARTE_MENOR_VENDA) numeroCotasStr ");
 		
 		sql.append("  FROM (SELECT REP.ID, ");
 		
@@ -64,71 +72,50 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		
 		sql.append("               SUM(REP.RECEBIDO) AS RECEBIDO, ");
 		
-		sql.append("               SUM(REP.VENDA_MEDIA) AS VENDA_MEDIA, ");
-		
-		sql.append("               REP.QTDE_EDICOES, ");
-		
+		if (isEdicoesBaseEspecificas){
+		    
+		    sql.append("           SUM(REP.VENDA_MEDIA) AS VENDA_MEDIA, ");
+		}
+
 		sql.append("               (CASE WHEN SUM(REP.REPARTE) < SUM(VENDA_MEDIA) THEN REP.NUMERO_COTA ELSE NULL END) IS_REPARTE_MENOR_VENDA ");
 		
-		sql.append("          FROM (SELECT C.ID, ");
+		sql.append("        FROM (SELECT C.ID, ");
 		
-		sql.append("                       C.NUMERO_COTA, ");
+		sql.append("                     C.NUMERO_COTA, ");
 		
-		sql.append("                       EC.REPARTE, ");
-		
-		
-		sql.append("                       (SELECT SUM(EPE.QTDE_RECEBIDA) "); 
-		
-		sql.append("                        FROM estoque_produto_cota EPE "); 
-		
-		sql.append("                        WHERE EPE.COTA_ID = C.ID ");
-		
-        sql.append(                         parametroEdicoesBase);
-		
-		sql.append("                        ) RECEBIDO,  ");
+		sql.append("                     EC.REPARTE, ");
 		
 		
-        sql.append("                       (SELECT SUM(EPE.QTDE_RECEBIDA - EPE.QTDE_DEVOLVIDA) "); 
+		sql.append("                     (SELECT SUM(EPE.QTDE_RECEBIDA) "); 
 		
-		sql.append("                        FROM estoque_produto_cota EPE "); 
+		sql.append("                      FROM estoque_produto_cota EPE "); 
 		
-		sql.append("                        WHERE EPE.COTA_ID = C.ID ");
+		sql.append("                      WHERE EPE.COTA_ID = C.ID ");
 		
-        sql.append(                         parametroEdicoesBase);
+        sql.append(                       tuplaSqlEdicoesBase);
 		
-		sql.append("                        ) VENDA,  ");
+		sql.append("                     ) RECEBIDO,  ");
+		
+			
+	    sql.append("                     (SELECT AVG(EPE.QTDE_RECEBIDA - EPE.QTDE_DEVOLVIDA) "); 
+			
+		sql.append("                      FROM estoque_produto_cota EPE "); 
+			
+		sql.append("                      WHERE EPE.COTA_ID = C.ID ");
+			
+	    sql.append(                       tuplaSqlEdicoesBase);
+			
+		sql.append("                     ) VENDA_MEDIA  ");
 		
 		
-        sql.append("                       (SELECT AVG(EPE.QTDE_RECEBIDA - EPE.QTDE_DEVOLVIDA) "); 
+		sql.append("              FROM estudo_cota_gerado EC ");
 		
-		sql.append("                        FROM estoque_produto_cota EPE "); 
+		sql.append("              JOIN COTA C ON C.ID = EC.COTA_ID ");
 		
-		sql.append("                        WHERE EPE.COTA_ID = C.ID ");
-		
-        sql.append(                         parametroEdicoesBase);
-		
-		sql.append("                        ) VENDA_MEDIA,  ");
-		
-		
-        sql.append("                       (SELECT COUNT(*) "); 
-		
-		sql.append("                        FROM estoque_produto_cota EPE "); 
-		
-		sql.append("                        WHERE EPE.COTA_ID = C.ID ");
-		
-        sql.append(                         parametroEdicoesBase);
-		
-		sql.append("                        ) QTDE_EDICOES  ");
+		sql.append("              WHERE EC.ESTUDO_ID = :ESTUDO_ID) REP ");
 
 		
-		sql.append("                  FROM estudo_cota_gerado EC ");
-		
-		sql.append("                  JOIN COTA C ON C.ID = EC.COTA_ID ");
-		
-		sql.append("                  WHERE EC.ESTUDO_ID = :ESTUDO_ID) REP ");
-
-		
-		sql.append("         WHERE REP.REPARTE BETWEEN :DE AND :ATE GROUP BY NUMERO_COTA) TES ");
+		sql.append("        WHERE REP.REPARTE BETWEEN :DE AND :ATE GROUP BY NUMERO_COTA) TES ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
@@ -138,7 +125,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		
 		query.setParameter("ATE", faixaAte);
 		
-		if (listaIdEdicaoBase !=null && !listaIdEdicaoBase.isEmpty()){
+		if (isEdicoesBaseEspecificas){
 			
 		    query.setParameterList("EDICOES_BASES", listaIdEdicaoBase);
 		}
