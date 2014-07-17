@@ -3824,5 +3824,21 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	
     	query.executeUpdate();
     }
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<MovimentoEstoqueCota> obterMovimentosEstoqueCotaPorIds(List<Long> idsMEC) {
+		
+		StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" select mec from MovimentoEstoqueCota mec ")
+    		.append(" where mec.id in (:idsMEC) ");
+    	
+    	Query query = getSession().createQuery(hql.toString());
+    	
+    	query.setParameterList("idsMEC", idsMEC);
+    	
+    	return query.list();
+	}
 	
 }

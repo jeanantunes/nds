@@ -2349,11 +2349,23 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 			if(movimentosFechamentoFiscalCota != null && !movimentosFechamentoFiscalCota.isEmpty()) {
 				
+				List<Long> idsMFFC = new ArrayList<Long>();
+				
 				for(MovimentoFechamentoFiscalCota mffc : movimentosFechamentoFiscalCota) {
 					
-					for(OrigemItemMovFechamentoFiscal omff : mffc.getOrigemMovimentoFechamentoFiscal()) {
+					idsMFFC.add(mffc.getId());
+				}
+				
+				List<Long> idsMEC = new ArrayList<Long>();
+				idsMEC = movimentoFechamentoFiscalRepository.obterMECIdsPelosMovFechamentosFiscaisCota(idsMFFC); 
 						
-						if(((OrigemItemMovFechamentoFiscalMEC) omff).getMovimento().getId().equals(idMovimentoEstoqueCota)) {
+				for(MovimentoFechamentoFiscalCota mffc : movimentosFechamentoFiscalCota) {
+
+					// Não utiliza este lazy loading devido o tipo de mapeamento de subclasses impactar no desempenho de vido ao union
+					// for(OrigemItemMovFechamentoFiscal omff : mffc.getOrigemMovimentoFechamentoFiscal())
+					for(MovimentoEstoqueCota mec : movimentoEstoqueCotaRepository.obterMovimentosEstoqueCotaPorIds(idsMEC) ) {
+						
+						if(mec.getId().equals(idMovimentoEstoqueCota)) {
 							
 							mffc.setNotaFiscalLiberadaEmissao(false);
 							mffc.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
