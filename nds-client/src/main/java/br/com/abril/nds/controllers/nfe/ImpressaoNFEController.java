@@ -24,7 +24,6 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
-import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
@@ -34,7 +33,6 @@ import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.RoteiroService;
-import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
@@ -64,10 +62,7 @@ public class ImpressaoNFEController extends BaseController {
 
 	@Autowired
 	private FornecedorService fornecedorService;
-
-	@Autowired
-	private NaturezaOperacaoService naturezaOperacaoService;
-
+	
 	@Autowired
 	private NFeService nfeService; 
 
@@ -101,20 +96,6 @@ public class ImpressaoNFEController extends BaseController {
 		
 		this.result.include("tipoEmissao", TipoEmissaoNfe.values());
 		
-	}
-
-	@Post
-	public void obterNaturezasOperacoesPorTipoDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario) {
-	    
-	    List<ItemDTO<Long, String>> naturezasOperacoes = null;
-	    
-	    if(TipoEmitente.COTA.equals(tipoEmitente) &&  TipoDestinatario.DISTRIBUIDOR.equals(tipoDestinatario)){
-            naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario, false, true);
-        } else{
-            naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario, false, null);
-        }
-	    
-		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
 	}
 	
 	private void obterTiposDestinatarios() {
