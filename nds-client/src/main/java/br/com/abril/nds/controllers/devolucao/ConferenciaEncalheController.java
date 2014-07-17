@@ -1145,7 +1145,7 @@ public class ConferenciaEncalheController extends BaseController {
 		} 
 		
 		return conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(
-				conferenciaEncalheDTONaoValidado, getCotaFromSession(), null, indConferenciaContingencia);
+				conferenciaEncalheDTONaoValidado, getCotaFromSession(), null, indConferenciaContingencia, true);
 	}
 	
 	@Post

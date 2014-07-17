@@ -130,7 +130,7 @@ public class ConferenciaEncalheBackupRepositoryImpl extends AbstractRepositoryMo
 		
 		sql.append(" INNER JOIN COTA ON (COTA.ID = CONF_ENCALHE.COTA_ID) ");
 		
-		sql.append(" WHERE  ");
+		sql.append(" WHERE ");
 		
 		sql.append(" CONF_ENCALHE.DATA_OPERACAO = :dataOperacao AND ");
 		

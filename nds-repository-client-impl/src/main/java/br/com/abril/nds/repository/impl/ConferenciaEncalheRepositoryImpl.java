@@ -655,7 +655,7 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		hql.append(" INNER JOIN PESSOA PESSOA_FORNECEDOR ON (FORNECEDOR_0.JURIDICA_ID = PESSOA_FORNECEDOR.ID) 	");
 		hql.append(" INNER JOIN PESSOA PESSOA_EDITOR ON (EDITOR_0.JURIDICA_ID = PESSOA_EDITOR.ID) 		");
 		
-		hql.append(" WHERE ");
+		hql.append(" WHERE  ");
 		hql.append(" CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = :idControleConferenciaEncalheCota   ");
 		
 		if(processoUtilizaNFe != null) {

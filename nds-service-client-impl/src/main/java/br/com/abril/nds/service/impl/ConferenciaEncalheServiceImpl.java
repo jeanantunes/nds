@@ -2260,10 +2260,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				obterControleConferenciaEncalheCotaAtualizado(controleConfEncalheCota, statusOperacao, usuario);
 		
 		final Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque = obterMapaTipoMovimentoEstoque();
-
+		
+		final boolean validarExemplaresComZero =false;
+		
 		for(final ConferenciaEncalheDTO conferenciaEncalheDTO : listaConferenciaEncalhe) {
 
-			validarQtdeEncalheExcedeQtdeReparte(conferenciaEncalheDTO, controleConferenciaEncalheCota.getCota(), dataOperacao, indConferenciaContingencia);
+			validarQtdeEncalheExcedeQtdeReparte(conferenciaEncalheDTO, controleConferenciaEncalheCota.getCota(), dataOperacao, indConferenciaContingencia, validarExemplaresComZero);
 			
 			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
 
@@ -2875,13 +2877,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public boolean validarQtdeEncalheExcedeQtdeReparte(
 			final ConferenciaEncalheDTO conferenciaEncalhe,
 			final Cota cota, 
-			final Date dataOperacao, final boolean indConferenciaContingencia) {
-
-		if (!indConferenciaContingencia &&
-				(conferenciaEncalhe.getQtdExemplar() == null || conferenciaEncalhe.getQtdExemplar().compareTo(BigInteger.ZERO) <= 0)){
+			final Date dataOperacao, final boolean indConferenciaContingencia, boolean validarExemplarZero) {
+		
+		if(validarExemplarZero){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos no encalhe deve ser maior que zero.");
-			
+			if (!indConferenciaContingencia &&
+					(conferenciaEncalhe.getQtdExemplar() == null || conferenciaEncalhe.getQtdExemplar().compareTo(BigInteger.ZERO) <= 0)){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos no encalhe deve ser maior que zero.");
+				
+			}
 		}
 
 		final boolean indNovoRegistroConfEncalheCota = conferenciaEncalhe.getIdConferenciaEncalhe() == null || 
