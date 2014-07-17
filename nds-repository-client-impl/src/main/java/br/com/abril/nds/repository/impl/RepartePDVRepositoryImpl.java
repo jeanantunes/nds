@@ -115,9 +115,22 @@ public class RepartePDVRepositoryImpl extends  AbstractRepositoryModel<RepartePD
         return (List<RepartePDV>)q.list();
 		
 	}
-	
-	
+
+    @Override
+    public boolean verificarRepartePdv(final Integer numeroCota, final String codigoProduto) {
+        
+        final Query query = 
+                this.getSession().createQuery(
+                        "select count(rpdv.id) from RepartePDV rpdv " +
+                        " join rpdv.pdv pd " +
+                        " join pd.cota c " +
+                        " join rpdv.produto p " +
+                        " where c.numeroCota = :numeroCota " +
+                        " and p.codigo = :codigoProduto ");
+        
+        query.setParameter("numeroCota", numeroCota);
+        query.setParameter("codigoProduto", codigoProduto);
+        
+        return ((Long)query.uniqueResult() > 0);
+    }
 }
-
-
-
