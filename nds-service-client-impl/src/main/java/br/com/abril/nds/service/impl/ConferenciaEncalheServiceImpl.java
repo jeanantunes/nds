@@ -3115,15 +3115,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		final Date dataConferenciaEncalhe = this.distribuidorService.obterDataOperacaoDistribuidor();
 
-		final TipoMovimentoEstoque tipoMovimentoEstoque = 
-			obterTipoMovimentoEstoqueDistribuidor(
+		final TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimentoEstoqueDistribuidor(
 				juramentada, conferenciaEncalheDTO.getDataRecolhimento(),
 				dataConferenciaEncalhe, mapaTipoMovimentoEstoque, tipoChamadaEncalhe);
 
-		final MovimentoEstoque movimentoEstoque = 
-			this.movimentoEstoqueService.gerarMovimentoEstoque(
-					conferenciaEncalheDTO.getIdProdutoEdicao(), usuario.getId(), 
-					conferenciaEncalheDTO.getQtdExemplar(), tipoMovimentoEstoque, false, cota);
+		final MovimentoEstoque movimentoEstoque = this.movimentoEstoqueService.gerarMovimentoEstoque(conferenciaEncalheDTO.getIdProdutoEdicao(), 
+				usuario.getId(), 
+				conferenciaEncalheDTO.getQtdExemplar(), 
+				tipoMovimentoEstoque, 
+				true, 
+				cota);
 		
 		return movimentoEstoque;
 	}
@@ -3149,8 +3150,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
-		final Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(
-				dataOperacao, 
+		final Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(dataOperacao, 
                 conferenciaEncalheDTO.getDataRecolhimento(),
                 numeroCota,
                 conferenciaEncalheDTO.getIdProdutoEdicao(), 
