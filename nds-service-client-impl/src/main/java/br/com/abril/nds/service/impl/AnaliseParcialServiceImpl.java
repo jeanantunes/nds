@@ -38,8 +38,6 @@ import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
-import br.com.abril.nds.model.planejamento.Lancamento;
-import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -409,7 +407,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     		this.validarDistribuicaoPorMultiplo(estudoId, reparteDigitado, estudoGerado);
     	}
     	
-        analiseParcialRepository.atualizaReparteCota(estudoId, numeroCota, reparte);
+    	if(reparteDigitado > 0){
+    		analiseParcialRepository.atualizaReparteCota(estudoId, numeroCota, reparte);
+    	}else{
+    		EstudoCotaGerado estudoCota = estudoService.obterEstudoCotaGerado(numeroCota.intValue(), estudoId);
+    		estudoCotaGerado.removerEstudoCotaGerado(estudoCota.getId());
+    	}
+    	
         analiseParcialRepository.atualizaReparteEstudo(estudoId, reparte);
     }
     
@@ -557,8 +561,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     
     @Override
     @Transactional
-    public CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto) {
-        return cotaRepository.buscarCotaPorNumero(numeroCota, codigoProduto);
+    public CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto, Long idClassifProdEdicao) {
+        return cotaRepository.buscarCotaPorNumero(numeroCota, codigoProduto, idClassifProdEdicao);
     }
     
     private String traduzClassificacaoCota(String motivo) {

@@ -39,6 +39,7 @@ import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
@@ -94,6 +95,9 @@ public class AnaliseParcialController extends BaseController {
     
     @Autowired
     private MixCotaProdutoService mixCotaProdutoService;
+    
+    @Autowired
+    private RepartePdvService repartePdvService;
     
     private static final String EDICOES_BASE_SESSION_ATTRIBUTE = "";
 
@@ -163,9 +167,9 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Post
-    public void carregarDetalhesCota(Integer numeroCota, String codigoProduto) {
+    public void carregarDetalhesCota(Integer numeroCota, String codigoProduto, Long idClassifProdEdicao) {
         Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
-        CotaDTO cotaDTO = analiseParcialService.buscarDetalhesCota(numeroCota, produto.getCodigoICD());
+        CotaDTO cotaDTO = analiseParcialService.buscarDetalhesCota(numeroCota, produto.getCodigoICD(), idClassifProdEdicao);
 
         result.use(Results.json()).withoutRoot().from(cotaDTO).recursive().serialize();
     }
@@ -374,11 +378,16 @@ public class AnaliseParcialController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS_ALTERACAO)
-	public void verificarMaxMinCotaMix(Integer numeroCota, String codigoProduto, Long qtdDigitado, Long tipoClassificacaoProduto){
+	public void verificarMaxMinCotaMix(final Integer numeroCota, 
+	        final String codigoProduto, final Long qtdDigitado, final Long tipoClassificacaoProduto){
 	    
-	    this.result.use(Results.json()).from(
+	    final Object[] ret = new Object[2];
+	    ret[0] = 
 	            this.mixCotaProdutoService.verificarReparteMinMaxCotaProdutoMix(
-	                    numeroCota, codigoProduto, qtdDigitado, tipoClassificacaoProduto), 
-	            "result").serialize();
+	                    numeroCota, codigoProduto, qtdDigitado, tipoClassificacaoProduto);
+	    
+	    ret[1] = this.repartePdvService.verificarRepartePdv(numeroCota, codigoProduto);
+	    
+	    this.result.use(Results.json()).from(ret, "result").serialize();
 	}
 }

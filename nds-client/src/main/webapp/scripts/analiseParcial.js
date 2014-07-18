@@ -6,7 +6,8 @@ var analiseParcialController = $.extend(true, {
 
     linkNomeCota : '<a tabindex="-1" class="linkNomeCota" numeroCota="#numeroCota" >#nomeCota</a>',
     edicoesBase : [],
-    inputReparteSugerido: '<input #disabled reducaoReparte="#redReparte" nmCota="#nmCota" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" ajustado="#ajustado" qtdPDV="#qtdPDV" quantidadeAjuste="#quantidadeAjuste" value="#value" class="reparteSugerido" />',
+    edicoesBaseDadosEdicoes : [],
+    inputReparteSugerido: '<input #disabled reducaoReparte="#redReparte" nmCota="#nmCota" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" ajustado="#ajustado" qtdPDV="#qtdPDV" quantidadeAjuste="#quantidadeAjuste" value="#value" idrowGrid="#idrow" percentualVenda="#percVenda"  class="reparteSugerido" />',
     tipoExibicao : 'NORMAL',
 
     exibirMsg: function(tipo, texto) {
@@ -174,6 +175,7 @@ var analiseParcialController = $.extend(true, {
 
         $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/carregarDetalhesCota',
             [{name: 'numeroCota', value: numeroCota},
+             {name: 'idClassifProdEdicao', value: $('#tipoClassificacaoProdutoId').val()},
              {name: 'codigoProduto', value: $('input[id="codigoProduto"]').val()}],
             function(result){
 
@@ -408,6 +410,7 @@ var analiseParcialController = $.extend(true, {
         var qtdPdv = input_reparte_element.attr('qtdPDV');
         var reparteDigitado = ((input_reparte_element.val() == "") ? 0 : input_reparte_element.val());
         var reparteAtual = input_reparte_element.attr('reparteAtual');
+        var idRowGrid = input_reparte_element.attr('idrowgrid');
         var reparteSubtraido = parseInt(reparteDigitado, 10) - parseInt(reparteAtual, 10);
         var legenda_element = input_reparte_element.closest('td').next().find('div');
         
@@ -415,14 +418,19 @@ var analiseParcialController = $.extend(true, {
             var legendaText = legenda_element.text();
             if (legendaText.indexOf('FX') > -1 || legendaText.indexOf('MX') > -1) {
             	
+            	var codProd = $("#codigoProduto", analiseParcialController.workspace).text() || $("#codigoProduto", analiseParcialController.workspace).val();
+            	
             	$.postJSON(
             		analiseParcialController.path + '/distribuicao/analise/parcial/verificarMaxMinCotaMix',
             		[{name:"numeroCota", value:numeroCota},
-            		 {name:"codigoProduto", value:"" + $("#codigoProduto").val() + ""},
+            		 {name:"codigoProduto", value:"" + codProd + ""},
             		 {name:"qtdDigitado", value:reparteDigitado},
             		 {name:"tipoClassificacaoProduto", value:$("#tipoClassificacaoProdutoId").val()}],
             		 function(result){
-            			if (!result || !result.boolean){
+            			
+            			isAtualizarRepartePDV = result[1];
+            			
+            			if (!result[0]){
             				
             				usuarioController.supervisor.verificarRoleSupervisao({
         		            	optionalDialogMessage: 'É necessario confirmar esta ação com senha.',
@@ -450,7 +458,7 @@ var analiseParcialController = $.extend(true, {
         		    			}
         		            });
             			} else {
-            				
+
             				analiseParcialController.atualizarReparteCota(
             						input_reparte_element, numeroCota, reparteSubtraido, reparteDigitado, 
             						reparteAtual, saldoReparte, legenda_element);
@@ -458,12 +466,12 @@ var analiseParcialController = $.extend(true, {
             		}
             	);
             }else{
-            	analiseParcialController.atualizarReparteCota(input_reparte_element, numeroCota, reparteSubtraido, reparteDigitado, reparteAtual, saldoReparte, legenda_element);
+            	analiseParcialController.atualizarReparteCota(input_reparte_element, numeroCota, reparteSubtraido, reparteDigitado, reparteAtual, saldoReparte, legenda_element, idRowGrid);
             }
         }
     },
     
-    atualizarReparteCota : function(input_reparte_element, numeroCota, reparteSubtraido, reparteDigitado, reparteAtual, saldoReparte, legenda_element){
+    atualizarReparteCota : function(input_reparte_element, numeroCota, reparteSubtraido, reparteDigitado, reparteAtual, saldoReparte, legenda_element, idRowGrid){
     	
     	var legendaCota = legenda_element.text();
     	
@@ -516,6 +524,11 @@ var analiseParcialController = $.extend(true, {
                         exibirMensagem('WARNING', [e.message]);
                     }
                 }
+                
+                if(reparteDigitado == 0){
+                	$("#row"+idRowGrid, analiseParcialController.workspace).remove();
+                }
+                
             },
             error: function() {
                 analiseParcialController.exibirMsg('WARNING', ['Erro ao enviar novo reparte!']);
@@ -581,8 +594,31 @@ var analiseParcialController = $.extend(true, {
         // atualização dos valores da grid
         for (var i = 0; i < resultado.rows.length; i++) {
         	
-            var cell = resultado.rows[i].cell;
-            var numCota = cell.cota;
+        	var cell = resultado.rows[i].cell;
+        	var numCota = cell.cota;
+        	
+        	var somaReparteCota = 0;
+        	var somaVendasCota = 0;
+        	var porcentagemVendaCota = 0;
+
+        	for (var j = 0; j < 6; j++) {
+                if (typeof cell.edicoesBase[j] === 'undefined' || typeof cell.edicoesBase[j].reparte === 'undefined') {
+                    cell['reparte'+ (j + 1)] = '';
+                    cell['venda'+ (j + 1)] = '';
+                } else {
+                    cell['reparte'+ (j + 1)] = cell.edicoesBase[j].reparte;
+                    cell['venda'+ (j + 1)] = cell.edicoesBase[j].venda || 0;
+                    
+                    somaReparteCota += Number(cell.edicoesBase[j].reparte);
+                    somaVendasCota += Number(cell.edicoesBase[j].venda);
+                }
+            }
+        	
+        	if(somaVendasCota > 0){
+        		porcentagemVendaCota = ((somaVendasCota)/(somaReparteCota))*100;
+        	} 
+        	
+        	
             var input = analiseParcialController.inputReparteSugerido.toString()
                             .replace(/#numeroCota/g, numCota)
                             .replace(/#value/g, cell.reparteSugerido)
@@ -592,6 +628,8 @@ var analiseParcialController = $.extend(true, {
                             .replace(/#quantidadeAjuste/g, cell.quantidadeAjuste)
                             .replace(/#redReparte/g, analiseParcialController.calculaPercentualReducaoReparte(cell.reparteEstudo, cell.reparteSugerido))
                             .replace(/#qtdPDV/g, cell.npdv)
+                            .replace(/#idrow/g, i+1)
+                            .replace(/#percVenda/g, porcentagemVendaCota)
                             .replace(/#nmCota/g, cell.nome);
             
             cell.reparteSugerido = input;
@@ -617,18 +655,12 @@ var analiseParcialController = $.extend(true, {
                 cell.juramento = '';
             }
 
-            for (var j = 0; j < 6; j++) {
-                if (typeof cell.edicoesBase[j] === 'undefined' || typeof cell.edicoesBase[j].reparte === 'undefined') {
-                    cell['reparte'+ (j + 1)] = '';
-                    cell['venda'+ (j + 1)] = '';
-                } else {
-                    cell['reparte'+ (j + 1)] = cell.edicoesBase[j].reparte;
-                    cell['venda'+ (j + 1)] = cell.edicoesBase[j].venda || 0;
-                }
-            }   
-            
             totalSaldoReparte += parseInt(cell.quantidadeAjuste);
         }
+        
+       if(resultado.rows[0].cell.edicoesBase != undefined){
+    	   edicoesBaseDadosEdicoes = resultado.rows[0].cell.edicoesBase; 
+       }
         
         return resultado;
     },
@@ -1159,7 +1191,7 @@ var analiseParcialController = $.extend(true, {
         var $input = $(input);
         $input.data('valid', false);
 
-        if ($input.val() !== '' && !isNaN($input.val())) {
+        if ($input.val() !== '' && !isNaN($input.val()) && $input.val() > 0) {
         	
         	var message = '';
         	
@@ -1187,7 +1219,8 @@ var analiseParcialController = $.extend(true, {
     			}
             });
             
-        } else if ($input.val() === '') {
+        } else if ($input.val() === '' || $input.val() == 0) {
+        	analiseParcialController.exibirMsg('WARNING', ['Esse não é um reparte válido! Essa cota não será inserida na distribuição.']);
             analiseParcialController.atualizaQuantidadeTotal($input);
         } else {
             $input.val('');
@@ -1367,6 +1400,8 @@ var analiseParcialController = $.extend(true, {
                         }
                         analiseParcialController.postMudarReparteLote();
                         $(this).dialog("close");
+                    }else{
+                    	analiseParcialController.exibirMsg('WARNING', ['Não há cotas com reparte válido!']);
                     }
                 },
                 "Cancelar" : function() {
@@ -1523,15 +1558,15 @@ var analiseParcialController = $.extend(true, {
                 .removeClass('erow')
                 .each(function(){
                     var $tr = $(this);
-                    var perc = $tr.find(sortAtribute).attr('percentualVenda');
+                    var perc = Math.round($('#baseEstudoGridParcial td[abbr="reparteSugerido"] input[numerocota="' + $tr.find('td[abbr="cota"]').text() + '"]').attr('percentualvenda'));
                     if (de < ate) {
-                        if (de < perc && perc < ate) {
+                        if (de <= perc && perc <= ate) {
                             $tr.show();
                         } else {
                             $tr.hide();
                         }
                     } else {
-                        if (de > perc && perc > ate) {
+                        if (de >= perc && perc >= ate) {
                             $tr.show();
                         } else {
                             $tr.hide();
@@ -1601,7 +1636,87 @@ var analiseParcialController = $.extend(true, {
     	
     	$('#reparteCota', analiseParcialController.workspace).text(totalRepartePDVs);
     	
-    }
+    },
+    
+    montarDadosDetalhesEdicoesBases : function(){
+    	
+    	$('.detalhesDados-analiseParcial').show();
+    	
+    	// tr codProduto
+		$("#analiseParcialPopUpCodProduto", analiseParcialController.workspace).clear();
+		$("#analiseParcialPopUpCodProduto", analiseParcialController.workspace)
+		.append('<td class="class_linha_1"><strong>Código:</strong></td>');
+    	
+		// tr nomeProduto
+		$("#analiseParcialPopUpNomeProduto", analiseParcialController.workspace).clear();
+		$("#analiseParcialPopUpNomeProduto", analiseParcialController.workspace)
+		.append('<td class="class_linha_1"><strong>Produto:</strong></td>');
+		
+		// tr numeroEdicao
+		$('#analiseParcialPopUpNumeroEdicao', analiseParcialController.workspace).html('')
+		.append('<td class="class_linha_1"><strong>Edição:</strong></td>');
+		
+		// tr dataLancamento
+		$('#analiseParcialPopUpDatalancamento', analiseParcialController.workspace).html('')
+		.append('<td width="136" class="class_linha_2"><strong>Data Lançamento:</strong></td>');
+		
+		// tr reparte
+		$('#analiseParcialPopUpReparte', analiseParcialController.workspace).html('')
+		.append('<td class="class_linha_1"><strong>Reparte:</strong></td>');
+		
+		// tr venda
+		$('#analiseParcialPopUpVenda', analiseParcialController.workspace).html('')
+		.append('<td class="class_linha_2"><strong>Venda:</strong></td>');
+		
+		var qtdEdicoesSelecionadas = edicoesBaseDadosEdicoes.length; 
+		
+		// carregando popUp_detalhesDados-analiseParcial
+		for (var i = 0; i <= qtdEdicoesSelecionadas - 1; i++) {
+			row = edicoesBaseDadosEdicoes[i];
+			
+			$("#analiseParcialPopUpCodProduto", analiseParcialController.workspace).append(
+					'<td class="class_linha_1">'+row.codigoProduto+'</td>');
+			
+			$("#analiseParcialPopUpNomeProduto", analiseParcialController.workspace).append(
+					'<td class="class_linha_1">'+row.nomeProduto+'</td>');
+			
+			$("#analiseParcialPopUpNumeroEdicao", analiseParcialController.workspace).append(
+					'<td class="class_linha_1">'+row.edicao+'</td>');
+			
+			$("#analiseParcialPopUpDatalancamento", analiseParcialController.workspace).append(
+					'<td width="130" align="center" class="class_linha_2">' + row.dataLancamento + '</td>');
+			
+			$("#analiseParcialPopUpReparte", analiseParcialController.workspace).append(
+					'<td align="right" class="class_linha_1">' + (row.reparte != undefined ? row.reparte : "") +'</td>');
+			
+			$("#analiseParcialPopUpVenda", analiseParcialController.workspace).append(
+					'<td align="right" class="class_linha_1">' + (row.venda != undefined ? row.venda : "") + '</td>');
+		}
+		
+		qtdEdicoesSelecionadas = 6 - edicoesBaseDadosEdicoes.length; 
+		
+		// por estética de layout, insiro elementos td vazios
+		for ( var int = 0; int < qtdEdicoesSelecionadas.length; int++) {
+			$("#analiseParcialPopUpCodProduto", analiseParcialController.workspace).append(
+					'<td class="class_linha_1"></td>');
+			
+			$("#analiseParcialPopUpNomeProduto", analiseParcialController.workspace).append(
+					'<td class="class_linha_1"></td>');
+			
+			$("#analiseParcialPopUpNumeroEdicao", analiseParcialController.workspace).append(
+					'<td class="class_linha_1"></td>');
+			
+			$("#analiseParcialPopUpDatalancamento", analiseParcialController.workspace).append(
+					'<td width="130" align="center" class="class_linha_2"></td>');
+			
+			$("#analiseParcialPopUpReparte", analiseParcialController.workspace).append(
+					'<td align="right" class="class_linha_1"></td>');
+			
+			$("#analiseParcialPopUpVenda", analiseParcialController.workspace).append(
+					'<td align="right" class="class_linha_1"></td>');
+		}
+					
+	}
 });
 
 $(".cotasDetalhesGrid").flexigrid({
