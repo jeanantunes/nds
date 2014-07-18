@@ -21,6 +21,7 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.TransferenciaEstoqueParcialService;
+import br.com.abril.nds.util.BigIntegerUtil;
 
 @Service
 public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEstoqueParcialService {
@@ -111,19 +112,19 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 		
 		movimentarEstoque(
 			idProdutoEdicaoOrigem, estoqueProdutoOrigem.getQtde(), 
-				GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO, idUsuario);
+				GrupoMovimentoEstoque.TRANSFERENCIA_PARCIAL_SAIDA_LANCAMENTO, idUsuario);
 		
 		movimentarEstoque(
 			idProdutoEdicaoOrigem, estoqueProdutoOrigem.getQtdeSuplementar(), 
-				GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR, idUsuario);
+				GrupoMovimentoEstoque.TRANSFERENCIA_PARCIAL_SAIDA_SUPLEMENTAR, idUsuario);
 		
 		movimentarEstoque(
 			idProdutoEdicaoOrigem, estoqueProdutoOrigem.getQtdeDevolucaoEncalhe(), 
-				GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_ENCALHE, idUsuario);
+				GrupoMovimentoEstoque.TRANSFERENCIA_PARCIAL_SAIDA_PRODUTOS_DEVOLUCAO_ENCALHE, idUsuario);
 		
 		movimentarEstoque(
 			idProdutoEdicaoOrigem, estoqueProdutoOrigem.getQtdeDanificado(), 
-				GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS, idUsuario);
+				GrupoMovimentoEstoque.TRANSFERENCIA_PARCIAL_SAIDA_PRODUTOS_DANIFICADOS, idUsuario);
 		
 		movimentarEstoque(
 			idProdutoEdicaoDestino, qtdeEstoqueParaTransferencia, 
@@ -142,6 +143,10 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 								   BigInteger qtde,
 								   GrupoMovimentoEstoque grupoMovimentoEstoque,
 								   Long idUsuario) {
+		
+		if (qtde == null || !BigIntegerUtil.isMaiorQueZero(qtde)) {
+			return;
+		}
 		
 		TipoMovimentoEstoque tipoMovimentoEstoque = 
 			this.tipoMovimentoService.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);

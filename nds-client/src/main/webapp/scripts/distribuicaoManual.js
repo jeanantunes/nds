@@ -574,18 +574,17 @@ var distribuicaoManual = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					var fileName = $("#excelFileDistbManual").val();
-					var ext = ext != ""? fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase() : "";
+					var ext = fileName != ""? fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase() : "";
 				       
 					if(ext!="xls" && ext!="xlsx"){
 						exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
-						$(this).dialog("close");
 					}else{
 						distribuicaoManual.executarSubmitArquivo();
 					}
+					$(this).dialog("destroy");
 				},
 				"Cancelar": function() {
-					$("#excelFileDistbManual").val("");
-					$(this).dialog("close");
+					$(this).dialog("destroy");
 				}
 			},
 		});
@@ -634,15 +633,13 @@ var distribuicaoManual = $.extend(true, {
 	        			exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
 	        		}
 		        	
-	                $("#modalUploadArquivo-DistbManual").dialog( "close" );
+	                $("#modalUploadArquivo-DistbManual").dialog("destroy");
 		        }
 		   },
 		   url:  contextPath +"/distribuicaoManual/uploadArquivoLoteDistbManual",				   
 	       type: 'POST',
 	       dataType: 'json',
  	   });
-		
-		$("#excelFileDistbManual").val("");
 	}
 	// ##-- --##
 	
