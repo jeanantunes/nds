@@ -101,13 +101,9 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 				this.processarItemExtratoEdicaoDiferenca(itemExtratoEdicao);
 			}
 			
-			BigInteger qtdEntrada = BigInteger.ZERO;
+			BigInteger qtdEntrada = itemExtratoEdicao.getQtdEdicaoEntrada() == null ? BigInteger.ZERO : itemExtratoEdicao.getQtdEdicaoEntrada();
 			
-			qtdEntrada = itemExtratoEdicao.getQtdEdicaoEntrada();
-			
-			BigInteger qtdSaida = BigInteger.ZERO;
-			
-			qtdSaida = itemExtratoEdicao.getQtdEdicaoSaida();
+			BigInteger qtdSaida = itemExtratoEdicao.getQtdEdicaoSaida() == null ? BigInteger.ZERO : itemExtratoEdicao.getQtdEdicaoSaida();
 			
 			BigInteger qtdeParcial = qtdEntrada.subtract(qtdSaida);
 		
