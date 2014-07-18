@@ -249,7 +249,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		    }else if (event.keyCode == 27){ //"ESC"
 		    	$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
 		    }else if (event.keyCode == 40){ //"Seta para baixo"
-		    	ConferenciaEncalhe.posicionarQtdExemplares();
+		    	ConferenciaEncalhe.posicionarQtdExemplares(null, null, 'codigo_barras');
 		    }
 
 		});
@@ -1143,7 +1143,17 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#somatorioTotal", ConferenciaEncalhe.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 	},
 	
-	posicionarQtdExemplares : function(e, index) {
+	posicionarQtdExemplares : function(e, index, fromInput) {
+		
+		if(fromInput == 'codigo_barras') {
+			
+			var qtdSource = $("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete('option',  'source').length;
+			
+			if(qtdSource) {
+				return;
+			}
+			
+		}
 		
 		var listaItemGrid = $("._dadosConfEncalhe", ConferenciaEncalhe.workspace);
 		
@@ -1151,18 +1161,30 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 			if(index || index == 0) {
 				
-				if(e.keyCode == 38 && index > 0) {
+				if(e.keyCode == 38) {
+					
+					if(index == 0) {
+						
+						$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).select();
+						
+						return;
+					}
 					
 					var proximoCampo = (index - 1); 
 					
-					$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').select();
-				
-				} else if (e.keyCode == 40) {
+					var campo = $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]');
+					
+					$(campo).select();
+					
+				} else if (e.keyCode == 40 || e.keyCode == 13) {
 					
 					var proximoCampo = (index + 1);
 					
-					$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').select();
-				
+					var campo = $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]');
+					
+					$(campo).select();
+
+					
 				} 
 					
 				return;
