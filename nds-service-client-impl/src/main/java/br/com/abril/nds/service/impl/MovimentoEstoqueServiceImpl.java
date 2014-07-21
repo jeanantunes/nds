@@ -1658,7 +1658,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         if (dataLancamento != null && produtoEdicao.getId() != null) {
             
-            if (idLancamento==null) {
+            if (idLancamento == null) {
                 
                 idLancamento = lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
                         new ProdutoEdicao(produtoEdicao.getId()), null, dataLancamento);
@@ -1673,7 +1673,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 // FIXME Provisorio ate validação do Evaldo !
                 // final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
                 
-				                                                /**
+                /**
                  * A busca dos descontos é feita diretamente no Map, por chave,
                  * agilizando o retorno do resultado
                  */
