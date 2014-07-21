@@ -2347,7 +2347,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 			atualizarMovimentoEstoqueCota(idMovimentoEstoqueCota, conferenciaEncalheDTO, cota);
 			
-			List<MovimentoFechamentoFiscalCota> movimentosFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCota(chamadaEncalheCota);
+			List<MovimentoFechamentoFiscalCota> movimentosFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCota(chamadaEncalheCota.getId());
 		
 			if(movimentosFechamentoFiscalCota != null && !movimentosFechamentoFiscalCota.isEmpty()) {
 				
