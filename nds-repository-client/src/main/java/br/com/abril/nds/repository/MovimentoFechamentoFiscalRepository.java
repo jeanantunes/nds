@@ -7,11 +7,10 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
-import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 
 public interface MovimentoFechamentoFiscalRepository extends Repository<MovimentoFechamentoFiscal, Long> {
 	
-	List<MovimentoFechamentoFiscalCota> buscarPorChamadaEncalheCota(ChamadaEncalheCota chamadaEncalheCota);
+	List<MovimentoFechamentoFiscalCota> buscarPorChamadaEncalheCota(Long chamadaEncalheId);
 
 	MovimentoFechamentoFiscalFornecedor buscarPorProdutoEdicaoTipoMovimentoEstoque(ProdutoEdicao produtoEdicao, TipoMovimentoEstoque tipoMovimentoEstoque);
 

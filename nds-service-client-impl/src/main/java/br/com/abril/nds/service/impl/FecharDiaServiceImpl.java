@@ -32,6 +32,7 @@ import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
+import br.com.abril.nds.dto.chamadaencalhe.ChamadaEncalheCotaDTO;
 import br.com.abril.nds.dto.fechamentodiario.DiferencaDTO;
 import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
 import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
@@ -98,10 +99,10 @@ import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
-import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
@@ -329,6 +330,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private FlagPendenteAtivacaoRepository flagPendenteAtivacaoRepository; 
+	
+	@Autowired
+	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
 	
 	private static final Logger LOG = LoggerFactory.getLogger("fecharDiaLogger");
 	
@@ -1846,9 +1850,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			this.lancamentoRepository.merge(lancamento);
 			
 			for(ChamadaEncalhe ce : lancamento.getChamadaEncalhe()) {
-				for(ChamadaEncalheCota cec : ce.getChamadaEncalheCotas()) {
+				
+				List<ChamadaEncalheCotaDTO> chamadasEncalheCota = chamadaEncalheCotaRepository.buscarPorChamadaEncalhe(ce);
+				
+				for(ChamadaEncalheCotaDTO cec : chamadasEncalheCota ) { //ce.getChamadaEncalheCotas()) {
 					
-					List<MovimentoFechamentoFiscalCota> movimentosFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCota(cec);
+					List<MovimentoFechamentoFiscalCota> movimentosFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCota(cec.getId());
 					
 					if(movimentosFechamentoFiscalCota == null || movimentosFechamentoFiscalCota.isEmpty()) {
 						
@@ -1859,10 +1866,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 							
 							mffc.setNotaFiscalLiberadaEmissao(true);
 							
-							if(cec.getCota() != null
-									&& cec.getCota().getParametrosCotaNotaFiscalEletronica() != null
-									&& (cec.getCota().getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() 
-											|| cec.getCota().getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica())) {
+							if(cec.isExigeNFE() || cec.isContribuinteICMS()) {
 								
 								mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(true);
 								mffc.setNotaFiscalDevolucaoSimbolicaEmitida(false);

@@ -16,7 +16,6 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
-import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoFechamentoFiscalRepository;
 
@@ -32,10 +31,11 @@ public class MovimentoFechamentoFiscalRepositoryImpl extends AbstractRepositoryM
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<MovimentoFechamentoFiscalCota> buscarPorChamadaEncalheCota(ChamadaEncalheCota chamadaEncalheCota) {
+	public List<MovimentoFechamentoFiscalCota> buscarPorChamadaEncalheCota(Long chamadaEncalheCotaId) {
 		
 		Criteria criteria = getSession().createCriteria(MovimentoFechamentoFiscalCota.class);
-		criteria.add(Restrictions.eq("chamadaEncalheCota", chamadaEncalheCota));
+		criteria.createAlias("chamadaEncalheCota", "chamadaEncalheCota");
+		criteria.add(Restrictions.eq("chamadaEncalheCota.id", chamadaEncalheCotaId));
 		
 		return (List<MovimentoFechamentoFiscalCota>) criteria.list();
 	}

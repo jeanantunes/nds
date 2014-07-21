@@ -607,10 +607,14 @@ var analiseParcialController = $.extend(true, {
                     cell['venda'+ (j + 1)] = '';
                 } else {
                     cell['reparte'+ (j + 1)] = cell.edicoesBase[j].reparte;
-                    cell['venda'+ (j + 1)] = cell.edicoesBase[j].venda || 0;
-                    
                     somaReparteCota += Number(cell.edicoesBase[j].reparte);
-                    somaVendasCota += Number(cell.edicoesBase[j].venda);
+                    
+                    if (cell.edicoesBase[j].venda){
+                    	cell['venda'+ (j + 1)] = cell.edicoesBase[j].venda;
+                    	somaVendasCota += Number(cell.edicoesBase[j].venda);
+                    } else {
+                    	cell['venda'+ (j + 1)] = '';
+                    }
                 }
             }
         	
@@ -653,6 +657,10 @@ var analiseParcialController = $.extend(true, {
             }
             if (cell.juramento == 0) {
                 cell.juramento = '';
+            }
+            
+            if (!cell.ultimoReparte){
+            	cell.ultimoReparte = '';
             }
 
             totalSaldoReparte += parseInt(cell.quantidadeAjuste);
