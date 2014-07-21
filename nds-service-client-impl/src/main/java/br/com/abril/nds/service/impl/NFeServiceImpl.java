@@ -490,7 +490,7 @@ public class NFeServiceImpl implements NFeService {
 		} else {
 			
 			this.notaFiscalService.exportarNotasFiscais(notas);
-//			throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
 			
 		}
 		
@@ -757,7 +757,7 @@ public class NFeServiceImpl implements NFeService {
 		}
 		
 		if(naturezaOperacao.isGerarNotasReferenciadas()){
-			this.gerarNotaFiscalReferenciada(notasFiscais);
+			this.gerarNotaFiscalReferenciada(notasFiscais, TipoDestinatario.FORNECEDOR);
 		}
 		
 	}
@@ -907,8 +907,12 @@ public class NFeServiceImpl implements NFeService {
 				NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 				notasFiscais.add(notaFiscal);
 			}
-
 		}
+		
+		if(naturezaOperacao.isGerarNotasReferenciadas()){
+			this.gerarNotaFiscalReferenciada(notasFiscais, TipoDestinatario.COTA);
+		}
+		
 	}
 
 	private void gerarNotaFiscalUnificada(FiltroNFeDTO filtro, List<NotaFiscal> notasFiscais, Distribuidor distribuidor, 
@@ -1162,7 +1166,7 @@ public class NFeServiceImpl implements NFeService {
 		}	
     }
 	
-	private void gerarNotaFiscalReferenciada(List<NotaFiscal> notaFiscais) {
+	private void gerarNotaFiscalReferenciada(List<NotaFiscal> notaFiscais, TipoDestinatario tipoDestinatario) {
 		
 		List<NotaFiscalReferenciada> listaNotaFiscalReferenciadas = new ArrayList<>();
 		
@@ -1176,7 +1180,7 @@ public class NFeServiceImpl implements NFeService {
 				produtoEdicoesIds.add(detalhe.getProdutoServico().getProdutoEdicao().getId());
 			}
 			
-			List<NotaFiscalDTO> notaFiscalDTOs = this.notaFiscalRepository.obterNotasPeloItensNotas(produtoEdicoesIds);
+			List<NotaFiscalDTO> notaFiscalDTOs = this.notaFiscalRepository.obterNotasPeloItensNotas(produtoEdicoesIds, tipoDestinatario);				
 
 			NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWrapper = new NotaFiscalReferenciadaWrapper();
 			for (NotaFiscalDTO notaFiscalDTO : notaFiscalDTOs) {

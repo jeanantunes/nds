@@ -16,6 +16,7 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -88,6 +89,6 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 
 	List<MovimentoFechamentoFiscal> obterMovimentosFechamentosFiscaisCota(FiltroNFeDTO filtro);
 	
-	List<NotaFiscalDTO> obterNotasPeloItensNotas(List<Long> produtoEdicoesIds);
+	List<NotaFiscalDTO> obterNotasPeloItensNotas(List<Long> produtoEdicoesIds, TipoDestinatario tipoDestinatario);
 
 }

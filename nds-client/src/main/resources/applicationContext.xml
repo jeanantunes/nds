@@ -33,7 +33,9 @@
 	<util:properties id="queries" location="classpath:/query.properties" />
 	<util:properties id="query_estudo" location="classpath:/query-estudo.properties" />
 	
-	<!-- <bean id="ndsProfiler" class="br.com.abril.nds.client.aop.profiler.NdsProfiler"/> --> 
+	<!-- 
+	<bean id="ndsProfiler" class="br.com.abril.nds.client.aop.profiler.NdsProfiler"/> 
+	 -->
 	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 		
@@ -122,7 +124,7 @@
 				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
 				<prop key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</prop>
 				<prop key="hibernate.cache.provider_configuration_file_resource_path">ehcache.xml</prop>
-				<prop key="hibernate.generate_statistics">true</prop>
+				<prop key="hibernate.generate_statistics">false</prop>
 				 
            
 				<!-- c3p0 -->
