@@ -238,12 +238,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                         }
                     }
                 }
-                // tratamento para deixar as vendas zeradas em caso de edicao aberta
-                for (EdicoesProdutosDTO edicao : edicoesProdutosDTOMap.values()) {
-                    if (edicao.isEdicaoAberta()) {
-                	    edicao.setVenda(BigDecimal.ZERO);
-                    }
-                }
+                
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>(edicoesProdutosDTOMap.values()));
             }
         }
