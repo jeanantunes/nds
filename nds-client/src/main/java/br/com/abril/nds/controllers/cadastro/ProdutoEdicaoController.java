@@ -139,18 +139,22 @@ public class ProdutoEdicaoController extends BaseController {
 			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
 		}
 		result.include("listaClassificacao",comboClassificacao);
-		
-        final List<Brinde> brindes = brindeService.obterBrindes();
-        result.include("brindes",brindes);
     }
 
 	@Post
-	@Path("/obterComboBrindes.json")
-	public void obterComboBrindes(){
+	@Path("/obterBrindes.json")
+	public void obterBrindes(){
 	    
 		final List<Brinde> brindes = brindeService.obterBrindes();
+		
+		final List<ItemDTO<Long,String>> comboBrindes =  new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Brinde b : brindes) {
+			
+			comboBrindes.add(new ItemDTO<Long,String>(b.getId(), b.getDescricao()));
+		}
 	    
-		result.use(Results.json()).from(brindes, "result").recursive().serialize();
+		result.use(Results.json()).from(comboBrindes, "result").recursive().serialize();
 	}
 	
 	@Post
@@ -275,8 +279,6 @@ public class ProdutoEdicaoController extends BaseController {
 		else{			
 			produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataRecolhimentoReal());
 		}
-			
-		ValidacaoVO vo = null;
 		 
 		try {
 			
@@ -297,20 +299,15 @@ public class ProdutoEdicaoController extends BaseController {
 			        produtoEdicaoDTO, produtoEdicaoDTO.getCodigoProduto(), 
 			        contentType, imgInputStream,istrac29, modoTela);
 			
-            vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
+            this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!"), "result").recursive().serialize();
 			
 		} catch (ValidacaoException e) {
-			
-			vo = e.getValidacao();
 
+			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
 		} catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
 			
-			vo = new ValidacaoVO(TipoMensagem.ERROR, "O seguinte erro ocorreu:" + e.getMessage());
-		
-		} finally {
-			
-			this.result.use(Results.json()).from(vo, "result").recursive().serialize();
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "O seguinte erro ocorreu:" + e.getMessage()), "result").recursive().serialize();
 		}
 	}
 	
