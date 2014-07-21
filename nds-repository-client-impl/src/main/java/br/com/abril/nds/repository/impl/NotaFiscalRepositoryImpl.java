@@ -26,6 +26,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalTipoEmissaoRegimeEspecial;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -1230,24 +1231,29 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<NotaFiscalDTO> obterNotasPeloItensNotas(List<Long> produtoEdicoesIds) {
+	public List<NotaFiscalDTO> obterNotasPeloItensNotas(List<Long> produtoEdicoesIds, TipoDestinatario tipoDestinatario) {
 		
 		StringBuffer hql = new StringBuffer("");
 		
-		hql.append(" select  ");
-		hql.append(" nfef.serie as serie,  ");
-		hql.append(" nfef.chaveAcesso  ");
-		hql.append(" nfef.cnpj as cnpj,  ");
-		hql.append(" nfef.modeloDocumentoFiscal as modelo,  ");
-		hql.append(" nfef.dataEmissao as dataEmissao ");
-		hql.append(" FROM NotaFiscalEntradaFornecedor as nfef ");
-		hql.append(" JOIN nfef.itens as itens ");
+		hql.append(" select pe.id, ");
+		hql.append(" ide.serie as serie, ");
+		hql.append(" ie.chaveAcesso as chaveAcesso, ");
+		hql.append(" emi.documento as cnpj, ");
+		hql.append(" ide.modeloDocumentoFiscal as modelo,  ");
+		hql.append(" ide.dataEmissao as dataEmissao ");
+		hql.append(" FROM NotaFiscal as nfe ");			
+		hql.append(" JOIN nfe.notaFiscalInformacoes as inf ");
+		hql.append(" JOIN inf.informacaoEletronica as ie ");
+		hql.append(" JOIN inf.identificacao as ide ");
+		hql.append(" JOIN inf.identificacaoEmitente as emi" );
+		hql.append(" JOIN inf.detalhesNotaFiscal as det ");
+		hql.append(" LEFT JOIN det.produtoServico as ps ");
+		hql.append(" LEFT JOIN ps.produtoEdicao as pe ");
 		hql.append(" WHERE 1=1 ");
-		hql.append(" AND nfe.chaveAcesso is null");
-		hql.append(" AND det.id in (:produtoEdicoesIds) ");		
+		hql.append(" AND ie.chaveAcesso is null");
 		
 		if(produtoEdicoesIds != null) {
-			hql.append(" AND nfe.id in (:produtoEdicoesIds) ");
+			hql.append(" AND produtoEdicao.id in (:produtoEdicoesIds) ");
 		}
 		
 		Query query = super.getSession().createQuery(hql.toString());
