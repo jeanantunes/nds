@@ -910,7 +910,7 @@ public class NFeServiceImpl implements NFeService {
 		}
 		
 		if(naturezaOperacao.isGerarNotasReferenciadas()){
-			this.gerarNotaFiscalReferenciada(notasFiscais, TipoDestinatario.COTA);
+			this.gerarNotaFiscalReferenciada(notasFiscais, TipoDestinatario.DISTRIBUIDOR);
 		}
 		
 	}
@@ -1182,31 +1182,36 @@ public class NFeServiceImpl implements NFeService {
 			
 			List<NotaFiscalDTO> notaFiscalDTOs = this.notaFiscalRepository.obterNotasPeloItensNotas(produtoEdicoesIds, tipoDestinatario);				
 
-			NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWrapper = new NotaFiscalReferenciadaWrapper();
-			for (NotaFiscalDTO notaFiscalDTO : notaFiscalDTOs) {
-				notaReferenciada = new NotaFiscalReferenciada();
-				if(notaReferenciada.getNotaFiscalReferenciadaNFE() == null){
-					NotaFiscalReferenciadaNFE notaFiscalReferenciadaNFE = new NotaFiscalReferenciadaNFE();
-					notaReferenciada.setNotaFiscalReferenciadaNFE(notaFiscalReferenciadaNFE);
+			NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWrapper = null;
+			if(notaFiscalDTOs != null ) {
+				notaFiscalReferenciadaWrapper = new NotaFiscalReferenciadaWrapper();
+				for (NotaFiscalDTO notaFiscalDTO : notaFiscalDTOs) {
+					notaReferenciada = new NotaFiscalReferenciada();
+					if(notaReferenciada.getNotaFiscalReferenciadaNFE() == null){
+						NotaFiscalReferenciadaNFE notaFiscalReferenciadaNFE = new NotaFiscalReferenciadaNFE();
+						notaReferenciada.setNotaFiscalReferenciadaNFE(notaFiscalReferenciadaNFE);
+						
+					}
 					
+					notaReferenciada.getNotaFiscalReferenciadaNFE().setCodigoUF(notaFiscalDTO.getCodigoUF());
+					notaReferenciada.getNotaFiscalReferenciadaNFE().setCnpj(notaFiscalDTO.getCnpj());
+					notaReferenciada.getNotaFiscalReferenciadaNFE().setDataEmissao(notaFiscalDTO.getDataEmissao());
+					notaReferenciada.getNotaFiscalReferenciadaNFE().setModelo(notaFiscalDTO.getModelo());
+					notaReferenciada.getNotaFiscalReferenciadaNFE().setNumeroDocumentoFiscal(notaFiscalDTO.getNumero());
+					notaReferenciada.getNotaFiscalReferenciadaNFE().setSerie(String.valueOf(notaFiscalDTO.getSerie()));
+					
+					NotaFiscalReferenciadaPK pk = new NotaFiscalReferenciadaPK();
+					pk.setChaveAcesso(notaFiscalDTO.getChaveAcesso());
+					pk.setNotaFiscal(notaFiscal);
+					notaReferenciada.setPk(pk);
+					listaNotaFiscalReferenciadas.add(notaReferenciada);
+						
+					notaFiscalReferenciadaWrapper.setListReferenciadas(listaNotaFiscalReferenciadas);
 				}
 				
-				notaReferenciada.getNotaFiscalReferenciadaNFE().setCodigoUF(notaFiscalDTO.getCodigoUF());
-				notaReferenciada.getNotaFiscalReferenciadaNFE().setCnpj(notaFiscalDTO.getCnpj());
-				notaReferenciada.getNotaFiscalReferenciadaNFE().setDataEmissao(notaFiscalDTO.getDataEmissao());
-				notaReferenciada.getNotaFiscalReferenciadaNFE().setModelo(notaFiscalDTO.getModelo());
-				notaReferenciada.getNotaFiscalReferenciadaNFE().setNumeroDocumentoFiscal(notaFiscalDTO.getNumero());
-				notaReferenciada.getNotaFiscalReferenciadaNFE().setSerie(String.valueOf(notaFiscalDTO.getSerie()));
-				
-				NotaFiscalReferenciadaPK pk = new NotaFiscalReferenciadaPK();
-				pk.setChaveAcesso(notaFiscalDTO.getChaveAcesso());
-				pk.setNotaFiscal(notaFiscal);
-				notaReferenciada.setPk(pk);
-				listaNotaFiscalReferenciadas.add(notaReferenciada);
-					
-			}
-			notaFiscalReferenciadaWrapper.setListReferenciadas(listaNotaFiscalReferenciadas);
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNotaFiscalReferenciada(notaFiscalReferenciadaWrapper);
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNotaFiscalReferenciada(notaFiscalReferenciadaWrapper);
+			}			
+
 		}
 		
 	}
