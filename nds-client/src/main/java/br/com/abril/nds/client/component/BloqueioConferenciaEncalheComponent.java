@@ -41,7 +41,7 @@ public class BloqueioConferenciaEncalheComponent {
 		
 		if (mapaCotaConferidaUsuario != null && mapaCotaConferidaUsuario.containsValue(userSessionID)) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não possível executar mais de uma conferência de encalhe ao mesmo tempo!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível executar mais de uma conferência de encalhe ao mesmo tempo!");
 		}
 	}
 	
