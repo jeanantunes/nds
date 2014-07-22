@@ -1185,7 +1185,7 @@ public class NFeServiceImpl implements NFeService {
 			NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWrapper = new NotaFiscalReferenciadaWrapper();
 			for (NotaFiscalDTO notaFiscalDTO : notaFiscalDTOs) {
 				notaReferenciada = new NotaFiscalReferenciada();
-				if(notaReferenciada.getNotaFiscalReferenciadaNFE() != null){
+				if(notaReferenciada.getNotaFiscalReferenciadaNFE() == null){
 					NotaFiscalReferenciadaNFE notaFiscalReferenciadaNFE = new NotaFiscalReferenciadaNFE();
 					notaReferenciada.setNotaFiscalReferenciadaNFE(notaFiscalReferenciadaNFE);
 					
@@ -1196,7 +1196,7 @@ public class NFeServiceImpl implements NFeService {
 				notaReferenciada.getNotaFiscalReferenciadaNFE().setDataEmissao(notaFiscalDTO.getDataEmissao());
 				notaReferenciada.getNotaFiscalReferenciadaNFE().setModelo(notaFiscalDTO.getModelo());
 				notaReferenciada.getNotaFiscalReferenciadaNFE().setNumeroDocumentoFiscal(notaFiscalDTO.getNumero());
-				notaReferenciada.getNotaFiscalReferenciadaNFE().setSerie(notaFiscalDTO.getSerie());
+				notaReferenciada.getNotaFiscalReferenciadaNFE().setSerie(String.valueOf(notaFiscalDTO.getSerie()));
 				
 				NotaFiscalReferenciadaPK pk = new NotaFiscalReferenciadaPK();
 				pk.setChaveAcesso(notaFiscalDTO.getChaveAcesso());
