@@ -263,7 +263,7 @@ public class AnaliseParcialController extends BaseController {
     }
     
     @Path("/mudarReparte")
-    public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado, String legendaCota) {
+    public void mudarReparte(Integer numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado, String legendaCota) {
         analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte, reparteDigitado);
         
         if(ClassificacaoCota.ReparteFixado.getCodigo().equalsIgnoreCase(legendaCota) || 

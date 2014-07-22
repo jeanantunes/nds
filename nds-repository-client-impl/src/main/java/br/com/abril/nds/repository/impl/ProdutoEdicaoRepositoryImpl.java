@@ -437,7 +437,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return query;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public Integer countPesquisarEdicoes(final String codigoProduto, 
 			                             final String nomeProduto,

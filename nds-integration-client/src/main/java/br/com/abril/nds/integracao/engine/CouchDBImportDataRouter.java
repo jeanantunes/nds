@@ -85,6 +85,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		} catch(org.lightcouch.NoDocumentException e){
 			//Nao ha informacoes a serem processadas
             ndsiLoggerFactory.getLogger().setStatusProcesso(StatusExecucaoEnum.VAZIO);
+            couchDbClient.shutdown();
 			return;
 		}
 		
