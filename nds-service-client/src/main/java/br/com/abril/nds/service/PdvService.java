@@ -187,5 +187,7 @@ public interface PdvService {
 	
 	
 	public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxoOrdenado();
+
+    Long obterQtdPdvPorCota(Integer numeroCota);
 }
 

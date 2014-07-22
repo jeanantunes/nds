@@ -1366,6 +1366,10 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				ConferenciaEncalhe.numeroCotaEditavel(false);
 				
+				setTimeout(function(){
+					$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).select();
+				}, 1);
+				
 			}, function(){
 				
 				var data = [
@@ -1493,9 +1497,10 @@ var ConferenciaEncalhe = $.extend(true, {
 									}
 								}
 								
-								setTimeout (function () {
-									$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).select();
+								setTimeout(function(){
+									$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).select();
 								}, 1);
+								
 								
 							},
 							open: function(){
