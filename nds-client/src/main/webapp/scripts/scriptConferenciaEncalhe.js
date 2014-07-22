@@ -249,7 +249,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		    }else if (event.keyCode == 27){ //"ESC"
 		    	$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
 		    }else if (event.keyCode == 40){ //"Seta para baixo"
-		    	ConferenciaEncalhe.posicionarQtdExemplares();
+		    	ConferenciaEncalhe.posicionarQtdExemplares(null, null, 'codigo_barras');
 		    }
 
 		});
@@ -400,6 +400,16 @@ var ConferenciaEncalhe = $.extend(true, {
 							ConferenciaEncalhe.numeroCotaEditavel(false);
 							
 						}
+					},
+					
+					open: function() {
+						
+						ConferenciaEncalhe.configurarNavegacaoSetas($('#form-conferencia-nao-salva').find('button'));
+						
+						setTimeout(function(){
+							$($('#form-conferencia-nao-salva').find('button')[0]).focus();
+						}, 1);
+						
 					},
 					
 					form: $("#dialog-conferencia-nao-salva", this.workspace).parents("form")
@@ -555,6 +565,17 @@ var ConferenciaEncalhe = $.extend(true, {
 						}
 					},
 					form: $("#dialog-reabertura", this.workspace).parents("form"),
+					
+					open : function() {
+						
+						ConferenciaEncalhe.configurarNavegacaoSetas($('#form-reabertura').find('button'));
+						
+						setTimeout(function(){
+							$($('#form-reabertura').find('button')[0]).focus();
+						}, 1);
+						
+					},
+					
 					close : function(){
 						
 						if( $("#vlrCE", ConferenciaEncalhe.workspace).length != 0 ){
@@ -699,6 +720,17 @@ var ConferenciaEncalhe = $.extend(true, {
 									$("#dialog-confirmar", ConferenciaEncalhe.workspace).dialog("close");
 								}
 							},
+							
+							open : function() {
+								
+								ConferenciaEncalhe.configurarNavegacaoSetas($('#form-confirmar').find('button'));
+								
+								setTimeout(function(){
+									$($('#form-confirmar').find('button')[0]).focus();
+								}, 1);
+								
+							},
+							
 							form: $("#dialog-confirmar", ConferenciaEncalhe.workspace).parents("form")
 						});
 					}
@@ -1107,6 +1139,17 @@ var ConferenciaEncalhe = $.extend(true, {
 					$(this).dialog("close");
 				}
 			},
+			
+			open : function() {
+				
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-dadosNotaFiscal').find('button'));
+				
+				setTimeout(function(){
+					$($('#form-dadosNotaFiscal').find('button')[0]).focus();
+				}, 1);
+				
+			},
+			
 			form: $("#dialog-dadosNotaFiscal", this.workspace).parents("form"),
 			close : function(){
 				
@@ -1143,41 +1186,77 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#somatorioTotal", ConferenciaEncalhe.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 	},
 	
-	posicionarQtdExemplares : function(e, index) {
+	
+	configurarNavegacaoSetas : function (bts) {
 		
-		var listaItemGrid = $("._dadosConfEncalhe", ConferenciaEncalhe.workspace);
-		
-		if(listaItemGrid) {
+		$(bts).each(function(index, element){
 			
-			if(index || index == 0) {
+			$(element).keydown(function(e){
 				
-				if(e.keyCode == 38 && index > 0) {
-					
-					var proximoCampo = (index - 1); 
-					
-					$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').select();
-				
-				} else if (e.keyCode == 40) {
-					
-					var proximoCampo = (index + 1);
-					
-					$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').select();
-				
-				} 
-					
-				return;
-				
-			}
-			
-			$(listaItemGrid).each(function(index, element){
-				
-				$(element).find("[id^='qtdExemplaresGrid_']").select();
-				
-				return false;
+				if(e.keyCode == 39) {
+					var campo = $(this).next();
+					$(campo).focus();
+				} else if (e.keyCode == 37) {
+					var campo = $(this).prev();
+					$(campo).focus();
+				}
 				
 			});
 			
+		});
+		
+	},
+	
+	posicionarQtdExemplares : function(e, index, fromInput) {
+		
+		if(fromInput == 'codigo_barras') {
+			
+			var qtdSource = $("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete('option',  'source').length;
+			
+			if(qtdSource) {
+				return;
+			}
+			
 		}
+		
+		var listaItemGrid = $("._dadosConfEncalhe", ConferenciaEncalhe.workspace);
+		
+		if(!listaItemGrid) {
+			return;
+		}
+		
+		if(index || index == 0) {
+			
+			if(e.keyCode == 38) {
+				
+				if(index == 0) {
+					$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).select();
+					return;
+				}
+				
+				var proximoCampo = (index - 1); 
+				$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').select();
+				
+			} else if (e.keyCode == 40 || e.keyCode == 13) {
+				
+				var proximoCampo = (index + 1);
+				$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').select();
+				
+			} 
+			
+			return;
+			
+		}
+		
+		$(listaItemGrid).each(function(index, element){
+			
+			$(element).find("[id^='qtdExemplaresGrid_']").select();
+			
+			return false;
+			
+		});
+			
+		
 		
 	},
 	
@@ -1402,6 +1481,8 @@ var ConferenciaEncalhe = $.extend(true, {
 							},
 							open: function(){
 								
+								ConferenciaEncalhe.configurarNavegacaoSetas($('#form-autenticar-supervisor').find('button'));
+								
 								focusSelectRefField($("#inputUsuarioSup", ConferenciaEncalhe.workspace));
 							}
 						});
@@ -1576,7 +1657,19 @@ var ConferenciaEncalhe = $.extend(true, {
 					$('#pesq_cota', ConferenciaEncalhe.workspace).focus();
 				}
 			},
+			
 			form: $("#dialog-excluir-conferencia", this.workspace).parents("form"),
+			
+			open : function() {
+				
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-excluir-conferencia').find('button'));
+				
+				setTimeout(function(){
+					$($('#form-excluir-conferencia').find('button')[0]).focus();
+				}, 1);
+				
+			},
+			
 			close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
@@ -1620,8 +1713,14 @@ var ConferenciaEncalhe = $.extend(true, {
 			},
 			form: $("#dialog-logado", this.workspace).parents("form"),
 			
-			open : function(){
-				setTimeout (function () {$("#boxLogado").focus();}, 1);
+			open : function(event, ui){
+				
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-logado').find('button'));
+				
+				setTimeout(function(){
+					$($('#form-logado').find('button')[0]).focus();
+				}, 1);
+				
 			},
 			
 			close : function(){
@@ -1776,9 +1875,16 @@ var ConferenciaEncalhe = $.extend(true, {
 					$("#qtdCE", ConferenciaEncalhe.workspace).focus();
 					
 				}
-			}, open : function(){
+			}, 
+			
+			open : function(){
 				
-				$(this).parent('div').find('button:contains("Sim")').focus();
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-alert').find('button'));
+				
+				setTimeout(function(){
+					$($('#form-alert').find('button')[0]).focus();
+				}, 1);
+				
 			}, close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
@@ -1831,7 +1937,10 @@ var ConferenciaEncalhe = $.extend(true, {
 				}
 			}, open : function(){
 				
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-notaFiscal').find('button'));
+				
 				setTimeout (function () {$("#numNotaFiscal").focus();}, 1);
+				
 			}, close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
@@ -1874,7 +1983,11 @@ var ConferenciaEncalhe = $.extend(true, {
 				}
 			}, 
 			open : function (){
+				
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-pesquisar').find('button'));
+				
 				setTimeout (function () {$("#pesq_prod").focus();}, 1);
+				
 			},
 			close : function(){
 				
@@ -1905,7 +2018,15 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					$(this).dialog("close");
 				}
-			}, close : function(){
+			}, 
+			
+			open : function() {
+				
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-detalhe-publicacao').find('button'));
+				
+			},
+			
+			close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
 				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
@@ -1949,7 +2070,19 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					$(this).dialog("close");
 				}
-			}, close : function(){
+			}, 
+			
+			open : function() {
+				
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-outros-valores').find('button'));
+				
+				setTimeout(function(){
+					$($('#form-outros-valores').find('button')[0]).focus();
+				}, 1);
+				
+			},
+			
+			close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
 				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
@@ -2011,7 +2144,19 @@ var ConferenciaEncalhe = $.extend(true, {
 					$(this).dialog("close");
 				}
 
-			}, close : function(){
+			}, 
+			
+			open : function() {
+				
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-salvar').find('button'));
+				
+				setTimeout(function(){
+					$($('#form-salvar').find('button')[0]).focus();
+				}, 1);
+				
+			},
+			
+			close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
 				
@@ -2167,6 +2312,16 @@ var ConferenciaEncalhe = $.extend(true, {
 								}
 							},
 							
+							open: function() {
+								
+								ConferenciaEncalhe.configurarNavegacaoSetas($('#form-conferencia-nao-salva').find('button'));
+								
+								setTimeout(function(){
+									$($('#form-conferencia-nao-salva').find('button')[0]).focus();
+								}, 1);
+								
+							},
+							
 							form: $("#dialog-conferencia-nao-salva", this.workspace).parents("form")
 						});
 						
@@ -2229,7 +2384,18 @@ var ConferenciaEncalhe = $.extend(true, {
 								
 								$("#dialog-confirmar-regerar-cobranca", ConferenciaEncalhe.workspace).dialog("close");
 							}
-						}, 
+						},
+						
+						open : function() {
+							
+							ConferenciaEncalhe.configurarNavegacaoSetas($('#form-confirmar-regerar-cobranca').find('button'));
+							
+							setTimeout(function(){
+								$($('#form-confirmar-regerar-cobranca').find('button')[0]).focus();
+							}, 1);
+
+							
+						},
 						
 						close : function(){
 							
