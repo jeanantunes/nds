@@ -297,26 +297,32 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	criarComboBoxEncalhe : function() {
 		
-		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/carregarComboBoxEncalheContingencia", null,
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/obterBoxLogado", null,
 				
-			function(result){
-				
-				var opcoesBox = '';
-				
-				$.each(result, function(key, value) {
-					opcoesBox = opcoesBox + "<option value="+key+">"+value+"</option>"; 
-				});
-				
-				$('#boxLogado', ConferenciaEncalheCont.workspace).html(opcoesBox);
-				
-				ConferenciaEncalheCont.popup_logado();
-				
-			}
+			function(idBoxLogado){
+	
+				$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/carregarComboBoxEncalheContingencia", null,
+						
+					function(result){
+						
+						var opcoesBox = '';
+						
+						$.each(result, function(key, value) {
+							
+							opcoesBox = opcoesBox + "<option "+ (idBoxLogado.long==key?" selected ":" ") +" value="+key+">"+value+"</option>"; 
+						});
+						
+						$('#boxLogado', ConferenciaEncalheCont.workspace).html(opcoesBox);
+						
+						ConferenciaEncalheCont.popup_logado();
+						
+					}
+				);
+		    }
 		);
 		
-		
 	},
-	
+
 	popup_logado : function() {
 		
 		ConferenciaEncalheCont.modalAberta = true;
