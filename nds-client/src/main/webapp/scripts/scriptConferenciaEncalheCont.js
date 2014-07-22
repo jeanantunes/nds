@@ -789,6 +789,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 						exibirMensagem('WARNING', [result[1]]);
 						ConferenciaEncalheCont.resetValue = false;
 						ConferenciaEncalheCont.atualizarValores(index);
+						ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
 					} else {
 						
 						$("#msgSupervisor", ConferenciaEncalheCont.workspace).text(result[1]);
@@ -828,6 +829,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 									
 									$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
 								}
+								
+								ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
 							}
 						});
 					}
@@ -835,6 +838,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				} else {
 					
 					ConferenciaEncalheCont.atualizarValores(index);
+					ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
 				}
 			}, null, null, null, false
 		);
