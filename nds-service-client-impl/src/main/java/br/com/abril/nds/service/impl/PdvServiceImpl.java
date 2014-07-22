@@ -1621,4 +1621,11 @@ public class PdvServiceImpl implements PdvService {
 		return this.tipoGeradorFluxoPDVRepsitory.obterTiposGeradorFluxoOrdenado();
 	}
 
+    @Override
+    @Transactional(readOnly=true)
+    public Long obterQtdPdvPorCota(Integer numeroCota) {
+        
+        return this.pdvRepository.obterQtdPdvPorCota(numeroCota);
+    }
+
 }
