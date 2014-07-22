@@ -1243,21 +1243,12 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" ident.modeloDocumentoFiscal as modelo,  ");
 		hql.append(" ident.numeroDocumentoFiscal as numero,  ");
 		hql.append(" ident.dataEmissao as dataEmissao ");
-		hql.append(" FROM NotaFiscal as notaFiscal")
-		.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ")
-		.append(" JOIN nfi.identificacao as ident ")
-		.append(" JOIN ident.naturezaOperacao as natOp ")
-		.append(" LEFT JOIN natOp.processo as proc ")
-		.append(" JOIN nfi.identificacaoEmitente as identEmit ")
-		.append(" JOIN nfi.identificacaoDestinatario as identDest")
-		.append(" JOIN identEmit.documento as doc ")
-		.append(" JOIN identDest.documento as docDest ")
-		.append(" JOIN nfi.informacaoEletronica as infElet ")
-		.append(" JOIN nfi.detalhesNotaFiscal as det ")
-		.append(" JOIN det.produtoServico as prd ")
-		.append(" JOIN prd.produtoEdicao as pe ")
-		.append(" WHERE 1=1 ")
-		.append(" AND ident.numeroDocumentoFiscal is not null ");
+		
+		if(tipoDestinatario.equals(TipoDestinatario.COTA)) {
+			montarQueryNotasCota(hql);			
+		} else {
+			montarQueryNotasFornecedor(hql);
+		}
 		
 		if(produtoEdicoesIds != null) {
 			hql.append(" AND pe.id in (:produtoEdicoesIds) ");
@@ -1272,5 +1263,35 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		query.setResultTransformer(new AliasToBeanResultTransformer(NotaFiscalDTO.class));
 		
 		return query.list();
+	}
+
+	private void montarQueryNotasCota(StringBuffer hql) {
+		hql.append(" FROM NotaFiscal as notaFiscal")
+		.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ")
+		.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as det ")
+		.append(" JOIN nfi.informacaoEletronica as infElet ")
+		.append(" JOIN nfi.identificacaoEmitente as identEmit ")
+		.append(" JOIN nfi.identificacaoDestinatario as identDest")
+		.append(" JOIN nfi.identificacao as ident ")
+		.append(" JOIN ident.naturezaOperacao as natOp ")
+		.append(" LEFT JOIN natOp.processo as proc ")
+		.append(" JOIN identEmit.documento as doc ")
+		.append(" JOIN identDest.documento as docDest ")
+		.append(" JOIN det.produtoServico as prd ")
+		.append(" JOIN prd.produtoEdicao as pe ")
+		.append(" WHERE 1=1 ")
+		.append(" AND ident.numeroDocumentoFiscal is not null ");
+	}
+	
+	private void montarQueryNotasFornecedor(StringBuffer hql) {
+		
+		hql.append(" from NotaFiscalEntradaFornecedor notaFiscal ")
+		.append(" join notaFiscal.tipoNotaFiscal tipoNotaFiscal	")
+		.append(" join notaFiscal.itens i 			")
+		.append(" join i.produtoEdicao pe			")
+		.append(" join pe.produto p					")
+		.append(" join p.fornecedores f				")
+		.append(" WHERE 1=1 ")
+		.append(" AND notaFiscal.numero is not null ");
 	}
 }
