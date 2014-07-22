@@ -720,6 +720,17 @@ var ConferenciaEncalhe = $.extend(true, {
 									$("#dialog-confirmar", ConferenciaEncalhe.workspace).dialog("close");
 								}
 							},
+							
+							open : function() {
+								
+								ConferenciaEncalhe.configurarNavegacaoSetas($('#form-confirmar').find('button'));
+								
+								setTimeout(function(){
+									$($('#form-confirmar').find('button')[0]).focus();
+								}, 1);
+								
+							},
+							
 							form: $("#dialog-confirmar", ConferenciaEncalhe.workspace).parents("form")
 						});
 					}
@@ -1128,6 +1139,17 @@ var ConferenciaEncalhe = $.extend(true, {
 					$(this).dialog("close");
 				}
 			},
+			
+			open : function() {
+				
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-dadosNotaFiscal').find('button'));
+				
+				setTimeout(function(){
+					$($('#form-dadosNotaFiscal').find('button')[0]).focus();
+				}, 1);
+				
+			},
+			
 			form: $("#dialog-dadosNotaFiscal", this.workspace).parents("form"),
 			close : function(){
 				
@@ -1458,6 +1480,8 @@ var ConferenciaEncalhe = $.extend(true, {
 								
 							},
 							open: function(){
+								
+								ConferenciaEncalhe.configurarNavegacaoSetas($('#form-autenticar-supervisor').find('button'));
 								
 								focusSelectRefField($("#inputUsuarioSup", ConferenciaEncalhe.workspace));
 							}
@@ -1851,9 +1875,16 @@ var ConferenciaEncalhe = $.extend(true, {
 					$("#qtdCE", ConferenciaEncalhe.workspace).focus();
 					
 				}
-			}, open : function(){
+			}, 
+			
+			open : function(){
 				
-				$(this).parent('div').find('button:contains("Sim")').focus();
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-alert').find('button'));
+				
+				setTimeout(function(){
+					$($('#form-alert').find('button')[0]).focus();
+				}, 1);
+				
 			}, close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
@@ -1906,7 +1937,10 @@ var ConferenciaEncalhe = $.extend(true, {
 				}
 			}, open : function(){
 				
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-notaFiscal').find('button'));
+				
 				setTimeout (function () {$("#numNotaFiscal").focus();}, 1);
+				
 			}, close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
@@ -1984,7 +2018,15 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					$(this).dialog("close");
 				}
-			}, close : function(){
+			}, 
+			
+			open : function() {
+				
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-detalhe-publicacao').find('button'));
+				
+			},
+			
+			close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
 				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
@@ -2028,7 +2070,19 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					$(this).dialog("close");
 				}
-			}, close : function(){
+			}, 
+			
+			open : function() {
+				
+				ConferenciaEncalhe.configurarNavegacaoSetas($('#form-outros-valores').find('button'));
+				
+				setTimeout(function(){
+					$($('#form-outros-valores').find('button')[0]).focus();
+				}, 1);
+				
+			},
+			
+			close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
 				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
@@ -2330,7 +2384,18 @@ var ConferenciaEncalhe = $.extend(true, {
 								
 								$("#dialog-confirmar-regerar-cobranca", ConferenciaEncalhe.workspace).dialog("close");
 							}
-						}, 
+						},
+						
+						open : function() {
+							
+							ConferenciaEncalhe.configurarNavegacaoSetas($('#form-confirmar-regerar-cobranca').find('button'));
+							
+							setTimeout(function(){
+								$($('#form-confirmar-regerar-cobranca').find('button')[0]).focus();
+							}, 1);
+
+							
+						},
 						
 						close : function(){
 							
