@@ -1244,8 +1244,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" ident.numeroDocumentoFiscal as numero,  ");
 		hql.append(" ident.dataEmissao as dataEmissao ");
 		
-		if(tipoDestinatario.equals(TipoDestinatario.COTA)) {
-			montarQueryNotasCota(hql);			
+		if(tipoDestinatario.equals(TipoDestinatario.DISTRIBUIDOR)) {
+			montarQueryNotasDistribuidor(hql);			
 		} else {
 			montarQueryNotasFornecedor(hql);
 		}
@@ -1265,7 +1265,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return query.list();
 	}
 
-	private void montarQueryNotasCota(StringBuffer hql) {
+	private void montarQueryNotasDistribuidor(StringBuffer hql) {
 		hql.append(" FROM NotaFiscal as notaFiscal")
 		.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ")
 		.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as det ")
