@@ -745,6 +745,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 				$("#totalOutrosValores", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 				$("#valorAPagar", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 				
+				 setTimeout(function(){
+					 $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).select();
+				 }, 1);
+				
 				ConferenciaEncalheCont.numeroCotaEditavel(false);
 				
 			},
@@ -811,7 +815,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								ConferenciaEncalheCont.configurarNavegacaoSetas($('#form-autenticar-supervisor').find('button'));
 								
 								setTimeout(function(){
-									$($('#form-autenticar-supervisor').find('button')[0]).focus();
+									$('#inputUsuarioSup').select();
 								}, 1);
 								
 							},
@@ -821,6 +825,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 								if (ConferenciaEncalheCont.resetValue){
 									
 									$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
+									
+									setTimeout(function(){
+										$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).select();
+									},1);
+									
 								}
 							}
 						});
@@ -1025,7 +1034,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								ConferenciaEncalheCont.configurarNavegacaoSetas($('#form-autenticar-supervisor').find('button'));
 								
 								setTimeout(function(){
-									$($('#form-autenticar-supervisor').find('button')[0]).focus();
+									$('#inputUsuarioSup').select();
 								}, 1);
 								
 							},
