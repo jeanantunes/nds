@@ -1235,25 +1235,33 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		StringBuffer hql = new StringBuffer("");
 		
-		hql.append(" select pe.id, ");
-		hql.append(" ide.serie as serie, ");
-		hql.append(" ie.chaveAcesso as chaveAcesso, ");
-		hql.append(" emi.documento as cnpj, ");
-		hql.append(" ide.modeloDocumentoFiscal as modelo,  ");
-		hql.append(" ide.dataEmissao as dataEmissao ");
-		hql.append(" FROM NotaFiscal as nfe ");			
-		hql.append(" JOIN nfe.notaFiscalInformacoes as inf ");
-		hql.append(" JOIN inf.informacaoEletronica as ie ");
-		hql.append(" JOIN inf.identificacao as ide ");
-		hql.append(" JOIN inf.identificacaoEmitente as emi" );
-		hql.append(" JOIN inf.detalhesNotaFiscal as det ");
-		hql.append(" LEFT JOIN det.produtoServico as ps ");
-		hql.append(" LEFT JOIN ps.produtoEdicao as pe ");
-		hql.append(" WHERE 1=1 ");
-		hql.append(" AND ie.chaveAcesso is null");
+		hql.append(" select ");
+		hql.append(" infElet.chaveAcesso as chaveAcesso, ");
+		hql.append(" doc.documento as cnpj, ");
+		hql.append(" ident.codigoUf as codigoUF, ");
+		hql.append(" ident.serie as serie, ");
+		hql.append(" ident.modeloDocumentoFiscal as modelo,  ");
+		hql.append(" ident.numeroDocumentoFiscal as numero,  ");
+		hql.append(" ident.dataEmissao as dataEmissao ");
+		hql.append(" FROM NotaFiscal as notaFiscal")
+		.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ")
+		.append(" JOIN nfi.identificacao as ident ")
+		.append(" JOIN ident.naturezaOperacao as natOp ")
+		.append(" LEFT JOIN natOp.processo as proc ")
+		.append(" JOIN nfi.identificacaoEmitente as identEmit ")
+		.append(" JOIN nfi.identificacaoDestinatario as identDest")
+		.append(" JOIN identEmit.documento as doc ")
+		.append(" JOIN identDest.documento as docDest ")
+		.append(" JOIN nfi.informacaoEletronica as infElet ")
+		.append(" JOIN nfi.detalhesNotaFiscal as det ")
+		.append(" JOIN det.produtoServicoPK as pk ")
+		.append(" JOIN det.produtoServico as prd ")
+		.append(" JOIN prd.produtoEdicao as pe ")
+		.append(" WHERE 1=1 ")
+		.append(" AND ident.numeroDocumentoFiscal is not null ");
 		
 		if(produtoEdicoesIds != null) {
-			hql.append(" AND produtoEdicao.id in (:produtoEdicoesIds) ");
+			hql.append(" AND pe.id in (:produtoEdicoesIds) ");
 		}
 		
 		Query query = super.getSession().createQuery(hql.toString());
