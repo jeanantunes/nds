@@ -322,26 +322,32 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	criarComboBoxEncalhe : function() {
 		
-		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/carregarComboBoxEncalheContingencia", null,
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/obterBoxLogado", null,
 				
-			function(result){
-				
-				var opcoesBox = '';
-				
-				$.each(result, function(key, value) {
-					opcoesBox = opcoesBox + "<option value="+key+">"+value+"</option>"; 
-				});
-				
-				$('#boxLogado', ConferenciaEncalheCont.workspace).html(opcoesBox);
-				
-				ConferenciaEncalheCont.popup_logado();
-				
-			}
+			function(idBoxLogado){
+	
+				$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/carregarComboBoxEncalheContingencia", null,
+						
+					function(result){
+						
+						var opcoesBox = '';
+						
+						$.each(result, function(key, value) {
+							
+							opcoesBox = opcoesBox + "<option "+ (idBoxLogado.long==key?" selected ":" ") +" value="+key+">"+value+"</option>"; 
+						});
+						
+						$('#boxLogado', ConferenciaEncalheCont.workspace).html(opcoesBox);
+						
+						ConferenciaEncalheCont.popup_logado();
+						
+					}
+				);
+		    }
 		);
 		
-		
 	},
-	
+
 	popup_logado : function() {
 		
 		ConferenciaEncalheCont.modalAberta = true;
@@ -769,6 +775,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 				$("#totalOutrosValores", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 				$("#valorAPagar", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 				
+				 setTimeout(function(){
+					 $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).select();
+				 }, 1);
+				
 				ConferenciaEncalheCont.numeroCotaEditavel(false);
 				
 			},
@@ -807,6 +817,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 						exibirMensagem('WARNING', [result[1]]);
 						ConferenciaEncalheCont.resetValue = false;
 						ConferenciaEncalheCont.atualizarValores(index);
+						ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
 					} else {
 						
 						$("#msgSupervisor", ConferenciaEncalheCont.workspace).text(result[1]);
@@ -835,7 +846,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								ConferenciaEncalheCont.configurarNavegacaoSetas($('#form-autenticar-supervisor').find('button'));
 								
 								setTimeout(function(){
-									$($('#form-autenticar-supervisor').find('button')[0]).focus();
+									$('#inputUsuarioSup').select();
 								}, 1);
 								
 							},
@@ -845,7 +856,14 @@ var ConferenciaEncalheCont = $.extend(true, {
 								if (ConferenciaEncalheCont.resetValue){
 									
 									$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
+									
+									setTimeout(function(){
+										$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).select();
+									},1);
+									
 								}
+								
+								ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
 							}
 						});
 					}
@@ -853,6 +871,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				} else {
 					
 					ConferenciaEncalheCont.atualizarValores(index);
+					ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
 				}
 			}, null, null, null, false
 		);
@@ -1049,7 +1068,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								ConferenciaEncalheCont.configurarNavegacaoSetas($('#form-autenticar-supervisor').find('button'));
 								
 								setTimeout(function(){
-									$($('#form-autenticar-supervisor').find('button')[0]).focus();
+									$('#inputUsuarioSup').select();
 								}, 1);
 								
 							},

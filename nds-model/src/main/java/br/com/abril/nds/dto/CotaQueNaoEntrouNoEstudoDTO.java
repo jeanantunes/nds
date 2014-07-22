@@ -6,16 +6,16 @@ import java.math.BigInteger;
 public class CotaQueNaoEntrouNoEstudoDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private Long numeroCota;
+	private Integer numeroCota;
 	private String nomeCota;
 	private String motivo;
 	private String siglaMotivo;
 	private BigInteger quantidade;
 	
-	public Long getNumeroCota() {
+	public Integer getNumeroCota() {
 	    return numeroCota;
 	}
-	public void setNumeroCota(Long numeroCota) {
+	public void setNumeroCota(Integer numeroCota) {
 	    this.numeroCota = numeroCota;
 	}
 	public String getNomeCota() {

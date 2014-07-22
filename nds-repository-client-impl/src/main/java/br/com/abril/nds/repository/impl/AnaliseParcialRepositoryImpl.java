@@ -453,7 +453,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @Override
     @Transactional
-    public void atualizaReparteCota(Long estudoId, Long numeroCota, Long reparteSubtraido) {
+    public void atualizaReparteCota(Long estudoId, Integer numeroCota, Long reparteSubtraido) {
 
         StringBuilder sql = new StringBuilder();
         sql.append("  update estudo_cota_gerado ec ");
@@ -467,13 +467,13 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         query.setLong(0, reparteSubtraido);
         query.setLong(1, reparteSubtraido);
         query.setLong(2, estudoId);
-        query.setLong(3, numeroCota);
+        query.setInteger(3, numeroCota);
         query.executeUpdate();
     }
 
     @Override
     @Transactional
-    public void atualizaClassificacaoCota(Long estudoId, Long numeroCota, String classificacaoCota) {
+    public void atualizaClassificacaoCota(Long estudoId, Integer numeroCota, String classificacaoCota) {
 
         StringBuilder sql = new StringBuilder();
         
@@ -486,7 +486,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setString(0, classificacaoCota);
         query.setLong(1, estudoId);
-        query.setLong(2, numeroCota);
+        query.setInteger(2, numeroCota);
         query.executeUpdate();
     }
 
