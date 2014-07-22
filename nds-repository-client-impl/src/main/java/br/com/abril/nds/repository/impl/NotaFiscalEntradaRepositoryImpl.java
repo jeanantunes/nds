@@ -157,7 +157,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		
 		hql.append(" from NotaFiscalEntradaFornecedor notaFiscal ")
 
-		   .append(" join notaFiscal.tipoNotaFiscal tipoNotaFiscal	")
+		   .append(" join notaFiscal.naturezaOperacao naturezaOperacao	")
 		   .append(" join notaFiscal.itens i 			")
 		   .append(" join i.produtoEdicao pe			")
 		   .append(" join pe.produto p					")
@@ -180,7 +180,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 			
 			condicoes += "".equals(condicoes) ? " where " : " and ";
 			
-			condicoes += " tipoNotaFiscal.id = :idTipoNotaFiscal ";
+			condicoes += " naturezaOperacao.id = :naturezaOperacaoId ";
 		}
 
 		if (filtroConsultaNotaFiscal.getIdFornecedor() != null) {
@@ -314,7 +314,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		
 		if (filtroConsultaNotaFiscal.getIdTipoNotaFiscal() != null) {
 			
-			query.setParameter("idTipoNotaFiscal", filtroConsultaNotaFiscal.getIdTipoNotaFiscal());
+			query.setParameter("naturezaOperacaoId", filtroConsultaNotaFiscal.getIdTipoNotaFiscal());
 		}
 		
 		if (filtroConsultaNotaFiscal.getIdFornecedor() != null) {
