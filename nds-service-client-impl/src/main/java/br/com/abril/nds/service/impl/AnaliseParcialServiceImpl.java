@@ -621,15 +621,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         	
         }else{
         	
-        	MixCotaProduto mix =  mixCotaProdutoRepository.obterMixPorCotaICDCLassificacao(cota.getId(), produto.getCodigoICD(), estudo.getProdutoEdicao().getTipoClassificacaoProduto().getDescricao());
-        	
-//        	if(reparteDigitado > mix.getReparteMaximo()){
-//    			mix.setReparteMaximo(Long.valueOf(reparteDigitado));
-//    		}else{ 
-//    			if(reparteDigitado < mix.getReparteMinimo()){
-//    				mix.setReparteMinimo(Long.valueOf(reparteDigitado));
-//    			}
-//    		}
+        	MixCotaProduto mix = 
+        	        mixCotaProdutoRepository.obterMixPorCotaICDCLassificacao(
+        	                cota.getId(), 
+        	                produto.getCodigoICD(), 
+        	                estudo.getProdutoEdicao().getTipoClassificacaoProduto().getDescricao());
         	
         	if (this.pdvService.obterQtdPdvPorCota(numeroCota) == 1){
         	    
