@@ -1254,7 +1254,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN identDest.documento as docDest ")
 		.append(" JOIN nfi.informacaoEletronica as infElet ")
 		.append(" JOIN nfi.detalhesNotaFiscal as det ")
-		.append(" JOIN det.produtoServicoPK as pk ")
 		.append(" JOIN det.produtoServico as prd ")
 		.append(" JOIN prd.produtoEdicao as pe ")
 		.append(" WHERE 1=1 ")
