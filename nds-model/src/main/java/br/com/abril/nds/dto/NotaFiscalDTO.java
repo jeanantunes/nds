@@ -17,7 +17,7 @@ public class NotaFiscalDTO implements Serializable {
 	
 	protected Long numero;
 	
-	protected String serie;
+	protected Long serie;
 	
 	protected String chaveAcesso;
 
@@ -69,11 +69,11 @@ public class NotaFiscalDTO implements Serializable {
 		this.numero = numero;
 	}
 
-	public String getSerie() {
+	public Long getSerie() {
 		return serie;
 	}
 
-	public void setSerie(String serie) {
+	public void setSerie(Long serie) {
 		this.serie = serie;
 	}
 
