@@ -60,9 +60,14 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		InfoConsultaEncalheDTO info = new InfoConsultaEncalheDTO();
 		
-		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
-		
 		Integer qtdeConsultaEncalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalhe(filtro);
+		
+		if (qtdeConsultaEncalhe == null || qtdeConsultaEncalhe.equals(0)) {
+			
+			return info;
+		}
+		
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
 		
 		BigDecimal valorTotalReparte = BigDecimal.ZERO;
 		
@@ -131,15 +136,15 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		info.setListaDebitoCreditoCota(carregaDebitoCreditoCotaVO(listaDebitoCreditoCotaDTO));
 		
-		info.setValorVendaDia(valorVendaDia.setScale(2, RoundingMode.HALF_UP));
+		info.setValorVendaDia(valorVendaDia.setScale(2, RoundingMode.HALF_EVEN));
 		
 		info.setValorDebitoCredito(valorDebitoCredito.setScale(2, RoundingMode.HALF_UP));
 		
 		info.setValorPagar(valorPagar.setScale(2, RoundingMode.HALF_UP));
 		
-		info.setValorReparte(valorTotalReparte.setScale(2, RoundingMode.HALF_UP));
+		info.setValorReparte(valorTotalReparte.setScale(2, RoundingMode.HALF_EVEN));
 		
-		info.setValorEncalhe(valorTotalEncalhe.setScale(2, RoundingMode.HALF_UP));
+		info.setValorEncalhe(valorTotalEncalhe.setScale(2, RoundingMode.HALF_EVEN));
 		
 		return info;
 	}
