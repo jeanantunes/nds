@@ -14,7 +14,6 @@ import br.com.abril.nds.repository.FechamentoDiarioConsolidadoReparteRepository;
 import br.com.abril.nds.repository.FechamentoDiarioLancamentoReparteRepository;
 import br.com.abril.nds.repository.FechamentoDiarioRepository;
 import br.com.abril.nds.repository.ResumoReparteFecharDiaRepository;
-import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.vo.PaginacaoVO;

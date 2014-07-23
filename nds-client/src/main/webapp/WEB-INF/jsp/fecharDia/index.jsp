@@ -422,6 +422,10 @@
         <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalTransferencia"></div></td>
       </tr>
       <tr>
+        <td align="left" style="border-bottom:1px solid #ccc;">(-) Promocional</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalDiferenca"></div></td>
+      </tr>
+      <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">(=) A Distribuir</td>
         <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalADistribuir"></div></td>
         </tr>
@@ -432,11 +436,7 @@
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Sobra Dist.</td>
         <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalSobraDistribuido"></div></td>
-        </tr>
-      <tr>
-        <td align="left" style="border-bottom:1px solid #ccc;">Diferença</td>
-        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalDiferenca"></div></td>
-      </tr>
+       </tr>
       <tr>
         <td align="left">&nbsp;</td>
         <td align="right">&nbsp;</td>
