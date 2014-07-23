@@ -507,6 +507,11 @@ public class ConsultaEncalheController extends BaseController {
 		
 		List<ConsultaEncalheVO> listaResultadosVO = new ArrayList<ConsultaEncalheVO>();
 		
+		if (listaConsultaEncalheDTO == null || listaConsultaEncalheDTO.isEmpty()) {
+			
+			return listaResultadosVO;
+		}
+		
 		ConsultaEncalheVO consultaEncalheVO = null;
 		
 		String idProdutoEdicao 		= null;

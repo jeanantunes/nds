@@ -264,5 +264,20 @@ public class EstudoCotaGeradoRepositoryImpl extends AbstractRepositoryModel<Estu
 		
 		return (EstudoCotaGerado) query.uniqueResult();
 	}
+
+	@Override
+	public void removerEstudoCotaGerado(Long idEstudoCotaGerado) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" delete from estudo_cota_gerado WHERE ID = :estudoCotaGeradoId ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("estudoCotaGeradoId", idEstudoCotaGerado);
+		
+		query.executeUpdate();
+		
+	}
     
 }

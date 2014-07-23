@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.TreeSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Sets;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -1185,7 +1187,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				controleConferenciaEncalheCota == null ? null : controleConferenciaEncalheCota.getId(), 
 				indConferenciaContingencia, 
 				datasRecolhimento);
-				
+		
 		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		this.debitoCreditoCotaService.carregarDadosDebitoCreditoDaCota(infoConfereciaEncalheCota, cota, datasRecolhimento);
@@ -1228,7 +1230,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			List<ConferenciaEncalheDTO> conferencias = conferenciaEncalheBackupRepository.obterDadosConferenciasEncalheBackup(numeroCota, dataOperacao);
 			
 			if(conferencias!=null) {
-				info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>(conferencias));
+				info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>(conferencias));
 			}
 			
 			return;
@@ -1242,13 +1244,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConfEncalheCota);
 			
 			if(listaConferenciaEncalheDTO != null) {
-				info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>(listaConferenciaEncalheDTO));
+				info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>(listaConferenciaEncalheDTO));
 			}
 			
 		} 
 		
 		if(info.getListaConferenciaEncalhe() == null) {
-			info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>());
+			info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>());
 		}
 		
 		if(indConferenciaContingencia) {
@@ -1891,7 +1893,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		this.abaterNegociacao(listaConferenciaEncalhe, cota.getId(), usuario);
 
-		Set<String> nossoNumeroCollection = new LinkedHashSet<String>();
+		Set<String> nossoNumeroCollection = new HashSet<String>();
 		
 		final DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 
@@ -2213,14 +2215,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque = 
 				obterMapaTipoMovimentoEstoque();
-
+		
+		final boolean validarExemplaresComZero =false;
+		
 		for(final ConferenciaEncalheDTO conferenciaEncalheDTO : listaConferenciaEncalhe) {
 			
 
 			validarQtdeEncalheExcedeQtdeReparte(
 					conferenciaEncalheDTO,
 					controleConferenciaEncalheCota.getCota(), 
-					dataOperacao, indConferenciaContingencia);
+					dataOperacao, indConferenciaContingencia, validarExemplaresComZero);
 				
 			
 			
@@ -2730,13 +2734,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public boolean validarQtdeEncalheExcedeQtdeReparte(
 			final ConferenciaEncalheDTO conferenciaEncalhe,
 			final Cota cota, 
-			final Date dataOperacao, final boolean indConferenciaContingencia) {
-
-		if (!indConferenciaContingencia &&
-				(conferenciaEncalhe.getQtdExemplar() == null || conferenciaEncalhe.getQtdExemplar().compareTo(BigInteger.ZERO) <= 0)){
+			final Date dataOperacao, final boolean indConferenciaContingencia, boolean validarExemplarZero) {
+		
+		if(validarExemplarZero){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos no encalhe deve ser maior que zero.");
-			
+			if (!indConferenciaContingencia &&
+					(conferenciaEncalhe.getQtdExemplar() == null || conferenciaEncalhe.getQtdExemplar().compareTo(BigInteger.ZERO) <= 0)){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos no encalhe deve ser maior que zero.");
+				
+			}
 		}
 
 		final boolean indNovoRegistroConfEncalheCota = conferenciaEncalhe.getIdConferenciaEncalhe() == null || 

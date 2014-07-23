@@ -21,6 +21,7 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.TransferenciaEstoqueParcialService;
+import br.com.abril.nds.util.BigIntegerUtil;
 
 @Service
 public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEstoqueParcialService {
@@ -95,44 +96,57 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 		
 		efetuarMovimentacaoTransferencia(
 			produtoEdicaoOrigem.getEstoqueProduto(), 
-				produtoEdicaoDestino.getEstoqueProduto(), idUsuario);
+				produtoEdicaoDestino.getId(), idUsuario);
 	}
 	
 	private void efetuarMovimentacaoTransferencia(EstoqueProduto estoqueProdutoOrigem,
-												  EstoqueProduto estoqueProdutoDestino,
+											 	  Long idProdutoEdicaoDestino,
 												  Long idUsuario) {
 		
 		Long idProdutoEdicaoOrigem = estoqueProdutoOrigem.getProdutoEdicao().getId();
-		Long idProdutoEdicaoDestino = estoqueProdutoDestino.getProdutoEdicao().getId();
-		
+
 		BigInteger qtdeEstoqueParaTransferencia =
 			this.estoqueProdutoRespository.buscarQtdeEstoqueParaTransferenciaParcial(idProdutoEdicaoOrigem);
 		
+		validarQuantidadeTransferencia(qtdeEstoqueParaTransferencia);
+		
 		movimentarEstoque(
 			idProdutoEdicaoOrigem, estoqueProdutoOrigem.getQtde(), 
-				GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO, idUsuario);
+				GrupoMovimentoEstoque.TRANSFERENCIA_PARCIAL_SAIDA_LANCAMENTO, idUsuario);
 		
 		movimentarEstoque(
 			idProdutoEdicaoOrigem, estoqueProdutoOrigem.getQtdeSuplementar(), 
-				GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR, idUsuario);
+				GrupoMovimentoEstoque.TRANSFERENCIA_PARCIAL_SAIDA_SUPLEMENTAR, idUsuario);
 		
 		movimentarEstoque(
 			idProdutoEdicaoOrigem, estoqueProdutoOrigem.getQtdeDevolucaoEncalhe(), 
-				GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_ENCALHE, idUsuario);
+				GrupoMovimentoEstoque.TRANSFERENCIA_PARCIAL_SAIDA_PRODUTOS_DEVOLUCAO_ENCALHE, idUsuario);
 		
 		movimentarEstoque(
 			idProdutoEdicaoOrigem, estoqueProdutoOrigem.getQtdeDanificado(), 
-				GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS, idUsuario);
+				GrupoMovimentoEstoque.TRANSFERENCIA_PARCIAL_SAIDA_PRODUTOS_DANIFICADOS, idUsuario);
 		
 		movimentarEstoque(
 			idProdutoEdicaoDestino, qtdeEstoqueParaTransferencia, 
 				GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_ESTOQUE_PARCIAIS, idUsuario);
 	}
 	
+	private void validarQuantidadeTransferencia(BigInteger qtdTransferencia) {
+		
+		if (qtdTransferencia == BigInteger.ZERO) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edição de origem sem estoque cadastrado.");
+		}
+	}
+	
 	private void movimentarEstoque(Long idProdutoEdicaoOrigem,
 								   BigInteger qtde,
 								   GrupoMovimentoEstoque grupoMovimentoEstoque,
 								   Long idUsuario) {
+		
+		if (qtde == null || !BigIntegerUtil.isMaiorQueZero(qtde)) {
+			return;
+		}
 		
 		TipoMovimentoEstoque tipoMovimentoEstoque = 
 			this.tipoMovimentoService.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
@@ -167,6 +181,11 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 		if (produtoEdicaoDestino == null) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto/Edição de Destino não encontrado.");
+		}
+		
+		if (produtoEdicaoOrigem.getEstoqueProduto() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto/Edição de Origem sem estoque cadastrado.");
 		}
 		
 		if (!produtoEdicaoDestino.isParcial()) {

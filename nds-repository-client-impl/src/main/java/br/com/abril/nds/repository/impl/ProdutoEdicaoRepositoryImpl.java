@@ -314,31 +314,172 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		return query.list();
 	}
+	
+	/**
+	 * Obtem tuplas para pesquisas de edições
+	 * 
+	 * @param codigoProduto
+	 * @param nome
+	 * @param dataLancamento
+	 * @param preco
+	 * @param statusLancamento
+	 * @param codigoDeBarras
+	 * @param brinde
+	 * @return StringBuilder
+	 */
+	private StringBuilder obterTuplasPesquisarEdicoes(final String codigoProduto, 
+			                                          final String nome,
+			                                          final Intervalo<Date> dataLancamento, 
+			                                          final Intervalo<Double> preco , 
+			                                          final StatusLancamento statusLancamento,
+			                                          final String codigoDeBarras, 
+			                                          final boolean brinde){
+		
+		StringBuilder sql = new StringBuilder();
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Integer countPesquisarEdicoes(final String codigoProduto, final String nomeProduto,
-			final Intervalo<Date> dataLancamento, final Intervalo<Double> preco , final StatusLancamento statusLancamento,
-			final String codigoDeBarras, final boolean brinde) {
-		
-		final StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT pe.id as total ");
-		
-		// Corpo da consulta com os filtros:
-		final SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, null, null);
-		
-		query.addScalar("total", StandardBasicTypes.LONG);
-		
-		final List idsProdutoEdicao = query.list();
-		
-		if(idsProdutoEdicao == null) {
-			return 0;
+		if (dataLancamento != null) {
+			
+			sql.append("  AND (l.DATA_LCTO_DISTRIBUIDOR between :dataLancamentoDe and :dataLancamentoAte OR l.DATA_LCTO_PREVISTA between :dataLancamentoDe and :dataLancamentoAte) ");
 		}
 		
-		return  idsProdutoEdicao.size();
+		if (preco != null) {
+			
+			sql.append("  AND (pe.PRECO_VENDA between :precoDe and :precoAte) ");
+		}
+		if (statusLancamento != null) {
+			
+			sql.append("  AND l.status = :situacaoLancamento ");
+
+		}		
+		if (!StringUtil.isEmpty(codigoProduto)) {
+			
+			sql.append("  AND UPPER(p.codigo) LIKE UPPER(:codigoProduto) ");
+		}
+		if (!StringUtil.isEmpty(nome)) {
+			
+			sql.append("  AND UPPER(p.nome) LIKE UPPER(:nome) ");
+		}
+		if (!StringUtil.isEmpty(codigoDeBarras)) {
+			
+			sql.append("  AND pe.CODIGO_DE_BARRAS LIKE :codigoDeBarras ");
+		}
+		if (brinde) {
+			
+			sql.append("  AND pe.POSSUI_BRINDE = :possuiBrinde ");
+		}
+		
+		return sql;
+	}
+	
+	/**
+	 * Define parâmetros para consulta de edições
+	 * 
+	 * @param query
+	 * @param codigoProduto
+	 * @param nome
+	 * @param dataLancamento
+	 * @param preco
+	 * @param statusLancamento
+	 * @param codigoDeBarras
+	 * @param brinde
+	 * @return SQLQuery
+	 */
+	private SQLQuery setParametrosPerquisarEdicoes(final SQLQuery query,
+			                                       final String codigoProduto, 
+										           final String nome,
+										           final Intervalo<Date> dataLancamento, 
+										           final Intervalo<Double> preco , 
+										           final StatusLancamento statusLancamento,
+										           final String codigoDeBarras, 
+										           final boolean brinde){
+		
+        query.setParameter("indAtivo", true);
+		
+		if (dataLancamento != null) {
+			
+			query.setDate("dataLancamentoDe", dataLancamento.getDe());
+			
+			query.setDate("dataLancamentoAte", dataLancamento.getAte());
+		}
+		
+		if (preco != null) {
+			
+			query.setDouble("precoDe", preco.getDe());
+			
+			query.setDouble("precoAte", preco.getAte());
+		}
+		
+        if (statusLancamento != null) {
+        	
+			query.setParameter("situacaoLancamento", statusLancamento.name());
+		}	
+		
+		if (!StringUtil.isEmpty(codigoProduto)) {
+			
+			query.setString("codigoProduto", codigoProduto);
+		}
+		
+		if (!StringUtil.isEmpty(nome))  {
+			
+            query.setString("nome", "%" + nome + "%");
+		}
+		
+		if (!StringUtil.isEmpty(codigoDeBarras)) {
+			
+			query.setString("codigoDeBarras", codigoDeBarras);
+		}
+		
+		if (brinde) {
+			
+			query.setBoolean("possuiBrinde", brinde);
+		}
+		
+		return query;
 	}
 
-	                            /**
+	@Override
+	public Integer countPesquisarEdicoes(final String codigoProduto, 
+			                             final String nomeProduto,
+			                             final Intervalo<Date> dataLancamento, 
+			                             final Intervalo<Double> preco , 
+			                             final StatusLancamento statusLancamento,
+			                             final String codigoDeBarras, 
+			                             final boolean brinde) {
+		
+		final StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT count(Q.lancamentoId) as total FROM ");
+		
+		hql.append(" ( ");
+		
+		hql.append("     SELECT distinct l.id as lancamentoId ");
+		
+		hql.append("     from PRODUTO_EDICAO pe ");
+		
+		hql.append("     inner join PRODUTO p on pe.PRODUTO_ID=p.ID "); 
+		
+		hql.append("     join LANCAMENTO l on pe.ID=l.PRODUTO_EDICAO_ID "); 
+		
+		hql.append("     where pe.ATIVO = :indAtivo ");
+		
+		hql.append(      this.obterTuplasPesquisarEdicoes(codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde));
+		
+        hql.append("     GROUP BY l.id ");
+			
+		hql.append("     ORDER BY l.id DESC ");
+		
+		hql.append(" ) AS Q ");
+		
+		SQLQuery query = getSession().createSQLQuery(hql.toString());
+
+        query = this.setParametrosPerquisarEdicoes(query, codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
+        
+        query.addScalar("total", StandardBasicTypes.INTEGER);
+
+		return  (Integer) query.uniqueResult();
+	}
+	
+	/**
      * Corpo com a consulta HQL para pesquisar e ordenar as edições já
      * cadatradas.<br>
      * Possui como opções de filtro:<br>
@@ -358,98 +499,59 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
      * 
      * @return
      */
-	private SQLQuery queryBodyPesquisarEdicoes(final StringBuilder hql, final String codigoProduto, final String nome,
-			final Intervalo<Date> dataLancamento, final Intervalo<Double> preco , final StatusLancamento statusLancamento,
-			final String codigoDeBarras, final boolean brinde, final String sortname, final String sortorder) {
+	private SQLQuery queryBodyPesquisarEdicoes(final StringBuilder hql, 
+			                                   final String codigoProduto, 
+			                                   final String nome,
+			                                   final Intervalo<Date> dataLancamento, 
+			                                   final Intervalo<Double> preco , 
+			                                   final StatusLancamento statusLancamento,
+			                                   final String codigoDeBarras, 
+			                                   final boolean brinde, 
+			                                   final String sortname, 
+			                                   final String sortorder) {
 		
 		hql.append("   from PRODUTO_EDICAO pe ");
+		
 		hql.append("   inner join PRODUTO p on pe.PRODUTO_ID=p.ID "); 
+		
 		hql.append("   left join PRODUTO_FORNECEDOR pf on p.ID=pf.PRODUTO_ID "); 
+		
 		hql.append("   left join FORNECEDOR f on pf.fornecedores_ID=f.ID ");
+		
 		hql.append("   left join PESSOA pessoa on f.JURIDICA_ID=pessoa.ID ");
+		
 		hql.append("   join LANCAMENTO l on pe.ID=l.PRODUTO_EDICAO_ID "); 
+		
 		hql.append("   where pe.ATIVO = :indAtivo ");
+		
 		hql.append("   and l.id=( ");
+		
 		hql.append("       select ");
-		hql.append("           max(l.id) "); 
+		
+		hql.append("           max(l.id) ");
+		
 		hql.append("       from ");
+		
 		hql.append("           LANCAMENTO l "); 
+		
 		hql.append("       where ");
+		
 		hql.append("           l.PRODUTO_EDICAO_ID=pe.ID ");
+		
 		hql.append("   ) ");
 		
-		                                                        /**
-         * Comentado por Eduardo "PunkRock" Castro em 05/12 devido a existencia
-         * de dados na tabela de ProdutoEdicao e não eh apresentado no grid
-         */
-		//hql.append(" AND ln.id = (select max(ln.id) from ln where ln.produtoEdicao.id = pe.id) ");
-		
-		// Filtros opcionais da pesquisa:
-		if (dataLancamento != null) {
-			hql.append("  AND (l.DATA_LCTO_DISTRIBUIDOR between :dataLancamentoDe and :dataLancamentoAte OR l.DATA_LCTO_PREVISTA between :dataLancamentoDe and :dataLancamentoAte) ");
-		}
-		
-		if (preco != null) {
-			hql.append("  AND (pe.PRECO_VENDA between :precoDe and :precoAte) ");
-		}
-		if (statusLancamento != null) {
-            hql.append("  AND l.status = :situacaoLancamento ");
-
-		}		
-		if (!StringUtil.isEmpty(codigoProduto)) {
-			hql.append("  AND UPPER(p.codigo) LIKE UPPER(:codigoProduto) ");
-		}
-		if (!StringUtil.isEmpty(nome)) {
-			hql.append("  AND UPPER(p.nome) LIKE UPPER(:nome) ");
-		}
-		if (!StringUtil.isEmpty(codigoDeBarras)) {
-			hql.append("  AND pe.CODIGO_DE_BARRAS LIKE :codigoDeBarras ");
-		}
-		if (brinde) {
-			hql.append("  AND pe.POSSUI_BRINDE = :possuiBrinde ");
-		}
+        hql.append(this.obterTuplasPesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde));
 		
 		hql.append(" GROUP BY pe.id ");
 		
-		// Ordenacao:
 		if (sortname != null && sortorder != null) {
+			
 			hql.append(" ORDER BY " + sortname + " " + sortorder);
 		}
 		
-		final SQLQuery query = getSession().createSQLQuery(hql.toString());
-		
-		query.setParameter("indAtivo", true);
-		
-        // Parâmetros opcionais da pesquisa:
-		if (dataLancamento != null) {
-			query.setDate("dataLancamentoDe", dataLancamento.getDe());
-			query.setDate("dataLancamentoAte", dataLancamento.getAte());
-		}
-		
-		if (preco != null) {
-			query.setDouble("precoDe", preco.getDe());
-			query.setDouble("precoAte", preco.getAte());
-		}
-		
-        if (statusLancamento != null) {
-			query.setParameter("situacaoLancamento", statusLancamento.name());
-		}	
-		
-		if (!StringUtil.isEmpty(codigoProduto)) {
-			query.setString("codigoProduto", codigoProduto);
-		}
-		
-		if (!StringUtil.isEmpty(nome))  {
-            query.setString("nome", "%" + nome + "%");
-		}
-		
-		if (!StringUtil.isEmpty(codigoDeBarras)) {
-			query.setString("codigoDeBarras", codigoDeBarras);
-		}
-		
-		if (brinde) {
-			query.setBoolean("possuiBrinde", brinde);
-		}
+		SQLQuery query = getSession().createSQLQuery(hql.toString());
+
+        query = this.setParametrosPerquisarEdicoes(query, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
 		
 		return query;
 	}
@@ -1972,5 +2074,18 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         query.setParameter("juramentado", TipoEstudoCota.JURAMENTADO);
         
         return query.list();
+    }
+    
+    @Override
+    public BigDecimal obterPrecoProdutoEdicao(String codigoProduto, Long numeroEdicao){
+    	
+    	String hql = "select coalesce(pe.precoVenda,pe.precoPrevisto) from ProdutoEdicao pe where pe.numeroEdicao=:numeroEdicao and pe.produto.codigo=:codigo";
+    	
+    	Query query  = getSession().createQuery(hql);
+    	
+    	query.setParameter("numeroEdicao", numeroEdicao);
+    	query.setParameter("codigo",codigoProduto);
+    	
+    	return (BigDecimal) query.uniqueResult();
     }
 }

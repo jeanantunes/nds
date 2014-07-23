@@ -38,8 +38,6 @@ import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
-import br.com.abril.nds.model.planejamento.Lancamento;
-import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -240,12 +238,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                         }
                     }
                 }
-                // tratamento para deixar as vendas zeradas em caso de edicao aberta
-                for (EdicoesProdutosDTO edicao : edicoesProdutosDTOMap.values()) {
-                    if (edicao.isEdicaoAberta()) {
-                	    edicao.setVenda(BigDecimal.ZERO);
-                    }
-                }
+                
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>(edicoesProdutosDTOMap.values()));
             }
         }
@@ -395,13 +388,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     @Override
     @Transactional
-    public void atualizaClassificacaoCota(Long estudoId, Long numeroCota, String classificacaoCota) {
+    public void atualizaClassificacaoCota(Long estudoId, Integer numeroCota, String classificacaoCota) {
 	analiseParcialRepository.atualizaClassificacaoCota(estudoId, numeroCota, classificacaoCota);
     }
     
     @Override
     @Transactional
-    public void atualizaReparte(Long estudoId, Long numeroCota, Long reparte, Long reparteDigitado) {
+    public void atualizaReparte(Long estudoId, Integer numeroCota, Long reparte, Long reparteDigitado) {
     	
     	EstudoGerado estudoGerado = estudoService.obterEstudo(estudoId);
     	
@@ -409,7 +402,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     		this.validarDistribuicaoPorMultiplo(estudoId, reparteDigitado, estudoGerado);
     	}
     	
-        analiseParcialRepository.atualizaReparteCota(estudoId, numeroCota, reparte);
+    	if(reparteDigitado > 0){
+    		analiseParcialRepository.atualizaReparteCota(estudoId, numeroCota, reparte);
+    	}else{
+    		EstudoCotaGerado estudoCota = estudoService.obterEstudoCotaGerado(numeroCota.intValue(), estudoId);
+    		estudoCotaGerado.removerEstudoCotaGerado(estudoCota.getId());
+    	}
+    	
         analiseParcialRepository.atualizaReparteEstudo(estudoId, reparte);
     }
     
@@ -557,8 +556,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     
     @Override
     @Transactional
-    public CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto) {
-        return cotaRepository.buscarCotaPorNumero(numeroCota, codigoProduto);
+    public CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto, Long idClassifProdEdicao) {
+        return cotaRepository.buscarCotaPorNumero(numeroCota, codigoProduto, idClassifProdEdicao);
     }
     
     private String traduzClassificacaoCota(String motivo) {
@@ -602,7 +601,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
 	@Override
 	@Transactional
-	public void atualizarFixacaoOuMix(Long estudoId, Long numeroCota, Long reparteDigitado, String LegendaCota) {
+	public void atualizarFixacaoOuMix(Long estudoId, Integer numeroCota, Long reparteDigitado, String LegendaCota) {
 		
         EstudoGerado estudo = estudoGeradoRepository.buscarPorId(estudoId);
         Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota.intValue());
@@ -622,18 +621,28 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         	
         }else{
         	
-        	MixCotaProduto mix =  mixCotaProdutoRepository.obterMixPorCotaICDCLassificacao(cota.getId(), produto.getCodigoICD(), estudo.getProdutoEdicao().getTipoClassificacaoProduto().getDescricao());
+        	MixCotaProduto mix = 
+        	        mixCotaProdutoRepository.obterMixPorCotaICDCLassificacao(
+        	                cota.getId(), 
+        	                produto.getCodigoICD(), 
+        	                estudo.getProdutoEdicao().getTipoClassificacaoProduto().getDescricao());
         	
-//        	if(reparteDigitado > mix.getReparteMaximo()){
-//    			mix.setReparteMaximo(Long.valueOf(reparteDigitado));
-//    		}else{ 
-//    			if(reparteDigitado < mix.getReparteMinimo()){
-//    				mix.setReparteMinimo(Long.valueOf(reparteDigitado));
-//    			}
-//    		}
+        	if (this.pdvService.obterQtdPdvPorCota(numeroCota) == 1){
+        	    
+        	    if (reparteDigitado < mix.getReparteMaximo()){
+        	        
+        	        mix.setReparteMinimo(reparteDigitado);
+        	    } else {
+        	        
+        	        mix.setReparteMaximo(reparteDigitado);
+        	    }
+        	    
+        	} else {
+        	    
+        	    mix.setReparteMinimo(reparteDigitado);
+                mix.setReparteMaximo(reparteDigitado);
+        	}
         	
-        	mix.setReparteMinimo(reparteDigitado);
-        	mix.setReparteMaximo(reparteDigitado);
         	mix.setUsuario(usuarioLogado);
         	mix.setDataHora(new Date());
         	

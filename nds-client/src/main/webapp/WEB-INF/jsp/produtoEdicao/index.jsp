@@ -518,12 +518,9 @@ fieldset {
 									<tr class="descBrinde" style="display: none;">
 										<td height="24">Descri&ccedil;&atilde;o Brinde:</td>
 										<td><select name="produtoEdicaoDTO.idBrinde"
-											id="produtoEdicaoController-descricaoBrinde"
+											id="produtoEdicaoController-selectBrinde"
 											style="width: 190px;">
 												<option value="">Selecione</option>
-												<c:forEach items="${brindes}" var="brinde">
-													<option value="${brinde.id}">${brinde.descricao}</option>
-												</c:forEach>
 										</select></td>
 									</tr>
 

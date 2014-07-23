@@ -123,11 +123,13 @@ public class ConferenciaEncalheBackupRepositoryImpl extends AbstractRepositoryMo
 		
 		sql.append(" INNER JOIN COTA ON (COTA.ID = CONF_ENCALHE.COTA_ID) ");
 		
-		sql.append(" WHERE  ");
+		sql.append(" WHERE ");
 		
 		sql.append(" CONF_ENCALHE.DATA_OPERACAO = :dataOperacao AND ");
 		
 		sql.append(" COTA.NUMERO_COTA = :numeroCota ");
+		
+		sql.append(" ORDER BY CH_ENCALHE.DATA_RECOLHIMENTO, CH_ENCALHE.SEQUENCIA ");
 		
 		Query query = getSession().createSQLQuery(sql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		

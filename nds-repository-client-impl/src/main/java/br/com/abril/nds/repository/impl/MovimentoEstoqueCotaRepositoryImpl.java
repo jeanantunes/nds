@@ -2191,8 +2191,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	
         if (filtro.getPaginacao() == null){
             
-            hql.append(" order by lancamento.SEQUENCIA_MATRIZ, box.CODIGO, roteiro.ORDEM, rota.ORDEM, cota.NUMERO_COTA ");
+            hql.append(" order by nomeProduto asc ");
+            
             return;
+            
         }
         
         final String sortOrder = filtro.getPaginacao().getOrdenacao().name();
@@ -2792,7 +2794,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		sum(estudoCota.REPARTE * produtoEdicao.PRECO_VENDA) as totalBox, ");
         hql.append(" 		lancamento.SEQUENCIA_MATRIZ as sequenciaMatriz, ");
         hql.append(" 		lancamento.REPARTE_PROMOCIONAL as materialPromocional, ");
-        hql.append("		box.id as boxId ");
+        hql.append("		box.id as boxId, ");
+        hql.append("		box.CODIGO as codigoBox ");
         
         
         filtro.setUseSM(true);
@@ -2827,6 +2830,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.addScalar("totalBox", StandardBasicTypes.BIG_DECIMAL);
         query.addScalar("sequenciaMatriz", StandardBasicTypes.INTEGER);
         query.addScalar("materialPromocional", StandardBasicTypes.BIG_INTEGER);
+        query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
         
@@ -3791,4 +3795,29 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	return query.list();
     }
     
+    @Override
+    public void atualizarPrecoProdutoExpedido(final Long idProdutoEdicao, final BigDecimal precoProduto){
+    	
+    	StringBuilder sql = new StringBuilder();
+    	
+    	sql.append(" update movimento_estoque_cota mc ")
+	    	.append(" join lancamento l on mc.LANCAMENTO_ID = l.ID ")
+	    	.append(" join tipo_movimento tm on tm.ID = mc.TIPO_MOVIMENTO_ID ")
+	    	.append(" set mc.PRECO_VENDA =:precoProduto ,")
+	    	.append(" mc.PRECO_COM_DESCONTO = :precoProduto - ((mc.valor_desconto/100)* :precoProduto)")
+	    	.append(" where l.STATUS in (:statusLancamento) ")
+	    	.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE =:statusRecebimentoReparte")
+	    	.append(" and mc.PRODUTO_EDICAO_ID =:idProdutoEdicao ");
+	   
+    	Query query = getSession().createSQLQuery(sql.toString());
+    	
+    	query.setParameterList("statusLancamento", 
+    			Arrays.asList(StatusLancamento.EXPEDIDO.name(),
+    						  StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name()));
+    	query.setParameter("idProdutoEdicao", idProdutoEdicao);
+    	query.setParameter("statusRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+    	query.setParameter("precoProduto", precoProduto);
+    	
+    	query.executeUpdate();
+    }
 }
