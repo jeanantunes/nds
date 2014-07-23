@@ -716,7 +716,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 	},
 	
-	atualizarValores: function(index) {
+	atualizarValores: function(index, focusOnInput) {
 		
 		if(ConferenciaEncalheCont.processandoConferenciaEncalhe){
 			return;
@@ -753,12 +753,29 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				ConferenciaEncalheCont.numeroCotaEditavel(false);
 				
+				if(focusOnInput) {
+					
+					var position = $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val().length;
+					
+					setTimeout(function(){
+						$("#qtdExemplaresGrid_" + index).focus().selectRange(0, position);
+					},1);
+					
+				}
+				
 			},
 			function(result) {
 
 				if (result.mensagens){
 
 					$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
+					
+					var position = $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val().length;
+					
+					setTimeout(function(){
+						$("#qtdExemplaresGrid_" + index).focus().selectRange(0, position);
+					},1);
+					
 				}
 			}, null, null, false
 		);
@@ -889,7 +906,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				}
 				
 				if (index){
-					ConferenciaEncalheCont.atualizarValores(index);
+					ConferenciaEncalheCont.atualizarValores(index, true);
 				}
 				
 				if (callback){
