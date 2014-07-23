@@ -36,17 +36,17 @@ public class SumarizacaoReparteDTO implements Serializable {
    
     public SumarizacaoReparteDTO(BigDecimal totalReparte,
             BigDecimal totalSobras, BigDecimal totalFaltas,
-            BigDecimal totalTransferencias, BigDecimal totalDistribuido) {
-        this.totalReparte = Util.nvl(totalReparte, BigDecimal.ZERO);
+            BigDecimal totalTransferencias, BigDecimal totalDistribuido, BigDecimal totalDiferenca) {
+        
+    	this.totalReparte = Util.nvl(totalReparte, BigDecimal.ZERO);
         this.totalSobras = Util.nvl(totalSobras, BigDecimal.ZERO);
         this.totalFaltas = Util.nvl(totalFaltas, BigDecimal.ZERO);
         this.totalTransferencias = Util.nvl(totalTransferencias, BigDecimal.ZERO);
         this.totalDistribuido = Util.nvl(totalDistribuido, BigDecimal.ZERO);
-        
-        this.totalDistribuir = this.totalReparte.add(this.totalSobras)
+        this.totalDiferenca = Util.nvl(totalDiferenca, BigDecimal.ZERO);
+        this.totalDistribuir = this.totalReparte.add(this.totalSobras).subtract(this.totalDiferenca)
                 .subtract(this.totalFaltas).add(this.totalTransferencias);
-        this.totalSobraDistribuicao = this.totalDistribuir.subtract(this.totalDistribuido);
-        this.totalDiferenca = this.totalDistribuir.subtract(this.totalDistribuido).subtract(this.totalSobraDistribuicao);
+        this.totalSobraDistribuicao = this.totalDistribuir.subtract(this.totalDistribuido); 
     }
 
     /**
