@@ -1235,12 +1235,22 @@ var ConferenciaEncalhe = $.extend(true, {
 				}
 				
 				var proximoCampo = (index - 1); 
-				$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').select();
+
+				var position = $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').val().length;
+				
+				setTimeout(function(){
+					$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').focus().setCursorPosition(position);
+				},1);
 				
 			} else if (e.keyCode == 40 || e.keyCode == 13) {
 				
 				var proximoCampo = (index + 1);
-				$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').select();
+
+				var position = $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').val().length;
+				
+				setTimeout(function(){
+					$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').focus().setCursorPosition(position);
+				},1);
 				
 			} 
 			
@@ -1250,13 +1260,14 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$(listaItemGrid).each(function(index, element){
 			
-			$(element).find("[id^='qtdExemplaresGrid_']").select();
+			var position = $(element).find("[id^='qtdExemplaresGrid_']").val().length;
 			
+			setTimeout(function(){
+				$(element).find("[id^='qtdExemplaresGrid_']").focus().setCursorPosition(position);
+			},1);
 			return false;
 			
 		});
-			
-		
 		
 	},
 	
@@ -1346,10 +1357,6 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#totalExemplaresFooter", ConferenciaEncalhe.workspace).text(result.qtdRecebida);
 				
 				ConferenciaEncalhe.numeroCotaEditavel(false);
-				
-				setTimeout(function(){
-					$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).select();
-				}, 1);
 				
 			}, function(){
 				
