@@ -205,7 +205,7 @@ public class MatrizDistribuicaoController extends BaseController {
         filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
         TotalizadorProdutoDistribuicaoVO vo = matrizDistribuicaoService.obterMatrizDistribuicao(filtro);
 
-        Collections.sort(vo.getListProdutoDistribuicao());
+//        Collections.sort(vo.getListProdutoDistribuicao());
 
         List<ProdutoDistribuicaoVO> listSession = obterListaDeItensDuplicadosNaSessao();
 
@@ -312,7 +312,7 @@ public class MatrizDistribuicaoController extends BaseController {
         tm.setPage(paginacao.getPaginaAtual());
         tm.setTotal(filtro.getTotalRegistrosEncontrados());
         resultado.add(tm);
-        resultado.add(totProdDistVO.getTotalEstudosGerados());
+        resultado.add(totProdDistVO.getTotalSemEstudo());
         resultado.add(totProdDistVO.getTotalEstudosLiberados());
         resultado.add(totProdDistVO.isMatrizFinalizada());
         result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
@@ -357,25 +357,28 @@ public class MatrizDistribuicaoController extends BaseController {
 
     @Exportable
     public class RodapeDTO {
-        @Export(label = "Estudos gerados:")
-        private String totalEstudosGerados;
-        @Export(label = "Estudos liberados:")
+        
+        @Export(label = "Publicações Liberadas:")
         private String totalEstudosLiberado;
+        
+        @Export(label = "Publicações sem Estudo:")
+        private String totalSemEstudo;
+        
 
-        public RodapeDTO(String totalGerado, String totalLiberado) {
-            this.totalEstudosGerados = totalGerado;
+        public RodapeDTO(String totalSemEstudo, String totalLiberado) {
+            this.totalSemEstudo = totalSemEstudo;
             this.totalEstudosLiberado = totalLiberado;
 
-        }
-
-        public String getTotalEstudosGerados() {
-            return totalEstudosGerados;
         }
 
         public String getTotalEstudosLiberado() {
             return totalEstudosLiberado;
         }
-
+        
+        public String getTotalSemEstudo() {
+            return totalSemEstudo;
+        }
+        
     }
 
     /**
@@ -395,7 +398,7 @@ public class MatrizDistribuicaoController extends BaseController {
                 totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao() != null &&
                 !totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao().isEmpty()) {
 
-            RodapeDTO rodapeDTO = new RodapeDTO(CurrencyUtil.formatarValor(totalizadorProdutoDistribuicaoVO.getTotalEstudosGerados()),
+            RodapeDTO rodapeDTO = new RodapeDTO(CurrencyUtil.formatarValor(totalizadorProdutoDistribuicaoVO.getTotalSemEstudo()),
                     CurrencyUtil.formatarValor(totalizadorProdutoDistribuicaoVO.getTotalEstudosLiberados()));
 
             FileExporter.to("matriz_distribuicao", fileType).inHTTPResponse(

@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -156,10 +155,6 @@ public class MixProdutoDTO implements Serializable {
 		return dataHora;
 	}
 	public void setDataHora(Date dataHora) {
-		if(dataHora !=null){
-			this.setData(DateUtil.formatarData(dataHora, "dd/MM/yyyy"));
-			this.setHora(DateUtil.formatarHoraMinuto(dataHora));
-		}
 		this.dataHora = dataHora;
 	}
 	public BigInteger getId() {
