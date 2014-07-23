@@ -775,10 +775,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 				$("#totalOutrosValores", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 				$("#valorAPagar", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 				
-				 setTimeout(function(){
-					 $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).select();
-				 }, 1);
-				
 				ConferenciaEncalheCont.numeroCotaEditavel(false);
 				
 			},
@@ -1298,13 +1294,25 @@ var ConferenciaEncalheCont = $.extend(true, {
 	nextInputExemplares : function(curIndex, evt) {
 	
 		if (evt.keyCode == 13 || evt.keyCode == 40) {
+			
 			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
-			nextElement.focus();
-			nextElement.select();
-		}else if (event.keyCode == 38) {
+			
+			var position = $(nextElement).val().length;
+			
+			setTimeout(function(){
+				$(nextElement).focus().setCursorPosition(position);
+			},1);
+		
+		} else if (event.keyCode == 38) {
+			
 			var nextElement = $('[tabindex=' + (curIndex - 1) + ']');
-			nextElement.focus();
-			nextElement.select();  
+
+			var position = $(nextElement).val().length;
+			
+			setTimeout(function(){
+				$(nextElement).focus().setCursorPosition(position);
+			},1);
+			
 		} 
 	},
 	
