@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.repository.TipoSegmentoProdutoRepository;
 import br.com.abril.nds.service.TipoSegmentoProdutoService;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
 public class TipoSegmentoProdutoServiceImpl implements TipoSegmentoProdutoService {
@@ -21,6 +22,16 @@ public class TipoSegmentoProdutoServiceImpl implements TipoSegmentoProdutoServic
 	public List<TipoSegmentoProduto> obterTipoSegmentoProduto() {
 		return tipoSegmentoProdutoRepo.buscarTodos();
 	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<TipoSegmentoProduto> obterTipoSegmentoProdutoOrdenados(Ordenacao ordem) {
+		return tipoSegmentoProdutoRepo.obterTipoSegmentoProdutoOrdenados(ordem);
+	}
+	
+//	@Transactional
+//	@Override
+//	public TipoSegm
 
 	@Transactional(readOnly = true)
 	@Override

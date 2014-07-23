@@ -393,6 +393,56 @@ var relatorioVendasController = $.extend(true, {
 			width : 960,
 			height : 255
 		});
+				
+		$(".segmentacaoGrid",relatorioVendasController.workspace).flexigrid({
+			preProcess: relatorioVendasController.executarPreProcessamentoCota,
+			dataType : 'json',
+			colModel : [ { 
+				display : 'Ranking',
+				name : 'ranking',
+				width : 50,
+				sortable : false,
+				align : 'left'
+			},{
+				display : 'Cota',
+				name : 'numeroCota',
+				width : 60,
+				sortable : false,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nomeCota',
+				width : 500,
+				sortable : false,
+				align : 'left'
+			}, {
+				display : 'Faturamento Capa R$',
+				name : 'faturamentoCapaFormatado',
+				width : 130,
+				sortable : false,
+				align : 'right'
+			}, {
+				display : 'Part. %',
+				name : 'participacaoFormatado',
+				width : 50,
+				sortable : false,
+				align : 'right'
+			}, {
+				display : 'Part. Acum. %',
+				name : 'participacaoAcumuladaFormatado',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			} ],
+			sortname : "ranking",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 255
+		});
 		
 		$(document).ready(function(){
 			
@@ -516,6 +566,24 @@ var relatorioVendasController = $.extend(true, {
 			$(".abcCotaGrid", relatorioVendasController.workspace).flexReload();
 			$(".areaBts", relatorioVendasController.workspace).show();
 			relatorioVendasController.mostra_cota();					
+		
+		} else if ($('#filtro_segmentacao', relatorioVendasController.workspace).attr("checked") == "checked") {
+			
+			var idSegmentacao = $('#selectSegmentacao', relatorioVendasController.workspace).val();
+			var descricaoSegmento = $('#selectSegmentacao option:selected', relatorioVendasController.workspace).text();
+			
+			$(".segmentacaoGrid", relatorioVendasController.workspace).flexOptions({
+				url: contextPath + "/lancamento/relatorioVendas/pesquisarRankingSegmentacao",
+				params: [
+			         {name:'dataDe', value: dataDe},
+			         {name:'dataAte', value: dataAte},
+			         {name:'idSegmentacao', value: idSegmentacao},
+			         {name:'descricaoSegmento', value: descricaoSegmento}
+			    ],
+			    newp: 1,
+			});
+			$(".segmentacaoGrid", relatorioVendasController.workspace).flexReload();
+			$(".areaBts", relatorioVendasController.workspace).show();
 		}
 	},
 	
@@ -661,6 +729,8 @@ var relatorioVendasController = $.extend(true, {
 		$('#relatorioCota', relatorioVendasController.workspace).hide();
 		$('.linhaCota', relatorioVendasController.workspace).hide();
 		$('.linhaProduto', relatorioVendasController.workspace).hide();
+		$('#relatorioSegmentacao', relatorioVendasController.workspace).hide();
+		$('.linhaSegmentacao', relatorioVendasController.workspace).hide();
 		
 		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=1';
 		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=1';
@@ -677,6 +747,8 @@ var relatorioVendasController = $.extend(true, {
 		$('#relatorioCota', relatorioVendasController.workspace).hide();
 		$('.linhaCota', relatorioVendasController.workspace).hide();
 		$('.linhaProduto', relatorioVendasController.workspace).hide();
+		$('#relatorioSegmentacao', relatorioVendasController.workspace).hide();
+		$('.linhaSegmentacao', relatorioVendasController.workspace).hide();
 		
 		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=2';
 		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=2';
@@ -691,8 +763,10 @@ var relatorioVendasController = $.extend(true, {
 		$('#relatorioEditor', relatorioVendasController.workspace).hide();
 		$('#relatorioProduto', relatorioVendasController.workspace).show();
 		$('#relatorioCota', relatorioVendasController.workspace).hide();
+		$('#relatorioSegmentacao', relatorioVendasController.workspace).hide();
 		$('.linhaCota', relatorioVendasController.workspace).hide();
 		$('.linhaProduto', relatorioVendasController.workspace).show();
+		$('.linhaSegmentacao', relatorioVendasController.workspace).hide();
 
 		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=3';
 		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=3';
@@ -707,15 +781,36 @@ var relatorioVendasController = $.extend(true, {
 		$('#relatorioEditor', relatorioVendasController.workspace).hide();
 		$('#relatorioProduto', relatorioVendasController.workspace).hide();
 		$('#relatorioCota', relatorioVendasController.workspace).show();
+		$('#relatorioSegmentacao', relatorioVendasController.workspace).hide();
 		$('.linhaCota', relatorioVendasController.workspace).show();
 		$('.linhaProduto', relatorioVendasController.workspace).hide();
-
+		$('.linhaSegmentacao', relatorioVendasController.workspace).hide();
+		
 		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=4';
 		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=4';
 			
 		$(".impressaoPDFRelatorioVendas").attr("href", pathExportacaoRelatorioPDF);
 		$(".impressaoXLSRelatorioVendas").attr("href", pathExportacaoRelatorioXLS);
 		
+	},
+	
+	mostra_segmentacao: function() {
+		
+		$('#relatorioDistribuidor', relatorioVendasController.workspace).hide();
+		$('#relatorioEditor', relatorioVendasController.workspace).hide();
+		$('#relatorioProduto', relatorioVendasController.workspace).hide();
+		$('#relatorioCota', relatorioVendasController.workspace).hide();
+		$('.linhaCota', relatorioVendasController.workspace).hide();
+		$('.linhaProduto', relatorioVendasController.workspace).hide();
+		
+		$('#relatorioSegmentacao', relatorioVendasController.workspace).show();
+		$('.linhaSegmentacao', relatorioVendasController.workspace).show();
+		
+		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=6';
+		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=6';
+
+		$(".impressaoPDFRelatorioVendas").attr("href", pathExportacaoRelatorioPDF);
+		$(".impressaoXLSRelatorioVendas").attr("href", pathExportacaoRelatorioXLS);
 	},
 
 	popup_editor : function() {
