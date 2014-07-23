@@ -74,7 +74,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		
 		view.startKey(inputModel.getRouteInterface().getName(), null);
 		view.endKey(inputModel.getRouteInterface().getName(), "");
-		view.limit(couchDbProperties.getBachSize());
+
 		view.includeDocs(true);
 		ViewResult<Object[], Void, ?> result = null;
 		
@@ -85,6 +85,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		} catch(org.lightcouch.NoDocumentException e){
 			//Nao ha informacoes a serem processadas
             ndsiLoggerFactory.getLogger().setStatusProcesso(StatusExecucaoEnum.VAZIO);
+            couchDbClient.shutdown();
 			return;
 		}
 		

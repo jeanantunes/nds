@@ -478,5 +478,16 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 	        		
 	}
 	
+	@Override
+	public Long obterQtdPdvPorCota(Integer numeroCota){
+	    
+	    final Query query = 
+	            this.getSession().createQuery(
+	                    "select count(p.id) from Cota c join c.pdvs p where c.numeroCota = :numeroCota");
+	    
+	    query.setParameter("numeroCota", numeroCota);
+	    
+	    return (Long) query.uniqueResult();
+	}
 }
 

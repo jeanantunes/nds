@@ -105,8 +105,7 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		this.carregarDadosCombo();
 	}
-
-	                                                                                        /**
+                                                                                       /**
      * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
      */
 	private void carregarDadosCombo() {
@@ -116,7 +115,7 @@ public class ProdutoEdicaoController extends BaseController {
 			listaGrupoProduto.add(new ItemDTO<GrupoProduto,String>(item,item.getNome()));
 		}
 		result.include("listaGrupoProduto",listaGrupoProduto);
-		
+
 		final List<ItemDTO<StatusLancamento,String>> listaStatusLancamento =  new ArrayList<ItemDTO<StatusLancamento,String>>();
 		for (StatusLancamento statusLancamento : StatusLancamento.values()) {
 			
@@ -125,7 +124,7 @@ public class ProdutoEdicaoController extends BaseController {
 					statusLancamento, statusLancamento.getDescricao()));
 		}
 		result.include("listaStatusLancamento", listaStatusLancamento);
-		
+
 		final List<ItemDTO<Long,String>> listaTipoSegmentoProduto =  new ArrayList<ItemDTO<Long,String>>();
 		for (TipoSegmentoProduto tipoSegmentoProduto : tipoSegmentoProdutoService.obterTipoSegmentoProduto()) {
 			listaTipoSegmentoProduto.add(
@@ -133,10 +132,7 @@ public class ProdutoEdicaoController extends BaseController {
 							tipoSegmentoProduto.getId(), tipoSegmentoProduto.getDescricao()));
 		}
 		result.include("listaTipoSegmentoProduto", listaTipoSegmentoProduto);
-		
-		final List<Brinde> brindes = brindeService.obterBrindes();
-		result.include("brindes", brindes);
-		
+
 		final List<TipoClassificacaoProduto> classificacoes = tipoClassificacaoProdutoService.obterTodos();
 		final List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
 		for (TipoClassificacaoProduto tipoClassificacaoProduto : classificacoes) {
@@ -145,6 +141,22 @@ public class ProdutoEdicaoController extends BaseController {
 		result.include("listaClassificacao",comboClassificacao);
     }
 
+	@Post
+	@Path("/obterBrindes.json")
+	public void obterBrindes(){
+	    
+		final List<Brinde> brindes = brindeService.obterBrindes();
+		
+		final List<ItemDTO<Long,String>> comboBrindes =  new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Brinde b : brindes) {
+			
+			comboBrindes.add(new ItemDTO<Long,String>(b.getId(), b.getDescricao()));
+		}
+	    
+		result.use(Results.json()).from(comboBrindes, "result").recursive().serialize();
+	}
+	
 	@Post
 	public void pesquisarProdutoCodBarra(String codBarra){
 		
@@ -267,8 +279,6 @@ public class ProdutoEdicaoController extends BaseController {
 		else{			
 			produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataRecolhimentoReal());
 		}
-			
-		ValidacaoVO vo = null;
 		 
 		try {
 			
@@ -289,20 +299,15 @@ public class ProdutoEdicaoController extends BaseController {
 			        produtoEdicaoDTO, produtoEdicaoDTO.getCodigoProduto(), 
 			        contentType, imgInputStream,istrac29, modoTela);
 			
-            vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
+            this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!"), "result").recursive().serialize();
 			
 		} catch (ValidacaoException e) {
-			
-			vo = e.getValidacao();
 
+			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
 		} catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
 			
-			vo = new ValidacaoVO(TipoMensagem.ERROR, "O seguinte erro ocorreu:" + e.getMessage());
-		
-		} finally {
-			
-			this.result.use(Results.json()).from(vo, "result").recursive().serialize();
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "O seguinte erro ocorreu:" + e.getMessage()), "result").recursive().serialize();
 		}
 	}
 	

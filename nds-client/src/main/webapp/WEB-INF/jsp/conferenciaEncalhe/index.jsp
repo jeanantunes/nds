@@ -29,21 +29,13 @@
 	</style>
 	
 	<script type="text/javascript">
-		var ID_BOX_LOGADO = "${conferenciaEncalheSessionScopeAttr.idBoxLogado}";
-		$('#boxLogado option[value="${conferenciaEncalheSessionScopeAttr.idBoxLogado}"]').attr("selected","selected");
-		
-		var VEIO_DO_BT_BOX_ENCALHE = false;
-		
-		//Solicita sele��o do box caso usu�rio n�o esteja associado.
-		if(ID_BOX_LOGADO == ""){
-			ConferenciaEncalhe.popup_logado();
-		}else{
-			focusSelectRefField($('#numeroCota', ConferenciaEncalhe.workspace));
-		}
 		
 		$(function(){
+			
 			ConferenciaEncalhe.init();
+			
 			bloquearItensEdicao(ConferenciaEncalhe.workspace);
+			
 		});
 		
 	</script>

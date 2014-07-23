@@ -93,6 +93,8 @@ var PesquisaConferenciaEncalhe = {
 			
 			source: result,
 			
+			autoFocus: true,
+			
 			select: function(event, ui){			
 				
 				var idProdutoEdicao = ui.item.chave;	
@@ -113,7 +115,8 @@ var PesquisaConferenciaEncalhe = {
 			close: function() {
 				
 				ConferenciaEncalhe.limparDadosProduto(true);
-			
+				
+				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete('option', 'source', []);
 			},
 			
 			delay : 0,

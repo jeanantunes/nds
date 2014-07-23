@@ -380,31 +380,10 @@ public class InterfaceExecutor {
 			
 				FileInputStream in = null;
 				try {
-					in = new FileInputStream(imagem);	
-					
+					in = new FileInputStream(imagem);					
 					couchDbClient.saveAttachment(in, imagem.getName().replace(".jpeg", ".jpg"), "image/jpeg", doc.get_id(), doc.get_rev());
 					
-					if (null != in) {
-						try {
-							
-							in.close();
-							
-							String nomeArquivo = imagem.getName();
-							
-							if(imagem.delete()){
-								this.logarArquivo(StatusExecucaoEnum.AVISO, "Imagem excluída com sucesso."+nomeArquivo);
-							}else{
-							    this.logarArquivo(StatusExecucaoEnum.AVISO, "Erro na exclução da imagem."+nomeArquivo);
-							}
-							
-                        } catch (IOException ex) {
-                            LOGGER.error(ex.getMessage(), ex);
-						}
-					}
-					
-					
-					
-					
+					imagem.delete();
 				} catch (FileNotFoundException e1) {
                     this.logarArquivo(StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
 				} finally {
