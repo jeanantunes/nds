@@ -560,6 +560,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		FechamentoDiarioConsolidadoCota consolidadoCota = 
 				fechamentoDiarioConsolidadoCotaRepository.obterResumoConsolidadoCotas(dataFechamento);
 		
+		if(consolidadoCota == null){
+			return new ResumoFechamentoDiarioCotasDTO(0L, 0L,0L,0L,0L,0L);
+		}
+		
 		Long quantidadeTotal = Util.nvl(consolidadoCota.getQuantidadeTotal(),0L).longValue();
 		
 		Long quantidadeAtivas = Util.nvl(consolidadoCota.getQuantidadeAtivos(),0L).longValue();
@@ -727,31 +731,37 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		//Consignado
 		FechamentoDiarioResumoConsignado resumoConsignadoDia = fechamentoDiarioResumoConsignadoRepository.obterResumoConsignado(dataFechamento);
 		
-		resumoConsignado.setSaldoAnterior(resumoConsignadoDia.getSaldoAnterior());
-		
-		resumoConsignado.setValorEntradas(resumoConsignadoDia.getValorEntradas());
-		
-		resumoConsignado.setValorSaidas(resumoConsignadoDia.getValorSaidas());
-		
-		resumoConsignado.setSaldoAtual(resumoConsignadoDia.getSaldoAtual());
-		
-		resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
+		if(resumoConsignadoDia != null){
+			
+			resumoConsignado.setSaldoAnterior(resumoConsignadoDia.getSaldoAnterior());
+			
+			resumoConsignado.setValorEntradas(resumoConsignadoDia.getValorEntradas());
+			
+			resumoConsignado.setValorSaidas(resumoConsignadoDia.getValorSaidas());
+			
+			resumoConsignado.setSaldoAtual(resumoConsignadoDia.getSaldoAtual());
+			
+			resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
+		}
 		
 		ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = resumoFechamentoDiarioConsignado.new ResumoAVista();
 		
 		//A Vista
 		FechamentoDiarioResumoAvista resumoAvistaDia = fechamentoDiarioResumoAvistaRepository.obterResumoConsignado(dataFechamento);
 		
-		resumoAVista.setSaldoAnterior(resumoAvistaDia.getSaldoAnterior());
+		if(resumoAvistaDia!= null){
+			
+			resumoAVista.setSaldoAnterior(resumoAvistaDia.getSaldoAnterior());
 
-		resumoAVista.setValorEntradas(resumoAvistaDia.getValorEntradas());
-		
-		resumoAVista.setValorSaidas(resumoAvistaDia.getValorSaidas());
-		
-		resumoAVista.setSaldoAtual(resumoAvistaDia.getSaldoAtual());
-		
-		resumoFechamentoDiarioConsignado.setResumoAVista(resumoAVista);
-		
+			resumoAVista.setValorEntradas(resumoAvistaDia.getValorEntradas());
+			
+			resumoAVista.setValorSaidas(resumoAvistaDia.getValorSaidas());
+			
+			resumoAVista.setSaldoAtual(resumoAvistaDia.getSaldoAtual());
+			
+			resumoFechamentoDiarioConsignado.setResumoAVista(resumoAVista);
+		}
+				
 		return resumoFechamentoDiarioConsignado;
 	}
 

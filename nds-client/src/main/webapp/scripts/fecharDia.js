@@ -149,6 +149,12 @@ var fecharDiaController =  $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}, {
+				display : 'Prom.',
+				name : 'qtdeDiferenca',
+				width : 40,
+				sortable : false,
+				align : 'center'
+			} ,{
 				display : 'A Distr',
 				name : 'qtdeDistribuir',
 				width : 50,
@@ -164,12 +170,6 @@ var fecharDiaController =  $.extend(true, {
 				display : 'Sobra Distr',
 				name : 'qtdeSobraDistribuicao',
 				width : 55,
-				sortable : false,
-				align : 'center'
-			}, {
-				display : 'Dif.',
-				name : 'qtdeDiferenca',
-				width : 40,
 				sortable : false,
 				align : 'center'
 			}],
