@@ -1273,8 +1273,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 			var position = $(nextElement).val().length;
 			
 			setTimeout(function(){
-				$(nextElement).focus().setCursorPosition(position);
+				$(nextElement).focus().selectRange(0, position);
 			},1);
+			
 		
 		} else if (event.keyCode == 38) {
 			
@@ -1283,7 +1284,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			var position = $(nextElement).val().length;
 			
 			setTimeout(function(){
-				$(nextElement).focus().setCursorPosition(position);
+				$(nextElement).focus().selectRange(0, position);
 			},1);
 			
 		} 
