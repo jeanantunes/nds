@@ -688,14 +688,6 @@ public class Cota implements Serializable {
 		int result = 1;
 		result = prime * result + ((this.getId() == null) ? 0 : getId().hashCode());
 		result = prime * result + ((this.getNumeroCota() == null) ? 0 : getNumeroCota().hashCode());
-		result = prime * result + ((this.getChamadaEncalheCotas() == null) ? 0 : getChamadaEncalheCotas().hashCode());
-		result = prime * result + ((this.getClassificacaoEspectativaFaturamento() == null) ? 0 : getClassificacaoEspectativaFaturamento().hashCode());
-		result = prime * result + ((this.getEnderecos() == null) ? 0 : getEnderecos().hashCode());
-		result = prime * result + ((this.getEstoqueProdutoCotas() == null) ? 0 : getEstoqueProdutoCotas().hashCode());
-		result = prime * result + ((this.getEstudoCotas() == null) ? 0 : getEstudoCotas().hashCode());
-		result = prime * result + ((this.getFornecedores() == null) ? 0 : getFornecedores().hashCode());
-		result = prime * result + ((this.getMovimentoEstoqueCotas() == null) ? 0 : getMovimentoEstoqueCotas().hashCode());
-		result = prime * result + ((this.getPessoa() == null) ? 0 : getPessoa().hashCode());
 		return result;
 	}
 
@@ -723,48 +715,6 @@ public class Cota implements Serializable {
 			if (other.getBox() != null)
 				return false;
 		} else if (!this.getBox().equals(other.getBox()))
-			return false;
-		if (this.getChamadaEncalheCotas() == null) {
-			if (other.getChamadaEncalheCotas() != null)
-				return false;
-		} else if (!this.getChamadaEncalheCotas().equals(other.getChamadaEncalheCotas()))
-			return false;
-		if (this.getClassificacaoEspectativaFaturamento() != other.getClassificacaoEspectativaFaturamento())
-			return false;
-		if (this.getEnderecos() == null) {
-			if (other.getEnderecos() != null)
-				return false;
-		} else if (!this.getEnderecos().equals(other.getEnderecos()))
-			return false;
-		if (this.getEstoqueProdutoCotas() == null) {
-			if (other.getEstoqueProdutoCota() != null)
-				return false;
-		} else if (!this.getEstoqueProdutoCotas().equals(other.getEstoqueProdutoCotas()))
-			return false;
-		if (this.getEstoqueProdutoCotas() == null) {
-			if (other.getEstoqueProdutoCotas() != null)
-				return false;
-		} else if (!this.getEstoqueProdutoCotas().equals(other.getEstoqueProdutoCotas()))
-			return false;
-		if (this.getEstudoCotas() == null) {
-			if (other.getEstudoCotas() != null)
-				return false;
-		} else if (!this.getEstudoCotas().equals(other.getEstudoCotas()))
-			return false;
-		if (this.getFornecedores() == null) {
-			if (other.getFornecedores() != null)
-				return false;
-		} else if (!this.getFornecedores().equals(other.getFornecedores()))
-			return false;
-		if (this.getMovimentoEstoqueCotas() == null) {
-			if (other.getMovimentoEstoqueCotas() != null)
-				return false;
-		} else if (!this.getMovimentoEstoqueCotas().equals(other.getMovimentoEstoqueCotas()))
-			return false;
-		if (this.getPessoa() == null) {
-			if (other.getPessoa() != null)
-				return false;
-		} else if (!this.getPessoa().equals(other.getPessoa()))
 			return false;
 		return true;
 	}

@@ -14,8 +14,8 @@ import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 public interface AnaliseParcialRepository {
 	
 	List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO);
-	void atualizaClassificacaoCota(Long estudoId, Long numeroCota, String classificacaoCota);
-	void atualizaReparteCota(Long estudoId, Long numeroCota, Long reparteSubtraido);
+	void atualizaClassificacaoCota(Long estudoId, Integer numeroCota, String classificacaoCota);
+	void atualizaReparteCota(Long estudoId, Integer numeroCota, Long reparteSubtraido);
 	void atualizaReparteEstudo(Long estudoId, Long reparteSubtraido);
 	void liberar(Long id);
 	List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo);

@@ -129,6 +129,8 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private static final String IND_USUARIO_SUPERVISOR = "indUsuarioSupervisorParaConferenciaEncalhe";
 	
+	private static String ID_BOX_LOGADO_SESSION = "idBoxLogado";
+	
 	/*
      * Conferência de encalhe da cota que foi iniciada porém ainda não foi
      * salva.
@@ -199,6 +201,21 @@ public class ConferenciaEncalheController extends BaseController {
 	@Autowired
 	private BloqueioConferenciaEncalheComponent bloqueioConferenciaEncalheComponent;
 	
+	private void preCarregarBoxes(){
+		
+		 // Obter box usuário
+		if(this.getUsuarioLogado()!= null && this.getUsuarioLogado().getBox() != null && 
+				this.getUsuarioLogado().getBox().getId() != null){
+			
+			if(conferenciaEncalheSessionScopeAttr != null){
+				conferenciaEncalheSessionScopeAttr.setIdBoxLogado(this.getUsuarioLogado().getBox().getId());
+			}
+		}
+		
+		limparDadosSessao();
+		carregarComboBoxEncalhe();
+	}
+	
 	@Path("/")
 	public void index() {
 		
@@ -212,17 +229,7 @@ public class ConferenciaEncalheController extends BaseController {
 			this.result.include("tipoContabilizacaoCE", tipoContabilizacaoCE.name());
 		}
 		
-        // Obter box usuário
-		if(this.getUsuarioLogado()!= null && this.getUsuarioLogado().getBox() != null && 
-				this.getUsuarioLogado().getBox().getId() != null){
-			
-			if(conferenciaEncalheSessionScopeAttr != null){
-				conferenciaEncalheSessionScopeAttr.setIdBoxLogado(this.getUsuarioLogado().getBox().getId());
-			}
-		}
-		
-		limparDadosSessao();
-		carregarComboBoxEncalhe();
+        this.preCarregarBoxes();
 	}
 	
 	@Path("/contingencia")
@@ -237,6 +244,8 @@ public class ConferenciaEncalheController extends BaseController {
 		if(tipoContabilizacaoCE!=null) {
 			this.result.include("tipoContabilizacaoCE", tipoContabilizacaoCE.name());
 		}
+		
+		this.preCarregarBoxes();
 	}
 	
 	public void carregarComboBoxEncalheContingencia() {
@@ -266,11 +275,22 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Path("/obterBoxLogado")
+	public void obterBoxLogado(){
+		
+        Long idBoxlogado = (Long) this.session.getAttribute(ID_BOX_LOGADO_SESSION);
+
+		this.result.use(Results.json()).from(idBoxlogado).serialize();
+	}
+	
+	@Post
 	public void salvarIdBoxSessao(final Long idBox){
 		
 		if (idBox != null){
 		
 			conferenciaEncalheSessionScopeAttr.setIdBoxLogado(idBox);
+			
+			this.session.setAttribute(ID_BOX_LOGADO_SESSION, idBox);
 			
 			this.result.include("boxes", idBox);
 			
@@ -404,7 +424,14 @@ public class ConferenciaEncalheController extends BaseController {
 				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
 			
 			} else {
-				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg", "Cota não possui recolhimento planejado para a data de operação atual.").serialize();
+				
+				this.result.use(CustomMapJson.class)
+				.put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg",
+                        "Cota não possui recolhimento planejado para a data de operação atual.")
+                        .serialize();
+				
+				bloqueioConferenciaEncalheComponent.removerTravaConferenciaCotaUsuario(this.session);
+			
 			}
 		}
 		
