@@ -737,6 +737,17 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" WHERE mffc.data BETWEEN :dataInicial AND :dataFinal ")
 		.append(" AND mffc.notaFiscalLiberadaEmissao = :true ");
 		
+		if(filtro.getNotaFiscalVendaConsignado() != null && filtro.getNotaFiscalVendaConsignado()) {
+			
+			hql.append(" AND mffc.notaFiscalVendaEmitida = :false ");
+		}
+		
+		if(filtro.getNotaFiscalDevolucaoSimbolica() != null && filtro.getNotaFiscalDevolucaoSimbolica()) {
+			
+			hql.append(" AND mffc.notaFiscalDevolucaoSimbolicaEmitida = :false ");
+		}
+		
+		/*
 		if(filtro.getNotaFiscalDevolucaoSimbolica() != null && filtro.getNotaFiscalVendaConsignado()) {
 			
 			hql.append(" AND mffc.notaFiscalVendaEmitida = :true ");
@@ -752,6 +763,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			
 			hql.append(" AND mffc.notaFiscalDevolucaoSimbolicaEmitida = :false ");
 		}
+		*/
 
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null) {
