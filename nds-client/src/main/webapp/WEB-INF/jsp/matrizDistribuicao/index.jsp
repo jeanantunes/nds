@@ -213,7 +213,7 @@ var lancamentosSelecionados = [];
 						
 						<tr>
 							<td colspan="4">
-								<b>Total previsto na matriz para estudos gerados:</b> &nbsp;<span id="totalGerado"></span>, &nbsp;<b>liberados:&nbsp;</b> <span id="totalLiberado"></span>
+								<b>Total de Publica&ccedil&otildees: Publica&ccedil&otildees Liberadas</b> &nbsp;<span id="totalLiberado"></span>, &nbsp;<b>Publica&ccedil&otildees sem Estudo:&nbsp;</b> <span id="totalGerado"></span>
 							</td>
 						</tr>
 					</table>

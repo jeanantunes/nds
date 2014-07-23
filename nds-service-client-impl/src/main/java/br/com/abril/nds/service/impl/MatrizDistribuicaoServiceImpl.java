@@ -198,23 +198,24 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
     private TotalizadorProdutoDistribuicaoVO getProdutoDistribuicaoVOTotalizado(List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
 
-		Integer totalEstudoGerado = 0;
+		Integer totalSemEstudo = 0;
 		Integer totalEstudoLiberado = 0;
 
 		for (ProdutoDistribuicaoVO prodDistVO : produtoDistribuicaoVOs) {
 			if (prodDistVO.getIdEstudo() != null) {
-				if (prodDistVO.getLiberado().equals(
-						StatusEstudo.LIBERADO.name())) {
-					totalEstudoLiberado++;
-				} else {
-					totalEstudoGerado++;
+				if (prodDistVO.getLiberado().equals(StatusEstudo.LIBERADO.name())) {
+					
+				    totalEstudoLiberado++;
 				}
+			} else {
+			    
+			    totalSemEstudo++;
 			}
 		}
 
 		TotalizadorProdutoDistribuicaoVO totProdDistVO = new TotalizadorProdutoDistribuicaoVO();
 		totProdDistVO.setListProdutoDistribuicao(produtoDistribuicaoVOs);
-		totProdDistVO.setTotalEstudosGerados(totalEstudoGerado);
+		totProdDistVO.setTotalSemEstudo(totalSemEstudo);
 		totProdDistVO.setTotalEstudosLiberados(totalEstudoLiberado);
 
 		return totProdDistVO;
